@@ -1,0 +1,6 @@
+venv/
+.idea/
+cmake-build-*/
+**/__pycache__/
+
+TODO_generator.md
