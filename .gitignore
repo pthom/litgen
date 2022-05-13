@@ -7,5 +7,3 @@ cmake-build-*/
 **/*.egg-info/
 *.so
 *.pyd
-
-TODO_generator.md
