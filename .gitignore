@@ -1,6 +1,11 @@
 venv/
 .idea/
+build/
+build*/
 cmake-build-*/
 **/__pycache__/
+**/*.egg-info/
+*.so
+*.pyd
 
 TODO_generator.md

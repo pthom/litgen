@@ -1,1 +1,0 @@
-add_library(example_cpp_library example_cpp_library.cpp example_cpp_library.h)
