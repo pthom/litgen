@@ -1,4 +1,5 @@
 #pragma once
+#include <cstddef>
 
 #ifndef MY_API
 #define MY_API
@@ -7,7 +8,18 @@
 namespace LiterateGeneratorExample
 {
     // Adds two numbers
-    MY_API int add(int a, int b) { return a + b; }
+    MY_API inline int add(int a, int b) { return a + b; }
+
+    // Adds three numbers, with a surprise
+    MY_API inline int add(int a, int b, int c) { return a + b + c + 4; }
+
+    // Modify an array by adding a value to its elements
+    MY_API inline void add_inside_array(int* array, size_t array_size, int number_to_add)
+    {
+        for (size_t i  = 0; i < array_size; ++i)
+            array[i] += number_to_add;
+    }
+
 
     MY_API int sub(int a, int b) { return a - b; }
 

@@ -50,7 +50,7 @@
 from dataclasses import dataclass
 from enum import Enum
 from typing import Optional, List, Tuple, Callable
-
+from internal.code_utils import make_regex_any_variable_ending_with, make_regex_any_variable_starting_with
 import internal.code_replacements as _code_replacements
 
 
@@ -91,8 +91,12 @@ class CodeStyleOptions:
     #
     buffer_flag_replace_by_array = False
     buffer_inner_types = [] # of type List[str]. Could be ["T", "void"], which would mean that `T*` and `void *` are considered as buffers
-    buffer_size_names = []  # of type List[str]. Could be ["count", "size"]
-
+    buffer_size_regexes = [
+        make_regex_any_variable_ending_with("count"),
+        make_regex_any_variable_starting_with("count"),
+        make_regex_any_variable_ending_with("size"),
+        make_regex_any_variable_starting_with("size"),
+    ]
 
 def code_style_immvision() -> CodeStyleOptions:
     options = CodeStyleOptions()
@@ -130,7 +134,6 @@ def code_style_implot():
 
     options.buffer_flag_replace_by_array = True
     options.buffer_inner_types = ["T", "void"]
-    options.buffer_size_names = ["count"]
 
     options.function_exclude_regexes = [
         ####################################################

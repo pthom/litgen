@@ -34,30 +34,25 @@ def test_make_function_wrapper_lambda():
 
     def test_with_one_buffer():
         function_decl = """
-        IMPLOT_TMP int PlotScatter(const char* label_id, const T* values, int count, double xscale=1, double x0=0, int offset=0, int stride=sizeof(T));
+        IMPLOT_TMP int Foo1(const T* values, int count);
         """
 
         expected_lambda_code_naive = """
-        [](const char* label_id, const T* values, int count, double xscale = 1, double x0 = 0, int offset = 0, int stride = sizeof(T))
-        {
-            return PlotScatter(label_id, values, count, xscale, x0, offset, stride);
-        },
+            [](const T* values, int count)
+            {
+                return Foo1(values, count);
+            },
         """
 
         expected_lambda_code_buffer = """
-        [](const char* label_id, const py::array & values, double xscale = 1, double x0 = 0, int offset = 0, int stride = -1)
-        {
-            // convert values (py::array&) to C standard buffer
-            const void* values_buffer = values.data();
-            int values_count = values.shape()[0];
-
-            // process stride default value (which was a sizeof in C++)
-            int values_stride = stride;
-            if (values_stride == -1)
-                values_stride = (int)values.itemsize();
-
-            return PlotScatter(label_id, values_buffer, values_count, xscale, x0, offset, values_stride);
-        },
+            [](const py::array & values)
+            {
+                // convert values (py::array&) to C standard buffer
+                const void* values_buffer =  values.data();
+                int values_count = values.shape()[0];
+                    
+                return Foo1(values_buffer, values_count);
+            },
         """
 
         options.buffer_flag_replace_by_array = False
@@ -68,33 +63,36 @@ def test_make_function_wrapper_lambda():
 
     test_with_one_buffer()
 
-    def test_with_two_buffers():
+    def test_with_four_buffers():
         function_decl = """
-        IMPLOT_TMP void PlotScatter(const char* label_id, const T* xs, const T* ys, int count, int offset=0, int stride=sizeof(T));
+            IMPLOT_TMP int Foo4(const T* values_x, const T* values_y, const T* values_z, T* values_w, int count);
         """
 
         expected_lambda_code_buffer = """
-        [](const char* label_id, const py::array & xs, const py::array & ys, int offset = 0, int stride = -1)
-        {
-            // convert xs (py::array&) to C standard buffer
-            const void* xs_buffer = xs.data();
-            int xs_count = xs.shape()[0];
-                
-            // convert ys (py::array&) to C standard buffer
-            const void* ys_buffer = ys.data();
-            int ys_count = ys.shape()[0];
-                
-            // process stride default value (which was a sizeof in C++)
-            int xs_stride = stride;
-            if (xs_stride == -1)
-                xs_stride = (int)xs.itemsize();
-                
-            PlotScatter(label_id, xs_buffer, ys_buffer, xs_count, offset, xs_stride);
-        },
+            [](const py::array & values_x, const py::array & values_y, const py::array & values_z, py::array & values_w)
+            {
+                // convert values_x (py::array&) to C standard buffer
+                const void* values_x_buffer =  values_x.data();
+                int values_x_count = values_x.shape()[0];
+                    
+                // convert values_y (py::array&) to C standard buffer
+                const void* values_y_buffer =  values_y.data();
+                int values_y_count = values_y.shape()[0];
+                    
+                // convert values_z (py::array&) to C standard buffer
+                const void* values_z_buffer =  values_z.data();
+                int values_z_count = values_z.shape()[0];
+                    
+                // convert values_w (py::array&) to C standard buffer
+                void* values_w_buffer =  values_w.data();
+                int values_w_count = values_w.shape()[0];
+                    
+                return Foo4(values_x_buffer, values_y_buffer, values_z_buffer, values_w_buffer, values_x_count);
+            },
         """
         code_utils.assert_are_codes_equal( make_lambda_code(function_decl), expected_lambda_code_buffer )
 
-    test_with_two_buffers()
+    test_with_four_buffers()
 
     def test_with_variadic_fmt():
         function_decl = """
@@ -110,8 +108,29 @@ def test_make_function_wrapper_lambda():
 
         options.buffer_flag_replace_by_array = True
         code_utils.assert_are_codes_equal( make_lambda_code(function_decl), expected_lambda_code_buffer )
-        # print("\n\n\n" + function_decl)
-        # print("\n\n\n" + make_lambda_code(function_decl))
-        # assert False
 
     test_with_variadic_fmt()
+
+    def test_with_modifiable_int():
+        function_decl = """
+            // Modify an array by adding a value to its elements
+            IMPLOT_API inline void add_inside_array(int* array, int array_size, int number_to_add);
+        """
+
+        expected_lambda_code_buffer = """
+            [](py::array & array, int number_to_add)
+            {
+                // convert array (py::array&) to C standard buffer
+                int* array_buffer = (int*) array.data();
+                int array_count = array.shape()[0];
+                    
+                return add_inside_array(array_buffer, array_count, number_to_add);
+            },
+    """
+
+        options.buffer_flag_replace_by_array = True
+        options.buffer_inner_types = ["T", "void", "int"]
+        generated_code = make_lambda_code(function_decl)
+        code_utils.assert_are_codes_equal( generated_code, expected_lambda_code_buffer )
+
+    test_with_modifiable_int()

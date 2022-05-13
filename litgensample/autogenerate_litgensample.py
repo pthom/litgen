@@ -17,8 +17,7 @@ def my_code_style_options():
     options.code_replacements = litgen.standard_replacements()
 
     options.buffer_flag_replace_by_array = True
-    options.buffer_inner_types = ["T", "void"]
-    options.buffer_size_names = ["count"]
+    options.buffer_inner_types = ["T", "void", "int"]
 
     options.function_exclude_regexes = []
     return options

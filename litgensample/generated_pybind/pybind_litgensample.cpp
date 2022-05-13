@@ -1,6 +1,7 @@
 #include "litgensample.h"
 
 #include <pybind11/pybind11.h>
+#include <pybind11/numpy.h>
 
 //#include "imgui_helper.hpp"
 //#include "leaked_ptr.hpp"
@@ -43,6 +44,33 @@ void py_init_module_litgensample(py::module& m)
         py::arg("a"),
         py::arg("b"),
         "Adds two numbers"
+    );
+
+
+    m.def("add",
+        [](int a, int b, int c)
+        {
+            return add(a, b, c);
+        },
+        py::arg("a"),
+        py::arg("b"),
+        py::arg("c"),
+        "Adds three numbers, with a surprise"
+    );
+
+
+    m.def("add_inside_array",
+        [](py::array & array, int number_to_add)
+        {
+            // convert array (py::array&) to C standard buffer
+            int* array_buffer = (int*) array.data();
+            int array_count = array.shape()[0];
+                
+            return add_inside_array(array_buffer, array_count, number_to_add);
+        },
+        py::arg("array"),
+        py::arg("number_to_add"),
+        "Modify an array by adding a value to its elements"
     );
 
 

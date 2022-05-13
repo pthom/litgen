@@ -329,3 +329,32 @@ def parse_function_declaration(code_line: str) -> Optional[FunctionNameAndReturn
     function_name = function_name.strip()
     return_type_cpp = return_type_and_function_name[ : idx_start_fn_identifier].strip()
     return FunctionNameAndReturnType(function_name, return_type_cpp)
+
+
+def does_match_regex(regex_str: str, word: str) -> bool:
+    matches = list(re.finditer(regex_str, word, re.MULTILINE))
+    return len(matches) > 0
+
+
+def does_match_regexes(regex_strs: List[str], word: str) -> bool:
+    for regex_str in regex_strs:
+        if does_match_regex(regex_str, word):
+            return True
+
+
+def make_regex_any_variable_ending_with(what_to_find: str) -> str:
+    # For example, this matches only variable
+    # ending with count or Count:
+    #               r"\b[A-Za-z0-9_]*[Cc]ount\b"
+
+    regex_template = r"\b[A-Za-z0-9_]*WHAT_REGEX\b"
+    what_regex = f"[{what_to_find[0].lower()}{what_to_find[0].upper()}]{what_to_find[1:].lower()}"
+    regex = regex_template.replace("WHAT_REGEX", what_regex)
+    return regex
+
+
+def make_regex_any_variable_starting_with(what_to_find: str) -> str:
+    regex_template = r"\bWHAT_REGEX[A-Za-z0-9_]*\b"
+    what_regex = f"[{what_to_find[0].lower()}{what_to_find[0].upper()}]{what_to_find[1:].lower()}"
+    regex = regex_template.replace("WHAT_REGEX", what_regex)
+    return regex

@@ -35,6 +35,7 @@ Shall be wrapped like this:
 """
 from code_types import *
 import code_types
+import code_utils
 from options import CodeStyleOptions
 import copy
 
@@ -55,7 +56,7 @@ def _looks_like_param_buffer(param: PydefAttribute, options: CodeStyleOptions) -
 
 
 def _looks_like_buffer_size_name(param: PydefAttribute, options: CodeStyleOptions) -> bool:
-    return param.name_cpp in options.buffer_size_names
+    return code_utils.does_match_regexes(options.buffer_size_regexes, param.name_cpp)
 
 
 def is_buffer_size_name_at_idx(params: List[PydefAttribute], options: CodeStyleOptions, idx_param: int) -> bool:
@@ -147,10 +148,24 @@ def _buffer_params_code(params: List[PydefAttribute], options: CodeStyleOptions)
     for buffer_param in buffer_params_list:
         code_template = """
     // convert PARAM_NAME_CPP (py::array&) to C standard buffer
-    const void* PARAM_NAME_CPP_buffer = PARAM_NAME_CPP.data();
+    PARAM_TYPE_CPP PARAM_NAME_CPP_buffer = CAST_EXPR PARAM_NAME_CPP.data();
     int PARAM_NAME_CPP_count = PARAM_NAME_CPP.shape()[0];
         """[1:]
-        code = code_template.replace("PARAM_NAME_CPP", buffer_param.name_cpp)
+        code = code_template
+        code = code.replace("PARAM_NAME_CPP", buffer_param.name_cpp)
+
+        param_type = buffer_param.type_cpp
+        if param_type == "T*" or param_type == "T *":
+            param_type = "void*"
+        if param_type == "const T*" or param_type == "const T *":
+            param_type = "const void*"
+        code = code.replace("PARAM_TYPE_CPP", param_type)
+
+        if "void" in param_type:
+            code = code.replace("CAST_EXPR", "")
+        else:
+            code = code.replace("CAST_EXPR", f"({param_type})")
+
         r += code.split("\n")
 
     # Process sizeof params
