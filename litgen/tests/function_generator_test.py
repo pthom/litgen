@@ -1,4 +1,4 @@
-import os, sys; THIS_DIR = os.path.dirname(__file__); sys.path = [THIS_DIR + "/.."] + sys.path
+import os, sys; _THIS_DIR = os.path.dirname(__file__); sys.path = [_THIS_DIR + "/.."] + sys.path
 import code_utils
 from code_types import *
 from options import CodeStyleOptions, code_style_immvision, code_style_implot
@@ -80,7 +80,7 @@ def test_generate_pydef_function_cpp_code() -> str:
     m.def("setup_axis_format",
         [](ImAxis axis, const char* fmt)
         {
-             ImPlot::SetupAxisFormat(axis, fmt);
+             SetupAxisFormat(axis, fmt);
         },
         py::arg("axis"),
         py::arg("fmt"),
@@ -112,7 +112,7 @@ def test_generate_pydef_function_cpp_code() -> str:
                     if (values_stride == -1)
                         values_stride = (int)values.itemsize();
                         
-                     ImPlot::PlotScatter(label_id, values_buffer, values_count, xscale, x0, offset, values_stride);
+                     PlotScatter(label_id, values_buffer, values_count, xscale, x0, offset, values_stride);
                 },
                 py::arg("label_id"),
                 py::arg("values"),
@@ -151,7 +151,7 @@ def test_generate_pydef_function_cpp_code() -> str:
                     if (xs_stride == -1)
                         xs_stride = (int)xs.itemsize();
                         
-                     ImPlot::PlotScatter(label_id, xs_buffer, ys_buffer, xs_count, offset, xs_stride);
+                     PlotScatter(label_id, xs_buffer, ys_buffer, xs_count, offset, xs_stride);
                 },
                 py::arg("label_id"),
                 py::arg("xs"),
@@ -183,7 +183,7 @@ def test_generate_pydef_function_cpp_code() -> str:
             m.def("image",
                 [](const std::string& label_id, const cv::Mat& mat, ImageParams* params)
                 {
-                    return ImmVision::Image(label_id, mat, params);
+                    return Image(label_id, mat, params);
                 },
                 py::arg("label_id"),
                 py::arg("mat"),

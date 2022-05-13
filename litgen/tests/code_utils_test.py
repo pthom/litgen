@@ -1,11 +1,9 @@
-import os, sys;
-
+import os, sys; _THIS_DIR = os.path.dirname(__file__); sys.path = [_THIS_DIR + "/.."] + sys.path
+from typing import Tuple
 import pytest
 
-THIS_DIR = os.path.dirname(__file__); sys.path = [THIS_DIR + "/.."] + sys.path
-from code_types import *
-from options import CodeStyleOptions
-import code_utils
+import litgen
+import litgen.internal.code_utils as code_utils
 
 
 def test_strip_empty_lines():
@@ -58,10 +56,10 @@ def test_parse_c_identifier_at_end() -> Tuple[str, int]:
     assert pos == -1
 
 
-    with pytest.raises(CppParseException):
+    with pytest.raises(litgen.CppParseException):
         code_utils.parse_c_identifier_at_end("")
 
-    with pytest.raises(CppParseException):
+    with pytest.raises(litgen.CppParseException):
         code_utils.parse_c_identifier_at_end("value float")
 
 

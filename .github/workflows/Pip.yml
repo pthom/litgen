@@ -1,0 +1,29 @@
+name: Pip
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@master
+    - name: Checkout submodules
+      run: git submodule update --init --recursive
+
+    - name: Create docker image and container
+      run: |
+        cd scripts/docker_clang_build
+        ./docker_run.py -build_image
+        ./docker_run.py -create_container
+
+    - name: pip install in docker container
+      run: |
+        cd scripts/docker_clang_build
+        ./docker_run.py exec "cd / && python3 -m venv venv && source venv/bin/activate && cd /dvp/sources && pip install -v ."
+
+    - name: run example graphical app for 5 seconds
+      run:  |
+        cd scripts/docker_clang_build
+        ./docker_run.py exec "/start_x_vnc.sh & sleep 5 && export DISPLAY=:0 && cd /dvp/sources && source /venv/bin/activate && python -c 'import immvision._pip_test_app_countdown_5' "

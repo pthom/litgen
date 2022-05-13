@@ -1,3 +1,5 @@
+set(CMAKE_CXX_STANDARD 14)
+
 set(cpp_lib_name litgensample_library)
 set(python_module_name litgensample)
 set(autgenerate_name litgensample_autogen)

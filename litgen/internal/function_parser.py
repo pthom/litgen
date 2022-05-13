@@ -1,10 +1,12 @@
+import os, sys; _THIS_DIR = os.path.dirname(__file__); sys.path = [_THIS_DIR] + sys.path
+import re
 from dataclasses import dataclass
+
 from code_types import *
 from options import CodeStyleOptions
 import struct_parser, enum_parser, function_parser
 import code_utils
 import find_functions_structs_enums
-import re
 
 
 @dataclass

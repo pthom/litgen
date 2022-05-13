@@ -1,6 +1,6 @@
 import os, sys
-THIS_DIR = os.path.dirname(__file__)
-sys.path.append(THIS_DIR)
+_THIS_DIR = os.path.dirname(__file__)
+sys.path.append(_THIS_DIR)
 
 from code_types import *
 from options import CodeStyleOptions

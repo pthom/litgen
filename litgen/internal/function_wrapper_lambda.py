@@ -5,7 +5,7 @@ For example:
     IMPLOT_API void SetupAxisFormat(ImAxis axis, const char* fmt);
     IMPLOT_API void SetupAxisFormat(ImAxis axis, ImPlotFormatter formatter, void* data = NULL);
 ````
-In this case, a function pointer like &ImPlot::SetupAxisFormat is ambiguous.
+In this case, a function pointer like &SetupAxisFormat is ambiguous.
 
 Easy case: functions without buffer
 ***********************************
@@ -15,7 +15,7 @@ The function overload:
 We will create the lambda:
     [](ImAxis axis, const char* fmt)
     {
-        return ImPlot::SetupAxisFormat(axis, fmt);
+        return SetupAxisFormat(axis, fmt);
     },
 
 Case with native arrays
@@ -30,10 +30,11 @@ Shall be wrapped like this:
         if (stride == -1)
             stride = values.itemsize();
         auto count = values.shape(0);
-        return ImPlot::PlotScatter(label_id, values, count, stride);
+        return PlotScatter(label_id, values, count, stride);
     },
 """
 from code_types import *
+import code_types
 from options import CodeStyleOptions
 import copy
 
@@ -182,7 +183,7 @@ def _lambda_params_signature(
         parent_struct_name: str = "") -> str:
 
     if not options.buffer_flag_replace_by_array:
-        return pydef_attributes_as_cpp_declaration(params)
+        return code_types._pydef_attributes_as_cpp_declaration(params)
 
     new_params: List[PydefAttribute] = []
 
@@ -215,7 +216,7 @@ def _lambda_params_signature(
 
         idx_param += 1
 
-    return pydef_attributes_as_cpp_declaration(new_params)
+    return code_types._pydef_attributes_as_cpp_declaration(new_params)
 
 
 def _lambda_params_call(
@@ -297,8 +298,6 @@ def make_function_wrapper_lambda(
 
     if len(parent_struct_name) > 0:
         add_line(f"    {return_str} self.{function_infos.function_name_cpp()}({attrs_function_call});")
-    elif len(options.functions_namespace) > 0:
-        add_line(f"    {return_str} {options.functions_namespace}::{function_infos.function_name_cpp()}({attrs_function_call});")
     else:
         add_line(f"    {return_str} {function_infos.function_name_cpp()}({attrs_function_call});")
 

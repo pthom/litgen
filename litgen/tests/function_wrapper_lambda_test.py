@@ -2,7 +2,7 @@ import os, sys;
 
 import code_utils
 
-THIS_DIR = os.path.dirname(__file__); sys.path = [THIS_DIR + "/.."] + sys.path
+_THIS_DIR = os.path.dirname(__file__); sys.path = [_THIS_DIR + "/.."] + sys.path
 import code_replacements
 from code_types import *
 from options import CodeStyleOptions, code_style_implot, code_style_immvision
@@ -25,7 +25,7 @@ def test_make_function_wrapper_lambda():
             """
             [](ImAxis axis, const char* fmt = "%.3f")
             {
-                ImPlot::SetupAxisFormat(axis, fmt);
+                SetupAxisFormat(axis, fmt);
             },
             """)
 
@@ -40,7 +40,7 @@ def test_make_function_wrapper_lambda():
         expected_lambda_code_naive = """
         [](const char* label_id, const T* values, int count, double xscale = 1, double x0 = 0, int offset = 0, int stride = sizeof(T))
         {
-            return ImPlot::PlotScatter(label_id, values, count, xscale, x0, offset, stride);
+            return PlotScatter(label_id, values, count, xscale, x0, offset, stride);
         },
         """
 
@@ -56,7 +56,7 @@ def test_make_function_wrapper_lambda():
             if (values_stride == -1)
                 values_stride = (int)values.itemsize();
 
-            return ImPlot::PlotScatter(label_id, values_buffer, values_count, xscale, x0, offset, values_stride);
+            return PlotScatter(label_id, values_buffer, values_count, xscale, x0, offset, values_stride);
         },
         """
 
@@ -89,7 +89,7 @@ def test_make_function_wrapper_lambda():
             if (xs_stride == -1)
                 xs_stride = (int)xs.itemsize();
                 
-            ImPlot::PlotScatter(label_id, xs_buffer, ys_buffer, xs_count, offset, xs_stride);
+            PlotScatter(label_id, xs_buffer, ys_buffer, xs_count, offset, xs_stride);
         },
         """
         code_utils.assert_are_codes_equal( make_lambda_code(function_decl), expected_lambda_code_buffer )
@@ -104,7 +104,7 @@ def test_make_function_wrapper_lambda():
         expected_lambda_code_buffer = """
             [](double x, const ImVec4& color, const char* fmt)
             {
-                 ImPlot::TagX(x, color, "%s", fmt);
+                 TagX(x, color, "%s", fmt);
             },
         """
 

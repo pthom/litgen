@@ -1,5 +1,5 @@
-import os, sys; THIS_DIR = os.path.dirname(__file__); sys.path = [THIS_DIR + "/.."] + sys.path
-import code_replacements
+import os, sys; _THIS_DIR = os.path.dirname(__file__); sys.path = [_THIS_DIR + "/.."] + sys.path
+from litgen.internal import code_replacements
 from options import CodeStyleOptions
 
 

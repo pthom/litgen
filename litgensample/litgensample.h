@@ -13,4 +13,17 @@ namespace LiterateGeneratorExample
 
     MY_API int mul(int a, int b) { return a * b; }
 
+    // A superb struct
+    struct Foo
+    {
+        // Multiplication factor
+        int factor = 10;
+
+        // addition factor
+        int delta = 0;
+
+        // Do some math
+        int calc(int x) { return x * factor + delta; }
+    };
+
 } // namespace LiterateGeneratorExample

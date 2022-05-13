@@ -1,12 +1,12 @@
-from dataclasses import dataclass, field
-from enum import Enum
-from code_replacements import StringReplacement
-import code_replacements
-from options import CodeStyleOptions
+from dataclasses import dataclass as _dataclass, field as _field
+from enum import Enum as _Enum
 from typing import Optional, List, Tuple
 
+from options import CodeStyleOptions
 
-class CppCodeType(Enum):
+import internal.code_replacements as _code_replacements
+
+class CppCodeType(_Enum):
     STRUCT = "Struct"
     FUNCTION = "Function"
     ENUM_CPP_98 = "Enum - C++ 98"
@@ -16,7 +16,7 @@ class CppParseException(Exception):
     pass
 
 
-@dataclass
+@_dataclass
 class PydefCode:
     """
     Container for the code of either:
@@ -38,14 +38,14 @@ class PydefCode:
         self.return_type_cpp = return_type_cpp
 
     def title_python(self, options: CodeStyleOptions):
-        return code_replacements.apply_code_replacements(self.title_cpp, options.code_replacements)
+        return _code_replacements.apply_code_replacements(self.title_cpp, options.code_replacements)
 
     def return_type_python(self, options: CodeStyleOptions):
-        return code_replacements.apply_code_replacements(self.return_type_cpp, options.code_replacements)
+        return _code_replacements.apply_code_replacements(self.return_type_cpp, options.code_replacements)
 
 
 
-@dataclass
+@_dataclass
 class PydefAttribute:
     name_cpp: str = ""
     type_cpp: str = ""
@@ -58,13 +58,13 @@ class PydefAttribute:
         return code_utils.to_snake_case(self.name_cpp)
 
     def type_python(self, options: CodeStyleOptions):
-        return code_replacements.apply_code_replacements(self.type_cpp, options.code_replacements)
+        return _code_replacements.apply_code_replacements(self.type_cpp, options.code_replacements)
 
     def default_value_python(self, options: CodeStyleOptions):
-        return code_replacements.apply_code_replacements(self.default_value_cpp, options.code_replacements)
+        return _code_replacements.apply_code_replacements(self.default_value_cpp, options.code_replacements)
 
     def comment_python(self, options: CodeStyleOptions):
-        return code_replacements.apply_code_replacements(self.comment_cpp, options.code_replacements)
+        return _code_replacements.apply_code_replacements(self.comment_cpp, options.code_replacements)
 
     def _default_value_cpp_str(self):
         return " = " + self.default_value_cpp if len(self.default_value_cpp) > 0 else ""
@@ -85,7 +85,7 @@ class PydefAttribute:
         return python_str
 
 
-def pydef_attributes_as_cpp_declaration(attrs: List[PydefAttribute]) -> str:
+def _pydef_attributes_as_cpp_declaration(attrs: List[PydefAttribute]) -> str:
     strs = map(lambda attr: attr.as_cpp_declaration(), attrs)
     return ", ".join(strs)
 
@@ -95,12 +95,12 @@ def pydef_attributes_as_cpp_function_params(attrs: List[PydefAttribute]) -> str:
     return ", ".join(strs)
 
 
-def pydef_attributes_as_python_declaration(attrs: List[PydefAttribute], options: CodeStyleOptions):
+def _pydef_attributes_as_python_declaration(attrs: List[PydefAttribute], options: CodeStyleOptions):
     strs = map(lambda attr: attr.as_python_declaration(options), attrs)
     return ", ".join(strs)
 
 
-@dataclass
+@_dataclass
 class PydefEnumCpp98Value:
     name_cpp: str = ""
     # name_python cannot be inferred from name_cpp in a C++ 98 enum (i.e. not enum class)
@@ -110,7 +110,7 @@ class PydefEnumCpp98Value:
     line_number: int = 0  # from the body_code line_start
 
 
-@dataclass
+@_dataclass
 class CodeRegionComment:
     """
     A CodeRegionComment is the beginning of a "code region" inside a struct or enum
@@ -133,7 +133,7 @@ class CodeRegionComment:
     line_number: int = 0
 
     def comment_python(self, options: CodeStyleOptions):
-        return code_replacements.apply_code_replacements(self.comment_cpp, options.code_replacements)
+        return _code_replacements.apply_code_replacements(self.comment_cpp, options.code_replacements)
 
     def as_multiline_cpp_comment(self, indentation: int):
         lines = self.comment_cpp.split("\n")
@@ -144,10 +144,10 @@ class CodeRegionComment:
         return "\n".join(lines)
 
 
-@dataclass
+@_dataclass
 class FunctionsInfos:
     function_code: PydefCode = None
-    parameters: List[PydefAttribute] = field(default_factory=list)
+    parameters: List[PydefAttribute] = _field(default_factory=list)
 
     # Typed accessor
     def get_parameters(self) -> List[PydefAttribute]:
@@ -179,7 +179,7 @@ class FunctionsInfos:
         code = code.replace("PARAMS", params_str)
         return code
 
-@dataclass
+@_dataclass
 class Variant_Attribute_Method_CodeRegion:
     line_number: int = 0
     code_region_comment: CodeRegionComment = None
@@ -188,10 +188,10 @@ class Variant_Attribute_Method_CodeRegion:
     method_infos: FunctionsInfos = None
 
 
-@dataclass
+@_dataclass
 class StructInfos:
     struct_code: PydefCode = None
-    attr_and_regions: List[Variant_Attribute_Method_CodeRegion] = field(default_factory=list)
+    attr_and_regions: List[Variant_Attribute_Method_CodeRegion] = _field(default_factory=list)
 
     # Typed accessor
     def get_attr_and_regions(self) -> List[Variant_Attribute_Method_CodeRegion]:
@@ -201,10 +201,10 @@ class StructInfos:
         return self.struct_code.name_cpp
 
 
-@dataclass
+@_dataclass
 class EnumCpp98Infos():
     enum_code: PydefCode = None
-    attr_and_regions: List[Variant_Attribute_Method_CodeRegion] = field(default_factory=list)
+    attr_and_regions: List[Variant_Attribute_Method_CodeRegion] = _field(default_factory=list)
 
     # Typed accessor
     def get_attr_and_regions(self) -> List[Variant_Attribute_Method_CodeRegion]:

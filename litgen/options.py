@@ -49,10 +49,9 @@
 """
 from dataclasses import dataclass
 from enum import Enum
-from code_replacements import StringReplacement
-import code_replacements
 from typing import Optional, List, Tuple, Callable
-# from code_types import FunctionsInfos
+
+import internal.code_replacements as _code_replacements
 
 
 @dataclass
@@ -62,8 +61,6 @@ class CodeStyleOptions:
 
     # Shall we generate a __str__() method for structs
     generate_to_string: bool = False
-    # Namespace where to look for functions
-    functions_namespace: str = ""
     # functions to exclude
     function_exclude_regexes: List[str] = ""
     # Spacing option
@@ -101,10 +98,9 @@ def code_style_immvision() -> CodeStyleOptions:
     options = CodeStyleOptions()
     options.enum_title_on_previous_line = True
     options.generate_to_string = True
-    options.functions_namespace = "ImmVision"
     options.indent_size_functions_pydef = 8
     options.functions_api_prefixes = ["IMMVISION_API"]
-    options.code_replacements = code_replacements.standard_replacements() + code_replacements.opencv_replacements()
+    options.code_replacements = _code_replacements.standard_replacements() + _code_replacements.opencv_replacements()
 
     options.buffer_flag_replace_by_array = False
 
@@ -128,10 +124,9 @@ def code_style_implot():
     options = CodeStyleOptions()
     options.enum_title_on_previous_line = False
     options.generate_to_string = False
-    options.functions_namespace = "ImPlot"
     options.indent_size_functions_pydef = 4
     options.functions_api_prefixes = ["IMPLOT_API", "IMPLOT_TMP"]
-    options.code_replacements = code_replacements.standard_replacements()
+    options.code_replacements = _code_replacements.standard_replacements()
 
     options.buffer_flag_replace_by_array = True
     options.buffer_inner_types = ["T", "void"]

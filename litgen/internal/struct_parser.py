@@ -1,8 +1,12 @@
+import os, sys; _THIS_DIR = os.path.dirname(__file__); sys.path = [_THIS_DIR] + sys.path
+
+from dataclasses import dataclass
+import copy
+
 from code_types import *
 from options import CodeStyleOptions
 import comments_parser
 import code_utils
-import copy
 import find_functions_structs_enums
 import function_parser
 
