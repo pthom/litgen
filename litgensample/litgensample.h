@@ -1,5 +1,7 @@
 #pragma once
 #include <cstddef>
+//#include <cstdint>
+#include <stdint.h>
 
 #ifndef MY_API
 #define MY_API
@@ -14,10 +16,17 @@ namespace LiterateGeneratorExample
     MY_API inline int add(int a, int b, int c) { return a + b + c + 4; }
 
     // Modify an array by adding a value to its elements
-    MY_API inline void add_inside_array(int* array, size_t array_size, int number_to_add)
+    MY_API inline void add_inside_array(uint8_t* array, size_t array_size, uint8_t number_to_add)
     {
         for (size_t i  = 0; i < array_size; ++i)
             array[i] += number_to_add;
+    }
+
+    // Modify an array by adding a value to its elements
+    MY_API template<typename T> void mul_inside_array(T* array, size_t array_size, double factor)
+    {
+        for (size_t i  = 0; i < array_size; ++i)
+            array[i] *= (T)factor;
     }
 
 

@@ -161,10 +161,7 @@ def _buffer_params_code(params: List[PydefAttribute], options: CodeStyleOptions)
             param_type = "const void*"
         code = code.replace("PARAM_TYPE_CPP", param_type)
 
-        if "void" in param_type:
-            code = code.replace("CAST_EXPR", "")
-        else:
-            code = code.replace("CAST_EXPR", f"({param_type})")
+        code = code.replace("CAST_EXPR", f"({param_type})")
 
         r += code.split("\n")
 

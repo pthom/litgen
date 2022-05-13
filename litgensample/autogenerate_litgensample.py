@@ -17,7 +17,7 @@ def my_code_style_options():
     options.code_replacements = litgen.standard_replacements()
 
     options.buffer_flag_replace_by_array = True
-    options.buffer_inner_types = ["T", "void", "int"]
+    options.buffer_inner_types = ["T", "void", "int", "uint8_t"]
 
     options.function_exclude_regexes = []
     return options
@@ -36,4 +36,4 @@ def autogenerate():
 
 if __name__ == "__main__":
     print("autogenerate_litgensample")
-    autogenerate()
+    #autogenerate()

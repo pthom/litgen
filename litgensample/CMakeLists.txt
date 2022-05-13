@@ -1,4 +1,4 @@
-set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD 20)
 
 set(cpp_lib_name litgensample_library)
 set(python_module_name litgensample)

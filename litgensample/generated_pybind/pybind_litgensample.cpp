@@ -3,6 +3,9 @@
 #include <pybind11/pybind11.h>
 #include <pybind11/numpy.h>
 
+//#include <cstdint>
+#include <stdint.h>
+
 //#include "imgui_helper.hpp"
 //#include "leaked_ptr.hpp"
 
@@ -60,16 +63,59 @@ void py_init_module_litgensample(py::module& m)
 
 
     m.def("add_inside_array",
-        [](py::array & array, int number_to_add)
+        [](py::array & array, uint8_t number_to_add)
         {
             // convert array (py::array&) to C standard buffer
-            int* array_buffer = (int*) array.data();
+            uint8_t* array_buffer = (uint8_t*) array.data();
             int array_count = array.shape()[0];
                 
             return add_inside_array(array_buffer, array_count, number_to_add);
         },
         py::arg("array"),
         py::arg("number_to_add"),
+        "Modify an array by adding a value to its elements"
+    );
+
+
+    m.def("mul_inside_array",
+        [](py::array & array, double factor)
+        {
+            // convert array (py::array&) to C standard buffer
+            void* array_buffer = (void*) array.data();
+            int array_count = array.shape()[0];
+
+            printf("array.dtype().char_()=%c\n", array.dtype().char_());
+
+            char array_type = array.dtype().char_();
+            if (array_type == 'B')
+                return mul_inside_array<uint8_t>((uint8_t *)array_buffer, array_count, factor);
+            else if (array_type == 'b')
+                return mul_inside_array<int8_t>((int8_t *)array_buffer, array_count, factor);
+            else if (array_type == 'H')
+                return mul_inside_array<uint16_t>((uint16_t *)array_buffer, array_count, factor);
+            else if (array_type == 'h')
+                return mul_inside_array<int16_t>((int16_t *)array_buffer, array_count, factor);
+            else if (array_type == 'I')
+                return mul_inside_array<uint32_t>((uint32_t *)array_buffer, array_count, factor);
+            else if (array_type == 'i')
+                return mul_inside_array<int32_t>((int32_t *)array_buffer, array_count, factor);
+    else if (array_type == 'L')
+        return mul_inside_array<__UINT64_TYPE__>((__UINT64_TYPE__ *)array_buffer, array_count, factor);
+    else if (array_type == 'l')
+        return mul_inside_array<__INT64_TYPE__>((__INT64_TYPE__ *)array_buffer, array_count, factor);
+            else if (array_type == 'f')
+                return mul_inside_array<float>((float *)array_buffer, array_count, factor);
+            else if (array_type == 'd')
+                return mul_inside_array<double>((double *)array_buffer, array_count, factor);
+            else if (array_type == 'g')
+                return mul_inside_array<long double>((long double *)array_buffer, array_count, factor);
+            else
+                throw std::runtime_error(std::string("mul_inside_array unexpected array type: ") + array_type);
+
+            //mul_inside_array(array_buffer, array_count, factor);
+        },
+        py::arg("array"),
+        py::arg("factor"),
         "Modify an array by adding a value to its elements"
     );
 
