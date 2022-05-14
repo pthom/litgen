@@ -42,22 +42,22 @@ def test_generate_pydef_struct_cpp_code():
     struct_infos = struct_parser.parse_one_struct_testonly(SIMPLE_STRUCT, OPTIONS)
     code = struct_generator.generate_pydef_struct_cpp_code(struct_infos, OPTIONS)
     expected_code = """
-    auto pyClassMultiplier = py::class_<Multiplier>
-        (m, "Multiplier", 
-        "A dummy structure that likes to multiply")
-
-        .def(py::init<>()) 
-
-        .def("calculate_double",
-            [](Multiplier& self, int x = 21)
-            {
-                return self.CalculateDouble(x);
-            },
-            py::arg("x") = 21,
-            "Doubles the input number"
-        )
-
-        .def_readwrite("who", &Multiplier::who, "Who is who?")
-        ; 
+        auto pyClassMultiplier = py::class_<Multiplier>
+            (m, "Multiplier",
+            "A dummy structure that likes to multiply")
+        
+            .def(py::init<>())
+        
+            .def("calculate_double",
+                [](Multiplier& self, int x = 21)
+                {
+                    { return self.CalculateDouble(x); }
+                },
+                py::arg("x") = 21,
+                "Doubles the input number"
+            )
+        
+            .def_readwrite("who", &Multiplier::who, "Who is who?")
+            ;
     """
     code_utils.assert_are_codes_equal(code, expected_code)

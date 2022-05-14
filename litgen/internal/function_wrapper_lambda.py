@@ -197,7 +197,8 @@ def _make_call_function(function_infos: FunctionsInfos, is_method, options: Code
     params = function_infos.get_parameters()
     is_template = _contains_template_buffer(params, options)
     first_template_buffer_param = _first_template_buffer_param(params, options)
-    return_str = "" if function_infos.function_code.return_type_cpp == "void" else "return "
+    return_str1 = "" if function_infos.function_code.return_type_cpp == "void" else "return "
+    return_str2 = " return;" if function_infos.function_code.return_type_cpp == "void" else ""
     self_prefix = "self." if is_method else ""
 
     code_lines = []
@@ -211,7 +212,7 @@ def _make_call_function(function_infos: FunctionsInfos, is_method, options: Code
 
             code_lines.append(f"    if (array_type == '{py_array_type}')")
             attrs_function_call = _lambda_params_call(params, options, cast_type)
-            code_lines.append(f"        {return_str}{self_prefix}{function_infos.function_name_cpp()}({attrs_function_call});")
+            code_lines.append(f"        {{ {return_str1}{self_prefix}{function_infos.function_name_cpp()}({attrs_function_call});{return_str2} }}")
 
         code_lines.append("")
         code_lines.append(f'    // If we arrive here, the array type is not supported!')
@@ -236,7 +237,7 @@ def _make_call_function(function_infos: FunctionsInfos, is_method, options: Code
 
         cast_type = None
         attrs_function_call = _lambda_params_call(params, options, cast_type)
-        code_lines.append(f"    {return_str}{self_prefix}{function_infos.function_name_cpp()}({attrs_function_call});")
+        code_lines.append(f"    {{ {return_str1}{self_prefix}{function_infos.function_name_cpp()}({attrs_function_call});{return_str2} }}")
 
     return code_lines
 

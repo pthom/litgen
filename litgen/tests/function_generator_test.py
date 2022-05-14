@@ -70,7 +70,7 @@ def test_generate_pydef_function_cpp_code() -> str:
             m.def("setup_axis_format",
                 [](ImAxis axis, const char* fmt)
                 {
-                    SetupAxisFormat(axis, fmt);
+                    { SetupAxisFormat(axis, fmt); return; }
                 },
                 py::arg("axis"),
                 py::arg("fmt"),
@@ -99,27 +99,27 @@ def test_generate_pydef_function_cpp_code() -> str:
             
                     char array_type = values.dtype().char_();
                     if (array_type == 'B')
-                        PlotScatter(static_cast<const uint8_t*>(values_buffer), values_count);
+                        { PlotScatter(static_cast<const uint8_t*>(values_buffer), values_count); return; }
                     if (array_type == 'b')
-                        PlotScatter(static_cast<const int8_t*>(values_buffer), values_count);
+                        { PlotScatter(static_cast<const int8_t*>(values_buffer), values_count); return; }
                     if (array_type == 'H')
-                        PlotScatter(static_cast<const uint16_t*>(values_buffer), values_count);
+                        { PlotScatter(static_cast<const uint16_t*>(values_buffer), values_count); return; }
                     if (array_type == 'h')
-                        PlotScatter(static_cast<const int16_t*>(values_buffer), values_count);
+                        { PlotScatter(static_cast<const int16_t*>(values_buffer), values_count); return; }
                     if (array_type == 'I')
-                        PlotScatter(static_cast<const uint32_t*>(values_buffer), values_count);
+                        { PlotScatter(static_cast<const uint32_t*>(values_buffer), values_count); return; }
                     if (array_type == 'i')
-                        PlotScatter(static_cast<const int32_t*>(values_buffer), values_count);
+                        { PlotScatter(static_cast<const int32_t*>(values_buffer), values_count); return; }
                     if (array_type == 'L')
-                        PlotScatter(static_cast<const uint64_t*>(values_buffer), values_count);
+                        { PlotScatter(static_cast<const uint64_t*>(values_buffer), values_count); return; }
                     if (array_type == 'l')
-                        PlotScatter(static_cast<const int64_t*>(values_buffer), values_count);
+                        { PlotScatter(static_cast<const int64_t*>(values_buffer), values_count); return; }
                     if (array_type == 'f')
-                        PlotScatter(static_cast<const float*>(values_buffer), values_count);
+                        { PlotScatter(static_cast<const float*>(values_buffer), values_count); return; }
                     if (array_type == 'd')
-                        PlotScatter(static_cast<const double*>(values_buffer), values_count);
+                        { PlotScatter(static_cast<const double*>(values_buffer), values_count); return; }
                     if (array_type == 'g')
-                        PlotScatter(static_cast<const long double*>(values_buffer), values_count);
+                        { PlotScatter(static_cast<const long double*>(values_buffer), values_count); return; }
             
                     // If we arrive here, the array type is not supported!
                     throw std::runtime_error(std::string("Bad array type: ") + array_type );
@@ -144,7 +144,7 @@ def test_generate_pydef_function_cpp_code() -> str:
             m.def("image",
                 [](const std::string& label_id, const cv::Mat& mat, ImageParams* params)
                 {
-                    return Image(label_id, mat, params);
+                    { return Image(label_id, mat, params); }
                 },
                 py::arg("label_id"),
                 py::arg("mat"),

@@ -27,7 +27,7 @@ def test_make_function_wrapper_lambda():
             """
                 [](ImAxis axis, const char* fmt = "%.3f")
                 {
-                    SetupAxisFormat(axis, fmt);
+                    { SetupAxisFormat(axis, fmt); return; }
                 },
             """)
 
@@ -54,7 +54,7 @@ def test_make_function_wrapper_lambda():
                                         b
                                     (using py::array::dtype().char_() as an id)
                         )msg"));
-                return test_with_one_const_buffer(static_cast<const int8_t*>(values_buffer), values_count);
+                { return test_with_one_const_buffer(static_cast<const int8_t*>(values_buffer), values_count); }
             },
         """
 
@@ -83,7 +83,7 @@ def test_make_function_wrapper_lambda():
                                         b
                                     (using py::array::dtype().char_() as an id)
                         )msg"));
-                test_with_one_nonconst_buffer(static_cast<int8_t*>(values_buffer), values_count);
+                { test_with_one_nonconst_buffer(static_cast<int8_t*>(values_buffer), values_count); return; }
             },
         """
 
@@ -109,32 +109,32 @@ def test_make_function_wrapper_lambda():
             
                 char array_type = values1.dtype().char_();
                 if (array_type == 'B')
-                    return test_with_two_template_buffers(static_cast<const uint8_t*>(values1_buffer), static_cast<uint8_t*>(values2_buffer), values1_count);
+                    { return test_with_two_template_buffers(static_cast<const uint8_t*>(values1_buffer), static_cast<uint8_t*>(values2_buffer), values1_count); }
                 if (array_type == 'b')
-                    return test_with_two_template_buffers(static_cast<const int8_t*>(values1_buffer), static_cast<int8_t*>(values2_buffer), values1_count);
+                    { return test_with_two_template_buffers(static_cast<const int8_t*>(values1_buffer), static_cast<int8_t*>(values2_buffer), values1_count); }
                 if (array_type == 'H')
-                    return test_with_two_template_buffers(static_cast<const uint16_t*>(values1_buffer), static_cast<uint16_t*>(values2_buffer), values1_count);
+                    { return test_with_two_template_buffers(static_cast<const uint16_t*>(values1_buffer), static_cast<uint16_t*>(values2_buffer), values1_count); }
                 if (array_type == 'h')
-                    return test_with_two_template_buffers(static_cast<const int16_t*>(values1_buffer), static_cast<int16_t*>(values2_buffer), values1_count);
+                    { return test_with_two_template_buffers(static_cast<const int16_t*>(values1_buffer), static_cast<int16_t*>(values2_buffer), values1_count); }
                 if (array_type == 'I')
-                    return test_with_two_template_buffers(static_cast<const uint32_t*>(values1_buffer), static_cast<uint32_t*>(values2_buffer), values1_count);
+                    { return test_with_two_template_buffers(static_cast<const uint32_t*>(values1_buffer), static_cast<uint32_t*>(values2_buffer), values1_count); }
                 if (array_type == 'i')
-                    return test_with_two_template_buffers(static_cast<const int32_t*>(values1_buffer), static_cast<int32_t*>(values2_buffer), values1_count);
+                    { return test_with_two_template_buffers(static_cast<const int32_t*>(values1_buffer), static_cast<int32_t*>(values2_buffer), values1_count); }
                 if (array_type == 'L')
-                    return test_with_two_template_buffers(static_cast<const uint64_t*>(values1_buffer), static_cast<uint64_t*>(values2_buffer), values1_count);
+                    { return test_with_two_template_buffers(static_cast<const uint64_t*>(values1_buffer), static_cast<uint64_t*>(values2_buffer), values1_count); }
                 if (array_type == 'l')
-                    return test_with_two_template_buffers(static_cast<const int64_t*>(values1_buffer), static_cast<int64_t*>(values2_buffer), values1_count);
+                    { return test_with_two_template_buffers(static_cast<const int64_t*>(values1_buffer), static_cast<int64_t*>(values2_buffer), values1_count); }
                 if (array_type == 'f')
-                    return test_with_two_template_buffers(static_cast<const float*>(values1_buffer), static_cast<float*>(values2_buffer), values1_count);
+                    { return test_with_two_template_buffers(static_cast<const float*>(values1_buffer), static_cast<float*>(values2_buffer), values1_count); }
                 if (array_type == 'd')
-                    return test_with_two_template_buffers(static_cast<const double*>(values1_buffer), static_cast<double*>(values2_buffer), values1_count);
+                    { return test_with_two_template_buffers(static_cast<const double*>(values1_buffer), static_cast<double*>(values2_buffer), values1_count); }
                 if (array_type == 'g')
-                    return test_with_two_template_buffers(static_cast<const long double*>(values1_buffer), static_cast<long double*>(values2_buffer), values1_count);
+                    { return test_with_two_template_buffers(static_cast<const long double*>(values1_buffer), static_cast<long double*>(values2_buffer), values1_count); }
             
                 // If we arrive here, the array type is not supported!
                 throw std::runtime_error(std::string("Bad array type: ") + array_type );
             },
-        """
+           """
 
         code_utils.assert_are_codes_equal( make_lambda_code(function_decl), expected_lambda_code_buffer )
 
@@ -149,7 +149,7 @@ def test_make_function_wrapper_lambda():
         expected_lambda_code_buffer = """
             [](double x, const ImVec4& color, const char* fmt)
             {
-                TagX(x, color, "%s", fmt);
+                { TagX(x, color, "%s", fmt); return; }
             },
            """
 
@@ -180,7 +180,7 @@ def test_make_function_wrapper_lambda():
                                         b
                                     (using py::array::dtype().char_() as an id)
                         )msg"));
-                add_inside_array(static_cast<int8_t*>(array_buffer), array_count, number_to_add);
+                { add_inside_array(static_cast<int8_t*>(array_buffer), array_count, number_to_add); return; }
             },
         """
 
