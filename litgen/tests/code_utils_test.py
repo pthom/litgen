@@ -119,3 +119,15 @@ a
     c
 """
     code_utils.assert_are_codes_equal(generated, expected)
+
+
+#     expected = """
+# Hello,
+# World!
+#     """
+#
+#     generated = """
+# Hello,
+# Big World!
+#     """
+#     code_utils.assert_are_codes_equal(generated, expected)

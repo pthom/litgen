@@ -7,6 +7,8 @@ import itertools
 import logging
 import string
 import difflib
+from pprint import pprint
+import traceback
 
 
 # Identifiers must begin with a letter or an underscore (_)
@@ -215,23 +217,29 @@ def unindent_code(code: str) -> str:
     return "\n".join(processed_lines)
 
 
+def make_nice_code_diff(generated: str, expected: str) -> str:
+    differ = difflib.Differ()
+    diffs = list(differ.compare(expected.splitlines(keepends=True) , generated.splitlines(keepends=True)))
+    return "".join(diffs)
+
+
 def assert_are_codes_equal(generated_code: str, expected_code: str) -> str:
     generated_processed = strip_empty_lines(unindent_code(generated_code))
     expected_processed = strip_empty_lines(unindent_code(expected_code))
     if not generated_processed == expected_processed:
-        diffs = difflib.unified_diff(expected_code, generated_code, fromfile="expected", tofile="generated")
-        diff_str = ""
-        for diff in diffs:
-            diff_str += str(diff)
-
+        diff_str = make_nice_code_diff(generated_processed, expected_processed)
         logging.error(f"""assert_are_codes_equal returns false 
-            with expected_processed=
+                    with diff= 
+{str(diff_str)}
+                    expected_processed=
 {expected_processed}
                     and generated_processed=
 {generated_processed}
-                    and diff = 
-{str(diff_str)}
         """)
+
+        stack_lines = traceback.format_stack()
+        error_line = stack_lines[-2]
+        logging.error(error_line.strip())
 
     assert generated_processed == expected_processed
 
@@ -333,6 +341,40 @@ class FunctionNameAndReturnType:
     return_type_cpp: str = ""
 
 
+def remove_template_from_return_type(type_str: str) -> str:
+    if not type_str.startswith("template"):
+        return type_str
+
+    type_str = type_str.replace("template", "").strip()
+
+    if type_str[0] == "<":
+        pos = 1
+        nb_chevrons = 1
+        while pos < len(type_str) and nb_chevrons > 0:
+            char = type_str[pos]
+            if char == "<":
+                nb_chevrons += 1
+            if char == ">":
+                nb_chevrons -= 1
+            if nb_chevrons == 0:
+                break
+            pos += 1
+        assert nb_chevrons == 0
+
+        type_str = type_str[pos + 1 : ].strip()
+
+    return type_str
+
+
+def remove_template_and_inline_from_return_type(type_str: str) -> str:
+    type_str = remove_template_from_return_type(type_str)
+    if type_str.startswith("inline"):
+        type_str = type_str.replace("inline", "").strip()
+    type_str = remove_template_from_return_type(type_str)
+
+    return type_str
+
+
 def parse_function_declaration(code_line: str) -> Optional[FunctionNameAndReturnType]:
     if "(" not in code_line:
         return None
@@ -379,7 +421,11 @@ def parse_function_declaration(code_line: str) -> Optional[FunctionNameAndReturn
     if len(function_name) == 0:
         raise CppParseException(f"parse_function_declaration; empty function name!")
     function_name = function_name.strip()
+
     return_type_cpp = return_type_and_function_name[ : idx_start_fn_identifier].strip()
+
+    return_type_cpp = remove_template_and_inline_from_return_type(return_type_cpp)
+
     return FunctionNameAndReturnType(function_name, return_type_cpp)
 
 
