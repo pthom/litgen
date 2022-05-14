@@ -316,4 +316,5 @@ pip install -v -e .
 ### Notes
 
 * Published structs and classes should be default constructible
-* 
+* See https://pybind11-jagerman.readthedocs.io/en/stable/advanced.html?highlight=reference#return-value-policies
+=> annotate functions with return_value_policy::reference, etc.

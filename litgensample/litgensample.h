@@ -61,10 +61,11 @@ namespace LiterateGeneratorExample
     struct Foo            // MY_API_STRUCT
     {
         Foo() { printf("Construct Foo\n"); }
+        ~Foo() { printf("Destruct Foo\n"); }
 
-        // Constructor with an int: set the factor
-        Foo(int fac) { factor = fac; printf("Construct Foo with int\n"); }
-
+//        // Constructor with an int: set the factor
+//        Foo(int fac) { factor = fac; printf("Construct Foo with int\n"); }
+//
         // Multiplication factor
         int factor = 10;
 
@@ -74,13 +75,12 @@ namespace LiterateGeneratorExample
         // Do some math
         int calc(int x) { return x * factor + delta; }
 
-        static Foo& Instance() { static Foo instance; return instance; }
+        static Foo& Instance() { static Foo instance; return instance; } // return_value_policy::reference
 
 
-        ~Foo() { printf("Destruct Foo\n"); }
     };
 
-    MY_API Foo* FooInstance() { return & Foo::Instance(); }
+    MY_API Foo* FooInstance() { return & Foo::Instance(); } // return_value_policy::reference
 
 
     //Foo() { printf("Construct Foo\n"); }

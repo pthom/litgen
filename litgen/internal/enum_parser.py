@@ -5,11 +5,12 @@ import find_functions_structs_enums
 
 
 def try_parse_enum_cpp_98_declaration(line: str, code_style_options: CodeStyleOptions) -> Optional[PydefCode]:
+    full_line = line
     line = line.strip()
     if line.startswith("enum") and not line.startswith("enum class"):
         items = line.split(" ")
         cpp_name = items[1].replace("{", "").strip()
-        return PydefCode(code_type=CppCodeType.ENUM_CPP_98, name_cpp=cpp_name)
+        return PydefCode(code_type=CppCodeType.ENUM_CPP_98, name_cpp=cpp_name, declaration_line=full_line)
     else:
         return None
 

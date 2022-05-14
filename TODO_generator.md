@@ -8,11 +8,14 @@
 
 OK! Test use class
 
-Bugs:
-    - Constructor & destructors
-    - leaked_ptr
-    - Static methods
+Lire doc pybind / numpy and eigen...
 
+Bugs:
+    X Constructor & destructors
+    X return value policy
+    ? leaked_ptr (pas sur qu'on en ait besoin)
+    - Static methods: cf https://pybind11-jagerman.readthedocs.io/en/stable/classes.html?highlight=static%20method#instance-and-static-fields 
+        use def_static
 
 
 - private / public

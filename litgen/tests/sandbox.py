@@ -24,8 +24,12 @@ def test_struct():
         // default constructor
         Foo(int x) {}
         ~Foo() {}
+
         // Do some math
-        int calc(int x) { return x * factor + delta; }
+        //int calc(int x) { return x * factor + delta; }
+        
+        static Foo& Instance() { static Foo instance; return instance; } // return_value_policy::reference
+
     };
         '''
     struct_info = struct_parser.parse_one_struct_testonly(code, options)

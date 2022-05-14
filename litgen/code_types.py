@@ -31,11 +31,13 @@ class PydefCode:
     line_end: int = 0            # end line of the struct / enum / function
     body_code_cpp: str = ""      # the code inside the struct or enum body, or inside the function input params signature
     return_type_cpp: str = ""    # The return type (for functions only)
+    declaration_line: str = ""   # A verbatim copy of the first declaration line
 
-    def __init__(self, code_type: CppCodeType, name_cpp: str = "", return_type_cpp: str = ""):
+    def __init__(self, code_type: CppCodeType, name_cpp: str = "", return_type_cpp: str = "", declaration_line: str = ""):
         self.code_type = code_type
         self.name_cpp = name_cpp
         self.return_type_cpp = return_type_cpp
+        self.declaration_line = declaration_line
 
     def title_python(self, options: CodeStyleOptions):
         return _code_replacements.apply_code_replacements(self.title_cpp, options.code_replacements)
@@ -153,6 +155,14 @@ class CodeRegionComment:
 class FunctionsInfos:
     function_code: PydefCode = None
     parameters: List[PydefAttribute] = _field(default_factory=list)
+
+    # See https://pybind11-jagerman.readthedocs.io/en/stable/advanced.html?highlight=reference#return-value-policies
+    # If you annotate a function declaration, you can set the return value lifetime policy:
+    # For example:
+    #       ````cpp
+    #       Foo& getFoo()    // return_value_policy::reference
+    #       ````
+    return_value_policy: str = ""
 
     # Typed accessor
     def get_parameters(self) -> List[PydefAttribute]:

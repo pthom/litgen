@@ -40,7 +40,7 @@ def _try_parse_struct_declaration(line: str, options: CodeStyleOptions) -> Optio
             if not found_suffix:
                 return None
 
-        return PydefCode(code_type=CppCodeType.STRUCT, name_cpp=struct_name)
+        return PydefCode(code_type=CppCodeType.STRUCT, name_cpp=struct_name, declaration_line=full_line)
     else:
         return None
 

@@ -80,7 +80,10 @@ def try_parse_function_name_from_declaration(code: str, options: CodeStyleOption
             return None
 
         return PydefCode(code_type=CppCodeType.FUNCTION,
-                         name_cpp=function_definition.name_cpp, return_type_cpp=function_definition.return_type_cpp)
+                         name_cpp=function_definition.name_cpp,
+                         return_type_cpp=function_definition.return_type_cpp,
+                         declaration_line = full_line
+                         )
     return None
 
 
@@ -163,6 +166,14 @@ def parse_function_declaration_pydef(pydef_code: PydefCode, code_style_options: 
     r = FunctionsInfos()
     r.function_code = pydef_code
     r.parameters = _extract_function_parameters(pydef_code.body_code_cpp, code_style_options)
+
+    ret_policy_str = "return_value_policy::"
+    if ret_policy_str in pydef_code.declaration_line:
+        rest_of_line = pydef_code.declaration_line[
+                            pydef_code.declaration_line.index(ret_policy_str) + len(ret_policy_str) : ]
+        policy_name, _ = code_utils.parse_c_identifier_at_start(rest_of_line)
+        r.return_value_policy = ret_policy_str + policy_name
+
     return r
 
 

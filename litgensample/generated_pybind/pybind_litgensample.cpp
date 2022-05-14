@@ -19,13 +19,6 @@ void py_init_module_litgensample(py::module& m)
         "A superb struct")
 
         .def(py::init<>()) 
-
-        .def(
-            py::init<int>(),
-            py::arg("fac"),
-
-            "Constructor with an int: set the factor"
-        )
         .def_readwrite("factor", &Foo::factor, "Multiplication factor")
         .def_readwrite("delta", &Foo::delta, "addition factor")
 
@@ -45,7 +38,8 @@ void py_init_module_litgensample(py::module& m)
                 { return self.Instance(); }
             },
 
-            ""
+            "",
+            pybind11::return_value_policy::reference
         )
 
         ; 
@@ -295,7 +289,8 @@ void py_init_module_litgensample(py::module& m)
             { return FooInstance(); }
         },
 
-        ""
+        "",
+        pybind11::return_value_policy::reference
     );
 
 

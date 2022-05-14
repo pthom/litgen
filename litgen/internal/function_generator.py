@@ -121,8 +121,16 @@ def generate_pydef_function_cpp_code(
 
     code_lines += pyarg_code(function_infos, options).split("\n")
 
+    #  comment
     comment_cpp = code_utils.format_cpp_comment_on_one_line(function_infos.function_code.title_python(options))
     code_lines += [f'    "{comment_cpp}"']
+
+    # Return value policy
+    if len(function_infos.return_value_policy) > 0:
+        code_lines[-1] += ","
+        code_lines += [f"    pybind11::{function_infos.return_value_policy}"]
+
+    # Ending
     if is_method:
         code_lines += ")"
     else:
