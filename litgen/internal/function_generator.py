@@ -1,4 +1,5 @@
 from code_types import *
+import code_types
 from options import CodeStyleOptions
 from function_wrapper_lambda import \
     make_function_wrapper_lambda, make_method_wrapper_lambda, \
@@ -69,7 +70,7 @@ def generate_python_wrapper_init_code(function_infos: FunctionsInfos, options: C
     return r
 
 
-def add_pyarg_lines(function_infos: FunctionsInfos, options: CodeStyleOptions) -> List[str]:
+def pyarg_code(function_infos: FunctionsInfos, options: CodeStyleOptions) -> str:
     param_lines = []
     code_inner_defaultvalue = '    py::arg("ARG_NAME_PYTHON") = ARG_DEFAULT_VALUE'
     code_inner_nodefaultvalue = '    py::arg("ARG_NAME_PYTHON")'
@@ -90,10 +91,12 @@ def add_pyarg_lines(function_infos: FunctionsInfos, options: CodeStyleOptions) -
                 continue
             param_line= code_inner_nodefaultvalue.replace("ARG_NAME_PYTHON", param.name_python())
 
-        param_line += ","
         param_lines.append(param_line)
 
-    return param_lines
+    code = ",\n".join(param_lines)
+    if len(param_lines) > 0:
+        code += ","
+    return code
 
 
 def generate_pydef_function_cpp_code(
@@ -115,7 +118,8 @@ def generate_pydef_function_cpp_code(
     lambda_code = make_function_wrapper_lambda(function_infos, options, parent_struct_name)
     lambda_code = code_utils.indent_code(lambda_code, 4)
     code_lines += lambda_code.split("\n")
-    code_lines += add_pyarg_lines(function_infos, options)
+
+    code_lines += pyarg_code(function_infos, options).split("\n")
 
     comment_cpp = code_utils.format_cpp_comment_on_one_line(function_infos.function_code.title_python(options))
     code_lines += [f'    "{comment_cpp}"']
@@ -130,9 +134,43 @@ def generate_pydef_function_cpp_code(
     return code
 
 
+def generate_constructor_code(
+        function_infos: FunctionsInfos,
+        options: CodeStyleOptions) -> str:
+
+    # Default constructors are always generated!
+    if len(function_infos.get_parameters()) == 0:
+        return ""
+
+    code = """
+          .def(
+              py::init<PARAMS>(),
+              PYARGS
+              "CONSTRUCTOR_DOC"
+          )
+    """
+
+    pyarg_str = pyarg_code(function_infos, options)
+    pyarg_str = code_utils.reindent_code(pyarg_str, 4, True)
+    params_str = code_types._pydef_attributes_as_types_only(function_infos.get_parameters())
+
+    code = code.replace("PARAMS", params_str)
+    code = code.replace("PYARGS", pyarg_str)
+    code = code.replace("CONSTRUCTOR_DOC",
+                        code_utils.format_cpp_comment_on_one_line(function_infos.function_code.title_python(options)) )
+
+    code = code_utils.unindent_code(code)
+    code = code_utils.indent_code(code, 4)
+    return code
+
+
 def generate_pydef_method_cpp_code(
         function_infos: FunctionsInfos,
         options: CodeStyleOptions,
         parent_struct_name: str) -> str:
 
+    if function_infos.function_name_cpp() == parent_struct_name:
+        return generate_constructor_code(function_infos, options)
+    if function_infos.function_name_cpp() == "~" + parent_struct_name:
+        return ""
     return generate_pydef_function_cpp_code(function_infos, options, parent_struct_name)

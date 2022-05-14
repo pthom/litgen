@@ -9,7 +9,7 @@
 OK! Test use class
 
 Bugs:
-    - Constructor & desructors
+    - Constructor & destructors
     - leaked_ptr
     - Static methods
 

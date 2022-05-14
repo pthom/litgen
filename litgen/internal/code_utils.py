@@ -75,7 +75,32 @@ def write_text_file(filename: str, content: str):
             f.write(content)
 
 
+def unindent_code(code: str) -> str:
+    "unindent the code but keep the inner identation"
+    indent_size = compute_code_indent_size(code)
+    what_to_replace = " " * indent_size
+
+    lines = code.split("\n")
+
+    processed_lines = []
+    for line in lines:
+        if line.startswith(what_to_replace):
+            processed_line = line[indent_size:]
+        else:
+            processed_line = line
+        processed_lines.append(remove_trailing_spaces(processed_line))
+    return "\n".join(processed_lines)
+
+
+def reindent_code(code: str, indent_size: int, skip_first_line = False):
+    "change the global code indentation, but keep its inner indentation"
+    code = unindent_code(code)
+    code = indent_code(code, indent_size, skip_first_line)
+    return code
+
+
 def indent_code(code: str, indent_size: int, skip_first_line = False):
+    "add some space to the left of all lines"
     if skip_first_line:
         lines = code.split("\n")
         first_line = lines[0]
@@ -93,6 +118,14 @@ def indent_code(code: str, indent_size: int, skip_first_line = False):
     return "\n".join(lines)
 
 
+def indent_code_force(code: str, indent_size: int):
+    "violently remove all space at the left, thus removign the inner indentation"
+    lines = code.split("\n")
+    indent_str = " " * indent_size
+    lines = map(lambda s: indent_str + s.strip(), lines)
+    return "\n".join(lines)
+
+
 def format_python_comment(comment: str, indent_size: int) -> str:
     lines = comment.split("\n")
     indent_str = " " * indent_size + "# "
@@ -106,13 +139,6 @@ def format_cpp_comment_on_one_line(comment: str) -> str:
     comment = comment.replace("\n", "\\n")
     comment = comment.replace('"', '\\"')
     return comment
-
-
-def indent_code_force(code: str, indent_size: int):
-    lines = code.split("\n")
-    indent_str = " " * indent_size
-    lines = map(lambda s: indent_str + s.strip(), lines)
-    return "\n".join(lines)
 
 
 def write_code_between_markers(
@@ -199,22 +225,6 @@ def remove_trailing_spaces(line: str) -> str:
     while r[-1:] == " ":
         r = r[:-1]
     return r
-
-
-def unindent_code(code: str) -> str:
-    indent_size = compute_code_indent_size(code)
-    what_to_replace = " " * indent_size
-
-    lines = code.split("\n")
-
-    processed_lines = []
-    for line in lines:
-        if line.startswith(what_to_replace):
-            processed_line = line[indent_size:]
-        else:
-            processed_line = line
-        processed_lines.append(remove_trailing_spaces(processed_line))
-    return "\n".join(processed_lines)
 
 
 def make_nice_code_diff(generated: str, expected: str) -> str:
@@ -415,8 +425,15 @@ def parse_function_declaration(code_line: str) -> Optional[FunctionNameAndReturn
         if return_type_and_function_name.endswith(op):
             function_name = op
             idx_start_fn_identifier = return_type_and_function_name.index(op)
+
     if idx_start_fn_identifier < 0:
         function_name, idx_start_fn_identifier  = parse_c_identifier_at_end(return_type_and_function_name)
+
+    # Special case for destructors
+    if idx_start_fn_identifier > 0 and return_type_and_function_name[idx_start_fn_identifier - 1] =="~":
+        function_name = "~" + function_name
+        return_type_cpp = ""
+        return FunctionNameAndReturnType(function_name, return_type_cpp)
 
     if len(function_name) == 0:
         raise CppParseException(f"parse_function_declaration; empty function name!")

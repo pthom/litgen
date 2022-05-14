@@ -311,3 +311,9 @@ pip install -r requirements-dev.txt
 pip install -v -e .
 ````
 
+
+
+### Notes
+
+* Published structs and classes should be default constructible
+* 

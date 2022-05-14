@@ -60,6 +60,11 @@ namespace LiterateGeneratorExample
     // A superb struct
     struct Foo            // MY_API_STRUCT
     {
+        Foo() { printf("Construct Foo\n"); }
+
+        // Constructor with an int: set the factor
+        Foo(int fac) { factor = fac; printf("Construct Foo with int\n"); }
+
         // Multiplication factor
         int factor = 10;
 
@@ -71,8 +76,8 @@ namespace LiterateGeneratorExample
 
         static Foo& Instance() { static Foo instance; return instance; }
 
-        Foo() { printf("Construct Foo\n"); } //MY_API_EXCLUDE
-        ~Foo() { printf("Destruct Foo\n"); } //MY_API_EXCLUDE
+
+        ~Foo() { printf("Destruct Foo\n"); }
     };
 
     MY_API Foo* FooInstance() { return & Foo::Instance(); }

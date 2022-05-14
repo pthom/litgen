@@ -72,7 +72,7 @@ class PydefAttribute:
     def _default_value_python_str(self, options: CodeStyleOptions):
         return " = " + self.default_value_python(options) if len(self.default_value_python(options)) > 0 else ""
 
-    def as_cpp_declaration(self):
+    def as_cpp_declaration_with_default_value(self):
         cpp_str = f"{self.type_cpp} {self.name_cpp}{self._default_value_cpp_str()}"
         return cpp_str
 
@@ -85,8 +85,13 @@ class PydefAttribute:
         return python_str
 
 
-def _pydef_attributes_as_cpp_declaration(attrs: List[PydefAttribute]) -> str:
-    strs = map(lambda attr: attr.as_cpp_declaration(), attrs)
+def _pydef_attributes_as_cpp_declaration_with_default_values(attrs: List[PydefAttribute]) -> str:
+    strs = map(lambda attr: attr.as_cpp_declaration_with_default_value(), attrs)
+    return ", ".join(strs)
+
+
+def _pydef_attributes_as_types_only(attrs: List[PydefAttribute]) -> str:
+    strs = map(lambda attr: attr.type_cpp, attrs)
     return ", ".join(strs)
 
 

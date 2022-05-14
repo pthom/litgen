@@ -310,7 +310,7 @@ def _lambda_params_signature(
         parent_struct_name: str = "") -> str:
 
     if not options.buffer_flag_replace_by_array:
-        return code_types._pydef_attributes_as_cpp_declaration(params)
+        return code_types._pydef_attributes_as_cpp_declaration_with_default_values(params)
 
     new_params: List[PydefAttribute] = []
 
@@ -343,7 +343,7 @@ def _lambda_params_signature(
 
         idx_param += 1
 
-    return code_types._pydef_attributes_as_cpp_declaration(new_params)
+    return code_types._pydef_attributes_as_cpp_declaration_with_default_values(new_params)
 
 
 def _lambda_params_call(
