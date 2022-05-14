@@ -56,7 +56,7 @@ def _looks_like_param_buffer_standard(param: PydefAttribute, options: CodeStyleO
     if not options.buffer_flag_replace_by_array:
         return False
     for possible_buffer_type in _possible_buffer_pointer_types(options):
-        if possible_buffer_type  in param.type_cpp:
+        if code_utils.contains_pointer_type(param.type_cpp, possible_buffer_type):
             return True
     return False
 
@@ -65,7 +65,7 @@ def _looks_like_param_template_buffer(param: PydefAttribute, options: CodeStyleO
     if not options.buffer_flag_replace_by_array:
         return False
     for possible_buffer_type in _possible_buffer_template_pointer_types(options):
-        if possible_buffer_type  in param.type_cpp:
+        if code_utils.contains_pointer_type(param.type_cpp, possible_buffer_type):
             return True
     return False
 
@@ -159,7 +159,7 @@ def _param_buffer_replaced_by_array(param: PydefAttribute, options: CodeStyleOpt
         return param
 
     for possible_buffer_type in _possible_buffer_pointer_types(options) + _possible_buffer_template_pointer_types(options):
-        if possible_buffer_type  in param.type_cpp:
+        if code_utils.contains_pointer_type(param.type_cpp, possible_buffer_type):
             param_copy = copy.deepcopy(param)
             param_copy.type_cpp = param.type_cpp.replace(possible_buffer_type, "py::array &")
             return param_copy

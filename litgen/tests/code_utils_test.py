@@ -106,6 +106,25 @@ if a > 10:
 """
 
 
+def test_contains_word():
+    assert code_utils.contains_word("Hello wonderful world", "wonderful")
+    assert not code_utils.contains_word("Hello wonderful world", "Wonderful")
+    assert code_utils.contains_word("Hello wonderful world", "Hello")
+    assert code_utils.contains_word("Hello wonderful world", "world")
+    assert not code_utils.contains_word("Hello wonderful world", "worl")
+    assert not code_utils.contains_word("Hello wonderful world", "Hell")
+    assert not code_utils.contains_word('const int8_t*', 'T*')
+
+
+def test_contains_pointer_type():
+    assert code_utils.contains_pointer_type('const int8_t*', 'int8_t*')
+    assert code_utils.contains_pointer_type('int8_t*', 'int8_t*')
+    assert not code_utils.contains_pointer_type('const int8_t*', 'T*')
+
+    assert not code_utils.contains_pointer_type('uint8_t*', 'int8_t*')
+    assert not code_utils.contains_pointer_type('int8_t*', 'uint8_t*')
+
+
 def test_assert_are_code_equal():
     expected = """
     a

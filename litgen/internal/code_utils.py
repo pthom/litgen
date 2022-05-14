@@ -429,6 +429,31 @@ def parse_function_declaration(code_line: str) -> Optional[FunctionNameAndReturn
     return FunctionNameAndReturnType(function_name, return_type_cpp)
 
 
+def contains_word(where_to_search: str, word: str):
+    word = word.replace("*", "\\*")
+    regex_str = r"\b" + word + r"\b"
+    return does_match_regex(regex_str, where_to_search)
+
+
+def contains_word_boundary_left_only(where_to_search: str, word: str):
+    word = word.replace("*", "\\*")
+    regex_str = r"\b" + word
+    return does_match_regex(regex_str, where_to_search)
+
+
+def contains_pointer_type(full_type_str: str, type_to_search: str):
+    if type_to_search.endswith("*"):
+        type_to_search = type_to_search[:-1]
+
+    if contains_word_boundary_left_only(full_type_str, type_to_search +  "*"):
+        return True
+
+    if contains_word_boundary_left_only(full_type_str, type_to_search +  " *"):
+        return True
+
+    return False
+
+
 def does_match_regex(regex_str: str, word: str) -> bool:
     matches = list(re.finditer(regex_str, word, re.MULTILINE))
     return len(matches) > 0

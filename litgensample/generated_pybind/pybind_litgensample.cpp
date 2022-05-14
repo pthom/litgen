@@ -179,7 +179,7 @@ void py_init_module_litgensample(py::module& m)
 
 
     m.def("add_inside_array",
-        [](upy::array & array, uint8_t number_to_add)
+        [](py::array & array, uint8_t number_to_add)
         {
             // convert array (py::array&) to C standard buffer (mutable)
             void* array_buffer = array.mutable_data();
