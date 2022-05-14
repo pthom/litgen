@@ -2,6 +2,7 @@
 #include <cstddef>
 //#include <cstdint>
 #include <stdint.h>
+#include <stdio.h>
 
 #ifndef MY_API
 #define MY_API
@@ -57,7 +58,7 @@ namespace LiterateGeneratorExample
     MY_API int mul(int a, int b) { return a * b; }
 
     // A superb struct
-    struct Foo
+    struct Foo            // MY_API_STRUCT
     {
         // Multiplication factor
         int factor = 10;
@@ -67,6 +68,17 @@ namespace LiterateGeneratorExample
 
         // Do some math
         int calc(int x) { return x * factor + delta; }
+
+        static Foo& Instance() { static Foo instance; return instance; }
+
+        Foo() { printf("Construct Foo\n"); } //MY_API_EXCLUDE
+        ~Foo() { printf("Destruct Foo\n"); } //MY_API_EXCLUDE
     };
+
+    MY_API Foo* FooInstance() { return & Foo::Instance(); }
+
+
+    //Foo() { printf("Construct Foo\n"); }
+    //~Foo() { printf("Destruct Foo\n"); }
 
 } // namespace LiterateGeneratorExample

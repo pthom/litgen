@@ -6,9 +6,17 @@
   ok Check authorized buffer_types in options (uint8_t ok, not char, etc) 
   ok test avec const 
 
-- Test leaked_ptr
-- Test use class
+OK! Test use class
+
+Bugs:
+    - Constructor & desructors
+    - leaked_ptr
+    - Static methods
+
+
+
 - private / public
+- class (same as struct, except public)
 - ToString ?
 - Online Interface with google colab
 

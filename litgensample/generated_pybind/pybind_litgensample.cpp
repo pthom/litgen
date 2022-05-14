@@ -41,6 +41,15 @@ void py_init_module_litgensample(py::module& m)
             "Do some math"
         )
 
+
+        .def("instance",
+            [](Foo& self)
+            {
+                return self.Instance();
+            },
+            ""
+        )
+
         ; 
 
 
@@ -278,6 +287,15 @@ void py_init_module_litgensample(py::module& m)
         },
         py::arg("a"),
         py::arg("b"),
+        ""
+    );
+
+
+    m.def("foo_instance",
+        []()
+        {
+            return FooInstance();
+        },
         ""
     );
 

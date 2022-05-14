@@ -47,7 +47,7 @@
                 };
                 ````
 """
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from enum import Enum
 from typing import Optional, List, Tuple, Callable
 from internal.code_utils import make_regex_any_variable_ending_with, make_regex_any_variable_starting_with
@@ -61,12 +61,20 @@ class CodeStyleOptions:
 
     # Shall we generate a __str__() method for structs
     generate_to_string: bool = False
-    # functions to exclude
-    function_exclude_regexes: List[str] = ""
+    # functions to exclude by name
+    function_name_exclude_regexes: List[str] = field(default_factory=list)
+    # enable to exclude functions by adding a comment on the same line of their declaration
+    function_exclude_by_comment: List[str] = field(default_factory=list)
     # Spacing option
     indent_size_functions_pydef: int = 8
     # Prefixes that denote functions that should be published (for example ["IMPLOT_API", "IMPLOT_TMP"])
+    # if empty, all function are published!
     functions_api_prefixes = []
+    # Suffixes that denote structs that should be published, for example:
+    #       struct MyStruct        // IMMVISION_API_STRUCT     <== this is a suffix
+    #       { };
+    # if empty, all structs are published
+    struct_api_suffixes = []
 
     # List of code replacements when going from C++ to Python (for example double -> float, vector-> List, etc)
     code_replacements = [] # List[StringReplacement]
@@ -159,7 +167,7 @@ def code_style_implot():
 
     options.buffer_flag_replace_by_array = True
 
-    options.function_exclude_regexes = [
+    options.function_name_exclude_regexes = [
         ####################################################
         #  Legitimate Excludes                             #
         ####################################################

@@ -42,7 +42,7 @@ _SCOPE_OBSERVER = _ScopeObserver()
 
 
 def is_function_in_excludes(function_name: str, options: CodeStyleOptions) -> bool:
-    for regex in options.function_exclude_regexes:
+    for regex in options.function_name_exclude_regexes:
         matches = list(re.finditer(regex, function_name, re.MULTILINE))
         if len(matches) > 0:
             return True
@@ -50,6 +50,7 @@ def is_function_in_excludes(function_name: str, options: CodeStyleOptions) -> bo
 
 
 def try_parse_function_name_from_declaration(code: str, options: CodeStyleOptions) -> Optional[PydefCode]:
+    full_line = code
     code = code_utils.remove_end_of_line_cpp_comments(code)
     code = code_utils.force_one_space(code)
 
@@ -65,6 +66,10 @@ def try_parse_function_name_from_declaration(code: str, options: CodeStyleOption
                 code = code.replace(possible_prefix, "").strip()
                 return True
         return False
+
+    for exclude_comment in options.function_exclude_by_comment:
+        if exclude_comment in full_line:
+            return None
 
     if is_prefix_found() and _SCOPE_OBSERVER.is_in_main_scope():
         function_definition = code_utils.parse_function_declaration(code)

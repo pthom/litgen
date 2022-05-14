@@ -11,7 +11,7 @@ import find_functions_structs_enums
 import function_parser
 
 
-def _try_parse_struct_declaration(line: str, code_style_options: CodeStyleOptions) -> Optional[PydefCode]:
+def _try_parse_struct_declaration(line: str, options: CodeStyleOptions) -> Optional[PydefCode]:
     """
     Accepts lines like
         struct ImPlotContext {
@@ -21,15 +21,26 @@ def _try_parse_struct_declaration(line: str, code_style_options: CodeStyleOption
     but refuses forward declarations like
         struct ImPlotContext;             // ImPlot context (opaque struct, see implot_internal.h)
     """
+    full_line = line
+
     if "//" in line:
         line = line.split("//")[0].strip()
     line = line.strip()
     if line.startswith("struct"):
         items = line.split(" ")
-        cpp_name = items[1].replace("{", "").strip()
-        if cpp_name.endswith(";"):
+        struct_name = items[1].replace("{", "").strip()
+        if struct_name.endswith(";"):
             return None
-        return PydefCode(code_type=CppCodeType.STRUCT, name_cpp=cpp_name)
+
+        if len(options.struct_api_suffixes) > 0:
+            found_suffix = False
+            for possible_suffix in options.struct_api_suffixes:
+                if possible_suffix in full_line:
+                    found_suffix = True
+            if not found_suffix:
+                return None
+
+        return PydefCode(code_type=CppCodeType.STRUCT, name_cpp=struct_name)
     else:
         return None
 
