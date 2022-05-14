@@ -51,6 +51,18 @@ def opencv_replacements() -> List[StringReplacement]:
 
 def standard_replacements() -> List[StringReplacement]:
     replacements = r"""
+    \buint8_t\b -> int
+    \bint8_t\b -> int
+    \buint16_t\b -> int
+    \bint16_t\b -> int
+    \buint32_t\b -> int
+    \bint32_t\b -> int
+    \buint64_t\b -> int
+    \bint64_t\b -> int
+    \blong double\b -> float
+    \bdouble\b -> float
+    \blong\b -> int
+    
     \bconst char*\b -> str
     \bconst char *\b -> str
     \bsize_t\b -> int
@@ -58,7 +70,6 @@ def standard_replacements() -> List[StringReplacement]:
     \bstd::string\b -> str
     \btrue\b -> True
     \bfalse\b -> False
-    \bdouble\b -> float
     \bstd::vector<([\w:]*)> -> list[\1]
     \bconst\b -> REMOVE
     & -> REMOVE

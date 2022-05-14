@@ -33,8 +33,7 @@ def _fill_pydef_body_code(code_lines: List[str], pydef_type: CppCodeType, pydef_
         return line.count(opening_token) - line.count(closing_token)
 
     def append_body_line(line):
-        if len(line) > 0:
-            body_lines.append(line)
+        body_lines.append(line)
 
     for line_number, code_line in enumerate(lines_under_pydef):
         if flag_exited_body:
@@ -71,7 +70,7 @@ def find_functions_struct_or_enums(
         fn_try_parse_code_type = function_parser.try_parse_function_name_from_declaration
     assert fn_try_parse_code_type is not None
 
-    code_lines = whole_file_code.split("\n")
+    code_lines = whole_file_code.splitlines(keepends=False)
     pydef_codes = []
     for line_number, code_line in enumerate(code_lines):
         pydef_code = fn_try_parse_code_type(code_line, options)

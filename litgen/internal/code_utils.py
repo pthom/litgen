@@ -349,6 +349,7 @@ def parse_c_identifier_at_end(code: str) -> Tuple[str, int]:
 class FunctionNameAndReturnType:
     name_cpp: str = ""
     return_type_cpp: str = ""
+    is_static: bool = False
 
 
 def remove_template_from_return_type(type_str: str) -> str:
@@ -443,7 +444,12 @@ def parse_function_declaration(code_line: str) -> Optional[FunctionNameAndReturn
 
     return_type_cpp = remove_template_and_inline_from_return_type(return_type_cpp)
 
-    return FunctionNameAndReturnType(function_name, return_type_cpp)
+    is_static = False
+    if contains_word(return_type_cpp, "static"):
+        return_type_cpp = return_type_cpp.replace("static", "").strip()
+        is_static = True
+
+    return FunctionNameAndReturnType(function_name, return_type_cpp, is_static=is_static)
 
 
 def contains_word(where_to_search: str, word: str):

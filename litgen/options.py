@@ -65,8 +65,6 @@ class CodeStyleOptions:
     function_name_exclude_regexes: List[str] = field(default_factory=list)
     # enable to exclude functions by adding a comment on the same line of their declaration
     function_exclude_by_comment: List[str] = field(default_factory=list)
-    # Spacing option
-    indent_size_functions_pydef: int = 8
     # Prefixes that denote functions that should be published (for example ["IMPLOT_API", "IMPLOT_TMP"])
     # if empty, all function are published!
     functions_api_prefixes = []
@@ -81,6 +79,11 @@ class CodeStyleOptions:
 
     # Function that may generate additional code in the function defined in the  __init__.py file of the package
     init_function_python_additional_code = None # Callable[[FunctionsInfos], str]
+
+    # Size of an indentation in the python stubs
+    indent_size_python = 4
+    # Spacing option in C++ code
+    indent_size_cpp_pydef: int = 8
 
     # Typed accessor
     def get_code_replacements(self):
@@ -135,7 +138,7 @@ def code_style_immvision() -> CodeStyleOptions:
     options = CodeStyleOptions()
     options.enum_title_on_previous_line = True
     options.generate_to_string = True
-    options.indent_size_functions_pydef = 8
+    options.indent_size_cpp_pydef = 8
     options.functions_api_prefixes = ["IMMVISION_API"]
     options.code_replacements = _code_replacements.standard_replacements() + _code_replacements.opencv_replacements()
 
@@ -161,7 +164,7 @@ def code_style_implot():
     options = CodeStyleOptions()
     options.enum_title_on_previous_line = False
     options.generate_to_string = False
-    options.indent_size_functions_pydef = 4
+    options.indent_size_cpp_pydef = 4
     options.functions_api_prefixes = ["IMPLOT_API", "IMPLOT_TMP"]
     options.code_replacements = _code_replacements.standard_replacements()
 

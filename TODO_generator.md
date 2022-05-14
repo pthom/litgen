@@ -6,9 +6,24 @@
   ok Check authorized buffer_types in options (uint8_t ok, not char, etc) 
   ok test avec const 
 
+- stub / pyi 
+
+- Lire le fichier entier comme une struct (i.e avec Variant)
+    Comme ça, on pourra reproduire toute la doc !
+
+- toString en hackant str:
+    l.Foo.__str__ = my_str
+
+def checkChessboard(img: Mat, size) -> typing.Any:
+    """checkChessboard(img, size) -> retval"""
+    
+
 OK! Test use class
 
 Lire doc pybind / numpy and eigen...
+Voir https://github.com/python/typeshed and https://github.com/microsoft/python-type-stubs
+
+
 
 Bugs:
     X Constructor & destructors

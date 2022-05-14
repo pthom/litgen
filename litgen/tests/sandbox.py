@@ -16,25 +16,30 @@ def test_function():
     print(generated_code)
 
 
-def test_struct():
-    code = '''
-    // A superb struct
-    struct Foo            // MY_API_STRUCT
-    {
-        // default constructor
-        Foo(int x) {}
-        ~Foo() {}
+struct_code = '''
+struct Foo            // MY_API_STRUCT
+{
+        //
+        // And these are our calculations
+        //
 
         // Do some math
-        //int calc(int x) { return x * factor + delta; }
-        
-        static Foo& Instance() { static Foo instance; return instance; } // return_value_policy::reference
+        int calc(int x) { return x * factor + delta; }
+};
+'''
 
-    };
-        '''
-    struct_info = struct_parser.parse_one_struct_testonly(code, options)
+
+def test_struct_pydef():
+    struct_info = struct_parser.parse_one_struct_testonly(struct_code, options)
     generated_code = struct_generator.generate_pydef_struct_cpp_code(struct_info, options)
     print(generated_code)
 
 
-test_struct()
+def test_struct_stub():
+    struct_info = struct_parser.parse_one_struct_testonly(struct_code, options)
+    generated_code = struct_generator.generate_stub_pyi(struct_info, options)
+    print(generated_code)
+
+
+# test_struct_pydef()
+test_struct_stub()

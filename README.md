@@ -1,3 +1,5 @@
+![Pip](https://github.com/pthom/immvision/workflows/Pip/badge.svg)
+
 `litgen` is a pybind11 literate automatic generator for humans who like nice code and API.
 
 

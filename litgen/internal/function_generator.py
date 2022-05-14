@@ -138,7 +138,7 @@ def generate_pydef_function_cpp_code(
     code_lines += ["", ""]
 
     code = "\n".join(code_lines)
-    code = code_utils.indent_code(code, options.indent_size_functions_pydef)
+    code = code_utils.indent_code(code, options.indent_size_cpp_pydef)
     return code
 
 

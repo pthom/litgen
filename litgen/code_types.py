@@ -43,6 +43,8 @@ class PydefCode:
         return _code_replacements.apply_code_replacements(self.title_cpp, options.code_replacements)
 
     def return_type_python(self, options: CodeStyleOptions):
+        if self.return_type_cpp == "void":
+            return "None"
         return _code_replacements.apply_code_replacements(self.return_type_cpp, options.code_replacements)
 
 
@@ -60,6 +62,8 @@ class PydefAttribute:
         return code_utils.to_snake_case(self.name_cpp)
 
     def type_python(self, options: CodeStyleOptions):
+        if self.type_cpp == "py::array":
+            return "numpy.ndarray"
         return _code_replacements.apply_code_replacements(self.type_cpp, options.code_replacements)
 
     def default_value_python(self, options: CodeStyleOptions):
@@ -71,9 +75,6 @@ class PydefAttribute:
     def _default_value_cpp_str(self):
         return " = " + self.default_value_cpp if len(self.default_value_cpp) > 0 else ""
 
-    def _default_value_python_str(self, options: CodeStyleOptions):
-        return " = " + self.default_value_python(options) if len(self.default_value_python(options)) > 0 else ""
-
     def as_cpp_declaration_with_default_value(self):
         cpp_str = f"{self.type_cpp} {self.name_cpp}{self._default_value_cpp_str()}"
         return cpp_str
@@ -83,7 +84,11 @@ class PydefAttribute:
         return cpp_str
 
     def as_python_declaration(self, options: CodeStyleOptions):
-        python_str = f"{self.name_python()}: {self.type_python(options)}{self._default_value_python_str(options)}"
+        python_str = f"{self.name_python()}"
+        if len(self.type_python(options)) > 0:
+            python_str += ": " + self.type_python(options)
+        if len(self.default_value_python(options)) > 0:
+            python_str += " = " + self.default_value_python(options)
         return python_str
 
 
@@ -185,14 +190,6 @@ class FunctionsInfos:
         strs = [param.as_python_declaration(options) for param in self.get_parameters() ]
         return ", ".join(strs)
 
-    def declaration_python(self, options: CodeStyleOptions) -> str:
-        import code_utils
-        code = ""
-        code += code_utils.format_python_comment(self.function_code.title_python(options), 0) + "\n"
-        code += f"def {self.function_name_cpp()}(PARAMS) -> {self.return_type_python(options)}" + "\n"
-        params_str = self.params_declaration_str_python(options)
-        code = code.replace("PARAMS", params_str)
-        return code
 
 @_dataclass
 class Variant_Attribute_Method_CodeRegion:
