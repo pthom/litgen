@@ -13,7 +13,7 @@ def test_strip_empty_lines():
              int a = 1;
           };
     """.split('\n')
-    code_lines = code_utils.strip_empty_lines(code_lines)
+    code_lines = code_utils.strip_empty_lines_in_list(code_lines)
     code_stripped = "\n".join(code_lines)
     assert code_stripped == """          struct Foo {
              int a = 1;
@@ -91,3 +91,31 @@ def test_parse_function_declaration():
     r = code_utils.parse_function_declaration(code_line)
     assert r.name_cpp == "operator()"
     assert r.return_type_cpp == "std::function<int(void)>"
+
+
+def test_unindent_code():
+    code = """
+    a = 5
+    if a > 10:
+        return 0
+    """
+    assert code_utils.unindent_code(code) == """
+a = 5
+if a > 10:
+    return 0
+"""
+
+
+def test_assert_are_code_equal():
+    expected = """
+    a
+        b
+        c
+
+    """
+    generated = """
+a
+    b
+    c
+"""
+    code_utils.assert_are_codes_equal(generated, expected)

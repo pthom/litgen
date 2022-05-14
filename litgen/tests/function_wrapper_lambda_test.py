@@ -18,75 +18,64 @@ def test_make_function_wrapper_lambda():
         lambda_code = function_wrapper_lambda.make_function_wrapper_lambda(fn_info, options)
         return lambda_code
 
-    def easy_test():
-        code = 'IMPLOT_API void SetupAxisFormat(ImAxis axis, const char* fmt = "%.3f");'
-        code_utils.assert_are_codes_equal(
-            make_lambda_code(code),
-            """
-            [](ImAxis axis, const char* fmt = "%.3f")
-            {
-                SetupAxisFormat(axis, fmt);
-            },
-            """)
-
-    easy_test()
-
+    # def easy_test():
+    #     code = 'IMPLOT_API void SetupAxisFormat(ImAxis axis, const char* fmt = "%.3f");'
+    #     code_utils.assert_are_codes_equal(
+    #         make_lambda_code(code),
+    #         """
+    #         [](ImAxis axis, const char* fmt = "%.3f")
+    #         {
+    #             SetupAxisFormat(axis, fmt);
+    #         },
+    #         """)
+    #
+    # easy_test()
 
     def test_with_one_buffer():
         function_decl = """
-        IMPLOT_TMP int Foo1(const T* values, int count);
-        """
-
-        expected_lambda_code_naive = """
-            [](const T* values, int count)
-            {
-                return Foo1(values, count);
-            },
+        IMPLOT_TMP int Foo1(T* values, int count);
         """
 
         expected_lambda_code_buffer = """
-            [](const py::array & values)
+            [](py::array & values)
             {
                 // convert values (py::array&) to C standard buffer
-                const void* values_buffer =  values.data();
+                void* values_buffer = (void*) values.data();
                 int values_count = values.shape()[0];
-                    
+            
                 return Foo1(values_buffer, values_count);
             },
         """
 
-        options.buffer_flag_replace_by_array = False
-        code_utils.assert_are_codes_equal( make_lambda_code(function_decl), expected_lambda_code_naive )
-
-        options.buffer_flag_replace_by_array = True
         code_utils.assert_are_codes_equal( make_lambda_code(function_decl), expected_lambda_code_buffer )
 
     test_with_one_buffer()
 
     def test_with_four_buffers():
+        options.buffer_types = ["uint8_t"]
         function_decl = """
-            IMPLOT_TMP int Foo4(const T* values_x, const T* values_y, const T* values_z, T* values_w, int count);
+            IMPLOT_TMP int Foo4(const uint8_t* values_x, const uint8_t* values_y, const uint8_t* values_z, uint8_t* values_w, int count);
         """
 
         expected_lambda_code_buffer = """
             [](const py::array & values_x, const py::array & values_y, const py::array & values_z, py::array & values_w)
             {
                 // convert values_x (py::array&) to C standard buffer
-                const void* values_x_buffer =  values_x.data();
+                const uint8_t* values_x_buffer = (const uint8_t*) values_x.data();
                 int values_x_count = values_x.shape()[0];
-                    
+
                 // convert values_y (py::array&) to C standard buffer
-                const void* values_y_buffer =  values_y.data();
+                const uint8_t* values_y_buffer = (const uint8_t*) values_y.data();
                 int values_y_count = values_y.shape()[0];
-                    
+
                 // convert values_z (py::array&) to C standard buffer
-                const void* values_z_buffer =  values_z.data();
+                const uint8_t* values_z_buffer = (const uint8_t*) values_z.data();
                 int values_z_count = values_z.shape()[0];
-                    
+
                 // convert values_w (py::array&) to C standard buffer
-                void* values_w_buffer =  values_w.data();
+                uint8_t* values_w_buffer = (uint8_t*) values_w.data();
                 int values_w_count = values_w.shape()[0];
-                    
+
                 return Foo4(values_x_buffer, values_y_buffer, values_z_buffer, values_w_buffer, values_x_count);
             },
         """
@@ -123,13 +112,13 @@ def test_make_function_wrapper_lambda():
                 // convert array (py::array&) to C standard buffer
                 int* array_buffer = (int*) array.data();
                 int array_count = array.shape()[0];
-                    
+
                 return add_inside_array(array_buffer, array_count, number_to_add);
             },
     """
 
         options.buffer_flag_replace_by_array = True
-        options.buffer_inner_types = ["T", "void", "int"]
+        options.buffer_types = ["T", "void", "int"]
         generated_code = make_lambda_code(function_decl)
         code_utils.assert_are_codes_equal( generated_code, expected_lambda_code_buffer )
 

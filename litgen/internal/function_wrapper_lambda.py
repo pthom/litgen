@@ -41,18 +41,37 @@ import copy
 
 
 def _possible_buffer_pointer_types(options: CodeStyleOptions):
-    types =   [ t + "*" for t in options.buffer_inner_types ] \
-            + [ t + " *" for t in options.buffer_inner_types ]
+    types =   [t + "*" for t in options.buffer_types] \
+            + [t + " *" for t in options.buffer_types]
     return types
 
 
-def _looks_like_param_buffer(param: PydefAttribute, options: CodeStyleOptions) -> bool:
+def _possible_buffer_template_pointer_types(options: CodeStyleOptions):
+    types =   [t + "*" for t in options.buffer_template_types] \
+              + [t + " *" for t in options.buffer_template_types]
+    return types
+
+
+def _looks_like_param_buffer_standard(param: PydefAttribute, options: CodeStyleOptions) -> bool:
     if not options.buffer_flag_replace_by_array:
         return False
     for possible_buffer_type in _possible_buffer_pointer_types(options):
         if possible_buffer_type  in param.type_cpp:
             return True
     return False
+
+
+def _looks_like_param_template_buffer(param: PydefAttribute, options: CodeStyleOptions) -> bool:
+    if not options.buffer_flag_replace_by_array:
+        return False
+    for possible_buffer_type in _possible_buffer_template_pointer_types(options):
+        if possible_buffer_type  in param.type_cpp:
+            return True
+    return False
+
+
+def _looks_like_param_buffer(param: PydefAttribute, options: CodeStyleOptions) -> bool:
+    return _looks_like_param_buffer_standard(param, options) or _looks_like_param_template_buffer(param, options)
 
 
 def _looks_like_buffer_size_name(param: PydefAttribute, options: CodeStyleOptions) -> bool:
@@ -109,8 +128,6 @@ def _is_first_param_of_variadic_format(params: List[PydefAttribute], options: Co
     return next_param.name_cpp == "..." and (param.type_cpp == "const char *" or param.type_cpp == "const char*")
 
 
-
-
 def is_default_sizeof_param(param: PydefAttribute, options: CodeStyleOptions) -> bool:
     if not options.buffer_flag_replace_by_array:
         return False
@@ -121,7 +138,7 @@ def _param_buffer_replaced_by_array(param: PydefAttribute, options: CodeStyleOpt
     if not options.buffer_flag_replace_by_array:
         return param
 
-    for possible_buffer_type in _possible_buffer_pointer_types(options):
+    for possible_buffer_type in _possible_buffer_pointer_types(options) + _possible_buffer_template_pointer_types(options):
         if possible_buffer_type  in param.type_cpp:
             param_copy = copy.deepcopy(param)
             param_copy.type_cpp = param.type_cpp.replace(possible_buffer_type, "py::array &")
@@ -139,11 +156,27 @@ def _buffer_params_list(params: List[PydefAttribute], options: CodeStyleOptions)
     return r
 
 
-def _buffer_params_code(params: List[PydefAttribute], options: CodeStyleOptions) -> List[str]:
+def _make_call_function(function_infos: FunctionsInfos, is_method, options: CodeStyleOptions) -> List[str]:
+    return_str = "" if function_infos.function_code.return_type_cpp == "void" else "return"
+    attrs_function_call = _lambda_params_call(function_infos.get_parameters(), options)
+
+    if is_method:
+        r = f"    {return_str} self.{function_infos.function_name_cpp()}({attrs_function_call});"
+    else:
+        r = f"    {return_str} {function_infos.function_name_cpp()}({attrs_function_call});"
+
+    return [r]
+
+
+def _template_body_code(function_infos: FunctionsInfos, is_method: bool, options: CodeStyleOptions) -> List[str]:
+
+    params = function_infos.get_parameters()
 
     r = []
 
+    #
     # Process buffer params
+    #
     buffer_params_list=  _buffer_params_list(params, options)
     for buffer_param in buffer_params_list:
         code_template = """
@@ -154,18 +187,17 @@ def _buffer_params_code(params: List[PydefAttribute], options: CodeStyleOptions)
         code = code_template
         code = code.replace("PARAM_NAME_CPP", buffer_param.name_cpp)
 
-        param_type = buffer_param.type_cpp
-        if param_type == "T*" or param_type == "T *":
-            param_type = "void*"
-        if param_type == "const T*" or param_type == "const T *":
-            param_type = "const void*"
-        code = code.replace("PARAM_TYPE_CPP", param_type)
+        is_template_buffer = _looks_like_param_template_buffer(buffer_param, options)
 
+        param_type = "void*" if is_template_buffer else buffer_param.type_cpp
+        code = code.replace("PARAM_TYPE_CPP", param_type)
         code = code.replace("CAST_EXPR", f"({param_type})")
 
         r += code.split("\n")
 
+    #
     # Process sizeof params
+    #
     idx_sizeof_param = 0
     for sizeof_param in params:
         if not is_default_sizeof_param(sizeof_param, options):
@@ -186,6 +218,10 @@ def _buffer_params_code(params: List[PydefAttribute], options: CodeStyleOptions)
 
         idx_sizeof_param += 1
 
+    #
+    # call the function at the end of the lambda
+    #
+    r += _make_call_function(function_infos, is_method, options)
     return r
 
 
@@ -299,19 +335,12 @@ def make_function_wrapper_lambda(
         code_lines.append(line)
 
     attrs_lambda_signature = _lambda_params_signature(function_infos.get_parameters(), options, parent_struct_name)
-    attrs_function_call = _lambda_params_call(function_infos.get_parameters(), options)
 
     add_line(f"[]({attrs_lambda_signature})")
     add_line("{")
 
-    code_lines += _buffer_params_code(function_infos.parameters, options)
-
-    return_str = "" if function_infos.function_code.return_type_cpp == "void" else "return"
-
-    if len(parent_struct_name) > 0:
-        add_line(f"    {return_str} self.{function_infos.function_name_cpp()}({attrs_function_call});")
-    else:
-        add_line(f"    {return_str} {function_infos.function_name_cpp()}({attrs_function_call});")
+    is_method = len(parent_struct_name) > 0
+    code_lines += _template_body_code(function_infos, is_method, options)
 
     add_line("},")
     return "\n".join(code_lines)

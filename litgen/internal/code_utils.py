@@ -6,6 +6,7 @@ from dataclasses import dataclass
 import itertools
 import logging
 import string
+import difflib
 
 
 # Identifiers must begin with a letter or an underscore (_)
@@ -28,13 +29,19 @@ def overlapping_pairs(iterable):
         a = b
 
 
-def strip_empty_lines(code_lines: List[str]) -> List[str]:
+def strip_empty_lines_in_list(code_lines: List[str]) -> List[str]:
     code_lines = list(itertools.dropwhile(lambda s: len(s.strip())  == 0, code_lines))
     code_lines = list(reversed(code_lines))
     code_lines = list(itertools.dropwhile(lambda s: len(s.strip())  == 0, code_lines))
     code_lines = list(reversed(code_lines))
 
     return code_lines
+
+
+def strip_empty_lines(code_lines: str) -> str:
+    lines = code_lines.split("\n")
+    lines = strip_empty_lines_in_list(lines)
+    return "\n".join(lines)
 
 
 def to_snake_case(name):
@@ -167,21 +174,66 @@ def force_one_space(code: str) -> str:
     return result
 
 
-def are_codes_equal(code1: str, code2: str) -> str:
-    return force_one_space(code1) == force_one_space(code2)
+def count_spaces_at_start_of_line(line: str):
+    nb_spaces_this_line = 0
+    for char in line:
+        if char == " ":
+            nb_spaces_this_line += 1
+        else:
+            return nb_spaces_this_line
 
 
-def assert_are_codes_equal(code1: str, code2: str) -> str:
-    code1_processed = force_one_space(code1)
-    code2_processed = force_one_space(code2)
-    if not code1_processed == code2_processed:
+def compute_code_indent_size(code: str) -> int:
+    lines = code.split("\n")
+    for line in lines:
+        if len(line.replace(" ", "")) == 0:
+            continue
+        return count_spaces_at_start_of_line(line)
+    return 0
+
+
+def remove_trailing_spaces(line: str) -> str:
+    r = line
+    while r[-1:] == " ":
+        r = r[:-1]
+    return r
+
+
+def unindent_code(code: str) -> str:
+    indent_size = compute_code_indent_size(code)
+    what_to_replace = " " * indent_size
+
+    lines = code.split("\n")
+
+    processed_lines = []
+    for line in lines:
+        if line.startswith(what_to_replace):
+            processed_line = line[indent_size:]
+        else:
+            processed_line = line
+        processed_lines.append(remove_trailing_spaces(processed_line))
+    return "\n".join(processed_lines)
+
+
+def assert_are_codes_equal(generated_code: str, expected_code: str) -> str:
+    generated_processed = strip_empty_lines(unindent_code(generated_code))
+    expected_processed = strip_empty_lines(unindent_code(expected_code))
+    if not generated_processed == expected_processed:
+        diffs = difflib.unified_diff(expected_code, generated_code, fromfile="expected", tofile="generated")
+        diff_str = ""
+        for diff in diffs:
+            diff_str += str(diff)
+
         logging.error(f"""assert_are_codes_equal returns false 
-        with code1=
-{code1}
-        and code2=
-{code2}
+            with expected_processed=
+{expected_processed}
+                    and generated_processed=
+{generated_processed}
+                    and diff = 
+{str(diff_str)}
         """)
-    assert code1_processed == code2_processed
+
+    assert generated_processed == expected_processed
 
 
 def remove_end_of_line_cpp_comments(code: str) -> str:

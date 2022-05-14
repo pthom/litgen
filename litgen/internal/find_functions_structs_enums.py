@@ -51,7 +51,7 @@ def _fill_pydef_body_code(code_lines: List[str], pydef_type: CppCodeType, pydef_
                 pydef_code_inout.line_end = line_number + pydef_code_inout.line_start
         append_body_line(body_line)
 
-    body_lines = code_utils.strip_empty_lines(body_lines)
+    body_lines = code_utils.strip_empty_lines_in_list(body_lines)
     result = "\n".join(body_lines)
     pydef_code_inout.body_code_cpp = result
 

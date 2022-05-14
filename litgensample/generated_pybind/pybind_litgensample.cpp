@@ -9,6 +9,11 @@
 //#include "imgui_helper.hpp"
 //#include "leaked_ptr.hpp"
 
+void foo()
+{
+    int64_t r;
+}
+
 namespace py = pybind11;
 
 
@@ -99,10 +104,10 @@ void py_init_module_litgensample(py::module& m)
                 return mul_inside_array<uint32_t>((uint32_t *)array_buffer, array_count, factor);
             else if (array_type == 'i')
                 return mul_inside_array<int32_t>((int32_t *)array_buffer, array_count, factor);
-    else if (array_type == 'L')
-        return mul_inside_array<__UINT64_TYPE__>((__UINT64_TYPE__ *)array_buffer, array_count, factor);
-    else if (array_type == 'l')
-        return mul_inside_array<__INT64_TYPE__>((__INT64_TYPE__ *)array_buffer, array_count, factor);
+            else if (array_type == 'L')
+                return mul_inside_array<uint64_t>((uint64_t *)array_buffer, array_count, factor);
+            else if (array_type == 'l')
+                return mul_inside_array<int64_t>((int64_t *)array_buffer, array_count, factor);
             else if (array_type == 'f')
                 return mul_inside_array<float>((float *)array_buffer, array_count, factor);
             else if (array_type == 'd')
@@ -111,8 +116,6 @@ void py_init_module_litgensample(py::module& m)
                 return mul_inside_array<long double>((long double *)array_buffer, array_count, factor);
             else
                 throw std::runtime_error(std::string("mul_inside_array unexpected array type: ") + array_type);
-
-            //mul_inside_array(array_buffer, array_count, factor);
         },
         py::arg("array"),
         py::arg("factor"),

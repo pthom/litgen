@@ -90,10 +90,11 @@ class CodeStyleOptions:
     # C Buffers to py::array
     #
     buffer_flag_replace_by_array = False
-    buffer_inner_types = [] # of type List[str]. Could be ["T", "void"], which would mean that `T*` and `void *` are considered as buffers
+    buffer_types = ["uint8_t"] # of type List[str]. Which means that `uint8_t*` are considered as possible buffers
+    buffer_template_types = ["T"] # Which means that templated functions using a buffer use T as a templated name
     buffer_size_regexes = [
-        make_regex_any_variable_ending_with("count"),
-        make_regex_any_variable_starting_with("count"),
+        make_regex_any_variable_ending_with("count"),   # any variable name ending with count or Count
+        make_regex_any_variable_starting_with("count"), # any variable name starting with count or Count
         make_regex_any_variable_ending_with("size"),
         make_regex_any_variable_starting_with("size"),
     ]
@@ -133,7 +134,8 @@ def code_style_implot():
     options.code_replacements = _code_replacements.standard_replacements()
 
     options.buffer_flag_replace_by_array = True
-    options.buffer_inner_types = ["T", "void"]
+    options.buffer_types = ["void"]
+    options.buffer_template_types = ["T"]
 
     options.function_exclude_regexes = [
         ####################################################
