@@ -38,14 +38,14 @@ namespace LiterateGeneratorExample
     }
 
 
-    // Modify an array by adding a value to its elements
+    // Modify an array by adding a value to its elements (*non* template function)
     MY_API inline void add_inside_array(uint8_t* array, size_t array_size, uint8_t number_to_add)
     {
         for (size_t i  = 0; i < array_size; ++i)
             array[i] += number_to_add;
     }
 
-    // Modify an array by adding a value to its elements
+    // Modify an array by multiplying its elements (template function!)
     MY_API template<typename T> void mul_inside_array(T* array, size_t array_size, double factor)
     {
         for (size_t i  = 0; i < array_size; ++i)
