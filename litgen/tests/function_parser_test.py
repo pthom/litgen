@@ -43,6 +43,29 @@ def test_try_parse_function_name_from_declaration():
 
     test_complex()
 
+    def test_inline():
+        code = "IMPLOT_API inline int foo() { return 42;}"
+        pydef = call_parse(code)
+        assert pydef.name_cpp == "foo"
+        assert pydef.return_type_cpp == "int"
+
+    test_inline()
+
+    def test_template():
+        code = "IMPLOT_API template<typename T> std::vector<T> foo() { return {};}"
+        pydef = call_parse(code)
+        assert pydef.name_cpp == "foo"
+        assert pydef.return_type_cpp == "std::vector<T>"
+
+    test_template()
+
+    def test_template_inline():
+        code = "IMPLOT_API template<typename T> inline std::vector<T> foo() { return {};}"
+        pydef = call_parse(code)
+        assert pydef.name_cpp == "foo"
+        assert pydef.return_type_cpp == "std::vector<T>"
+
+    test_template_inline()
 
 
 def test_split_function_parameters():

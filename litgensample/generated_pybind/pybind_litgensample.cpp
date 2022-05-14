@@ -67,14 +67,125 @@ void py_init_module_litgensample(py::module& m)
     );
 
 
-    m.def("add_inside_array",
-        [](py::array & array, uint8_t number_to_add)
+    m.def("test_with_one_const_buffer",
+        [](const py::array & values)
         {
-            // convert array (py::array&) to C standard buffer
-            uint8_t* array_buffer = (uint8_t*) array.data();
+            // convert values (py::array&) to C standard buffer (const)
+            const void* values_buffer = values.data();
+            int values_count = values.shape()[0];
+            
+            return test_with_one_const_buffer(static_cast<const int8_t*>(values_buffer), values_count);
+        },
+        py::arg("values"),
+        ""
+    );
+
+
+    m.def("test_with_one_nonconst_buffer",
+        [](py::array & values)
+        {
+            // convert values (py::array&) to C standard buffer (mutable)
+            void* values_buffer = values.mutable_data();
+            int values_count = values.shape()[0];
+            
+            test_with_one_nonconst_buffer(static_cast<int8_t*>(values_buffer), values_count);
+        },
+        py::arg("values"),
+        ""
+    );
+
+
+    m.def("test_with_one_template_buffer",
+        [](const py::array & values)
+        {
+            // convert values (py::array&) to C standard buffer (const)
+            const void* values_buffer = values.data();
+            int values_count = values.shape()[0];
+            
+            char array_type = values.dtype().char_();
+            if (array_type == 'B')
+                return test_with_one_template_buffer(static_cast<const uint8_t*>(values_buffer), values_count);
+            if (array_type == 'b')
+                return test_with_one_template_buffer(static_cast<const int8_t*>(values_buffer), values_count);
+            if (array_type == 'H')
+                return test_with_one_template_buffer(static_cast<const uint16_t*>(values_buffer), values_count);
+            if (array_type == 'h')
+                return test_with_one_template_buffer(static_cast<const int16_t*>(values_buffer), values_count);
+            if (array_type == 'I')
+                return test_with_one_template_buffer(static_cast<const uint32_t*>(values_buffer), values_count);
+            if (array_type == 'i')
+                return test_with_one_template_buffer(static_cast<const int32_t*>(values_buffer), values_count);
+            if (array_type == 'L')
+                return test_with_one_template_buffer(static_cast<const uint64_t*>(values_buffer), values_count);
+            if (array_type == 'l')
+                return test_with_one_template_buffer(static_cast<const int64_t*>(values_buffer), values_count);
+            if (array_type == 'f')
+                return test_with_one_template_buffer(static_cast<const float*>(values_buffer), values_count);
+            if (array_type == 'd')
+                return test_with_one_template_buffer(static_cast<const double*>(values_buffer), values_count);
+            if (array_type == 'g')
+                return test_with_one_template_buffer(static_cast<const long double*>(values_buffer), values_count);
+
+            // If we arrive here, the array type is not supported!
+            throw std::runtime_error(std::string("Bad array type: ") + array_type );
+        },
+        py::arg("values"),
+        ""
+    );
+
+
+    m.def("test_with_two_template_buffers",
+        [](const py::array & values1, py::array & values2)
+        {
+            // convert values1 (py::array&) to C standard buffer (const)
+            const void* values1_buffer = values1.data();
+            int values1_count = values1.shape()[0];
+            
+            // convert values2 (py::array&) to C standard buffer (mutable)
+            void* values2_buffer = values2.mutable_data();
+            int values2_count = values2.shape()[0];
+            
+            char array_type = values1.dtype().char_();
+            if (array_type == 'B')
+                return test_with_two_template_buffers(static_cast<const uint8_t*>(values1_buffer), static_cast<uint8_t*>(values2_buffer), values1_count);
+            if (array_type == 'b')
+                return test_with_two_template_buffers(static_cast<const int8_t*>(values1_buffer), static_cast<int8_t*>(values2_buffer), values1_count);
+            if (array_type == 'H')
+                return test_with_two_template_buffers(static_cast<const uint16_t*>(values1_buffer), static_cast<uint16_t*>(values2_buffer), values1_count);
+            if (array_type == 'h')
+                return test_with_two_template_buffers(static_cast<const int16_t*>(values1_buffer), static_cast<int16_t*>(values2_buffer), values1_count);
+            if (array_type == 'I')
+                return test_with_two_template_buffers(static_cast<const uint32_t*>(values1_buffer), static_cast<uint32_t*>(values2_buffer), values1_count);
+            if (array_type == 'i')
+                return test_with_two_template_buffers(static_cast<const int32_t*>(values1_buffer), static_cast<int32_t*>(values2_buffer), values1_count);
+            if (array_type == 'L')
+                return test_with_two_template_buffers(static_cast<const uint64_t*>(values1_buffer), static_cast<uint64_t*>(values2_buffer), values1_count);
+            if (array_type == 'l')
+                return test_with_two_template_buffers(static_cast<const int64_t*>(values1_buffer), static_cast<int64_t*>(values2_buffer), values1_count);
+            if (array_type == 'f')
+                return test_with_two_template_buffers(static_cast<const float*>(values1_buffer), static_cast<float*>(values2_buffer), values1_count);
+            if (array_type == 'd')
+                return test_with_two_template_buffers(static_cast<const double*>(values1_buffer), static_cast<double*>(values2_buffer), values1_count);
+            if (array_type == 'g')
+                return test_with_two_template_buffers(static_cast<const long double*>(values1_buffer), static_cast<long double*>(values2_buffer), values1_count);
+
+            // If we arrive here, the array type is not supported!
+            throw std::runtime_error(std::string("Bad array type: ") + array_type );
+        },
+        py::arg("values1"),
+        py::arg("values2"),
+        ""
+    );
+
+
+    m.def("add_inside_array",
+        [](upy::array & array, uint8_t number_to_add)
+        {
+            // convert array (py::array&) to C standard buffer (mutable)
+            void* array_buffer = array.mutable_data();
             int array_count = array.shape()[0];
-                
-            return add_inside_array(array_buffer, array_count, number_to_add);
+            
+            add_inside_array(static_cast<uint8_t*>(array_buffer), array_count, number_to_add);
         },
         py::arg("array"),
         py::arg("number_to_add"),
@@ -85,37 +196,36 @@ void py_init_module_litgensample(py::module& m)
     m.def("mul_inside_array",
         [](py::array & array, double factor)
         {
-            // convert array (py::array&) to C standard buffer
-            void* array_buffer = (void*) array.data();
+            // convert array (py::array&) to C standard buffer (mutable)
+            void* array_buffer = array.mutable_data();
             int array_count = array.shape()[0];
-
-            printf("array.dtype().char_()=%c\n", array.dtype().char_());
-
+            
             char array_type = array.dtype().char_();
             if (array_type == 'B')
-                return mul_inside_array<uint8_t>((uint8_t *)array_buffer, array_count, factor);
-            else if (array_type == 'b')
-                return mul_inside_array<int8_t>((int8_t *)array_buffer, array_count, factor);
-            else if (array_type == 'H')
-                return mul_inside_array<uint16_t>((uint16_t *)array_buffer, array_count, factor);
-            else if (array_type == 'h')
-                return mul_inside_array<int16_t>((int16_t *)array_buffer, array_count, factor);
-            else if (array_type == 'I')
-                return mul_inside_array<uint32_t>((uint32_t *)array_buffer, array_count, factor);
-            else if (array_type == 'i')
-                return mul_inside_array<int32_t>((int32_t *)array_buffer, array_count, factor);
-            else if (array_type == 'L')
-                return mul_inside_array<uint64_t>((uint64_t *)array_buffer, array_count, factor);
-            else if (array_type == 'l')
-                return mul_inside_array<int64_t>((int64_t *)array_buffer, array_count, factor);
-            else if (array_type == 'f')
-                return mul_inside_array<float>((float *)array_buffer, array_count, factor);
-            else if (array_type == 'd')
-                return mul_inside_array<double>((double *)array_buffer, array_count, factor);
-            else if (array_type == 'g')
-                return mul_inside_array<long double>((long double *)array_buffer, array_count, factor);
-            else
-                throw std::runtime_error(std::string("mul_inside_array unexpected array type: ") + array_type);
+                mul_inside_array(static_cast<uint8_t*>(array_buffer), array_count, factor);
+            if (array_type == 'b')
+                mul_inside_array(static_cast<int8_t*>(array_buffer), array_count, factor);
+            if (array_type == 'H')
+                mul_inside_array(static_cast<uint16_t*>(array_buffer), array_count, factor);
+            if (array_type == 'h')
+                mul_inside_array(static_cast<int16_t*>(array_buffer), array_count, factor);
+            if (array_type == 'I')
+                mul_inside_array(static_cast<uint32_t*>(array_buffer), array_count, factor);
+            if (array_type == 'i')
+                mul_inside_array(static_cast<int32_t*>(array_buffer), array_count, factor);
+            if (array_type == 'L')
+                mul_inside_array(static_cast<uint64_t*>(array_buffer), array_count, factor);
+            if (array_type == 'l')
+                mul_inside_array(static_cast<int64_t*>(array_buffer), array_count, factor);
+            if (array_type == 'f')
+                mul_inside_array(static_cast<float*>(array_buffer), array_count, factor);
+            if (array_type == 'd')
+                mul_inside_array(static_cast<double*>(array_buffer), array_count, factor);
+            if (array_type == 'g')
+                mul_inside_array(static_cast<long double*>(array_buffer), array_count, factor);
+
+            // If we arrive here, the array type is not supported!
+            throw std::runtime_error(std::string("Bad array type: ") + array_type );
         },
         py::arg("array"),
         py::arg("factor"),

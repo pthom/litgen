@@ -112,6 +112,26 @@ def _is_param_buffer_at_idx(params: List[PydefAttribute], options: CodeStyleOpti
     return False
 
 
+def _contains_template_buffer(params: List[PydefAttribute], options: CodeStyleOptions) -> bool:
+    result = False
+    buffer_params_list=  _buffer_params_list(params, options)
+    for buffer_param in buffer_params_list:
+        is_template_buffer = _looks_like_param_template_buffer(buffer_param, options)
+        if is_template_buffer:
+            result = True
+    return result
+
+
+def _first_template_buffer_param(params: List[PydefAttribute], options: CodeStyleOptions) -> Optional[PydefAttribute]:
+    buffer_params_list=  _buffer_params_list(params, options)
+    for buffer_param in buffer_params_list:
+        is_template_buffer = _looks_like_param_template_buffer(buffer_param, options)
+        if is_template_buffer:
+            return buffer_param
+    return None
+
+
+
 def is_param_variadic_format(params: List[PydefAttribute], options: CodeStyleOptions, idx_param: int) -> bool:
     if idx_param == 0:
         return False
@@ -157,15 +177,34 @@ def _buffer_params_list(params: List[PydefAttribute], options: CodeStyleOptions)
 
 
 def _make_call_function(function_infos: FunctionsInfos, is_method, options: CodeStyleOptions) -> List[str]:
-    return_str = "" if function_infos.function_code.return_type_cpp == "void" else "return"
-    attrs_function_call = _lambda_params_call(function_infos.get_parameters(), options)
+    is_template = _contains_template_buffer(function_infos.get_parameters(), options)
+    first_template_buffer_param = _first_template_buffer_param(function_infos.get_parameters(), options)
+    return_str = "" if function_infos.function_code.return_type_cpp == "void" else "return "
+    self_prefix = "self." if is_method else ""
 
-    if is_method:
-        r = f"    {return_str} self.{function_infos.function_name_cpp()}({attrs_function_call});"
+    code_lines = []
+    if is_template:
+        assert first_template_buffer_param is not None
+        code_lines.append(f"    char array_type = {first_template_buffer_param.name_cpp}.dtype().char_();")
+
+        for py_array_type in code_types.py_array_types():
+
+            cast_type = code_types.py_array_type_to_cpp_type(py_array_type) + "*"
+
+            code_lines.append(f"    if (array_type == '{py_array_type}')")
+            attrs_function_call = _lambda_params_call(function_infos.get_parameters(), options, cast_type)
+            code_lines.append(f"        {return_str}{self_prefix}{function_infos.function_name_cpp()}({attrs_function_call});")
+
+        code_lines.append("")
+        code_lines.append(f'    // If we arrive here, the array type is not supported!')
+        code_lines.append(f'    throw std::runtime_error(std::string("Bad array type: ") + array_type );')
+
     else:
-        r = f"    {return_str} {function_infos.function_name_cpp()}({attrs_function_call});"
+        cast_type = None
+        attrs_function_call = _lambda_params_call(function_infos.get_parameters(), options, cast_type)
+        code_lines.append(f"    {return_str}{self_prefix}{function_infos.function_name_cpp()}({attrs_function_call});")
 
-    return [r]
+    return code_lines
 
 
 def _template_body_code(function_infos: FunctionsInfos, is_method: bool, options: CodeStyleOptions) -> List[str]:
@@ -179,19 +218,25 @@ def _template_body_code(function_infos: FunctionsInfos, is_method: bool, options
     #
     buffer_params_list=  _buffer_params_list(params, options)
     for buffer_param in buffer_params_list:
-        code_template = """
-    // convert PARAM_NAME_CPP (py::array&) to C standard buffer
-    PARAM_TYPE_CPP PARAM_NAME_CPP_buffer = CAST_EXPR PARAM_NAME_CPP.data();
-    int PARAM_NAME_CPP_count = PARAM_NAME_CPP.shape()[0];
-        """[1:]
-        code = code_template
-        code = code.replace("PARAM_NAME_CPP", buffer_param.name_cpp)
-
+        is_const = buffer_param.type_cpp.startswith("const")
         is_template_buffer = _looks_like_param_template_buffer(buffer_param, options)
 
-        param_type = "void*" if is_template_buffer else buffer_param.type_cpp
-        code = code.replace("PARAM_TYPE_CPP", param_type)
-        code = code.replace("CAST_EXPR", f"({param_type})")
+        if is_const:
+            code_template = """
+                // convert PARAM_NAME_CPP (py::array&) to C standard buffer (const)
+                const void* PARAM_NAME_CPP_buffer = PARAM_NAME_CPP.data();
+                int PARAM_NAME_CPP_count = PARAM_NAME_CPP.shape()[0];
+            """[1:]
+        else:
+            code_template = """
+                // convert PARAM_NAME_CPP (py::array&) to C standard buffer (mutable)
+                void* PARAM_NAME_CPP_buffer = PARAM_NAME_CPP.mutable_data();
+                int PARAM_NAME_CPP_count = PARAM_NAME_CPP.shape()[0];
+            """[1:]
+        code_template = code_utils.indent_code_force(code_template, 4)
+
+        code = code_template
+        code = code.replace("PARAM_NAME_CPP", buffer_param.name_cpp)
 
         r += code.split("\n")
 
@@ -269,7 +314,9 @@ def _lambda_params_signature(
 
 def _lambda_params_call(
         params: List[PydefAttribute],
-        options: CodeStyleOptions) -> str:
+        options: CodeStyleOptions,
+        forced_cast_type: Optional[str]
+        ) -> str:
 
     if not options.buffer_flag_replace_by_array:
         return pydef_attributes_as_cpp_function_params(params)
@@ -288,7 +335,15 @@ def _lambda_params_call(
         if _is_param_buffer_at_idx(params, options, idx_param):
             buffer_param = buffer_params_list[idx_buffer_params_list]
             buffer_variable_name = f"{buffer_param.name_cpp}_buffer"
-            new_params_code.append(buffer_variable_name)
+
+            cast_type_this_param = buffer_param.type_cpp
+            if forced_cast_type is not None:
+                cast_type_this_param = forced_cast_type
+                if buffer_param.type_cpp.startswith("const"):
+                    cast_type_this_param = "const " + cast_type_this_param
+
+            param_code = f"static_cast<{cast_type_this_param}>({buffer_variable_name})"
+            new_params_code.append(param_code)
             idx_buffer_params_list += 1
             flag_replaced = True
         # Process count params: replace by variable created in the lambda

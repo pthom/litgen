@@ -214,3 +214,34 @@ class EnumCpp98Infos():
         return self.enum_code.name_cpp
 
 
+"""
+In python and numpy we have the following correspondence:
+
+Given a py::array, we can get its inner type with a char identifier like this: 
+    char array_type = array.dtype().char_();
+
+Here is the table of correspondences:
+"""
+_PY_ARRAY_TYPE_TO_CPP_TYPE = {
+    'B' : 'uint8_t',
+    'b' : 'int8_t',
+    'H' : 'uint16_t',
+    'h' : 'int16_t',
+    'I' : 'uint32_t',
+    'i' : 'int32_t',
+    'L' : 'uint64_t',
+    'l' : 'int64_t',
+    'f' : 'float',
+    'd' : 'double',
+    'g' : 'long double'
+}
+
+
+def py_array_types():
+    return _PY_ARRAY_TYPE_TO_CPP_TYPE.keys()
+
+
+def py_array_type_to_cpp_type(py_array_type: str) -> str:
+    assert len(py_array_type) == 1
+    assert py_array_type in _PY_ARRAY_TYPE_TO_CPP_TYPE
+    return _PY_ARRAY_TYPE_TO_CPP_TYPE[py_array_type]

@@ -11,89 +11,129 @@ import function_wrapper_lambda
 
 
 def test_make_function_wrapper_lambda():
+
     options = code_style_implot()
+    options.functions_api_prefixes = ["MY_API"]
 
     def make_lambda_code(code):
         fn_info = function_parser.parse_one_function_declaration(code, options)
         lambda_code = function_wrapper_lambda.make_function_wrapper_lambda(fn_info, options)
         return lambda_code
 
-    # def easy_test():
-    #     code = 'IMPLOT_API void SetupAxisFormat(ImAxis axis, const char* fmt = "%.3f");'
-    #     code_utils.assert_are_codes_equal(
-    #         make_lambda_code(code),
-    #         """
-    #         [](ImAxis axis, const char* fmt = "%.3f")
-    #         {
-    #             SetupAxisFormat(axis, fmt);
-    #         },
-    #         """)
-    #
-    # easy_test()
+    def easy_test():
+        code = 'MY_API void SetupAxisFormat(ImAxis axis, const char* fmt = "%.3f");'
+        code_utils.assert_are_codes_equal(
+            make_lambda_code(code),
+            """
+                [](ImAxis axis, const char* fmt = "%.3f")
+                {
+                    SetupAxisFormat(axis, fmt);
+                },
+            """)
 
-    def test_with_one_buffer():
+    easy_test()
+
+    def test_with_one_const_buffer():
         function_decl = """
-        IMPLOT_TMP int Foo1(T* values, int count);
+            MY_API inline int8_t test_with_one_const_buffer(const int8_t* values, int count)
+        """
+
+        expected_lambda_code_buffer = """
+            [](const py::array & values)
+            {
+                // convert values (py::array&) to C standard buffer (const)
+                const void* values_buffer = values.data();
+                int values_count = values.shape()[0];
+
+                return test_with_one_const_buffer(static_cast<const int8_t*>(values_buffer), values_count);
+            },
+        """
+
+        code_utils.assert_are_codes_equal( make_lambda_code(function_decl), expected_lambda_code_buffer )
+
+    test_with_one_const_buffer()
+
+    def test_with_one_nonconst_buffer():
+        function_decl = """
+            MY_API inline void test_with_one_nonconst_buffer(int8_t* values, int count)
         """
 
         expected_lambda_code_buffer = """
             [](py::array & values)
             {
-                // convert values (py::array&) to C standard buffer
-                void* values_buffer = (void*) values.data();
+                // convert values (py::array&) to C standard buffer (mutable)
+                void* values_buffer = values.mutable_data();
                 int values_count = values.shape()[0];
-            
-                return Foo1(values_buffer, values_count);
+
+                test_with_one_nonconst_buffer(static_cast<int8_t*>(values_buffer), values_count);
             },
         """
 
         code_utils.assert_are_codes_equal( make_lambda_code(function_decl), expected_lambda_code_buffer )
 
-    test_with_one_buffer()
+    test_with_one_nonconst_buffer()
 
-    def test_with_four_buffers():
-        options.buffer_types = ["uint8_t"]
+    def test_with_two_template_buffers():
         function_decl = """
-            IMPLOT_TMP int Foo4(const uint8_t* values_x, const uint8_t* values_y, const uint8_t* values_z, uint8_t* values_w, int count);
+            MY_API template<typename T> inline int test_with_two_template_buffers(const T* values1, T* values2, int count)
         """
 
         expected_lambda_code_buffer = """
-            [](const py::array & values_x, const py::array & values_y, const py::array & values_z, py::array & values_w)
+            [](const py::array & values1, py::array & values2)
             {
-                // convert values_x (py::array&) to C standard buffer
-                const uint8_t* values_x_buffer = (const uint8_t*) values_x.data();
-                int values_x_count = values_x.shape()[0];
-
-                // convert values_y (py::array&) to C standard buffer
-                const uint8_t* values_y_buffer = (const uint8_t*) values_y.data();
-                int values_y_count = values_y.shape()[0];
-
-                // convert values_z (py::array&) to C standard buffer
-                const uint8_t* values_z_buffer = (const uint8_t*) values_z.data();
-                int values_z_count = values_z.shape()[0];
-
-                // convert values_w (py::array&) to C standard buffer
-                uint8_t* values_w_buffer = (uint8_t*) values_w.data();
-                int values_w_count = values_w.shape()[0];
-
-                return Foo4(values_x_buffer, values_y_buffer, values_z_buffer, values_w_buffer, values_x_count);
+                // convert values1 (py::array&) to C standard buffer (const)
+                const void* values1_buffer = values1.data();
+                int values1_count = values1.shape()[0];
+            
+                // convert values2 (py::array&) to C standard buffer (mutable)
+                void* values2_buffer = values2.mutable_data();
+                int values2_count = values2.shape()[0];
+            
+                char array_type = values1.dtype().char_();
+                if (array_type == 'B')
+                    return test_with_two_template_buffers(static_cast<const uint8_t*>(values1_buffer), static_cast<uint8_t*>(values2_buffer), values1_count);
+                if (array_type == 'b')
+                    return test_with_two_template_buffers(static_cast<const int8_t*>(values1_buffer), static_cast<int8_t*>(values2_buffer), values1_count);
+                if (array_type == 'H')
+                    return test_with_two_template_buffers(static_cast<const uint16_t*>(values1_buffer), static_cast<uint16_t*>(values2_buffer), values1_count);
+                if (array_type == 'h')
+                    return test_with_two_template_buffers(static_cast<const int16_t*>(values1_buffer), static_cast<int16_t*>(values2_buffer), values1_count);
+                if (array_type == 'I')
+                    return test_with_two_template_buffers(static_cast<const uint32_t*>(values1_buffer), static_cast<uint32_t*>(values2_buffer), values1_count);
+                if (array_type == 'i')
+                    return test_with_two_template_buffers(static_cast<const int32_t*>(values1_buffer), static_cast<int32_t*>(values2_buffer), values1_count);
+                if (array_type == 'L')
+                    return test_with_two_template_buffers(static_cast<const uint64_t*>(values1_buffer), static_cast<uint64_t*>(values2_buffer), values1_count);
+                if (array_type == 'l')
+                    return test_with_two_template_buffers(static_cast<const int64_t*>(values1_buffer), static_cast<int64_t*>(values2_buffer), values1_count);
+                if (array_type == 'f')
+                    return test_with_two_template_buffers(static_cast<const float*>(values1_buffer), static_cast<float*>(values2_buffer), values1_count);
+                if (array_type == 'd')
+                    return test_with_two_template_buffers(static_cast<const double*>(values1_buffer), static_cast<double*>(values2_buffer), values1_count);
+                if (array_type == 'g')
+                    return test_with_two_template_buffers(static_cast<const long double*>(values1_buffer), static_cast<long double*>(values2_buffer), values1_count);
+            
+                // If we arrive here, the array type is not supported!
+                throw std::runtime_error(std::string("Bad array type: ") + array_type );
             },
         """
+
         code_utils.assert_are_codes_equal( make_lambda_code(function_decl), expected_lambda_code_buffer )
 
-    test_with_four_buffers()
+    test_with_two_template_buffers()
+
 
     def test_with_variadic_fmt():
         function_decl = """
-            IMPLOT_API void TagX(double x, const ImVec4& color, const char* fmt, ...)           IM_FMTARGS(3);
+            MY_API void TagX(double x, const ImVec4& color, const char* fmt, ...)           IM_FMTARGS(3);
         """
 
         expected_lambda_code_buffer = """
             [](double x, const ImVec4& color, const char* fmt)
             {
-                 TagX(x, color, "%s", fmt);
+                TagX(x, color, "%s", fmt);
             },
-        """
+           """
 
         options.buffer_flag_replace_by_array = True
         code_utils.assert_are_codes_equal( make_lambda_code(function_decl), expected_lambda_code_buffer )
@@ -103,19 +143,19 @@ def test_make_function_wrapper_lambda():
     def test_with_modifiable_int():
         function_decl = """
             // Modify an array by adding a value to its elements
-            IMPLOT_API inline void add_inside_array(int* array, int array_size, int number_to_add);
+            MY_API inline void add_inside_array(int* array, int array_size, int number_to_add);
         """
 
         expected_lambda_code_buffer = """
             [](py::array & array, int number_to_add)
             {
-                // convert array (py::array&) to C standard buffer
-                int* array_buffer = (int*) array.data();
+                // convert array (py::array&) to C standard buffer (mutable)
+                void* array_buffer = array.mutable_data();
                 int array_count = array.shape()[0];
-
-                return add_inside_array(array_buffer, array_count, number_to_add);
+            
+                add_inside_array(static_cast<int*>(array_buffer), array_count, number_to_add);
             },
-    """
+        """
 
         options.buffer_flag_replace_by_array = True
         options.buffer_types = ["T", "void", "int"]
