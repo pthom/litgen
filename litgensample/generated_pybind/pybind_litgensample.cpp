@@ -74,6 +74,15 @@ void py_init_module_litgensample(py::module& m)
             const void* values_buffer = values.data();
             int values_count = values.shape()[0];
             
+            char array_type = values.dtype().char_();
+            if (array_type != 'b')
+                throw std::runtime_error(std::string(R"msg(
+                        Bad type!  Expected a buffer of native type:
+                                    const int8_t*
+                                Which is equivalent to 
+                                    b
+                                (using py::array::dtype().char_() as an id)
+                    )msg"));
             return test_with_one_const_buffer(static_cast<const int8_t*>(values_buffer), values_count);
         },
         py::arg("values"),
@@ -88,6 +97,15 @@ void py_init_module_litgensample(py::module& m)
             void* values_buffer = values.mutable_data();
             int values_count = values.shape()[0];
             
+            char array_type = values.dtype().char_();
+            if (array_type != 'b')
+                throw std::runtime_error(std::string(R"msg(
+                        Bad type!  Expected a buffer of native type:
+                                    int8_t*
+                                Which is equivalent to 
+                                    b
+                                (using py::array::dtype().char_() as an id)
+                    )msg"));
             test_with_one_nonconst_buffer(static_cast<int8_t*>(values_buffer), values_count);
         },
         py::arg("values"),
@@ -185,6 +203,15 @@ void py_init_module_litgensample(py::module& m)
             void* array_buffer = array.mutable_data();
             int array_count = array.shape()[0];
             
+            char array_type = array.dtype().char_();
+            if (array_type != 'B')
+                throw std::runtime_error(std::string(R"msg(
+                        Bad type!  Expected a buffer of native type:
+                                    uint8_t*
+                                Which is equivalent to 
+                                    B
+                                (using py::array::dtype().char_() as an id)
+                    )msg"));
             add_inside_array(static_cast<uint8_t*>(array_buffer), array_count, number_to_add);
         },
         py::arg("array"),

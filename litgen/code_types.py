@@ -245,3 +245,15 @@ def py_array_type_to_cpp_type(py_array_type: str) -> str:
     assert len(py_array_type) == 1
     assert py_array_type in _PY_ARRAY_TYPE_TO_CPP_TYPE
     return _PY_ARRAY_TYPE_TO_CPP_TYPE[py_array_type]
+
+
+def cpp_type_to_py_array_type(cpp_type: str) -> str:
+    cpp_type = cpp_type.strip()
+    if cpp_type.endswith("*"):
+        cpp_type = cpp_type[:-1].strip()
+    if cpp_type.startswith("const "):
+        cpp_type = cpp_type.replace("const ", "").strip()
+    for py_type, tested_cpp_type in _PY_ARRAY_TYPE_TO_CPP_TYPE.items():
+        if tested_cpp_type == cpp_type:
+            return py_type
+    raise CppParseException(f"cpp_type_to_py_array_type: unhandled type {cpp_type}")

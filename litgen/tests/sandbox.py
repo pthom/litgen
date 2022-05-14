@@ -7,7 +7,7 @@ options = litgen.code_style_implot()
 options.functions_api_prefixes = ["MY_API"]
 
 code = '''
-    MY_API inline void add_inside_array(uint8_t* array, size_t array_size, uint8_t number_to_add)
+    MY_API inline void add_inside_array(int8_t* array, int array_size, int number_to_add);
     '''
 function_info = function_parser.parse_one_function_declaration(code, options)
 generated_code = function_generator.generate_pydef_function_cpp_code(function_info, options)

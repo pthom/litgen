@@ -44,7 +44,16 @@ def test_make_function_wrapper_lambda():
                 // convert values (py::array&) to C standard buffer (const)
                 const void* values_buffer = values.data();
                 int values_count = values.shape()[0];
-
+            
+                char array_type = values.dtype().char_();
+                if (array_type != 'b')
+                    throw std::runtime_error(std::string(R"msg(
+                            Bad type!  Expected a buffer of native type:
+                                        const int8_t*
+                                    Which is equivalent to
+                                        b
+                                    (using py::array::dtype().char_() as an id)
+                        )msg"));
                 return test_with_one_const_buffer(static_cast<const int8_t*>(values_buffer), values_count);
             },
         """
@@ -64,7 +73,16 @@ def test_make_function_wrapper_lambda():
                 // convert values (py::array&) to C standard buffer (mutable)
                 void* values_buffer = values.mutable_data();
                 int values_count = values.shape()[0];
-
+            
+                char array_type = values.dtype().char_();
+                if (array_type != 'b')
+                    throw std::runtime_error(std::string(R"msg(
+                            Bad type!  Expected a buffer of native type:
+                                        int8_t*
+                                    Which is equivalent to
+                                        b
+                                    (using py::array::dtype().char_() as an id)
+                        )msg"));
                 test_with_one_nonconst_buffer(static_cast<int8_t*>(values_buffer), values_count);
             },
         """
@@ -143,7 +161,7 @@ def test_make_function_wrapper_lambda():
     def test_with_modifiable_int():
         function_decl = """
             // Modify an array by adding a value to its elements
-            MY_API inline void add_inside_array(int* array, int array_size, int number_to_add);
+            MY_API inline void add_inside_array(int8_t* array, int array_size, int number_to_add);
         """
 
         expected_lambda_code_buffer = """
@@ -153,12 +171,20 @@ def test_make_function_wrapper_lambda():
                 void* array_buffer = array.mutable_data();
                 int array_count = array.shape()[0];
             
-                add_inside_array(static_cast<int*>(array_buffer), array_count, number_to_add);
+                char array_type = array.dtype().char_();
+                if (array_type != 'b')
+                    throw std::runtime_error(std::string(R"msg(
+                            Bad type!  Expected a buffer of native type:
+                                        int8_t*
+                                    Which is equivalent to
+                                        b
+                                    (using py::array::dtype().char_() as an id)
+                        )msg"));
+                add_inside_array(static_cast<int8_t*>(array_buffer), array_count, number_to_add);
             },
         """
 
         options.buffer_flag_replace_by_array = True
-        options.buffer_types = ["T", "void", "int"]
         generated_code = make_lambda_code(function_decl)
         code_utils.assert_are_codes_equal( generated_code, expected_lambda_code_buffer )
 

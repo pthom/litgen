@@ -70,7 +70,7 @@ def _looks_like_param_template_buffer(param: PydefAttribute, options: CodeStyleO
     return False
 
 
-def _looks_like_param_buffer(param: PydefAttribute, options: CodeStyleOptions) -> bool:
+def _looks_like_param_buffer_template_or_not(param: PydefAttribute, options: CodeStyleOptions) -> bool:
     return _looks_like_param_buffer_standard(param, options) or _looks_like_param_template_buffer(param, options)
 
 
@@ -85,17 +85,17 @@ def is_buffer_size_name_at_idx(params: List[PydefAttribute], options: CodeStyleO
     # Test if this is a size preceded by a buffer
     param_n0 = params[idx_param]
     param_n1 = params[idx_param - 1]
-    if _looks_like_buffer_size_name(param_n0, options) and _looks_like_param_buffer(param_n1, options):
+    if _looks_like_buffer_size_name(param_n0, options) and _looks_like_param_buffer_template_or_not(param_n1, options):
         return True
 
     return False
 
 
-def _is_param_buffer_at_idx(params: List[PydefAttribute], options: CodeStyleOptions, idx_param: int) -> bool:
+def _is_param_buffer_at_idx_template_or_not(params: List[PydefAttribute], options: CodeStyleOptions, idx_param: int) -> bool:
     if idx_param > len(params) - 2:
         return False
 
-    if not _looks_like_param_buffer(params[idx_param], options):
+    if not _looks_like_param_buffer_template_or_not(params[idx_param], options):
         return False
 
     # Test if this is a buffer (optionally followed by other buffers), then followed by a size
@@ -104,7 +104,7 @@ def _is_param_buffer_at_idx(params: List[PydefAttribute], options: CodeStyleOpti
     while nb_additional_buffers < 5 and idx_next_param < len(params):
         if _looks_like_buffer_size_name(params[idx_next_param], options):
             return True
-        if not _looks_like_param_buffer(params[idx_next_param], options):
+        if not _looks_like_param_buffer_template_or_not(params[idx_next_param], options):
             return False
         idx_next_param += 1
         nb_additional_buffers += 1
@@ -112,7 +112,16 @@ def _is_param_buffer_at_idx(params: List[PydefAttribute], options: CodeStyleOpti
     return False
 
 
+def _contains_buffer(params: List[PydefAttribute], options: CodeStyleOptions) -> bool:
+    for idx in range(len(params)):
+        if _is_param_buffer_at_idx_template_or_not(params, options, idx):
+            return True
+    return False
+
+
 def _contains_template_buffer(params: List[PydefAttribute], options: CodeStyleOptions) -> bool:
+    if not _contains_buffer(params, options):
+        return False
     result = False
     buffer_params_list=  _buffer_params_list(params, options)
     for buffer_param in buffer_params_list:
@@ -130,6 +139,14 @@ def _first_template_buffer_param(params: List[PydefAttribute], options: CodeStyl
             return buffer_param
     return None
 
+
+def _first_buffer_param(params: List[PydefAttribute], options: CodeStyleOptions) -> Optional[PydefAttribute]:
+    buffer_params_list=  _buffer_params_list(params, options)
+    for buffer_param in buffer_params_list:
+        is_buffer = _looks_like_param_buffer_template_or_not(buffer_param, options)
+        if is_buffer:
+            return buffer_param
+    return None
 
 
 def is_param_variadic_format(params: List[PydefAttribute], options: CodeStyleOptions, idx_param: int) -> bool:
@@ -171,14 +188,15 @@ def _buffer_params_list(params: List[PydefAttribute], options: CodeStyleOptions)
         return []
     r = []
     for idx_param, param in enumerate(params):
-        if _is_param_buffer_at_idx(params, options, idx_param):
+        if _is_param_buffer_at_idx_template_or_not(params, options, idx_param):
             r.append(param)
     return r
 
 
 def _make_call_function(function_infos: FunctionsInfos, is_method, options: CodeStyleOptions) -> List[str]:
-    is_template = _contains_template_buffer(function_infos.get_parameters(), options)
-    first_template_buffer_param = _first_template_buffer_param(function_infos.get_parameters(), options)
+    params = function_infos.get_parameters()
+    is_template = _contains_template_buffer(params, options)
+    first_template_buffer_param = _first_template_buffer_param(params, options)
     return_str = "" if function_infos.function_code.return_type_cpp == "void" else "return "
     self_prefix = "self." if is_method else ""
 
@@ -192,7 +210,7 @@ def _make_call_function(function_infos: FunctionsInfos, is_method, options: Code
             cast_type = code_types.py_array_type_to_cpp_type(py_array_type) + "*"
 
             code_lines.append(f"    if (array_type == '{py_array_type}')")
-            attrs_function_call = _lambda_params_call(function_infos.get_parameters(), options, cast_type)
+            attrs_function_call = _lambda_params_call(params, options, cast_type)
             code_lines.append(f"        {return_str}{self_prefix}{function_infos.function_name_cpp()}({attrs_function_call});")
 
         code_lines.append("")
@@ -200,8 +218,24 @@ def _make_call_function(function_infos: FunctionsInfos, is_method, options: Code
         code_lines.append(f'    throw std::runtime_error(std::string("Bad array type: ") + array_type );')
 
     else:
+        if _contains_buffer(params, options):
+            first_buffer_param = _first_buffer_param(params, options)
+            expected_py_array_type = code_types.cpp_type_to_py_array_type(first_buffer_param.type_cpp)
+            error_message = f"""
+                Bad type!  Expected a buffer of native type:
+                            {first_buffer_param.type_cpp}
+                        Which is equivalent to 
+                            {expected_py_array_type}
+                        (using py::array::dtype().char_() as an id)
+            """
+            error_message_docstring = f'std::string(R"msg({error_message})msg")'
+
+            code_lines.append(f"    char array_type = {first_buffer_param.name_cpp}.dtype().char_();")
+            code_lines.append(f"    if (array_type != '{expected_py_array_type}')")
+            code_lines.append(f'        throw std::runtime_error({error_message_docstring});')
+
         cast_type = None
-        attrs_function_call = _lambda_params_call(function_infos.get_parameters(), options, cast_type)
+        attrs_function_call = _lambda_params_call(params, options, cast_type)
         code_lines.append(f"    {return_str}{self_prefix}{function_infos.function_name_cpp()}({attrs_function_call});")
 
     return code_lines
@@ -220,7 +254,6 @@ def _template_body_code(function_infos: FunctionsInfos, is_method: bool, options
     for buffer_param in buffer_params_list:
         is_const = buffer_param.type_cpp.startswith("const")
         is_template_buffer = _looks_like_param_template_buffer(buffer_param, options)
-
         if is_const:
             code_template = """
                 // convert PARAM_NAME_CPP (py::array&) to C standard buffer (const)
@@ -288,7 +321,7 @@ def _lambda_params_signature(
         param = params[idx_param]
         flag_replaced = False
         # Process buffer params: replace by array
-        if _is_param_buffer_at_idx(params, options, idx_param):
+        if _is_param_buffer_at_idx_template_or_not(params, options, idx_param):
             new_param = _param_buffer_replaced_by_array(param, options)
             new_params.append(new_param)
             flag_replaced = True
@@ -332,7 +365,7 @@ def _lambda_params_call(
         param = params[idx_param]
         flag_replaced = False
         # Process buffer params: replace by buffer created in the lambda
-        if _is_param_buffer_at_idx(params, options, idx_param):
+        if _is_param_buffer_at_idx_template_or_not(params, options, idx_param):
             buffer_param = buffer_params_list[idx_buffer_params_list]
             buffer_variable_name = f"{buffer_param.name_cpp}_buffer"
 
