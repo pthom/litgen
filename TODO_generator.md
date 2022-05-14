@@ -1,10 +1,11 @@
 - OK ! Test overidde function
 - OK! Test keyword inline
-- Test array: Semi Ok. 
-  - Type size inconsistency
-  - Template functions?
-  - Check authorized buffer_types in options (uint8_t ok, not char, etc) 
-  - test avec const 
+- OK! Test array: Semi Ok. 
+  ok Type size inconsistency
+  ok Template functions?
+  ok Check authorized buffer_types in options (uint8_t ok, not char, etc) 
+  ok test avec const 
+
 - Test leaked_ptr
 - Test use class
 - private / public

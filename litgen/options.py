@@ -99,6 +99,29 @@ class CodeStyleOptions:
         make_regex_any_variable_starting_with("size"),
     ]
 
+    def assert_buffer_types_are_ok(self):
+        # the only authorized type are those for which the size is known with certainty
+        # (except for float, double and long double for which there seems to be no reliable standard)
+        authorized_types = [
+            'uint8_t',
+            'int8_t',
+            'uint16_t',
+            'int16_t',
+            'uint32_t',
+            'int32_t',
+            'uint64_t',
+            'int64_t',
+            'float',
+            'double',
+            'long double'
+        ]
+        for buffer_type in self.buffer_types:
+            if buffer_type not in authorized_types:
+                raise ValueError(f"""
+                    options.build_types contains an unauthorized type: {buffer_type}
+                    Authorized types are: { ", ".join(authorized_types) }
+                    """)
+
 
 def code_style_immvision() -> CodeStyleOptions:
     options = CodeStyleOptions()

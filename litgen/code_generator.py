@@ -62,6 +62,8 @@ def generate_pydef_cpp(
     assert os.path.isfile(input_cpp_header)
     assert os.path.isfile(output_cpp_module_file)
 
+    options.assert_buffer_types_are_ok()
+
     header_code = code_utils.read_text_file(input_cpp_header)
 
     generated_code = ""
