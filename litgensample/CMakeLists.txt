@@ -1,3 +1,10 @@
+cmake_minimum_required(VERSION 3.2)
+project(litgensample)
+
+# Add pybind11
+add_subdirectory(external/pybind11)
+
+
 set(CMAKE_CXX_STANDARD 20)
 
 set(cpp_lib_name litgensample_library)

@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.2)
-project(pybind11_litgen)
+project(litgen)
 
 
 #
@@ -13,5 +13,4 @@ else()
 endif()
 
 
-add_subdirectory(external/pybind11)
 add_subdirectory(litgensample)
