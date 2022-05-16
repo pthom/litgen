@@ -13,4 +13,4 @@ else()
 endif()
 
 
-add_subdirectory(litgensample)
+add_subdirectory(example)
