@@ -41,5 +41,16 @@ def test_struct_stub():
     print(generated_code)
 
 
+def test_doc():
+    import litgen, litgen.internal.function_parser, litgen.internal.function_wrapper_lambda
+    options = litgen.code_style_implot()
+    code = '''  // Adds two number"
+                   IMPLOT_API int add(int a, int b = 10);
+                   '''
+    infos = litgen.internal.function_parser.parse_one_function_declaration(code, options)
+    litgen.internal.function_wrapper_lambda.make_function_wrapper_lambda(infos, options, "Foo")
+
+
 # test_struct_pydef()
-test_struct_stub()
+#test_struct_stub()
+test_doc()

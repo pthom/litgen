@@ -184,6 +184,6 @@ def parse_all_function_declarations(code: str, options: CodeStyleOptions) -> Lis
 
 
 def parse_one_function_declaration(code: str, options: CodeStyleOptions) -> FunctionsInfos:
-    aux = parse_all_function_declarations(code, options)
-    assert len(aux) == 1
-    return aux[0]
+    found_functions = parse_all_function_declarations(code, options)
+    assert len(found_functions) == 1
+    return found_functions[0]
