@@ -83,15 +83,7 @@ setup(
     long_description=long_description,
     long_description_content_type='text/markdown',
     url='https://github.com/pthom/pybind11_literate_generator',
-    #ext_modules=[CMakeExtension('litgensample')],
-
-    #packages = ["litgensample", "litgen"],
-    #package_dir={"": ""},
-
-    #packages = ["litgen"],
-    packages = find_packages(where='.'),
-
-
+    ext_modules=[CMakeExtension('litgensample')],
     cmdclass=dict(build_ext=CMakeBuild),
     zip_safe=False,
 )
