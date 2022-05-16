@@ -2,8 +2,8 @@ import os, sys; THIS_DIR = os.path.dirname(__file__); sys.path = [THIS_DIR + "/.
 import litgen
 
 THIS_DIR = os.path.dirname(__file__)
-CPP_HEADERS_DIR = THIS_DIR
-CPP_GENERATED_PYBIND_DIR = THIS_DIR + "/generated_pybind"
+CPP_HEADERS_DIR = THIS_DIR + "/bound_library"
+CPP_GENERATED_PYBIND_DIR = THIS_DIR + "/binding_module"
 assert os.path.isdir(CPP_HEADERS_DIR)
 assert os.path.isdir(CPP_GENERATED_PYBIND_DIR)
 
@@ -28,7 +28,7 @@ def my_code_style_options():
 def autogenerate():
     input_cpp_header =  CPP_HEADERS_DIR + "/litgensample.h"
     output_cpp_module = CPP_GENERATED_PYBIND_DIR + "/pybind_litgensample.cpp"
-    output_stub_pyi_file = CPP_GENERATED_PYBIND_DIR + "/litgensample.pyi"
+    output_stub_pyi_file = CPP_GENERATED_PYBIND_DIR + "/litgensample/__init__.pyi"
 
     # Configure options
     options = my_code_style_options()
@@ -37,6 +37,7 @@ def autogenerate():
                     output_cpp_module_file=output_cpp_module,
                     options=options,
                     output_stub_pyi_file=output_stub_pyi_file)
+
 
 if __name__ == "__main__":
     print("autogenerate_litgensample")

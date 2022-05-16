@@ -7,3 +7,5 @@ cmake-build-*/
 **/*.egg-info/
 *.so
 *.pyd
+
+voiladoc/

@@ -6,22 +6,28 @@
   ok Check authorized buffer_types in options (uint8_t ok, not char, etc) 
   ok test avec const 
 
-- stub / pyi 
+- install package litgen via setup
+- renommer repo github en litgen
 
-- Lire le fichier entier comme une struct (i.e avec Variant)
-    Comme ça, on pourra reproduire toute la doc !
+- stub / pyi
+  - Lire le fichier entier comme une struct (i.e avec Variant)
+      Comme ça, on pourra reproduire toute la doc !
 
 - toString en hackant str:
     l.Foo.__str__ = my_str
 
-def checkChessboard(img: Mat, size) -> typing.Any:
-    """checkChessboard(img, size) -> retval"""
-    
 
-OK! Test use class
+- Resoudre les exclude de implot en ajoutant des callback qui hackent:
+  soit les params d'une fonction
+  soit le body de la lambda
+
 
 Lire doc pybind / numpy and eigen...
 Voir https://github.com/python/typeshed and https://github.com/microsoft/python-type-stubs
+
+
+Dyndoc !!!!
+    Export Text, HTML, Image, Take Screenshots, etc
 
 
 

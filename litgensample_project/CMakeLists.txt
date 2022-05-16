@@ -13,11 +13,11 @@ set(autgenerate_name litgensample_autogen)
 
 
 #
-# Build C++ library
+# Build Bound C++ library (this is just a dummy example external library)
 #
-set(cpp_lib_sources litgensample.cpp litgensample.h)
+set(cpp_lib_sources bound_library/litgensample.cpp bound_library/litgensample.h)
 add_library(${cpp_lib_name} ${cpp_lib_sources})
-target_include_directories(${cpp_lib_name} PUBLIC ${CMAKE_CURRENT_LIST_DIR})
+target_include_directories(${cpp_lib_name} PUBLIC ${CMAKE_CURRENT_LIST_DIR}/bound_library)
 
 
 #
@@ -26,7 +26,7 @@ target_include_directories(${cpp_lib_name} PUBLIC ${CMAKE_CURRENT_LIST_DIR})
 add_custom_target(
     ${autgenerate_name}
     COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_LIST_DIR}/autogenerate_litgensample.py
-    DEPENDS ${CMAKE_CURRENT_LIST_DIR}/litgensample.h
+    DEPENDS ${CMAKE_CURRENT_LIST_DIR}/bound_library/litgensample.h
     COMMENT "autogenerate python bindings"
 
     # We can't use BYPRODUCTS, since
@@ -40,10 +40,11 @@ add_dependencies(${cpp_lib_name} ${autgenerate_name})
 #
 # Build python module that uses the library
 #
-set(python_module_sources generated_pybind/module.cpp generated_pybind/pybind_litgensample.cpp)
+set(python_module_sources binding_module/module.cpp binding_module/pybind_litgensample.cpp)
 pybind11_add_module(${python_module_name} ${python_module_sources})
 target_link_libraries(${python_module_name} PRIVATE ${cpp_lib_name})
 
+install(TARGETS ${python_module_name} DESTINATION .)
 
 #
 # Copy the python module to the project dir post build (for editable mode)
@@ -53,5 +54,5 @@ add_custom_command(
     POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy
     $<TARGET_FILE:${python_module_name}>
-    ${PROJECT_SOURCE_DIR}/$<TARGET_FILE_NAME:${python_module_name}>
+    ${CMAKE_CURRENT_LIST_DIR}/binding_module/litgensample/$<TARGET_FILE_NAME:${python_module_name}>
 )
