@@ -8,7 +8,10 @@ void py_init_module_litgensample(py::module& m);
 // void py_init_my_submodule(py::module&);
 
 
-PYBIND11_MODULE(litgensample, m)
+// This builds the native python module (`_cpp_litgensample`),
+//    it will be wrapped in a standard python module `litgensample,
+//    which is located in bindings/litgensample
+PYBIND11_MODULE(_cpp_litgensample, m)
 {
     #ifdef VERSION_INFO
     m.attr("__version__") = VERSION_INFO;

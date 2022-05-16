@@ -6,6 +6,8 @@
   ok Check authorized buffer_types in options (uint8_t ok, not char, etc) 
   ok test avec const 
 
+gnargh / CI deconne(litgensample semble vide) . Test avec docker
+
 - install package litgen via setup
 - renommer repo github en litgen
 

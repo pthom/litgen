@@ -18,7 +18,7 @@ jobs:
         source venv/bin/activate
         pip install -r requirements-dev.txt
 
-    - name: Build python module
+    - name: Build python module litgen
       run: |
         source venv/bin/activate
         pip install -v .
@@ -27,9 +27,15 @@ jobs:
       run: |
         source venv/bin/activate
         pytest litgen/tests
-        
-    - name: Import and use the generated native package
+
+    - name: Build example python module, litgensample and _cpp_litgensample
       run: |
         source venv/bin/activate
-        python -c "import litgensample; print(litgensample.add(59, 41));"      
+        cd example
+        pip install -v .
+
+    - name: Import and use the generated example package
+      run: |
+        source venv/bin/activate
+        python -c "import litgensample; print(litgensample.add(59, 41));"
         

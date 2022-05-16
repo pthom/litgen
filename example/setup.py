@@ -10,8 +10,8 @@ setup(
     url='https://github.com/pthom/pybind11_literate_generator',
 
     packages=(["litgensample"]),
-    package_dir={"": "binding_module"},
-    cmake_install_dir="binding_module/litgensample",
+    package_dir={"": "bindings"},
+    cmake_install_dir="bindings/litgensample",
     include_package_data=True,
     extras_require={"test": ["pytest"]},
     python_requires=">=3.6",
