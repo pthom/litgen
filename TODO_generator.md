@@ -1,18 +1,22 @@
-- OK ! Test overidde function
-- OK! Test keyword inline
-- OK! Test array: Semi Ok. 
-  ok Type size inconsistency
-  ok Template functions?
-  ok Check authorized buffer_types in options (uint8_t ok, not char, etc) 
-  ok test avec const 
+srcml!!!
+    Pass 1: code to xml
+    Pass 2: Creer un arbre de trucs
+        
+        structs
+        enum
+        function
 
 
-code coverage
 
+Generic recursion:
+    First parser pass -> pydef
+    Second parser pass -> fill structs, enums, functions, etc
 
-X install package litgen via setup
-X renommer repo github en litgen
+    code_types: deriver de  Pydef
 
+test function declaree sur plusieurs lignes
+
+- 
 - stub / pyi
   - Lire le fichier entier comme une struct (i.e avec Variant)
       Comme ça, on pourra reproduire toute la doc !
