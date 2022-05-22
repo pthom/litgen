@@ -9,7 +9,7 @@ def test_generate_python_wrapper_init_code():
     def test_simple():
         code = """
         // Adds two numbers
-        IMMVISION_API int add(int a, int b);    
+        IMMVISION_API int add(int a, int b);
         """
         options = code_style_immvision()
         function_infos = function_parser.parse_one_function_declaration(code, options)
@@ -44,9 +44,9 @@ def test_generate_python_wrapper_init_code():
                 """Display an image, with full user control: zoom, pan, watch pixels, etc.
                 requires OpenGL initialized.
                 """
-            
+
                 _cpp_immvision.transfer_imgui_context_python_to_cpp()
-            
+
                 r = _cpp_immvision.image(label_id, mat, params)
                 return r
         '''
@@ -96,7 +96,7 @@ def test_generate_pydef_function_cpp_code() -> str:
                     // convert values (py::array&) to C standard buffer (const)
                     const void* values_buffer = values.data();
                     int values_count = values.shape()[0];
-            
+
                     char array_type = values.dtype().char_();
                     if (array_type == 'B')
                         { PlotScatter(static_cast<const uint8_t*>(values_buffer), values_count); return; }
@@ -120,7 +120,7 @@ def test_generate_pydef_function_cpp_code() -> str:
                         { PlotScatter(static_cast<const double*>(values_buffer), values_count); return; }
                     if (array_type == 'g')
                         { PlotScatter(static_cast<const long double*>(values_buffer), values_count); return; }
-            
+
                     // If we arrive here, the array type is not supported!
                     throw std::runtime_error(std::string("Bad array type: ") + array_type );
                 },
@@ -135,7 +135,7 @@ def test_generate_pydef_function_cpp_code() -> str:
     def test_immvision():
         options = code_style_immvision()
         code = """
-            // Display an image (requires OpenGL initialized) 
+            // Display an image (requires OpenGL initialized)
             IMMVISION_API bool Image(const std::string& label_id, const cv::Mat& mat, ImageParams* params);
         """
         function_info = function_parser.parse_one_function_declaration(code, options)

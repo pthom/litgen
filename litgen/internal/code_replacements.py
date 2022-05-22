@@ -65,12 +65,17 @@ def standard_replacements() -> List[StringReplacement]:
     
     \bconst char*\b -> str
     \bconst char *\b -> str
+    
     \bsize_t\b -> int
     \bstd::string\(\) -> ""
     \bstd::string\b -> str
     \btrue\b -> True
     \bfalse\b -> False
     \bstd::vector<([\w:]*)> -> list[\1]
+    \bvoid\b -> None
+    
+    \bpy::array\b -> numpy.ndarray
+    
     \bconst\b -> REMOVE
     & -> REMOVE
     \* -> REMOVE

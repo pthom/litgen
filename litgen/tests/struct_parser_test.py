@@ -64,7 +64,6 @@ def test_try_parse_attribute():
         assert attr.comment_cpp == "X comment"
         assert attr.line_number == 22
         assert attr.name_cpp == "xStart"
-        assert attr.name_python() == "x_start"
         assert attr.type_cpp == "double"
         assert attr.default_value_cpp == "1"
     test_easy()
@@ -76,7 +75,6 @@ def test_try_parse_attribute():
         attrs = struct_parser._try_parse_struct_member(state, line_number, code_line)
         assert len(attrs) == 1
         attr = attrs[0]
-        assert attr.name_python() == "watched_pixels"
         assert attr.type_cpp == "std::vector <cv::Point>"
         assert attr.comment_cpp == "std::vector <cv::Point> is empty by default"
         assert attr.default_value_cpp == ""
@@ -101,7 +99,6 @@ def test_try_parse_attribute():
         assert attrs[0].name_cpp == "xStart"
         assert attrs[0].type_cpp == "double"
         assert attrs[0].default_value_cpp == "0.1"
-        assert attrs[3].name_python() == "w_start"
     test_multiple_attributes()
 
     def test_method_declaration():

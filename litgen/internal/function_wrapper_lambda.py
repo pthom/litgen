@@ -35,7 +35,8 @@ Shall be wrapped like this:
 """
 from code_types import *
 import code_types
-import code_utils
+import code_utils, cpp_to_python
+import function_parser
 from options import CodeStyleOptions
 import copy
 
@@ -206,9 +207,9 @@ def _make_call_function(function_infos: FunctionsInfos, is_method, options: Code
         assert first_template_buffer_param is not None
         code_lines.append(f"    char array_type = {first_template_buffer_param.name_cpp}.dtype().char_();")
 
-        for py_array_type in code_types.py_array_types():
+        for py_array_type in cpp_to_python.py_array_types():
 
-            cast_type = code_types.py_array_type_to_cpp_type(py_array_type) + "*"
+            cast_type = cpp_to_python.py_array_type_to_cpp_type(py_array_type) + "*"
 
             code_lines.append(f"    if (array_type == '{py_array_type}')")
             attrs_function_call = _lambda_params_call(params, options, cast_type)
@@ -221,7 +222,7 @@ def _make_call_function(function_infos: FunctionsInfos, is_method, options: Code
     else:
         if _contains_buffer(params, options):
             first_buffer_param = _first_buffer_param(params, options)
-            expected_py_array_type = code_types.cpp_type_to_py_array_type(first_buffer_param.type_cpp)
+            expected_py_array_type = cpp_to_python.cpp_type_to_py_array_type(first_buffer_param.type_cpp)
             error_message = f"""
                 Bad type!  Expected a buffer of native type:
                             {first_buffer_param.type_cpp}
@@ -417,6 +418,19 @@ def make_function_wrapper_lambda(
         options: CodeStyleOptions,
         parent_struct_name: str = ""
         ) -> str:
+    """
+    ````voiladoc
+>>> import litgen, litgen.internal.function_parser, litgen.internal.function_wrapper_lambda
+>>> options = litgen.code_style_implot()
+>>> code = "IMPLOT_API int add(int a, int b = 10);"
+>>> infos = litgen.internal.function_parser.parse_one_function_declaration(code, options)
+>>> print(litgen.internal.function_wrapper_lambda.make_function_wrapper_lambda(infos, options, "Foo"))
+[](Foo& self, int a, int b = 10)
+{
+    { return self.add(a, b); }
+},
+    ````
+    """
 
     code_lines = []
 

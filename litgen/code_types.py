@@ -2,7 +2,6 @@ from dataclasses import dataclass as _dataclass, field as _field
 from enum import Enum as _Enum
 from typing import Optional, List, Tuple
 
-from options import CodeStyleOptions
 
 import internal.code_replacements as _code_replacements
 
@@ -39,15 +38,6 @@ class PydefCode:
         self.return_type_cpp = return_type_cpp
         self.declaration_line = declaration_line
 
-    def title_python(self, options: CodeStyleOptions):
-        return _code_replacements.apply_code_replacements(self.title_cpp, options.code_replacements)
-
-    def return_type_python(self, options: CodeStyleOptions):
-        if self.return_type_cpp == "void":
-            return "None"
-        return _code_replacements.apply_code_replacements(self.return_type_cpp, options.code_replacements)
-
-
 
 @_dataclass
 class PydefAttribute:
@@ -56,21 +46,6 @@ class PydefAttribute:
     default_value_cpp: str = ""
     comment_cpp: str = ""
     line_number: int = 0  # from the body_code line_start
-
-    def name_python(self):
-        import code_utils
-        return code_utils.to_snake_case(self.name_cpp)
-
-    def type_python(self, options: CodeStyleOptions):
-        if self.type_cpp == "py::array":
-            return "numpy.ndarray"
-        return _code_replacements.apply_code_replacements(self.type_cpp, options.code_replacements)
-
-    def default_value_python(self, options: CodeStyleOptions):
-        return _code_replacements.apply_code_replacements(self.default_value_cpp, options.code_replacements)
-
-    def comment_python(self, options: CodeStyleOptions):
-        return _code_replacements.apply_code_replacements(self.comment_cpp, options.code_replacements)
 
     def _default_value_cpp_str(self):
         return " = " + self.default_value_cpp if len(self.default_value_cpp) > 0 else ""
@@ -83,32 +58,19 @@ class PydefAttribute:
         cpp_str = f"{self.name_cpp}"
         return cpp_str
 
-    def as_python_declaration(self, options: CodeStyleOptions):
-        python_str = f"{self.name_python()}"
-        if len(self.type_python(options)) > 0:
-            python_str += ": " + self.type_python(options)
-        if len(self.default_value_python(options)) > 0:
-            python_str += " = " + self.default_value_python(options)
-        return python_str
-
 
 def _pydef_attributes_as_cpp_declaration_with_default_values(attrs: List[PydefAttribute]) -> str:
     strs = map(lambda attr: attr.as_cpp_declaration_with_default_value(), attrs)
     return ", ".join(strs)
 
 
-def _pydef_attributes_as_types_only(attrs: List[PydefAttribute]) -> str:
+def _pydef_attributes_as_cpp_types_only(attrs: List[PydefAttribute]) -> str:
     strs = map(lambda attr: attr.type_cpp, attrs)
     return ", ".join(strs)
 
 
 def pydef_attributes_as_cpp_function_params(attrs: List[PydefAttribute]) -> str:
     strs = map(lambda attr: attr.as_cpp_function_param(), attrs)
-    return ", ".join(strs)
-
-
-def _pydef_attributes_as_python_declaration(attrs: List[PydefAttribute], options: CodeStyleOptions):
-    strs = map(lambda attr: attr.as_python_declaration(options), attrs)
     return ", ".join(strs)
 
 
@@ -144,9 +106,6 @@ class CodeRegionComment:
     comment_cpp: str = ""
     line_number: int = 0
 
-    def comment_python(self, options: CodeStyleOptions):
-        return _code_replacements.apply_code_replacements(self.comment_cpp, options.code_replacements)
-
     def as_multiline_cpp_comment(self, indentation: int):
         lines = self.comment_cpp.split("\n")
         spacing = " " * indentation
@@ -176,19 +135,8 @@ class FunctionsInfos:
     def function_name_cpp(self):
         return self.function_code.name_cpp
 
-    def function_name_python(self, options: CodeStyleOptions):
-        import code_utils
-        return code_utils.to_snake_case(self.function_name_cpp())
-
     def return_type_cpp(self):
         return self.function_code.return_type_cpp
-
-    def return_type_python(self, options: CodeStyleOptions):
-        return self.function_code.return_type_python(options)
-
-    def params_declaration_str_python(self, options: CodeStyleOptions):
-        strs = [param.as_python_declaration(options) for param in self.get_parameters() ]
-        return ", ".join(strs)
 
 
 @_dataclass
@@ -225,47 +173,3 @@ class EnumCpp98Infos():
     def enum_name(self):
         return self.enum_code.name_cpp
 
-
-"""
-In python and numpy we have the following correspondence:
-
-Given a py::array, we can get its inner type with a char identifier like this: 
-    char array_type = array.dtype().char_();
-
-Here is the table of correspondences:
-"""
-_PY_ARRAY_TYPE_TO_CPP_TYPE = {
-    'B' : 'uint8_t',
-    'b' : 'int8_t',
-    'H' : 'uint16_t',
-    'h' : 'int16_t',
-    'I' : 'uint32_t',
-    'i' : 'int32_t',
-    'L' : 'uint64_t',
-    'l' : 'int64_t',
-    'f' : 'float',
-    'd' : 'double',
-    'g' : 'long double'
-}
-
-
-def py_array_types():
-    return _PY_ARRAY_TYPE_TO_CPP_TYPE.keys()
-
-
-def py_array_type_to_cpp_type(py_array_type: str) -> str:
-    assert len(py_array_type) == 1
-    assert py_array_type in _PY_ARRAY_TYPE_TO_CPP_TYPE
-    return _PY_ARRAY_TYPE_TO_CPP_TYPE[py_array_type]
-
-
-def cpp_type_to_py_array_type(cpp_type: str) -> str:
-    cpp_type = cpp_type.strip()
-    if cpp_type.endswith("*"):
-        cpp_type = cpp_type[:-1].strip()
-    if cpp_type.startswith("const "):
-        cpp_type = cpp_type.replace("const ", "").strip()
-    for py_type, tested_cpp_type in _PY_ARRAY_TYPE_TO_CPP_TYPE.items():
-        if tested_cpp_type == cpp_type:
-            return py_type
-    raise CppParseException(f"cpp_type_to_py_array_type: unhandled type {cpp_type}")

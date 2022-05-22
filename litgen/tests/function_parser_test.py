@@ -11,7 +11,7 @@ def test_try_parse_function_name_from_declaration():
 
     def call_parse(code):
         function_parser._SCOPE_OBSERVER.reset()
-        pydef = function_parser.try_parse_function_name_from_declaration(code, options)
+        pydef = function_parser._try_parse_function_name_from_declaration(code, options)
         assert pydef is not None
         return pydef
 

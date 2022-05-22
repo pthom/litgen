@@ -5,6 +5,7 @@ from function_wrapper_lambda import \
     make_function_wrapper_lambda, make_method_wrapper_lambda, \
     is_default_sizeof_param, is_buffer_size_name_at_idx, is_param_variadic_format
 import code_utils
+import cpp_to_python
 
 
 def generate_python_wrapper_init_code(function_infos: FunctionsInfos, options: CodeStyleOptions) -> str:
@@ -20,8 +21,8 @@ def generate_python_wrapper_init_code(function_infos: FunctionsInfos, options: C
         '''
         _cpp_immvision.image_display(image, image_display_size, refresh_image)
     """
-    py_function_name = function_infos.function_name_python(options)
-    title = code_utils.indent_code(function_infos.function_code.title_python(options), 4)[4:]
+    py_function_name = cpp_to_python.function_name_to_python(function_infos.function_name_cpp(), options)
+    title = code_utils.indent_code(cpp_to_python.title_python(function_infos.function_code.title_cpp, options), 4)[4:]
 
     code_intro = f'def {py_function_name}(\n'
     param_line_template  = f'PARAM_NAME: PARAM_TYPE PARAM_DEFAULT'
@@ -31,12 +32,12 @@ def generate_python_wrapper_init_code(function_infos: FunctionsInfos, options: C
     param_lines = []
     for param in function_infos.get_parameters():
         param_line = param_line_template
-        param_line = param_line.replace("PARAM_TYPE", param.type_python(options))
-        param_line = param_line.replace("PARAM_NAME", param.name_python())
+        param_line = param_line.replace("PARAM_TYPE", cpp_to_python.cpp_type_to_python(param.type_cpp, options))
+        param_line = param_line.replace("PARAM_NAME", cpp_to_python.var_name_to_python(param.name_cpp, options))
         if len(param.default_value_cpp) > 0:
             param_line = param_line.replace(
                 "PARAM_DEFAULT",
-                " = " + param.default_value_python(options))
+                " = " + cpp_to_python.default_value_to_python(param.default_value_cpp, options))
         else:
             param_line = param_line.replace(" PARAM_DEFAULT", "")
         param_lines.append(param_line.strip())
@@ -58,10 +59,8 @@ def generate_python_wrapper_init_code(function_infos: FunctionsInfos, options: C
     if options.init_function_python_additional_code is not None:
         r += options.init_function_python_additional_code(function_infos)
     r = r + f"    r = {options.package_name_native}.{py_function_name}("
-    params_list = []
-    for param in function_infos.get_parameters():
-        params_list.append(param.name_python())
-    r = r + ", ".join(params_list)
+
+    r += cpp_to_python.params_names_to_python(function_infos.get_parameters(), options)
 
     r = r + ")\n"
     r = r + '    return r\n'
@@ -82,14 +81,15 @@ def pyarg_code(function_infos: FunctionsInfos, options: CodeStyleOptions) -> str
             else:
                 default_value_cpp = param.default_value_cpp
             param_line = code_inner_defaultvalue \
-                .replace("ARG_NAME_PYTHON", param.name_python()) \
+                .replace("ARG_NAME_PYTHON", cpp_to_python.var_name_to_python(param.name_cpp, options)) \
                 .replace("ARG_DEFAULT_VALUE", default_value_cpp)
         else:
             if is_buffer_size_name_at_idx(function_infos.get_parameters(), options, idx_param):
                 continue
             if  is_param_variadic_format(function_infos.parameters, options, idx_param):
                 continue
-            param_line= code_inner_nodefaultvalue.replace("ARG_NAME_PYTHON", param.name_python())
+            param_line= code_inner_nodefaultvalue.replace("ARG_NAME_PYTHON",
+                                                          cpp_to_python.var_name_to_python(param.name_cpp, options))
 
         param_lines.append(param_line)
 
@@ -107,7 +107,7 @@ def generate_pydef_function_cpp_code(
 
     is_method = len(parent_struct_name) > 0
 
-    fn_name_python = function_infos.function_name_python(options)
+    fn_name_python = cpp_to_python.function_name_to_python(function_infos.function_name_cpp(), options)
 
     code_intro = f'.def("{fn_name_python}",'
     if not is_method:
@@ -122,7 +122,7 @@ def generate_pydef_function_cpp_code(
     code_lines += pyarg_code(function_infos, options).split("\n")
 
     #  comment
-    comment_cpp = code_utils.format_cpp_comment_on_one_line(function_infos.function_code.title_python(options))
+    comment_cpp =  cpp_to_python.title_python_one_line(function_infos.function_code.title_cpp, options)
     code_lines += [f'    "{comment_cpp}"']
 
     # Return value policy
@@ -160,12 +160,12 @@ def generate_constructor_code(
 
     pyarg_str = pyarg_code(function_infos, options)
     pyarg_str = code_utils.reindent_code(pyarg_str, 4, True)
-    params_str = code_types._pydef_attributes_as_types_only(function_infos.get_parameters())
+    params_str = code_types._pydef_attributes_as_cpp_types_only(function_infos.get_parameters())
 
     code = code.replace("PARAMS", params_str)
     code = code.replace("PYARGS", pyarg_str)
     code = code.replace("CONSTRUCTOR_DOC",
-                        code_utils.format_cpp_comment_on_one_line(function_infos.function_code.title_python(options)) )
+                        cpp_to_python.title_python_one_line(function_infos.function_code.title_cpp, options))
 
     code = code_utils.unindent_code(code)
     code = code_utils.indent_code(code, 4)

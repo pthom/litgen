@@ -1,13 +1,14 @@
 from code_types import *
 from options import CodeStyleOptions
 import code_utils
+import cpp_to_python
 
 
 def generate_pydef_enum_cpp_98(enum_infos: EnumCpp98Infos, options: CodeStyleOptions) -> str:
     enum_name = enum_infos.enum_name()
 
     code_intro = f'    py::enum_<{enum_name}>(m, "{enum_name}", py::arithmetic(),\n'
-    comment = code_utils.format_cpp_comment_on_one_line(enum_infos.enum_code.title_python(options))
+    comment = cpp_to_python.title_python_one_line(enum_infos.enum_code.title_cpp, options)
     code_intro += f'        "{comment}")\n'
     code_inner = f'        .value("ATTR_NAME_PYTHON", ATTR_NAME_CPP, "(ATTR_COMMENT)")\n'
     code_outro = "    ;\n\n"

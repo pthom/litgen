@@ -3,6 +3,7 @@ import time
 
 from options import code_style_implot, code_style_immvision
 from code_types import *
+from options import CodeStyleOptions
 from internal import code_utils
 from internal import function_parser, enum_parser, struct_parser
 from internal import function_generator, enum_generator, struct_generator

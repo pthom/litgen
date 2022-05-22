@@ -67,7 +67,7 @@ def find_functions_struct_or_enums(
     if code_type == CppCodeType.ENUM_CPP_98:
         fn_try_parse_code_type = enum_parser.try_parse_enum_cpp_98_declaration
     if code_type == CppCodeType.FUNCTION:
-        fn_try_parse_code_type = function_parser.try_parse_function_name_from_declaration
+        fn_try_parse_code_type = function_parser._try_parse_function_name_from_declaration
     assert fn_try_parse_code_type is not None
 
     code_lines = whole_file_code.splitlines(keepends=False)
