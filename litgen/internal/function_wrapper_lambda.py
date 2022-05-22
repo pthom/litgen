@@ -311,7 +311,7 @@ def _lambda_params_signature(
         parent_struct_name: str = "") -> str:
 
     if not options.buffer_flag_replace_by_array:
-        return code_types._pydef_attributes_as_cpp_declaration_with_default_values(params)
+        return cpp_to_python.attrs_cpp_type_name_default(params)
 
     new_params: List[PydefAttribute] = []
 
@@ -344,7 +344,7 @@ def _lambda_params_signature(
 
         idx_param += 1
 
-    return code_types._pydef_attributes_as_cpp_declaration_with_default_values(new_params)
+    return cpp_to_python.attrs_cpp_type_name_default(new_params)
 
 
 def _lambda_params_call(
@@ -353,8 +353,12 @@ def _lambda_params_call(
         forced_cast_type: Optional[str]
         ) -> str:
 
+    def pydef_attributes_names_cpp(attrs: List[PydefAttribute]) -> str:
+        strs = map(lambda attr: attr.name_cpp, attrs)
+        return ", ".join(strs)
+
     if not options.buffer_flag_replace_by_array:
-        return pydef_attributes_as_cpp_function_params(params)
+        return pydef_attributes_names_cpp(params)
 
     buffer_params_list=  _buffer_params_list(params, options)
     idx_buffer_params_list = 0

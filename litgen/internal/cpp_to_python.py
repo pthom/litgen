@@ -26,6 +26,19 @@ def type_to_python(type_cpp: str, options: CodeStyleOptions) -> str:
     return code_replacements.apply_code_replacements(type_cpp, options.code_replacements)
 
 
+def attr_cpp_type_name_default(attr: PydefAttribute) -> str:
+    default_value_cpp_str = ""
+    if len(attr.default_value_cpp) > 0:
+        default_value_cpp_str = " = " + attr.default_value_cpp
+    cpp_str = f"{attr.type_cpp} {attr.name_cpp}{default_value_cpp_str}"
+    return cpp_str
+
+
+def attrs_cpp_type_name_default(attrs: List[PydefAttribute]) -> str:
+    strs = map(attr_cpp_type_name_default, attrs)
+    return ", ".join(strs)
+
+
 def attr_python_name_type_default(attr: PydefAttribute, options: CodeStyleOptions) -> str:
     var_name_python = var_name_to_python(attr.name_cpp, options)
     var_type_python = type_to_python(attr.type_cpp, options)

@@ -141,6 +141,15 @@ def format_cpp_comment_on_one_line(comment: str) -> str:
     return comment
 
 
+def format_cpp_comment_multiline(comment: str, indentation: int):
+    lines = comment.split("\n")
+    spacing = " " * indentation
+    def process_line(line):
+        return spacing + "// " + line
+    lines = list(map(process_line, lines))
+    return "\n".join(lines)
+
+
 def write_code_between_markers(
         inout_filename: str,
         code_marker_in: str,

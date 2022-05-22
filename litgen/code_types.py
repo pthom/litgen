@@ -47,32 +47,6 @@ class PydefAttribute:
     docstring_cpp: str = ""
     line_number: int = 0  # from the body_code line_start
 
-    def _default_value_cpp_str(self):
-        return " = " + self.default_value_cpp if len(self.default_value_cpp) > 0 else ""
-
-    def as_cpp_declaration_with_default_value(self):
-        cpp_str = f"{self.type_cpp} {self.name_cpp}{self._default_value_cpp_str()}"
-        return cpp_str
-
-    def as_cpp_function_param(self):
-        cpp_str = f"{self.name_cpp}"
-        return cpp_str
-
-
-def _pydef_attributes_as_cpp_declaration_with_default_values(attrs: List[PydefAttribute]) -> str:
-    strs = map(lambda attr: attr.as_cpp_declaration_with_default_value(), attrs)
-    return ", ".join(strs)
-
-
-def _pydef_attributes_as_cpp_types_only(attrs: List[PydefAttribute]) -> str:
-    strs = map(lambda attr: attr.type_cpp, attrs)
-    return ", ".join(strs)
-
-
-def pydef_attributes_as_cpp_function_params(attrs: List[PydefAttribute]) -> str:
-    strs = map(lambda attr: attr.as_cpp_function_param(), attrs)
-    return ", ".join(strs)
-
 
 @_dataclass
 class PydefEnumCpp98Value:
@@ -105,14 +79,6 @@ class CodeRegionComment:
     """
     docstring_cpp: str = ""
     line_number: int = 0
-
-    def as_multiline_cpp_comment(self, indentation: int):
-        lines = self.docstring_cpp.split("\n")
-        spacing = " " * indentation
-        def process_line(line):
-            return spacing + "// " + line
-        lines = list(map(process_line, lines))
-        return "\n".join(lines)
 
 
 @_dataclass

@@ -30,7 +30,7 @@ def generate_pydef_struct_cpp_code(struct_infos: StructInfos, options: CodeStyle
             code = code.replace("ATTR_COMMENT", cpp_to_python.docstring_python_one_line(attr.docstring_cpp, options))
             r = r + code
         if info.code_region_comment is not None:
-            r = r + info.code_region_comment.as_multiline_cpp_comment(4) + "\n"
+            r = r + code_utils.format_cpp_comment_multiline(info.code_region_comment.docstring_cpp, 4) + "\n"
         if info.method_infos is not None:
             r = r + function_generator.generate_pydef_method_cpp_code(info.method_infos, options, struct_name)
     r = r + code_outro

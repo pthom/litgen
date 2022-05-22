@@ -146,6 +146,10 @@ def generate_constructor_code(
         function_infos: FunctionsInfos,
         options: CodeStyleOptions) -> str:
 
+    def pydef_attributes_as_cpp_types_only(attrs: List[PydefAttribute]) -> str:
+        strs = map(lambda attr: attr.type_cpp, attrs)
+        return ", ".join(strs)
+
     # Default constructors are always generated!
     if len(function_infos.get_parameters()) == 0:
         return ""
@@ -160,7 +164,7 @@ def generate_constructor_code(
 
     pyarg_str = pyarg_code(function_infos, options)
     pyarg_str = code_utils.reindent_code(pyarg_str, 4, True)
-    params_str = code_types._pydef_attributes_as_cpp_types_only(function_infos.get_parameters())
+    params_str = pydef_attributes_as_cpp_types_only(function_infos.get_parameters())
 
     code = code.replace("PARAMS", params_str)
     code = code.replace("PYARGS", pyarg_str)
