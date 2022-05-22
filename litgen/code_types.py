@@ -16,17 +16,23 @@ class CppParseException(Exception):
 
 
 @_dataclass
-class PydefCode:
+class LineNumberedItem:
+    line_number: int = 0    # starting line of the struct / enum / function,
+                            # either in the whole code or inside a struct/enum
+
+
+@_dataclass
+class PydefCode(LineNumberedItem):
     """
+    Result of the first pass of the parser:
     Container for the code of either:
         * the body of a struct
         * the body of an enum
         * the parameters of a function declaration
     """
-    code_type: CppCodeType
+    code_type: CppCodeType = CppCodeType.STRUCT
     name_cpp: str = ""
-    docstring_cpp: str = ""          # the short title just one line before the struct or function declaration
-    line_start: int = 0          # starting line of the struct / enum / function in the whole code
+    docstring_cpp: str = ""      # the short title just one line before the struct or function declaration
     line_end: int = 0            # end line of the struct / enum / function
     body_code_cpp: str = ""      # the code inside the struct or enum body, or inside the function input params signature
     return_type_cpp: str = ""    # The return type (for functions only)
@@ -40,26 +46,24 @@ class PydefCode:
 
 
 @_dataclass
-class PydefAttribute:
+class PydefAttribute(LineNumberedItem):
     name_cpp: str = ""
     type_cpp: str = ""
     default_value_cpp: str = ""
     docstring_cpp: str = ""
-    line_number: int = 0  # from the body_code line_start
 
 
 @_dataclass
-class PydefEnumCpp98Value:
+class PydefEnumCpp98Value(LineNumberedItem):
     name_cpp: str = ""
     # name_python cannot be inferred from name_cpp in a C++ 98 enum (i.e. not enum class)
     # (for example in a C++ enum `ImplotCol_`, the value `ImPlotCol_Line` would be named `Line` in python)
     name_python: str = ""
     docstring_cpp: str = ""
-    line_number: int = 0  # from the body_code line_start
 
 
 @_dataclass
-class CodeRegionComment:
+class CodeRegionComment(LineNumberedItem):
     """
     A CodeRegionComment is the beginning of a "code region" inside a struct or enum
     It should look like this in the C++ header file:
@@ -78,7 +82,6 @@ class CodeRegionComment:
 
     """
     docstring_cpp: str = ""
-    line_number: int = 0
 
 
 @_dataclass

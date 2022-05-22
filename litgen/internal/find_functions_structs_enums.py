@@ -11,7 +11,7 @@ def _fill_pydef_body_code(code_lines: List[str], pydef_type: CppCodeType, pydef_
     """Fills the body of a struct, function or enum, given a partially filled PydefCode
     """
     body_lines = []
-    lines_under_pydef = code_lines[pydef_code_inout.line_start:]
+    lines_under_pydef = code_lines[pydef_code_inout.line_number:]
     flag_entered_body = False
     flag_exited_body = False
 
@@ -47,7 +47,7 @@ def _fill_pydef_body_code(code_lines: List[str], pydef_type: CppCodeType, pydef_
                 body_line += character
             if nb_opening_tokens == 0 and flag_entered_body:
                 flag_exited_body = True
-                pydef_code_inout.line_end = line_number + pydef_code_inout.line_start
+                pydef_code_inout.line_end = line_number + pydef_code_inout.line_number
         append_body_line(body_line)
 
     body_lines = code_utils.strip_empty_lines_in_list(body_lines)
@@ -76,7 +76,7 @@ def find_functions_struct_or_enums(
         pydef_code = fn_try_parse_code_type(code_line, options)
         if pydef_code is not None:
             pydef_code.docstring_cpp = _read_comment_on_top_of_line(code_lines, options, line_number)
-            pydef_code.line_start = line_number
+            pydef_code.line_number = line_number
             pydef_codes.append(pydef_code)
 
     for pydef_code in pydef_codes:

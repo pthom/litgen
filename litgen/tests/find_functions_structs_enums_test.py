@@ -12,6 +12,7 @@ def test_fill_pydef_body_code():
         bool v;}
     """.split("\n")
     pydef_code = PydefCode(CppCodeType.STRUCT)
+    pydef_code.line_number = 1
     find_functions_structs_enums._fill_pydef_body_code(code_lines, CppCodeType.STRUCT, pydef_code)
     assert pydef_code.body_code_cpp == '{\n        int a = 1;\n        bool v;}'
 
@@ -34,6 +35,7 @@ def test_fill_pydef_body_code():
         bool v;}
     """.split("\n")
     pydef_code = PydefCode(CppCodeType.STRUCT)
+    pydef_code.line_number = 1
     find_functions_structs_enums._fill_pydef_body_code(code_lines, CppCodeType.STRUCT, pydef_code)
     assert pydef_code.body_code_cpp == '{\n        struct { int g = 5 } gg;\n        bool v;}'
 

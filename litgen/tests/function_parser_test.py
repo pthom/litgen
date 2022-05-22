@@ -90,10 +90,10 @@ def test_extract_function_parameters():
     function_decl_body_code = "(const char* name, const ImVec4* cols, int size, bool qual=true)"
     params = function_parser._extract_function_parameters(function_decl_body_code, code_style_options)
     assert str(params) == code_utils.force_one_space("""
-            [PydefAttribute(name_cpp='name', type_cpp='const char*', default_value_cpp='', docstring_cpp='', line_number=0),
-             PydefAttribute(name_cpp='cols', type_cpp='const ImVec4*', default_value_cpp='', docstring_cpp='', line_number=0),
-             PydefAttribute(name_cpp='size', type_cpp='int', default_value_cpp='', docstring_cpp='', line_number=0),
-             PydefAttribute(name_cpp='qual', type_cpp='bool', default_value_cpp='true', docstring_cpp='', line_number=0)]
+            [PydefAttribute(line_number=0, name_cpp='name', type_cpp='const char*', default_value_cpp='', docstring_cpp=''),
+             PydefAttribute(line_number=0, name_cpp='cols', type_cpp='const ImVec4*', default_value_cpp='', docstring_cpp=''),
+             PydefAttribute(line_number=0, name_cpp='size', type_cpp='int', default_value_cpp='', docstring_cpp=''),
+             PydefAttribute(line_number=0, name_cpp='qual', type_cpp='bool', default_value_cpp='true', docstring_cpp='')]
     """)
 
 

@@ -220,7 +220,7 @@ def parse_struct_pydef(pydef_code: PydefCode, options: CodeStyleOptions) -> Stru
     for m in parse_methods():
         v = Variant_Attribute_Method_CodeRegion()
         v.method_infos = m
-        v.line_number = m.function_code.line_start
+        v.line_number = m.function_code.line_number
         struct_infos.attr_and_regions.append(v)
     for sa in struct_attributes:
         v = Variant_Attribute_Method_CodeRegion()
