@@ -60,4 +60,4 @@ IMPLOT_API void SetupAxisFormat(ImAxis axis, const char* fmt);
     pydef_functions = find_functions_structs_enums.find_functions_struct_or_enums(code, CppCodeType.FUNCTION, options)
     assert len(pydef_functions) == 2
     assert pydef_functions[0].name_cpp == "SetupAxis"
-    assert pydef_functions[1].title_cpp == 'Sets the format of numeric axis labels. Formated values will be double'
+    assert pydef_functions[1].docstring_cpp == 'Sets the format of numeric axis labels. Formated values will be double'

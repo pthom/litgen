@@ -27,7 +27,7 @@ enum ImAxis_ {
     assert len(enums_infos) == 1
     enum_infos = enums_infos[0]
     assert enum_infos.get_attr_and_regions()[0].code_region_comment is not None
-    assert enum_infos.get_attr_and_regions()[0].code_region_comment.comment_cpp == "horizontal axes"
+    assert enum_infos.get_attr_and_regions()[0].code_region_comment.docstring_cpp == "horizontal axes"
 
     assert enum_infos.get_attr_and_regions()[1].enum_cpp_98_value.name_cpp == "ImAxis_X1"
 

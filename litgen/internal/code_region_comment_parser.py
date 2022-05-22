@@ -67,8 +67,8 @@ def extract_code_region_comments(struct_or_enum_code: PydefCode, code_style_opti
                 all_code_region_comments.append(current_code_region_comment)
                 current_code_region_comment = None
             elif is_filled_comment(line_number) and current_code_region_comment is not None:
-                current_code_region_comment.comment_cpp = \
-                    append_line(current_code_region_comment.comment_cpp, get_filled_comment(line_number))
+                current_code_region_comment.docstring_cpp = \
+                    append_line(current_code_region_comment.docstring_cpp, get_filled_comment(line_number))
     else:
         all_code_region_comments = []
         current_code_region_comment = None
@@ -80,7 +80,7 @@ def extract_code_region_comments(struct_or_enum_code: PydefCode, code_style_opti
                 all_code_region_comments.append(current_code_region_comment)
                 current_code_region_comment = None
             if is_filled_comment(line_number) and current_code_region_comment is not None:
-                current_code_region_comment.comment_cpp = \
-                    append_line(current_code_region_comment.comment_cpp, get_filled_comment(line_number))
+                current_code_region_comment.docstring_cpp = \
+                    append_line(current_code_region_comment.docstring_cpp, get_filled_comment(line_number))
 
     return all_code_region_comments

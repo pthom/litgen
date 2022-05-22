@@ -25,7 +25,7 @@ class PydefCode:
     """
     code_type: CppCodeType
     name_cpp: str = ""
-    title_cpp: str = ""          # the short title just one line before the struct or function declaration
+    docstring_cpp: str = ""          # the short title just one line before the struct or function declaration
     line_start: int = 0          # starting line of the struct / enum / function in the whole code
     line_end: int = 0            # end line of the struct / enum / function
     body_code_cpp: str = ""      # the code inside the struct or enum body, or inside the function input params signature
@@ -44,7 +44,7 @@ class PydefAttribute:
     name_cpp: str = ""
     type_cpp: str = ""
     default_value_cpp: str = ""
-    comment_cpp: str = ""
+    docstring_cpp: str = ""
     line_number: int = 0  # from the body_code line_start
 
     def _default_value_cpp_str(self):
@@ -80,7 +80,7 @@ class PydefEnumCpp98Value:
     # name_python cannot be inferred from name_cpp in a C++ 98 enum (i.e. not enum class)
     # (for example in a C++ enum `ImplotCol_`, the value `ImPlotCol_Line` would be named `Line` in python)
     name_python: str = ""
-    comment: str = ""
+    docstring_cpp: str = ""
     line_number: int = 0  # from the body_code line_start
 
 
@@ -96,18 +96,18 @@ class CodeRegionComment:
     // (the display size can differ from the image size)                     <=== It can span several lines
     //
 
-    // Size of the displayed image (can be different from the matrix size)   <=== This is StructAttribute.comment
-    cv::Size ImageDisplaySize = cv::Size();                                   (it should fit on one line)
+    // Size of the displayed image (can be different from the matrix size)   <=== This is a docstring for a struct member
+    cv::Size ImageDisplaySize = cv::Size();                                       It is directly on top of the member decl
     // Title displayed in the border
     std::string Legend = "Image";
     ````
 
     """
-    comment_cpp: str = ""
+    docstring_cpp: str = ""
     line_number: int = 0
 
     def as_multiline_cpp_comment(self, indentation: int):
-        lines = self.comment_cpp.split("\n")
+        lines = self.docstring_cpp.split("\n")
         spacing = " " * indentation
         def process_line(line):
             return spacing + "// " + line

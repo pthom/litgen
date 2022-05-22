@@ -33,7 +33,7 @@ def test_try_parse_function_name_from_declaration():
 
     def test_complex():
         code = """
-        IMPLOT_API const std::vector< std::pair<int, float> >    // An annoying comment 
+        IMPLOT_API const std::vector< std::pair<int, float> >    // An annoying comment
                         *Value(                                  // A annoying * just before the function name
                                 const char* fmt, ...);           // and another
         """
@@ -90,10 +90,10 @@ def test_extract_function_parameters():
     function_decl_body_code = "(const char* name, const ImVec4* cols, int size, bool qual=true)"
     params = function_parser._extract_function_parameters(function_decl_body_code, code_style_options)
     assert str(params) == code_utils.force_one_space("""
-            [PydefAttribute(name_cpp='name', type_cpp='const char*', default_value_cpp='', comment_cpp='', line_number=0),
-             PydefAttribute(name_cpp='cols', type_cpp='const ImVec4*', default_value_cpp='', comment_cpp='', line_number=0),
-             PydefAttribute(name_cpp='size', type_cpp='int', default_value_cpp='', comment_cpp='', line_number=0),
-             PydefAttribute(name_cpp='qual', type_cpp='bool', default_value_cpp='true', comment_cpp='', line_number=0)]
+            [PydefAttribute(name_cpp='name', type_cpp='const char*', default_value_cpp='', docstring_cpp='', line_number=0),
+             PydefAttribute(name_cpp='cols', type_cpp='const ImVec4*', default_value_cpp='', docstring_cpp='', line_number=0),
+             PydefAttribute(name_cpp='size', type_cpp='int', default_value_cpp='', docstring_cpp='', line_number=0),
+             PydefAttribute(name_cpp='qual', type_cpp='bool', default_value_cpp='true', docstring_cpp='', line_number=0)]
     """)
 
 
@@ -110,7 +110,7 @@ IMPLOT_API void SetupAxisLinks(ImAxis axis, double* link_min, double* link_max);
     options = code_style_implot()
     functions_infos = function_parser.parse_all_function_declarations(code, options)
     assert len(functions_infos) == 3
-    assert functions_infos[0].function_code.title_cpp == "Enables an axis or sets the label and/or flags for an existing axis. Leave #label = NULL for no label."
+    assert functions_infos[0].function_code.docstring_cpp == "Enables an axis or sets the label and/or flags for an existing axis. Leave #label = NULL for no label."
     assert functions_infos[0].function_code.return_type_cpp == "void"
     assert functions_infos[0].function_name_cpp() == "SetupAxis"
     assert functions_infos[0].get_parameters()[0].name_cpp == "axis"

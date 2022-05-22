@@ -1,6 +1,6 @@
 from code_types import *
 from options import CodeStyleOptions
-import comments_parser
+import code_region_comment_parser
 import find_functions_structs_enums
 
 
@@ -40,7 +40,7 @@ def parse_enum_value(line_number: int, code_line: str, enum_name: str) -> Option
     # fill comment
     if "//" in code_line:
         items = code_line.split("//")
-        r.comment = items[1].strip()
+        r.docstring_cpp = items[1].strip()
         code_line = items[0].strip()
     # skip end of line after "=" or ","
     if "=" in code_line:
@@ -98,7 +98,7 @@ def parse_enum_cpp_98_pydef(pydef_code: PydefCode, code_style_options: CodeStyle
     r = EnumCpp98Infos()
     r.enum_code = pydef_code
     enum_values = _extract_enum_cpp_98_values(r.enum_code)
-    code_region_comments = comments_parser.extract_code_region_comments(r.enum_code, code_style_options)
+    code_region_comments = code_region_comment_parser.extract_code_region_comments(r.enum_code, code_style_options)
     for ev in enum_values:
         v = Variant_Attribute_Method_CodeRegion()
         v.line_number = ev.line_number

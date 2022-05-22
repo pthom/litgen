@@ -5,7 +5,7 @@ import copy
 
 from code_types import *
 from options import CodeStyleOptions
-import comments_parser
+import code_region_comment_parser
 import code_utils
 import find_functions_structs_enums
 import function_parser
@@ -106,7 +106,7 @@ def _try_parse_struct_member(state : _ParseScopeObserver, line_number: int, code
     # extract comment
     if "//" in code_line:
         items = code_line.split("//")
-        single_attr_result.comment_cpp = items[1].strip()
+        single_attr_result.docstring_cpp = items[1].strip()
         code_line = items[0]
 
     # Strip trailing ";"
@@ -188,7 +188,7 @@ def _extract_struct_attributes(struct_pydef: PydefCode, options: CodeStyleOption
             comment_lines_before_attribute_decl.append(previous_code_line)
             line_number = line_number - 1
         comment_lines_before_attribute_decl = list(reversed(comment_lines_before_attribute_decl))
-        attribute.comment_cpp = "\n".join(comment_lines_before_attribute_decl)
+        attribute.docstring_cpp = "\n".join(comment_lines_before_attribute_decl)
 
     state = _ParseScopeObserver()
     all_attributes = []
@@ -215,7 +215,7 @@ def parse_struct_pydef(pydef_code: PydefCode, options: CodeStyleOptions) -> Stru
         return methods
 
     struct_attributes = _extract_struct_attributes(struct_infos.struct_code, options)
-    code_region_comments = comments_parser.extract_code_region_comments(struct_infos.struct_code, options)
+    code_region_comments = code_region_comment_parser.extract_code_region_comments(struct_infos.struct_code, options)
 
     for m in parse_methods():
         v = Variant_Attribute_Method_CodeRegion()

@@ -75,7 +75,7 @@ def find_functions_struct_or_enums(
     for line_number, code_line in enumerate(code_lines):
         pydef_code = fn_try_parse_code_type(code_line, options)
         if pydef_code is not None:
-            pydef_code.title_cpp = _read_comment_on_top_of_line(code_lines, options, line_number)
+            pydef_code.docstring_cpp = _read_comment_on_top_of_line(code_lines, options, line_number)
             pydef_code.line_start = line_number
             pydef_codes.append(pydef_code)
 

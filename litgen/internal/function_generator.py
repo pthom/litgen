@@ -22,7 +22,7 @@ def generate_python_wrapper_init_code(function_infos: FunctionsInfos, options: C
         _cpp_immvision.image_display(image, image_display_size, refresh_image)
     """
     py_function_name = cpp_to_python.function_name_to_python(function_infos.function_name_cpp(), options)
-    title = code_utils.indent_code(cpp_to_python.title_python(function_infos.function_code.title_cpp, options), 4)[4:]
+    title = code_utils.indent_code(cpp_to_python.docstring_python(function_infos.function_code.docstring_cpp, options), 4)[4:]
 
     code_intro = f'def {py_function_name}(\n'
     param_line_template  = f'PARAM_NAME: PARAM_TYPE PARAM_DEFAULT'
@@ -32,7 +32,7 @@ def generate_python_wrapper_init_code(function_infos: FunctionsInfos, options: C
     param_lines = []
     for param in function_infos.get_parameters():
         param_line = param_line_template
-        param_line = param_line.replace("PARAM_TYPE", cpp_to_python.cpp_type_to_python(param.type_cpp, options))
+        param_line = param_line.replace("PARAM_TYPE", cpp_to_python.type_to_python(param.type_cpp, options))
         param_line = param_line.replace("PARAM_NAME", cpp_to_python.var_name_to_python(param.name_cpp, options))
         if len(param.default_value_cpp) > 0:
             param_line = param_line.replace(
@@ -122,7 +122,7 @@ def generate_pydef_function_cpp_code(
     code_lines += pyarg_code(function_infos, options).split("\n")
 
     #  comment
-    comment_cpp =  cpp_to_python.title_python_one_line(function_infos.function_code.title_cpp, options)
+    comment_cpp =  cpp_to_python.docstring_python_one_line(function_infos.function_code.docstring_cpp, options)
     code_lines += [f'    "{comment_cpp}"']
 
     # Return value policy
@@ -165,7 +165,7 @@ def generate_constructor_code(
     code = code.replace("PARAMS", params_str)
     code = code.replace("PYARGS", pyarg_str)
     code = code.replace("CONSTRUCTOR_DOC",
-                        cpp_to_python.title_python_one_line(function_infos.function_code.title_cpp, options))
+                        cpp_to_python.docstring_python_one_line(function_infos.function_code.docstring_cpp, options))
 
     code = code_utils.unindent_code(code)
     code = code_utils.indent_code(code, 4)

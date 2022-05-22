@@ -146,7 +146,7 @@ def code_style_immvision() -> CodeStyleOptions:
 
     def init_function_python_additional_code_require_opengl_initialized(function_infos) -> str: # function_infos of type FunctionInfos
         # make sure to transfer the ImGui context before doing anything related to ImGui or OpenGL
-        title = function_infos.function_code.title_cpp
+        title = function_infos.function_code.docstring_cpp
         if "opengl" in title.lower() and "initialized" in title.lower():
             return "\n    _cpp_immvision.transfer_imgui_context_python_to_cpp()\n\n"
         else:

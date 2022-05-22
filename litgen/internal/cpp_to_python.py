@@ -10,7 +10,7 @@ from options import CodeStyleOptions
 import code_replacements, code_utils
 
 
-def title_python(title_cpp: str, options: CodeStyleOptions) -> str:
+def docstring_python(title_cpp: str, options: CodeStyleOptions) -> str:
     """
     Make some replacements in a C++ title (a comment on top of a function, struct, etc)
     in order to adapt it to python.
@@ -18,17 +18,17 @@ def title_python(title_cpp: str, options: CodeStyleOptions) -> str:
     return code_replacements.apply_code_replacements(title_cpp, options.code_replacements)
 
 
-def title_python_one_line(title_cpp: str, options: CodeStyleOptions) -> str:
-    return code_utils.format_cpp_comment_on_one_line( title_python(title_cpp, options) )
+def docstring_python_one_line(title_cpp: str, options: CodeStyleOptions) -> str:
+    return code_utils.format_cpp_comment_on_one_line(docstring_python(title_cpp, options))
 
 
-def cpp_type_to_python(type_cpp: str, options: CodeStyleOptions) -> str:
+def type_to_python(type_cpp: str, options: CodeStyleOptions) -> str:
     return code_replacements.apply_code_replacements(type_cpp, options.code_replacements)
 
 
 def attr_python_name_type_default(attr: PydefAttribute, options: CodeStyleOptions) -> str:
     var_name_python = var_name_to_python(attr.name_cpp, options)
-    var_type_python = cpp_type_to_python(attr.type_cpp, options)
+    var_type_python = type_to_python(attr.type_cpp, options)
     default_value_python = default_value_to_python(attr.default_value_cpp, options)
 
     python_str = var_name_python

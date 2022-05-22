@@ -9,7 +9,7 @@ import copy
 def generate_pydef_struct_cpp_code(struct_infos: StructInfos, options: CodeStyleOptions) -> str:
     struct_name = struct_infos.struct_name()
     code_intro  = f'auto pyClass{struct_name} = py::class_<{struct_name}>\n    (m, "{struct_name}", \n'
-    comment = cpp_to_python.title_python_one_line(struct_infos.struct_code.title_cpp, options)
+    comment = cpp_to_python.docstring_python_one_line(struct_infos.struct_code.docstring_cpp, options)
     code_intro += f'    "{comment}")\n\n'
     code_intro += f'    .def(py::init<>()) \n'  # Yes, we require struct to be default constructible!
 
@@ -27,7 +27,7 @@ def generate_pydef_struct_cpp_code(struct_infos: StructInfos, options: CodeStyle
             code = code_inner_attribute
             code = code.replace("ATTR_NAME_PYTHON",  cpp_to_python.var_name_to_python(attr.name_cpp, options))
             code = code.replace("ATTR_NAME_CPP", attr.name_cpp)
-            code = code.replace("ATTR_COMMENT", cpp_to_python.title_python_one_line(attr.comment_cpp, options))
+            code = code.replace("ATTR_COMMENT", cpp_to_python.docstring_python_one_line(attr.docstring_cpp, options))
             r = r + code
         if info.code_region_comment is not None:
             r = r + info.code_region_comment.as_multiline_cpp_comment(4) + "\n"

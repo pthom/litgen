@@ -61,7 +61,7 @@ def test_try_parse_attribute():
         attrs = struct_parser._try_parse_struct_member(state, line_number, code_line)
         assert len(attrs) == 1
         attr = attrs[0]
-        assert attr.comment_cpp == "X comment"
+        assert attr.docstring_cpp == "X comment"
         assert attr.line_number == 22
         assert attr.name_cpp == "xStart"
         assert attr.type_cpp == "double"
@@ -76,7 +76,7 @@ def test_try_parse_attribute():
         assert len(attrs) == 1
         attr = attrs[0]
         assert attr.type_cpp == "std::vector <cv::Point>"
-        assert attr.comment_cpp == "std::vector <cv::Point> is empty by default"
+        assert attr.docstring_cpp == "std::vector <cv::Point> is empty by default"
         assert attr.default_value_cpp == ""
     test_no_default_value()
 

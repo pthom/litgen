@@ -48,12 +48,12 @@ def _py_layout_title(title: str, indent_level: int, options: CodeStyleOptions) -
 def _py_dump_attr(attr: PydefAttribute, indent_level: int, options: CodeStyleOptions) -> List[str]:
     spacing = _indent_spacing(indent_level, options)
 
-    comment_python = cpp_to_python.title_python(attr.comment_cpp, options)
+    comment_python = cpp_to_python.docstring_python(attr.docstring_cpp, options)
     comment_lines = _py_layout_comment(comment_python, indent_level, options)
 
     attr_decl_line = spacing + """NAME_PYTHON: TYPE_PYTHON DEFAULT_VALUE_PYTHON"""
     attr_decl_line = attr_decl_line.replace("NAME_PYTHON", cpp_to_python.var_name_to_python(attr.name_cpp, options))
-    attr_decl_line = attr_decl_line.replace("TYPE_PYTHON", cpp_to_python.cpp_type_to_python(attr.type_cpp, options))
+    attr_decl_line = attr_decl_line.replace("TYPE_PYTHON", cpp_to_python.type_to_python(attr.type_cpp, options))
 
     default_value_python = cpp_to_python.default_value_to_python(attr.default_value_cpp, options)
     if len(default_value_python) > 0:
@@ -86,7 +86,7 @@ def _py_filter_function_args(function_infos: FunctionsInfos, options: CodeStyleO
 def py_function_declaration(function_infos: FunctionsInfos, options: CodeStyleOptions) -> str:
     function_name_python = cpp_to_python.function_name_to_python(function_infos.function_name_cpp(), options)
     params_str =  cpp_to_python.attrs_python_name_type_default(function_infos.get_parameters(), options)
-    return_type_python = cpp_to_python.cpp_type_to_python(function_infos.return_type_cpp(), options)
+    return_type_python = cpp_to_python.type_to_python(function_infos.return_type_cpp(), options)
 
     code = f"def {function_name_python}({params_str})"
     if len(return_type_python) > 0:
@@ -101,7 +101,7 @@ def _py_dump_function(function: FunctionsInfos, indent_level: int, options: Code
     function_params_filtered.parameters = _py_filter_function_args(function_params_filtered, options)
 
     declaration_line =  spacing + py_function_declaration(function_params_filtered, options)
-    title = cpp_to_python.title_python(function.function_code.title_cpp, options)
+    title = cpp_to_python.docstring_python(function.function_code.docstring_cpp, options)
 
     return [declaration_line] +_py_layout_title(title, indent_level + 1, options) + [""]
 
@@ -138,13 +138,13 @@ def generate_struct_stub(struct_infos: StructInfos, options: CodeStyleOptions) -
 
     code_lines.append(f"class {struct_infos.struct_name()}:")
 
-    title =  cpp_to_python.title_python(struct_infos.struct_code.title_cpp, options)
+    title =  cpp_to_python.docstring_python(struct_infos.struct_code.docstring_cpp, options)
     code_lines += _py_layout_title(title, indent_level=1, options=options)
 
     for info in struct_infos.get_attr_and_regions():
         if info.code_region_comment is not None:
             code_lines += _py_layout_region_comment(
-                                    cpp_to_python.title_python(info.code_region_comment.comment_cpp, options),
+                                    cpp_to_python.docstring_python(info.code_region_comment.docstring_cpp, options),
                                     indent_level=1, options=options)
         if info.attribute is not None:
             code_lines += _py_dump_attr(info.attribute, indent_level=1, options=options)
@@ -209,7 +209,7 @@ class {struct_name}(_cpp_immvision.{struct_name}):
     def do_replace(s: str, attr: PydefAttribute):
         out = s
         out = out.replace("ATTR_NAME_PYTHON", cpp_to_python.var_name_to_python(attr.name_cpp, options))
-        out = out.replace("ATTR_TYPE", cpp_to_python.cpp_type_to_python(attr.type_cpp, options))
+        out = out.replace("ATTR_TYPE", cpp_to_python.type_to_python(attr.type_cpp, options))
         out = out.replace("ATTR_DEFAULT", cpp_to_python.default_value_to_python(attr.default_value_cpp, options))
         return out
 
@@ -224,7 +224,7 @@ class {struct_name}(_cpp_immvision.{struct_name}):
     for info in struct_infos.get_attr_and_regions():
         if info.attribute is not None:
             attr = info.attribute
-            final_code += split_comment(cpp_to_python.title_python(attr.comment_cpp, options))
+            final_code += split_comment(cpp_to_python.docstring_python(attr.docstring_cpp, options))
             final_code += do_replace(code_inner_param, attr)
     final_code += code_outro_1
     for info in struct_infos.attr_and_regions:

@@ -1,5 +1,5 @@
 import os, sys; _THIS_DIR = os.path.dirname(__file__); sys.path = [_THIS_DIR + "/.."] + sys.path
-import comments_parser
+import code_region_comment_parser
 import find_functions_structs_enums
 from code_types import *
 from options import CodeStyleOptions
@@ -23,9 +23,9 @@ def test_extract_code_region_comments():
     pydef_enums = find_functions_structs_enums.find_functions_struct_or_enums(code, CppCodeType.ENUM_CPP_98, options)
     assert len(pydef_enums) == 1
     pydef_enum = pydef_enums[0]
-    code_region_comments = comments_parser.extract_code_region_comments(pydef_enum, options)
+    code_region_comments = code_region_comment_parser.extract_code_region_comments(pydef_enum, options)
     assert len(code_region_comments) == 2
-    assert code_region_comments[1].comment_cpp == "plot styling variables"
+    assert code_region_comments[1].docstring_cpp == "plot styling variables"
     assert code_region_comments[1].line_number == 4
 
 
@@ -50,7 +50,7 @@ def test_extract_code_region_comments():
     pydef_enums = find_functions_structs_enums.find_functions_struct_or_enums(code, CppCodeType.STRUCT, options)
     assert len(pydef_enums) == 1
     pydef_enum = pydef_enums[0]
-    code_region_comments = comments_parser.extract_code_region_comments(pydef_enum, options)
+    code_region_comments = code_region_comment_parser.extract_code_region_comments(pydef_enum, options)
     assert len(code_region_comments) == 1
-    assert code_region_comments[0].comment_cpp == "ImageParams store the parameters for a displayed image\nBla, bla, bla"
+    assert code_region_comments[0].docstring_cpp == "ImageParams store the parameters for a displayed image\nBla, bla, bla"
     assert code_region_comments[0].line_number == 1

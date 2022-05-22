@@ -7,6 +7,9 @@
   ok test avec const 
 
 
+code coverage
+
+
 X install package litgen via setup
 X renommer repo github en litgen
 
