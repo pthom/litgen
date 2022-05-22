@@ -17,7 +17,7 @@ setup(
         ''',
     long_description=long_description,
     long_description_content_type='text/markdown',
-    url='https://github.com/pthom/pybind11_literate_generator',
+    url='https://github.com/pthom/litgen',
     packages = find_packages(where='.'),
     zip_safe=False,
 )
