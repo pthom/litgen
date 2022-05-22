@@ -8,11 +8,30 @@ import tempfile
 import xml.etree.ElementTree as ET
 from xml.dom import minidom
 
-from code_types import *
+from srcml_types import *
 
 
 class SrcMlException(Exception):
     pass
+
+
+###########################################
+#
+# code_to_srcml / srcml_to_code, etc (call program srcml)
+#
+###########################################
+
+
+class _CountSrcmlCalls:
+    nb_calls: int = 0
+    def ping(self):
+        self.nb_calls += 1
+    def __del__(self):
+        print(f"CountSrcmlCalls: {self.nb_calls} calls")
+
+
+_COUNT_SRCML_CALLS = _CountSrcmlCalls()
+
 
 
 def code_to_srcml(code: str, dump_positions: bool = False) -> ET.Element:
@@ -29,6 +48,7 @@ def code_to_srcml(code: str, dump_positions: bool = False) -> ET.Element:
             cmd = f"srcml -l C++ {cpp_header_file.name} {position_arg} --xml-encoding utf-8 --src-encoding utf-8 -o {xml_file.name}"
             try:
                 # print(cmd)
+                _COUNT_SRCML_CALLS.ping()
                 subprocess.check_call(cmd, shell=True)
                 srcml_bytes = xml_file.read()
             except subprocess.CalledProcessError as e:
@@ -62,6 +82,7 @@ def srcml_to_code(root: ET.Element) -> str:
             cmd = f"srcml -l C++ {xml_file.name} --xml-encoding utf-8 --src-encoding utf-8  -o {header_file.name}"
             # print(f"{cmd=}")
             try:
+                _COUNT_SRCML_CALLS.ping()
                 subprocess.check_call(cmd, shell=True)
                 code_bytes = header_file.read()
             except subprocess.CalledProcessError as e:
@@ -75,32 +96,27 @@ def srcml_to_code(root: ET.Element) -> str:
     return code_str
 
 
-
-"""
-<ns0:type xmlns:ns0="http://www.srcML.org/srcML/src"><ns0:name>int</ns0:name></ns0:type> 
-"""
-
-def srcml_to_str(root: ET.Element):
-    xmlstr = minidom.parseString(ET.tostring(root)).toprettyxml(indent="   ")
-    return xmlstr
+###########################################
+#
+# Parsing
+#
+###########################################
 
 
-def srcml_to_file(root: ET.Element, filename: str):
-    element_tree = ET.ElementTree(root)
-    element_tree.write(filename, encoding="utf-8")
-
-
-def clean_tag(tag_name: str) -> str:
-    return tag_name.replace("{http://www.srcML.org/srcML/src}", "")
-
-
-def parse_type_to_original_decl(element: ET.Element) -> str:
-    xml_template = """
-    <ns0:unit>TYPE_XML</ns0:unit>
+def parse_name(element: ET.Element) -> str:
     """
+    https://www.srcml.org/doc/cpp_srcML.html#name
+
+    For names, we always reproduce the original code (i.e we reassemble the sub-elements)
+    """
+    assert clean_tag(element.tag) == "name"
+    if element.text is not None:
+        return element.text
+    else:
+        return srcml_to_code(element)
 
 
-def parse_type(element: ET.Element) -> CppType:
+def parse_type(element: ET.Element, previous_decl: CppDecl) -> CppType:
     """
     https://www.srcml.org/doc/cpp_srcML.html#type
     """
@@ -109,7 +125,7 @@ def parse_type(element: ET.Element) -> CppType:
     for child in element:
         child_tag = clean_tag(child.tag)
         if child_tag == "name":
-            result.name_cpp = child.text
+            result.name_cpp = parse_name(child)
         elif child_tag == "specifier":
             result.specifiers.append(child.text)
         elif child_tag == "modifier":
@@ -117,23 +133,33 @@ def parse_type(element: ET.Element) -> CppType:
         else:
             raise SrcMlException(f"Unexpected tag in parse_type: {child_tag}")
 
+    if len(result.name_cpp) == 0:
+        assert previous_decl is not None
+        result.name_cpp = previous_decl.cpp_type.name_cpp
+
     return result
 
 
 def parse_cpp_decl(element: ET.Element, previous_decl: CppDecl) -> CppDecl:
     """
     https://www.srcml.org/doc/cpp_srcML.html#variable-declaration-statement
+
+    Note: init_cpp is inside an <init><expr> node in srcML. Here we retransform it to C++ code for simplicity
+        For example:
+            int a = 5;
+            <decl_stmt><decl><type><name>int</name></type> <name>a</name> <init>= <expr><literal type="number">5</literal></expr></init></decl>;</decl_stmt>
     """
     assert clean_tag(element.tag) == "decl"
     result = CppDecl()
     for child in element:
         child_tag = clean_tag(child.tag)
         if child_tag == "type":
-            result.cpp_type = parse_type(child)
+            result.cpp_type = parse_type(child, previous_decl)
         elif child_tag == "name":
             result.name_cpp = child.text
         elif child_tag == "init":
-            result.name_cpp = child.text
+            expr_child = child_with_tag(child, "expr")
+            result.init_cpp = srcml_to_code(expr_child)
         else:
             raise SrcMlException(f"Unexpected tag in parse_cpp_decl: {child_tag}")
     return result
@@ -157,6 +183,69 @@ def parse_cpp_decl_stmt(element: ET.Element) -> CppDeclStatement:
         else:
             raise SrcMlException(f"Unexpected tag in parse_cpp_decl_statement: {child_tag}")
     return result
+
+
+def parse_parameter(element: ET.Element) -> CppParameter:
+    """
+    https://www.srcml.org/doc/cpp_srcML.html#function-declaration
+    """
+    assert clean_tag(element.tag) == "parameter"
+    result = CppParameter()
+    for child in element:
+        child_tag = clean_tag(child.tag)
+        if child_tag == "decl":
+            result.decl = parse_cpp_decl(child, None)
+        else:
+            raise SrcMlException(f"Unexpected tag in parse_parameter: {parse_parameter}")
+
+    if len(result.decl.name_cpp) == 0:
+        raise SrcMlException(f"Found no name in parse_parameter!")
+
+    return result
+
+
+def parse_parameter_list(element: ET.Element) -> CppParameterList:
+    """
+    https://www.srcml.org/doc/cpp_srcML.html#function-declaration
+    """
+    assert clean_tag(element.tag) == "parameter_list"
+    result = CppParameterList()
+    for child in element:
+        child_tag = clean_tag(child.tag)
+        if child_tag == "parameter":
+            result.parameters.append(parse_parameter(child))
+        else:
+            raise SrcMlException(f"Unexpected tag in parse_parameter_list: {child_tag}")
+    return result
+
+
+def parse_function_decl(element: ET.Element) -> CppFunctionDecl:
+    """
+    https://www.srcml.org/doc/cpp_srcML.html#function-declaration
+    """
+    assert clean_tag(element.tag) == "function_decl"
+    result = CppFunctionDecl()
+
+    for child in element:
+        child_tag = clean_tag(child.tag)
+        if child_tag == "type":
+            result.type = parse_type(child, None)
+        elif child_tag == "name":
+            result.name_cpp = parse_name(child)
+        elif child_tag == "parameter_list":
+            result.parameter_list = parse_parameter_list(child)
+        else:
+            raise SrcMlException(f"Unexpected tag in parse_function_decl: {child_tag}")
+
+    return result
+
+
+
+###########################################
+#
+# Utilities
+#
+###########################################
 
 
 def children_with_tag(element: ET.Element, tag: str) -> List[ET.Element]:
@@ -183,4 +272,18 @@ def first_code_element_with_tag(code: str, tag: str) -> ET.Element:
     """
     root = code_to_srcml(code)
     return child_with_tag(root, tag)
+
+
+def srcml_to_str(root: ET.Element):
+    xmlstr = minidom.parseString(ET.tostring(root)).toprettyxml(indent="   ")
+    return xmlstr
+
+
+def srcml_to_file(root: ET.Element, filename: str):
+    element_tree = ET.ElementTree(root)
+    element_tree.write(filename, encoding="utf-8")
+
+
+def clean_tag(tag_name: str) -> str:
+    return tag_name.replace("{http://www.srcML.org/srcML/src}", "")
 

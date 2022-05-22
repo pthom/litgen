@@ -1,10 +1,7 @@
 srcml!!!
-    Pass 1: code to xml
-    Pass 2: Creer un arbre de trucs
-        
-        structs
-        enum
-        function
+    add test xml()
+    one test repr()
+    add str()
 
 
 

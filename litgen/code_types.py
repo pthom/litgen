@@ -2,44 +2,7 @@ from dataclasses import dataclass as _dataclass, field as _field
 from enum import Enum as _Enum
 from typing import Optional, List, Tuple
 
-
 import internal.code_replacements as _code_replacements
-
-@_dataclass
-class CppType:
-    """
-    Describes a full C++ type, as seen by srcML
-    See https://www.srcml.org/doc/cpp_srcML.html#type
-    """
-    name_cpp: str
-    specifiers: List[str] # could be ["const"], ["static", "const"], ["extern"], ["constexpr"], etc.
-    modifiers: List[str]  # could be ["*"], ["&&"], ["&"], ["*", "*"]
-
-    def __init__(self):
-        self.name_cpp = ""
-        self.specifiers = []
-        self.modifiers = []
-
-
-@_dataclass
-class CppDecl:
-    """
-    https://www.srcml.org/doc/cpp_srcML.html#variable-declaration
-    """
-    cpp_type: CppType = CppType()
-    name_cpp: str = ""
-
-
-@_dataclass
-class CppDeclStatement:
-    """
-    https://www.srcml.org/doc/cpp_srcML.html#variable-declaration-statement
-    """
-    cpp_decls: List[CppDecl]
-
-    def __init__(self):
-        self.cpp_decls = []
-
 
 
 class CppCodeType(_Enum):
@@ -178,4 +141,3 @@ class EnumCpp98Infos():
 
     def enum_name(self):
         return self.enum_code.name_cpp
-

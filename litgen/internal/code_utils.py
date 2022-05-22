@@ -198,7 +198,7 @@ def write_code_between_markers(
     write_text_file(inout_filename, output_code)
 
 
-def force_one_space(code: str) -> str:
+def remove_redundant_spaces(code: str) -> str:
     result = code.strip()
     result = result.replace("\n", " ")
     result = result.replace("\t", " ")
@@ -208,6 +208,13 @@ def force_one_space(code: str) -> str:
         if aux == result:
             break
         result = aux
+
+    separators = [",", "(", ")", "[", "]", ",", ";"]
+
+    for separator in separators:
+        result = result.replace(separator + " ", separator)
+        result = result.replace(" " + separator, separator)
+
     return result
 
 
@@ -240,6 +247,27 @@ def make_nice_code_diff(generated: str, expected: str) -> str:
     differ = difflib.Differ()
     diffs = list(differ.compare(expected.splitlines(keepends=True) , generated.splitlines(keepends=True)))
     return "".join(diffs)
+
+
+def assert_are_equal_ignore_spaces(generated_code: str, expected_code: str):
+    generated_processed = remove_redundant_spaces(str(generated_code))
+    expected_processed = remove_redundant_spaces(expected_code)
+    if not generated_processed == expected_processed:
+        diff_str = make_nice_code_diff(generated_processed, expected_processed)
+        logging.error(f"""assert_force_one_space_equal returns false 
+                    with diff= 
+{str(diff_str)}
+                    expected_processed=
+{expected_processed}
+                    and generated_processed=
+{generated_processed}
+        """)
+
+        stack_lines = traceback.format_stack()
+        error_line = stack_lines[-2]
+        logging.error(error_line.strip())
+
+    assert generated_processed == expected_processed
 
 
 def assert_are_codes_equal(generated_code: str, expected_code: str) -> str:
