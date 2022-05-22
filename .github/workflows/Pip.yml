@@ -26,7 +26,8 @@ jobs:
     - name: Run Python litgen tests
       run: |
         source venv/bin/activate
-        pytest litgen/tests
+        cd litgen
+        pytest
 
     - name: Build example python module, litgensample and _cpp_litgensample
       run: |
