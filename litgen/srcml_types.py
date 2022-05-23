@@ -104,3 +104,89 @@ class CppFunctionDecl(SrcmlBase):
     def __str__(self):
         r = f"{self.type} {self.name}({self.parameter_list})"
         return r
+
+
+@_dataclass
+class CppSuper(SrcmlBase):
+    """
+    Define a super classes of a struct or class
+    https://www.srcml.org/doc/cpp_srcML.html#struct-definition
+    """
+    specifier: str # public, private or protected inheritance
+    name: str      # name of the super class
+
+    def __str__(self):
+        if len(self.specifier) > 0:
+            return f"{self.specifier} {self.name}"
+        else:
+            return self.name
+
+
+@_dataclass
+class CppSuperList(SrcmlBase):
+    """
+    Define a list of super classes of a struct or class
+    https://www.srcml.org/doc/cpp_srcML.html#struct-definition
+    """
+    super_list: List[CppSuper]
+
+    def __init__(self):
+        self.super_list: List[CppSuper] = []
+
+    def __str__(self):
+        strs = map(str, self.super_list)
+        return code_utils.join_remove_empty(", ", strs)
+
+
+@_dataclass
+class CppBlockContent(SrcmlBase):
+    """
+    https://www.srcml.org/doc/cpp_srcML.html#block_content
+    """
+    pass
+
+
+@_dataclass
+class CppPublicProtectedPrivate(SrcmlBase):
+    """
+    See https://www.srcml.org/doc/cpp_srcML.html#public-access-specifier
+    Note: this is not a direct adaptation. Here we merge the different access types
+    """
+    access_type: str # "public", "private", or "protected"
+
+    def __init__(self, access_type):
+        self.access_type = access_type
+
+
+@_dataclass
+class CppBlock(SrcmlBase):
+    """
+    https://www.srcml.org/doc/cpp_srcML.html#block
+    """
+    public_protected_private: List[CppPublicProtectedPrivate]
+    block_content: CppBlockContent = CppBlockContent()
+
+    def __init__(self):
+        self.public_protected_private: List[CppPublicProtectedPrivate] = []
+
+
+@_dataclass
+class CppStruct(SrcmlBase):
+    """
+    https://www.srcml.org/doc/cpp_srcML.html#struct-definition
+    """
+    name: str = ""
+    super_list: CppSuperList = CppSuperList()
+    block: CppBlock = CppBlock()
+
+    def __str__(self):
+        r = f"struct {self.name}"
+        if len(str(self.super_list)) > 0:
+            r += " : "
+            r += str(self.super_list)
+
+        r += "\n{\n"
+        r +=  code_utils.indent_code(str(self.block), 4) + "\n"
+        r += "};\n"
+
+        return r

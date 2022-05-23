@@ -9,12 +9,38 @@ import xml.etree.ElementTree as ET
 from xml.dom import minidom
 import logging
 import time
+import traceback, inspect
+
 
 from srcml_types import *
 
 
 class SrcMlException(Exception):
     pass
+
+
+def _bad_tag_exception(element: ET.Element) -> SrcMlException:
+    tag_name = clean_tag(element.tag)
+    code = srcml_to_code(element)
+
+    def get_call_info():
+        stack_lines = traceback.format_stack()
+        error_line = stack_lines[-3]
+        frame = inspect.currentframe()
+        caller_function_name = inspect.getframeinfo(frame.f_back.f_back).function
+        return caller_function_name, error_line
+
+    caller_function_name, error_line = get_call_info()
+
+    msg = f"""
+    Error in parser '{caller_function_name}': unexpected tag '{tag_name}'
+        With inner code:
+            {code_utils.indent_code(code, 12, skip_first_line=True)}
+            
+        The error happened here: {error_line}   
+    """
+    return SrcMlException(msg)
+
 
 
 ###########################################
@@ -43,6 +69,8 @@ class _TimeStats:
     def stop(self):
         self.total_time += time.time() - self._last_start_time
     def stats_string(self) -> str:
+        if self.nb_calls == 0:
+            return ""
         return f"calls: {self.nb_calls} total time: {self.total_time:.3f}s average: {self.total_time / self.nb_calls * 1000:.0f}ms"
 
 
@@ -152,7 +180,7 @@ def parse_type(element: ET.Element, previous_decl: CppDecl) -> CppType:
         elif child_tag == "modifier":
             result.modifiers.append(child.text)
         else:
-            raise SrcMlException(f"Unexpected tag in parse_type: {child_tag}")
+            raise _bad_tag_exception(child)
 
     if len(result.name) == 0:
         assert previous_decl is not None
@@ -182,7 +210,7 @@ def parse_cpp_decl(element: ET.Element, previous_decl: CppDecl) -> CppDecl:
             expr_child = child_with_tag(child, "expr")
             result.init = srcml_to_code(expr_child)
         else:
-            raise SrcMlException(f"Unexpected tag in parse_cpp_decl: {child_tag}")
+            raise _bad_tag_exception(child)
     return result
 
 
@@ -202,7 +230,7 @@ def parse_cpp_decl_stmt(element: ET.Element) -> CppDeclStatement:
             result.cpp_decls.append(cpp_decl)
             previous_decl = cpp_decl
         else:
-            raise SrcMlException(f"Unexpected tag in parse_cpp_decl_statement: {child_tag}")
+            raise _bad_tag_exception(child)
     return result
 
 
@@ -217,7 +245,7 @@ def parse_parameter(element: ET.Element) -> CppParameter:
         if child_tag == "decl":
             result.decl = parse_cpp_decl(child, None)
         else:
-            raise SrcMlException(f"Unexpected tag in parse_parameter: {parse_parameter}")
+            raise _bad_tag_exception(child)
 
     if len(result.decl.name) == 0:
         raise SrcMlException(f"Found no name in parse_parameter!")
@@ -236,7 +264,7 @@ def parse_parameter_list(element: ET.Element) -> CppParameterList:
         if child_tag == "parameter":
             result.parameters.append(parse_parameter(child))
         else:
-            raise SrcMlException(f"Unexpected tag in parse_parameter_list: {child_tag}")
+            raise _bad_tag_exception(child)
     return result
 
 
@@ -256,10 +284,117 @@ def parse_function_decl(element: ET.Element) -> CppFunctionDecl:
         elif child_tag == "parameter_list":
             result.parameter_list = parse_parameter_list(child)
         else:
-            raise SrcMlException(f"Unexpected tag in parse_function_decl: {child_tag}")
+            raise _bad_tag_exception(child)
 
     return result
 
+
+def parse_super(element: ET.Element) -> CppSuper:
+    """
+    Define a super classes of a struct or class
+    https://www.srcml.org/doc/cpp_srcML.html#struct-definition
+    """
+    assert clean_tag(element.tag) == "super"
+    result = CppSuper()
+
+    for child in element:
+        child_tag = clean_tag(child.tag)
+        if child_tag == "specifier":
+            result.specifier = child.text
+        elif child_tag == "name":
+            result.name = parse_name(child)
+        else:
+            raise _bad_tag_exception(child)
+
+    return result
+
+
+def parse_super_list(element: ET.Element) -> CppSuperList:
+    """
+    Define a list of super classes of a struct or class
+    https://www.srcml.org/doc/cpp_srcML.html#struct-definition
+    """
+    assert clean_tag(element.tag) == "super_list"
+    result = CppSuperList()
+
+    for child in element:
+        child_tag = clean_tag(child.tag)
+        if child_tag == "super":
+            result.super_list.append(parse_super(child))
+        else:
+            raise _bad_tag_exception(child)
+
+    return result
+
+
+def parse_struct(element: ET.Element) -> CppStruct:
+    """
+    https://www.srcml.org/doc/cpp_srcML.html#struct-definition
+    """
+    assert clean_tag(element.tag) == "struct"
+    result = CppStruct()
+
+    for child in element:
+        child_tag = clean_tag(child.tag)
+        if child_tag == "name":
+            result.name = parse_name(child)
+        elif child_tag == "super_list":
+            result.super_list = parse_super_list(child)
+        elif child_tag == "block":
+            result.block = parse_block(child)
+        else:
+            raise _bad_tag_exception(child)
+
+    return result
+
+
+def parse_public_protected_private(element: ET.Element) -> CppPublicProtectedPrivate:
+    """
+    See https://www.srcml.org/doc/cpp_srcML.html#public-access-specifier
+    Note: this is not a direct adaptation. Here we merge the different access types
+    """
+    element_tag = clean_tag(element.tag)
+    assert element_tag in ["public", "protected", "private"]
+
+    result = CppPublicProtectedPrivate(element_tag)
+    for child in element:
+        child_tag = clean_tag(child.tag)
+        pass
+
+    return result
+
+
+
+def parse_block(element: ET.Element) -> CppBlock:
+    """
+    https://www.srcml.org/doc/cpp_srcML.html#block
+    """
+    assert clean_tag(element.tag) == "block"
+    result = CppBlock()
+
+    for child in element:
+        child_tag = clean_tag(child.tag)
+        if child_tag == "block_content":
+            result.block_content = parse_block_content(child)
+        elif child_tag in ["public", "private", "protected"]:
+            result.public_protected_private.append(parse_public_protected_private(child))
+        else:
+            raise _bad_tag_exception(child)
+
+    return result
+
+
+def parse_block_content(element: ET.Element) -> CppBlockContent:
+    """
+    https://www.srcml.org/doc/cpp_srcML.html#block_content
+    """
+    assert clean_tag(element.tag) == "block_content"
+    result = CppBlockContent()
+
+    for child in element:
+        pass
+
+    return result
 
 
 ###########################################

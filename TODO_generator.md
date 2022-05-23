@@ -1,7 +1,5 @@
 srcml!!!
     ajout parent + parent class
-    one test repr()
-    add str()
 
 
 Generic recursion:

@@ -148,3 +148,53 @@ def test_parse_function_decl():
     function_decl  = srcml.parse_function_decl(element)
     code_utils.assert_are_codes_equal(function_decl, "auto minimum(int && a, int b = 5)")
 
+
+def test_struct_srcml():
+    code = """
+    struct a {
+        int x;
+    };
+    """
+    element = srcml.first_code_element_with_tag(code, "struct")
+    srcml_str = srcml.srcml_to_str(element)
+    expected_str = """
+        <?xml version="1.0" ?>
+        <ns0:struct
+            xmlns:ns0="http://www.srcML.org/srcML/src">
+                   struct                    
+            <ns0:name>a</ns0:name>
+            <ns0:block>
+                      {                      
+                <ns0:public type="default">
+                    <ns0:decl_stmt>
+                        <ns0:decl>
+                            <ns0:type>
+                                <ns0:name>int</ns0:name>
+                            </ns0:type>
+                            <ns0:name>x</ns0:name>
+                        </ns0:decl>
+                            ;                         
+                    </ns0:decl_stmt>
+                </ns0:public>
+                      }                   
+            </ns0:block>
+                   ;                
+        </ns0:struct>
+        """
+    code_utils.assert_are_codes_equal(code_utils.force_one_space(srcml_str), code_utils.force_one_space(expected_str))
+
+
+def test_parse_struct_decl():
+    code = """
+    struct a {
+        int x;
+    };
+    """
+    element = srcml.first_code_element_with_tag(code, "struct")
+    struct = srcml.parse_struct(element)
+    # code_utils.assert_are_codes_equal(struct, "")
+    print(struct)
+
+
+test_parse_struct_decl()
+#test_struct_srcml()
