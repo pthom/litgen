@@ -247,7 +247,7 @@ def test_parse_block():
     element = srcml.first_code_element_with_tag(code, "block")
     cpp_block = srcml.parse_block(element)
     block_str = str(cpp_block)
-    print(block_str)
+    # print(block_str)
 
     expected_str = """
         // <CppBlockContent>
@@ -287,7 +287,7 @@ def test_parse_block():
         // </CppBlockContent>
     """
 
-    #code_utils.assert_are_codes_equal(struct, "")
+    code_utils.assert_are_codes_equal(block_str, expected_str)
     #print(block)
 
 
