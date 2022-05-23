@@ -449,10 +449,13 @@ def fill_block(element: ET.Element, inout_block_content: CppBlock):
             inout_block_content.block_children.append(parse_block_content(child))
         elif child_tag in ["public", "protected", "private"]:
             inout_block_content.block_children.append(parse_public_protected_private(child))
-        elif child_tag == "empty_stmt":
+        elif child_tag in [
+            "empty_stmt", "pragma", "include", "ifndef", "define", "ifdef", "endif", "struct_decl", "typedef"
+            ]:
             pass
         else:
-            raise _bad_tag_exception(child)
+            # raise _bad_tag_exception(child)
+            logging.warn(f"missing tag {child_tag}")
 
 
 def parse_block_content(element: ET.Element) -> CppBlockContent:
@@ -583,4 +586,7 @@ def srcml_to_file(root: ET.Element, filename: str):
 
 
 def clean_tag(tag_name: str) -> str:
-    return tag_name.replace("{http://www.srcML.org/srcML/src}", "")
+    tag_name = tag_name.replace("{http://www.srcML.org/srcML/src}", "")
+    tag_name = tag_name.replace("{http://www.srcML.org/srcML/cpp}", "")
+    return tag_name
+
