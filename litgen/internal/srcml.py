@@ -179,6 +179,8 @@ def parse_type(element: ET.Element, previous_decl: CppDecl) -> CppType:
             result.specifiers.append(child.text)
         elif child_tag == "modifier":
             result.modifiers.append(child.text)
+        elif child_tag == "argument_list":
+            result.argument_list.append(child.text)
         else:
             raise _bad_tag_exception(child)
 
@@ -205,7 +207,7 @@ def parse_decl(element: ET.Element, previous_decl: CppDecl) -> CppDecl:
         if child_tag == "type":
             result.cpp_type = parse_type(child, previous_decl)
         elif child_tag == "name":
-            result.name = child.text
+            result.name = parse_name(child)
         elif child_tag == "init":
             expr_child = child_with_tag(child, "expr")
             result.init = srcml_to_code(expr_child)
@@ -562,7 +564,12 @@ def first_code_element_with_tag(code: str, tag: str) -> ET.Element:
 
 
 def srcml_to_str(element: ET.Element):
-    xmlstr = minidom.parseString(ET.tostring(element)).toprettyxml(indent="   ")
+    xmlstr_raw = ET.tostring(element, encoding="unicode")
+    try:
+        xmlstr = minidom.parseString(ET.tostring(element)).toprettyxml(indent="   ")
+    except Exception as e:
+        xmlstr = xmlstr_raw
+
     return xmlstr
 
 

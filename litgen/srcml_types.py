@@ -137,7 +137,7 @@ class CppBlock(SrcmlBase): # it is also a CppBlockChild
 
     def _str_block(self):
         strs = map(str, self.block_children)
-        result = code_utils.join_remove_empty("\n\n", strs)
+        result = code_utils.join_remove_empty("\n", strs)
         return result
 
     def __str__(self):
@@ -188,16 +188,24 @@ class CppType(SrcmlBase):
     name: str
     specifiers: List[str] # could be ["const"], ["static", "const"], ["extern"], ["constexpr"], etc.
     modifiers: List[str]  # could be ["*"], ["&&"], ["&"], ["*", "*"]
+    argument_list: List[str] # template arguments i.e ["int"] for vector<int>
 
     def __init__(self):
         self.name = ""
         self.specifiers = []
         self.modifiers = []
+        self.argument_list = []
 
     def __str__(self):
         specifiers_str = code_utils.join_remove_empty(" ", self.specifiers)
         modifiers_str = code_utils.join_remove_empty(" ", self.modifiers)
-        strs = [specifiers_str, self.name, modifiers_str]
+
+        name_and_arg = self.name
+        if len(self.argument_list) > 0:
+            args_str = ", ".join(self.argument_list)
+            name_and_arg += "<" + args_str + ">"
+
+        strs = [specifiers_str, name_and_arg, modifiers_str]
         r = code_utils.join_remove_empty(" ", strs)
         return r
 
