@@ -1,9 +1,14 @@
 from dataclasses import dataclass as _dataclass
 from typing import Optional, List, Tuple
+import litgen.internal.code_utils as code_utils
+
+
+class SrcmlBase:
+    pass
 
 
 @_dataclass
-class CppType:
+class CppType(SrcmlBase):
     """
     Describes a full C++ type, as seen by srcML
     See https://www.srcml.org/doc/cpp_srcML.html#type
@@ -17,9 +22,16 @@ class CppType:
         self.specifiers = []
         self.modifiers = []
 
+    def __str__(self):
+        specifiers_str = code_utils.join_remove_empty(" ", self.specifiers)
+        modifiers_str = code_utils.join_remove_empty(" ", self.modifiers)
+        strs = [specifiers_str, self.name_cpp, modifiers_str]
+        r = code_utils.join_remove_empty(" ", strs)
+        return r
+
 
 @_dataclass
-class CppDecl:
+class CppDecl(SrcmlBase):
     """
     https://www.srcml.org/doc/cpp_srcML.html#variable-declaration
 
@@ -32,9 +44,15 @@ class CppDecl:
     name_cpp: str = ""
     init_cpp: str = ""
 
+    def __str__(self):
+        r = f"{self.cpp_type} {self.name_cpp}"
+        if len(self.init_cpp) > 0:
+            r += " = " + self.init_cpp
+        return r
+
 
 @_dataclass
-class CppDeclStatement:
+class CppDeclStatement(SrcmlBase):
     """
     https://www.srcml.org/doc/cpp_srcML.html#variable-declaration-statement
     """
@@ -43,17 +61,25 @@ class CppDeclStatement:
     def __init__(self):
         self.cpp_decls = []
 
+    def __str__(self):
+        strs = list(map(str, self.cpp_decls))
+        r = code_utils.join_remove_empty("\n", strs)
+        return r
+
 
 @_dataclass
-class CppParameter:
+class CppParameter(SrcmlBase):
     """
     https://www.srcml.org/doc/cpp_srcML.html#function-declaration
     """
     decl: CppDecl = CppDecl()
 
+    def __str__(self):
+        return str(self.decl)
+
 
 @_dataclass
-class CppParameterList:
+class CppParameterList(SrcmlBase):
     """
     https://www.srcml.org/doc/cpp_srcML.html#function-declaration
     """
@@ -61,9 +87,13 @@ class CppParameterList:
     def __init__(self):
         self.parameters = []
 
+    def __str__(self):
+        strs = list(map(lambda param: str(param), self.parameters))
+        return  code_utils.join_remove_empty(", ", strs)
+
 
 @_dataclass
-class CppFunctionDecl:
+class CppFunctionDecl(SrcmlBase):
     """
     https://www.srcml.org/doc/cpp_srcML.html#function-declaration
     """
@@ -71,4 +101,6 @@ class CppFunctionDecl:
     name_cpp: str = ""
     parameter_list: CppParameterList = CppParameterList()
 
-
+    def __str__(self):
+        r = f"{self.type} {self.name_cpp}({self.parameter_list})"
+        return r

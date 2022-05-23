@@ -254,7 +254,7 @@ def assert_are_equal_ignore_spaces(generated_code: str, expected_code: str):
     expected_processed = remove_redundant_spaces(expected_code)
     if not generated_processed == expected_processed:
         diff_str = make_nice_code_diff(generated_processed, expected_processed)
-        logging.error(f"""assert_force_one_space_equal returns false 
+        logging.error(f"""assert_are_equal_ignore_spaces returns false 
                     with diff= 
 {str(diff_str)}
                     expected_processed=
@@ -271,7 +271,8 @@ def assert_are_equal_ignore_spaces(generated_code: str, expected_code: str):
 
 
 def assert_are_codes_equal(generated_code: str, expected_code: str) -> str:
-    generated_processed = strip_empty_lines(unindent_code(generated_code))
+    generated_code_str = str(generated_code)
+    generated_processed = strip_empty_lines(unindent_code(generated_code_str))
     expected_processed = strip_empty_lines(unindent_code(expected_code))
     if not generated_processed == expected_processed:
         diff_str = make_nice_code_diff(generated_processed, expected_processed)
@@ -487,6 +488,12 @@ def parse_function_declaration(code_line: str) -> Optional[FunctionNameAndReturn
         is_static = True
 
     return FunctionNameAndReturnType(function_name, return_type_cpp, is_static=is_static)
+
+
+def join_remove_empty(separator: str, strs: List[str]):
+    non_empty_strs = filter(lambda s : len(s) > 0, strs)
+    r = separator.join(non_empty_strs)
+    return r
 
 
 def contains_word(where_to_search: str, word: str):

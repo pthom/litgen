@@ -61,105 +61,90 @@ def test_srcml_does_not_modify_code():
     """)
 
 
+def test_srcml_repr():
+    code = "int a;"
+    element = srcml.first_code_element_with_tag(code, "decl_stmt")
+    cpp_decl_statement  = srcml.parse_cpp_decl_stmt(element)
+    repr_cpp_decl_statement = repr(cpp_decl_statement)
+    repr_expected = 'CppDeclStatement(cpp_decls=[CppDecl(cpp_type=CppType(name_cpp=\'int\', specifiers=[], modifiers=[]), name_cpp=\'a\', init_cpp=\'\')])'
+    assert repr_cpp_decl_statement == repr_expected
+
+
 def test_parse_cpp_decl_statement():
     # Basic test
     code = "int a;"
     element = srcml.first_code_element_with_tag(code, "decl_stmt")
     cpp_decl_statement  = srcml.parse_cpp_decl_stmt(element)
-    code_utils.assert_are_equal_ignore_spaces(cpp_decl_statement, """
-        CppDeclStatement(cpp_decls=[
-            CppDecl(cpp_type=CppType(name_cpp='int', specifiers=[], modifiers=[]), name_cpp='a', init_cpp='')])""")
+    code_utils.assert_are_equal_ignore_spaces(cpp_decl_statement, "int a")
 
-    # Test with * and initial value
-    code = "const int* a = 1;"
+    # # Test with *, initial value and east/west const translation
+    code = "int const *a=nullptr;"
     element = srcml.first_code_element_with_tag(code, "decl_stmt")
     cpp_decl_statement  = srcml.parse_cpp_decl_stmt(element)
-    code_utils.assert_are_equal_ignore_spaces(cpp_decl_statement, """
-        CppDeclStatement(cpp_decls=[
-            CppDecl(cpp_type=CppType(name_cpp='int', specifiers=['const'], modifiers=['*']), name_cpp='a', init_cpp='1')])""")
+    code_utils.assert_are_equal_ignore_spaces(cpp_decl_statement, "const int * a = nullptr")
 
     # Test with several variables + modifiers
-    code = "int a = 3, &b, *c;"
+    code = "int a = 3, &b = b0, *c;"
     element = srcml.first_code_element_with_tag(code, "decl_stmt")
     cpp_decl_statement  = srcml.parse_cpp_decl_stmt(element)
-    code_utils.assert_are_equal_ignore_spaces(cpp_decl_statement, """
-        CppDeclStatement(cpp_decls=[
-            CppDecl(cpp_type=CppType(name_cpp='int', specifiers=[], modifiers=[]), name_cpp='a', init_cpp='3'), 
-            CppDecl(cpp_type=CppType(name_cpp='int', specifiers=[], modifiers=['&']), name_cpp='b', init_cpp=''), 
-            CppDecl(cpp_type=CppType(name_cpp='int', specifiers=[], modifiers=['*']), name_cpp='c', init_cpp='')])""")
+    code_utils.assert_are_codes_equal(cpp_decl_statement, """
+        int a = 3
+        int & b = b0
+        int * c
+    """)
+
 
     # Test with double pointer, which creates a double modifier
     code = "uchar **buffer;"
     element = srcml.first_code_element_with_tag(code, "decl_stmt")
     cpp_decl_statement  = srcml.parse_cpp_decl_stmt(element)
-    code_utils.assert_are_equal_ignore_spaces(cpp_decl_statement, """
-        CppDeclStatement(cpp_decls=[
-            CppDecl(cpp_type=CppType(name_cpp='uchar', specifiers=[], modifiers=['*', '*']), name_cpp='buffer', init_cpp='')])""")
+    code_utils.assert_are_codes_equal(cpp_decl_statement, "uchar * * buffer")
 
     # Test with a template type
-    code = "std::map<int, std::string> x = {1, 2, 3};"
+    code = "std::map<int, std::string>x = {1, 2, 3};"
     element = srcml.first_code_element_with_tag(code, "decl_stmt")
     cpp_decl_statement  = srcml.parse_cpp_decl_stmt(element)
-    code_utils.assert_are_equal_ignore_spaces(cpp_decl_statement, """
-        CppDeclStatement(cpp_decls=[
-            CppDecl(cpp_type=CppType(name_cpp='std::map<int, std::string>', specifiers=[], modifiers=[]), name_cpp='x', init_cpp='{1, 2, 3}')])""")
+    code_utils.assert_are_codes_equal(cpp_decl_statement, "std::map<int, std::string> x = {1, 2, 3}")
 
 
 def test_parse_function_decl():
-    # Basic test
+    # Basic test with repr
     code = "int foo();"
     element = srcml.first_code_element_with_tag(code, "function_decl")
     function_decl  = srcml.parse_function_decl(element)
-    assert str(function_decl) == "CppFunctionDecl(type=CppType(name_cpp='int', specifiers=[], modifiers=[]), name_cpp='foo', parameter_list=CppParameterList(parameters=[]))"
+    assert repr(function_decl) == "CppFunctionDecl(type=CppType(name_cpp='int', specifiers=[], modifiers=[]), name_cpp='foo', parameter_list=CppParameterList(parameters=[]))"
+
+    # Basic test with str
+    code = "int foo();"
+    element = srcml.first_code_element_with_tag(code, "function_decl")
+    function_decl  = srcml.parse_function_decl(element)
+    assert str(function_decl) == "int foo()"
+
 
     # Test with params and default values
     code = "int add(int a, int b = 5);"
     element = srcml.first_code_element_with_tag(code, "function_decl")
     function_decl  = srcml.parse_function_decl(element)
-    code_utils.assert_are_equal_ignore_spaces(
-        str(function_decl), """
-        CppFunctionDecl(type=CppType(name_cpp='int', specifiers=[], modifiers=[]), name_cpp='add', 
-            parameter_list=CppParameterList(parameters=[
-                CppParameter(decl=CppDecl(cpp_type=CppType(name_cpp='int', specifiers=[], modifiers=[]), name_cpp='a', init_cpp='')), 
-                CppParameter(decl=CppDecl(cpp_type=CppType(name_cpp='int', specifiers=[], modifiers=[]), name_cpp='b', init_cpp='5'))
-                ]))"""
-        )
+    code_utils.assert_are_codes_equal(function_decl, "int add(int a, int b = 5)")
 
     # Test with template types
     code = """
-    std::vector<std::pair<size_t, int>> enumerate(const std::vector<int>& xs);
+    std::vector<std::pair<size_t, int>>     enumerate(std::vector<int>&   const    xs);
     """
     element = srcml.first_code_element_with_tag(code, "function_decl")
     function_decl  = srcml.parse_function_decl(element)
-    code_utils.assert_are_equal_ignore_spaces(function_decl, """
-        CppFunctionDecl(type=CppType(name_cpp='std::vector<std::pair<size_t, int>>', specifiers=[], modifiers=[]), name_cpp='enumerate', 
-            parameter_list=CppParameterList(parameters=[
-                CppParameter(decl=CppDecl(cpp_type=CppType(name_cpp='std::vector<int>', specifiers=['const'], modifiers=['&']), name_cpp='xs', init_cpp=''))]))
-        """)
-
+    code_utils.assert_are_codes_equal(function_decl, "std::vector<std::pair<size_t, int>> enumerate(const std::vector<int> & xs)")
 
     # Test with type declared after ->
     code = "auto divide(int a, int b) -> double;"
     element = srcml.first_code_element_with_tag(code, "function_decl")
     function_decl  = srcml.parse_function_decl(element)
-    code_utils.assert_are_equal_ignore_spaces(function_decl, """
-        CppFunctionDecl(type=CppType(name_cpp='double', specifiers=[], modifiers=[]), name_cpp='divide', 
-            parameter_list=CppParameterList(parameters=[
-                CppParameter(decl=CppDecl(cpp_type=CppType(name_cpp='int', specifiers=[], modifiers=[]), name_cpp='a', init_cpp='')), 
-                CppParameter(decl=CppDecl(cpp_type=CppType(name_cpp='int', specifiers=[], modifiers=[]), name_cpp='b', init_cpp=''))]))    
-        """)
+    code_utils.assert_are_codes_equal(function_decl, "double divide(int a, int b)")
 
 
     # Test with inferred type
-    code = "auto minimum(int&& a, int b = 5);"
+    code = "auto minimum(int&&a, int b = 5);"
     element = srcml.first_code_element_with_tag(code, "function_decl")
     function_decl  = srcml.parse_function_decl(element)
-    code_utils.assert_are_equal_ignore_spaces(function_decl, """
-        CppFunctionDecl(type=CppType(name_cpp='auto', specifiers=[], modifiers=[]), name_cpp='minimum', 
-            parameter_list=CppParameterList(parameters=[
-                CppParameter(decl=CppDecl(cpp_type=CppType(name_cpp='int', specifiers=[], modifiers=['&&']), name_cpp='a', init_cpp='')), 
-                CppParameter(decl=CppDecl(cpp_type=CppType(name_cpp='int', specifiers=[], modifiers=[]), name_cpp='b', init_cpp='5'))]))        
-        """)
+    code_utils.assert_are_codes_equal(function_decl, "auto minimum(int && a, int b = 5)")
 
-
-test_parse_function_decl()
