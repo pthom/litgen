@@ -277,12 +277,19 @@ class CppFunctionDecl(CppBlockChild):
     """
     https://www.srcml.org/doc/cpp_srcML.html#function-declaration
     """
+    specifiers: List[str] # "const" or ""
     type: CppType = CppType()
     name: str = ""
     parameter_list: CppParameterList = CppParameterList()
 
+    def __init__(self):
+        self.specifiers: List[str] = []
+
     def __str__(self):
         r = f"{self.type} {self.name}({self.parameter_list})"
+        if len(self.specifiers) > 0:
+            specifiers_strs = map(str, self.specifiers)
+            r = r + " " + " ".join(specifiers_strs)
         return r
 
 
@@ -292,6 +299,9 @@ class CppFunction(CppFunctionDecl):
     https://www.srcml.org/doc/cpp_srcML.html#function-definition
     """
     block: CppBlock = CppBlock()
+
+    def __init__(self):
+        super().__init__()
 
     def __str__(self):
         r = CppFunctionDecl.__str__(self) + " { OMITTED_BLOCK; }"

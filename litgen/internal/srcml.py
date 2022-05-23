@@ -285,6 +285,8 @@ def parse_function_decl(element: ET.Element) -> CppFunctionDecl:
             result.name = parse_name(child)
         elif child_tag == "parameter_list":
             result.parameter_list = parse_parameter_list(child)
+        elif child_tag == "specifier":
+            result.specifiers.append(child.text)
         else:
             raise _bad_tag_exception(child)
 
@@ -306,6 +308,8 @@ def parse_function(element: ET.Element) -> CppFunction:
             result.name = parse_name(child)
         elif child_tag == "parameter_list":
             result.parameter_list = parse_parameter_list(child)
+        elif child_tag == "specifier":
+            result.specifiers.append(child.text)
         elif child_tag == "block":
             result.block = parse_block(child)
         else:
