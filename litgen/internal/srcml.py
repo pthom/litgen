@@ -81,12 +81,12 @@ class _SrcmlCaller:
         self._stats_code_to_srcml.stop()
         return element
 
-    def srcml_to_code(self, root: ET.Element) -> str:
+    def srcml_to_code(self, element: ET.Element) -> str:
         """
         Calls srcml with the given srcml xml element and return the corresponding code
         """
         self._stats_srcml_to_code.start()
-        unit_element = _embed_element_into_unit(root)
+        unit_element = _embed_element_into_unit(element)
         with tempfile.NamedTemporaryFile(delete=False, suffix=".xml") as input_xml_file:
             element_tree = ET.ElementTree(unit_element)
             element_tree.write(input_xml_file.name)
@@ -295,8 +295,8 @@ def first_code_element_with_tag(code: str, tag: str) -> ET.Element:
     return child_with_tag(root, tag)
 
 
-def srcml_to_str(root: ET.Element):
-    xmlstr = minidom.parseString(ET.tostring(root)).toprettyxml(indent="   ")
+def srcml_to_str(element: ET.Element):
+    xmlstr = minidom.parseString(ET.tostring(element)).toprettyxml(indent="   ")
     return xmlstr
 
 
