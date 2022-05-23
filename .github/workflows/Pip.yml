@@ -12,6 +12,9 @@ jobs:
     - name: Checkout submodules
       run: git submodule update --init --recursive
 
+    - name: Install srcML
+      run : sudo ./ci_scripts/install_srcml_ubuntu.sh
+
     - name: Create venv
       run: |
         python3 -m venv venv
