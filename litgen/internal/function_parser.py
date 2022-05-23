@@ -52,7 +52,7 @@ def is_function_in_excludes(function_name: str, options: CodeStyleOptions) -> bo
 def _try_parse_function_name_from_declaration(code: str, options: CodeStyleOptions) -> Optional[PydefCode]:
     full_line = code
     code = code_utils.remove_end_of_line_cpp_comments(code)
-    code = code_utils.remove_redundant_spaces(code)
+    code = code_utils.force_one_space(code)
 
     # update state
     _SCOPE_OBSERVER.parse_line(code)

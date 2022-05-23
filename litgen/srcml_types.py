@@ -13,19 +13,19 @@ class CppType(SrcmlBase):
     Describes a full C++ type, as seen by srcML
     See https://www.srcml.org/doc/cpp_srcML.html#type
     """
-    name_cpp: str
+    name: str
     specifiers: List[str] # could be ["const"], ["static", "const"], ["extern"], ["constexpr"], etc.
     modifiers: List[str]  # could be ["*"], ["&&"], ["&"], ["*", "*"]
 
     def __init__(self):
-        self.name_cpp = ""
+        self.name = ""
         self.specifiers = []
         self.modifiers = []
 
     def __str__(self):
         specifiers_str = code_utils.join_remove_empty(" ", self.specifiers)
         modifiers_str = code_utils.join_remove_empty(" ", self.modifiers)
-        strs = [specifiers_str, self.name_cpp, modifiers_str]
+        strs = [specifiers_str, self.name, modifiers_str]
         r = code_utils.join_remove_empty(" ", strs)
         return r
 
@@ -41,13 +41,13 @@ class CppDecl(SrcmlBase):
             <decl_stmt><decl><type><name>int</name></type> <name>a</name> <init>= <expr><literal type="number">5</literal></expr></init></decl>;</decl_stmt>
     """
     cpp_type: CppType = CppType()
-    name_cpp: str = ""
-    init_cpp: str = ""
+    name: str = ""
+    init: str = ""  # initial or default value
 
     def __str__(self):
-        r = f"{self.cpp_type} {self.name_cpp}"
-        if len(self.init_cpp) > 0:
-            r += " = " + self.init_cpp
+        r = f"{self.cpp_type} {self.name}"
+        if len(self.init) > 0:
+            r += " = " + self.init
         return r
 
 
@@ -98,9 +98,9 @@ class CppFunctionDecl(SrcmlBase):
     https://www.srcml.org/doc/cpp_srcML.html#function-declaration
     """
     type: CppType = CppType()
-    name_cpp: str = ""
+    name: str = ""
     parameter_list: CppParameterList = CppParameterList()
 
     def __str__(self):
-        r = f"{self.type} {self.name_cpp}({self.parameter_list})"
+        r = f"{self.type} {self.name}({self.parameter_list})"
         return r

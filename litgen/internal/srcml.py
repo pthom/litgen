@@ -146,7 +146,7 @@ def parse_type(element: ET.Element, previous_decl: CppDecl) -> CppType:
     for child in element:
         child_tag = clean_tag(child.tag)
         if child_tag == "name":
-            result.name_cpp = parse_name(child)
+            result.name = parse_name(child)
         elif child_tag == "specifier":
             result.specifiers.append(child.text)
         elif child_tag == "modifier":
@@ -154,9 +154,9 @@ def parse_type(element: ET.Element, previous_decl: CppDecl) -> CppType:
         else:
             raise SrcMlException(f"Unexpected tag in parse_type: {child_tag}")
 
-    if len(result.name_cpp) == 0:
+    if len(result.name) == 0:
         assert previous_decl is not None
-        result.name_cpp = previous_decl.cpp_type.name_cpp
+        result.name = previous_decl.cpp_type.name
 
     return result
 
@@ -177,10 +177,10 @@ def parse_cpp_decl(element: ET.Element, previous_decl: CppDecl) -> CppDecl:
         if child_tag == "type":
             result.cpp_type = parse_type(child, previous_decl)
         elif child_tag == "name":
-            result.name_cpp = child.text
+            result.name = child.text
         elif child_tag == "init":
             expr_child = child_with_tag(child, "expr")
-            result.init_cpp = srcml_to_code(expr_child)
+            result.init = srcml_to_code(expr_child)
         else:
             raise SrcMlException(f"Unexpected tag in parse_cpp_decl: {child_tag}")
     return result
@@ -219,7 +219,7 @@ def parse_parameter(element: ET.Element) -> CppParameter:
         else:
             raise SrcMlException(f"Unexpected tag in parse_parameter: {parse_parameter}")
 
-    if len(result.decl.name_cpp) == 0:
+    if len(result.decl.name) == 0:
         raise SrcMlException(f"Found no name in parse_parameter!")
 
     return result
@@ -252,7 +252,7 @@ def parse_function_decl(element: ET.Element) -> CppFunctionDecl:
         if child_tag == "type":
             result.type = parse_type(child, None)
         elif child_tag == "name":
-            result.name_cpp = parse_name(child)
+            result.name = parse_name(child)
         elif child_tag == "parameter_list":
             result.parameter_list = parse_parameter_list(child)
         else:

@@ -198,17 +198,20 @@ def write_code_between_markers(
     write_text_file(inout_filename, output_code)
 
 
-def remove_redundant_spaces(code: str) -> str:
+def force_one_space(code: str) -> str:
     result = code.strip()
     result = result.replace("\n", " ")
     result = result.replace("\t", " ")
-
     while True:
         aux = result.replace("  ", " ")
         if aux == result:
             break
         result = aux
+    return result
 
+
+def remove_redundant_spaces(code: str) -> str:
+    result = force_one_space(code)
     separators = [",", "(", ")", "[", "]", ",", ";"]
 
     for separator in separators:
