@@ -189,7 +189,7 @@ def parse_type(element: ET.Element, previous_decl: CppDecl) -> CppType:
     return result
 
 
-def parse_cpp_decl(element: ET.Element, previous_decl: CppDecl) -> CppDecl:
+def parse_decl(element: ET.Element, previous_decl: CppDecl) -> CppDecl:
     """
     https://www.srcml.org/doc/cpp_srcML.html#variable-declaration-statement
 
@@ -214,7 +214,7 @@ def parse_cpp_decl(element: ET.Element, previous_decl: CppDecl) -> CppDecl:
     return result
 
 
-def parse_cpp_decl_stmt(element: ET.Element) -> CppDeclStatement:
+def parse_decl_stmt(element: ET.Element) -> CppDeclStatement:
     """
     https://www.srcml.org/doc/cpp_srcML.html#variable-declaration-statement
     https://www.srcml.org/doc/cpp_srcML.html#variable-declaration
@@ -226,7 +226,7 @@ def parse_cpp_decl_stmt(element: ET.Element) -> CppDeclStatement:
     for child in element:
         child_tag = clean_tag(child.tag)
         if child_tag == "decl":
-            cpp_decl = parse_cpp_decl(child, previous_decl)
+            cpp_decl = parse_decl(child, previous_decl)
             result.cpp_decls.append(cpp_decl)
             previous_decl = cpp_decl
         else:
@@ -243,7 +243,7 @@ def parse_parameter(element: ET.Element) -> CppParameter:
     for child in element:
         child_tag = clean_tag(child.tag)
         if child_tag == "decl":
-            result.decl = parse_cpp_decl(child, None)
+            result.decl = parse_decl(child, None)
         else:
             raise _bad_tag_exception(child)
 
@@ -289,6 +289,29 @@ def parse_function_decl(element: ET.Element) -> CppFunctionDecl:
     return result
 
 
+def parse_function(element: ET.Element) -> CppFunction:
+    """
+    https://www.srcml.org/doc/cpp_srcML.html#function-definition
+    """
+    assert clean_tag(element.tag) == "function"
+    result = CppFunction()
+
+    for child in element:
+        child_tag = clean_tag(child.tag)
+        if child_tag == "type":
+            result.type = parse_type(child, None)
+        elif child_tag == "name":
+            result.name = parse_name(child)
+        elif child_tag == "parameter_list":
+            result.parameter_list = parse_parameter_list(child)
+        elif child_tag == "block":
+            result.block = parse_block(child)
+        else:
+            raise _bad_tag_exception(child)
+
+    return result
+
+
 def parse_super(element: ET.Element) -> CppSuper:
     """
     Define a super classes of a struct or class
@@ -327,12 +350,17 @@ def parse_super_list(element: ET.Element) -> CppSuperList:
     return result
 
 
-def parse_struct(element: ET.Element) -> CppStruct:
+def parse_struct_or_class(element: ET.Element) -> CppStruct:
     """
     https://www.srcml.org/doc/cpp_srcML.html#struct-definition
+    https://www.srcml.org/doc/cpp_srcML.html#class-definition
     """
-    assert clean_tag(element.tag) == "struct"
-    result = CppStruct()
+    element_tag = clean_tag(element.tag)
+    assert element_tag in ["struct", "class"]
+    if element_tag == "struct":
+        result = CppStruct()
+    else:
+        result = CppClass()
 
     for child in element:
         child_tag = clean_tag(child.tag)
@@ -356,12 +384,9 @@ def parse_public_protected_private(element: ET.Element) -> CppPublicProtectedPri
     element_tag = clean_tag(element.tag)
     assert element_tag in ["public", "protected", "private"]
 
-    result = CppPublicProtectedPrivate(element_tag)
-    for child in element:
-        child_tag = clean_tag(child.tag)
-        pass
-
-    return result
+    block_content = CppPublicProtectedPrivate(element_tag)
+    fill_block(element, block_content)
+    return block_content
 
 
 
@@ -370,18 +395,58 @@ def parse_block(element: ET.Element) -> CppBlock:
     https://www.srcml.org/doc/cpp_srcML.html#block
     """
     assert clean_tag(element.tag) == "block"
-    result = CppBlock()
 
+    cpp_block = CppBlock()
+    fill_block(element, cpp_block)
+    return cpp_block
+
+
+def fill_block(element: ET.Element, inout_block_content: CppBlock):
+    """
+    https://www.srcml.org/doc/cpp_srcML.html#block_content
+
+    possible child tags:
+        child_tag='decl_stmt'
+        child_tag='function_decl'
+        child_tag='function'
+        child_tag='comment'
+        child_tag='struct'
+        child_tag='class'
+        child_tag='namespace'
+        child_tag='enum' (optionally type="class")
+    """
     for child in element:
         child_tag = clean_tag(child.tag)
-        if child_tag == "block_content":
-            result.block_content = parse_block_content(child)
-        elif child_tag in ["public", "private", "protected"]:
-            result.public_protected_private.append(parse_public_protected_private(child))
+        if child_tag == "decl_stmt":
+            inout_block_content.block_children.append(parse_decl_stmt(child))
+        elif child_tag == "decl":
+            inout_block_content.block_children.append(parse_decl(child, None))
+        elif child_tag == "function_decl":
+            inout_block_content.block_children.append(parse_function_decl(child))
+        elif child_tag == "function":
+            inout_block_content.block_children.append(parse_function(child))
+        elif child_tag == "comment":
+            inout_block_content.block_children.append(parse_comment(child))
+        elif child_tag == "struct":
+            inout_block_content.block_children.append(parse_struct_or_class(child))
+        elif child_tag == "class":
+            inout_block_content.block_children.append(parse_class(child))
+        elif child_tag == "namespace":
+            inout_block_content.block_children.append(parse_namespace(child))
+        elif child_tag == "enum":
+            inout_block_content.block_children.append(parse_enum(child))
+        elif child_tag == "expr_stmt":
+            inout_block_content.block_children.append(parse_expr_stmt(child))
+        elif child_tag == "return":
+            inout_block_content.block_children.append(parse_return(child))
+        elif child_tag == "block_content":
+            inout_block_content.block_children.append(parse_block_content(child))
+        elif child_tag in ["public", "protected", "private"]:
+            inout_block_content.block_children.append(parse_public_protected_private(child))
+        elif child_tag == "empty_stmt":
+            pass
         else:
             raise _bad_tag_exception(child)
-
-    return result
 
 
 def parse_block_content(element: ET.Element) -> CppBlockContent:
@@ -389,12 +454,76 @@ def parse_block_content(element: ET.Element) -> CppBlockContent:
     https://www.srcml.org/doc/cpp_srcML.html#block_content
     """
     assert clean_tag(element.tag) == "block_content"
-    result = CppBlockContent()
 
-    for child in element:
-        pass
+    block_content = CppBlockContent()
+    fill_block(element, block_content)
+    return block_content
+
+
+def parse_comment(element: ET.Element) -> CppComment:
+    """
+    https://www.srcml.org/doc/cpp_srcML.html#comment
+    """
+    assert clean_tag(element.tag) == "comment"
+    assert len(element) == 0 # a comment has no child
+
+    result = CppComment()
+    result.text = element.text
 
     return result
+
+
+def parse_namespace(element: ET.Element) -> CppNamespace:
+    """
+    https://www.srcml.org/doc/cpp_srcML.html#namespace
+    """
+    assert clean_tag(element.tag) == "namespace"
+    result = CppNamespace()
+
+    for child in element:
+        child_tag = clean_tag(child.tag)
+        if child_tag == "name":
+            result.name = parse_name(child)
+        elif child_tag == "block":
+            result.block = parse_block(child)
+        else:
+            raise _bad_tag_exception(child)
+
+    return result
+
+
+def parse_enum(element: ET.Element) -> CppEnum:
+    """
+    https://www.srcml.org/doc/cpp_srcML.html#enum-definition
+    https://www.srcml.org/doc/cpp_srcML.html#enum-class
+    """
+    assert clean_tag(element.tag) == "enum"
+    result = CppEnum()
+
+    if "type" in element.attrib.keys():
+        result.type = element.attrib["type"]
+
+    for child in element:
+        child_tag = clean_tag(child.tag)
+        if child_tag == "name":
+            result.name = parse_name(child)
+        elif child_tag == "block":
+            result.block = parse_block(child)
+        else:
+            raise _bad_tag_exception(child)
+
+    return result
+
+
+def parse_expr_stmt(element: ET.Element) -> CppExprStmt:
+    assert clean_tag(element.tag) == "expr_stmt"
+    return CppExprStmt()
+
+
+def parse_return(element: ET.Element) -> CppReturn:
+    assert clean_tag(element.tag) == "return"
+    return CppReturn()
+
 
 
 ###########################################
@@ -416,7 +545,9 @@ def children_with_tag(element: ET.Element, tag: str) -> List[ET.Element]:
 def child_with_tag(element: ET.Element, tag: str) -> ET.Element:
     children = children_with_tag(element, tag)
     if len(children) == 0:
-        raise SrcMlException(f"child_with_tag: did not find child with tag {tag}")
+        tags_strs = map(lambda c: c.tag, children)
+        tags_str = ", ".join(tags_strs)
+        raise SrcMlException(f"child_with_tag: did not find child with tag {tag}  (found {tags_str})")
     elif len(children) > 1:
         raise SrcMlException(f"child_with_tag: found more than one child with tag {tag}")
     return  children[0]
@@ -442,4 +573,3 @@ def srcml_to_file(root: ET.Element, filename: str):
 
 def clean_tag(tag_name: str) -> str:
     return tag_name.replace("{http://www.srcML.org/srcML/src}", "")
-

@@ -64,7 +64,7 @@ def test_srcml_does_not_modify_code():
 def test_srcml_repr():
     code = "int a;"
     element = srcml.first_code_element_with_tag(code, "decl_stmt")
-    cpp_decl_statement  = srcml.parse_cpp_decl_stmt(element)
+    cpp_decl_statement  = srcml.parse_decl_stmt(element)
     repr_cpp_decl_statement = repr(cpp_decl_statement)
     repr_expected = 'CppDeclStatement(cpp_decls=[CppDecl(cpp_type=CppType(name=\'int\', specifiers=[], modifiers=[]), name=\'a\', init=\'\')])'
     assert repr_cpp_decl_statement == repr_expected
@@ -74,19 +74,19 @@ def test_parse_cpp_decl_statement():
     # Basic test
     code = "int a;"
     element = srcml.first_code_element_with_tag(code, "decl_stmt")
-    cpp_decl_statement  = srcml.parse_cpp_decl_stmt(element)
+    cpp_decl_statement  = srcml.parse_decl_stmt(element)
     code_utils.assert_are_equal_ignore_spaces(cpp_decl_statement, "int a")
 
     # # Test with *, initial value and east/west const translation
     code = "int const *a=nullptr;"
     element = srcml.first_code_element_with_tag(code, "decl_stmt")
-    cpp_decl_statement  = srcml.parse_cpp_decl_stmt(element)
+    cpp_decl_statement  = srcml.parse_decl_stmt(element)
     code_utils.assert_are_equal_ignore_spaces(cpp_decl_statement, "const int * a = nullptr")
 
     # Test with several variables + modifiers
     code = "int a = 3, &b = b0, *c;"
     element = srcml.first_code_element_with_tag(code, "decl_stmt")
-    cpp_decl_statement  = srcml.parse_cpp_decl_stmt(element)
+    cpp_decl_statement  = srcml.parse_decl_stmt(element)
     code_utils.assert_are_codes_equal(cpp_decl_statement, """
         int a = 3
         int & b = b0
@@ -97,13 +97,13 @@ def test_parse_cpp_decl_statement():
     # Test with double pointer, which creates a double modifier
     code = "uchar **buffer;"
     element = srcml.first_code_element_with_tag(code, "decl_stmt")
-    cpp_decl_statement  = srcml.parse_cpp_decl_stmt(element)
+    cpp_decl_statement  = srcml.parse_decl_stmt(element)
     code_utils.assert_are_codes_equal(cpp_decl_statement, "uchar * * buffer")
 
     # Test with a template type
     code = "std::map<int, std::string>x = {1, 2, 3};"
     element = srcml.first_code_element_with_tag(code, "decl_stmt")
-    cpp_decl_statement  = srcml.parse_cpp_decl_stmt(element)
+    cpp_decl_statement  = srcml.parse_decl_stmt(element)
     code_utils.assert_are_codes_equal(cpp_decl_statement, "std::map<int, std::string> x = {1, 2, 3}")
 
 
@@ -149,6 +149,14 @@ def test_parse_function_decl():
     code_utils.assert_are_codes_equal(function_decl, "auto minimum(int && a, int b = 5)")
 
 
+def test_parse_function_definition():
+    code = "int foo() {return 42;}"
+    element = srcml.first_code_element_with_tag(code, "function")
+    function_srcml  = srcml.parse_function(element)
+    function_str = str(function_srcml)
+    code_utils.assert_are_codes_equal(function_str, "int foo() { OMITTED_BLOCK; }")
+
+
 def test_struct_srcml():
     code = """
     struct a {
@@ -188,13 +196,123 @@ def test_parse_struct_decl():
     code = """
     struct a {
         int x;
+        int y = 2;
+        int z,w =2;
+        int add(int a, int b);        
+        // Sustract
+        int sub(int a, int b) { return b - a;}
+        
+        struct A {
+        };
     };
     """
     element = srcml.first_code_element_with_tag(code, "struct")
-    struct = srcml.parse_struct(element)
+    struct = srcml.parse_struct_or_class(element)
     # code_utils.assert_are_codes_equal(struct, "")
     print(struct)
 
 
-test_parse_struct_decl()
+def test_parse_block():
+    code = """
+    {
+        int z,w =2;
+        int add(int a, int b);        
+     
+        // Sustract
+        int sub(int a, int b) {
+            int c = 56; 
+            callMummy();
+            return b - a - c;
+        }
+        
+        struct A {
+        };
+        
+        namespace internal
+        {
+            bool flag;
+        }    
+        
+        enum MyEnum
+        {
+            A = 0;
+        };
+        
+        enum class MyEnumClass
+        {
+            B = 1;
+        };
+    }
+    """
+    element = srcml.first_code_element_with_tag(code, "block")
+    cpp_block = srcml.parse_block(element)
+    block_str = str(cpp_block)
+    print(block_str)
+
+    expected_str = """
+        // <CppBlockContent>
+        int z
+        int w = 2
+        
+        int add(int a, int b)
+        
+        // Sustract
+        
+        int sub(int a, int b) { OMITTED_BLOCK; }
+        
+        struct A
+        {
+            public:
+        
+        };
+        
+        
+        namespace internal
+        {
+            bool flag
+        }
+        
+        
+        enum MyEnum
+        {
+             A = 0
+        }
+        
+        
+        enum MyEnumClass
+        {
+             B = 1
+        }
+        
+        // </CppBlockContent>
+    """
+
+    #code_utils.assert_are_codes_equal(struct, "")
+    #print(block)
+
+
+def test_parse_block2():
+    codes = {
+        "function": "void foo() {}",
+        "block": "{}",
+        "namespace": "namespace Foo {}",
+        "class": "class Foo {}",
+    }
+
+    for type, code in codes.items():
+        element = srcml.first_code_element_with_tag(code, type)
+        element_str = srcml.srcml_to_str(element)
+        print(f"""
+Type: {type} / code = {code}
+****************************************
+{element_str}
+    """)
+    #block = srcml.parse_block(element)
+    # code_utils.assert_are_codes_equal(struct, "")
+    #print(block)
+
+
+#test_parse_struct_decl()
 #test_struct_srcml()
+#test_parse_block2()
+test_parse_block()
