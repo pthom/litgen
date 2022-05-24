@@ -273,16 +273,20 @@ def test_misc_examples():
 };
 """)
     verify_code_parse("""template<typename T, typename U, int N>
-class Foo
+class Foo : public Cat, private Dog
 {
+        Foo();
+        Foo(int x) { }
         T x = T();
     public:
         std::optional<U> u = std::nullopt;    
         const int n = N;
 };""", """template<typename T, typename U, int N>
-class Foo
+class Foo : public Cat, private Dog
 {
     private:
+        Foo();
+        Foo(int x) : OMITTED_MEMBER_INIT_LIST { OMITTED_CONSTRUCTOR_CODE; }
         T x = T();
     public:
         std::optional<U> u = std::nullopt;
@@ -297,20 +301,6 @@ class Foo
     return a + b;
 };
 """)
-
-
-def implot_header_source():
-    def preprocess_implot_code(code):
-        import re
-        new_code = code
-        new_code  = re.sub(r'IM_FMTARGS\(\d\)', '', new_code)
-        new_code  = re.sub(r'IM_FMTLIST\(\d\)', '', new_code)
-        return new_code
-
-    implot_filename = _THIS_DIR + "/../../examples_real_libs/implot/implot.h"
-    with open(implot_filename, "r") as f:
-        code = f.read()
-    return preprocess_implot_code(code)
 
 
 def test_preprocessor_test_state_and_inclusion_guards():
@@ -347,10 +337,31 @@ void Foo() { OMITTED_FUNCTION_CODE; }
     code_utils.assert_are_codes_equal(parsed_str, expected_code)
 
 
-def test_parse_implot():
+def do_parse_implot_or_imgui(source_filename):
     """This text reads a big header file (+ 1000 lines) and parses it"""
-    code = implot_header_source()
+    def lib_header_source():
+        def preprocess_source(code):
+            import re
+            new_code = code
+            new_code  = re.sub(r'IM_FMTARGS\(\d\)', '', new_code)
+            new_code  = re.sub(r'IM_FMTLIST\(\d\)', '', new_code)
+            return new_code
+
+        with open(source_filename, "r") as f:
+            code = f.read()
+        return preprocess_source(code)
+
+    code = lib_header_source()
     parsed_code = srcml.parse_code(code)
     recomposed_code = str(parsed_code)
     lines = recomposed_code.splitlines()
     assert len(lines) > 500
+
+
+def test_parse_imgui():
+    source_filename = _THIS_DIR + "/../../examples_real_libs/imgui/imgui.h"
+    do_parse_implot_or_imgui(source_filename)
+
+def test_parse_implot():
+    source_filename = _THIS_DIR + "/../../examples_real_libs/implot/implot.h"
+    do_parse_implot_or_imgui(source_filename)
