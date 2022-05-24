@@ -15,7 +15,7 @@ import traceback, inspect
 from srcml_types import *
 
 
-HEADER_GUARD_SUFFIXES = ["_H", "HPP", "HXX"]
+HEADER_GUARD_SUFFIXES = ["_H", "HPP", "HXX", "IMGUI_DISABLE"]
 
 DUMP_SRCML_TREE_ON_ERROR = False
 
@@ -753,7 +753,7 @@ def fill_block(element: ET.Element, inout_block_content: CppBlock):
         "union"
     ]
 
-    last_ignored_element_position: CodePosition = CodePosition()
+    last_ignored_child: ET.Element = None
 
     _preprocessor_tests_state = _PreprocessorTestState()
 
@@ -782,10 +782,25 @@ def fill_block(element: ET.Element, inout_block_content: CppBlock):
             inout_block_content.block_children.append(parse_constructor_decl(child))
         elif child_tag == "constructor":
             inout_block_content.block_children.append(parse_constructor(child))
+
         elif child_tag == "comment":
             cpp_comment = parse_comment(child)
-            if cpp_comment.start.line != last_ignored_element_position.line:
+
+            ignore_comment = False
+            if last_ignored_child is not None:
+                last_ignore_child_end_position = element_code_position(last_ignored_child)[1]
+                if cpp_comment.start.line == last_ignore_child_end_position.line:
+                    # When there is an explanation following a typedef or a struct forward decl,
+                    # we keep both the code (as a comment) and its comment
+                    if clean_tag_or_attrib(last_ignored_child.tag) in ["typedef", "struct_decl"]:
+                        cpp_comment.text = "// " + srcml_to_code(last_ignored_child) + "    " + cpp_comment.text
+                        ignore_comment = False
+                    else:
+                        ignore_comment = True
+
+            if not ignore_comment:
                 inout_block_content.block_children.append(cpp_comment)
+
         elif child_tag == "struct":
             inout_block_content.block_children.append(parse_struct_or_class(child))
         elif child_tag == "class":
@@ -803,7 +818,7 @@ def fill_block(element: ET.Element, inout_block_content: CppBlock):
         elif child_tag in ["public", "protected", "private"]:
             inout_block_content.block_children.append(parse_public_protected_private(child))
         elif child_tag in ignored_block_types:
-            last_ignored_element_position = element_code_position(child)[1]
+            last_ignored_child = child
         else:
             # raise _bad_tag_exception(child)
             emit_srcml_warning(child, None, f'Unhandled tag type in `fill_block`: "{child_tag}"')
