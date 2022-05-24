@@ -1,8 +1,5 @@
 srcml
     put comment to the right if possible
-    ignore comments to the right of ignored elements 
-    put struct decl / enum decl in comment if they are followed by an explanation
-    lambdas
     const IMGUI_API -> IMGUI_API const
 
 Pb / ifdef & struct 

@@ -98,7 +98,6 @@ class CppBlock(CppElement): # it is also a CppBlockChild
 
             previous_child = child
 
-        result += "\n"
         return result
 
     def _str_block_enum(self):
@@ -203,13 +202,14 @@ class CppType(CppElement):
         if nb_const > 2:
             raise ValueError("I cannot handle more than two `const` occurences in a type!")
 
+        specifiers = self.specifiers
         if nb_const == 2:
             # remove the last const and handle it later
-            specifier_r: List[str] = list(reversed(self.specifiers))
+            specifier_r: List[str] = list(reversed(specifiers))
             specifier_r.remove("const")
-            self.specifiers = list(reversed(specifier_r))
+            specifiers = list(reversed(specifier_r))
 
-        specifiers_str = code_utils.join_remove_empty(" ", self.specifiers)
+        specifiers_str = code_utils.join_remove_empty(" ", specifiers)
         modifiers_str = code_utils.join_remove_empty(" ", self.modifiers)
 
         # if len(self.names) == 0 and "..." not in self.modifiers:

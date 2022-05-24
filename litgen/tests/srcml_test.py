@@ -195,11 +195,9 @@ def test_nice_warning_message():
         assert expected_short_message_on_first_line in first_message_line
 
         expected_detailed_infos = [
-            "Position:2:21: Issue inside parent cpp_element of type <class 'srcml_types.CppType'> (parsed by litgen.internal.srcml.parse_type)",
-            "Issue found in its srcml child, with tag",
-            "Parent cpp_element original C++ code:",
+            "Original C++ code: Position:2:21:",
             "int^",
-            "Parent cpp_element code, as currently parsed by litgen (of type <class 'srcml_types.CppType'>)",
+            "type <class 'srcml_types.CppType'>",
             "Python call stack info",
             ]
         for expected_detailed_info in expected_detailed_infos:
@@ -355,4 +353,4 @@ def test_parse_implot():
     parsed_code = srcml.parse_code(code)
     recomposed_code = str(parsed_code)
     lines = recomposed_code.splitlines()
-    assert len(lines) > 1000
+    assert len(lines) > 500
