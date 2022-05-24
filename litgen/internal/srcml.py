@@ -263,13 +263,22 @@ def srcml_to_code(element: ET.Element) -> str:
 ###########################################
 
 
-def fill_cpp_element_data(element: ET.Element, inout_cpp_element: CppElement):
-    inout_cpp_element.srcml_element = element
+def element_code_position(element: ET.Element) -> Tuple[CodePosition, CodePosition]:
+    start = None
+    end = None
     for key, value in element.attrib.items():
         if clean_tag_or_attrib(key) == "start":
-            inout_cpp_element.start = CodePosition.from_string(value)
+            start = CodePosition.from_string(value)
         if clean_tag_or_attrib(key) == "end":
-            inout_cpp_element.end = CodePosition.from_string(value)
+            end = CodePosition.from_string(value)
+    return start, end
+
+
+def fill_cpp_element_data(element: ET.Element, inout_cpp_element: CppElement):
+    inout_cpp_element.srcml_element = element
+    start, end = element_code_position(element)
+    inout_cpp_element.start = start
+    inout_cpp_element.end = end
 
 
 def parse_type(element: ET.Element, previous_decl: CppDecl) -> CppType:
@@ -744,6 +753,8 @@ def fill_block(element: ET.Element, inout_block_content: CppBlock):
         "union"
     ]
 
+    last_ignored_element_position: CodePosition = CodePosition()
+
     _preprocessor_tests_state = _PreprocessorTestState()
 
     for child in element:
@@ -772,7 +783,9 @@ def fill_block(element: ET.Element, inout_block_content: CppBlock):
         elif child_tag == "constructor":
             inout_block_content.block_children.append(parse_constructor(child))
         elif child_tag == "comment":
-            inout_block_content.block_children.append(parse_comment(child))
+            cpp_comment = parse_comment(child)
+            if cpp_comment.start.line != last_ignored_element_position.line:
+                inout_block_content.block_children.append(cpp_comment)
         elif child_tag == "struct":
             inout_block_content.block_children.append(parse_struct_or_class(child))
         elif child_tag == "class":
@@ -790,8 +803,7 @@ def fill_block(element: ET.Element, inout_block_content: CppBlock):
         elif child_tag in ["public", "protected", "private"]:
             inout_block_content.block_children.append(parse_public_protected_private(child))
         elif child_tag in ignored_block_types:
-            # logging.warning(f"ignored tag {child_tag}")
-            pass
+            last_ignored_element_position = element_code_position(child)[1]
         else:
             # raise _bad_tag_exception(child)
             emit_srcml_warning(child, None, f'Unhandled tag type in `fill_block`: "{child_tag}"')
