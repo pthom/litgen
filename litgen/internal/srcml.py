@@ -15,39 +15,53 @@ import traceback, inspect
 from srcml_types import *
 
 
-class SrcMlException(Exception):
-    pass
+def _warning_detailed_info(
+        srcml_element: ET.Element, parent_cpp_element: CppElement, additional_message: str = "", header_filename: str = ""):
 
-
-def _bad_tag_exception(element: ET.Element, parent: ET.Element = None) -> SrcMlException:
-    tag_name = clean_tag_or_attrib(element.tag)
-    element_code = srcml_to_code(element)
-
-    if parent is not None:
-        parent_code = srcml_to_code(parent)
-    else:
-        parent_code = "unknown"
-
-    def get_call_info():
+    def _get_python_call_info():
         stack_lines = traceback.format_stack()
-        error_line = stack_lines[-3]
+        error_line = stack_lines[-4]
         frame = inspect.currentframe()
-        caller_function_name = inspect.getframeinfo(frame.f_back.f_back).function
+        caller_function_name = inspect.getframeinfo(frame.f_back.f_back.f_back).function
         return caller_function_name, error_line
+    python_caller_function_name, python_error_line = _get_python_call_info()
 
-    caller_function_name, error_line = get_call_info()
+    if len(header_filename) > 0:
+        header_filename = header_filename + ":"
+    else:
+        header_filename = "Position:"
 
-    msg = f"""
-    Error in parser '{caller_function_name}': unexpected tag '{tag_name}'
-        With element code:
-            {code_utils.indent_code(element_code, 12, skip_first_line=True)}
-        and parent code:
-            {code_utils.indent_code(parent_code, 12, skip_first_line=True)}
-            
-        The error happened here: {error_line}   
+    detailed_message = f"""
+{header_filename}{parent_cpp_element.start}: Issue inside parent cpp_element of type {type(parent_cpp_element)} (parsed by litgen.internal.srcml.{python_caller_function_name})
+
+    Issue found in its srcml child, with this C++ code:
+    {code_utils.indent_code(srcml_to_code(srcml_element), 8)}
+
+    Parent cpp_element original C++ code:
+    {code_utils.indent_code(srcml_to_code(parent_cpp_element.srcml_element), 8)}
+
+    Parent cpp_element code, as currently parsed by litgen (of type {type(parent_cpp_element)})
+    {code_utils.indent_code(str(parent_cpp_element), 4)}
+
+    Python call stack info:
+    {code_utils.indent_code(python_error_line, 4)}
     """
-    return SrcMlException(msg)
 
+    if len(additional_message) > 0:
+        detailed_message = additional_message + "\n" + code_utils.indent_code(detailed_message, 4)
+
+    return detailed_message
+
+
+class SrcMlException(Exception):
+    def __init__(self, srcml_element: ET.Element, parent_cpp_element: CppElement, additional_message = "", header_filename: str = ""):
+        message = _warning_detailed_info(srcml_element, parent_cpp_element, additional_message, header_filename)
+        super().__init__(message)
+
+
+def emit_srcml_warning(srcml_element: ET.Element, parent_cpp_element: CppElement, additional_message = "", header_filename: str = ""):
+    message = _warning_detailed_info(srcml_element, parent_cpp_element, additional_message, header_filename)
+    logging.warning(message)
 
 
 ###########################################
@@ -120,6 +134,9 @@ class _SrcmlCaller:
         """
         Calls srcml with the given srcml xml element and return the corresponding code
         """
+        if element is None:
+            return "<srcml_to_code(None)>"
+
         self._stats_srcml_to_code.start()
         unit_element = _embed_element_into_unit(element)
         with tempfile.NamedTemporaryFile(delete=False, suffix=".xml") as input_xml_file:
@@ -159,7 +176,8 @@ def srcml_to_code(element: ET.Element) -> str:
 ###########################################
 
 
-def fill_cpp_element_position(element: ET.Element, inout_cpp_element: CppElement):
+def fill_cpp_element_data(element: ET.Element, inout_cpp_element: CppElement):
+    inout_cpp_element.srcml_element = element
     for key, value in element.attrib.items():
         if clean_tag_or_attrib(key) == "start":
             inout_cpp_element.start = CodePosition.from_string(value)
@@ -186,7 +204,7 @@ def parse_type(element: ET.Element, previous_decl: CppDecl) -> CppType:
     """
     assert clean_tag_or_attrib(element.tag) == "type"
     result = CppType()
-    fill_cpp_element_position(element, result)
+    fill_cpp_element_data(element, result)
     for child in element:
         child_tag = clean_tag_or_attrib(child.tag)
         if child_tag == "name":
@@ -194,11 +212,14 @@ def parse_type(element: ET.Element, previous_decl: CppDecl) -> CppType:
         elif child_tag == "specifier":
             result.specifiers.append(child.text)
         elif child_tag == "modifier":
+            modifier = child.text
+            if modifier not in CppType.authorized_modifiers():
+                raise SrcMlException(child, result, f'modifier "{modifier}" is not authorized')
             result.modifiers.append(child.text)
         elif child_tag == "argument_list":
             result.argument_list.append(child.text)
         else:
-            raise _bad_tag_exception(child)
+            raise SrcMlException(child, result)
 
     if len(result.name) == 0:
         assert previous_decl is not None
@@ -218,7 +239,7 @@ def parse_decl(element: ET.Element, previous_decl: CppDecl) -> CppDecl:
     """
     assert clean_tag_or_attrib(element.tag) == "decl"
     result = CppDecl()
-    fill_cpp_element_position(element, result)
+    fill_cpp_element_data(element, result)
     for child in element:
         child_tag = clean_tag_or_attrib(child.tag)
         if child_tag == "type":
@@ -228,14 +249,10 @@ def parse_decl(element: ET.Element, previous_decl: CppDecl) -> CppDecl:
         elif child_tag == "init":
             expr_child = child_with_tag(child, "expr")
             result.init = srcml_to_code(expr_child)
-        elif child_tag == "argument_list":
-            logging.warn(f"""            
-                parse_decl: received unexpected argument_list tag, with 
-                          child={srcml_to_code(child)} 
-
-                    and element={srcml_to_code(element)}""")
+        # elif child_tag == "argument_list":
+        #     emit_srcml_warning(child, result, "received unexpected argument_list tag")
         else:
-            raise _bad_tag_exception(child, element)
+            raise SrcMlException(child, result)
     return result
 
 
@@ -248,7 +265,7 @@ def parse_decl_stmt(element: ET.Element) -> CppDeclStatement:
 
     previous_decl: CppDecl = None
     result = CppDeclStatement()
-    fill_cpp_element_position(element, result)
+    fill_cpp_element_data(element, result)
     for child in element:
         child_tag = clean_tag_or_attrib(child.tag)
         if child_tag == "decl":
@@ -266,16 +283,16 @@ def parse_parameter(element: ET.Element) -> CppParameter:
     """
     assert clean_tag_or_attrib(element.tag) == "parameter"
     result = CppParameter()
-    fill_cpp_element_position(element, result)
+    fill_cpp_element_data(element, result)
     for child in element:
         child_tag = clean_tag_or_attrib(child.tag)
         if child_tag == "decl":
             result.decl = parse_decl(child, None)
         else:
-            raise _bad_tag_exception(child)
+            raise SrcMlException(child, result)
 
     if len(result.decl.name) == 0:
-        raise SrcMlException(f"Found no name in parse_parameter!")
+        raise SrcMlException(None, result, "Found no name in parse_parameter!")
 
     return result
 
@@ -286,13 +303,13 @@ def parse_parameter_list(element: ET.Element) -> CppParameterList:
     """
     assert clean_tag_or_attrib(element.tag) == "parameter_list"
     result = CppParameterList()
-    fill_cpp_element_position(element, result)
+    fill_cpp_element_data(element, result)
     for child in element:
         child_tag = clean_tag_or_attrib(child.tag)
         if child_tag == "parameter":
             result.parameters.append(parse_parameter(child))
         else:
-            raise _bad_tag_exception(child)
+            raise SrcMlException(child, result)
     return result
 
 
@@ -302,7 +319,7 @@ def parse_function_decl(element: ET.Element) -> CppFunctionDecl:
     """
     assert clean_tag_or_attrib(element.tag) == "function_decl"
     result = CppFunctionDecl()
-    fill_cpp_element_position(element, result)
+    fill_cpp_element_data(element, result)
     for child in element:
         child_tag = clean_tag_or_attrib(child.tag)
         if child_tag == "type":
@@ -314,7 +331,7 @@ def parse_function_decl(element: ET.Element) -> CppFunctionDecl:
         elif child_tag == "specifier":
             result.specifiers.append(child.text)
         else:
-            raise _bad_tag_exception(child)
+            raise SrcMlException(child, result)
 
     return result
 
@@ -325,7 +342,7 @@ def parse_function(element: ET.Element) -> CppFunction:
     """
     assert clean_tag_or_attrib(element.tag) == "function"
     result = CppFunction()
-    fill_cpp_element_position(element, result)
+    fill_cpp_element_data(element, result)
     for child in element:
         child_tag = clean_tag_or_attrib(child.tag)
         if child_tag == "type":
@@ -339,7 +356,7 @@ def parse_function(element: ET.Element) -> CppFunction:
         elif child_tag == "block":
             result.block = parse_block(child)
         else:
-            raise _bad_tag_exception(child)
+            raise SrcMlException(child, result)
 
     return result
 
@@ -351,7 +368,7 @@ def parse_super(element: ET.Element) -> CppSuper:
     """
     assert clean_tag_or_attrib(element.tag) == "super"
     result = CppSuper()
-    fill_cpp_element_position(element, result)
+    fill_cpp_element_data(element, result)
     for child in element:
         child_tag = clean_tag_or_attrib(child.tag)
         if child_tag == "specifier":
@@ -359,7 +376,7 @@ def parse_super(element: ET.Element) -> CppSuper:
         elif child_tag == "name":
             result.name = parse_name(child)
         else:
-            raise _bad_tag_exception(child)
+            raise SrcMlException(child, result)
 
     return result
 
@@ -371,13 +388,13 @@ def parse_super_list(element: ET.Element) -> CppSuperList:
     """
     assert clean_tag_or_attrib(element.tag) == "super_list"
     result = CppSuperList()
-    fill_cpp_element_position(element, result)
+    fill_cpp_element_data(element, result)
     for child in element:
         child_tag = clean_tag_or_attrib(child.tag)
         if child_tag == "super":
             result.super_list.append(parse_super(child))
         else:
-            raise _bad_tag_exception(child)
+            raise SrcMlException(child, result)
 
     return result
 
@@ -393,7 +410,7 @@ def parse_struct_or_class(element: ET.Element) -> CppStruct:
         result = CppStruct()
     else:
         result = CppClass()
-    fill_cpp_element_position(element, result)
+    fill_cpp_element_data(element, result)
 
     for child in element:
         child_tag = clean_tag_or_attrib(child.tag)
@@ -404,7 +421,7 @@ def parse_struct_or_class(element: ET.Element) -> CppStruct:
         elif child_tag == "block":
             result.block = parse_block(child)
         else:
-            raise _bad_tag_exception(child)
+            raise SrcMlException(child, result)
 
     return result
 
@@ -418,7 +435,7 @@ def parse_public_protected_private(element: ET.Element) -> CppPublicProtectedPri
     assert element_tag in ["public", "protected", "private"]
 
     block_content = CppPublicProtectedPrivate(element_tag)
-    fill_cpp_element_position(element, block_content)
+    fill_cpp_element_data(element, block_content)
     fill_block(element, block_content)
     return block_content
 
@@ -431,7 +448,7 @@ def parse_block(element: ET.Element) -> CppBlock:
     assert clean_tag_or_attrib(element.tag) == "block"
 
     cpp_block = CppBlock()
-    fill_cpp_element_position(element, cpp_block)
+    fill_cpp_element_data(element, cpp_block)
     fill_block(element, cpp_block)
     return cpp_block
 
@@ -495,7 +512,7 @@ def parse_block_content(element: ET.Element) -> CppBlockContent:
     assert clean_tag_or_attrib(element.tag) == "block_content"
 
     block_content = CppBlockContent()
-    fill_cpp_element_position(element, block_content)
+    fill_cpp_element_data(element, block_content)
     fill_block(element, block_content)
     return block_content
 
@@ -508,7 +525,7 @@ def parse_comment(element: ET.Element) -> CppComment:
     assert len(element) == 0 # a comment has no child
 
     result = CppComment()
-    fill_cpp_element_position(element, result)
+    fill_cpp_element_data(element, result)
     result.text = element.text
 
     return result
@@ -520,7 +537,7 @@ def parse_namespace(element: ET.Element) -> CppNamespace:
     """
     assert clean_tag_or_attrib(element.tag) == "namespace"
     result = CppNamespace()
-    fill_cpp_element_position(element, result)
+    fill_cpp_element_data(element, result)
     for child in element:
         child_tag = clean_tag_or_attrib(child.tag)
         if child_tag == "name":
@@ -540,7 +557,7 @@ def parse_enum(element: ET.Element) -> CppEnum:
     """
     assert clean_tag_or_attrib(element.tag) == "enum"
     result = CppEnum()
-    fill_cpp_element_position(element, result)
+    fill_cpp_element_data(element, result)
 
     if "type" in element.attrib.keys():
         result.type = element.attrib["type"]
@@ -552,7 +569,7 @@ def parse_enum(element: ET.Element) -> CppEnum:
         elif child_tag == "block":
             result.block = parse_block(child)
         else:
-            raise _bad_tag_exception(child)
+            raise SrcMlException(child, result)
 
     return result
 
@@ -560,14 +577,14 @@ def parse_enum(element: ET.Element) -> CppEnum:
 def parse_expr_stmt(element: ET.Element) -> CppExprStmt:
     assert clean_tag_or_attrib(element.tag) == "expr_stmt"
     result = CppExprStmt()
-    fill_cpp_element_position(element, result)
+    fill_cpp_element_data(element, result)
     return result
 
 
 def parse_return(element: ET.Element) -> CppReturn:
     assert clean_tag_or_attrib(element.tag) == "return"
     result = CppReturn()
-    fill_cpp_element_position(element, result)
+    fill_cpp_element_data(element, result)
     return result
 
 
@@ -591,11 +608,15 @@ def children_with_tag(element: ET.Element, tag: str) -> List[ET.Element]:
 def child_with_tag(element: ET.Element, tag: str) -> ET.Element:
     children = children_with_tag(element, tag)
     if len(children) == 0:
-        tags_strs = map(lambda c: c.tag, children)
+        tags_strs = map(lambda c: '"' + clean_tag_or_attrib(c.tag) + '"', element)
         tags_str = ", ".join(tags_strs)
-        raise SrcMlException(f"child_with_tag: did not find child with tag {tag}  (found {tags_str})")
+        message = f'child_with_tag: did not find child with tag "{tag}"  (found [{tags_str}])'
+        logging.error(message)
+        raise LookupError(message)
     elif len(children) > 1:
-        raise SrcMlException(f"child_with_tag: found more than one child with tag {tag}")
+        message = f'child_with_tag: found more than one child with tag "{tag}" (found {len(children)})'
+        logging.error(message)
+        raise LookupError(message)
     return  children[0]
 
 

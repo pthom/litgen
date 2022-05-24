@@ -121,10 +121,13 @@ class CodePosition:
 
 
 class CppElement:
-    """Base class for all the Cpp Elements below. It contains their start/end position in the original code
+    """Base class for all the Cpp Elements below.
+    - It contains their start/end position in the original code
+    - It also contains the original Xml Element from which it was constructed
     """
     start: CodePosition
     end: CodePosition
+    srcml_element: ET.Element
 
 
 @_dataclass
@@ -216,6 +219,10 @@ class CppType(CppElement):
         self.specifiers = []
         self.modifiers = []
         self.argument_list = []
+
+    @staticmethod
+    def authorized_modifiers():
+        return ["*", "&", "&&"]
 
     def __str__(self):
         specifiers_str = code_utils.join_remove_empty(" ", self.specifiers)

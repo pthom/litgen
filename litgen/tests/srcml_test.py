@@ -3,6 +3,8 @@ import os, sys; _THIS_DIR = os.path.dirname(__file__); sys.path = [_THIS_DIR + "
 import litgen.internal.srcml as srcml
 import litgen.internal.code_utils as code_utils
 
+import logging
+
 
 def assert_code_unmodified_by_srcml(code: str):
     """
@@ -170,6 +172,43 @@ def test_parse_function_definition():
     function_srcml  = srcml.parse_function(element)
     function_str = str(function_srcml)
     code_utils.assert_are_codes_equal(function_str, "int foo() { OMITTED_BLOCK; }")
+
+
+def test_nice_warning_message():
+    code = """
+    void foo(int x, int^ y); // ^ is not an authorized modifier!
+    """
+    element = srcml.first_code_element_with_tag(code, "function_decl")
+    got_exception = False
+    try:
+        function_srcml  = srcml.parse_function_decl(element)
+    except srcml.SrcMlException as e:
+        got_exception = True
+        message = str(e)
+
+        expected_short_message_on_first_line = 'modifier "^" is not authorized'
+        first_message_line = message.splitlines()[0]
+        assert expected_short_message_on_first_line in first_message_line
+
+        expected_detailed_infos = [
+            "Position:2:21: Issue inside parent cpp_element of type <class 'srcml_types.CppType'> (parsed by litgen.internal.srcml.parse_type)",
+            "Issue found in its srcml child, with this C++ code:",
+            "Parent cpp_element original C++ code:",
+            "int^",
+            "Parent cpp_element code, as currently parsed by litgen (of type <class 'srcml_types.CppType'>)"
+            ]
+        for expected_detailed_info in expected_detailed_infos:
+            assert expected_detailed_info in message
+
+        expected_call_stack_info = """
+        Python call stack info:
+              File "/Users/pascal/dvp/OpenSource/ImGuiWork/litgen/litgen/internal/srcml.py", line xxx, in parse_type
+        """
+        import re
+        message_no_line_number = re.sub(r'\d', 'x', message)
+        assert expected_call_stack_info in message_no_line_number
+
+    assert got_exception == True
 
 
 def test_struct_srcml():
