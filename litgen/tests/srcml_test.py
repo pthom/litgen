@@ -70,6 +70,21 @@ def test_srcml_repr():
     assert repr_cpp_decl_statement == repr_expected
 
 
+def test_cpp_element_positions():
+    code = """
+    {
+        /* 
+        A multiline 
+        comment
+        */
+    }
+    """
+    element = srcml.first_code_element_with_tag(code, "block")
+    cpp_block = srcml.parse_block(element)
+    assert str(cpp_block.start) == "2:5"
+    assert str(cpp_block.end) == "7:5"
+
+
 def test_parse_cpp_decl_statement():
     # Basic test
     code = "int a;"
@@ -209,7 +224,7 @@ def test_parse_struct_decl():
     element = srcml.first_code_element_with_tag(code, "struct")
     struct = srcml.parse_struct_or_class(element)
     # code_utils.assert_are_codes_equal(struct, "")
-    print(struct)
+    # print(struct)
 
 
 def test_parse_block():

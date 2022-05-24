@@ -107,7 +107,7 @@ class CodePosition:
     column: int = 0
 
     @staticmethod
-    def from_string(self, s: str): # -> CodePosition:
+    def from_string(s: str): # -> CodePosition:
         """Parses a string like '3:5' which means line 3, column 5 """
         items = s.split(":")
         assert len(items) == 2
@@ -115,6 +115,9 @@ class CodePosition:
         r.line = int(items[0])
         r.column = int(items[1])
         return r
+
+    def __str__(self):
+        return f"{self.line}:{self.column}"
 
 
 class CppElement:

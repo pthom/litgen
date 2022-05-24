@@ -20,7 +20,7 @@ class SrcMlException(Exception):
 
 
 def _bad_tag_exception(element: ET.Element, parent: ET.Element = None) -> SrcMlException:
-    tag_name = clean_tag(element.tag)
+    tag_name = clean_tag_or_attrib(element.tag)
     element_code = srcml_to_code(element)
 
     if parent is not None:
@@ -160,10 +160,11 @@ def srcml_to_code(element: ET.Element) -> str:
 
 
 def fill_cpp_element_position(element: ET.Element, inout_cpp_element: CppElement):
-    if "n1:start" in element.attrib.keys():
-        inout_cpp_element.start = CodePosition.from_string(element.attrib["ns1:start"])
-    if "n1:end" in element.attrib.keys():
-        inout_cpp_element.end = CodePosition.from_string(element.attrib["ns1:end"])
+    for key, value in element.attrib.items():
+        if clean_tag_or_attrib(key) == "start":
+            inout_cpp_element.start = CodePosition.from_string(value)
+        if clean_tag_or_attrib(key) == "end":
+            inout_cpp_element.end = CodePosition.from_string(value)
 
 
 def parse_name(element: ET.Element) -> str:
@@ -172,7 +173,7 @@ def parse_name(element: ET.Element) -> str:
 
     For names, we always reproduce the original code (i.e we reassemble the sub-elements)
     """
-    assert clean_tag(element.tag) == "name"
+    assert clean_tag_or_attrib(element.tag) == "name"
     if element.text is not None:
         return element.text
     else:
@@ -183,11 +184,11 @@ def parse_type(element: ET.Element, previous_decl: CppDecl) -> CppType:
     """
     https://www.srcml.org/doc/cpp_srcML.html#type
     """
-    assert clean_tag(element.tag) == "type"
+    assert clean_tag_or_attrib(element.tag) == "type"
     result = CppType()
     fill_cpp_element_position(element, result)
     for child in element:
-        child_tag = clean_tag(child.tag)
+        child_tag = clean_tag_or_attrib(child.tag)
         if child_tag == "name":
             result.name = parse_name(child)
         elif child_tag == "specifier":
@@ -215,11 +216,11 @@ def parse_decl(element: ET.Element, previous_decl: CppDecl) -> CppDecl:
             int a = 5;
             <decl_stmt><decl><type><name>int</name></type> <name>a</name> <init>= <expr><literal type="number">5</literal></expr></init></decl>;</decl_stmt>
     """
-    assert clean_tag(element.tag) == "decl"
+    assert clean_tag_or_attrib(element.tag) == "decl"
     result = CppDecl()
     fill_cpp_element_position(element, result)
     for child in element:
-        child_tag = clean_tag(child.tag)
+        child_tag = clean_tag_or_attrib(child.tag)
         if child_tag == "type":
             result.cpp_type = parse_type(child, previous_decl)
         elif child_tag == "name":
@@ -243,13 +244,13 @@ def parse_decl_stmt(element: ET.Element) -> CppDeclStatement:
     https://www.srcml.org/doc/cpp_srcML.html#variable-declaration-statement
     https://www.srcml.org/doc/cpp_srcML.html#variable-declaration
     """
-    assert clean_tag(element.tag) == "decl_stmt"
+    assert clean_tag_or_attrib(element.tag) == "decl_stmt"
 
     previous_decl: CppDecl = None
     result = CppDeclStatement()
     fill_cpp_element_position(element, result)
     for child in element:
-        child_tag = clean_tag(child.tag)
+        child_tag = clean_tag_or_attrib(child.tag)
         if child_tag == "decl":
             cpp_decl = parse_decl(child, previous_decl)
             result.cpp_decls.append(cpp_decl)
@@ -263,11 +264,11 @@ def parse_parameter(element: ET.Element) -> CppParameter:
     """
     https://www.srcml.org/doc/cpp_srcML.html#function-declaration
     """
-    assert clean_tag(element.tag) == "parameter"
+    assert clean_tag_or_attrib(element.tag) == "parameter"
     result = CppParameter()
     fill_cpp_element_position(element, result)
     for child in element:
-        child_tag = clean_tag(child.tag)
+        child_tag = clean_tag_or_attrib(child.tag)
         if child_tag == "decl":
             result.decl = parse_decl(child, None)
         else:
@@ -283,11 +284,11 @@ def parse_parameter_list(element: ET.Element) -> CppParameterList:
     """
     https://www.srcml.org/doc/cpp_srcML.html#function-declaration
     """
-    assert clean_tag(element.tag) == "parameter_list"
+    assert clean_tag_or_attrib(element.tag) == "parameter_list"
     result = CppParameterList()
     fill_cpp_element_position(element, result)
     for child in element:
-        child_tag = clean_tag(child.tag)
+        child_tag = clean_tag_or_attrib(child.tag)
         if child_tag == "parameter":
             result.parameters.append(parse_parameter(child))
         else:
@@ -299,11 +300,11 @@ def parse_function_decl(element: ET.Element) -> CppFunctionDecl:
     """
     https://www.srcml.org/doc/cpp_srcML.html#function-declaration
     """
-    assert clean_tag(element.tag) == "function_decl"
+    assert clean_tag_or_attrib(element.tag) == "function_decl"
     result = CppFunctionDecl()
     fill_cpp_element_position(element, result)
     for child in element:
-        child_tag = clean_tag(child.tag)
+        child_tag = clean_tag_or_attrib(child.tag)
         if child_tag == "type":
             result.type = parse_type(child, None)
         elif child_tag == "name":
@@ -322,11 +323,11 @@ def parse_function(element: ET.Element) -> CppFunction:
     """
     https://www.srcml.org/doc/cpp_srcML.html#function-definition
     """
-    assert clean_tag(element.tag) == "function"
+    assert clean_tag_or_attrib(element.tag) == "function"
     result = CppFunction()
     fill_cpp_element_position(element, result)
     for child in element:
-        child_tag = clean_tag(child.tag)
+        child_tag = clean_tag_or_attrib(child.tag)
         if child_tag == "type":
             result.type = parse_type(child, None)
         elif child_tag == "name":
@@ -348,11 +349,11 @@ def parse_super(element: ET.Element) -> CppSuper:
     Define a super classes of a struct or class
     https://www.srcml.org/doc/cpp_srcML.html#struct-definition
     """
-    assert clean_tag(element.tag) == "super"
+    assert clean_tag_or_attrib(element.tag) == "super"
     result = CppSuper()
     fill_cpp_element_position(element, result)
     for child in element:
-        child_tag = clean_tag(child.tag)
+        child_tag = clean_tag_or_attrib(child.tag)
         if child_tag == "specifier":
             result.specifier = child.text
         elif child_tag == "name":
@@ -368,11 +369,11 @@ def parse_super_list(element: ET.Element) -> CppSuperList:
     Define a list of super classes of a struct or class
     https://www.srcml.org/doc/cpp_srcML.html#struct-definition
     """
-    assert clean_tag(element.tag) == "super_list"
+    assert clean_tag_or_attrib(element.tag) == "super_list"
     result = CppSuperList()
     fill_cpp_element_position(element, result)
     for child in element:
-        child_tag = clean_tag(child.tag)
+        child_tag = clean_tag_or_attrib(child.tag)
         if child_tag == "super":
             result.super_list.append(parse_super(child))
         else:
@@ -386,7 +387,7 @@ def parse_struct_or_class(element: ET.Element) -> CppStruct:
     https://www.srcml.org/doc/cpp_srcML.html#struct-definition
     https://www.srcml.org/doc/cpp_srcML.html#class-definition
     """
-    element_tag = clean_tag(element.tag)
+    element_tag = clean_tag_or_attrib(element.tag)
     assert element_tag in ["struct", "class"]
     if element_tag == "struct":
         result = CppStruct()
@@ -395,7 +396,7 @@ def parse_struct_or_class(element: ET.Element) -> CppStruct:
     fill_cpp_element_position(element, result)
 
     for child in element:
-        child_tag = clean_tag(child.tag)
+        child_tag = clean_tag_or_attrib(child.tag)
         if child_tag == "name":
             result.name = parse_name(child)
         elif child_tag == "super_list":
@@ -413,7 +414,7 @@ def parse_public_protected_private(element: ET.Element) -> CppPublicProtectedPri
     See https://www.srcml.org/doc/cpp_srcML.html#public-access-specifier
     Note: this is not a direct adaptation. Here we merge the different access types
     """
-    element_tag = clean_tag(element.tag)
+    element_tag = clean_tag_or_attrib(element.tag)
     assert element_tag in ["public", "protected", "private"]
 
     block_content = CppPublicProtectedPrivate(element_tag)
@@ -427,7 +428,7 @@ def parse_block(element: ET.Element) -> CppBlock:
     """
     https://www.srcml.org/doc/cpp_srcML.html#block
     """
-    assert clean_tag(element.tag) == "block"
+    assert clean_tag_or_attrib(element.tag) == "block"
 
     cpp_block = CppBlock()
     fill_cpp_element_position(element, cpp_block)
@@ -450,7 +451,7 @@ def fill_block(element: ET.Element, inout_block_content: CppBlock):
         child_tag='enum' (optionally type="class")
     """
     for child in element:
-        child_tag = clean_tag(child.tag)
+        child_tag = clean_tag_or_attrib(child.tag)
         if child_tag == "decl_stmt":
             inout_block_content.block_children.append(parse_decl_stmt(child))
         elif child_tag == "decl":
@@ -491,7 +492,7 @@ def parse_block_content(element: ET.Element) -> CppBlockContent:
     """
     https://www.srcml.org/doc/cpp_srcML.html#block_content
     """
-    assert clean_tag(element.tag) == "block_content"
+    assert clean_tag_or_attrib(element.tag) == "block_content"
 
     block_content = CppBlockContent()
     fill_cpp_element_position(element, block_content)
@@ -503,7 +504,7 @@ def parse_comment(element: ET.Element) -> CppComment:
     """
     https://www.srcml.org/doc/cpp_srcML.html#comment
     """
-    assert clean_tag(element.tag) == "comment"
+    assert clean_tag_or_attrib(element.tag) == "comment"
     assert len(element) == 0 # a comment has no child
 
     result = CppComment()
@@ -517,11 +518,11 @@ def parse_namespace(element: ET.Element) -> CppNamespace:
     """
     https://www.srcml.org/doc/cpp_srcML.html#namespace
     """
-    assert clean_tag(element.tag) == "namespace"
+    assert clean_tag_or_attrib(element.tag) == "namespace"
     result = CppNamespace()
     fill_cpp_element_position(element, result)
     for child in element:
-        child_tag = clean_tag(child.tag)
+        child_tag = clean_tag_or_attrib(child.tag)
         if child_tag == "name":
             result.name = parse_name(child)
         elif child_tag == "block":
@@ -537,7 +538,7 @@ def parse_enum(element: ET.Element) -> CppEnum:
     https://www.srcml.org/doc/cpp_srcML.html#enum-definition
     https://www.srcml.org/doc/cpp_srcML.html#enum-class
     """
-    assert clean_tag(element.tag) == "enum"
+    assert clean_tag_or_attrib(element.tag) == "enum"
     result = CppEnum()
     fill_cpp_element_position(element, result)
 
@@ -545,7 +546,7 @@ def parse_enum(element: ET.Element) -> CppEnum:
         result.type = element.attrib["type"]
 
     for child in element:
-        child_tag = clean_tag(child.tag)
+        child_tag = clean_tag_or_attrib(child.tag)
         if child_tag == "name":
             result.name = parse_name(child)
         elif child_tag == "block":
@@ -557,14 +558,14 @@ def parse_enum(element: ET.Element) -> CppEnum:
 
 
 def parse_expr_stmt(element: ET.Element) -> CppExprStmt:
-    assert clean_tag(element.tag) == "expr_stmt"
+    assert clean_tag_or_attrib(element.tag) == "expr_stmt"
     result = CppExprStmt()
     fill_cpp_element_position(element, result)
     return result
 
 
 def parse_return(element: ET.Element) -> CppReturn:
-    assert clean_tag(element.tag) == "return"
+    assert clean_tag_or_attrib(element.tag) == "return"
     result = CppReturn()
     fill_cpp_element_position(element, result)
     return result
@@ -581,7 +582,7 @@ def parse_return(element: ET.Element) -> CppReturn:
 def children_with_tag(element: ET.Element, tag: str) -> List[ET.Element]:
     r = []
     for child in element:
-        child_tag = clean_tag(child.tag)
+        child_tag = clean_tag_or_attrib(child.tag)
         if child_tag == tag:
             r.append(child)
     return r
@@ -598,7 +599,7 @@ def child_with_tag(element: ET.Element, tag: str) -> ET.Element:
     return  children[0]
 
 
-def first_code_element_with_tag(code: str, tag: str, dump_positions: bool = False) -> ET.Element:
+def first_code_element_with_tag(code: str, tag: str, dump_positions: bool = True) -> ET.Element:
     """
     Utility for tests: extracts the first xml element of type "decl_stmt"
     """
@@ -621,8 +622,12 @@ def srcml_to_file(root: ET.Element, filename: str):
     element_tree.write(filename, encoding="utf-8")
 
 
-def clean_tag(tag_name: str) -> str:
-    tag_name = tag_name.replace("{http://www.srcML.org/srcML/src}", "")
-    tag_name = tag_name.replace("{http://www.srcML.org/srcML/cpp}", "")
+def clean_tag_or_attrib(tag_name: str) -> str:
+    if tag_name.startswith("{"):
+        assert("}") in tag_name
+        pos = tag_name.index("}") + 1
+        tag_name = tag_name[ pos : ]
+    tag_name = tag_name.replace("ns0:", "")
+    tag_name = tag_name.replace("ns1:", "")
     return tag_name
 
