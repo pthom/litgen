@@ -15,6 +15,8 @@ import traceback, inspect
 from srcml_types import *
 
 
+HEADER_GUARD_SUFFIXES = ["_H", "HPP", "HXX"]
+
 DUMP_SRCML_TREE_ON_ERROR = False
 
 ###########################################
@@ -610,6 +612,56 @@ def parse_block(element: ET.Element) -> CppBlock:
     return cpp_block
 
 
+class _PreprocessorTestState:
+    """We ignore everything that is inside a #ifdef/#if/#ifndef  region
+       but we try to keep what is inside the header inclusion guard ifndef region.
+
+       We will test that a ifndef is an inclusion guard by checking comparing its suffix with HEADER_GUARD_SUFFIXES
+    """
+
+    nb_tests = 0
+
+    def process_tag(self, element: ET.Element) -> bool:
+        """Returns true if this tag was processed"""
+
+        def extract_ifndef_name():
+            for child in element:
+                if clean_tag_or_attrib(child.tag) == "name":
+                    return child.text
+            return ""
+
+        def is_inclusion_guard_ifndef():
+            ifndef_name = extract_ifndef_name()
+            for suffix in HEADER_GUARD_SUFFIXES:
+                if ifndef_name.upper().endswith(suffix.upper()):
+                    return True
+            return False
+
+        tag = clean_tag_or_attrib(element.tag)
+        is_preprocessor_test = False
+        if tag in ["ifdef", "if"]:
+            self.nb_tests += 1
+            is_preprocessor_test = True
+        elif tag == "endif":
+            self.nb_tests -= 1
+            is_preprocessor_test = True
+        elif tag in ["else", "elif"]:
+            is_preprocessor_test = True
+        elif tag == "ifndef":
+            if not is_inclusion_guard_ifndef():
+                self.nb_tests += 1
+            is_preprocessor_test = True
+
+        return is_preprocessor_test
+
+    def is_inside_ignored_region(self) -> bool:
+        assert self.nb_tests >= -1 # -1 because we can ignore the inclusion guard
+        if self.nb_tests > 0:
+            return True
+        else:
+            return False
+
+
 def fill_block(element: ET.Element, inout_block_content: CppBlock):
     """
     https://www.srcml.org/doc/cpp_srcML.html#block_content
@@ -628,14 +680,20 @@ def fill_block(element: ET.Element, inout_block_content: CppBlock):
     ignored_block_types = [
         "empty_stmt",
         "pragma", "include", "macro", "define",             # preprocessor
-        "ifndef", "ifdef", "endif", "elif", "if", "else",   # preprocessor tests
         "struct_decl",                                      # struct forward decl (ignored)
         "typedef"
     ]
 
+    _preprocessor_tests_state = _PreprocessorTestState()
+
     for child in element:
         child_tag = clean_tag_or_attrib(child.tag)
-        if child_tag == "decl_stmt":
+
+        if _preprocessor_tests_state.process_tag(child):
+            pass
+        elif _preprocessor_tests_state.is_inside_ignored_region():
+            pass
+        elif child_tag == "decl_stmt":
             inout_block_content.block_children.append(parse_decl_stmt(child))
         elif child_tag == "decl":
             inout_block_content.block_children.append(parse_decl(child, None))

@@ -1,13 +1,6 @@
 srcml
     Pb / enum:
 
-// Enums for different automatic histogram binning methods (k = bin count or w = bin width)
-enum ImPlotBin_ {
-ImPlotBin_Sqrt    = -1, // k = sqrt(n)
-ImPlotBin_Sturges = -2, // k = 1 + log2(n)
-ImPlotBin_Rice    = -3, // k = 2 * cbrt(n)
-ImPlotBin_Scott   = -4, // w = 3.49 * sigma / cbrt(n)
-};
 
 Pb / ifdef & struct 
 

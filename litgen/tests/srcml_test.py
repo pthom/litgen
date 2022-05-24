@@ -270,7 +270,7 @@ def test_misc_examples():
     verify_code_parse("""enum Foo
 {
     a = 0,
-    b = 1
+    b = 1,
 };
 """)
 
@@ -287,6 +287,40 @@ def implot_header_source():
     with open(implot_filename, "r") as f:
         code = f.read()
     return preprocess_implot_code(code)
+
+
+def test_preprocessor_test_state_and_inclusion_guards():
+    code = """
+#ifndef MY_HEADER_H
+// We are in the main header, and this should be included (the previous ifndef was just an inclusion guard)
+
+void Foo() {}     // This should be included
+
+#ifdef SOME_OPTION
+// We are probably entering a zone that handle arcane options and should not be included in the bindings
+    void Foo2() {}    // this should be ignored
+#else
+    void Foo3() {}    // this should be ignored also
+#endif // #ifdef SOME_OPTION
+
+#ifndef WIN32
+    // We are also probably entering a zone that handle arcane options and should not be included in the bindings
+    void Foo4() {}
+#endif
+
+#endif // #ifndef MY_HEADER_H    
+    """
+
+    parsed_code = srcml.parse_code(code)
+    parsed_str = str(parsed_code)
+    expected_code = """
+// We are in the main header, and this should be included (the previous ifndef was just an inclusion guard)
+void Foo() { OMITTED_FUNCTION_CODE; }
+// This should be included
+// #ifdef SOME_OPTION
+// #ifndef MY_HEADER_H
+    """
+    code_utils.assert_are_codes_equal(parsed_str, expected_code)
 
 
 def test_parse_implot():

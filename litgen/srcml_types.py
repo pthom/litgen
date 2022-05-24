@@ -78,8 +78,14 @@ class CppBlock(CppElement): # it is also a CppBlockChild
         return result
 
     def _str_block_enum(self):
-        strs = map(str, self.block_children)
-        result = code_utils.join_remove_empty(",\n", strs)
+        strs = []
+        for child in self.block_children:
+            if isinstance(child, CppDecl):
+                strs.append(str(child)+ ",")
+            else:
+                strs.append(str(child))
+
+        result = code_utils.join_remove_empty("\n", strs)
         return result
 
     def __str__(self):
@@ -454,7 +460,7 @@ class CppStruct(CppBlockChild):
             r = f"class {self.name}"
         else:
             r = f"struct {self.name}"
-        if len(str(self.super_list)) > 0:
+        if self.super_list is not None and len(str(self.super_list)) > 0:
             r += " : "
             r += str(self.super_list)
 
