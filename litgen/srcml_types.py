@@ -72,21 +72,37 @@ class CppBlock(CppElement): # it is also a CppBlockChild
         super().__init__()
         self.block_children: List[CppBlockChild] = []
 
-    def _str_block(self):
-        strs = map(str, self.block_children)
-        result = code_utils.join_remove_empty("\n", strs)
+    def _str_block(self, is_enum_block: bool = False):
+        result = ""
+        previous_child = None
+        for child in self.block_children:
+            child_str = str(child)
+            if len(child_str) == 0:
+                continue
+
+            add_new_line = True
+            if previous_child == None:
+                add_new_line = False
+            if previous_child is not None and isinstance(child, CppComment):
+                if child.start.line == previous_child.end.line:
+                    add_new_line = False
+                    result += " "
+
+            if add_new_line:
+                result += "\n"
+
+            if is_enum_block and isinstance(child, CppDecl):
+                result += str(child)+ ","
+            else:
+                result += str(child)
+
+            previous_child = child
+
+        result += "\n"
         return result
 
     def _str_block_enum(self):
-        strs = []
-        for child in self.block_children:
-            if isinstance(child, CppDecl):
-                strs.append(str(child)+ ",")
-            else:
-                strs.append(str(child))
-
-        result = code_utils.join_remove_empty("\n", strs)
-        return result
+        return self._str_block(is_enum_block=True)
 
     def __str__(self):
         return self._str_block()
