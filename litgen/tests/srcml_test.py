@@ -196,7 +196,7 @@ def test_nice_warning_message():
 
         expected_detailed_infos = [
             "Position:2:21: Issue inside parent cpp_element of type <class 'srcml_types.CppType'> (parsed by litgen.internal.srcml.parse_type)",
-            "Issue found in its srcml child, with this C++ code:",
+            "Issue found in its srcml child, with tag",
             "Parent cpp_element original C++ code:",
             "int^",
             "Parent cpp_element code, as currently parsed by litgen (of type <class 'srcml_types.CppType'>)",

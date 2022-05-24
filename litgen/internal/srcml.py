@@ -73,7 +73,7 @@ def _warning_detailed_info(
         detailed_message = f"""
     {header_filename}{parent_cpp_element.start}: Issue inside parent cpp_element of type {type(parent_cpp_element)} (parsed by litgen.internal.srcml.{python_caller_function_name})
     
-        Issue found in its srcml child, with this C++ code:
+        Issue found in its srcml child, with tag "{clean_tag_or_attrib(srcml_element.tag)}" with this C++ code:
         {code_utils.indent_code(srcml_to_code(srcml_element), 8)}{child_xml_str}
     
         Parent cpp_element original C++ code:
@@ -710,7 +710,7 @@ def fill_block(element: ET.Element, inout_block_content: CppBlock):
         elif child_tag == "struct":
             inout_block_content.block_children.append(parse_struct_or_class(child))
         elif child_tag == "class":
-            inout_block_content.block_children.append(parse_class(child))
+            inout_block_content.block_children.append(parse_struct_or_class(child))
         elif child_tag == "namespace":
             inout_block_content.block_children.append(parse_namespace(child))
         elif child_tag == "enum":
