@@ -266,6 +266,7 @@ def test_misc_examples():
     verify_code_parse("void foo(...);")
     verify_code_parse("const Foo & GetFoo() const;")
     verify_code_parse("template<typename T, typename U, int N> void Foo(T x);")
+    verify_code_parse("IMGUI_API const int Foo();")
     verify_code_parse("""enum Foo
 {
     a = 0,

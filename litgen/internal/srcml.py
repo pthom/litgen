@@ -16,7 +16,7 @@ from srcml_types import *
 
 
 HEADER_GUARD_SUFFIXES = ["_H", "HPP", "HXX", "IMGUI_DISABLE"]
-
+API_SUFFIXES = ["_API"]
 DUMP_SRCML_TREE_ON_ERROR = False
 
 ###########################################
@@ -307,7 +307,8 @@ def parse_type(element: ET.Element, previous_decl: CppDecl) -> CppType:
     for child in element:
         child_tag = clean_tag_or_attrib(child.tag)
         if child_tag == "name":
-            result.names.append(recompose_type_name(child))
+            typename = recompose_type_name(child)
+            result.names.append(typename)
         elif child_tag == "specifier":
             result.specifiers.append(child.text)
         elif child_tag == "modifier":
@@ -332,6 +333,16 @@ def parse_type(element: ET.Element, previous_decl: CppDecl) -> CppType:
 
     if len(result.names) == 0 and "..." not in result.modifiers:
         raise SrcMlException(None, result, "len(result.names) == 0!")
+
+    # process api names
+    for name in result.names:
+        is_api_name = False
+        for api_suffix in API_SUFFIXES:
+            if name.endswith(api_suffix):
+                is_api_name = True
+        if is_api_name:
+            result.names.remove(name)
+            result.specifiers = [name] + result.specifiers
 
     return result
 
