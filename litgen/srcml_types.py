@@ -196,15 +196,15 @@ class CppType(CppElement):
         specifiers_str = code_utils.join_remove_empty(" ", self.specifiers)
         modifiers_str = code_utils.join_remove_empty(" ", self.modifiers)
 
-        if len(self.names) == 0 and "..." not in self.modifiers:
-            # this can happen with cast operators
-            # Example:
-            #   struct Foo
-            #   {
-            #     inline operator int();
-            #   };
-            # We raise an exception, and this operator will be ignored
-            raise SrcMlException(self.srcml_element, None, "CppType: len(self.names) = 0")
+        # if len(self.names) == 0 and "..." not in self.modifiers:
+        #     # this can happen with cast operators
+        #     # Example:
+        #     #   struct Foo
+        #     #   {
+        #     #     inline operator int();
+        #     #   };
+        #     # We raise an exception, and this operator will be ignored
+        #     # raise SrcMlException(self.srcml_element, None, "CppType: len(self.names) = 0")
 
         name = " ".join(self.names)
 

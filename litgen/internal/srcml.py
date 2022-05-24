@@ -496,8 +496,10 @@ def parse_function(element: ET.Element) -> CppFunction:
     for child in element:
         child_tag = clean_tag_or_attrib(child.tag)
         if child_tag == "block":
-            result.block = parse_block(child)
-        elif child_tag in ["type", "name", "parameter_list", "specifier", "attribute"]:
+            # We do not parse inner function code
+            # result.block = parse_block(child)
+            pass
+        elif child_tag in ["type", "name", "parameter_list", "specifier", "attribute", "template"]:
             pass # alread handled by fill_function_decl
         else:
             raise SrcMlException(child, result)
@@ -716,7 +718,8 @@ def fill_block(element: ET.Element, inout_block_content: CppBlock):
         "empty_stmt",
         "pragma", "include", "macro", "define",             # preprocessor
         "struct_decl",                                      # struct forward decl (ignored)
-        "typedef"
+        "typedef",
+        "destructor", "destructor_decl",                    # destructors are not published in bindings
     ]
 
     _preprocessor_tests_state = _PreprocessorTestState()
