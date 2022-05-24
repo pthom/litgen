@@ -19,9 +19,14 @@ class SrcMlException(Exception):
     pass
 
 
-def _bad_tag_exception(element: ET.Element) -> SrcMlException:
+def _bad_tag_exception(element: ET.Element, parent: ET.Element = None) -> SrcMlException:
     tag_name = clean_tag(element.tag)
-    code = srcml_to_code(element)
+    element_code = srcml_to_code(element)
+
+    if parent is not None:
+        parent_code = srcml_to_code(parent)
+    else:
+        parent_code = "unknown"
 
     def get_call_info():
         stack_lines = traceback.format_stack()
@@ -34,8 +39,10 @@ def _bad_tag_exception(element: ET.Element) -> SrcMlException:
 
     msg = f"""
     Error in parser '{caller_function_name}': unexpected tag '{tag_name}'
-        With inner code:
-            {code_utils.indent_code(code, 12, skip_first_line=True)}
+        With element code:
+            {code_utils.indent_code(element_code, 12, skip_first_line=True)}
+        and parent code:
+            {code_utils.indent_code(parent_code, 12, skip_first_line=True)}
             
         The error happened here: {error_line}   
     """
@@ -220,8 +227,14 @@ def parse_decl(element: ET.Element, previous_decl: CppDecl) -> CppDecl:
         elif child_tag == "init":
             expr_child = child_with_tag(child, "expr")
             result.init = srcml_to_code(expr_child)
+        elif child_tag == "argument_list":
+            logging.warn(f"""            
+                parse_decl: received unexpected argument_list tag, with 
+                          child={srcml_to_code(child)} 
+
+                    and element={srcml_to_code(element)}""")
         else:
-            raise _bad_tag_exception(child)
+            raise _bad_tag_exception(child, element)
     return result
 
 
