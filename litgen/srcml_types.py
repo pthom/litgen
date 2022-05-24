@@ -181,10 +181,38 @@ class CppDecl(CppElement):
     """
     https://www.srcml.org/doc/cpp_srcML.html#variable-declaration
 
-    Note: init_cpp is inside an <init><expr> node in srcML. Here we retransform it to C++ code for simplicity
+    Notes:
+    * In certain cases, the name of a variable can be seen as a composition by srcML.
+      For example:
+
+        `int v[10];`
+
+      Will yield the following tree for the name:
+
+            <?xml version="1.0" ?>
+            <ns0:name>
+               <ns0:name>v</ns0:name>
+               <ns0:index>
+                  [
+                  <ns0:expr>
+                     <ns0:literal type="number">10</ns0:literal>
+                  </ns0:expr>
+                  ]
+               </ns0:index>
+            </ns0:name>
+
+      In litgen, this name will be seen as "v[10]"
+
+    * init represent the initial aka default value.
+      With srcML, it is inside an <init><expr> node in srcML.
+      Here we retransform it to C++ code for simplicity
         For example:
             int a = 5;
+
+            leads to:
             <decl_stmt><decl><type><name>int</name></type> <name>a</name> <init>= <expr><literal type="number">5</literal></expr></init></decl>;</decl_stmt>
+
+            Which is retranscribed as "5"
     """
     cpp_type: CppType = CppType()
     name: str = ""
