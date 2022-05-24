@@ -44,7 +44,8 @@ def _warning_detailed_info(
         parent_cpp_element: CppElement,
         additional_message: str = "",
         header_filename: str = "",
-        dump_srcml_tree: bool = DUMP_SRCML_TREE_ON_ERROR
+        dump_srcml_tree: bool = DUMP_SRCML_TREE_ON_ERROR,
+        flag_short_message: bool = False
         ):
 
     def _get_python_call_info():
@@ -60,7 +61,7 @@ def _warning_detailed_info(
     else:
         header_filename = "Position:"
 
-    if dump_srcml_tree and srcml_element is not None:
+    if dump_srcml_tree and srcml_element is not None and not flag_short_message:
         child_xml_str = f"""
     Which corresponds to this xml tree:
     {code_utils.indent_code(srcml_to_str(srcml_element), 8)}
@@ -73,22 +74,25 @@ def _warning_detailed_info(
     if parent_cpp_element is not None:
 
         detailed_message = f"""
-    {header_filename}{parent_cpp_element.start}: Issue inside parent cpp_element of type {type(parent_cpp_element)} (parsed by litgen.internal.srcml.{python_caller_function_name})
-    
-        Issue found in its srcml child, with tag "{srcml_element_tag}" with this C++ code:
-        {code_utils.indent_code(srcml_to_code(srcml_element), 8)}{child_xml_str}
-    
-        Parent cpp_element original C++ code:
+        Original C++ code: {header_filename}{parent_cpp_element.start}: 
         {code_utils.indent_code(srcml_to_code(parent_cpp_element.srcml_element), 8)}
-    
-        Parent cpp_element code, as currently parsed by litgen (of type {type(parent_cpp_element)})
-        {code_utils.indent_code(str(parent_cpp_element), 4)}
-    
-        Python call stack info:
-        {code_utils.indent_code(python_error_line, 4)}
+        """
+
+        if not flag_short_message:
+            detailed_message += f"""
+            Issue inside parent cpp_element of type {type(parent_cpp_element)} (parsed by litgen.internal.srcml.{python_caller_function_name})
+
+            Issue found in its srcml child, with tag "{srcml_element_tag}" with this C++ code:
+            {code_utils.indent_code(srcml_to_code(srcml_element), 8)}{child_xml_str}
+
+            Parent cpp_element code, as currently parsed by litgen (of type {type(parent_cpp_element)})
+            {code_utils.indent_code(str(parent_cpp_element), 4)}
+        
+            Python call stack info:
+            {code_utils.indent_code(python_error_line, 4)}
     
             (Note for litgen developers: add `dump_xml_tree=True` in order to see the corresponding srcml xml tree)
-        """
+            """
 
     else:
         code_position = ""
@@ -96,18 +100,20 @@ def _warning_detailed_info(
             if clean_tag_or_attrib(k) == "start":
                 code_position = v
 
-        detailed_message = f"""
-    {header_filename}:{code_position} Issue inside {python_caller_function_name})
-    
-        Issue found in srcml child, with this C++ code:
+        detailed_message = """
+        Issue found in srcml child, with this C++ code: {header_filename}:{code_position} 
         {code_utils.indent_code(srcml_to_code(srcml_element), 8)}{child_xml_str}
-            
-        Python call stack info:
-        {code_utils.indent_code(python_error_line, 4)}
-    
-            (Note for litgen developers: add `dump_xml_tree=True` in order to see the corresponding srcml xml tree)
         """
 
+        if not flag_short_message:
+            detailed_message += f"""
+            Issue inside {python_caller_function_name})
+                    
+            Python call stack info:
+            {code_utils.indent_code(python_error_line, 4)}
+        
+                (Note for litgen developers: add `dump_xml_tree=True` in order to see the corresponding srcml xml tree)
+            """
 
     if len(additional_message) > 0:
         detailed_message = additional_message + "\n" + code_utils.indent_code(detailed_message, 4)
@@ -121,8 +127,10 @@ class SrcMlException(Exception):
                  parent_cpp_element: CppElement,
                  additional_message = "",
                  header_filename: str = "",
-                 dump_srcml_tree: bool = DUMP_SRCML_TREE_ON_ERROR):
-        message = _warning_detailed_info(srcml_element, parent_cpp_element, additional_message, header_filename, dump_srcml_tree)
+                 dump_srcml_tree: bool = DUMP_SRCML_TREE_ON_ERROR,
+                 flag_short_message: bool = False
+                 ):
+        message = _warning_detailed_info(srcml_element, parent_cpp_element, additional_message, header_filename, dump_srcml_tree, flag_short_message)
         super().__init__(message)
 
 
@@ -131,7 +139,9 @@ def emit_srcml_warning(
         parent_cpp_element: CppElement,
         additional_message = "",
         header_filename: str = "",
-        dump_srcml_tree: bool = DUMP_SRCML_TREE_ON_ERROR):
+        dump_srcml_tree: bool = DUMP_SRCML_TREE_ON_ERROR,
+        flag_short_message: bool = False
+        ):
     message = _warning_detailed_info(srcml_element, parent_cpp_element, additional_message, header_filename, dump_srcml_tree)
     logging.warning(message)
 
@@ -303,7 +313,11 @@ def parse_type(element: ET.Element, previous_decl: CppDecl) -> CppType:
 
     if len(result.names) == 0 and "..." not in result.modifiers:
         if previous_decl is None:
-            raise SrcMlException(None, result, "Can't find type name")
+            raise SrcMlException(
+                None, result,
+                additional_message="Can't find type name",
+                flag_short_message=True
+            )
         assert previous_decl is not None
         result.names = previous_decl.cpp_type.names
 
@@ -413,7 +427,10 @@ def parse_parameter(element: ET.Element) -> CppParameter:
             result.template_name = child.text # This is only for template parameters
         elif child_tag == "function_decl":
             #result.decl = parse_function_decl(child)
-            raise SrcMlException(child, result, f"A function uses a function_decl as a param. It was discarded")
+            raise SrcMlException(
+                child, result,
+                f"A function uses a function_decl as a param. It was discarded",
+                flag_short_message=True)
         else:
             raise SrcMlException(child, result, f"unhandled tag {child_tag}")
 
@@ -471,6 +488,10 @@ def fill_function_decl(element: ET.Element, function_decl: CppFunctionDecl):
             function_decl.template = parse_template(child)
         elif child_tag == "block":
             pass # will be handled by parse_function
+        elif child_tag == "modifier":
+            raise SrcMlException(
+                child, function_decl, flag_short_message=True,
+                additional_message="C style function pointers are poorly supported")
         else:
             raise SrcMlException(child, function_decl)
 
@@ -720,6 +741,7 @@ def fill_block(element: ET.Element, inout_block_content: CppBlock):
         "struct_decl",                                      # struct forward decl (ignored)
         "typedef",
         "destructor", "destructor_decl",                    # destructors are not published in bindings
+        "union"
     ]
 
     _preprocessor_tests_state = _PreprocessorTestState()
