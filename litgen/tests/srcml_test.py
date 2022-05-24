@@ -133,7 +133,7 @@ def test_parse_function_decl():
     code = "int foo();"
     element = srcml.first_code_element_with_tag(code, "function_decl")
     function_decl  = srcml.parse_function_decl(element)
-    assert repr(function_decl) == "CppFunctionDecl(specifiers=[], type=CppType(names=['int'], specifiers=[], modifiers=[], argument_list=[]), name='foo', parameter_list=CppParameterList(parameters=[]))"
+    assert repr(function_decl) == "CppFunctionDecl(specifiers=[], type=CppType(names=['int'], specifiers=[], modifiers=[], argument_list=[]), name='foo', parameter_list=CppParameterList(parameters=[]), template=None)"
 
     # Basic test with str
     code = "int foo();"
@@ -243,6 +243,13 @@ def test_struct_srcml():
     code_utils.assert_are_codes_equal(code_utils.force_one_space(srcml_str), code_utils.force_one_space(expected_str))
 
 
+def test_srcml_issues_still_present():
+    # See issue: https://github.com/srcML/srcML/issues/1687
+    code = 'void foo() __attribute__ ((optimize("0")));'
+    with pytest.raises(srcml.SrcMlException) as e:
+        srcml.parse_code(code)
+
+
 def verify_code_parse(original_cpp_code, expected_parsed_code = None):
     if expected_parsed_code is None:
         expected_parsed_code = original_cpp_code
@@ -250,13 +257,6 @@ def verify_code_parse(original_cpp_code, expected_parsed_code = None):
     cpp_unit = srcml.parse_code(original_cpp_code)
     cpp_unit_str = str(cpp_unit)
     code_utils.assert_are_codes_equal(cpp_unit_str, expected_parsed_code)
-
-
-def test_srcml_issues_still_present():
-    # See issue: https://github.com/srcML/srcML/issues/1687
-    code = 'void foo() __attribute__ ((optimize("0")));'
-    with pytest.raises(srcml.SrcMlException) as e:
-        srcml.parse_code(code)
 
 
 def test_misc_examples():
@@ -267,10 +267,28 @@ def test_misc_examples():
     verify_code_parse('void foo() [[gnu::optimize(0)]];', 'void foo();')
     verify_code_parse("void foo(...);")
     verify_code_parse("const Foo & GetFoo() const;")
+    verify_code_parse("template<typename T, typename U, int N> void Foo(T x);")
     verify_code_parse("""enum Foo
 {
     a = 0,
     b = 1,
+};
+""")
+    verify_code_parse("""template<typename T, typename U, int N>
+class Foo
+{
+        T x = T();
+    public:
+        std::optional<U> u = std::nullopt;    
+        const int n = N;
+};""", """template<typename T, typename U, int N>
+class Foo
+{
+    private:
+        T x = T();
+    public:
+        std::optional<U> u = std::nullopt;
+        const int n = N;
 };
 """)
 

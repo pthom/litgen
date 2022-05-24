@@ -331,8 +331,9 @@ def parse_init_expr(element: ET.Element) -> str:
     if len(expr) == 1:
         for child in expr:
             if clean_tag_or_attrib(child.tag) in ["literal", "name"]:
-                r = child.text
-                return r
+                if child.text is not None:
+                    r = child.text
+                    return r
 
     # More complex cases
     r = srcml_to_code(expr)
@@ -362,8 +363,8 @@ def parse_decl(element: ET.Element, previous_decl: CppDecl) -> CppDecl:
         else:
             raise SrcMlException(child, result)
 
-    if not result.has_name_or_ellipsis():
-        raise SrcMlException(child, result, "This decl has no name, and is not an ellipsis (...)!")
+    # if not result.has_name_or_ellipsis():
+    #     raise SrcMlException(child, result, "This decl has no name, and is not an ellipsis (...)!")
 
     return result
 
@@ -400,8 +401,15 @@ def parse_parameter(element: ET.Element) -> CppParameter:
         child_tag = clean_tag_or_attrib(child.tag)
         if child_tag == "decl":
             result.decl = parse_decl(child, None)
+        elif child_tag == "type":
+            result.template_type = parse_type(child, None) # This is only for template parameters
+        elif child_tag == "name":
+            result.template_name = child.text # This is only for template parameters
+        elif child_tag == "function_decl":
+            #result.decl = parse_function_decl(child)
+            emit_srcml_warning(child, result, f"A function uses a function_decl as a param. It was ignored")
         else:
-            raise SrcMlException(child, result)
+            raise SrcMlException(child, result, f"unhandled tag {child_tag}")
 
     return result
 
@@ -422,6 +430,23 @@ def parse_parameter_list(element: ET.Element) -> CppParameterList:
     return result
 
 
+def parse_template(element: ET.Element) -> CppTemplate:
+    """
+    Template parameters of a function, struct or class
+    https://www.srcml.org/doc/cpp_srcML.html#template
+    """
+    assert clean_tag_or_attrib(element.tag) == "template"
+    result = CppTemplate()
+    fill_cpp_element_data(element, result)
+    for child in element:
+        child_tag = clean_tag_or_attrib(child.tag)
+        if child_tag == "parameter_list":
+            result.parameter_list = parse_parameter_list(child)
+        else:
+            raise SrcMlException(child, result)
+    return result
+
+
 def fill_function_decl(element: ET.Element, function_decl: CppFunctionDecl):
     fill_cpp_element_data(element, function_decl)
     for child in element:
@@ -436,10 +461,12 @@ def fill_function_decl(element: ET.Element, function_decl: CppFunctionDecl):
             function_decl.specifiers.append(child.text)
         elif child_tag == "attribute":
             pass # compiler options, such as [[gnu::optimize(0)]]
+        elif child_tag == "template":
+            function_decl.template = parse_template(child)
         elif child_tag == "block":
             pass # will be handled by parse_function
         else:
-            raise SrcMlException(child, result)
+            raise SrcMlException(child, function_decl)
 
 
 def parse_function_decl(element: ET.Element) -> CppFunctionDecl:
@@ -579,6 +606,8 @@ def parse_struct_or_class(element: ET.Element) -> CppStruct:
             result.super_list = parse_super_list(child)
         elif child_tag == "block":
             result.block = parse_block(child)
+        elif child_tag == "template":
+            result.template = parse_template(child)
         else:
             raise SrcMlException(child, result)
 

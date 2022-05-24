@@ -302,11 +302,19 @@ class CppParameter(CppElement):
     """
     decl: CppDecl = None
 
+    template_type: CppType = None  # This is only for template's CppParameterList
+    template_name: str = ""
+
     def __init__(self):
         super().__init__()
 
     def __str__(self):
-        return str(self.decl)
+        if self.decl is not None:
+            assert self.template_type is None
+            return str(self.decl)
+        else:
+            assert self.template_type is not None
+            return str(self.template_type) + " " + self.template_name
 
 
 @_dataclass
@@ -326,6 +334,23 @@ class CppParameterList(CppElement):
 
 
 @_dataclass
+class CppTemplate(CppElement):
+    """
+    Template parameters of a function, struct or class
+    https://www.srcml.org/doc/cpp_srcML.html#template
+    """
+    parameter_list: CppParameterList = CppParameterList()
+
+    def __init__(self):
+        super().__init__()
+
+    def __str__(self):
+        params_str = str(self.parameter_list)
+        result = f"template<{params_str}>"
+        return result
+
+
+@_dataclass
 class CppFunctionDecl(CppBlockChild):
     """
     https://www.srcml.org/doc/cpp_srcML.html#function-declaration
@@ -334,13 +359,17 @@ class CppFunctionDecl(CppBlockChild):
     type: CppType = None
     name: str = ""
     parameter_list: CppParameterList = None
+    template: CppTemplate = None
 
     def __init__(self):
         super().__init__()
         self.specifiers: List[str] = []
 
     def _str_decl(self):
-        r = f"{self.type} {self.name}({self.parameter_list})"
+        r = ""
+        if self.template is not None:
+            r += str(self.template) + " "
+        r += f"{self.type} {self.name}({self.parameter_list})"
         if len(self.specifiers) > 0:
             specifiers_strs = map(str, self.specifiers)
             r = r + " " + " ".join(specifiers_strs)
@@ -451,15 +480,19 @@ class CppStruct(CppBlockChild):
     name: str = ""
     super_list: CppSuperList = None
     block: CppBlock = None
+    template: CppTemplate = None    # for template classes or structs
 
     def __init__(self):
         super().__init__()
 
     def _str_struct_or_class(self, is_class: bool):
+        r = ""
+        if self.template is not None:
+            r += str(self.template) + "\n"
         if is_class:
-            r = f"class {self.name}"
+            r += f"class {self.name}"
         else:
-            r = f"struct {self.name}"
+            r += f"struct {self.name}"
         if self.super_list is not None and len(str(self.super_list)) > 0:
             r += " : "
             r += str(self.super_list)
