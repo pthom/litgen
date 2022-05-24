@@ -197,6 +197,13 @@ class CppType(CppElement):
         modifiers_str = code_utils.join_remove_empty(" ", self.modifiers)
 
         if len(self.names) == 0 and "..." not in self.modifiers:
+            # this can happen with cast operators
+            # Example:
+            #   struct Foo
+            #   {
+            #     inline operator int();
+            #   };
+            # We raise an exception, and this operator will be ignored
             raise SrcMlException(self.srcml_element, None, "CppType: len(self.names) = 0")
 
         name = " ".join(self.names)
@@ -313,7 +320,8 @@ class CppParameter(CppElement):
             assert self.template_type is None
             return str(self.decl)
         else:
-            assert self.template_type is not None
+            if self.template_type is None:
+                logging.warning("CppParameter.__str__() with no decl and no template_type")
             return str(self.template_type) + " " + self.template_name
 
 

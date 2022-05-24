@@ -292,6 +292,14 @@ class Foo
 };
 """)
 
+    # Note: lambdas are parsed correctly as decl
+    # However, they won't be published in the bindings.
+    # Wrap them into published functions if needed
+    verify_code_parse("""auto add = [](int a, int b) {
+    return a + b;
+};
+""")
+
 
 def implot_header_source():
     def preprocess_implot_code(code):

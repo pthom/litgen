@@ -60,7 +60,7 @@ def _warning_detailed_info(
     else:
         header_filename = "Position:"
 
-    if dump_srcml_tree:
+    if dump_srcml_tree and srcml_element is not None:
         child_xml_str = f"""
     Which corresponds to this xml tree:
     {code_utils.indent_code(srcml_to_str(srcml_element), 8)}
@@ -68,12 +68,14 @@ def _warning_detailed_info(
     else:
         child_xml_str = ""
 
+    srcml_element_tag = clean_tag_or_attrib(srcml_element.tag) if srcml_element is not None else ""
+
     if parent_cpp_element is not None:
 
         detailed_message = f"""
     {header_filename}{parent_cpp_element.start}: Issue inside parent cpp_element of type {type(parent_cpp_element)} (parsed by litgen.internal.srcml.{python_caller_function_name})
     
-        Issue found in its srcml child, with tag "{clean_tag_or_attrib(srcml_element.tag)}" with this C++ code:
+        Issue found in its srcml child, with tag "{srcml_element_tag}" with this C++ code:
         {code_utils.indent_code(srcml_to_code(srcml_element), 8)}{child_xml_str}
     
         Parent cpp_element original C++ code:
@@ -300,6 +302,8 @@ def parse_type(element: ET.Element, previous_decl: CppDecl) -> CppType:
             raise SrcMlException(child, result)
 
     if len(result.names) == 0 and "..." not in result.modifiers:
+        if previous_decl is None:
+            raise SrcMlException(None, result, "Can't find type name")
         assert previous_decl is not None
         result.names = previous_decl.cpp_type.names
 
@@ -360,6 +364,8 @@ def parse_decl(element: ET.Element, previous_decl: CppDecl) -> CppDecl:
             result.name = recompose_decl_name(child)
         elif child_tag == "init":
             result.init = parse_init_expr(child)
+        elif child_tag == "range":
+            pass # this is for C bit fields
         else:
             raise SrcMlException(child, result)
 
@@ -407,7 +413,7 @@ def parse_parameter(element: ET.Element) -> CppParameter:
             result.template_name = child.text # This is only for template parameters
         elif child_tag == "function_decl":
             #result.decl = parse_function_decl(child)
-            emit_srcml_warning(child, result, f"A function uses a function_decl as a param. It was ignored")
+            raise SrcMlException(child, result, f"A function uses a function_decl as a param. It was discarded")
         else:
             raise SrcMlException(child, result, f"unhandled tag {child_tag}")
 
@@ -727,9 +733,15 @@ def fill_block(element: ET.Element, inout_block_content: CppBlock):
         elif child_tag == "decl":
             inout_block_content.block_children.append(parse_decl(child, None))
         elif child_tag == "function_decl":
-            inout_block_content.block_children.append(parse_function_decl(child))
+            try:
+                inout_block_content.block_children.append(parse_function_decl(child))
+            except SrcMlException as e:
+                logging.warning(f"A function was ignored. Details follow\n {e}")
         elif child_tag == "function":
-            inout_block_content.block_children.append(parse_function(child))
+            try:
+                inout_block_content.block_children.append(parse_function(child))
+            except SrcMlException as e:
+                logging.warning(f"A function was ignored. Details follow\n {e}")
         elif child_tag == "constructor_decl":
             inout_block_content.block_children.append(parse_constructor_decl(child))
         elif child_tag == "constructor":
