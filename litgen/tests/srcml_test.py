@@ -66,7 +66,7 @@ def test_srcml_repr():
     element = srcml.first_code_element_with_tag(code, "decl_stmt")
     cpp_decl_statement  = srcml.parse_decl_stmt(element)
     repr_cpp_decl_statement = repr(cpp_decl_statement)
-    repr_expected = 'CppDeclStatement(cpp_decls=[CppDecl(cpp_type=CppType(name=\'int\', specifiers=[], modifiers=[]), name=\'a\', init=\'\')])'
+    repr_expected = 'CppDeclStatement(cpp_decls=[CppDecl(cpp_type=CppType(name=\'int\', specifiers=[], modifiers=[], argument_list=[]), name=\'a\', init=\'\')])'
     assert repr_cpp_decl_statement == repr_expected
 
 
@@ -112,7 +112,7 @@ def test_parse_function_decl():
     code = "int foo();"
     element = srcml.first_code_element_with_tag(code, "function_decl")
     function_decl  = srcml.parse_function_decl(element)
-    assert repr(function_decl) == "CppFunctionDecl(type=CppType(name='int', specifiers=[], modifiers=[]), name='foo', parameter_list=CppParameterList(parameters=[]))"
+    assert repr(function_decl) == "CppFunctionDecl(specifiers=[], type=CppType(name='int', specifiers=[], modifiers=[], argument_list=[]), name='foo', parameter_list=CppParameterList(parameters=[]))"
 
     # Basic test with str
     code = "int foo();"
@@ -194,10 +194,10 @@ def test_struct_srcml():
 
 def test_parse_struct_decl():
     code = """
-    struct a {
-        int x;
-        int y = 2;
-        int z,w =2;
+    struct a 
+    {
+        
+        int a, b = 2;
         int add(int a, int b);        
         // Sustract
         int sub(int a, int b) { return b - a;}
@@ -253,31 +253,24 @@ def test_parse_block():
         // <CppBlockContent>
         int z
         int w = 2
-        
         int add(int a, int b)
-        
         // Sustract
-        
         int sub(int a, int b) { OMITTED_BLOCK; }
-        
         struct A
         {
             public:
         
         };
         
-        
         namespace internal
         {
             bool flag
         }
         
-        
         enum MyEnum
         {
              A = 0
         }
-        
         
         enum MyEnumClass
         {
@@ -288,27 +281,6 @@ def test_parse_block():
     """
 
     code_utils.assert_are_codes_equal(block_str, expected_str)
-    #print(block)
-
-
-def test_parse_block2():
-    codes = {
-        "function": "void foo() {}",
-        "block": "{}",
-        "namespace": "namespace Foo {}",
-        "class": "class Foo {}",
-    }
-
-    for type, code in codes.items():
-        element = srcml.first_code_element_with_tag(code, type)
-        element_str = srcml.srcml_to_str(element)
-        print(f"""
-Type: {type} / code = {code}
-****************************************
-{element_str}
-    """)
-    #block = srcml.parse_block(element)
-    # code_utils.assert_are_codes_equal(struct, "")
     #print(block)
 
 
