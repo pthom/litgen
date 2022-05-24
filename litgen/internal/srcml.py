@@ -228,7 +228,7 @@ def parse_type(element: ET.Element, previous_decl: CppDecl) -> CppType:
     for child in element:
         child_tag = clean_tag_or_attrib(child.tag)
         if child_tag == "name":
-            result.name = parse_name(child)
+            result.names.append(parse_name(child))
         elif child_tag == "specifier":
             result.specifiers.append(child.text)
         elif child_tag == "modifier":
@@ -241,9 +241,9 @@ def parse_type(element: ET.Element, previous_decl: CppDecl) -> CppType:
         else:
             raise SrcMlException(child, result)
 
-    if len(result.name) == 0:
+    if len(result.names) == 0:
         assert previous_decl is not None
-        result.name = previous_decl.cpp_type.name
+        result.names = previous_decl.cpp_type.names
 
     return result
 

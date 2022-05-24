@@ -1,7 +1,5 @@
 srcml
-    ajout unit comme block
-    
-    IMPLOT_API disparait / parse_name que pour types ?
+     IMPLOT_API disparait / parse_name que pour types ?
 
     ? ajout parent + parent class
     

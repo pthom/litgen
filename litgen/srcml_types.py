@@ -127,13 +127,24 @@ class CppType(CppElement):
     Describes a full C++ type, as seen by srcML
     See https://www.srcml.org/doc/cpp_srcML.html#type
     """
-    name: str
-    specifiers: List[str]    # could be ["const"], ["static", "const"], ["extern"], ["constexpr"], etc.
-    modifiers: List[str]     # could be ["*"], ["&&"], ["&"], ["*", "*"]
-    argument_list: List[str] # template arguments i.e ["int"] for vector<int>
+
+    # A type name can be composed of several names, for example:
+    #   "unsigned int" -> ["unsigned", "int"]
+    #   MY_API void Process() declares a function whose return type will be ["MY_API", "void"]
+    #                         (where "MY_API" could for example be a dll export/import macro)
+    names: List[str]
+
+    # specifiers: could be ["const"], ["static", "const"], ["extern"], ["constexpr"], etc.
+    specifiers: List[str]
+
+    # modifiers: could be ["*"], ["&&"], ["&"], ["*", "*"]
+    modifiers: List[str]
+
+    # template arguments types i.e ["int"] for vector<int>
+    argument_list: List[str]
 
     def __init__(self):
-        self.name = ""
+        self.names = []
         self.specifiers = []
         self.modifiers = []
         self.argument_list = []
@@ -146,7 +157,10 @@ class CppType(CppElement):
         specifiers_str = code_utils.join_remove_empty(" ", self.specifiers)
         modifiers_str = code_utils.join_remove_empty(" ", self.modifiers)
 
-        name_and_arg = self.name
+        assert len(self.names) > 0
+        name = " ".join(self.names)
+
+        name_and_arg = name
         if len(self.argument_list) > 0:
             args_str = ", ".join(self.argument_list)
             name_and_arg += "<" + args_str + ">"
