@@ -15,6 +15,8 @@ import traceback, inspect
 from srcml_types import *
 
 
+DUMP_SRCML_TREE_ON_ERROR = False
+
 ###########################################
 #
 # main API
@@ -40,7 +42,7 @@ def _warning_detailed_info(
         parent_cpp_element: CppElement,
         additional_message: str = "",
         header_filename: str = "",
-        dump_srcml_tree: bool = False
+        dump_srcml_tree: bool = DUMP_SRCML_TREE_ON_ERROR
         ):
 
     def _get_python_call_info():
@@ -64,24 +66,44 @@ def _warning_detailed_info(
     else:
         child_xml_str = ""
 
+    if parent_cpp_element is not None:
 
-    detailed_message = f"""
-{header_filename}{parent_cpp_element.start}: Issue inside parent cpp_element of type {type(parent_cpp_element)} (parsed by litgen.internal.srcml.{python_caller_function_name})
+        detailed_message = f"""
+    {header_filename}{parent_cpp_element.start}: Issue inside parent cpp_element of type {type(parent_cpp_element)} (parsed by litgen.internal.srcml.{python_caller_function_name})
+    
+        Issue found in its srcml child, with this C++ code:
+        {code_utils.indent_code(srcml_to_code(srcml_element), 8)}{child_xml_str}
+    
+        Parent cpp_element original C++ code:
+        {code_utils.indent_code(srcml_to_code(parent_cpp_element.srcml_element), 8)}
+    
+        Parent cpp_element code, as currently parsed by litgen (of type {type(parent_cpp_element)})
+        {code_utils.indent_code(str(parent_cpp_element), 4)}
+    
+        Python call stack info:
+        {code_utils.indent_code(python_error_line, 4)}
+    
+            (Note for litgen developers: add `dump_xml_tree=True` in order to see the corresponding srcml xml tree)
+        """
 
-    Issue found in its srcml child, with this C++ code:
-    {code_utils.indent_code(srcml_to_code(srcml_element), 8)}{child_xml_str}
+    else:
+        code_position = ""
+        for k, v in srcml_element.attrib.items():
+            if clean_tag_or_attrib(k) == "start":
+                code_position = v
 
-    Parent cpp_element original C++ code:
-    {code_utils.indent_code(srcml_to_code(parent_cpp_element.srcml_element), 8)}
+        detailed_message = f"""
+    {header_filename}:{code_position} Issue inside {python_caller_function_name})
+    
+        Issue found in srcml child, with this C++ code:
+        {code_utils.indent_code(srcml_to_code(srcml_element), 8)}{child_xml_str}
+            
+        Python call stack info:
+        {code_utils.indent_code(python_error_line, 4)}
+    
+            (Note for litgen developers: add `dump_xml_tree=True` in order to see the corresponding srcml xml tree)
+        """
 
-    Parent cpp_element code, as currently parsed by litgen (of type {type(parent_cpp_element)})
-    {code_utils.indent_code(str(parent_cpp_element), 4)}
-
-    Python call stack info:
-    {code_utils.indent_code(python_error_line, 4)}
-
-        (Note for litgen developers: add `dump_xml_tree=True` in order to see the corresponding srcml xml tree)
-    """
 
     if len(additional_message) > 0:
         detailed_message = additional_message + "\n" + code_utils.indent_code(detailed_message, 4)
@@ -95,7 +117,7 @@ class SrcMlException(Exception):
                  parent_cpp_element: CppElement,
                  additional_message = "",
                  header_filename: str = "",
-                 dump_srcml_tree: bool = False):
+                 dump_srcml_tree: bool = DUMP_SRCML_TREE_ON_ERROR):
         message = _warning_detailed_info(srcml_element, parent_cpp_element, additional_message, header_filename, dump_srcml_tree)
         super().__init__(message)
 
@@ -105,7 +127,7 @@ def emit_srcml_warning(
         parent_cpp_element: CppElement,
         additional_message = "",
         header_filename: str = "",
-        dump_srcml_tree: bool = False):
+        dump_srcml_tree: bool = DUMP_SRCML_TREE_ON_ERROR):
     message = _warning_detailed_info(srcml_element, parent_cpp_element, additional_message, header_filename, dump_srcml_tree)
     logging.warning(message)
 
@@ -183,6 +205,11 @@ class _SrcmlCaller:
         if element is None:
             return "<srcml_to_code(None)>"
 
+        # print(f"""
+        # srcml_to_code with
+        #     {code_utils.indent_code(srcml_to_str(element), 12, skip_first_line=True)}
+        # """)
+
         self._stats_srcml_to_code.start()
         unit_element = _embed_element_into_unit(element)
         with tempfile.NamedTemporaryFile(delete=False, suffix=".xml") as input_xml_file:
@@ -249,7 +276,7 @@ def parse_type(element: ET.Element, previous_decl: CppDecl) -> CppType:
 
     def recompose_type_name(element: ET.Element) -> str:
         is_composed_type = (element.text is None)
-        return srcml_to_code(element) if is_composed_type else element.text
+        return srcml_to_code(element).strip() if is_composed_type else element.text
 
     assert clean_tag_or_attrib(element.tag) == "type"
     result = CppType()
@@ -270,11 +297,44 @@ def parse_type(element: ET.Element, previous_decl: CppDecl) -> CppType:
         else:
             raise SrcMlException(child, result)
 
-    if len(result.names) == 0:
+    if len(result.names) == 0 and "..." not in result.modifiers:
         assert previous_decl is not None
         result.names = previous_decl.cpp_type.names
 
+    if len(result.names) == 0 and "..." not in result.modifiers:
+        raise SrcMlException(None, result, "len(result.names) == 0!")
+
     return result
+
+
+def parse_init_expr(element: ET.Element) -> str:
+    """
+    Can parse simple literals, like "hello", whose tree looks like:
+            <ns0:expr>
+               <ns0:literal type="string">&quot;hello&quot;</ns0:literal>
+            </ns0:expr>
+
+    But for more complete expressions, like "1<<20", whose tree looks like:
+            <ns0:expr>
+                <ns0:literal type="number">1</ns0:literal>
+                <ns0:operator><</ns0:operator>
+                <ns0:literal type="number">20</ns0:literal>
+            </ns0:expr>
+    we will call srcml_to_code, which will invoke the executable srcml
+    """
+    assert clean_tag_or_attrib(element.tag) == "init"
+    expr = child_with_tag(element, "expr")
+
+    # Case for simple literals
+    if len(expr) == 1:
+        for child in expr:
+            if clean_tag_or_attrib(child.tag) in ["literal", "name"]:
+                r = child.text
+                return r
+
+    # More complex cases
+    r = srcml_to_code(expr)
+    return r
 
 
 def parse_decl(element: ET.Element, previous_decl: CppDecl) -> CppDecl:
@@ -284,7 +344,7 @@ def parse_decl(element: ET.Element, previous_decl: CppDecl) -> CppDecl:
 
     def recompose_decl_name(element: ET.Element) -> str:
         is_composed = (element.text is None)
-        return srcml_to_code(element) if is_composed else element.text
+        return srcml_to_code(element).strip() if is_composed else element.text
 
     assert clean_tag_or_attrib(element.tag) == "decl"
     result = CppDecl()
@@ -296,12 +356,13 @@ def parse_decl(element: ET.Element, previous_decl: CppDecl) -> CppDecl:
         elif child_tag == "name":
             result.name = recompose_decl_name(child)
         elif child_tag == "init":
-            expr_child = child_with_tag(child, "expr")
-            result.init = srcml_to_code(expr_child)
-        # elif child_tag == "argument_list":
-        #     emit_srcml_warning(child, result, "received unexpected argument_list tag")
+            result.init = parse_init_expr(child)
         else:
             raise SrcMlException(child, result)
+
+    if not result.has_name_or_ellipsis():
+        raise SrcMlException(child, result, "This decl has no name, and is not an ellipsis (...)!")
+
     return result
 
 
@@ -340,9 +401,6 @@ def parse_parameter(element: ET.Element) -> CppParameter:
         else:
             raise SrcMlException(child, result)
 
-    if result.decl.name is None or len(result.decl.name) == 0:
-        raise SrcMlException(None, result, "Found no name in parse_parameter!")
-
     return result
 
 
@@ -379,6 +437,8 @@ def parse_function_decl(element: ET.Element) -> CppFunctionDecl:
             result.parameter_list = parse_parameter_list(child)
         elif child_tag == "specifier":
             result.specifiers.append(child.text)
+        elif child_tag == "attribute":
+            pass # compiler options, such as [[gnu::optimize(0)]]
         else:
             raise SrcMlException(child, result)
 
@@ -516,6 +576,15 @@ def fill_block(element: ET.Element, inout_block_content: CppBlock):
         child_tag='namespace'
         child_tag='enum' (optionally type="class")
     """
+
+    ignored_block_types = [
+        "empty_stmt",
+        "pragma", "include", "macro", "define",             # preprocessor
+        "ifndef", "ifdef", "endif", "elif", "if", "else",   # preprocessor tests
+        "struct_decl",                                      # struct forward decl (ignored)
+        "typedef"
+    ]
+
     for child in element:
         child_tag = clean_tag_or_attrib(child.tag)
         if child_tag == "decl_stmt":
@@ -544,14 +613,12 @@ def fill_block(element: ET.Element, inout_block_content: CppBlock):
             inout_block_content.block_children.append(parse_block_content(child))
         elif child_tag in ["public", "protected", "private"]:
             inout_block_content.block_children.append(parse_public_protected_private(child))
-        elif child_tag in [
-            "empty_stmt", "pragma", "include", "ifndef", "define", "ifdef", "endif", "struct_decl", "typedef"
-            ]:
-            logging.warning(f"ignored tag {child_tag}")
+        elif child_tag in ignored_block_types:
+            # logging.warning(f"ignored tag {child_tag}")
             pass
         else:
             # raise _bad_tag_exception(child)
-            logging.warning(f"missing tag {child_tag}")
+            emit_srcml_warning(child, None, f'Unhandled tag type in `fill_block`: "{child_tag}"')
 
 
 def parse_unit(element: ET.Element) -> CppUnit:

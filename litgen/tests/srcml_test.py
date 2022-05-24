@@ -1,4 +1,8 @@
-import os, sys; _THIS_DIR = os.path.dirname(__file__); sys.path = [_THIS_DIR + "/.."] + sys.path
+import os, sys;
+
+import pytest
+
+_THIS_DIR = os.path.dirname(__file__); sys.path = [_THIS_DIR + "/.."] + sys.path
 
 import litgen.internal.srcml as srcml
 import litgen.internal.code_utils as code_utils
@@ -195,18 +199,11 @@ def test_nice_warning_message():
             "Issue found in its srcml child, with this C++ code:",
             "Parent cpp_element original C++ code:",
             "int^",
-            "Parent cpp_element code, as currently parsed by litgen (of type <class 'srcml_types.CppType'>)"
+            "Parent cpp_element code, as currently parsed by litgen (of type <class 'srcml_types.CppType'>)",
+            "Python call stack info",
             ]
         for expected_detailed_info in expected_detailed_infos:
             assert expected_detailed_info in message
-
-        expected_call_stack_info = """
-        Python call stack info:
-              File "/Users/pascal/dvp/OpenSource/ImGuiWork/litgen/litgen/internal/srcml.py", line xxx, in parse_type
-        """
-        import re
-        message_no_line_number = re.sub(r'\d', 'x', message)
-        assert expected_call_stack_info in message_no_line_number
 
     assert got_exception == True
 
@@ -246,8 +243,49 @@ def test_struct_srcml():
     code_utils.assert_are_codes_equal(code_utils.force_one_space(srcml_str), code_utils.force_one_space(expected_str))
 
 
-def test_parse_code():
-    code = "int a = 1;"
-    cpp_unit = srcml.parse_code(code)
-    assert str(cpp_unit) == "int a = 1;\n"
+def verify_code_parse(original_cpp_code, expected_parsed_code = None):
+    if expected_parsed_code is None:
+        expected_parsed_code = original_cpp_code
 
+    cpp_unit = srcml.parse_code(original_cpp_code)
+    cpp_unit_str = str(cpp_unit)
+    code_utils.assert_are_codes_equal(cpp_unit_str, expected_parsed_code)
+
+
+def test_srcml_issues_still_present():
+    # See issue: https://github.com/srcML/srcML/issues/1687
+    code = 'void foo() __attribute__ ((optimize("0")));'
+    with pytest.raises(srcml.SrcMlException) as e:
+        srcml.parse_code(code)
+
+
+def test_misc_examples():
+    verify_code_parse("MY_APY int add();")
+    verify_code_parse("int a;")
+    verify_code_parse("int v[10];")
+    verify_code_parse("const char * const labels[] = NULL;")
+    verify_code_parse('void foo() [[gnu::optimize(0)]];', 'void foo();')
+    verify_code_parse("void foo(...);")
+
+
+def implot_header_source():
+    def preprocess_implot_code(code):
+        import re
+        new_code = code
+        new_code  = re.sub(r'IM_FMTARGS\(\d\)', '', new_code)
+        new_code  = re.sub(r'IM_FMTLIST\(\d\)', '', new_code)
+        return new_code
+
+    implot_filename = _THIS_DIR + "/../../examples_real_libs/implot/implot.h"
+    with open(implot_filename, "r") as f:
+        code = f.read()
+    return preprocess_implot_code(code)
+
+
+def test_parse_implot():
+    """This text reads a big header file (+ 1000 lines) and parses it"""
+    code = implot_header_source()
+    parsed_code = srcml.parse_code(code)
+    recomposed_code = str(parsed_code)
+    lines = recomposed_code.splitlines()
+    assert len(lines) > 1000

@@ -1,3 +1,4 @@
+import logging
 from dataclasses import dataclass as _dataclass
 from typing import Optional, List, Tuple
 import litgen.internal.code_utils as code_utils
@@ -34,12 +35,17 @@ class CppElement:
     end: CodePosition
     srcml_element: ET.Element
 
+    def __init__(self):
+        self.start: CodePosition = None
+        self.end: CodePosition = None
+        self.srcml_element = None
+
 
 @_dataclass
 class CppBlockChild(CppElement):
     """Any token that can be embedded in a CppBlock (expr_stmt, function_decl, decl_stmt, ...)"""
-    pass
-
+    def __init__(self):
+        super().__init__()
 
 @_dataclass
 class CppBlock(CppElement): # it is also a CppBlockChild
@@ -63,6 +69,7 @@ class CppBlock(CppElement): # it is also a CppBlockChild
     block_children: List[CppBlockChild]
 
     def __init__(self):
+        super().__init__()
         self.block_children: List[CppBlockChild] = []
 
     def _str_block(self):
@@ -134,7 +141,7 @@ class CppType(CppElement):
         MY_API void Process() declares a function whose return type will be ["MY_API", "void"]
                              (where "MY_API" could for example be a dll export/import macro)
 
-    Note:
+    Note about composed types:
         For composed types, like `std::map<int, std::string>` srcML returns a full tree.
         In order to simplify the process, we recompose this kind of type names into a simple string
     """
@@ -143,13 +150,15 @@ class CppType(CppElement):
     # specifiers: could be ["const"], ["static", "const"], ["extern"], ["constexpr"], etc.
     specifiers: List[str]
 
-    # modifiers: could be ["*"], ["&&"], ["&"], ["*", "*"]
+    # modifiers: could be ["*"], ["&&"], ["&"], ["*", "*"], ["..."]
     modifiers: List[str]
 
     # template arguments types i.e ["int"] for vector<int>
+    # (this will not be filled: see note about composed types)
     argument_list: List[str]
 
     def __init__(self):
+        super().__init__()
         self.names = []
         self.specifiers = []
         self.modifiers = []
@@ -157,13 +166,28 @@ class CppType(CppElement):
 
     @staticmethod
     def authorized_modifiers():
-        return ["*", "&", "&&"]
+        return ["*", "&", "&&", "..."]
 
     def __str__(self):
+        from litgen.internal.srcml import SrcMlException
+
+        nb_const = self.specifiers.count("const")
+
+        if nb_const > 2:
+            raise ValueError("I cannot handle more than two `const` occurences in a type!")
+
+        if nb_const == 2:
+            # remove the last const and handle it later
+            specifier_r: List[str] = list(reversed(self.specifiers))
+            specifier_r.remove("const")
+            self.specifiers = list(reversed(specifier_r))
+
         specifiers_str = code_utils.join_remove_empty(" ", self.specifiers)
         modifiers_str = code_utils.join_remove_empty(" ", self.modifiers)
 
-        assert len(self.names) > 0
+        if len(self.names) == 0 and "..." not in self.modifiers:
+            raise SrcMlException(self.srcml_element, None, "CppType: len(self.names) = 0")
+
         name = " ".join(self.names)
 
         name_and_arg = name
@@ -173,6 +197,10 @@ class CppType(CppElement):
 
         strs = [specifiers_str, name_and_arg, modifiers_str]
         r = code_utils.join_remove_empty(" ", strs)
+
+        if nb_const == 2:
+            r += " const"
+
         return r
 
 
@@ -214,15 +242,30 @@ class CppDecl(CppElement):
 
             Which is retranscribed as "5"
     """
-    cpp_type: CppType = CppType()
+    cpp_type: CppType = None
     name: str = ""
     init: str = ""  # initial or default value
 
+    def __init__(self):
+        super().__init__()
+
     def __str__(self):
-        r = f"{self.cpp_type} {self.name}"
+        if len(self.name) > 0:
+            r = f"{self.cpp_type} {self.name}"
+        else:
+            r = f"{self.cpp_type}"
         if len(self.init) > 0:
             r += " = " + self.init
         return r
+
+    def has_name_or_ellipsis(self):
+        assert self.name is not None
+        if len(self.name) > 0:
+            return True
+        elif "..." in self.cpp_type.modifiers:
+            return True
+        return False
+
 
 
 @_dataclass
@@ -233,6 +276,7 @@ class CppDeclStatement(CppBlockChild):
     cpp_decls: List[CppDecl]  # A CppDeclStatement can initialize several variables
 
     def __init__(self):
+        super().__init__()
         self.cpp_decls = []
 
     def __str__(self):
@@ -246,7 +290,10 @@ class CppParameter(CppElement):
     """
     https://www.srcml.org/doc/cpp_srcML.html#function-declaration
     """
-    decl: CppDecl = CppDecl()
+    decl: CppDecl = None
+
+    def __init__(self):
+        super().__init__()
 
     def __str__(self):
         return str(self.decl)
@@ -260,6 +307,7 @@ class CppParameterList(CppElement):
     """
     parameters: List[CppParameter]
     def __init__(self):
+        super().__init__()
         self.parameters = []
 
     def __str__(self):
@@ -273,11 +321,12 @@ class CppFunctionDecl(CppBlockChild):
     https://www.srcml.org/doc/cpp_srcML.html#function-declaration
     """
     specifiers: List[str] # "const" or ""
-    type: CppType = CppType()
+    type: CppType = None
     name: str = ""
-    parameter_list: CppParameterList = CppParameterList()
+    parameter_list: CppParameterList = None
 
     def __init__(self):
+        super().__init__()
         self.specifiers: List[str] = []
 
     def _str_decl(self):
@@ -297,7 +346,7 @@ class CppFunction(CppFunctionDecl):
     """
     https://www.srcml.org/doc/cpp_srcML.html#function-definition
     """
-    block: CppBlock = CppBlock()
+    block: CppBlock = None
 
     def __init__(self):
         super().__init__()
@@ -314,7 +363,10 @@ class CppContructorDecl(CppBlockChild):
     """
     specifier: str = ""
     name: str = ""
-    parameter_list: CppParameterList = CppParameterList()
+    parameter_list: CppParameterList = None
+
+    def __init__(self):
+        super().__init__()
 
     def __str__(self):
         r = f"{self.type} {self.name}({self.parameter_list})"
@@ -329,6 +381,9 @@ class CppSuper(CppElement):
     """
     specifier: str # public, private or protected inheritance
     name: str      # name of the super class
+
+    def __init__(self):
+        super().__init__()
 
     def __str__(self):
         if len(self.specifier) > 0:
@@ -346,6 +401,7 @@ class CppSuperList(CppElement):
     super_list: List[CppSuper]
 
     def __init__(self):
+        super().__init__()
         self.super_list: List[CppSuper] = []
 
     def __str__(self):
@@ -359,8 +415,11 @@ class CppStruct(CppBlockChild):
     https://www.srcml.org/doc/cpp_srcML.html#struct-definition
     """
     name: str = ""
-    super_list: CppSuperList = CppSuperList()
-    block: CppBlock = CppBlock()
+    super_list: CppSuperList = None
+    block: CppBlock = None
+
+    def __init__(self):
+        super().__init__()
 
     def _str_struct_or_class(self, is_class: bool):
         if is_class:
@@ -386,6 +445,9 @@ class CppClass(CppStruct):
     """
     https://www.srcml.org/doc/cpp_srcML.html#class-definition
     """
+    def __init__(self):
+        super().__init__()
+
     def __str__(self):
         return self._str_struct_or_class(True)
 
@@ -397,6 +459,9 @@ class CppComment(CppBlockChild):
     """
     text: str = "" # Warning, the text contains "//" or "/* ... */"
 
+    def __init__(self):
+        super().__init__()
+
     def __str__(self):
         return self.text
 
@@ -407,7 +472,10 @@ class CppNamespace(CppBlockChild):
     https://www.srcml.org/doc/cpp_srcML.html#namespace
     """
     name: str = ""
-    block: CppBlock = CppBlock()
+    block: CppBlock = None
+
+    def __init__(self):
+        super().__init__()
 
     def __str__(self):
         r = f"namespace {self.name}\n"
@@ -425,7 +493,10 @@ class CppEnum(CppBlockChild):
     """
     type: str = ""  # "class" or ""
     name: str = ""
-    block: CppBlock = CppBlock()
+    block: CppBlock = None
+
+    def __init__(self):
+        super().__init__()
 
     def __str__(self):
         if type == "class":
@@ -441,16 +512,19 @@ class CppEnum(CppBlockChild):
 @_dataclass
 class CppExprStmt(CppBlockChild):
     """Not handled, we do not need it in the context of litgen"""
-    pass
+    def __init__(self):
+        super().__init__()
 
 
 @_dataclass
 class CppExprStmt(CppBlockChild):
     """Not handled, we do not need it in the context of litgen"""
-    pass
+    def __init__(self):
+        super().__init__()
 
 
 @_dataclass
 class CppReturn(CppBlockChild):
     """Not handled, we do not need it in the context of litgen"""
-    pass
+    def __init__(self):
+        super().__init__()
