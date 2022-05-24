@@ -15,11 +15,11 @@ Note about CppBlock an CppBlockContent: the distinction betwen the two is not ve
 They are a versatile container for decl_stmt, function, function_decl, enul, expr_stmt, etc.
 Here is the list of classes related to blocks handling:
 
-    class CppBlockChild(SrcmlBase):
+    class CppBlockChild(CppElement):
         """Any token that can be embedded in a CppBlock (expr_stmt, function_decl, decl_stmt, ...)"""
         pass
 
-    class CppBlock(SrcmlBase, CppBlockChild):
+    class CppBlock(CppElement, CppBlockChild):
         """Any block inside a function, an anonymous block, a namespace, or in a public/protected/private zone        
             - For functions and anonymous blocks, the code is inside <block><block_content>
             - For namespaces, the code is inside <block> (without <block_content>)
@@ -47,19 +47,20 @@ Below, an output of the xml tree for function, anonymous blocks, namespaces and 
 Type: function / code = void foo() {}
 ****************************************
 <?xml version="1.0" ?>
-<ns0:function xmlns:ns0="http://www.srcML.org/srcML/src">
-<ns0:type>
-<ns0:name>void</ns0:name>
-</ns0:type>
-
-<ns0:name>foo</ns0:name>
-<ns0:parameter_list>()</ns0:parameter_list>
-
-<ns0:block>
+<ns0:function
+    xmlns:ns0="http://www.srcML.org/srcML/src">
+    <ns0:type>
+        <ns0:name>void</ns0:name>
+    </ns0:type>
+    <ns0:name>foo</ns0:name>
+    <ns0:parameter_list>()</ns0:parameter_list>
+    <ns0:block>
 {
-<ns0:block_content/>
+
+        <ns0:block_content/>
 }
-</ns0:block>
+
+    </ns0:block>
 </ns0:function>
 
 
@@ -68,7 +69,7 @@ Type: block / code = {}
 <?xml version="1.0" ?>
 <ns0:block xmlns:ns0="http://www.srcML.org/srcML/src">
 {
-<ns0:block_content/>
+    <ns0:block_content/>
 }
 </ns0:block>
 
@@ -77,10 +78,9 @@ Type: namespace / code = namespace Foo {}
 ****************************************
 <?xml version="1.0" ?>
 <ns0:namespace xmlns:ns0="http://www.srcML.org/srcML/src">
-namespace 
-<ns0:name>Foo</ns0:name>
-
-<ns0:block>{}</ns0:block>
+    namespace 
+    <ns0:name>Foo</ns0:name>
+    <ns0:block>{}</ns0:block>
 </ns0:namespace>
 
 
@@ -88,32 +88,50 @@ Type: class / code = class Foo {}
 ****************************************
 <?xml version="1.0" ?>
 <ns0:class xmlns:ns0="http://www.srcML.org/srcML/src">
-class 
-<ns0:name>Foo</ns0:name>
-
-<ns0:block>
-{
-<ns0:private type="default"/>
-}
-</ns0:block>
-<ns0:decl/>
+    class 
+    <ns0:name>Foo</ns0:name>    
+    <ns0:block>
+        {
+        <ns0:private type="default"/>
+        }
+    </ns0:block>
+    <ns0:decl/>
 </ns0:class>
 '''
 
 
+@_dataclass
+class CodePosition:
+    """Position of an element in the code"""
+    line: int = 0
+    column: int = 0
 
-class SrcmlBase:
-    pass
+    @staticmethod
+    def from_string(self, s: str): # -> CodePosition:
+        """Parses a string like '3:5' which means line 3, column 5 """
+        items = s.split(":")
+        assert len(items) == 2
+        r = CodePosition()
+        r.line = int(items[0])
+        r.column = int(items[1])
+        return r
+
+
+class CppElement:
+    """Base class for all the Cpp Elements below. It contains their start/end position in the original code
+    """
+    start: CodePosition
+    end: CodePosition
 
 
 @_dataclass
-class CppBlockChild(SrcmlBase):
+class CppBlockChild(CppElement):
     """Any token that can be embedded in a CppBlock (expr_stmt, function_decl, decl_stmt, ...)"""
     pass
 
 
 @_dataclass
-class CppBlock(SrcmlBase): # it is also a CppBlockChild
+class CppBlock(CppElement): # it is also a CppBlockChild
     """Any block inside a function, an anonymous block, a namespace, or in a public/protected/private zone
         - For functions and anonymous blocks, the code is inside <block><block_content>
         - For namespaces, the code is inside <block> (without <block_content>)
@@ -180,14 +198,14 @@ class CppPublicProtectedPrivate(CppBlock): # Also a CppBlockChild
 
 
 @_dataclass
-class CppType(SrcmlBase):
+class CppType(CppElement):
     """
     Describes a full C++ type, as seen by srcML
     See https://www.srcml.org/doc/cpp_srcML.html#type
     """
     name: str
-    specifiers: List[str] # could be ["const"], ["static", "const"], ["extern"], ["constexpr"], etc.
-    modifiers: List[str]  # could be ["*"], ["&&"], ["&"], ["*", "*"]
+    specifiers: List[str]    # could be ["const"], ["static", "const"], ["extern"], ["constexpr"], etc.
+    modifiers: List[str]     # could be ["*"], ["&&"], ["&"], ["*", "*"]
     argument_list: List[str] # template arguments i.e ["int"] for vector<int>
 
     def __init__(self):
@@ -211,7 +229,7 @@ class CppType(SrcmlBase):
 
 
 @_dataclass
-class CppDecl(SrcmlBase):
+class CppDecl(CppElement):
     """
     https://www.srcml.org/doc/cpp_srcML.html#variable-declaration
 
@@ -248,7 +266,7 @@ class CppDeclStatement(CppBlockChild):
 
 
 @_dataclass
-class CppParameter(SrcmlBase):
+class CppParameter(CppElement):
     """
     https://www.srcml.org/doc/cpp_srcML.html#function-declaration
     """
@@ -259,8 +277,9 @@ class CppParameter(SrcmlBase):
 
 
 @_dataclass
-class CppParameterList(SrcmlBase):
+class CppParameterList(CppElement):
     """
+    List of parameters of a function
     https://www.srcml.org/doc/cpp_srcML.html#function-declaration
     """
     parameters: List[CppParameter]
@@ -312,7 +331,21 @@ class CppFunction(CppFunctionDecl):
 
 
 @_dataclass
-class CppSuper(SrcmlBase):
+class CppContructorDecl(CppBlockChild):
+    """
+    https://www.srcml.org/doc/cpp_srcML.html#constructor-declaration
+    """
+    specifier: str = ""
+    name: str = ""
+    parameter_list: CppParameterList = CppParameterList()
+
+    def __str__(self):
+        r = f"{self.type} {self.name}({self.parameter_list})"
+        return r
+
+
+@_dataclass
+class CppSuper(CppElement):
     """
     Define a super classes of a struct or class
     https://www.srcml.org/doc/cpp_srcML.html#struct-definition
@@ -328,7 +361,7 @@ class CppSuper(SrcmlBase):
 
 
 @_dataclass
-class CppSuperList(SrcmlBase):
+class CppSuperList(CppElement):
     """
     Define a list of super classes of a struct or class
     https://www.srcml.org/doc/cpp_srcML.html#struct-definition

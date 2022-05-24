@@ -15,7 +15,7 @@ def assert_code_unmodified_by_srcml(code: str):
 
 def test_srcml_xml():
     code = "int a = 1"
-    element = srcml.code_to_srcml(code)
+    element = srcml.code_to_srcml(code, False)
     xml_str = srcml.srcml_to_str(element)
     expected_xml_str = """<?xml version="1.0" ?>
         <ns0:unit xmlns:ns0="http://www.srcML.org/srcML/src" revision="1.0.0" language="C++" filename="/var/folders/hj/vlpl655s0gz58f0tfgghv0g40000gn/T/tmph4tcp71f.h">
@@ -163,7 +163,7 @@ def test_struct_srcml():
         int x;
     };
     """
-    element = srcml.first_code_element_with_tag(code, "struct")
+    element = srcml.first_code_element_with_tag(code, "struct", False)
     srcml_str = srcml.srcml_to_str(element)
     expected_str = """
         <?xml version="1.0" ?>

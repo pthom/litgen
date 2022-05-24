@@ -137,7 +137,7 @@ class _SrcmlCaller:
 _SRCML_CALLER = _SrcmlCaller()
 
 
-def code_to_srcml(code: str, dump_positions: bool = False) -> ET.Element:
+def code_to_srcml(code: str, dump_positions: bool = True) -> ET.Element:
     return _SRCML_CALLER.code_to_srcml(code, dump_positions)
 
 
@@ -150,6 +150,13 @@ def srcml_to_code(element: ET.Element) -> str:
 # Parsing
 #
 ###########################################
+
+
+def fill_cpp_element_position(element: ET.Element, inout_cpp_element: CppElement):
+    if "n1:start" in element.attrib.keys():
+        inout_cpp_element.start = CodePosition.from_string(element.attrib["ns1:start"])
+    if "n1:end" in element.attrib.keys():
+        inout_cpp_element.end = CodePosition.from_string(element.attrib["ns1:end"])
 
 
 def parse_name(element: ET.Element) -> str:
@@ -171,6 +178,7 @@ def parse_type(element: ET.Element, previous_decl: CppDecl) -> CppType:
     """
     assert clean_tag(element.tag) == "type"
     result = CppType()
+    fill_cpp_element_position(element, result)
     for child in element:
         child_tag = clean_tag(child.tag)
         if child_tag == "name":
@@ -195,13 +203,14 @@ def parse_decl(element: ET.Element, previous_decl: CppDecl) -> CppDecl:
     """
     https://www.srcml.org/doc/cpp_srcML.html#variable-declaration-statement
 
-    Note: init_cpp is inside an <init><expr> node in srcML. Here we retransform it to C++ code for simplicity
+    Note: CppDecl.init (initial value of a decl) is inside an <init><expr> node in srcML. We retransform it to C++ code for simplicity
         For example:
             int a = 5;
             <decl_stmt><decl><type><name>int</name></type> <name>a</name> <init>= <expr><literal type="number">5</literal></expr></init></decl>;</decl_stmt>
     """
     assert clean_tag(element.tag) == "decl"
     result = CppDecl()
+    fill_cpp_element_position(element, result)
     for child in element:
         child_tag = clean_tag(child.tag)
         if child_tag == "type":
@@ -225,6 +234,7 @@ def parse_decl_stmt(element: ET.Element) -> CppDeclStatement:
 
     previous_decl: CppDecl = None
     result = CppDeclStatement()
+    fill_cpp_element_position(element, result)
     for child in element:
         child_tag = clean_tag(child.tag)
         if child_tag == "decl":
@@ -242,6 +252,7 @@ def parse_parameter(element: ET.Element) -> CppParameter:
     """
     assert clean_tag(element.tag) == "parameter"
     result = CppParameter()
+    fill_cpp_element_position(element, result)
     for child in element:
         child_tag = clean_tag(child.tag)
         if child_tag == "decl":
@@ -261,6 +272,7 @@ def parse_parameter_list(element: ET.Element) -> CppParameterList:
     """
     assert clean_tag(element.tag) == "parameter_list"
     result = CppParameterList()
+    fill_cpp_element_position(element, result)
     for child in element:
         child_tag = clean_tag(child.tag)
         if child_tag == "parameter":
@@ -276,7 +288,7 @@ def parse_function_decl(element: ET.Element) -> CppFunctionDecl:
     """
     assert clean_tag(element.tag) == "function_decl"
     result = CppFunctionDecl()
-
+    fill_cpp_element_position(element, result)
     for child in element:
         child_tag = clean_tag(child.tag)
         if child_tag == "type":
@@ -299,7 +311,7 @@ def parse_function(element: ET.Element) -> CppFunction:
     """
     assert clean_tag(element.tag) == "function"
     result = CppFunction()
-
+    fill_cpp_element_position(element, result)
     for child in element:
         child_tag = clean_tag(child.tag)
         if child_tag == "type":
@@ -325,7 +337,7 @@ def parse_super(element: ET.Element) -> CppSuper:
     """
     assert clean_tag(element.tag) == "super"
     result = CppSuper()
-
+    fill_cpp_element_position(element, result)
     for child in element:
         child_tag = clean_tag(child.tag)
         if child_tag == "specifier":
@@ -345,7 +357,7 @@ def parse_super_list(element: ET.Element) -> CppSuperList:
     """
     assert clean_tag(element.tag) == "super_list"
     result = CppSuperList()
-
+    fill_cpp_element_position(element, result)
     for child in element:
         child_tag = clean_tag(child.tag)
         if child_tag == "super":
@@ -367,6 +379,7 @@ def parse_struct_or_class(element: ET.Element) -> CppStruct:
         result = CppStruct()
     else:
         result = CppClass()
+    fill_cpp_element_position(element, result)
 
     for child in element:
         child_tag = clean_tag(child.tag)
@@ -391,6 +404,7 @@ def parse_public_protected_private(element: ET.Element) -> CppPublicProtectedPri
     assert element_tag in ["public", "protected", "private"]
 
     block_content = CppPublicProtectedPrivate(element_tag)
+    fill_cpp_element_position(element, block_content)
     fill_block(element, block_content)
     return block_content
 
@@ -403,6 +417,7 @@ def parse_block(element: ET.Element) -> CppBlock:
     assert clean_tag(element.tag) == "block"
 
     cpp_block = CppBlock()
+    fill_cpp_element_position(element, cpp_block)
     fill_block(element, cpp_block)
     return cpp_block
 
@@ -452,10 +467,11 @@ def fill_block(element: ET.Element, inout_block_content: CppBlock):
         elif child_tag in [
             "empty_stmt", "pragma", "include", "ifndef", "define", "ifdef", "endif", "struct_decl", "typedef"
             ]:
+            logging.warning(f"ignored tag {child_tag}")
             pass
         else:
             # raise _bad_tag_exception(child)
-            logging.warn(f"missing tag {child_tag}")
+            logging.warning(f"missing tag {child_tag}")
 
 
 def parse_block_content(element: ET.Element) -> CppBlockContent:
@@ -465,6 +481,7 @@ def parse_block_content(element: ET.Element) -> CppBlockContent:
     assert clean_tag(element.tag) == "block_content"
 
     block_content = CppBlockContent()
+    fill_cpp_element_position(element, block_content)
     fill_block(element, block_content)
     return block_content
 
@@ -477,6 +494,7 @@ def parse_comment(element: ET.Element) -> CppComment:
     assert len(element) == 0 # a comment has no child
 
     result = CppComment()
+    fill_cpp_element_position(element, result)
     result.text = element.text
 
     return result
@@ -488,7 +506,7 @@ def parse_namespace(element: ET.Element) -> CppNamespace:
     """
     assert clean_tag(element.tag) == "namespace"
     result = CppNamespace()
-
+    fill_cpp_element_position(element, result)
     for child in element:
         child_tag = clean_tag(child.tag)
         if child_tag == "name":
@@ -508,6 +526,7 @@ def parse_enum(element: ET.Element) -> CppEnum:
     """
     assert clean_tag(element.tag) == "enum"
     result = CppEnum()
+    fill_cpp_element_position(element, result)
 
     if "type" in element.attrib.keys():
         result.type = element.attrib["type"]
@@ -526,12 +545,16 @@ def parse_enum(element: ET.Element) -> CppEnum:
 
 def parse_expr_stmt(element: ET.Element) -> CppExprStmt:
     assert clean_tag(element.tag) == "expr_stmt"
-    return CppExprStmt()
+    result = CppExprStmt()
+    fill_cpp_element_position(element, result)
+    return result
 
 
 def parse_return(element: ET.Element) -> CppReturn:
     assert clean_tag(element.tag) == "return"
-    return CppReturn()
+    result = CppReturn()
+    fill_cpp_element_position(element, result)
+    return result
 
 
 
@@ -562,11 +585,11 @@ def child_with_tag(element: ET.Element, tag: str) -> ET.Element:
     return  children[0]
 
 
-def first_code_element_with_tag(code: str, tag: str) -> ET.Element:
+def first_code_element_with_tag(code: str, tag: str, dump_positions: bool = False) -> ET.Element:
     """
     Utility for tests: extracts the first xml element of type "decl_stmt"
     """
-    root = code_to_srcml(code)
+    root = code_to_srcml(code, dump_positions)
     return child_with_tag(root, tag)
 
 
