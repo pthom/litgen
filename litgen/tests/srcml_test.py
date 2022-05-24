@@ -267,6 +267,12 @@ def test_misc_examples():
     verify_code_parse('void foo() [[gnu::optimize(0)]];', 'void foo();')
     verify_code_parse("void foo(...);")
     verify_code_parse("const Foo & GetFoo() const;")
+    verify_code_parse("""enum Foo
+{
+    a = 0,
+    b = 1
+};
+""")
 
 
 def implot_header_source():

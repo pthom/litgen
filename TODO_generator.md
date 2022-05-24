@@ -10,6 +10,7 @@ ImPlotBin_Scott   = -4, // w = 3.49 * sigma / cbrt(n)
 };
 
 Pb / ifdef & struct 
+
 // Double precision version of ImVec2 used by ImPlot. Extensible by end users.
 struct ImPlotPoint {
 double x, y;

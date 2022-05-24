@@ -77,6 +77,11 @@ class CppBlock(CppElement): # it is also a CppBlockChild
         result = code_utils.join_remove_empty("\n", strs)
         return result
 
+    def _str_block_enum(self):
+        strs = map(str, self.block_children)
+        result = code_utils.join_remove_empty(",\n", strs)
+        return result
+
     def __str__(self):
         return self._str_block()
 
@@ -527,8 +532,11 @@ class CppEnum(CppBlockChild):
         else:
             r = f"enum {self.name}\n"
         r += "{\n"
-        r += code_utils.indent_code(str(self.block), 4)
-        r += "\n}\n"
+
+        block_code = self.block._str_block_enum()
+        r += code_utils.indent_code(block_code, 4)
+
+        r += "\n};\n"
         return r
 
 
