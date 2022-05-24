@@ -250,10 +250,9 @@ class CppDecl(CppElement):
         super().__init__()
 
     def __str__(self):
-        if len(self.name) > 0:
-            r = f"{self.cpp_type} {self.name}"
-        else:
-            r = f"{self.cpp_type}"
+        cpp_type = str(self.cpp_type) if self.cpp_type is not None else ""
+        type_and_name = code_utils.join_remove_empty(" ", [cpp_type, self.name])
+        r = type_and_name
         if len(self.init) > 0:
             r += " = " + self.init
         return r
@@ -361,15 +360,39 @@ class CppContructorDecl(CppBlockChild):
     """
     https://www.srcml.org/doc/cpp_srcML.html#constructor-declaration
     """
-    specifier: str = ""
+    specifiers: List[str]
     name: str = ""
     parameter_list: CppParameterList = None
 
     def __init__(self):
         super().__init__()
+        self.specifiers: List[str] = []
+
+    def _str_decl(self):
+        r = f"{self.name}({self.parameter_list})"
+        if len(self.specifiers) > 0:
+            specifiers_strs = map(str, self.specifiers)
+            r = r + " " + " ".join(specifiers_strs)
+        return r
 
     def __str__(self):
-        r = f"{self.type} {self.name}({self.parameter_list})"
+        r = self._str_decl() +  ";"
+        return r
+
+
+@_dataclass
+class CppContructor(CppContructorDecl):
+    """
+    https://www.srcml.org/doc/cpp_srcML.html#constructor
+    """
+    block: CppBlock = None
+    # member_init_list: Any = None   # Not handled by litgen
+
+    def __init__(self):
+        super().__init__()
+
+    def __str__(self):
+        r = self._str_decl() + " : OMITTED_MEMBER_INIT_LIST { OMITTED_CONSTRUCTOR_CODE; }"
         return r
 
 

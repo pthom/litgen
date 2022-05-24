@@ -266,6 +266,7 @@ def test_misc_examples():
     verify_code_parse("const char * const labels[] = NULL;")
     verify_code_parse('void foo() [[gnu::optimize(0)]];', 'void foo();')
     verify_code_parse("void foo(...);")
+    verify_code_parse("const Foo & GetFoo() const;")
 
 
 def implot_header_source():

@@ -420,28 +420,33 @@ def parse_parameter_list(element: ET.Element) -> CppParameterList:
     return result
 
 
+def fill_function_decl(element: ET.Element, function_decl: CppFunctionDecl):
+    fill_cpp_element_data(element, function_decl)
+    for child in element:
+        child_tag = clean_tag_or_attrib(child.tag)
+        if child_tag == "type":
+            function_decl.type = parse_type(child, None)
+        elif child_tag == "name":
+            function_decl.name = child.text
+        elif child_tag == "parameter_list":
+            function_decl.parameter_list = parse_parameter_list(child)
+        elif child_tag == "specifier":
+            function_decl.specifiers.append(child.text)
+        elif child_tag == "attribute":
+            pass # compiler options, such as [[gnu::optimize(0)]]
+        elif child_tag == "block":
+            pass # will be handled by parse_function
+        else:
+            raise SrcMlException(child, result)
+
+
 def parse_function_decl(element: ET.Element) -> CppFunctionDecl:
     """
     https://www.srcml.org/doc/cpp_srcML.html#function-declaration
     """
     assert clean_tag_or_attrib(element.tag) == "function_decl"
     result = CppFunctionDecl()
-    fill_cpp_element_data(element, result)
-    for child in element:
-        child_tag = clean_tag_or_attrib(child.tag)
-        if child_tag == "type":
-            result.type = parse_type(child, None)
-        elif child_tag == "name":
-            result.name = child.text
-        elif child_tag == "parameter_list":
-            result.parameter_list = parse_parameter_list(child)
-        elif child_tag == "specifier":
-            result.specifiers.append(child.text)
-        elif child_tag == "attribute":
-            pass # compiler options, such as [[gnu::optimize(0)]]
-        else:
-            raise SrcMlException(child, result)
-
+    fill_function_decl(element, result)
     return result
 
 
@@ -451,19 +456,62 @@ def parse_function(element: ET.Element) -> CppFunction:
     """
     assert clean_tag_or_attrib(element.tag) == "function"
     result = CppFunction()
-    fill_cpp_element_data(element, result)
+    fill_function_decl(element, result)
+
     for child in element:
         child_tag = clean_tag_or_attrib(child.tag)
-        if child_tag == "type":
-            result.type = parse_type(child, None)
-        elif child_tag == "name":
-            result.name = child.text
-        elif child_tag == "parameter_list":
-            result.parameter_list = parse_parameter_list(child)
-        elif child_tag == "specifier":
-            result.specifiers.append(child.text)
-        elif child_tag == "block":
+        if child_tag == "block":
             result.block = parse_block(child)
+        elif child_tag in ["type", "name", "parameter_list", "specifier", "attribute"]:
+            pass # alread handled by fill_function_decl
+        else:
+            raise SrcMlException(child, result)
+
+    return result
+
+
+def fill_constructor_decl(element: ET.Element, constructor_decl: CppContructorDecl):
+    fill_cpp_element_data(element, constructor_decl)
+    for child in element:
+        child_tag = clean_tag_or_attrib(child.tag)
+        if child_tag == "name":
+            constructor_decl.name = child.text
+        elif child_tag == "parameter_list":
+            constructor_decl.parameter_list = parse_parameter_list(child)
+        elif child_tag == "specifier":
+            constructor_decl.specifiers.append(child.text)
+        elif child_tag == "attribute":
+            pass # compiler options, such as [[gnu::optimize(0)]]
+        elif child_tag == "block":
+            pass # will be handled by parse_constructor
+        else:
+            raise SrcMlException(child, result)
+
+
+def parse_constructor_decl(element: ET.Element) -> CppContructorDecl:
+    """
+    https://www.srcml.org/doc/cpp_srcML.html#constructor-declaration
+    """
+    assert clean_tag_or_attrib(element.tag) == "constructor_decl"
+    result = CppContructorDecl()
+    fill_constructor_decl(element, result)
+    return result
+
+
+def parse_constructor(element: ET.Element) -> CppContructor:
+    """
+    https://www.srcml.org/doc/cpp_srcML.html#function-definition
+    """
+    assert clean_tag_or_attrib(element.tag) == "constructor"
+    result = CppContructor()
+    fill_constructor_decl(element, result)
+
+    for child in element:
+        child_tag = clean_tag_or_attrib(child.tag)
+        if child_tag == "block":
+            result.block = parse_block(child)
+        elif child_tag in ["name", "parameter_list", "specifier", "attribute"]:
+            pass # alread handled by fill_constructor_decl
         else:
             raise SrcMlException(child, result)
 
@@ -595,6 +643,10 @@ def fill_block(element: ET.Element, inout_block_content: CppBlock):
             inout_block_content.block_children.append(parse_function_decl(child))
         elif child_tag == "function":
             inout_block_content.block_children.append(parse_function(child))
+        elif child_tag == "constructor_decl":
+            inout_block_content.block_children.append(parse_constructor_decl(child))
+        elif child_tag == "constructor":
+            inout_block_content.block_children.append(parse_constructor(child))
         elif child_tag == "comment":
             inout_block_content.block_children.append(parse_comment(child))
         elif child_tag == "struct":
