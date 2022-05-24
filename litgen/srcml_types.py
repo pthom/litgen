@@ -4,101 +4,6 @@ import litgen.internal.code_utils as code_utils
 
 import xml.etree.ElementTree as ET
 
-'''
-
-Note about CppBlock an CppBlockContent: the distinction betwen the two is not very clear. 
-
-- For functions and anonymous blocks, the code is inside <block><block_content>
-- For namespaces, the code is inside <block> (without <block_content>)
-- For classes and structs the code is inside <block><private or public>
-
-They are a versatile container for decl_stmt, function, function_decl, enul, expr_stmt, etc.
-Here is the list of classes related to blocks handling:
-
-    class CppBlockChild(CppElement):
-        """Any token that can be embedded in a CppBlock (expr_stmt, function_decl, decl_stmt, ...)"""
-        pass
-
-    class CppBlock(CppElement, CppBlockChild):
-        """Any block inside a function, an anonymous block, a namespace, or in a public/protected/private zone        
-            - For functions and anonymous blocks, the code is inside <block><block_content>
-            - For namespaces, the code is inside <block> (without <block_content>)
-            - For classes and structs the code is inside <block><private or public>
-            
-            https://www.srcml.org/doc/cpp_srcML.html#block
-        """ 
-        block_children: List[CppBlockChild]
-
-    class CppBlockContent(CppBlock):
-        """A kind of block used by function and anonymous blocks, where the code is inside <block><block_content>
-           This can be viewed as a sub-block with a different name
-        """
-
-    class CppPublicProtectedPrivate(CppBlock, CppBlockChild):
-        """A kind of block defined by a public/protected/private zone in a struct or in a class
-        See https://www.srcml.org/doc/cpp_srcML.html#public-access-specifier
-        Note: this is not a direct adaptation. Here we merge the different access types, and we derive from CppBlockContent
-        """
-        access_type: str # "public", "private", or "protected"
-
-
-Below, an output of the xml tree for function, anonymous blocks, namespaces and classes:
-
-Type: function / code = void foo() {}
-****************************************
-<?xml version="1.0" ?>
-<ns0:function
-    xmlns:ns0="http://www.srcML.org/srcML/src">
-    <ns0:type>
-        <ns0:name>void</ns0:name>
-    </ns0:type>
-    <ns0:name>foo</ns0:name>
-    <ns0:parameter_list>()</ns0:parameter_list>
-    <ns0:block>
-{
-
-        <ns0:block_content/>
-}
-
-    </ns0:block>
-</ns0:function>
-
-
-Type: block / code = {}
-****************************************
-<?xml version="1.0" ?>
-<ns0:block xmlns:ns0="http://www.srcML.org/srcML/src">
-{
-    <ns0:block_content/>
-}
-</ns0:block>
-
-
-Type: namespace / code = namespace Foo {}
-****************************************
-<?xml version="1.0" ?>
-<ns0:namespace xmlns:ns0="http://www.srcML.org/srcML/src">
-    namespace 
-    <ns0:name>Foo</ns0:name>
-    <ns0:block>{}</ns0:block>
-</ns0:namespace>
-
-
-Type: class / code = class Foo {}
-****************************************
-<?xml version="1.0" ?>
-<ns0:class xmlns:ns0="http://www.srcML.org/srcML/src">
-    class 
-    <ns0:name>Foo</ns0:name>    
-    <ns0:block>
-        {
-        <ns0:private type="default"/>
-        }
-    </ns0:block>
-    <ns0:decl/>
-</ns0:class>
-'''
-
 
 @_dataclass
 class CodePosition:
@@ -138,21 +43,22 @@ class CppBlockChild(CppElement):
 
 @_dataclass
 class CppBlock(CppElement): # it is also a CppBlockChild
-    """Any block inside a function, an anonymous block, a namespace, or in a public/protected/private zone
-        - For functions and anonymous blocks, the code is inside <block><block_content>
-        - For namespaces, the code is inside <block> (without <block_content>)
-        - For classes and structs the code is inside <block><private or public>
+    """The class CppBlock is a container that represents any set of code  detected by srcML. It has several derived classes.
+
+        - For namespaces:
+                Inside srcML we have this: <block>CODE</block>
+                Inside python, the block is handled by `CppBlock`
+        - For files (i.e "units"):
+                Inside srcML we have this: <unit>CODE</unit>
+                Inside python, the block is handled by `CppUnit` (which derives from `CppBlock`)
+        - For functions and anonymous block:
+                Inside srcML we have this:  <block><block_content>CODE</block_content></block>
+                Inside python, the block is handled by `CppBlockContent` (which derives from `CppBlock`)
+        - For classes and structs:
+                Inside srcML we have this: <block><private or public>CODE</private or public></block>
+                Inside python, the block is handled by `CppPublicProtectedPrivate` (which derives from `CppBlock`)
 
         https://www.srcml.org/doc/cpp_srcML.html#block
-
-        Can contain these types of child tags:
-            child_tag='decl_stmt'
-            child_tag='function_decl'
-            child_tag='comment'
-            child_tag='function'
-            child_tag='struct'
-            child_tag='namespace'
-            child_tag='enum' (optionally type="class")
     """
     block_children: List[CppBlockChild]
 
@@ -166,6 +72,18 @@ class CppBlock(CppElement): # it is also a CppBlockChild
 
     def __str__(self):
         return self._str_block()
+
+
+@_dataclass
+class CppUnit(CppBlock):
+    """A kind of block representing a full file.
+    """
+    def __init__(self):
+        super().__init__()
+
+    def __str__(self):
+        r = self._str_block() + "\n"
+        return r
 
 
 @_dataclass
@@ -199,7 +117,7 @@ class CppPublicProtectedPrivate(CppBlock): # Also a CppBlockChild
 
     def __str__(self):
         r = f"{self.access_type}:\n"
-        r += self._str_block()
+        r += code_utils.indent_code(self._str_block(), 4)
         return r
 
 
@@ -270,7 +188,7 @@ class CppDeclStatement(CppBlockChild):
         self.cpp_decls = []
 
     def __str__(self):
-        strs = list(map(str, self.cpp_decls))
+        strs = list(map(lambda cpp_decl: str(cpp_decl) + ";", self.cpp_decls))
         r = code_utils.join_remove_empty("\n", strs)
         return r
 
@@ -314,11 +232,15 @@ class CppFunctionDecl(CppBlockChild):
     def __init__(self):
         self.specifiers: List[str] = []
 
-    def __str__(self):
+    def _str_decl(self):
         r = f"{self.type} {self.name}({self.parameter_list})"
         if len(self.specifiers) > 0:
             specifiers_strs = map(str, self.specifiers)
             r = r + " " + " ".join(specifiers_strs)
+        return r
+
+    def __str__(self):
+        r = self._str_decl() +  ";"
         return r
 
 
@@ -333,10 +255,7 @@ class CppFunction(CppFunctionDecl):
         super().__init__()
 
     def __str__(self):
-        r = CppFunctionDecl.__str__(self) + " { OMITTED_BLOCK; }"
-        # r += "\n{\n"
-        # r += code_utils.indent_code( str(self.block), 4)
-        # r += "\n}\n"
+        r = self._str_decl() + " { OMITTED_FUNCTION_CODE; }"
         return r
 
 

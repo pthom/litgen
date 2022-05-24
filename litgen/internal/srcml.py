@@ -15,6 +15,26 @@ import traceback, inspect
 from srcml_types import *
 
 
+###########################################
+#
+# main API
+#
+###########################################
+
+
+def parse_code(code: str) -> CppUnit:
+    """Parse the given code, and returns it under the form of a CppUnit (which contains the parsed code)"""
+    element_srcml = code_to_srcml(code, True)
+    cpp_unit = parse_unit(element_srcml)
+    return cpp_unit
+
+
+###########################################
+#
+# Error and warning messages
+#
+###########################################
+
 def _warning_detailed_info(
         srcml_element: ET.Element, parent_cpp_element: CppElement, additional_message: str = "", header_filename: str = ""):
 
@@ -503,6 +523,14 @@ def fill_block(element: ET.Element, inout_block_content: CppBlock):
         else:
             # raise _bad_tag_exception(child)
             logging.warning(f"missing tag {child_tag}")
+
+
+def parse_unit(element: ET.Element) -> CppUnit:
+    assert clean_tag_or_attrib(element.tag) == "unit"
+    cpp_unit = CppUnit()
+    fill_cpp_element_data(element, cpp_unit)
+    fill_block(element, cpp_unit)
+    return cpp_unit
 
 
 def parse_block_content(element: ET.Element) -> CppBlockContent:
