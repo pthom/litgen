@@ -205,30 +205,33 @@ def fill_cpp_element_data(element: ET.Element, inout_cpp_element: CppElement):
             inout_cpp_element.end = CodePosition.from_string(value)
 
 
-def parse_name(element: ET.Element) -> str:
-    """
-    https://www.srcml.org/doc/cpp_srcML.html#name
-
-    For names, we always reproduce the original code (i.e we reassemble the sub-elements)
-    """
-    assert clean_tag_or_attrib(element.tag) == "name"
-    if element.text is not None:
-        return element.text
-    else:
-        return srcml_to_code(element)
-
-
 def parse_type(element: ET.Element, previous_decl: CppDecl) -> CppType:
     """
     https://www.srcml.org/doc/cpp_srcML.html#type
+
+    A type name can be composed of several names, for example:
+
+        "unsigned int" -> ["unsigned", "int"]
+
+        MY_API void Process() declares a function whose return type will be ["MY_API", "void"]
+                             (where "MY_API" could for example be a dll export/import macro)
+
+    Note:
+        For composed types, like `std::map<int, std::string>` srcML returns a full tree.
+        In order to simplify the process, we recompose this kind of type names into a simple string
     """
+
+    def recompose_type_name(element: ET.Element) -> str:
+        is_composed_type = (element.text is None)
+        return srcml_to_code(element) if is_composed_type else element.text
+
     assert clean_tag_or_attrib(element.tag) == "type"
     result = CppType()
     fill_cpp_element_data(element, result)
     for child in element:
         child_tag = clean_tag_or_attrib(child.tag)
         if child_tag == "name":
-            result.names.append(parse_name(child))
+            result.names.append(recompose_type_name(child))
         elif child_tag == "specifier":
             result.specifiers.append(child.text)
         elif child_tag == "modifier":
@@ -265,7 +268,7 @@ def parse_decl(element: ET.Element, previous_decl: CppDecl) -> CppDecl:
         if child_tag == "type":
             result.cpp_type = parse_type(child, previous_decl)
         elif child_tag == "name":
-            result.name = parse_name(child)
+            result.name = child.text
         elif child_tag == "init":
             expr_child = child_with_tag(child, "expr")
             result.init = srcml_to_code(expr_child)
@@ -345,7 +348,7 @@ def parse_function_decl(element: ET.Element) -> CppFunctionDecl:
         if child_tag == "type":
             result.type = parse_type(child, None)
         elif child_tag == "name":
-            result.name = parse_name(child)
+            result.name = child.text
         elif child_tag == "parameter_list":
             result.parameter_list = parse_parameter_list(child)
         elif child_tag == "specifier":
@@ -368,7 +371,7 @@ def parse_function(element: ET.Element) -> CppFunction:
         if child_tag == "type":
             result.type = parse_type(child, None)
         elif child_tag == "name":
-            result.name = parse_name(child)
+            result.name = child.text
         elif child_tag == "parameter_list":
             result.parameter_list = parse_parameter_list(child)
         elif child_tag == "specifier":
@@ -394,7 +397,7 @@ def parse_super(element: ET.Element) -> CppSuper:
         if child_tag == "specifier":
             result.specifier = child.text
         elif child_tag == "name":
-            result.name = parse_name(child)
+            result.name = child.text
         else:
             raise SrcMlException(child, result)
 
@@ -435,7 +438,7 @@ def parse_struct_or_class(element: ET.Element) -> CppStruct:
     for child in element:
         child_tag = clean_tag_or_attrib(child.tag)
         if child_tag == "name":
-            result.name = parse_name(child)
+            result.name = child.text
         elif child_tag == "super_list":
             result.super_list = parse_super_list(child)
         elif child_tag == "block":
@@ -569,7 +572,7 @@ def parse_namespace(element: ET.Element) -> CppNamespace:
     for child in element:
         child_tag = clean_tag_or_attrib(child.tag)
         if child_tag == "name":
-            result.name = parse_name(child)
+            result.name = child.text
         elif child_tag == "block":
             result.block = parse_block(child)
         else:
@@ -593,7 +596,7 @@ def parse_enum(element: ET.Element) -> CppEnum:
     for child in element:
         child_tag = clean_tag_or_attrib(child.tag)
         if child_tag == "name":
-            result.name = parse_name(child)
+            result.name = child.text
         elif child_tag == "block":
             result.block = parse_block(child)
         else:

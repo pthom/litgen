@@ -126,12 +126,18 @@ class CppType(CppElement):
     """
     Describes a full C++ type, as seen by srcML
     See https://www.srcml.org/doc/cpp_srcML.html#type
-    """
 
-    # A type name can be composed of several names, for example:
-    #   "unsigned int" -> ["unsigned", "int"]
-    #   MY_API void Process() declares a function whose return type will be ["MY_API", "void"]
-    #                         (where "MY_API" could for example be a dll export/import macro)
+    A type name can be composed of several names, for example:
+
+        "unsigned int" -> ["unsigned", "int"]
+
+        MY_API void Process() declares a function whose return type will be ["MY_API", "void"]
+                             (where "MY_API" could for example be a dll export/import macro)
+
+    Note:
+        For composed types, like `std::map<int, std::string>` srcML returns a full tree.
+        In order to simplify the process, we recompose this kind of type names into a simple string
+    """
     names: List[str]
 
     # specifiers: could be ["const"], ["static", "const"], ["extern"], ["constexpr"], etc.

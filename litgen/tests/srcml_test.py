@@ -68,7 +68,7 @@ def test_srcml_repr():
     element = srcml.first_code_element_with_tag(code, "decl_stmt")
     cpp_decl_statement  = srcml.parse_decl_stmt(element)
     repr_cpp_decl_statement = repr(cpp_decl_statement)
-    repr_expected = 'CppDeclStatement(cpp_decls=[CppDecl(cpp_type=CppType(name=\'int\', specifiers=[], modifiers=[], argument_list=[]), name=\'a\', init=\'\')])'
+    repr_expected = "CppDeclStatement(cpp_decls=[CppDecl(cpp_type=CppType(names=['int'], specifiers=[], modifiers=[], argument_list=[]), name='a', init='')])"
     assert repr_cpp_decl_statement == repr_expected
 
 
@@ -129,7 +129,7 @@ def test_parse_function_decl():
     code = "int foo();"
     element = srcml.first_code_element_with_tag(code, "function_decl")
     function_decl  = srcml.parse_function_decl(element)
-    assert repr(function_decl) == "CppFunctionDecl(specifiers=[], type=CppType(name='int', specifiers=[], modifiers=[], argument_list=[]), name='foo', parameter_list=CppParameterList(parameters=[]))"
+    assert repr(function_decl) == "CppFunctionDecl(specifiers=[], type=CppType(names=['int'], specifiers=[], modifiers=[], argument_list=[]), name='foo', parameter_list=CppParameterList(parameters=[]))"
 
     # Basic test with str
     code = "int foo();"
