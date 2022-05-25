@@ -4,6 +4,11 @@ from typing import Optional, List, Tuple
 import litgen.internal.code_utils as code_utils
 
 import xml.etree.ElementTree as ET
+from typing import Any
+import abc
+
+def _str_none_empty(what: Any):
+    return "" if what is None else str(what)
 
 
 @_dataclass
@@ -41,12 +46,29 @@ class CppElement:
         self.end: CodePosition = None
         self.srcml_element = None
 
+    def tail(self):
+        return _str_none_empty(self.srcml_element.tail)
+
+    def text(self):
+        return _str_none_empty(self.srcml_element.text)
+
+    @abc.abstractmethod
+    def str_element(self):
+        """Returns the inner str representation.
+        The base class CppElement will add to it the xml text and tail"""
+        pass
+
+    def str_full(self):
+        r =  f"{self.text()}{self.str_element()}{self.tail()}"
+        return r
+
 
 @_dataclass
 class CppBlockChild(CppElement):
-    """Any token that can be embedded in a CppBlock (expr_stmt, function_decl, decl_stmt, ...)"""
+    """Abstract parent class: any token that can be embedded in a CppBlock (expr_stmt, function_decl, decl_stmt, ...)"""
     def __init__(self):
         super().__init__()
+
 
 @_dataclass
 class CppBlock(CppElement): # it is also a CppBlockChild
@@ -73,45 +95,20 @@ class CppBlock(CppElement): # it is also a CppBlockChild
         super().__init__()
         self.block_children: List[CppBlockChild] = []
 
-    def _str_block(self, is_enum_block: bool = False):
+    def _str_block(self):
         result = ""
-
-        def shall_add_new_line(previous_child: CppElement, child: CppElement):
-            add_new_line = True
-            if previous_child == None:
-                add_new_line = False
-            if previous_child is not None:
-                if isinstance(previous_child, CppUnprocessed):
-                    add_new_line = False
-                if isinstance(child, CppComment) and child.start.line == previous_child.end.line:
-                    add_new_line = False
-            return add_new_line
-
-        previous_child = None
-
         for child in self.block_children:
-            child_str = str(child)
-            if len(child_str) == 0:
-                continue
-
-            add_new_line = shall_add_new_line(previous_child, child)
-            if add_new_line:
-                result += "\n"
-
-            if is_enum_block and isinstance(child, CppDecl):
-                result += str(child)+ ","
+            if isinstance(child, CppUnprocessed):
+                result += child.code
             else:
                 result += str(child)
-
-            previous_child = child
-
         return result
 
-    def _str_block_enum(self):
-        return self._str_block(is_enum_block=True)
+    def str_element(self):
+        return self._str_block()
 
     def __str__(self):
-        return self._str_block()
+        return self.str_full()
 
 
 @_dataclass
@@ -122,8 +119,7 @@ class CppUnit(CppBlock):
         super().__init__()
 
     def __str__(self):
-        r = self._str_block() + "\n"
-        return r
+        return self.str_full()
 
 
 class CppUnprocessed(CppBlockChild):
@@ -134,9 +130,12 @@ class CppUnprocessed(CppBlockChild):
     def __init__(self):
         super().__init__()
 
-    def __str__(self):
+    def str_element(self):
         return self.code
         #return f"<{self.tag}>{self.code}</{self.tag}>"
+
+    def __str__(self):
+        return self.str_full()
 
 
 @_dataclass
@@ -147,12 +146,15 @@ class CppBlockContent(CppBlock):
     def __init__(self):
         super().__init__()
 
-    def __str__(self):
+    def str_element(self):
         r = ""
         r += "// <CppBlockContent>\n"
         r += self._str_block() + "\n"
         r += "// </CppBlockContent>\n"
         return r
+
+    def __str__(self):
+        return self.str_full()
 
 
 @_dataclass
@@ -163,15 +165,24 @@ class CppPublicProtectedPrivate(CppBlock): # Also a CppBlockChild
     Note: this is not a direct adaptation. Here we merge the different access types, and we derive from CppBlockContent
     """
     access_type: str # "public", "private", or "protected"
+    type: str        # "default" or "" ("default" means it was added automaticaly, as "public" for structs or "private" for classes)
 
-    def __init__(self, access_type):
+    def __init__(self, access_type: str, type: str):
         super().__init__()
+        assert type == "" or type == "default"
         self.access_type = access_type
+        self.type = type
+
+    def str_element(self):
+        r = ""
+        # if self.type != "default":
+        #     r += f"{self.access_type}:\n"
+
+        r += self._str_block()
+        return r
 
     def __str__(self):
-        r = f"{self.access_type}:\n"
-        r += code_utils.indent_code(self._str_block(), 4)
-        return r
+        return self.str_full()
 
 
 @_dataclass
@@ -214,7 +225,7 @@ class CppType(CppElement):
     def authorized_modifiers():
         return ["*", "&", "&&", "..."]
 
-    def __str__(self):
+    def str_element(self):
         from litgen.internal.srcml import SrcMlException
 
         nb_const = self.specifiers.count("const")
@@ -256,6 +267,9 @@ class CppType(CppElement):
             r += " const"
 
         return r
+
+    def __str__(self):
+        return self.str_full()
 
 
 @_dataclass
@@ -303,7 +317,7 @@ class CppDecl(CppElement):
     def __init__(self):
         super().__init__()
 
-    def __str__(self):
+    def str_element(self):
         cpp_type = str(self.cpp_type) if self.cpp_type is not None else ""
         type_and_name = code_utils.join_remove_empty(" ", [cpp_type, self.name])
         r = type_and_name
@@ -319,6 +333,9 @@ class CppDecl(CppElement):
             return True
         return False
 
+    def __str__(self):
+        return self.str_full()
+
 
 
 @_dataclass
@@ -332,10 +349,13 @@ class CppDeclStatement(CppBlockChild):
         super().__init__()
         self.cpp_decls = []
 
-    def __str__(self):
-        strs = list(map(lambda cpp_decl: str(cpp_decl) + ";", self.cpp_decls))
+    def str_element(self):
+        strs = list(map(lambda cpp_decl: str(cpp_decl), self.cpp_decls))
         r = code_utils.join_remove_empty("\n", strs)
         return r
+
+    def __str__(self):
+        return self.str_full()
 
 
 @_dataclass
@@ -351,7 +371,7 @@ class CppParameter(CppElement):
     def __init__(self):
         super().__init__()
 
-    def __str__(self):
+    def str_element(self):
         if self.decl is not None:
             assert self.template_type is None
             return str(self.decl)
@@ -361,6 +381,9 @@ class CppParameter(CppElement):
                 if not OPTIONS.flag_quiet:
                     logging.warning("CppParameter.__str__() with no decl and no template_type")
             return str(self.template_type) + " " + self.template_name
+
+    def __str__(self):
+        return self.str_full()
 
 
 @_dataclass
@@ -374,9 +397,12 @@ class CppParameterList(CppElement):
         super().__init__()
         self.parameters = []
 
-    def __str__(self):
+    def str_element(self):
         strs = list(map(lambda param: str(param), self.parameters))
         return  code_utils.join_remove_empty(", ", strs)
+
+    def __str__(self):
+        return self.str_full()
 
 
 @_dataclass
@@ -390,10 +416,13 @@ class CppTemplate(CppElement):
     def __init__(self):
         super().__init__()
 
-    def __str__(self):
+    def str_element(self):
         params_str = str(self.parameter_list)
         result = f"template<{params_str}>"
         return result
+
+    def __str__(self):
+        return self.str_full()
 
 
 @_dataclass
@@ -421,9 +450,12 @@ class CppFunctionDecl(CppBlockChild):
             r = r + " " + " ".join(specifiers_strs)
         return r
 
-    def __str__(self):
+    def str_element(self):
         r = self._str_decl() +  ";"
         return r
+
+    def __str__(self):
+        return self.str_full()
 
 
 @_dataclass
@@ -436,9 +468,12 @@ class CppFunction(CppFunctionDecl):
     def __init__(self):
         super().__init__()
 
-    def __str__(self):
+    def str_element(self):
         r = self._str_decl() + " { OMITTED_FUNCTION_CODE; }"
         return r
+
+    def __str__(self):
+        return self.str_full()
 
 
 @_dataclass
@@ -461,9 +496,12 @@ class CppContructorDecl(CppBlockChild):
             r = r + " " + " ".join(specifiers_strs)
         return r
 
-    def __str__(self):
+    def str_element(self):
         r = self._str_decl() +  ";"
         return r
+
+    def __str__(self):
+        return self.str_full()
 
 
 @_dataclass
@@ -477,9 +515,12 @@ class CppContructor(CppContructorDecl):
     def __init__(self):
         super().__init__()
 
-    def __str__(self):
+    def str_element(self):
         r = self._str_decl() + " : OMITTED_MEMBER_INIT_LIST { OMITTED_CONSTRUCTOR_CODE; }"
         return r
+
+    def __str__(self):
+        return self.str_full()
 
 
 @_dataclass
@@ -488,17 +529,20 @@ class CppSuper(CppElement):
     Define a super classes of a struct or class
     https://www.srcml.org/doc/cpp_srcML.html#struct-definition
     """
-    specifier: str # public, private or protected inheritance
-    name: str      # name of the super class
+    specifier: str = "" # public, private or protected inheritance
+    name: str = ""      # name of the super class
 
     def __init__(self):
         super().__init__()
 
-    def __str__(self):
+    def str_element(self):
         if len(self.specifier) > 0:
             return f"{self.specifier} {self.name}"
         else:
             return self.name
+
+    def __str__(self):
+        return self.str_full()
 
 
 @_dataclass
@@ -513,9 +557,12 @@ class CppSuperList(CppElement):
         super().__init__()
         self.super_list: List[CppSuper] = []
 
-    def __str__(self):
+    def str_element(self):
         strs = map(str, self.super_list)
-        return code_utils.join_remove_empty(", ", strs)
+        return code_utils.join_remove_empty("", strs)
+
+    def __str__(self):
+        return self.str_full()
 
 
 @_dataclass
@@ -531,26 +578,20 @@ class CppStruct(CppBlockChild):
     def __init__(self):
         super().__init__()
 
-    def _str_struct_or_class(self, is_class: bool):
+    def str_element(self):
         r = ""
         if self.template is not None:
             r += str(self.template) + "\n"
-        if is_class:
-            r += f"class {self.name}"
-        else:
-            r += f"struct {self.name}"
+        r += f"{self.name}"
         if self.super_list is not None and len(str(self.super_list)) > 0:
-            r += " : "
             r += str(self.super_list)
 
-        r += "\n{\n"
-        r +=  code_utils.indent_code(str(self.block), 4) + "\n"
-        r += "};\n"
+        r +=  str(self.block)
 
         return r
 
     def __str__(self):
-        return self._str_struct_or_class(False)
+        return self.str_full()
 
 
 @_dataclass
@@ -562,21 +603,25 @@ class CppClass(CppStruct):
         super().__init__()
 
     def __str__(self):
-        return self._str_struct_or_class(True)
+        return self.str_full()
 
 
 @_dataclass
 class CppComment(CppBlockChild):
     """
     https://www.srcml.org/doc/cpp_srcML.html#comment
-    """
-    text: str = "" # Warning, the text contains "//" or "/* ... */"
 
+    The comment text is inside CppComment.text()
+    Warning, the text contains "//" or "/* ... */" and "\n"
+    """
     def __init__(self):
         super().__init__()
 
+    def str_element(self):
+        return ""  # comments are outputed by CppBlock.str (which outputs text())
+
     def __str__(self):
-        return self.text
+        return self.str_full()
 
 
 @_dataclass
@@ -590,12 +635,13 @@ class CppNamespace(CppBlockChild):
     def __init__(self):
         super().__init__()
 
-    def __str__(self):
-        r = f"namespace {self.name}\n"
-        r += "{\n"
-        r += code_utils.indent_code(str(self.block), 4)
-        r += "\n}\n"
+    def str_element(self):
+        r = f"{self.name}\n"
+        r += str(self.block)
         return r
+
+    def __str__(self):
+        return self.str_full()
 
 
 @_dataclass
@@ -611,25 +657,14 @@ class CppEnum(CppBlockChild):
     def __init__(self):
         super().__init__()
 
-    def __str__(self):
-        if type == "class":
-            r = f"enum class {self.name}\n"
-        else:
-            r = f"enum {self.name}\n"
-        r += "{\n"
-
-        block_code = self.block._str_block_enum()
-        r += code_utils.indent_code(block_code, 4)
-
-        r += "\n};\n"
+    def str_element(self):
+        r = self.name
+        block_code = str(self.block)
+        r += block_code
         return r
 
-
-@_dataclass
-class CppExprStmt(CppBlockChild):
-    """Not handled, we do not need it in the context of litgen"""
-    def __init__(self):
-        super().__init__()
+    def __str__(self):
+        return self.str_full()
 
 
 @_dataclass
@@ -637,6 +672,19 @@ class CppExprStmt(CppBlockChild):
     """Not handled, we do not need it in the context of litgen"""
     def __init__(self):
         super().__init__()
+
+    def __str__(self):
+        return self.str_full()
+
+
+@_dataclass
+class CppExprStmt(CppBlockChild):
+    """Not handled, we do not need it in the context of litgen"""
+    def __init__(self):
+        super().__init__()
+
+    def __str__(self):
+        return self.str_full()
 
 
 @_dataclass
@@ -644,3 +692,6 @@ class CppReturn(CppBlockChild):
     """Not handled, we do not need it in the context of litgen"""
     def __init__(self):
         super().__init__()
+
+    def __str__(self):
+        return self.str_full()

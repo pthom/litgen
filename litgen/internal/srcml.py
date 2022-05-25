@@ -177,7 +177,7 @@ def _warning_detailed_info(
         detailed_message = f"""
         Original C++ code: 
         {cpp_code_location}
-        {code_utils.indent_code(srcml_to_code(parent_cpp_element.srcml_element), 8)}
+            {code_utils.indent_code(srcml_to_code(parent_cpp_element.srcml_element), 12, skip_first_line=True)}
         """
 
         if not OPTIONS.flag_short_message:
@@ -770,7 +770,12 @@ def parse_public_protected_private(element: ET.Element) -> CppPublicProtectedPri
     element_tag = clean_tag_or_attrib(element.tag)
     assert element_tag in ["public", "protected", "private"]
 
-    block_content = CppPublicProtectedPrivate(element_tag)
+    type = ""
+    for k, v  in element.attrib.items():
+        if clean_tag_or_attrib(k) == "type":
+            type = v
+
+    block_content = CppPublicProtectedPrivate(element_tag, type)
     fill_cpp_element_data(element, block_content)
     fill_block(element, block_content)
     return block_content
@@ -857,72 +862,68 @@ def fill_block(element: ET.Element, inout_block_content: CppBlock):
     for child in element:
         child_tag = clean_tag_or_attrib(child.tag)
 
-        if _preprocessor_tests_state.process_tag(child):
-            pass
-        elif _preprocessor_tests_state.is_inside_ignored_region():
-            pass
-        elif child_tag == "decl_stmt":
-            try:
+
+        try:
+            if _preprocessor_tests_state.process_tag(child):
+                pass
+            elif _preprocessor_tests_state.is_inside_ignored_region():
+                pass
+            elif child_tag == "decl_stmt":
                 inout_block_content.block_children.append(parse_decl_stmt(child))
-            except SrcMlException as e:
-                emit_warning(f"A decl_stmt was ignored. Details follow\n {e}")
-        elif child_tag == "decl":
-            inout_block_content.block_children.append(parse_decl(child, None))
-        elif child_tag == "function_decl":
-            try:
+            elif child_tag == "decl":
+                inout_block_content.block_children.append(parse_decl(child, None))
+            elif child_tag == "function_decl":
                 inout_block_content.block_children.append(parse_function_decl(child))
-            except SrcMlException as e:
-                emit_warning(f"A function was ignored. Details follow\n {e}")
-        elif child_tag == "function":
-            try:
+            elif child_tag == "function":
                 inout_block_content.block_children.append(parse_function(child))
-            except SrcMlException as e:
-                emit_warning(f"A function was ignored. Details follow\n {e}")
-        elif child_tag == "constructor_decl":
-            inout_block_content.block_children.append(parse_constructor_decl(child))
-        elif child_tag == "constructor":
-            inout_block_content.block_children.append(parse_constructor(child))
+            elif child_tag == "constructor_decl":
+                inout_block_content.block_children.append(parse_constructor_decl(child))
+            elif child_tag == "constructor":
+                inout_block_content.block_children.append(parse_constructor(child))
 
-        elif child_tag == "comment":
-            cpp_comment = parse_comment(child)
+            elif child_tag == "comment":
+                cpp_comment = parse_comment(child)
 
-            ignore_comment = False
-            if last_ignored_child is not None:
-                last_ignore_child_end_position = element_code_position(last_ignored_child)[1]
-                if cpp_comment.start.line == last_ignore_child_end_position.line:
-                    # When there is an explanation following a typedef or a struct forward decl,
-                    # we keep both the code (as a comment) and its comment
-                    if clean_tag_or_attrib(last_ignored_child.tag) in ["typedef", "struct_decl"]:
-                        cpp_comment.text = "// " + srcml_to_code(last_ignored_child) + "    " + cpp_comment.text
-                        ignore_comment = False
-                    else:
-                        ignore_comment = True
+                ignore_comment = False
+                if last_ignored_child is not None:
+                    last_ignore_child_end_position = element_code_position(last_ignored_child)[1]
+                    if cpp_comment.start.line == last_ignore_child_end_position.line:
+                        # When there is an explanation following a typedef or a struct forward decl,
+                        # we keep both the code (as a comment) and its comment
+                        if clean_tag_or_attrib(last_ignored_child.tag) in ["typedef", "struct_decl"]:
+                            cpp_comment.text = "// " + srcml_to_code(last_ignored_child) + "    " + cpp_comment.text
+                            ignore_comment = False
+                        else:
+                            ignore_comment = True
 
-            if not ignore_comment:
-                inout_block_content.block_children.append(cpp_comment)
+                if not ignore_comment:
+                    inout_block_content.block_children.append(cpp_comment)
 
-        elif child_tag == "struct":
-            inout_block_content.block_children.append(parse_struct_or_class(child))
-        elif child_tag == "class":
-            inout_block_content.block_children.append(parse_struct_or_class(child))
-        elif child_tag == "namespace":
-            inout_block_content.block_children.append(parse_namespace(child))
-        elif child_tag == "enum":
-            inout_block_content.block_children.append(parse_enum(child))
-        elif child_tag == "expr_stmt":
-            inout_block_content.block_children.append(parse_expr_stmt(child))
-        elif child_tag == "return":
-            inout_block_content.block_children.append(parse_return(child))
-        elif child_tag == "block_content":
-            inout_block_content.block_children.append(parse_block_content(child))
-        elif child_tag in ["public", "protected", "private"]:
-            inout_block_content.block_children.append(parse_public_protected_private(child))
-        elif child_tag in OPTIONS.ignored_block_types:
-            last_ignored_child = child
-        else:
-            # raise _bad_tag_exception(child)
-            # emit_srcml_warning(child, None, f'Unhandled tag type in `fill_block`: "{child_tag}"')
-            inout_block_content.block_children.append(parse_unprocessed(child))
+            elif child_tag == "struct":
+                inout_block_content.block_children.append(parse_struct_or_class(child))
+            elif child_tag == "class":
+                inout_block_content.block_children.append(parse_struct_or_class(child))
+            elif child_tag == "namespace":
+                inout_block_content.block_children.append(parse_namespace(child))
+            elif child_tag == "enum":
+                inout_block_content.block_children.append(parse_enum(child))
+            elif child_tag == "expr_stmt":
+                inout_block_content.block_children.append(parse_expr_stmt(child))
+            elif child_tag == "return":
+                inout_block_content.block_children.append(parse_return(child))
+            elif child_tag == "block_content":
+                inout_block_content.block_children.append(parse_block_content(child))
+            elif child_tag in ["public", "protected", "private"]:
+                inout_block_content.block_children.append(parse_public_protected_private(child))
+            elif child_tag in OPTIONS.ignored_block_types:
+                last_ignored_child = child
+            else:
+                # raise _bad_tag_exception(child)
+                # emit_srcml_warning(child, None, f'Unhandled tag type in `fill_block`: "{child_tag}"')
+                inout_block_content.block_children.append(parse_unprocessed(child))
+        except SrcMlException as e:
+            emit_warning(f'A cpp element of type "{child_tag}" was ignored. Details follow\n {e}')
+
 
 
 def parse_unit(element: ET.Element) -> CppUnit:
@@ -962,8 +963,6 @@ def parse_comment(element: ET.Element) -> CppComment:
 
     result = CppComment()
     fill_cpp_element_data(element, result)
-    result.text = element.text
-
     return result
 
 
