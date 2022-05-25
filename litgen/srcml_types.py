@@ -34,6 +34,7 @@ class CppElement:
     start: CodePosition
     end: CodePosition
     srcml_element: ET.Element
+    tag: str
 
     def __init__(self):
         self.start: CodePosition = None
@@ -74,20 +75,26 @@ class CppBlock(CppElement): # it is also a CppBlockChild
 
     def _str_block(self, is_enum_block: bool = False):
         result = ""
+
+        def shall_add_new_line(previous_child: CppElement, child: CppElement):
+            add_new_line = True
+            if previous_child == None:
+                add_new_line = False
+            if previous_child is not None:
+                if isinstance(previous_child, CppUnprocessed):
+                    add_new_line = False
+                if isinstance(child, CppComment) and child.start.line == previous_child.end.line:
+                    add_new_line = False
+            return add_new_line
+
         previous_child = None
+
         for child in self.block_children:
             child_str = str(child)
             if len(child_str) == 0:
                 continue
 
-            add_new_line = True
-            if previous_child == None:
-                add_new_line = False
-            if previous_child is not None and isinstance(child, CppComment):
-                if child.start.line == previous_child.end.line:
-                    add_new_line = False
-                    result += " "
-
+            add_new_line = shall_add_new_line(previous_child, child)
             if add_new_line:
                 result += "\n"
 
@@ -117,6 +124,19 @@ class CppUnit(CppBlock):
     def __str__(self):
         r = self._str_block() + "\n"
         return r
+
+
+class CppUnprocessed(CppBlockChild):
+    """Any Cpp Element that is not yet processed by srcmlcpp
+    We keep its original source under the form of a string
+    """
+    code: str = ""
+    def __init__(self):
+        super().__init__()
+
+    def __str__(self):
+        return self.code
+        #return f"<{self.tag}>{self.code}</{self.tag}>"
 
 
 @_dataclass
@@ -337,7 +357,9 @@ class CppParameter(CppElement):
             return str(self.decl)
         else:
             if self.template_type is None:
-                logging.warning("CppParameter.__str__() with no decl and no template_type")
+                from litgen.internal.srcml import OPTIONS
+                if not OPTIONS.flag_quiet:
+                    logging.warning("CppParameter.__str__() with no decl and no template_type")
             return str(self.template_type) + " " + self.template_name
 
 

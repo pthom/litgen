@@ -1,4 +1,11 @@
-srcml
+srcml 
+* [ ] Dump ignored regions
+  * [ ] Dump empty lines  
+  * [ ] Options / output style (tab or spaces + size, accolade positions, )
+  * [ ] Ignore default public/private 
+  * [ ] function code
+
+* [ ] Separate library (srclmcpp)
 
 
 

@@ -10,14 +10,84 @@ from xml.dom import minidom
 import logging
 import time
 import traceback, inspect
+from dataclasses import dataclass
+from typing import Callable
 
 
 from srcml_types import *
 
 
-HEADER_GUARD_SUFFIXES = ["_H", "HPP", "HXX", "IMGUI_DISABLE"]
-API_SUFFIXES = ["_API"]
-DUMP_SRCML_TREE_ON_ERROR = False
+def _preprocess_imgui_code(code):
+    import re
+    new_code = code
+    new_code  = re.sub(r'IM_FMTARGS\(\d\)', '', new_code)
+    new_code  = re.sub(r'IM_FMTLIST\(\d\)', '', new_code)
+    return new_code
+
+
+@dataclass
+class SrmlCppOptions:
+    header_guard_suffixes: List[str]
+    api_suffixes: List[str]
+    ignored_block_types: List[str]
+    encoding = "utf-8"
+    code_preprocess_function: Callable[[str], str] = None
+    filter_preprocessor_regions: bool = False
+
+    flag_quiet = False           # if quiet, all warning messages are discarded
+    flag_short_message = True
+    dump_srcml_tree_on_error: bool = False
+
+    def __init__(self):
+        self.header_guard_suffixes: List[str] = []
+        self.api_suffixes: List[str] = []
+        self.ignored_block_types: List[str] = []
+        self.filter_preprocessor_regions = False
+
+        self.flag_short_message = True
+        self.dump_srcml_tree_on_error: bool = False
+
+    @staticmethod
+    def options_litgen():
+        result = SrmlCppOptions()
+        result.header_guard_suffixes: List[str] = ["_H", "HPP", "HXX", "IMGUI_DISABLE"]
+        result.api_suffixes: List[str] = ["API"]
+        result.ignored_block_types: List[str] = [
+            "empty_stmt",
+            "pragma", "include", "macro", "define",             # preprocessor
+            "struct_decl",                                      # struct forward decl (ignored)
+            "typedef",
+            "destructor", "destructor_decl",                    # destructors are not published in bindings
+            "union"
+        ]
+        result.filter_preprocessor_regions = True
+
+        result.flag_short_message = False
+        result.dump_srcml_tree_on_error: bool = False
+        return result
+
+    @staticmethod
+    def options_litgen_imgui_implot():
+        result = SrmlCppOptions.options_litgen()
+        result.code_preprocess_function = _preprocess_imgui_code
+        return result
+
+    @staticmethod
+    def options_preserve_code():
+        result = SrmlCppOptions()
+        result.header_guard_suffixes: List[str] = []
+        result.api_suffixes: List[str] = ["API"]
+        result.ignored_block_types: List[str] = []
+        result.filter_preprocessor_regions = False
+
+        result.flag_short_message = True
+        result.dump_srcml_tree_on_error: bool = False
+        return result
+
+
+OPTIONS = SrmlCppOptions.options_litgen()
+# OPTIONS = SrmlCppOptions.options_preserve_code()
+
 
 ###########################################
 #
@@ -26,12 +96,35 @@ DUMP_SRCML_TREE_ON_ERROR = False
 ###########################################
 
 
-def parse_code(code: str) -> CppUnit:
-    """Parse the given code, and returns it under the form of a CppUnit (which contains the parsed code)"""
+_CURRENT_PARSED_FILE: str = ""
+
+
+def parse_code(code: str = "", filename: str = "") -> CppUnit:
+    """Parse the given code, and returns it under the form of a CppUnit (which contains the parsed code)
+    Note:
+        * if `code` is not empty, the code will be taken from it.
+          In this case, the `filename` param will still be used to display code source position in warning messages.
+          This can be used when you need to preprocess the code before parsing it.
+        * if `code`is empty, the code will be read from `filename`
+    """
+    global _CURRENT_PARSED_FILE
+
+    if len(code) == 0:
+        with open(filename, "r", encoding=OPTIONS.encoding) as f:
+            code = f.read()
+
+    if OPTIONS.code_preprocess_function is not None:
+        code = OPTIONS.code_preprocess_function(code)
+
+    _CURRENT_PARSED_FILE = filename
+
     element_srcml = code_to_srcml(code, True)
     cpp_unit = parse_unit(element_srcml)
     return cpp_unit
 
+
+def parse_file(filename: str) -> CppUnit:
+    return parse_code(code="", filename=filename)
 
 ###########################################
 #
@@ -39,14 +132,20 @@ def parse_code(code: str) -> CppUnit:
 #
 ###########################################
 
+def _output_cpp_code_position(filename: str, line: int, column: int):
+    """Failed attemps to make the code location clickable"""
+    # if len(function_name) > 0:
+    #     return f"<FrameSummary file {filename}, line {line} in {function_name}>"
+    # else:
+    #     return f"<FrameSummary file {filename}, line {line}, in foo>"
+
+    return f'{filename}:{line}:{column}'
+
+
 def _warning_detailed_info(
         srcml_element: ET.Element,
         parent_cpp_element: CppElement,
-        additional_message: str = "",
-        header_filename: str = "",
-        dump_srcml_tree: bool = DUMP_SRCML_TREE_ON_ERROR,
-        flag_short_message: bool = False
-        ):
+        additional_message: str = ""):
 
     def _get_python_call_info():
         stack_lines = traceback.format_stack()
@@ -56,12 +155,14 @@ def _warning_detailed_info(
         return caller_function_name, error_line
     python_caller_function_name, python_error_line = _get_python_call_info()
 
-    if len(header_filename) > 0:
-        header_filename = header_filename + ":"
+
+    if len(_CURRENT_PARSED_FILE) > 0:
+        header_filename = _CURRENT_PARSED_FILE
     else:
         header_filename = "Position:"
+    cpp_code_location = _output_cpp_code_position(header_filename, parent_cpp_element.start.line, parent_cpp_element.start.column)
 
-    if dump_srcml_tree and srcml_element is not None and not flag_short_message:
+    if OPTIONS.dump_srcml_tree_on_error and srcml_element is not None and not OPTIONS.flag_short_message:
         child_xml_str = f"""
     Which corresponds to this xml tree:
     {code_utils.indent_code(srcml_to_str(srcml_element), 8)}
@@ -74,11 +175,12 @@ def _warning_detailed_info(
     if parent_cpp_element is not None:
 
         detailed_message = f"""
-        Original C++ code: {header_filename}{parent_cpp_element.start}: 
+        Original C++ code: 
+        {cpp_code_location}
         {code_utils.indent_code(srcml_to_code(parent_cpp_element.srcml_element), 8)}
         """
 
-        if not flag_short_message:
+        if not OPTIONS.flag_short_message:
             detailed_message += f"""
             Issue inside parent cpp_element of type {type(parent_cpp_element)} (parsed by litgen.internal.srcml.{python_caller_function_name})
 
@@ -100,12 +202,12 @@ def _warning_detailed_info(
             if clean_tag_or_attrib(k) == "start":
                 code_position = v
 
-        detailed_message = """
+        detailed_message = f"""
         Issue found in srcml child, with this C++ code: {header_filename}:{code_position} 
         {code_utils.indent_code(srcml_to_code(srcml_element), 8)}{child_xml_str}
         """
 
-        if not flag_short_message:
+        if not OPTIONS.flag_short_message:
             detailed_message += f"""
             Issue inside {python_caller_function_name})
                     
@@ -125,24 +227,24 @@ class SrcMlException(Exception):
     def __init__(self,
                  srcml_element: ET.Element,
                  parent_cpp_element: CppElement,
-                 additional_message = "",
-                 header_filename: str = "",
-                 dump_srcml_tree: bool = DUMP_SRCML_TREE_ON_ERROR,
-                 flag_short_message: bool = False
-                 ):
-        message = _warning_detailed_info(srcml_element, parent_cpp_element, additional_message, header_filename, dump_srcml_tree, flag_short_message)
+                 additional_message = ""):
+        message = _warning_detailed_info(srcml_element, parent_cpp_element, additional_message)
         super().__init__(message)
 
 
 def emit_srcml_warning(
         srcml_element: ET.Element,
         parent_cpp_element: CppElement,
-        additional_message = "",
-        header_filename: str = "",
-        dump_srcml_tree: bool = DUMP_SRCML_TREE_ON_ERROR,
-        flag_short_message: bool = False
-        ):
-    message = _warning_detailed_info(srcml_element, parent_cpp_element, additional_message, header_filename, dump_srcml_tree)
+        additional_message = ""):
+    if OPTIONS.flag_quiet:
+        return
+    message = _warning_detailed_info(srcml_element, parent_cpp_element, additional_message)
+    logging.warning(message)
+
+
+def emit_warning(message: str):
+    if OPTIONS.flag_quiet:
+        return
     logging.warning(message)
 
 
@@ -185,7 +287,7 @@ class _SrcmlCaller:
     def _call_subprocess(self, input_filename, output_filename, dump_positions: bool):
         position_arg = "--position" if dump_positions else ""
 
-        shell_command = f"srcml -l C++ {input_filename} {position_arg} --xml-encoding utf-8 --src-encoding utf-8 -o {output_filename}"
+        shell_command = f"srcml -l C++ {input_filename} {position_arg} --xml-encoding {OPTIONS.encoding} --src-encoding {OPTIONS.encoding} -o {output_filename}"
         logging.debug(f"_SrcmlCaller.call: {shell_command}")
         try:
             subprocess.check_call(shell_command, shell=True)
@@ -199,7 +301,7 @@ class _SrcmlCaller:
         """
         self._stats_code_to_srcml.start()
         with tempfile.NamedTemporaryFile(suffix=".h", delete=False) as input_header_file:
-            input_header_file.write(input_str.encode("utf-8"))
+            input_header_file.write(input_str.encode(OPTIONS.encoding))
             input_header_file.close()
             with tempfile.NamedTemporaryFile(suffix=".xml", delete=False) as output_xml_file:
                 self._call_subprocess(input_header_file.name, output_xml_file.name, dump_positions)
@@ -207,7 +309,7 @@ class _SrcmlCaller:
                 os.remove(output_xml_file.name)
             os.remove(input_header_file.name)
 
-        output_str = output_bytes.decode("utf-8")
+        output_str = output_bytes.decode(OPTIONS.encoding)
         element = ET.fromstring(output_str)
         self._stats_code_to_srcml.stop()
         return element
@@ -236,7 +338,7 @@ class _SrcmlCaller:
                 os.remove(output_header_file.name)
         os.remove(input_xml_file.name)
 
-        code_str = output_bytes.decode("utf-8")
+        code_str = output_bytes.decode(OPTIONS.encoding)
         self._stats_srcml_to_code.stop()
         return code_str
 
@@ -279,6 +381,7 @@ def fill_cpp_element_data(element: ET.Element, inout_cpp_element: CppElement):
     start, end = element_code_position(element)
     inout_cpp_element.start = start
     inout_cpp_element.end = end
+    inout_cpp_element.tag = clean_tag_or_attrib(element.tag)
 
 
 def parse_type(element: ET.Element, previous_decl: CppDecl) -> CppType:
@@ -325,9 +428,7 @@ def parse_type(element: ET.Element, previous_decl: CppDecl) -> CppType:
         if previous_decl is None:
             raise SrcMlException(
                 None, result,
-                additional_message="Can't find type name",
-                flag_short_message=True
-            )
+                additional_message="Can't find type name")
         assert previous_decl is not None
         result.names = previous_decl.cpp_type.names
 
@@ -337,7 +438,7 @@ def parse_type(element: ET.Element, previous_decl: CppDecl) -> CppType:
     # process api names
     for name in result.names:
         is_api_name = False
-        for api_suffix in API_SUFFIXES:
+        for api_suffix in OPTIONS.api_suffixes:
             if name.endswith(api_suffix):
                 is_api_name = True
         if is_api_name:
@@ -449,8 +550,7 @@ def parse_parameter(element: ET.Element) -> CppParameter:
             #result.decl = parse_function_decl(child)
             raise SrcMlException(
                 child, result,
-                f"A function uses a function_decl as a param. It was discarded",
-                flag_short_message=True)
+                f"A function uses a function_decl as a param. It was discarded")
         else:
             raise SrcMlException(child, result, f"unhandled tag {child_tag}")
 
@@ -510,8 +610,7 @@ def fill_function_decl(element: ET.Element, function_decl: CppFunctionDecl):
             pass # will be handled by parse_function
         elif child_tag == "modifier":
             raise SrcMlException(
-                child, function_decl, flag_short_message=True,
-                additional_message="C style function pointers are poorly supported")
+                child, function_decl, additional_message="C style function pointers are poorly supported")
         else:
             raise SrcMlException(child, function_decl)
 
@@ -702,6 +801,9 @@ class _PreprocessorTestState:
     def process_tag(self, element: ET.Element) -> bool:
         """Returns true if this tag was processed"""
 
+        if not OPTIONS.filter_preprocessor_regions:
+            return False
+
         def extract_ifndef_name():
             for child in element:
                 if clean_tag_or_attrib(child.tag) == "name":
@@ -710,7 +812,7 @@ class _PreprocessorTestState:
 
         def is_inclusion_guard_ifndef():
             ifndef_name = extract_ifndef_name()
-            for suffix in HEADER_GUARD_SUFFIXES:
+            for suffix in OPTIONS.header_guard_suffixes:
                 if ifndef_name.upper().endswith(suffix.upper()):
                     return True
             return False
@@ -733,6 +835,9 @@ class _PreprocessorTestState:
         return is_preprocessor_test
 
     def is_inside_ignored_region(self) -> bool:
+        if not OPTIONS.filter_preprocessor_regions:
+            return False
+
         assert self.nb_tests >= -1 # -1 because we can ignore the inclusion guard
         if self.nb_tests > 0:
             return True
@@ -743,26 +848,7 @@ class _PreprocessorTestState:
 def fill_block(element: ET.Element, inout_block_content: CppBlock):
     """
     https://www.srcml.org/doc/cpp_srcML.html#block_content
-
-    possible child tags:
-        child_tag='decl_stmt'
-        child_tag='function_decl'
-        child_tag='function'
-        child_tag='comment'
-        child_tag='struct'
-        child_tag='class'
-        child_tag='namespace'
-        child_tag='enum' (optionally type="class")
     """
-
-    ignored_block_types = [
-        "empty_stmt",
-        "pragma", "include", "macro", "define",             # preprocessor
-        "struct_decl",                                      # struct forward decl (ignored)
-        "typedef",
-        "destructor", "destructor_decl",                    # destructors are not published in bindings
-        "union"
-    ]
 
     last_ignored_child: ET.Element = None
 
@@ -776,19 +862,22 @@ def fill_block(element: ET.Element, inout_block_content: CppBlock):
         elif _preprocessor_tests_state.is_inside_ignored_region():
             pass
         elif child_tag == "decl_stmt":
-            inout_block_content.block_children.append(parse_decl_stmt(child))
+            try:
+                inout_block_content.block_children.append(parse_decl_stmt(child))
+            except SrcMlException as e:
+                emit_warning(f"A decl_stmt was ignored. Details follow\n {e}")
         elif child_tag == "decl":
             inout_block_content.block_children.append(parse_decl(child, None))
         elif child_tag == "function_decl":
             try:
                 inout_block_content.block_children.append(parse_function_decl(child))
             except SrcMlException as e:
-                logging.warning(f"A function was ignored. Details follow\n {e}")
+                emit_warning(f"A function was ignored. Details follow\n {e}")
         elif child_tag == "function":
             try:
                 inout_block_content.block_children.append(parse_function(child))
             except SrcMlException as e:
-                logging.warning(f"A function was ignored. Details follow\n {e}")
+                emit_warning(f"A function was ignored. Details follow\n {e}")
         elif child_tag == "constructor_decl":
             inout_block_content.block_children.append(parse_constructor_decl(child))
         elif child_tag == "constructor":
@@ -828,11 +917,12 @@ def fill_block(element: ET.Element, inout_block_content: CppBlock):
             inout_block_content.block_children.append(parse_block_content(child))
         elif child_tag in ["public", "protected", "private"]:
             inout_block_content.block_children.append(parse_public_protected_private(child))
-        elif child_tag in ignored_block_types:
+        elif child_tag in OPTIONS.ignored_block_types:
             last_ignored_child = child
         else:
             # raise _bad_tag_exception(child)
-            emit_srcml_warning(child, None, f'Unhandled tag type in `fill_block`: "{child_tag}"')
+            # emit_srcml_warning(child, None, f'Unhandled tag type in `fill_block`: "{child_tag}"')
+            inout_block_content.block_children.append(parse_unprocessed(child))
 
 
 def parse_unit(element: ET.Element) -> CppUnit:
@@ -841,6 +931,14 @@ def parse_unit(element: ET.Element) -> CppUnit:
     fill_cpp_element_data(element, cpp_unit)
     fill_block(element, cpp_unit)
     return cpp_unit
+
+
+def parse_unprocessed(element: ET.Element) -> CppUnit:
+    result = CppUnprocessed()
+    fill_cpp_element_data(element, result)
+    result.code = srcml_to_code(element)
+    result.tag = clean_tag_or_attrib(element.tag)
+    return result
 
 
 def parse_block_content(element: ET.Element) -> CppBlockContent:
@@ -966,8 +1064,11 @@ def first_code_element_with_tag(code: str, tag: str, dump_positions: bool = True
     return child_with_tag(root, tag)
 
 
-def srcml_to_str(element: ET.Element):
+def srcml_to_str(element: ET.Element, bare = False):
     xmlstr_raw = ET.tostring(element, encoding="unicode")
+    if bare:
+        return xmlstr_raw
+
     try:
         xmlstr = minidom.parseString(ET.tostring(element)).toprettyxml(indent="   ")
     except Exception as e:
@@ -978,7 +1079,7 @@ def srcml_to_str(element: ET.Element):
 
 def srcml_to_file(root: ET.Element, filename: str):
     element_tree = ET.ElementTree(root)
-    element_tree.write(filename, encoding="utf-8")
+    element_tree.write(filename, encoding=OPTIONS.encoding)
 
 
 def clean_tag_or_attrib(tag_name: str) -> str:

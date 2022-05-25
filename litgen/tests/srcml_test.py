@@ -8,7 +8,7 @@ import litgen.internal.srcml as srcml
 import litgen.internal.code_utils as code_utils
 
 import logging
-
+import copy
 
 def assert_code_unmodified_by_srcml(code: str):
     """
@@ -179,13 +179,19 @@ def test_parse_function_definition():
 
 
 def test_nice_warning_message():
+
     code = """
     void foo(int x, int^ y); // ^ is not an authorized modifier!
     """
     element = srcml.first_code_element_with_tag(code, "function_decl")
     got_exception = False
     try:
+        options_backup = copy.deepcopy(srcml.OPTIONS)
+        srcml.OPTIONS.flag_short_message = False
+
         function_srcml  = srcml.parse_function_decl(element)
+
+        srcml.OPTIONS = options_backup
     except srcml.SrcMlException as e:
         got_exception = True
         message = str(e)
@@ -195,7 +201,7 @@ def test_nice_warning_message():
         assert expected_short_message_on_first_line in first_message_line
 
         expected_detailed_infos = [
-            "Original C++ code: Position:2:21:",
+            "2:21", # position
             "int^",
             "type <class 'srcml_types.CppType'>",
             "Python call stack info",
@@ -244,8 +250,12 @@ def test_struct_srcml():
 def test_srcml_issues_still_present():
     # See issue: https://github.com/srcML/srcML/issues/1687
     code = 'void foo() __attribute__ ((optimize("0")));'
-    with pytest.raises(srcml.SrcMlException) as e:
-        srcml.parse_code(code)
+
+    srcml.OPTIONS.flag_quiet = True
+    cpp_unit = srcml.parse_code(code)
+    srcml.OPTIONS.flag_quiet = False
+
+    assert len(cpp_unit.block_children) == 0
 
 
 def verify_code_parse(original_cpp_code, expected_parsed_code = None):
@@ -338,31 +348,31 @@ void Foo() { OMITTED_FUNCTION_CODE; }
     code_utils.assert_are_codes_equal(parsed_str, expected_code)
 
 
-def do_parse_implot_or_imgui(source_filename):
-    """This text reads a big header file (+ 1000 lines) and parses it"""
-    def lib_header_source():
-        def preprocess_source(code):
-            import re
-            new_code = code
-            new_code  = re.sub(r'IM_FMTARGS\(\d\)', '', new_code)
-            new_code  = re.sub(r'IM_FMTLIST\(\d\)', '', new_code)
-            return new_code
+def do_parse_imgui_implot(filename):
+    options_backup = copy.deepcopy(srcml.OPTIONS)
 
-        with open(source_filename, "r") as f:
-            code = f.read()
-        return preprocess_source(code)
+    # srcml.OPTIONS = srcml.SrmlCppOptions.options_preserve_code()
+    # srcml.OPTIONS.code_preprocess_function = srcml._preprocess_imgui_code
 
-    code = lib_header_source()
-    parsed_code = srcml.parse_code(code)
+    srcml.OPTIONS = srcml.SrmlCppOptions.options_litgen()
+
+    srcml.OPTIONS.flag_quiet = True
+
+    parsed_code = srcml.parse_file(filename)
+
+    srcml.OPTIONS = options_backup
+
     recomposed_code = str(parsed_code)
     lines = recomposed_code.splitlines()
+    # print(recomposed_code)
     assert len(lines) > 500
+
 
 
 def test_parse_imgui():
     source_filename = _THIS_DIR + "/../../examples_real_libs/imgui/imgui.h"
-    do_parse_implot_or_imgui(source_filename)
+    do_parse_imgui_implot(source_filename)
 
 def test_parse_implot():
     source_filename = _THIS_DIR + "/../../examples_real_libs/implot/implot.h"
-    do_parse_implot_or_imgui(source_filename)
+    do_parse_imgui_implot(source_filename)
