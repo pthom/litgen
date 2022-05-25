@@ -14,10 +14,10 @@ def read_file_content(filename):
 
 def do_parse_imgui_implot(filename):
 
-    srcml.OPTIONS = srcml.SrmlCppOptions.options_litgen_imgui_implot()
+    # srcml.OPTIONS = srcml.SrmlCppOptions.options_litgen_imgui_implot()
 
-    # srcml.OPTIONS = srcml.SrmlCppOptions.options_preserve_code()
-    # srcml.OPTIONS.code_preprocess_function = srcml._preprocess_imgui_code
+    srcml.OPTIONS = srcml.SrmlCppOptions.options_preserve_code()
+    srcml.OPTIONS.code_preprocess_function = srcml._preprocess_imgui_code
 
     srcml.OPTIONS.flag_short_message = True
 

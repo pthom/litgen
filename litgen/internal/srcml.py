@@ -25,6 +25,12 @@ def _preprocess_imgui_code(code):
     new_code  = re.sub(r'IM_FMTLIST\(\d\)', '', new_code)
     return new_code
 
+###########################################
+#
+# Options
+#
+###########################################
+
 
 @dataclass
 class SrmlCppOptions:
@@ -161,7 +167,10 @@ def _warning_detailed_info(
         header_filename = _CURRENT_PARSED_FILE
     else:
         header_filename = "Position:"
-    cpp_code_location = _output_cpp_code_position(header_filename, parent_cpp_element.start.line, parent_cpp_element.start.column)
+    if parent_cpp_element is not None and parent_cpp_element.start is not None:
+        cpp_code_location = _output_cpp_code_position(header_filename, parent_cpp_element.start.line, parent_cpp_element.start.column)
+    else:
+        cpp_code_location = ""
 
     if OPTIONS.dump_srcml_tree_on_error and srcml_element is not None and not OPTIONS.flag_short_message:
         child_xml_str = f"""
@@ -861,18 +870,28 @@ class _PreprocessorTestState:
             return False
 
 
+def is_operator_function(element: ET.Element) -> bool:
+    assert clean_tag_or_attrib(element.tag) in ["function", "function_decl"]
+    for k, v in element.attrib.items():
+        if clean_tag_or_attrib(k) == "type":
+            if v == "operator":
+                return True
+    return False
+
+
 def fill_block(element: ET.Element, inout_block_content: CppBlock):
     """
     https://www.srcml.org/doc/cpp_srcML.html#block_content
     """
+    fill_cpp_element_data(element, inout_block_content)
 
     last_ignored_child: ET.Element = None
 
     _preprocessor_tests_state = _PreprocessorTestState()
 
+
     for child in element:
         child_tag = clean_tag_or_attrib(child.tag)
-
 
         try:
             if _preprocessor_tests_state.process_tag(child):
@@ -884,9 +903,17 @@ def fill_block(element: ET.Element, inout_block_content: CppBlock):
             elif child_tag == "decl":
                 inout_block_content.block_children.append(parse_decl(child, None))
             elif child_tag == "function_decl":
-                inout_block_content.block_children.append(parse_function_decl(child))
+                if is_operator_function(child):
+                    emit_srcml_warning(child, None, "Operator functions are ignored")
+                    inout_block_content.block_children.append(parse_unprocessed(child))
+                else:
+                    inout_block_content.block_children.append(parse_function_decl(child))
             elif child_tag == "function":
-                inout_block_content.block_children.append(parse_function(child))
+                if is_operator_function(child):
+                    emit_srcml_warning(child, None, "Operator functions are ignored")
+                    inout_block_content.block_children.append(parse_unprocessed(child))
+                else:
+                    inout_block_content.block_children.append(parse_function(child))
             elif child_tag == "constructor_decl":
                 inout_block_content.block_children.append(parse_constructor_decl(child))
             elif child_tag == "constructor":
