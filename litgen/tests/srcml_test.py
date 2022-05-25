@@ -72,7 +72,7 @@ def test_srcml_repr():
     element = srcml.first_code_element_with_tag(code, "decl_stmt")
     cpp_decl_statement  = srcml.parse_decl_stmt(element)
     repr_cpp_decl_statement = repr(cpp_decl_statement)
-    repr_expected = "CppDeclStatement(cpp_decls=[CppDecl(cpp_type=CppType(names=['int'], specifiers=[], modifiers=[], argument_list=[]), name='a', init='')])"
+    repr_expected = 'CppDeclStatement(cpp_decls=[CppDecl(cpp_type=CppType(names=[\'int\'], specifiers=[], modifiers=[], argument_list=[]), name=CppName(name=\'a\'), init=\'\')])'
     assert repr_cpp_decl_statement == repr_expected
 
 
@@ -102,39 +102,28 @@ def test_parse_cpp_decl_statement():
     code = "int const *a=nullptr;"
     element = srcml.first_code_element_with_tag(code, "decl_stmt")
     cpp_decl_statement  = srcml.parse_decl_stmt(element)
-    code_utils.assert_are_equal_ignore_spaces(cpp_decl_statement, "const int * a = nullptr;")
+    code_utils.assert_are_equal_ignore_spaces(cpp_decl_statement, "const int *a= nullptr;")
 
     # Test with several variables + modifiers
     code = "int a = 3, &b = b0, *c;"
     element = srcml.first_code_element_with_tag(code, "decl_stmt")
     cpp_decl_statement  = srcml.parse_decl_stmt(element)
-    code_utils.assert_are_codes_equal(cpp_decl_statement, """
-        int a = 3;
-        int & b = b0;
-        int * c;
-    """)
-
+    code_utils.assert_are_codes_equal(cpp_decl_statement, "int a = 3, b = b0, c;")
 
     # Test with double pointer, which creates a double modifier
     code = "uchar **buffer;"
     element = srcml.first_code_element_with_tag(code, "decl_stmt")
     cpp_decl_statement  = srcml.parse_decl_stmt(element)
-    code_utils.assert_are_codes_equal(cpp_decl_statement, "uchar * * buffer;")
+    code_utils.assert_are_codes_equal(cpp_decl_statement, "uchar * *buffer;")
 
     # Test with a template type
     code = "std::map<int, std::string>x = {1, 2, 3};"
     element = srcml.first_code_element_with_tag(code, "decl_stmt")
     cpp_decl_statement  = srcml.parse_decl_stmt(element)
-    code_utils.assert_are_codes_equal(cpp_decl_statement, "std::map<int, std::string> x = {1, 2, 3};")
+    code_utils.assert_are_codes_equal(cpp_decl_statement, "std::map<int, std::string>x = {1, 2, 3};")
 
 
 def test_parse_function_decl():
-    # Basic test with repr
-    code = "int foo();"
-    element = srcml.first_code_element_with_tag(code, "function_decl")
-    function_decl  = srcml.parse_function_decl(element)
-    assert repr(function_decl) == "CppFunctionDecl(specifiers=[], type=CppType(names=['int'], specifiers=[], modifiers=[], argument_list=[]), name='foo', parameter_list=CppParameterList(parameters=[]), template=None)"
-
     # Basic test with str
     code = "int foo();"
     element = srcml.first_code_element_with_tag(code, "function_decl")
@@ -154,20 +143,20 @@ def test_parse_function_decl():
     """
     element = srcml.first_code_element_with_tag(code, "function_decl")
     function_decl  = srcml.parse_function_decl(element)
-    code_utils.assert_are_codes_equal(function_decl, "std::vector<std::pair<size_t, int>> enumerate(const std::vector<int> & xs);")
+    code_utils.assert_are_codes_equal(function_decl, "std::vector<std::pair<size_t, int>>     enumerate(const std::vector<int> &    xs);")
 
     # Test with type declared after ->
     code = "auto divide(int a, int b) -> double;"
     element = srcml.first_code_element_with_tag(code, "function_decl")
     function_decl  = srcml.parse_function_decl(element)
-    code_utils.assert_are_codes_equal(function_decl, "double divide(int a, int b);")
+    code_utils.assert_are_codes_equal(function_decl, "auto divide(int a, int b) -> double;")
 
 
     # Test with inferred type
     code = "auto minimum(int&&a, int b = 5);"
     element = srcml.first_code_element_with_tag(code, "function_decl")
     function_decl  = srcml.parse_function_decl(element)
-    code_utils.assert_are_codes_equal(function_decl, "auto minimum(int && a, int b = 5);")
+    code_utils.assert_are_codes_equal(function_decl, "auto minimum(int &&a, int b = 5);")
 
 
 def test_parse_function_definition():
@@ -175,7 +164,7 @@ def test_parse_function_definition():
     element = srcml.first_code_element_with_tag(code, "function")
     function_srcml  = srcml.parse_function(element)
     function_str = str(function_srcml)
-    code_utils.assert_are_codes_equal(function_str, "int foo() { OMITTED_FUNCTION_CODE; }")
+    code_utils.assert_are_codes_equal(function_str, "int foo() {return 42;}")
 
 
 def test_nice_warning_message():
@@ -287,23 +276,12 @@ def test_misc_examples():
 class Foo : public Cat, private Dog
 {
         Foo();
-        Foo(int x) { }
+        Foo(int _n) : n(_n) { u = U(); }
         T x = T();
     public:
         std::optional<U> u = std::nullopt;    
         const int n = N;
-};""", """template<typename T, typename U, int N>
-class Foo : public Cat, private Dog
-{
-    private:
-        Foo();
-        Foo(int x) : OMITTED_MEMBER_INIT_LIST { OMITTED_CONSTRUCTOR_CODE; }
-        T x = T();
-    public:
-        std::optional<U> u = std::nullopt;
-        const int n = N;
-};
-""")
+};""")
 
     # Note: lambdas are parsed correctly as decl
     # However, they won't be published in the bindings.
@@ -336,42 +314,35 @@ void Foo() {}     // This should be included
 #endif // #ifndef MY_HEADER_H    
     """
 
+    srcml.OPTIONS.filter_preprocessor_regions = True
     parsed_code = srcml.parse_code(code)
     parsed_str = str(parsed_code)
     expected_code = """
+
 // We are in the main header, and this should be included (the previous ifndef was just an inclusion guard)
-void Foo() { OMITTED_FUNCTION_CODE; }
-// This should be included
-// #ifdef SOME_OPTION
-// #ifndef MY_HEADER_H
+
+void Foo() {}     // This should be included
+
+
     """
     code_utils.assert_are_codes_equal(parsed_str, expected_code)
 
 
 def do_parse_imgui_implot(filename):
     options_backup = copy.deepcopy(srcml.OPTIONS)
-
-    # srcml.OPTIONS = srcml.SrmlCppOptions.options_preserve_code()
-    # srcml.OPTIONS.code_preprocess_function = srcml._preprocess_imgui_code
-
-    srcml.OPTIONS = srcml.SrmlCppOptions.options_litgen()
-
+    srcml.OPTIONS = srcml.SrmlCppOptions.options_litgen_imgui_implot()
     srcml.OPTIONS.flag_quiet = True
-
     parsed_code = srcml.parse_file(filename)
-
     srcml.OPTIONS = options_backup
-
     recomposed_code = str(parsed_code)
     lines = recomposed_code.splitlines()
-    # print(recomposed_code)
     assert len(lines) > 500
-
 
 
 def test_parse_imgui():
     source_filename = _THIS_DIR + "/../../examples_real_libs/imgui/imgui.h"
     do_parse_imgui_implot(source_filename)
+
 
 def test_parse_implot():
     source_filename = _THIS_DIR + "/../../examples_real_libs/implot/implot.h"

@@ -6,6 +6,7 @@ import litgen.internal.code_utils as code_utils
 import xml.etree.ElementTree as ET
 from typing import Any
 import abc
+import copy
 
 def _str_none_empty(what: Any):
     return "" if what is None else str(what)
@@ -47,10 +48,18 @@ class CppElement:
         self.srcml_element = None
 
     def tail(self):
+        if self.srcml_element is None:
+            return ""
         return _str_none_empty(self.srcml_element.tail)
 
     def text(self):
+        if self.srcml_element is None:
+            return ""
         return _str_none_empty(self.srcml_element.text)
+
+    def set_text(self, text):
+        assert self.srcml_element is not None
+        self.srcml_element.text = text
 
     @abc.abstractmethod
     def str_element(self):
@@ -68,6 +77,24 @@ class CppBlockChild(CppElement):
     """Abstract parent class: any token that can be embedded in a CppBlock (expr_stmt, function_decl, decl_stmt, ...)"""
     def __init__(self):
         super().__init__()
+
+
+@_dataclass
+class CppName(CppElement):
+    """Represents the name of a variable, struct, function, etc"""
+    name: str = ""
+
+    def __init__(self):
+        super().__init__()
+
+    def str_element(self):
+        if len(self.text()) > 0:
+            return "" # The name is also present in CppElement.text and will be taken from there
+        else:
+            return self.name  # This is when we had to parse a composed name
+
+    def __str__(self):
+        return self.str_full()
 
 
 @_dataclass
@@ -135,7 +162,7 @@ class CppUnprocessed(CppBlockChild):
         #return f"<{self.tag}>{self.code}</{self.tag}>"
 
     def __str__(self):
-        return self.str_full()
+        return self.code
 
 
 @_dataclass
@@ -147,11 +174,7 @@ class CppBlockContent(CppBlock):
         super().__init__()
 
     def str_element(self):
-        r = ""
-        r += "// <CppBlockContent>\n"
-        r += self._str_block() + "\n"
-        r += "// </CppBlockContent>\n"
-        return r
+        return self._str_block()
 
     def __str__(self):
         return self.str_full()
@@ -311,18 +334,22 @@ class CppDecl(CppElement):
             Which is retranscribed as "5"
     """
     cpp_type: CppType = None
-    name: str = ""
+    name: CppName = CppName()
     init: str = ""  # initial or default value
 
     def __init__(self):
         super().__init__()
 
     def str_element(self):
-        cpp_type = str(self.cpp_type) if self.cpp_type is not None else ""
-        type_and_name = code_utils.join_remove_empty(" ", [cpp_type, self.name])
-        r = type_and_name
+        r = _str_none_empty(self.cpp_type) + str(self.name)
         if len(self.init) > 0:
-            r += " = " + self.init
+            r += "= " + self.init
+        return r
+
+    def str_no_type(self):
+        r = str(self.name)
+        if len(self.init) > 0:
+            r += "= " + self.init
         return r
 
     def has_name_or_ellipsis(self):
@@ -350,8 +377,12 @@ class CppDeclStatement(CppBlockChild):
         self.cpp_decls = []
 
     def str_element(self):
-        strs = list(map(lambda cpp_decl: str(cpp_decl), self.cpp_decls))
-        r = code_utils.join_remove_empty("\n", strs)
+        first_type_str = _str_none_empty(self.cpp_decls[0].cpp_type)
+        str_decls = list(map(lambda cpp_decl: cpp_decl.str_no_type(), self.cpp_decls))
+        str_decl = code_utils.join_remove_empty(", ", str_decls)
+        r = first_type_str + str_decl
+        if not r.endswith(";"):
+            r += ";"
         return r
 
     def __str__(self):
@@ -380,7 +411,7 @@ class CppParameter(CppElement):
                 from litgen.internal.srcml import OPTIONS
                 if not OPTIONS.flag_quiet:
                     logging.warning("CppParameter.__str__() with no decl and no template_type")
-            return str(self.template_type) + " " + self.template_name
+            return str(self.template_type) + self.template_name
 
     def __str__(self):
         return self.str_full()
@@ -399,7 +430,7 @@ class CppParameterList(CppElement):
 
     def str_element(self):
         strs = list(map(lambda param: str(param), self.parameters))
-        return  code_utils.join_remove_empty(", ", strs)
+        return  code_utils.join_remove_empty("", strs)
 
     def __str__(self):
         return self.str_full()
@@ -418,7 +449,7 @@ class CppTemplate(CppElement):
 
     def str_element(self):
         params_str = str(self.parameter_list)
-        result = f"template<{params_str}>"
+        result = f"{params_str}"
         return result
 
     def __str__(self):
@@ -432,9 +463,10 @@ class CppFunctionDecl(CppBlockChild):
     """
     specifiers: List[str] # "const" or ""
     type: CppType = None
-    name: str = ""
+    name: CppName = CppName()
     parameter_list: CppParameterList = None
     template: CppTemplate = None
+    is_auto_decl: bool = False # True if it is a decl of the form `auto square(double) -> double`
 
     def __init__(self):
         super().__init__()
@@ -443,19 +475,35 @@ class CppFunctionDecl(CppBlockChild):
     def _str_decl(self):
         r = ""
         if self.template is not None:
-            r += str(self.template) + " "
-        r += f"{self.type} {self.name}({self.parameter_list})"
+            r += str(self.template)
+
+        is_auto = False
+        if self.type is not None and "auto" in self.type.names:
+            type_copy = copy.deepcopy(self.type)
+            type_copy.names.remove("auto")
+            r += f"auto {self.name}{self.parameter_list}{type_copy}"
+        else:
+            r += f"{self.type}{self.name}{self.parameter_list}"
+
         if len(self.specifiers) > 0:
             specifiers_strs = map(str, self.specifiers)
-            r = r + " " + " ".join(specifiers_strs)
+            r = r + " ".join(specifiers_strs)
+
         return r
 
     def str_element(self):
-        r = self._str_decl() +  ";"
+        r = self._str_decl()
         return r
 
     def __str__(self):
-        return self.str_full()
+        r = self.str_full()
+        if not r.strip().endswith(";"):
+            r2 = r.strip()
+            r_ending_spaces = r[len(r2) : ]
+            r2 = r2 + ";" + r_ending_spaces
+            return r2
+        else:
+            return r
 
 
 @_dataclass
@@ -469,7 +517,7 @@ class CppFunction(CppFunctionDecl):
         super().__init__()
 
     def str_element(self):
-        r = self._str_decl() + " { OMITTED_FUNCTION_CODE; }"
+        r = self._str_decl() + str(self.block)
         return r
 
     def __str__(self):
@@ -477,12 +525,12 @@ class CppFunction(CppFunctionDecl):
 
 
 @_dataclass
-class CppContructorDecl(CppBlockChild):
+class CppConstructorDecl(CppBlockChild):
     """
     https://www.srcml.org/doc/cpp_srcML.html#constructor-declaration
     """
     specifiers: List[str]
-    name: str = ""
+    name: CppName = CppName()
     parameter_list: CppParameterList = None
 
     def __init__(self):
@@ -490,14 +538,14 @@ class CppContructorDecl(CppBlockChild):
         self.specifiers: List[str] = []
 
     def _str_decl(self):
-        r = f"{self.name}({self.parameter_list})"
+        r = f"{self.name}{self.parameter_list}"
         if len(self.specifiers) > 0:
             specifiers_strs = map(str, self.specifiers)
             r = r + " " + " ".join(specifiers_strs)
         return r
 
     def str_element(self):
-        r = self._str_decl() +  ";"
+        r = self._str_decl()
         return r
 
     def __str__(self):
@@ -505,18 +553,18 @@ class CppContructorDecl(CppBlockChild):
 
 
 @_dataclass
-class CppContructor(CppContructorDecl):
+class CppConstructor(CppConstructorDecl):
     """
     https://www.srcml.org/doc/cpp_srcML.html#constructor
     """
     block: CppBlock = None
-    # member_init_list: Any = None   # Not handled by litgen
+    member_init_list: CppUnprocessed = CppUnprocessed()
 
     def __init__(self):
         super().__init__()
 
     def str_element(self):
-        r = self._str_decl() + " : OMITTED_MEMBER_INIT_LIST { OMITTED_CONSTRUCTOR_CODE; }"
+        r = self._str_decl() + str(self.member_init_list) + str(self.block)
         return r
 
     def __str__(self):
@@ -530,7 +578,7 @@ class CppSuper(CppElement):
     https://www.srcml.org/doc/cpp_srcML.html#struct-definition
     """
     specifier: str = "" # public, private or protected inheritance
-    name: str = ""      # name of the super class
+    name: CppName = CppName() # name of the super class
 
     def __init__(self):
         super().__init__()
@@ -570,7 +618,7 @@ class CppStruct(CppBlockChild):
     """
     https://www.srcml.org/doc/cpp_srcML.html#struct-definition
     """
-    name: str = ""
+    name: CppName = CppName()
     super_list: CppSuperList = None
     block: CppBlock = None
     template: CppTemplate = None    # for template classes or structs
@@ -581,7 +629,7 @@ class CppStruct(CppBlockChild):
     def str_element(self):
         r = ""
         if self.template is not None:
-            r += str(self.template) + "\n"
+            r += str(self.template)
         r += f"{self.name}"
         if self.super_list is not None and len(str(self.super_list)) > 0:
             r += str(self.super_list)
@@ -629,14 +677,14 @@ class CppNamespace(CppBlockChild):
     """
     https://www.srcml.org/doc/cpp_srcML.html#namespace
     """
-    name: str = ""
+    name: CppName = CppName()
     block: CppBlock = None
 
     def __init__(self):
         super().__init__()
 
     def str_element(self):
-        r = f"{self.name}\n"
+        r = f"{self.name}"
         r += str(self.block)
         return r
 
@@ -651,47 +699,17 @@ class CppEnum(CppBlockChild):
     https://www.srcml.org/doc/cpp_srcML.html#enum-class
     """
     type: str = ""  # "class" or ""
-    name: str = ""
+    name: CppName = CppName()
     block: CppBlock = None
 
     def __init__(self):
         super().__init__()
 
     def str_element(self):
-        r = self.name
+        r = str(self.name)
         block_code = str(self.block)
         r += block_code
         return r
-
-    def __str__(self):
-        return self.str_full()
-
-
-@_dataclass
-class CppExprStmt(CppBlockChild):
-    """Not handled, we do not need it in the context of litgen"""
-    def __init__(self):
-        super().__init__()
-
-    def __str__(self):
-        return self.str_full()
-
-
-@_dataclass
-class CppExprStmt(CppBlockChild):
-    """Not handled, we do not need it in the context of litgen"""
-    def __init__(self):
-        super().__init__()
-
-    def __str__(self):
-        return self.str_full()
-
-
-@_dataclass
-class CppReturn(CppBlockChild):
-    """Not handled, we do not need it in the context of litgen"""
-    def __init__(self):
-        super().__init__()
 
     def __str__(self):
         return self.str_full()

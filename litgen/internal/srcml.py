@@ -15,6 +15,7 @@ from typing import Callable
 
 
 from srcml_types import *
+from srcml_types import _str_none_empty
 
 
 def _preprocess_imgui_code(code):
@@ -479,14 +480,19 @@ def parse_init_expr(element: ET.Element) -> str:
     return r
 
 
+def parse_name(element: ET.Element) -> CppName:
+    assert clean_tag_or_attrib(element.tag) == "name"
+    result = CppName()
+    fill_cpp_element_data(element, result)
+    is_composed = (element.text is None)
+    result.name = srcml_to_code(element).strip() if is_composed else element.text
+    return result
+
+
 def parse_decl(element: ET.Element, previous_decl: CppDecl) -> CppDecl:
     """
     https://www.srcml.org/doc/cpp_srcML.html#variable-declaration-statement
     """
-
-    def recompose_decl_name(element: ET.Element) -> str:
-        is_composed = (element.text is None)
-        return srcml_to_code(element).strip() if is_composed else element.text
 
     assert clean_tag_or_attrib(element.tag) == "decl"
     result = CppDecl()
@@ -496,7 +502,7 @@ def parse_decl(element: ET.Element, previous_decl: CppDecl) -> CppDecl:
         if child_tag == "type":
             result.cpp_type = parse_type(child, previous_decl)
         elif child_tag == "name":
-            result.name = recompose_decl_name(child)
+            result.name = parse_name(child)
         elif child_tag == "init":
             result.init = parse_init_expr(child)
         elif child_tag == "range":
@@ -595,9 +601,14 @@ def fill_function_decl(element: ET.Element, function_decl: CppFunctionDecl):
     for child in element:
         child_tag = clean_tag_or_attrib(child.tag)
         if child_tag == "type":
-            function_decl.type = parse_type(child, None)
+            if function_decl.type is None or len(function_decl.type.names) == 0:
+                parsed_type = parse_type(child, None)
+                function_decl.type = parsed_type
+            else:
+                additional_type = parse_type(child, None)
+                function_decl.type.names += additional_type.names
         elif child_tag == "name":
-            function_decl.name = child.text
+            function_decl.name = parse_name(child)
         elif child_tag == "parameter_list":
             function_decl.parameter_list = parse_parameter_list(child)
         elif child_tag == "specifier":
@@ -636,9 +647,7 @@ def parse_function(element: ET.Element) -> CppFunction:
     for child in element:
         child_tag = clean_tag_or_attrib(child.tag)
         if child_tag == "block":
-            # We do not parse inner function code
-            # result.block = parse_block(child)
-            pass
+            result.block = parse_block(child)
         elif child_tag in ["type", "name", "parameter_list", "specifier", "attribute", "template"]:
             pass # alread handled by fill_function_decl
         else:
@@ -647,46 +656,48 @@ def parse_function(element: ET.Element) -> CppFunction:
     return result
 
 
-def fill_constructor_decl(element: ET.Element, constructor_decl: CppContructorDecl):
+def fill_constructor_decl(element: ET.Element, constructor_decl: CppConstructorDecl):
     fill_cpp_element_data(element, constructor_decl)
     for child in element:
         child_tag = clean_tag_or_attrib(child.tag)
         if child_tag == "name":
-            constructor_decl.name = child.text
+            constructor_decl.name = parse_name(child)
         elif child_tag == "parameter_list":
             constructor_decl.parameter_list = parse_parameter_list(child)
         elif child_tag == "specifier":
             constructor_decl.specifiers.append(child.text)
         elif child_tag == "attribute":
             pass # compiler options, such as [[gnu::optimize(0)]]
-        elif child_tag == "block":
+        elif child_tag in ["block", "member_init_list"]:
             pass # will be handled by parse_constructor
         else:
             raise SrcMlException(child, result)
 
 
-def parse_constructor_decl(element: ET.Element) -> CppContructorDecl:
+def parse_constructor_decl(element: ET.Element) -> CppConstructorDecl:
     """
     https://www.srcml.org/doc/cpp_srcML.html#constructor-declaration
     """
     assert clean_tag_or_attrib(element.tag) == "constructor_decl"
-    result = CppContructorDecl()
+    result = CppConstructorDecl()
     fill_constructor_decl(element, result)
     return result
 
 
-def parse_constructor(element: ET.Element) -> CppContructor:
+def parse_constructor(element: ET.Element) -> CppConstructor:
     """
     https://www.srcml.org/doc/cpp_srcML.html#function-definition
     """
     assert clean_tag_or_attrib(element.tag) == "constructor"
-    result = CppContructor()
+    result = CppConstructor()
     fill_constructor_decl(element, result)
 
     for child in element:
         child_tag = clean_tag_or_attrib(child.tag)
         if child_tag == "block":
             result.block = parse_block(child)
+        elif child_tag == "member_init_list":
+            result.member_init_list = parse_unprocessed(child)
         elif child_tag in ["name", "parameter_list", "specifier", "attribute"]:
             pass # alread handled by fill_constructor_decl
         else:
@@ -708,7 +719,7 @@ def parse_super(element: ET.Element) -> CppSuper:
         if child_tag == "specifier":
             result.specifier = child.text
         elif child_tag == "name":
-            result.name = child.text
+            result.name = parse_name(child)
         else:
             raise SrcMlException(child, result)
 
@@ -749,7 +760,7 @@ def parse_struct_or_class(element: ET.Element) -> CppStruct:
     for child in element:
         child_tag = clean_tag_or_attrib(child.tag)
         if child_tag == "name":
-            result.name = child.text
+            result.name = parse_name(child)
         elif child_tag == "super_list":
             result.super_list = parse_super_list(child)
         elif child_tag == "block":
@@ -865,9 +876,9 @@ def fill_block(element: ET.Element, inout_block_content: CppBlock):
 
         try:
             if _preprocessor_tests_state.process_tag(child):
-                pass
+                last_ignored_child = child
             elif _preprocessor_tests_state.is_inside_ignored_region():
-                pass
+                last_ignored_child = child
             elif child_tag == "decl_stmt":
                 inout_block_content.block_children.append(parse_decl_stmt(child))
             elif child_tag == "decl":
@@ -891,7 +902,7 @@ def fill_block(element: ET.Element, inout_block_content: CppBlock):
                         # When there is an explanation following a typedef or a struct forward decl,
                         # we keep both the code (as a comment) and its comment
                         if clean_tag_or_attrib(last_ignored_child.tag) in ["typedef", "struct_decl"]:
-                            cpp_comment.text = "// " + srcml_to_code(last_ignored_child) + "    " + cpp_comment.text
+                            cpp_comment.set_text("// " + srcml_to_code(last_ignored_child) + "    " + cpp_comment.text())
                             ignore_comment = False
                         else:
                             ignore_comment = True
@@ -907,10 +918,6 @@ def fill_block(element: ET.Element, inout_block_content: CppBlock):
                 inout_block_content.block_children.append(parse_namespace(child))
             elif child_tag == "enum":
                 inout_block_content.block_children.append(parse_enum(child))
-            elif child_tag == "expr_stmt":
-                inout_block_content.block_children.append(parse_expr_stmt(child))
-            elif child_tag == "return":
-                inout_block_content.block_children.append(parse_return(child))
             elif child_tag == "block_content":
                 inout_block_content.block_children.append(parse_block_content(child))
             elif child_tag in ["public", "protected", "private"]:
@@ -976,7 +983,7 @@ def parse_namespace(element: ET.Element) -> CppNamespace:
     for child in element:
         child_tag = clean_tag_or_attrib(child.tag)
         if child_tag == "name":
-            result.name = child.text
+            result.name = parse_name(child)
         elif child_tag == "block":
             result.block = parse_block(child)
         else:
@@ -1000,28 +1007,13 @@ def parse_enum(element: ET.Element) -> CppEnum:
     for child in element:
         child_tag = clean_tag_or_attrib(child.tag)
         if child_tag == "name":
-            result.name = child.text
+            result.name = parse_name(child)
         elif child_tag == "block":
             result.block = parse_block(child)
         else:
             raise SrcMlException(child, result)
 
     return result
-
-
-def parse_expr_stmt(element: ET.Element) -> CppExprStmt:
-    assert clean_tag_or_attrib(element.tag) == "expr_stmt"
-    result = CppExprStmt()
-    fill_cpp_element_data(element, result)
-    return result
-
-
-def parse_return(element: ET.Element) -> CppReturn:
-    assert clean_tag_or_attrib(element.tag) == "return"
-    result = CppReturn()
-    fill_cpp_element_data(element, result)
-    return result
-
 
 
 ###########################################
