@@ -55,7 +55,34 @@ import internal.code_replacements as _code_replacements
 
 
 @dataclass
+class LitgenOptions:
+    flag_quiet: bool = False # if quiet, all warning messages are discarded
+    flag_show_python_callstack: bool = False
+
+
+LITGEN_OPTIONS = LitgenOptions()
+
+
+def _preprocess_imgui_code(code):
+    import re
+    new_code = code
+    new_code  = re.sub(r'IM_FMTARGS\(\d\)', '', new_code)
+    new_code  = re.sub(r'IM_FMTLIST\(\d\)', '', new_code)
+    return new_code
+
+
+@dataclass
 class CodeStyleOptions:
+
+    encoding = "utf-8"
+
+    header_guard_suffixes = ["_H", "HPP", "HXX"]
+    header_filter_preprocessor_regions = True
+    code_preprocess_function: Callable[[str], str] = None
+
+    # Preserve empty lines, i.e any empty line in the C++ code will lead to an empty line in the python stub
+    preserve_empty_lines: bool = True
+
     # Enum members title policy: are titles directly on top (True), or to the right (False)
     enum_title_on_previous_line: bool = False
 
@@ -85,6 +112,19 @@ class CodeStyleOptions:
     # Spacing option in C++ code
     indent_size_cpp_pydef: int = 8
 
+    #
+    # enum options
+    #
+
+    # Remove the typical "EnumName_" prefix from enum values.
+    # For example, with the C enum:
+    #     enum MyEnum { MyEnum_A = 0, MyEnum_B };
+    # Values would be named "a" and "b" in python
+    enum_flag_remove_values_prefix: bool = True
+    # Skip count value from enums, for example like in:
+    #    enum MyEnum { MyEnum_A = 1, MyEnum_B = 1, MyEnum_COUNT };
+    enum_flag_skip_count: bool = True
+
     # Typed accessor
     def get_code_replacements(self):
         return self.code_replacements
@@ -101,7 +141,7 @@ class CodeStyleOptions:
     # C Buffers to py::array
     #
     buffer_flag_replace_by_array = False
-    buffer_types = ["int8_t", "uint8_t"] # of type List[str]. Which means that `uint8_t*` are considered as possible buffers
+    buffer_types = ["int8_t", "uint8_t", "uchar"] # of type List[str]. Which means that `uint8_t*` are considered as possible buffers
     buffer_template_types = ["T"] # Which means that templated functions using a buffer use T as a templated name
     buffer_size_regexes = [
         make_regex_any_variable_ending_with("count"),   # any variable name ending with count or Count
@@ -213,4 +253,12 @@ def code_style_implot():
         "PlotPieChart"
     ]
 
+    options.code_preprocess_function = _preprocess_imgui_code
+
+    return options
+
+
+def code_style_imgui():
+    options = code_style_implot()
+    options.header_guard_suffixes.append("IMGUI_DISABLE")
     return options

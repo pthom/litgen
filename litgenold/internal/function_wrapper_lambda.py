@@ -33,11 +33,9 @@ Shall be wrapped like this:
         return PlotScatter(label_id, values, count, stride);
     },
 """
-import copy
-
 from typing import List, Optional
-from litgen.internal import code_utils, cpp_to_python, CodeStyleOptions
-from litgen.internal.cpp_elements import CppDecl, CppFunctionDecl
+from litgen.internal import code_utils, cpp_to_python, CodeStyleOptions, CppDecl
+import copy
 
 
 def _possible_buffer_pointer_types(options: CodeStyleOptions):
@@ -48,7 +46,7 @@ def _possible_buffer_pointer_types(options: CodeStyleOptions):
 
 def _possible_buffer_template_pointer_types(options: CodeStyleOptions):
     types = [t + "*" for t in options.buffer_template_types] \
-            + [t + " *" for t in options.buffer_template_types]
+              + [t + " *" for t in options.buffer_template_types]
     return types
 
 
@@ -193,8 +191,8 @@ def _buffer_params_list(params: List[CppDecl], options: CodeStyleOptions) -> Lis
     return r
 
 
-def _make_call_function(function_infos: CppFunctionDecl, is_method, options: CodeStyleOptions) -> List[str]:
-    params = function_infos.parameters
+def _make_call_function(function_infos: FunctionsInfos, is_method, options: CodeStyleOptions) -> List[str]:
+    params = function_infos.get_parameters()
     is_template = _contains_template_buffer(params, options)
     first_template_buffer_param = _first_template_buffer_param(params, options)
     return_str1 = "" if function_infos.function_code.return_type == "void" else "return "
@@ -242,9 +240,9 @@ def _make_call_function(function_infos: CppFunctionDecl, is_method, options: Cod
     return code_lines
 
 
-def _template_body_code(function_infos: CppFunctionDecl, is_method: bool, options: CodeStyleOptions) -> List[str]:
+def _template_body_code(function_infos: FunctionsInfos, is_method: bool, options: CodeStyleOptions) -> List[str]:
 
-    params = function_infos.parameters
+    params = function_infos.get_parameters()
 
     r = []
 
@@ -350,7 +348,7 @@ def _lambda_params_call(
         params: List[CppDecl],
         options: CodeStyleOptions,
         forced_cast_type: Optional[str]
-) -> str:
+        ) -> str:
 
     def pydef_attributes_names_cpp(attrs: List[CppDecl]) -> str:
         strs = map(lambda attr: attr.name_cpp, attrs)
@@ -417,10 +415,10 @@ def _lambda_params_call(
 
 
 def make_function_wrapper_lambda(
-        function_infos: CppFunctionDecl,
+        function_infos: FunctionsInfos,
         options: CodeStyleOptions,
         parent_struct_name: str = ""
-) -> str:
+        ) -> str:
     """
     ````voiladoc
 >>> import litgen, litgen.internal.function_parser, litgen.internal.function_wrapper_lambda
@@ -453,7 +451,7 @@ def make_function_wrapper_lambda(
 
 
 def make_method_wrapper_lambda(
-        function_infos: CppFunctionDecl,
+        function_infos: FunctionsInfos,
         options: CodeStyleOptions,
         parent_struct_name: str) -> str:
 

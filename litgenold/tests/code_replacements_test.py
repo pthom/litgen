@@ -1,5 +1,6 @@
 import os, sys; _THIS_DIR = os.path.dirname(__file__); sys.path = [_THIS_DIR + "/.."] + sys.path
 from litgen.internal import code_replacements
+from options import CodeStyleOptions
 
 
 def test_code_replacements():

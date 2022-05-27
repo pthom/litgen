@@ -1,6 +1,7 @@
 import os.path
 import re
 from typing import List, Tuple, Optional
+from code_types import *
 from dataclasses import dataclass
 import itertools
 import logging
@@ -108,13 +109,11 @@ def indent_code(code: str, indent_size: int, skip_first_line = False):
 
     lines = code.split("\n")
     indent_str = " " * indent_size
-
     def indent_line(line):
         if len(line) == 0:
             return ""
         else:
             return indent_str + line
-
     lines = map(indent_line, lines)
     return "\n".join(lines)
 
@@ -309,6 +308,191 @@ def remove_end_of_line_cpp_comments(code: str) -> str:
     return code
 
 
+
+def is_correct_c_identifier(name: str) -> bool:
+    """
+    The general rules for naming variables are:
+        Names can contain letters, digits and underscores
+        Names must begin with a letter or an underscore (_)
+        Names are case sensitive (myVar and myvar are different variables)
+        Names cannot contain whitespaces or special characters like !, #, %, etc.
+        Reserved words (like C++ keywords, such as int) cannot be used as names
+    """
+    if len(name) == 0:
+        return False
+    if name[0] not in VALID_IDENTIFIERS_CHARS_START:
+        return False
+    for c in name[1:]:
+        if c not in VALID_IDENTIFIERS_CHARS:
+            return False
+    return True
+
+
+def reserved_cpp_keywords():
+    keywords_str = (
+            "alignas alignof and and_eq asm atomic_cancel atomic_commit atomic_noexcept auto bitand bitor bool break case catch char "
+            + "char8_t  char16_t char32_t class compl concept  const consteval  constexpr constinit  const_cast continue co_await "
+            + "co_return  co_yield  decltype default delete do double dynamic_cast else enum explicit export extern false float "
+            + "for friend goto if inline int long mutable namespace new noexcept not not_eq nullptr operator or or_eq private protected "
+            + "public reflexpr register  reinterpret_cast requires  return short signed sizeof static static_assert static_cast struct "
+            + "switch synchronized template this thread_local throw true try typedef typeid typename union unsigned using virtual void "
+            + "volatile wchar_t while xor xor_eq" )
+
+    keywords = keywords_str.split(" ")
+    return keywords
+
+
+def parse_c_identifier_at_start(code: str) -> Tuple[str, int]:
+    if len(code) == 0:
+        raise ValueError("parse_c_identifier_at_start cannot accept empty strings")
+    if code[0] not in VALID_IDENTIFIERS_CHARS_START:
+        return "", -1
+
+    pos = 1
+    while pos < len(code):
+        if code[pos] not in VALID_IDENTIFIERS_CHARS:
+            break
+        pos = pos + 1
+
+    identifer = code[:pos]
+
+    if identifer in reserved_cpp_keywords():
+        raise ValueError("parse_c_identifier_at_start cannot return a reserved keyword")
+
+    return identifer, pos
+
+
+def parse_c_identifier_at_end(code: str) -> Tuple[str, int]:
+    if len(code) == 0:
+        raise CppParseException("parse_c_identifier_at_start cannot accept empty strings")
+    if code[-1] not in VALID_IDENTIFIERS_CHARS:
+        return "", -1
+
+    pos = len(code) - 1
+    while pos >= 0:
+        c = code[pos]
+        if c not in VALID_IDENTIFIERS_CHARS:
+            break
+        pos = pos - 1
+
+    pos = pos +  1
+    identifer = code[pos:]
+    if identifer[0] not in VALID_IDENTIFIERS_CHARS_START:
+        return "", -1
+
+    if identifer in reserved_cpp_keywords():
+        raise CppParseException("parse_c_identifier_at_start cannot return a reserved keyword")
+
+    return identifer, pos
+
+
+@dataclass
+class FunctionNameAndReturnType:
+    name_cpp: str = ""
+    return_type_cpp: str = ""
+    is_static: bool = False
+
+
+def remove_template_from_return_type(type_str: str) -> str:
+    if not type_str.startswith("template"):
+        return type_str
+
+    type_str = type_str.replace("template", "").strip()
+
+    if type_str[0] == "<":
+        pos = 1
+        nb_chevrons = 1
+        while pos < len(type_str) and nb_chevrons > 0:
+            char = type_str[pos]
+            if char == "<":
+                nb_chevrons += 1
+            if char == ">":
+                nb_chevrons -= 1
+            if nb_chevrons == 0:
+                break
+            pos += 1
+        assert nb_chevrons == 0
+
+        type_str = type_str[pos + 1 : ].strip()
+
+    return type_str
+
+
+def remove_template_and_inline_from_return_type(type_str: str) -> str:
+    type_str = remove_template_from_return_type(type_str)
+    if type_str.startswith("inline"):
+        type_str = type_str.replace("inline", "").strip()
+    type_str = remove_template_from_return_type(type_str)
+
+    return type_str
+
+
+def parse_function_declaration(code_line: str) -> Optional[FunctionNameAndReturnType]:
+    if "(" not in code_line:
+        return None
+
+    def find_first_paren_in_main_scope(pos_start: int) -> int:
+        nb_chevrons = 0
+        nb_accolades = 0
+        nb_equal = 0
+        for pos, char in enumerate(code_line[pos_start :]):
+            if char == "=":
+                nb_equal += 1
+            if char == "<":
+                nb_chevrons += 1
+            if char == ">":
+                nb_chevrons -= 1
+            if char == "{":
+                nb_accolades += 1
+            if char == "}":
+                nb_accolades -= 1
+            if char == "(" and nb_chevrons == 0 and nb_accolades == 0 and nb_equal == 0:
+                return pos + pos_start
+        return -1
+
+    pos_first_paren = find_first_paren_in_main_scope(0)
+
+    # special case for operator()
+    if (pos_first_paren > len("operator(") and
+            code_line[ pos_first_paren - len("operator") : pos_first_paren + 2] == "operator()"):
+        pos_first_paren = find_first_paren_in_main_scope(pos_first_paren + 2)
+
+    if pos_first_paren < 0:
+        return None
+
+    return_type_and_function_name = code_line[0 : pos_first_paren].strip()
+
+    idx_start_fn_identifier = -1
+    for op in CPP_OPERATORS:
+        if return_type_and_function_name.endswith(op):
+            function_name = op
+            idx_start_fn_identifier = return_type_and_function_name.index(op)
+
+    if idx_start_fn_identifier < 0:
+        function_name, idx_start_fn_identifier  = parse_c_identifier_at_end(return_type_and_function_name)
+
+    # Special case for destructors
+    if idx_start_fn_identifier > 0 and return_type_and_function_name[idx_start_fn_identifier - 1] =="~":
+        function_name = "~" + function_name
+        return_type_cpp = ""
+        return FunctionNameAndReturnType(function_name, return_type_cpp)
+
+    if len(function_name) == 0:
+        raise CppParseException(f"parse_function_declaration; empty function name!")
+    function_name = function_name.strip()
+
+    return_type_cpp = return_type_and_function_name[ : idx_start_fn_identifier].strip()
+
+    return_type_cpp = remove_template_and_inline_from_return_type(return_type_cpp)
+
+    is_static = False
+    if contains_word(return_type_cpp, "static"):
+        return_type_cpp = return_type_cpp.replace("static", "").strip()
+        is_static = True
+
+    return FunctionNameAndReturnType(function_name, return_type_cpp, is_static=is_static)
+
+
 def join_remove_empty(separator: str, strs: List[str]):
     non_empty_strs = filter(lambda s : len(s) > 0, strs)
     r = separator.join(non_empty_strs)
@@ -367,8 +551,3 @@ def make_regex_any_variable_starting_with(what_to_find: str) -> str:
     what_regex = f"[{what_to_find[0].lower()}{what_to_find[0].upper()}]{what_to_find[1:].lower()}"
     regex = regex_template.replace("WHAT_REGEX", what_regex)
     return regex
-
-
-def merge_dicts(dict1, dict2):
-    res = {**dict1, **dict2}
-    return res
