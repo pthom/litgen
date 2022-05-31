@@ -90,6 +90,30 @@ def test_generate_pydef_function_cpp_code() -> str:
 
     test_implot_easy()
 
+    def test_return_value_policy():
+        options = code_style_implot()
+        code = '''
+            // Returns a widget
+            IMPLOT_API Widget* Foo();  // return_value_policy::reference
+        '''
+        cpp_unit = srcml.code_to_cpp_unit(options, code)
+        generated_code = module_pydef_generator.generate_pydef(cpp_unit, options)
+        expected_code = '''
+            m.def("foo",
+                []()
+                {
+                    { return Foo(); }
+                },
+            
+                "Returns a widget\\n\\nreturn_value_policy::reference",
+                pybind11::reference
+            );
+        '''
+        code_utils.assert_are_codes_equal(generated_code, expected_code)
+
+    test_return_value_policy()
+
+
     def test_implot_one_buffer():
         options = code_style_implot()
         code = '''

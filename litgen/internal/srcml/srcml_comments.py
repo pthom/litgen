@@ -203,7 +203,9 @@ def _is_comment_on_previous_line(children: List[ET.Element], idx: int):
                 return True
             else:
                 next_next_element = CppElement(children[idx +  2])
-                if next_next_element.tag() == "comment" and next_next_element.start().line == next_element.end().line:
+                if (next_next_element.tag() == "comment" and next_next_element.start().line == next_element.end().line
+                    and "return_value_policy::" not in next_next_element.text() ):
+
                     return False
                 else:
                     return True

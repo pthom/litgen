@@ -111,6 +111,7 @@ def _generate_pydef_function(
         options: CodeStyleOptions,
         parent_struct_name: str = ""
     ) -> str:
+    return_value_policy = function_return_value_policy(function_infos)
 
     is_method = len(parent_struct_name) > 0
 
@@ -133,9 +134,9 @@ def _generate_pydef_function(
     code_lines += [f'    "{comment_cpp}"']
 
     # Return value policy
-    if len(function_return_value_policy(function_infos)) > 0:
+    if len(return_value_policy) > 0:
         code_lines[-1] += ","
-        code_lines += [f"    pybind11::{function_return_value_policy(function_infos)}"]
+        code_lines += [f"    pybind11::{return_value_policy}"]
 
     # Ending
     if is_method:
