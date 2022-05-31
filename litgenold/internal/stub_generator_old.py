@@ -234,4 +234,3 @@ class {struct_name}(_cpp_immvision.{struct_name}):
     final_code += code_outro_2
 
     return final_code
-

@@ -548,6 +548,11 @@ class CppParameterList(CppElement):
         r = ", ".join(names)
         return r
 
+    def types_only_for_template(self):
+        types = [ param.full_type() for param in self.parameters ]
+        r = ", ".join(types)
+        return r
+
     def __str__(self):
         return self.str_code()
 

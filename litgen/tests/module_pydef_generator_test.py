@@ -246,3 +246,60 @@ test_generate_python_wrapper_init_code will need to be handled later (or not !)
 #     test_require_opengl()
 
 
+#################################
+#           Structs
+################################
+
+
+def test_generate_pydef_struct_cpp_code():
+    options = code_style_immvision()
+    code = """
+        // A dummy structure that likes to multiply
+        struct Multiplier 
+        { 
+            Multiplier(); // default constructor
+            
+            // Constructor with param
+            Multiplier(int _who): who(_who) {}; 
+            
+            // Doubles the input number
+            int CalculateDouble(int x = 21) 
+            { 
+                return x * 2; 
+            }
+            // Who is who?
+            int who = 627;
+        };
+    """
+    cpp_unit = srcml.code_to_cpp_unit(options, code)
+    generated = module_pydef_generator.generate_pydef(cpp_unit, options)
+    expected_code = """
+    auto pyClassMultiplier = py::class_<Multiplier>
+        (m, "Multiplier", 
+        "A dummy structure that likes to multiply")
+
+        .def(py::init<>()) 
+
+
+        .def(
+            py::init<int>(),
+            py::arg("_who"),
+
+            "Constructor with param"
+        )
+
+
+            .def("calculate_double",
+                [](int x = 21)
+                {
+                    { return self.CalculateDouble(x); }
+                },
+                py::arg("x") = 21,
+                "Doubles the input number"
+            )
+
+        .def_readwrite("who", &Multiplier::who, "Who is who?")
+        .def("__repr__", [](const Multiplier& v) { return ToString(v); }); 
+    """
+    # logging.warning("\n" + generated)
+    code_utils.assert_are_codes_equal(generated, expected_code)
