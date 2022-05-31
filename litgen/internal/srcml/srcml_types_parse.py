@@ -111,6 +111,13 @@ def _parse_name(element: ET.Element) -> str:
     return name
 
 
+def parse_decl_from_code(options: CodeStyleOptions, code: str, previous_decl: CppDecl) -> CppDecl:
+    cpp_unit = srcml_main.code_to_cpp_unit(options, code)
+    assert len(cpp_unit.block_children) == 1
+    assert cpp_unit.block_children[0].tag() == "decl"
+    return cpp_unit.block_children[0]
+
+
 def parse_decl(options: CodeStyleOptions, element_c: CppElementAndComment, previous_decl: CppDecl) -> CppDecl:
     """
     https://www.srcml.org/doc/cpp_srcML.html#variable-declaration-statement

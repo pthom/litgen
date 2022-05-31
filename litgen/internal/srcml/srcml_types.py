@@ -6,6 +6,7 @@ import xml.etree.ElementTree as ET
 
 from litgen.internal.srcml import srcml_utils, srcml_caller
 from litgen.internal import code_utils
+from litgen import CodeStyleOptions
 
 
 @dataclass
@@ -508,6 +509,21 @@ class CppParameter(CppElement):
     def __str__(self):
         return self.str_code()
 
+    def full_type(self) -> str:
+        r = self.decl.cpp_type.str_code()
+        return r
+
+    def default_value(self):
+        return self.decl.init
+
+    def variable_name(self):
+        return self.decl.name
+
+
+def str_code_parameters_list(parameters: List[CppParameter]) -> str:
+    strs = list(map(lambda param: str(param), parameters))
+    return  code_utils.join_remove_empty(", ", strs)
+
 
 @dataclass
 class CppParameterList(CppElement):
@@ -522,8 +538,7 @@ class CppParameterList(CppElement):
         self.parameters = []
 
     def str_code(self):
-        strs = list(map(lambda param: str(param), self.parameters))
-        return  code_utils.join_remove_empty(", ", strs)
+        return str_code_parameters_list(self.parameters)
 
     def __str__(self):
         return self.str_code()
@@ -581,6 +596,14 @@ class CppFunctionDecl(CppElementAndComment):
 
     def str_code(self):
         r = self._str_signature() + ";"
+        return r
+
+    def full_return_type(self, options: CodeStyleOptions):
+        r = self.type.str_code()
+        for prefix in options.functions_api_prefixes:
+            r = r.replace(prefix + " ", "")
+        if r.startswith("inline "):
+            r = r.replace("inline ", "")
         return r
 
     def __str__(self):

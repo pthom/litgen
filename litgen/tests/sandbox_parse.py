@@ -1,22 +1,33 @@
 import os, sys; _THIS_DIR = os.path.dirname(__file__); sys.path = [_THIS_DIR + "/.."] + sys.path
 
-import litgen.internal.srcml as srcml
-import litgen.internal.code_utils as code_utils
+from litgen.internal import srcml
+from litgen.internal import code_utils
+import litgen
 
 
-def truc():
+def read_file_content(filename):
+    with open(filename, "r") as f:
+        content = f.read()
+    return content
+
+
+def play_code():
+    options = litgen.code_style_imgui()
     code = """
-    enum Foo {
-        a = 1, // A value
-        b = 2, // B Value
-        c // End
-    };
+MY_API inline int8_t test_with_one_const_buffer(const int8_t* values, int count) {}
     """
 
-    srcml_element = srcml.code_to_srcml(code, encoding="utf-8")
-    print(srcml.srcml_to_code(srcml_element, encoding="utf-8"))
+    cpp_unit = srcml.code_to_cpp_unit(options, code)
+    print(cpp_unit)
 
-    print(srcml.srcml_to_str_readable(srcml_element))
+def play_imgui():
+    options = litgen.code_style_imgui()
+    source_filename = os.path.realpath(_THIS_DIR + "/../../../examples_real_libs/imgui/imgui.h")
+    cpp_unit = srcml.file_to_cpp_unit(options, source_filename)
+    # print(cpp_unit)
 
-# truc()
+#test_code()
 
+#test_imgui()
+
+play_code()

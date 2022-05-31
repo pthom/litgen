@@ -37,7 +37,9 @@ import copy
 
 from typing import List, Optional
 from litgen.internal import code_utils, cpp_to_python, CodeStyleOptions
-from litgen.internal.cpp_elements import CppDecl, CppFunctionDecl
+from litgen.internal.srcml.srcml_types import CppFunctionDecl, CppParameter, CppParameterList, CppType
+from litgen.internal.srcml import srcml_types_parse
+from litgen.internal.srcml import srcml_types
 
 
 def _possible_buffer_pointer_types(options: CodeStyleOptions):
@@ -52,59 +54,61 @@ def _possible_buffer_template_pointer_types(options: CodeStyleOptions):
     return types
 
 
-def _looks_like_param_buffer_standard(param: CppDecl, options: CodeStyleOptions) -> bool:
+def _looks_like_param_buffer_standard(param: CppParameter, options: CodeStyleOptions) -> bool:
     if not options.buffer_flag_replace_by_array:
         return False
     for possible_buffer_type in _possible_buffer_pointer_types(options):
-        if code_utils.contains_pointer_type(param.type, possible_buffer_type):
+        param_type_code = param.full_type()
+        if code_utils.contains_pointer_type(param_type_code, possible_buffer_type):
             return True
     return False
 
 
-def _looks_like_param_template_buffer(param: CppDecl, options: CodeStyleOptions) -> bool:
+def _looks_like_param_template_buffer(param: CppParameter, options: CodeStyleOptions) -> bool:
     if not options.buffer_flag_replace_by_array:
         return False
     for possible_buffer_type in _possible_buffer_template_pointer_types(options):
-        if code_utils.contains_pointer_type(param.type, possible_buffer_type):
+        param_type_code = param.full_type()
+        if code_utils.contains_pointer_type(param_type_code, possible_buffer_type):
             return True
     return False
 
 
-def _looks_like_param_buffer_template_or_not(param: CppDecl, options: CodeStyleOptions) -> bool:
+def _looks_like_param_buffer_template_or_not(param: CppParameter, options: CodeStyleOptions) -> bool:
     return _looks_like_param_buffer_standard(param, options) or _looks_like_param_template_buffer(param, options)
 
 
-def _looks_like_buffer_size_name(param: CppDecl, options: CodeStyleOptions) -> bool:
-    return code_utils.does_match_regexes(options.buffer_size_regexes, param.name)
+def _looks_like_buffer_size_name(param: CppParameter, options: CodeStyleOptions) -> bool:
+    return code_utils.does_match_regexes(options.buffer_size_regexes, param.variable_name())
 
 
-def is_buffer_size_name_at_idx(params: List[CppDecl], options: CodeStyleOptions, idx_param: int) -> bool:
+def is_buffer_size_name_at_idx(params: CppParameterList, options: CodeStyleOptions, idx_param: int) -> bool:
     if idx_param == 0:
         return False
 
     # Test if this is a size preceded by a buffer
-    param_n0 = params[idx_param]
-    param_n1 = params[idx_param - 1]
+    param_n0 = params.parameters[idx_param]
+    param_n1 = params.parameters[idx_param - 1]
     if _looks_like_buffer_size_name(param_n0, options) and _looks_like_param_buffer_template_or_not(param_n1, options):
         return True
 
     return False
 
 
-def _is_param_buffer_at_idx_template_or_not(params: List[CppDecl], options: CodeStyleOptions, idx_param: int) -> bool:
-    if idx_param > len(params) - 2:
+def _is_param_buffer_at_idx_template_or_not(params: CppParameterList, options: CodeStyleOptions, idx_param: int) -> bool:
+    if idx_param > len(params.parameters) - 2:
         return False
 
-    if not _looks_like_param_buffer_template_or_not(params[idx_param], options):
+    if not _looks_like_param_buffer_template_or_not(params.parameters[idx_param], options):
         return False
 
     # Test if this is a buffer (optionally followed by other buffers), then followed by a size
     nb_additional_buffers = 1
     idx_next_param = idx_param + 1
-    while nb_additional_buffers < 5 and idx_next_param < len(params):
-        if _looks_like_buffer_size_name(params[idx_next_param], options):
+    while nb_additional_buffers < 5 and idx_next_param < len(params.parameters):
+        if _looks_like_buffer_size_name(params.parameters[idx_next_param], options):
             return True
-        if not _looks_like_param_buffer_template_or_not(params[idx_next_param], options):
+        if not _looks_like_param_buffer_template_or_not(params.parameters[idx_next_param], options):
             return False
         idx_next_param += 1
         nb_additional_buffers += 1
@@ -112,14 +116,14 @@ def _is_param_buffer_at_idx_template_or_not(params: List[CppDecl], options: Code
     return False
 
 
-def _contains_buffer(params: List[CppDecl], options: CodeStyleOptions) -> bool:
-    for idx in range(len(params)):
+def _contains_buffer(params: CppParameterList, options: CodeStyleOptions) -> bool:
+    for idx in range(len(params.parameters)):
         if _is_param_buffer_at_idx_template_or_not(params, options, idx):
             return True
     return False
 
 
-def _contains_template_buffer(params: List[CppDecl], options: CodeStyleOptions) -> bool:
+def _contains_template_buffer(params: CppParameterList, options: CodeStyleOptions) -> bool:
     if not _contains_buffer(params, options):
         return False
     result = False
@@ -131,7 +135,7 @@ def _contains_template_buffer(params: List[CppDecl], options: CodeStyleOptions) 
     return result
 
 
-def _first_template_buffer_param(params: List[CppDecl], options: CodeStyleOptions) -> Optional[CppDecl]:
+def _first_template_buffer_param(params: CppParameterList, options: CodeStyleOptions) -> Optional[CppParameter]:
     buffer_params_list = _buffer_params_list(params, options)
     for buffer_param in buffer_params_list:
         is_template_buffer = _looks_like_param_template_buffer(buffer_param, options)
@@ -140,7 +144,7 @@ def _first_template_buffer_param(params: List[CppDecl], options: CodeStyleOption
     return None
 
 
-def _first_buffer_param(params: List[CppDecl], options: CodeStyleOptions) -> Optional[CppDecl]:
+def _first_buffer_param(params: CppParameterList, options: CodeStyleOptions) -> Optional[CppParameter]:
     buffer_params_list = _buffer_params_list(params, options)
     for buffer_param in buffer_params_list:
         is_buffer = _looks_like_param_buffer_template_or_not(buffer_param, options)
@@ -149,62 +153,70 @@ def _first_buffer_param(params: List[CppDecl], options: CodeStyleOptions) -> Opt
     return None
 
 
-def is_param_variadic_format(params: List[CppDecl], options: CodeStyleOptions, idx_param: int) -> bool:
+def is_param_variadic_format(params: CppParameterList, options: CodeStyleOptions, idx_param: int) -> bool:
     if idx_param == 0:
         return False
-    param = params[idx_param]
-    previous_param = params[idx_param - 1]
-    return param.name == "..." and (previous_param.type == "const char *" or previous_param.type == "const char*")
+    param = params.parameters[idx_param]
+    previous_param = params.parameters[idx_param - 1]
+    param_type = param.full_type()
+    previous_param_type = previous_param.full_type()
+    return param_type == "..." and (previous_param_type == "const char *" or previous_param_type == "const char*")
 
 
-def _is_first_param_of_variadic_format(params: List[CppDecl], options: CodeStyleOptions, idx_param: int) -> bool:
-    if idx_param == len(params) - 1:
+def _is_first_param_of_variadic_format(params: CppParameterList, options: CodeStyleOptions, idx_param: int) -> bool:
+    if idx_param == len(params.parameters) - 1:
         return False
-    param = params[idx_param]
-    next_param = params[idx_param + 1]
-    return next_param.name == "..." and (param.type == "const char *" or param.type == "const char*")
+    param = params.parameters[idx_param]
+    next_param = params.parameters[idx_param + 1]
+    next_param_type = next_param.full_type()
+    param_type = param.full_type()
+    return next_param_type == "..." and (param_type == "const char *" or param_type == "const char*")
 
 
-def is_default_sizeof_param(param: CppDecl, options: CodeStyleOptions) -> bool:
+def is_default_sizeof_param(param: CppParameter, options: CodeStyleOptions) -> bool:
     if not options.buffer_flag_replace_by_array:
         return False
-    return param.default_value.strip().startswith("sizeof")
+    param_default_value = param.default_value()
+    return param_default_value.strip().startswith("sizeof")
 
 
-def _param_buffer_replaced_by_array(param: CppDecl, options: CodeStyleOptions) -> CppDecl:
+def _param_buffer_replaced_by_array(param: CppParameter, options: CodeStyleOptions) -> CppParameter:
     if not options.buffer_flag_replace_by_array:
         return param
 
     for possible_buffer_type in _possible_buffer_pointer_types(options) + _possible_buffer_template_pointer_types(options):
-        if code_utils.contains_pointer_type(param.type, possible_buffer_type):
-            param_copy = copy.deepcopy(param)
-            param_copy.type = param.type.replace(possible_buffer_type, "py::array &")
-            return param_copy
+        param_type = param.full_type()
+        if code_utils.contains_pointer_type(param_type, possible_buffer_type):
+            if param_type.strip().startswith("const"):
+                param_new = srcml_types_parse.parse_decl_from_code(options, f"const py::array & {param.variable_name()}", None)
+            else:
+                param_new = srcml_types_parse.parse_decl_from_code(options, f"py::array & {param.variable_name()}", None)
+            return param_new
     return param
 
 
-def _buffer_params_list(params: List[CppDecl], options: CodeStyleOptions) -> List[CppDecl]:
+def _buffer_params_list(params: CppParameterList, options: CodeStyleOptions) -> List[CppParameter]:
     if not options.buffer_flag_replace_by_array:
         return []
     r = []
-    for idx_param, param in enumerate(params):
+    for idx_param, param in enumerate(params.parameters):
         if _is_param_buffer_at_idx_template_or_not(params, options, idx_param):
             r.append(param)
     return r
 
 
 def _make_call_function(function_infos: CppFunctionDecl, is_method, options: CodeStyleOptions) -> List[str]:
-    params = function_infos.parameters
+    params = function_infos.parameter_list
     is_template = _contains_template_buffer(params, options)
     first_template_buffer_param = _first_template_buffer_param(params, options)
-    return_str1 = "" if function_infos.function_code.return_type == "void" else "return "
-    return_str2 = " return;" if function_infos.function_code.return_type == "void" else ""
+    return_str1 = "" if function_infos.full_return_type(options) == "void" else "return "
+    return_str2 = " return;" if function_infos.full_return_type(options) == "void" else ""
     self_prefix = "self." if is_method else ""
 
     code_lines = []
     if is_template:
         assert first_template_buffer_param is not None
-        code_lines.append(f"    char array_type = {first_template_buffer_param.name}.dtype().char_();")
+        code_lines.append(f"    char array_type = {first_template_buffer_param.variable_name()}.dtype().char_();")
 
         for py_array_type in cpp_to_python.py_array_types():
 
@@ -212,7 +224,7 @@ def _make_call_function(function_infos: CppFunctionDecl, is_method, options: Cod
 
             code_lines.append(f"    if (array_type == '{py_array_type}')")
             attrs_function_call = _lambda_params_call(params, options, cast_type)
-            code_lines.append(f"        {{ {return_str1}{self_prefix}{function_infos.function_name()}({attrs_function_call});{return_str2} }}")
+            code_lines.append(f"        {{ {return_str1}{self_prefix}{function_infos.name}({attrs_function_call});{return_str2} }}")
 
         code_lines.append("")
         code_lines.append(f'    // If we arrive here, the array type is not supported!')
@@ -221,30 +233,30 @@ def _make_call_function(function_infos: CppFunctionDecl, is_method, options: Cod
     else:
         if _contains_buffer(params, options):
             first_buffer_param = _first_buffer_param(params, options)
-            expected_py_array_type = cpp_to_python.cpp_type_to_py_array_type(first_buffer_param.type)
+            expected_py_array_type = cpp_to_python.cpp_type_to_py_array_type(first_buffer_param.full_type())
             error_message = f"""
                 Bad type!  Expected a buffer of native type:
-                            {first_buffer_param.type}
+                            {first_buffer_param.full_type()}
                         Which is equivalent to 
                             {expected_py_array_type}
                         (using py::array::dtype().char_() as an id)
             """
             error_message_docstring = f'std::string(R"msg({error_message})msg")'
 
-            code_lines.append(f"    char array_type = {first_buffer_param.name}.dtype().char_();")
+            code_lines.append(f"    char array_type = {first_buffer_param.variable_name()}.dtype().char_();")
             code_lines.append(f"    if (array_type != '{expected_py_array_type}')")
             code_lines.append(f'        throw std::runtime_error({error_message_docstring});')
 
         cast_type = None
         attrs_function_call = _lambda_params_call(params, options, cast_type)
-        code_lines.append(f"    {{ {return_str1}{self_prefix}{function_infos.function_name()}({attrs_function_call});{return_str2} }}")
+        code_lines.append(f"    {{ {return_str1}{self_prefix}{function_infos.name}({attrs_function_call});{return_str2} }}")
 
     return code_lines
 
 
 def _template_body_code(function_infos: CppFunctionDecl, is_method: bool, options: CodeStyleOptions) -> List[str]:
 
-    params = function_infos.parameters
+    params = function_infos.parameter_list
 
     r = []
 
@@ -253,7 +265,8 @@ def _template_body_code(function_infos: CppFunctionDecl, is_method: bool, option
     #
     buffer_params_list = _buffer_params_list(params, options)
     for buffer_param in buffer_params_list:
-        is_const = buffer_param.type.startswith("const")
+        buffer_param_type = buffer_param.full_type()
+        is_const = buffer_param_type.startswith("const")
         is_template_buffer = _looks_like_param_template_buffer(buffer_param, options)
         if is_const:
             code_template = """
@@ -270,7 +283,7 @@ def _template_body_code(function_infos: CppFunctionDecl, is_method: bool, option
         code_template = code_utils.indent_code_force(code_template, 4)
 
         code = code_template
-        code = code.replace("PARAM_NAME_CPP", buffer_param.name)
+        code = code.replace("PARAM_NAME_CPP", buffer_param.variable_name())
 
         r += code.split("\n")
 
@@ -278,7 +291,7 @@ def _template_body_code(function_infos: CppFunctionDecl, is_method: bool, option
     # Process sizeof params
     #
     idx_sizeof_param = 0
-    for sizeof_param in params:
+    for sizeof_param in params.parameters:
         if not is_default_sizeof_param(sizeof_param, options):
             continue
         assert idx_sizeof_param < len(buffer_params_list)
@@ -291,8 +304,8 @@ def _template_body_code(function_infos: CppFunctionDecl, is_method: bool, option
         BUFFER_PARAM_NAME_CPP_SIZEOF_PARAM_NAME = (int)BUFFER_PARAM_NAME_CPP.itemsize();
         """[1:]
         code = code_template
-        code = code.replace("SIZEOF_PARAM_NAME", sizeof_param.name)
-        code = code.replace("BUFFER_PARAM_NAME_CPP", related_buffer_param.name)
+        code = code.replace("SIZEOF_PARAM_NAME", sizeof_param.variable_name())
+        code = code.replace("BUFFER_PARAM_NAME_CPP", related_buffer_param.variable_name())
         r += code.split("\n")
 
         idx_sizeof_param += 1
@@ -305,21 +318,24 @@ def _template_body_code(function_infos: CppFunctionDecl, is_method: bool, option
 
 
 def _lambda_params_signature(
-        params: List[CppDecl],
+        params: CppParameterList,
         options: CodeStyleOptions,
         parent_struct_name: str = "") -> str:
 
     if not options.buffer_flag_replace_by_array:
-        return cpp_to_python.attrs_cpp_type_name_default(params)
+        #return cpp_to_python.attrs_cpp_type_name_default(params)
+        return params.str_code()
 
-    new_params: List[CppDecl] = []
+    new_params: List[CppParameter] = []
 
     if len(parent_struct_name) > 0:
-        new_params.append(CppDecl(type=parent_struct_name + "&", name="self"))
+        # new_params.append(CppParameter(type=parent_struct_name + "&", name="self"))
+        new_decl = srcml_types_parse.parse_decl_from_code(options, f"{parent_struct_name} & self", None)
+        new_params.append(new_decl)
 
     idx_param = 0
-    while idx_param < len(params):
-        param = params[idx_param]
+    while idx_param < len(params.parameters):
+        param = params.parameters[idx_param]
         flag_replaced = False
         # Process buffer params: replace by array
         if _is_param_buffer_at_idx_template_or_not(params, options, idx_param):
@@ -331,8 +347,8 @@ def _lambda_params_signature(
             flag_replaced = True
         # Process sizeof params (in the case of templated functions): set as -1 by default (the lambda code will initialize it if needed)
         if is_default_sizeof_param(param, options):
-            new_param = copy.deepcopy(param)
-            new_param.default_value = "-1"
+            new_param: CppParameter = copy.deepcopy(param)
+            new_param.init = "-1"
             new_params.append(new_param)
             flag_replaced = True
         if is_param_variadic_format(params, options, idx_param):
@@ -343,21 +359,25 @@ def _lambda_params_signature(
 
         idx_param += 1
 
-    return cpp_to_python.attrs_cpp_type_name_default(new_params)
+    #return cpp_to_python.attrs_cpp_type_name_default(new_params)
+    r = srcml_types.str_code_parameters_list(new_params)
+    return r
+
 
 
 def _lambda_params_call(
-        params: List[CppDecl],
+        params: CppParameterList,
         options: CodeStyleOptions,
         forced_cast_type: Optional[str]
-) -> str:
+    ) -> str:
 
-    def pydef_attributes_names_cpp(attrs: List[CppDecl]) -> str:
-        strs = map(lambda attr: attr.name_cpp, attrs)
-        return ", ".join(strs)
+    # def pydef_attributes_names_cpp(attrs: List[CppParameter]) -> str:
+    #     strs = map(lambda attr: attr.name_cpp, attrs)
+    #     return ", ".join(strs)
 
     if not options.buffer_flag_replace_by_array:
-        return pydef_attributes_names_cpp(params)
+        # return pydef_attributes_names_cpp(params)
+        return params.str_code()
 
     buffer_params_list = _buffer_params_list(params, options)
     idx_buffer_params_list = 0
@@ -366,18 +386,19 @@ def _lambda_params_call(
 
     new_params_code = []
     idx_param = 0
-    while idx_param < len(params):
-        param = params[idx_param]
+    while idx_param < len(params.parameters):
+        param = params.parameters[idx_param]
         flag_replaced = False
         # Process buffer params: replace by buffer created in the lambda
         if _is_param_buffer_at_idx_template_or_not(params, options, idx_param):
             buffer_param = buffer_params_list[idx_buffer_params_list]
-            buffer_variable_name = f"{buffer_param.name}_buffer"
+            buffer_variable_name = f"{buffer_param.variable_name()}_buffer"
 
-            cast_type_this_param = buffer_param.type
+            # cast_type_this_param = buffer_param.type
+            cast_type_this_param = buffer_param.full_type()
             if forced_cast_type is not None:
                 cast_type_this_param = forced_cast_type
-                if buffer_param.type.startswith("const"):
+                if buffer_param.full_type().startswith("const"):
                     cast_type_this_param = "const " + cast_type_this_param
 
             param_code = f"static_cast<{cast_type_this_param}>({buffer_variable_name})"
@@ -388,7 +409,7 @@ def _lambda_params_call(
         if is_buffer_size_name_at_idx(params, options, idx_param):
             assert idx_count_param < len(buffer_params_list)
             buffer_param = buffer_params_list[idx_count_param]
-            size_variable_name = f"{buffer_param.name}_count"
+            size_variable_name = f"{buffer_param.variable_name()}_count"
             new_params_code.append(size_variable_name)
             idx_count_param += 1
             flag_replaced = True
@@ -397,8 +418,8 @@ def _lambda_params_call(
             assert idx_sizeof_param < len(buffer_params_list)
             buffer_param = buffer_params_list[idx_sizeof_param]
             variable_name = "BUFFER_PARAM_NAME_CPP_SIZEOF_PARAM_NAME"
-            variable_name = variable_name.replace("BUFFER_PARAM_NAME_CPP", buffer_param.name)
-            variable_name = variable_name.replace("SIZEOF_PARAM_NAME", param.name)
+            variable_name = variable_name.replace("BUFFER_PARAM_NAME_CPP", buffer_param.variable_name())
+            variable_name = variable_name.replace("SIZEOF_PARAM_NAME", param.variable_name())
             new_params_code.append(variable_name)
             idx_sizeof_param += 1
             flag_replaced = True
@@ -408,7 +429,7 @@ def _lambda_params_call(
             flag_replaced = True
 
         if not flag_replaced:
-            new_params_code.append(param.name)
+            new_params_code.append(param.variable_name())
 
         idx_param += 1
 
@@ -440,7 +461,7 @@ def make_function_wrapper_lambda(
     def add_line(line):
         code_lines.append(line)
 
-    attrs_lambda_signature = _lambda_params_signature(function_infos.get_parameters(), options, parent_struct_name)
+    attrs_lambda_signature = _lambda_params_signature(function_infos.parameter_list, options, parent_struct_name)
 
     add_line(f"[]({attrs_lambda_signature})")
     add_line("{")
