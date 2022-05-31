@@ -1,20 +1,4 @@
-STOP
-test implot / o imgui
-warnings -> use code + ^
 
-
-Generic recursion:
-    First parser pass -> pydef
-    Second parser pass -> fill structs, enums, functions, etc
-
-    code_types: deriver de  Pydef
-
-test function declaree sur plusieurs lignes
-
-- 
-- stub / pyi
-  - Lire le fichier entier comme une struct (i.e avec Variant)
-      Comme ça, on pourra reproduire toute la doc !
 
 - toString en hackant str:
     l.Foo.__str__ = my_str
