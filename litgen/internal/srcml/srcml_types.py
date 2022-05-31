@@ -520,7 +520,7 @@ class CppParameter(CppElement):
         return self.decl.name
 
 
-def str_code_parameters_list(parameters: List[CppParameter]) -> str:
+def types_names_default_for_signature_parameters_list(parameters: List[CppParameter]) -> str:
     strs = list(map(lambda param: str(param), parameters))
     return  code_utils.join_remove_empty(", ", strs)
 
@@ -538,7 +538,15 @@ class CppParameterList(CppElement):
         self.parameters = []
 
     def str_code(self):
-        return str_code_parameters_list(self.parameters)
+        return types_names_default_for_signature_parameters_list(self.parameters)
+
+    def types_names_default_for_signature(self):
+        return self.str_code()
+
+    def names_only_for_call(self):
+        names = [ param.variable_name() for param in self.parameters ]
+        r = ", ".join(names)
+        return r
 
     def __str__(self):
         return self.str_code()

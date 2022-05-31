@@ -324,7 +324,7 @@ def _lambda_params_signature(
 
     if not options.buffer_flag_replace_by_array:
         #return cpp_to_python.attrs_cpp_type_name_default(params)
-        return params.str_code()
+        return params.types_names_default_for_signature()
 
     new_params: List[CppParameter] = []
 
@@ -360,7 +360,7 @@ def _lambda_params_signature(
         idx_param += 1
 
     #return cpp_to_python.attrs_cpp_type_name_default(new_params)
-    r = srcml_types.str_code_parameters_list(new_params)
+    r = srcml_types.types_names_default_for_signature_parameters_list(new_params)
     return r
 
 
@@ -377,7 +377,7 @@ def _lambda_params_call(
 
     if not options.buffer_flag_replace_by_array:
         # return pydef_attributes_names_cpp(params)
-        return params.str_code()
+        return params.names_only_for_call()
 
     buffer_params_list = _buffer_params_list(params, options)
     idx_buffer_params_list = 0
