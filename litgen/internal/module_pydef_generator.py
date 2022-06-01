@@ -1,10 +1,11 @@
 import logging
 import os, sys; _THIS_DIR = os.path.dirname(__file__); sys.path = [_THIS_DIR + "/.."] + sys.path
 
-from litgen.internal import srcml, CodeStyleOptions, cpp_to_python, code_utils
-from litgen.internal.srcml.srcml_types import *
+import srcmlcpp
+from srcmlcpp.srcml_types import *
 
-from function_wrapper_lambda import \
+from litgen.internal import CodeStyleOptions, cpp_to_python, code_utils
+from litgen.internal.function_wrapper_lambda import \
     make_function_wrapper_lambda, make_method_wrapper_lambda, \
     is_default_sizeof_param, is_buffer_size_name_at_idx, is_param_variadic_format
 
@@ -50,7 +51,7 @@ def _generate_pydef_enum(enum: CppEnum, options: CodeStyleOptions) -> str:
         elif child.tag() == "decl":
             result += make_value_code(child)
         else:
-            raise srcml.SrcMlException(child.srcml_element, f"Unexpected tag {child.tag()} in enum")
+            raise srcmlcpp.SrcMlException(child.srcml_element, f"Unexpected tag {child.tag()} in enum")
     result = result[:-1] + ";\n"
     return result
 

@@ -1,13 +1,14 @@
+from typing import List
+
+from litgen import CodeStyleOptions, LitgenParseException
+from litgen.internal import code_replacements, code_utils
+
 """
 Apply some replacements when going from c++ to Python:
 - CamelCase to snake_case
 - double -> float, void -> None, etc.
 
 """
-from typing import List
-# from code_types import *
-from litgen import CodeStyleOptions, LitgenParseException
-import code_replacements, code_utils
 
 
 def docstring_python(title_cpp: str, options: CodeStyleOptions) -> str:

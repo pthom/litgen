@@ -4,10 +4,9 @@ from dataclasses import dataclass
 
 import xml.etree.ElementTree as ET
 
-import srcml_code_utils
-from srcml_options import SrcmlOptions
-import srcml_utils, srcml_caller
-from srcml_code_position import CodePosition
+from srcmlcpp import code_utils, srcml_utils, srcml_caller
+from srcmlcpp.srcml_options import SrcmlOptions
+from srcmlcpp.srcml_code_position import CodePosition
 
 
 @dataclass
@@ -165,7 +164,7 @@ class CppElementAndComment(CppElement):
         self.cpp_element_comments = cpp_element_comments
 
     def as_dict(self):
-        as_dict= srcml_code_utils.merge_dicts(super().as_dict(), self.cpp_element_comments.as_dict())
+        as_dict= code_utils.merge_dicts(super().as_dict(), self.cpp_element_comments.as_dict())
         return as_dict
 
     def str_commented(self, is_enum:bool = False, is_decl_stmt: bool = False):
@@ -222,7 +221,7 @@ class CppBlock(CppElement): # it is also a CppBlockChild
                 Inside srcML we have this: <block><private or public>CODE</private or public></block>
                 Inside python, the block is handled by `CppPublicProtectedPrivate` (which derives from `CppBlock`)
 
-        https://www.srcml.org/doc/cpp_srcML.html#block
+        https://www.srcmlcpp.org/doc/cpp_srcML.html#block
     """
     block_children: List[CppBlockChild] = None
 
@@ -273,7 +272,7 @@ class CppBlockContent(CppBlock):
 class CppPublicProtectedPrivate(CppBlock): # Also a CppBlockChild
     """A kind of block defined by a public/protected/private zone in a struct or in a class
 
-    See https://www.srcml.org/doc/cpp_srcML.html#public-access-specifier
+    See https://www.srcmlcpp.org/doc/cpp_srcML.html#public-access-specifier
     Note: this is not a direct adaptation. Here we merge the different access types, and we derive from CppBlockContent
     """
     access_type: str = "" # "public", "private", or "protected"
@@ -294,7 +293,7 @@ class CppPublicProtectedPrivate(CppBlock): # Also a CppBlockChild
             r += "// <default_access_type/>"
         r += "\n"
 
-        r += srcml_code_utils.indent_code(self.str_block(), 4)
+        r += code_utils.indent_code(self.str_block(), 4)
         return r
 
     def str_code(self):
@@ -311,7 +310,7 @@ class CppPublicProtectedPrivate(CppBlock): # Also a CppBlockChild
 class CppType(CppElement):
     """
     Describes a full C++ type, as seen by srcML
-    See https://www.srcml.org/doc/cpp_srcML.html#type
+    See https://www.srcmlcpp.org/doc/cpp_srcML.html#type
 
     A type name can be composed of several names, for example:
 
@@ -359,14 +358,14 @@ class CppType(CppElement):
             specifier_r.remove("const")
             specifiers = list(reversed(specifier_r))
 
-        specifiers_str = srcml_code_utils.join_remove_empty(" ", specifiers)
-        modifiers_str = srcml_code_utils.join_remove_empty(" ", self.modifiers)
+        specifiers_str = code_utils.join_remove_empty(" ", specifiers)
+        modifiers_str = code_utils.join_remove_empty(" ", self.modifiers)
 
         name = " ".join(self.names)
 
         name_and_arg = name
         strs = [specifiers_str, name_and_arg, modifiers_str]
-        r = srcml_code_utils.join_remove_empty(" ", strs)
+        r = code_utils.join_remove_empty(" ", strs)
 
         if nb_const == 2:
             r += " const"
@@ -380,7 +379,7 @@ class CppType(CppElement):
 @dataclass
 class CppDecl(CppElementAndComment):
     """
-    https://www.srcml.org/doc/cpp_srcML.html#variable-declaration
+    https://www.srcmlcpp.org/doc/cpp_srcML.html#variable-declaration
 
     Notes:
     * In certain cases, the name of a variable can be seen as a composition by srcML.
@@ -444,7 +443,7 @@ class CppDecl(CppElementAndComment):
 @dataclass
 class CppDeclStatement(CppElementAndComment):
     """
-    https://www.srcml.org/doc/cpp_srcML.html#variable-declaration-statement
+    https://www.srcmlcpp.org/doc/cpp_srcML.html#variable-declaration-statement
     """
     cpp_decls: List[CppDecl] = None  # A CppDeclStatement can initialize several variables
 
@@ -454,7 +453,7 @@ class CppDeclStatement(CppElementAndComment):
 
     def str_code(self):
         str_decls = list(map(lambda cpp_decl: cpp_decl.str_commented(is_decl_stmt=True), self.cpp_decls))
-        str_decl = srcml_code_utils.join_remove_empty("\n", str_decls)
+        str_decl = code_utils.join_remove_empty("\n", str_decls)
         return str_decl
 
     def __str__(self):
@@ -464,7 +463,7 @@ class CppDeclStatement(CppElementAndComment):
 @dataclass
 class CppParameter(CppElement):
     """
-    https://www.srcml.org/doc/cpp_srcML.html#function-declaration
+    https://www.srcmlcpp.org/doc/cpp_srcML.html#function-declaration
     """
     decl: CppDecl = None
 
@@ -499,14 +498,14 @@ class CppParameter(CppElement):
 
 def types_names_default_for_signature_parameters_list(parameters: List[CppParameter]) -> str:
     strs = list(map(lambda param: str(param), parameters))
-    return  srcml_code_utils.join_remove_empty(", ", strs)
+    return  code_utils.join_remove_empty(", ", strs)
 
 
 @dataclass
 class CppParameterList(CppElement):
     """
     List of parameters of a function
-    https://www.srcml.org/doc/cpp_srcML.html#function-declaration
+    https://www.srcmlcpp.org/doc/cpp_srcML.html#function-declaration
     """
     parameters: List[CppParameter] = None
 
@@ -538,7 +537,7 @@ class CppParameterList(CppElement):
 class CppTemplate(CppElement):
     """
     Template parameters of a function, struct or class
-    https://www.srcml.org/doc/cpp_srcML.html#template
+    https://www.srcmlcpp.org/doc/cpp_srcML.html#template
     """
     parameter_list: CppParameterList = None
 
@@ -557,7 +556,7 @@ class CppTemplate(CppElement):
 @dataclass
 class CppFunctionDecl(CppElementAndComment):
     """
-    https://www.srcml.org/doc/cpp_srcML.html#function-declaration
+    https://www.srcmlcpp.org/doc/cpp_srcML.html#function-declaration
     """
     specifiers: List[str] = None # "const" or ""
     type: CppType = None
@@ -603,7 +602,7 @@ class CppFunctionDecl(CppElementAndComment):
 @dataclass
 class CppFunction(CppFunctionDecl):
     """
-    https://www.srcml.org/doc/cpp_srcML.html#function-definition
+    https://www.srcmlcpp.org/doc/cpp_srcML.html#function-definition
     """
     block: CppUnprocessed = None
 
@@ -626,7 +625,7 @@ class CppFunction(CppFunctionDecl):
 @dataclass
 class CppConstructorDecl(CppElementAndComment):
     """
-    https://www.srcml.org/doc/cpp_srcML.html#constructor-declaration
+    https://www.srcmlcpp.org/doc/cpp_srcML.html#constructor-declaration
     """
     specifiers: List[str]
     name: str = ""
@@ -653,7 +652,7 @@ class CppConstructorDecl(CppElementAndComment):
 @dataclass
 class CppConstructor(CppConstructorDecl):
     """
-    https://www.srcml.org/doc/cpp_srcML.html#constructor
+    https://www.srcmlcpp.org/doc/cpp_srcML.html#constructor
     """
     block: CppUnprocessed = None
     member_init_list: CppUnprocessed = None
@@ -678,7 +677,7 @@ class CppConstructor(CppConstructorDecl):
 class CppSuper(CppElement):
     """
     Define a super classes of a struct or class
-    https://www.srcml.org/doc/cpp_srcML.html#struct-definition
+    https://www.srcmlcpp.org/doc/cpp_srcML.html#struct-definition
     """
     specifier: str = "" # public, private or protected inheritance
     name: str = "" # name of the super class
@@ -700,7 +699,7 @@ class CppSuper(CppElement):
 class CppSuperList(CppElement):
     """
     Define a list of super classes of a struct or class
-    https://www.srcml.org/doc/cpp_srcML.html#struct-definition
+    https://www.srcmlcpp.org/doc/cpp_srcML.html#struct-definition
     """
     super_list: List[CppSuper]
 
@@ -710,7 +709,7 @@ class CppSuperList(CppElement):
 
     def str_code(self):
         strs = map(str, self.super_list)
-        return " : " + srcml_code_utils.join_remove_empty(", ", strs)
+        return " : " + code_utils.join_remove_empty(", ", strs)
 
     def __str__(self):
         return self.str_code()
@@ -719,7 +718,7 @@ class CppSuperList(CppElement):
 @dataclass
 class CppStruct(CppBlockChild):
     """
-    https://www.srcml.org/doc/cpp_srcML.html#struct-definition
+    https://www.srcmlcpp.org/doc/cpp_srcML.html#struct-definition
     """
     name: str = ""
     super_list: CppSuperList = None
@@ -746,7 +745,7 @@ class CppStruct(CppBlockChild):
         r += "\n"
 
         r += "{\n"
-        r += srcml_code_utils.indent_code(str(self.block), 4)
+        r += code_utils.indent_code(str(self.block), 4)
         r += "};\n"
 
         return r
@@ -779,7 +778,7 @@ class CppStruct(CppBlockChild):
 @dataclass
 class CppClass(CppStruct):
     """
-    https://www.srcml.org/doc/cpp_srcML.html#class-definition
+    https://www.srcmlcpp.org/doc/cpp_srcML.html#class-definition
     """
     def __init__(self, element: ET.Element, cpp_element_comments: CppElementComments):
         super().__init__(element, cpp_element_comments)
@@ -791,7 +790,7 @@ class CppClass(CppStruct):
 @dataclass
 class CppComment(CppBlockChild):
     """
-    https://www.srcml.org/doc/cpp_srcML.html#comment
+    https://www.srcmlcpp.org/doc/cpp_srcML.html#comment
     Warning, the text contains "//" or "/* ... */" and "\n"
     """
     comment: str
@@ -811,7 +810,7 @@ class CppComment(CppBlockChild):
 @dataclass
 class CppNamespace(CppBlockChild):
     """
-    https://www.srcml.org/doc/cpp_srcML.html#namespace
+    https://www.srcmlcpp.org/doc/cpp_srcML.html#namespace
     """
     name: str = ""
     block: CppBlock = None
@@ -822,7 +821,7 @@ class CppNamespace(CppBlockChild):
     def str_code(self):
         r = f"namespace {self.name}\n"
         r += "{\n"
-        r += srcml_code_utils.indent_code(str(self.block), 4)
+        r += code_utils.indent_code(str(self.block), 4)
         r += "}"
         return r
 
@@ -833,8 +832,8 @@ class CppNamespace(CppBlockChild):
 @dataclass
 class CppEnum(CppBlockChild):
     """
-    https://www.srcml.org/doc/cpp_srcML.html#enum-definition
-    https://www.srcml.org/doc/cpp_srcML.html#enum-class
+    https://www.srcmlcpp.org/doc/cpp_srcML.html#enum-definition
+    https://www.srcmlcpp.org/doc/cpp_srcML.html#enum-class
     """
     type: str = ""  # "class" or ""
     name: str = ""
@@ -851,7 +850,7 @@ class CppEnum(CppBlockChild):
             r+= f"enum {self.name}\n"
         r += "{\n"
         block_code = self.block.str_block(is_enum=True)
-        r += srcml_code_utils.indent_code(block_code, 4)
+        r += code_utils.indent_code(block_code, 4)
         r += "};\n"
         return r
 

@@ -26,7 +26,13 @@ jobs:
         source venv/bin/activate
         pip install -v .
 
-    - name: Run Python litgen tests
+    - name: Run srcmlcpp tests
+      run: |
+        source venv/bin/activate
+        cd srcmlcpp
+        pytest
+
+    - name: Run litgen tests
       run: |
         source venv/bin/activate
         cd litgen

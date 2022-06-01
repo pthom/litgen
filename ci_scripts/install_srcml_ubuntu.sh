@@ -6,6 +6,6 @@
 
 # If you get an error that says "Package libssl1.1 is not installed", run the install of libssl that is commented
 # on top of this file
-wget http://131.123.42.38/lmcrs/v1.0.0/srcml_1.0.0-1_ubuntu20.04.deb -O /tmp/srcml.deb
-sudo dpkg -i /tmp/srcml.deb
+wget http://131.123.42.38/lmcrs/v1.0.0/srcml_1.0.0-1_ubuntu20.04.deb -O /tmp/srcmlcpp.deb
+sudo dpkg -i /tmp/srcmlcpp.deb
 

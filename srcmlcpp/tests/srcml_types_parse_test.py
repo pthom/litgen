@@ -1,15 +1,9 @@
-import os, sys;
+import os, sys; _THIS_DIR = os.path.dirname(__file__); sys.path.append(_THIS_DIR + "/../..")
 
-import litgen
+from srcmlcpp import srcml_types_parse, srcml_main
+from srcmlcpp import code_utils
+from srcmlcpp.srcml_options import SrcmlOptions
 
-_THIS_DIR = os.path.dirname(__file__); sys.path = [_THIS_DIR + "/.."] + sys.path
-
-from litgen.internal.srcml import srcml_types_parse, srcml_main
-import litgen.internal.code_utils as code_utils
-from litgen.internal.srcml.srcml_options import SrcmlOptions
-
-import logging
-import copy
 
 
 def test_parse_cpp_decl_statement():
@@ -331,12 +325,12 @@ def do_parse_imgui_implot(filename):
     assert len(lines) > 500
 
 
-# def test_parse_imgui():
-#     source_filename = os.path.realpath(_THIS_DIR + "/../../../examples_real_libs/imgui/imgui.h")
-#     do_parse_imgui_implot(source_filename)
-#
-#
-# def test_parse_implot():
-#     source_filename = os.path.realpath(_THIS_DIR + "/../../../examples_real_libs/implot/implot.h")
-#     do_parse_imgui_implot(source_filename)
-#
+def test_parse_imgui():
+    source_filename = os.path.realpath(_THIS_DIR + "/../../examples_real_libs/imgui/imgui.h")
+    do_parse_imgui_implot(source_filename)
+
+
+def test_parse_implot():
+    source_filename = os.path.realpath(_THIS_DIR + "/../../examples_real_libs/implot/implot.h")
+    do_parse_imgui_implot(source_filename)
+

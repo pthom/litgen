@@ -5,10 +5,9 @@ import xml.etree.ElementTree as ET
 import logging
 import traceback, inspect
 
-import srcml_code_utils
-from srcml_options import SrcmlOptions
-from srcml_exception import SrcMlException
-import srcml_main, srcml_types, srcml_utils
+from srcmlcpp import code_utils, srcml_main, srcml_types, srcml_utils
+from srcmlcpp.srcml_options import SrcmlOptions
+from srcmlcpp.srcml_exception import SrcMlException
 
 ###########################################
 #
@@ -72,7 +71,7 @@ def _show_element_info(element: ET.Element, encoding):
     message = f"""        
     While parsing a "{element_tag}", corresponding to this C++ code:
     {file_location(element)}
-{srcml_code_utils.indent_code(concerned_code, 12)}
+{code_utils.indent_code(concerned_code, 12)}
     """
     return message
 
@@ -96,7 +95,7 @@ def _warning_detailed_info(
     def show_python_callstack():
         return f"""
                 Python call stack info:
-        {srcml_code_utils.indent_code(python_error_line, 4)}
+        {code_utils.indent_code(python_error_line, 4)}
         """
 
     message = ""
@@ -110,7 +109,7 @@ def _warning_detailed_info(
         message += show_python_callstack()
 
     if len(additional_message) > 0:
-        message = additional_message + "\n" + srcml_code_utils.indent_code(message, 4)
+        message = additional_message + "\n" + code_utils.indent_code(message, 4)
 
     return message
 

@@ -1,20 +1,21 @@
-import os, sys; _THIS_DIR = os.path.dirname(__file__); sys.path = [_THIS_DIR + "/.."] + sys.path
+import os, sys; _THIS_DIR = os.path.dirname(__file__); sys.path.append(_THIS_DIR + "/../..")
 import logging
 
 from litgen.internal import code_utils, code_replacements
-from litgen.options import CodeStyleOptions, code_style_implot, code_style_immvision
+from litgen.options import CodeStyleOptions
+import litgen
 from litgen.internal import function_wrapper_lambda
-import litgen.internal.srcml as srcml
-from litgen.internal.srcml.srcml_types import *
+import srcmlcpp
+from srcmlcpp.srcml_types import *
 
 
 def test_make_function_wrapper_lambda():
 
-    options = code_style_implot()
-    # options.srcml_options.functions_api_prefixes = ["MY_API"]
+    options = litgen.options.code_style_implot()
+    options.srcml_options.functions_api_prefixes = ["MY_API"]
 
     def make_lambda_code(code):
-        cpp_unit = srcml.code_to_cpp_unit(options.srcml_options, code)
+        cpp_unit = srcmlcpp.code_to_cpp_unit(options.srcml_options, code)
         for child in cpp_unit.block_children:
             if isinstance(child, CppFunctionDecl) or isinstance(child, CppFunction):
                 lambda_code = function_wrapper_lambda.make_function_wrapper_lambda(child, options)
@@ -30,7 +31,7 @@ def test_make_function_wrapper_lambda():
             """
                 [](ImAxis axis, const char * fmt = "%.3f")
                 {
-                    { SetupAxisFormat(axis, fmt); return; }
+                    SetupAxisFormat(axis, fmt);
                 },
             """)
 
@@ -57,7 +58,8 @@ def test_make_function_wrapper_lambda():
                                         b
                                     (using py::array::dtype().char_() as an id)
                         )msg"));
-                { return test_with_one_const_buffer(static_cast<const int8_t *>(values_buffer), values_count); }
+
+                return test_with_one_const_buffer(static_cast<const int8_t *>(values_buffer), values_count);
             },
         """
         generated = make_lambda_code(function_decl)
@@ -87,7 +89,8 @@ def test_make_function_wrapper_lambda():
                                         b
                                     (using py::array::dtype().char_() as an id)
                         )msg"));
-                { test_with_one_nonconst_buffer(static_cast<int8_t *>(values_buffer), values_count); return; }
+                
+                test_with_one_nonconst_buffer(static_cast<int8_t *>(values_buffer), values_count);
             },
         """
 
@@ -101,43 +104,43 @@ def test_make_function_wrapper_lambda():
         """
 
         expected_lambda_code_buffer = """
-            [](const py::array & values1, py::array & values2)
-            {
-                // convert values1 (py::array&) to C standard buffer (const)
-                const void* values1_buffer = values1.data();
-                int values1_count = values1.shape()[0];
-
-                // convert values2 (py::array&) to C standard buffer (mutable)
-                void* values2_buffer = values2.mutable_data();
-                int values2_count = values2.shape()[0];
-
-                char array_type = values1.dtype().char_();
-                if (array_type == 'B')
-                    { return test_with_two_template_buffers(static_cast<const uint8_t*>(values1_buffer), static_cast<uint8_t*>(values2_buffer), values1_count); }
-                if (array_type == 'b')
-                    { return test_with_two_template_buffers(static_cast<const int8_t*>(values1_buffer), static_cast<int8_t*>(values2_buffer), values1_count); }
-                if (array_type == 'H')
-                    { return test_with_two_template_buffers(static_cast<const uint16_t*>(values1_buffer), static_cast<uint16_t*>(values2_buffer), values1_count); }
-                if (array_type == 'h')
-                    { return test_with_two_template_buffers(static_cast<const int16_t*>(values1_buffer), static_cast<int16_t*>(values2_buffer), values1_count); }
-                if (array_type == 'I')
-                    { return test_with_two_template_buffers(static_cast<const uint32_t*>(values1_buffer), static_cast<uint32_t*>(values2_buffer), values1_count); }
-                if (array_type == 'i')
-                    { return test_with_two_template_buffers(static_cast<const int32_t*>(values1_buffer), static_cast<int32_t*>(values2_buffer), values1_count); }
-                if (array_type == 'L')
-                    { return test_with_two_template_buffers(static_cast<const uint64_t*>(values1_buffer), static_cast<uint64_t*>(values2_buffer), values1_count); }
-                if (array_type == 'l')
-                    { return test_with_two_template_buffers(static_cast<const int64_t*>(values1_buffer), static_cast<int64_t*>(values2_buffer), values1_count); }
-                if (array_type == 'f')
-                    { return test_with_two_template_buffers(static_cast<const float*>(values1_buffer), static_cast<float*>(values2_buffer), values1_count); }
-                if (array_type == 'd')
-                    { return test_with_two_template_buffers(static_cast<const double*>(values1_buffer), static_cast<double*>(values2_buffer), values1_count); }
-                if (array_type == 'g')
-                    { return test_with_two_template_buffers(static_cast<const long double*>(values1_buffer), static_cast<long double*>(values2_buffer), values1_count); }
-
-                // If we arrive here, the array type is not supported!
-                throw std::runtime_error(std::string("Bad array type: ") + array_type );
-            },
+                [](const py::array & values1, py::array & values2)
+                {
+                    // convert values1 (py::array&) to C standard buffer (const)
+                    const void* values1_buffer = values1.data();
+                    int values1_count = values1.shape()[0];
+                    
+                    // convert values2 (py::array&) to C standard buffer (mutable)
+                    void* values2_buffer = values2.mutable_data();
+                    int values2_count = values2.shape()[0];
+                    
+                    char array_type = values1.dtype().char_();
+                    if (array_type == 'B')
+                        return test_with_two_template_buffers(static_cast<const uint8_t*>(values1_buffer), static_cast<uint8_t*>(values2_buffer), values1_count);
+                    else if (array_type == 'b')
+                        return test_with_two_template_buffers(static_cast<const int8_t*>(values1_buffer), static_cast<int8_t*>(values2_buffer), values1_count);
+                    else if (array_type == 'H')
+                        return test_with_two_template_buffers(static_cast<const uint16_t*>(values1_buffer), static_cast<uint16_t*>(values2_buffer), values1_count);
+                    else if (array_type == 'h')
+                        return test_with_two_template_buffers(static_cast<const int16_t*>(values1_buffer), static_cast<int16_t*>(values2_buffer), values1_count);
+                    else if (array_type == 'I')
+                        return test_with_two_template_buffers(static_cast<const uint32_t*>(values1_buffer), static_cast<uint32_t*>(values2_buffer), values1_count);
+                    else if (array_type == 'i')
+                        return test_with_two_template_buffers(static_cast<const int32_t*>(values1_buffer), static_cast<int32_t*>(values2_buffer), values1_count);
+                    else if (array_type == 'L')
+                        return test_with_two_template_buffers(static_cast<const uint64_t*>(values1_buffer), static_cast<uint64_t*>(values2_buffer), values1_count);
+                    else if (array_type == 'l')
+                        return test_with_two_template_buffers(static_cast<const int64_t*>(values1_buffer), static_cast<int64_t*>(values2_buffer), values1_count);
+                    else if (array_type == 'f')
+                        return test_with_two_template_buffers(static_cast<const float*>(values1_buffer), static_cast<float*>(values2_buffer), values1_count);
+                    else if (array_type == 'd')
+                        return test_with_two_template_buffers(static_cast<const double*>(values1_buffer), static_cast<double*>(values2_buffer), values1_count);
+                    else if (array_type == 'g')
+                        return test_with_two_template_buffers(static_cast<const long double*>(values1_buffer), static_cast<long double*>(values2_buffer), values1_count);
+            
+                    // If we reach this point, the array type is not supported!
+                    throw std::runtime_error(std::string("Bad array type: ") + array_type );
+                },
            """
 
         generated = make_lambda_code(function_decl)
@@ -154,7 +157,7 @@ def test_make_function_wrapper_lambda():
         expected_lambda_code_buffer = """
             [](double x, const ImVec4 & color, const char * fmt)
             {
-                { TagX(x, color, "%s", fmt); return; }
+                TagX(x, color, "%s", fmt);
             },
            """
 
@@ -187,7 +190,8 @@ def test_make_function_wrapper_lambda():
                                         b
                                     (using py::array::dtype().char_() as an id)
                         )msg"));
-                { add_inside_array(static_cast<int8_t *>(array_buffer), array_count, number_to_add); return; }
+
+                add_inside_array(static_cast<int8_t *>(array_buffer), array_count, number_to_add);
             },
         """
 

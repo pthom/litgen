@@ -4,8 +4,8 @@ import logging
 import xml.etree.ElementTree as ET
 from xml.dom import minidom
 
-import srcml_caller
-from srcml_code_position import CodePosition
+from srcmlcpp import srcml_caller
+from srcmlcpp.srcml_code_position import CodePosition
 
 
 def _element_position(element: ET.Element, start_or_end: str) -> CodePosition:

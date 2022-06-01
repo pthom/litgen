@@ -1,23 +1,11 @@
 import os.path
 import re
-from typing import List, Tuple, Optional
-from dataclasses import dataclass
+from typing import List
 import itertools
 import logging
-import string
 import difflib
-from pprint import pprint
 import traceback
 
-
-# Identifiers must begin with a letter or an underscore (_)
-VALID_IDENTIFIERS_CHARS_START = string.ascii_lowercase + string.ascii_uppercase + "_"
-# Then, they can contain letters, digits and underscores
-VALID_IDENTIFIERS_CHARS = VALID_IDENTIFIERS_CHARS_START + string.digits
-CPP_OPERATORS = list(map(lambda s: "operator" + s,
-    "+ - * / % ^ & | ~ ! = < > += -= *= /= %= ^= &= |= << >> >>= <<= == != <= >= <=> && || ++ -- , ->* -> () []"
-    .split(" ")
-    ))
 
 # transform a list into a list of adjacent pairs
 # For example : [a, b, c] -> [ [a, b], [b, c]]
@@ -134,8 +122,10 @@ def indent_code_force(code: str, indent_size: int = 1, indent_str = ""):
 def format_python_comment(comment: str, indent_size: int) -> str:
     lines = comment.split("\n")
     indent_str = " " * indent_size + "# "
+
     def indent_and_comment_line(line):
         return indent_str + line
+
     lines = map(indent_and_comment_line, lines)
     return "\n".join(lines)
 

@@ -1,8 +1,8 @@
-import logging
-import os, sys; _THIS_DIR = os.path.dirname(__file__); sys.path = [_THIS_DIR + "/../.."] + sys.path
-from litgen.internal import srcml
-from litgen.internal.srcml import srcml_utils, srcml_comments, srcml_caller
-from litgen.internal import code_utils
+import os, sys; _THIS_DIR = os.path.dirname(__file__); sys.path.append(_THIS_DIR + "/../..")
+
+import srcmlcpp
+from srcmlcpp import srcml_utils, srcml_comments, srcml_caller
+from srcmlcpp import code_utils
 
 
 def test_mark_empty_lines():
@@ -15,7 +15,7 @@ def test_mark_empty_lines():
 
 def test_group_consecutive_comment():
     code = srcml_comments.mark_empty_lines(srcml_comments._EXAMPLE_COMMENTS_TO_GROUPS)
-    srcml_code = srcml.srcml_caller.code_to_srcml(code)
+    srcml_code = srcmlcpp.srcml_caller.code_to_srcml(code)
     srcml_grouped = srcml_comments._group_consecutive_comments(srcml_code)
     grouped_str = srcml_utils.srcml_to_str_readable(srcml_grouped)
     # logging.warning("\n" + grouped_str)
@@ -31,7 +31,7 @@ def test_iterate_children_simple():
 
     """
     code = srcml_comments.mark_empty_lines(code)
-    srcml_code = srcml.srcml_caller.code_to_srcml(code)
+    srcml_code = srcmlcpp.srcml_caller.code_to_srcml(code)
     children_and_comments = srcml_comments.get_children_with_comments(srcml_code)
     msgs = [ str(child.as_dict()) for child in children_and_comments]
     msg = "\n".join(msgs)
@@ -51,7 +51,7 @@ def test_iterate_children_simple():
 
 def test_iterate_children_with_comments():
     code = srcml_comments.mark_empty_lines(srcml_comments._EXAMPLE_COMMENTS_TO_GROUPS)
-    srcml_code = srcml.srcml_caller.code_to_srcml(code)
+    srcml_code = srcmlcpp.srcml_caller.code_to_srcml(code)
     children_and_comments = srcml_comments.get_children_with_comments(srcml_code)
     msgs = [ str(child.as_dict()) for child in children_and_comments]
     msg = "\n".join(msgs)

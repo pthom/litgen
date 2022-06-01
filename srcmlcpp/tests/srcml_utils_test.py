@@ -1,8 +1,7 @@
-import os, sys; _THIS_DIR = os.path.dirname(__file__); sys.path = [_THIS_DIR + "/../.."] + sys.path
-import logging
+import os, sys; _THIS_DIR = os.path.dirname(__file__); sys.path.append(_THIS_DIR + "/../..")
 
-from litgen.internal import srcml
-from litgen.internal import code_utils
+import srcmlcpp
+from srcmlcpp import code_utils
 
 
 def test_srcml_to_str_readable():
@@ -17,8 +16,8 @@ private:
 };
 """
 
-    code_xml = srcml.code_to_srcml(code)
-    code_info = srcml.srcml_utils.srcml_to_str_readable(code_xml)
+    code_xml = srcmlcpp.code_to_srcml(code)
+    code_info = srcmlcpp.srcml_utils.srcml_to_str_readable(code_xml)
 
     expected_code_info = """unit
     comment text="// A superb struct"                       line  2

@@ -1,9 +1,8 @@
-import os, sys; _THIS_DIR = os.path.dirname(__file__); sys.path = [_THIS_DIR + "/../.."] + sys.path
+import os, sys; _THIS_DIR = os.path.dirname(__file__); sys.path.append(_THIS_DIR + "/../..")
 
-from litgen.internal import srcml
-from litgen.internal.srcml.srcml_warnings import SrcMlExceptionDetailed
-from litgen.internal.srcml.srcml_options import SrcmlOptions
-import litgen
+import srcmlcpp
+from srcmlcpp.srcml_warnings import SrcMlExceptionDetailed
+from srcmlcpp.srcml_options import SrcmlOptions
 
 
 def test_warnings():
@@ -11,13 +10,13 @@ def test_warnings():
     options.flag_show_python_callstack = True
     code = "void foo(int a);"
 
-    cpp_unit = srcml.code_to_cpp_unit(options, code, filename="main.h")
+    cpp_unit = srcmlcpp.code_to_cpp_unit(options, code, filename="main.h")
     decl = cpp_unit.block_children[0]
 
     got_exception = False
     try:
         raise SrcMlExceptionDetailed(decl.srcml_element, "Artificial exception", options)
-    except srcml.SrcMlException as e:
+    except srcmlcpp.SrcMlException as e:
         got_exception = True
         msg = str(e)
         for part in ["test_warning", "function_decl", "main.h:1:1", "void foo", "Artificial exception"]:

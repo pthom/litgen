@@ -3,7 +3,7 @@ import copy
 
 import xml.etree.ElementTree as ET
 
-import srcml_utils
+from srcmlcpp import srcml_utils
 
 """
 Filters a code unit (i.e a file) a removes regions that are inside preprocessor tests

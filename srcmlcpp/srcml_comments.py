@@ -4,8 +4,8 @@ import copy
 import xml.etree.ElementTree as ET
 from typing import List
 
-import srcml_utils
-from srcml_types import CppElementAndComment, CppElement, CppElementComments
+from srcmlcpp import srcml_utils
+from srcmlcpp.srcml_types import CppElementAndComment, CppElement, CppElementComments
 
 
 COMMENT_NEW_LINE_TOKEN = "_SRCML_LINEFEED_"

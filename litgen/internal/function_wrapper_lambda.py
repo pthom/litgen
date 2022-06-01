@@ -1,3 +1,12 @@
+from typing import List, Optional
+import copy
+
+from litgen.internal import code_utils, cpp_to_python, CodeStyleOptions
+
+from srcmlcpp.srcml_types import CppFunctionDecl, CppParameter, CppParameterList, CppType
+from srcmlcpp import srcml_types_parse
+from srcmlcpp import srcml_types
+
 """
 We create a lambda in all cases. This helps overloads resolution, because ImPlot uses a lot of them.
 For example:
@@ -33,13 +42,6 @@ Shall be wrapped like this:
         return PlotScatter(label_id, values, count, stride);
     },
 """
-import copy
-
-from typing import List, Optional
-from litgen.internal import code_utils, cpp_to_python, CodeStyleOptions
-from litgen.internal.srcml.srcml_types import CppFunctionDecl, CppParameter, CppParameterList, CppType
-from litgen.internal.srcml import srcml_types_parse
-from litgen.internal.srcml import srcml_types
 
 
 def _possible_buffer_pointer_types(options: CodeStyleOptions):
@@ -188,9 +190,9 @@ def _param_buffer_replaced_by_array(param: CppParameter, options: CodeStyleOptio
         param_type = param.full_type()
         if code_utils.contains_pointer_type(param_type, possible_buffer_type):
             if param_type.strip().startswith("const"):
-                param_new = srcml_types_parse.parse_decl_from_code(options, f"const py::array & {param.variable_name()}", None)
+                param_new = srcml_types_parse.parse_decl_from_code(options.srcml_options, f"const py::array & {param.variable_name()}", None)
             else:
-                param_new = srcml_types_parse.parse_decl_from_code(options, f"py::array & {param.variable_name()}", None)
+                param_new = srcml_types_parse.parse_decl_from_code(options.srcml_options, f"py::array & {param.variable_name()}", None)
             return param_new
     return param
 
@@ -212,8 +214,10 @@ def _make_call_function(function_infos: CppFunctionDecl, is_method, options: Cod
     params = function_infos.parameter_list
     is_template = _contains_template_buffer(params, options)
     first_template_buffer_param = _first_template_buffer_param(params, options)
-    return_str1 = "" if function_infos.full_return_type(options.srcml_options) == "void" else "return "
-    return_str2 = " return;" if function_infos.full_return_type(options.srcml_options) == "void" else ""
+    function_return_type = function_infos.full_return_type(options.srcml_options)
+
+    return_str1 = "" if function_return_type == "void" else "return "
+    # return_str2 = " return;" if function_return_type == "void" else ""
     self_prefix = "self." if is_method else ""
 
     code_lines = []
@@ -221,16 +225,19 @@ def _make_call_function(function_infos: CppFunctionDecl, is_method, options: Cod
         assert first_template_buffer_param is not None
         code_lines.append(f"    char array_type = {first_template_buffer_param.variable_name()}.dtype().char_();")
 
-        for py_array_type in cpp_to_python.py_array_types():
+        for idx, py_array_type in enumerate(cpp_to_python.py_array_types()):
+
+            if_cmd = "if" if idx == 0 else "else if"
 
             cast_type = cpp_to_python.py_array_type_to_cpp_type(py_array_type) + "*"
 
-            code_lines.append(f"{_i_}if (array_type == '{py_array_type}')")
+            code_lines.append(f"{_i_}{if_cmd} (array_type == '{py_array_type}')")
             attrs_function_call = _lambda_params_call(params, options, cast_type)
-            code_lines.append(f"{_i_}{_i_}{{ {return_str1}{self_prefix}{function_infos.name}({attrs_function_call});{return_str2} }}")
+            # code_lines.append(f"{_i_}{_i_}{{ {return_str1}{self_prefix}{function_infos.name}({attrs_function_call});{return_str2} }}")
+            code_lines.append(f"{_i_}{_i_}{return_str1}{self_prefix}{function_infos.name}({attrs_function_call});")
 
         code_lines.append("")
-        code_lines.append(f'{_i_}// If we arrive here, the array type is not supported!')
+        code_lines.append(f'{_i_}// If we reach this point, the array type is not supported!')
         code_lines.append(f'{_i_}throw std::runtime_error(std::string("Bad array type: ") + array_type );')
 
     else:
@@ -252,7 +259,11 @@ def _make_call_function(function_infos: CppFunctionDecl, is_method, options: Cod
 
         cast_type = None
         attrs_function_call = _lambda_params_call(params, options, cast_type)
-        code_lines.append(f"{_i_}{{ {return_str1}{self_prefix}{function_infos.name}({attrs_function_call});{return_str2} }}")
+        #code_lines.append(f"{_i_}{{ {return_str1}{self_prefix}{function_infos.name}({attrs_function_call});{return_str2} }}")
+
+        if len(code_lines) > 0:
+            code_lines.append("")
+        code_lines.append(f"{_i_}{return_str1}{self_prefix}{function_infos.name}({attrs_function_call});")
 
     return code_lines
 
@@ -335,7 +346,7 @@ def _lambda_params_signature(
 
     if len(parent_struct_name) > 0:
         # new_params.append(CppParameter(type=parent_struct_name + "&", name="self"))
-        new_decl = srcml_types_parse.parse_decl_from_code(options, f"{parent_struct_name} & self", None)
+        new_decl = srcml_types_parse.parse_decl_from_code(options.srcml_options, f"{parent_struct_name} & self", None)
         new_params.append(new_decl)
 
     idx_param = 0
