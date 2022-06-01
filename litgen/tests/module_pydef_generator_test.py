@@ -105,9 +105,8 @@ def test_generate_pydef_function_cpp_code() -> str:
                 {
                     return Foo();
                 },
-            
                 "Returns a widget\\n\\nreturn_value_policy::reference",
-                pybind11::reference
+                pybind11::return_value_policy::reference
             );
         '''
         code_utils.assert_are_codes_equal(generated_code, expected_code)
@@ -276,9 +275,9 @@ def test_generate_pydef_struct_cpp_code():
     expected_code = """
         auto pyClassMultiplier = py::class_<Multiplier>
             (m, "Multiplier", "A dummy structure that likes to multiply")
-            .def(py::init<>(),
+            .def(py::init<>())
                 "default constructor")
-            .def(py::init<int>(),
+            .def(py::init<int>())
                 py::arg("_who"),
                 "Constructor with param")
             .def("calculate_double",
