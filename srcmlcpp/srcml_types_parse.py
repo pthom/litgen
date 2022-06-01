@@ -390,6 +390,11 @@ def parse_struct_or_class(options: SrcmlOptions, element_c: CppElementAndComment
             result.block = parse_block(options, child)
         elif child_tag == "template":
             result.template = parse_template(options, child)
+        elif child_tag == "comment":
+            comment_text = code_utils.cpp_comment_remove_comment_markers(child.text)
+            if len(result.cpp_element_comments.comment_end_of_line) > 0:
+                result.cpp_element_comments.comment_end_of_line += " - "
+            result.cpp_element_comments.comment_end_of_line += comment_text
         else:
             raise SrcMlExceptionDetailed(child, f"unhandled tag {child_tag}", options)
 

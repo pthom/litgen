@@ -41,7 +41,7 @@ def play_imgui():
 # options = code_style_implot()
 # options.srcml_options.functions_api_prefixes = ["MY_API"]
 code = """
-            MY_API template<typename T> inline int test_with_two_template_buffers(const T* values1, T* values2, int count);
+        static Foo& Instance() { static Foo instance; return instance; }       // return_value_policy::reference
 """
 # play_parse(code)
 play_pydef(code)

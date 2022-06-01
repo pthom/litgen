@@ -146,13 +146,42 @@ def format_cpp_comment_multiline(comment: str, indentation_size: int = 4, indent
     return "\n".join(lines)
 
 
+def cpp_comment_remove_comment_markers(comment: str) -> str:
+    if comment.startswith("//"):
+        result = comment[2:].strip()
+        return result
+    else:
+        result = comment
+        if result.startswith("/*"):
+            result = result[2:].strip()
+            if result.endswith("*/"):
+                result = result[:-2]
+        return result
+
+
+def spaces_or_tabs_at_line_start(line) -> str:
+    r = ""
+    for i, c in enumerate(line):
+        if c == " " or c == "\t":
+            r += c
+        else:
+            break
+    return r
+
+
 def write_code_between_markers(
         inout_filename: str,
         code_marker_in: str,
         code_marker_out: str,
         code_to_insert: str,
-        flag_preserve_left_spaces: bool
+        flag_preserve_indentation: bool = True
     ):
+
+    while code_to_insert.endswith("\n\n"):
+        code_to_insert = code_to_insert[:-1]
+    while code_to_insert.startswith("\n\n"):
+        code_to_insert = code_to_insert[1:]
+
     assert os.path.isfile(inout_filename)
     input_code = read_text_file(inout_filename)
     input_code_lines = input_code.split("\n")
@@ -167,15 +196,16 @@ def write_code_between_markers(
             else:
                 is_inside_autogen_region = True
                 was_replacement_performed = True
-                indent_size = 0
-                while indent_size < len(code_line) and code_line[indent_size] == " ":
-                    indent_size += 1
+
+                indent_str = spaces_or_tabs_at_line_start(code_line)
+
                 output_code = output_code + code_line + "\n"
-                output_code = output_code + "\n"
-                if flag_preserve_left_spaces:
-                    output_code = output_code + code_to_insert
-                else:
-                    output_code = output_code + indent_code_force(code_to_insert, indent_size)
+
+                if flag_preserve_indentation:
+                    code_to_insert = indent_code(code_to_insert, indent_str=indent_str)
+
+                output_code = output_code + code_to_insert
+
         else:
             if not is_inside_autogen_region:
                 output_code = output_code + code_line + "\n"
@@ -191,7 +221,8 @@ def write_code_between_markers(
     if not was_replacement_performed:
         raise RuntimeError(f"write_code_between_markers: could not find marker {code_marker_in} in file {inout_filename}")
 
-    write_text_file(inout_filename, output_code)
+    if output_code != input_code:
+        write_text_file(inout_filename, output_code)
 
 
 def force_one_space(code: str) -> str:

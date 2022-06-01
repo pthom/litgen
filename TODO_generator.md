@@ -1,10 +1,9 @@
-- separate module srcmlcpp
-    - option / log time srcml caller
-
-- gen stub
+- re-test integration c++
+- add namespace hierarchy in pydef ? With option ?
 - integration tests
-  - work on full gen (namespace, comment, etc)
-- filter function with API prefix
+    - work on full gen (namespace, comment, etc)
+- gen stub
+- filter function with API prefix / filter struct by eol comment
 
 
 Doc avec google collab

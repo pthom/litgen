@@ -4,7 +4,7 @@ import logging
 
 import xml.etree.ElementTree as ET
 
-from srcmlcpp import srcml_types, srcml_comments, srcml_types_parse, srcml_caller
+from srcmlcpp import srcml_types, srcml_comments, srcml_types_parse, srcml_caller, srcml_utils
 from srcmlcpp import srcml_filter_preprocessor_regions
 from srcmlcpp.srcml_options import SrcmlOptions
 

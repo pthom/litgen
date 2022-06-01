@@ -1,6 +1,6 @@
 from typing import List
 
-from litgen import CodeStyleOptions, LitgenParseException
+from litgen import CodeStyleOptions
 from litgen.internal import code_replacements, code_utils
 
 """
@@ -120,7 +120,7 @@ def cpp_type_to_py_array_type(cpp_type: str) -> str:
     for py_type, tested_cpp_type in _PY_ARRAY_TYPE_TO_CPP_TYPE.items():
         if tested_cpp_type == cpp_type:
             return py_type
-    raise LitgenParseException(f"cpp_type_to_py_array_type: unhandled type {cpp_type}")
+    raise ValueError(f"cpp_type_to_py_array_type: unhandled type {cpp_type}")
 
 
 def _enum_remove_values_prefix(enum_name: str, value_name: str) -> str:

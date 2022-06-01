@@ -4,7 +4,8 @@ import os, sys; _THIS_DIR = os.path.dirname(__file__); sys.path = [_THIS_DIR + "
 import srcmlcpp
 from srcmlcpp.srcml_types import *
 
-from litgen.internal import CodeStyleOptions, cpp_to_python, code_utils
+from litgen import CodeStyleOptions
+from litgen.internal import cpp_to_python, code_utils
 from litgen.internal.function_wrapper_lambda import \
     make_function_wrapper_lambda, make_method_wrapper_lambda, \
     is_default_sizeof_param, is_buffer_size_name_at_idx, is_param_variadic_format
@@ -125,24 +126,29 @@ def _generate_pydef_function(
 
     module_str = "" if is_method else "m"
 
-    code_lines = []
+    code_lines: List[str] = []
     code_lines += [f'{module_str}.def("{fn_name_python}",']
     lambda_code = make_function_wrapper_lambda(function_infos, options, parent_struct_name)
     lambda_code = code_utils.indent_code(lambda_code, indent_str=_i_)
     code_lines += lambda_code.split("\n")
 
     pyarg_str = code_utils.indent_code(pyarg_code(function_infos, options),indent_str=options.indent_cpp_spaces())
-    code_lines += pyarg_str.split("\n")
+    if len(pyarg_str) > 0:
+        code_lines += pyarg_str.split("\n")
 
     #  comment
     comment_cpp =  cpp_to_python.docstring_python_one_line(function_infos.cpp_element_comments.full_comment(), options)
-    if len(comment_cpp) > 0:
+    if len(comment_cpp) == 0:
+        # remove last "," from last line since there is no comment that follows
+        if code_lines[-1].endswith(","):
+            code_lines[-1] = code_lines[-1][ : -1]
+    else:
         code_lines += [f'{_i_}"{comment_cpp}"']
 
     # Return value policy
     if len(return_value_policy) > 0:
         code_lines[-1] += ","
-        code_lines += [f"{_i_}pybind11::{return_value_policy}"]
+        code_lines += [f"{_i_}pybind11::return_value_policy::{return_value_policy}"]
 
     # Ending
     if is_method:
@@ -174,7 +180,7 @@ def _generate_pydef_constructor(
     doc_string = cpp_to_python.docstring_python_one_line(function_infos.cpp_element_comments.full_comment(), options)
 
     code_lines = []
-    code_lines.append(f".def(py::init<{params_str}>(),")
+    code_lines.append(f".def(py::init<{params_str}>())")
     if len(pyarg_str) > 0:
         pyarg_lines = pyarg_str.split("\n")
         pyarg_lines = list(map(lambda s: _i_ + s, pyarg_lines))
@@ -271,17 +277,56 @@ def _generate_pydef_struct_or_class(struct_infos: CppStruct, options: CodeStyleO
 
 
 #################################
+#           Namespace
+################################
+def _generate_pydef_namespace(
+        cpp_namespace: CppNamespace,
+        options: CodeStyleOptions,
+        current_namespaces: List[str] = []) -> str:
+
+    namespace_name = cpp_namespace.name
+    new_namespaces = current_namespaces + [namespace_name]
+    namespace_code = generate_pydef(cpp_namespace.block, options, new_namespaces)
+
+    namespace_code_commented = ""
+    namespace_code_commented += f"// <namespace {namespace_name}>\n"
+    namespace_code_commented += namespace_code
+    namespace_code_commented += f"// </namespace {namespace_name}>\n"
+
+    return namespace_code_commented
+
+
+#################################
 #           All
 ################################
 
-def generate_pydef(cpp_unit: CppUnit, options: CodeStyleOptions) -> str:
+
+def _add_new_lines(code: str, nb_lines_before: int = 0, nb_lines_after: int = 1) -> str:
+    r = "\n" * nb_lines_before + code + "\n" * nb_lines_after
+    return r
+
+
+def _add_one_line_after(code: str) -> str:
+    return _add_new_lines(code, nb_lines_after=1)
+
+
+def _add_one_line_before_two_after(code: str) -> str:
+    return _add_new_lines(code, nb_lines_before=1, nb_lines_after=2)
+
+
+def generate_pydef(cpp_unit: CppUnit, options: CodeStyleOptions, current_namespaces: List[str] = []) -> str:
+
     r = ""
     indent_level = 0
-    for cpp_element in cpp_unit.block_children:
-        if cpp_element.tag() == "enum":
-            r += _generate_pydef_enum(cpp_element, options)
-        elif cpp_element.tag() == "function" or cpp_element.tag() == "function_decl":
-            r += _generate_pydef_function(cpp_element, options, parent_struct_name="")
-        elif cpp_element.tag() == "struct" or cpp_element.tag() == "class":
-            r += _generate_pydef_struct_or_class(cpp_element, options)
+    for i, cpp_element in enumerate(cpp_unit.block_children):
+        if False:
+            pass
+        elif isinstance(cpp_element, CppFunctionDecl) or isinstance(cpp_element, CppFunction):
+            r += _add_one_line_after( _generate_pydef_function(cpp_element, options, parent_struct_name="") )
+        elif isinstance(cpp_element, CppEnum):
+            r += _add_one_line_before_two_after( _generate_pydef_enum(cpp_element, options) )
+        elif isinstance(cpp_element, CppStruct) or isinstance(cpp_element, CppClass):
+            r += _add_one_line_before_two_after( _generate_pydef_struct_or_class(cpp_element, options) )
+        elif isinstance(cpp_element, CppStruct) or isinstance(cpp_element, CppNamespace):
+            r += _add_one_line_before_two_after( _generate_pydef_namespace(cpp_element, options, current_namespaces) )
     return r
