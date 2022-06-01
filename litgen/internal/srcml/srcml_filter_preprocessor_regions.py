@@ -1,3 +1,10 @@
+from typing import List
+import copy
+
+import xml.etree.ElementTree as ET
+
+import srcml_utils
+
 """
 Filters a code unit (i.e a file) a removes regions that are inside preprocessor tests
 (except for header inclusion guards)
@@ -33,11 +40,6 @@ void Foo() {}     // This function and this comment should be included
 
 
 """
-from typing import List
-import copy
-import xml.etree.ElementTree as ET
-from litgen.internal.srcml import srcml_utils, srcml_caller
-
 
 class _SrcmlPreprocessorState:
     """We ignore everything that is inside a #ifdef/#if/#ifndef  region

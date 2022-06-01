@@ -1,5 +1,5 @@
-import logging
 import os, sys; _THIS_DIR = os.path.dirname(__file__); sys.path = [_THIS_DIR + "/.."] + sys.path
+import logging
 
 from litgen.internal import code_utils, code_replacements
 from litgen.options import CodeStyleOptions, code_style_implot, code_style_immvision

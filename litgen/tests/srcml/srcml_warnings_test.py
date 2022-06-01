@@ -1,7 +1,7 @@
-import logging
 import os, sys; _THIS_DIR = os.path.dirname(__file__); sys.path = [_THIS_DIR + "/../.."] + sys.path
 
 from litgen.internal import srcml
+from litgen.internal.srcml.srcml_warnings import SrcMlExceptionDetailed
 import litgen
 
 
@@ -16,7 +16,7 @@ def test_warnings():
 
     got_exception = False
     try:
-        raise srcml.SrcMlException(decl.srcml_element, "Artificial exception")
+        raise SrcMlExceptionDetailed(decl.srcml_element, "Artificial exception")
     except srcml.SrcMlException as e:
         got_exception = True
         msg = str(e)

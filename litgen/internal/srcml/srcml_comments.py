@@ -1,11 +1,11 @@
 from typing import Callable, Iterable
+import copy
 
 import xml.etree.ElementTree as ET
-import copy
 from typing import List
 
-import srcml_utils, srcml_caller
-from litgen.internal.srcml.srcml_types import CppElementAndComment, CppElement, CppElementComments
+import srcml_utils
+from srcml_types import CppElementAndComment, CppElement, CppElementComments
 
 
 COMMENT_NEW_LINE_TOKEN = "_SRCML_LINEFEED_"

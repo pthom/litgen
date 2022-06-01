@@ -1,11 +1,11 @@
 from typing import Tuple, List, Any
+import logging
+
 import xml.etree.ElementTree as ET
 from xml.dom import minidom
 
 from srcml_caller import srcml_to_code
-from litgen.internal.srcml import srcml_utils, srcml_caller
-from litgen.internal.srcml.srcml_types import CodePosition
-import logging
+from srcml_code_position import CodePosition
 
 
 def _element_position(element: ET.Element, start_or_end: str) -> CodePosition:

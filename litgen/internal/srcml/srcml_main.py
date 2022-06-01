@@ -1,25 +1,49 @@
 from typing import List
+from dataclasses import dataclass
+import logging
+
 import xml.etree.ElementTree as ET
 
-from litgen.internal.srcml import srcml_types, srcml_comments, srcml_types_parse
-from litgen.internal import srcml
 from litgen import CodeStyleOptions
 
-_CURRENT_PARSED_FILE: str = ""
-_CURRENT_PARSED_UNIT_CODE: str = ""
+import srcml_types, srcml_comments, srcml_types_parse, srcml_caller
+import srcml_filter_preprocessor_regions
 
 
-def current_parsed_file():
-    return _CURRENT_PARSED_FILE
+@dataclass
+class _SrcmlMainContext:
+    _current_parsed_file: str = ""
+    _current_parsed_unit_code: str = ""
+
+    def __init__(self):
+        logging.warning(f"Constructing _SrcmlMainContext id={id(self)}")
+
+    @property
+    def current_parsed_file(self):
+        return self._current_parsed_file
+
+    @current_parsed_file.setter
+    def current_parsed_file(self, value):
+        self._current_parsed_file = value
+
+    @property
+    def current_parsed_unit_code(self):
+        return self._current_parsed_unit_code
+
+    @current_parsed_unit_code.setter
+    def current_parsed_unit_code(self, value):
+        self._current_parsed_unit_code = value
 
 
-def current_parsed_unit_code():
-    return _CURRENT_PARSED_UNIT_CODE
+def srcml_main_context():
+    if not hasattr(srcml_main_context, "instance"):
+        srcml_main_context.instance = _SrcmlMainContext()
+    return srcml_main_context.instance
 
 
 def get_children_with_comments(options: CodeStyleOptions, srcml_xml: ET.Element) -> List[srcml_types.CppElementAndComment]:
     if options.header_filter_preprocessor_regions:
-        srcml_xml = srcml.srcml_filter_preprocessor_regions.filter_preprocessor_regions(
+        srcml_xml = srcml_filter_preprocessor_regions.filter_preprocessor_regions(
             srcml_xml, options.header_guard_suffixes)
 
     cpp_elements_commented = srcml_comments.get_children_with_comments(srcml_xml)
@@ -34,14 +58,13 @@ def code_to_srcml_unit(options: CodeStyleOptions, code: str = "", filename: str 
           This can be used when you need to preprocess the code before parsing it.
         * if `code`is empty, the code will be read from `filename`
     """
-    global _CURRENT_PARSED_FILE, _CURRENT_PARSED_UNIT_CODE
-    _CURRENT_PARSED_FILE = filename
+    srcml_main_context().current_parsed_file = filename
 
     if len(code) == 0:
         with open(filename, "r", encoding=options.encoding) as f:
             code = f.read()
 
-    _CURRENT_PARSED_UNIT_CODE = code
+    srcml_main_context().current_parsed_unit_code = code
 
     if options.code_preprocess_function is not None:
         code = options.code_preprocess_function(code)
@@ -49,7 +72,7 @@ def code_to_srcml_unit(options: CodeStyleOptions, code: str = "", filename: str 
     if options.preserve_empty_lines:
         code = srcml_comments._mark_empty_lines(code)
 
-    srcml_xml = srcml.srcml_caller.code_to_srcml(code, encoding=options.encoding)
+    srcml_xml = srcml_caller.code_to_srcml(code, encoding=options.encoding)
 
     return srcml_xml
 

@@ -1,9 +1,10 @@
 import subprocess
-import xml.etree.ElementTree as ET
 import tempfile
 import os
 import time
 import logging
+
+import xml.etree.ElementTree as ET
 
 ###########################################
 #

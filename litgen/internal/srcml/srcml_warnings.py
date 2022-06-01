@@ -1,4 +1,3 @@
-import copy
 import sys
 from typing import List
 from dataclasses import dataclass
@@ -7,6 +6,10 @@ import logging
 import traceback, inspect
 
 from litgen import LITGEN_OPTIONS
+from litgen.internal import code_utils
+
+from litgen.internal.srcml import SrcMlException
+import srcml_main, srcml_types, srcml_utils
 
 ###########################################
 #
@@ -41,9 +44,8 @@ class ErrorContext:
 
 
 def _extract_error_context(element: ET.Element) -> ErrorContext:
-    from litgen.internal.srcml import srcml_types, srcml_main
     cpp_element = srcml_types.CppElement(element)
-    full_code = srcml_main.current_parsed_unit_code()
+    full_code = srcml_main.srcml_main_context().current_parsed_unit_code
     full_code_lines = [""] + full_code.split("\n")
 
     concerned_lines = full_code_lines[cpp_element.start().line : cpp_element.end().line + 1]
@@ -53,17 +55,15 @@ def _extract_error_context(element: ET.Element) -> ErrorContext:
 
 
 def _highlight_responsible_code(element: ET.Element, encoding) -> str:
-    from litgen.internal.srcml import srcml_caller
     error_context = _extract_error_context(element)
     return str(error_context)
 
 
 def _show_element_info(element: ET.Element, encoding):
-    from litgen.internal.srcml import srcml_main, srcml_utils
-    from litgen.internal import code_utils
-
     def file_location(element: ET.Element):
-        header_filename = srcml_main.current_parsed_file() if len(srcml_main.current_parsed_file()) > 0 else "Position"
+        header_filename = srcml_main.srcml_main_context().current_parsed_file
+        if len(header_filename) == 0:
+            header_filename = "Position"
         start = srcml_utils.element_start_position(element)
         return f'{header_filename}:{start.line}:{start.column}'
 
@@ -83,10 +83,6 @@ def _warning_detailed_info(
         additional_message: str = "",
         encoding: str = "utf-8"
         ):
-
-    from litgen.internal.srcml import srcml_utils, srcml_main, srcml_caller
-    from litgen.internal import code_utils
-
     def _get_python_call_info():
         stack_lines = traceback.format_stack()
         error_line = stack_lines[-4]
@@ -119,7 +115,7 @@ def _warning_detailed_info(
     return message
 
 
-class SrcMlException(Exception):
+class SrcMlExceptionDetailed(SrcMlException):
     def __init__(self,
                  current_element: ET.Element = None,
                  additional_message = "",

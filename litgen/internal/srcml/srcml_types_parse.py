@@ -1,9 +1,10 @@
 import copy
 
-from litgen.internal.srcml.srcml_types import *
-from litgen.internal.srcml import srcml_caller, srcml_utils, srcml_warnings, srcml_main, srcml_comments
-from litgen.internal.srcml.srcml_warnings import SrcMlException
 from litgen import CodeStyleOptions
+
+from srcml_types import *
+import srcml_caller, srcml_utils, srcml_warnings, srcml_main, srcml_comments
+from srcml_warnings import SrcMlExceptionDetailed
 
 
 def parse_unprocessed(options: CodeStyleOptions, element_c: CppElementAndComment) -> CppUnit:
@@ -44,21 +45,21 @@ def parse_type(options: CodeStyleOptions, element: ET.Element, previous_decl: Cp
         elif child_tag == "modifier":
             modifier = child.text
             if modifier not in CppType.authorized_modifiers():
-                raise SrcMlException(child, f'modifier "{modifier}" is not authorized', options.encoding)
+                raise SrcMlExceptionDetailed(child, f'modifier "{modifier}" is not authorized', options.encoding)
             result.modifiers.append(child.text)
         elif child_tag == "argument_list":
             result.argument_list.append(child.text)
         else:
-            raise SrcMlException(child, f"unhandled tag {child_tag}", options.encoding)
+            raise SrcMlExceptionDetailed(child, f"unhandled tag {child_tag}", options.encoding)
 
     if len(result.names) == 0 and "..." not in result.modifiers:
         if previous_decl is None:
-            raise SrcMlException(result, "Can't find type name", options.encoding)
+            raise SrcMlExceptionDetailed(result, "Can't find type name", options.encoding)
         assert previous_decl is not None
         result.names = previous_decl.cpp_type.names
 
     if len(result.names) == 0 and "..." not in result.modifiers:
-        raise SrcMlException(result, "len(result.names) == 0!", options.encoding)
+        raise SrcMlExceptionDetailed(result, "len(result.names) == 0!", options.encoding)
 
     # process api names
     for name in result.names:
@@ -135,7 +136,7 @@ def parse_decl(options: CodeStyleOptions, element_c: CppElementAndComment, previ
         elif child_tag == "range":
             pass # this is for C bit fields
         else:
-            raise SrcMlException(child, f"unhandled tag {child_tag}", options.encoding)
+            raise SrcMlExceptionDetailed(child, f"unhandled tag {child_tag}", options.encoding)
 
     return result
 
@@ -156,7 +157,7 @@ def parse_decl_stmt(options: CodeStyleOptions, element_c: CppElementAndComment) 
             result.cpp_decls.append(cpp_decl)
             previous_decl = cpp_decl
         else:
-            raise SrcMlException(child, f"unhandled tag {child_c.tag()}", options.encoding)
+            raise SrcMlExceptionDetailed(child, f"unhandled tag {child_c.tag()}", options.encoding)
 
     # the comments were copied to all the internal decls, we can remove them from the decl_stmt
     result.cpp_element_comments = CppElementComments()
@@ -180,10 +181,10 @@ def parse_parameter(options: CodeStyleOptions, element: ET.Element) -> CppParame
         elif child_tag == "name":
             result.template_name = child.text # This is only for template parameters
         elif child_tag == "function_decl":
-            raise SrcMlException(
+            raise SrcMlExceptionDetailed(
                 child, f"A function uses a function_decl as a param. It was discarded", options.encoding)
         else:
-            raise SrcMlException(child, f"unhandled tag {child_tag}", options.encoding)
+            raise SrcMlExceptionDetailed(child, f"unhandled tag {child_tag}", options.encoding)
 
     return result
 
@@ -199,7 +200,7 @@ def parse_parameter_list(options: CodeStyleOptions, element: ET.Element) -> CppP
         if child_tag == "parameter":
             result.parameters.append(parse_parameter(options, child))
         else:
-            raise SrcMlException(child, result)
+            raise SrcMlExceptionDetailed(child, result)
     return result
 
 
@@ -215,7 +216,7 @@ def parse_template(options: CodeStyleOptions, element: ET.Element) -> CppTemplat
         if child_tag == "parameter_list":
             result.parameter_list = parse_parameter_list(options, child)
         else:
-            raise SrcMlException(child, f"unhandled tag {child_tag}", options.encoding)
+            raise SrcMlExceptionDetailed(child, f"unhandled tag {child_tag}", options.encoding)
     return result
 
 
@@ -242,9 +243,9 @@ def fill_function_decl(options: CodeStyleOptions, element_c: CppElementAndCommen
         elif child_tag == "block":
             pass # will be handled by parse_function
         elif child_tag == "modifier":
-            raise SrcMlException(child, "C style function pointers are poorly supported", options.encoding)
+            raise SrcMlExceptionDetailed(child, "C style function pointers are poorly supported", options.encoding)
         else:
-            raise SrcMlException(child, f"unhandled tag {child_tag}", options.encoding)
+            raise SrcMlExceptionDetailed(child, f"unhandled tag {child_tag}", options.encoding)
 
     if len(function_decl.type.names) >= 2 and function_decl.type.names[0] == "auto":
         function_decl.type.names = function_decl.type.names[1 : ]
@@ -276,7 +277,7 @@ def parse_function(options: CodeStyleOptions, element_c: CppElementAndComment) -
         elif child_tag in ["type", "name", "parameter_list", "specifier", "attribute", "template"]:
             pass # already handled by fill_function_decl
         else:
-            raise SrcMlException(child, f"unhandled tag {child_tag}", options.encoding)
+            raise SrcMlExceptionDetailed(child, f"unhandled tag {child_tag}", options.encoding)
     return result
 
 
@@ -296,7 +297,7 @@ def fill_constructor_decl(options: CodeStyleOptions, element_c: CppElementAndCom
         elif child_tag in ["block", "member_init_list"]:
             pass # will be handled by parse_constructor
         else:
-            raise SrcMlException(child, f"unhandled tag {child_tag}", options.encoding)
+            raise SrcMlExceptionDetailed(child, f"unhandled tag {child_tag}", options.encoding)
 
 
 def parse_constructor_decl(options: CodeStyleOptions, element_c: CppElementAndComment) -> CppConstructorDecl:
@@ -327,7 +328,7 @@ def parse_constructor(options: CodeStyleOptions, element_c: CppElementAndComment
         elif child_tag in ["name", "parameter_list", "specifier", "attribute"]:
             pass # alread handled by fill_constructor_decl
         else:
-            raise SrcMlException(child, f"unhandled tag {child_tag}", options.encoding)
+            raise SrcMlExceptionDetailed(child, f"unhandled tag {child_tag}", options.encoding)
 
     return result
 
@@ -346,7 +347,7 @@ def parse_super(options: CodeStyleOptions, element: ET.Element) -> CppSuper:
         elif child_tag == "name":
             result.name = _parse_name(child)
         else:
-            raise SrcMlException(child, f"unhandled tag {child_tag}", options.encoding)
+            raise SrcMlExceptionDetailed(child, f"unhandled tag {child_tag}", options.encoding)
 
     return result
 
@@ -363,7 +364,7 @@ def parse_super_list(options: CodeStyleOptions, element: ET.Element) -> CppSuper
         if child_tag == "super":
             result.super_list.append(parse_super(options, child))
         else:
-            raise SrcMlException(child, f"unhandled tag {child_tag}", options.encoding)
+            raise SrcMlExceptionDetailed(child, f"unhandled tag {child_tag}", options.encoding)
 
     return result
 
@@ -391,7 +392,7 @@ def parse_struct_or_class(options: CodeStyleOptions, element_c: CppElementAndCom
         elif child_tag == "template":
             result.template = parse_template(options, child)
         else:
-            raise SrcMlException(child, f"unhandled tag {child_tag}", options.encoding)
+            raise SrcMlExceptionDetailed(child, f"unhandled tag {child_tag}", options.encoding)
 
     return result
 
@@ -495,7 +496,7 @@ def fill_block(options: CodeStyleOptions, element: ET.Element, inout_block_conte
             else:
                 last_ignored_child = child_c
                 inout_block_content.block_children.append(parse_unprocessed(options, child_c))
-        except SrcMlException as e:
+        except SrcMlExceptionDetailed as e:
             srcml_warnings.emit_warning(f'A cpp element of type "{child_tag}" was ignored. Details follow\n {e}')
 
 
@@ -542,7 +543,7 @@ def parse_namespace(options: CodeStyleOptions, element_c: CppElementAndComment) 
         elif child_tag == "block":
             result.block = parse_block(options, child)
         else:
-            raise SrcMlException(child, f"unhandled tag {child_tag}", options.encoding)
+            raise SrcMlExceptionDetailed(child, f"unhandled tag {child_tag}", options.encoding)
 
     return result
 
@@ -565,6 +566,6 @@ def parse_enum(options: CodeStyleOptions, element_c: CppElementAndComment) -> Cp
         elif child_tag == "block":
             result.block = parse_block(options, child)
         else:
-            raise SrcMlException(child, f"unhandled tag {child_tag}", options.encoding)
+            raise SrcMlExceptionDetailed(child, f"unhandled tag {child_tag}", options.encoding)
 
     return result
