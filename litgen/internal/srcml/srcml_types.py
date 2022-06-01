@@ -777,6 +777,27 @@ class CppStruct(CppBlockChild):
     def __str__(self):
         return self.str_commented()
 
+    def has_non_default_ctor(self) -> bool:
+        found_non_default_ctor = False
+        for access_zone in self.block.block_children:
+            if isinstance(access_zone, CppPublicProtectedPrivate):
+                for child in access_zone.block_children:
+                    if isinstance(child, CppConstructorDecl):
+                        found_non_default_ctor = True
+                        break
+        return found_non_default_ctor
+
+    def has_deleted_default_ctor(self) -> bool:
+        found_deleted_default_ctor = False
+        for access_zone in self.block.block_children:
+            if isinstance(access_zone, CppPublicProtectedPrivate):
+                for child in access_zone.block_children:
+                    if isinstance(child, CppConstructorDecl):
+                        if "delete" in child.specifiers:
+                            found_deleted_default_ctor = True
+                            break
+        return found_deleted_default_ctor
+
 
 @dataclass
 class CppClass(CppStruct):

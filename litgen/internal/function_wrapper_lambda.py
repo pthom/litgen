@@ -206,6 +206,9 @@ def _buffer_params_list(params: CppParameterList, options: CodeStyleOptions) -> 
 
 
 def _make_call_function(function_infos: CppFunctionDecl, is_method, options: CodeStyleOptions) -> List[str]:
+
+    _i_ = options.indent_cpp_spaces()
+
     params = function_infos.parameter_list
     is_template = _contains_template_buffer(params, options)
     first_template_buffer_param = _first_template_buffer_param(params, options)
@@ -222,13 +225,13 @@ def _make_call_function(function_infos: CppFunctionDecl, is_method, options: Cod
 
             cast_type = cpp_to_python.py_array_type_to_cpp_type(py_array_type) + "*"
 
-            code_lines.append(f"    if (array_type == '{py_array_type}')")
+            code_lines.append(f"{_i_}if (array_type == '{py_array_type}')")
             attrs_function_call = _lambda_params_call(params, options, cast_type)
-            code_lines.append(f"        {{ {return_str1}{self_prefix}{function_infos.name}({attrs_function_call});{return_str2} }}")
+            code_lines.append(f"{_i_}{_i_}{{ {return_str1}{self_prefix}{function_infos.name}({attrs_function_call});{return_str2} }}")
 
         code_lines.append("")
-        code_lines.append(f'    // If we arrive here, the array type is not supported!')
-        code_lines.append(f'    throw std::runtime_error(std::string("Bad array type: ") + array_type );')
+        code_lines.append(f'{_i_}// If we arrive here, the array type is not supported!')
+        code_lines.append(f'{_i_}throw std::runtime_error(std::string("Bad array type: ") + array_type );')
 
     else:
         if _contains_buffer(params, options):
@@ -243,18 +246,20 @@ def _make_call_function(function_infos: CppFunctionDecl, is_method, options: Cod
             """
             error_message_docstring = f'std::string(R"msg({error_message})msg")'
 
-            code_lines.append(f"    char array_type = {first_buffer_param.variable_name()}.dtype().char_();")
-            code_lines.append(f"    if (array_type != '{expected_py_array_type}')")
-            code_lines.append(f'        throw std::runtime_error({error_message_docstring});')
+            code_lines.append(f"{_i_}char array_type = {first_buffer_param.variable_name()}.dtype().char_();")
+            code_lines.append(f"{_i_}if (array_type != '{expected_py_array_type}')")
+            code_lines.append(f'{_i_}{_i_}throw std::runtime_error({error_message_docstring});')
 
         cast_type = None
         attrs_function_call = _lambda_params_call(params, options, cast_type)
-        code_lines.append(f"    {{ {return_str1}{self_prefix}{function_infos.name}({attrs_function_call});{return_str2} }}")
+        code_lines.append(f"{_i_}{{ {return_str1}{self_prefix}{function_infos.name}({attrs_function_call});{return_str2} }}")
 
     return code_lines
 
 
 def _template_body_code(function_infos: CppFunctionDecl, is_method: bool, options: CodeStyleOptions) -> List[str]:
+
+    _i_ = options.indent_cpp_spaces()
 
     params = function_infos.parameter_list
 
@@ -280,7 +285,7 @@ def _template_body_code(function_infos: CppFunctionDecl, is_method: bool, option
                 void* PARAM_NAME_CPP_buffer = PARAM_NAME_CPP.mutable_data();
                 int PARAM_NAME_CPP_count = PARAM_NAME_CPP.shape()[0];
             """[1:]
-        code_template = code_utils.indent_code_force(code_template, 4)
+        code_template = code_utils.indent_code_force(code_template, indent_str=options.indent_cpp_spaces())
 
         code = code_template
         code = code.replace("PARAM_NAME_CPP", buffer_param.variable_name())
@@ -297,11 +302,11 @@ def _template_body_code(function_infos: CppFunctionDecl, is_method: bool, option
         assert idx_sizeof_param < len(buffer_params_list)
         related_buffer_param = buffer_params_list[idx_sizeof_param]
 
-        code_template = """
-    // process SIZEOF_PARAM_NAME default value (which was a sizeof in C++)
-    int BUFFER_PARAM_NAME_CPP_SIZEOF_PARAM_NAME = SIZEOF_PARAM_NAME;
-    if (BUFFER_PARAM_NAME_CPP_SIZEOF_PARAM_NAME == -1)
-        BUFFER_PARAM_NAME_CPP_SIZEOF_PARAM_NAME = (int)BUFFER_PARAM_NAME_CPP.itemsize();
+        code_template = f"""
+{_i_}// process SIZEOF_PARAM_NAME default value (which was a sizeof in C++)
+{_i_}int BUFFER_PARAM_NAME_CPP_SIZEOF_PARAM_NAME = SIZEOF_PARAM_NAME;
+{_i_}if (BUFFER_PARAM_NAME_CPP_SIZEOF_PARAM_NAME == -1)
+{_i_}{_i_}BUFFER_PARAM_NAME_CPP_SIZEOF_PARAM_NAME = (int)BUFFER_PARAM_NAME_CPP.itemsize();
         """[1:]
         code = code_template
         code = code.replace("SIZEOF_PARAM_NAME", sizeof_param.variable_name())
@@ -441,21 +446,7 @@ def make_function_wrapper_lambda(
         function_infos: CppFunctionDecl,
         options: CodeStyleOptions,
         parent_struct_name: str = ""
-) -> str:
-    """
-    ````voiladoc
->>> import litgen, litgen.internal.function_parser, litgen.internal.function_wrapper_lambda
->>> options = litgen.code_style_implot()
->>> code = "IMPLOT_API int add(int a, int b = 10);"
->>> infos = litgen.internal.function_parser.parse_one_function_declaration(code, options)
->>> print(litgen.internal.function_wrapper_lambda.make_function_wrapper_lambda(infos, options, "Foo"))
-[](Foo& self, int a, int b = 10)
-{
-    { return self.add(a, b); }
-},
-    ````
-    """
-
+    ) -> str:
     code_lines = []
 
     def add_line(line):

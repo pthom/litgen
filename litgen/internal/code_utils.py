@@ -91,23 +91,26 @@ def unindent_code(code: str) -> str:
     return "\n".join(processed_lines)
 
 
-def reindent_code(code: str, indent_size: int, skip_first_line = False):
+def reindent_code(code: str, indent_size: int = 4, skip_first_line = False, indent_str = ""):
     "change the global code indentation, but keep its inner indentation"
     code = unindent_code(code)
-    code = indent_code(code, indent_size, skip_first_line)
+    code = indent_code(code, indent_size = indent_size, skip_first_line = skip_first_line,indent_str=indent_str)
     return code
 
 
-def indent_code(code: str, indent_size: int, skip_first_line = False):
+def indent_code(code: str, indent_size: int = 1, skip_first_line = False, indent_str = ""):
     "add some space to the left of all lines"
     if skip_first_line:
         lines = code.split("\n")
+        if len(lines) == 1:
+            return code
         first_line = lines[0]
         rest = "\n".join(lines[1:])
-        return first_line + "\n" + indent_code(rest, indent_size, False)
+        return first_line + "\n" + indent_code(rest, indent_size, False, indent_str)
 
     lines = code.split("\n")
-    indent_str = " " * indent_size
+    if len(indent_str) == 0:
+        indent_str = " " * indent_size
 
     def indent_line(line):
         if len(line) == 0:
@@ -119,10 +122,11 @@ def indent_code(code: str, indent_size: int, skip_first_line = False):
     return "\n".join(lines)
 
 
-def indent_code_force(code: str, indent_size: int):
+def indent_code_force(code: str, indent_size: int = 1, indent_str = ""):
     "violently remove all space at the left, thus removign the inner indentation"
     lines = code.split("\n")
-    indent_str = " " * indent_size
+    if len(indent_str) == 0:
+        indent_str = " " * indent_size
     lines = map(lambda s: indent_str + s.strip(), lines)
     return "\n".join(lines)
 
@@ -142,11 +146,12 @@ def format_cpp_comment_on_one_line(comment: str) -> str:
     return comment
 
 
-def format_cpp_comment_multiline(comment: str, indentation: int):
+def format_cpp_comment_multiline(comment: str, indentation_size: int = 4, indentation_str = ""):
     lines = comment.split("\n")
-    spacing = " " * indentation
+    if len(indentation_str) == 0:
+        indentation_str = " " * indentation_size
     def process_line(line):
-        return spacing + "// " + line
+        return indentation_str + "// " + line
     lines = list(map(process_line, lines))
     return "\n".join(lines)
 

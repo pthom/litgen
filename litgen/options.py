@@ -108,9 +108,10 @@ class CodeStyleOptions:
     init_function_python_additional_code = None # Callable[[FunctionsInfos], str]
 
     # Size of an indentation in the python stubs
-    indent_size_python = 4
+    indent_python_size = 4
     # Spacing option in C++ code
-    indent_size_cpp_pydef: int = 8
+    indent_cpp_size: int = 4
+    indent_cpp_with_tabs: bool = False
 
     #
     # enum options
@@ -141,7 +142,7 @@ class CodeStyleOptions:
     # C Buffers to py::array
     #
     buffer_flag_replace_by_array = False
-    buffer_types = ["int8_t", "uint8_t", "uchar"] # of type List[str]. Which means that `uint8_t*` are considered as possible buffers
+    buffer_types = ["int8_t", "uint8_t"] # of type List[str]. Which means that `uint8_t*` are considered as possible buffers
     buffer_template_types = ["T"] # Which means that templated functions using a buffer use T as a templated name
     buffer_size_regexes = [
         make_regex_any_variable_ending_with("count"),   # any variable name ending with count or Count
@@ -173,12 +174,16 @@ class CodeStyleOptions:
                     Authorized types are: { ", ".join(authorized_types) }
                     """)
 
+    def indent_cpp_spaces(self):
+        space = "\t" if self.indent_cpp_with_tabs else " "
+        return space * self.indent_cpp_size
+
 
 def code_style_immvision() -> CodeStyleOptions:
     options = CodeStyleOptions()
     options.enum_title_on_previous_line = True
     options.generate_to_string = True
-    options.indent_size_cpp_pydef = 8
+    options.indent_cpp_size = 4
     options.functions_api_prefixes = ["IMMVISION_API"]
     options.code_replacements = _code_replacements.standard_replacements() + _code_replacements.opencv_replacements()
 
@@ -204,7 +209,7 @@ def code_style_implot():
     options = CodeStyleOptions()
     options.enum_title_on_previous_line = False
     options.generate_to_string = False
-    options.indent_size_cpp_pydef = 4
+    options.indent_cpp_size = 4
     options.functions_api_prefixes = ["IMPLOT_API", "IMPLOT_TMP"]
     options.code_replacements = _code_replacements.standard_replacements()
 

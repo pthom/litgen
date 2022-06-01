@@ -15,27 +15,28 @@ def test_generate_pydef_enum():
 
     code1 = """
         // This is the enum doc
+        // on two lines
         enum MyEnum {
             // A doc on several values 
+            // on several lines
             MyEnum_A = 0, // Doc about A
-            MyEnum_B,     // Doc about B
+            MyEnum_B,     
             // Count the number of values in the enum
             MyEnum_COUNT
         };        
     """
 
-    expected_generated_code1 = """
-        py::enum_<MyEnum>(m, "MyEnum", py::arithmetic(),
-            "This is the enum doc")
-            // A doc on several values
-            .value("a", MyEnum_A, "(Doc about A)")
-            .value("b", MyEnum_B, "(Doc about B)")
-        ;
+    expected_generated_code1 = """py::enum_<MyEnum>(m, "MyEnum", py::arithmetic(), "This is the enum doc\\non two lines")
+    // A doc on several values 
+    // on several lines
+    .value("a", MyEnum_A, "Doc about A")
+    .value("b", MyEnum_B, "");
     """
 
     cpp_unit1 = srcml.code_to_cpp_unit(options, code1)
     generated_code1 = module_pydef_generator.generate_pydef(cpp_unit1, options)
-    code_utils.assert_are_codes_equal(expected_generated_code1, generated_code1)
+    # logging.warning("\n" + generated_code1)
+    code_utils.assert_are_codes_equal(generated_code1, expected_generated_code1)
 
     code2 = """
         // This is the enum doc
@@ -47,17 +48,14 @@ def test_generate_pydef_enum():
             COUNT
         };
     """
-    expected_generated_code2 = """
-        py::enum_<MyEnum>(m, "MyEnum", py::arithmetic(),
-            "This is the enum doc")
-            // A doc on several values
-            .value("a", MyEnum::A, "(Doc about A)")
-            .value("b", MyEnum::B, "(Doc about B)")
-        ;
+    expected_generated_code2 = """py::enum_<MyEnum>(m, "MyEnum", py::arithmetic(), "This is the enum doc")
+    // A doc on several values
+    .value("a", MyEnum::A, "Doc about A")
+    .value("b", MyEnum::B, "Doc about B");
     """
     cpp_unit2 = srcml.code_to_cpp_unit(options, code2)
     generated_code2 = module_pydef_generator.generate_pydef(cpp_unit2, options)
-    code_utils.assert_are_codes_equal(expected_generated_code2, generated_code2)
+    code_utils.assert_are_codes_equal(generated_code2, expected_generated_code2)
 
 
 #################################
@@ -70,22 +68,24 @@ def test_generate_pydef_function_cpp_code() -> str:
     def test_implot_easy():
         options = code_style_implot()
         code = '''
-            // Sets the format of numeric axis labels
+            // Sets the format of numeric 
+            // axis labels
             IMPLOT_API void SetupAxisFormat(ImAxis axis, const char* fmt);
         '''
         cpp_unit = srcml.code_to_cpp_unit(options, code)
         generated_code = module_pydef_generator.generate_pydef(cpp_unit, options)
         expected_code = '''
-            m.def("setup_axis_format",
-                [](ImAxis axis, const char * fmt)
-                {
-                    { SetupAxisFormat(axis, fmt); return; }
-                },
-                py::arg("axis"),
-                py::arg("fmt"),
-                "Sets the format of numeric axis labels"
-            );
+        m.def("setup_axis_format",
+            [](ImAxis axis, const char * fmt)
+            {
+                { SetupAxisFormat(axis, fmt); return; }
+            },
+            py::arg("axis"),
+            py::arg("fmt"),
+            "Sets the format of numeric \\naxis labels"
+        );
         '''
+        # logging.warning("\n" + generated_code)
         code_utils.assert_are_codes_equal(generated_code, expected_code)
 
     test_implot_easy()
@@ -112,7 +112,6 @@ def test_generate_pydef_function_cpp_code() -> str:
         code_utils.assert_are_codes_equal(generated_code, expected_code)
 
     test_return_value_policy()
-
 
     def test_implot_one_buffer():
         options = code_style_implot()
@@ -274,21 +273,13 @@ def test_generate_pydef_struct_cpp_code():
     cpp_unit = srcml.code_to_cpp_unit(options, code)
     generated = module_pydef_generator.generate_pydef(cpp_unit, options)
     expected_code = """
-    auto pyClassMultiplier = py::class_<Multiplier>
-        (m, "Multiplier", 
-        "A dummy structure that likes to multiply")
-
-        .def(py::init<>()) 
-
-
-        .def(
-            py::init<int>(),
-            py::arg("_who"),
-
-            "Constructor with param"
-        )
-
-
+        auto pyClassMultiplier = py::class_<Multiplier>
+            (m, "Multiplier", "A dummy structure that likes to multiply")
+            .def(py::init<>(),
+                "default constructor")
+            .def(py::init<int>(),
+                py::arg("_who"),
+                "Constructor with param")
             .def("calculate_double",
                 [](int x = 21)
                 {
@@ -297,9 +288,8 @@ def test_generate_pydef_struct_cpp_code():
                 py::arg("x") = 21,
                 "Doubles the input number"
             )
-
-        .def_readwrite("who", &Multiplier::who, "Who is who?")
-        .def("__repr__", [](const Multiplier& v) { return ToString(v); }); 
+            .def_readwrite("who", &Multiplier::who, "Who is who?")
+            .def("__repr__", [](const Multiplier& v) { return ToString(v); });
     """
     # logging.warning("\n" + generated)
     code_utils.assert_are_codes_equal(generated, expected_code)

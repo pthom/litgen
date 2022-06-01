@@ -1,7 +1,7 @@
 import os, sys; _THIS_DIR = os.path.dirname(__file__); sys.path = [_THIS_DIR + "/.."] + sys.path
 
 from litgen.internal import srcml
-from litgen.internal import code_utils
+from litgen.internal import code_utils, module_pydef_generator
 import litgen
 
 
@@ -11,14 +11,20 @@ def read_file_content(filename):
     return content
 
 
-def play_code():
+def play_parse(code):
     options = litgen.code_style_imgui()
-    code = """
-MY_API inline int8_t test_with_one_const_buffer(const int8_t* values, int count) {}
-    """
-
     cpp_unit = srcml.code_to_cpp_unit(options, code)
     print(cpp_unit)
+
+
+def play_pydef(code):
+    options = litgen.code_style_imgui()
+    options.indent_cpp_size = 4
+    options.indent_cpp_with_tabs = False
+    cpp_unit = srcml.code_to_cpp_unit(options, code)
+    pydef_code = litgen.internal.module_pydef_generator.generate_pydef(cpp_unit, options)
+    print(f">>>\n{pydef_code}<<<")
+
 
 def play_imgui():
     options = litgen.code_style_imgui()
@@ -30,4 +36,25 @@ def play_imgui():
 
 #test_imgui()
 
-play_code()
+
+code = """
+        // A dummy structure that likes 
+        // to multiply numbers
+        struct Multiplier 
+        { 
+            Multiplier(): factor(0) {} // default constructor
+            
+            // Constructor with param
+            Multiplier(int a, int b): factor(a) {}; 
+            
+            // Doubles the input number
+            int CalculateDouble(int x = 21, int y) 
+            { 
+                return x * 2; 
+            }
+            // Who is who?
+            int factor = 627;
+        };
+"""
+# play_parse(code)
+play_pydef(code)

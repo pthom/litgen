@@ -12,7 +12,7 @@ def my_code_style_options():
     options = litgen.CodeStyleOptions()
     options.enum_title_on_previous_line = False
     options.generate_to_string = False
-    options.indent_size_cpp_pydef = 4
+    options.indent_cpp_size = 4
     options.functions_api_prefixes = ["MY_API"]
     options.struct_api_suffixes = ["MY_API_STRUCT"]
     options.function_exclude_by_comment = ["MY_API_EXCLUDE"]

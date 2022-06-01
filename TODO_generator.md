@@ -1,4 +1,15 @@
+- align struct
+- ctor default or not
+  - strct.has_implicit_public_default_ctor()
+- gen stub
+- integration tests
+  - work on full gen (namespace, comment, etc)
+- filter function with API prefix
 
+- separate module srcmlcpp
+  - option / log time srcml caller
+
+Doc avec google collab
 
 - toString en hackant str:
     l.Foo.__str__ = my_str
