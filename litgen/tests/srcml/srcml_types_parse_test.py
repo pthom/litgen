@@ -4,16 +4,16 @@ import litgen
 
 _THIS_DIR = os.path.dirname(__file__); sys.path = [_THIS_DIR + "/.."] + sys.path
 
-from litgen.internal.srcml import srcml_utils, srcml_types_parse, srcml_main
+from litgen.internal.srcml import srcml_types_parse, srcml_main
 import litgen.internal.code_utils as code_utils
-from litgen import code_style_implot, code_style_imgui
+from litgen.internal.srcml.srcml_options import SrcmlOptions
 
 import logging
 import copy
 
 
 def test_parse_cpp_decl_statement():
-    options = code_style_implot()
+    options = SrcmlOptions()
 
     def code_to_decl_statement(code):
         element = srcml_main.get_only_child_with_tag(options, code, "decl_stmt")
@@ -70,7 +70,7 @@ def test_parse_cpp_decl_statement():
 
 
 def test_parse_function_decl():
-    options = code_style_implot()
+    options = SrcmlOptions()
 
     def code_to_fn_decl(code):
         element = srcml_main.get_only_child_with_tag(options, code, "function_decl")
@@ -113,7 +113,7 @@ def test_parse_function_decl():
 
 
 def test_parse_function():
-    options = code_style_implot()
+    options = SrcmlOptions()
 
     def code_to_fn_decl(code):
         element = srcml_main.get_only_child_with_tag(options, code, "function")
@@ -134,7 +134,7 @@ def test_parse_function():
 
 
 def test_parse_struct():
-    options = code_style_implot()
+    options = SrcmlOptions()
 
     def code_to_struct_decl(code):
         element_c = srcml_main.get_only_child_with_tag(options, code, "struct")
@@ -220,7 +220,7 @@ def test_parse_struct():
 
 
 def test_parse_unit():
-    options = code_style_implot()
+    options = SrcmlOptions()
 
     def code_to_unit(code):
         srcml_unit = srcml_main.code_to_srcml_unit(options, code)
@@ -320,8 +320,9 @@ def test_parse_unit():
 
 
 def do_parse_imgui_implot(filename):
-    options = litgen.code_style_imgui()
-    litgen.LITGEN_OPTIONS.flag_quiet = True
+    options = SrcmlOptions()
+    options.flag_quiet = True
+    options.header_guard_suffixes.append("IMGUI_DISABLE")
     srcml_unit = srcml_main.file_to_srcml_unit(options, filename)
     unit_element = srcml_types_parse.parse_unit(options, srcml_unit)
     recomposed_code = str(unit_element)
@@ -330,12 +331,12 @@ def do_parse_imgui_implot(filename):
     assert len(lines) > 500
 
 
-def test_parse_imgui():
-    source_filename = os.path.realpath(_THIS_DIR + "/../../../examples_real_libs/imgui/imgui.h")
-    do_parse_imgui_implot(source_filename)
-
-
-def test_parse_implot():
-    source_filename = os.path.realpath(_THIS_DIR + "/../../../examples_real_libs/implot/implot.h")
-    do_parse_imgui_implot(source_filename)
-
+# def test_parse_imgui():
+#     source_filename = os.path.realpath(_THIS_DIR + "/../../../examples_real_libs/imgui/imgui.h")
+#     do_parse_imgui_implot(source_filename)
+#
+#
+# def test_parse_implot():
+#     source_filename = os.path.realpath(_THIS_DIR + "/../../../examples_real_libs/implot/implot.h")
+#     do_parse_imgui_implot(source_filename)
+#

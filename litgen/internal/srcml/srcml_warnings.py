@@ -5,10 +5,9 @@ import xml.etree.ElementTree as ET
 import logging
 import traceback, inspect
 
-from litgen import LITGEN_OPTIONS
-from litgen.internal import code_utils
-
-from litgen.internal.srcml import SrcMlException
+import srcml_code_utils
+from srcml_options import SrcmlOptions
+from srcml_exception import SrcMlException
 import srcml_main, srcml_types, srcml_utils
 
 ###########################################
@@ -73,7 +72,7 @@ def _show_element_info(element: ET.Element, encoding):
     message = f"""        
     While parsing a "{element_tag}", corresponding to this C++ code:
     {file_location(element)}
-{code_utils.indent_code(concerned_code, 12)}
+{srcml_code_utils.indent_code(concerned_code, 12)}
     """
     return message
 
@@ -81,8 +80,9 @@ def _show_element_info(element: ET.Element, encoding):
 def _warning_detailed_info(
         current_element: ET.Element = None,
         additional_message: str = "",
-        encoding: str = "utf-8"
+        options: SrcmlOptions = SrcmlOptions()
         ):
+
     def _get_python_call_info():
         stack_lines = traceback.format_stack()
         error_line = stack_lines[-4]
@@ -96,7 +96,7 @@ def _warning_detailed_info(
     def show_python_callstack():
         return f"""
                 Python call stack info:
-        {code_utils.indent_code(python_error_line, 4)}
+        {srcml_code_utils.indent_code(python_error_line, 4)}
         """
 
     message = ""
@@ -104,13 +104,13 @@ def _warning_detailed_info(
     if current_element is not None:
         message += """
         Issue found"""
-        message += _show_element_info(current_element, encoding)
+        message += _show_element_info(current_element, options.encoding)
 
-    if LITGEN_OPTIONS.flag_show_python_callstack:
+    if options.flag_show_python_callstack:
         message += show_python_callstack()
 
     if len(additional_message) > 0:
-        message = additional_message + "\n" + code_utils.indent_code(message, 4)
+        message = additional_message + "\n" + srcml_code_utils.indent_code(message, 4)
 
     return message
 
@@ -119,20 +119,20 @@ class SrcMlExceptionDetailed(SrcMlException):
     def __init__(self,
                  current_element: ET.Element = None,
                  additional_message = "",
-                 encoding: str = "utf-8"
+                 options: SrcmlOptions = SrcmlOptions()
                  ):
-        message = _warning_detailed_info(current_element,  additional_message, encoding=encoding)
+        message = _warning_detailed_info(current_element,  additional_message, options=options)
         super().__init__(message)
 
 
 def emit_srcml_warning(
         current_element: ET.Element = None,
         additional_message = "",
-        encoding:str = "utf-8"
+        options: SrcmlOptions = SrcmlOptions()
     ):
-    if LITGEN_OPTIONS.flag_quiet:
+    if options.flag_quiet:
         return
-    message = _warning_detailed_info(current_element, additional_message, encoding)
+    message = _warning_detailed_info(current_element, additional_message, options)
 
     in_pytest = "pytest" in sys.modules
     if in_pytest:
@@ -141,8 +141,8 @@ def emit_srcml_warning(
         print(message, file=sys.stderr)
 
 
-def emit_warning(message: str):
-    if LITGEN_OPTIONS.flag_quiet:
+def emit_warning(message: str, options: SrcmlOptions):
+    if options.flag_quiet:
         return
     in_pytest = "pytest" in sys.modules
     if in_pytest:

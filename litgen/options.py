@@ -51,15 +51,7 @@ from dataclasses import dataclass, field
 from enum import Enum
 from typing import Optional, List, Tuple, Callable
 from internal.code_utils import make_regex_any_variable_ending_with, make_regex_any_variable_starting_with
-
-
-@dataclass
-class LitgenOptions:
-    flag_quiet: bool = False # if quiet, all warning messages are discarded
-    flag_show_python_callstack: bool = False
-
-
-LITGEN_OPTIONS = LitgenOptions()
+from internal.srcml.srcml_options import SrcmlOptions
 
 
 def _preprocess_imgui_code(code):
@@ -72,15 +64,7 @@ def _preprocess_imgui_code(code):
 
 @dataclass
 class CodeStyleOptions:
-
-    encoding = "utf-8"
-
-    header_guard_suffixes = ["_H", "HPP", "HXX"]
-    header_filter_preprocessor_regions = True
-    code_preprocess_function: Callable[[str], str] = None
-
-    # Preserve empty lines, i.e any empty line in the C++ code will lead to an empty line in the python stub
-    preserve_empty_lines: bool = True
+    srcml_options: SrcmlOptions = SrcmlOptions()
 
     # Enum members title policy: are titles directly on top (True), or to the right (False)
     enum_title_on_previous_line: bool = False
@@ -91,9 +75,6 @@ class CodeStyleOptions:
     function_name_exclude_regexes: List[str] = field(default_factory=list)
     # enable to exclude functions by adding a comment on the same line of their declaration
     function_exclude_by_comment: List[str] = field(default_factory=list)
-    # Prefixes that denote functions that should be published (for example ["IMPLOT_API", "IMPLOT_TMP"])
-    # if empty, all function are published!
-    functions_api_prefixes = []
     # Suffixes that denote structs that should be published, for example:
     #       struct MyStruct        // IMMVISION_API_STRUCT     <== this is a suffix
     #       { };
@@ -185,7 +166,7 @@ def code_style_immvision() -> CodeStyleOptions:
     options.enum_title_on_previous_line = True
     options.generate_to_string = True
     options.indent_cpp_size = 4
-    options.functions_api_prefixes = ["IMMVISION_API"]
+    options.srcml_options.functions_api_prefixes = ["IMMVISION_API"]
     options.code_replacements = _code_replacements.standard_replacements() + _code_replacements.opencv_replacements()
 
     options.buffer_flag_replace_by_array = False
@@ -213,7 +194,7 @@ def code_style_implot():
     options.enum_title_on_previous_line = False
     options.generate_to_string = False
     options.indent_cpp_size = 4
-    options.functions_api_prefixes = ["IMPLOT_API", "IMPLOT_TMP"]
+    options.srcml_options.functions_api_prefixes = ["IMPLOT_API", "IMPLOT_TMP"]
     options.code_replacements = _code_replacements.standard_replacements()
 
     options.buffer_flag_replace_by_array = True
@@ -261,12 +242,12 @@ def code_style_implot():
         "PlotPieChart"
     ]
 
-    options.code_preprocess_function = _preprocess_imgui_code
+    options.srcml_options.code_preprocess_function = _preprocess_imgui_code
 
     return options
 
 
 def code_style_imgui():
     options = code_style_implot()
-    options.header_guard_suffixes.append("IMGUI_DISABLE")
+    options.srcml_options.header_guard_suffixes.append("IMGUI_DISABLE")
     return options

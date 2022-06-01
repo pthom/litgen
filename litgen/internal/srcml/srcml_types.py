@@ -4,9 +4,8 @@ from dataclasses import dataclass
 
 import xml.etree.ElementTree as ET
 
-from litgen.internal import code_utils
-from litgen import CodeStyleOptions
-
+import srcml_code_utils
+from srcml_options import SrcmlOptions
 import srcml_utils, srcml_caller
 from srcml_code_position import CodePosition
 
@@ -166,7 +165,7 @@ class CppElementAndComment(CppElement):
         self.cpp_element_comments = cpp_element_comments
 
     def as_dict(self):
-        as_dict= code_utils.merge_dicts(super().as_dict(), self.cpp_element_comments.as_dict())
+        as_dict= srcml_code_utils.merge_dicts(super().as_dict(), self.cpp_element_comments.as_dict())
         return as_dict
 
     def str_commented(self, is_enum:bool = False, is_decl_stmt: bool = False):
@@ -295,7 +294,7 @@ class CppPublicProtectedPrivate(CppBlock): # Also a CppBlockChild
             r += "// <default_access_type/>"
         r += "\n"
 
-        r += code_utils.indent_code(self.str_block(), 4)
+        r += srcml_code_utils.indent_code(self.str_block(), 4)
         return r
 
     def str_code(self):
@@ -348,8 +347,6 @@ class CppType(CppElement):
         return ["*", "&", "&&", "..."]
 
     def str_code(self):
-        from litgen.internal.srcml import SrcMlException
-
         nb_const = self.specifiers.count("const")
 
         if nb_const > 2:
@@ -362,14 +359,14 @@ class CppType(CppElement):
             specifier_r.remove("const")
             specifiers = list(reversed(specifier_r))
 
-        specifiers_str = code_utils.join_remove_empty(" ", specifiers)
-        modifiers_str = code_utils.join_remove_empty(" ", self.modifiers)
+        specifiers_str = srcml_code_utils.join_remove_empty(" ", specifiers)
+        modifiers_str = srcml_code_utils.join_remove_empty(" ", self.modifiers)
 
         name = " ".join(self.names)
 
         name_and_arg = name
         strs = [specifiers_str, name_and_arg, modifiers_str]
-        r = code_utils.join_remove_empty(" ", strs)
+        r = srcml_code_utils.join_remove_empty(" ", strs)
 
         if nb_const == 2:
             r += " const"
@@ -405,7 +402,7 @@ class CppDecl(CppElementAndComment):
                </ns0:index>
             </ns0:name>
 
-      In litgen, this name will be seen as "v[10]"
+      In this library, this name will be seen as "v[10]"
 
     * init represent the initial aka default value.
       With srcML, it is inside an <init><expr> node in srcML.
@@ -457,7 +454,7 @@ class CppDeclStatement(CppElementAndComment):
 
     def str_code(self):
         str_decls = list(map(lambda cpp_decl: cpp_decl.str_commented(is_decl_stmt=True), self.cpp_decls))
-        str_decl = code_utils.join_remove_empty("\n", str_decls)
+        str_decl = srcml_code_utils.join_remove_empty("\n", str_decls)
         return str_decl
 
     def __str__(self):
@@ -483,9 +480,7 @@ class CppParameter(CppElement):
             return str(self.decl)
         else:
             if self.template_type is None:
-                from litgen.internal.srcml import OPTIONS
-                if not OPTIONS.flag_quiet:
-                    logging.warning("CppParameter.__str__() with no decl and no template_type")
+                logging.warning("CppParameter.__str__() with no decl and no template_type")
             return str(self.template_type) + " " + self.template_name
 
     def __str__(self):
@@ -504,7 +499,7 @@ class CppParameter(CppElement):
 
 def types_names_default_for_signature_parameters_list(parameters: List[CppParameter]) -> str:
     strs = list(map(lambda param: str(param), parameters))
-    return  code_utils.join_remove_empty(", ", strs)
+    return  srcml_code_utils.join_remove_empty(", ", strs)
 
 
 @dataclass
@@ -593,7 +588,7 @@ class CppFunctionDecl(CppElementAndComment):
         r = self._str_signature() + ";"
         return r
 
-    def full_return_type(self, options: CodeStyleOptions):
+    def full_return_type(self, options: SrcmlOptions):
         r = self.type.str_code()
         for prefix in options.functions_api_prefixes:
             r = r.replace(prefix + " ", "")
@@ -715,7 +710,7 @@ class CppSuperList(CppElement):
 
     def str_code(self):
         strs = map(str, self.super_list)
-        return " : " + code_utils.join_remove_empty(", ", strs)
+        return " : " + srcml_code_utils.join_remove_empty(", ", strs)
 
     def __str__(self):
         return self.str_code()
@@ -751,7 +746,7 @@ class CppStruct(CppBlockChild):
         r += "\n"
 
         r += "{\n"
-        r += code_utils.indent_code(str(self.block), 4)
+        r += srcml_code_utils.indent_code(str(self.block), 4)
         r += "};\n"
 
         return r
@@ -827,7 +822,7 @@ class CppNamespace(CppBlockChild):
     def str_code(self):
         r = f"namespace {self.name}\n"
         r += "{\n"
-        r += code_utils.indent_code(str(self.block), 4)
+        r += srcml_code_utils.indent_code(str(self.block), 4)
         r += "}"
         return r
 
@@ -856,7 +851,7 @@ class CppEnum(CppBlockChild):
             r+= f"enum {self.name}\n"
         r += "{\n"
         block_code = self.block.str_block(is_enum=True)
-        r += code_utils.indent_code(block_code, 4)
+        r += srcml_code_utils.indent_code(block_code, 4)
         r += "};\n"
         return r
 

@@ -12,6 +12,9 @@ import xml.etree.ElementTree as ET
 #
 ###########################################
 
+# Count the total time used by call to the exe srcml
+_FLAG_PROFILE_SRCML_CALLS: bool = False
+
 
 def _embed_element_into_unit(element: ET.Element) -> ET.Element:
     if element.tag.endswith("unit"):
@@ -81,11 +84,6 @@ class _SrcmlCaller:
         if element is None:
             return "<srcml_to_code(None)>"
 
-        # print(f"""
-        # srcml_to_code with
-        #     {code_utils.indent_code(srcml_to_str(element), 12, skip_first_line=True)}
-        # """)
-
         self._stats_srcml_to_code.start()
         unit_element = _embed_element_into_unit(element)
         with tempfile.NamedTemporaryFile(delete=False, suffix=".xml") as input_xml_file:
@@ -103,7 +101,9 @@ class _SrcmlCaller:
         return code_str
 
     def __del__(self):
-        print(f"_SrcmlCaller: code_to_srcml {self._stats_code_to_srcml.stats_string()}    |    srcml_to_code {self._stats_srcml_to_code.stats_string()}")
+        global _FLAG_PROFILE_SRCML_CALLS
+        if _FLAG_PROFILE_SRCML_CALLS:
+            print(f"_SrcmlCaller: code_to_srcml {self._stats_code_to_srcml.stats_string()}    |    srcml_to_code {self._stats_srcml_to_code.stats_string()}")
 
 
 _SRCML_CALLER = _SrcmlCaller()

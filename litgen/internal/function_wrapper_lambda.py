@@ -212,8 +212,8 @@ def _make_call_function(function_infos: CppFunctionDecl, is_method, options: Cod
     params = function_infos.parameter_list
     is_template = _contains_template_buffer(params, options)
     first_template_buffer_param = _first_template_buffer_param(params, options)
-    return_str1 = "" if function_infos.full_return_type(options) == "void" else "return "
-    return_str2 = " return;" if function_infos.full_return_type(options) == "void" else ""
+    return_str1 = "" if function_infos.full_return_type(options.srcml_options) == "void" else "return "
+    return_str2 = " return;" if function_infos.full_return_type(options.srcml_options) == "void" else ""
     self_prefix = "self." if is_method else ""
 
     code_lines = []

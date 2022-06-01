@@ -1,20 +1,20 @@
 import logging
 import os, sys; _THIS_DIR = os.path.dirname(__file__); sys.path = [_THIS_DIR + "/../.."] + sys.path
 from litgen.internal import srcml
-from litgen.internal.srcml import srcml_utils, srcml_comments
+from litgen.internal.srcml import srcml_utils, srcml_comments, srcml_caller
 from litgen.internal import code_utils
 
 
 def test_mark_empty_lines():
     code = srcml_comments._EXAMPLE_COMMENTS_TO_GROUPS
-    code2 = srcml_comments._mark_empty_lines(code)
+    code2 = srcml_comments.mark_empty_lines(code)
     lines2 = code2.split("\n")
     lines2_empty = list(filter(lambda line: line == srcml_comments.EMPTY_LINE_COMMENT, lines2))
     assert len(lines2_empty) > 4
 
 
 def test_group_consecutive_comment():
-    code = srcml_comments._mark_empty_lines(srcml_comments._EXAMPLE_COMMENTS_TO_GROUPS)
+    code = srcml_comments.mark_empty_lines(srcml_comments._EXAMPLE_COMMENTS_TO_GROUPS)
     srcml_code = srcml.srcml_caller.code_to_srcml(code)
     srcml_grouped = srcml_comments._group_consecutive_comments(srcml_code)
     grouped_str = srcml_utils.srcml_to_str_readable(srcml_grouped)
@@ -30,7 +30,7 @@ def test_iterate_children_simple():
     void Boo3();
 
     """
-    code = srcml_comments._mark_empty_lines(code)
+    code = srcml_comments.mark_empty_lines(code)
     srcml_code = srcml.srcml_caller.code_to_srcml(code)
     children_and_comments = srcml_comments.get_children_with_comments(srcml_code)
     msgs = [ str(child.as_dict()) for child in children_and_comments]
@@ -50,7 +50,7 @@ def test_iterate_children_simple():
 
 
 def test_iterate_children_with_comments():
-    code = srcml_comments._mark_empty_lines(srcml_comments._EXAMPLE_COMMENTS_TO_GROUPS)
+    code = srcml_comments.mark_empty_lines(srcml_comments._EXAMPLE_COMMENTS_TO_GROUPS)
     srcml_code = srcml.srcml_caller.code_to_srcml(code)
     children_and_comments = srcml_comments.get_children_with_comments(srcml_code)
     msgs = [ str(child.as_dict()) for child in children_and_comments]

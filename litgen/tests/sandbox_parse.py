@@ -21,7 +21,7 @@ def play_pydef(code):
     options = litgen.code_style_imgui()
     options.indent_cpp_size = 4
     options.indent_cpp_with_tabs = False
-    cpp_unit = srcml.code_to_cpp_unit(options, code)
+    cpp_unit = srcml.code_to_cpp_unit(options.srcml_options, code)
     pydef_code = litgen.internal.module_pydef_generator.generate_pydef(cpp_unit, options)
     print(f">>>\n{pydef_code}<<<")
 
@@ -37,24 +37,8 @@ def play_imgui():
 #test_imgui()
 
 
-code = """
-        // A dummy structure that likes 
-        // to multiply numbers
-        struct Multiplier 
-        { 
-            Multiplier(): factor(0) {} // default constructor
-            
-            // Constructor with param
-            Multiplier(int a, int b): factor(a) {}; 
-            
-            // Doubles the input number
-            int CalculateDouble(int x = 21, int y) 
-            { 
-                return x * 2; 
-            }
-            // Who is who?
-            int factor = 627;
-        };
-"""
+# options = code_style_implot()
+# options.srcml_options.functions_api_prefixes = ["MY_API"]
+code = 'MY_API void SetupAxisFormat(ImAxis axis, const char* fmt = "%.3f");'
 # play_parse(code)
 play_pydef(code)

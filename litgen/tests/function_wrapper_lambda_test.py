@@ -11,10 +11,10 @@ from litgen.internal.srcml.srcml_types import *
 def test_make_function_wrapper_lambda():
 
     options = code_style_implot()
-    options.functions_api_prefixes = ["MY_API"]
+    # options.srcml_options.functions_api_prefixes = ["MY_API"]
 
     def make_lambda_code(code):
-        cpp_unit = srcml.code_to_cpp_unit(options, code)
+        cpp_unit = srcml.code_to_cpp_unit(options.srcml_options, code)
         for child in cpp_unit.block_children:
             if isinstance(child, CppFunctionDecl) or isinstance(child, CppFunction):
                 lambda_code = function_wrapper_lambda.make_function_wrapper_lambda(child, options)

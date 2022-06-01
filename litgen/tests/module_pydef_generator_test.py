@@ -33,7 +33,7 @@ def test_generate_pydef_enum():
     .value("b", MyEnum_B, "");
     """
 
-    cpp_unit1 = srcml.code_to_cpp_unit(options, code1)
+    cpp_unit1 = srcml.code_to_cpp_unit(options.srcml_options, code1)
     generated_code1 = module_pydef_generator.generate_pydef(cpp_unit1, options)
     # logging.warning("\n" + generated_code1)
     code_utils.assert_are_codes_equal(generated_code1, expected_generated_code1)
@@ -53,7 +53,7 @@ def test_generate_pydef_enum():
     .value("a", MyEnum::A, "Doc about A")
     .value("b", MyEnum::B, "Doc about B");
     """
-    cpp_unit2 = srcml.code_to_cpp_unit(options, code2)
+    cpp_unit2 = srcml.code_to_cpp_unit(options.srcml_options, code2)
     generated_code2 = module_pydef_generator.generate_pydef(cpp_unit2, options)
     code_utils.assert_are_codes_equal(generated_code2, expected_generated_code2)
 
@@ -72,7 +72,7 @@ def test_generate_pydef_function_cpp_code() -> str:
             // axis labels
             IMPLOT_API void SetupAxisFormat(ImAxis axis, const char* fmt);
         '''
-        cpp_unit = srcml.code_to_cpp_unit(options, code)
+        cpp_unit = srcml.code_to_cpp_unit(options.srcml_options, code)
         generated_code = module_pydef_generator.generate_pydef(cpp_unit, options)
         expected_code = '''
         m.def("setup_axis_format",
@@ -270,7 +270,7 @@ def test_generate_pydef_struct_cpp_code():
             int who = 627;
         };
     """
-    cpp_unit = srcml.code_to_cpp_unit(options, code)
+    cpp_unit = srcml.code_to_cpp_unit(options.srcml_options, code)
     generated = module_pydef_generator.generate_pydef(cpp_unit, options)
     expected_code = """
         auto pyClassMultiplier = py::class_<Multiplier>

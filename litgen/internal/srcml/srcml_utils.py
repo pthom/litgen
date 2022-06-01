@@ -4,7 +4,7 @@ import logging
 import xml.etree.ElementTree as ET
 from xml.dom import minidom
 
-from srcml_caller import srcml_to_code
+import srcml_caller
 from srcml_code_position import CodePosition
 
 
@@ -34,7 +34,7 @@ def copy_element_end_position(element_src: ET.Element, element_dst: ET.Element):
 def element_name(element: ET.Element) -> str:
     assert clean_tag_or_attrib(element.tag) == "name"
     is_composed = (element.text is None)
-    name = srcml_to_code(element).strip() if is_composed else element.text
+    name = srcml_caller.srcml_to_code(element).strip() if is_composed else element.text
     return name
 
 

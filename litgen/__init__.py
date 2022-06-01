@@ -7,4 +7,3 @@ class LitgenParseException(Exception):
 
 from internal.code_replacements import standard_replacements, opencv_replacements
 from options import CodeStyleOptions, code_style_implot, code_style_immvision, code_style_imgui
-from options import LITGEN_OPTIONS

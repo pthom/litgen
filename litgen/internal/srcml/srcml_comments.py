@@ -102,7 +102,7 @@ unit
 """
 
 
-def _mark_empty_lines(code: str) -> str:
+def mark_empty_lines(code: str) -> str:
     lines = code.split("\n")
     lines2 = list(map(lambda line: EMPTY_LINE_COMMENT if len(line.strip()) == 0 else line, lines))
     result = "\n".join(lines2)
