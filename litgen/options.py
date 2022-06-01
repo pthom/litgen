@@ -51,7 +51,6 @@ from dataclasses import dataclass, field
 from enum import Enum
 from typing import Optional, List, Tuple, Callable
 from internal.code_utils import make_regex_any_variable_ending_with, make_regex_any_variable_starting_with
-import internal.code_replacements as _code_replacements
 
 
 @dataclass
@@ -180,6 +179,8 @@ class CodeStyleOptions:
 
 
 def code_style_immvision() -> CodeStyleOptions:
+    import internal.code_replacements as _code_replacements
+
     options = CodeStyleOptions()
     options.enum_title_on_previous_line = True
     options.generate_to_string = True
@@ -206,6 +207,8 @@ def code_style_immvision() -> CodeStyleOptions:
 
 
 def code_style_implot():
+    import internal.code_replacements as _code_replacements
+
     options = CodeStyleOptions()
     options.enum_title_on_previous_line = False
     options.generate_to_string = False
