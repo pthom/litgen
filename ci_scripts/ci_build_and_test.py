@@ -8,6 +8,7 @@ cmd = f"""
 
 # Create virtual env
 cd {REPO_DIR}
+rm -rf venv_ci/
 python3 -m venv venv_ci
 . venv_ci/bin/activate 
 which python

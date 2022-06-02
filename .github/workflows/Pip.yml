@@ -15,10 +15,13 @@ jobs:
     - name: Install srcML
       run : sudo ./ci_scripts/install_srcml_ubuntu.sh
 
+    - name: Setup interactive tmate session
+      uses: mxschmitt/action-tmate@v3
+
     - name: Full build and test
       run: |
         cd ci_scripts
-        python3 ci_builld_and_test.py
+        python3 ci_build_and_test.py
 
 #    - name: Create venv
 #      run: |
