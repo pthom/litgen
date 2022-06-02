@@ -1,3 +1,9 @@
+from dataclasses import dataclass, field
+from typing import List
+
+from litgen.internal.code_utils import make_regex_any_variable_ending_with, make_regex_any_variable_starting_with
+from srcmlcpp import SrcmlOptions
+
 """
 ## Struct and Enum members title policy
 
@@ -47,15 +53,20 @@
                 };
                 ````
 """
-from dataclasses import dataclass, field
-from enum import Enum
-from typing import Optional, List, Tuple, Callable
-from internal.code_utils import make_regex_any_variable_ending_with, make_regex_any_variable_starting_with
-import internal.code_replacements as _code_replacements
+
+
+def _preprocess_imgui_code(code):
+    import re
+    new_code = code
+    new_code  = re.sub(r'IM_FMTARGS\(\d\)', '', new_code)
+    new_code  = re.sub(r'IM_FMTLIST\(\d\)', '', new_code)
+    return new_code
 
 
 @dataclass
 class CodeStyleOptions:
+    srcml_options: SrcmlOptions = SrcmlOptions()
+
     # Enum members title policy: are titles directly on top (True), or to the right (False)
     enum_title_on_previous_line: bool = False
 
@@ -65,9 +76,6 @@ class CodeStyleOptions:
     function_name_exclude_regexes: List[str] = field(default_factory=list)
     # enable to exclude functions by adding a comment on the same line of their declaration
     function_exclude_by_comment: List[str] = field(default_factory=list)
-    # Prefixes that denote functions that should be published (for example ["IMPLOT_API", "IMPLOT_TMP"])
-    # if empty, all function are published!
-    functions_api_prefixes = []
     # Suffixes that denote structs that should be published, for example:
     #       struct MyStruct        // IMMVISION_API_STRUCT     <== this is a suffix
     #       { };
@@ -81,9 +89,23 @@ class CodeStyleOptions:
     init_function_python_additional_code = None # Callable[[FunctionsInfos], str]
 
     # Size of an indentation in the python stubs
-    indent_size_python = 4
+    indent_python_size = 4
     # Spacing option in C++ code
-    indent_size_cpp_pydef: int = 8
+    indent_cpp_size: int = 4
+    indent_cpp_with_tabs: bool = False
+
+    #
+    # enum options
+    #
+
+    # Remove the typical "EnumName_" prefix from enum values.
+    # For example, with the C enum:
+    #     enum MyEnum { MyEnum_A = 0, MyEnum_B };
+    # Values would be named "a" and "b" in python
+    enum_flag_remove_values_prefix: bool = True
+    # Skip count value from enums, for example like in:
+    #    enum MyEnum { MyEnum_A = 1, MyEnum_B = 1, MyEnum_COUNT };
+    enum_flag_skip_count: bool = True
 
     # Typed accessor
     def get_code_replacements(self):
@@ -133,13 +155,19 @@ class CodeStyleOptions:
                     Authorized types are: { ", ".join(authorized_types) }
                     """)
 
+    def indent_cpp_spaces(self):
+        space = "\t" if self.indent_cpp_with_tabs else " "
+        return space * self.indent_cpp_size
+
 
 def code_style_immvision() -> CodeStyleOptions:
+    import internal.code_replacements as _code_replacements
+
     options = CodeStyleOptions()
     options.enum_title_on_previous_line = True
     options.generate_to_string = True
-    options.indent_size_cpp_pydef = 8
-    options.functions_api_prefixes = ["IMMVISION_API"]
+    options.indent_cpp_size = 4
+    options.srcml_options.functions_api_prefixes = ["IMMVISION_API"]
     options.code_replacements = _code_replacements.standard_replacements() + _code_replacements.opencv_replacements()
 
     options.buffer_flag_replace_by_array = False
@@ -161,12 +189,14 @@ def code_style_immvision() -> CodeStyleOptions:
 
 
 def code_style_implot():
+    from litgen.internal import code_replacements
+
     options = CodeStyleOptions()
     options.enum_title_on_previous_line = False
     options.generate_to_string = False
-    options.indent_size_cpp_pydef = 4
-    options.functions_api_prefixes = ["IMPLOT_API", "IMPLOT_TMP"]
-    options.code_replacements = _code_replacements.standard_replacements()
+    options.indent_cpp_size = 4
+    options.srcml_options.functions_api_prefixes = ["IMPLOT_API", "IMPLOT_TMP"]
+    options.code_replacements = code_replacements.standard_replacements()
 
     options.buffer_flag_replace_by_array = True
 
@@ -213,4 +243,12 @@ def code_style_implot():
         "PlotPieChart"
     ]
 
+    options.srcml_options.code_preprocess_function = _preprocess_imgui_code
+
+    return options
+
+
+def code_style_imgui():
+    options = code_style_implot()
+    options.srcml_options.header_guard_suffixes.append("IMGUI_DISABLE")
     return options

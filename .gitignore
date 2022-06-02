@@ -9,3 +9,4 @@ cmake-build-*/
 *.pyd
 
 voiladoc/
+venv_ci

@@ -8,6 +8,10 @@
 #define MY_API
 #endif
 
+#ifdef OBSCURE_OPTION
+void SomeFunctionThatShouldNotBeIncluded();
+#endif // #ifdef OBSCURE_OPTION
+
 namespace LiterateGeneratorExample
 {
     // Adds two numbers

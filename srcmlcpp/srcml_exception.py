@@ -1,0 +1,2 @@
+class SrcMlException(Exception):
+    pass

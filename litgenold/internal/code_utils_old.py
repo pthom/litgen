@@ -1,11 +1,24 @@
 import os.path
 import re
-from typing import List
+from typing import List, Tuple, Optional
+from code_types import *
+from dataclasses import dataclass
 import itertools
 import logging
+import string
 import difflib
+from pprint import pprint
 import traceback
 
+
+# Identifiers must begin with a letter or an underscore (_)
+VALID_IDENTIFIERS_CHARS_START = string.ascii_lowercase + string.ascii_uppercase + "_"
+# Then, they can contain letters, digits and underscores
+VALID_IDENTIFIERS_CHARS = VALID_IDENTIFIERS_CHARS_START + string.digits
+CPP_OPERATORS = list(map(lambda s: "operator" + s,
+    "+ - * / % ^ & | ~ ! = < > += -= *= /= %= ^= &= |= << >> >>= <<= == != <= >= <=> && || ++ -- , ->* -> () []"
+    .split(" ")
+    ))
 
 # transform a list into a list of adjacent pairs
 # For example : [a, b, c] -> [ [a, b], [b, c]]
@@ -79,42 +92,36 @@ def unindent_code(code: str) -> str:
     return "\n".join(processed_lines)
 
 
-def reindent_code(code: str, indent_size: int = 4, skip_first_line = False, indent_str = ""):
+def reindent_code(code: str, indent_size: int, skip_first_line = False):
     "change the global code indentation, but keep its inner indentation"
     code = unindent_code(code)
-    code = indent_code(code, indent_size = indent_size, skip_first_line = skip_first_line,indent_str=indent_str)
+    code = indent_code(code, indent_size, skip_first_line)
     return code
 
 
-def indent_code(code: str, indent_size: int = 1, skip_first_line = False, indent_str = ""):
+def indent_code(code: str, indent_size: int, skip_first_line = False):
     "add some space to the left of all lines"
     if skip_first_line:
         lines = code.split("\n")
-        if len(lines) == 1:
-            return code
         first_line = lines[0]
         rest = "\n".join(lines[1:])
-        return first_line + "\n" + indent_code(rest, indent_size, False, indent_str)
+        return first_line + "\n" + indent_code(rest, indent_size, False)
 
     lines = code.split("\n")
-    if len(indent_str) == 0:
-        indent_str = " " * indent_size
-
+    indent_str = " " * indent_size
     def indent_line(line):
         if len(line) == 0:
             return ""
         else:
             return indent_str + line
-
     lines = map(indent_line, lines)
     return "\n".join(lines)
 
 
-def indent_code_force(code: str, indent_size: int = 1, indent_str = ""):
+def indent_code_force(code: str, indent_size: int):
     "violently remove all space at the left, thus removign the inner indentation"
     lines = code.split("\n")
-    if len(indent_str) == 0:
-        indent_str = " " * indent_size
+    indent_str = " " * indent_size
     lines = map(lambda s: indent_str + s.strip(), lines)
     return "\n".join(lines)
 
@@ -122,10 +129,8 @@ def indent_code_force(code: str, indent_size: int = 1, indent_str = ""):
 def format_python_comment(comment: str, indent_size: int) -> str:
     lines = comment.split("\n")
     indent_str = " " * indent_size + "# "
-
     def indent_and_comment_line(line):
         return indent_str + line
-
     lines = map(indent_and_comment_line, lines)
     return "\n".join(lines)
 
@@ -136,37 +141,13 @@ def format_cpp_comment_on_one_line(comment: str) -> str:
     return comment
 
 
-def format_cpp_comment_multiline(comment: str, indentation_size: int = 4, indentation_str = ""):
+def format_cpp_comment_multiline(comment: str, indentation: int):
     lines = comment.split("\n")
-    if len(indentation_str) == 0:
-        indentation_str = " " * indentation_size
+    spacing = " " * indentation
     def process_line(line):
-        return indentation_str + "// " + line
+        return spacing + "// " + line
     lines = list(map(process_line, lines))
     return "\n".join(lines)
-
-
-def cpp_comment_remove_comment_markers(comment: str) -> str:
-    if comment.startswith("//"):
-        result = comment[2:].strip()
-        return result
-    else:
-        result = comment
-        if result.startswith("/*"):
-            result = result[2:].strip()
-            if result.endswith("*/"):
-                result = result[:-2]
-        return result
-
-
-def spaces_or_tabs_at_line_start(line) -> str:
-    r = ""
-    for i, c in enumerate(line):
-        if c == " " or c == "\t":
-            r += c
-        else:
-            break
-    return r
 
 
 def write_code_between_markers(
@@ -174,14 +155,8 @@ def write_code_between_markers(
         code_marker_in: str,
         code_marker_out: str,
         code_to_insert: str,
-        flag_preserve_indentation: bool = True
+        flag_preserve_left_spaces: bool
     ):
-
-    while code_to_insert.endswith("\n\n"):
-        code_to_insert = code_to_insert[:-1]
-    while code_to_insert.startswith("\n\n"):
-        code_to_insert = code_to_insert[1:]
-
     assert os.path.isfile(inout_filename)
     input_code = read_text_file(inout_filename)
     input_code_lines = input_code.split("\n")
@@ -196,16 +171,15 @@ def write_code_between_markers(
             else:
                 is_inside_autogen_region = True
                 was_replacement_performed = True
-
-                indent_str = spaces_or_tabs_at_line_start(code_line)
-
+                indent_size = 0
+                while indent_size < len(code_line) and code_line[indent_size] == " ":
+                    indent_size += 1
                 output_code = output_code + code_line + "\n"
-
-                if flag_preserve_indentation:
-                    code_to_insert = indent_code(code_to_insert, indent_str=indent_str)
-
-                output_code = output_code + code_to_insert
-
+                output_code = output_code + "\n"
+                if flag_preserve_left_spaces:
+                    output_code = output_code + code_to_insert
+                else:
+                    output_code = output_code + indent_code_force(code_to_insert, indent_size)
         else:
             if not is_inside_autogen_region:
                 output_code = output_code + code_line + "\n"
@@ -221,8 +195,7 @@ def write_code_between_markers(
     if not was_replacement_performed:
         raise RuntimeError(f"write_code_between_markers: could not find marker {code_marker_in} in file {inout_filename}")
 
-    if output_code != input_code:
-        write_text_file(inout_filename, output_code)
+    write_text_file(inout_filename, output_code)
 
 
 def force_one_space(code: str) -> str:
@@ -335,6 +308,191 @@ def remove_end_of_line_cpp_comments(code: str) -> str:
     return code
 
 
+
+def is_correct_c_identifier(name: str) -> bool:
+    """
+    The general rules for naming variables are:
+        Names can contain letters, digits and underscores
+        Names must begin with a letter or an underscore (_)
+        Names are case sensitive (myVar and myvar are different variables)
+        Names cannot contain whitespaces or special characters like !, #, %, etc.
+        Reserved words (like C++ keywords, such as int) cannot be used as names
+    """
+    if len(name) == 0:
+        return False
+    if name[0] not in VALID_IDENTIFIERS_CHARS_START:
+        return False
+    for c in name[1:]:
+        if c not in VALID_IDENTIFIERS_CHARS:
+            return False
+    return True
+
+
+def reserved_cpp_keywords():
+    keywords_str = (
+            "alignas alignof and and_eq asm atomic_cancel atomic_commit atomic_noexcept auto bitand bitor bool break case catch char "
+            + "char8_t  char16_t char32_t class compl concept  const consteval  constexpr constinit  const_cast continue co_await "
+            + "co_return  co_yield  decltype default delete do double dynamic_cast else enum explicit export extern false float "
+            + "for friend goto if inline int long mutable namespace new noexcept not not_eq nullptr operator or or_eq private protected "
+            + "public reflexpr register  reinterpret_cast requires  return short signed sizeof static static_assert static_cast struct "
+            + "switch synchronized template this thread_local throw true try typedef typeid typename union unsigned using virtual void "
+            + "volatile wchar_t while xor xor_eq" )
+
+    keywords = keywords_str.split(" ")
+    return keywords
+
+
+def parse_c_identifier_at_start(code: str) -> Tuple[str, int]:
+    if len(code) == 0:
+        raise ValueError("parse_c_identifier_at_start cannot accept empty strings")
+    if code[0] not in VALID_IDENTIFIERS_CHARS_START:
+        return "", -1
+
+    pos = 1
+    while pos < len(code):
+        if code[pos] not in VALID_IDENTIFIERS_CHARS:
+            break
+        pos = pos + 1
+
+    identifer = code[:pos]
+
+    if identifer in reserved_cpp_keywords():
+        raise ValueError("parse_c_identifier_at_start cannot return a reserved keyword")
+
+    return identifer, pos
+
+
+def parse_c_identifier_at_end(code: str) -> Tuple[str, int]:
+    if len(code) == 0:
+        raise CppParseException("parse_c_identifier_at_start cannot accept empty strings")
+    if code[-1] not in VALID_IDENTIFIERS_CHARS:
+        return "", -1
+
+    pos = len(code) - 1
+    while pos >= 0:
+        c = code[pos]
+        if c not in VALID_IDENTIFIERS_CHARS:
+            break
+        pos = pos - 1
+
+    pos = pos +  1
+    identifer = code[pos:]
+    if identifer[0] not in VALID_IDENTIFIERS_CHARS_START:
+        return "", -1
+
+    if identifer in reserved_cpp_keywords():
+        raise CppParseException("parse_c_identifier_at_start cannot return a reserved keyword")
+
+    return identifer, pos
+
+
+@dataclass
+class FunctionNameAndReturnType:
+    name_cpp: str = ""
+    return_type_cpp: str = ""
+    is_static: bool = False
+
+
+def remove_template_from_return_type(type_str: str) -> str:
+    if not type_str.startswith("template"):
+        return type_str
+
+    type_str = type_str.replace("template", "").strip()
+
+    if type_str[0] == "<":
+        pos = 1
+        nb_chevrons = 1
+        while pos < len(type_str) and nb_chevrons > 0:
+            char = type_str[pos]
+            if char == "<":
+                nb_chevrons += 1
+            if char == ">":
+                nb_chevrons -= 1
+            if nb_chevrons == 0:
+                break
+            pos += 1
+        assert nb_chevrons == 0
+
+        type_str = type_str[pos + 1 : ].strip()
+
+    return type_str
+
+
+def remove_template_and_inline_from_return_type(type_str: str) -> str:
+    type_str = remove_template_from_return_type(type_str)
+    if type_str.startswith("inline"):
+        type_str = type_str.replace("inline", "").strip()
+    type_str = remove_template_from_return_type(type_str)
+
+    return type_str
+
+
+def parse_function_declaration(code_line: str) -> Optional[FunctionNameAndReturnType]:
+    if "(" not in code_line:
+        return None
+
+    def find_first_paren_in_main_scope(pos_start: int) -> int:
+        nb_chevrons = 0
+        nb_accolades = 0
+        nb_equal = 0
+        for pos, char in enumerate(code_line[pos_start :]):
+            if char == "=":
+                nb_equal += 1
+            if char == "<":
+                nb_chevrons += 1
+            if char == ">":
+                nb_chevrons -= 1
+            if char == "{":
+                nb_accolades += 1
+            if char == "}":
+                nb_accolades -= 1
+            if char == "(" and nb_chevrons == 0 and nb_accolades == 0 and nb_equal == 0:
+                return pos + pos_start
+        return -1
+
+    pos_first_paren = find_first_paren_in_main_scope(0)
+
+    # special case for operator()
+    if (pos_first_paren > len("operator(") and
+            code_line[ pos_first_paren - len("operator") : pos_first_paren + 2] == "operator()"):
+        pos_first_paren = find_first_paren_in_main_scope(pos_first_paren + 2)
+
+    if pos_first_paren < 0:
+        return None
+
+    return_type_and_function_name = code_line[0 : pos_first_paren].strip()
+
+    idx_start_fn_identifier = -1
+    for op in CPP_OPERATORS:
+        if return_type_and_function_name.endswith(op):
+            function_name = op
+            idx_start_fn_identifier = return_type_and_function_name.index(op)
+
+    if idx_start_fn_identifier < 0:
+        function_name, idx_start_fn_identifier  = parse_c_identifier_at_end(return_type_and_function_name)
+
+    # Special case for destructors
+    if idx_start_fn_identifier > 0 and return_type_and_function_name[idx_start_fn_identifier - 1] =="~":
+        function_name = "~" + function_name
+        return_type_cpp = ""
+        return FunctionNameAndReturnType(function_name, return_type_cpp)
+
+    if len(function_name) == 0:
+        raise CppParseException(f"parse_function_declaration; empty function name!")
+    function_name = function_name.strip()
+
+    return_type_cpp = return_type_and_function_name[ : idx_start_fn_identifier].strip()
+
+    return_type_cpp = remove_template_and_inline_from_return_type(return_type_cpp)
+
+    is_static = False
+    if contains_word(return_type_cpp, "static"):
+        return_type_cpp = return_type_cpp.replace("static", "").strip()
+        is_static = True
+
+    return FunctionNameAndReturnType(function_name, return_type_cpp, is_static=is_static)
+
+
 def join_remove_empty(separator: str, strs: List[str]):
     non_empty_strs = filter(lambda s : len(s) > 0, strs)
     r = separator.join(non_empty_strs)
@@ -393,8 +551,3 @@ def make_regex_any_variable_starting_with(what_to_find: str) -> str:
     what_regex = f"[{what_to_find[0].lower()}{what_to_find[0].upper()}]{what_to_find[1:].lower()}"
     regex = regex_template.replace("WHAT_REGEX", what_regex)
     return regex
-
-
-def merge_dicts(dict1, dict2):
-    res = {**dict1, **dict2}
-    return res

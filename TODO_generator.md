@@ -1,21 +1,13 @@
-- OK ! Test overidde function
-- OK! Test keyword inline
-- OK! Test array: Semi Ok. 
-  ok Type size inconsistency
-  ok Template functions?
-  ok Check authorized buffer_types in options (uint8_t ok, not char, etc) 
-  ok test avec const 
+- CI plante dans python 
+- re-test integration c++
+- add namespace hierarchy in pydef ? With option ?
+- integration tests
+    - work on full gen (namespace, comment, etc)
+- gen stub
+- filter function with API prefix / filter struct by eol comment
 
 
-code coverage
-
-
-X install package litgen via setup
-X renommer repo github en litgen
-
-- stub / pyi
-  - Lire le fichier entier comme une struct (i.e avec Variant)
-      Comme ça, on pourra reproduire toute la doc !
+Doc avec google collab
 
 - toString en hackant str:
     l.Foo.__str__ = my_str

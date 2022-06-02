@@ -12,31 +12,47 @@ jobs:
     - name: Checkout submodules
       run: git submodule update --init --recursive
 
-    - name: Create venv
-      run: |
-        python3 -m venv venv
-        source venv/bin/activate
-        pip install -r requirements-dev.txt
+    - name: Install srcML
+      run : sudo ./ci_scripts/install_srcml_ubuntu.sh
 
-    - name: Build python module litgen
-      run: |
-        source venv/bin/activate
-        pip install -v .
+    - name: Setup interactive tmate session
+      uses: mxschmitt/action-tmate@v3
 
-    - name: Run Python litgen tests
+    - name: Full build and test
       run: |
-        source venv/bin/activate
-        cd litgen
-        pytest
+        cd ci_scripts
+        python3 ci_build_and_test.py
 
-    - name: Build example python module, litgensample and _cpp_litgensample
-      run: |
-        source venv/bin/activate
-        cd example
-        pip install -v .
-
-    - name: Import and use the generated example package
-      run: |
-        source venv/bin/activate
-        python -c "import litgensample; print(litgensample.add(59, 41));"
-        
+#    - name: Create venv
+#      run: |
+#        python3 -m venv venv
+#        source venv/bin/activate
+#        pip install -r requirements-dev.txt
+#
+#    - name: Build python module litgen
+#      run: |
+#        source venv/bin/activate
+#        pip install -v .
+#
+#    - name: Run srcmlcpp tests
+#      run: |
+#        source venv/bin/activate
+#        cd srcmlcpp
+#        pytest
+#
+#    - name: Run litgen tests
+#      run: |
+#        source venv/bin/activate
+#        cd litgen
+#        pytest
+#
+#    - name: Build example python module, litgensample and _cpp_litgensample
+#      run: |
+#        source venv/bin/activate
+#        cd example
+#        pip install -v .
+#
+#    - name: Import and use the generated example package
+#      run: |
+#        source venv/bin/activate
+#        python -c "import litgensample; print(litgensample.add(59, 41));"
