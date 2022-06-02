@@ -1,3 +1,4 @@
+- CI plante dans python 
 - re-test integration c++
 - add namespace hierarchy in pydef ? With option ?
 - integration tests
