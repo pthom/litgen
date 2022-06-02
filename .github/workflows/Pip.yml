@@ -15,8 +15,6 @@ jobs:
     - name: Install srcML
       run : sudo ./ci_scripts/install_srcml_ubuntu.sh
 
-    - name: Setup interactive tmate session
-      uses: mxschmitt/action-tmate@v3
 
     - name: Full build and test
       run: |
