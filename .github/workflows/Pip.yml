@@ -15,11 +15,9 @@ jobs:
     - name: Install srcML
       run : sudo ./ci_scripts/install_srcml_ubuntu.sh
 
-
     - name: Full build and test
       run: |
-        cd ci_scripts
-        python3 ci_build_and_test.py
+        /bin/bash ci_scripts/ci_build_and_test.sh
 
 #    - name: Create venv
 #      run: |
