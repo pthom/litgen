@@ -326,11 +326,11 @@ def do_parse_imgui_implot(filename):
 
 
 def test_parse_imgui():
-    source_filename = os.path.realpath(_THIS_DIR + "/../../examples_real_libs/imgui/imgui.h")
+    source_filename = os.path.realpath(_THIS_DIR + "/../../examples_real_libs/imgui/imgui/imgui.h")
     do_parse_imgui_implot(source_filename)
 
 
 def test_parse_implot():
-    source_filename = os.path.realpath(_THIS_DIR + "/../../examples_real_libs/implot/implot.h")
+    source_filename = os.path.realpath(_THIS_DIR + "/../../examples_real_libs/implot/implot/implot.h")
     do_parse_imgui_implot(source_filename)
 
