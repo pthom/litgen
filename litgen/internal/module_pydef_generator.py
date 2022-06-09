@@ -3,6 +3,7 @@ import os, sys; _THIS_DIR = os.path.dirname(__file__); sys.path = [_THIS_DIR + "
 
 import srcmlcpp
 from srcmlcpp.srcml_types import *
+from srcmlcpp import srcml_main
 
 from litgen import CodeStyleOptions
 from litgen.internal import cpp_to_python, code_utils
@@ -95,6 +96,19 @@ def pyarg_code(function_infos: CppFunctionDecl, options: CodeStyleOptions) -> st
     return code
 
 
+def pyarg_code_list(function_infos: CppFunctionDecl, options: CodeStyleOptions) -> List[str]:
+    code = pyarg_code(function_infos, options)
+    if len(code) == 0:
+        return []
+    lines = code.split("\n")
+    r = []
+    for line in lines:
+        if line.endswith(","):
+            line = line[:-1]
+        r.append(line)
+    return r
+
+
 def _function_return_value_policy(function_infos: CppFunctionDecl) -> str:
     """Parses the return_value_policy from the function end of line comment
     For example:
@@ -108,6 +122,16 @@ def _function_return_value_policy(function_infos: CppFunctionDecl) -> str:
         return return_value_policy
     else:
         return ""
+
+
+def info_cpp_element_original_location(cpp_element: CppElement, options: CodeStyleOptions):
+    if not options.flag_show_original_location_in_pybind_file:
+        return ""
+    _i_ = options.indent_cpp_spaces()
+    header_file = srcml_main.srcml_main_context().current_parsed_file
+    line = cpp_element.start().line
+    r = f"{_i_}// {header_file}:{line}"
+    return r
 
 
 def _generate_pydef_function(
@@ -155,7 +179,6 @@ def _generate_pydef_function(
         code_lines += ")"
     else:
         code_lines += [');']
-    code_lines += [""]
 
     code = "\n".join(code_lines)
     return code
@@ -173,22 +196,30 @@ def _generate_pydef_constructor(
     if "delete" in function_infos.specifiers:
         return ""
 
+    """
+    A constructor decl look like this
+        .def(py::init<ARG_TYPES_LIST>(),
+        PY_ARG_LIST
+        DOC_STRING);    
+    """
+
     _i_ = options.indent_cpp_spaces()
 
-    pyarg_str = pyarg_code(function_infos, options)
     params_str = function_infos.parameter_list.types_only_for_template()
     doc_string = cpp_to_python.docstring_python_one_line(function_infos.cpp_element_comments.full_comment(), options)
 
     code_lines = []
-    code_lines.append(f".def(py::init<{params_str}>())")
-    if len(pyarg_str) > 0:
-        pyarg_lines = pyarg_str.split("\n")
-        pyarg_lines = list(map(lambda s: _i_ + s, pyarg_lines))
-        code_lines += pyarg_lines
+    code_lines.append(f".def(py::init<{params_str}>()")
+    code_lines += pyarg_code_list(function_infos, options)
     if len(doc_string) > 0:
-        code_lines.append(f'{_i_}"{doc_string}")')
+        code_lines.append(f'"{doc_string}"')
 
-    code = "\n".join(code_lines) + "\n"
+    # indent lines after first
+    for i in range(1, len(code_lines)):
+        code_lines[i] = _i_ + code_lines[i]
+
+    code = ",\n".join(code_lines)
+    code += ")"
     return code
 
 
@@ -236,9 +267,9 @@ def _add_public_struct_elements(public_zone: CppPublicProtectedPrivate, struct_n
         # elif isinstance(public_child, CppComment):
         #     r += code_utils.format_cpp_comment_multiline(public_child.cpp_element_comments.full_comment(), 4) + "\n"
         elif isinstance(public_child, CppFunctionDecl):
-            r = r + _generate_pydef_method(function_infos = public_child, options=options, parent_struct_name=struct_name)
+            r = r + _generate_pydef_method(function_infos = public_child, options=options, parent_struct_name=struct_name) + "\n"
         elif isinstance(public_child, CppConstructorDecl):
-            r = r + _generate_pydef_constructor(function_infos = public_child, options=options)
+            r = r + _generate_pydef_constructor(function_infos = public_child, options=options) + "\n"
     return r
 
 

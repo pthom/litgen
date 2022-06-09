@@ -67,8 +67,8 @@ def _preprocess_imgui_code(code):
 class CodeStyleOptions:
     srcml_options: SrcmlOptions = SrcmlOptions()
 
-    # Enum members title policy: are titles directly on top (True), or to the right (False)
-    enum_title_on_previous_line: bool = False
+    # Shall the pybind cpp file show the original location of elements as a comment
+    flag_show_original_location_in_pybind_file = False
 
     # Shall we generate a __str__() method for structs
     generate_to_string: bool = False
@@ -164,7 +164,6 @@ def code_style_immvision() -> CodeStyleOptions:
     import internal.code_replacements as _code_replacements
 
     options = CodeStyleOptions()
-    options.enum_title_on_previous_line = True
     options.generate_to_string = True
     options.indent_cpp_size = 4
     options.srcml_options.functions_api_prefixes = ["IMMVISION_API"]
@@ -192,7 +191,6 @@ def code_style_implot():
     from litgen.internal import code_replacements
 
     options = CodeStyleOptions()
-    options.enum_title_on_previous_line = False
     options.generate_to_string = False
     options.indent_cpp_size = 4
     options.srcml_options.functions_api_prefixes = ["IMPLOT_API", "IMPLOT_TMP"]
@@ -250,5 +248,6 @@ def code_style_implot():
 
 def code_style_imgui():
     options = code_style_implot()
+    options.buffer_types += ["float"]
     options.srcml_options.header_guard_suffixes.append("IMGUI_DISABLE")
     return options
