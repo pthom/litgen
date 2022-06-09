@@ -14,3 +14,4 @@ endif()
 
 
 add_subdirectory(example)
+add_subdirectory(examples_real_libs)
