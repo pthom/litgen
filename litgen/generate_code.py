@@ -9,10 +9,11 @@ import srcmlcpp
 def generate_pydef(
         code: str,
         options: CodeStyleOptions,
-        add_boxed_types_definitions: bool = False
+        add_boxed_types_definitions: bool = False,
+        filename: str = ""
     ) -> str:
 
-    cpp_unit = srcmlcpp.code_to_cpp_unit(options.srcml_options, code)
+    cpp_unit = srcmlcpp.code_to_cpp_unit(options.srcml_options, code, filename=filename)
     generated_code = module_pydef_generator.generate_pydef(
         cpp_unit, options, add_boxed_types_definitions=add_boxed_types_definitions)
     return generated_code
@@ -33,7 +34,7 @@ def _run_generate_file(
 
     header_code = code_utils.read_text_file(input_cpp_header)
 
-    generated_code = fn_code_generator(header_code, options, add_boxed_types_definitions)
+    generated_code = fn_code_generator(header_code, options, add_boxed_types_definitions, filename=input_cpp_header)
 
     marker_in = f"<autogen:{marker_token}>"
     marker_out = f"</autogen:{marker_token}>"
