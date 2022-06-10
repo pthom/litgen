@@ -54,71 +54,43 @@ void py_init_module_litgensample(py::module& m)
 
             return add_c_array2_adapt_fixed_size_c_arrays(values);
         },
-        py::arg("values"),
-        "Add"
+        py::arg("values")
     );
 
-//    // Dead end, see: https://pybind11.readthedocs.io/en/stable/advanced/cast/stl.html
-//    m.def("change_c_array",
-//        [](std::vector<BoxedUnsignedLong>& values)
-//        {
-//            auto change_c_array_adapt_fixed_size_c_arrays = [](std::vector<BoxedUnsignedLong>& values)
-//            {
-//                unsigned long values_raw[2];
-//                for (size_t i = 0; i < 2; ++i)
-//                    values_raw[i] = values[i].value;
-//
-//                /*auto r=*/ change_c_array(values_raw);
-//
-//                for (size_t i = 0; i < 2; ++i)
-//                    values[i].value = values_raw[i];
-//            };
-//            change_c_array_adapt_fixed_size_c_arrays(values);
-//        },
-//        py::arg("values")
-//    );
+
+    m.def("log_c_array2",
+        [](const std::array<int, 2>& values)
+        {
+            auto log_c_array2_adapt_fixed_size_c_arrays = [](const std::array<int, 2>& values)
+            {
+                log_c_array2(values.data());
+            };
+
+            log_c_array2_adapt_fixed_size_c_arrays(values);
+        },
+        py::arg("values")
+    );
+
 
     m.def("change_c_array2",
-        [](BoxedUnsignedLong& values_0, BoxedUnsignedLong& values_1)
+        [](BoxedUnsignedLong & values_0, BoxedUnsignedLong & values_1)
         {
-            auto change_c_array_adapt_fixed_size_c_arrays = [](BoxedUnsignedLong& values_0, BoxedUnsignedLong& values_1)
+            auto change_c_array2_adapt_fixed_size_c_arrays = [](BoxedUnsignedLong & values_0, BoxedUnsignedLong & values_1)
             {
                 unsigned long values_raw[2];
                 values_raw[0] = values_0.value;
                 values_raw[1] = values_1.value;
 
-                /*auto r=*/ change_c_array(values_raw);
+                change_c_array2(values_raw);
 
                 values_0.value = values_raw[0];
                 values_1.value = values_raw[1];
             };
-            change_c_array_adapt_fixed_size_c_arrays(values_0, values_1);
+
+            change_c_array2_adapt_fixed_size_c_arrays(values_0, values_1);
         },
         py::arg("values_0"),
         py::arg("values_1")
-    );
-
-
-    m.def("add",
-        [](int a, int b)
-        {
-            return add(a, b);
-        },
-        py::arg("a"),
-        py::arg("b"),
-        "Adds two numbers"
-    );
-
-
-    m.def("add",
-        [](int a, int b, int c)
-        {
-            return add(a, b, c);
-        },
-        py::arg("a"),
-        py::arg("b"),
-        py::arg("c"),
-        "Adds three numbers, with a surprise"
     );
 
 
@@ -184,6 +156,29 @@ void py_init_module_litgensample(py::module& m)
         py::arg("array"),
         py::arg("factor"),
         "Modify an array by multiplying its elements (template function!)"
+    );
+
+
+    m.def("add",
+        [](int a, int b)
+        {
+            return add(a, b);
+        },
+        py::arg("a"),
+        py::arg("b"),
+        "Adds two numbers"
+    );
+
+
+    m.def("add",
+        [](int a, int b, int c)
+        {
+            return add(a, b, c);
+        },
+        py::arg("a"),
+        py::arg("b"),
+        py::arg("c"),
+        "Adds three numbers, with a surprise"
     );
 
 

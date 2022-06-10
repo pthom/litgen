@@ -1,3 +1,4 @@
+from __future__ import annotations
 import copy
 from typing import List, Optional
 import logging
@@ -46,6 +47,7 @@ class CppElementComments:
             return self.comment_on_previous_lines + "\n\n" + self.comment_end_of_line
         else:
             return self.comment_on_previous_lines + self.comment_end_of_line
+
 
 class CppElement:
     """Wrapper around a srcLML xml node.
@@ -440,15 +442,31 @@ class CppDecl(CppElementAndComment):
         r = self.str_commented()
         return r
 
-    def is_c_array(self):
+    def is_c_array(self) -> bool:
+        """
+        Returns true if this decl is a C style array, e.g.
+            int v[4]
+        or
+            int v[]
+        """
         return "[" in self.name and self.name.endswith("]")
 
-    def name_c_array(self):
+    def name_c_array(self) -> bool:
+        """
+        If this decl is a c array, return the param name, e.g. for
+            int v[4]
+        It will return "v"
+        """
         assert self.is_c_array()
         r = self.name[ : self.name.index("[")]
         return r
 
     def c_array_size(self) -> Optional[int]:
+        """
+        If this decl is a c array, return its size, e.g. for
+            int v[4]
+        It will return 4
+        """
         if not self.is_c_array():
             return None
         pos = self.name.index("[")
@@ -460,38 +478,79 @@ class CppDecl(CppElementAndComment):
             return None
 
     def is_const(self):
+        """
+        Returns true if this decl is const"""
         return "const" in self.cpp_type.specifiers # or "const" in self.cpp_type.names
 
     def is_c_array_fixed_size(self):
+        """Returns true if this decl is a c array, and has a fixed size
+        """
         size = self.c_array_size()
         r = size is not None
         return r
 
-    def c_array_fixed_size_to_std_array(self): # -> CppDecl:
-        from litgen.internal import cpp_to_python
+    def c_array_fixed_size_to_std_array(self) -> CppDecl:
+        """
+        Processes decl that contains a *const* c style array of fixed size, e.g. `const int v[2]`
+
+        We simply wrap it into a std::array, like this:
+                `const int v[2]` --> `const std::array<int, 2> v`
+        """
+        is_const = "const" in self.cpp_type.specifiers
 
         assert self.is_c_array_fixed_size()
+        assert is_const
 
+        # If the array is `const`, then we simply wrap it into a std::array, like this:
+        # `const int v[2]` --> `[ const std::array<int, 2> v ]`
         new_decl = copy.deepcopy(self)
-        cpp_type_name = new_decl.cpp_type.str_code()
 
-        if "const" not in self.cpp_type.specifiers:
-            is_const = False
-            if cpp_to_python.is_cpp_type_immutable_in_python(cpp_type_name):
-                boxed_type = cpp_to_python.BoxedImmutablePythonType(cpp_type_name)
-                cpp_type_name = boxed_type.boxed_type_name()
-        else:
-            is_const = True
-            new_decl.cpp_type.specifiers.remove("const")
-            cpp_type_name = new_decl.cpp_type.str_code()
+        new_decl.cpp_type.specifiers.remove("const")
+        cpp_type_name = new_decl.cpp_type.str_code()
 
         std_array_type_name = f"std::array<{cpp_type_name}, {self.c_array_size()}>&"
         new_decl.cpp_type.names = [std_array_type_name]
-        if is_const:
-            new_decl.cpp_type.specifiers.append("const")
-        new_decl.name = new_decl.name_c_array()
 
+        new_decl.cpp_type.specifiers.append("const")
+        new_decl.name = new_decl.name_c_array()
         return new_decl
+
+    def c_array_fixed_size_to_new_modifiable_decls(self) -> List[CppDecl]:
+        """
+        Processes decl that contains a *non const* c style array of fixed size, e.g. `int v[2]`
+            * we may need to "Box" the values if they are of an immutable type in python,
+            * we separate the array into several arguments
+            For example:
+                `int v[2]`
+            Becomes:
+                `[ BoxedInt v_0, BoxedInt v_1 ]`
+
+        :return: a list of CppDecls as described before
+        """
+        from litgen.internal import cpp_to_python
+
+        is_const = "const" in self.cpp_type.specifiers
+
+        assert self.is_c_array_fixed_size()
+        assert not is_const
+
+        cpp_type_name = self.cpp_type.str_code()
+
+        if cpp_to_python.is_cpp_type_immutable_in_python(cpp_type_name):
+            boxed_type = cpp_to_python.BoxedImmutablePythonType(cpp_type_name)
+            cpp_type_name = boxed_type.boxed_type_name()
+
+        n = self.c_array_size()
+
+        new_decls = []
+        for i in range(n):
+            new_decl = copy.deepcopy(self)
+            new_decl.name = new_decl.name_c_array() + "_" + str(i)
+            new_decl.cpp_type.names = [cpp_type_name]
+            new_decl.cpp_type.modifiers = ["&"]
+            new_decls.append(new_decl)
+
+        return new_decls
 
 
 @dataclass

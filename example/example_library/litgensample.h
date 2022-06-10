@@ -17,29 +17,22 @@ void SomeFunctionThatShouldNotBeIncluded();
 
 namespace LiterateGeneratorExample
 {
-    // Add
-    MY_API inline int add_c_array2(const int values[2]) { return values[0] + values[1];}
+    //
+    // C Style array tests
+    //
 
-    MY_API inline void change_c_array(unsigned long values[2])
+    MY_API inline int add_c_array2(const int values[2]) { return values[0] + values[1];}
+    MY_API inline void log_c_array2(const int values[2]) { printf("%i, %i\n", values[0], values[1]); }
+    MY_API inline void change_c_array2(unsigned long values[2])
     {
         values[0] = values[1] + values[0];
         values[1] = values[0] * values[1];
     }
 
-    //    // Add vector
-//    MY_API inline int change_vector(std::vector<int>& values)
-//    {
-//        int sum = 0;
-//        for (auto& v : values)
-//            v += 1;
-//        return sum;
-//    }
 
-    // Adds two numbers
-    MY_API inline int add(int a, int b) { return a + b; }
-
-    // Adds three numbers, with a surprise
-    MY_API inline int add(int a, int b, int c) { return a + b + c + 4; }
+    //
+    // C Style buffer to py::array tests
+    //
 
     // Modify an array by adding a value to its elements (*non* template function)
     MY_API inline void add_inside_array(uint8_t* array, size_t array_size, uint8_t number_to_add)
@@ -47,13 +40,20 @@ namespace LiterateGeneratorExample
         for (size_t i  = 0; i < array_size; ++i)
             array[i] += number_to_add;
     }
-
     // Modify an array by multiplying its elements (template function!)
     MY_API template<typename T> void mul_inside_array(T* array, size_t array_size, double factor)
     {
         for (size_t i  = 0; i < array_size; ++i)
             array[i] *= (T)factor;
     }
+
+
+    // Adds two numbers
+    MY_API inline int add(int a, int b) { return a + b; }
+
+    // Adds three numbers, with a surprise
+    MY_API inline int add(int a, int b, int c) { return a + b + c + 4; }
+
 
     MY_API int sub(int a, int b) { return a - b; }
 

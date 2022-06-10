@@ -27,7 +27,6 @@ def my_code_style_options():
 
 
 def autogenerate():
-    return
     input_cpp_header =  CPP_HEADERS_DIR + "/litgensample.h"
     output_cpp_module = CPP_GENERATED_PYBIND_DIR + "/pybind_litgensample.cpp"
     output_stub_pyi_file = CPP_GENERATED_PYBIND_DIR + "/litgensample/__init__.pyi"
