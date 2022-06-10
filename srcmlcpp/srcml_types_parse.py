@@ -368,6 +368,22 @@ def parse_super_list(options: SrcmlOptions, element: ET.Element) -> CppSuperList
     return result
 
 
+def _add_comment_child_before_block(element_c: CppElementAndComment, child: ET.Element):
+    """
+    For struct, enum and namespace, we might add a comment like this:
+        struct Foo   // MY_API
+        {
+            ...
+        };
+    This comment was not added as an end of line comment previously, so that we add it now
+    """
+    assert srcml_utils.clean_tag_or_attrib(child.tag) == "comment"
+    comment_text = code_utils.cpp_comment_remove_comment_markers(child.text)
+    if len(element_c.cpp_element_comments.comment_end_of_line) > 0:
+        element_c.cpp_element_comments.comment_end_of_line += " - "
+    element_c.cpp_element_comments.comment_end_of_line += comment_text
+
+
 def parse_struct_or_class(options: SrcmlOptions, element_c: CppElementAndComment) -> CppStruct:
     """
     https://www.srcmlcpp.org/doc/cpp_srcML.html#struct-definition
@@ -391,10 +407,7 @@ def parse_struct_or_class(options: SrcmlOptions, element_c: CppElementAndComment
         elif child_tag == "template":
             result.template = parse_template(options, child)
         elif child_tag == "comment":
-            comment_text = code_utils.cpp_comment_remove_comment_markers(child.text)
-            if len(result.cpp_element_comments.comment_end_of_line) > 0:
-                result.cpp_element_comments.comment_end_of_line += " - "
-            result.cpp_element_comments.comment_end_of_line += comment_text
+            _add_comment_child_before_block(result, child)
         else:
             raise SrcMlExceptionDetailed(child, f"unhandled tag {child_tag}", options)
 
@@ -586,6 +599,8 @@ def parse_namespace(options: SrcmlOptions, element_c: CppElementAndComment) -> C
             result.name = _parse_name(child)
         elif child_tag == "block":
             result.block = parse_block(options, child)
+        elif child_tag == "comment":
+            _add_comment_child_before_block(result, child)
         else:
             raise SrcMlExceptionDetailed(child, f"unhandled tag {child_tag}", options)
 
@@ -609,6 +624,8 @@ def parse_enum(options: SrcmlOptions, element_c: CppElementAndComment) -> CppEnu
             result.name = _parse_name(child)
         elif child_tag == "block":
             result.block = parse_block(options, child)
+        elif child_tag == "comment":
+            _add_comment_child_before_block(result, child)
         else:
             raise SrcMlExceptionDetailed(child, f"unhandled tag {child_tag}", options)
 

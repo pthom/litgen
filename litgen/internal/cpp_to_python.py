@@ -1,3 +1,4 @@
+import copy
 from typing import List
 from dataclasses import dataclass
 from litgen import CodeStyleOptions
@@ -143,10 +144,13 @@ class BoxedImmutablePythonType:
 
     @staticmethod
     def binding_codes(options: CodeStyleOptions):
+        options_no_api = copy.deepcopy(options)
+        options_no_api.srcml_options.api_suffixes = []
+        options_no_api.srcml_options.functions_api_prefixes = []
         r = ""
         for cpp_type in BoxedImmutablePythonType.static_list_of_instantiated_type:
             boxed_type = BoxedImmutablePythonType(cpp_type)
-            r += boxed_type._binding_code(options)
+            r += boxed_type._binding_code(options_no_api)
         return r
 
 

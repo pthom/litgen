@@ -204,7 +204,7 @@ void py_init_module_litgensample(py::module& m)
 
 
     auto pyClassFoo = py::class_<Foo>
-        (m, "Foo", "A superb struct\n\nMY_API_STRUCT")
+        (m, "Foo", "A superb struct\n\nMY_API")
         .def(py::init<>())
         .def_readwrite("factor", &Foo::factor, "Multiplication factor")
         .def_readwrite("delta", &Foo::delta, "addition factor")

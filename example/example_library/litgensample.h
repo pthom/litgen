@@ -15,7 +15,7 @@
 void SomeFunctionThatShouldNotBeIncluded();
 #endif // #ifdef OBSCURE_OPTION
 
-namespace LiterateGeneratorExample
+namespace LiterateGeneratorExample // MY_API
 {
     //
     // C Style array tests
@@ -60,7 +60,7 @@ namespace LiterateGeneratorExample
     MY_API int mul(int a, int b) { return a * b; }
 
     // A superb struct
-    struct Foo            // MY_API_STRUCT
+    struct Foo            // MY_API
     {
         Foo() { printf("Construct Foo\n"); }
         ~Foo() { printf("Destruct Foo\n"); }
@@ -80,9 +80,9 @@ namespace LiterateGeneratorExample
         //
 
         // Do some math
-        int calc(int x) { return x * factor + delta; }
+        MY_API int calc(int x) { return x * factor + delta; }
 
-        static Foo& Instance() { static Foo instance; return instance; }       // return_value_policy::reference
+        MY_API static Foo& Instance() { static Foo instance; return instance; }       // return_value_policy::reference
     };
 
     MY_API Foo* FooInstance() { return & Foo::Instance(); } // return_value_policy::reference
