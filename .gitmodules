@@ -1,3 +1,9 @@
 [submodule "external/pybind11"]
 	path = example/external/pybind11
 	url = https://github.com/pybind/pybind11.git
+[submodule "examples_real_libs/imgui/imgui"]
+	path = examples_real_libs/imgui/imgui
+	url = https://github.com/ocornut/imgui.git
+[submodule "examples_real_libs/implot/implot"]
+	path = examples_real_libs/implot/implot
+	url = https://github.com/epezent/implot.git
