@@ -21,6 +21,7 @@ def play_parse(code):
 def play_pydef(code):
     options = litgen.options.code_style_implot()
     options.srcml_options.functions_api_prefixes = ["MY_API"]
+    options.srcml_options.api_suffixes = ["MY_API"]
     options.indent_cpp_size = 4
     options.indent_cpp_with_tabs = False
 
@@ -56,7 +57,12 @@ def play_implot():
 # options = code_style_implot()
 # options.srcml_options.functions_api_prefixes = ["MY_API"]
 code = """
-inline void change_c_array(unsigned long values[2]);
+MY_API inline void change_c_array(unsigned long values[2]);
+
+struct Machin // MY_API
+{
+    int a = 1;
+};
 """
 # play_parse(code)
 play_pydef(code)

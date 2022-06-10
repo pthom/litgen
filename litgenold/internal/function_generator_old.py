@@ -56,8 +56,8 @@ def generate_python_wrapper_init_code(function_infos: FunctionsInfos, options: C
 
     r = r + code_outro
 
-    if options.init_function_python_additional_code is not None:
-        r += options.init_function_python_additional_code(function_infos)
+    if options.poub_init_function_python_additional_code is not None:
+        r += options.poub_init_function_python_additional_code(function_infos)
     r = r + f"    r = {options.package_name_native}.{py_function_name}("
 
     r += cpp_to_python.params_names_to_python(function_infos.get_parameters(), options)

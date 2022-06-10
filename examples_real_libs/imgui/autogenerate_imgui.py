@@ -18,7 +18,7 @@ def my_code_style_options():
     # options.srcml_options = srcmlcpp.SrcmlOptions()
     # options.srcml_options.functions_api_prefixes = ["IMGUI_API"]
     #
-    # # options.struct_api_suffixes = ["MY_API_STRUCT"]
+    # # options.api_suffixes = ["MY_API_STRUCT"]
     # # options.function_exclude_by_comment = ["MY_API_EXCLUDE"]
     # options.code_replacements = litgen.standard_replacements()
     #

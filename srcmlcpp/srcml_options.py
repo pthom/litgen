@@ -6,10 +6,18 @@ from dataclasses import dataclass
 class SrcmlOptions:
 
     #
-    # Prefixes that denote functions that should be published (for example ["IMPLOT_API", "IMPLOT_TMP"])
+    # Prefixes that denote functions that should be published (for example ["IMPLOT_API"])
     # if empty, all function are published!
     #
     functions_api_prefixes = []
+
+    # Suffixes that denote structs, classes, enums and namespaces that should be published, for example:
+    #       struct MyStruct        // IMMVISION_API_STRUCT     <== this is a suffix
+    #       { };
+    # if empty, all structs/enums/classes/namespaces are published
+    #
+    # you may decide to fill api_suffixes and functions_api_prefixes with the same value(s)
+    api_suffixes = []
 
     # Set header_filter_preprocessor_regions to True if the header has regions like
     #       #ifdef SOME_RARE_OPTION

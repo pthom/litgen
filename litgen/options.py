@@ -18,37 +18,32 @@ class CodeStyleOptions:
 
     #
     # There are interesting options to set in SrcmlOptions (see srcmlcpp/srcml_options.py)
-    # Notably, fill srcml_options.functions_api_prefixes (the prefixes that denotes the functions that shall be published)
+    #
+    # Notably, fill srcml_options.functions_api_prefixes
+    # (the prefixes that denotes the functions that shall be published)
     #
     srcml_options: SrcmlOptions = SrcmlOptions()
 
-    # Suffixes that denote structs that should be published, for example:
-    #       struct MyStruct        // IMMVISION_API_STRUCT     <== this is a suffix
-    #       { };
-    # if empty, all structs are published
-    struct_api_suffixes = []
-
-
+    #
     # Shall the binding cpp file show the original location of elements as a comment
+    #
     flag_show_original_location_in_pybind_file = False
 
-    # functions to exclude by name
+    #
+    # Exclude certain functions by a regex on their name
+    #
     function_name_exclude_regexes: List[str] = field(default_factory=list)
-    # enable to exclude functions by adding a comment on the same line of their declaration
+    # Exclude functions by adding a comment on the same line of their declaration
     function_exclude_by_comment: List[str] = field(default_factory=list)
 
-    # List of code replacements when going from C++ to Python (for example double -> float, vector-> List, etc)
+    #
+    # List of code replacements when going from C++ to Python
+    # These replacements are applied to type names (for example double -> float, vector-> List, etc)
+    # as well as comment (which may contain type names)
+    #
+    # Note: you can prefill it with litgen.standard_replacements()
+    #
     code_replacements = [] # List[StringReplacement]
-
-    # Function that may generate additional code in the function defined in the  __init__.py file of the package
-    init_function_python_additional_code = None # Callable[[FunctionsInfos], str]
-
-    #
-    # Options that need work
-    #
-
-    # Shall we generate a __str__() method for structs
-    generate_to_string: bool = False
 
     #
     # Indentation settings for the generated code
@@ -68,6 +63,7 @@ class CodeStyleOptions:
     # For example, with the C enum:
     #     enum MyEnum { MyEnum_A = 0, MyEnum_B };
     # Values would be named "a" and "b" in python
+    #
     enum_flag_remove_values_prefix: bool = True
     # Skip count value from enums, for example like in:
     #    enum MyEnum { MyEnum_A = 1, MyEnum_B = 1, MyEnum_COUNT };
@@ -86,6 +82,7 @@ class CodeStyleOptions:
     # will be transformed to:
     #       void mul_inside_array(py::array & array, double factor)
     # (and factor will be down-casted to the target type)
+    #
     buffer_flag_replace_by_array = False
     buffer_types = ["int8_t", "uint8_t"] # of type List[str]. Which means that `uint8_t*` are considered as possible buffers
     buffer_template_types = ["T"] # Which means that templated functions using a buffer use T as a templated name
@@ -109,9 +106,19 @@ class CodeStyleOptions:
     # will be transformed to:
     #       void foo_non_const(BoxedInt & output_0, BoxedInt & output_1)
     # (c_array_modifiable_max_params is the maximum number of params that can be boxed like this)
+    #
     c_array_const_flag_replace = False
     c_array_modifiable_flag_replace = False
     c_array_modifiable_max_params = 10
+
+    #
+    # Options that need rework
+    #
+    # Shall we generate a __str__() method for structs
+    generate_to_string: bool = False
+    # Function that may generate additional code in the function defined in the  __init__.py file of the package
+    poub_init_function_python_additional_code = None # Callable[[FunctionsInfos], str]
+
 
     #
     # Sanity checks and utilities below
@@ -163,7 +170,7 @@ def code_style_immvision() -> CodeStyleOptions:
         else:
             return ""
 
-    options.init_function_python_additional_code = init_function_python_additional_code_require_opengl_initialized
+    options.poub_init_function_python_additional_code = init_function_python_additional_code_require_opengl_initialized
 
     return options
 
