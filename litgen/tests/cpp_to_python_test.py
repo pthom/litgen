@@ -2,6 +2,7 @@ import logging
 
 import pytest
 
+import litgen
 from litgen.internal import cpp_to_python
 from litgen.internal import code_utils
 from litgen.options import code_style_implot
@@ -23,7 +24,7 @@ def test_make_boxed_type():
         };
     """)
 
-    options = code_style_implot()
+    options = litgen.CodeStyleOptions()
     pydef_code = boxed_type._binding_code(options)
     # logging.warning("\n" + pydef_code)
     expected_code = """
@@ -65,7 +66,7 @@ def test_make_boxed_type():
             BoxedInt() : value{} {}
             BoxedInt(int v) : value(v) {}
             std::string __repr__() { return std::string("BoxedInt(") + std::to_string(value) + ")"; }
-        };    
+        };
     """)
 
     binding_codes = cpp_to_python.BoxedImmutablePythonType.binding_codes(options)
@@ -83,8 +84,8 @@ def test_make_boxed_type():
                 }
             )
             ;
-        
-        
+
+
         auto pyClassBoxedInt = py::class_<BoxedInt>
             (m, "BoxedInt", "")
             .def_readwrite("value", &BoxedInt::value, "")

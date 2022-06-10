@@ -13,7 +13,6 @@ def _preprocess_imgui_code(code):
     return new_code
 
 
-@dataclass
 class CodeStyleOptions:
 
     #
@@ -32,9 +31,9 @@ class CodeStyleOptions:
     #
     # Exclude certain functions by a regex on their name
     #
-    function_name_exclude_regexes: List[str] = field(default_factory=list)
+    function_name_exclude_regexes: List[str] = []
     # Exclude functions by adding a comment on the same line of their declaration
-    function_exclude_by_comment: List[str] = field(default_factory=list)
+    function_exclude_by_comment: List[str] = []
 
     #
     # List of code replacements when going from C++ to Python
@@ -84,9 +83,9 @@ class CodeStyleOptions:
     # (and factor will be down-casted to the target type)
     #
     buffer_flag_replace_by_array = False
-    buffer_types = ["int8_t", "uint8_t"] # of type List[str]. Which means that `uint8_t*` are considered as possible buffers
-    buffer_template_types = ["T"] # Which means that templated functions using a buffer use T as a templated name
-    buffer_size_regexes = [
+    buffer_types: List[str] = ["int8_t", "uint8_t"] # of type List[str]. Which means that `uint8_t*` are considered as possible buffers
+    buffer_template_types: List[str] = ["T"] # Which means that templated functions using a buffer use T as a templated name
+    buffer_size_regexes: List[str] = [
         make_regex_any_variable_ending_with("count"),   # any variable name ending with count or Count
         make_regex_any_variable_starting_with("count"), # any variable name starting with count or Count
         make_regex_any_variable_ending_with("size"),
@@ -149,6 +148,9 @@ class CodeStyleOptions:
     def indent_cpp_spaces(self):
         space = "\t" if self.indent_cpp_with_tabs else " "
         return space * self.indent_cpp_size
+
+    def __init__(self):
+        self.srcml_options = SrcmlOptions()
 
 
 def code_style_immvision() -> CodeStyleOptions:

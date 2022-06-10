@@ -1,15 +1,13 @@
 from typing import Callable, List
-from dataclasses import dataclass
 
 
-@dataclass
 class SrcmlOptions:
 
     #
     # Prefixes that denote functions that should be published (for example ["IMPLOT_API"])
     # if empty, all function are published!
     #
-    functions_api_prefixes: List[str]
+    functions_api_prefixes: List[str] = []
 
     # Suffixes that denote structs, classes, enums and namespaces that should be published, for example:
     #       struct MyStruct        // IMMVISION_API_STRUCT     <== this is a suffix
@@ -17,7 +15,7 @@ class SrcmlOptions:
     # if empty, all structs/enums/classes/namespaces are published
     #
     # you may decide to fill api_suffixes and functions_api_prefixes with the same value(s)
-    api_suffixes: List[str]
+    api_suffixes: List[str] = []
 
     # Set header_filter_preprocessor_regions to True if the header has regions like
     #       #ifdef SOME_RARE_OPTION
