@@ -105,11 +105,11 @@ class CodeStyleOptions:
     #       void foo_non_const(int output[2])
     # will be transformed to:
     #       void foo_non_const(BoxedInt & output_0, BoxedInt & output_1)
-    # (c_array_modifiable_max_params is the maximum number of params that can be boxed like this)
+    # (c_array_modifiable_max_size is the maximum number of params that can be boxed like this)
     #
-    c_array_const_flag_replace = False
-    c_array_modifiable_flag_replace = False
-    c_array_modifiable_max_params = 10
+    c_array_const_flag_replace = True
+    c_array_modifiable_flag_replace = True
+    c_array_modifiable_max_size = 10
 
     #
     # Options that need rework
