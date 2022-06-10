@@ -36,10 +36,10 @@ def autogenerate():
     # Configure options
     options = my_code_style_options()
 
-    litgen.generate(input_cpp_header=input_cpp_header,
-                    output_cpp_module_file=output_cpp_module,
-                    options=options,
-                    output_stub_pyi_file=output_stub_pyi_file)
+    litgen.generate_files(input_cpp_header=input_cpp_header,
+                          output_cpp_module_file=output_cpp_module,
+                          options=options,
+                          output_stub_pyi_file=output_stub_pyi_file)
 
 
 if __name__ == "__main__":

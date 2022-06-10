@@ -7,9 +7,24 @@ from srcmlcpp import srcml_main
 
 from litgen import CodeStyleOptions
 from litgen.internal import cpp_to_python, code_utils
+from litgen.internal.cpp_function_adapted_params import CppFunctionDeclWithAdaptedParams
+from litgen.internal.function_params_adapter import make_function_params_adapter
 from litgen.internal.function_wrapper_lambda import \
-    make_function_wrapper_lambda, make_method_wrapper_lambda, \
+    make_function_wrapper_lambda_impl, \
     is_default_sizeof_param, is_buffer_size_name_at_idx, is_param_variadic_format
+
+
+def _add_new_lines(code: str, nb_lines_before: int = 0, nb_lines_after: int = 1) -> str:
+    r = "\n" * nb_lines_before + code + "\n" * nb_lines_after
+    return r
+
+
+def _add_one_line_before(code: str) -> str:
+    return _add_new_lines(code, nb_lines_before=1)
+
+
+def _add_two_lines_before(code: str) -> str:
+    return _add_new_lines(code, nb_lines_before=2, nb_lines_after=0)
 
 
 #################################
@@ -138,10 +153,23 @@ def _generate_pydef_function(
         function_infos: CppFunctionDecl,
         options: CodeStyleOptions,
         parent_struct_name: str = ""
+) -> str:
+    function_adapted_params = make_function_params_adapter(function_infos, options)
+
+    r = ""
+    r += _generate_pydef_function_impl(function_adapted_params, options, parent_struct_name)
+    return r
+
+
+def _generate_pydef_function_impl(
+        function_adapted_params: CppFunctionDeclWithAdaptedParams,
+        options: CodeStyleOptions,
+        parent_struct_name: str = ""
     ) -> str:
 
     _i_ = options.indent_cpp_spaces()
 
+    function_infos = function_adapted_params.function_infos
     return_value_policy = _function_return_value_policy(function_infos)
 
     is_method = len(parent_struct_name) > 0
@@ -151,8 +179,8 @@ def _generate_pydef_function(
     module_str = "" if is_method else "m"
 
     code_lines: List[str] = []
-    code_lines += [f'{module_str}.def("{fn_name_python}",']
-    lambda_code = make_function_wrapper_lambda(function_infos, options, parent_struct_name)
+    code_lines += [f'{module_str}.def("{fn_name_python}",{info_cpp_element_original_location(function_infos, options)}']
+    lambda_code = make_function_wrapper_lambda_impl(function_adapted_params, options, parent_struct_name)
     lambda_code = code_utils.indent_code(lambda_code, indent_str=_i_)
     code_lines += lambda_code.split("\n")
 
@@ -181,6 +209,7 @@ def _generate_pydef_function(
         code_lines += [');']
 
     code = "\n".join(code_lines)
+    code = code + "\n"
     return code
 
 
@@ -220,6 +249,7 @@ def _generate_pydef_constructor(
 
     code = ",\n".join(code_lines)
     code += ")"
+    code += "\n"
     return code
 
 
@@ -261,15 +291,18 @@ def _add_public_struct_elements(public_zone: CppPublicProtectedPrivate, struct_n
     r = ""
     for public_child in public_zone.block_children:
         if isinstance(public_child, CppDeclStatement):
-            r += _add_struct_member_decl_stmt(cpp_decl_stmt=public_child, struct_name=struct_name, options=options)
+            code = _add_struct_member_decl_stmt(cpp_decl_stmt=public_child, struct_name=struct_name, options=options)
+            r += code
         # elif isinstance(public_child, CppEmptyLine):
         #     r += "\n"
         # elif isinstance(public_child, CppComment):
         #     r += code_utils.format_cpp_comment_multiline(public_child.cpp_element_comments.full_comment(), 4) + "\n"
         elif isinstance(public_child, CppFunctionDecl):
-            r = r + _generate_pydef_method(function_infos = public_child, options=options, parent_struct_name=struct_name) + "\n"
+            code = _generate_pydef_method(function_infos = public_child, options=options, parent_struct_name=struct_name)
+            r = r + code
         elif isinstance(public_child, CppConstructorDecl):
-            r = r + _generate_pydef_constructor(function_infos = public_child, options=options) + "\n"
+            code = _generate_pydef_constructor(function_infos = public_child, options=options)
+            r = r + code
     return r
 
 
@@ -287,9 +320,9 @@ def _generate_pydef_struct_or_class(struct_infos: CppStruct, options: CodeStyleO
     # code_intro += f'{_i_}.def(py::init<>()) \n'  # Yes, we require struct and classes to be default constructible!
 
     if options.generate_to_string:
-        code_outro  = f'{_i_}.def("__repr__", [](const {struct_name}& v) {{ return ToString(v); }}); \n'
+        code_outro = f'{_i_}.def("__repr__", [](const {struct_name}& v) {{ return ToString(v); }});'
     else:
-        code_outro  = f'{_i_}; \n'
+        code_outro = f'{_i_};'
 
     r = code_intro
 
@@ -303,7 +336,7 @@ def _generate_pydef_struct_or_class(struct_infos: CppStruct, options: CodeStyleO
             zone_code = _add_public_struct_elements(public_zone=child, struct_name=struct_name, options=options)
             r += code_utils.indent_code(zone_code, indent_str=options.indent_cpp_spaces())
     r = r + code_outro
-
+    r = r + "\n"
     return r
 
 
@@ -322,8 +355,9 @@ def _generate_pydef_namespace(
     namespace_code_commented = ""
     namespace_code_commented += f"// <namespace {namespace_name}>\n"
     namespace_code_commented += namespace_code
-    namespace_code_commented += f"// </namespace {namespace_name}>\n"
+    namespace_code_commented += f"// </namespace {namespace_name}>"
 
+    namespace_code_commented += "\n"
     return namespace_code_commented
 
 
@@ -331,33 +365,29 @@ def _generate_pydef_namespace(
 #           All
 ################################
 
-
-def _add_new_lines(code: str, nb_lines_before: int = 0, nb_lines_after: int = 1) -> str:
-    r = "\n" * nb_lines_before + code + "\n" * nb_lines_after
-    return r
-
-
-def _add_one_line_after(code: str) -> str:
-    return _add_new_lines(code, nb_lines_after=1)
-
-
-def _add_one_line_before_two_after(code: str) -> str:
-    return _add_new_lines(code, nb_lines_before=1, nb_lines_after=2)
-
-
-def generate_pydef(cpp_unit: CppUnit, options: CodeStyleOptions, current_namespaces: List[str] = []) -> str:
+def generate_pydef(
+        cpp_unit: CppUnit,
+        options: CodeStyleOptions,
+        current_namespaces: List[str] = [],
+        add_boxed_types_definitions: bool = False) -> str:
 
     r = ""
-    indent_level = 0
     for i, cpp_element in enumerate(cpp_unit.block_children):
         if False:
             pass
         elif isinstance(cpp_element, CppFunctionDecl) or isinstance(cpp_element, CppFunction):
-            r += _add_one_line_after( _generate_pydef_function(cpp_element, options, parent_struct_name="") )
+            r += _add_one_line_before( _generate_pydef_function(cpp_element, options, parent_struct_name="") )
         elif isinstance(cpp_element, CppEnum):
-            r += _add_one_line_before_two_after( _generate_pydef_enum(cpp_element, options) )
+            r += _add_two_lines_before( _generate_pydef_enum(cpp_element, options) )
         elif isinstance(cpp_element, CppStruct) or isinstance(cpp_element, CppClass):
-            r += _add_one_line_before_two_after( _generate_pydef_struct_or_class(cpp_element, options) )
-        elif isinstance(cpp_element, CppStruct) or isinstance(cpp_element, CppNamespace):
-            r += _add_one_line_before_two_after( _generate_pydef_namespace(cpp_element, options, current_namespaces) )
+            r += _add_two_lines_before( _generate_pydef_struct_or_class(cpp_element, options) )
+        elif isinstance(cpp_element, CppNamespace):
+            r += _add_two_lines_before( _generate_pydef_namespace(cpp_element, options, current_namespaces) )
+
+    if add_boxed_types_definitions:
+        boxed_structs = cpp_to_python.BoxedImmutablePythonType.struct_codes()
+        boxed_bindings = cpp_to_python.BoxedImmutablePythonType.binding_codes(options)
+        if len(boxed_structs) > 0:
+            r = boxed_structs + "\n" + boxed_bindings + "\n" + r
+
     return r

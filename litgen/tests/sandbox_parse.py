@@ -22,6 +22,11 @@ def play_pydef(code):
     options.srcml_options.functions_api_prefixes = ["MY_API"]
     options.indent_cpp_size = 4
     options.indent_cpp_with_tabs = False
+
+    # from srcmlcpp import srcml_utils
+    # xml = srcmlcpp.code_to_srcml(code)
+    # print(srcml_utils.srcml_to_str_readable(xml))
+
     cpp_unit = srcmlcpp.code_to_cpp_unit(options.srcml_options, code)
     pydef_code = litgen.internal.module_pydef_generator.generate_pydef(cpp_unit, options)
     print(f">>>\n{pydef_code}<<<")
@@ -29,19 +34,20 @@ def play_pydef(code):
 
 def play_imgui():
     options = litgen.code_style_imgui()
-    source_filename = os.path.realpath(_THIS_DIR + "/../../../examples_real_libs/imgui/imgui.h")
-    cpp_unit = srcmlcpp.file_to_cpp_unit(options, source_filename)
+    source_filename = os.path.realpath(_THIS_DIR + "/../../examples_real_libs/imgui/imgui/imgui.h")
+    cpp_unit = srcmlcpp.file_to_cpp_unit(options.srcml_options, source_filename)
     # print(cpp_unit)
 
 #test_code()
 
-#test_imgui()
 
-
+# IMGUI_API bool          Combo(const char* label, int* current_item, const char* const items[], int items_count);
 # options = code_style_implot()
 # options.srcml_options.functions_api_prefixes = ["MY_API"]
 code = """
-        static Foo& Instance() { static Foo instance; return instance; }       // return_value_policy::reference
+    MY_API inline void change_c_array(unsigned long values[2]);
 """
 # play_parse(code)
 play_pydef(code)
+# play_imgui()
+

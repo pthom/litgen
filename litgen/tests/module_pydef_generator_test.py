@@ -273,11 +273,13 @@ def test_generate_pydef_struct_cpp_code():
     cpp_unit = srcmlcpp.code_to_cpp_unit(options.srcml_options, code)
     generated = module_pydef_generator.generate_pydef(cpp_unit, options)
     expected_code = """
+
+
         auto pyClassMultiplier = py::class_<Multiplier>
             (m, "Multiplier", "A dummy structure that likes to multiply")
-            .def(py::init<>())
+            .def(py::init<>(),
                 "default constructor")
-            .def(py::init<int>())
+            .def(py::init<int>(),
                 py::arg("_who"),
                 "Constructor with param")
             .def("calculate_double",

@@ -1,4 +1,5 @@
-from typing import List
+import copy
+from typing import List, Optional
 import logging
 from dataclasses import dataclass
 
@@ -438,6 +439,59 @@ class CppDecl(CppElementAndComment):
     def __str__(self):
         r = self.str_commented()
         return r
+
+    def is_c_array(self):
+        return "[" in self.name and self.name.endswith("]")
+
+    def name_c_array(self):
+        assert self.is_c_array()
+        r = self.name[ : self.name.index("[")]
+        return r
+
+    def c_array_size(self) -> Optional[int]:
+        if not self.is_c_array():
+            return None
+        pos = self.name.index("[")
+        size_str = self.name[pos + 1:-1]
+        try:
+            size = int(size_str)
+            return size
+        except ValueError:
+            return None
+
+    def is_const(self):
+        return "const" in self.cpp_type.specifiers # or "const" in self.cpp_type.names
+
+    def is_c_array_fixed_size(self):
+        size = self.c_array_size()
+        r = size is not None
+        return r
+
+    def c_array_fixed_size_to_std_array(self): # -> CppDecl:
+        from litgen.internal import cpp_to_python
+
+        assert self.is_c_array_fixed_size()
+
+        new_decl = copy.deepcopy(self)
+        cpp_type_name = new_decl.cpp_type.str_code()
+
+        if "const" not in self.cpp_type.specifiers:
+            is_const = False
+            if cpp_to_python.is_cpp_type_immutable_in_python(cpp_type_name):
+                boxed_type = cpp_to_python.BoxedImmutablePythonType(cpp_type_name)
+                cpp_type_name = boxed_type.boxed_type_name()
+        else:
+            is_const = True
+            new_decl.cpp_type.specifiers.remove("const")
+            cpp_type_name = new_decl.cpp_type.str_code()
+
+        std_array_type_name = f"std::array<{cpp_type_name}, {self.c_array_size()}>&"
+        new_decl.cpp_type.names = [std_array_type_name]
+        if is_const:
+            new_decl.cpp_type.specifiers.append("const")
+        new_decl.name = new_decl.name_c_array()
+
+        return new_decl
 
 
 @dataclass

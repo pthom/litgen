@@ -3,6 +3,9 @@
 //#include <cstdint>
 #include <stdint.h>
 #include <stdio.h>
+#include <memory>
+#include <vector>
+#include <array>
 
 #ifndef MY_API
 #define MY_API
@@ -14,6 +17,24 @@ void SomeFunctionThatShouldNotBeIncluded();
 
 namespace LiterateGeneratorExample
 {
+    // Add
+    MY_API inline int add_c_array2(const int values[2]) { return values[0] + values[1];}
+
+    MY_API inline void change_c_array(unsigned long values[2])
+    {
+        values[0] = values[1] + values[0];
+        values[1] = values[0] * values[1];
+    }
+
+    //    // Add vector
+//    MY_API inline int change_vector(std::vector<int>& values)
+//    {
+//        int sum = 0;
+//        for (auto& v : values)
+//            v += 1;
+//        return sum;
+//    }
+
     // Adds two numbers
     MY_API inline int add(int a, int b) { return a + b; }
 
@@ -66,5 +87,15 @@ namespace LiterateGeneratorExample
 
     MY_API Foo* FooInstance() { return & Foo::Instance(); } // return_value_policy::reference
 
-
+//    MY_API void ToggleBool(bool *v) {
+//        printf("ToggleBool ptr=%p value=%s\n", v, (*v) ? "True" : "False");
+//        *v = !(*v);
+//    }
+//
+//    MY_API void ToggleBool2(std::shared_ptr<bool> v) {
+//        bool *b = v.get();
+//        printf("ToggleBool2 ptr=%p value=%s\n", b, (*b) ? "True" : "False");
+//        *b = !(*b);
+//    }
+//
 } // namespace LiterateGeneratorExample

@@ -5,6 +5,7 @@ from litgen.internal import code_utils, code_replacements
 from litgen.options import CodeStyleOptions
 import litgen
 from litgen.internal import function_wrapper_lambda
+from litgen.internal.function_params_adapter import CppFunctionDeclWithAdaptedParams
 import srcmlcpp
 from srcmlcpp.srcml_types import *
 
@@ -18,7 +19,8 @@ def test_make_function_wrapper_lambda():
         cpp_unit = srcmlcpp.code_to_cpp_unit(options.srcml_options, code)
         for child in cpp_unit.block_children:
             if isinstance(child, CppFunctionDecl) or isinstance(child, CppFunction):
-                lambda_code = function_wrapper_lambda.make_function_wrapper_lambda(child, options)
+                function_adapted = CppFunctionDeclWithAdaptedParams(child)
+                lambda_code = function_wrapper_lambda.make_function_wrapper_lambda_impl(function_adapted, options)
                 return lambda_code
         return ""
 

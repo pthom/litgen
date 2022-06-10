@@ -5,6 +5,7 @@ from litgen.internal import code_utils, cpp_to_python
 from litgen import CodeStyleOptions
 
 from srcmlcpp.srcml_types import CppFunctionDecl, CppParameter, CppParameterList, CppType
+from litgen.internal.function_params_adapter import CppFunctionDeclWithAdaptedParams
 from srcmlcpp import srcml_types_parse
 from srcmlcpp import srcml_types
 
@@ -208,14 +209,14 @@ def _buffer_params_list(params: CppParameterList, options: CodeStyleOptions) -> 
     return r
 
 
-def _make_call_function(function_infos: CppFunctionDecl, is_method, options: CodeStyleOptions) -> List[str]:
+def _make_call_function(function_adapted: CppFunctionDeclWithAdaptedParams, is_method, options: CodeStyleOptions) -> List[str]:
 
     _i_ = options.indent_cpp_spaces()
 
-    params = function_infos.parameter_list
+    params = function_adapted.function_infos.parameter_list
     is_template = _contains_template_buffer(params, options)
     first_template_buffer_param = _first_template_buffer_param(params, options)
-    function_return_type = function_infos.full_return_type(options.srcml_options)
+    function_return_type = function_adapted.function_infos.full_return_type(options.srcml_options)
 
     return_str1 = "" if function_return_type == "void" else "return "
     # return_str2 = " return;" if function_return_type == "void" else ""
@@ -235,7 +236,7 @@ def _make_call_function(function_infos: CppFunctionDecl, is_method, options: Cod
             code_lines.append(f"{_i_}{if_cmd} (array_type == '{py_array_type}')")
             attrs_function_call = _lambda_params_call(params, options, cast_type)
             # code_lines.append(f"{_i_}{_i_}{{ {return_str1}{self_prefix}{function_infos.name}({attrs_function_call});{return_str2} }}")
-            code_lines.append(f"{_i_}{_i_}{return_str1}{self_prefix}{function_infos.name}({attrs_function_call});")
+            code_lines.append(f"{_i_}{_i_}{return_str1}{self_prefix}{function_adapted.lambda_to_call}({attrs_function_call});")
 
         code_lines.append("")
         code_lines.append(f'{_i_}// If we reach this point, the array type is not supported!')
@@ -264,16 +265,16 @@ def _make_call_function(function_infos: CppFunctionDecl, is_method, options: Cod
 
         if len(code_lines) > 0:
             code_lines.append("")
-        code_lines.append(f"{_i_}{return_str1}{self_prefix}{function_infos.name}({attrs_function_call});")
+        code_lines.append(f"{_i_}{return_str1}{self_prefix}{function_adapted.lambda_to_call}({attrs_function_call});")
 
     return code_lines
 
 
-def _template_body_code(function_infos: CppFunctionDecl, is_method: bool, options: CodeStyleOptions) -> List[str]:
+def _template_body_code(function_adapted: CppFunctionDeclWithAdaptedParams, is_method: bool, options: CodeStyleOptions) -> List[str]:
 
     _i_ = options.indent_cpp_spaces()
 
-    params = function_infos.parameter_list
+    params = function_adapted.function_infos.parameter_list
 
     r = []
 
@@ -330,7 +331,7 @@ def _template_body_code(function_infos: CppFunctionDecl, is_method: bool, option
     #
     # call the function at the end of the lambda
     #
-    r += _make_call_function(function_infos, is_method, options)
+    r += _make_call_function(function_adapted, is_method, options)
     return r
 
 
@@ -454,8 +455,8 @@ def _lambda_params_call(
     return code
 
 
-def make_function_wrapper_lambda(
-        function_infos: CppFunctionDecl,
+def make_function_wrapper_lambda_impl(
+        function_adapted: CppFunctionDeclWithAdaptedParams,
         options: CodeStyleOptions,
         parent_struct_name: str = ""
     ) -> str:
@@ -464,22 +465,16 @@ def make_function_wrapper_lambda(
     def add_line(line):
         code_lines.append(line)
 
-    attrs_lambda_signature = _lambda_params_signature(function_infos.parameter_list, options, parent_struct_name)
+    attrs_lambda_signature = _lambda_params_signature(function_adapted.function_infos.parameter_list, options, parent_struct_name)
 
     add_line(f"[]({attrs_lambda_signature})")
     add_line("{")
 
     is_method = len(parent_struct_name) > 0
-    code_lines += _template_body_code(function_infos, is_method, options)
+    if len(function_adapted.cpp_adapter_code) > 0:
+        code_lines += code_utils.indent_code(
+            function_adapted.cpp_adapter_code, indent_str=options.indent_cpp_spaces()).split("\n")
+    code_lines += _template_body_code(function_adapted, is_method, options)
 
     add_line("},")
     return "\n".join(code_lines)
-
-
-def make_method_wrapper_lambda(
-        function_infos: CppFunctionDecl,
-        options: CodeStyleOptions,
-        parent_struct_name: str) -> str:
-
-    lambda_code = make_function_wrapper_lambda(function_infos, options, parent_struct_name)
-    return lambda_code

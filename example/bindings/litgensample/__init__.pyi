@@ -9,7 +9,6 @@ class Foo:
     def __init__(self):
         """"""
 
-
     #
     # These are our parameters
     #

@@ -62,7 +62,7 @@ def write_text_file(filename: str, content: str):
             f.write(content)
 
 
-def unindent_code(code: str) -> str:
+def unindent_code(code: str, flag_strip_empty_lines: bool = False) -> str:
     "unindent the code but keep the inner identation"
     indent_size = compute_code_indent_size(code)
     what_to_replace = " " * indent_size
@@ -76,7 +76,13 @@ def unindent_code(code: str) -> str:
         else:
             processed_line = line
         processed_lines.append(remove_trailing_spaces(processed_line))
-    return "\n".join(processed_lines)
+
+    r = "\n".join(processed_lines)
+
+    if flag_strip_empty_lines:
+        r = strip_empty_lines(r)
+
+    return r
 
 
 def reindent_code(code: str, indent_size: int = 4, skip_first_line = False, indent_str = ""):
