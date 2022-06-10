@@ -6,7 +6,7 @@ from litgen.internal import code_utils
 import srcmlcpp
 
 
-def _generate_pydef(
+def generate_pydef(
         code: str,
         options: CodeStyleOptions
     ) -> str:
@@ -51,7 +51,7 @@ def generate(
 
     _run_generate(input_cpp_header,
                   output_cpp_module_file,
-                  _generate_pydef,
+                  generate_pydef,
                   "pydef_cpp",
                   options)
 

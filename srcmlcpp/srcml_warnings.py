@@ -63,8 +63,10 @@ def _show_element_info(element: ET.Element, encoding):
         if len(header_filename) == 0:
             header_filename = "Position"
         start = srcml_utils.element_start_position(element)
-        return f'{header_filename}:{start.line}:{start.column}'
-
+        if start is not None:
+            return f'{header_filename}:{start.line}:{start.column}'
+        else:
+            return f'{header_filename}'
 
     element_tag = srcml_utils.clean_tag_or_attrib(element.tag)
     concerned_code = _highlight_responsible_code(element, encoding)
