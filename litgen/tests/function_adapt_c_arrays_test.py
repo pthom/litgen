@@ -134,3 +134,29 @@ def test_mixture():
             );    
     """)
 
+
+def test_mixture_no_replace():
+    options = litgen.CodeStyleOptions()
+    options.c_array_const_flag_replace = True
+    options.c_array_modifiable_flag_replace = False
+
+    code = """MY_API void foo(bool flag, const double v[2], double outputs[2]);"""
+    function_decl = get_first_function_decl(code)
+    generated_code = module_pydef_generator._generate_pydef_function(function_decl, options)
+
+    code_utils.assert_are_codes_equal(generated_code, """
+        m.def("foo",
+            [](bool flag, const std::array<double, 2>& v, double outputs[2])
+            {
+                auto foo_adapt_fixed_size_c_arrays = [](bool flag, const std::array<double, 2>& v, double outputs[2])
+                {
+                    return foo(flag, v.data(), outputs[2]);
+                };
+        
+                return foo_adapt_fixed_size_c_arrays(flag, v, outputs[2]);
+            },
+            py::arg("flag"),
+            py::arg("v"),
+            py::arg("outputs[2]")
+        );
+    """)
