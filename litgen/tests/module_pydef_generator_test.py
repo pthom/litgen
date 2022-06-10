@@ -262,7 +262,7 @@ def test_generate_pydef_struct_cpp_code():
             Multiplier(int _who): who(_who) {}; 
             
             // Doubles the input number
-            int CalculateDouble(int x = 21) 
+            IMMVISION_API int CalculateDouble(int x = 21) 
             { 
                 return x * 2; 
             }
@@ -283,7 +283,7 @@ def test_generate_pydef_struct_cpp_code():
                 py::arg("_who"),
                 "Constructor with param")
             .def("calculate_double",
-                [](int x = 21)
+                [](Multiplier & self, int x = 21)
                 {
                     return self.CalculateDouble(x);
                 },

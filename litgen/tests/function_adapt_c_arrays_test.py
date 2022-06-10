@@ -35,27 +35,27 @@ def test_make_function_params_adapter():
         return function_adapted_params
 
     # Easy test with const
-    code = """void foo(const int v[2]);"""
+    code = """MY_API void foo(const int v[2]);"""
     function_adapted_params = make_adapted_function(code)
-    code_utils.assert_are_codes_equal(function_adapted_params.function_infos, "void foo(const std::array<int, 2>& v);")
+    code_utils.assert_are_codes_equal(function_adapted_params.function_infos, "MY_API void foo(const std::array<int, 2>& v);")
 
     # Less easy test with non const
-    code = """void foo(unsigned long long v[2]);"""
+    code = """MY_API void foo(unsigned long long v[2]);"""
     function_adapted_params = make_adapted_function(code)
     code_utils.assert_are_codes_equal(
         function_adapted_params.function_infos,
-        "void foo(BoxedUnsignedLongLong & v_0, BoxedUnsignedLongLong & v_1);")
+        "MY_API void foo(BoxedUnsignedLongLong & v_0, BoxedUnsignedLongLong & v_1);")
 
     # Full test with a mixture
-    code = """void foo(bool flag, const double v[2], double outputs[2]);"""
+    code = """MY_API void foo(bool flag, const double v[2], double outputs[2]);"""
     function_adapted_params = make_adapted_function(code)
     code_utils.assert_are_codes_equal(
         function_adapted_params.function_infos,
-        "void foo(bool flag, const std::array<double, 2>& v, BoxedDouble & outputs_0, BoxedDouble & outputs_1);")
+        "MY_API void foo(bool flag, const std::array<double, 2>& v, BoxedDouble & outputs_0, BoxedDouble & outputs_1);")
 
 
 def test_use_function_params_adapter_const():
-    code = """void foo_const(const int input[2]);"""
+    code = """MY_API void foo_const(const int input[2]);"""
     function_decl = get_first_function_decl(code)
     generated_code = module_pydef_generator._generate_pydef_function(function_decl, OPTIONS)
     # logging. warning("\n" + generated_code)
@@ -76,7 +76,7 @@ def test_use_function_params_adapter_const():
 
 
 def test_use_function_params_adapter_non_const():
-    code = """void foo_non_const(int output[2]);"""
+    code = """MY_API void foo_non_const(int output[2]);"""
     function_decl = get_first_function_decl(code)
     generated_code = module_pydef_generator._generate_pydef_function(function_decl, OPTIONS)
     # logging.warning("\n" + generated_code)
@@ -105,7 +105,7 @@ def test_use_function_params_adapter_non_const():
 
 
 def test_mixture():
-    code = """void foo(bool flag, const double v[2], double outputs[2]);"""
+    code = """MY_API void foo(bool flag, const double v[2], double outputs[2]);"""
     function_decl = get_first_function_decl(code)
     generated_code = module_pydef_generator._generate_pydef_function(function_decl, OPTIONS)
     code_utils.assert_are_codes_equal(

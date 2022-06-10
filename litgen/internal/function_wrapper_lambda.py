@@ -340,10 +340,6 @@ def _lambda_params_signature(
         options: CodeStyleOptions,
         parent_struct_name: str = "") -> str:
 
-    if not options.buffer_flag_replace_by_array:
-        #return cpp_to_python.attrs_cpp_type_name_default(params)
-        return params.types_names_default_for_signature()
-
     new_params: List[CppParameter] = []
 
     if len(parent_struct_name) > 0:
@@ -355,20 +351,23 @@ def _lambda_params_signature(
     while idx_param < len(params.parameters):
         param = params.parameters[idx_param]
         flag_replaced = False
-        # Process buffer params: replace by array
-        if _is_param_buffer_at_idx_template_or_not(params, options, idx_param):
-            new_param = _param_buffer_replaced_by_array(param, options)
-            new_params.append(new_param)
-            flag_replaced = True
-        # Process count params: do not use in the lambda signature
-        if is_buffer_size_name_at_idx(params, options, idx_param):
-            flag_replaced = True
-        # Process sizeof params (in the case of templated functions): set as -1 by default (the lambda code will initialize it if needed)
-        if is_default_sizeof_param(param, options):
-            new_param: CppParameter = copy.deepcopy(param)
-            new_param.init = "-1"
-            new_params.append(new_param)
-            flag_replaced = True
+
+        if options.buffer_flag_replace_by_array:
+            # Process buffer params: replace by array
+            if _is_param_buffer_at_idx_template_or_not(params, options, idx_param):
+                new_param = _param_buffer_replaced_by_array(param, options)
+                new_params.append(new_param)
+                flag_replaced = True
+            # Process count params: do not use in the lambda signature
+            if is_buffer_size_name_at_idx(params, options, idx_param):
+                flag_replaced = True
+            # Process sizeof params (in the case of templated functions): set as -1 by default (the lambda code will initialize it if needed)
+            if is_default_sizeof_param(param, options):
+                new_param: CppParameter = copy.deepcopy(param)
+                new_param.init = "-1"
+                new_params.append(new_param)
+                flag_replaced = True
+
         if is_param_variadic_format(params, options, idx_param):
             flag_replaced = True
 
