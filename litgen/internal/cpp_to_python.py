@@ -128,7 +128,9 @@ class BoxedImmutablePythonType:
     def _binding_code(self, options: CodeStyleOptions) -> str:
         from litgen import generate_code
         struct_code = self._struct_code()
-        pydef_code = generate_code.generate_pydef(struct_code, options, add_boxed_types_definitions=False)
+        pydef_code = generate_code.generate_pydef(
+            struct_code, options,
+            add_boxed_types_definitions=False)
         return pydef_code
 
     @staticmethod

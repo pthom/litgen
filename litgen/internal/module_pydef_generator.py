@@ -238,7 +238,7 @@ def _generate_pydef_constructor(
     doc_string = cpp_to_python.docstring_python_one_line(function_infos.cpp_element_comments.full_comment(), options)
 
     code_lines = []
-    code_lines.append(f".def(py::init<{params_str}>()")
+    code_lines.append(f".def(py::init<{params_str}>(){info_cpp_element_original_location(function_infos, options)}")
     code_lines += pyarg_code_list(function_infos, options)
     if len(doc_string) > 0:
         code_lines.append(f'"{doc_string}"')
@@ -271,7 +271,7 @@ def _add_struct_member_decl(cpp_decl: CppDecl, struct_name: str, options: CodeSt
     name_python = cpp_to_python.var_name_to_python(name_cpp, options)
     comment = cpp_decl.cpp_element_comments.full_comment()
 
-    code_inner_member  = f'.def_readwrite("MEMBER_NAME_PYTHON", &{struct_name}::MEMBER_NAME_CPP, "MEMBER_COMMENT")\n'
+    code_inner_member  = f'.def_readwrite("MEMBER_NAME_PYTHON", &{struct_name}::MEMBER_NAME_CPP, "MEMBER_COMMENT"){info_cpp_element_original_location(cpp_decl, options)}\n'
 
     r = code_inner_member
     r = r.replace("MEMBER_NAME_PYTHON",  name_python)
@@ -314,7 +314,7 @@ def _generate_pydef_struct_or_class(struct_infos: CppStruct, options: CodeStyleO
     comment = cpp_to_python.docstring_python_one_line(struct_infos.cpp_element_comments.full_comment(), options)
 
     code_intro = ""
-    code_intro += f'auto pyClass{struct_name} = py::class_<{struct_name}>\n'
+    code_intro += f'auto pyClass{struct_name} = py::class_<{struct_name}>{info_cpp_element_original_location(struct_infos, options)}\n'
     code_intro += f'{_i_}(m, "{struct_name}", "{comment}")\n'
 
     # code_intro += f'{_i_}.def(py::init<>()) \n'  # Yes, we require struct and classes to be default constructible!
@@ -353,7 +353,7 @@ def _generate_pydef_namespace(
     namespace_code = generate_pydef(cpp_namespace.block, options, new_namespaces)
 
     namespace_code_commented = ""
-    namespace_code_commented += f"// <namespace {namespace_name}>\n"
+    namespace_code_commented += f"// <namespace {namespace_name}>{info_cpp_element_original_location(cpp_namespace, options)}\n"
     namespace_code_commented += namespace_code
     namespace_code_commented += f"// </namespace {namespace_name}>"
 

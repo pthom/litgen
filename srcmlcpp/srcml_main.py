@@ -11,11 +11,19 @@ from srcmlcpp.srcml_options import SrcmlOptions
 
 @dataclass
 class _SrcmlMainContext:
-    current_parsed_file: str = ""
-    current_parsed_unit_code: str = ""
+    _current_parsed_file: str = ""
+    current_parsed_file_unit_code: str = ""
 
     # def __init__(self):
     #     logging.warning(f"Constructing _SrcmlMainContext id={id(self)}")
+
+    @property
+    def current_parsed_file(self):
+        return self._current_parsed_file
+
+    @current_parsed_file.setter
+    def current_parsed_file(self, value):
+        self._current_parsed_file = value
 
 
 def srcml_main_context():
@@ -41,13 +49,16 @@ def code_to_srcml_unit(options: SrcmlOptions, code: str = "", filename: str = ""
           This can be used when you need to preprocess the code before parsing it.
         * if `code`is empty, the code will be read from `filename`
     """
-    srcml_main_context().current_parsed_file = filename
+
+    if len(filename) > 0:
+        srcml_main_context().current_parsed_file = filename
 
     if len(code) == 0:
         with open(filename, "r", encoding=options.encoding) as f:
             code = f.read()
 
-    srcml_main_context().current_parsed_unit_code = code
+    if len(filename) > 0:
+        srcml_main_context().current_parsed_file_unit_code = code
 
     if options.code_preprocess_function is not None:
         code = options.code_preprocess_function(code)

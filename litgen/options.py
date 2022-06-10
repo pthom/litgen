@@ -4,56 +4,6 @@ from typing import List
 from litgen.internal.code_utils import make_regex_any_variable_ending_with, make_regex_any_variable_starting_with
 from srcmlcpp import SrcmlOptions
 
-"""
-## Struct and Enum members title policy
-
-    Two policies are possible:
-
-    Policy 1, if members_title_on_previous_line==False:
-
-            ````cpp
-            // Plot style structure         <=== this is the struct title. It *has to be on top, and can span several lines
-            // Another line in the title
-            struct ImPlotStyle {
-                // item styling variables   <=== this is the beginning of a code region, with this title
-                float   LineWeight;              // = 1, item line weight  <=== member title begins after //
-                int     Marker;                  // = ImPlotMarker_None, marker specification
-                // plot styling variables   <=== this is the beginning of a code region, with this title
-                float   PlotBorderSize;          // = 1,      line thickness of border around plot area
-            ````
-
-    Policy 2, if members_title_on_previous_line==True:
-
-            ````cpp
-            // Set of display parameters and options for an Image <=== this is the struct title. It *has to be on top, and can span several lines
-            struct ImageParams  // IMMVISION_API_STRUCT           <=== IMMVISION_API_STRUCT is a marker for the parsing, not included in the title
-            {
-                //                                                <=== this is the beginning of a code region, indicated by an empty comment line
-                // ImageParams store the parameters for a displayed image
-                // Its values will be updated when the user pans or zooms the image, adds watched pixels, etc.
-                //                                                <=== end of the code region title, indicated by an empty comment line
-
-
-                // Refresh Image: set to true if your image matrix/buffer has changed <== member title
-                // (for example, for live video images)
-                bool RefreshImage = false;
-            ````
-
-
-## Functions, structs and enums title policy
-
-    For functions, structs and enums, the title is always on the line(s) before.
-    For example:
-
-                ````cpp
-                // Important info
-                // info line 2
-                enum MyEnum {
-                    MyEnum_Value0 = 0;    // Some doc about this value
-                };
-                ````
-"""
-
 
 def _preprocess_imgui_code(code):
     import re
@@ -65,28 +15,44 @@ def _preprocess_imgui_code(code):
 
 @dataclass
 class CodeStyleOptions:
+
+    #
+    # There are interesting options to set in SrcmlOptions (see srcmlcpp/srcml_options.py)
+    # Notably, fill srcml_options.functions_api_prefixes (the prefixes that denotes the functions that shall be published)
+    #
     srcml_options: SrcmlOptions = SrcmlOptions()
 
-    # Shall the pybind cpp file show the original location of elements as a comment
-    flag_show_original_location_in_pybind_file = False
-
-    # Shall we generate a __str__() method for structs
-    generate_to_string: bool = False
-    # functions to exclude by name
-    function_name_exclude_regexes: List[str] = field(default_factory=list)
-    # enable to exclude functions by adding a comment on the same line of their declaration
-    function_exclude_by_comment: List[str] = field(default_factory=list)
     # Suffixes that denote structs that should be published, for example:
     #       struct MyStruct        // IMMVISION_API_STRUCT     <== this is a suffix
     #       { };
     # if empty, all structs are published
     struct_api_suffixes = []
 
+
+    # Shall the binding cpp file show the original location of elements as a comment
+    flag_show_original_location_in_pybind_file = False
+
+    # functions to exclude by name
+    function_name_exclude_regexes: List[str] = field(default_factory=list)
+    # enable to exclude functions by adding a comment on the same line of their declaration
+    function_exclude_by_comment: List[str] = field(default_factory=list)
+
     # List of code replacements when going from C++ to Python (for example double -> float, vector-> List, etc)
     code_replacements = [] # List[StringReplacement]
 
     # Function that may generate additional code in the function defined in the  __init__.py file of the package
     init_function_python_additional_code = None # Callable[[FunctionsInfos], str]
+
+    #
+    # Options that need work
+    #
+
+    # Shall we generate a __str__() method for structs
+    generate_to_string: bool = False
+
+    #
+    # Indentation settings for the generated code
+    #
 
     # Size of an indentation in the python stubs
     indent_python_size = 4
@@ -107,21 +73,19 @@ class CodeStyleOptions:
     #    enum MyEnum { MyEnum_A = 1, MyEnum_B = 1, MyEnum_COUNT };
     enum_flag_skip_count: bool = True
 
-    # Typed accessor
-    def get_code_replacements(self):
-        return self.code_replacements
-
-    #
-    # Python package names:
-    #
-    # Name of the native package
-    package_name_native: str = "undefined_package_name_native"
-    # Name of an optional python wrapper package that calls the native functions
-    package_name_python_wrapper: str = "undefined_package_name_python_wrapper"
-
     #
     # C Buffers to py::array
     #
+    # If active, signatures with a C buffer like this:
+    #       MY_API inline void add_inside_array(uint8_t* array, size_t array_size, uint8_t number_to_add)
+    # will be transformed to:
+    #       void add_inside_array(py::array & array, uint8_t number_to_add)
+    #
+    # It also works for templated buffers:
+    #       MY_API template<typename T> void mul_inside_array(T* array, size_t array_size, double factor)
+    # will be transformed to:
+    #       void mul_inside_array(py::array & array, double factor)
+    # (and factor will be down-casted to the target type)
     buffer_flag_replace_by_array = False
     buffer_types = ["int8_t", "uint8_t"] # of type List[str]. Which means that `uint8_t*` are considered as possible buffers
     buffer_template_types = ["T"] # Which means that templated functions using a buffer use T as a templated name
@@ -132,6 +96,26 @@ class CodeStyleOptions:
         make_regex_any_variable_starting_with("size"),
     ]
 
+    #
+    # C style arrays processing
+    #
+    # if c_array_const_flag_replace is active, then signatures like
+    #       void foo_const(const int input[2])
+    # will be transformed to:
+    #       void foo_const(const std::array<int, 2>& input)
+    #
+    # if c_array_modifiable_flag_replace is active, then signatures like
+    #       void foo_non_const(int output[2])
+    # will be transformed to:
+    #       void foo_non_const(BoxedInt & output_0, BoxedInt & output_1)
+    # (c_array_modifiable_max_params is the maximum number of params that can be boxed like this)
+    c_array_const_flag_replace = False
+    c_array_modifiable_flag_replace = False
+    c_array_modifiable_max_params = 10
+
+    #
+    # Sanity checks and utilities below
+    #
     def assert_buffer_types_are_ok(self):
         # the only authorized type are those for which the size is known with certainty
         # (except for float, double and long double for which there seems to be no reliable standard)
@@ -180,9 +164,6 @@ def code_style_immvision() -> CodeStyleOptions:
             return ""
 
     options.init_function_python_additional_code = init_function_python_additional_code_require_opengl_initialized
-
-    options.package_name_native = "_cpp_immvision"
-    options.package_name_python_wrapper = "immvision"
 
     return options
 

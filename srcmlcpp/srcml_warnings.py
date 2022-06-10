@@ -43,7 +43,7 @@ class ErrorContext:
 
 def _extract_error_context(element: ET.Element) -> ErrorContext:
     cpp_element = srcml_types.CppElement(element)
-    full_code = srcml_main.srcml_main_context().current_parsed_unit_code
+    full_code = srcml_main.srcml_main_context().current_parsed_file_unit_code
     full_code_lines = [""] + full_code.split("\n")
 
     concerned_lines = full_code_lines[cpp_element.start().line : cpp_element.end().line + 1]

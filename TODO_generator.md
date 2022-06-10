@@ -1,5 +1,4 @@
 check unit tests
-CI test litgensample
 options / C Array:
     flag / const & non const 
     max non const
