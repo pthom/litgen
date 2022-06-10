@@ -37,8 +37,9 @@ def _generate_pydef_enum(enum: CppEnum, options: CodeStyleOptions) -> str:
 
     _i_ = options.indent_cpp_spaces()
     comment = cpp_to_python.docstring_python_one_line(enum.cpp_element_comments.full_comment() , options)
+    location = info_cpp_element_original_location(enum, options)
 
-    code_intro = f'py::enum_<{enum_name}>(m, "{enum_name}", py::arithmetic(), "{comment}")\n'
+    code_intro = f'py::enum_<{enum_name}>(m, "{enum_name}", py::arithmetic(), "{comment}"){location}\n'
 
     def make_value_code(enum_decl: CppDecl):
         code = f'{_i_}.value("VALUE_NAME_PYTHON", VALUE_NAME_CPP, "VALUE_COMMENT")\n'
@@ -69,7 +70,8 @@ def _generate_pydef_enum(enum: CppEnum, options: CodeStyleOptions) -> str:
             result += make_value_code(child)
         else:
             raise srcmlcpp.SrcMlException(child.srcml_element, f"Unexpected tag {child.tag()} in enum")
-    result = result[:-1] + ";\n"
+    result = result[:-1]
+    result = code_utils.add_item_before_comment(result, ";")
     return result
 
 
@@ -175,11 +177,12 @@ def _generate_pydef_function_impl(
     is_method = len(parent_struct_name) > 0
 
     fn_name_python = cpp_to_python.function_name_to_python(function_infos.name, options)
+    location = info_cpp_element_original_location(function_infos, options)
 
     module_str = "" if is_method else "m"
 
     code_lines: List[str] = []
-    code_lines += [f'{module_str}.def("{fn_name_python}",{info_cpp_element_original_location(function_infos, options)}']
+    code_lines += [f'{module_str}.def("{fn_name_python}",{location}']
     lambda_code = make_function_wrapper_lambda_impl(function_adapted_params, options, parent_struct_name)
     lambda_code = code_utils.indent_code(lambda_code, indent_str=_i_)
     code_lines += lambda_code.split("\n")
@@ -332,7 +335,7 @@ def _generate_pydef_struct_or_class(struct_infos: CppStruct, options: CodeStyleO
     r = code_intro
 
     if not struct_infos.has_non_default_ctor() and not struct_infos.has_deleted_default_ctor():
-        r += f"{_i_}.def(py::init<>() // implicit default constructor\n"
+        r += f"{_i_}.def(py::init<>()) // implicit default constructor\n"
     if struct_infos.has_deleted_default_ctor():
         r += f"{_i_}// (default constructor explicitly deleted)\n"
 

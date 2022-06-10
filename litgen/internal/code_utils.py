@@ -59,6 +59,8 @@ def last_code_position_before_comment(code_line: str) -> int:
             pos = pos + 1
             break
         pos = pos - 1
+    if pos < 0:
+        pos = 0
     return pos
 
 
@@ -75,12 +77,15 @@ def join_lines_with_token_before_comment(lines: List[str], token: str) -> str:
     return r
 
 
-def add_item_before_comment(line: str, item: str) -> str:
-    if len(line) == 0:
+def add_item_before_comment(code: str, item: str) -> str:
+    if len(code) == 0:
         return item
-
-    pos = last_code_position_before_comment(line)
-    r = line[ : pos] + item + line[pos : ]
+    lines = code.split("\n")
+    last_line = lines[-1]
+    pos = last_code_position_before_comment(last_line)
+    last_line = last_line[: pos] + item + last_line[pos:]
+    lines[-1] = last_line
+    r = "\n".join(lines)
     return r
 
 

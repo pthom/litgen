@@ -239,5 +239,6 @@ def code_style_implot():
 def code_style_imgui():
     options = code_style_implot()
     options.buffer_types += ["float"]
+    options.srcml_options.functions_api_prefixes = ["IMGUI_API"]
     options.srcml_options.header_guard_suffixes.append("IMGUI_DISABLE")
     return options
