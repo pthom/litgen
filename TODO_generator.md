@@ -1,47 +1,10 @@
-    // Dead end, see: https://pybind11.readthedocs.io/en/stable/advanced/cast/stl.html
-    m.def("change_c_array",
-        [](std::vector<BoxedUnsignedLong>& values)
-        {
-            auto change_c_array_adapt_fixed_size_c_arrays = [](std::vector<BoxedUnsignedLong>& values)
-            {
-                unsigned long values_raw[2];
-                for (size_t i = 0; i < 2; ++i)
-                    values_raw[i] = values[i].value;
-
-                /*auto r=*/ change_c_array(values_raw);
-
-                for (size_t i = 0; i < 2; ++i)
-                    values[i].value = values_raw[i];
-            };
-            change_c_array_adapt_fixed_size_c_arrays(values);
-        },
-        py::arg("values")
-    );
-
-    // OK with separated arguments
-    m.def("change_c_array2",
-        [](BoxedUnsignedLong& values_0, BoxedUnsignedLong& values_1)
-        {
-            auto change_c_array_adapt_fixed_size_c_arrays = [](BoxedUnsignedLong& values_0, BoxedUnsignedLong& values_1)
-            {
-                unsigned long values_raw[2];
-                values_raw[0] = values_0.value;
-                values_raw[1] = values_1.value;
-
-                /*auto r=*/ change_c_array(values_raw);
-
-                values_0.value = values_raw[0];
-                values_1.value = values_raw[1];
-            };
-            change_c_array_adapt_fixed_size_c_arrays(values_0, values_1);
-        },
-        py::arg("values_0"),
-        py::arg("values_1")
-    );
-
-
+check unit tests
+CI test litgensample
+options / C Array:
+    flag / const & non const 
+    max non const
+test imgui
 notebook
-
 
 
 Notes / Doc pybind11:
@@ -54,8 +17,6 @@ Notes / Doc pybind11:
         enum / py::arithmetic() : add an option?
 
 
-- CI plante dans python 
-- re-test integration c++
 - add namespace hierarchy in pydef ? With option ?
 - integration tests
     - work on full gen (namespace, comment, etc)

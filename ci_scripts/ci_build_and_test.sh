@@ -33,16 +33,17 @@ title "Install litgen"
 pip install -v .
 
 title "Run srcmlcpp tests"
-cd $REPO_DIR/srcmlcpp
+cd "$REPO_DIR"/srcmlcpp
 pytest
 
 title "Run litgen tests"
-cd $REPO_DIR/litgen
+cd "$REPO_DIR"/litgen
 pytest
 
-title "Build example"
-cd $REPO_DIR/example
+title "Build litgensample"
+cd "$REPO_DIR"/example
 pip install -v .
 
-title "Test example"
-python -c "import litgensample; print(litgensample.add(59, 41));"
+title "Test litgensample"
+cd "$REPO_DIR"/litgen/tests_litgensample
+python test_litgensample.py
