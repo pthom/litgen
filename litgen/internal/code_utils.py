@@ -1,6 +1,6 @@
 import os.path
 import re
-from typing import List
+from typing import List, Optional
 import itertools
 import logging
 import difflib
@@ -31,6 +31,57 @@ def strip_empty_lines(code_lines: str) -> str:
     lines = code_lines.split("\n")
     lines = strip_empty_lines_in_list(lines)
     return "\n".join(lines)
+
+
+def line_comment_position(code_line: str) -> Optional[int]:
+    in_string = False
+    last_char = None
+    for i, char in enumerate(code_line):
+        if char == '"' and not last_char == "\\":
+            in_string = not in_string
+        if char == "/" and last_char == "/" and not in_string:
+            return i - 1
+
+        last_char = char
+
+    return None
+
+
+def last_code_position_before_comment(code_line: str) -> int:
+    pos = line_comment_position(code_line)
+    if pos is None:
+        return len(code_line.rstrip())
+
+    pos -= 1
+    while pos >= 0:
+        c = code_line[pos]
+        if not c.isspace():
+            pos = pos + 1
+            break
+        pos = pos - 1
+    return pos
+
+
+def join_lines_with_token_before_comment(lines: List[str], token: str) -> str:
+    if len(lines) == 0:
+        return ""
+    def add_token_to_line(line):
+        pos = last_code_position_before_comment(line)
+        r = line[ : pos] + token + line[pos : ]
+        return r
+
+    lines_with_token = list(map(add_token_to_line, lines[:-1])) + [lines[-1]]
+    r = "\n".join(lines_with_token)
+    return r
+
+
+def add_item_before_comment(line: str, item: str) -> str:
+    if len(line) == 0:
+        return item
+
+    pos = last_code_position_before_comment(line)
+    r = line[ : pos] + item + line[pos : ]
+    return r
 
 
 def to_snake_case(name):

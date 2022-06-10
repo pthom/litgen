@@ -105,7 +105,7 @@ def pyarg_code(function_infos: CppFunctionDecl, options: CodeStyleOptions) -> st
 
         param_lines.append(param_line)
 
-    code = ",\n".join(param_lines)
+    code = code_utils.join_lines_with_token_before_comment(param_lines, ",")
     if len(param_lines) > 0:
         code += ","
     return code
@@ -236,9 +236,10 @@ def _generate_pydef_constructor(
 
     params_str = function_infos.parameter_list.types_only_for_template()
     doc_string = cpp_to_python.docstring_python_one_line(function_infos.cpp_element_comments.full_comment(), options)
+    location = info_cpp_element_original_location(function_infos, options)
 
     code_lines = []
-    code_lines.append(f".def(py::init<{params_str}>(){info_cpp_element_original_location(function_infos, options)}")
+    code_lines.append(f".def(py::init<{params_str}>(){location}")
     code_lines += pyarg_code_list(function_infos, options)
     if len(doc_string) > 0:
         code_lines.append(f'"{doc_string}"')
@@ -247,9 +248,11 @@ def _generate_pydef_constructor(
     for i in range(1, len(code_lines)):
         code_lines[i] = _i_ + code_lines[i]
 
-    code = ",\n".join(code_lines)
-    code += ")"
+    code_lines[-1] = code_utils.add_item_before_comment(code_lines[-1], ")")
+
+    code = code_utils.join_lines_with_token_before_comment(code_lines, ",")
     code += "\n"
+
     return code
 
 
@@ -270,8 +273,9 @@ def _add_struct_member_decl(cpp_decl: CppDecl, struct_name: str, options: CodeSt
     name_cpp = cpp_decl.name
     name_python = cpp_to_python.var_name_to_python(name_cpp, options)
     comment = cpp_decl.cpp_element_comments.full_comment()
+    location = info_cpp_element_original_location(cpp_decl, options)
 
-    code_inner_member  = f'.def_readwrite("MEMBER_NAME_PYTHON", &{struct_name}::MEMBER_NAME_CPP, "MEMBER_COMMENT"){info_cpp_element_original_location(cpp_decl, options)}\n'
+    code_inner_member  = f'.def_readwrite("MEMBER_NAME_PYTHON", &{struct_name}::MEMBER_NAME_CPP, "MEMBER_COMMENT"){location}\n'
 
     r = code_inner_member
     r = r.replace("MEMBER_NAME_PYTHON",  name_python)
@@ -312,9 +316,10 @@ def _generate_pydef_struct_or_class(struct_infos: CppStruct, options: CodeStyleO
     _i_ = options.indent_cpp_spaces()
 
     comment = cpp_to_python.docstring_python_one_line(struct_infos.cpp_element_comments.full_comment(), options)
+    location = info_cpp_element_original_location(struct_infos, options)
 
     code_intro = ""
-    code_intro += f'auto pyClass{struct_name} = py::class_<{struct_name}>{info_cpp_element_original_location(struct_infos, options)}\n'
+    code_intro += f'auto pyClass{struct_name} = py::class_<{struct_name}>{location}\n'
     code_intro += f'{_i_}(m, "{struct_name}", "{comment}")\n'
 
     # code_intro += f'{_i_}.def(py::init<>()) \n'  # Yes, we require struct and classes to be default constructible!
@@ -351,9 +356,10 @@ def _generate_pydef_namespace(
     namespace_name = cpp_namespace.name
     new_namespaces = current_namespaces + [namespace_name]
     namespace_code = generate_pydef(cpp_namespace.block, options, new_namespaces)
+    location = info_cpp_element_original_location(cpp_namespace, options)
 
     namespace_code_commented = ""
-    namespace_code_commented += f"// <namespace {namespace_name}>{info_cpp_element_original_location(cpp_namespace, options)}\n"
+    namespace_code_commented += f"// <namespace {namespace_name}>{location}\n"
     namespace_code_commented += namespace_code
     namespace_code_commented += f"// </namespace {namespace_name}>"
 

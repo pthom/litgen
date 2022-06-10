@@ -79,3 +79,48 @@ a
 # Big World!
 #     """
 #     code_utils.assert_are_codes_equal(generated, expected)
+
+
+def test_line_comment_position():
+    line = "int a;"
+    assert code_utils.line_comment_position(line) is None
+
+    line = "int a; // Test"
+    assert code_utils.line_comment_position(line) == 7
+
+    line = 'std::string r="// Tricky \\" string" // Final comment'
+    assert code_utils.line_comment_position(line) == 36
+
+    line = 'std::string s="// Super \" Tricky string"'
+    assert code_utils.line_comment_position(line) is None
+
+
+def test_last_code_position_before_comment():
+    line = "int a;"
+    assert code_utils.last_code_position_before_comment(line) == 6
+
+    line = "int a; // Test"
+    assert code_utils.last_code_position_before_comment(line) == 6
+
+    line = 'std::string r="// Tricky \\" string" // Final comment'
+    assert code_utils.last_code_position_before_comment(line) == 35
+
+    line = ""
+    assert code_utils.last_code_position_before_comment(line) == 0
+
+
+def test_join_lines_with_token_before_comment():
+    lines = [
+        "int a = 0",
+        "int b = 1 // Dummy comment",
+        'std::string r="// Tricky string" // Final comment',
+        'std::string s="// Tricky string"'
+    ]
+
+    r = code_utils.join_lines_with_token_before_comment(lines, ",")
+    code_utils.assert_are_codes_equal(r, """
+        int a = 0,
+        int b = 1, // Dummy comment
+        std::string r="// Tricky string", // Final comment
+        std::string s="// Tricky string"
+    """)
