@@ -30,7 +30,7 @@ pip install -r requirements-dev.txt
 pip install -r requirements.txt
 
 title "Install litgen"
-pip install -v .
+pip install .
 
 title "Run srcmlcpp tests"
 cd "$REPO_DIR"/srcmlcpp
@@ -42,7 +42,7 @@ pytest
 
 title "Build litgensample"
 cd "$REPO_DIR"/example
-pip install -v .
+pip install .
 
 title "Test litgensample"
 cd "$REPO_DIR"/litgen/tests_litgensample
