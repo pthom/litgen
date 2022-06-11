@@ -27,7 +27,7 @@ def test_c_array():
     assert r is None
 
     #
-    # Test non const c arrays
+    # Test non const c arrays with numeric type (which will be boxed)
     # MY_API inline void change_c_array(unsigned long values[2])
     # {
     #     values[0] = values[1] + values[0];
@@ -39,6 +39,14 @@ def test_c_array():
     litgensample.change_c_array2(a, b)
     assert a.value == 11
     assert b.value == 66
+
+
+    # Test non const c arrays with struct type (which will *not* be boxed)
+    #     MY_API inline void GetPoints(Point2 out[2]) { out[0] = {0, 1}; out[1] = {2, 3}; }
+    a = litgensample.Point2()
+    b = litgensample.Point2()
+    litgensample.get_points(a, b)
+    assert a.x == 0 and a.y == 1 and b.x == 2 and b.y == 3
 
 
 def test_c_buffers():

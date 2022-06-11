@@ -17,10 +17,12 @@ void SomeFunctionThatShouldNotBeIncluded();
 
 namespace LiterateGeneratorExample // MY_API
 {
+
     //
     // C Style array tests
     //
 
+    // Tests with Boxed Numbers
     MY_API inline int add_c_array2(const int values[2]) { return values[0] + values[1];}
     MY_API inline void log_c_array2(const int values[2]) { printf("%i, %i\n", values[0], values[1]); }
     MY_API inline void change_c_array2(unsigned long values[2])
@@ -28,7 +30,12 @@ namespace LiterateGeneratorExample // MY_API
         values[0] = values[1] + values[0];
         values[1] = values[0] * values[1];
     }
-
+    // Test with C array containing user defined struct (which will not be boxed)
+    struct Point2 // MY_API
+    {
+        int x, y;
+    };
+    MY_API inline void GetPoints(Point2 out[2]) { out[0] = {0, 1}; out[1] = {2, 3}; }
 
     //
     // C Style buffer to py::array tests
@@ -50,6 +57,7 @@ namespace LiterateGeneratorExample // MY_API
     //
     // C String lists tests
     //
+
     MY_API inline size_t c_string_list_total_size(const char * const items[], int items_count, int output[2])
     {
         size_t total = 0;

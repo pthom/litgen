@@ -146,7 +146,8 @@ def parse_decl(options: SrcmlOptions, element_c: CppElementAndComment, previous_
         elif child_tag == "init":
             result.init = _parse_init_expr(child)
         elif child_tag == "range":
-            pass # this is for C bit fields
+            # this is for C bit fields
+            result.range = srcml_caller.srcml_to_code(child)
         else:
             raise SrcMlExceptionDetailed(child, f"unhandled tag {child_tag}", options)
 

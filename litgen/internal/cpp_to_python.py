@@ -87,7 +87,7 @@ def cpp_numeric_types():
     return r
 
 
-def is_cpp_type_immutable_in_python(cpp_type: str):
+def is_cpp_type_immutable_for_python(cpp_type: str):
     if cpp_type in cpp_numeric_types():
         return True
     if cpp_type in ["string", "std::string"]:
@@ -101,7 +101,7 @@ class BoxedImmutablePythonType:
     cpp_type: str
 
     def __init__(self, cpp_type: str):
-        if not is_cpp_type_immutable_in_python(cpp_type):
+        if not is_cpp_type_immutable_for_python(cpp_type):
             raise TypeError(f"BoxedImmutablePythonType({cpp_type}) is seemingly not immutable")
         self.cpp_type = cpp_type
         if cpp_type not in BoxedImmutablePythonType.static_list_of_instantiated_type:

@@ -49,9 +49,9 @@ def play_pydef(code):
 
     options.flag_show_original_location_in_pybind_file = True
 
-    from srcmlcpp import srcml_utils
-    xml = srcmlcpp.code_to_srcml(code)
-    print(srcml_utils.srcml_to_str_readable(xml))
+    # from srcmlcpp import srcml_utils
+    # xml = srcmlcpp.code_to_srcml(code)
+    # print(srcml_utils.srcml_to_str_readable(xml))
 
     pydef_code = litgen.generate_pydef(code, options, add_boxed_types_definitions=True)
     print(f">>>\n{pydef_code}<<<")
@@ -64,11 +64,7 @@ def play_pydef(code):
 # options.srcml_options.functions_api_prefixes = ["MY_API"]
 # play_parse(code)
 code = """
-struct ImGuiTableColumnSortSpecs
-{
-    ImS16                       SortOrder;          // Index within parent ImGuiTableSortSpecs (always stored in order starting from 0, tables sorted on a single criteria will always have a 0 here)
-    ImGuiSortDirection          SortDirection : 8;  // ImGuiSortDirection_Ascending or ImGuiSortDirection_Descending (you can use this or SortSign, whichever is more convenient for your sort function)
-};
+    IMGUI_API inline void change_c_array2(unsigned long values[2]);
 """
 play_pydef(code)
 # play_imgui()

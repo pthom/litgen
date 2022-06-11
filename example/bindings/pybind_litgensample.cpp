@@ -76,7 +76,8 @@ void py_init_module_litgensample(py::module& m)
 
             return add_c_array2_adapt_fixed_size_c_arrays(values);
         },
-        py::arg("values")
+        py::arg("values"),
+        "Tests with Boxed Numbers"
     );
 
 
@@ -113,6 +114,36 @@ void py_init_module_litgensample(py::module& m)
         },
         py::arg("values_0"),
         py::arg("values_1")
+    );
+
+
+
+    auto pyClassPoint2 = py::class_<Point2>
+        (m, "Point2", "Test with C array containing user defined struct (which will not be boxed)\n\nMY_API")
+        .def(py::init<>()) // implicit default constructor
+        .def_readwrite("x", &Point2::x, "")
+        .def_readwrite("y", &Point2::y, "")
+        ;
+
+    m.def("get_points",
+        [](Point2 & out_0, Point2 & out_1)
+        {
+            auto GetPoints_adapt_fixed_size_c_arrays = [](Point2 & out_0, Point2 & out_1)
+            {
+                Point2 out_raw[2];
+                out_raw[0] = out_0;
+                out_raw[1] = out_1;
+
+                GetPoints(out_raw);
+
+                out_0 = out_raw[0];
+                out_1 = out_raw[1];
+            };
+
+            GetPoints_adapt_fixed_size_c_arrays(out_0, out_1);
+        },
+        py::arg("out_0"),
+        py::arg("out_1")
     );
 
 
@@ -212,8 +243,7 @@ void py_init_module_litgensample(py::module& m)
         },
         py::arg("items"),
         py::arg("output_0"),
-        py::arg("output_1"),
-        "\nC String lists tests\n"
+        py::arg("output_1")
     );
 
 

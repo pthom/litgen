@@ -420,6 +420,7 @@ class CppDecl(CppElementAndComment):
     cpp_type: CppType = None
     name: str = ""
     init: str = ""  # initial or default value
+    range: str = "" # Will be filled for bitfield members
 
     def __init__(self, element: ET.Element, cpp_element_comments: CppElementComments):
         super().__init__(element, cpp_element_comments)
@@ -558,6 +559,12 @@ class CppDecl(CppElementAndComment):
         new_decl.name = new_decl.name_c_array()
         return new_decl
 
+    def is_immutable_for_python(self) -> bool:
+        from litgen.internal import cpp_to_python
+        cpp_type_name = self.cpp_type.str_code()
+        r = cpp_to_python.is_cpp_type_immutable_for_python(cpp_type_name)
+        return r
+
     def c_array_fixed_size_to_new_modifiable_decls(self) -> List[CppDecl]:
         """
         Processes decl that contains a *non const* c style array of fixed size, e.g. `int v[2]`
@@ -579,7 +586,7 @@ class CppDecl(CppElementAndComment):
 
         cpp_type_name = self.cpp_type.str_code()
 
-        if cpp_to_python.is_cpp_type_immutable_in_python(cpp_type_name):
+        if cpp_to_python.is_cpp_type_immutable_for_python(cpp_type_name):
             boxed_type = cpp_to_python.BoxedImmutablePythonType(cpp_type_name)
             cpp_type_name = boxed_type.boxed_type_name()
 

@@ -5523,7 +5523,6 @@ void py_init_module_imgui(py::module& m)
         .def_readwrite("column_user_id", &ImGuiTableColumnSortSpecs::ColumnUserID, "User id of the column (if specified by a TableSetupColumn() call)")    // /Users/pascal/dvp/OpenSource/ImGuiWork/litgen/examples_real_libs/imgui/imgui/imgui.h:2138
         .def_readwrite("column_index", &ImGuiTableColumnSortSpecs::ColumnIndex, "Index of the column")    // /Users/pascal/dvp/OpenSource/ImGuiWork/litgen/examples_real_libs/imgui/imgui/imgui.h:2139
         .def_readwrite("sort_order", &ImGuiTableColumnSortSpecs::SortOrder, "Index within parent ImGuiTableSortSpecs (always stored in order starting from 0, tables sorted on a single criteria will always have a 0 here)")    // /Users/pascal/dvp/OpenSource/ImGuiWork/litgen/examples_real_libs/imgui/imgui/imgui.h:2140
-        .def_readwrite("sort_direction", &ImGuiTableColumnSortSpecs::SortDirection, "ImGuiSortDirection_Ascending or ImGuiSortDirection_Descending (you can use this or SortSign, whichever is more convenient for your sort function)")    // /Users/pascal/dvp/OpenSource/ImGuiWork/litgen/examples_real_libs/imgui/imgui/imgui.h:2141
         .def(py::init<>())    // /Users/pascal/dvp/OpenSource/ImGuiWork/litgen/examples_real_libs/imgui/imgui/imgui.h:2143
         ;
 
@@ -6446,9 +6445,6 @@ void py_init_module_imgui(py::module& m)
     auto pyClassImFontGlyph = py::class_<ImFontGlyph>    // /Users/pascal/dvp/OpenSource/ImGuiWork/litgen/examples_real_libs/imgui/imgui/imgui.h:2682
         (m, "ImFontGlyph", "Hold rendering data for one glyph.\n(Note: some language parsers may fail to convert the 31+1 bitfield members, in this case maybe drop store a single u32 or we can rework this)")
         .def(py::init<>()) // implicit default constructor
-        .def_readwrite("colored", &ImFontGlyph::Colored, "Flag to indicate glyph is colored and should generally ignore tinting (make it usable with no shift on little-endian as this is used in loops)")    // /Users/pascal/dvp/OpenSource/ImGuiWork/litgen/examples_real_libs/imgui/imgui/imgui.h:2684
-        .def_readwrite("visible", &ImFontGlyph::Visible, "Flag to indicate glyph has no visible pixels (e.g. space). Allow early out when rendering.")    // /Users/pascal/dvp/OpenSource/ImGuiWork/litgen/examples_real_libs/imgui/imgui/imgui.h:2685
-        .def_readwrite("codepoint", &ImFontGlyph::Codepoint, "0x0000..0x10FFFF")    // /Users/pascal/dvp/OpenSource/ImGuiWork/litgen/examples_real_libs/imgui/imgui/imgui.h:2686
         .def_readwrite("advance_x", &ImFontGlyph::AdvanceX, "Distance to next character (= data from font + ImFontConfig::GlyphExtraSpacing.x baked in)")    // /Users/pascal/dvp/OpenSource/ImGuiWork/litgen/examples_real_libs/imgui/imgui/imgui.h:2687
         .def_readwrite("x0", &ImFontGlyph::X0, "Glyph corners")    // /Users/pascal/dvp/OpenSource/ImGuiWork/litgen/examples_real_libs/imgui/imgui/imgui.h:2688
         .def_readwrite("y0", &ImFontGlyph::Y0, "Glyph corners")    // /Users/pascal/dvp/OpenSource/ImGuiWork/litgen/examples_real_libs/imgui/imgui/imgui.h:2688

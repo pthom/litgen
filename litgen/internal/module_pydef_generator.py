@@ -288,6 +288,10 @@ def _add_struct_member_decl(cpp_decl: CppDecl, struct_name: str, options: CodeSt
     comment = cpp_decl.cpp_element_comments.full_comment()
     location = info_cpp_element_original_location(cpp_decl, options)
 
+    if len(cpp_decl.range) > 0:
+        # We ignore bitfields
+        return ""
+
     if cpp_decl.is_c_array_fixed_size():
         # Cf. https://stackoverflow.com/questions/58718884/binding-an-array-using-pybind11
         array_typename = cpp_decl.cpp_type.str_code()
