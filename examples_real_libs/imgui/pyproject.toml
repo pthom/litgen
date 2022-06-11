@@ -1,0 +1,13 @@
+[build-system]
+requires = [
+    "setuptools>=42",
+    "wheel",
+    "scikit-build",
+    "cmake",
+    "ninja; platform_system!='Windows'",
+    "litgen @ git+https://github.com/pthom/litgen"
+]
+build-backend = "setuptools.build_meta"
+
+[tool.isort]
+profile = "black"
