@@ -568,7 +568,7 @@ def fill_block(options: SrcmlOptions, element: ET.Element, inout_block_content: 
                 inout_block_content.block_children.append(parse_unprocessed(options, child_c))
         except SrcMlExceptionDetailed as e:
             srcml_warnings.emit_warning(
-                f'A cpp element of type "{child_tag}" was ignored. Details follow\n {e}', options)
+                f'A cpp element of type "{child_tag}" was ignored. Details follow\n{e}', options)
 
 
 def parse_unit(options: SrcmlOptions, element: ET.Element) -> CppUnit:

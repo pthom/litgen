@@ -32,11 +32,12 @@ class ErrorContext:
         msg = ""
         for i, line in enumerate(self.concerned_lines):
             msg += line + "\n"
-            if i == self.start.line:
-                nb_spaces = self.start.col - 1
-                if nb_spaces < 0:
-                    nb_spaces = 0
-                msg += " " * nb_spaces + "^" + "\n"
+            if self.start is not None:
+                if i == self.start.line:
+                    nb_spaces = self.start.col - 1
+                    if nb_spaces < 0:
+                        nb_spaces = 0
+                    msg += " " * nb_spaces + "^" + "\n"
 
 
         return msg
@@ -111,16 +112,15 @@ def _warning_detailed_info(
     message = ""
 
     if current_element is not None:
-        message += """
-        Issue found"""
         message += _show_element_info(current_element, options.encoding)
 
     if options.flag_show_python_callstack:
         message += show_python_callstack()
 
     if len(additional_message) > 0:
-        message =   code_utils.unindent_code(additional_message, flag_strip_empty_lines=True) \
-                  + code_utils.indent_code(message, 4)
+        message = \
+            (code_utils.unindent_code(additional_message, flag_strip_empty_lines=True)
+            + "\n" + code_utils.unindent_code(message, flag_strip_empty_lines=True))
 
     return message
 
