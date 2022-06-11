@@ -1,6 +1,6 @@
 #pragma once
 #include <cstddef>
-//#include <cstdint>
+#include <cstring>
 #include <stdint.h>
 #include <stdio.h>
 #include <memory>
