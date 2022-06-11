@@ -95,12 +95,12 @@ class CodeStyleOptions:
     #
     # C style arrays processing
     #
-    # if c_array_const_flag_replace is active, then signatures like
+    # If c_array_const_flag_replace is active, then signatures like
     #       void foo_const(const int input[2])
     # will be transformed to:
     #       void foo_const(const std::array<int, 2>& input)
     #
-    # if c_array_modifiable_flag_replace is active, then signatures like
+    # If c_array_modifiable_flag_replace is active, then signatures like
     #       void foo_non_const(int output[2])
     # will be transformed to:
     #       void foo_non_const(BoxedInt & output_0, BoxedInt & output_1)
@@ -109,6 +109,13 @@ class CodeStyleOptions:
     c_array_const_flag_replace = True
     c_array_modifiable_flag_replace = True
     c_array_modifiable_max_size = 10
+
+    # If c_string_list_flag_replace is active, then C string lists `(const char **, size_t)`
+    # will be replaced by `const std::vector<std::string>&`. For example:
+    #     void foo(const char * const items[], int items_count)
+    # will be transformed to:
+    #     void foo(const std::vector<std::string>& const items[])
+    c_string_list_flag_replace = True
 
     #
     # Options that need rework

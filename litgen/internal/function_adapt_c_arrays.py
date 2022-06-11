@@ -1,22 +1,16 @@
 from typing import Optional, List
 import copy
-import enum
-from dataclasses import dataclass
 
-from litgen.generate_code import CodeStyleOptions, generate_pydef, code_utils
-from litgen.internal import cpp_to_python
-from litgen.internal.function_params_adapter import CppFunctionDeclWithAdaptedParams
+from litgen.generate_code import CodeStyleOptions, code_utils
+from litgen.internal.cpp_function_adapted_params import CppFunctionDeclWithAdaptedParams, LambdaAdapter
 
 from srcmlcpp.srcml_types import CppFunctionDecl, CppParameter, CppParameterList, CppType, CppDecl
 
 
 def adapt_c_arrays(function_adapted_params: CppFunctionDeclWithAdaptedParams,
-                   options: CodeStyleOptions,
-                   parent_struct_name: str = ""
-                   ):
+                   options: CodeStyleOptions
+                   ) -> LambdaAdapter:
     """
-    This function modifies the parameter `function_adapted_params`
-
     We want to adapt functions that use fixed size C arrays like those:
         `void foo_const(const int input[2])` or `void foo_non_const(int output[2])`
 
@@ -50,7 +44,7 @@ def adapt_c_arrays(function_adapted_params: CppFunctionDeclWithAdaptedParams,
     """
 
     if not options.c_array_const_flag_replace and not options.c_array_modifiable_flag_replace:
-        return
+        return None
 
     needs_adapt = False
 
@@ -59,31 +53,40 @@ def adapt_c_arrays(function_adapted_params: CppFunctionDeclWithAdaptedParams,
             needs_adapt = True
 
     if not needs_adapt:
-        return
+        return None
 
-    new_function_infos = copy.deepcopy(function_adapted_params.function_infos)
+    lambda_adapter = LambdaAdapter()
+
+    lambda_adapter.new_function_infos = copy.deepcopy(function_adapted_params.function_infos)
     old_function_params: List[CppParameter] = function_adapted_params.function_infos.parameter_list.parameters
     new_function_params = []
-    adapted_cpp_parameter_list = []
-    lambda_input_code = ""
-    lambda_output_code = ""
     for old_param in old_function_params:
         was_replaced = False
         if old_param.decl.is_c_array_fixed_size():
 
             if old_param.decl.is_const() and options.c_array_const_flag_replace:
                 was_replaced = True
+                # Create new calling param (const std::array &)
                 new_decl = old_param.decl.c_array_fixed_size_to_std_array()
                 new_param = copy.deepcopy(old_param)
                 new_param.decl = new_decl
                 new_function_params.append(new_param)
-                adapted_cpp_parameter_list.append(new_decl.name + ".data()")
+                # Fill adapted_cpp_parameter_list (those that will call the original C style function)
+                lambda_adapter.adapted_cpp_parameter_list.append(new_decl.name_without_array() + ".data()")
 
             if not old_param.decl.is_const() and options.c_array_modifiable_flag_replace:
                 array_size = old_param.decl.c_array_size()
+
                 if array_size <= options.c_array_modifiable_max_size:
+
                     was_replaced = True
+
                     new_decls = old_param.decl.c_array_fixed_size_to_new_modifiable_decls()
+
+                    #
+                    # Fill lambda_input_code and lambda_output_code
+                    # and create new calling params (BoxedInt& for example)
+                    #
 
                     # unsigned long output_raw[2];
                     # output_raw[0] = output_0.value;    // `lambda_input_code`
@@ -94,13 +97,13 @@ def adapt_c_arrays(function_adapted_params: CppFunctionDeclWithAdaptedParams,
 
                     old_param_renamed = copy.deepcopy(old_param)
                     old_param_renamed.decl.name = old_param_renamed.decl.name_c_array() + "_raw"
-                    lambda_input_code += old_param_renamed.decl.str_code() + f"[{len(new_decls)}]" + ";\n"
+                    lambda_adapter.lambda_input_code += old_param_renamed.decl.str_code() + f"[{len(new_decls)}]" + ";\n"
 
-                    adapted_cpp_parameter_list.append(old_param_renamed.decl.name)
+                    lambda_adapter.adapted_cpp_parameter_list.append(old_param_renamed.decl.name_without_array())
 
                     for i, new_decl in enumerate(new_decls):
-                        lambda_input_code += f"{old_param_renamed.decl.name}[{i}] = {new_decl.name}.value;\n"
-                        lambda_output_code += f"{new_decl.name}.value = {old_param_renamed.decl.name}[{i}];\n"
+                        lambda_adapter.lambda_input_code += f"{old_param_renamed.decl.name}[{i}] = {new_decl.name}.value;\n"
+                        lambda_adapter.lambda_output_code += f"{new_decl.name}.value = {old_param_renamed.decl.name}[{i}];\n"
 
                         new_param = copy.deepcopy(old_param)
                         new_param.decl = new_decl
@@ -108,29 +111,10 @@ def adapt_c_arrays(function_adapted_params: CppFunctionDeclWithAdaptedParams,
 
         if not was_replaced:
             new_function_params.append(old_param)
-            adapted_cpp_parameter_list.append(old_param.decl.name)
+            lambda_adapter.adapted_cpp_parameter_list.append(old_param.decl.name_without_array())
 
-    new_function_infos.parameter_list.parameters = new_function_params
+    lambda_adapter.new_function_infos.parameter_list.parameters = new_function_params
 
-    lambda_name = function_adapted_params.function_infos.name + "_adapt_fixed_size_c_arrays"
-    capture_this = "this" if len(parent_struct_name) > 0 else ""
-    adapted_python_parameter_list_str = new_function_infos.parameter_list.str_code()
-    adapted_cpp_parameter_list_str = ", ".join(adapted_cpp_parameter_list)
+    lambda_adapter.lambda_name = function_adapted_params.function_infos.name + "_adapt_fixed_size_c_arrays"
 
-    _i_ = options.indent_cpp_spaces()
-    lambda_code = ""
-    lambda_code += f"auto {lambda_name} = [{capture_this}]({adapted_python_parameter_list_str})\n"
-    lambda_code += "{\n"
-    fn_return_type = function_adapted_params.function_infos.full_return_type(options.srcml_options)
-    return_code = "" if fn_return_type == "void" else "return "
-
-    if len(lambda_input_code) > 0:
-        lambda_code += code_utils.indent_code(lambda_input_code, indent_str=options.indent_cpp_spaces()) + "\n"
-    lambda_code += f"{_i_}{return_code}{function_adapted_params.function_infos.name}({adapted_cpp_parameter_list_str});\n"
-    if len(lambda_output_code) > 0:
-        lambda_code += "\n" + code_utils.indent_code(lambda_output_code, indent_str=options.indent_cpp_spaces())
-    lambda_code += "};\n"
-
-    function_adapted_params.cpp_adapter_code += lambda_code
-    function_adapted_params.function_infos = new_function_infos
-    function_adapted_params.lambda_to_call = lambda_name
+    return lambda_adapter

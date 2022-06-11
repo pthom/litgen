@@ -35,6 +35,17 @@ if a > 10:
 """
 
 
+def test_var_name_contains_word():
+    assert code_utils.var_name_contains_word("item_count", "count")
+    assert code_utils.var_name_contains_word("count", "count")
+    assert code_utils.var_name_contains_word("count_items", "count")
+    assert not code_utils.var_name_contains_word("countitems", "count")
+
+    assert code_utils.var_name_contains_word("itemCount", "Count")
+    assert code_utils.var_name_contains_word("countItems", "Count")
+    assert code_utils.var_name_contains_word("count_Items", "Count")
+
+
 def test_contains_word():
     assert code_utils.contains_word("Hello wonderful world", "wonderful")
     assert not code_utils.contains_word("Hello wonderful world", "Wonderful")
@@ -124,3 +135,4 @@ def test_join_lines_with_token_before_comment():
         std::string r="// Tricky string", // Final comment
         std::string s="// Tricky string"
     """)
+

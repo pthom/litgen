@@ -89,18 +89,31 @@ def _parse_init_expr(element: ET.Element) -> str:
     we will call srcml_to_code, which will invoke the executable srcml
     """
     assert srcml_utils.clean_tag_or_attrib(element.tag) == "init"
+
+    def expr_literal_value(expr_element: ET.Element) -> Optional[str]:
+        # Case for simple literals
+        if len(expr_element) != 1:
+            return None
+        else:
+            for expr_child in expr_element:
+                if srcml_utils.clean_tag_or_attrib(expr_child.tag) in ["literal", "name"]:
+                    if expr_child.text is not None:
+                        return expr_child.text
+        return None
+
+    r = ""
+
     expr = srcml_utils.child_with_tag(element, "expr")
+    if expr is not None:
+        if expr_literal_value(expr) is not None:
+            r = expr_literal_value(expr)
+        else:
+            r = srcml_caller.srcml_to_code(expr)
+    else:
+        r = srcml_caller.srcml_to_code(element).strip()
+        if r.startswith("="):
+            r = r[1:]
 
-    # Case for simple literals
-    if len(expr) == 1:
-        for child in expr:
-            if srcml_utils.clean_tag_or_attrib(child.tag) in ["literal", "name"]:
-                if child.text is not None:
-                    r = child.text
-                    return r
-
-    # More complex cases
-    r = srcml_caller.srcml_to_code(expr)
     return r
 
 

@@ -1,4 +1,4 @@
-from typing import Tuple, List, Any
+from typing import Tuple, List, Any, Optional
 import logging
 
 import xml.etree.ElementTree as ET
@@ -47,27 +47,16 @@ def children_with_tag(element: ET.Element, tag: str) -> List[ET.Element]:
     return r
 
 
-def first_code_element_with_tag(code: str, tag: str, dump_positions: bool = True) -> ET.Element:
-    """
-    Utility for tests: extracts the first xml element of type "decl_stmt"
-    """
-    root = srcml_caller.code_to_srcml(code, dump_positions)
-    return child_with_tag(root, tag)
-
-
-def child_with_tag(element: ET.Element, tag: str) -> ET.Element:
+def child_with_tag(element: ET.Element, tag: str) -> Optional[ET.Element]:
     children = children_with_tag(element, tag)
     if len(children) == 0:
-        tags_strs = map(lambda c: '"' + clean_tag_or_attrib(c.tag) + '"', element)
-        tags_str = ", ".join(tags_strs)
-        message = f'child_with_tag: did not find child with tag "{tag}"  (found [{tags_str}])'
-        logging.error(message)
-        raise LookupError(message)
+        return None
     elif len(children) > 1:
         message = f'child_with_tag: found more than one child with tag "{tag}" (found {len(children)})'
-        logging.error(message)
-        raise LookupError(message)
-    return  children[0]
+        logging.debug(message)
+        return None
+    else:
+        return children[0]
 
 
 def srcml_to_str(element: ET.Element, bare = False):

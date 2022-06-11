@@ -430,6 +430,12 @@ class CppDecl(CppElementAndComment):
             r += " = " + self.init
         return r
 
+    def name_without_array(self):
+        if "[" in self.name:
+            return self.name[ : self.name.index("[")]
+        else:
+            return self.name
+
     def has_name_or_ellipsis(self):
         assert self.name is not None
         if len(self.name) > 0:
@@ -440,6 +446,34 @@ class CppDecl(CppElementAndComment):
 
     def __str__(self):
         r = self.str_commented()
+        return r
+
+    def look_like_size_name(self):
+        possible_tokens = ["nb", "size", "count", "total", "n"]
+        for possible_token in possible_tokens:
+            if code_utils.var_name_contains_word(self.name, possible_token):
+                return True
+        return False
+
+    def is_c_string_list_ptr(self):
+        """
+        Returns true if this decl looks like a const C string double pointer.
+        Examples:
+            const char * const items[]
+            const char ** const items
+            const char ** items
+        :return:
+        """
+        is_const = "const" in self.cpp_type.specifiers
+        is_char = self.cpp_type.names == ["char"]
+        is_default_init = (self.init == "" or self.init == "NULL" or self.init == "nullptr")
+
+        nb_indirections = 0
+        nb_indirections += self.cpp_type.modifiers.count("*")
+        if ("[]" in self.name) or ("[ ]" in self.name):
+            nb_indirections += 1
+
+        r = is_const and is_char and nb_indirections == 2 and is_default_init
         return r
 
     def is_c_array(self) -> bool:

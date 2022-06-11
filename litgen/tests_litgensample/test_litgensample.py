@@ -76,5 +76,16 @@ def test_c_buffers():
     assert got_exception
 
 
+def test_c_string_list():
+    strings = ["Hello", "Wonderful", "World"]
+    a = litgensample.BoxedInt()
+    b = litgensample.BoxedInt()
+    total_size = litgensample.c_string_list_total_size(strings, a, b)
+    assert total_size == len("Hello") + len("Wonderful") + len("World")
+    assert a.value == total_size
+    assert b.value == total_size + 1
+
+
 test_c_array()
 test_c_buffers()
+test_c_string_list()

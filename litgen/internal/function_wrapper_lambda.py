@@ -235,8 +235,13 @@ def _make_call_function(function_adapted: CppFunctionDeclWithAdaptedParams, is_m
 
             code_lines.append(f"{_i_}{if_cmd} (array_type == '{py_array_type}')")
             attrs_function_call = _lambda_params_call(params, options, cast_type)
-            # code_lines.append(f"{_i_}{_i_}{{ {return_str1}{self_prefix}{function_infos.name}({attrs_function_call});{return_str2} }}")
-            code_lines.append(f"{_i_}{_i_}{return_str1}{self_prefix}{function_adapted.lambda_to_call}({attrs_function_call});")
+
+            if len(function_adapted.lambda_to_call) > 0:
+                function_to_call = function_adapted.lambda_to_call
+            else:
+                function_to_call = function_adapted.function_infos.name
+
+            code_lines.append(f"{_i_}{_i_}{return_str1}{self_prefix}{function_to_call}({attrs_function_call});")
 
         code_lines.append("")
         code_lines.append(f'{_i_}// If we reach this point, the array type is not supported!')
@@ -265,7 +270,13 @@ def _make_call_function(function_adapted: CppFunctionDeclWithAdaptedParams, is_m
 
         if len(code_lines) > 0:
             code_lines.append("")
-        code_lines.append(f"{_i_}{return_str1}{self_prefix}{function_adapted.lambda_to_call}({attrs_function_call});")
+
+        if len(function_adapted.lambda_to_call) > 0:
+            function_to_call = function_adapted.lambda_to_call
+        else:
+            function_to_call = function_adapted.function_infos.name
+
+        code_lines.append(f"{_i_}{return_str1}{self_prefix}{function_to_call}({attrs_function_call});")
 
     return code_lines
 

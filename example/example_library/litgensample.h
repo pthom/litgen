@@ -47,6 +47,19 @@ namespace LiterateGeneratorExample // MY_API
             array[i] *= (T)factor;
     }
 
+    //
+    // C String lists tests
+    //
+    MY_API inline size_t c_string_list_total_size(const char * const items[], int items_count, int output[2])
+    {
+        size_t total = 0;
+        for (size_t i = 0; i < items_count; ++i)
+            total += strlen(items[i]);
+        output[0] = total;
+        output[1] = total + 1;
+        return total;
+    }
+
 
     // Adds two numbers
     MY_API inline int add(int a, int b) { return a + b; }

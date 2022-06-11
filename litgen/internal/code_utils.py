@@ -1,20 +1,23 @@
 import os.path
 import re
-from typing import List, Optional
+from typing import List, Optional, Iterable, TypeVar, Tuple
 import itertools
 import logging
 import difflib
 import traceback
 
 
+T = TypeVar('T')
+
+
 # transform a list into a list of adjacent pairs
 # For example : [a, b, c] -> [ [a, b], [b, c]]
-def overlapping_pairs(iterable):
+def overlapping_pairs(iterable : Iterable[T]) -> Tuple[T, T]:
     it = iter(iterable)
-    a = next(it, None)
-
+    a= next(it, None)
+    b = None
     for b in it:
-        yield (a, b)
+        yield a, b
         a = b
 
 
@@ -413,6 +416,18 @@ def contains_word_boundary_left_only(where_to_search: str, word: str):
     word = word.replace("*", "\\*")
     regex_str = r"\b" + word
     return does_match_regex(regex_str, where_to_search)
+
+
+def var_name_contains_word(var_name: str, word: str):
+    var_name = to_snake_case(var_name).strip()
+    word = word.lower()
+    if " " in var_name:
+        return False
+    parts = var_name.split("_")
+    for part in parts:
+        if part == word:
+            return True
+    return False
 
 
 def contains_pointer_type(full_type_str: str, type_to_search: str):

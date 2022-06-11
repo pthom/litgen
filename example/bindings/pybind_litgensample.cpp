@@ -4,7 +4,6 @@
 #include <pybind11/numpy.h>
 #include <pybind11/stl.h>
 #include <stdint.h>
-#include <stdio.h>
 
 
 namespace py = pybind11;
@@ -22,6 +21,13 @@ void py_init_module_litgensample(py::module& m)
         BoxedUnsignedLong() : value{} {}
         BoxedUnsignedLong(unsigned long v) : value(v) {}
         std::string __repr__() { return std::string("BoxedUnsignedLong(") + std::to_string(value) + ")"; }
+    };
+    struct BoxedInt
+    {
+        int value;
+        BoxedInt() : value{} {}
+        BoxedInt(int v) : value(v) {}
+        std::string __repr__() { return std::string("BoxedInt(") + std::to_string(value) + ")"; }
     };
 
 
@@ -41,6 +47,21 @@ void py_init_module_litgensample(py::module& m)
         ;
 
 
+    auto pyClassBoxedInt = py::class_<BoxedInt>
+        (m, "BoxedInt", "")
+        .def_readwrite("value", &BoxedInt::value, "")
+        .def(py::init<>())
+        .def(py::init<int>(),
+            py::arg("v"))
+        .def("__repr__",
+            [](BoxedInt & self)
+            {
+                return self.__repr__();
+            }
+        )
+        ;
+
+
 
     // <namespace LiterateGeneratorExample>
 
@@ -49,7 +70,8 @@ void py_init_module_litgensample(py::module& m)
         {
             auto add_c_array2_adapt_fixed_size_c_arrays = [](const std::array<int, 2>& values)
             {
-                return add_c_array2(values.data());
+                auto r = add_c_array2(values.data());
+                return r;
             };
 
             return add_c_array2_adapt_fixed_size_c_arrays(values);
@@ -156,6 +178,42 @@ void py_init_module_litgensample(py::module& m)
         py::arg("array"),
         py::arg("factor"),
         "Modify an array by multiplying its elements (template function!)"
+    );
+
+
+    m.def("c_string_list_total_size",
+        [](const std::vector<std::string> & items, BoxedInt & output_0, BoxedInt & output_1)
+        {
+            auto c_string_list_total_size_adapt_fixed_size_c_arrays = [](const char * const items[], int items_count, BoxedInt & output_0, BoxedInt & output_1)
+            {
+                int output_raw[2];
+                output_raw[0] = output_0.value;
+                output_raw[1] = output_1.value;
+
+                auto r = c_string_list_total_size(items, items_count, output_raw);
+
+                output_0.value = output_raw[0];
+                output_1.value = output_raw[1];
+
+                return r;
+            };
+            auto c_string_list_total_size_adapt_c_string_list = [&c_string_list_total_size_adapt_fixed_size_c_arrays](const std::vector<std::string> & items, BoxedInt & output_0, BoxedInt & output_1)
+            {
+                std::vector<const char *> items_ptrs;
+                for (const auto& v: items)
+                    items_ptrs.push_back(v.c_str());
+                int items_count = static_cast<int>(items.size());
+
+                auto r = c_string_list_total_size_adapt_fixed_size_c_arrays(items_ptrs.data(), items_count, output_0, output_1);
+                return r;
+            };
+
+            return c_string_list_total_size_adapt_c_string_list(items, output_0, output_1);
+        },
+        py::arg("items"),
+        py::arg("output_0"),
+        py::arg("output_1"),
+        "\nC String lists tests\n"
     );
 
 
