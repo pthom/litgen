@@ -1,4 +1,7 @@
-test imgui
+imgui
+    CI compile
+    pyi
+
 notebook
 
 

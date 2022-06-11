@@ -47,3 +47,8 @@ pip install .
 title "Test litgensample"
 cd "$REPO_DIR"/litgen/tests_litgensample
 python test_litgensample.py
+
+title "Build lg-imgui"
+cd "$REPO_DIR"/examples_real_libs/imgui
+pip install .
+
