@@ -82,7 +82,7 @@ class CodeStyleOptions:
     #       void mul_inside_array(py::array & array, double factor)
     # (and factor will be down-casted to the target type)
     #
-    buffer_flag_replace_by_array = False
+    buffer_flag_replace_by_array = True
     buffer_types: List[str] = ["int8_t", "uint8_t"] # of type List[str]. Which means that `uint8_t*` are considered as possible buffers
     buffer_template_types: List[str] = ["T"] # Which means that templated functions using a buffer use T as a templated name
     buffer_size_regexes: List[str] = [
@@ -93,7 +93,7 @@ class CodeStyleOptions:
     ]
 
     #
-    # C style arrays processing
+    # C style arrays functions and methods parameters
     #
     # If c_array_const_flag_replace is active, then signatures like
     #       void foo_const(const int input[2])
@@ -109,6 +109,35 @@ class CodeStyleOptions:
     c_array_const_flag_replace = True
     c_array_modifiable_flag_replace = True
     c_array_modifiable_max_size = 10
+
+    #
+    # C style arrays structs and class members
+    #
+    # If c_array_numeric_member_flag_replace is active, then members like
+    #       struct Foo {  int values[10]; };
+    # will be transformed to a property that points to a numpy array
+    # which can be read/written from python (this requires numpy)
+    c_array_numeric_member_flag_replace = True
+    c_array_numeric_member_types = [     # don't include char !
+        "int",                           # See https://numpy.org/doc/stable/reference/generated/numpy.chararray.html
+        "unsigned int",
+        "long",
+        "unsigned long",
+        "long long",
+        "unsigned long long",
+        "float",
+        "double",
+        "long double",
+        "uint8_t",
+        "int8_t",
+        "uint16_t",
+        "int16_t",
+        "uint32_t",
+        "int32_t",
+        "uint64_t",
+        "int64_t",
+        "bool",
+    ]
 
     # If c_string_list_flag_replace is active, then C string lists `(const char **, size_t)`
     # will be replaced by `const std::vector<std::string>&`. For example:
@@ -184,16 +213,31 @@ def code_style_immvision() -> CodeStyleOptions:
     return options
 
 
-def code_style_implot():
+def code_style_imgui():
     from litgen.internal import code_replacements
 
     options = CodeStyleOptions()
+
     options.generate_to_string = False
     options.indent_cpp_size = 4
-    options.srcml_options.functions_api_prefixes = ["IMPLOT_API", "IMPLOT_TMP"]
-    options.code_replacements = code_replacements.standard_replacements()
 
+    options.code_replacements = code_replacements.standard_replacements()
     options.buffer_flag_replace_by_array = True
+
+    options.srcml_options.functions_api_prefixes = ["IMGUI_API"]
+    options.srcml_options.header_guard_suffixes.append("IMGUI_DISABLE")
+
+    options.buffer_types += ["float"]
+    options.c_array_numeric_member_types += ["ImGuiID", "ImS8", "ImU8", "ImS16", "ImU16", "ImS32", "ImU32", "ImS64", "ImU64"]
+
+    options.srcml_options.code_preprocess_function = _preprocess_imgui_code
+
+    return options
+
+
+def code_style_implot():
+    options = code_style_imgui()
+    options.srcml_options.functions_api_prefixes = ["IMPLOT_API", "IMPLOT_TMP"]
 
     options.function_name_exclude_regexes = [
         ####################################################
@@ -238,14 +282,4 @@ def code_style_implot():
         "PlotPieChart"
     ]
 
-    options.srcml_options.code_preprocess_function = _preprocess_imgui_code
-
-    return options
-
-
-def code_style_imgui():
-    options = code_style_implot()
-    options.buffer_types += ["float"]
-    options.srcml_options.functions_api_prefixes = ["IMGUI_API"]
-    options.srcml_options.header_guard_suffixes.append("IMGUI_DISABLE")
     return options

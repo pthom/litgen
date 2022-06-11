@@ -4,6 +4,7 @@ import os, sys; _THIS_DIR = os.path.dirname(__file__); sys.path = [_THIS_DIR + "
 import srcmlcpp
 from srcmlcpp.srcml_types import *
 from srcmlcpp import srcml_main
+from srcmlcpp import srcml_warnings
 
 from litgen import CodeStyleOptions
 from litgen.internal import cpp_to_python, code_utils
@@ -271,20 +272,59 @@ def _generate_pydef_method(
 ################################
 
 
-def _add_struct_member_decl(cpp_decl: CppDecl, struct_name: str, options: CodeStyleOptions):
+def _add_struct_member_decl(cpp_decl: CppDecl, struct_name: str, options: CodeStyleOptions) -> str:
     _i_ = options.indent_cpp_spaces()
-    name_cpp = cpp_decl.name
+    name_cpp = cpp_decl.name_without_array()
     name_python = cpp_to_python.var_name_to_python(name_cpp, options)
     comment = cpp_decl.cpp_element_comments.full_comment()
     location = info_cpp_element_original_location(cpp_decl, options)
 
-    code_inner_member  = f'.def_readwrite("MEMBER_NAME_PYTHON", &{struct_name}::MEMBER_NAME_CPP, "MEMBER_COMMENT"){location}\n'
 
-    r = code_inner_member
-    r = r.replace("MEMBER_NAME_PYTHON",  name_python)
-    r = r.replace("MEMBER_NAME_CPP", name_cpp)
-    r = r.replace("MEMBER_COMMENT", cpp_to_python.docstring_python_one_line(comment, options))
-    return r
+    if cpp_decl.is_c_array():
+        # Cf. https://stackoverflow.com/questions/58718884/binding-an-array-using-pybind11
+        array_typename = cpp_decl.cpp_type.str_code()
+        if array_typename not in options.c_array_numeric_member_types:
+            srcml_warnings.emit_srcml_warning(
+                cpp_decl.srcml_element,
+                """
+                Only numeric C Style arrays are supported 
+                    Hint: use a vector, or extend `options.c_array_numeric_member_types`
+                """,
+                options.srcml_options)
+            return ""
+
+        if not options.c_array_numeric_member_flag_replace:
+            srcml_warnings.emit_srcml_warning(
+                cpp_decl.srcml_element,
+                """
+                Detected a numeric C Style array, but will not export it.
+                    Hint: set `options.c_array_numeric_member_flag_replace = True`)
+                """,
+                options.srcml_options)
+            return ""
+
+        array_size = cpp_decl.c_array_size()
+
+        template_code = f"""
+            .def_property("{name_python}", 
+                []({struct_name} &self) -> pybind11::array 
+                {{
+                    auto dtype = pybind11::dtype(pybind11::format_descriptor<{array_typename}>::format());
+                    auto base = pybind11::array(dtype, {{{array_size}}}, {{sizeof({array_typename})}});
+                    return pybind11::array(dtype, {{{array_size}}}, {{sizeof({array_typename})}}, self.{name_cpp}, base);
+                }}, []({struct_name}& self) {{}})
+        """
+
+        r = code_utils.unindent_code(template_code, flag_strip_empty_lines=True) + "\n"
+        return r
+
+    else:
+        code_inner_member  = f'.def_readwrite("MEMBER_NAME_PYTHON", &{struct_name}::MEMBER_NAME_CPP, "MEMBER_COMMENT"){location}\n'
+        r = code_inner_member
+        r = r.replace("MEMBER_NAME_PYTHON",  name_python)
+        r = r.replace("MEMBER_NAME_CPP", name_cpp)
+        r = r.replace("MEMBER_COMMENT", cpp_to_python.docstring_python_one_line(comment, options))
+        return r
 
 
 def _add_struct_member_decl_stmt(cpp_decl_stmt: CppDeclStatement, struct_name: str, options: CodeStyleOptions):
@@ -315,6 +355,9 @@ def _add_public_struct_elements(public_zone: CppPublicProtectedPrivate, struct_n
 
 def _generate_pydef_struct_or_class(struct_infos: CppStruct, options: CodeStyleOptions) -> str:
     struct_name = struct_infos.name
+
+    if struct_infos.template is not None:
+        return ""
 
     _i_ = options.indent_cpp_spaces()
 

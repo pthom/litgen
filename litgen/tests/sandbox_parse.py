@@ -41,11 +41,11 @@ def play_pydef(code):
     # options.srcml_options.functions_api_prefixes = ["MY_API"]
     # options.srcml_options.api_suffixes = ["MY_API"]
 
-    options = litgen.options.CodeStyleOptions()
-    options.indent_cpp_size = 4
-    options.indent_cpp_with_tabs = False
+    # options = litgen.options.CodeStyleOptions()
+    # options.indent_cpp_size = 4
+    # options.indent_cpp_with_tabs = False
 
-    # options = litgen.code_style_imgui()
+    options = litgen.code_style_imgui()
 
     options.flag_show_original_location_in_pybind_file = True
 
@@ -53,8 +53,7 @@ def play_pydef(code):
     # xml = srcmlcpp.code_to_srcml(code)
     # print(srcml_utils.srcml_to_str_readable(xml))
 
-    cpp_unit = srcmlcpp.code_to_cpp_unit(options.srcml_options, code)
-    pydef_code = litgen.internal.module_pydef_generator.generate_pydef(cpp_unit, options, add_boxed_types_definitions=True)
+    pydef_code = litgen.generate_pydef(code, options, add_boxed_types_definitions=True)
     print(f">>>\n{pydef_code}<<<")
 
 #test_code()
@@ -65,10 +64,10 @@ def play_pydef(code):
 # options.srcml_options.functions_api_prefixes = ["MY_API"]
 # play_parse(code)
 code = """
-    struct BoxedInt
-    {
-        std::string truc();
-    };
+struct Foo
+{
+    ImGuiID values[2];
+};
 """
 play_pydef(code)
 # play_imgui()

@@ -75,12 +75,18 @@ namespace LiterateGeneratorExample // MY_API
     // A superb struct
     struct Foo            // MY_API
     {
-        Foo() { printf("Construct Foo\n"); }
+        Foo() { printf("Construct Foo\n");}
         ~Foo() { printf("Destruct Foo\n"); }
 
         //
         // These are our parameters
         //
+
+        //
+        // Test with numeric arrays
+        //
+        int values[2] = {0, 1};
+        bool flags[3] = {false, true, false};
 
         // Multiplication factor
         int factor = 10;

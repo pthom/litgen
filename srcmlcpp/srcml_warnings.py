@@ -5,6 +5,7 @@ import xml.etree.ElementTree as ET
 import logging
 import traceback, inspect
 
+import srcmlcpp
 from srcmlcpp import code_utils, srcml_main, srcml_types, srcml_utils
 from srcmlcpp.srcml_options import SrcmlOptions
 from srcmlcpp.srcml_exception import SrcMlException
@@ -43,17 +44,21 @@ class ErrorContext:
 
 def _extract_error_context(element: ET.Element) -> ErrorContext:
     cpp_element = srcml_types.CppElement(element)
+
     full_code = srcml_main.srcml_main_context().current_parsed_file_unit_code
-    full_code_lines = [""] + full_code.split("\n")
+    if len(full_code) > 0:
+        full_code_lines = [""] + full_code.split("\n")
 
-    if cpp_element.start() is not None:
-        concerned_lines = full_code_lines[cpp_element.start().line : cpp_element.end().line + 1]
-        start = CodePos(0, cpp_element.start().column)
-        end = CodePos(cpp_element.end().line - cpp_element.start().line, cpp_element.end().column)
-        return ErrorContext(concerned_lines, start, end)
+        if cpp_element.start() is not None and len(full_code) > 0:
+            concerned_lines = full_code_lines[cpp_element.start().line : cpp_element.end().line + 1]
+            start = CodePos(0, cpp_element.start().column)
+            end = CodePos(cpp_element.end().line - cpp_element.start().line, cpp_element.end().column)
+            return ErrorContext(concerned_lines, start, end)
+        else:
+            return ErrorContext([], CodePos(), CodePos())
     else:
-        return ErrorContext([], CodePos(), CodePos())
-
+        original_code = srcmlcpp.srcml_to_code(element)
+        return ErrorContext(original_code.split("\n"), cpp_element.start(), cpp_element.end())
 
 def _highlight_responsible_code(element: ET.Element, encoding) -> str:
     error_context = _extract_error_context(element)

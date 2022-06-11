@@ -195,9 +195,30 @@ def format_python_comment(comment: str, indent_size: int) -> str:
     return "\n".join(lines)
 
 
+def escape_backslash_in_comments(comment: str) -> str:
+    if len(comment) <= 1:
+        return comment
+    r = ""
+
+    for c1, c2 in overlapping_pairs(comment):
+        if c1 == "\\" and c2 not in ["n", "t", "o", "x", "\"", "\'"]:
+            r += "\\\\"
+        else:
+            r += c1
+
+    last_char = comment[-1]
+    if last_char == "\\":
+        r += "\\\\"
+    else:
+        r += last_char
+
+    return r
+
+
 def format_cpp_comment_on_one_line(comment: str) -> str:
     comment = comment.replace("\n", "\\n")
     comment = comment.replace('"', '\\"')
+    comment = escape_backslash_in_comments(comment)
     return comment
 
 

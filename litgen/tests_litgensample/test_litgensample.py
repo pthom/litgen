@@ -86,6 +86,19 @@ def test_c_string_list():
     assert b.value == total_size + 1
 
 
+def test_c_array_numeric_member_types():
+    foo = litgensample.Foo()
+
+    assert (foo.values == [0, 1]).all()
+    foo.values[0] = 42
+    assert (foo.values == [42, 1]).all()
+
+    assert (foo.flags == [False, True, False]).all()
+    foo.flags[0] = True
+    assert (foo.flags == [True, True, False]).all()
+
+
 test_c_array()
 test_c_buffers()
 test_c_string_list()
+test_c_array_numeric_member_types()

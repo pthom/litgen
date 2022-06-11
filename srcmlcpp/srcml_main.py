@@ -12,7 +12,7 @@ from srcmlcpp.srcml_options import SrcmlOptions
 @dataclass
 class _SrcmlMainContext:
     _current_parsed_file: str = ""
-    current_parsed_file_unit_code: str = ""
+    _current_parsed_file_unit_code: str = ""
 
     # def __init__(self):
     #     logging.warning(f"Constructing _SrcmlMainContext id={id(self)}")
@@ -24,6 +24,14 @@ class _SrcmlMainContext:
     @current_parsed_file.setter
     def current_parsed_file(self, value):
         self._current_parsed_file = value
+
+    @property
+    def current_parsed_file_unit_code(self):
+        return self._current_parsed_file_unit_code
+
+    @current_parsed_file_unit_code.setter
+    def current_parsed_file_unit_code(self, value):
+        self._current_parsed_file_unit_code = value
 
 
 def srcml_main_context():

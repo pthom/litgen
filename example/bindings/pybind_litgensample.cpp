@@ -264,6 +264,20 @@ void py_init_module_litgensample(py::module& m)
     auto pyClassFoo = py::class_<Foo>
         (m, "Foo", "A superb struct\n\nMY_API")
         .def(py::init<>())
+        .def_property("values",
+            [](Foo &self) -> pybind11::array
+            {
+                auto dtype = pybind11::dtype(pybind11::format_descriptor<int>::format());
+                auto base = pybind11::array(dtype, {2}, {sizeof(int)});
+                return pybind11::array(dtype, {2}, {sizeof(int)}, self.values, base);
+            }, [](Foo& self) {})
+        .def_property("flags",
+            [](Foo &self) -> pybind11::array
+            {
+                auto dtype = pybind11::dtype(pybind11::format_descriptor<bool>::format());
+                auto base = pybind11::array(dtype, {3}, {sizeof(bool)});
+                return pybind11::array(dtype, {3}, {sizeof(bool)}, self.flags, base);
+            }, [](Foo& self) {})
         .def_readwrite("factor", &Foo::factor, "Multiplication factor")
         .def_readwrite("delta", &Foo::delta, "addition factor")
         .def("calc",
