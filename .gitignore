@@ -10,3 +10,4 @@ cmake-build-*/
 
 voiladoc/
 venv_ci
+.ipynb_checkpoints/
