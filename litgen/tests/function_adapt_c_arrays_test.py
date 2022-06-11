@@ -150,7 +150,8 @@ def test_mixture_no_replace():
             {
                 auto foo_adapt_fixed_size_c_arrays = [](bool flag, const std::array<double, 2>& v, double outputs[2])
                 {
-                    return foo(flag, v.data(), outputs[2]);
+                    auto r = foo(flag, v.data(), outputs);
+                    return r;
                 };
         
                 return foo_adapt_fixed_size_c_arrays(flag, v, outputs[2]);
