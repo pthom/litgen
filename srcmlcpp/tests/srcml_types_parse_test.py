@@ -5,7 +5,6 @@ from srcmlcpp import code_utils
 from srcmlcpp.srcml_options import SrcmlOptions
 
 
-
 def test_parse_cpp_decl_statement():
     options = SrcmlOptions()
 
@@ -183,26 +182,26 @@ def test_parse_struct():
             NumericType x = NumericType{};
             // coordinates
             NumericType y = NumericType{};
-    
+
             // Constructor from coordinates
             Point(T _x, T _y)<unprocessed_block/>
             Point() // default constructor
-    
+
             T getX();
             T getY(); // get y
             T getZ();
-    
-            // 
+
+            //
             // Norms: we provide
             // * Norm2
             // * NormManhattan
-            // 
-    
+            //
+
             T Norm2(); // this is the euclidean norm
             T NormManhattan()<unprocessed_block/> // this is the manhattan norm
-    
+
             <unprocessed_friend/>
-    
+
         private:
             void Foo(); // A method that shall not be published
             T x_old; // some members that shall not be published
@@ -271,10 +270,10 @@ def test_parse_unit():
 
     expected_code = """
     <unprocessed_define/>
-    
+
     namespace MyApi
     {
-    
+
         // Foo class
         class FooStruct
         {
@@ -284,10 +283,10 @@ def test_parse_unit():
             public:
                 // Constructor with a and b
                 FooStruct(int a, int b)<unprocessed_block/>
-    
+
                 int add(int x)<unprocessed_block/> // an addition
         };
-    
+
         enum FooEnum
         {
              FooEnum_A = 1, // A Value
@@ -295,7 +294,7 @@ def test_parse_unit():
              FooEnum_C,
              FooEnum_Count // Count nb of elements
         };
-    
+
         enum class FooEnum2
         {
              A = 1,
@@ -314,7 +313,15 @@ def test_parse_unit():
 
 
 def do_parse_imgui_implot(filename):
+    def preprocess_imgui_code(code):
+        import re
+        new_code = code
+        new_code  = re.sub(r'IM_FMTARGS\(\d\)', '', new_code)
+        new_code  = re.sub(r'IM_FMTLIST\(\d\)', '', new_code)
+        return new_code
+
     options = SrcmlOptions()
+    options.code_preprocess_function = preprocess_imgui_code
     options.flag_quiet = True
     options.header_guard_suffixes.append("IMGUI_DISABLE")
     srcml_unit = srcml_main.file_to_srcml_unit(options, filename)

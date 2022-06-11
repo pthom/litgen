@@ -17,7 +17,6 @@ def my_code_style_options():
     options.srcml_options.functions_api_prefixes = ["MY_API"]
 
     options.srcml_options.api_suffixes = ["MY_API"]
-    options.function_exclude_by_comment = ["MY_API_EXCLUDE"]
     options.code_replacements = litgen.standard_replacements()
 
     options.buffer_flag_replace_by_array = True

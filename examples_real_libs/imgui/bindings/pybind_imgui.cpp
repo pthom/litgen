@@ -4425,47 +4425,6 @@ void py_init_module_imgui(py::module& m)
         "This is called by IMGUI_CHECKVERSION() macro."
     );
 
-
-    m.def("set_allocator_functions",    // /Users/pascal/dvp/OpenSource/ImGuiWork/litgen/examples_real_libs/imgui/imgui/imgui.h:929
-        [](ImGuiMemAllocFunc alloc_func, ImGuiMemFreeFunc free_func, void * user_data = NULL)
-        {
-            SetAllocatorFunctions(alloc_func, free_func, user_data);
-        },
-        py::arg("alloc_func"),
-        py::arg("free_func"),
-        py::arg("user_data") = NULL,
-        "Memory Allocators\n- Those functions are not reliant on the current context.\n- DLL users: heaps and globals are not shared across DLL boundaries! You will need to call SetCurrentContext() + SetAllocatorFunctions()\nfor each static/DLL boundary you are calling from. Read \"Context and Memory Allocators\" section of imgui.cpp for more details."
-    );
-
-
-    m.def("get_allocator_functions",    // /Users/pascal/dvp/OpenSource/ImGuiWork/litgen/examples_real_libs/imgui/imgui/imgui.h:930
-        [](ImGuiMemAllocFunc * p_alloc_func, ImGuiMemFreeFunc * p_free_func, void * * p_user_data)
-        {
-            GetAllocatorFunctions(p_alloc_func, p_free_func, p_user_data);
-        },
-        py::arg("p_alloc_func"),
-        py::arg("p_free_func"),
-        py::arg("p_user_data")
-    );
-
-
-    m.def("mem_alloc",    // /Users/pascal/dvp/OpenSource/ImGuiWork/litgen/examples_real_libs/imgui/imgui/imgui.h:931
-        [](size_t size)
-        {
-            return MemAlloc(size);
-        },
-        py::arg("size")
-    );
-
-
-    m.def("mem_free",    // /Users/pascal/dvp/OpenSource/ImGuiWork/litgen/examples_real_libs/imgui/imgui/imgui.h:932
-        [](void * ptr)
-        {
-            MemFree(ptr);
-        },
-        py::arg("ptr")
-    );
-
     // </namespace ImGui>
 
 
@@ -5796,7 +5755,6 @@ void py_init_module_imgui(py::module& m)
         .def_readwrite("vtx_offset", &ImDrawCmd::VtxOffset, "4    // Start offset in vertex buffer. ImGuiBackendFlags_RendererHasVtxOffset: always 0, otherwise may be >0 to support meshes larger than 64K vertices with 16-bit indices.")    // /Users/pascal/dvp/OpenSource/ImGuiWork/litgen/examples_real_libs/imgui/imgui/imgui.h:2402
         .def_readwrite("idx_offset", &ImDrawCmd::IdxOffset, "4    // Start offset in index buffer.")    // /Users/pascal/dvp/OpenSource/ImGuiWork/litgen/examples_real_libs/imgui/imgui/imgui.h:2403
         .def_readwrite("elem_count", &ImDrawCmd::ElemCount, "4    // Number of indices (multiple of 3) to be rendered as triangles. Vertices are stored in the callee ImDrawList's vtx_buffer[] array, indices in idx_buffer[].")    // /Users/pascal/dvp/OpenSource/ImGuiWork/litgen/examples_real_libs/imgui/imgui/imgui.h:2404
-        .def_readwrite("user_callback", &ImDrawCmd::UserCallback, "4-8  // If != NULL, call the function instead of rendering the vertices. clip_rect and texture_id will be set normally.")    // /Users/pascal/dvp/OpenSource/ImGuiWork/litgen/examples_real_libs/imgui/imgui/imgui.h:2405
         .def_readwrite("user_callback_data", &ImDrawCmd::UserCallbackData, "4-8  // The draw callback code can access this.")    // /Users/pascal/dvp/OpenSource/ImGuiWork/litgen/examples_real_libs/imgui/imgui/imgui.h:2406
         .def(py::init<>(),    // /Users/pascal/dvp/OpenSource/ImGuiWork/litgen/examples_real_libs/imgui/imgui/imgui.h:2408
             "Also ensure our padding fields are zeroed")
@@ -6394,7 +6352,6 @@ void py_init_module_imgui(py::module& m)
         .def_readwrite("cmd_lists_count", &ImDrawData::CmdListsCount, "Number of ImDrawList to render")    // /Users/pascal/dvp/OpenSource/ImGuiWork/litgen/examples_real_libs/imgui/imgui/imgui.h:2634
         .def_readwrite("total_idx_count", &ImDrawData::TotalIdxCount, "For convenience, sum of all ImDrawList's IdxBuffer.Size")    // /Users/pascal/dvp/OpenSource/ImGuiWork/litgen/examples_real_libs/imgui/imgui/imgui.h:2635
         .def_readwrite("total_vtx_count", &ImDrawData::TotalVtxCount, "For convenience, sum of all ImDrawList's VtxBuffer.Size")    // /Users/pascal/dvp/OpenSource/ImGuiWork/litgen/examples_real_libs/imgui/imgui/imgui.h:2636
-        .def_readwrite("cmd_lists", &ImDrawData::CmdLists, "Array of ImDrawList to render. The ImDrawList are owned by ImGuiContext and only pointed to from here.")    // /Users/pascal/dvp/OpenSource/ImGuiWork/litgen/examples_real_libs/imgui/imgui/imgui.h:2637
         .def_readwrite("display_pos", &ImDrawData::DisplayPos, "Top-left position of the viewport to render (== top-left of the orthogonal projection matrix to use) (== GetMainViewport()->Pos for the main viewport, == (0.0) in most single-viewport applications)")    // /Users/pascal/dvp/OpenSource/ImGuiWork/litgen/examples_real_libs/imgui/imgui/imgui.h:2638
         .def_readwrite("display_size", &ImDrawData::DisplaySize, "Size of the viewport to render (== GetMainViewport()->Size for the main viewport, == io.DisplaySize in most single-viewport applications)")    // /Users/pascal/dvp/OpenSource/ImGuiWork/litgen/examples_real_libs/imgui/imgui/imgui.h:2639
         .def_readwrite("framebuffer_scale", &ImDrawData::FramebufferScale, "Amount of pixels for each unit of DisplaySize. Based on io.DisplayFramebufferScale. Generally (1,1) on normal display, (2,2) on OSX with Retina display.")    // /Users/pascal/dvp/OpenSource/ImGuiWork/litgen/examples_real_libs/imgui/imgui/imgui.h:2640
@@ -6606,28 +6563,6 @@ void py_init_module_imgui(py::module& m)
             },
             "Build pixels data. This is called automatically for you by the GetTexData functions."
         )
-        .def("get_tex_data_as_alpha8",    // /Users/pascal/dvp/OpenSource/ImGuiWork/litgen/examples_real_libs/imgui/imgui/imgui.h:2768
-            [](ImFontAtlas & self, unsigned char * * out_pixels, int * out_width, int * out_height, int * out_bytes_per_pixel = NULL)
-            {
-                self.GetTexDataAsAlpha8(out_pixels, out_width, out_height, out_bytes_per_pixel);
-            },
-            py::arg("out_pixels"),
-            py::arg("out_width"),
-            py::arg("out_height"),
-            py::arg("out_bytes_per_pixel") = NULL,
-            "1 byte per-pixel"
-        )
-        .def("get_tex_data_as_rgba32",    // /Users/pascal/dvp/OpenSource/ImGuiWork/litgen/examples_real_libs/imgui/imgui/imgui.h:2769
-            [](ImFontAtlas & self, unsigned char * * out_pixels, int * out_width, int * out_height, int * out_bytes_per_pixel = NULL)
-            {
-                self.GetTexDataAsRGBA32(out_pixels, out_width, out_height, out_bytes_per_pixel);
-            },
-            py::arg("out_pixels"),
-            py::arg("out_width"),
-            py::arg("out_height"),
-            py::arg("out_bytes_per_pixel") = NULL,
-            "4 bytes-per-pixel"
-        )
         .def("get_glyph_ranges_default",    // /Users/pascal/dvp/OpenSource/ImGuiWork/litgen/examples_real_libs/imgui/imgui/imgui.h:2780
             [](ImFontAtlas & self)
             {
@@ -6804,19 +6739,6 @@ void py_init_module_imgui(py::module& m)
                 return self.FindGlyphNoFallback(c);
             },
             py::arg("c")
-        )
-        .def("calc_text_size_a",    // /Users/pascal/dvp/OpenSource/ImGuiWork/litgen/examples_real_libs/imgui/imgui/imgui.h:2884
-            [](ImFont & self, float size, float max_width, float wrap_width, const char * text_begin, const char * text_end = NULL, const char * * remaining = NULL)
-            {
-                return self.CalcTextSizeA(size, max_width, wrap_width, text_begin, text_end, remaining);
-            },
-            py::arg("size"),
-            py::arg("max_width"),
-            py::arg("wrap_width"),
-            py::arg("text_begin"),
-            py::arg("text_end") = NULL,
-            py::arg("remaining") = NULL,
-            "utf8"
         )
         .def("calc_word_wrap_position_a",    // /Users/pascal/dvp/OpenSource/ImGuiWork/litgen/examples_real_libs/imgui/imgui/imgui.h:2885
             [](ImFont & self, float scale, const char * text, const char * text_end, float wrap_width)

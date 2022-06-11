@@ -102,7 +102,7 @@ def test_make_function_wrapper_lambda():
 
     def test_with_two_template_buffers():
         function_decl = """
-            MY_API template<typename T> inline int test_with_two_template_buffers(const T* values1, T* values2, int count);
+            template<typename T> MY_API inline int test_with_two_template_buffers(const T* values1, T* values2, int count);
         """
 
         expected_lambda_code_buffer = """

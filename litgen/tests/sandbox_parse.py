@@ -18,8 +18,6 @@ def play_parse(code):
     print(cpp_unit)
 
 
-
-
 def play_imgui():
     options = litgen.code_style_imgui()
     source_filename = os.path.realpath(_THIS_DIR + "/../../examples_real_libs/imgui/imgui/imgui.h")
@@ -49,9 +47,10 @@ def play_pydef(code):
 
     options.flag_show_original_location_in_pybind_file = True
 
-    # from srcmlcpp import srcml_utils
-    # xml = srcmlcpp.code_to_srcml(code)
+    from srcmlcpp import srcml_utils
+    xml = srcmlcpp.code_to_srcml(code, dump_positions=False)
     # print(srcml_utils.srcml_to_str_readable(xml))
+    print(srcml_utils.srcml_to_str(xml))
 
     pydef_code = litgen.generate_pydef(code, options, add_boxed_types_definitions=True)
     print(f">>>\n{pydef_code}<<<")
@@ -64,10 +63,7 @@ def play_pydef(code):
 # options.srcml_options.functions_api_prefixes = ["MY_API"]
 # play_parse(code)
 code = """
-struct Foo
-{
-    IMGUI_API bool thing(Point2 out[2]);
-};
+template<typename T> IMGUI_API void foo();
 """
 play_pydef(code)
 # play_imgui()

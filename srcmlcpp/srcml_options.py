@@ -9,6 +9,7 @@ class SrcmlOptions:
     #
     functions_api_prefixes: List[str] = []
 
+    #
     # Suffixes that denote structs, classes, enums and namespaces that should be published, for example:
     #       struct MyStruct        // IMMVISION_API_STRUCT     <== this is a suffix
     #       { };
@@ -16,6 +17,17 @@ class SrcmlOptions:
     #
     # you may decide to fill api_suffixes and functions_api_prefixes with the same value(s)
     api_suffixes: List[str] = []
+
+    #
+    # Excludes
+    #
+
+    # Exclude certain functions and methods by a regex on their name
+    # These are regexes. If you want to exclude an exact function name, use a regex like this:
+    #         r"\bYourFunctionName\b",
+    function_name_exclude_regexes: List[str] = []
+    # Exclude certain declarations, (namespace variables, struct and class members) by a regex on their name
+    decl_name_exclude_regexes: List[str] = []
 
     # Set header_filter_preprocessor_regions to True if the header has regions like
     #       #ifdef SOME_RARE_OPTION

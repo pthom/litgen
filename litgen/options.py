@@ -18,22 +18,16 @@ class CodeStyleOptions:
     #
     # There are interesting options to set in SrcmlOptions (see srcmlcpp/srcml_options.py)
     #
-    # Notably, fill srcml_options.functions_api_prefixes
-    # (the prefixes that denotes the functions that shall be published)
-    #
+    # Notably:
+    # * fill srcml_options.functions_api_prefixes
+    #   (the prefixes that denotes the functions that shall be published)
+    # * Also, fill the excludes if you encounter issues with some function or declarations you want to ignore
     srcml_options: SrcmlOptions = SrcmlOptions()
 
     #
     # Shall the binding cpp file show the original location of elements as a comment
     #
     flag_show_original_location_in_pybind_file = False
-
-    #
-    # Exclude certain functions by a regex on their name
-    #
-    function_name_exclude_regexes: List[str] = []
-    # Exclude functions by adding a comment on the same line of their declaration
-    function_exclude_by_comment: List[str] = []
 
     #
     # List of code replacements when going from C++ to Python
@@ -235,6 +229,43 @@ def code_style_imgui():
 
     options.srcml_options.code_preprocess_function = _preprocess_imgui_code
 
+    options.srcml_options.function_name_exclude_regexes = [
+        # IMGUI_API void          SetAllocatorFunctions(ImGuiMemAllocFunc alloc_func, ImGuiMemFreeFunc free_func, void* user_data = NULL);
+        #                                               ^
+        # IMGUI_API void          GetAllocatorFunctions(ImGuiMemAllocFunc* p_alloc_func, ImGuiMemFreeFunc* p_free_func, void** p_user_data);
+        #                                               ^
+        # IMGUI_API void*         MemAlloc(size_t size);
+        #           ^
+        # IMGUI_API void          MemFree(void* ptr);
+        #                                 ^
+        r"\bGetAllocatorFunctions\b",
+        r"\bSetAllocatorFunctions\b",
+        r"\bMemAlloc\b",
+        r"\bMemFree\b",
+        # IMGUI_API void              GetTexDataAsAlpha8(unsigned char** out_pixels, int* out_width, int* out_height, int* out_bytes_per_pixel = NULL);  // 1 byte per-pixel
+        #                                                             ^
+        # IMGUI_API void              GetTexDataAsRGBA32(unsigned char** out_pixels, int* out_width, int* out_height, int* out_bytes_per_pixel = NULL);  // 4 bytes-per-pixel
+        #                                                             ^
+        r"\bGetTexDataAsAlpha8\b",
+        r"\bGetTexDataAsRGBA32\b",
+        # IMGUI_API ImVec2            CalcTextSizeA(float size, float max_width, float wrap_width, const char* text_begin, const char* text_end = NULL, const char** remaining = NULL) const; // utf8
+        #                                                                                                                                                         ^
+        r"\bCalcTextSizeA\b"
+    ]
+
+    options.srcml_options.decl_name_exclude_regexes = [
+        #     typedef void (*ImDrawCallback)(const ImDrawList* parent_list, const ImDrawCmd* cmd);
+        #     ImDrawCallback  UserCallback;       // 4-8  // If != NULL, call the function instead of rendering the vertices. clip_rect and texture_id will be set normally.
+        #     ^
+        r"\bUserCallback\b",
+        # struct ImDrawData
+        # { ...
+        #     ImDrawList**    CmdLists;               // Array of ImDrawList* to render. The ImDrawList are owned by ImGuiContext and only pointed to from here.
+        #               ^
+        # }
+        r"\bCmdLists\b"
+    ]
+
     return options
 
 
@@ -242,7 +273,7 @@ def code_style_implot():
     options = code_style_imgui()
     options.srcml_options.functions_api_prefixes = ["IMPLOT_API", "IMPLOT_TMP"]
 
-    options.function_name_exclude_regexes = [
+    options.srcml_options.function_name_exclude_regexes = [
         ####################################################
         #  Legitimate Excludes                             #
         ####################################################

@@ -1,2 +1,2 @@
-#pybind11_add_module(pybind_imgui pybind_imgui.cpp)
-#target_link_libraries(pybind_imgui PUBLIC imgui)
+pybind11_add_module(pybind_imgui pybind_imgui.cpp)
+target_link_libraries(pybind_imgui PUBLIC imgui)
