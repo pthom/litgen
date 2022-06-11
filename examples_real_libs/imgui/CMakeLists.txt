@@ -2,8 +2,7 @@ cmake_minimum_required(VERSION 3.2)
 project(lg_imgui)
 
 # Add pybind11
-add_subdirectory(../../example/external/pybind11 pybind11)
-
+add_subdirectory(pybind11)
 
 set(CMAKE_CXX_STANDARD 20)
 
@@ -30,7 +29,6 @@ target_include_directories(${cpp_lib_name} PUBLIC ${CMAKE_CURRENT_LIST_DIR}/imgu
 #
 # Auto-generate the C++ binding code before building the python module
 #
-# message(FATAL_ERROR "PYTHON_EXECUTABLE=${PYTHON_EXECUTABLE}")
 add_custom_target(
     ${autgenerate_name}
     COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_LIST_DIR}/autogenerate_imgui.py

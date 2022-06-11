@@ -7,3 +7,6 @@
 [submodule "examples_real_libs/implot/implot"]
 	path = examples_real_libs/implot/implot
 	url = https://github.com/epezent/implot.git
+[submodule "examples_real_libs/imgui/pybind11"]
+	path = examples_real_libs/imgui/pybind11
+	url = https://github.com/pybind/pybind11.git
