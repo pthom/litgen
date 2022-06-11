@@ -219,8 +219,10 @@ def _make_call_function(function_adapted: CppFunctionDeclWithAdaptedParams, is_m
     function_return_type = function_adapted.function_infos.full_return_type(options.srcml_options)
 
     return_str1 = "" if function_return_type == "void" else "return "
-    # return_str2 = " return;" if function_return_type == "void" else ""
-    self_prefix = "self." if is_method else ""
+
+    self_prefix = ""
+    if is_method and len(function_adapted.lambda_to_call) == 0:
+        self_prefix = "self."
 
     code_lines = []
     if is_template:

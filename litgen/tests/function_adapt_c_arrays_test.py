@@ -67,11 +67,11 @@ def test_use_function_params_adapter_const():
                 {
                     foo_const(input.data());
                 };
-        
+
                 foo_const_adapt_fixed_size_c_arrays(input);
             },
             py::arg("input")
-        );    
+        );
     """)
 
 
@@ -89,18 +89,18 @@ def test_use_function_params_adapter_non_const():
                     int output_raw[2];
                     output_raw[0] = output_0.value;
                     output_raw[1] = output_1.value;
-        
+
                     foo_non_const(output_raw);
-        
+
                     output_0.value = output_raw[0];
                     output_1.value = output_raw[1];
                 };
-        
+
                 foo_non_const_adapt_fixed_size_c_arrays(output_0, output_1);
             },
             py::arg("output_0"),
             py::arg("output_1")
-        );    
+        );
     """)
 
 
@@ -118,20 +118,20 @@ def test_mixture():
                         double outputs_raw[2];
                         outputs_raw[0] = outputs_0.value;
                         outputs_raw[1] = outputs_1.value;
-            
+
                         foo(flag, v.data(), outputs_raw);
-            
+
                         outputs_0.value = outputs_raw[0];
                         outputs_1.value = outputs_raw[1];
                     };
-            
+
                     foo_adapt_fixed_size_c_arrays(flag, v, outputs_0, outputs_1);
                 },
                 py::arg("flag"),
                 py::arg("v"),
                 py::arg("outputs_0"),
                 py::arg("outputs_1")
-            );    
+            );
     """)
 
 
@@ -153,11 +153,51 @@ def test_mixture_no_replace():
                     auto r = foo(flag, v.data(), outputs);
                     return r;
                 };
-        
+
                 return foo_adapt_fixed_size_c_arrays(flag, v, outputs[2]);
             },
             py::arg("flag"),
             py::arg("v"),
             py::arg("outputs[2]")
         );
+    """)
+
+
+def test_in_method():
+    code = """
+        struct Foo
+        {
+            IMGUI_API bool thing(Point2 out[2]);
+        };    
+    """
+    options = litgen.CodeStyleOptions()
+    generated_code = litgen.generate_pydef(code, options)
+    # logging.warning("\n" + generated_code)
+    code_utils.assert_are_codes_equal(generated_code, """
+        auto pyClassFoo = py::class_<Foo>
+            (m, "Foo", "")
+            .def(py::init<>()) // implicit default constructor
+            .def("thing",
+                [](Foo & self, Point2 & out_0, Point2 & out_1)
+                {
+                    auto thing_adapt_fixed_size_c_arrays = [&self](Point2 & out_0, Point2 & out_1)
+                    {
+                        Point2 out_raw[2];
+                        out_raw[0] = out_0;
+                        out_raw[1] = out_1;
+        
+                        auto r = self.thing(out_raw);
+        
+                        out_0 = out_raw[0];
+                        out_1 = out_raw[1];
+        
+                        return r;
+                    };
+        
+                    return thing_adapt_fixed_size_c_arrays(out_0, out_1);
+                },
+                py::arg("out_0"),
+                py::arg("out_1")
+            )
+            ;    
     """)

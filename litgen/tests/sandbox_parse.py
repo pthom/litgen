@@ -64,7 +64,10 @@ def play_pydef(code):
 # options.srcml_options.functions_api_prefixes = ["MY_API"]
 # play_parse(code)
 code = """
-    IMGUI_API inline void change_c_array2(unsigned long values[2]);
+struct Foo
+{
+    IMGUI_API bool thing(Point2 out[2]);
+};
 """
 play_pydef(code)
 # play_imgui()

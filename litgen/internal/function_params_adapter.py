@@ -22,7 +22,7 @@ def make_function_params_adapter(
     for adapter_function in all_adapters_functions:
         lambda_adapter = adapter_function(function_adapted_params, options)
         if lambda_adapter is not None:
-            apply_lambda_adapter(function_adapted_params, lambda_adapter, options)
+            apply_lambda_adapter(function_adapted_params, lambda_adapter, options, parent_struct_name)
 
     return function_adapted_params
 
@@ -31,15 +31,18 @@ def apply_lambda_adapter(
         function_adapted_params: CppFunctionDeclWithAdaptedParams,
         lambda_adapter: LambdaAdapter,
         options: CodeStyleOptions,
-        parent_struct_name: str = ""):
+        parent_struct_name):
 
     _i_ = options.indent_cpp_spaces()
 
     lambda_captures_list = []
-    if len(parent_struct_name) > 0:
-        lambda_captures_list.append("this")
+
+    is_method = len(parent_struct_name) > 0
     if len(function_adapted_params.lambda_to_call) > 0:
         lambda_captures_list.append("&" + function_adapted_params.lambda_to_call)
+    elif is_method:
+        lambda_captures_list.append("&self")
+
     lambda_captures_str = ", ".join(lambda_captures_list)
 
     adapted_python_parameter_list_str = lambda_adapter.new_function_infos.parameter_list.str_code()
@@ -52,11 +55,14 @@ def apply_lambda_adapter(
 
     capture_return_code = "" if fn_return_type == "void" else "auto r = "
 
-    # Which function to call: either the last lambda, or the original function
+    # Which function to call: either the last lambda, or the original function, or the original method
     if len(function_adapted_params.lambda_to_call) > 0:
         function_or_lambda_to_call = function_adapted_params.lambda_to_call
     else:
-        function_or_lambda_to_call = function_adapted_params.function_infos.name
+        if is_method:
+            function_or_lambda_to_call = "self." + function_adapted_params.function_infos.name
+        else:
+            function_or_lambda_to_call = function_adapted_params.function_infos.name
 
     if len(lambda_adapter.lambda_input_code) > 0:
         lambda_code += code_utils.indent_code(lambda_adapter.lambda_input_code, indent_str=options.indent_cpp_spaces()) + "\n"

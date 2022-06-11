@@ -157,7 +157,7 @@ def _generate_pydef_function(
         options: CodeStyleOptions,
         parent_struct_name: str = ""
 ) -> str:
-    function_adapted_params = make_function_params_adapter(function_infos, options)
+    function_adapted_params = make_function_params_adapter(function_infos, options, parent_struct_name)
 
     r = ""
     r += _generate_pydef_function_impl(function_adapted_params, options, parent_struct_name)

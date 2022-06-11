@@ -6718,26 +6718,26 @@ void py_init_module_imgui(py::module& m)
         .def("get_mouse_cursor_tex_data",    // /Users/pascal/dvp/OpenSource/ImGuiWork/litgen/examples_real_libs/imgui/imgui/imgui.h:2806
             [](ImFontAtlas & self, ImGuiMouseCursor cursor, ImVec2 * out_offset, ImVec2 * out_size, ImVec2 & out_uv_border_0, ImVec2 & out_uv_border_1, ImVec2 & out_uv_fill_0, ImVec2 & out_uv_fill_1)
             {
-                auto GetMouseCursorTexData_adapt_fixed_size_c_arrays = [](ImGuiMouseCursor cursor, ImVec2 * out_offset, ImVec2 * out_size, ImVec2 & out_uv_border_0, ImVec2 & out_uv_border_1, ImVec2 & out_uv_fill_0, ImVec2 & out_uv_fill_1)
+                auto GetMouseCursorTexData_adapt_fixed_size_c_arrays = [&self](ImGuiMouseCursor cursor, ImVec2 * out_offset, ImVec2 * out_size, ImVec2 & out_uv_border_0, ImVec2 & out_uv_border_1, ImVec2 & out_uv_fill_0, ImVec2 & out_uv_fill_1)
                 {
                     ImVec2 out_uv_border_raw[2];
-                    out_uv_border_raw[0] = out_uv_border_0.value;
-                    out_uv_border_raw[1] = out_uv_border_1.value;
+                    out_uv_border_raw[0] = out_uv_border_0;
+                    out_uv_border_raw[1] = out_uv_border_1;
                     ImVec2 out_uv_fill_raw[2];
-                    out_uv_fill_raw[0] = out_uv_fill_0.value;
-                    out_uv_fill_raw[1] = out_uv_fill_1.value;
+                    out_uv_fill_raw[0] = out_uv_fill_0;
+                    out_uv_fill_raw[1] = out_uv_fill_1;
 
-                    auto r = GetMouseCursorTexData(cursor, out_offset, out_size, out_uv_border_raw, out_uv_fill_raw);
+                    auto r = self.GetMouseCursorTexData(cursor, out_offset, out_size, out_uv_border_raw, out_uv_fill_raw);
 
-                    out_uv_border_0.value = out_uv_border_raw[0];
-                    out_uv_border_1.value = out_uv_border_raw[1];
-                    out_uv_fill_0.value = out_uv_fill_raw[0];
-                    out_uv_fill_1.value = out_uv_fill_raw[1];
+                    out_uv_border_0 = out_uv_border_raw[0];
+                    out_uv_border_1 = out_uv_border_raw[1];
+                    out_uv_fill_0 = out_uv_fill_raw[0];
+                    out_uv_fill_1 = out_uv_fill_raw[1];
 
                     return r;
                 };
 
-                return self.GetMouseCursorTexData_adapt_fixed_size_c_arrays(cursor, out_offset, out_size, out_uv_border_0, out_uv_border_1, out_uv_fill_0, out_uv_fill_1);
+                return GetMouseCursorTexData_adapt_fixed_size_c_arrays(cursor, out_offset, out_size, out_uv_border_0, out_uv_border_1, out_uv_fill_0, out_uv_fill_1);
             },
             py::arg("cursor"),
             py::arg("out_offset"),
