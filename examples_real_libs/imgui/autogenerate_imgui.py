@@ -32,7 +32,7 @@ def my_code_style_options():
 def autogenerate():
     input_cpp_header =  CPP_HEADERS_DIR + "/imgui.h"
     output_cpp_module = CPP_GENERATED_PYBIND_DIR + "/pybind_imgui.cpp"
-    output_stub_pyi_file = CPP_GENERATED_PYBIND_DIR + "/__init__.pyi"
+    output_stub_pyi_file = CPP_GENERATED_PYBIND_DIR + "/lg_imgui/__init__.pyi"
 
     # Configure options
     options = my_code_style_options()

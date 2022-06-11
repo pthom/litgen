@@ -2,7 +2,7 @@ import os
 
 import litgen.internal.module_pydef_generator
 from litgen import CodeStyleOptions
-from litgen.internal import code_utils, module_pydef_generator
+from litgen.internal import code_utils, module_pydef_generator, module_pyi_generator
 import srcmlcpp
 
 
@@ -15,6 +15,18 @@ def generate_pydef(
 
     cpp_unit = srcmlcpp.code_to_cpp_unit(options.srcml_options, code, filename=filename)
     generated_code = module_pydef_generator.generate_pydef(
+        cpp_unit, options, add_boxed_types_definitions=add_boxed_types_definitions)
+    return generated_code
+
+
+def generate_pyi(
+        code: str,
+        options: CodeStyleOptions,
+        add_boxed_types_definitions: bool = False,
+        filename: str = ""
+) -> str:
+    cpp_unit = srcmlcpp.code_to_cpp_unit(options.srcml_options, code, filename=filename)
+    generated_code = module_pyi_generator.generate_pyi(
         cpp_unit, options, add_boxed_types_definitions=add_boxed_types_definitions)
     return generated_code
 
@@ -61,10 +73,9 @@ def generate_files(
                        options,
                        add_boxed_types_definitions)
 
-    # if len(output_stub_pyi_file) > 0:
-    #     _run_generate(input_cpp_header,
-    #                   output_stub_pyi_file,
-    #                   _fn_code_generator_stub,
-    #                   "stub",
-    #                   options)
-
+    _run_generate_file(input_cpp_header,
+                       output_stub_pyi_file,
+                       generate_pyi,
+                       "pyi",
+                       options,
+                       add_boxed_types_definitions)

@@ -151,7 +151,7 @@ def reindent_code(code: str, indent_size: int = 4, skip_first_line = False, inde
     return code
 
 
-def indent_code(code: str, indent_size: int = 1, skip_first_line = False, indent_str = ""):
+def indent_code(code: str, indent_size: int = 1, skip_first_line = False, indent_str = None):
     "add some space to the left of all lines"
     if skip_first_line:
         lines = code.split("\n")
@@ -162,7 +162,7 @@ def indent_code(code: str, indent_size: int = 1, skip_first_line = False, indent
         return first_line + "\n" + indent_code(rest, indent_size, False, indent_str)
 
     lines = code.split("\n")
-    if len(indent_str) == 0:
+    if indent_str is None:
         indent_str = " " * indent_size
 
     def indent_line(line):

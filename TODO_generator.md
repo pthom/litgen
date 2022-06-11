@@ -3,6 +3,7 @@ duplicate code_utils / add copy script
 imgui
     CI compile
     pyi
+    widgets avec int*, float*, bool* : Boxer
 
 notebook
 
