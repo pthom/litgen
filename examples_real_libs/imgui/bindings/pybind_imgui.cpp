@@ -1580,14 +1580,24 @@ void py_init_module_imgui(py::module& m)
 
 
     m.def("combo",    // /Users/pascal/dvp/OpenSource/ImGuiWork/litgen/examples_real_libs/imgui/imgui/imgui.h:511
-        [](const char * label, int * current_item, const char * const items[], int items_count, int popup_max_height_in_items = -1)
+        [](const char * label, int * current_item, const std::vector<std::string> & items, int popup_max_height_in_items = -1)
         {
-            return Combo(label, current_item, items[], items_count, popup_max_height_in_items);
+            auto Combo_adapt_c_string_list = [](const char * label, int * current_item, const std::vector<std::string> & items, int popup_max_height_in_items = -1)
+            {
+                std::vector<const char *> items_ptrs;
+                for (const auto& v: items)
+                    items_ptrs.push_back(v.c_str());
+                int items_count = static_cast<int>(items.size());
+
+                auto r = Combo(label, current_item, items_ptrs.data(), items_count, popup_max_height_in_items);
+                return r;
+            };
+
+            return Combo_adapt_c_string_list(label, current_item, items, popup_max_height_in_items);
         },
         py::arg("label"),
         py::arg("current_item"),
-        py::arg("items[]"),
-        py::arg("items_count"),
+        py::arg("items"),
         py::arg("popup_max_height_in_items") = -1
     );
 
@@ -1601,7 +1611,7 @@ void py_init_module_imgui(py::module& m)
         py::arg("current_item"),
         py::arg("items_separated_by_zeros"),
         py::arg("popup_max_height_in_items") = -1,
-        "Separate items with \0 within a string, end item-list with \0\0. e.g. \"One\0Two\0Three\0\""
+        "Separate items with \\0 within a string, end item-list with \\0\\0. e.g. \"One\\0Two\\0Three\\0\""
     );
 
 
@@ -1630,10 +1640,12 @@ void py_init_module_imgui(py::module& m)
                 v_raw[0] = v_0.value;
                 v_raw[1] = v_1.value;
 
-                return DragFloat2(label, v_raw, v_speed, v_min, v_max, format, flags);
+                auto r = DragFloat2(label, v_raw, v_speed, v_min, v_max, format, flags);
 
                 v_0.value = v_raw[0];
                 v_1.value = v_raw[1];
+
+                return r;
             };
 
             return DragFloat2_adapt_fixed_size_c_arrays(label, v_0, v_1, v_speed, v_min, v_max, format, flags);
@@ -1659,11 +1671,13 @@ void py_init_module_imgui(py::module& m)
                 v_raw[1] = v_1.value;
                 v_raw[2] = v_2.value;
 
-                return DragFloat3(label, v_raw, v_speed, v_min, v_max, format, flags);
+                auto r = DragFloat3(label, v_raw, v_speed, v_min, v_max, format, flags);
 
                 v_0.value = v_raw[0];
                 v_1.value = v_raw[1];
                 v_2.value = v_raw[2];
+
+                return r;
             };
 
             return DragFloat3_adapt_fixed_size_c_arrays(label, v_0, v_1, v_2, v_speed, v_min, v_max, format, flags);
@@ -1691,12 +1705,14 @@ void py_init_module_imgui(py::module& m)
                 v_raw[2] = v_2.value;
                 v_raw[3] = v_3.value;
 
-                return DragFloat4(label, v_raw, v_speed, v_min, v_max, format, flags);
+                auto r = DragFloat4(label, v_raw, v_speed, v_min, v_max, format, flags);
 
                 v_0.value = v_raw[0];
                 v_1.value = v_raw[1];
                 v_2.value = v_raw[2];
                 v_3.value = v_raw[3];
+
+                return r;
             };
 
             return DragFloat4_adapt_fixed_size_c_arrays(label, v_0, v_1, v_2, v_3, v_speed, v_min, v_max, format, flags);
@@ -1756,10 +1772,12 @@ void py_init_module_imgui(py::module& m)
                 v_raw[0] = v_0.value;
                 v_raw[1] = v_1.value;
 
-                return DragInt2(label, v_raw, v_speed, v_min, v_max, format, flags);
+                auto r = DragInt2(label, v_raw, v_speed, v_min, v_max, format, flags);
 
                 v_0.value = v_raw[0];
                 v_1.value = v_raw[1];
+
+                return r;
             };
 
             return DragInt2_adapt_fixed_size_c_arrays(label, v_0, v_1, v_speed, v_min, v_max, format, flags);
@@ -1785,11 +1803,13 @@ void py_init_module_imgui(py::module& m)
                 v_raw[1] = v_1.value;
                 v_raw[2] = v_2.value;
 
-                return DragInt3(label, v_raw, v_speed, v_min, v_max, format, flags);
+                auto r = DragInt3(label, v_raw, v_speed, v_min, v_max, format, flags);
 
                 v_0.value = v_raw[0];
                 v_1.value = v_raw[1];
                 v_2.value = v_raw[2];
+
+                return r;
             };
 
             return DragInt3_adapt_fixed_size_c_arrays(label, v_0, v_1, v_2, v_speed, v_min, v_max, format, flags);
@@ -1817,12 +1837,14 @@ void py_init_module_imgui(py::module& m)
                 v_raw[2] = v_2.value;
                 v_raw[3] = v_3.value;
 
-                return DragInt4(label, v_raw, v_speed, v_min, v_max, format, flags);
+                auto r = DragInt4(label, v_raw, v_speed, v_min, v_max, format, flags);
 
                 v_0.value = v_raw[0];
                 v_1.value = v_raw[1];
                 v_2.value = v_raw[2];
                 v_3.value = v_raw[3];
+
+                return r;
             };
 
             return DragInt4_adapt_fixed_size_c_arrays(label, v_0, v_1, v_2, v_3, v_speed, v_min, v_max, format, flags);
@@ -1914,10 +1936,12 @@ void py_init_module_imgui(py::module& m)
                 v_raw[0] = v_0.value;
                 v_raw[1] = v_1.value;
 
-                return SliderFloat2(label, v_raw, v_min, v_max, format, flags);
+                auto r = SliderFloat2(label, v_raw, v_min, v_max, format, flags);
 
                 v_0.value = v_raw[0];
                 v_1.value = v_raw[1];
+
+                return r;
             };
 
             return SliderFloat2_adapt_fixed_size_c_arrays(label, v_0, v_1, v_min, v_max, format, flags);
@@ -1942,11 +1966,13 @@ void py_init_module_imgui(py::module& m)
                 v_raw[1] = v_1.value;
                 v_raw[2] = v_2.value;
 
-                return SliderFloat3(label, v_raw, v_min, v_max, format, flags);
+                auto r = SliderFloat3(label, v_raw, v_min, v_max, format, flags);
 
                 v_0.value = v_raw[0];
                 v_1.value = v_raw[1];
                 v_2.value = v_raw[2];
+
+                return r;
             };
 
             return SliderFloat3_adapt_fixed_size_c_arrays(label, v_0, v_1, v_2, v_min, v_max, format, flags);
@@ -1973,12 +1999,14 @@ void py_init_module_imgui(py::module& m)
                 v_raw[2] = v_2.value;
                 v_raw[3] = v_3.value;
 
-                return SliderFloat4(label, v_raw, v_min, v_max, format, flags);
+                auto r = SliderFloat4(label, v_raw, v_min, v_max, format, flags);
 
                 v_0.value = v_raw[0];
                 v_1.value = v_raw[1];
                 v_2.value = v_raw[2];
                 v_3.value = v_raw[3];
+
+                return r;
             };
 
             return SliderFloat4_adapt_fixed_size_c_arrays(label, v_0, v_1, v_2, v_3, v_min, v_max, format, flags);
@@ -2032,10 +2060,12 @@ void py_init_module_imgui(py::module& m)
                 v_raw[0] = v_0.value;
                 v_raw[1] = v_1.value;
 
-                return SliderInt2(label, v_raw, v_min, v_max, format, flags);
+                auto r = SliderInt2(label, v_raw, v_min, v_max, format, flags);
 
                 v_0.value = v_raw[0];
                 v_1.value = v_raw[1];
+
+                return r;
             };
 
             return SliderInt2_adapt_fixed_size_c_arrays(label, v_0, v_1, v_min, v_max, format, flags);
@@ -2060,11 +2090,13 @@ void py_init_module_imgui(py::module& m)
                 v_raw[1] = v_1.value;
                 v_raw[2] = v_2.value;
 
-                return SliderInt3(label, v_raw, v_min, v_max, format, flags);
+                auto r = SliderInt3(label, v_raw, v_min, v_max, format, flags);
 
                 v_0.value = v_raw[0];
                 v_1.value = v_raw[1];
                 v_2.value = v_raw[2];
+
+                return r;
             };
 
             return SliderInt3_adapt_fixed_size_c_arrays(label, v_0, v_1, v_2, v_min, v_max, format, flags);
@@ -2091,12 +2123,14 @@ void py_init_module_imgui(py::module& m)
                 v_raw[2] = v_2.value;
                 v_raw[3] = v_3.value;
 
-                return SliderInt4(label, v_raw, v_min, v_max, format, flags);
+                auto r = SliderInt4(label, v_raw, v_min, v_max, format, flags);
 
                 v_0.value = v_raw[0];
                 v_1.value = v_raw[1];
                 v_2.value = v_raw[2];
                 v_3.value = v_raw[3];
+
+                return r;
             };
 
             return SliderInt4_adapt_fixed_size_c_arrays(label, v_0, v_1, v_2, v_3, v_min, v_max, format, flags);
@@ -2258,10 +2292,12 @@ void py_init_module_imgui(py::module& m)
                 v_raw[0] = v_0.value;
                 v_raw[1] = v_1.value;
 
-                return InputFloat2(label, v_raw, format, flags);
+                auto r = InputFloat2(label, v_raw, format, flags);
 
                 v_0.value = v_raw[0];
                 v_1.value = v_raw[1];
+
+                return r;
             };
 
             return InputFloat2_adapt_fixed_size_c_arrays(label, v_0, v_1, format, flags);
@@ -2284,11 +2320,13 @@ void py_init_module_imgui(py::module& m)
                 v_raw[1] = v_1.value;
                 v_raw[2] = v_2.value;
 
-                return InputFloat3(label, v_raw, format, flags);
+                auto r = InputFloat3(label, v_raw, format, flags);
 
                 v_0.value = v_raw[0];
                 v_1.value = v_raw[1];
                 v_2.value = v_raw[2];
+
+                return r;
             };
 
             return InputFloat3_adapt_fixed_size_c_arrays(label, v_0, v_1, v_2, format, flags);
@@ -2313,12 +2351,14 @@ void py_init_module_imgui(py::module& m)
                 v_raw[2] = v_2.value;
                 v_raw[3] = v_3.value;
 
-                return InputFloat4(label, v_raw, format, flags);
+                auto r = InputFloat4(label, v_raw, format, flags);
 
                 v_0.value = v_raw[0];
                 v_1.value = v_raw[1];
                 v_2.value = v_raw[2];
                 v_3.value = v_raw[3];
+
+                return r;
             };
 
             return InputFloat4_adapt_fixed_size_c_arrays(label, v_0, v_1, v_2, v_3, format, flags);
@@ -2355,10 +2395,12 @@ void py_init_module_imgui(py::module& m)
                 v_raw[0] = v_0.value;
                 v_raw[1] = v_1.value;
 
-                return InputInt2(label, v_raw, flags);
+                auto r = InputInt2(label, v_raw, flags);
 
                 v_0.value = v_raw[0];
                 v_1.value = v_raw[1];
+
+                return r;
             };
 
             return InputInt2_adapt_fixed_size_c_arrays(label, v_0, v_1, flags);
@@ -2380,11 +2422,13 @@ void py_init_module_imgui(py::module& m)
                 v_raw[1] = v_1.value;
                 v_raw[2] = v_2.value;
 
-                return InputInt3(label, v_raw, flags);
+                auto r = InputInt3(label, v_raw, flags);
 
                 v_0.value = v_raw[0];
                 v_1.value = v_raw[1];
                 v_2.value = v_raw[2];
+
+                return r;
             };
 
             return InputInt3_adapt_fixed_size_c_arrays(label, v_0, v_1, v_2, flags);
@@ -2408,12 +2452,14 @@ void py_init_module_imgui(py::module& m)
                 v_raw[2] = v_2.value;
                 v_raw[3] = v_3.value;
 
-                return InputInt4(label, v_raw, flags);
+                auto r = InputInt4(label, v_raw, flags);
 
                 v_0.value = v_raw[0];
                 v_1.value = v_raw[1];
                 v_2.value = v_raw[2];
                 v_3.value = v_raw[3];
+
+                return r;
             };
 
             return InputInt4_adapt_fixed_size_c_arrays(label, v_0, v_1, v_2, v_3, flags);
@@ -2482,11 +2528,13 @@ void py_init_module_imgui(py::module& m)
                 col_raw[1] = col_1.value;
                 col_raw[2] = col_2.value;
 
-                return ColorEdit3(label, col_raw, flags);
+                auto r = ColorEdit3(label, col_raw, flags);
 
                 col_0.value = col_raw[0];
                 col_1.value = col_raw[1];
                 col_2.value = col_raw[2];
+
+                return r;
             };
 
             return ColorEdit3_adapt_fixed_size_c_arrays(label, col_0, col_1, col_2, flags);
@@ -2511,12 +2559,14 @@ void py_init_module_imgui(py::module& m)
                 col_raw[2] = col_2.value;
                 col_raw[3] = col_3.value;
 
-                return ColorEdit4(label, col_raw, flags);
+                auto r = ColorEdit4(label, col_raw, flags);
 
                 col_0.value = col_raw[0];
                 col_1.value = col_raw[1];
                 col_2.value = col_raw[2];
                 col_3.value = col_raw[3];
+
+                return r;
             };
 
             return ColorEdit4_adapt_fixed_size_c_arrays(label, col_0, col_1, col_2, col_3, flags);
@@ -2540,11 +2590,13 @@ void py_init_module_imgui(py::module& m)
                 col_raw[1] = col_1.value;
                 col_raw[2] = col_2.value;
 
-                return ColorPicker3(label, col_raw, flags);
+                auto r = ColorPicker3(label, col_raw, flags);
 
                 col_0.value = col_raw[0];
                 col_1.value = col_raw[1];
                 col_2.value = col_raw[2];
+
+                return r;
             };
 
             return ColorPicker3_adapt_fixed_size_c_arrays(label, col_0, col_1, col_2, flags);
@@ -2568,12 +2620,14 @@ void py_init_module_imgui(py::module& m)
                 col_raw[2] = col_2.value;
                 col_raw[3] = col_3.value;
 
-                return ColorPicker4(label, col_raw, flags, ref_col);
+                auto r = ColorPicker4(label, col_raw, flags, ref_col);
 
                 col_0.value = col_raw[0];
                 col_1.value = col_raw[1];
                 col_2.value = col_raw[2];
                 col_3.value = col_raw[3];
+
+                return r;
             };
 
             return ColorPicker4_adapt_fixed_size_c_arrays(label, col_0, col_1, col_2, col_3, flags, ref_col);
@@ -2840,14 +2894,24 @@ void py_init_module_imgui(py::module& m)
 
 
     m.def("list_box",    // /Users/pascal/dvp/OpenSource/ImGuiWork/litgen/examples_real_libs/imgui/imgui/imgui.h:623
-        [](const char * label, int * current_item, const char * const items[], int items_count, int height_in_items = -1)
+        [](const char * label, int * current_item, const std::vector<std::string> & items, int height_in_items = -1)
         {
-            return ListBox(label, current_item, items[], items_count, height_in_items);
+            auto ListBox_adapt_c_string_list = [](const char * label, int * current_item, const std::vector<std::string> & items, int height_in_items = -1)
+            {
+                std::vector<const char *> items_ptrs;
+                for (const auto& v: items)
+                    items_ptrs.push_back(v.c_str());
+                int items_count = static_cast<int>(items.size());
+
+                auto r = ListBox(label, current_item, items_ptrs.data(), items_count, height_in_items);
+                return r;
+            };
+
+            return ListBox_adapt_c_string_list(label, current_item, items, height_in_items);
         },
         py::arg("label"),
         py::arg("current_item"),
-        py::arg("items[]"),
-        py::arg("items_count"),
+        py::arg("items"),
         py::arg("height_in_items") = -1
     );
 
@@ -4778,7 +4842,7 @@ void py_init_module_imgui(py::module& m)
         .value("semicolon", ImGuiKey_Semicolon, ";")
         .value("equal", ImGuiKey_Equal, "=")
         .value("left_bracket", ImGuiKey_LeftBracket, "[")
-        .value("backslash", ImGuiKey_Backslash, "\ (this text inhibit multiline comment caused by backslash)")
+        .value("backslash", ImGuiKey_Backslash, "\\ (this text inhibit multiline comment caused by backslash)")
         .value("right_bracket", ImGuiKey_RightBracket, "]")
         .value("grave_accent", ImGuiKey_GraveAccent, "`")
         .value("caps_lock", ImGuiKey_CapsLock, "")
@@ -5066,21 +5130,10 @@ void py_init_module_imgui(py::module& m)
         ;
 
 
-    auto pyClassImVector = py::class_<ImVector>    // /Users/pascal/dvp/OpenSource/ImGuiWork/litgen/examples_real_libs/imgui/imgui/imgui.h:1767
-        (m, "ImVector", "")
-        .def_readwrite("size", &ImVector::Size, "")    // /Users/pascal/dvp/OpenSource/ImGuiWork/litgen/examples_real_libs/imgui/imgui/imgui.h:1770
-        .def_readwrite("capacity", &ImVector::Capacity, "")    // /Users/pascal/dvp/OpenSource/ImGuiWork/litgen/examples_real_libs/imgui/imgui/imgui.h:1771
-        .def_readwrite("data", &ImVector::Data, "")    // /Users/pascal/dvp/OpenSource/ImGuiWork/litgen/examples_real_libs/imgui/imgui/imgui.h:1772
-        .def(py::init<>(),    // /Users/pascal/dvp/OpenSource/ImGuiWork/litgen/examples_real_libs/imgui/imgui/imgui.h:1780
-            "Constructors, destructor")
-        .def(py::init<const ImVector<T> &>(),    // /Users/pascal/dvp/OpenSource/ImGuiWork/litgen/examples_real_libs/imgui/imgui/imgui.h:1781
-            py::arg("src"))
-        ;
 
 
     auto pyClassImGuiStyle = py::class_<ImGuiStyle>    // /Users/pascal/dvp/OpenSource/ImGuiWork/litgen/examples_real_libs/imgui/imgui/imgui.h:1838
         (m, "ImGuiStyle", "")
-        .def(py::init<>()) // implicit default constructor
         .def_readwrite("alpha", &ImGuiStyle::Alpha, "Global alpha applies to everything in Dear ImGui.")    // /Users/pascal/dvp/OpenSource/ImGuiWork/litgen/examples_real_libs/imgui/imgui/imgui.h:1840
         .def_readwrite("disabled_alpha", &ImGuiStyle::DisabledAlpha, "Additional alpha multiplier applied by BeginDisabled(). Multiply over current value of Alpha.")    // /Users/pascal/dvp/OpenSource/ImGuiWork/litgen/examples_real_libs/imgui/imgui/imgui.h:1841
         .def_readwrite("window_padding", &ImGuiStyle::WindowPadding, "Padding within a window.")    // /Users/pascal/dvp/OpenSource/ImGuiWork/litgen/examples_real_libs/imgui/imgui/imgui.h:1842
@@ -5121,13 +5174,7 @@ void py_init_module_imgui(py::module& m)
         .def_readwrite("anti_aliased_fill", &ImGuiStyle::AntiAliasedFill, "Enable anti-aliased edges around filled shapes (rounded rectangles, circles, etc.). Disable if you are really tight on CPU/GPU. Latched at the beginning of the frame (copied to ImDrawList).")    // /Users/pascal/dvp/OpenSource/ImGuiWork/litgen/examples_real_libs/imgui/imgui/imgui.h:1877
         .def_readwrite("curve_tessellation_tol", &ImGuiStyle::CurveTessellationTol, "Tessellation tolerance when using PathBezierCurveTo() without a specific number of segments. Decrease for highly tessellated curves (higher quality, more polygons), increase to reduce quality.")    // /Users/pascal/dvp/OpenSource/ImGuiWork/litgen/examples_real_libs/imgui/imgui/imgui.h:1878
         .def_readwrite("circle_tessellation_max_error", &ImGuiStyle::CircleTessellationMaxError, "Maximum error (in pixels) allowed when using AddCircle()/AddCircleFilled() or drawing rounded corner rectangles with no explicit segment count specified. Decrease for higher quality but more geometry.")    // /Users/pascal/dvp/OpenSource/ImGuiWork/litgen/examples_real_libs/imgui/imgui/imgui.h:1879
-        .def_readwrite("colors[_im_gui_col_count]", &ImGuiStyle::Colors[ImGuiCol_COUNT], "")    // /Users/pascal/dvp/OpenSource/ImGuiWork/litgen/examples_real_libs/imgui/imgui/imgui.h:1880
-        .def("im_gui_style",    // /Users/pascal/dvp/OpenSource/ImGuiWork/litgen/examples_real_libs/imgui/imgui/imgui.h:1882
-            [](ImGuiStyle & self)
-            {
-                return self.ImGuiStyle();
-            }
-        )
+        .def(py::init<>())    // /Users/pascal/dvp/OpenSource/ImGuiWork/litgen/examples_real_libs/imgui/imgui/imgui.h:1882
         .def("scale_all_sizes",    // /Users/pascal/dvp/OpenSource/ImGuiWork/litgen/examples_real_libs/imgui/imgui/imgui.h:1883
             [](ImGuiStyle & self, float scale_factor)
             {
@@ -5150,7 +5197,6 @@ void py_init_module_imgui(py::module& m)
 
     auto pyClassImGuiIO = py::class_<ImGuiIO>    // /Users/pascal/dvp/OpenSource/ImGuiWork/litgen/examples_real_libs/imgui/imgui/imgui.h:1903
         (m, "ImGuiIO", "")
-        .def(py::init<>()) // implicit default constructor
         .def_readwrite("config_flags", &ImGuiIO::ConfigFlags, "= 0              // See ImGuiConfigFlags_ enum. Set by user/application. Gamepad/keyboard navigation options, etc.")    // /Users/pascal/dvp/OpenSource/ImGuiWork/litgen/examples_real_libs/imgui/imgui/imgui.h:1909
         .def_readwrite("backend_flags", &ImGuiIO::BackendFlags, "= 0              // See ImGuiBackendFlags_ enum. Set by backend (imgui_impl_xxx files or custom backend) to communicate features supported by the backend.")    // /Users/pascal/dvp/OpenSource/ImGuiWork/litgen/examples_real_libs/imgui/imgui/imgui.h:1910
         .def_readwrite("display_size", &ImGuiIO::DisplaySize, "<unset>          // Main display size, in pixels (generally == GetMainViewport()->Size). May change every frame.")    // /Users/pascal/dvp/OpenSource/ImGuiWork/litgen/examples_real_libs/imgui/imgui/imgui.h:1911
@@ -5309,32 +5355,99 @@ void py_init_module_imgui(py::module& m)
         .def_readwrite("metrics_active_allocations", &ImGuiIO::MetricsActiveAllocations, "Number of active allocations, updated by MemAlloc/MemFree based on current context. May be off if you have multiple imgui contexts.")    // /Users/pascal/dvp/OpenSource/ImGuiWork/litgen/examples_real_libs/imgui/imgui/imgui.h:2004
         .def_readwrite("mouse_delta", &ImGuiIO::MouseDelta, "")    // /Users/pascal/dvp/OpenSource/ImGuiWork/litgen/examples_real_libs/imgui/imgui/imgui.h:2005
         .def_readwrite("mouse_pos", &ImGuiIO::MousePos, "Mouse position, in pixels. Set to ImVec2(-FLT_MAX, -FLT_MAX) if mouse is unavailable (on another screen, etc.)")    // /Users/pascal/dvp/OpenSource/ImGuiWork/litgen/examples_real_libs/imgui/imgui/imgui.h:2021
-        .def_readwrite("mouse_down[5]", &ImGuiIO::MouseDown[5], "Mouse buttons: 0=left, 1=right, 2=middle + extras (ImGuiMouseButton_COUNT == 5). Dear ImGui mostly uses left and right buttons. Others buttons allows us to track if the mouse is being used by your application + available to user as a convenience via IsMouse API.")    // /Users/pascal/dvp/OpenSource/ImGuiWork/litgen/examples_real_libs/imgui/imgui/imgui.h:2022
+        .def_property("mouse_down",
+            [](ImGuiIO &self) -> pybind11::array
+            {
+                auto dtype = pybind11::dtype(pybind11::format_descriptor<bool>::format());
+                auto base = pybind11::array(dtype, {5}, {sizeof(bool)});
+                return pybind11::array(dtype, {5}, {sizeof(bool)}, self.MouseDown, base);
+            }, [](ImGuiIO& self) {})
         .def_readwrite("mouse_wheel", &ImGuiIO::MouseWheel, "Mouse wheel Vertical: 1 unit scrolls about 5 lines text.")    // /Users/pascal/dvp/OpenSource/ImGuiWork/litgen/examples_real_libs/imgui/imgui/imgui.h:2023
         .def_readwrite("mouse_wheel_h", &ImGuiIO::MouseWheelH, "Mouse wheel Horizontal. Most users don't have a mouse with an horizontal wheel, may not be filled by all backends.")    // /Users/pascal/dvp/OpenSource/ImGuiWork/litgen/examples_real_libs/imgui/imgui/imgui.h:2024
         .def_readwrite("key_ctrl", &ImGuiIO::KeyCtrl, "Keyboard modifier down: Control")    // /Users/pascal/dvp/OpenSource/ImGuiWork/litgen/examples_real_libs/imgui/imgui/imgui.h:2025
         .def_readwrite("key_shift", &ImGuiIO::KeyShift, "Keyboard modifier down: Shift")    // /Users/pascal/dvp/OpenSource/ImGuiWork/litgen/examples_real_libs/imgui/imgui/imgui.h:2026
         .def_readwrite("key_alt", &ImGuiIO::KeyAlt, "Keyboard modifier down: Alt")    // /Users/pascal/dvp/OpenSource/ImGuiWork/litgen/examples_real_libs/imgui/imgui/imgui.h:2027
         .def_readwrite("key_super", &ImGuiIO::KeySuper, "Keyboard modifier down: Cmd/Super/Windows")    // /Users/pascal/dvp/OpenSource/ImGuiWork/litgen/examples_real_libs/imgui/imgui/imgui.h:2028
-        .def_readwrite("nav_inputs[_im_gui_nav_input_count]", &ImGuiIO::NavInputs[ImGuiNavInput_COUNT], "Gamepad inputs. Cleared back to zero by EndFrame(). Keyboard keys will be auto-mapped and be written here by NewFrame().")    // /Users/pascal/dvp/OpenSource/ImGuiWork/litgen/examples_real_libs/imgui/imgui/imgui.h:2029
         .def_readwrite("key_mods", &ImGuiIO::KeyMods, "Key mods flags (same as io.KeyCtrl/KeyShift/KeyAlt/KeySuper but merged into flags), updated by NewFrame()")    // /Users/pascal/dvp/OpenSource/ImGuiWork/litgen/examples_real_libs/imgui/imgui/imgui.h:2032
-        .def_readwrite("keys_data[_im_gui_key_keys_data_size]", &ImGuiIO::KeysData[ImGuiKey_KeysData_SIZE], "Key state for all known keys. Use IsKeyXXX() functions to access this.")    // /Users/pascal/dvp/OpenSource/ImGuiWork/litgen/examples_real_libs/imgui/imgui/imgui.h:2033
         .def_readwrite("want_capture_mouse_unless_popup_close", &ImGuiIO::WantCaptureMouseUnlessPopupClose, "Alternative to WantCaptureMouse: (WantCaptureMouse == True  WantCaptureMouseUnlessPopupClose == False) when a click over None is expected to close a popup.")    // /Users/pascal/dvp/OpenSource/ImGuiWork/litgen/examples_real_libs/imgui/imgui/imgui.h:2034
         .def_readwrite("mouse_pos_prev", &ImGuiIO::MousePosPrev, "Previous mouse position (note that MouseDelta is not necessary == MousePos-MousePosPrev, in case either position is invalid)")    // /Users/pascal/dvp/OpenSource/ImGuiWork/litgen/examples_real_libs/imgui/imgui/imgui.h:2035
-        .def_readwrite("mouse_clicked_pos[5]", &ImGuiIO::MouseClickedPos[5], "Position at time of clicking")    // /Users/pascal/dvp/OpenSource/ImGuiWork/litgen/examples_real_libs/imgui/imgui/imgui.h:2036
-        .def_readwrite("mouse_clicked_time[5]", &ImGuiIO::MouseClickedTime[5], "Time of last click (used to figure out float-click)")    // /Users/pascal/dvp/OpenSource/ImGuiWork/litgen/examples_real_libs/imgui/imgui/imgui.h:2037
-        .def_readwrite("mouse_clicked[5]", &ImGuiIO::MouseClicked[5], "Mouse button went from !Down to Down (same as MouseClickedCount[x] != 0)")    // /Users/pascal/dvp/OpenSource/ImGuiWork/litgen/examples_real_libs/imgui/imgui/imgui.h:2038
-        .def_readwrite("mouse_double_clicked[5]", &ImGuiIO::MouseDoubleClicked[5], "Has mouse button been float-clicked? (same as MouseClickedCount[x] == 2)")    // /Users/pascal/dvp/OpenSource/ImGuiWork/litgen/examples_real_libs/imgui/imgui/imgui.h:2039
-        .def_readwrite("mouse_clicked_count[5]", &ImGuiIO::MouseClickedCount[5], "== 0 (not clicked), == 1 (same as MouseClicked[]), == 2 (float-clicked), == 3 (triple-clicked) etc. when going from !Down to Down")    // /Users/pascal/dvp/OpenSource/ImGuiWork/litgen/examples_real_libs/imgui/imgui/imgui.h:2040
-        .def_readwrite("mouse_clicked_last_count[5]", &ImGuiIO::MouseClickedLastCount[5], "Count successive number of clicks. Stays valid after mouse release. Reset after another click is done.")    // /Users/pascal/dvp/OpenSource/ImGuiWork/litgen/examples_real_libs/imgui/imgui/imgui.h:2041
-        .def_readwrite("mouse_released[5]", &ImGuiIO::MouseReleased[5], "Mouse button went from Down to !Down")    // /Users/pascal/dvp/OpenSource/ImGuiWork/litgen/examples_real_libs/imgui/imgui/imgui.h:2042
-        .def_readwrite("mouse_down_owned[5]", &ImGuiIO::MouseDownOwned[5], "Track if button was clicked inside a dear imgui window or over None blocked by a popup. We don't request mouse capture from the application if click started outside ImGui bounds.")    // /Users/pascal/dvp/OpenSource/ImGuiWork/litgen/examples_real_libs/imgui/imgui/imgui.h:2043
-        .def_readwrite("mouse_down_owned_unless_popup_close[5]", &ImGuiIO::MouseDownOwnedUnlessPopupClose[5], "Track if button was clicked inside a dear imgui window.")    // /Users/pascal/dvp/OpenSource/ImGuiWork/litgen/examples_real_libs/imgui/imgui/imgui.h:2044
-        .def_readwrite("mouse_down_duration[5]", &ImGuiIO::MouseDownDuration[5], "Duration the mouse button has been down (0.0f == just clicked)")    // /Users/pascal/dvp/OpenSource/ImGuiWork/litgen/examples_real_libs/imgui/imgui/imgui.h:2045
-        .def_readwrite("mouse_down_duration_prev[5]", &ImGuiIO::MouseDownDurationPrev[5], "Previous time the mouse button has been down")    // /Users/pascal/dvp/OpenSource/ImGuiWork/litgen/examples_real_libs/imgui/imgui/imgui.h:2046
-        .def_readwrite("mouse_drag_max_distance_sqr[5]", &ImGuiIO::MouseDragMaxDistanceSqr[5], "Squared maximum distance of how much mouse has traveled from the clicking point (used for moving thresholds)")    // /Users/pascal/dvp/OpenSource/ImGuiWork/litgen/examples_real_libs/imgui/imgui/imgui.h:2047
-        .def_readwrite("nav_inputs_down_duration[_im_gui_nav_input_count]", &ImGuiIO::NavInputsDownDuration[ImGuiNavInput_COUNT], "")    // /Users/pascal/dvp/OpenSource/ImGuiWork/litgen/examples_real_libs/imgui/imgui/imgui.h:2048
-        .def_readwrite("nav_inputs_down_duration_prev[_im_gui_nav_input_count]", &ImGuiIO::NavInputsDownDurationPrev[ImGuiNavInput_COUNT], "")    // /Users/pascal/dvp/OpenSource/ImGuiWork/litgen/examples_real_libs/imgui/imgui/imgui.h:2049
+        .def_property("mouse_clicked_time",
+            [](ImGuiIO &self) -> pybind11::array
+            {
+                auto dtype = pybind11::dtype(pybind11::format_descriptor<double>::format());
+                auto base = pybind11::array(dtype, {5}, {sizeof(double)});
+                return pybind11::array(dtype, {5}, {sizeof(double)}, self.MouseClickedTime, base);
+            }, [](ImGuiIO& self) {})
+        .def_property("mouse_clicked",
+            [](ImGuiIO &self) -> pybind11::array
+            {
+                auto dtype = pybind11::dtype(pybind11::format_descriptor<bool>::format());
+                auto base = pybind11::array(dtype, {5}, {sizeof(bool)});
+                return pybind11::array(dtype, {5}, {sizeof(bool)}, self.MouseClicked, base);
+            }, [](ImGuiIO& self) {})
+        .def_property("mouse_double_clicked",
+            [](ImGuiIO &self) -> pybind11::array
+            {
+                auto dtype = pybind11::dtype(pybind11::format_descriptor<bool>::format());
+                auto base = pybind11::array(dtype, {5}, {sizeof(bool)});
+                return pybind11::array(dtype, {5}, {sizeof(bool)}, self.MouseDoubleClicked, base);
+            }, [](ImGuiIO& self) {})
+        .def_property("mouse_clicked_count",
+            [](ImGuiIO &self) -> pybind11::array
+            {
+                auto dtype = pybind11::dtype(pybind11::format_descriptor<ImU16>::format());
+                auto base = pybind11::array(dtype, {5}, {sizeof(ImU16)});
+                return pybind11::array(dtype, {5}, {sizeof(ImU16)}, self.MouseClickedCount, base);
+            }, [](ImGuiIO& self) {})
+        .def_property("mouse_clicked_last_count",
+            [](ImGuiIO &self) -> pybind11::array
+            {
+                auto dtype = pybind11::dtype(pybind11::format_descriptor<ImU16>::format());
+                auto base = pybind11::array(dtype, {5}, {sizeof(ImU16)});
+                return pybind11::array(dtype, {5}, {sizeof(ImU16)}, self.MouseClickedLastCount, base);
+            }, [](ImGuiIO& self) {})
+        .def_property("mouse_released",
+            [](ImGuiIO &self) -> pybind11::array
+            {
+                auto dtype = pybind11::dtype(pybind11::format_descriptor<bool>::format());
+                auto base = pybind11::array(dtype, {5}, {sizeof(bool)});
+                return pybind11::array(dtype, {5}, {sizeof(bool)}, self.MouseReleased, base);
+            }, [](ImGuiIO& self) {})
+        .def_property("mouse_down_owned",
+            [](ImGuiIO &self) -> pybind11::array
+            {
+                auto dtype = pybind11::dtype(pybind11::format_descriptor<bool>::format());
+                auto base = pybind11::array(dtype, {5}, {sizeof(bool)});
+                return pybind11::array(dtype, {5}, {sizeof(bool)}, self.MouseDownOwned, base);
+            }, [](ImGuiIO& self) {})
+        .def_property("mouse_down_owned_unless_popup_close",
+            [](ImGuiIO &self) -> pybind11::array
+            {
+                auto dtype = pybind11::dtype(pybind11::format_descriptor<bool>::format());
+                auto base = pybind11::array(dtype, {5}, {sizeof(bool)});
+                return pybind11::array(dtype, {5}, {sizeof(bool)}, self.MouseDownOwnedUnlessPopupClose, base);
+            }, [](ImGuiIO& self) {})
+        .def_property("mouse_down_duration",
+            [](ImGuiIO &self) -> pybind11::array
+            {
+                auto dtype = pybind11::dtype(pybind11::format_descriptor<float>::format());
+                auto base = pybind11::array(dtype, {5}, {sizeof(float)});
+                return pybind11::array(dtype, {5}, {sizeof(float)}, self.MouseDownDuration, base);
+            }, [](ImGuiIO& self) {})
+        .def_property("mouse_down_duration_prev",
+            [](ImGuiIO &self) -> pybind11::array
+            {
+                auto dtype = pybind11::dtype(pybind11::format_descriptor<float>::format());
+                auto base = pybind11::array(dtype, {5}, {sizeof(float)});
+                return pybind11::array(dtype, {5}, {sizeof(float)}, self.MouseDownDurationPrev, base);
+            }, [](ImGuiIO& self) {})
+        .def_property("mouse_drag_max_distance_sqr",
+            [](ImGuiIO &self) -> pybind11::array
+            {
+                auto dtype = pybind11::dtype(pybind11::format_descriptor<float>::format());
+                auto base = pybind11::array(dtype, {5}, {sizeof(float)});
+                return pybind11::array(dtype, {5}, {sizeof(float)}, self.MouseDragMaxDistanceSqr, base);
+            }, [](ImGuiIO& self) {})
         .def_readwrite("pen_pressure", &ImGuiIO::PenPressure, "Touch/Pen pressure (0.0f to 1.0f, should be >0.0f only when MouseDown[0] == True). Helper storage currently unused by Dear ImGui.")    // /Users/pascal/dvp/OpenSource/ImGuiWork/litgen/examples_real_libs/imgui/imgui/imgui.h:2050
         .def_readwrite("app_focus_lost", &ImGuiIO::AppFocusLost, "Only modify via AddFocusEvent()")    // /Users/pascal/dvp/OpenSource/ImGuiWork/litgen/examples_real_libs/imgui/imgui/imgui.h:2051
         .def_readwrite("app_accepting_events", &ImGuiIO::AppAcceptingEvents, "Only modify via SetAppAcceptingEvents()")    // /Users/pascal/dvp/OpenSource/ImGuiWork/litgen/examples_real_libs/imgui/imgui/imgui.h:2052
@@ -5342,18 +5455,12 @@ void py_init_module_imgui(py::module& m)
         .def_readwrite("backend_using_legacy_nav_input_array", &ImGuiIO::BackendUsingLegacyNavInputArray, "0: using AddKeyAnalogEvent(), 1: writing to legacy io.NavInputs[] directly")    // /Users/pascal/dvp/OpenSource/ImGuiWork/litgen/examples_real_libs/imgui/imgui/imgui.h:2054
         .def_readwrite("input_queue_surrogate", &ImGuiIO::InputQueueSurrogate, "For AddInputCharacterUTF16()")    // /Users/pascal/dvp/OpenSource/ImGuiWork/litgen/examples_real_libs/imgui/imgui/imgui.h:2055
         .def_readwrite("input_queue_characters", &ImGuiIO::InputQueueCharacters, "Queue of _characters_ input (obtained by platform backend). Fill using AddInputCharacter() helper.")    // /Users/pascal/dvp/OpenSource/ImGuiWork/litgen/examples_real_libs/imgui/imgui/imgui.h:2056
-        .def("im_gui_io",    // /Users/pascal/dvp/OpenSource/ImGuiWork/litgen/examples_real_libs/imgui/imgui/imgui.h:2058
-            [](ImGuiIO & self)
-            {
-                return self.ImGuiIO();
-            }
-        )
+        .def(py::init<>())    // /Users/pascal/dvp/OpenSource/ImGuiWork/litgen/examples_real_libs/imgui/imgui/imgui.h:2058
         ;
 
 
     auto pyClassImGuiInputTextCallbackData = py::class_<ImGuiInputTextCallbackData>    // /Users/pascal/dvp/OpenSource/ImGuiWork/litgen/examples_real_libs/imgui/imgui/imgui.h:2074
         (m, "ImGuiInputTextCallbackData", "Shared state of InputText(), passed as an argument to your callback when a ImGuiInputTextFlags_Callback flag is used.\nThe callback function should return 0 by default.\nCallbacks (follow a flag name and see comments in ImGuiInputTextFlags_ declarations for more details)\n- ImGuiInputTextFlags_CallbackEdit:        Callback on buffer edit (note that InputText() already returns True on edit, the callback is useful mainly to manipulate the underlying buffer while focus is active)\n- ImGuiInputTextFlags_CallbackAlways:      Callback on each iteration\n- ImGuiInputTextFlags_CallbackCompletion:  Callback on pressing TAB\n- ImGuiInputTextFlags_CallbackHistory:     Callback on pressing Up/Down arrows\n- ImGuiInputTextFlags_CallbackCharFilter:  Callback on character inputs to replace or discard them. Modify 'EventChar' to replace or discard, or return 1 in callback to discard.\n- ImGuiInputTextFlags_CallbackResize:      Callback on buffer capacity changes request (beyond 'buf_size' parameter value), allowing the string to grow.")
-        .def(py::init<>()) // implicit default constructor
         .def_readwrite("event_flag", &ImGuiInputTextCallbackData::EventFlag, "One ImGuiInputTextFlags_Callback    // Read-only")    // /Users/pascal/dvp/OpenSource/ImGuiWork/litgen/examples_real_libs/imgui/imgui/imgui.h:2076
         .def_readwrite("flags", &ImGuiInputTextCallbackData::Flags, "What user passed to InputText()      // Read-only")    // /Users/pascal/dvp/OpenSource/ImGuiWork/litgen/examples_real_libs/imgui/imgui/imgui.h:2077
         .def_readwrite("user_data", &ImGuiInputTextCallbackData::UserData, "What user passed to InputText()      // Read-only")    // /Users/pascal/dvp/OpenSource/ImGuiWork/litgen/examples_real_libs/imgui/imgui/imgui.h:2078
@@ -5366,13 +5473,8 @@ void py_init_module_imgui(py::module& m)
         .def_readwrite("cursor_pos", &ImGuiInputTextCallbackData::CursorPos, "                                     // Read-write   // [Completion,History,Always]")    // /Users/pascal/dvp/OpenSource/ImGuiWork/litgen/examples_real_libs/imgui/imgui/imgui.h:2089
         .def_readwrite("selection_start", &ImGuiInputTextCallbackData::SelectionStart, "                                     // Read-write   // [Completion,History,Always] == to SelectionEnd when no selection)")    // /Users/pascal/dvp/OpenSource/ImGuiWork/litgen/examples_real_libs/imgui/imgui/imgui.h:2090
         .def_readwrite("selection_end", &ImGuiInputTextCallbackData::SelectionEnd, "                                     // Read-write   // [Completion,History,Always]")    // /Users/pascal/dvp/OpenSource/ImGuiWork/litgen/examples_real_libs/imgui/imgui/imgui.h:2091
-        .def("im_gui_input_text_callback_data",    // /Users/pascal/dvp/OpenSource/ImGuiWork/litgen/examples_real_libs/imgui/imgui/imgui.h:2095
-            [](ImGuiInputTextCallbackData & self)
-            {
-                return self.ImGuiInputTextCallbackData();
-            },
-            "Helper functions for text manipulation.\nUse those function to benefit from the CallbackResize behaviors. Calling those function reset the selection."
-        )
+        .def(py::init<>(),    // /Users/pascal/dvp/OpenSource/ImGuiWork/litgen/examples_real_libs/imgui/imgui/imgui.h:2095
+            "Helper functions for text manipulation.\nUse those function to benefit from the CallbackResize behaviors. Calling those function reset the selection.")
         .def("delete_chars",    // /Users/pascal/dvp/OpenSource/ImGuiWork/litgen/examples_real_libs/imgui/imgui/imgui.h:2096
             [](ImGuiInputTextCallbackData & self, int pos, int bytes_count)
             {
@@ -5410,7 +5512,6 @@ void py_init_module_imgui(py::module& m)
         .def_readwrite("source_id", &ImGuiPayload::SourceId, "Source item id")    // /Users/pascal/dvp/OpenSource/ImGuiWork/litgen/examples_real_libs/imgui/imgui/imgui.h:2121
         .def_readwrite("source_parent_id", &ImGuiPayload::SourceParentId, "Source parent id (if available)")    // /Users/pascal/dvp/OpenSource/ImGuiWork/litgen/examples_real_libs/imgui/imgui/imgui.h:2122
         .def_readwrite("data_frame_count", &ImGuiPayload::DataFrameCount, "Data timestamp")    // /Users/pascal/dvp/OpenSource/ImGuiWork/litgen/examples_real_libs/imgui/imgui/imgui.h:2123
-        .def_readwrite("data_type[32 + 1]", &ImGuiPayload::DataType[32 + 1], "Data type tag (short user-supplied string, 32 characters max)")    // /Users/pascal/dvp/OpenSource/ImGuiWork/litgen/examples_real_libs/imgui/imgui/imgui.h:2124
         .def_readwrite("preview", &ImGuiPayload::Preview, "Set when AcceptDragDropPayload() was called and mouse has been hovering the target item (nb: handle overlapping drag targets)")    // /Users/pascal/dvp/OpenSource/ImGuiWork/litgen/examples_real_libs/imgui/imgui/imgui.h:2125
         .def_readwrite("delivery", &ImGuiPayload::Delivery, "Set when AcceptDragDropPayload() was called and mouse button is released over the target item.")    // /Users/pascal/dvp/OpenSource/ImGuiWork/litgen/examples_real_libs/imgui/imgui/imgui.h:2126
         .def(py::init<>())    // /Users/pascal/dvp/OpenSource/ImGuiWork/litgen/examples_real_libs/imgui/imgui/imgui.h:2128
@@ -5445,14 +5546,8 @@ void py_init_module_imgui(py::module& m)
 
     auto pyClassImGuiTextFilter = py::class_<ImGuiTextFilter>    // /Users/pascal/dvp/OpenSource/ImGuiWork/litgen/examples_real_libs/imgui/imgui/imgui.h:2181
         (m, "ImGuiTextFilter", "Helper: Parse and apply text filters. In format \"aaaaa[,bbbb][,ccccc]\"")
-        .def(py::init<>()) // implicit default constructor
-        .def("im_gui_text_filter",    // /Users/pascal/dvp/OpenSource/ImGuiWork/litgen/examples_real_libs/imgui/imgui/imgui.h:2183
-            [](ImGuiTextFilter & self, const char * default_filter = "")
-            {
-                return self.ImGuiTextFilter(default_filter);
-            },
-            py::arg("default_filter") = ""
-        )
+        .def(py::init<const char *>(),    // /Users/pascal/dvp/OpenSource/ImGuiWork/litgen/examples_real_libs/imgui/imgui/imgui.h:2183
+            py::arg("default_filter") = "")
         .def("draw",    // /Users/pascal/dvp/OpenSource/ImGuiWork/litgen/examples_real_libs/imgui/imgui/imgui.h:2184
             [](ImGuiTextFilter & self, const char * label = "Filter (inc,-exc)", float width = 0.0f)
             {
@@ -5476,7 +5571,6 @@ void py_init_module_imgui(py::module& m)
                 self.Build();
             }
         )
-        .def_readwrite("input_buf[256]", &ImGuiTextFilter::InputBuf[256], "")    // /Users/pascal/dvp/OpenSource/ImGuiWork/litgen/examples_real_libs/imgui/imgui/imgui.h:2201
         .def_readwrite("filters", &ImGuiTextFilter::Filters, "")    // /Users/pascal/dvp/OpenSource/ImGuiWork/litgen/examples_real_libs/imgui/imgui/imgui.h:2202
         .def_readwrite("count_grep", &ImGuiTextFilter::CountGrep, "")    // /Users/pascal/dvp/OpenSource/ImGuiWork/litgen/examples_real_libs/imgui/imgui/imgui.h:2203
         ;
@@ -5485,7 +5579,6 @@ void py_init_module_imgui(py::module& m)
     auto pyClassImGuiTextBuffer = py::class_<ImGuiTextBuffer>    // /Users/pascal/dvp/OpenSource/ImGuiWork/litgen/examples_real_libs/imgui/imgui/imgui.h:2208
         (m, "ImGuiTextBuffer", "Helper: Growable text buffer for logging/accumulating text\n(this could be called 'ImGuiTextBuilder' / 'ImGuiStringBuilder')")
         .def_readwrite("buf", &ImGuiTextBuffer::Buf, "")    // /Users/pascal/dvp/OpenSource/ImGuiWork/litgen/examples_real_libs/imgui/imgui/imgui.h:2210
-        .def_readwrite("empty_string[1]", &ImGuiTextBuffer::EmptyString[1], "")    // /Users/pascal/dvp/OpenSource/ImGuiWork/litgen/examples_real_libs/imgui/imgui/imgui.h:2211
         .def(py::init<>())    // /Users/pascal/dvp/OpenSource/ImGuiWork/litgen/examples_real_libs/imgui/imgui/imgui.h:2213
         .def("append",    // /Users/pascal/dvp/OpenSource/ImGuiWork/litgen/examples_real_libs/imgui/imgui/imgui.h:2222
             [](ImGuiTextBuffer & self, const char * str, const char * str_end = NULL)
@@ -5634,20 +5727,14 @@ void py_init_module_imgui(py::module& m)
 
     auto pyClassImGuiListClipper = py::class_<ImGuiListClipper>    // /Users/pascal/dvp/OpenSource/ImGuiWork/litgen/examples_real_libs/imgui/imgui/imgui.h:2298
         (m, "ImGuiListClipper", "Helper: Manually clip large list of items.\nIf you have lots evenly spaced items and you have a random access to the list, you can perform coarse\nclipping based on visibility to only submit items that are in view.\nThe clipper calculates the range of visible items and advance the cursor to compensate for the non-visible items we have skipped.\n(Dear ImGui already clip items based on their bounds but: it needs to first layout the item to do so, and generally\nfetching/submitting your own data incurs additional cost. Coarse clipping using ImGuiListClipper allows you to easily\nscale using lists with tens of thousands of items without a problem)\nUsage:\nImGuiListClipper clipper;\nclipper.Begin(1000);         // We have 1000 elements, evenly spaced.\nwhile (clipper.Step())\nfor (int i = clipper.DisplayStart; i < clipper.DisplayEnd; i++)\nImGui::Text(\"line number %d\", i);\nGenerally what happens is:\n- Clipper lets you process the first element (DisplayStart = 0, DisplayEnd = 1) regardless of it being visible or not.\n- User code submit that one element.\n- Clipper can measure the height of the first element\n- Clipper calculate the actual range of elements to display based on the current clipping rectangle, position the cursor before the first visible element.\n- User code submit visible elements.\n- The clipper also handles various subtleties related to keyboard/gamepad navigation, wrapping etc.")
-        .def(py::init<>()) // implicit default constructor
         .def_readwrite("display_start", &ImGuiListClipper::DisplayStart, "First item to display, updated by each call to Step()")    // /Users/pascal/dvp/OpenSource/ImGuiWork/litgen/examples_real_libs/imgui/imgui/imgui.h:2300
         .def_readwrite("display_end", &ImGuiListClipper::DisplayEnd, "End of items to display (exclusive)")    // /Users/pascal/dvp/OpenSource/ImGuiWork/litgen/examples_real_libs/imgui/imgui/imgui.h:2301
         .def_readwrite("items_count", &ImGuiListClipper::ItemsCount, "[Internal] Number of items")    // /Users/pascal/dvp/OpenSource/ImGuiWork/litgen/examples_real_libs/imgui/imgui/imgui.h:2302
         .def_readwrite("items_height", &ImGuiListClipper::ItemsHeight, "[Internal] Height of item after a first step and item submission can calculate it")    // /Users/pascal/dvp/OpenSource/ImGuiWork/litgen/examples_real_libs/imgui/imgui/imgui.h:2303
         .def_readwrite("start_pos_y", &ImGuiListClipper::StartPosY, "[Internal] Cursor position at the time of Begin() or after table frozen rows are all processed")    // /Users/pascal/dvp/OpenSource/ImGuiWork/litgen/examples_real_libs/imgui/imgui/imgui.h:2304
         .def_readwrite("temp_data", &ImGuiListClipper::TempData, "[Internal] Internal data")    // /Users/pascal/dvp/OpenSource/ImGuiWork/litgen/examples_real_libs/imgui/imgui/imgui.h:2305
-        .def("im_gui_list_clipper",    // /Users/pascal/dvp/OpenSource/ImGuiWork/litgen/examples_real_libs/imgui/imgui/imgui.h:2309
-            [](ImGuiListClipper & self)
-            {
-                return self.ImGuiListClipper();
-            },
-            "items_count: Use INT_MAX if you don't know how many items you have (in which case the cursor won't be advanced in the final step)\nitems_height: Use -1.0f to be calculated automatically on first step. Otherwise pass in the distance between your items, typically GetTextLineHeightWithSpacing() or GetFrameHeightWithSpacing()."
-        )
+        .def(py::init<>(),    // /Users/pascal/dvp/OpenSource/ImGuiWork/litgen/examples_real_libs/imgui/imgui/imgui.h:2309
+            "items_count: Use INT_MAX if you don't know how many items you have (in which case the cursor won't be advanced in the final step)\nitems_height: Use -1.0f to be calculated automatically on first step. Otherwise pass in the distance between your items, typically GetTextLineHeightWithSpacing() or GetFrameHeightWithSpacing().")
         .def("begin",    // /Users/pascal/dvp/OpenSource/ImGuiWork/litgen/examples_real_libs/imgui/imgui/imgui.h:2311
             [](ImGuiListClipper & self, int items_count, float items_height = -1.0f)
             {
@@ -6334,7 +6421,6 @@ void py_init_module_imgui(py::module& m)
 
     auto pyClassImFontConfig = py::class_<ImFontConfig>    // /Users/pascal/dvp/OpenSource/ImGuiWork/litgen/examples_real_libs/imgui/imgui/imgui.h:2653
         (m, "ImFontConfig", "")
-        .def(py::init<>()) // implicit default constructor
         .def_readwrite("font_data", &ImFontConfig::FontData, "         // TTF/OTF data")    // /Users/pascal/dvp/OpenSource/ImGuiWork/litgen/examples_real_libs/imgui/imgui/imgui.h:2655
         .def_readwrite("font_data_size", &ImFontConfig::FontDataSize, "         // TTF/OTF data size")    // /Users/pascal/dvp/OpenSource/ImGuiWork/litgen/examples_real_libs/imgui/imgui/imgui.h:2656
         .def_readwrite("font_data_owned_by_atlas", &ImFontConfig::FontDataOwnedByAtlas, "True     // TTF/OTF data ownership taken by the container ImFontAtlas (will delete memory itself).")    // /Users/pascal/dvp/OpenSource/ImGuiWork/litgen/examples_real_libs/imgui/imgui/imgui.h:2657
@@ -6352,14 +6438,8 @@ void py_init_module_imgui(py::module& m)
         .def_readwrite("font_builder_flags", &ImFontConfig::FontBuilderFlags, "0        // Settings for custom font builder. THIS IS BUILDER IMPLEMENTATION DEPENDENT. Leave as zero if unsure.")    // /Users/pascal/dvp/OpenSource/ImGuiWork/litgen/examples_real_libs/imgui/imgui/imgui.h:2669
         .def_readwrite("rasterizer_multiply", &ImFontConfig::RasterizerMultiply, "1.0f     // Brighten (>1.0f) or darken (<1.0f) font output. Brightening small fonts may be a good workaround to make them more readable.")    // /Users/pascal/dvp/OpenSource/ImGuiWork/litgen/examples_real_libs/imgui/imgui/imgui.h:2670
         .def_readwrite("ellipsis_char", &ImFontConfig::EllipsisChar, "-1       // Explicitly specify unicode codepoint of ellipsis character. When fonts are being merged first specified ellipsis will be used.")    // /Users/pascal/dvp/OpenSource/ImGuiWork/litgen/examples_real_libs/imgui/imgui/imgui.h:2671
-        .def_readwrite("name[40]", &ImFontConfig::Name[40], "Name (strictly to ease debugging)")    // /Users/pascal/dvp/OpenSource/ImGuiWork/litgen/examples_real_libs/imgui/imgui/imgui.h:2674
         .def_readwrite("dst_font", &ImFontConfig::DstFont, "")    // /Users/pascal/dvp/OpenSource/ImGuiWork/litgen/examples_real_libs/imgui/imgui/imgui.h:2675
-        .def("im_font_config",    // /Users/pascal/dvp/OpenSource/ImGuiWork/litgen/examples_real_libs/imgui/imgui/imgui.h:2677
-            [](ImFontConfig & self)
-            {
-                return self.ImFontConfig();
-            }
-        )
+        .def(py::init<>())    // /Users/pascal/dvp/OpenSource/ImGuiWork/litgen/examples_real_libs/imgui/imgui/imgui.h:2677
         ;
 
 
@@ -6435,13 +6515,7 @@ void py_init_module_imgui(py::module& m)
 
     auto pyClassImFontAtlas = py::class_<ImFontAtlas>    // /Users/pascal/dvp/OpenSource/ImGuiWork/litgen/examples_real_libs/imgui/imgui/imgui.h:2747
         (m, "ImFontAtlas", "Load and rasterize multiple TTF/OTF fonts into a same texture. The font atlas will build a single texture holding:\n- One or more fonts.\n- Custom graphics data needed to render the shapes needed by Dear ImGui.\n- Mouse cursor shapes for software cursor rendering (unless setting 'Flags |= ImFontAtlasFlags_NoMouseCursors' in the font atlas).\nIt is the user-code responsibility to setup/build the atlas, then upload the pixel data into a texture accessible by your graphics api.\n- Optionally, call any of the AddFont functions. If you don't call any, the default font embedded in the code will be loaded for you.\n- Call GetTexDataAsAlpha8() or GetTexDataAsRGBA32() to build and retrieve pixels data.\n- Upload the pixels data into a texture within your graphics system (see imgui_impl_xxxx.cpp examples)\n- Call SetTexID(my_tex_id); and pass the pointer/identifier to your texture in a format natural to your graphics API.\nThis value will be passed back to you during rendering to identify the texture. Read FAQ entry about ImTextureID for more details.\nCommon pitfalls:\n- If you pass a 'glyph_ranges' array to AddFont functions, you need to make sure that your array persist up until the\natlas is build (when calling GetTexData or Build()). We only copy the pointer, not the data.\n- Important: By default, AddFontFromMemoryTTF() takes ownership of the data. Even though we are not writing to it, we will free the pointer on destruction.\nYou can set font_cfg->FontDataOwnedByAtlas=False to keep ownership of your data and it won't be freed,\n- Even though many functions are suffixed with \"TTF\", OTF data is supported just as well.\n- This is an old API and it is currently awkward for those and and various other reasons! We will address them in the future!")
-        .def(py::init<>()) // implicit default constructor
-        .def("im_font_atlas",    // /Users/pascal/dvp/OpenSource/ImGuiWork/litgen/examples_real_libs/imgui/imgui/imgui.h:2749
-            [](ImFontAtlas & self)
-            {
-                return self.ImFontAtlas();
-            }
-        )
+        .def(py::init<>())    // /Users/pascal/dvp/OpenSource/ImGuiWork/litgen/examples_real_libs/imgui/imgui/imgui.h:2749
         .def("add_font",    // /Users/pascal/dvp/OpenSource/ImGuiWork/litgen/examples_real_libs/imgui/imgui/imgui.h:2751
             [](ImFontAtlas & self, const ImFontConfig * font_cfg)
             {
@@ -6657,12 +6731,14 @@ void py_init_module_imgui(py::module& m)
                     out_uv_fill_raw[0] = out_uv_fill_0.value;
                     out_uv_fill_raw[1] = out_uv_fill_1.value;
 
-                    return GetMouseCursorTexData(cursor, out_offset, out_size, out_uv_border_raw, out_uv_fill_raw);
+                    auto r = GetMouseCursorTexData(cursor, out_offset, out_size, out_uv_border_raw, out_uv_fill_raw);
 
                     out_uv_border_0.value = out_uv_border_raw[0];
                     out_uv_border_1.value = out_uv_border_raw[1];
                     out_uv_fill_0.value = out_uv_fill_raw[0];
                     out_uv_fill_1.value = out_uv_fill_raw[1];
+
+                    return r;
                 };
 
                 return self.GetMouseCursorTexData_adapt_fixed_size_c_arrays(cursor, out_offset, out_size, out_uv_border_0, out_uv_border_1, out_uv_fill_0, out_uv_fill_1);
@@ -6691,7 +6767,6 @@ void py_init_module_imgui(py::module& m)
         .def_readwrite("fonts", &ImFontAtlas::Fonts, "Hold all the fonts returned by AddFont. Fonts[0] is the default font upon calling ImGui::NewFrame(), use ImGui::PushFont()/PopFont() to change the current font.")    // /Users/pascal/dvp/OpenSource/ImGuiWork/litgen/examples_real_libs/imgui/imgui/imgui.h:2828
         .def_readwrite("custom_rects", &ImFontAtlas::CustomRects, "Rectangles for packing custom texture data into the atlas.")    // /Users/pascal/dvp/OpenSource/ImGuiWork/litgen/examples_real_libs/imgui/imgui/imgui.h:2829
         .def_readwrite("config_data", &ImFontAtlas::ConfigData, "Configuration data")    // /Users/pascal/dvp/OpenSource/ImGuiWork/litgen/examples_real_libs/imgui/imgui/imgui.h:2830
-        .def_readwrite("tex_uv_lines[im_drawlist_tex_lines_width_max + 1]", &ImFontAtlas::TexUvLines[IM_DRAWLIST_TEX_LINES_WIDTH_MAX + 1], "UVs for baked anti-aliased lines")    // /Users/pascal/dvp/OpenSource/ImGuiWork/litgen/examples_real_libs/imgui/imgui/imgui.h:2831
         .def_readwrite("font_builder_io", &ImFontAtlas::FontBuilderIO, "Opaque interface to a font builder (default to stb_truetype, can be changed to use FreeType by defining IMGUI_ENABLE_FREETYPE).")    // /Users/pascal/dvp/OpenSource/ImGuiWork/litgen/examples_real_libs/imgui/imgui/imgui.h:2834
         .def_readwrite("font_builder_flags", &ImFontAtlas::FontBuilderFlags, "Shared flags (for all fonts) for custom font builder. THIS IS BUILD IMPLEMENTATION DEPENDENT. Per-font override is also available in ImFontConfig.")    // /Users/pascal/dvp/OpenSource/ImGuiWork/litgen/examples_real_libs/imgui/imgui/imgui.h:2835
         .def_readwrite("pack_id_mouse_cursors", &ImFontAtlas::PackIdMouseCursors, "Custom texture rectangle ID for white pixel and mouse cursors")    // /Users/pascal/dvp/OpenSource/ImGuiWork/litgen/examples_real_libs/imgui/imgui/imgui.h:2838
@@ -6701,7 +6776,6 @@ void py_init_module_imgui(py::module& m)
 
     auto pyClassImFont = py::class_<ImFont>    // /Users/pascal/dvp/OpenSource/ImGuiWork/litgen/examples_real_libs/imgui/imgui/imgui.h:2848
         (m, "ImFont", "Font runtime data and rendering\nImFontAtlas automatically loads a default embedded font for you when you call GetTexDataAsAlpha8() or GetTexDataAsRGBA32().")
-        .def(py::init<>()) // implicit default constructor
         .def_readwrite("index_advance_x", &ImFont::IndexAdvanceX, "12-16 // out //            // Sparse. Glyphs->AdvanceX in a directly indexable way (cache-friendly for CalcTextSize functions which only this this info, and are often bottleneck in large UI).")    // /Users/pascal/dvp/OpenSource/ImGuiWork/litgen/examples_real_libs/imgui/imgui/imgui.h:2851
         .def_readwrite("fallback_advance_x", &ImFont::FallbackAdvanceX, "4     // out // = FallbackGlyph->AdvanceX")    // /Users/pascal/dvp/OpenSource/ImGuiWork/litgen/examples_real_libs/imgui/imgui/imgui.h:2852
         .def_readwrite("font_size", &ImFont::FontSize, "4     // in  //            // Height of characters/line, set during loading (don't change after loading)")    // /Users/pascal/dvp/OpenSource/ImGuiWork/litgen/examples_real_libs/imgui/imgui/imgui.h:2853
@@ -6719,14 +6793,8 @@ void py_init_module_imgui(py::module& m)
         .def_readwrite("ascent", &ImFont::Ascent, "4+4   // out //            // Ascent: distance from top to bottom of e.g. 'A' [0..FontSize]")    // /Users/pascal/dvp/OpenSource/ImGuiWork/litgen/examples_real_libs/imgui/imgui/imgui.h:2869
         .def_readwrite("descent", &ImFont::Descent, "4+4   // out //            // Ascent: distance from top to bottom of e.g. 'A' [0..FontSize]")    // /Users/pascal/dvp/OpenSource/ImGuiWork/litgen/examples_real_libs/imgui/imgui/imgui.h:2869
         .def_readwrite("metrics_total_surface", &ImFont::MetricsTotalSurface, "4     // out //            // Total surface in pixels to get an idea of the font rasterization/texture cost (not exact, we approximate the cost of padding between glyphs)")    // /Users/pascal/dvp/OpenSource/ImGuiWork/litgen/examples_real_libs/imgui/imgui/imgui.h:2870
-        .def_readwrite("used4k_pages_map[(im_unicode_codepoint_max+1)/4096/8]", &ImFont::Used4kPagesMap[(IM_UNICODE_CODEPOINT_MAX+1)/4096/8], "2 bytes if ImWchar=ImWchar16, 34 bytes if ImWchar==ImWchar32. Store 1-bit for each block of 4K codepoints that has one active glyph. This is mainly used to facilitate iterations across all used codepoints.")    // /Users/pascal/dvp/OpenSource/ImGuiWork/litgen/examples_real_libs/imgui/imgui/imgui.h:2871
-        .def("im_font",    // /Users/pascal/dvp/OpenSource/ImGuiWork/litgen/examples_real_libs/imgui/imgui/imgui.h:2874
-            [](ImFont & self)
-            {
-                return self.ImFont();
-            },
-            "Methods"
-        )
+        .def(py::init<>(),    // /Users/pascal/dvp/OpenSource/ImGuiWork/litgen/examples_real_libs/imgui/imgui/imgui.h:2874
+            "Methods")
         .def("find_glyph",    // /Users/pascal/dvp/OpenSource/ImGuiWork/litgen/examples_real_libs/imgui/imgui/imgui.h:2876
             [](ImFont & self, ImWchar c)
             {

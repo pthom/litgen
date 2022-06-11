@@ -511,6 +511,13 @@ class CppDecl(CppElementAndComment):
         except ValueError:
             return None
 
+    def c_array_size_str(self) -> str:
+        if "[" not in self.name:
+            return None
+        pos = self.name.index("[")
+        size_str = self.name[pos + 1 : -1].strip()
+        return size_str
+
     def is_const(self):
         """
         Returns true if this decl is const"""
@@ -519,8 +526,10 @@ class CppDecl(CppElementAndComment):
     def is_c_array_fixed_size(self):
         """Returns true if this decl is a c array, and has a fixed size
         """
-        size = self.c_array_size()
-        r = size is not None
+        size_str = self.c_array_size_str()
+        if size_str is None:
+            return False
+        r = len(size_str) > 0
         return r
 
     def c_array_fixed_size_to_std_array(self) -> CppDecl:
@@ -908,6 +917,10 @@ class CppStruct(CppBlockChild):
                     if isinstance(child, CppConstructorDecl):
                         found_non_default_ctor = True
                         break
+                    if isinstance(child, CppFunctionDecl) and child.name == self.name:
+                        found_non_default_ctor = True
+                        break
+
         return found_non_default_ctor
 
     def has_deleted_default_ctor(self) -> bool:

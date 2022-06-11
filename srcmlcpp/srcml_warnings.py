@@ -119,7 +119,8 @@ def _warning_detailed_info(
         message += show_python_callstack()
 
     if len(additional_message) > 0:
-        message = additional_message + "\n" + code_utils.indent_code(message, 4)
+        message =   code_utils.unindent_code(additional_message, flag_strip_empty_lines=True) \
+                  + code_utils.indent_code(message, 4)
 
     return message
 

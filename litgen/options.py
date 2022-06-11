@@ -1,5 +1,5 @@
 from dataclasses import dataclass, field
-from typing import List
+from typing import List, Dict
 
 from litgen.internal.code_utils import make_regex_any_variable_ending_with, make_regex_any_variable_starting_with
 from srcmlcpp import SrcmlOptions
@@ -118,6 +118,7 @@ class CodeStyleOptions:
     # will be transformed to a property that points to a numpy array
     # which can be read/written from python (this requires numpy)
     c_array_numeric_member_flag_replace = True
+    # list of numeric types that can be stored in a numpy array
     c_array_numeric_member_types = [     # don't include char !
         "int",                           # See https://numpy.org/doc/stable/reference/generated/numpy.chararray.html
         "unsigned int",
@@ -138,6 +139,8 @@ class CodeStyleOptions:
         "int64_t",
         "bool",
     ]
+    # List of named possible sizes (fill it if some sizes are defined by macros or constexpr values)
+    c_array_numeric_member_size_dict: Dict[str, int] = {}
 
     # If c_string_list_flag_replace is active, then C string lists `(const char **, size_t)`
     # will be replaced by `const std::vector<std::string>&`. For example:

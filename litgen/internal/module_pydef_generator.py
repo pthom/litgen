@@ -264,7 +264,16 @@ def _generate_pydef_method(
         function_infos: CppFunctionDecl,
         options: CodeStyleOptions,
         parent_struct_name: str) -> str:
-    return _generate_pydef_function(function_infos, options, parent_struct_name)
+    if function_infos.name == parent_struct_name:
+        # Sometimes, srcml might see a constructor as a decl
+        # Example:
+        # struct Foo
+        # {
+        #     IMGUI_API Foo();
+        # };
+        return _generate_pydef_constructor(function_infos, options)
+    else:
+        return _generate_pydef_function(function_infos, options, parent_struct_name)
 
 
 #################################
@@ -279,8 +288,7 @@ def _add_struct_member_decl(cpp_decl: CppDecl, struct_name: str, options: CodeSt
     comment = cpp_decl.cpp_element_comments.full_comment()
     location = info_cpp_element_original_location(cpp_decl, options)
 
-
-    if cpp_decl.is_c_array():
+    if cpp_decl.is_c_array_fixed_size():
         # Cf. https://stackoverflow.com/questions/58718884/binding-an-array-using-pybind11
         array_typename = cpp_decl.cpp_type.str_code()
         if array_typename not in options.c_array_numeric_member_types:
@@ -298,12 +306,34 @@ def _add_struct_member_decl(cpp_decl: CppDecl, struct_name: str, options: CodeSt
                 cpp_decl.srcml_element,
                 """
                 Detected a numeric C Style array, but will not export it.
-                    Hint: set `options.c_array_numeric_member_flag_replace = True`)
+                    Hint: set `options.c_array_numeric_member_flag_replace = True`
                 """,
                 options.srcml_options)
             return ""
 
         array_size = cpp_decl.c_array_size()
+
+        if array_size is None:
+            array_size_str = cpp_decl.c_array_size_str()
+            if array_size_str in options.c_array_numeric_member_size_dict.keys():
+                array_size = options.c_array_numeric_member_size_dict[array_size_str]
+                if type(array_size) != int:
+                    srcml_warnings.emit_srcml_warning(
+                        cpp_decl.srcml_element,
+                        """
+                        options.c_array_numeric_member_size_dict should contains [str,int] items !
+                        """,
+                        options.srcml_options)
+                    return ""
+            else:
+                srcml_warnings.emit_srcml_warning(
+                    cpp_decl.srcml_element,
+                    f"""
+                    Detected a numeric C Style array, but will not export it because its size is not parsable.
+                        Hint: may be, add the value "{array_size_str}" to `options.c_array_numeric_member_size_dict`
+                    """,
+                    options.srcml_options)
+                return ""
 
         template_code = f"""
             .def_property("{name_python}", 
