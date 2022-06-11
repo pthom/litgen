@@ -148,7 +148,7 @@ def emit_srcml_warning(
     if in_pytest:
         logging.warning(message)
     else:
-        print(message, file=sys.stderr)
+        print("Warning: " + message, file=sys.stderr)
 
 
 def emit_warning(message: str, options: SrcmlOptions):
@@ -158,4 +158,4 @@ def emit_warning(message: str, options: SrcmlOptions):
     if in_pytest:
         logging.warning(message)
     else:
-        print(message, file=sys.stderr)
+        print("Warning: " + message, file=sys.stderr)
