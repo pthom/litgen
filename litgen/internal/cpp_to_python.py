@@ -32,6 +32,8 @@ def _info_original_location(cpp_element: CppElement, options: CodeStyleOptions, 
     nb_folders = options.original_location_nb_parent_folders
     header_file = srcml_main.srcml_main_context().current_parsed_file
     header_file = _filename_with_n_parent_folders(header_file, nb_folders)
+    if len(header_file) == 0:
+        header_file = "Line"
 
     _i_ = options.indent_cpp_spaces()
 

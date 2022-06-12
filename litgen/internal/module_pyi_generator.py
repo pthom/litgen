@@ -32,25 +32,28 @@ def _add_stub_element(
         cpp_element: CppElementAndComment,
         first_code_line: str,
         options: CodeStyleOptions,
-        body_lines: List[str] = []
+        body_lines: List[str] = [],
+        fn_params_and_return: str = ""
     ) -> str:
     """Common layout for class, enum, and functions stubs"""
 
     location = cpp_to_python.info_original_location_python(cpp_element, options)
-    all_lines = [first_code_line + location]
+    first_line = first_code_line + location
 
-    doc_lines = cpp_to_python.docstring_lines(cpp_element, options)
-
-    remaining_lines = doc_lines + body_lines
+    all_lines_except_first = []
+    if len(fn_params_and_return) > 0:
+        all_lines_except_first += fn_params_and_return.split("\n")
+    all_lines_except_first += cpp_to_python.docstring_lines(cpp_element, options)
+    all_lines_except_first += body_lines
     if len(body_lines) == 0:
-        remaining_lines.append("pass")
+        all_lines_except_first += ["pass"]
 
     _i_ = options.indent_python_spaces()
-    remaining_lines = list(map(lambda s: _i_ + s, remaining_lines))
+    all_lines_except_first = list(map(lambda s: _i_ + s, all_lines_except_first))
 
-    remaining_lines = code_utils.align_python_comments_in_block(remaining_lines)
+    all_lines_except_first = code_utils.align_python_comments_in_block(all_lines_except_first)
 
-    all_lines += remaining_lines
+    all_lines = [first_line] + all_lines_except_first
 
     r = "\n".join(all_lines) + "\n"
 
@@ -130,18 +133,13 @@ def _make_enum_element_decl_lines(
     return _make_decl_lines(enum_element, options)
 
 
-
 #################################
 #           Enums
 ################################
 
 def _generate_pyi_enum(enum: CppEnum, options: CodeStyleOptions) -> str:
-
-    enum_name = enum.name
-
-    _i_ = options.indent_python_spaces()
-
-    first_code_line = f"class {enum_name}(Enum):"
+    return ""
+    first_code_line = f"class {enum.name}(Enum):"
 
     body_lines: List[str] = []
 
@@ -157,141 +155,36 @@ def _generate_pyi_enum(enum: CppEnum, options: CodeStyleOptions) -> str:
     r = _add_stub_element(enum, first_code_line, options, body_lines)
     return r
 
-    # _i_ = options.indent_python_spaces()
-    # comment = cpp_to_python.docstring_python_one_line(enum.cpp_element_comments.full_comment() , options)
-    # location = info_cpp_element_original_location(enum, options)
-    #
-    # code_intro = f'py::enum_<{enum_name}>(m, "{enum_name}", py::arithmetic(), "{comment}"){location}\n'
-    #
-    # def make_value_code(enum_decl: CppDecl):
-    #     code = f'{_i_}.value("VALUE_NAME_PYTHON", VALUE_NAME_CPP, "VALUE_COMMENT")\n'
-    #
-    #     value_name_cpp = enum_decl.name
-    #     value_name_python = cpp_to_python.enum_value_name_to_python(enum_name, value_name_cpp, options)
-    #
-    #     if enum_type == "class":
-    #         value_name_cpp_str = enum_name + "::" + value_name_cpp
-    #     else:
-    #         value_name_cpp_str = value_name_cpp
-    #
-    #     code = code.replace("VALUE_NAME_PYTHON", value_name_python)
-    #     code = code.replace("VALUE_NAME_CPP", value_name_cpp_str)
-    #     code = code.replace("VALUE_COMMENT", code_utils.format_cpp_comment_on_one_line(
-    #         enum_decl.cpp_element_comments.full_comment()))
-    #
-    #     if cpp_to_python.enum_value_name_is_count(enum_name, value_name_cpp, options):
-    #         return ""
-    #     return code
-    #
-    # result = code_intro
-    # for i, child in enumerate(enum.block.block_children):
-    #     if child.tag() == "comment":
-    #         result += code_utils.format_cpp_comment_multiline(
-    #             child.text(), indentation_str=options.indent_python_spaces()) + "\n"
-    #     elif child.tag() == "decl":
-    #         result += make_value_code(child)
-    #     else:
-    #         raise srcmlcpp.SrcMlException(child.srcml_element, f"Unexpected tag {child.tag()} in enum")
-    # result = result[:-1]
-    # result = code_utils.add_item_before_comment(result, ";")
-    # return result
-
 
 #################################
 #           Functions
 ################################
-
-
-def pyarg_code(function_infos: CppFunctionDecl, options: CodeStyleOptions) -> str:
-    return ""
-
-    _i_ = options.indent_python_spaces()
-
-    param_lines = []
-    code_inner_defaultvalue = f'py::arg("ARG_NAME_PYTHON") = ARG_DEFAULT_VALUE'
-    code_inner_nodefaultvalue = f'py::arg("ARG_NAME_PYTHON")'
-
-    for idx_param, param in enumerate(function_infos.parameter_list.parameters):
-        param_default_value = param.default_value()
-        if len(param_default_value) > 0:
-            if is_default_sizeof_param(param, options):
-                default_value_cpp = "-1"
-            else:
-                default_value_cpp = param_default_value
-            param_line = code_inner_defaultvalue \
-                .replace("ARG_NAME_PYTHON", cpp_to_python.var_name_to_python(param.variable_name(), options)) \
-                .replace("ARG_DEFAULT_VALUE", default_value_cpp)
-        else:
-            if is_buffer_size_name_at_idx(function_infos.parameter_list, options, idx_param):
-                continue
-            if  is_param_variadic_format(function_infos.parameter_list, options, idx_param):
-                continue
-            param_line= code_inner_nodefaultvalue.replace("ARG_NAME_PYTHON",
-                                                          cpp_to_python.var_name_to_python(param.variable_name(), options))
-
-        param_lines.append(param_line)
-
-    code = code_utils.join_lines_with_token_before_comment(param_lines, ",")
-    if len(param_lines) > 0:
-        code += ","
-    return code
-
-
-def pyarg_code_list(function_infos: CppFunctionDecl, options: CodeStyleOptions) -> List[str]:
-    return ""
-
-    code = pyarg_code(function_infos, options)
-    if len(code) == 0:
-        return []
-    lines = code.split("\n")
-    r = []
-    for line in lines:
-        if line.endswith(","):
-            line = line[:-1]
-        r.append(line)
-    return r
-
-
-def _function_return_value_policy(function_infos: CppFunctionDecl) -> str:
-    return ""
-
-    """Parses the return_value_policy from the function end of line comment
-    For example:
-        // A static instance (which python shall not delete, as enforced by the marker return_policy below)
-        static Foo& Instance() { static Foo instance; return instance; }       // return_value_policy::reference
-    """
-    token = "return_value_policy::"
-    eol_comment = function_infos.cpp_element_comments.eol_comment_code()
-    if "return_value_policy::" in eol_comment:
-        return_value_policy = eol_comment[ eol_comment.index(token) + len(token) : ]
-        return return_value_policy
-    else:
-        return ""
-
-
-def info_cpp_element_original_location(cpp_element: CppElement, options: CodeStyleOptions):
-    return ""
-
-    if not options.original_location_flag_show:
-        return ""
-    _i_ = options.indent_python_spaces()
-    header_file = srcml_main.srcml_main_context().current_parsed_file
-    line = cpp_element.start().line
-    r = f"{_i_}// {header_file}:{line}"
-    return r
-
 
 def _generate_pyi_function(
         function_infos: CppFunctionDecl,
         options: CodeStyleOptions,
         parent_struct_name: str = ""
 ) -> str:
-    return ""
 
     function_adapted_params = make_function_params_adapter(function_infos, options, parent_struct_name)
 
-    r = ""
-    r += _generate_pyi_function_impl(function_adapted_params, options, parent_struct_name)
+    r = _generate_pyi_function_impl(function_adapted_params, options, parent_struct_name)
+    return r
+
+
+def _paramlist_call_strs(param_list: CppParameterList, options: CodeStyleOptions) -> List[str]:
+    r = []
+    for param in param_list.parameters:
+        param_name_python = cpp_to_python.var_name_to_python(param.decl.name_without_array(), options)
+        param_type_cpp = param.decl.cpp_type.str_code()
+        param_type_python = cpp_to_python.type_to_python(param_type_cpp, options)
+        param_default_value = cpp_to_python.default_value_to_python(param.default_value(), options)
+
+        param_code = f"{param_name_python}: {param_type_python}"
+        if len(param_default_value) > 0:
+            param_code += f" = {param_default_value}"
+
+        r.append(param_code)
     return r
 
 
@@ -300,9 +193,61 @@ def _generate_pyi_function_impl(
         options: CodeStyleOptions,
         parent_struct_name: str = ""
     ) -> str:
-    return ""
+
+    function_infos = function_adapted_params.function_infos
+
+    return_type_python = cpp_to_python.type_to_python(
+        function_infos.full_return_type(options.srcml_options), options)
+
+    first_code_line = f"def {function_infos.name}("
+
+    params_strs = _paramlist_call_strs(function_infos.parameter_list, options)
+    return_line = f"): -> {return_type_python}"
+
+    # Try to add all params and return type on the same line
+    def all_on_one_line():
+        first_code_line_full = first_code_line
+        first_code_line_full += ", ".join(params_strs)
+        first_code_line_full += return_line
+        if len(first_code_line_full) < options.python_max_line_length:
+            return first_code_line_full
+        else:
+            return None
+
+    if all_on_one_line() is not None:
+        first_code_line = all_on_one_line()
+        params_and_return_str = ""
+    else:
+        params_and_return_str = ",\n".join(params_strs) + "\n" + return_line
+
+    body_lines: List[str] = []
+
+    r = _add_stub_element(function_infos, first_code_line, options, body_lines, params_and_return_str)
+
+    return r
+
+    #
+    # Extract from enum:
+    #
+    # first_code_line = f"class {enum.name}(Enum):"
+    #
+    # body_lines: List[str] = []
+    #
+    # previous_enum_element: CppDecl = None
+    # for child in enum.block.block_children:
+    #     if isinstance(child, CppDecl):
+    #         body_lines += _make_enum_element_decl_lines(enum, child, previous_enum_element, options)
+    #         previous_enum_element = child
+    #     if isinstance(child, CppEmptyLine):
+    #         body_lines.append("")
+    #     if isinstance(child, CppComment):
+    #         body_lines += cpp_to_python.python_comment_lines(child, options)
+    # r = _add_stub_element(enum, first_code_line, options, body_lines)
+    # return r
 
 
+
+    # old pydef code:
     _i_ = options.indent_python_spaces()
 
     function_infos = function_adapted_params.function_infos
@@ -582,7 +527,7 @@ def _generate_pyi_namespace(
     namespace_name = cpp_namespace.name
     new_namespaces = current_namespaces + [namespace_name]
     namespace_code = generate_pyi(cpp_namespace.block, options, new_namespaces)
-    location = info_cpp_element_original_location(cpp_namespace, options)
+    location = cpp_to_python.info_original_location_python(cpp_namespace, options)
 
     namespace_code_commented = ""
     namespace_code_commented += f"# <namespace {namespace_name}>{location}\n"

@@ -43,6 +43,7 @@ class CodeStyleOptions:
     python_indent_size = 4
     python_ident_with_tabs: bool = False
     python_max_consecutive_empty_lines: int = 2
+    python_max_line_length = 80
 
     # Spacing option in C++ code
     cpp_indent_size: int = 4

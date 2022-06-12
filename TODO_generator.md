@@ -1,5 +1,5 @@
 stub:
-    X enums: OK
+    
 
 
 duplicate code_utils / add copy script

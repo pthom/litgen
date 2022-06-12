@@ -238,7 +238,7 @@ class ImGuiTableFlags_(Enum):    # imgui.h:1131
     sort_tristate = 1 << 27                           # Allow no sorting, disable default sorting. TableGetSortSpecs() may return specs where (SpecsCount == 0).
     
     # [Internal] Combinations and masks
-    sizing_mask_ = sizing_fixed_fit | sizing_fixed_same | sizing_stretch_prop | sizing_stretch_same
+    sizing_mask_ = ImGuiTableFlags_.sizing_fixed_same | ImGuiTableFlags_.sizing_fixed_same
     
     # Obsolete names (will be removed soon)
 
