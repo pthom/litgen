@@ -278,7 +278,12 @@ def code_style_imgui():
         r"\bGetTexDataAsRGBA32\b",
         # IMGUI_API ImVec2            CalcTextSizeA(float size, float max_width, float wrap_width, const char* text_begin, const char* text_end = NULL, const char** remaining = NULL) const; // utf8
         #                                                                                                                                                         ^
-        r"\bCalcTextSizeA\b"
+        r"\bCalcTextSizeA\b",
+
+        # Exclude function whose name ends with V, like for example
+        #       IMGUI_API void          TextV(const char* fmt, va_list args)                            IM_FMTLIST(1);
+        # which are utilities for variadic print format
+        r"\w*V\Z",
     ]
 
     options.srcml_options.decl_name_exclude_regexes = [
@@ -292,12 +297,6 @@ def code_style_imgui():
         #               ^
         # }
         r"\bCmdLists\b",
-
-        # Exclude function whose name ends with V, like for example
-        #       IMGUI_API void          TextV(const char* fmt, va_list args)                            IM_FMTLIST(1);
-        # which are utilities for variadic print format
-        r"\w*V\Z",
-
     ]
 
     return options

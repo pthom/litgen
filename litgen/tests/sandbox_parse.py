@@ -59,15 +59,15 @@ def play_pydef(code):
 
 
 def play_pyi(code):
-    options = litgen.options.code_style_implot()
-    options.srcml_options.functions_api_prefixes = ["MY_API"]
-    options.srcml_options.api_suffixes = ["MY_API"]
+    # options = litgen.options.code_style_implot()
+    # options.srcml_options.functions_api_prefixes = ["MY_API"]
+    # options.srcml_options.api_suffixes = ["MY_API"]
 
     # options = litgen.options.CodeStyleOptions()
     # options.cpp_indent_size = 4
     # options.cpp_indent_with_tabs = False
 
-    # options = litgen.code_style_imgui()
+    options = litgen.code_style_imgui()
 
     options.original_location_flag_show = True
 
@@ -105,8 +105,7 @@ def play_pyi(code):
 # print(pydef_code)
 
 code = """
-// Modify an array by multiplying its elements (template function!)
-template<typename T> MY_API void mul_inside_array(T* array, size_t array_size, double factor);
+    IMGUI_API void          TextV(const char* fmt, va_list args)                            IM_FMTLIST(1);
 """
 
 play_pyi(code)
