@@ -59,12 +59,18 @@ def standard_replacements() -> List[StringReplacement]:
     \bint32_t\b -> int
     \buint64_t\b -> int
     \bint64_t\b -> int
-    \blong double\b -> float
-    \bdouble\b -> float
     \blong\b -> int
+    \blong \s*long\b -> int
+    \bunsigned \s*int\b -> int
+    \bunsigned \s*long\b -> int
+    \bunsigned \s*long long\b -> int
+
+    \blong \s*double\b -> float
+    \bdouble\b -> float
+    \bfloat\b -> float
     
-    \bconst char*\b -> str
-    \bconst char *\b -> str
+    \bconst \s*char*\b -> str
+    \bconst \s*char *\b -> str
     
     \bsize_t\b -> int
     \bstd::string\(\) -> ""
@@ -73,7 +79,10 @@ def standard_replacements() -> List[StringReplacement]:
     \bfalse\b -> False
     \bstd::vector\s*<\s*([\w:]*)\s*> -> List[\1]
     \bstd::array\s*<\s*([\w:]*)\s*,\s*([\w:])\s*> -> List[\1, \2]
-    \bvoid\b -> None
+
+    \bvoid\b -> None    
+    \bNULL\b -> None
+    \bnullptr\b -> None
     
     \bpy::array\b -> numpy.ndarray
     \bT\b -> numpy.ndarray

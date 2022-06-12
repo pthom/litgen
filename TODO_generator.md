@@ -1,7 +1,30 @@
 stub:
+    Pb avec buffer -> refactoring necessaire
+        MY_API inline void add_inside_array(uint8_t* array, size_t array_size, uint8_t number_to_add)
+                                                            ^should be removed
+    Pb avec variadics:
+        IMGUI_API void          Text(const char* fmt, ...)                                      IM_FMTARGS(1); // formatted text
+
+    Exclure fonctions terminant en V(
+        IMGUI_API void          TextV(const char* fmt, va_list args)                            IM_FMTLIST(1);
+        => le pattern ajouté ne semble pas marcher...
+
+    Définir FLT_MIN / FLT_MAX
+        def progress_bar(    # imgui.h:503
+        fraction: float,
+        size_arg: ImVec2 = ImVec2(-FLT_MIN, 0),
+        overlay: str = NULL
+        ) -> None:
+        pass
+
+    S'attendre a problem possible avec conversion enum / int:
+        def begin_combo(    # imgui.h:509
+        label: str,
+        preview_value: str,
+        flags: ImGuiComboFlags = 0
+        ) -> bool:
+
     
-
-
 duplicate code_utils / add copy script
 
 imgui

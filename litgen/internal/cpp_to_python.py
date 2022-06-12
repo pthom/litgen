@@ -153,8 +153,24 @@ def function_name_to_python(function_name: str, options: CodeStyleOptions) -> st
     return code_utils.to_snake_case(function_name)
 
 
+def is_float_str(s: str) -> bool:
+    try:
+        _ = float(s)
+    except ValueError:
+        return False
+    return True
+
+
 def default_value_to_python(default_value_cpp: str, options: CodeStyleOptions) -> str:
-    return code_replacements.apply_code_replacements(default_value_cpp, options.code_replacements)
+    r = code_replacements.apply_code_replacements(default_value_cpp, options.code_replacements)
+
+    # Handle float numbers like 1.0f
+    if len(r) >= 2 and r[-1] == "f":
+        if is_float_str(r[: -1]):
+            return r[ : -1]
+
+    return r
+
 
 
 def _cpp_type_to_camel_case_no_space(cpp_type: str) -> str:

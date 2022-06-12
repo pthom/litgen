@@ -196,10 +196,12 @@ def _generate_pyi_function_impl(
 
     function_infos = function_adapted_params.function_infos
 
+    function_name_python = cpp_to_python.function_name_to_python(function_infos.name, options)
+
     return_type_python = cpp_to_python.type_to_python(
         function_infos.full_return_type(options.srcml_options), options)
 
-    first_code_line = f"def {function_infos.name}("
+    first_code_line = f"def {function_name_python}("
 
     params_strs = _paramlist_call_strs(function_infos.parameter_list, options)
     return_line = f") -> {return_type_python}:"

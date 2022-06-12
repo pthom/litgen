@@ -12,20 +12,6 @@ assert os.path.isdir(CPP_GENERATED_PYBIND_DIR)
 def my_code_style_options():
     options = litgen.code_style_imgui()
     options.original_location_flag_show = True
-    # options.enum_title_on_previous_line = False
-    # options.generate_to_string = False
-    # options.cpp_indent_size = 4
-    #
-    # options.srcml_options = srcmlcpp.SrcmlOptions()
-    # options.srcml_options.functions_api_prefixes = ["IMGUI_API"]
-    #
-    # # options.api_suffixes = ["MY_API_STRUCT"]
-    # # options.function_exclude_by_comment = ["MY_API_EXCLUDE"]
-    # options.code_replacements = litgen.standard_replacements()
-    #
-    # options.buffer_flag_replace_by_array = True
-    #
-    # options.function_name_exclude_regexes = []
     return options
 
 

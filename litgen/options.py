@@ -291,7 +291,13 @@ def code_style_imgui():
         #     ImDrawList**    CmdLists;               // Array of ImDrawList* to render. The ImDrawList are owned by ImGuiContext and only pointed to from here.
         #               ^
         # }
-        r"\bCmdLists\b"
+        r"\bCmdLists\b",
+
+        # Exclude function whose name ends with V, like for example
+        #       IMGUI_API void          TextV(const char* fmt, va_list args)                            IM_FMTLIST(1);
+        # which are utilities for variadic print format
+        r"\w*V\Z",
+
     ]
 
     return options

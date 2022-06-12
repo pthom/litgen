@@ -106,7 +106,7 @@ void py_init_module_imgui(py::module& m)
             DestroyContext(ctx);
         },
         py::arg("ctx") = NULL,
-        "NULL = destroy current context"
+        "None = destroy current context"
     );
 
 
@@ -307,7 +307,7 @@ void py_init_module_imgui(py::module& m)
         py::arg("name"),
         py::arg("p_open") = NULL,
         py::arg("flags") = 0,
-        "Windows\n- Begin() = push window to the stack and start appending to it. End() = pop window from the stack.\n- Passing 'bool p_open != NULL' shows a window-closing widget in the upper-right corner of the window,\nwhich clicking will set the boolean to False when clicked.\n- You may append multiple times to the same window during the same frame by calling Begin()/End() pairs multiple times.\nSome information such as 'flags' or 'p_open' will only be considered by the first call to Begin().\n- Begin() return False to indicate the window is collapsed or fully clipped, so you may early out and omit submitting\nanything to the window. Always call a matching End() for each Begin() call, regardless of its return value!\n[Important: due to legacy reason, this is inconsistent with most other functions such as BeginMenu/EndMenu,\nBeginPopup/EndPopup, etc. where the EndXXX call should only be called if the corresponding BeginXXX function\nreturned True. Begin and BeginChild are the only odd ones out. Will be fixed in a future update.]\n- Note that the bottom of window stack always contains a window called \"Debug\"."
+        "Windows\n- Begin() = push window to the stack and start appending to it. End() = pop window from the stack.\n- Passing 'bool p_open != None' shows a window-closing widget in the upper-right corner of the window,\nwhich clicking will set the boolean to False when clicked.\n- You may append multiple times to the same window during the same frame by calling Begin()/End() pairs multiple times.\nSome information such as 'flags' or 'p_open' will only be considered by the first call to Begin().\n- Begin() return False to indicate the window is collapsed or fully clipped, so you may early out and omit submitting\nanything to the window. Always call a matching End() for each Begin() call, regardless of its return value!\n[Important: due to legacy reason, this is inconsistent with most other functions such as BeginMenu/EndMenu,\nBeginPopup/EndPopup, etc. where the EndXXX call should only be called if the corresponding BeginXXX function\nreturned True. Begin and BeginChild are the only odd ones out. Will be fixed in a future update.]\n- Note that the bottom of window stack always contains a window called \"Debug\"."
     );
 
 
@@ -604,7 +604,7 @@ void py_init_module_imgui(py::module& m)
             SetWindowFocus(name);
         },
         py::arg("name"),
-        "set named window to be focused / top-most. use NULL to remove focus."
+        "set named window to be focused / top-most. use None to remove focus."
     );
 
 
@@ -748,7 +748,7 @@ void py_init_module_imgui(py::module& m)
             PushFont(font);
         },
         py::arg("font"),
-        "use NULL as a shortcut to push default font"
+        "use None as a shortcut to push default font"
     );
 
 
@@ -2832,7 +2832,7 @@ void py_init_module_imgui(py::module& m)
         py::arg("label"),
         py::arg("p_visible"),
         py::arg("flags") = 0,
-        "when 'p_visible != NULL': if 'p_visible==True' display an additional small close button on upper right of the header which will set the bool to False when clicked, if 'p_visible==False' don't display the header."
+        "when 'p_visible != None': if 'p_visible==True' display an additional small close button on upper right of the header which will set the bool to False when clicked, if 'p_visible==False' don't display the header."
     );
 
 
@@ -3107,7 +3107,7 @@ void py_init_module_imgui(py::module& m)
         py::arg("shortcut"),
         py::arg("p_selected"),
         py::arg("enabled") = true,
-        "return True when activated + toggle (p_selected) if p_selected != NULL"
+        "return True when activated + toggle (p_selected) if p_selected != None"
     );
 
 
@@ -3229,7 +3229,7 @@ void py_init_module_imgui(py::module& m)
         },
         py::arg("str_id") = NULL,
         py::arg("popup_flags") = 1,
-        "open+begin popup when clicked on last item. Use str_id==NULL to associate the popup to previous item. If you want to use that on a non-interactive item such as Text() you need to pass in an explicit ID here. read comments in .cpp!"
+        "open+begin popup when clicked on last item. Use str_id==None to associate the popup to previous item. If you want to use that on a non-interactive item such as Text() you need to pass in an explicit ID here. read comments in .cpp!"
     );
 
 
@@ -3367,7 +3367,7 @@ void py_init_module_imgui(py::module& m)
         {
             return TableGetSortSpecs();
         },
-        "get latest sort specs for the table (NULL if not sorting).  Lifetime: don't hold on this pointer over multiple frames or past any subsequent call to BeginTable()."
+        "get latest sort specs for the table (None if not sorting).  Lifetime: don't hold on this pointer over multiple frames or past any subsequent call to BeginTable()."
     );
 
 
@@ -3718,7 +3718,7 @@ void py_init_module_imgui(py::module& m)
         {
             return GetDragDropPayload();
         },
-        "peek directly into the current payload from anywhere. may return NULL. use ImGuiPayload::IsDataType() to test for the payload type."
+        "peek directly into the current payload from anywhere. may return None. use ImGuiPayload::IsDataType() to test for the payload type."
     );
 
 
@@ -3939,7 +3939,7 @@ void py_init_module_imgui(py::module& m)
         {
             return GetMainViewport();
         },
-        "return primary/default viewport. This can never be NULL."
+        "return primary/default viewport. This can never be None."
     );
 
 
@@ -4575,10 +4575,7 @@ void py_init_module_imgui(py::module& m)
         .value("row_bg", ImGuiTableFlags_RowBg, "Set each RowBg color with ImGuiCol_TableRowBg or ImGuiCol_TableRowBgAlt (equivalent of calling TableSetBgColor with ImGuiTableBgFlags_RowBg0 on each row manually)")
         .value("borders_inner_h", ImGuiTableFlags_BordersInnerH, "Draw horizontal borders between rows.")
         .value("borders_outer_h", ImGuiTableFlags_BordersOuterH, "Draw horizontal borders at the top and bottom.")
-        .value("borders_inner_v", ImGuiTableFlags_BordersInnerV, "Draw vertical borders between columns.")
-        .value("borders_outer_v", ImGuiTableFlags_BordersOuterV, "Draw vertical borders on the left and right sides.")
         .value("borders_h", ImGuiTableFlags_BordersH, "Draw horizontal borders.")
-        .value("borders_v", ImGuiTableFlags_BordersV, "Draw vertical borders.")
         .value("borders_inner", ImGuiTableFlags_BordersInner, "Draw inner borders.")
         .value("borders_outer", ImGuiTableFlags_BordersOuter, "Draw outer borders.")
         .value("borders", ImGuiTableFlags_Borders, "Draw all borders.")
@@ -4778,7 +4775,6 @@ void py_init_module_imgui(py::module& m)
         .value("s", ImGuiKey_S, "")
         .value("t", ImGuiKey_T, "")
         .value("u", ImGuiKey_U, "")
-        .value("v", ImGuiKey_V, "")
         .value("w", ImGuiKey_W, "")
         .value("x", ImGuiKey_X, "")
         .value("y", ImGuiKey_Y, "")
@@ -5035,14 +5031,12 @@ void py_init_module_imgui(py::module& m)
         .value("alpha_preview_half", ImGuiColorEditFlags_AlphaPreviewHalf, "             // ColorEdit, ColorPicker, ColorButton: display half opaque / half checkerboard, instead of opaque.")
         .value("hdr", ImGuiColorEditFlags_HDR, "             // (WIP) ColorEdit: Currently only disable 0.0f..1.0f limits in RGBA edition (note: you probably want to use ImGuiColorEditFlags_Float flag as well).")
         .value("display_rgb", ImGuiColorEditFlags_DisplayRGB, "[Display]    // ColorEdit: override _display_ type among RGB/HSV/Hex. ColorPicker: select any combination using one or more of RGB/HSV/Hex.")
-        .value("display_hsv", ImGuiColorEditFlags_DisplayHSV, "[Display]    // \"")
         .value("display_hex", ImGuiColorEditFlags_DisplayHex, "[Display]    // \"")
         .value("uint8", ImGuiColorEditFlags_Uint8, "[DataType]   // ColorEdit, ColorPicker, ColorButton: _display_ values formatted as 0..255.")
         .value("float", ImGuiColorEditFlags_Float, "[DataType]   // ColorEdit, ColorPicker, ColorButton: _display_ values formatted as 0.0f..1.0f floats instead of 0..255 integers. No round-trip of value via integers.")
         .value("picker_hue_bar", ImGuiColorEditFlags_PickerHueBar, "[Picker]     // ColorPicker: bar for Hue, rectangle for Sat/Value.")
         .value("picker_hue_wheel", ImGuiColorEditFlags_PickerHueWheel, "[Picker]     // ColorPicker: wheel for Hue, triangle for Sat/Value.")
         .value("input_rgb", ImGuiColorEditFlags_InputRGB, "[Input]      // ColorEdit, ColorPicker: input and output data in RGB format.")
-        .value("input_hsv", ImGuiColorEditFlags_InputHSV, "[Input]      // ColorEdit, ColorPicker: input and output data in HSV format.")
         // _SRCML_EMPTY_LINE_
         .value("default_options_", ImGuiColorEditFlags_DefaultOptions_, "Defaults Options. You can set application defaults using SetColorEditOptions(). The intent is that you probably don't want to\noverride them in most of your calls. Let the user choose via the option menu and/or call SetColorEditOptions() once during startup.")
         // _SRCML_EMPTY_LINE_
@@ -5169,18 +5163,18 @@ void py_init_module_imgui(py::module& m)
         .def_readwrite("display_size", &ImGuiIO::DisplaySize, "<unset>          // Main display size, in pixels (generally == GetMainViewport()->Size). May change every frame.")    // imgui.h:1911
         .def_readwrite("delta_time", &ImGuiIO::DeltaTime, "= 1.0f/60.0f     // Time elapsed since last frame, in seconds. May change every frame.")    // imgui.h:1912
         .def_readwrite("ini_saving_rate", &ImGuiIO::IniSavingRate, "= 5.0f           // Minimum time between saving positions/sizes to .ini file, in seconds.")    // imgui.h:1913
-        .def_readwrite("ini_filename", &ImGuiIO::IniFilename, "= \"imgui.ini\"    // Path to .ini file (important: default \"imgui.ini\" is relative to current working dir!). Set NULL to disable automatic .ini loading/saving or if you want to manually call LoadIniSettingsXXX() / SaveIniSettingsXXX() functions.")    // imgui.h:1914
+        .def_readwrite("ini_filename", &ImGuiIO::IniFilename, "= \"imgui.ini\"    // Path to .ini file (important: default \"imgui.ini\" is relative to current working dir!). Set None to disable automatic .ini loading/saving or if you want to manually call LoadIniSettingsXXX() / SaveIniSettingsXXX() functions.")    // imgui.h:1914
         .def_readwrite("log_filename", &ImGuiIO::LogFilename, "= \"imgui_log.txt\"// Path to .log file (default parameter to ImGui::LogToFile when no file is specified).")    // imgui.h:1915
         .def_readwrite("mouse_double_click_time", &ImGuiIO::MouseDoubleClickTime, "= 0.30f          // Time for a float-click, in seconds.")    // imgui.h:1916
         .def_readwrite("mouse_double_click_max_dist", &ImGuiIO::MouseDoubleClickMaxDist, "= 6.0f           // Distance threshold to stay in to validate a float-click, in pixels.")    // imgui.h:1917
         .def_readwrite("mouse_drag_threshold", &ImGuiIO::MouseDragThreshold, "= 6.0f           // Distance threshold before considering we are dragging.")    // imgui.h:1918
         .def_readwrite("key_repeat_delay", &ImGuiIO::KeyRepeatDelay, "= 0.250f         // When holding a key/button, time before it starts repeating, in seconds (for buttons in Repeat mode, etc.).")    // imgui.h:1919
         .def_readwrite("key_repeat_rate", &ImGuiIO::KeyRepeatRate, "= 0.050f         // When holding a key/button, rate at which it repeats, in seconds.")    // imgui.h:1920
-        .def_readwrite("user_data", &ImGuiIO::UserData, "= NULL           // Store your own data for retrieval by callbacks.")    // imgui.h:1921
+        .def_readwrite("user_data", &ImGuiIO::UserData, "= None           // Store your own data for retrieval by callbacks.")    // imgui.h:1921
         .def_readwrite("fonts", &ImGuiIO::Fonts, "<auto>           // Font atlas: load, rasterize and pack one or more fonts into a single texture.")    // imgui.h:1923
         .def_readwrite("font_global_scale", &ImGuiIO::FontGlobalScale, "= 1.0f           // Global scale all fonts")    // imgui.h:1924
         .def_readwrite("font_allow_user_scaling", &ImGuiIO::FontAllowUserScaling, "= False          // Allow user scaling text of individual window with CTRL+Wheel.")    // imgui.h:1925
-        .def_readwrite("font_default", &ImGuiIO::FontDefault, "= NULL           // Font to use on NewFrame(). Use NULL to uses Fonts->Fonts[0].")    // imgui.h:1926
+        .def_readwrite("font_default", &ImGuiIO::FontDefault, "= None           // Font to use on NewFrame(). Use None to uses Fonts->Fonts[0].")    // imgui.h:1926
         .def_readwrite("display_framebuffer_scale", &ImGuiIO::DisplayFramebufferScale, "= (1, 1)         // For retina display or other situations where window coordinates are different from framebuffer coordinates. This generally ends up in ImDrawData::FramebufferScale.")    // imgui.h:1927
         .def_readwrite("mouse_draw_cursor", &ImGuiIO::MouseDrawCursor, "= False          // Request ImGui to draw a mouse cursor for you (if you are on a platform without a mouse cursor). Cannot be easily renamed to 'io.ConfigXXX' because this is frequently used by backend implementations.")    // imgui.h:1930
         .def_readwrite("config_mac_osx_behaviors", &ImGuiIO::ConfigMacOSXBehaviors, "= defined(__APPLE__) // OS X style: Text editing cursor movement using Alt instead of Ctrl, Shortcuts using Cmd/Super instead of Ctrl, Line/Text Start and End using Cmd+Arrows instead of Home/End, Double click selects by word instead of selecting whole text, Multi-selection in lists uses Cmd/Super instead of Ctrl.")    // imgui.h:1931
@@ -5190,11 +5184,11 @@ void py_init_module_imgui(py::module& m)
         .def_readwrite("config_windows_resize_from_edges", &ImGuiIO::ConfigWindowsResizeFromEdges, "= True           // Enable resizing of windows from their edges and from the lower-left corner. This requires (io.BackendFlags  ImGuiBackendFlags_HasMouseCursors) because it needs mouse cursor feedback. (This used to be a per-window ImGuiWindowFlags_ResizeFromAnySide flag)")    // imgui.h:1935
         .def_readwrite("config_windows_move_from_title_bar_only", &ImGuiIO::ConfigWindowsMoveFromTitleBarOnly, "= False       // Enable allowing to move windows only when clicking on their title bar. Does not apply to windows without a title bar.")    // imgui.h:1936
         .def_readwrite("config_memory_compact_timer", &ImGuiIO::ConfigMemoryCompactTimer, "= 60.0f          // Timer (in seconds) to free transient windows/tables memory buffers when unused. Set to -1.0f to disable.")    // imgui.h:1937
-        .def_readwrite("backend_platform_name", &ImGuiIO::BackendPlatformName, "= NULL")    // imgui.h:1945
-        .def_readwrite("backend_renderer_name", &ImGuiIO::BackendRendererName, "= NULL")    // imgui.h:1946
-        .def_readwrite("backend_platform_user_data", &ImGuiIO::BackendPlatformUserData, "= NULL           // User data for platform backend")    // imgui.h:1947
-        .def_readwrite("backend_renderer_user_data", &ImGuiIO::BackendRendererUserData, "= NULL           // User data for renderer backend")    // imgui.h:1948
-        .def_readwrite("backend_language_user_data", &ImGuiIO::BackendLanguageUserData, "= NULL           // User data for non C++ programming language backend")    // imgui.h:1949
+        .def_readwrite("backend_platform_name", &ImGuiIO::BackendPlatformName, "= None")    // imgui.h:1945
+        .def_readwrite("backend_renderer_name", &ImGuiIO::BackendRendererName, "= None")    // imgui.h:1946
+        .def_readwrite("backend_platform_user_data", &ImGuiIO::BackendPlatformUserData, "= None           // User data for platform backend")    // imgui.h:1947
+        .def_readwrite("backend_renderer_user_data", &ImGuiIO::BackendRendererUserData, "= None           // User data for renderer backend")    // imgui.h:1948
+        .def_readwrite("backend_language_user_data", &ImGuiIO::BackendLanguageUserData, "= None           // User data for non C++ programming language backend")    // imgui.h:1949
         .def_readwrite("clipboard_user_data", &ImGuiIO::ClipboardUserData, "")    // imgui.h:1955
         .def("add_key_event",    // imgui.h:1971
             [](ImGuiIO & self, ImGuiKey key, bool down)
@@ -5311,7 +5305,7 @@ void py_init_module_imgui(py::module& m)
         .def_readwrite("want_capture_keyboard", &ImGuiIO::WantCaptureKeyboard, "Set when Dear ImGui will use keyboard inputs, in this case do not dispatch them to your main game/application (either way, always pass keyboard inputs to imgui). (e.g. InputText active, or an imgui window is focused and navigation is enabled, etc.).")    // imgui.h:1993
         .def_readwrite("want_text_input", &ImGuiIO::WantTextInput, "Mobile/console: when set, you may display an on-screen keyboard. This is set by Dear ImGui when it wants textual keyboard input to happen (e.g. when a InputText widget is active).")    // imgui.h:1994
         .def_readwrite("want_set_mouse_pos", &ImGuiIO::WantSetMousePos, "MousePos has been altered, backend should reposition mouse on next frame. Rarely used! Set only when ImGuiConfigFlags_NavEnableSetMousePos flag is enabled.")    // imgui.h:1995
-        .def_readwrite("want_save_ini_settings", &ImGuiIO::WantSaveIniSettings, "When manual .ini load/save is active (io.IniFilename == NULL), this will be set to notify your application that you can call SaveIniSettingsToMemory() and save yourself. Important: clear io.WantSaveIniSettings yourself after saving!")    // imgui.h:1996
+        .def_readwrite("want_save_ini_settings", &ImGuiIO::WantSaveIniSettings, "When manual .ini load/save is active (io.IniFilename == None), this will be set to notify your application that you can call SaveIniSettingsToMemory() and save yourself. Important: clear io.WantSaveIniSettings yourself after saving!")    // imgui.h:1996
         .def_readwrite("nav_active", &ImGuiIO::NavActive, "Keyboard/Gamepad navigation is currently allowed (will handle ImGuiKey_NavXXX events) = a window is focused and it doesn't use the ImGuiWindowFlags_NoNavInputs flag.")    // imgui.h:1997
         .def_readwrite("nav_visible", &ImGuiIO::NavVisible, "Keyboard/Gamepad navigation is visible and allowed (will handle ImGuiKey_NavXXX events).")    // imgui.h:1998
         .def_readwrite("framerate", &ImGuiIO::Framerate, "Rough estimate of application framerate, in frame per second. Solely for convenience. Rolling average estimation based on io.DeltaTime over 120 frames.")    // imgui.h:1999
@@ -5630,7 +5624,7 @@ void py_init_module_imgui(py::module& m)
                 return self.GetVoidPtr(key);
             },
             py::arg("key"),
-            "default_val is NULL"
+            "default_val is None"
         )
         .def("set_void_ptr",    // imgui.h:2260
             [](ImGuiStorage & self, ImGuiID key, void * val)
@@ -6391,11 +6385,10 @@ void py_init_module_imgui(py::module& m)
         .def_readwrite("font_no", &ImFontConfig::FontNo, "0        // Index of font within TTF/OTF file")    // imgui.h:2658
         .def_readwrite("size_pixels", &ImFontConfig::SizePixels, "         // Size in pixels for rasterizer (more or less maps to the resulting font height).")    // imgui.h:2659
         .def_readwrite("oversample_h", &ImFontConfig::OversampleH, "3        // Rasterize at higher quality for sub-pixel positioning. Note the difference between 2 and 3 is minimal so you can reduce this to 2 to save memory. Read https://github.com/nothings/stb/blob/master/tests/oversample/README.md for details.")    // imgui.h:2660
-        .def_readwrite("oversample_v", &ImFontConfig::OversampleV, "1        // Rasterize at higher quality for sub-pixel positioning. This is not really useful as we don't use sub-pixel positions on the Y axis.")    // imgui.h:2661
         .def_readwrite("pixel_snap_h", &ImFontConfig::PixelSnapH, "False    // Align every glyph to pixel boundary. Useful e.g. if you are merging a non-pixel aligned font with the default font. If enabled, you can set OversampleH/V to 1.")    // imgui.h:2662
         .def_readwrite("glyph_extra_spacing", &ImFontConfig::GlyphExtraSpacing, "0, 0     // Extra spacing (in pixels) between glyphs. Only X axis is supported for now.")    // imgui.h:2663
         .def_readwrite("glyph_offset", &ImFontConfig::GlyphOffset, "0, 0     // Offset all glyphs from this font input.")    // imgui.h:2664
-        .def_readwrite("glyph_ranges", &ImFontConfig::GlyphRanges, "NULL     // Pointer to a user-provided list of Unicode range (2 value per range, values are inclusive, zero-terminated list). THE ARRAY DATA NEEDS TO PERSIST AS LONG AS THE FONT IS ALIVE.")    // imgui.h:2665
+        .def_readwrite("glyph_ranges", &ImFontConfig::GlyphRanges, "None     // Pointer to a user-provided list of Unicode range (2 value per range, values are inclusive, zero-terminated list). THE ARRAY DATA NEEDS TO PERSIST AS LONG AS THE FONT IS ALIVE.")    // imgui.h:2665
         .def_readwrite("glyph_min_advance_x", &ImFontConfig::GlyphMinAdvanceX, "0        // Minimum AdvanceX for glyphs, set Min to align font icons, set both Min/Max to enforce mono-space font")    // imgui.h:2666
         .def_readwrite("glyph_max_advance_x", &ImFontConfig::GlyphMaxAdvanceX, "FLT_MAX  // Maximum AdvanceX for glyphs")    // imgui.h:2667
         .def_readwrite("merge_mode", &ImFontConfig::MergeMode, "False    // Merge into previous ImFont, so you can combine multiple inputs font into one ImFont (e.g. ASCII font + icons + Japanese glyphs). You may want to use GlyphOffset.y when merge font of different heights.")    // imgui.h:2668
