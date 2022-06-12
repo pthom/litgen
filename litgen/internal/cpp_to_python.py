@@ -325,9 +325,17 @@ def _enum_remove_values_prefix(enum_name: str, value_name: str) -> str:
 
 def enum_value_name_to_python(enum: CppEnum, enum_element: CppDecl, options: CodeStyleOptions) -> str:
     value_name = enum_element.name_without_array()
+
     if options.enum_flag_remove_values_prefix and enum.type != "class":
-        value_name = _enum_remove_values_prefix(enum.name, value_name)
-    return var_name_to_python(value_name, options)
+        value_name_no_prefix = _enum_remove_values_prefix(enum.name, value_name)
+        if len(value_name_no_prefix) == 0:
+            value_name_no_prefix = value_name
+        if value_name_no_prefix[0].isdigit():
+            value_name_no_prefix = "_" + value_name_no_prefix
+        value_name = value_name_no_prefix
+
+    r = var_name_to_python(value_name, options)
+    return r
 
 
 def enum_element_is_count(enum: CppEnum, enum_element: CppDecl, options: CodeStyleOptions) -> bool:

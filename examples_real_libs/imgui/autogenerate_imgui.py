@@ -14,7 +14,7 @@ def my_code_style_options():
     options.original_location_flag_show = True
     # options.enum_title_on_previous_line = False
     # options.generate_to_string = False
-    # options.indent_cpp_size = 4
+    # options.cpp_indent_size = 4
     #
     # options.srcml_options = srcmlcpp.SrcmlOptions()
     # options.srcml_options.functions_api_prefixes = ["IMGUI_API"]

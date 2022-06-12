@@ -48,6 +48,8 @@ def _add_stub_element(
     _i_ = options.indent_python_spaces()
     remaining_lines = list(map(lambda s: _i_ + s, remaining_lines))
 
+    remaining_lines = code_utils.align_python_comments_in_block(remaining_lines)
+
     all_lines += remaining_lines
 
     r = "\n".join(all_lines) + "\n"
@@ -69,7 +71,7 @@ def _make_decl_lines(cpp_decl: CppDecl, options: CodeStyleOptions) -> List[str]:
 
     decl_line = f"{var_name} = {var_value}"
     if not flag_comment_first:
-        decl_line += options.indent_python_spaces() + comment_lines[0]
+        decl_line += " " + comment_lines[0]
 
     r.append(decl_line)
 
@@ -78,31 +80,53 @@ def _make_decl_lines(cpp_decl: CppDecl, options: CodeStyleOptions) -> List[str]:
 
 def _make_enum_element_decl_lines(
         enum: CppEnum,
-        enum_element: CppDecl,
+        enum_element_orig: CppDecl,
         previous_enum_element: CppDecl,
         options: CodeStyleOptions) -> List[str]:
+
+    enum_element = copy.deepcopy(enum_element_orig)
 
     if cpp_to_python.enum_element_is_count(enum, enum_element, options):
         return []
 
     if len(enum_element.init) == 0:
-
         if previous_enum_element is None:
-            srcml_warnings.emit_srcml_warning(enum_element.srcml_element, """
-                    Cannot compute the value of an enum element (previous element missing), it was skipped!
-                    """, options.srcml_options)
-            return []
-
-        try:
-            previous_value = int(previous_enum_element.init)
-            enum_element.init = str(previous_value + 1)
-        except ValueError:
-            srcml_warnings.emit_srcml_warning(enum_element.srcml_element, """
-                    Cannot compute the value of an enum element (previous element value is not an int), it was skipped!
-                    """, options.srcml_options)
-            return []
+            # the first element of an enum has a default value of 0
+            enum_element.init = "0"
+            enum_element_orig.init = enum_element.init
+        else:
+            try:
+                previous_value = int(previous_enum_element.init)
+                enum_element.init = str(previous_value + 1)
+                enum_element_orig.init = enum_element.init
+            except ValueError:
+                srcml_warnings.emit_srcml_warning(enum_element.srcml_element, """
+                        Cannot compute the value of an enum element (previous element value is not an int), it was skipped!
+                        """, options.srcml_options)
+                return []
 
     enum_element.name = cpp_to_python.enum_value_name_to_python(enum, enum_element, options)
+
+    #
+    # Sometimes, enum decls have interdependent values like this:
+    #     enum MyEnum {
+    #         MyEnum_a = 1, MyEnum_b,
+    #         MyEnum_foo = MyEnum_a | MyEnum_b    //
+    #     };
+    #
+    # So, we search and replace enum strings in the default value (.init)
+    #
+    for enum_decl in enum.get_enum_decls():
+        enum_decl_cpp_name = enum_decl.name_without_array()
+        enum_decl_python_name = cpp_to_python.enum_value_name_to_python(enum, enum_decl, options)
+
+        replacement = code_replacements.StringReplacement()
+        replacement.replace_what = r"\b" + enum_decl_cpp_name + r"\b"
+        replacement.by_what = enum_decl_python_name
+        enum_element.init = code_replacements.apply_one_replacement(enum_element.init, replacement)
+        #enum_element.init = enum_element.init.replace(enum_decl_cpp_name, enum_decl_python_name)
+        #code_utils.w
+
     return _make_decl_lines(enum_element, options)
 
 
@@ -599,4 +623,5 @@ def generate_pyi(
         # if len(boxed_structs) > 0:
         #     r = boxed_structs + "\n" + boxed_bindings + "\n" + r
 
+    r = code_utils.code_set_max_consecutive_empty_lines(r, options.python_max_consecutive_empty_lines)
     return r

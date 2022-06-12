@@ -40,11 +40,13 @@ class CodeStyleOptions:
     #
 
     # Size of an indentation in the python stubs
-    indent_python_size = 4
-    indent_python_with_tabs: bool = False
+    python_indent_size = 4
+    python_ident_with_tabs: bool = False
+    python_max_consecutive_empty_lines: int = 2
+
     # Spacing option in C++ code
-    indent_cpp_size: int = 4
-    indent_cpp_with_tabs: bool = False
+    cpp_indent_size: int = 4
+    cpp_indent_with_tabs: bool = False
 
     #
     # enum options
@@ -177,12 +179,12 @@ class CodeStyleOptions:
                     """)
 
     def indent_cpp_spaces(self):
-        space = "\t" if self.indent_cpp_with_tabs else " "
-        return space * self.indent_cpp_size
+        space = "\t" if self.cpp_indent_with_tabs else " "
+        return space * self.cpp_indent_size
 
     def indent_python_spaces(self):
-        space = "\t" if self.indent_python_with_tabs else " "
-        return space * self.indent_python_size
+        space = "\t" if self.python_ident_with_tabs else " "
+        return space * self.python_indent_size
 
     def __init__(self):
         self.srcml_options = SrcmlOptions()
@@ -198,7 +200,7 @@ def code_style_immvision() -> CodeStyleOptions:
 
     options = CodeStyleOptions()
     options.generate_to_string = True
-    options.indent_cpp_size = 4
+    options.cpp_indent_size = 4
     options.srcml_options.functions_api_prefixes = ["IMMVISION_API"]
     options.code_replacements = _code_replacements.standard_replacements() + _code_replacements.opencv_replacements()
 
@@ -241,7 +243,7 @@ def code_style_imgui():
     options = CodeStyleOptions()
 
     options.generate_to_string = False
-    options.indent_cpp_size = 4
+    options.cpp_indent_size = 4
 
     options.code_replacements = code_replacements.standard_replacements()
     options.buffer_flag_replace_by_array = True

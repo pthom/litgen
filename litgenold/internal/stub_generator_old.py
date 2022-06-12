@@ -8,7 +8,7 @@ from function_wrapper_lambda import is_buffer_size_name_at_idx, is_param_variadi
 
 
 def _indent_spacing(indent_level: int, options: CodeStyleOptions):
-    return " " * indent_level * options.indent_python_size
+    return " " * indent_level * options.python_indent_size
 
 
 def _py_layout_comment(comment, indent_level: int, options: CodeStyleOptions,

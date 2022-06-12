@@ -1051,3 +1051,10 @@ class CppEnum(CppBlockChild):
 
     def __str__(self):
         return self.str_code()
+
+    def get_enum_decls(self) -> List[CppDecl]:
+        r = []
+        for child in self.block.block_children:
+            if isinstance(child, CppDecl):
+                r.append(child)
+        return r

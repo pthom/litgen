@@ -2,6 +2,57 @@ import os, sys; _THIS_DIR = os.path.dirname(__file__); sys.path.append(_THIS_DIR
 import litgen.internal.code_utils as code_utils
 
 
+def test_line_python_comment_position():
+    """
+    Note: parsing comment position in python is complex.
+    This method applies naive strategies. May be use the python official parser module?
+    Example comments that it can handle:
+        a = 5 # my comment
+        a = 5 # my "comment"
+        a = 5 # my "comment" with # inside
+        a = "#" # my comment
+        a = '#' # my comment
+        a = '''#''' # my comment
+    """
+    code = "a = 5 # my comment"
+    assert code_utils.line_python_comment_position(code) == 6
+
+    code = 'a = 5 # my "comment"'
+    assert code_utils.line_python_comment_position(code) == 6
+
+    code = 'a = 5 # my "comment" with # inside'
+    assert code_utils.line_python_comment_position(code) == 6
+
+    code = 'a = "#" # my comment'
+    assert code_utils.line_python_comment_position(code) == 8
+
+    code = "a = '#' # my comment"
+    assert code_utils.line_python_comment_position(code) == 8
+
+    code = "a = '''#''' # my comment"
+    assert code_utils.line_python_comment_position(code) == 12
+
+    code = "        # my comment"
+    assert code_utils.line_python_comment_eol_position(code) is None
+
+    print("a")
+
+
+def test_align_python_comments_in_block():
+    code = """
+a = 5 # c
+aa = 5 # c
+# cc
+    """
+    expected = """
+a = 5  # c
+aa = 5 # c
+# cc
+    """
+    generated = code_utils.align_python_comments_in_block(code)
+    assert generated == expected
+
+
 def test_strip_empty_lines():
     code_lines = """
     
@@ -94,16 +145,16 @@ a
 
 def test_line_comment_position():
     line = "int a;"
-    assert code_utils.line_comment_position(line) is None
+    assert code_utils.line_cpp_comment_position(line) is None
 
     line = "int a; // Test"
-    assert code_utils.line_comment_position(line) == 7
+    assert code_utils.line_cpp_comment_position(line) == 7
 
     line = 'std::string r="// Tricky \\" string" // Final comment'
-    assert code_utils.line_comment_position(line) == 36
+    assert code_utils.line_cpp_comment_position(line) == 36
 
     line = 'std::string s="// Super \" Tricky string"'
-    assert code_utils.line_comment_position(line) is None
+    assert code_utils.line_cpp_comment_position(line) is None
 
 
 def test_last_code_position_before_comment():

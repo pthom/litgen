@@ -21,6 +21,22 @@ def overlapping_pairs(iterable : Iterable[T]) -> Tuple[T, T]:
         a = b
 
 
+def run_length_encode(in_list: List[T]) -> List[Tuple[int, T]]:
+    if in_list is None or len(in_list) == 0:
+        return []
+
+    out_list = [(in_list[0], 1)]
+
+    for item in in_list[1:]:
+        # If same as last, up count, otherwise new element with count 1.
+        if item == out_list[-1][0]:
+            out_list[-1] = (item, out_list[-1][1] + 1)
+        else:
+            out_list.append((item, 1))
+
+    return out_list
+
+
 def strip_empty_lines_in_list(code_lines: List[str]) -> List[str]:
     code_lines = list(itertools.dropwhile(lambda s: len(s.strip())  == 0, code_lines))
     code_lines = list(reversed(code_lines))
@@ -30,13 +46,26 @@ def strip_empty_lines_in_list(code_lines: List[str]) -> List[str]:
     return code_lines
 
 
+def code_set_max_consecutive_empty_lines(code: str, nb_max_empty: int) -> str:
+    lines = code.split("\n")
+    rle = run_length_encode(lines)
+
+    new_lines = []
+    for line, nb in rle:
+        if len(line.strip()) == 0 and nb >= nb_max_empty:
+            nb = nb_max_empty
+        for i in range(nb):
+            new_lines.append(line)
+    return "\n".join(new_lines)
+
+
 def strip_empty_lines(code_lines: str) -> str:
     lines = code_lines.split("\n")
     lines = strip_empty_lines_in_list(lines)
     return "\n".join(lines)
 
 
-def line_comment_position(code_line: str) -> Optional[int]:
+def line_cpp_comment_position(code_line: str) -> Optional[int]:
     in_string = False
     last_char = None
     for i, char in enumerate(code_line):
@@ -50,8 +79,81 @@ def line_comment_position(code_line: str) -> Optional[int]:
     return None
 
 
+def line_python_comment_position(code_line: str, skip_if_comment_only_line: bool = False) -> Optional[int]:
+    """
+    Note: parsing comment position in python is complex.
+    This method applies naive strategies. May be use the python official parser module?
+    Example comments that it can handle:
+        a = 5 # my comment
+        a = 5 # my "comment"
+        a = 5 # my "comment" with # inside
+        a = "#" # my comment
+        a = '#' # my comment
+        a = '''#''' # my comment
+    """
+
+    code_line = code_line.replace('"""', '__"')
+    code_line = code_line.replace("'''", "__'")
+    code_line = code_line.replace("'", '"')
+
+    in_string = False
+    has_seen_non_space = False
+    for i, char in enumerate(code_line):
+        if char == '"':
+            in_string = not in_string
+        if char == "#" and not in_string:
+            if not skip_if_comment_only_line:
+                return i
+            else:
+                if has_seen_non_space:
+                    return i
+
+        if not char.isspace():
+            has_seen_non_space = True
+
+    return None
+
+
+def line_python_comment_eol_position(code_line: str) -> Optional[int]:
+    return line_python_comment_position(code_line, skip_if_comment_only_line=True)
+
+
+def align_python_comments_in_block(code: str) -> str:
+    if type(code) == str:
+        is_list = False
+        lines = code.split("\n")
+    else:
+        is_list = True
+        lines = code
+
+    comments_positions = list(map(line_python_comment_eol_position, lines))
+    comments_positions = list(filter(lambda v: v is not None, comments_positions) )
+
+    if len(comments_positions) > 0:
+        new_lines = []
+        max_position = max(comments_positions)
+        for line in lines:
+            comment_position = line_python_comment_eol_position(line)
+            if comment_position is not None:
+                start = line[:comment_position]
+                end = line[comment_position + 1 :]
+                nb_spaces = max_position - comment_position
+                new_line = start + " " * nb_spaces + "#" + end
+                new_lines.append(new_line)
+            else:
+                new_lines.append(line)
+    else:
+        return code
+
+    if is_list:
+        return new_lines
+    else:
+        r = "\n".join(new_lines)
+        return r
+
+
 def last_code_position_before_comment(code_line: str) -> int:
-    pos = line_comment_position(code_line)
+    pos = line_cpp_comment_position(code_line)
     if pos is None:
         return len(code_line.rstrip())
 
