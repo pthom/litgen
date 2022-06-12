@@ -415,7 +415,7 @@ class CppDecl(CppElementAndComment):
             leads to:
             <decl_stmt><decl><type><name>int</name></type> <name>a</name> <init>= <expr><literal type="number">5</literal></expr></init></decl>;</decl_stmt>
 
-            Which is retranscribed as "5"
+            Which is transcribed as "5"
     """
     cpp_type: CppType = None
     name: str = ""

@@ -5,15 +5,9 @@ from litgen.internal.code_utils import make_regex_any_variable_ending_with, make
 from srcmlcpp import SrcmlOptions
 
 
-def _preprocess_imgui_code(code):
-    import re
-    new_code = code
-    new_code  = re.sub(r'IM_FMTARGS\(\d\)', '', new_code)
-    new_code  = re.sub(r'IM_FMTLIST\(\d\)', '', new_code)
-    return new_code
-
-
 class CodeStyleOptions:
+    """Configuration of the code generation (include / excludes, indentation, c++ to python translation settings, etc.)
+    """
 
     #
     # There are interesting options to set in SrcmlOptions (see srcmlcpp/srcml_options.py)
@@ -21,7 +15,7 @@ class CodeStyleOptions:
     # Notably:
     # * fill srcml_options.functions_api_prefixes
     #   (the prefixes that denotes the functions that shall be published)
-    # * Also, fill the excludes if you encounter issues with some function or declarations you want to ignore
+    # * Also, fill the excludes if you encounter issues with some functions or declarations you want to ignore
     srcml_options: SrcmlOptions = SrcmlOptions()
 
     #
@@ -186,6 +180,11 @@ class CodeStyleOptions:
         self.srcml_options = SrcmlOptions()
 
 
+#
+# Example of configurations for several libraries (immvision, imgui, implot)
+#
+
+
 def code_style_immvision() -> CodeStyleOptions:
     import internal.code_replacements as _code_replacements
 
@@ -208,6 +207,24 @@ def code_style_immvision() -> CodeStyleOptions:
     options.poub_init_function_python_additional_code = init_function_python_additional_code_require_opengl_initialized
 
     return options
+
+
+def _preprocess_imgui_code(code):
+    """
+    The imgui code uses two macros (IM_FMTARGS and IM_FMTLIST) which help the compiler
+        #define IM_FMTARGS(FMT)             __attribute__((format(printf, FMT, FMT+1)))
+        #define IM_FMTLIST(FMT)             __attribute__((format(printf, FMT, 0)))
+
+    They are used like this:
+        IMGUI_API bool          TreeNode(const char* str_id, const char* fmt, ...) IM_FMTARGS(2);
+
+    They are removed before processing the header, because they would not be correctly interpreted by srcml.
+    """
+    import re
+    new_code = code
+    new_code  = re.sub(r'IM_FMTARGS\(\d\)', '', new_code)
+    new_code  = re.sub(r'IM_FMTLIST\(\d\)', '', new_code)
+    return new_code
 
 
 def code_style_imgui():
@@ -274,9 +291,7 @@ def code_style_implot():
     options.srcml_options.functions_api_prefixes = ["IMPLOT_API", "IMPLOT_TMP"]
 
     options.srcml_options.function_name_exclude_regexes = [
-        ####################################################
-        #  Legitimate Excludes                             #
-        ####################################################
+        #  Legitimate Excludes
 
         # Exclude functions whose name end with G, like for example
         #       IMPLOT_API void PlotLineG(const char* label_id, ImPlotGetter getter, void* data, int count);
@@ -288,19 +303,15 @@ def code_style_implot():
         r"\w*V\Z",
 
 
-        ####################################################
-        #  Excludes due to two dimensional buffer          #
-        ####################################################
+        #  Excludes due to two-dimensional buffer
 
         #  PlotHeatmap(.., const T* values, int rows, int cols, !!!
         #                            ^          ^          ^
         "PlotHeatmap",
 
 
-        ####################################################
-        #  Excludes due to antique style string vectors    #
-        #  for which there is no generalizable parse       #
-        ####################################################
+        #  Excludes due to antique style string vectors
+        #  for which there is no generalizable parse
 
         # void SetupAxisTicks(ImAxis idx, const double* values, int n_ticks, const char* const labels[], bool show_default)
         #                                                            ^                           ^

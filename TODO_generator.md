@@ -5,7 +5,8 @@ imgui
     pyi
     widgets avec int*, float*, bool* : Boxer
 
-notebook
+implot SetupAxisTicks uses a string list, parameters order reversed!
+
 
 
 Notes / Doc pybind11:
@@ -21,11 +22,8 @@ Notes / Doc pybind11:
 - add namespace hierarchy in pydef ? With option ?
 - integration tests
     - work on full gen (namespace, comment, etc)
-- gen stub
-- filter function with API prefix / filter struct by eol comment
 
 
-Doc avec google collab
 
 - toString en hackant str:
     l.Foo.__str__ = my_str
@@ -46,9 +44,6 @@ Dyndoc !!!!
 
 
 Bugs:
-    X Constructor & destructors
-    X return value policy
-    ? leaked_ptr (pas sur qu'on en ait besoin)
     - Static methods: cf https://pybind11-jagerman.readthedocs.io/en/stable/classes.html?highlight=static%20method#instance-and-static-fields 
         use def_static
 
@@ -64,7 +59,6 @@ Bugs:
 - methods
 
 - Later: folder in site-packages
-- definir politique vis a vis DocString and multiline comments
 - code_replacement sur comments deconne:
     // Doubles the input number
     // i.e return "2 * x"    <== le * est supprimé
