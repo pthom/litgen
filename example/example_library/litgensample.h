@@ -68,7 +68,7 @@ namespace LiterateGeneratorExample // MY_API
             array[i] += number_to_add;
     }
     // Modify an array by multiplying its elements (template function!)
-    MY_API template<typename T> void mul_inside_array(T* array, size_t array_size, double factor)
+    template<typename T> MY_API void mul_inside_array(T* array, size_t array_size, double factor)
     {
         for (size_t i  = 0; i < array_size; ++i)
             array[i] *= (T)factor;

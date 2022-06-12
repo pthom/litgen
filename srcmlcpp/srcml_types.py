@@ -113,7 +113,8 @@ class CppElement:
         return len(name_children) == 1
 
     def name(self) -> str:
-        assert self.has_name()
+        if not self.has_name():
+            return None
         name_element = srcml_utils.child_with_tag(self.srcml_element, "name")
         if name_element.text is not None:
             return name_element.text

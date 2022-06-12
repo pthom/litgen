@@ -7,93 +7,67 @@ from enum import Enum
 # <namespace LiterateGeneratorExample>    # example_library/litgensample.h:18
 
 
-def add_c_array2(    # example_library/litgensample.h:46
-    values:  std::array<int, 2>
-    ): -> int
+def add_c_array2(values: List[int, 2]) -> int:    # example_library/litgensample.h:46
     """Tests with Boxed Numbers"""
     pass
 
 
-def log_c_array2(    # example_library/litgensample.h:47
-    values:  std::array<int, 2>
-    ): -> None
+def log_c_array2(values: List[int, 2]) -> None:    # example_library/litgensample.h:47
     pass
 
 
 def change_c_array2(    # example_library/litgensample.h:48
-    values_0: BoxedUnsignedLong ,
-    values_1: BoxedUnsignedLong 
-    ): -> None
+    values_0: BoxedUnsignedLong,
+    values_1: BoxedUnsignedLong
+    ) -> None:
     pass
 
 
-def GetPoints(    # example_library/litgensample.h:58
-    out_0: Point2 ,
-    out_1: Point2 
-    ): -> None
+def GetPoints(out_0: Point2, out_1: Point2) -> None:    # example_library/litgensample.h:58
     pass
 
 
-def add_inside_array(    # example_library/litgensample.h:65
-    array: int ,
-    array_size: int,
-    number_to_add: int
-    ): -> None
+def add_inside_array(array: int, array_size: int, number_to_add: int) -> None:    # example_library/litgensample.h:65
     """Modify an array by adding a value to its elements (non template function)"""
     pass
 
 
 def mul_inside_array(    # example_library/litgensample.h:71
-    array: T ,
+    array: numpy.ndarray,
     array_size: int,
     factor: float
-    ): -> template < typename T
+    ) -> None:
     """Modify an array by multiplying its elements (template function!)"""
     pass
 
 
 def c_string_list_total_size(    # example_library/litgensample.h:81
-    items:  list[str] ,
-    output_0: BoxedInt ,
-    output_1: BoxedInt 
-    ): -> int
+    items: List[str],
+    output_0: BoxedInt,
+    output_1: BoxedInt
+    ) -> int:
     pass
 
 
-def add(    # example_library/litgensample.h:93
-    a: int,
-    b: int
-    ): -> int
+def add(a: int, b: int) -> int:    # example_library/litgensample.h:93
     """Adds two numbers"""
     pass
 
 
-def add(    # example_library/litgensample.h:96
-    a: int,
-    b: int,
-    c: int
-    ): -> int
+def add(a: int, b: int, c: int) -> int:    # example_library/litgensample.h:96
     """Adds three numbers, with a surprise"""
     pass
 
 
-def sub(    # example_library/litgensample.h:99
-    a: int,
-    b: int
-    ): -> int
+def sub(a: int, b: int) -> int:    # example_library/litgensample.h:99
     pass
 
 
-def mul(    # example_library/litgensample.h:101
-    a: int,
-    b: int
-    ): -> int
+def mul(a: int, b: int) -> int:    # example_library/litgensample.h:101
     pass
 
 
-def FooInstance(    # example_library/litgensample.h:135
-    
-    ): -> Foo 
+def FooInstance() -> Foo:    # example_library/litgensample.h:135
     """return_value_policy::reference"""
     pass
 

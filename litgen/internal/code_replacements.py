@@ -71,10 +71,12 @@ def standard_replacements() -> List[StringReplacement]:
     \bstd::string\b -> str
     \btrue\b -> True
     \bfalse\b -> False
-    \bstd::vector<([\w:]*)> -> list[\1]
+    \bstd::vector\s*<\s*([\w:]*)\s*> -> List[\1]
+    \bstd::array\s*<\s*([\w:]*)\s*,\s*([\w:])\s*> -> List[\1, \2]
     \bvoid\b -> None
     
     \bpy::array\b -> numpy.ndarray
+    \bT\b -> numpy.ndarray
     
     \bconst\b -> REMOVE
     & -> REMOVE

@@ -580,6 +580,8 @@ def does_match_regex(regex_str: str, word: str) -> bool:
 
 
 def does_match_regexes(regex_strs: List[str], word: str) -> bool:
+    if word is None:
+        return False
     for regex_str in regex_strs:
         if does_match_regex(regex_str, word):
             return True

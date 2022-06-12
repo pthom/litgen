@@ -193,27 +193,27 @@ void py_init_module_litgensample(py::module& m)
             
             char array_type = array.dtype().char_();
             if (array_type == 'B')
-                return mul_inside_array(static_cast<uint8_t*>(array_buffer), array_count, factor);
+                mul_inside_array(static_cast<uint8_t*>(array_buffer), array_count, factor);
             else if (array_type == 'b')
-                return mul_inside_array(static_cast<int8_t*>(array_buffer), array_count, factor);
+                mul_inside_array(static_cast<int8_t*>(array_buffer), array_count, factor);
             else if (array_type == 'H')
-                return mul_inside_array(static_cast<uint16_t*>(array_buffer), array_count, factor);
+                mul_inside_array(static_cast<uint16_t*>(array_buffer), array_count, factor);
             else if (array_type == 'h')
-                return mul_inside_array(static_cast<int16_t*>(array_buffer), array_count, factor);
+                mul_inside_array(static_cast<int16_t*>(array_buffer), array_count, factor);
             else if (array_type == 'I')
-                return mul_inside_array(static_cast<uint32_t*>(array_buffer), array_count, factor);
+                mul_inside_array(static_cast<uint32_t*>(array_buffer), array_count, factor);
             else if (array_type == 'i')
-                return mul_inside_array(static_cast<int32_t*>(array_buffer), array_count, factor);
+                mul_inside_array(static_cast<int32_t*>(array_buffer), array_count, factor);
             else if (array_type == 'L')
-                return mul_inside_array(static_cast<uint64_t*>(array_buffer), array_count, factor);
+                mul_inside_array(static_cast<uint64_t*>(array_buffer), array_count, factor);
             else if (array_type == 'l')
-                return mul_inside_array(static_cast<int64_t*>(array_buffer), array_count, factor);
+                mul_inside_array(static_cast<int64_t*>(array_buffer), array_count, factor);
             else if (array_type == 'f')
-                return mul_inside_array(static_cast<float*>(array_buffer), array_count, factor);
+                mul_inside_array(static_cast<float*>(array_buffer), array_count, factor);
             else if (array_type == 'd')
-                return mul_inside_array(static_cast<double*>(array_buffer), array_count, factor);
+                mul_inside_array(static_cast<double*>(array_buffer), array_count, factor);
             else if (array_type == 'g')
-                return mul_inside_array(static_cast<long double*>(array_buffer), array_count, factor);
+                mul_inside_array(static_cast<long double*>(array_buffer), array_count, factor);
 
             // If we reach this point, the array type is not supported!
             throw std::runtime_error(std::string("Bad array type: ") + array_type );

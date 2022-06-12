@@ -130,7 +130,7 @@ def docstring_python_one_line(title_cpp: str, options: CodeStyleOptions) -> str:
 
 
 def type_to_python(type_cpp: str, options: CodeStyleOptions) -> str:
-    return code_replacements.apply_code_replacements(type_cpp, options.code_replacements)
+    return code_replacements.apply_code_replacements(type_cpp, options.code_replacements).strip()
 
 
 def var_name_to_python(var_name: str, options: CodeStyleOptions) -> str:

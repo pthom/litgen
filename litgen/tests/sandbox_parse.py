@@ -105,8 +105,8 @@ def play_pyi(code):
 # print(pydef_code)
 
 code = """
-    // Sum of values in the array
-    MY_API inline int add_c_array2(const int values[2], int values[2], int values[2]);
+// Modify an array by multiplying its elements (template function!)
+template<typename T> MY_API void mul_inside_array(T* array, size_t array_size, double factor);
 """
 
 play_pyi(code)

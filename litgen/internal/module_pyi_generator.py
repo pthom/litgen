@@ -202,7 +202,7 @@ def _generate_pyi_function_impl(
     first_code_line = f"def {function_infos.name}("
 
     params_strs = _paramlist_call_strs(function_infos.parameter_list, options)
-    return_line = f"): -> {return_type_python}"
+    return_line = f") -> {return_type_python}:"
 
     # Try to add all params and return type on the same line
     def all_on_one_line():

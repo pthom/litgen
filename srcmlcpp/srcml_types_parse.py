@@ -53,12 +53,12 @@ def parse_type(options: SrcmlOptions, element: ET.Element, previous_decl: CppDec
 
     if len(result.names) == 0 and "..." not in result.modifiers:
         if previous_decl is None:
-            raise SrcMlExceptionDetailed(result, "Can't find type name", options)
+            raise SrcMlExceptionDetailed(result.srcml_element, "Can't find type name", options)
         assert previous_decl is not None
         result.names = previous_decl.cpp_type.names
 
     if len(result.names) == 0 and "..." not in result.modifiers:
-        raise SrcMlExceptionDetailed(result, "len(result.names) == 0!", options)
+        raise SrcMlExceptionDetailed(result.srcml_element, "len(result.names) == 0!", options)
 
     # process api names
     for name in result.names:
