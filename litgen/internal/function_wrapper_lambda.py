@@ -247,7 +247,8 @@ def _make_call_function(function_adapted: CppFunctionDeclWithAdaptedParams, is_m
 
         code_lines.append("")
         code_lines.append(f'{_i_}// If we reach this point, the array type is not supported!')
-        code_lines.append(f'{_i_}throw std::runtime_error(std::string("Bad array type: ") + array_type );')
+        code_lines.append(f'{_i_}else')
+        code_lines.append(f'{_i_}{_i_}throw std::runtime_error(std::string("Bad array type: ") + array_type );')
 
     else:
         if _contains_buffer(params, options):

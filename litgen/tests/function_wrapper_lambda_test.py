@@ -141,7 +141,8 @@ def test_make_function_wrapper_lambda():
                         return test_with_two_template_buffers(static_cast<const long double*>(values1_buffer), static_cast<long double*>(values2_buffer), values1_count);
             
                     // If we reach this point, the array type is not supported!
-                    throw std::runtime_error(std::string("Bad array type: ") + array_type );
+                    else
+                        throw std::runtime_error(std::string("Bad array type: ") + array_type );
                 },
            """
 

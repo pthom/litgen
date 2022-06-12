@@ -154,7 +154,8 @@ def test_generate_pydef_function_cpp_code() -> str:
                         PlotScatter(static_cast<const long double*>(values_buffer), values_count);
             
                     // If we reach this point, the array type is not supported!
-                    throw std::runtime_error(std::string("Bad array type: ") + array_type );
+                    else
+                        throw std::runtime_error(std::string("Bad array type: ") + array_type );
                 },
                 py::arg("values"),
                 "Plots a standard 2D scatter plot. Default marker is ImPlotMarker_Circle."

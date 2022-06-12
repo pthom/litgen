@@ -23,7 +23,7 @@ def change_c_array2(    # example_library/litgensample.h:48
     pass
 
 
-def GetPoints(out_0: Point2, out_1: Point2) -> None:    # example_library/litgensample.h:58
+def get_points(out_0: Point2, out_1: Point2) -> None:    # example_library/litgensample.h:58
     pass
 
 
@@ -67,7 +67,7 @@ def mul(a: int, b: int) -> int:    # example_library/litgensample.h:101
     pass
 
 
-def FooInstance() -> Foo:    # example_library/litgensample.h:135
+def foo_instance() -> Foo:    # example_library/litgensample.h:135
     """return_value_policy::reference"""
     pass
 
