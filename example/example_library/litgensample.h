@@ -20,18 +20,20 @@ namespace LiterateGeneratorExample // MY_API
 
     // A super nice enum
     // for demo purposes ( bool val = true )
-    enum class MyEnum     // MY_API
+    enum MyEnum     // MY_API
     {
-        a = 1, // This is a
+        MyEnum_a = 1, // This is value a
 
         // Lonely comment
 
-        b,
+        // this is value b
+        MyEnum_b,
 
         // This is c
-        c,
+        // with doc on several lines
+        MyEnum_c,
 
-        count
+        MyEnum_count
     };
 
     //

@@ -481,11 +481,8 @@ class CppDecl(CppElementAndComment):
         return r
 
     def look_like_size_name(self):
-        possible_tokens = ["nb", "size", "count", "total", "n"]
-        for possible_token in possible_tokens:
-            if code_utils.var_name_contains_word(self.name, possible_token):
-                return True
-        return False
+        r = code_utils.var_name_looks_like_size_name(self.name)
+        return r
 
     def is_c_string_list_ptr(self):
         """

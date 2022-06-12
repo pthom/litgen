@@ -47,7 +47,7 @@ def _generate_pydef_enum(enum: CppEnum, options: CodeStyleOptions) -> str:
         code = f'{_i_}.value("VALUE_NAME_PYTHON", VALUE_NAME_CPP, "VALUE_COMMENT")\n'
 
         value_name_cpp = enum_decl.name
-        value_name_python = cpp_to_python.enum_value_name_to_python(enum_name, value_name_cpp, options)
+        value_name_python = cpp_to_python.enum_value_name_to_python(enum, enum_decl, options)
 
         if enum_type == "class":
             value_name_cpp_str = enum_name + "::" + value_name_cpp
@@ -59,7 +59,7 @@ def _generate_pydef_enum(enum: CppEnum, options: CodeStyleOptions) -> str:
         code = code.replace("VALUE_COMMENT", code_utils.format_cpp_comment_on_one_line(
             enum_decl.cpp_element_comments.full_comment()))
 
-        if cpp_to_python.enum_value_name_is_count(enum_name, value_name_cpp, options):
+        if cpp_to_python.enum_element_is_count(enum, enum_decl, options):
             return ""
         return code
 

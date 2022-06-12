@@ -4,7 +4,7 @@ from typing import List
 from dataclasses import dataclass
 from litgen import CodeStyleOptions
 from litgen.internal import code_replacements, code_utils
-from srcmlcpp.srcml_types import CppElement, CppElementAndComment, CppDecl
+from srcmlcpp.srcml_types import CppElement, CppElementAndComment, CppDecl, CppEnum, CppComment
 from srcmlcpp import srcml_main
 
 """
@@ -96,18 +96,28 @@ def docstring_lines(cpp_element_c: CppElementAndComment, options: CodeStyleOptio
     return r
 
 
+def python_comment_place_on_previous_lines(cpp_element_c: CppElementAndComment, options: CodeStyleOptions) -> bool:
+    if len(cpp_element_c.cpp_element_comments.comment_end_of_line) == 0:
+        return True
+    comment_lines = python_comment_lines(cpp_element_c, options)
+    return len(comment_lines) > 1
+
+
 def python_comment_lines(cpp_element_c: CppElementAndComment, options: CodeStyleOptions) -> List[str]:
     """See comment below"""
     # Returns the comment of a CppElement under the form of a python comment, such as the one you are reading.
     # Some replacements will be applied (for example true -> True, etc)
 
-    docstring = cpp_element_c.cpp_element_comments.full_comment()
-    docstring = _comment_apply_replacements(docstring, options)
+    comment = cpp_element_c.cpp_element_comments.full_comment()
+    if isinstance(cpp_element_c, CppComment):
+        comment = cpp_element_c.comment
 
-    if len(docstring) == 0:
+    comment = _comment_apply_replacements(comment, options)
+
+    if len(comment) == 0:
         return []
 
-    lines = docstring.split("\n")
+    lines = comment.split("\n")
     lines = list(map(lambda s : "# " + s, lines))
     return lines
 
@@ -313,15 +323,25 @@ def _enum_remove_values_prefix(enum_name: str, value_name: str) -> str:
         return value_name
 
 
-def enum_value_name_to_python(enum_name: str, value_name: str, options: CodeStyleOptions) -> str:
-    if options.enum_flag_remove_values_prefix:
-        value_name = _enum_remove_values_prefix(enum_name, value_name)
+def enum_value_name_to_python(enum: CppEnum, enum_element: CppDecl, options: CodeStyleOptions) -> str:
+    value_name = enum_element.name_without_array()
+    if options.enum_flag_remove_values_prefix and enum.type != "class":
+        value_name = _enum_remove_values_prefix(enum.name, value_name)
     return var_name_to_python(value_name, options)
 
 
-def enum_value_name_is_count(enum_name: str, value_name: str, options: CodeStyleOptions) -> bool:
+def enum_element_is_count(enum: CppEnum, enum_element: CppDecl, options: CodeStyleOptions) -> bool:
     if not options.enum_flag_skip_count:
         return False
-    return (value_name.lower() == enum_name.lower() + "_count"
-            or value_name.lower() == enum_name.lower() + "count"
-            or value_name.lower() == "count")
+
+    is_class_enum = enum.type == "class"
+    value_name = enum_element.name_without_array()
+
+    if not code_utils.var_name_looks_like_size_name(value_name):
+        return False
+
+    if is_class_enum:
+        return True
+    else:
+        has_enum_name_part = code_utils.var_name_contains_word(value_name.lower(), enum.name.lower())
+        return has_enum_name_part

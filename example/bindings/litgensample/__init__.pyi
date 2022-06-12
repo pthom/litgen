@@ -10,10 +10,17 @@ class MyEnum(Enum):    # example_library/litgensample.h:23
     """A super nice enum
     for demo purposes ( bool val = True )
     """
-    a = 1    # This is a
-    b = 
-    c =     # This is c
-    count = 
+    a = 1    # This is value a
+    
+    # Lonely comment
+    
+    # this is value b
+    b = 2
+    
+    # This is c
+    # with doc on several lines
+    c = 3
+    
 
 
 

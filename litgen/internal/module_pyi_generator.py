@@ -61,16 +61,50 @@ def _make_decl_lines(cpp_decl: CppDecl, options: CodeStyleOptions) -> List[str]:
     comment_lines = cpp_to_python.python_comment_lines(cpp_decl, options)
 
     r = []
-    if len(comment_lines) >= 2:
+
+    flag_comment_first = cpp_to_python.python_comment_place_on_previous_lines(cpp_decl, options)
+
+    if flag_comment_first:
         r += comment_lines
 
     decl_line = f"{var_name} = {var_value}"
-    if len(comment_lines) == 1:
+    if not flag_comment_first:
         decl_line += options.indent_python_spaces() + comment_lines[0]
 
     r.append(decl_line)
 
     return r
+
+
+def _make_enum_element_decl_lines(
+        enum: CppEnum,
+        enum_element: CppDecl,
+        previous_enum_element: CppDecl,
+        options: CodeStyleOptions) -> List[str]:
+
+    if cpp_to_python.enum_element_is_count(enum, enum_element, options):
+        return []
+
+    if len(enum_element.init) == 0:
+
+        if previous_enum_element is None:
+            srcml_warnings.emit_srcml_warning(enum_element.srcml_element, """
+                    Cannot compute the value of an enum element (previous element missing), it was skipped!
+                    """, options.srcml_options)
+            return []
+
+        try:
+            previous_value = int(previous_enum_element.init)
+            enum_element.init = str(previous_value + 1)
+        except ValueError:
+            srcml_warnings.emit_srcml_warning(enum_element.srcml_element, """
+                    Cannot compute the value of an enum element (previous element value is not an int), it was skipped!
+                    """, options.srcml_options)
+            return []
+
+    enum_element.name = cpp_to_python.enum_value_name_to_python(enum, enum_element, options)
+    return _make_decl_lines(enum_element, options)
+
 
 
 #################################
@@ -86,14 +120,16 @@ def _generate_pyi_enum(enum: CppEnum, options: CodeStyleOptions) -> str:
     first_code_line = f"class {enum_name}(Enum):"
 
     body_lines: List[str] = []
-    def add(line: str):
-        body_lines.append(line)
 
+    previous_enum_element: CppDecl = None
     for child in enum.block.block_children:
-        print(child)
         if isinstance(child, CppDecl):
-            body_lines += _make_decl_lines(child, options)
-
+            body_lines += _make_enum_element_decl_lines(enum, child, previous_enum_element, options)
+            previous_enum_element = child
+        if isinstance(child, CppEmptyLine):
+            body_lines.append("")
+        if isinstance(child, CppComment):
+            body_lines += cpp_to_python.python_comment_lines(child, options)
     r = _add_stub_element(enum, first_code_line, options, body_lines)
     return r
 
