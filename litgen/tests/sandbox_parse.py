@@ -26,7 +26,7 @@ def play_imgui():
 
 def play_implot():
     options = litgen.code_style_implot()
-    options.flag_show_original_location_in_pybind_file = True
+    options.original_location_flag_show = True
     source_filename = os.path.realpath(_THIS_DIR + "/../../examples_real_libs/implot/implot/implot.h")
     cpp_unit = srcmlcpp.file_to_cpp_unit(options.srcml_options, source_filename)
     # print(cpp_unit)
@@ -45,7 +45,7 @@ def play_pydef(code):
 
     options = litgen.code_style_imgui()
 
-    options.flag_show_original_location_in_pybind_file = True
+    options.original_location_flag_show = True
 
     from srcmlcpp import srcml_utils
     xml = srcmlcpp.code_to_srcml(code, dump_positions=False)

@@ -18,6 +18,22 @@ void SomeFunctionThatShouldNotBeIncluded();
 namespace LiterateGeneratorExample // MY_API
 {
 
+    // A super nice enum
+    // for demo purposes ( bool val = true )
+    enum class MyEnum     // MY_API
+    {
+        a = 1, // This is a
+
+        // Lonely comment
+
+        b,
+
+        // This is c
+        c,
+
+        count
+    };
+
     //
     // C Style array tests
     //

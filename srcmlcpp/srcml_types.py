@@ -13,6 +13,37 @@ from srcmlcpp.srcml_code_position import CodePosition
 
 @dataclass
 class CppElementComments:
+    """Gathers the C++ comments about functions, declarations, etc: each CppElement can store comment on previous lines,
+    and a single line comment next to its declaration.
+
+   "Lonely comments are stored as `CppComment`
+
+    Example:
+        `````cpp
+        /*
+        A multiline C comment
+        about Foo1
+        */
+        void Foo1();
+
+        // First line of comment on Foo2()
+        // Second line of comment on Foo2()
+        void Foo2();
+
+        // A lonely comment
+
+        //
+        // Another lonely comment, on two lines
+        // which ends on this second line, but has surrounding empty lines
+        //
+
+        // A comment on top of Foo3() & Foo4(), which should be kept as a standalone comment
+        // since Foo3 and Foo4 have end of line comments
+        Void Foo3(); // Comment on end of line for Foo3()
+        Void Foo4(); // Comment on end of line for Foo4()
+        // A comment that shall not be grouped to the previous (which was an EOL comment for Foo4())
+        ````
+    """
     comment_on_previous_lines: str = ""
     comment_end_of_line: str = ""
 

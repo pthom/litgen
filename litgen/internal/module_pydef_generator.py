@@ -8,6 +8,7 @@ from srcmlcpp import srcml_warnings
 
 from litgen import CodeStyleOptions
 from litgen.internal import cpp_to_python, code_utils
+from litgen.internal.cpp_to_python import info_original_location_cpp
 from litgen.internal.cpp_function_adapted_params import CppFunctionDeclWithAdaptedParams
 from litgen.internal.function_params_adapter import make_function_params_adapter
 from litgen.internal.function_wrapper_lambda import \
@@ -38,7 +39,7 @@ def _generate_pydef_enum(enum: CppEnum, options: CodeStyleOptions) -> str:
 
     _i_ = options.indent_cpp_spaces()
     comment = cpp_to_python.docstring_python_one_line(enum.cpp_element_comments.full_comment() , options)
-    location = info_cpp_element_original_location(enum, options)
+    location = info_original_location_cpp(enum, options)
 
     code_intro = f'py::enum_<{enum_name}>(m, "{enum_name}", py::arithmetic(), "{comment}"){location}\n'
 
@@ -142,16 +143,6 @@ def _function_return_value_policy(function_infos: CppFunctionDecl) -> str:
         return ""
 
 
-def info_cpp_element_original_location(cpp_element: CppElement, options: CodeStyleOptions):
-    if not options.flag_show_original_location_in_pybind_file:
-        return ""
-    _i_ = options.indent_cpp_spaces()
-    header_file = srcml_main.srcml_main_context().current_parsed_file
-    line = cpp_element.start().line
-    r = f"{_i_}// {header_file}:{line}"
-    return r
-
-
 def _generate_pydef_function(
         function_infos: CppFunctionDecl,
         options: CodeStyleOptions,
@@ -178,7 +169,7 @@ def _generate_pydef_function_impl(
     is_method = len(parent_struct_name) > 0
 
     fn_name_python = cpp_to_python.function_name_to_python(function_infos.name, options)
-    location = info_cpp_element_original_location(function_infos, options)
+    location = info_original_location_cpp(function_infos, options)
 
     module_str = "" if is_method else "m"
 
@@ -240,7 +231,7 @@ def _generate_pydef_constructor(
 
     params_str = function_infos.parameter_list.types_only_for_template()
     doc_string = cpp_to_python.docstring_python_one_line(function_infos.cpp_element_comments.full_comment(), options)
-    location = info_cpp_element_original_location(function_infos, options)
+    location = info_original_location_cpp(function_infos, options)
 
     code_lines = []
     code_lines.append(f".def(py::init<{params_str}>(){location}")
@@ -286,7 +277,7 @@ def _add_struct_member_decl(cpp_decl: CppDecl, struct_name: str, options: CodeSt
     name_cpp = cpp_decl.name_without_array()
     name_python = cpp_to_python.var_name_to_python(name_cpp, options)
     comment = cpp_decl.cpp_element_comments.full_comment()
-    location = info_cpp_element_original_location(cpp_decl, options)
+    location = info_original_location_cpp(cpp_decl, options)
 
     if len(cpp_decl.range) > 0:
         # We ignore bitfields
@@ -396,7 +387,7 @@ def _generate_pydef_struct_or_class(struct_infos: CppStruct, options: CodeStyleO
     _i_ = options.indent_cpp_spaces()
 
     comment = cpp_to_python.docstring_python_one_line(struct_infos.cpp_element_comments.full_comment(), options)
-    location = info_cpp_element_original_location(struct_infos, options)
+    location = info_original_location_cpp(struct_infos, options)
 
     code_intro = ""
     code_intro += f'auto pyClass{struct_name} = py::class_<{struct_name}>{location}\n'
@@ -436,7 +427,7 @@ def _generate_pydef_namespace(
     namespace_name = cpp_namespace.name
     new_namespaces = current_namespaces + [namespace_name]
     namespace_code = generate_pydef(cpp_namespace.block, options, new_namespaces)
-    location = info_cpp_element_original_location(cpp_namespace, options)
+    location = info_original_location_cpp(cpp_namespace, options)
 
     namespace_code_commented = ""
     namespace_code_commented += f"// <namespace {namespace_name}>{location}\n"

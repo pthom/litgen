@@ -19,9 +19,12 @@ class CodeStyleOptions:
     srcml_options: SrcmlOptions = SrcmlOptions()
 
     #
-    # Shall the binding cpp file show the original location of elements as a comment
+    # Shall the binding show the original location of elements as a comment
     #
-    flag_show_original_location_in_pybind_file = False
+    original_location_flag_show = False
+    # if showing location, how many parent folders shall be shown
+    original_location_nb_parent_folders = 0
+
 
     #
     # List of code replacements when going from C++ to Python
@@ -38,6 +41,7 @@ class CodeStyleOptions:
 
     # Size of an indentation in the python stubs
     indent_python_size = 4
+    indent_python_with_tabs: bool = False
     # Spacing option in C++ code
     indent_cpp_size: int = 4
     indent_cpp_with_tabs: bool = False
@@ -175,6 +179,10 @@ class CodeStyleOptions:
     def indent_cpp_spaces(self):
         space = "\t" if self.indent_cpp_with_tabs else " "
         return space * self.indent_cpp_size
+
+    def indent_python_spaces(self):
+        space = "\t" if self.indent_python_with_tabs else " "
+        return space * self.indent_python_size
 
     def __init__(self):
         self.srcml_options = SrcmlOptions()

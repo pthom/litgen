@@ -1,8 +1,11 @@
 import copy
+import pathlib
 from typing import List
 from dataclasses import dataclass
 from litgen import CodeStyleOptions
 from litgen.internal import code_replacements, code_utils
+from srcmlcpp.srcml_types import CppElement, CppElementAndComment, CppDecl
+from srcmlcpp import srcml_main
 
 """
 Apply some replacements when going from c++ to Python:
@@ -12,16 +15,106 @@ Apply some replacements when going from c++ to Python:
 """
 
 
-def docstring_python(title_cpp: str, options: CodeStyleOptions) -> str:
+def _filename_with_n_parent_folders(filename: str, n: int):
+    path = pathlib.Path(filename)
+    index_start = len(path.parts) - 1 - n
+    if index_start < 0:
+        index_start = 0
+    r = "/".join(path.parts[index_start:])
+    return r
+
+
+def _info_original_location(cpp_element: CppElement, options: CodeStyleOptions, comment_token: str):
+
+    if not options.original_location_flag_show:
+        return ""
+
+    nb_folders = options.original_location_nb_parent_folders
+    header_file = srcml_main.srcml_main_context().current_parsed_file
+    header_file = _filename_with_n_parent_folders(header_file, nb_folders)
+
+    _i_ = options.indent_cpp_spaces()
+
+    line = cpp_element.start().line
+    r = f"{_i_}{comment_token} {header_file}:{line}"
+    return r
+
+
+def info_original_location_cpp(cpp_element: CppElement, options: CodeStyleOptions):
+    return _info_original_location(cpp_element, options, "//")
+
+
+def info_original_location_python(cpp_element: CppElement, options: CodeStyleOptions):
+    return _info_original_location(cpp_element, options, "#")
+
+
+def _comment_apply_replacements(comment: str, options: CodeStyleOptions) -> str:
+    """Make some replacements in a C++ comment in order to adapt it to python
+    (strip empty lines, remove API markers, apply replacements)
     """
-    Make some replacements in a C++ title (a comment on top of a function, struct, etc)
-    in order to adapt it to python.
+    lines = comment.split("\n")
+    lines = code_utils.strip_empty_lines_in_list(lines)
+    if len(lines) == 0:
+        return ""
+
+    last_line = lines[-1].strip()
+    if last_line in options.srcml_options.api_suffixes:
+        lines = lines[ : -1]
+        lines = code_utils.strip_empty_lines_in_list(lines)
+
+    if len(lines) == 0:
+        return ""
+
+    comment = "\n".join(lines)
+    comment = code_replacements.apply_code_replacements(comment, options.code_replacements)
+
+    return comment
+
+
+def docstring_lines(cpp_element_c: CppElementAndComment, options: CodeStyleOptions) -> List[str]:
+    """Return the comment of a CppElement under the form of a docstring, such as the one you are reading.
+    Some replacements will be applied (for example true -> True, etc)
     """
-    return code_replacements.apply_code_replacements(title_cpp, options.code_replacements)
+
+    docstring = cpp_element_c.cpp_element_comments.full_comment()
+    docstring = _comment_apply_replacements(docstring, options)
+
+    if len(docstring) == 0:
+        return []
+
+    lines = docstring.split("\n")
+
+    r = []
+    r.append(f'''"""''' + lines[0])
+    r += lines[1:]
+
+    if len(r) == 1:
+        r[0] += '''"""'''
+    else:
+        r.append('"""')
+
+    return r
+
+
+def python_comment_lines(cpp_element_c: CppElementAndComment, options: CodeStyleOptions) -> List[str]:
+    """See comment below"""
+    # Returns the comment of a CppElement under the form of a python comment, such as the one you are reading.
+    # Some replacements will be applied (for example true -> True, etc)
+
+    docstring = cpp_element_c.cpp_element_comments.full_comment()
+    docstring = _comment_apply_replacements(docstring, options)
+
+    if len(docstring) == 0:
+        return []
+
+    lines = docstring.split("\n")
+    lines = list(map(lambda s : "# " + s, lines))
+    return lines
 
 
 def docstring_python_one_line(title_cpp: str, options: CodeStyleOptions) -> str:
-    return code_utils.format_cpp_comment_on_one_line(docstring_python(title_cpp, options))
+    """Formats a docstring on one cpp line. Used only in cpp bindings code"""
+    return code_utils.format_cpp_comment_on_one_line(_comment_apply_replacements(title_cpp, options))
 
 
 def type_to_python(type_cpp: str, options: CodeStyleOptions) -> str:
@@ -30,6 +123,18 @@ def type_to_python(type_cpp: str, options: CodeStyleOptions) -> str:
 
 def var_name_to_python(var_name: str, options: CodeStyleOptions) -> str:
     return code_utils.to_snake_case(var_name)
+
+
+def decl_python_var_name(cpp_decl: CppDecl, options: CodeStyleOptions):
+    var_cpp_name = cpp_decl.name_without_array()
+    var_python_name = var_name_to_python(var_cpp_name, options)
+    return var_python_name
+
+
+def decl_python_value(cpp_decl: CppDecl, options: CodeStyleOptions):
+    value_cpp = cpp_decl.init
+    value_python = code_replacements.apply_code_replacements(value_cpp, options.code_replacements)
+    return value_python
 
 
 def function_name_to_python(function_name: str, options: CodeStyleOptions) -> str:
@@ -152,15 +257,6 @@ class BoxedImmutablePythonType:
             boxed_type = BoxedImmutablePythonType(cpp_type)
             r += boxed_type._binding_code(options_no_api)
         return r
-
-
-# def get_cpp_numeric_synonyms(cpp_type: str) -> CppPythonTypesSynonyms:
-#     if cpp_type not in cpp_numeric_types():
-#         raise ValueError(f"{get_cpp_numeric_synonyms({cpp_type}) : not an acceptable type}")
-#
-#     for t in CPP_PYTHON_NUMERIC_SYNONYMS:
-#         if t.cpp_type == cpp_type:
-#             return t
 
 
 """

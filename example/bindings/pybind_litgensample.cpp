@@ -32,13 +32,13 @@ void py_init_module_litgensample(py::module& m)
 
 
 
-    auto pyClassBoxedUnsignedLong = py::class_<BoxedUnsignedLong>
+    auto pyClassBoxedUnsignedLong = py::class_<BoxedUnsignedLong>    // example_library/litgensample.h:1
         (m, "BoxedUnsignedLong", "")
-        .def_readwrite("value", &BoxedUnsignedLong::value, "")
-        .def(py::init<>())
-        .def(py::init<unsigned long>(),
+        .def_readwrite("value", &BoxedUnsignedLong::value, "")    // example_library/litgensample.h:3
+        .def(py::init<>())    // example_library/litgensample.h:4
+        .def(py::init<unsigned long>(),    // example_library/litgensample.h:5
             py::arg("v"))
-        .def("__repr__",
+        .def("__repr__",    // example_library/litgensample.h:6
             [](BoxedUnsignedLong & self)
             {
                 return self.__repr__();
@@ -47,13 +47,13 @@ void py_init_module_litgensample(py::module& m)
         ;
 
 
-    auto pyClassBoxedInt = py::class_<BoxedInt>
+    auto pyClassBoxedInt = py::class_<BoxedInt>    // example_library/litgensample.h:1
         (m, "BoxedInt", "")
-        .def_readwrite("value", &BoxedInt::value, "")
-        .def(py::init<>())
-        .def(py::init<int>(),
+        .def_readwrite("value", &BoxedInt::value, "")    // example_library/litgensample.h:3
+        .def(py::init<>())    // example_library/litgensample.h:4
+        .def(py::init<int>(),    // example_library/litgensample.h:5
             py::arg("v"))
-        .def("__repr__",
+        .def("__repr__",    // example_library/litgensample.h:6
             [](BoxedInt & self)
             {
                 return self.__repr__();
@@ -63,9 +63,19 @@ void py_init_module_litgensample(py::module& m)
 
 
 
-    // <namespace LiterateGeneratorExample>
+    // <namespace LiterateGeneratorExample>    // example_library/litgensample.h:18
 
-    m.def("add_c_array2",
+
+    py::enum_<MyEnum>(m, "MyEnum", py::arithmetic(), "A super nice enum\nfor demo purposes ( bool val = True )")    // example_library/litgensample.h:23
+        .value("a", MyEnum::a, "This is a")
+        // _SRCML_EMPTY_LINE_
+        // Lonely comment
+        // _SRCML_EMPTY_LINE_
+        .value("b", MyEnum::b, "")
+        // _SRCML_EMPTY_LINE_
+        .value("c", MyEnum::c, "This is c")
+    ;    // _SRCML_EMPTY_LINE_
+    m.def("add_c_array2",    // example_library/litgensample.h:42
         [](const std::array<int, 2>& values)
         {
             auto add_c_array2_adapt_fixed_size_c_arrays = [](const std::array<int, 2>& values)
@@ -81,7 +91,7 @@ void py_init_module_litgensample(py::module& m)
     );
 
 
-    m.def("log_c_array2",
+    m.def("log_c_array2",    // example_library/litgensample.h:43
         [](const std::array<int, 2>& values)
         {
             auto log_c_array2_adapt_fixed_size_c_arrays = [](const std::array<int, 2>& values)
@@ -95,7 +105,7 @@ void py_init_module_litgensample(py::module& m)
     );
 
 
-    m.def("change_c_array2",
+    m.def("change_c_array2",    // example_library/litgensample.h:44
         [](BoxedUnsignedLong & values_0, BoxedUnsignedLong & values_1)
         {
             auto change_c_array2_adapt_fixed_size_c_arrays = [](BoxedUnsignedLong & values_0, BoxedUnsignedLong & values_1)
@@ -118,14 +128,14 @@ void py_init_module_litgensample(py::module& m)
 
 
 
-    auto pyClassPoint2 = py::class_<Point2>
-        (m, "Point2", "Test with C array containing user defined struct (which will not be boxed)\n\nMY_API")
+    auto pyClassPoint2 = py::class_<Point2>    // example_library/litgensample.h:50
+        (m, "Point2", "Test with C array containing user defined struct (which will not be boxed)")
         .def(py::init<>()) // implicit default constructor
-        .def_readwrite("x", &Point2::x, "")
-        .def_readwrite("y", &Point2::y, "")
+        .def_readwrite("x", &Point2::x, "")    // example_library/litgensample.h:52
+        .def_readwrite("y", &Point2::y, "")    // example_library/litgensample.h:52
         ;
 
-    m.def("get_points",
+    m.def("get_points",    // example_library/litgensample.h:54
         [](Point2 & out_0, Point2 & out_1)
         {
             auto GetPoints_adapt_fixed_size_c_arrays = [](Point2 & out_0, Point2 & out_1)
@@ -147,7 +157,7 @@ void py_init_module_litgensample(py::module& m)
     );
 
 
-    m.def("add_inside_array",
+    m.def("add_inside_array",    // example_library/litgensample.h:61
         [](py::array & array, uint8_t number_to_add)
         {
             // convert array (py::array&) to C standard buffer (mutable)
@@ -172,7 +182,7 @@ void py_init_module_litgensample(py::module& m)
     );
 
 
-    m.def("mul_inside_array",
+    m.def("mul_inside_array",    // example_library/litgensample.h:67
         [](py::array & array, double factor)
         {
             // convert array (py::array&) to C standard buffer (mutable)
@@ -212,7 +222,7 @@ void py_init_module_litgensample(py::module& m)
     );
 
 
-    m.def("c_string_list_total_size",
+    m.def("c_string_list_total_size",    // example_library/litgensample.h:77
         [](const std::vector<std::string> & items, BoxedInt & output_0, BoxedInt & output_1)
         {
             auto c_string_list_total_size_adapt_fixed_size_c_arrays = [](const char * const items[], int items_count, BoxedInt & output_0, BoxedInt & output_1)
@@ -247,7 +257,7 @@ void py_init_module_litgensample(py::module& m)
     );
 
 
-    m.def("add",
+    m.def("add",    // example_library/litgensample.h:89
         [](int a, int b)
         {
             return add(a, b);
@@ -258,7 +268,7 @@ void py_init_module_litgensample(py::module& m)
     );
 
 
-    m.def("add",
+    m.def("add",    // example_library/litgensample.h:92
         [](int a, int b, int c)
         {
             return add(a, b, c);
@@ -270,7 +280,7 @@ void py_init_module_litgensample(py::module& m)
     );
 
 
-    m.def("sub",
+    m.def("sub",    // example_library/litgensample.h:95
         [](int a, int b)
         {
             return sub(a, b);
@@ -280,7 +290,7 @@ void py_init_module_litgensample(py::module& m)
     );
 
 
-    m.def("mul",
+    m.def("mul",    // example_library/litgensample.h:97
         [](int a, int b)
         {
             return mul(a, b);
@@ -291,9 +301,9 @@ void py_init_module_litgensample(py::module& m)
 
 
 
-    auto pyClassFoo = py::class_<Foo>
-        (m, "Foo", "A superb struct\n\nMY_API")
-        .def(py::init<>())
+    auto pyClassFoo = py::class_<Foo>    // example_library/litgensample.h:100
+        (m, "Foo", "A superb struct")
+        .def(py::init<>())    // example_library/litgensample.h:102
         .def_property("values",
             [](Foo &self) -> pybind11::array
             {
@@ -308,9 +318,9 @@ void py_init_module_litgensample(py::module& m)
                 auto base = pybind11::array(dtype, {3}, {sizeof(bool)});
                 return pybind11::array(dtype, {3}, {sizeof(bool)}, self.flags, base);
             }, [](Foo& self) {})
-        .def_readwrite("factor", &Foo::factor, "Multiplication factor")
-        .def_readwrite("delta", &Foo::delta, "addition factor")
-        .def("calc",
+        .def_readwrite("factor", &Foo::factor, "Multiplication factor")    // example_library/litgensample.h:116
+        .def_readwrite("delta", &Foo::delta, "addition factor")    // example_library/litgensample.h:119
+        .def("calc",    // example_library/litgensample.h:126
             [](Foo & self, int x)
             {
                 return self.calc(x);
@@ -318,7 +328,7 @@ void py_init_module_litgensample(py::module& m)
             py::arg("x"),
             "Do some math"
         )
-        .def("instance",
+        .def("instance",    // example_library/litgensample.h:128
             [](Foo & self)
             {
                 return self.Instance();
@@ -328,7 +338,7 @@ void py_init_module_litgensample(py::module& m)
         )
         ;
 
-    m.def("foo_instance",
+    m.def("foo_instance",    // example_library/litgensample.h:131
         []()
         {
             return FooInstance();

@@ -22,6 +22,10 @@ def my_code_style_options():
     options.buffer_flag_replace_by_array = True
 
     options.function_name_exclude_regexes = []
+
+    options.original_location_flag_show = True
+    options.original_location_nb_parent_folders = 1
+
     return options
 
 

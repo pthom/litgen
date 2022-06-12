@@ -11,7 +11,7 @@ assert os.path.isdir(CPP_GENERATED_PYBIND_DIR)
 
 def my_code_style_options():
     options = litgen.code_style_imgui()
-    options.flag_show_original_location_in_pybind_file = True
+    options.original_location_flag_show = True
     # options.enum_title_on_previous_line = False
     # options.generate_to_string = False
     # options.indent_cpp_size = 4

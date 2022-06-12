@@ -7,7 +7,7 @@ from srcmlcpp import srcml_main
 from srcmlcpp import srcml_warnings
 
 from litgen import CodeStyleOptions
-from litgen.internal import cpp_to_python, code_utils
+from litgen.internal import cpp_to_python, code_utils, code_replacements
 from litgen.internal.cpp_function_adapted_params import CppFunctionDeclWithAdaptedParams
 from litgen.internal.function_params_adapter import make_function_params_adapter
 from litgen.internal.function_wrapper_lambda import \
@@ -28,54 +28,113 @@ def _add_two_lines_before(code: str) -> str:
     return _add_new_lines(code, nb_lines_before=2, nb_lines_after=0)
 
 
+def _add_stub_element(
+        cpp_element: CppElementAndComment,
+        first_code_line: str,
+        options: CodeStyleOptions,
+        body_lines: List[str] = []
+    ) -> str:
+    """Common layout for class, enum, and functions stubs"""
+
+    location = cpp_to_python.info_original_location_python(cpp_element, options)
+    all_lines = [first_code_line + location]
+
+    doc_lines = cpp_to_python.docstring_lines(cpp_element, options)
+
+    remaining_lines = doc_lines + body_lines
+    if len(body_lines) == 0:
+        remaining_lines.append("pass")
+
+    _i_ = options.indent_python_spaces()
+    remaining_lines = list(map(lambda s: _i_ + s, remaining_lines))
+
+    all_lines += remaining_lines
+
+    r = "\n".join(all_lines) + "\n"
+
+    return r
+
+
+def _make_decl_lines(cpp_decl: CppDecl, options: CodeStyleOptions) -> List[str]:
+    var_name = cpp_to_python.decl_python_var_name(cpp_decl, options)
+    var_value = cpp_to_python.decl_python_value(cpp_decl, options)
+    comment_lines = cpp_to_python.python_comment_lines(cpp_decl, options)
+
+    r = []
+    if len(comment_lines) >= 2:
+        r += comment_lines
+
+    decl_line = f"{var_name} = {var_value}"
+    if len(comment_lines) == 1:
+        decl_line += options.indent_python_spaces() + comment_lines[0]
+
+    r.append(decl_line)
+
+    return r
+
+
 #################################
 #           Enums
 ################################
 
 def _generate_pyi_enum(enum: CppEnum, options: CodeStyleOptions) -> str:
-    return ""
 
-    enum_type = enum.attribute_value("type")
     enum_name = enum.name
 
-    _i_ = options.indent_cpp_spaces()
-    comment = cpp_to_python.docstring_python_one_line(enum.cpp_element_comments.full_comment() , options)
-    location = info_cpp_element_original_location(enum, options)
+    _i_ = options.indent_python_spaces()
 
-    code_intro = f'py::enum_<{enum_name}>(m, "{enum_name}", py::arithmetic(), "{comment}"){location}\n'
+    first_code_line = f"class {enum_name}(Enum):"
 
-    def make_value_code(enum_decl: CppDecl):
-        code = f'{_i_}.value("VALUE_NAME_PYTHON", VALUE_NAME_CPP, "VALUE_COMMENT")\n'
+    body_lines: List[str] = []
+    def add(line: str):
+        body_lines.append(line)
 
-        value_name_cpp = enum_decl.name
-        value_name_python = cpp_to_python.enum_value_name_to_python(enum_name, value_name_cpp, options)
+    for child in enum.block.block_children:
+        print(child)
+        if isinstance(child, CppDecl):
+            body_lines += _make_decl_lines(child, options)
 
-        if enum_type == "class":
-            value_name_cpp_str = enum_name + "::" + value_name_cpp
-        else:
-            value_name_cpp_str = value_name_cpp
+    r = _add_stub_element(enum, first_code_line, options, body_lines)
+    return r
 
-        code = code.replace("VALUE_NAME_PYTHON", value_name_python)
-        code = code.replace("VALUE_NAME_CPP", value_name_cpp_str)
-        code = code.replace("VALUE_COMMENT", code_utils.format_cpp_comment_on_one_line(
-            enum_decl.cpp_element_comments.full_comment()))
-
-        if cpp_to_python.enum_value_name_is_count(enum_name, value_name_cpp, options):
-            return ""
-        return code
-
-    result = code_intro
-    for i, child in enumerate(enum.block.block_children):
-        if child.tag() == "comment":
-            result += code_utils.format_cpp_comment_multiline(
-                child.text(), indentation_str=options.indent_cpp_spaces()) + "\n"
-        elif child.tag() == "decl":
-            result += make_value_code(child)
-        else:
-            raise srcmlcpp.SrcMlException(child.srcml_element, f"Unexpected tag {child.tag()} in enum")
-    result = result[:-1]
-    result = code_utils.add_item_before_comment(result, ";")
-    return result
+    # _i_ = options.indent_python_spaces()
+    # comment = cpp_to_python.docstring_python_one_line(enum.cpp_element_comments.full_comment() , options)
+    # location = info_cpp_element_original_location(enum, options)
+    #
+    # code_intro = f'py::enum_<{enum_name}>(m, "{enum_name}", py::arithmetic(), "{comment}"){location}\n'
+    #
+    # def make_value_code(enum_decl: CppDecl):
+    #     code = f'{_i_}.value("VALUE_NAME_PYTHON", VALUE_NAME_CPP, "VALUE_COMMENT")\n'
+    #
+    #     value_name_cpp = enum_decl.name
+    #     value_name_python = cpp_to_python.enum_value_name_to_python(enum_name, value_name_cpp, options)
+    #
+    #     if enum_type == "class":
+    #         value_name_cpp_str = enum_name + "::" + value_name_cpp
+    #     else:
+    #         value_name_cpp_str = value_name_cpp
+    #
+    #     code = code.replace("VALUE_NAME_PYTHON", value_name_python)
+    #     code = code.replace("VALUE_NAME_CPP", value_name_cpp_str)
+    #     code = code.replace("VALUE_COMMENT", code_utils.format_cpp_comment_on_one_line(
+    #         enum_decl.cpp_element_comments.full_comment()))
+    #
+    #     if cpp_to_python.enum_value_name_is_count(enum_name, value_name_cpp, options):
+    #         return ""
+    #     return code
+    #
+    # result = code_intro
+    # for i, child in enumerate(enum.block.block_children):
+    #     if child.tag() == "comment":
+    #         result += code_utils.format_cpp_comment_multiline(
+    #             child.text(), indentation_str=options.indent_python_spaces()) + "\n"
+    #     elif child.tag() == "decl":
+    #         result += make_value_code(child)
+    #     else:
+    #         raise srcmlcpp.SrcMlException(child.srcml_element, f"Unexpected tag {child.tag()} in enum")
+    # result = result[:-1]
+    # result = code_utils.add_item_before_comment(result, ";")
+    # return result
 
 
 #################################
@@ -86,7 +145,7 @@ def _generate_pyi_enum(enum: CppEnum, options: CodeStyleOptions) -> str:
 def pyarg_code(function_infos: CppFunctionDecl, options: CodeStyleOptions) -> str:
     return ""
 
-    _i_ = options.indent_cpp_spaces()
+    _i_ = options.indent_python_spaces()
 
     param_lines = []
     code_inner_defaultvalue = f'py::arg("ARG_NAME_PYTHON") = ARG_DEFAULT_VALUE'
@@ -153,9 +212,9 @@ def _function_return_value_policy(function_infos: CppFunctionDecl) -> str:
 def info_cpp_element_original_location(cpp_element: CppElement, options: CodeStyleOptions):
     return ""
 
-    if not options.flag_show_original_location_in_pybind_file:
+    if not options.original_location_flag_show:
         return ""
-    _i_ = options.indent_cpp_spaces()
+    _i_ = options.indent_python_spaces()
     header_file = srcml_main.srcml_main_context().current_parsed_file
     line = cpp_element.start().line
     r = f"{_i_}// {header_file}:{line}"
@@ -184,7 +243,7 @@ def _generate_pyi_function_impl(
     return ""
 
 
-    _i_ = options.indent_cpp_spaces()
+    _i_ = options.indent_python_spaces()
 
     function_infos = function_adapted_params.function_infos
     return_value_policy = _function_return_value_policy(function_infos)
@@ -202,7 +261,7 @@ def _generate_pyi_function_impl(
     lambda_code = code_utils.indent_code(lambda_code, indent_str=_i_)
     code_lines += lambda_code.split("\n")
 
-    pyarg_str = code_utils.indent_code(pyarg_code(function_infos, options),indent_str=options.indent_cpp_spaces())
+    pyarg_str = code_utils.indent_code(pyarg_code(function_infos, options),indent_str=options.indent_python_spaces())
     if len(pyarg_str) > 0:
         code_lines += pyarg_str.split("\n")
 
@@ -251,7 +310,7 @@ def _generate_pyi_constructor(
         DOC_STRING);    
     """
 
-    _i_ = options.indent_cpp_spaces()
+    _i_ = options.indent_python_spaces()
 
     params_str = function_infos.parameter_list.types_only_for_template()
     doc_string = cpp_to_python.docstring_python_one_line(function_infos.cpp_element_comments.full_comment(), options)
@@ -303,7 +362,7 @@ def _add_struct_member_decl(cpp_decl: CppDecl, struct_name: str, options: CodeSt
 
     return ""
 
-    _i_ = options.indent_cpp_spaces()
+    _i_ = options.indent_python_spaces()
     name_cpp = cpp_decl.name_without_array()
     name_python = cpp_to_python.var_name_to_python(name_cpp, options)
     comment = cpp_decl.cpp_element_comments.full_comment()
@@ -420,7 +479,7 @@ def _generate_pyi_struct_or_class(struct_infos: CppStruct, options: CodeStyleOpt
     if struct_infos.template is not None:
         return ""
 
-    _i_ = options.indent_cpp_spaces()
+    _i_ = options.indent_python_spaces()
 
     comment = cpp_to_python.docstring_python_one_line(struct_infos.cpp_element_comments.full_comment(), options)
     location = info_cpp_element_original_location(struct_infos, options)
@@ -446,7 +505,7 @@ def _generate_pyi_struct_or_class(struct_infos: CppStruct, options: CodeStyleOpt
     for child in struct_infos.block.block_children:
         if child.tag() == "public":
             zone_code = _add_public_struct_elements(public_zone=child, struct_name=struct_name, options=options)
-            r += code_utils.indent_code(zone_code, indent_str=options.indent_cpp_spaces())
+            r += code_utils.indent_code(zone_code, indent_str=options.indent_python_spaces())
     r = r + code_outro
     r = r + "\n"
     return r
