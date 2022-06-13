@@ -98,8 +98,7 @@ def test_use_function_params_adapter_non_const():
 
                 foo_non_const_adapt_fixed_size_c_arrays(output_0, output_1);
             },
-            py::arg("output_0"),
-            py::arg("output_1")
+            py::arg("output_0"), py::arg("output_1")
         );
     """)
 
@@ -127,10 +126,7 @@ def test_mixture():
 
                     foo_adapt_fixed_size_c_arrays(flag, v, outputs_0, outputs_1);
                 },
-                py::arg("flag"),
-                py::arg("v"),
-                py::arg("outputs_0"),
-                py::arg("outputs_1")
+                py::arg("flag"), py::arg("v"), py::arg("outputs_0"), py::arg("outputs_1")
             );
     """)
 
@@ -156,9 +152,7 @@ def test_mixture_no_replace():
         
                 return foo_adapt_fixed_size_c_arrays(flag, v, outputs);
             },
-            py::arg("flag"),
-            py::arg("v"),
-            py::arg("outputs")
+            py::arg("flag"), py::arg("v"), py::arg("outputs")
         );
     """)
 
@@ -190,14 +184,12 @@ def test_in_method():
         
                         out_0 = out_raw[0];
                         out_1 = out_raw[1];
-        
                         return r;
                     };
         
                     return thing_adapt_fixed_size_c_arrays(out_0, out_1);
                 },
-                py::arg("out_0"),
-                py::arg("out_1")
+                py::arg("out_0"), py::arg("out_1")
             )
-            ;    
+            ;
     """)

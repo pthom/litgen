@@ -192,9 +192,9 @@ def _param_buffer_replaced_by_array(param: CppParameter, options: CodeStyleOptio
         param_type = param.full_type()
         if code_utils.contains_pointer_type(param_type, possible_buffer_type):
             if param_type.strip().startswith("const"):
-                param_new = srcml_types_parse.parse_decl_from_code(options.srcml_options, f"const py::array & {param.variable_name()}", None)
+                param_new = srcml_types_parse.parse_decl_from_code(options.srcml_options, f"const py::array & {param.variable_name()}")
             else:
-                param_new = srcml_types_parse.parse_decl_from_code(options.srcml_options, f"py::array & {param.variable_name()}", None)
+                param_new = srcml_types_parse.parse_decl_from_code(options.srcml_options, f"py::array & {param.variable_name()}")
             return param_new
     return param
 
@@ -358,7 +358,7 @@ def _lambda_params_signature(
 
     if len(parent_struct_name) > 0:
         # new_params.append(CppParameter(type=parent_struct_name + "&", name="self"))
-        new_decl = srcml_types_parse.parse_decl_from_code(options.srcml_options, f"{parent_struct_name} & self", None)
+        new_decl = srcml_types_parse.parse_decl_from_code(options.srcml_options, f"{parent_struct_name} & self")
         new_params.append(new_decl)
 
     idx_param = 0

@@ -124,7 +124,7 @@ def _parse_name(element: ET.Element) -> str:
     return name
 
 
-def parse_decl_from_code(options: SrcmlOptions, code: str, previous_decl: CppDecl) -> CppDecl:
+def parse_decl_from_code(options: SrcmlOptions, code: str) -> CppDecl:
     cpp_unit = srcml_main.code_to_cpp_unit(options, code)
     assert len(cpp_unit.block_children) == 1
     assert cpp_unit.block_children[0].tag() == "decl"

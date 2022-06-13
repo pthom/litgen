@@ -124,8 +124,7 @@ void py_init_module_litgensample(py::module& m)
 
             change_c_array2_adapt_fixed_size_c_arrays(values_0, values_1);
         },
-        py::arg("values_0"),
-        py::arg("values_1")
+        py::arg("values_0"), py::arg("values_1")
     );
 
 
@@ -154,78 +153,159 @@ void py_init_module_litgensample(py::module& m)
 
             GetPoints_adapt_fixed_size_c_arrays(out_0, out_1);
         },
-        py::arg("out_0"),
-        py::arg("out_1")
+        py::arg("out_0"), py::arg("out_1")
     );
 
 
-    m.def("add_inside_array",    // example_library/litgensample.h:65
-        [](py::array & array, uint8_t number_to_add)
+    m.def("add_inside_buffer",    // example_library/litgensample.h:65
+        [](py::array & buffer, uint8_t number_to_add)
         {
-            // convert array (py::array&) to C standard buffer (mutable)
-            void* array_buffer = array.mutable_data();
-            int array_count = array.shape()[0];
-            
-            char array_type = array.dtype().char_();
-            if (array_type != 'B')
-                throw std::runtime_error(std::string(R"msg(
-                        Bad type!  Expected a buffer of native type:
-                                    uint8_t *
-                                Which is equivalent to 
-                                    B
-                                (using py::array::dtype().char_() as an id)
-                    )msg"));
+            auto add_inside_buffer_adapt_c_buffers = [](py::array & buffer, uint8_t number_to_add)
+            {
+                // convert py::array to C standard buffer (mutable)
+                void * buffer_from_pyarray = buffer.mutable_data();
+                py::ssize_t buffer_count = buffer.shape()[0];
+                char buffer_type = buffer.dtype().char_();
+                if (buffer_type != 'B')
+                    throw std::runtime_error(std::string(R"msg(
+                            Bad type!  Expected a numpy array of native type:
+                                        uint8_t *
+                                    Which is equivalent to
+                                        B
+                                    (using py::array::dtype().char_() as an id)
+                        )msg"));
 
-            add_inside_array(static_cast<uint8_t *>(array_buffer), array_count, number_to_add);
+                add_inside_buffer(static_cast<uint8_t *>(buffer_from_pyarray), static_cast<size_t>(buffer_count), number_to_add);
+            };
+
+            add_inside_buffer_adapt_c_buffers(buffer, number_to_add);
         },
-        py::arg("array"),
-        py::arg("number_to_add"),
-        "Modify an array by adding a value to its elements (non template function)"
+        py::arg("buffer"), py::arg("number_to_add"),
+        "Modifies a buffer by adding a value to its elements"
     );
 
 
-    m.def("mul_inside_array",    // example_library/litgensample.h:71
-        [](py::array & array, double factor)
+    m.def("buffer_sum",    // example_library/litgensample.h:71
+        [](const py::array & buffer, int stride = -1)
         {
-            // convert array (py::array&) to C standard buffer (mutable)
-            void* array_buffer = array.mutable_data();
-            int array_count = array.shape()[0];
-            
-            char array_type = array.dtype().char_();
-            if (array_type == 'B')
-                mul_inside_array(static_cast<uint8_t*>(array_buffer), array_count, factor);
-            else if (array_type == 'b')
-                mul_inside_array(static_cast<int8_t*>(array_buffer), array_count, factor);
-            else if (array_type == 'H')
-                mul_inside_array(static_cast<uint16_t*>(array_buffer), array_count, factor);
-            else if (array_type == 'h')
-                mul_inside_array(static_cast<int16_t*>(array_buffer), array_count, factor);
-            else if (array_type == 'I')
-                mul_inside_array(static_cast<uint32_t*>(array_buffer), array_count, factor);
-            else if (array_type == 'i')
-                mul_inside_array(static_cast<int32_t*>(array_buffer), array_count, factor);
-            else if (array_type == 'L')
-                mul_inside_array(static_cast<uint64_t*>(array_buffer), array_count, factor);
-            else if (array_type == 'l')
-                mul_inside_array(static_cast<int64_t*>(array_buffer), array_count, factor);
-            else if (array_type == 'f')
-                mul_inside_array(static_cast<float*>(array_buffer), array_count, factor);
-            else if (array_type == 'd')
-                mul_inside_array(static_cast<double*>(array_buffer), array_count, factor);
-            else if (array_type == 'g')
-                mul_inside_array(static_cast<long double*>(array_buffer), array_count, factor);
+            auto buffer_sum_adapt_c_buffers = [](const py::array & buffer, int stride = -1)
+            {
+                // convert py::array to C standard buffer (const)
+                const void * buffer_from_pyarray = buffer.data();
+                py::ssize_t buffer_count = buffer.shape()[0];
+                char buffer_type = buffer.dtype().char_();
+                if (buffer_type != 'B')
+                    throw std::runtime_error(std::string(R"msg(
+                            Bad type!  Expected a numpy array of native type:
+                                        const uint8_t *
+                                    Which is equivalent to
+                                        B
+                                    (using py::array::dtype().char_() as an id)
+                        )msg"));
 
-            // If we reach this point, the array type is not supported!
-            else
-                throw std::runtime_error(std::string("Bad array type: ") + array_type );
+                // process stride default value (which was a sizeof in C++)
+                int buffer_stride = stride;
+                if (buffer_stride == -1)
+                    buffer_stride = (int)buffer.itemsize();
+
+                auto r = buffer_sum(static_cast<const uint8_t *>(buffer_from_pyarray), static_cast<size_t>(buffer_count), static_cast<size_t>(buffer_stride));
+                return r;
+            };
+
+            return buffer_sum_adapt_c_buffers(buffer, stride);
         },
-        py::arg("array"),
-        py::arg("factor"),
+        py::arg("buffer"), py::arg("stride") = -1,
+        "Returns the sum of a const buffer"
+    );
+
+
+    m.def("add_inside_two_buffers",    // example_library/litgensample.h:79
+        [](py::array & buffer_1, py::array & buffer_2, uint8_t number_to_add)
+        {
+            auto add_inside_two_buffers_adapt_c_buffers = [](py::array & buffer_1, py::array & buffer_2, uint8_t number_to_add)
+            {
+                // convert py::array to C standard buffer (mutable)
+                void * buffer_1_from_pyarray = buffer_1.mutable_data();
+                py::ssize_t buffer_1_count = buffer_1.shape()[0];
+                char buffer_1_type = buffer_1.dtype().char_();
+                if (buffer_1_type != 'B')
+                    throw std::runtime_error(std::string(R"msg(
+                            Bad type!  Expected a numpy array of native type:
+                                        uint8_t *
+                                    Which is equivalent to
+                                        B
+                                    (using py::array::dtype().char_() as an id)
+                        )msg"));
+
+                // convert py::array to C standard buffer (mutable)
+                void * buffer_2_from_pyarray = buffer_2.mutable_data();
+                py::ssize_t buffer_2_count = buffer_2.shape()[0];
+                char buffer_2_type = buffer_2.dtype().char_();
+                if (buffer_2_type != 'B')
+                    throw std::runtime_error(std::string(R"msg(
+                            Bad type!  Expected a numpy array of native type:
+                                        uint8_t *
+                                    Which is equivalent to
+                                        B
+                                    (using py::array::dtype().char_() as an id)
+                        )msg"));
+
+                add_inside_two_buffers(static_cast<uint8_t *>(buffer_1_from_pyarray), static_cast<uint8_t *>(buffer_2_from_pyarray), static_cast<size_t>(buffer_2_count), number_to_add);
+            };
+
+            add_inside_two_buffers_adapt_c_buffers(buffer_1, buffer_2, number_to_add);
+        },
+        py::arg("buffer_1"), py::arg("buffer_2"), py::arg("number_to_add"),
+        "Modifies two buffers"
+    );
+
+
+    m.def("mul_inside_buffer",    // example_library/litgensample.h:90
+        [](py::array & buffer, double factor)
+        {
+            auto mul_inside_buffer_adapt_c_buffers = [](py::array & buffer, double factor)
+            {
+                // convert py::array to C standard buffer (mutable)
+                void * buffer_from_pyarray = buffer.mutable_data();
+                py::ssize_t buffer_count = buffer.shape()[0];
+
+                // call the correct template version by casting
+                char buffer_type = buffer.dtype().char_();
+                if (buffer_type == 'B')
+                    mul_inside_buffer(static_cast<uint8_t *>(buffer_from_pyarray), static_cast<size_t>(buffer_count), factor);
+                else if (buffer_type == 'b')
+                    mul_inside_buffer(static_cast<int8_t *>(buffer_from_pyarray), static_cast<size_t>(buffer_count), factor);
+                else if (buffer_type == 'H')
+                    mul_inside_buffer(static_cast<uint16_t *>(buffer_from_pyarray), static_cast<size_t>(buffer_count), factor);
+                else if (buffer_type == 'h')
+                    mul_inside_buffer(static_cast<int16_t *>(buffer_from_pyarray), static_cast<size_t>(buffer_count), factor);
+                else if (buffer_type == 'I')
+                    mul_inside_buffer(static_cast<uint32_t *>(buffer_from_pyarray), static_cast<size_t>(buffer_count), factor);
+                else if (buffer_type == 'i')
+                    mul_inside_buffer(static_cast<int32_t *>(buffer_from_pyarray), static_cast<size_t>(buffer_count), factor);
+                else if (buffer_type == 'L')
+                    mul_inside_buffer(static_cast<uint64_t *>(buffer_from_pyarray), static_cast<size_t>(buffer_count), factor);
+                else if (buffer_type == 'l')
+                    mul_inside_buffer(static_cast<int64_t *>(buffer_from_pyarray), static_cast<size_t>(buffer_count), factor);
+                else if (buffer_type == 'f')
+                    mul_inside_buffer(static_cast<float *>(buffer_from_pyarray), static_cast<size_t>(buffer_count), factor);
+                else if (buffer_type == 'd')
+                    mul_inside_buffer(static_cast<double *>(buffer_from_pyarray), static_cast<size_t>(buffer_count), factor);
+                else if (buffer_type == 'g')
+                    mul_inside_buffer(static_cast<long double *>(buffer_from_pyarray), static_cast<size_t>(buffer_count), factor);
+                // If we reach this point, the array type is not supported!
+                else
+                    throw std::runtime_error(std::string("Bad array type ('") + buffer_type + "') for param buffer");
+            };
+
+            mul_inside_buffer_adapt_c_buffers(buffer, factor);
+        },
+        py::arg("buffer"), py::arg("factor"),
         "Modify an array by multiplying its elements (template function!)"
     );
 
 
-    m.def("c_string_list_total_size",    // example_library/litgensample.h:81
+    m.def("c_string_list_total_size",    // example_library/litgensample.h:100
         [](const std::vector<std::string> & items, BoxedInt & output_0, BoxedInt & output_1)
         {
             auto c_string_list_total_size_adapt_fixed_size_c_arrays = [](const char * const items[], int items_count, BoxedInt & output_0, BoxedInt & output_1)
@@ -238,7 +318,6 @@ void py_init_module_litgensample(py::module& m)
 
                 output_0.value = output_raw[0];
                 output_1.value = output_raw[1];
-
                 return r;
             };
             auto c_string_list_total_size_adapt_c_string_list = [&c_string_list_total_size_adapt_fixed_size_c_arrays](const std::vector<std::string> & items, BoxedInt & output_0, BoxedInt & output_1)
@@ -254,59 +333,52 @@ void py_init_module_litgensample(py::module& m)
 
             return c_string_list_total_size_adapt_c_string_list(items, output_0, output_1);
         },
-        py::arg("items"),
-        py::arg("output_0"),
-        py::arg("output_1")
+        py::arg("items"), py::arg("output_0"), py::arg("output_1")
     );
 
 
-    m.def("add",    // example_library/litgensample.h:93
+    m.def("add",    // example_library/litgensample.h:112
         [](int a, int b)
         {
             return add(a, b);
         },
-        py::arg("a"),
-        py::arg("b"),
+        py::arg("a"), py::arg("b"),
         "Adds two numbers"
     );
 
 
-    m.def("add",    // example_library/litgensample.h:96
+    m.def("add",    // example_library/litgensample.h:115
         [](int a, int b, int c)
         {
             return add(a, b, c);
         },
-        py::arg("a"),
-        py::arg("b"),
-        py::arg("c"),
+        py::arg("a"), py::arg("b"), py::arg("c"),
         "Adds three numbers, with a surprise"
     );
 
 
-    m.def("sub",    // example_library/litgensample.h:99
+    m.def("sub",    // example_library/litgensample.h:118
         [](int a, int b)
         {
             return sub(a, b);
         },
-        py::arg("a"),
-        py::arg("b")
+        py::arg("a"), py::arg("b")
     );
 
 
-    m.def("mul",    // example_library/litgensample.h:101
+    m.def("mul",    // example_library/litgensample.h:120
         [](int a, int b)
         {
             return mul(a, b);
         },
-        py::arg("a"),
-        py::arg("b")
+        py::arg("a"), py::arg("b")
     );
 
 
 
-    auto pyClassFoo = py::class_<Foo>    // example_library/litgensample.h:104
+    auto pyClassFoo = py::class_<Foo>    // example_library/litgensample.h:123
         (m, "Foo", "A superb struct")
-        .def(py::init<>())    // example_library/litgensample.h:106
+        .def(py::init<>())    // example_library/litgensample.h:125
         .def_property("values",
             [](Foo &self) -> pybind11::array
             {
@@ -321,9 +393,9 @@ void py_init_module_litgensample(py::module& m)
                 auto base = pybind11::array(dtype, {3}, {sizeof(bool)});
                 return pybind11::array(dtype, {3}, {sizeof(bool)}, self.flags, base);
             }, [](Foo& self) {})
-        .def_readwrite("factor", &Foo::factor, "Multiplication factor")    // example_library/litgensample.h:120
-        .def_readwrite("delta", &Foo::delta, "addition factor")    // example_library/litgensample.h:123
-        .def("calc",    // example_library/litgensample.h:130
+        .def_readwrite("factor", &Foo::factor, "Multiplication factor")    // example_library/litgensample.h:139
+        .def_readwrite("delta", &Foo::delta, "addition factor")    // example_library/litgensample.h:142
+        .def("calc",    // example_library/litgensample.h:149
             [](Foo & self, int x)
             {
                 return self.calc(x);
@@ -331,7 +403,7 @@ void py_init_module_litgensample(py::module& m)
             py::arg("x"),
             "Do some math"
         )
-        .def("instance",    // example_library/litgensample.h:132
+        .def("instance",    // example_library/litgensample.h:151
             [](Foo & self)
             {
                 return self.Instance();
@@ -341,7 +413,7 @@ void py_init_module_litgensample(py::module& m)
         )
         ;
 
-    m.def("foo_instance",    // example_library/litgensample.h:135
+    m.def("foo_instance",    // example_library/litgensample.h:154
         []()
         {
             return FooInstance();

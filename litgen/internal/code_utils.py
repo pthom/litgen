@@ -55,7 +55,7 @@ def code_set_max_consecutive_empty_lines(code: str, nb_max_empty: int) -> str:
 
     new_lines = []
     for line, nb in rle:
-        if len(line.strip()) == 0 and nb >= nb_max_empty:
+        if len(line.strip()) == 0 and nb >= nb_max_empty: # noqa
             nb = nb_max_empty
         for i in range(nb):
             new_lines.append(line)
@@ -548,6 +548,10 @@ def var_name_looks_like_size_name(var_name: str, possible_tokens: List[str]) -> 
     for possible_token in possible_tokens:
         if var_name_contains_word(var_name, possible_token):
             return True
+        for number_suffix in range(10):
+            token_with_suffix = possible_token + str(number_suffix)
+            if var_name_contains_word(var_name, token_with_suffix):
+                return True
     return False
 
 
@@ -620,7 +624,7 @@ def replace_in_string(input_string, replacements: Dict[str, str]) -> str:
     return r
 
 
-def replace_in_string_remove_line_if_empty(
+def replace_in_string_remove_line_if_none(
         input_string: str, replacements: Dict[str, str]) -> str:
 
     r = input_string

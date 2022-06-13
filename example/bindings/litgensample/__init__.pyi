@@ -27,21 +27,31 @@ def get_points(out_0: Point2, out_1: Point2) -> None:    # example_library/litge
     pass
 
 
-def add_inside_array(array: int, array_size: int, number_to_add: int) -> None:    # example_library/litgensample.h:65
-    """Modify an array by adding a value to its elements (non template function)"""
+def add_inside_buffer(buffer: numpy.ndarray, number_to_add: int) -> None:    # example_library/litgensample.h:65
+    """Modifies a buffer by adding a value to its elements"""
     pass
 
 
-def mul_inside_array(    # example_library/litgensample.h:71
-    array: numpy.ndarray,
-    array_size: int,
-    factor: float
+def buffer_sum(buffer: numpy.ndarray, stride: int = -1) -> int:    # example_library/litgensample.h:71
+    """Returns the sum of a  buffer"""
+    pass
+
+
+def add_inside_two_buffers(    # example_library/litgensample.h:79
+    buffer_1: numpy.ndarray,
+    buffer_2: numpy.ndarray,
+    number_to_add: int
     ) -> None:
+    """Modifies two buffers"""
+    pass
+
+
+def mul_inside_buffer(buffer: numpy.ndarray, factor: float) -> None:    # example_library/litgensample.h:90
     """Modify an array by multiplying its elements (template function!)"""
     pass
 
 
-def c_string_list_total_size(    # example_library/litgensample.h:81
+def c_string_list_total_size(    # example_library/litgensample.h:100
     items: List[str],
     output_0: BoxedInt,
     output_1: BoxedInt
@@ -49,25 +59,25 @@ def c_string_list_total_size(    # example_library/litgensample.h:81
     pass
 
 
-def add(a: int, b: int) -> int:    # example_library/litgensample.h:93
+def add(a: int, b: int) -> int:    # example_library/litgensample.h:112
     """Adds two numbers"""
     pass
 
 
-def add(a: int, b: int, c: int) -> int:    # example_library/litgensample.h:96
+def add(a: int, b: int, c: int) -> int:    # example_library/litgensample.h:115
     """Adds three numbers, with a surprise"""
     pass
 
 
-def sub(a: int, b: int) -> int:    # example_library/litgensample.h:99
+def sub(a: int, b: int) -> int:    # example_library/litgensample.h:118
     pass
 
 
-def mul(a: int, b: int) -> int:    # example_library/litgensample.h:101
+def mul(a: int, b: int) -> int:    # example_library/litgensample.h:120
     pass
 
 
-def foo_instance() -> Foo:    # example_library/litgensample.h:135
+def foo_instance() -> Foo:    # example_library/litgensample.h:154
     """return_value_policy::reference"""
     pass
 

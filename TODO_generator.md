@@ -1,17 +1,10 @@
 Refactor funct_w_lambda:
-    Main Resp:
-        Faire une lambda
-
-    Other:
-        Adapt buffers 
-            Std / Template / Multiple / Sizeof
-            Variadic args
-
+    Variadic args
 
 
 stub:
     Pb avec buffer -> refactoring necessaire
-        MY_API inline void add_inside_array(uint8_t* array, size_t array_size, uint8_t number_to_add)
+        MY_API inline void add_inside_buffer(uint8_t* array, size_t array_size, uint8_t number_to_add)
                                                             ^should be removed
     Pb avec variadics:
         IMGUI_API void          Text(const char* fmt, ...)                                      IM_FMTARGS(1); // formatted text

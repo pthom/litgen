@@ -39,11 +39,10 @@ def play_pydef(code):
     # options.srcml_options.functions_api_prefixes = ["MY_API"]
     # options.srcml_options.api_suffixes = ["MY_API"]
 
-    # options = litgen.options.CodeStyleOptions()
-    # options.cpp_indent_size = 4
-    # options.cpp_indent_with_tabs = False
+    options = litgen.options.CodeStyleOptions()
+    options.srcml_options.functions_api_prefixes = ["MY_API"]
 
-    options = litgen.code_style_imgui()
+    # options = litgen.code_style_imgui()
 
     options.original_location_flag_show = True
 
@@ -105,7 +104,7 @@ def play_pyi(code):
 # print(pydef_code)
 
 code = """
-template<typename T> IMGUI_API bool foo(T *buffer, const T* buffer2, size_t count, int stride = sizeof(T));
+MY_API inline void GetPoints(Point2 out[2]) { out[0] = {0, 1}; out[1] = {2, 3}; }
 """
 
 play_pydef(code)

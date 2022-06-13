@@ -81,8 +81,7 @@ def test_generate_pydef_function_cpp_code() -> str:
             {
                 SetupAxisFormat(axis, fmt);
             },
-            py::arg("axis"),
-            py::arg("fmt"),
+            py::arg("axis"), py::arg("fmt"),
             "Sets the format of numeric \\naxis labels"
         );
         '''
@@ -125,37 +124,42 @@ def test_generate_pydef_function_cpp_code() -> str:
             m.def("plot_scatter",
                 [](const py::array & values)
                 {
-                    // convert values (py::array&) to C standard buffer (const)
-                    const void* values_buffer = values.data();
-                    int values_count = values.shape()[0];
+                    auto PlotScatter_adapt_c_buffers = [](const py::array & values)
+                    {
+                        // convert py::array to C standard buffer (const)
+                        const void * values_from_pyarray = values.data();
+                        py::ssize_t values_count = values.shape()[0];
             
-                    char array_type = values.dtype().char_();
-                    if (array_type == 'B')
-                        PlotScatter(static_cast<const uint8_t*>(values_buffer), values_count);
-                    else if (array_type == 'b')
-                        PlotScatter(static_cast<const int8_t*>(values_buffer), values_count);
-                    else if (array_type == 'H')
-                        PlotScatter(static_cast<const uint16_t*>(values_buffer), values_count);
-                    else if (array_type == 'h')
-                        PlotScatter(static_cast<const int16_t*>(values_buffer), values_count);
-                    else if (array_type == 'I')
-                        PlotScatter(static_cast<const uint32_t*>(values_buffer), values_count);
-                    else if (array_type == 'i')
-                        PlotScatter(static_cast<const int32_t*>(values_buffer), values_count);
-                    else if (array_type == 'L')
-                        PlotScatter(static_cast<const uint64_t*>(values_buffer), values_count);
-                    else if (array_type == 'l')
-                        PlotScatter(static_cast<const int64_t*>(values_buffer), values_count);
-                    else if (array_type == 'f')
-                        PlotScatter(static_cast<const float*>(values_buffer), values_count);
-                    else if (array_type == 'd')
-                        PlotScatter(static_cast<const double*>(values_buffer), values_count);
-                    else if (array_type == 'g')
-                        PlotScatter(static_cast<const long double*>(values_buffer), values_count);
+                        // call the correct template version by casting
+                        char values_type = values.dtype().char_();
+                        if (values_type == 'B')
+                            PlotScatter(static_cast<const uint8_t *>(values_from_pyarray), static_cast<int>(values_count));
+                        else if (values_type == 'b')
+                            PlotScatter(static_cast<const int8_t *>(values_from_pyarray), static_cast<int>(values_count));
+                        else if (values_type == 'H')
+                            PlotScatter(static_cast<const uint16_t *>(values_from_pyarray), static_cast<int>(values_count));
+                        else if (values_type == 'h')
+                            PlotScatter(static_cast<const int16_t *>(values_from_pyarray), static_cast<int>(values_count));
+                        else if (values_type == 'I')
+                            PlotScatter(static_cast<const uint32_t *>(values_from_pyarray), static_cast<int>(values_count));
+                        else if (values_type == 'i')
+                            PlotScatter(static_cast<const int32_t *>(values_from_pyarray), static_cast<int>(values_count));
+                        else if (values_type == 'L')
+                            PlotScatter(static_cast<const uint64_t *>(values_from_pyarray), static_cast<int>(values_count));
+                        else if (values_type == 'l')
+                            PlotScatter(static_cast<const int64_t *>(values_from_pyarray), static_cast<int>(values_count));
+                        else if (values_type == 'f')
+                            PlotScatter(static_cast<const float *>(values_from_pyarray), static_cast<int>(values_count));
+                        else if (values_type == 'd')
+                            PlotScatter(static_cast<const double *>(values_from_pyarray), static_cast<int>(values_count));
+                        else if (values_type == 'g')
+                            PlotScatter(static_cast<const long double *>(values_from_pyarray), static_cast<int>(values_count));
+                        // If we reach this point, the array type is not supported!
+                        else
+                            throw std::runtime_error(std::string("Bad array type ('") + values_type + "') for param values");
+                    };
             
-                    // If we reach this point, the array type is not supported!
-                    else
-                        throw std::runtime_error(std::string("Bad array type: ") + array_type );
+                    PlotScatter_adapt_c_buffers(values);
                 },
                 py::arg("values"),
                 "Plots a standard 2D scatter plot. Default marker is ImPlotMarker_Circle."
@@ -179,9 +183,7 @@ def test_generate_pydef_function_cpp_code() -> str:
                 {
                     return Image(label_id, mat, params);
                 },
-                py::arg("label_id"),
-                py::arg("mat"),
-                py::arg("params"),
+                py::arg("label_id"), py::arg("mat"), py::arg("params"),
                 "Display an image (requires OpenGL initialized)"
             );
         '''

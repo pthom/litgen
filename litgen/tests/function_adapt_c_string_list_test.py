@@ -53,7 +53,6 @@ def test_mix_array_and_string_list():
         
                     ouput_0.value = ouput_raw[0];
                     ouput_1.value = ouput_raw[1];
-        
                     return r;
                 };
                 auto foo_adapt_c_string_list = [&foo_adapt_fixed_size_c_arrays](const std::vector<std::string> & items, BoxedInt & ouput_0, BoxedInt & ouput_1)
@@ -69,8 +68,6 @@ def test_mix_array_and_string_list():
         
                 return foo_adapt_c_string_list(items, ouput_0, ouput_1);
             },
-            py::arg("items"),
-            py::arg("ouput_0"),
-            py::arg("ouput_1")
-        );    
+            py::arg("items"), py::arg("ouput_0"), py::arg("ouput_1")
+        );
     """)

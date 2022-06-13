@@ -1,7 +1,5 @@
-import copy
 import pathlib
-from typing import List
-from dataclasses import dataclass
+from dataclasses import dataclass # noqa
 from litgen import CodeStyleOptions
 from litgen.internal import code_replacements, code_utils
 from srcmlcpp.srcml_types import *
@@ -58,7 +56,7 @@ def _comment_apply_replacements(comment: str, options: CodeStyleOptions) -> str:
 
     last_line = lines[-1].strip()
     if last_line in options.srcml_options.api_suffixes:
-        lines = lines[ : -1]
+        lines = lines[ : -1] # noqa
         lines = code_utils.strip_empty_lines_in_list(lines)
 
     if len(lines) == 0:
@@ -83,7 +81,7 @@ def docstring_lines(cpp_element_c: CppElementAndComment, options: CodeStyleOptio
 
     lines = docstring.split("\n")
 
-    r = []
+    r = [] # noqa
     r.append(f'''"""''' + lines[0])
     r += lines[1:]
 
@@ -117,7 +115,7 @@ def python_comment_lines(cpp_element_c: CppElementAndComment, options: CodeStyle
         return []
 
     lines = comment.split("\n")
-    lines = list(map(lambda s : "# " + s, lines))
+    lines = list(map(lambda s: "# " + s, lines))
     return lines
 
 
@@ -130,7 +128,7 @@ def type_to_python(type_cpp: str, options: CodeStyleOptions) -> str:
     return code_replacements.apply_code_replacements(type_cpp, options.code_replacements).strip()
 
 
-def var_name_to_python(var_name: str, options: CodeStyleOptions) -> str:
+def var_name_to_python(var_name: str, options: CodeStyleOptions) -> str: # noqa
     return code_utils.to_snake_case(var_name)
 
 
@@ -146,7 +144,7 @@ def decl_python_value(cpp_decl: CppDecl, options: CodeStyleOptions):
     return value_python
 
 
-def function_name_to_python(function_name: str, options: CodeStyleOptions) -> str:
+def function_name_to_python(function_name: str, options: CodeStyleOptions) -> str: # noqa
     return code_utils.to_snake_case(function_name)
 
 
@@ -164,10 +162,9 @@ def default_value_to_python(default_value_cpp: str, options: CodeStyleOptions) -
     # Handle float numbers like 1.0f
     if len(r) >= 2 and r[-1] == "f":
         if is_float_str(r[: -1]):
-            return r[ : -1]
+            return r[: -1]
 
     return r
-
 
 
 def _cpp_type_to_camel_case_no_space(cpp_type: str) -> str:
@@ -293,17 +290,17 @@ Given a py::array, we can get its inner type with a char identifier like this:
 Here is the table of correspondences:
 """
 _PY_ARRAY_TYPE_TO_CPP_TYPE = {
-    'B' : 'uint8_t',
-    'b' : 'int8_t',
-    'H' : 'uint16_t',
-    'h' : 'int16_t',
-    'I' : 'uint32_t',
-    'i' : 'int32_t',
-    'L' : 'uint64_t',
-    'l' : 'int64_t',
-    'f' : 'float',
-    'd' : 'double',
-    'g' : 'long double'
+    'B': 'uint8_t',
+    'b': 'int8_t',
+    'H': 'uint16_t',
+    'h': 'int16_t',
+    'I': 'uint32_t',
+    'i': 'int32_t',
+    'L': 'uint64_t',
+    'l': 'int64_t',
+    'f': 'float',
+    'd': 'double',
+    'g': 'long double'
 }
 
 
@@ -331,9 +328,9 @@ def cpp_type_to_py_array_type(cpp_type: str) -> str:
 
 def _enum_remove_values_prefix(enum_name: str, value_name: str) -> str:
     if value_name.upper().startswith(enum_name.upper() + "_"):
-        return value_name[len(enum_name) + 1 : ]
+        return value_name[len(enum_name) + 1:]
     elif value_name.upper().startswith(enum_name.upper()):
-        return value_name[len(enum_name) : ]
+        return value_name[len(enum_name):]
     else:
         return value_name
 

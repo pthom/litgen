@@ -1481,14 +1481,13 @@ def list_box(    # imgui.h:623
 
 def plot_lines(    # imgui.h:628
     label: str,
-    values: float,
-    values_count: int,
+    values: numpy.ndarray,
     values_offset: int = 0,
     overlay_text: str = None,
     scale_min: float = sys.float_info.max,
     scale_max: float = sys.float_info.max,
     graph_size: ImVec2 = ImVec2(0, 0),
-    stride: int = sizeof(float)
+    stride: int = -1
     ) -> None:
     """Widgets: Data Plotting
     - Consider using ImPlot (https://github.com/epezent/implot) which is much better!
@@ -1498,14 +1497,13 @@ def plot_lines(    # imgui.h:628
 
 def plot_histogram(    # imgui.h:630
     label: str,
-    values: float,
-    values_count: int,
+    values: numpy.ndarray,
     values_offset: int = 0,
     overlay_text: str = None,
     scale_min: float = sys.float_info.max,
     scale_max: float = sys.float_info.max,
     graph_size: ImVec2 = ImVec2(0, 0),
-    stride: int = sizeof(float)
+    stride: int = -1
     ) -> None:
     pass
 

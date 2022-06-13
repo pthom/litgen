@@ -77,8 +77,22 @@ class CodeStyleOptions:
     #       void mul_inside_array(py::array & array, double factor)
     # (and factor will be down-casted to the target type)
     #
+
     buffer_flag_replace_by_array = True
-    buffer_types: List[str] = ["int8_t", "uint8_t"] # of type List[str]. Which means that `uint8_t*` are considered as possible buffers
+    # buffer_types List[str]. Which means that `uint8_t*` are considered as possible buffers
+    buffer_types: List[str] = [
+        "uint8_t",
+        "int8_t",
+        "uint16_t",
+        "int16_t",
+        "uint32_t",
+        "int32_t",
+        "uint64_t",
+        "int64_t",
+        "float",
+        "double",
+        "long double"
+    ]
     buffer_template_types: List[str] = ["T"] # Which means that templated functions using a buffer use T as a templated name
     buffer_size_names: List[str] = ["nb", "size", "count", "total", "n"]
 
@@ -153,7 +167,9 @@ class CodeStyleOptions:
     #
     def assert_buffer_types_are_ok(self):
         # the only authorized type are those for which the size is known with certainty
-        # (except for float, double and long double for which there seems to be no reliable standard)
+        # * int and long are not acceptable candidates: use int8_t, uint_8t, int32_t, etc.
+        # * concerning float and doubles, there is no standard for fixed size floats, so we have to cope with
+        #   float, double and long double and their various platforms implementations...
         authorized_types = [
             'uint8_t',
             'int8_t',

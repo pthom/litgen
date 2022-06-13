@@ -30,14 +30,14 @@ namespace LiterateGeneratorExample
     MY_API inline int add(int a, int b, int c) { return a + b + c + 4; }
 
     // Modify an array by multiplying its elements (template function!)
-    MY_API template<typename T> void mul_inside_array(T* array, size_t array_size, double factor)
+    MY_API template<typename T> void mul_inside_buffer(T* array, size_t array_size, double factor)
     {
         for (size_t i  = 0; i < array_size; ++i)
             array[i] *= (T)factor;
     }
     
     // Modify an array by adding a value to its elements (*non* template function)
-    MY_API inline void add_inside_array(uint8_t* array, size_t array_size, uint8_t number_to_add)
+    MY_API inline void add_inside_buffer(uint8_t* array, size_t array_size, uint8_t number_to_add)
     {
         for (size_t i  = 0; i < array_size; ++i)
             array[i] += number_to_add;
@@ -118,10 +118,10 @@ def add(a: int, b: int) -> int:
 def add(a: int, b: int, c: int) -> int:
     """Adds three numbers, with a surprise
     """
-def add_inside_array(array: numpy.ndarray, number_to_add: int) -> None:
+def add_inside_buffer(array: numpy.ndarray, number_to_add: int) -> None:
     """Modify an array by adding a value to its elements (non template function)
     """
-def mul_inside_array(array: numpy.ndarray, factor: float) -> None:
+def mul_inside_buffer(array: numpy.ndarray, factor: float) -> None:
     """Modify an array by multiplying its elements (template function!)
     """
 def sub(a: int, b: int) -> int:
@@ -174,12 +174,12 @@ add(...) method of builtins.PyCapsule instance
 7
 
 
->>> help(litgensample.mul_inside_array)
+>>> help(litgensample.mul_inside_buffer)
 """
-Help on built-in function mul_inside_array in module litgensample:
+Help on built-in function mul_inside_buffer in module litgensample:
 
-mul_inside_array(...) method of builtins.PyCapsule instance
-    mul_inside_array(array: numpy.ndarray, factor: float) -> None
+mul_inside_buffer(...) method of builtins.PyCapsule instance
+    mul_inside_buffer(array: numpy.ndarray, factor: float) -> None
 
     Modify an array by adding a value to its elements (template function!)
 """
@@ -190,13 +190,13 @@ mul_inside_array(...) method of builtins.PyCapsule instance
 array([1, 1, 1, 1, 1, 1, 1, 1, 1, 1], dtype=int32)
 
 >>> # We can use the templated array function with almost any type
->>> litgensample.mul_inside_array(a, 10)
+>>> litgensample.mul_inside_buffer(a, 10)
 >>> a
 array([10, 10, 10, 10, 10, 10, 10, 10, 10, 10], dtype=int32)
 
 >>> # If we use the non templated array function with bad element types
 >>> # we are informed with a nice message
->>> litgensample.add_inside_array(a, 10)
+>>> litgensample.add_inside_buffer(a, 10)
 Traceback (most recent call last):
     File "<stdin>", line 1, in <module>
 RuntimeError:
@@ -322,7 +322,7 @@ void py_init_module_litgensample(py::module& m)
     );
 
 
-    m.def("add_inside_array",
+    m.def("add_inside_buffer",
         [](py::array & array, uint8_t number_to_add)
         {
             // convert array (py::array&) to C standard buffer (mutable)
@@ -338,7 +338,7 @@ void py_init_module_litgensample(py::module& m)
                                     B
                                 (using py::array::dtype().char_() as an id)
                     )msg"));
-            { add_inside_array(static_cast<uint8_t*>(array_buffer), array_count, number_to_add); return; }
+            { add_inside_buffer(static_cast<uint8_t*>(array_buffer), array_count, number_to_add); return; }
         },
         py::arg("array"),
         py::arg("number_to_add"),
@@ -346,7 +346,7 @@ void py_init_module_litgensample(py::module& m)
     );
 
 
-    m.def("mul_inside_array",
+    m.def("mul_inside_buffer",
         [](py::array & array, double factor)
         {
             // convert array (py::array&) to C standard buffer (mutable)
@@ -355,27 +355,27 @@ void py_init_module_litgensample(py::module& m)
             
             char array_type = array.dtype().char_();
             if (array_type == 'B')
-                { mul_inside_array(static_cast<uint8_t*>(array_buffer), array_count, factor); return; }
+                { mul_inside_buffer(static_cast<uint8_t*>(array_buffer), array_count, factor); return; }
             if (array_type == 'b')
-                { mul_inside_array(static_cast<int8_t*>(array_buffer), array_count, factor); return; }
+                { mul_inside_buffer(static_cast<int8_t*>(array_buffer), array_count, factor); return; }
             if (array_type == 'H')
-                { mul_inside_array(static_cast<uint16_t*>(array_buffer), array_count, factor); return; }
+                { mul_inside_buffer(static_cast<uint16_t*>(array_buffer), array_count, factor); return; }
             if (array_type == 'h')
-                { mul_inside_array(static_cast<int16_t*>(array_buffer), array_count, factor); return; }
+                { mul_inside_buffer(static_cast<int16_t*>(array_buffer), array_count, factor); return; }
             if (array_type == 'I')
-                { mul_inside_array(static_cast<uint32_t*>(array_buffer), array_count, factor); return; }
+                { mul_inside_buffer(static_cast<uint32_t*>(array_buffer), array_count, factor); return; }
             if (array_type == 'i')
-                { mul_inside_array(static_cast<int32_t*>(array_buffer), array_count, factor); return; }
+                { mul_inside_buffer(static_cast<int32_t*>(array_buffer), array_count, factor); return; }
             if (array_type == 'L')
-                { mul_inside_array(static_cast<uint64_t*>(array_buffer), array_count, factor); return; }
+                { mul_inside_buffer(static_cast<uint64_t*>(array_buffer), array_count, factor); return; }
             if (array_type == 'l')
-                { mul_inside_array(static_cast<int64_t*>(array_buffer), array_count, factor); return; }
+                { mul_inside_buffer(static_cast<int64_t*>(array_buffer), array_count, factor); return; }
             if (array_type == 'f')
-                { mul_inside_array(static_cast<float*>(array_buffer), array_count, factor); return; }
+                { mul_inside_buffer(static_cast<float*>(array_buffer), array_count, factor); return; }
             if (array_type == 'd')
-                { mul_inside_array(static_cast<double*>(array_buffer), array_count, factor); return; }
+                { mul_inside_buffer(static_cast<double*>(array_buffer), array_count, factor); return; }
             if (array_type == 'g')
-                { mul_inside_array(static_cast<long double*>(array_buffer), array_count, factor); return; }
+                { mul_inside_buffer(static_cast<long double*>(array_buffer), array_count, factor); return; }
 
             // If we arrive here, the array type is not supported!
             throw std::runtime_error(std::string("Bad array type: ") + array_type );
