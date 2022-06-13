@@ -83,6 +83,13 @@ def standard_replacements() -> List[StringReplacement]:
     \bvoid\b -> None    
     \bNULL\b -> None
     \bnullptr\b -> None
+
+    \bFLT_MIN\b -> sys.float_info.min
+    \bFLT_MAX\b -> sys.float_info.max
+    \bDBL_MIN\b -> sys.float_info.min
+    \bDBL_MAX\b -> sys.float_info.max
+    \bLDBL_MIN\b -> sys.float_info.min
+    \bLDBL_MAX\b -> sys.float_info.max
     
     \bpy::array\b -> numpy.ndarray
     \bT\b -> numpy.ndarray
