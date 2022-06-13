@@ -7,13 +7,13 @@ from srcmlcpp.srcml_types import CppFunctionDecl
 @dataclass
 class CppFunctionDeclWithAdaptedParams:
     function_infos: CppFunctionDecl
-    cpp_adapter_code: str
-    lambda_to_call: str
+    cpp_adapter_code: str = None
+    lambda_to_call: str = None
 
     def __init__(self, function_infos: CppFunctionDecl):
         self.function_infos = function_infos
-        self.cpp_adapter_code = ""
-        self.lambda_to_call = ""
+        self.cpp_adapter_code = None
+        self.lambda_to_call = None
 
 
 class LambdaAdapter:

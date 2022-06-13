@@ -47,10 +47,10 @@ def play_pydef(code):
 
     options.original_location_flag_show = True
 
-    from srcmlcpp import srcml_utils
-    xml = srcmlcpp.code_to_srcml(code, dump_positions=False)
-    # print(srcml_utils.srcml_to_str_readable(xml))
-    print(srcml_utils.srcml_to_str(xml))
+    # from srcmlcpp import srcml_utils
+    # xml = srcmlcpp.code_to_srcml(code, dump_positions=False)
+    # # print(srcml_utils.srcml_to_str_readable(xml))
+    # print(srcml_utils.srcml_to_str(xml))
 
     pydef_code = litgen.generate_pydef(code, options, add_boxed_types_definitions=True)
     print(f">>>\n{pydef_code}<<<")
@@ -105,7 +105,7 @@ def play_pyi(code):
 # print(pydef_code)
 
 code = """
-    IMGUI_API void          TextV(const char* fmt, va_list args)                            IM_FMTLIST(1);
+IMGUI_API void foo(uint8_t *buffer, size_t count);
 """
 
-play_pyi(code)
+play_pydef(code)

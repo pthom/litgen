@@ -1,3 +1,4 @@
+import copy
 import logging
 import os, sys; _THIS_DIR = os.path.dirname(__file__); sys.path = [_THIS_DIR + "/.."] + sys.path
 
@@ -161,51 +162,173 @@ def _generate_pydef_function_impl(
         parent_struct_name: str = ""
     ) -> str:
 
-    _i_ = options.indent_cpp_spaces()
+    def new_version():
+        template_code = """
+{module_or_class}.def("{function_name}",{location}
+{_i_}[]({params_call_with_self_if_method})
+{_i_}{
+{_i_}{_i_}{lambda_adapter_code}
+{maybe_empty_line}
+{_i_}{_i_}{return_or_nothing}{self_prefix}{function_to_call}({params_call_inner});
+{_i_}}{maybe_comma}
+{_i_}{maybe_py_arg}{maybe_comma}
+{_i_}{maybe_docstring}{maybe_comma}
+{_i_}{maybe_return_value_policy}{maybe_comma}
+){semicolon_if_not_method}"""[1:]
 
-    function_infos = function_adapted_params.function_infos
-    return_value_policy = _function_return_value_policy(function_infos)
+        function_infos = function_adapted_params.function_infos
+        is_method = len(parent_struct_name) > 0
 
-    is_method = len(parent_struct_name) > 0
+        # fill _i_
+        _i_ = options.indent_cpp_spaces()
 
-    fn_name_python = cpp_to_python.function_name_to_python(function_infos.name, options)
-    location = info_original_location_cpp(function_infos, options)
+        # fill module_or_class, function_name, location
+        module_or_class = "" if is_method else "m"
+        function_name = cpp_to_python.function_name_to_python(function_infos.name, options)
+        location = info_original_location_cpp(function_infos, options)
 
-    module_str = "" if is_method else "m"
+        # fill params_call_with_self_if_method
+        fn_parameters = copy.deepcopy(function_infos.parameter_list.parameters)
+        if is_method:
+            fn_parameters = [f"{parent_struct_name}& self"] + fn_parameters
+        params_call_with_self_if_method = types_names_default_for_signature_parameters_list(fn_parameters)
 
-    code_lines: List[str] = []
-    code_lines += [f'{module_str}.def("{fn_name_python}",{location}']
-    lambda_code = make_function_wrapper_lambda_impl(function_adapted_params, options, parent_struct_name)
-    lambda_code = code_utils.indent_code(lambda_code, indent_str=_i_)
-    code_lines += lambda_code.split("\n")
+        # Fill params_call_inner
+        params_call_inner = function_infos.parameter_list.names_only_for_call()
 
-    pyarg_str = code_utils.indent_code(pyarg_code(function_infos, options),indent_str=options.indent_cpp_spaces())
-    if len(pyarg_str) > 0:
-        code_lines += pyarg_str.split("\n")
+        # fill lambda_adapter_code
+        lambda_adapter_code = function_adapted_params.cpp_adapter_code
+        if lambda_adapter_code is not None:
+            lambda_adapter_code = code_utils.indent_code(
+                lambda_adapter_code, indent_str=options.indent_cpp_spaces() * 2, skip_first_line=True)
+            if lambda_adapter_code[-1] == "\n":
+                lambda_adapter_code = lambda_adapter_code[:-1]
 
-    #  comment
-    comment_cpp =  cpp_to_python.docstring_python_one_line(function_infos.cpp_element_comments.full_comment(), options)
-    if len(comment_cpp) == 0:
-        # remove last "," from last line since there is no comment that follows
-        if code_lines[-1].endswith(","):
-            code_lines[-1] = code_lines[-1][ : -1]
-    else:
-        code_lines += [f'{_i_}"{comment_cpp}"']
+        # fill maybe_empty_line, return_or_nothing, self_prefix, semicolon_if_not_method
+        maybe_empty_line = "" if lambda_adapter_code is not None else None
+        return_or_nothing = "return " if function_infos.full_return_type(options.srcml_options) != "void" else ""
+        self_prefix = "self." if (is_method and function_adapted_params.lambda_to_call is not None) else ""
+        semicolon_if_not_method = ";" if not is_method else ""
 
-    # Return value policy
-    if len(return_value_policy) > 0:
-        code_lines[-1] += ","
-        code_lines += [f"{_i_}pybind11::return_value_policy::{return_value_policy}"]
+        # fill function_to_call
+        function_to_call = (
+            function_adapted_params.lambda_to_call if function_adapted_params.lambda_to_call is not None
+                else function_infos.name)
 
-    # Ending
-    if is_method:
-        code_lines += ")"
-    else:
-        code_lines += [');']
+        # fill maybe_py_arg
+        pyarg_codes = pyarg_code_list(function_infos, options)
+        if len(pyarg_codes) > 0:
+            maybe_py_arg = ", ".join(pyarg_codes)
+        else:
+            maybe_py_arg = None
 
-    code = "\n".join(code_lines)
-    code = code + "\n"
-    return code
+        # fill maybe_docstring
+        maybe_docstring = function_infos.cpp_element_comments.full_comment()
+        if len(maybe_docstring) == 0:
+            maybe_docstring = None
+        else:
+            maybe_docstring = '"' + code_utils.format_cpp_comment_on_one_line(maybe_docstring) + '"'
+
+        # Fill maybe_return_value_policy
+        return_value_policy = _function_return_value_policy(function_infos)
+        if len(return_value_policy) > 0:
+            maybe_return_value_policy = f"pybind11::return_value_policy::{return_value_policy}"
+        else:
+            maybe_return_value_policy = None
+
+        # Apply simple replacements
+        template_code = code_utils.replace_in_string(
+            template_code,
+            {
+                "_i_": _i_,
+                "module_or_class":module_or_class,
+                "function_name":function_name,
+                "location":location,
+                "params_call_with_self_if_method": params_call_with_self_if_method,
+                "return_or_nothing":return_or_nothing,
+                "semicolon_if_not_method": semicolon_if_not_method,
+                "self_prefix": self_prefix,
+                "function_to_call": function_to_call,
+                "params_call_inner": params_call_inner,
+            })
+
+        # Apply replacements with possible line removal
+        template_code = code_utils.replace_in_string_remove_line_if_empty(
+            template_code, {
+                "lambda_adapter_code": lambda_adapter_code,
+                "maybe_empty_line": maybe_empty_line,
+                "maybe_docstring": maybe_docstring,
+                "maybe_return_value_policy": maybe_return_value_policy,
+                "maybe_py_arg": maybe_py_arg,
+            })
+
+        # Process maybe_comma
+        lines = template_code.split("\n")
+        new_lines = []
+        for i, line in enumerate(lines):
+            if "{maybe_comma}" in line:
+                if i == len(lines) - 2:
+                    line = line.replace("{maybe_comma}", "")
+                else:
+                    line = line.replace("{maybe_comma}", ",")
+            new_lines.append(line)
+        template_code = "\n".join(new_lines) + "\n"
+
+        return template_code
+
+    def old_version():
+        function_infos = function_adapted_params.function_infos
+        return_value_policy = _function_return_value_policy(function_infos)
+
+        # fill _i_
+        _i_ = options.indent_cpp_spaces()
+
+        function_infos = function_adapted_params.function_infos
+        return_value_policy = _function_return_value_policy(function_infos)
+
+        is_method = len(parent_struct_name) > 0
+
+        fn_name_python = cpp_to_python.function_name_to_python(function_infos.name, options)
+        location = info_original_location_cpp(function_infos, options)
+
+        module_str = "" if is_method else "m"
+
+        code_lines: List[str] = []
+        code_lines += [f'{module_str}.def("{fn_name_python}",{location}']
+        lambda_code = make_function_wrapper_lambda_impl(function_adapted_params, options, parent_struct_name)
+        lambda_code = code_utils.indent_code(lambda_code, indent_str=_i_)
+        code_lines += lambda_code.split("\n")
+
+        pyarg_str = code_utils.indent_code(pyarg_code(function_infos, options),indent_str=options.indent_cpp_spaces())
+        if len(pyarg_str) > 0:
+            code_lines += pyarg_str.split("\n")
+
+        #  comment
+        comment_cpp =  cpp_to_python.docstring_python_one_line(function_infos.cpp_element_comments.full_comment(), options)
+        if len(comment_cpp) == 0:
+            # remove last "," from last line since there is no comment that follows
+            if code_lines[-1].endswith(","):
+                code_lines[-1] = code_lines[-1][ : -1]
+        else:
+            code_lines += [f'{_i_}"{comment_cpp}"']
+
+        # Return value policy
+        if len(return_value_policy) > 0:
+            code_lines[-1] += ","
+            code_lines += [f"{_i_}pybind11::return_value_policy::{return_value_policy}"]
+
+        # Ending
+        if is_method:
+            code_lines += ")"
+        else:
+            code_lines += [');']
+
+        code = "\n".join(code_lines)
+        code = code + "\n"
+        return code
+
+    # return old_version()
+    return new_version()
 
 
 #################################

@@ -38,7 +38,7 @@ def apply_lambda_adapter(
     lambda_captures_list = []
 
     is_method = len(parent_struct_name) > 0
-    if len(function_adapted_params.lambda_to_call) > 0:
+    if function_adapted_params.lambda_to_call is not None:
         lambda_captures_list.append("&" + function_adapted_params.lambda_to_call)
     elif is_method:
         lambda_captures_list.append("&self")
@@ -56,7 +56,7 @@ def apply_lambda_adapter(
     capture_return_code = "" if fn_return_type == "void" else "auto r = "
 
     # Which function to call: either the last lambda, or the original function, or the original method
-    if len(function_adapted_params.lambda_to_call) > 0:
+    if function_adapted_params.lambda_to_call is not None:
         function_or_lambda_to_call = function_adapted_params.lambda_to_call
     else:
         if is_method:
@@ -75,6 +75,9 @@ def apply_lambda_adapter(
         lambda_code += f"{_i_}return r;\n"
     lambda_code += "};\n"
 
-    function_adapted_params.cpp_adapter_code += lambda_code
+    if function_adapted_params.cpp_adapter_code is None:
+        function_adapted_params.cpp_adapter_code = lambda_code
+    else:
+        function_adapted_params.cpp_adapter_code += lambda_code
     function_adapted_params.function_infos = lambda_adapter.new_function_infos
     function_adapted_params.lambda_to_call = lambda_adapter.lambda_name

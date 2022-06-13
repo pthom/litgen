@@ -221,7 +221,7 @@ def _make_call_function(function_adapted: CppFunctionDeclWithAdaptedParams, is_m
     return_str1 = "" if function_return_type == "void" else "return "
 
     self_prefix = ""
-    if is_method and len(function_adapted.lambda_to_call) == 0:
+    if is_method and function_adapted.lambda_to_call is None:
         self_prefix = "self."
 
     code_lines = []
@@ -274,7 +274,7 @@ def _make_call_function(function_adapted: CppFunctionDeclWithAdaptedParams, is_m
         if len(code_lines) > 0:
             code_lines.append("")
 
-        if len(function_adapted.lambda_to_call) > 0:
+        if function_adapted.lambda_to_call is not None:
             function_to_call = function_adapted.lambda_to_call
         else:
             function_to_call = function_adapted.function_infos.name
@@ -484,7 +484,7 @@ def make_function_wrapper_lambda_impl(
     add_line("{")
 
     is_method = len(parent_struct_name) > 0
-    if len(function_adapted.cpp_adapter_code) > 0:
+    if function_adapted.cpp_adapter_code is not None:
         code_lines += code_utils.indent_code(
             function_adapted.cpp_adapter_code, indent_str=options.indent_cpp_spaces()).split("\n")
     code_lines += _template_body_code(function_adapted, is_method, options)

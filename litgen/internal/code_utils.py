@@ -1,6 +1,6 @@
 import os.path
 import re
-from typing import List, Optional, Iterable, TypeVar, Tuple
+from typing import List, Optional, Iterable, TypeVar, Tuple, Dict
 import itertools
 import logging
 import difflib
@@ -608,3 +608,31 @@ def make_regex_any_variable_starting_with(what_to_find: str) -> str:
 def merge_dicts(dict1, dict2):
     res = {**dict1, **dict2}
     return res
+
+
+def replace_in_string(input_string, replacements: Dict[str, str]) -> str:
+    r = input_string
+    for search, replace in replacements.items():
+        full_search = "{" + search + "}"
+        r = r.replace(full_search, replace)
+    return r
+
+
+def replace_in_string_remove_line_if_empty(
+        input_string: str, replacements: Dict[str, str]) -> str:
+
+    r = input_string
+
+    for search, replace in replacements.items():
+        if replace is None:
+            lines = r.split("\n")
+            new_lines = []
+            for line in lines:
+                if "{" + search + "}" not in line:
+                    new_lines.append(line)
+            r = "\n".join(new_lines)
+        else:
+            full_search = "{" + search + "}"
+            r = r.replace(full_search, replace)
+
+    return r
