@@ -481,10 +481,6 @@ class CppDecl(CppElementAndComment):
         r = self.str_commented()
         return r
 
-    def look_like_size_name(self):
-        r = code_utils.var_name_looks_like_size_name(self.name)
-        return r
-
     def is_c_string_list_ptr(self):
         """
         Returns true if this decl looks like a const C string double pointer.
@@ -685,7 +681,7 @@ class CppParameter(CppElement):
         return self.decl.init
 
     def variable_name(self):
-        return self.decl.name
+        return self.decl.name_without_array()
 
 
 def types_names_default_for_signature_parameters_list(parameters: List[CppParameter]) -> str:

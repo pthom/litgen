@@ -5,7 +5,10 @@ import itertools
 import logging
 import difflib
 import traceback
+"""Low level code utilities
 
+Note: This module shall work standalone, and not depend on anything inside litgen or srcmlcpp! 
+"""
 
 T = TypeVar('T')
 
@@ -541,8 +544,7 @@ def contains_word_boundary_left_only(where_to_search: str, word: str):
     return does_match_regex(regex_str, where_to_search)
 
 
-def var_name_looks_like_size_name(var_name: str) -> bool:
-    possible_tokens = ["nb", "size", "count", "total", "n"]
+def var_name_looks_like_size_name(var_name: str, possible_tokens: List[str]) -> bool:
     for possible_token in possible_tokens:
         if var_name_contains_word(var_name, possible_token):
             return True

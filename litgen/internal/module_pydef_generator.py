@@ -327,8 +327,8 @@ def _generate_pydef_function_impl(
         code = code + "\n"
         return code
 
-    # return old_version()
-    return new_version()
+    return old_version()
+    # return new_version()
 
 
 #################################

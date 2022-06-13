@@ -48,16 +48,3 @@ def test_is_c_string_list_ptr():
     assert not to_decl("const unsigned char ** items").is_c_string_list_ptr()
 
 
-def look_like_size_name():
-    assert to_decl("int count").look_like_size_name()
-    assert to_decl("int items_count").look_like_size_name()
-    assert to_decl("int count_items").look_like_size_name()
-    assert not to_decl("int countitems").look_like_size_name()
-
-    assert to_decl("int n").look_like_size_name()
-    assert not to_decl("int nn").look_like_size_name()
-    assert to_decl("int n_items").look_like_size_name()
-    assert to_decl("int items_nb").look_like_size_name()
-
-    assert to_decl("int countItems").look_like_size_name()
-    assert to_decl("int nbItems").look_like_size_name()

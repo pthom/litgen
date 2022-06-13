@@ -105,7 +105,7 @@ def play_pyi(code):
 # print(pydef_code)
 
 code = """
-IMGUI_API void foo(uint8_t *buffer, size_t count);
+template<typename T> IMGUI_API bool foo(T *buffer, const T* buffer2, size_t count, int stride = sizeof(T));
 """
 
 play_pydef(code)

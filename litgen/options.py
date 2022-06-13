@@ -80,12 +80,7 @@ class CodeStyleOptions:
     buffer_flag_replace_by_array = True
     buffer_types: List[str] = ["int8_t", "uint8_t"] # of type List[str]. Which means that `uint8_t*` are considered as possible buffers
     buffer_template_types: List[str] = ["T"] # Which means that templated functions using a buffer use T as a templated name
-    buffer_size_regexes: List[str] = [
-        make_regex_any_variable_ending_with("count"),   # any variable name ending with count or Count
-        make_regex_any_variable_starting_with("count"), # any variable name starting with count or Count
-        make_regex_any_variable_ending_with("size"),
-        make_regex_any_variable_starting_with("size"),
-    ]
+    buffer_size_names: List[str] = ["nb", "size", "count", "total", "n"]
 
     #
     # C style arrays functions and methods parameters

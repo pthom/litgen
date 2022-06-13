@@ -83,7 +83,7 @@ def _looks_like_param_buffer_template_or_not(param: CppParameter, options: CodeS
 
 
 def _looks_like_buffer_size_name(param: CppParameter, options: CodeStyleOptions) -> bool:
-    return code_utils.does_match_regexes(options.buffer_size_regexes, param.variable_name())
+    return code_utils.var_name_looks_like_size_name(param.variable_name(), options.buffer_size_names)
 
 
 def is_buffer_size_name_at_idx(params: CppParameterList, options: CodeStyleOptions, idx_param: int) -> bool:
@@ -238,7 +238,7 @@ def _make_call_function(function_adapted: CppFunctionDeclWithAdaptedParams, is_m
             code_lines.append(f"{_i_}{if_cmd} (array_type == '{py_array_type}')")
             attrs_function_call = _lambda_params_call(params, options, cast_type)
 
-            if len(function_adapted.lambda_to_call) > 0:
+            if function_adapted.lambda_to_call is not None:
                 function_to_call = function_adapted.lambda_to_call
             else:
                 function_to_call = function_adapted.function_infos.name

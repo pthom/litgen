@@ -4,14 +4,11 @@ from typing import List
 from dataclasses import dataclass
 from litgen import CodeStyleOptions
 from litgen.internal import code_replacements, code_utils
-from srcmlcpp.srcml_types import CppElement, CppElementAndComment, CppDecl, CppEnum, CppComment
+from srcmlcpp.srcml_types import *
 from srcmlcpp import srcml_main
 
 """
-Apply some replacements when going from c++ to Python:
-- CamelCase to snake_case
-- double -> float, void -> None, etc.
-
+Code utilities for transcription from C++ to Python
 """
 
 
@@ -363,7 +360,7 @@ def enum_element_is_count(enum: CppEnum, enum_element: CppDecl, options: CodeSty
     is_class_enum = enum.type == "class"
     value_name = enum_element.name_without_array()
 
-    if not code_utils.var_name_looks_like_size_name(value_name):
+    if not code_utils.var_name_looks_like_size_name(value_name, options.buffer_size_names):
         return False
 
     if is_class_enum:
@@ -371,3 +368,8 @@ def enum_element_is_count(enum: CppEnum, enum_element: CppDecl, options: CodeSty
     else:
         has_enum_name_part = code_utils.var_name_contains_word(value_name.lower(), enum.name.lower())
         return has_enum_name_part
+
+
+def looks_like_size_param(param_c: CppParameter, options: CodeStyleOptions):
+    r = code_utils.var_name_looks_like_size_name(param_c.decl.name_without_array(), options.buffer_size_names)
+    return r

@@ -143,7 +143,7 @@ def test_mixture_no_replace():
     code = """MY_API void foo(bool flag, const double v[2], double outputs[2]);"""
     function_decl = get_first_function_decl(code)
     generated_code = module_pydef_generator._generate_pydef_function(function_decl, options)
-
+    # logging.warning("\n" + generated_code)
     code_utils.assert_are_codes_equal(generated_code, """
         m.def("foo",
             [](bool flag, const std::array<double, 2>& v, double outputs[2])
@@ -153,12 +153,12 @@ def test_mixture_no_replace():
                     auto r = foo(flag, v.data(), outputs);
                     return r;
                 };
-
-                return foo_adapt_fixed_size_c_arrays(flag, v, outputs[2]);
+        
+                return foo_adapt_fixed_size_c_arrays(flag, v, outputs);
             },
             py::arg("flag"),
             py::arg("v"),
-            py::arg("outputs[2]")
+            py::arg("outputs")
         );
     """)
 
