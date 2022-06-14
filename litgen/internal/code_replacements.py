@@ -104,7 +104,7 @@ def standard_replacements() -> List[StringReplacement]:
 def apply_one_replacement(s: str, replacement: StringReplacement):
     regex = replacement.replace_what
     subst = replacement.by_what
-    r, nb = re.subn(regex, subst , s)
+    r, nb = re.subn(regex, subst, s)
     return r
 
 

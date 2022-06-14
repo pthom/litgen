@@ -1,6 +1,6 @@
-import os, sys; THIS_DIR = os.path.dirname(__file__); sys.path = [THIS_DIR + "/.."] + sys.path
+import os, sys; THIS_DIR = os.path.dirname(__file__); sys.path = [THIS_DIR + "/.."] + sys.path # noqa
 import litgen
-import srcmlcpp
+
 
 THIS_DIR = os.path.dirname(__file__)
 CPP_HEADERS_DIR = THIS_DIR + "/imgui"
@@ -16,7 +16,7 @@ def my_code_style_options():
 
 
 def autogenerate():
-    input_cpp_header =  CPP_HEADERS_DIR + "/imgui.h"
+    input_cpp_header = CPP_HEADERS_DIR + "/imgui.h"
     output_cpp_module = CPP_GENERATED_PYBIND_DIR + "/pybind_imgui.cpp"
     output_stub_pyi_file = CPP_GENERATED_PYBIND_DIR + "/lg_imgui/__init__.pyi"
 

@@ -112,7 +112,7 @@ class CppElement:
         name_children = srcml_utils.children_with_tag(self.srcml_element, "name")
         return len(name_children) == 1
 
-    def name(self) -> str:
+    def name(self) -> Optional[str]:
         if not self.has_name():
             return None
         name_element = srcml_utils.child_with_tag(self.srcml_element, "name")
@@ -511,7 +511,7 @@ class CppDecl(CppElementAndComment):
         """
         return "[" in self.name and self.name.endswith("]")
 
-    def name_c_array(self) -> bool:
+    def name_c_array(self) -> str:
         """
         If this decl is a c array, return the param name, e.g. for
             int v[4]
@@ -537,7 +537,7 @@ class CppDecl(CppElementAndComment):
         except ValueError:
             return None
 
-    def c_array_size_str(self) -> str:
+    def c_array_size_str(self) -> Optional[str]:
         if "[" not in self.name:
             return None
         pos = self.name.index("[")
@@ -658,7 +658,7 @@ class CppParameter(CppElement):
     template_type: CppType = None  # This is only for template's CppParameterList
     template_name: str = ""
 
-    def __init__(self, element: CppElement):
+    def __init__(self, element: ET.Element):
         super().__init__(element)
 
     def str_code(self):
@@ -697,7 +697,7 @@ class CppParameterList(CppElement):
     """
     parameters: List[CppParameter] = None
 
-    def __init__(self, element: CppElement):
+    def __init__(self, element: ET.Element):
         super().__init__(element)
         self.parameters = []
 
@@ -729,7 +729,7 @@ class CppTemplate(CppElement):
     """
     parameter_list: CppParameterList = None
 
-    def __init__(self, element: CppElement):
+    def __init__(self, element: ET.Element):
         super().__init__(element)
         self.parameter_list: List[CppParameterList] = []
 
@@ -896,7 +896,7 @@ class CppSuperList(CppElement):
         self.super_list: List[CppSuper] = []
 
     def str_code(self):
-        strs = map(str, self.super_list)
+        strs = list(map(str, self.super_list))
         return " : " + code_utils.join_remove_empty(", ", strs)
 
     def __str__(self):

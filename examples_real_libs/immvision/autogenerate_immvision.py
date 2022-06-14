@@ -4,9 +4,6 @@ import sys
 THIS_DIR = os.path.dirname(__file__)
 sys.path.append(THIS_DIR + "/../py-mahi-gui/scripts/code_parser")
 import time
-import code_generator
-import code_utils
-import options_immvision
 
 
 REPO_DIR = os.path.realpath(THIS_DIR + "/../..")

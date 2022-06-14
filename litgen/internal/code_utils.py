@@ -15,16 +15,16 @@ T = TypeVar('T')
 
 # transform a list into a list of adjacent pairs
 # For example : [a, b, c] -> [ [a, b], [b, c]]
-def overlapping_pairs(iterable : Iterable[T]) -> Tuple[T, T]:
+def overlapping_pairs(iterable: Iterable[T]) -> Tuple[T, T]:
     it = iter(iterable)
-    a= next(it, None)
-    b = None
+    a = next(it, None)
+    b = None # noqa
     for b in it:
         yield a, b
         a = b
 
 
-def run_length_encode(in_list: List[T]) -> List[Tuple[int, T]]:
+def run_length_encode(in_list: List[T]) -> List[Tuple[T, int]]:
     if in_list is None or len(in_list) == 0:
         return []
 
@@ -41,9 +41,9 @@ def run_length_encode(in_list: List[T]) -> List[Tuple[int, T]]:
 
 
 def strip_empty_lines_in_list(code_lines: List[str]) -> List[str]:
-    code_lines = list(itertools.dropwhile(lambda s: len(s.strip())  == 0, code_lines))
+    code_lines = list(itertools.dropwhile(lambda s: len(s.strip()) == 0, code_lines))
     code_lines = list(reversed(code_lines))
-    code_lines = list(itertools.dropwhile(lambda s: len(s.strip())  == 0, code_lines))
+    code_lines = list(itertools.dropwhile(lambda s: len(s.strip()) == 0, code_lines))
     code_lines = list(reversed(code_lines))
 
     return code_lines
@@ -51,7 +51,7 @@ def strip_empty_lines_in_list(code_lines: List[str]) -> List[str]:
 
 def code_set_max_consecutive_empty_lines(code: str, nb_max_empty: int) -> str:
     lines = code.split("\n")
-    rle = run_length_encode(lines)
+    rle: List[Tuple[str, int]] = run_length_encode(lines)
 
     new_lines = []
     for line, nb in rle:
@@ -121,16 +121,18 @@ def line_python_comment_eol_position(code_line: str) -> Optional[int]:
     return line_python_comment_position(code_line, skip_if_comment_only_line=True)
 
 
+def align_python_comments_in_block_list(lines: List[str]) -> List[str]:
+    code = "\n".join(lines)
+    code2 = align_python_comments_in_block(code)
+    out = code2.split("\n")
+    return out
+
+
 def align_python_comments_in_block(code: str) -> str:
-    if type(code) == str:
-        is_list = False
-        lines = code.split("\n")
-    else:
-        is_list = True
-        lines = code
+    lines = code.split("\n")
 
     comments_positions = list(map(line_python_comment_eol_position, lines))
-    comments_positions = list(filter(lambda v: v is not None, comments_positions) )
+    comments_positions = list(filter(lambda v: v is not None, comments_positions))
 
     if len(comments_positions) > 0:
         new_lines = []
@@ -139,7 +141,7 @@ def align_python_comments_in_block(code: str) -> str:
             comment_position = line_python_comment_eol_position(line)
             if comment_position is not None:
                 start = line[:comment_position]
-                end = line[comment_position + 1 :]
+                end = line[comment_position + 1:]
                 nb_spaces = max_position - comment_position
                 new_line = start + " " * nb_spaces + "#" + end
                 new_lines.append(new_line)
@@ -148,11 +150,8 @@ def align_python_comments_in_block(code: str) -> str:
     else:
         return code
 
-    if is_list:
-        return new_lines
-    else:
-        r = "\n".join(new_lines)
-        return r
+    r = "\n".join(new_lines)
+    return r
 
 
 def last_code_position_before_comment(code_line: str) -> int:
@@ -175,10 +174,11 @@ def last_code_position_before_comment(code_line: str) -> int:
 def join_lines_with_token_before_comment(lines: List[str], token: str) -> str:
     if len(lines) == 0:
         return ""
+
     def add_token_to_line(line):
         pos = last_code_position_before_comment(line)
-        r = line[ : pos] + token + line[pos : ]
-        return r
+        rr = line[:pos] + token + line[pos:]
+        return rr
 
     lines_with_token = list(map(add_token_to_line, lines[:-1])) + [lines[-1]]
     r = "\n".join(lines_with_token)
@@ -227,7 +227,7 @@ def write_text_file(filename: str, content: str):
 
 
 def unindent_code(code: str, flag_strip_empty_lines: bool = False) -> str:
-    "unindent the code but keep the inner identation"
+    """unindent the code but keep the inner indentation"""
     indent_size = compute_code_indent_size(code)
     what_to_replace = " " * indent_size
 
@@ -249,15 +249,15 @@ def unindent_code(code: str, flag_strip_empty_lines: bool = False) -> str:
     return r
 
 
-def reindent_code(code: str, indent_size: int = 4, skip_first_line = False, indent_str = ""):
-    "change the global code indentation, but keep its inner indentation"
+def reindent_code(code: str, indent_size: int = 4, skip_first_line=False, indent_str=""):
+    """change the global code indentation, but keep its inner indentation"""
     code = unindent_code(code)
-    code = indent_code(code, indent_size = indent_size, skip_first_line = skip_first_line,indent_str=indent_str)
+    code = indent_code(code, indent_size=indent_size, skip_first_line=skip_first_line, indent_str=indent_str)
     return code
 
 
-def indent_code(code: str, indent_size: int = 1, skip_first_line = False, indent_str = None):
-    "add some space to the left of all lines"
+def indent_code(code: str, indent_size: int = 1, skip_first_line=False, indent_str=None):
+    """add some space to the left of all lines"""
     if skip_first_line:
         lines = code.split("\n")
         if len(lines) == 1:
@@ -280,8 +280,8 @@ def indent_code(code: str, indent_size: int = 1, skip_first_line = False, indent
     return "\n".join(lines)
 
 
-def indent_code_force(code: str, indent_size: int = 1, indent_str = ""):
-    "violently remove all space at the left, thus removign the inner indentation"
+def indent_code_force(code: str, indent_size: int = 1, indent_str=""):
+    """violently remove all space at the left, thus removing the inner indentation"""
     lines = code.split("\n")
     if len(indent_str) == 0:
         indent_str = " " * indent_size
@@ -327,12 +327,14 @@ def format_cpp_comment_on_one_line(comment: str) -> str:
     return comment
 
 
-def format_cpp_comment_multiline(comment: str, indentation_size: int = 4, indentation_str = ""):
+def format_cpp_comment_multiline(comment: str, indentation_size: int = 4, indentation_str: str = ""):
     lines = comment.split("\n")
     if len(indentation_str) == 0:
         indentation_str = " " * indentation_size
+
     def process_line(line):
         return indentation_str + "// " + line
+
     lines = list(map(process_line, lines))
     return "\n".join(lines)
 
@@ -366,7 +368,7 @@ def write_code_between_markers(
         code_marker_out: str,
         code_to_insert: str,
         flag_preserve_indentation: bool = True
-    ):
+        ):
 
     while code_to_insert.endswith("\n\n"):
         code_to_insert = code_to_insert[:-1]
@@ -401,7 +403,7 @@ def write_code_between_markers(
             if not is_inside_autogen_region:
                 output_code = output_code + code_line + "\n"
             else:
-                pass # Skip code lines that were already in the autogenerated region
+                pass  # Skip code lines that were already in the autogenerated region
         if code_marker_out in code_line:
             output_code = output_code + "\n"
             output_code = output_code + code_line + "\n"
@@ -410,7 +412,8 @@ def write_code_between_markers(
         output_code = output_code[:-1]
 
     if not was_replacement_performed:
-        raise RuntimeError(f"write_code_between_markers: could not find marker {code_marker_in} in file {inout_filename}")
+        raise RuntimeError(
+            f"write_code_between_markers: could not find marker {code_marker_in} in file {inout_filename}")
 
     if output_code != input_code:
         write_text_file(inout_filename, output_code)
@@ -466,7 +469,7 @@ def remove_trailing_spaces(line: str) -> str:
 
 def make_nice_code_diff(generated: str, expected: str) -> str:
     differ = difflib.Differ()
-    diffs = list(differ.compare(expected.splitlines(keepends=True) , generated.splitlines(keepends=True)))
+    diffs = list(differ.compare(expected.splitlines(keepends=True), generated.splitlines(keepends=True)))
     return "".join(diffs)
 
 
@@ -491,7 +494,7 @@ def assert_are_equal_ignore_spaces(generated_code: str, expected_code: str):
     assert generated_processed == expected_processed
 
 
-def assert_are_codes_equal(generated_code: str, expected_code: str) -> str:
+def assert_are_codes_equal(generated_code: str, expected_code: str):
     generated_code_str = str(generated_code)
     generated_processed = strip_empty_lines(unindent_code(generated_code_str))
     expected_processed = strip_empty_lines(unindent_code(expected_code))
@@ -518,7 +521,7 @@ def remove_end_of_line_cpp_comments(code: str) -> str:
 
     def remove_comment(line: str):
         if "//" in line:
-            line = line[ : line.index("//")]
+            line = line[: line.index("//")]
         return line
 
     lines = map(remove_comment, lines)
@@ -527,7 +530,7 @@ def remove_end_of_line_cpp_comments(code: str) -> str:
 
 
 def join_remove_empty(separator: str, strs: List[str]):
-    non_empty_strs = filter(lambda s : len(s) > 0, strs)
+    non_empty_strs = filter(lambda s: len(s) > 0, strs)
     r = separator.join(non_empty_strs)
     return r
 
@@ -571,10 +574,10 @@ def contains_pointer_type(full_type_str: str, type_to_search: str):
     if type_to_search.endswith("*"):
         type_to_search = type_to_search[:-1]
 
-    if contains_word_boundary_left_only(full_type_str, type_to_search +  "*"):
+    if contains_word_boundary_left_only(full_type_str, type_to_search + "*"):
         return True
 
-    if contains_word_boundary_left_only(full_type_str, type_to_search +  " *"):
+    if contains_word_boundary_left_only(full_type_str, type_to_search + " *"):
         return True
 
     return False

@@ -51,7 +51,7 @@ def _add_stub_element(
     _i_ = options.indent_python_spaces()
     all_lines_except_first = list(map(lambda s: _i_ + s, all_lines_except_first))
 
-    all_lines_except_first = code_utils.align_python_comments_in_block(all_lines_except_first)
+    all_lines_except_first = code_utils.align_python_comments_in_block_lines(all_lines_except_first)
 
     all_lines = [first_line] + all_lines_except_first
 
