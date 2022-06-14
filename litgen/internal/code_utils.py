@@ -121,7 +121,7 @@ def line_python_comment_eol_position(code_line: str) -> Optional[int]:
     return line_python_comment_position(code_line, skip_if_comment_only_line=True)
 
 
-def align_python_comments_in_block_list(lines: List[str]) -> List[str]:
+def align_python_comments_in_block_lines(lines: List[str]) -> List[str]:
     code = "\n".join(lines)
     code2 = align_python_comments_in_block(code)
     out = code2.split("\n")

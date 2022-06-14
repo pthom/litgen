@@ -1,18 +1,16 @@
-import copy
-
 from srcmlcpp.srcml_types import *
 from srcmlcpp import srcml_caller, srcml_utils, srcml_warnings, srcml_main, srcml_comments
 from srcmlcpp.srcml_warnings import SrcMlExceptionDetailed
 from srcmlcpp.srcml_options import SrcmlOptions
 
 
-def parse_unprocessed(options: SrcmlOptions, element_c: CppElementAndComment) -> CppUnit:
+def parse_unprocessed(options: SrcmlOptions, element_c: CppElementAndComment) -> CppUnprocessed: # noqa
     result = CppUnprocessed(element_c.srcml_element, element_c.cpp_element_comments)
     result.code = srcml_caller.srcml_to_code(element_c.srcml_element)
     return result
 
 
-def parse_type(options: SrcmlOptions, element: ET.Element, previous_decl: CppDecl) -> CppType:
+def parse_type(options: SrcmlOptions, element: ET.Element, previous_decl: Optional[CppDecl]) -> CppType:
     """
     https://www.srcmlcpp.org/doc/cpp_srcML.html#type
 
@@ -46,8 +44,8 @@ def parse_type(options: SrcmlOptions, element: ET.Element, previous_decl: CppDec
             if modifier not in CppType.authorized_modifiers():
                 raise SrcMlExceptionDetailed(child, f'modifier "{modifier}" is not authorized', options)
             result.modifiers.append(child.text)
-        elif child_tag == "argument_list":
-            result.argument_list.append(child.text)
+        # elif child_tag == "argument_list":
+        #     result.argument_list.append(child.text)
         else:
             raise SrcMlExceptionDetailed(child, f"unhandled tag {child_tag}", options)
 
@@ -101,8 +99,6 @@ def _parse_init_expr(element: ET.Element) -> str:
                         return expr_child.text
         return None
 
-    r = ""
-
     expr = srcml_utils.child_with_tag(element, "expr")
     if expr is not None:
         if expr_literal_value(expr) is not None:
@@ -131,7 +127,7 @@ def parse_decl_from_code(options: SrcmlOptions, code: str) -> CppDecl:
     return cpp_unit.block_children[0]
 
 
-def parse_decl(options: SrcmlOptions, element_c: CppElementAndComment, previous_decl: CppDecl) -> CppDecl:
+def parse_decl(options: SrcmlOptions, element_c: CppElementAndComment, previous_decl: Optional[CppDecl]) -> CppDecl:
     """
     https://www.srcmlcpp.org/doc/cpp_srcML.html#variable-declaration-statement
     """
@@ -161,10 +157,11 @@ def parse_decl_stmt(options: SrcmlOptions, element_c: CppElementAndComment) -> C
     """
     assert element_c.tag() == "decl_stmt"
 
-    previous_decl: CppDecl = None
+    previous_decl: Optional[CppDecl] = None
     result = CppDeclStatement(element_c.srcml_element, element_c.cpp_element_comments)
     for child in element_c.srcml_element:
-        child_c = copy.deepcopy(element_c); child_c.srcml_element = child
+        child_c = copy.deepcopy(element_c)
+        child_c.srcml_element = child
         if child_c.tag() == "decl":
             if code_utils.does_match_regexes(options.decl_name_exclude_regexes, child_c.name()):
                 continue
@@ -193,9 +190,9 @@ def parse_parameter(options: SrcmlOptions, element: ET.Element) -> CppParameter:
             child_c = CppElementAndComment(child, CppElementComments())
             result.decl = parse_decl(options, child_c, None)
         elif child_tag == "type":
-            result.template_type = parse_type(options, child, None) # This is only for template parameters
+            result.template_type = parse_type(options, child, None)  # This is only for template parameters
         elif child_tag == "name":
-            result.template_name = child.text # This is only for template parameters
+            result.template_name = child.text  # This is only for template parameters
         elif child_tag == "function_decl":
             raise SrcMlExceptionDetailed(
                 child, f"A function uses a function_decl as a param. It was discarded", options)
@@ -253,18 +250,18 @@ def fill_function_decl(options: SrcmlOptions, element_c: CppElementAndComment, f
         elif child_tag == "specifier":
             function_decl.specifiers.append(child.text)
         elif child_tag == "attribute":
-            pass # compiler options, such as [[gnu::optimize(0)]]
+            pass  # compiler options, such as [[gnu::optimize(0)]]
         elif child_tag == "template":
             function_decl.template = parse_template(options, child)
         elif child_tag == "block":
-            pass # will be handled by parse_function
+            pass  # will be handled by parse_function
         elif child_tag == "modifier":
             raise SrcMlExceptionDetailed(child, "C style function pointers are poorly supported", options)
         else:
             raise SrcMlExceptionDetailed(child, f"unhandled tag {child_tag}", options)
 
     if len(function_decl.type.names) >= 2 and function_decl.type.names[0] == "auto":
-        function_decl.type.names = function_decl.type.names[1 : ]
+        function_decl.type.names = function_decl.type.names[1:]
 
 
 def parse_function_decl(options: SrcmlOptions, element_c: CppElementAndComment) -> CppFunctionDecl:
@@ -291,7 +288,7 @@ def parse_function(options: SrcmlOptions, element_c: CppElementAndComment) -> Cp
             child_c = CppElementAndComment(child, CppElementComments())
             result.block = parse_unprocessed(options, child_c)
         elif child_tag in ["type", "name", "parameter_list", "specifier", "attribute", "template"]:
-            pass # already handled by fill_function_decl
+            pass  # already handled by fill_function_decl
         else:
             raise SrcMlExceptionDetailed(child, f"unhandled tag {child_tag}", options)
     return result
@@ -309,9 +306,9 @@ def fill_constructor_decl(options: SrcmlOptions, element_c: CppElementAndComment
         elif child_tag == "specifier":
             constructor_decl.specifiers.append(child.text)
         elif child_tag == "attribute":
-            pass # compiler options, such as [[gnu::optimize(0)]]
+            pass  # compiler options, such as [[gnu::optimize(0)]]
         elif child_tag in ["block", "member_init_list"]:
-            pass # will be handled by parse_constructor
+            pass  # will be handled by parse_constructor
         else:
             raise SrcMlExceptionDetailed(child, f"unhandled tag {child_tag}", options)
 
@@ -342,7 +339,7 @@ def parse_constructor(options: SrcmlOptions, element_c: CppElementAndComment) ->
         elif child_tag == "member_init_list":
             result.member_init_list = parse_unprocessed(options, child_c)
         elif child_tag in ["name", "parameter_list", "specifier", "attribute"]:
-            pass # alread handled by fill_constructor_decl
+            pass  # alread handled by fill_constructor_decl
         else:
             raise SrcMlExceptionDetailed(child, f"unhandled tag {child_tag}", options)
 
@@ -502,7 +499,7 @@ def fill_block(options: SrcmlOptions, element: ET.Element, inout_block_content: 
     https://www.srcmlcpp.org/doc/cpp_srcML.html#block_content
     """
 
-    last_ignored_child: CppElementAndComment = None
+    last_ignored_child: Optional[CppElementAndComment] = None
 
     children = srcml_main.get_children_with_comments(options, element)
     for i, child_c in enumerate(children):
@@ -554,7 +551,8 @@ def fill_block(options: SrcmlOptions, element: ET.Element, inout_block_content: 
                             # When there is an explanation following a typedef or a struct forward decl,
                             # we keep both the code (as a comment) and its comment
                             if last_ignored_child.tag() in ["typedef", "struct_decl"]:
-                                cpp_comment.set_text("// " + last_ignored_child.str_code_verbatim() + "    " + cpp_comment.text())
+                                cpp_comment.set_text(
+                                    "// " + last_ignored_child.str_code_verbatim() + "    " + cpp_comment.text())
                                 ignore_comment = False
                             else:
                                 ignore_comment = True

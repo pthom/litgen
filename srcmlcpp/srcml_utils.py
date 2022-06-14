@@ -1,7 +1,7 @@
-from typing import Tuple, List, Any, Optional
+from typing import List, Any, Optional
 import logging
 
-import xml.etree.ElementTree as ET
+import xml.etree.ElementTree as ET # noqa
 from xml.dom import minidom
 
 from srcmlcpp import srcml_caller
@@ -59,14 +59,14 @@ def child_with_tag(element: ET.Element, tag: str) -> Optional[ET.Element]:
         return children[0]
 
 
-def srcml_to_str(element: ET.Element, bare = False):
+def srcml_to_str(element: ET.Element, bare=False):
     xmlstr_raw = ET.tostring(element, encoding="unicode")
     if bare:
         return xmlstr_raw
 
     try:
         xmlstr = minidom.parseString(ET.tostring(element)).toprettyxml(indent="   ")
-    except Exception as e:
+    except Exception:
         xmlstr = xmlstr_raw
 
     return xmlstr
@@ -79,9 +79,9 @@ def srcml_to_file(encoding: str, root: ET.Element, filename: str):
 
 def clean_tag_or_attrib(tag_name: str) -> str:
     if tag_name.startswith("{"):
-        assert("}") in tag_name
+        assert "}" in tag_name
         pos = tag_name.index("}") + 1
-        tag_name = tag_name[ pos : ]
+        tag_name = tag_name[pos:]
     tag_name = tag_name.replace("ns0:", "")
     tag_name = tag_name.replace("ns1:", "")
     return tag_name
@@ -98,6 +98,7 @@ def _extract_interesting_text(element: ET.Element):
     if text == ";":
         text = ""
     return text
+
 
 def _extract_interesting_tail(element: ET.Element):
     if element.tail is None:
@@ -128,15 +129,12 @@ def _info_element_position(element: ET.Element):
         return ""
 
 
-def srcml_to_str_readable(srcml_element: ET.Element, level = 0) -> str:
+def srcml_to_str_readable(srcml_element: ET.Element, level=0) -> str:
     indent_str = "    " * level
     msg = indent_str + clean_tag_or_attrib(srcml_element.tag)
     text = _extract_interesting_text(srcml_element)
-    tail = _extract_interesting_tail(srcml_element)
     if len(text) > 0:
         msg += f' text="{text}"'
-    # if len(tail) > 0:
-    #     msg += f' tail="{tail}"'
 
     info_position = _info_element_position(srcml_element)
     if len(info_position) > 0:
@@ -146,4 +144,3 @@ def srcml_to_str_readable(srcml_element: ET.Element, level = 0) -> str:
     for child in srcml_element:
         msg += srcml_to_str_readable(child, level + 1)
     return msg
-
