@@ -94,14 +94,18 @@ def docstring_lines(cpp_element_c: CppElementAndComment, options: CodeStyleOptio
     return r
 
 
-def python_comment_place_on_previous_lines(cpp_element_c: CppElementAndComment, options: CodeStyleOptions) -> bool:
-    if len(cpp_element_c.cpp_element_comments.comment_end_of_line) == 0:
-        return True
-    comment_lines = python_comment_lines(cpp_element_c, options)
-    return len(comment_lines) > 1
+def python_shall_place_comment_at_end_of_line(cpp_element_c: CppElementAndComment, options: CodeStyleOptions) -> bool:
+    eol_comment = _comment_apply_replacements(cpp_element_c.cpp_element_comments.comment_end_of_line, options)
+    p_comment = _comment_apply_replacements(cpp_element_c.cpp_element_comments.comment_on_previous_lines, options)
+    return len(eol_comment) > 0 and len(p_comment) == 0
 
 
-def python_comment_lines(cpp_element_c: CppElementAndComment, options: CodeStyleOptions) -> List[str]:
+def python_comment_end_of_line(cpp_element_c: CppElementAndComment, options: CodeStyleOptions) -> str:
+    eol_comment = _comment_apply_replacements(cpp_element_c.cpp_element_comments.comment_end_of_line, options)
+    return eol_comment
+
+
+def python_comment_previous_lines(cpp_element_c: CppElementAndComment, options: CodeStyleOptions) -> List[str]:
     """See comment below"""
     # Returns the comment of a CppElement under the form of a python comment, such as the one you are reading.
     # Some replacements will be applied (for example true -> True, etc)
@@ -117,6 +121,7 @@ def python_comment_lines(cpp_element_c: CppElementAndComment, options: CodeStyle
 
     lines = comment.split("\n")
     lines = list(map(lambda s: "# " + s, lines))
+
     return lines
 
 

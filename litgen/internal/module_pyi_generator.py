@@ -20,12 +20,18 @@ def _add_new_lines(code: str, nb_lines_before: int = 0, nb_lines_after: int = 1)
     return r
 
 
-def _add_one_line_before(code: str) -> str:
-    return _add_new_lines(code, nb_lines_before=1)
+def _add_one_line_before(code: str, options: CodeStyleOptions) -> str:
+    if options.srcml_options.preserve_empty_lines:
+        return code
+    else:
+        return _add_new_lines(code, nb_lines_before=1)
 
 
-def _add_two_lines_before(code: str) -> str:
-    return _add_new_lines(code, nb_lines_before=2, nb_lines_after=0)
+def _add_two_lines_before(code: str, options: CodeStyleOptions) -> str:
+    if options.srcml_options.preserve_empty_lines:
+        return code
+    else:
+        return _add_new_lines(code, nb_lines_before=2, nb_lines_after=0)
 
 
 def _add_stub_element(
@@ -63,22 +69,20 @@ def _add_stub_element(
 def _make_decl_lines(cpp_decl: CppDecl, options: CodeStyleOptions) -> List[str]:
     var_name = cpp_to_python.decl_python_var_name(cpp_decl, options)
     var_value = cpp_to_python.decl_python_value(cpp_decl, options)
-    comment_lines = cpp_to_python.python_comment_lines(cpp_decl, options)
 
-    r = []
+    lines = []
 
-    flag_comment_first = cpp_to_python.python_comment_place_on_previous_lines(cpp_decl, options)
+    decl_part = f"{var_name} = {var_value}"
 
-    if flag_comment_first:
-        r += comment_lines
+    if cpp_to_python.python_shall_place_comment_at_end_of_line(cpp_decl, options):
+        decl_line = decl_part + "  #" + cpp_to_python.python_comment_end_of_line(cpp_decl, options)
+        lines.append(decl_line)
+    else:
+        comment_lines = cpp_to_python.python_comment_previous_lines(cpp_decl, options)
+        lines += comment_lines
+        lines.append(decl_part)
 
-    decl_line = f"{var_name} = {var_value}"
-    if not flag_comment_first:
-        decl_line += " " + comment_lines[0]
-
-    r.append(decl_line)
-
-    return r
+    return lines
 
 
 def _make_enum_element_decl_lines(
@@ -138,7 +142,6 @@ def _make_enum_element_decl_lines(
 ################################
 
 def _generate_pyi_enum(enum: CppEnum, options: CodeStyleOptions) -> str:
-    return ""
     first_code_line = f"class {enum.name}(Enum):"
 
     body_lines: List[str] = []
@@ -148,10 +151,10 @@ def _generate_pyi_enum(enum: CppEnum, options: CodeStyleOptions) -> str:
         if isinstance(child, CppDecl):
             body_lines += _make_enum_element_decl_lines(enum, child, previous_enum_element, options)
             previous_enum_element = child
-        if isinstance(child, CppEmptyLine):
+        if isinstance(child, CppEmptyLine) and options.python_keep_empty_lines:
             body_lines.append("")
         if isinstance(child, CppComment):
-            body_lines += cpp_to_python.python_comment_lines(child, options)
+            body_lines += cpp_to_python.python_comment_previous_lines(child, options)
     r = _add_stub_element(enum, first_code_line, options, body_lines)
     return r
 
@@ -465,8 +468,8 @@ def _add_public_struct_elements(public_zone: CppPublicProtectedPrivate, struct_n
         if isinstance(public_child, CppDeclStatement):
             code = _add_struct_member_decl_stmt(cpp_decl_stmt=public_child, struct_name=struct_name, options=options)
             r += code
-        # elif isinstance(public_child, CppEmptyLine):
-        #     r += "\n"
+        elif isinstance(public_child, CppEmptyLine) and options.python_keep_empty_lines:
+            r += "\n"
         # elif isinstance(public_child, CppComment):
         #     r += code_utils.format_cpp_comment_multiline(public_child.cpp_element_comments.full_comment(), 4) + "\n"
         elif isinstance(public_child, CppFunctionDecl):
@@ -551,17 +554,21 @@ def generate_pyi(
         add_boxed_types_definitions: bool = False) -> str:
 
     r = ""
-    for i, cpp_element in enumerate(cpp_unit.block_children):
+    for i, child in enumerate(cpp_unit.block_children):
         if False:
             pass
-        elif isinstance(cpp_element, CppFunctionDecl) or isinstance(cpp_element, CppFunction):
-            r += _add_one_line_before( _generate_pyi_function(cpp_element, options, parent_struct_name="") )
-        elif isinstance(cpp_element, CppEnum):
-            r += _add_two_lines_before( _generate_pyi_enum(cpp_element, options) )
-        elif isinstance(cpp_element, CppStruct) or isinstance(cpp_element, CppClass):
-            r += _add_two_lines_before( _generate_pyi_struct_or_class(cpp_element, options) )
-        elif isinstance(cpp_element, CppNamespace):
-            r += _add_two_lines_before( _generate_pyi_namespace(cpp_element, options, current_namespaces) )
+        if isinstance(child, CppEmptyLine) and options.python_keep_empty_lines:
+            r += "\n"
+        if isinstance(child, CppComment):
+            r += "\n".join(cpp_to_python.python_comment_previous_lines(child, options)) + "\n"
+        elif isinstance(child, CppFunctionDecl) or isinstance(child, CppFunction):
+            r += _add_one_line_before( _generate_pyi_function(child, options, parent_struct_name=""), options)
+        elif isinstance(child, CppEnum):
+            r += _add_two_lines_before( _generate_pyi_enum(child, options), options)
+        elif isinstance(child, CppStruct) or isinstance(child, CppClass):
+            r += _add_two_lines_before( _generate_pyi_struct_or_class(child, options), options)
+        elif isinstance(child, CppNamespace):
+            r += _add_two_lines_before( _generate_pyi_namespace(child, options, current_namespaces), options)
 
     if add_boxed_types_definitions:
         pass

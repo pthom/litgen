@@ -202,6 +202,35 @@ def _is_comment_on_previous_line(children: List[ET.Element], idx: int):
 
     element = CppElement(children[idx])
     next_element = CppElement(children[idx + 1])
+
+    def is_group_comment():
+        """
+        Test if this is a comment on a group of several items of the same type on consecutive lines
+        (in which case, it does not belong to the first function, but should be standalone)
+              // A comment about
+              // several functions       // element_n0
+              MY_API void Foo();         // element_n1
+              MY_API void Foo2();        // element_n2
+              MY_API void Foo3();
+        """
+        if idx + 2 > len(children) - 1:
+            return False
+        element_n0 = CppElement(children[idx])
+        element_n1 = CppElement(children[idx + 1])
+        element_n2 = CppElement(children[idx + 2])
+
+        is_comment = element_n0.tag() == "comment"
+        are_next_same_types = element_n1.tag() == element_n2.tag()
+        are_consecutive_lines = (
+                (element_n0.end().line + 1 == element_n1.start().line)
+            and (element_n1.end().line + 1 == element_n2.start().line))
+
+        r = is_comment and are_next_same_types and are_consecutive_lines
+        return r
+
+    if is_group_comment():
+        return False
+
     if element.tag() == "comment" and next_element.tag() != "comment":
         if EMPTY_LINE_COMMENT_CONTENT in element.text():
             return False

@@ -58,3 +58,19 @@ def test_iterate_children_with_comments():
     # logging.warning("\n" + msg)
     code_utils.assert_are_codes_equal(msg, srcml_comments.EXPECTED_CHILDREN_WITH_COMMENTS)
 
+
+def test_group_comment():
+    code = """
+    // A comment about
+    // several functions
+    MY_API void Foo();
+    MY_API void Foo2();
+    MY_API void Foo3();
+    """[1:]
+    code = srcml_comments.mark_empty_lines(code)
+    srcml_code = srcmlcpp.srcml_caller.code_to_srcml(code)
+    children_and_comments = srcml_comments.get_children_with_comments(srcml_code)
+    assert children_and_comments[0].tag() == "comment"
+    assert children_and_comments[1].tag() == "function_decl"
+    assert children_and_comments[2].tag() == "function_decl"
+    assert children_and_comments[3].tag() == "function_decl"

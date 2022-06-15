@@ -6,50 +6,67 @@ from enum import Enum
 
 # <namespace LiterateGeneratorExample>    # example_library/litgensample.h:18
 
+class MyEnum(Enum):    # example_library/litgensample.h:23
+    """ A super nice enum
+     for demo purposes ( bool val = True )
+    """
+    a = 1    # This is value a
+    aa = 2   # this is value aa
+    aaa = 3  # this is value aaa
+    
+    #  Lonely comment
+    
+    #  This is value b
+    b = 4
+    
+    #  This is c
+    #  with doc on several lines
+    c = a | b
+    
 
+# 
+#  C Style array tests
+# 
+
+#  Tests with Boxed Numbers
 def add_c_array2(values: List[int, 2]) -> int:    # example_library/litgensample.h:46
-    """Tests with Boxed Numbers"""
     pass
-
-
 def log_c_array2(values: List[int, 2]) -> None:    # example_library/litgensample.h:47
     pass
-
-
 def change_c_array2(    # example_library/litgensample.h:48
     values_0: BoxedUnsignedLong,
     values_1: BoxedUnsignedLong
     ) -> None:
     pass
-
-
 def get_points(out_0: Point2, out_1: Point2) -> None:    # example_library/litgensample.h:58
     pass
 
+# 
+#  C Style buffer to numpy.ndarray tests
+# 
 
 def add_inside_buffer(buffer: numpy.ndarray, number_to_add: int) -> None:    # example_library/litgensample.h:65
-    """Modifies a buffer by adding a value to its elements"""
+    """ Modifies a buffer by adding a value to its elements"""
     pass
-
-
 def buffer_sum(buffer: numpy.ndarray, stride: int = -1) -> int:    # example_library/litgensample.h:71
-    """Returns the sum of a  buffer"""
+    """ Returns the sum of a  buffer"""
     pass
-
-
 def add_inside_two_buffers(    # example_library/litgensample.h:79
     buffer_1: numpy.ndarray,
     buffer_2: numpy.ndarray,
     number_to_add: int
     ) -> None:
-    """Modifies two buffers"""
+    """ Modifies two buffers"""
     pass
 
 
 def mul_inside_buffer(buffer: numpy.ndarray, factor: float) -> None:    # example_library/litgensample.h:90
-    """Modify an array by multiplying its elements (template function!)"""
+    """ Modify an array by multiplying its elements (template function!)"""
     pass
 
+# 
+#  C String lists tests
+# 
 
 def c_string_list_total_size(    # example_library/litgensample.h:100
     items: List[str],
@@ -60,27 +77,36 @@ def c_string_list_total_size(    # example_library/litgensample.h:100
 
 
 def add(a: int, b: int) -> int:    # example_library/litgensample.h:112
-    """Adds two numbers"""
+    """ Adds two numbers"""
     pass
 
-
 def add(a: int, b: int, c: int) -> int:    # example_library/litgensample.h:115
-    """Adds three numbers, with a surprise"""
+    """ Adds three numbers, with a surprise"""
     pass
 
 
 def sub(a: int, b: int) -> int:    # example_library/litgensample.h:118
     pass
 
-
 def mul(a: int, b: int) -> int:    # example_library/litgensample.h:120
     pass
 
 
 def foo_instance() -> Foo:    # example_library/litgensample.h:154
-    """return_value_policy::reference"""
+    """ return_value_policy::reference"""
     pass
 
+#     MY_API None ToggleBool(bool v) {
+#         printf("ToggleBool ptr=%p value=%s\n", v, (v) ? "True" : "False");
+#         v = !(v);
+#     }
+# 
+#     MY_API None ToggleBool2(std::shared_ptr<bool> v) {
+#         bool b = v.get();
+#         printf("ToggleBool2 ptr=%p value=%s\n", b, (b) ? "True" : "False");
+#         b = !(b);
+#     }
+# 
 # </namespace LiterateGeneratorExample>
 
 # </autogen:pyi>

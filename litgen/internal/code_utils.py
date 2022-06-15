@@ -50,6 +50,9 @@ def strip_empty_lines_in_list(code_lines: List[str]) -> List[str]:
 
 
 def code_set_max_consecutive_empty_lines(code: str, nb_max_empty: int) -> str:
+    if nb_max_empty < 0:
+        return code
+
     lines = code.split("\n")
     rle: List[Tuple[str, int]] = run_length_encode(lines)
 
