@@ -1255,7 +1255,7 @@ void py_init_module_imgui(py::module& m)
         {
             auto Text_adapt_variadic_format = [](const char * fmt)
             {
-                Text(fmt);
+                Text("%s", fmt);
             };
 
             Text_adapt_variadic_format(fmt);
@@ -1270,7 +1270,7 @@ void py_init_module_imgui(py::module& m)
         {
             auto TextColored_adapt_variadic_format = [](const ImVec4 & col, const char * fmt)
             {
-                TextColored(col, fmt);
+                TextColored(col, "%s", fmt);
             };
 
             TextColored_adapt_variadic_format(col, fmt);
@@ -1285,7 +1285,7 @@ void py_init_module_imgui(py::module& m)
         {
             auto TextDisabled_adapt_variadic_format = [](const char * fmt)
             {
-                TextDisabled(fmt);
+                TextDisabled("%s", fmt);
             };
 
             TextDisabled_adapt_variadic_format(fmt);
@@ -1300,7 +1300,7 @@ void py_init_module_imgui(py::module& m)
         {
             auto TextWrapped_adapt_variadic_format = [](const char * fmt)
             {
-                TextWrapped(fmt);
+                TextWrapped("%s", fmt);
             };
 
             TextWrapped_adapt_variadic_format(fmt);
@@ -1315,7 +1315,7 @@ void py_init_module_imgui(py::module& m)
         {
             auto LabelText_adapt_variadic_format = [](const char * label, const char * fmt)
             {
-                LabelText(label, fmt);
+                LabelText(label, "%s", fmt);
             };
 
             LabelText_adapt_variadic_format(label, fmt);
@@ -1330,7 +1330,7 @@ void py_init_module_imgui(py::module& m)
         {
             auto BulletText_adapt_variadic_format = [](const char * fmt)
             {
-                BulletText(fmt);
+                BulletText("%s", fmt);
             };
 
             BulletText_adapt_variadic_format(fmt);
@@ -2283,7 +2283,7 @@ void py_init_module_imgui(py::module& m)
         {
             auto TreeNode_adapt_variadic_format = [](const char * str_id, const char * fmt)
             {
-                auto r = TreeNode(str_id, fmt);
+                auto r = TreeNode(str_id, "%s", fmt);
                 return r;
             };
 
@@ -2299,7 +2299,7 @@ void py_init_module_imgui(py::module& m)
         {
             auto TreeNode_adapt_variadic_format = [](const void * ptr_id, const char * fmt)
             {
-                auto r = TreeNode(ptr_id, fmt);
+                auto r = TreeNode(ptr_id, "%s", fmt);
                 return r;
             };
 
@@ -2324,7 +2324,7 @@ void py_init_module_imgui(py::module& m)
         {
             auto TreeNodeEx_adapt_variadic_format = [](const char * str_id, ImGuiTreeNodeFlags flags, const char * fmt)
             {
-                auto r = TreeNodeEx(str_id, flags, fmt);
+                auto r = TreeNodeEx(str_id, flags, "%s", fmt);
                 return r;
             };
 
@@ -2339,7 +2339,7 @@ void py_init_module_imgui(py::module& m)
         {
             auto TreeNodeEx_adapt_variadic_format = [](const void * ptr_id, ImGuiTreeNodeFlags flags, const char * fmt)
             {
-                auto r = TreeNodeEx(ptr_id, flags, fmt);
+                auto r = TreeNodeEx(ptr_id, flags, "%s", fmt);
                 return r;
             };
 
@@ -2499,7 +2499,7 @@ void py_init_module_imgui(py::module& m)
                 if (values_stride == -1)
                     values_stride = (int)values.itemsize();
 
-                PlotLines(label, static_cast<const float *>(values_from_pyarray), static_cast<int>(values_count), values_offset, overlay_text, scale_min, scale_max, static_cast<ImVec2>(values_count), values_stride);
+                PlotLines(label, static_cast<const float *>(values_from_pyarray), static_cast<int>(values_count), values_offset, overlay_text, scale_min, scale_max, graph_size, values_stride);
             };
 
             PlotLines_adapt_c_buffers(label, values, values_offset, overlay_text, scale_min, scale_max, graph_size, stride);
@@ -2532,7 +2532,7 @@ void py_init_module_imgui(py::module& m)
                 if (values_stride == -1)
                     values_stride = (int)values.itemsize();
 
-                PlotHistogram(label, static_cast<const float *>(values_from_pyarray), static_cast<int>(values_count), values_offset, overlay_text, scale_min, scale_max, static_cast<ImVec2>(values_count), values_stride);
+                PlotHistogram(label, static_cast<const float *>(values_from_pyarray), static_cast<int>(values_count), values_offset, overlay_text, scale_min, scale_max, graph_size, values_stride);
             };
 
             PlotHistogram_adapt_c_buffers(label, values, values_offset, overlay_text, scale_min, scale_max, graph_size, stride);
@@ -2675,7 +2675,7 @@ void py_init_module_imgui(py::module& m)
         {
             auto SetTooltip_adapt_variadic_format = [](const char * fmt)
             {
-                SetTooltip(fmt);
+                SetTooltip("%s", fmt);
             };
 
             SetTooltip_adapt_variadic_format(fmt);
@@ -3143,7 +3143,7 @@ void py_init_module_imgui(py::module& m)
         {
             auto LogText_adapt_variadic_format = [](const char * fmt)
             {
-                LogText(fmt);
+                LogText("%s", fmt);
             };
 
             LogText_adapt_variadic_format(fmt);
@@ -4999,7 +4999,7 @@ void py_init_module_imgui(py::module& m)
             {
                 auto appendf_adapt_variadic_format = [&self](const char * fmt)
                 {
-                    self.appendf(fmt);
+                    self.appendf("%s", fmt);
                 };
 
                 appendf_adapt_variadic_format(fmt);
