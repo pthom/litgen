@@ -257,6 +257,8 @@ def fill_function_decl(options: SrcmlOptions, element_c: CppElementAndComment, f
             pass  # will be handled by parse_function
         elif child_tag == "modifier":
             raise SrcMlExceptionDetailed(child, "C style function pointers are poorly supported", options)
+        elif child_tag == "comment":
+            function_decl.cpp_element_comments.add_eol_comment(child.text)
         else:
             raise SrcMlExceptionDetailed(child, f"unhandled tag {child_tag}", options)
 
@@ -287,7 +289,7 @@ def parse_function(options: SrcmlOptions, element_c: CppElementAndComment) -> Cp
         if child_tag == "block":
             child_c = CppElementAndComment(child, CppElementComments())
             result.block = parse_unprocessed(options, child_c)
-        elif child_tag in ["type", "name", "parameter_list", "specifier", "attribute", "template"]:
+        elif child_tag in ["type", "name", "parameter_list", "specifier", "attribute", "template", "comment"]:
             pass  # already handled by fill_function_decl
         else:
             raise SrcMlExceptionDetailed(child, f"unhandled tag {child_tag}", options)
@@ -494,6 +496,22 @@ def _shall_publish(cpp_element: CppElementAndComment, options: SrcmlOptions):
         return True
 
 
+def shall_ignore_comment(cpp_comment: CppComment, last_ignored_child: Optional[CppElementAndComment]):
+    ignore_comment = False
+    if last_ignored_child is not None:
+        last_ignore_child_end_position = last_ignored_child.end()
+        if cpp_comment.start().line == last_ignore_child_end_position.line:
+            # When there is an explanation following a typedef or a struct forward decl,
+            # we keep both the code (as a comment) and its comment
+            if last_ignored_child.tag() in ["typedef", "struct_decl"]:
+                cpp_comment.set_text(
+                    "// " + last_ignored_child.str_code_verbatim() + "    " + cpp_comment.text())
+                ignore_comment = False
+            else:
+                ignore_comment = True
+    return ignore_comment
+
+
 def fill_block(options: SrcmlOptions, element: ET.Element, inout_block_content: CppBlock):
     """
     https://www.srcmlcpp.org/doc/cpp_srcML.html#block_content
@@ -544,20 +562,7 @@ def fill_block(options: SrcmlOptions, element: ET.Element, inout_block_content: 
                 if srcml_comments.EMPTY_LINE_COMMENT_CONTENT in cpp_comment.comment:
                     inout_block_content.block_children.append(CppEmptyLine(child_c.srcml_element))
                 else:
-                    ignore_comment = False
-                    if last_ignored_child is not None:
-                        last_ignore_child_end_position = last_ignored_child.end()
-                        if cpp_comment.start().line == last_ignore_child_end_position.line:
-                            # When there is an explanation following a typedef or a struct forward decl,
-                            # we keep both the code (as a comment) and its comment
-                            if last_ignored_child.tag() in ["typedef", "struct_decl"]:
-                                cpp_comment.set_text(
-                                    "// " + last_ignored_child.str_code_verbatim() + "    " + cpp_comment.text())
-                                ignore_comment = False
-                            else:
-                                ignore_comment = True
-
-                    if not ignore_comment:
+                    if not shall_ignore_comment(cpp_comment, last_ignored_child):
                         inout_block_content.block_children.append(cpp_comment)
 
             elif child_tag == "struct":
@@ -606,7 +611,16 @@ def parse_comment(options: SrcmlOptions, element_c: CppElementAndComment) -> Cpp
     assert len(element_c.srcml_element) == 0 # a comment has no child
 
     result = CppComment(element_c.srcml_element, element_c.cpp_element_comments)
-    result.comment = element_c.text()
+
+    comment = element_c.text()
+    lines = comment.split("\n")
+    if len(lines) > 1:
+        lines = list(map(lambda line: "" if "_SRCML_EMPTY_LINE_" in line else line, lines))
+        comment = "\n".join(lines)
+        result.comment = comment
+    else:
+        result.comment = comment
+
     return result
 
 

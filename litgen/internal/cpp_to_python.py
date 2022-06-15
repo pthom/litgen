@@ -50,7 +50,8 @@ def _comment_apply_replacements(comment: str, options: CodeStyleOptions) -> str:
     (strip empty lines, remove API markers, apply replacements)
     """
     lines = comment.split("\n")
-    lines = code_utils.strip_empty_lines_in_list(lines)
+    if options.python_strip_empty_comment_lines:
+        lines = code_utils.strip_empty_lines_in_list(lines)
     if len(lines) == 0:
         return ""
 

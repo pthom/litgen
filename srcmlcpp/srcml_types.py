@@ -73,6 +73,12 @@ class CppElementComments:
         else:
             return " // " + self.comment_end_of_line
 
+    def add_eol_comment(self, comment):
+        if len(self.comment_end_of_line) == 0:
+            self.comment_end_of_line = comment
+        else:
+            self.comment_end_of_line += " - " + comment
+
     def full_comment(self):
         if len(self.comment_on_previous_lines) > 0 and len(self.comment_end_of_line) > 0:
             return self.comment_on_previous_lines + "\n\n" + self.comment_end_of_line

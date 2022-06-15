@@ -44,6 +44,10 @@ class CodeStyleOptions:
     python_ident_with_tabs: bool = False
     python_max_consecutive_empty_lines: int = 2
     python_max_line_length = 80
+    # Insert as many empty lines in the python stub as found in the header file
+    python_keep_empty_lines: bool = True
+    # Strip (remove) empty comment lines
+    python_strip_empty_comment_lines: bool = False
 
     # Spacing option in C++ code
     cpp_indent_size: int = 4

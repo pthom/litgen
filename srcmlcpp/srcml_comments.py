@@ -46,20 +46,20 @@ Void Foo4(); // Comment on end of line for Foo4()
 
 
 EXPECTED_CHILDREN_WITH_COMMENTS = """
-{'tag': 'comment', 'name': '', 'text': '_SRCML_EMPTY_LINE_', 'start': '1:1', 'end': '1:21', 'comment_top': '', 'comment_eol': ''}
+{'tag': 'comment', 'name': '', 'text': ' _SRCML_EMPTY_LINE_', 'start': '1:1', 'end': '1:21', 'comment_top': '', 'comment_eol': ''}
 {'tag': 'function_decl', 'name': 'Foo1', 'text': '', 'start': '6:1', 'end': '6:12', 'comment_top': '\\nA multiline C comment\\nabout Foo1\\n', 'comment_eol': ''}
-{'tag': 'comment', 'name': '', 'text': '_SRCML_EMPTY_LINE_', 'start': '7:1', 'end': '7:21', 'comment_top': '', 'comment_eol': ''}
-{'tag': 'function_decl', 'name': 'Foo2', 'text': '', 'start': '10:1', 'end': '10:12', 'comment_top': 'First line of comment on Foo2()\\nSecond line of comment on Foo2()', 'comment_eol': ''}
-{'tag': 'comment', 'name': '', 'text': '_SRCML_EMPTY_LINE_', 'start': '11:1', 'end': '11:21', 'comment_top': '', 'comment_eol': ''}
-{'tag': 'comment', 'name': '', 'text': 'A lonely comment', 'start': '12:1', 'end': '12:19', 'comment_top': '', 'comment_eol': ''}
-{'tag': 'comment', 'name': '', 'text': '_SRCML_EMPTY_LINE_', 'start': '13:1', 'end': '13:21', 'comment_top': '', 'comment_eol': ''}
-{'tag': 'comment', 'name': '', 'text': '\\nAnother lonely comment, on two lines\\nwhich ends on this second line, but has surrounding empty lines\\n', 'start': '14:1', 'end': '17:2', 'comment_top': '', 'comment_eol': ''}
-{'tag': 'comment', 'name': '', 'text': '_SRCML_EMPTY_LINE_', 'start': '18:1', 'end': '18:21', 'comment_top': '', 'comment_eol': ''}
-{'tag': 'comment', 'name': '', 'text': 'A comment on top of Foo3() & Foo4(), which should be kept as a standalone comment\\nsince Foo3 and Foo4 have end of line comments', 'start': '19:1', 'end': '20:48', 'comment_top': '', 'comment_eol': ''}
-{'tag': 'function_decl', 'name': 'Foo3', 'text': '', 'start': '21:1', 'end': '21:12', 'comment_top': '', 'comment_eol': 'Comment on end of line for Foo3()'}
-{'tag': 'function_decl', 'name': 'Foo4', 'text': '', 'start': '22:1', 'end': '22:12', 'comment_top': '', 'comment_eol': 'Comment on end of line for Foo4()'}
-{'tag': 'comment', 'name': '', 'text': 'A comment that shall not be grouped to the previous (which was an EOL comment for Foo4())', 'start': '23:1', 'end': '23:92', 'comment_top': '', 'comment_eol': ''}
-{'tag': 'comment', 'name': '', 'text': '_SRCML_EMPTY_LINE_', 'start': '24:1', 'end': '24:21', 'comment_top': '', 'comment_eol': ''}
+{'tag': 'comment', 'name': '', 'text': ' _SRCML_EMPTY_LINE_', 'start': '7:1', 'end': '7:21', 'comment_top': '', 'comment_eol': ''}
+{'tag': 'function_decl', 'name': 'Foo2', 'text': '', 'start': '10:1', 'end': '10:12', 'comment_top': ' First line of comment on Foo2()\\n Second line of comment on Foo2()', 'comment_eol': ''}
+{'tag': 'comment', 'name': '', 'text': ' _SRCML_EMPTY_LINE_', 'start': '11:1', 'end': '11:21', 'comment_top': '', 'comment_eol': ''}
+{'tag': 'comment', 'name': '', 'text': ' A lonely comment', 'start': '12:1', 'end': '12:19', 'comment_top': '', 'comment_eol': ''}
+{'tag': 'comment', 'name': '', 'text': ' _SRCML_EMPTY_LINE_', 'start': '13:1', 'end': '13:21', 'comment_top': '', 'comment_eol': ''}
+{'tag': 'comment', 'name': '', 'text': '\\n Another lonely comment, on two lines\\n which ends on this second line, but has surrounding empty lines\\n', 'start': '14:1', 'end': '17:2', 'comment_top': '', 'comment_eol': ''}
+{'tag': 'comment', 'name': '', 'text': ' _SRCML_EMPTY_LINE_', 'start': '18:1', 'end': '18:21', 'comment_top': '', 'comment_eol': ''}
+{'tag': 'comment', 'name': '', 'text': ' A comment on top of Foo3() & Foo4(), which should be kept as a standalone comment\\n since Foo3 and Foo4 have end of line comments', 'start': '19:1', 'end': '20:48', 'comment_top': '', 'comment_eol': ''}
+{'tag': 'function_decl', 'name': 'Foo3', 'text': '', 'start': '21:1', 'end': '21:12', 'comment_top': '', 'comment_eol': ' Comment on end of line for Foo3()'}
+{'tag': 'function_decl', 'name': 'Foo4', 'text': '', 'start': '22:1', 'end': '22:12', 'comment_top': '', 'comment_eol': ' Comment on end of line for Foo4()'}
+{'tag': 'comment', 'name': '', 'text': ' A comment that shall not be grouped to the previous (which was an EOL comment for Foo4())', 'start': '23:1', 'end': '23:92', 'comment_top': '', 'comment_eol': ''}
+{'tag': 'comment', 'name': '', 'text': ' _SRCML_EMPTY_LINE_', 'start': '24:1', 'end': '24:21', 'comment_top': '', 'comment_eol': ''}
 """
 
 
@@ -73,7 +73,7 @@ unit
         name text="Foo1"
         parameter_list text="()"
     comment text="// _SRCML_EMPTY_LINE_"                    line  7
-    comment text="// First line of comment on Foo2()_SRCML_LINEFEED_Second line of comment on Foo2()"lines 8-9
+    comment text="// First line of comment on Foo2()_SRCML_LINEFEED_ Second line of comment on Foo2()"lines 8-9
     function_decl                                           line  10
         type
             name text="void"
@@ -82,9 +82,9 @@ unit
     comment text="// _SRCML_EMPTY_LINE_"                    line  11
     comment text="// A lonely comment"                      line  12
     comment text="// _SRCML_EMPTY_LINE_"                    line  13
-    comment text="//_SRCML_LINEFEED_Another lonely comment, on two lines_SRCML_LINEFEED_which ends on this second line, but has surrounding empty lines_SRCML_LINEFEED_"lines 14-17
+    comment text="//_SRCML_LINEFEED_ Another lonely comment, on two lines_SRCML_LINEFEED_ which ends on this second line, but has surrounding empty lines_SRCML_LINEFEED_"lines 14-17
     comment text="// _SRCML_EMPTY_LINE_"                    line  18
-    comment text="// A comment on top of Foo3() & Foo4(), which should be kept as a standalone comment_SRCML_LINEFEED_since Foo3 and Foo4 have end of line comments"lines 19-20
+    comment text="// A comment on top of Foo3() & Foo4(), which should be kept as a standalone comment_SRCML_LINEFEED_ since Foo3 and Foo4 have end of line comments"lines 19-20
     function_decl                                           line  21
         type
             name text="Void"
@@ -125,7 +125,10 @@ def _group_consecutive_comments(srcml_code: ET.Element) -> ET.Element:
             previous_child = child_copy
 
         def concat_comment():
-            current_comment = child.text.strip()[2:].strip()
+            comment_raw = child.text
+            if comment_raw.startswith("//"):
+                comment_raw = comment_raw[2:]
+            current_comment = comment_raw
             previous_child.text += COMMENT_NEW_LINE_TOKEN + current_comment
             srcml_utils.copy_element_end_position(child, previous_child)
 
@@ -179,6 +182,10 @@ def _is_comment_end_of_line(children: List[ET.Element], idx: int):
     if element.tag() == "comment" and previous_element.tag() != "comment":
         if EMPTY_LINE_COMMENT_CONTENT in element.text():
             return False
+        elm_start = element.start()
+        elm_end = element.end()
+        prev_start = previous_element.start()
+        prev_end = previous_element.end()
         if element.start().line == previous_element.end().line:
             return True
 
@@ -212,8 +219,6 @@ def _is_comment_on_previous_line(children: List[ET.Element], idx: int):
     return False
 
 
-
-
 def _remove_comment_tokens(comment: str) -> str:
     comment = comment.replace(COMMENT_NEW_LINE_TOKEN, "\n")
     if comment.startswith("/*") and comment.endswith("*/"):
@@ -222,12 +227,10 @@ def _remove_comment_tokens(comment: str) -> str:
         lines = comment.split("\n")
         lines_processed = []
         for line in lines:
-            if line.lstrip().startswith("// "):
-                lines_processed.append(line.lstrip()[3:])
-            elif line.lstrip().startswith("//"):
-                lines_processed.append(line.lstrip()[2:])
+            if line.lstrip().startswith("//"):
+                lines_processed.append(line[2:])
             else:
-                lines_processed.append(line.lstrip())
+                lines_processed.append(line)
         return "\n".join(lines_processed)
 
 
