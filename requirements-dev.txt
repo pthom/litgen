@@ -3,3 +3,4 @@ pytest-cov
 numpy
 matplotlib
 scikit-build
+black
