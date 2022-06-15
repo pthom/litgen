@@ -4,7 +4,7 @@ from typing import List, Optional
 import logging
 from dataclasses import dataclass
 
-import xml.etree.ElementTree as ET # noqa
+import xml.etree.ElementTree as ET  # noqa
 
 from srcmlcpp import code_utils, srcml_utils, srcml_caller
 from srcmlcpp.srcml_options import SrcmlOptions
@@ -14,41 +14,45 @@ from srcmlcpp.srcml_code_position import CodePosition
 @dataclass
 class CppElementComments:
     """Gathers the C++ comments about functions, declarations, etc. : each CppElement can store
-    comment on previous lines, and a single line comment next to its declaration.
+     comment on previous lines, and a single line comment next to its declaration.
 
-   Lonely comments are stored as `CppComment`
+    Lonely comments are stored as `CppComment`
 
-    Example:
-        `````cpp
-        /*
-        A multiline C comment
-        about Foo1
-        */
-        void Foo1();
+     Example:
+         `````cpp
+         /*
+         A multiline C comment
+         about Foo1
+         */
+         void Foo1();
 
-        // First line of comment on Foo2()
-        // Second line of comment on Foo2()
-        void Foo2();
+         // First line of comment on Foo2()
+         // Second line of comment on Foo2()
+         void Foo2();
 
-        // A lonely comment
+         // A lonely comment
 
-        //
-        // Another lonely comment, on two lines
-        // which ends on this second line, but has surrounding empty lines
-        //
+         //
+         // Another lonely comment, on two lines
+         // which ends on this second line, but has surrounding empty lines
+         //
 
-        // A comment on top of Foo3() & Foo4(), which should be kept as a standalone comment
-        // since Foo3 and Foo4 have eol comments
-        Void Foo3(); // Comment on end of line for Foo3()
-        Void Foo4(); // Comment on end of line for Foo4()
-        // A comment that shall not be grouped to the previous (which was an EOL comment for Foo4())
-        ````
+         // A comment on top of Foo3() & Foo4(), which should be kept as a standalone comment
+         // since Foo3 and Foo4 have eol comments
+         Void Foo3(); // Comment on end of line for Foo3()
+         Void Foo4(); // Comment on end of line for Foo4()
+         // A comment that shall not be grouped to the previous (which was an EOL comment for Foo4())
+         ````
     """
+
     comment_on_previous_lines: str = ""
     comment_end_of_line: str = ""
 
     def comment(self):
-        if len(self.comment_on_previous_lines) > 0 and len(self.comment_end_of_line) > 0:
+        if (
+            len(self.comment_on_previous_lines) > 0
+            and len(self.comment_end_of_line) > 0
+        ):
             return self.comment_on_previous_lines + "\n" + self.comment_end_of_line
         else:
             return self.comment_on_previous_lines + self.comment_end_of_line
@@ -56,12 +60,14 @@ class CppElementComments:
     def as_dict(self):
         r = {
             "comment_top": self.comment_on_previous_lines,
-            "comment_eol": self.comment_end_of_line
+            "comment_eol": self.comment_end_of_line,
         }
         return r
 
     def top_comment_code(self):
-        top_comments = map(lambda comment: "//" + comment, self.comment_on_previous_lines.splitlines())
+        top_comments = map(
+            lambda comment: "//" + comment, self.comment_on_previous_lines.splitlines()
+        )
         top_comment = "\n".join(top_comments)
         if len(top_comment) > 0:
             top_comment += "\n"
@@ -80,15 +86,18 @@ class CppElementComments:
             self.comment_end_of_line += " - " + comment
 
     def full_comment(self):
-        if len(self.comment_on_previous_lines) > 0 and len(self.comment_end_of_line) > 0:
+        if (
+            len(self.comment_on_previous_lines) > 0
+            and len(self.comment_end_of_line) > 0
+        ):
             return self.comment_on_previous_lines + "\n\n" + self.comment_end_of_line
         else:
             return self.comment_on_previous_lines + self.comment_end_of_line
 
 
 class CppElement:
-    """Wrapper around a srcLML xml node.
-    """
+    """Wrapper around a srcLML xml node."""
+
     srcml_element: ET.Element = None
 
     def __init__(self, srcml_element: ET.Element):
@@ -140,8 +149,7 @@ class CppElement:
             return None
 
     def str_code_verbatim(self):
-        """Return the exact C++ code from which this xml node was constructed by calling the executable srcml
-        """
+        """Return the exact C++ code from which this xml node was constructed by calling the executable srcml"""
         return srcml_caller.srcml_to_code(self.srcml_element)
 
     def annotate_with_cpp_element_class(self, msg):
@@ -187,7 +195,7 @@ class CppEmptyLine(CppElement):
     def str_code(self):
         return ""
 
-    def str_commented(self, is_enum: bool = False, is_decl_stmt: bool = False): # noqa
+    def str_commented(self, is_enum: bool = False, is_decl_stmt: bool = False):  # noqa
         return ""
 
     def __str__(self):
@@ -197,6 +205,7 @@ class CppEmptyLine(CppElement):
 @dataclass
 class CppElementAndComment(CppElement):
     """A CppElement to which we add comments"""
+
     cpp_element_comments: CppElementComments
 
     def __init__(self, element: ET.Element, cpp_element_comments: CppElementComments):
@@ -205,7 +214,9 @@ class CppElementAndComment(CppElement):
         self.cpp_element_comments = cpp_element_comments
 
     def as_dict(self):
-        as_dict = code_utils.merge_dicts(super().as_dict(), self.cpp_element_comments.as_dict())
+        as_dict = code_utils.merge_dicts(
+            super().as_dict(), self.cpp_element_comments.as_dict()
+        )
         return as_dict
 
     def str_commented(self, is_enum: bool = False, is_decl_stmt: bool = False):
@@ -225,6 +236,7 @@ class CppElementAndComment(CppElement):
 @dataclass
 class CppBlockChild(CppElementAndComment):
     """Abstract parent class: any token that can be embedded in a CppBlock (expr_stmt, function_decl, decl_stmt, ...)"""
+
     def __init__(self, element: ET.Element, cpp_element_comments: CppElementComments):
         super().__init__(element, cpp_element_comments)
 
@@ -233,6 +245,7 @@ class CppUnprocessed(CppBlockChild):
     """Any Cpp Element that is not yet processed by srcmlcpp
     We keep its original source under the form of a string
     """
+
     code: str = ""
 
     def __init__(self, element: ET.Element, cpp_element_comments: CppElementComments):
@@ -248,23 +261,24 @@ class CppUnprocessed(CppBlockChild):
 @dataclass
 class CppBlock(CppElement):  # it is also a CppBlockChild
     """The class CppBlock is a container that represents any set of code  detected by srcML.
-       It has several derived classes.
+    It has several derived classes.
 
-        - For namespaces:
-                Inside srcML we have this: <block>CODE</block>
-                Inside python, the block is handled by `CppBlock`
-        - For files (i.e "units"):
-                Inside srcML we have this: <unit>CODE</unit>
-                Inside python, the block is handled by `CppUnit` (which derives from `CppBlock`)
-        - For functions and anonymous block:
-                Inside srcML we have this:  <block><block_content>CODE</block_content></block>
-                Inside python, the block is handled by `CppBlockContent` (which derives from `CppBlock`)
-        - For classes and structs:
-                Inside srcML we have this: <block><private or public>CODE</private or public></block>
-                Inside python, the block is handled by `CppPublicProtectedPrivate` (which derives from `CppBlock`)
+     - For namespaces:
+             Inside srcML we have this: <block>CODE</block>
+             Inside python, the block is handled by `CppBlock`
+     - For files (i.e "units"):
+             Inside srcML we have this: <unit>CODE</unit>
+             Inside python, the block is handled by `CppUnit` (which derives from `CppBlock`)
+     - For functions and anonymous block:
+             Inside srcML we have this:  <block><block_content>CODE</block_content></block>
+             Inside python, the block is handled by `CppBlockContent` (which derives from `CppBlock`)
+     - For classes and structs:
+             Inside srcML we have this: <block><private or public>CODE</private or public></block>
+             Inside python, the block is handled by `CppPublicProtectedPrivate` (which derives from `CppBlock`)
 
-        https://www.srcmlcpp.org/doc/cpp_srcML.html#block
+     https://www.srcmlcpp.org/doc/cpp_srcML.html#block
     """
+
     block_children: List[CppBlockChild] = None
 
     def __init__(self, element: ET.Element):
@@ -289,8 +303,8 @@ class CppBlock(CppElement):  # it is also a CppBlockChild
 
 @dataclass
 class CppUnit(CppBlock):
-    """A kind of block representing a full file.
-    """
+    """A kind of block representing a full file."""
+
     def __init__(self, element: ET.Element):
         super().__init__(element)
 
@@ -301,8 +315,9 @@ class CppUnit(CppBlock):
 @dataclass
 class CppBlockContent(CppBlock):
     """A kind of block used by function and anonymous blocks, where the code is inside <block><block_content>
-       This can be viewed as a sub-block with a different name
+    This can be viewed as a sub-block with a different name
     """
+
     def __init__(self, element: ET.Element):
         super().__init__(element)
 
@@ -317,8 +332,9 @@ class CppPublicProtectedPrivate(CppBlock):  # Also a CppBlockChild
     See https://www.srcmlcpp.org/doc/cpp_srcML.html#public-access-specifier
     Note: this is not a direct adaptation. Here we merge the different access types, and we derive from CppBlockContent
     """
+
     access_type: str = ""  # "public", "private", or "protected"
-    type: str = ""         # "default" or "" ("default" means it was added automatically)
+    type: str = ""  # "default" or "" ("default" means it was added automatically)
 
     def __init__(self, element: ET.Element, access_type: str, type: str):
         super().__init__(element)
@@ -341,7 +357,7 @@ class CppPublicProtectedPrivate(CppBlock):  # Also a CppBlockChild
     def str_code(self):
         return self.str_ppp()
 
-    def str_commented(self, is_enum: bool = False, is_decl_stmt: bool = False): # noqa
+    def str_commented(self, is_enum: bool = False, is_decl_stmt: bool = False):  # noqa
         return self.str_code()
 
     def __str__(self):
@@ -365,6 +381,7 @@ class CppType(CppElement):
         For composed types, like `std::map<int, std::string>` srcML returns a full tree.
         In order to simplify the process, we recompose this kind of type names into a simple string
     """
+
     names: List[str] = None
 
     # specifiers: could be ["const"], ["static", "const"], ["extern"], ["constexpr"], etc.
@@ -391,7 +408,9 @@ class CppType(CppElement):
         nb_const = self.specifiers.count("const")
 
         if nb_const > 2:
-            raise ValueError("I cannot handle more than two `const` occurrences in a type!")
+            raise ValueError(
+                "I cannot handle more than two `const` occurrences in a type!"
+            )
 
         specifiers = self.specifiers
         if nb_const == 2:
@@ -455,10 +474,11 @@ class CppDecl(CppElementAndComment):
             <decl_stmt><decl><type><name>int</name></type> <name>a</name> <init>= <expr><literal type="number">5</literal></expr></init></decl>;</decl_stmt>
 
             Which is transcribed as "5"
-    """ # noqa
+    """  # noqa
+
     cpp_type: CppType = None
     name: str = ""
-    init: str = ""   # initial or default value
+    init: str = ""  # initial or default value
     range: str = ""  # Will be filled for bitfield members
 
     def __init__(self, element: ET.Element, cpp_element_comments: CppElementComments):
@@ -499,7 +519,9 @@ class CppDecl(CppElementAndComment):
         """
         is_const = "const" in self.cpp_type.specifiers
         is_char = self.cpp_type.names == ["char"]
-        is_default_init = (self.init == "" or self.init == "NULL" or self.init == "nullptr")
+        is_default_init = (
+            self.init == "" or self.init == "NULL" or self.init == "nullptr"
+        )
 
         nb_indirections = 0
         nb_indirections += self.cpp_type.modifiers.count("*")
@@ -537,7 +559,7 @@ class CppDecl(CppElementAndComment):
         if not self.is_c_array():
             return None
         pos = self.name.index("[")
-        size_str = self.name[pos + 1:-1]
+        size_str = self.name[pos + 1 : -1]
         try:
             size = int(size_str)
             return size
@@ -548,7 +570,7 @@ class CppDecl(CppElementAndComment):
         if "[" not in self.name:
             return None
         pos = self.name.index("[")
-        size_str = self.name[pos + 1: -1].strip()
+        size_str = self.name[pos + 1 : -1].strip()
         return size_str
 
     def is_const(self):
@@ -557,8 +579,7 @@ class CppDecl(CppElementAndComment):
         return "const" in self.cpp_type.specifiers  # or "const" in self.cpp_type.names
 
     def is_c_array_fixed_size(self):
-        """Returns true if this decl is a c array, and has a fixed size
-        """
+        """Returns true if this decl is a c array, and has a fixed size"""
         size_str = self.c_array_size_str()
         if size_str is None:
             return False
@@ -593,6 +614,7 @@ class CppDecl(CppElementAndComment):
 
     def is_immutable_for_python(self) -> bool:
         from litgen.internal import cpp_to_python
+
         cpp_type_name = self.cpp_type.str_code()
         r = cpp_to_python.is_cpp_type_immutable_for_python(cpp_type_name)
         return r
@@ -640,14 +662,22 @@ class CppDeclStatement(CppElementAndComment):
     """
     https://www.srcmlcpp.org/doc/cpp_srcML.html#variable-declaration-statement
     """
-    cpp_decls: List[CppDecl] = None  # A CppDeclStatement can initialize several variables
+
+    cpp_decls: List[
+        CppDecl
+    ] = None  # A CppDeclStatement can initialize several variables
 
     def __init__(self, element: ET.Element, cpp_element_comments: CppElementComments):
         super().__init__(element, cpp_element_comments)
         self.cpp_decls: List[CppDecl] = []
 
     def str_code(self):
-        str_decls = list(map(lambda cpp_decl: cpp_decl.str_commented(is_decl_stmt=True), self.cpp_decls))
+        str_decls = list(
+            map(
+                lambda cpp_decl: cpp_decl.str_commented(is_decl_stmt=True),
+                self.cpp_decls,
+            )
+        )
         str_decl = code_utils.join_remove_empty("\n", str_decls)
         return str_decl
 
@@ -660,6 +690,7 @@ class CppParameter(CppElement):
     """
     https://www.srcmlcpp.org/doc/cpp_srcML.html#function-declaration
     """
+
     decl: CppDecl = None
 
     template_type: CppType = None  # This is only for template's CppParameterList
@@ -674,7 +705,9 @@ class CppParameter(CppElement):
             return str(self.decl)
         else:
             if self.template_type is None:
-                logging.warning("CppParameter.__str__() with no decl and no template_type")
+                logging.warning(
+                    "CppParameter.__str__() with no decl and no template_type"
+                )
             return str(self.template_type) + " " + self.template_name
 
     def __str__(self):
@@ -691,7 +724,9 @@ class CppParameter(CppElement):
         return self.decl.name_without_array()
 
 
-def types_names_default_for_signature_parameters_list(parameters: List[CppParameter]) -> str:
+def types_names_default_for_signature_parameters_list(
+    parameters: List[CppParameter],
+) -> str:
     strs = list(map(lambda param: str(param), parameters))
     return code_utils.join_remove_empty(", ", strs)
 
@@ -702,6 +737,7 @@ class CppParameterList(CppElement):
     List of parameters of a function
     https://www.srcmlcpp.org/doc/cpp_srcML.html#function-declaration
     """
+
     parameters: List[CppParameter] = None
 
     def __init__(self, element: ET.Element):
@@ -734,6 +770,7 @@ class CppTemplate(CppElement):
     Template parameters of a function, struct or class
     https://www.srcmlcpp.org/doc/cpp_srcML.html#template
     """
+
     parameter_list: CppParameterList = None
 
     def __init__(self, element: ET.Element):
@@ -753,12 +790,15 @@ class CppFunctionDecl(CppElementAndComment):
     """
     https://www.srcmlcpp.org/doc/cpp_srcML.html#function-declaration
     """
+
     specifiers: List[str] = None  # "const" or ""
     type: CppType = None
     name: str = ""
     parameter_list: CppParameterList = None
     template: CppTemplate = None
-    is_auto_decl: bool = False  # True if it is a decl of the form `auto square(double) -> double`
+    is_auto_decl: bool = (
+        False  # True if it is a decl of the form `auto square(double) -> double`
+    )
 
     def __init__(self, element: ET.Element, cpp_element_comments: CppElementComments):
         super().__init__(element, cpp_element_comments)
@@ -799,6 +839,7 @@ class CppFunction(CppFunctionDecl):
     """
     https://www.srcmlcpp.org/doc/cpp_srcML.html#function-definition
     """
+
     block: CppUnprocessed = None
 
     def __init__(self, element: ET.Element, cpp_element_comments: CppElementComments):
@@ -822,6 +863,7 @@ class CppConstructorDecl(CppElementAndComment):
     """
     https://www.srcmlcpp.org/doc/cpp_srcML.html#constructor-declaration
     """
+
     specifiers: List[str]
     name: str = ""
     parameter_list: CppParameterList = None
@@ -849,6 +891,7 @@ class CppConstructor(CppConstructorDecl):
     """
     https://www.srcmlcpp.org/doc/cpp_srcML.html#constructor
     """
+
     block: CppUnprocessed = None
     member_init_list: CppUnprocessed = None
 
@@ -874,6 +917,7 @@ class CppSuper(CppElement):
     Define a super classes of a struct or class
     https://www.srcmlcpp.org/doc/cpp_srcML.html#struct-definition
     """
+
     specifier: str = ""  # public, private or protected inheritance
     name: str = ""  # name of the super class
 
@@ -896,6 +940,7 @@ class CppSuperList(CppElement):
     Define a list of super classes of a struct or class
     https://www.srcmlcpp.org/doc/cpp_srcML.html#struct-definition
     """
+
     super_list: List[CppSuper]
 
     def __init__(self, element: ET.Element):
@@ -915,10 +960,11 @@ class CppStruct(CppBlockChild):
     """
     https://www.srcmlcpp.org/doc/cpp_srcML.html#struct-definition
     """
+
     name: str = ""
     super_list: CppSuperList = None
     block: CppBlock = None
-    template: CppTemplate = None    # for template classes or structs
+    template: CppTemplate = None  # for template classes or structs
 
     def __init__(self, element: ET.Element, cpp_element_comments: CppElementComments):
         super().__init__(element, cpp_element_comments)
@@ -979,6 +1025,7 @@ class CppClass(CppStruct):
     """
     https://www.srcmlcpp.org/doc/cpp_srcML.html#class-definition
     """
+
     def __init__(self, element: ET.Element, cpp_element_comments: CppElementComments):
         super().__init__(element, cpp_element_comments)
 
@@ -992,13 +1039,16 @@ class CppComment(CppBlockChild):
     https://www.srcmlcpp.org/doc/cpp_srcML.html#comment
     Warning, the text contains "//" or "/* ... */" and "\n"
     """
+
     comment: str
 
     def __init__(self, element: ET.Element, cpp_element_comments: CppElementComments):
         super().__init__(element, cpp_element_comments)
 
     def str_code(self):
-        lines = self.comment.split("\n")       # split("\n") keeps empty lines (splitlines() does not!)
+        lines = self.comment.split(
+            "\n"
+        )  # split("\n") keeps empty lines (splitlines() does not!)
         lines = list(map(lambda s: "// " + s, lines))
         return "\n".join(lines)
 
@@ -1011,6 +1061,7 @@ class CppNamespace(CppBlockChild):
     """
     https://www.srcmlcpp.org/doc/cpp_srcML.html#namespace
     """
+
     name: str = ""
     block: CppBlock = None
 
@@ -1034,6 +1085,7 @@ class CppEnum(CppBlockChild):
     https://www.srcmlcpp.org/doc/cpp_srcML.html#enum-definition
     https://www.srcmlcpp.org/doc/cpp_srcML.html#enum-class
     """
+
     type: str = ""  # "class" or ""
     name: str = ""
     block: CppBlock = None

@@ -1,9 +1,10 @@
 import logging
-import os, sys;
+import os, sys
 
 import pytest
 
-_THIS_DIR = os.path.dirname(__file__); sys.path.append(_THIS_DIR + "/../..")
+_THIS_DIR = os.path.dirname(__file__)
+sys.path.append(_THIS_DIR + "/../..")
 
 from litgen.internal import code_utils
 from litgen.options import CodeStyleOptions, code_style_implot
@@ -27,39 +28,49 @@ def get_first_function_decl(code) -> CppFunctionDecl:
 
 
 def test_make_function_params_adapter():
-
     def make_adapted_function(code):
         function_decl = get_first_function_decl(code)
         struct_name = ""
-        function_adapted_params = make_function_params_adapter(function_decl, OPTIONS, struct_name)
+        function_adapted_params = make_function_params_adapter(
+            function_decl, OPTIONS, struct_name
+        )
         return function_adapted_params
 
     # Easy test with const
     code = """MY_API void foo(const int v[2]);"""
     function_adapted_params = make_adapted_function(code)
-    code_utils.assert_are_codes_equal(function_adapted_params.function_infos, "MY_API void foo(const std::array<int, 2>& v);")
+    code_utils.assert_are_codes_equal(
+        function_adapted_params.function_infos,
+        "MY_API void foo(const std::array<int, 2>& v);",
+    )
 
     # Less easy test with non const
     code = """MY_API void foo(unsigned long long v[2]);"""
     function_adapted_params = make_adapted_function(code)
     code_utils.assert_are_codes_equal(
         function_adapted_params.function_infos,
-        "MY_API void foo(BoxedUnsignedLongLong & v_0, BoxedUnsignedLongLong & v_1);")
+        "MY_API void foo(BoxedUnsignedLongLong & v_0, BoxedUnsignedLongLong & v_1);",
+    )
 
     # Full test with a mixture
     code = """MY_API void foo(bool flag, const double v[2], double outputs[2]);"""
     function_adapted_params = make_adapted_function(code)
     code_utils.assert_are_codes_equal(
         function_adapted_params.function_infos,
-        "MY_API void foo(bool flag, const std::array<double, 2>& v, BoxedDouble & outputs_0, BoxedDouble & outputs_1);")
+        "MY_API void foo(bool flag, const std::array<double, 2>& v, BoxedDouble & outputs_0, BoxedDouble & outputs_1);",
+    )
 
 
 def test_use_function_params_adapter_const():
     code = """MY_API void foo_const(const int input[2]);"""
     function_decl = get_first_function_decl(code)
-    generated_code = module_pydef_generator._generate_pydef_function(function_decl, OPTIONS)
+    generated_code = module_pydef_generator._generate_pydef_function(
+        function_decl, OPTIONS
+    )
     # logging. warning("\n" + generated_code)
-    code_utils.assert_are_codes_equal(generated_code, """
+    code_utils.assert_are_codes_equal(
+        generated_code,
+        """
         m.def("foo_const",
             [](const std::array<int, 2>& input)
             {
@@ -72,15 +83,20 @@ def test_use_function_params_adapter_const():
             },
             py::arg("input")
         );
-    """)
+    """,
+    )
 
 
 def test_use_function_params_adapter_non_const():
     code = """MY_API void foo_non_const(int output[2]);"""
     function_decl = get_first_function_decl(code)
-    generated_code = module_pydef_generator._generate_pydef_function(function_decl, OPTIONS)
+    generated_code = module_pydef_generator._generate_pydef_function(
+        function_decl, OPTIONS
+    )
     # logging.warning("\n" + generated_code)
-    code_utils.assert_are_codes_equal(generated_code, """
+    code_utils.assert_are_codes_equal(
+        generated_code,
+        """
         m.def("foo_non_const",
             [](BoxedInt & output_0, BoxedInt & output_1)
             {
@@ -100,15 +116,19 @@ def test_use_function_params_adapter_non_const():
             },
             py::arg("output_0"), py::arg("output_1")
         );
-    """)
+    """,
+    )
 
 
 def test_mixture():
     code = """MY_API void foo(bool flag, const double v[2], double outputs[2]);"""
     function_decl = get_first_function_decl(code)
-    generated_code = module_pydef_generator._generate_pydef_function(function_decl, OPTIONS)
+    generated_code = module_pydef_generator._generate_pydef_function(
+        function_decl, OPTIONS
+    )
     code_utils.assert_are_codes_equal(
-        generated_code, """
+        generated_code,
+        """
             m.def("foo",
                 [](bool flag, const std::array<double, 2>& v, BoxedDouble & outputs_0, BoxedDouble & outputs_1)
                 {
@@ -128,7 +148,8 @@ def test_mixture():
                 },
                 py::arg("flag"), py::arg("v"), py::arg("outputs_0"), py::arg("outputs_1")
             );
-    """)
+    """,
+    )
 
 
 def test_mixture_no_replace():
@@ -138,9 +159,13 @@ def test_mixture_no_replace():
 
     code = """MY_API void foo(bool flag, const double v[2], double outputs[2]);"""
     function_decl = get_first_function_decl(code)
-    generated_code = module_pydef_generator._generate_pydef_function(function_decl, options)
+    generated_code = module_pydef_generator._generate_pydef_function(
+        function_decl, options
+    )
     # logging.warning("\n" + generated_code)
-    code_utils.assert_are_codes_equal(generated_code, """
+    code_utils.assert_are_codes_equal(
+        generated_code,
+        """
         m.def("foo",
             [](bool flag, const std::array<double, 2>& v, double outputs[2])
             {
@@ -154,7 +179,8 @@ def test_mixture_no_replace():
             },
             py::arg("flag"), py::arg("v"), py::arg("outputs")
         );
-    """)
+    """,
+    )
 
 
 def test_in_method():
@@ -167,7 +193,9 @@ def test_in_method():
     options = litgen.CodeStyleOptions()
     generated_code = litgen.generate_pydef(code, options)
     # logging.warning("\n" + generated_code)
-    code_utils.assert_are_codes_equal(generated_code, """
+    code_utils.assert_are_codes_equal(
+        generated_code,
+        """
         auto pyClassFoo = py::class_<Foo>
             (m, "Foo", "")
             .def(py::init<>()) // implicit default constructor
@@ -192,4 +220,5 @@ def test_in_method():
                 py::arg("out_0"), py::arg("out_1")
             )
             ;
-    """)
+    """,
+    )

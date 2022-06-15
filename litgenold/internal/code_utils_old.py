@@ -15,10 +15,14 @@ import traceback
 VALID_IDENTIFIERS_CHARS_START = string.ascii_lowercase + string.ascii_uppercase + "_"
 # Then, they can contain letters, digits and underscores
 VALID_IDENTIFIERS_CHARS = VALID_IDENTIFIERS_CHARS_START + string.digits
-CPP_OPERATORS = list(map(lambda s: "operator" + s,
-    "+ - * / % ^ & | ~ ! = < > += -= *= /= %= ^= &= |= << >> >>= <<= == != <= >= <=> && || ++ -- , ->* -> () []"
-    .split(" ")
-    ))
+CPP_OPERATORS = list(
+    map(
+        lambda s: "operator" + s,
+        "+ - * / % ^ & | ~ ! = < > += -= *= /= %= ^= &= |= << >> >>= <<= == != <= >= <=> && || ++ -- , ->* -> () []".split(
+            " "
+        ),
+    )
+)
 
 # transform a list into a list of adjacent pairs
 # For example : [a, b, c] -> [ [a, b], [b, c]]
@@ -32,9 +36,9 @@ def overlapping_pairs(iterable):
 
 
 def strip_empty_lines_in_list(code_lines: List[str]) -> List[str]:
-    code_lines = list(itertools.dropwhile(lambda s: len(s.strip())  == 0, code_lines))
+    code_lines = list(itertools.dropwhile(lambda s: len(s.strip()) == 0, code_lines))
     code_lines = list(reversed(code_lines))
-    code_lines = list(itertools.dropwhile(lambda s: len(s.strip())  == 0, code_lines))
+    code_lines = list(itertools.dropwhile(lambda s: len(s.strip()) == 0, code_lines))
     code_lines = list(reversed(code_lines))
 
     return code_lines
@@ -47,14 +51,14 @@ def strip_empty_lines(code_lines: str) -> str:
 
 
 def to_snake_case(name):
-    name = re.sub('(.)([A-Z][a-z]+)', r'\1_\2', name)
-    name = re.sub('__([A-Z])', r'_\1', name)
-    name = re.sub('([a-z0-9])([A-Z])', r'\1_\2', name)
+    name = re.sub("(.)([A-Z][a-z]+)", r"\1_\2", name)
+    name = re.sub("__([A-Z])", r"_\1", name)
+    name = re.sub("([a-z0-9])([A-Z])", r"\1_\2", name)
     return name.lower()
 
 
 def to_camel_case(name):
-    r = ''.join(word.title() for word in name.split('_'))
+    r = "".join(word.title() for word in name.split("_"))
     return r
 
 
@@ -92,14 +96,14 @@ def unindent_code(code: str) -> str:
     return "\n".join(processed_lines)
 
 
-def reindent_code(code: str, indent_size: int, skip_first_line = False):
+def reindent_code(code: str, indent_size: int, skip_first_line=False):
     "change the global code indentation, but keep its inner indentation"
     code = unindent_code(code)
     code = indent_code(code, indent_size, skip_first_line)
     return code
 
 
-def indent_code(code: str, indent_size: int, skip_first_line = False):
+def indent_code(code: str, indent_size: int, skip_first_line=False):
     "add some space to the left of all lines"
     if skip_first_line:
         lines = code.split("\n")
@@ -109,11 +113,13 @@ def indent_code(code: str, indent_size: int, skip_first_line = False):
 
     lines = code.split("\n")
     indent_str = " " * indent_size
+
     def indent_line(line):
         if len(line) == 0:
             return ""
         else:
             return indent_str + line
+
     lines = map(indent_line, lines)
     return "\n".join(lines)
 
@@ -129,8 +135,10 @@ def indent_code_force(code: str, indent_size: int):
 def format_python_comment(comment: str, indent_size: int) -> str:
     lines = comment.split("\n")
     indent_str = " " * indent_size + "# "
+
     def indent_and_comment_line(line):
         return indent_str + line
+
     lines = map(indent_and_comment_line, lines)
     return "\n".join(lines)
 
@@ -144,19 +152,21 @@ def format_cpp_comment_on_one_line(comment: str) -> str:
 def format_cpp_comment_multiline(comment: str, indentation: int):
     lines = comment.split("\n")
     spacing = " " * indentation
+
     def process_line(line):
         return spacing + "// " + line
+
     lines = list(map(process_line, lines))
     return "\n".join(lines)
 
 
 def write_code_between_markers(
-        inout_filename: str,
-        code_marker_in: str,
-        code_marker_out: str,
-        code_to_insert: str,
-        flag_preserve_left_spaces: bool
-    ):
+    inout_filename: str,
+    code_marker_in: str,
+    code_marker_out: str,
+    code_to_insert: str,
+    flag_preserve_left_spaces: bool,
+):
     assert os.path.isfile(inout_filename)
     input_code = read_text_file(inout_filename)
     input_code_lines = input_code.split("\n")
@@ -167,7 +177,9 @@ def write_code_between_markers(
     for code_line in input_code_lines:
         if code_marker_in in code_line:
             if is_inside_autogen_region:
-                raise RuntimeError(f"Encountered more than one code_marker: {code_marker_in}")
+                raise RuntimeError(
+                    f"Encountered more than one code_marker: {code_marker_in}"
+                )
             else:
                 is_inside_autogen_region = True
                 was_replacement_performed = True
@@ -179,12 +191,14 @@ def write_code_between_markers(
                 if flag_preserve_left_spaces:
                     output_code = output_code + code_to_insert
                 else:
-                    output_code = output_code + indent_code_force(code_to_insert, indent_size)
+                    output_code = output_code + indent_code_force(
+                        code_to_insert, indent_size
+                    )
         else:
             if not is_inside_autogen_region:
                 output_code = output_code + code_line + "\n"
             else:
-                pass # Skip code lines that were already in the autogenerated region
+                pass  # Skip code lines that were already in the autogenerated region
         if code_marker_out in code_line:
             output_code = output_code + "\n"
             output_code = output_code + code_line + "\n"
@@ -193,7 +207,9 @@ def write_code_between_markers(
         output_code = output_code[:-1]
 
     if not was_replacement_performed:
-        raise RuntimeError(f"write_code_between_markers: could not find marker {code_marker_in} in file {inout_filename}")
+        raise RuntimeError(
+            f"write_code_between_markers: could not find marker {code_marker_in} in file {inout_filename}"
+        )
 
     write_text_file(inout_filename, output_code)
 
@@ -248,7 +264,11 @@ def remove_trailing_spaces(line: str) -> str:
 
 def make_nice_code_diff(generated: str, expected: str) -> str:
     differ = difflib.Differ()
-    diffs = list(differ.compare(expected.splitlines(keepends=True) , generated.splitlines(keepends=True)))
+    diffs = list(
+        differ.compare(
+            expected.splitlines(keepends=True), generated.splitlines(keepends=True)
+        )
+    )
     return "".join(diffs)
 
 
@@ -257,14 +277,16 @@ def assert_are_equal_ignore_spaces(generated_code: str, expected_code: str):
     expected_processed = remove_redundant_spaces(expected_code)
     if not generated_processed == expected_processed:
         diff_str = make_nice_code_diff(generated_processed, expected_processed)
-        logging.error(f"""assert_are_equal_ignore_spaces returns false 
+        logging.error(
+            f"""assert_are_equal_ignore_spaces returns false 
                     with diff= 
 {str(diff_str)}
                     expected_processed=
 {expected_processed}
                     and generated_processed=
 {generated_processed}
-        """)
+        """
+        )
 
         stack_lines = traceback.format_stack()
         error_line = stack_lines[-2]
@@ -279,14 +301,16 @@ def assert_are_codes_equal(generated_code: str, expected_code: str) -> str:
     expected_processed = strip_empty_lines(unindent_code(expected_code))
     if not generated_processed == expected_processed:
         diff_str = make_nice_code_diff(generated_processed, expected_processed)
-        logging.error(f"""assert_are_codes_equal returns false 
+        logging.error(
+            f"""assert_are_codes_equal returns false 
                     with diff= 
 {str(diff_str)}
                     expected_processed=
 {expected_processed}
                     and generated_processed=
 {generated_processed}
-        """)
+        """
+        )
 
         stack_lines = traceback.format_stack()
         error_line = stack_lines[-2]
@@ -300,13 +324,12 @@ def remove_end_of_line_cpp_comments(code: str) -> str:
 
     def remove_comment(line: str):
         if "//" in line:
-            line = line[ : line.index("//")]
+            line = line[: line.index("//")]
         return line
 
     lines = map(remove_comment, lines)
     code = "\n".join(lines)
     return code
-
 
 
 def is_correct_c_identifier(name: str) -> bool:
@@ -330,13 +353,14 @@ def is_correct_c_identifier(name: str) -> bool:
 
 def reserved_cpp_keywords():
     keywords_str = (
-            "alignas alignof and and_eq asm atomic_cancel atomic_commit atomic_noexcept auto bitand bitor bool break case catch char "
-            + "char8_t  char16_t char32_t class compl concept  const consteval  constexpr constinit  const_cast continue co_await "
-            + "co_return  co_yield  decltype default delete do double dynamic_cast else enum explicit export extern false float "
-            + "for friend goto if inline int long mutable namespace new noexcept not not_eq nullptr operator or or_eq private protected "
-            + "public reflexpr register  reinterpret_cast requires  return short signed sizeof static static_assert static_cast struct "
-            + "switch synchronized template this thread_local throw true try typedef typeid typename union unsigned using virtual void "
-            + "volatile wchar_t while xor xor_eq" )
+        "alignas alignof and and_eq asm atomic_cancel atomic_commit atomic_noexcept auto bitand bitor bool break case catch char "
+        + "char8_t  char16_t char32_t class compl concept  const consteval  constexpr constinit  const_cast continue co_await "
+        + "co_return  co_yield  decltype default delete do double dynamic_cast else enum explicit export extern false float "
+        + "for friend goto if inline int long mutable namespace new noexcept not not_eq nullptr operator or or_eq private protected "
+        + "public reflexpr register  reinterpret_cast requires  return short signed sizeof static static_assert static_cast struct "
+        + "switch synchronized template this thread_local throw true try typedef typeid typename union unsigned using virtual void "
+        + "volatile wchar_t while xor xor_eq"
+    )
 
     keywords = keywords_str.split(" ")
     return keywords
@@ -364,7 +388,9 @@ def parse_c_identifier_at_start(code: str) -> Tuple[str, int]:
 
 def parse_c_identifier_at_end(code: str) -> Tuple[str, int]:
     if len(code) == 0:
-        raise CppParseException("parse_c_identifier_at_start cannot accept empty strings")
+        raise CppParseException(
+            "parse_c_identifier_at_start cannot accept empty strings"
+        )
     if code[-1] not in VALID_IDENTIFIERS_CHARS:
         return "", -1
 
@@ -375,13 +401,15 @@ def parse_c_identifier_at_end(code: str) -> Tuple[str, int]:
             break
         pos = pos - 1
 
-    pos = pos +  1
+    pos = pos + 1
     identifer = code[pos:]
     if identifer[0] not in VALID_IDENTIFIERS_CHARS_START:
         return "", -1
 
     if identifer in reserved_cpp_keywords():
-        raise CppParseException("parse_c_identifier_at_start cannot return a reserved keyword")
+        raise CppParseException(
+            "parse_c_identifier_at_start cannot return a reserved keyword"
+        )
 
     return identifer, pos
 
@@ -413,7 +441,7 @@ def remove_template_from_return_type(type_str: str) -> str:
             pos += 1
         assert nb_chevrons == 0
 
-        type_str = type_str[pos + 1 : ].strip()
+        type_str = type_str[pos + 1 :].strip()
 
     return type_str
 
@@ -435,7 +463,7 @@ def parse_function_declaration(code_line: str) -> Optional[FunctionNameAndReturn
         nb_chevrons = 0
         nb_accolades = 0
         nb_equal = 0
-        for pos, char in enumerate(code_line[pos_start :]):
+        for pos, char in enumerate(code_line[pos_start:]):
             if char == "=":
                 nb_equal += 1
             if char == "<":
@@ -453,14 +481,17 @@ def parse_function_declaration(code_line: str) -> Optional[FunctionNameAndReturn
     pos_first_paren = find_first_paren_in_main_scope(0)
 
     # special case for operator()
-    if (pos_first_paren > len("operator(") and
-            code_line[ pos_first_paren - len("operator") : pos_first_paren + 2] == "operator()"):
+    if (
+        pos_first_paren > len("operator(")
+        and code_line[pos_first_paren - len("operator") : pos_first_paren + 2]
+        == "operator()"
+    ):
         pos_first_paren = find_first_paren_in_main_scope(pos_first_paren + 2)
 
     if pos_first_paren < 0:
         return None
 
-    return_type_and_function_name = code_line[0 : pos_first_paren].strip()
+    return_type_and_function_name = code_line[0:pos_first_paren].strip()
 
     idx_start_fn_identifier = -1
     for op in CPP_OPERATORS:
@@ -469,10 +500,15 @@ def parse_function_declaration(code_line: str) -> Optional[FunctionNameAndReturn
             idx_start_fn_identifier = return_type_and_function_name.index(op)
 
     if idx_start_fn_identifier < 0:
-        function_name, idx_start_fn_identifier  = parse_c_identifier_at_end(return_type_and_function_name)
+        function_name, idx_start_fn_identifier = parse_c_identifier_at_end(
+            return_type_and_function_name
+        )
 
     # Special case for destructors
-    if idx_start_fn_identifier > 0 and return_type_and_function_name[idx_start_fn_identifier - 1] =="~":
+    if (
+        idx_start_fn_identifier > 0
+        and return_type_and_function_name[idx_start_fn_identifier - 1] == "~"
+    ):
         function_name = "~" + function_name
         return_type_cpp = ""
         return FunctionNameAndReturnType(function_name, return_type_cpp)
@@ -481,7 +517,7 @@ def parse_function_declaration(code_line: str) -> Optional[FunctionNameAndReturn
         raise CppParseException(f"parse_function_declaration; empty function name!")
     function_name = function_name.strip()
 
-    return_type_cpp = return_type_and_function_name[ : idx_start_fn_identifier].strip()
+    return_type_cpp = return_type_and_function_name[:idx_start_fn_identifier].strip()
 
     return_type_cpp = remove_template_and_inline_from_return_type(return_type_cpp)
 
@@ -490,11 +526,13 @@ def parse_function_declaration(code_line: str) -> Optional[FunctionNameAndReturn
         return_type_cpp = return_type_cpp.replace("static", "").strip()
         is_static = True
 
-    return FunctionNameAndReturnType(function_name, return_type_cpp, is_static=is_static)
+    return FunctionNameAndReturnType(
+        function_name, return_type_cpp, is_static=is_static
+    )
 
 
 def join_remove_empty(separator: str, strs: List[str]):
-    non_empty_strs = filter(lambda s : len(s) > 0, strs)
+    non_empty_strs = filter(lambda s: len(s) > 0, strs)
     r = separator.join(non_empty_strs)
     return r
 
@@ -515,10 +553,10 @@ def contains_pointer_type(full_type_str: str, type_to_search: str):
     if type_to_search.endswith("*"):
         type_to_search = type_to_search[:-1]
 
-    if contains_word_boundary_left_only(full_type_str, type_to_search +  "*"):
+    if contains_word_boundary_left_only(full_type_str, type_to_search + "*"):
         return True
 
-    if contains_word_boundary_left_only(full_type_str, type_to_search +  " *"):
+    if contains_word_boundary_left_only(full_type_str, type_to_search + " *"):
         return True
 
     return False

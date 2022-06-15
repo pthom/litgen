@@ -1,4 +1,7 @@
-import os, sys; _THIS_DIR = os.path.dirname(__file__); sys.path.append(_THIS_DIR + "/../..")
+import os, sys
+
+_THIS_DIR = os.path.dirname(__file__)
+sys.path.append(_THIS_DIR + "/../..")
 
 from srcmlcpp import srcml_caller, srcml_utils
 from srcmlcpp import code_utils
@@ -42,13 +45,16 @@ def test_srcml_xml():
         r = "\n".join(lines[2:])
         return r
 
-    code_utils.assert_are_equal_ignore_spaces(remove_first_two_lines(xml_str), remove_first_two_lines(expected_xml_str))
+    code_utils.assert_are_equal_ignore_spaces(
+        remove_first_two_lines(xml_str), remove_first_two_lines(expected_xml_str)
+    )
 
 
 def test_srcml_does_not_modify_code():
     assert_code_unmodified_by_srcml("int a = 1;")
     assert_code_unmodified_by_srcml("void foo(int x, int y=5){};")
-    assert_code_unmodified_by_srcml("""
+    assert_code_unmodified_by_srcml(
+        """
     #include <nonexistingfile.h>
     #define TRUC
     // A super nice function
@@ -58,4 +64,5 @@ def test_srcml_does_not_modify_code():
                             ;;TRUC;;TRUC; TRUC TRUC   ;;;; // and some gratuitous elements
     // A lambda
     auto fnSub = [](int a, int b) { return b - a;};
-    """)
+    """
+    )

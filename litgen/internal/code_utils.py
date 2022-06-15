@@ -5,12 +5,13 @@ import itertools
 import logging
 import difflib
 import traceback
+
 """Low level code utilities
 
 Note: This module shall work standalone, and not depend on anything inside litgen or srcmlcpp! 
 """
 
-T = TypeVar('T')
+T = TypeVar("T")
 
 
 # transform a list into a list of adjacent pairs
@@ -18,7 +19,7 @@ T = TypeVar('T')
 def overlapping_pairs(iterable: Iterable[T]) -> Tuple[T, T]:
     it = iter(iterable)
     a = next(it, None)
-    b = None # noqa
+    b = None  # noqa
     for b in it:
         yield a, b
         a = b
@@ -58,7 +59,7 @@ def code_set_max_consecutive_empty_lines(code: str, nb_max_empty: int) -> str:
 
     new_lines = []
     for line, nb in rle:
-        if len(line.strip()) == 0 and nb >= nb_max_empty: # noqa
+        if len(line.strip()) == 0 and nb >= nb_max_empty:  # noqa
             nb = nb_max_empty
         for i in range(nb):
             new_lines.append(line)
@@ -85,7 +86,9 @@ def line_cpp_comment_position(code_line: str) -> Optional[int]:
     return None
 
 
-def line_python_comment_position(code_line: str, skip_if_comment_only_line: bool = False) -> Optional[int]:
+def line_python_comment_position(
+    code_line: str, skip_if_comment_only_line: bool = False
+) -> Optional[int]:
     """
     Note: parsing comment position in python is complex.
     This method applies naive strategies. May be use the python official parser module?
@@ -144,7 +147,7 @@ def align_python_comments_in_block(code: str) -> str:
             comment_position = line_python_comment_eol_position(line)
             if comment_position is not None:
                 start = line[:comment_position]
-                end = line[comment_position + 1:]
+                end = line[comment_position + 1 :]
                 nb_spaces = max_position - comment_position
                 new_line = start + " " * nb_spaces + "#" + end
                 new_lines.append(new_line)
@@ -194,7 +197,7 @@ def add_item_before_comment(code: str, item: str) -> str:
     lines = code.split("\n")
     last_line = lines[-1]
     pos = last_code_position_before_comment(last_line)
-    last_line = last_line[: pos] + item + last_line[pos:]
+    last_line = last_line[:pos] + item + last_line[pos:]
     lines[-1] = last_line
     r = "\n".join(lines)
     return r
@@ -202,22 +205,22 @@ def add_item_before_comment(code: str, item: str) -> str:
 
 def to_snake_case(name):
     if "re1" not in to_snake_case.__dict__:
-        to_snake_case.re1 = re.compile('(.)([A-Z][a-z]+)')
-        to_snake_case.re2 = re.compile('__([A-Z])')
-        to_snake_case.re3 = re.compile('([a-z0-9])([A-Z])')
+        to_snake_case.re1 = re.compile("(.)([A-Z][a-z]+)")
+        to_snake_case.re2 = re.compile("__([A-Z])")
+        to_snake_case.re3 = re.compile("([a-z0-9])([A-Z])")
 
-    name = to_snake_case.re1.sub(r'\1_\2', name)
-    name = to_snake_case.re2.sub(r'_\1', name)
-    name = to_snake_case.re3.sub(r'\1_\2', name)
+    name = to_snake_case.re1.sub(r"\1_\2", name)
+    name = to_snake_case.re2.sub(r"_\1", name)
+    name = to_snake_case.re3.sub(r"\1_\2", name)
 
-    #name = re.sub('(.)([A-Z][a-z]+)', r'\1_\2', name)
-    #name = re.sub('__([A-Z])', r'_\1', name)
-    #name = re.sub('([a-z0-9])([A-Z])', r'\1_\2', name)
+    # name = re.sub('(.)([A-Z][a-z]+)', r'\1_\2', name)
+    # name = re.sub('__([A-Z])', r'_\1', name)
+    # name = re.sub('([a-z0-9])([A-Z])', r'\1_\2', name)
     return name.lower()
 
 
 def to_camel_case(name):
-    r = ''.join(word.title() for word in name.split('_'))
+    r = "".join(word.title() for word in name.split("_"))
     return r
 
 
@@ -261,14 +264,23 @@ def unindent_code(code: str, flag_strip_empty_lines: bool = False) -> str:
     return r
 
 
-def reindent_code(code: str, indent_size: int = 4, skip_first_line=False, indent_str=""):
+def reindent_code(
+    code: str, indent_size: int = 4, skip_first_line=False, indent_str=""
+):
     """change the global code indentation, but keep its inner indentation"""
     code = unindent_code(code)
-    code = indent_code(code, indent_size=indent_size, skip_first_line=skip_first_line, indent_str=indent_str)
+    code = indent_code(
+        code,
+        indent_size=indent_size,
+        skip_first_line=skip_first_line,
+        indent_str=indent_str,
+    )
     return code
 
 
-def indent_code(code: str, indent_size: int = 1, skip_first_line=False, indent_str=None):
+def indent_code(
+    code: str, indent_size: int = 1, skip_first_line=False, indent_str=None
+):
     """add some space to the left of all lines"""
     if skip_first_line:
         lines = code.split("\n")
@@ -318,7 +330,7 @@ def escape_backslash_in_comments(comment: str) -> str:
     r = ""
 
     for c1, c2 in overlapping_pairs(comment):
-        if c1 == "\\" and c2 not in ["n", "t", "o", "x", "\"", "\'"]:
+        if c1 == "\\" and c2 not in ["n", "t", "o", "x", '"', "'"]:
             r += "\\\\"
         else:
             r += c1
@@ -339,7 +351,9 @@ def format_cpp_comment_on_one_line(comment: str) -> str:
     return comment
 
 
-def format_cpp_comment_multiline(comment: str, indentation_size: int = 4, indentation_str: str = ""):
+def format_cpp_comment_multiline(
+    comment: str, indentation_size: int = 4, indentation_str: str = ""
+):
     lines = comment.split("\n")
     if len(indentation_str) == 0:
         indentation_str = " " * indentation_size
@@ -375,12 +389,12 @@ def spaces_or_tabs_at_line_start(line) -> str:
 
 
 def write_code_between_markers(
-        inout_filename: str,
-        code_marker_in: str,
-        code_marker_out: str,
-        code_to_insert: str,
-        flag_preserve_indentation: bool = True
-        ):
+    inout_filename: str,
+    code_marker_in: str,
+    code_marker_out: str,
+    code_to_insert: str,
+    flag_preserve_indentation: bool = True,
+):
 
     while code_to_insert.endswith("\n\n"):
         code_to_insert = code_to_insert[:-1]
@@ -397,7 +411,9 @@ def write_code_between_markers(
     for code_line in input_code_lines:
         if code_marker_in in code_line:
             if is_inside_autogen_region:
-                raise RuntimeError(f"Encountered more than one code_marker: {code_marker_in}")
+                raise RuntimeError(
+                    f"Encountered more than one code_marker: {code_marker_in}"
+                )
             else:
                 is_inside_autogen_region = True
                 was_replacement_performed = True
@@ -425,7 +441,8 @@ def write_code_between_markers(
 
     if not was_replacement_performed:
         raise RuntimeError(
-            f"write_code_between_markers: could not find marker {code_marker_in} in file {inout_filename}")
+            f"write_code_between_markers: could not find marker {code_marker_in} in file {inout_filename}"
+        )
 
     if output_code != input_code:
         write_text_file(inout_filename, output_code)
@@ -481,7 +498,11 @@ def remove_trailing_spaces(line: str) -> str:
 
 def make_nice_code_diff(generated: str, expected: str) -> str:
     differ = difflib.Differ()
-    diffs = list(differ.compare(expected.splitlines(keepends=True), generated.splitlines(keepends=True)))
+    diffs = list(
+        differ.compare(
+            expected.splitlines(keepends=True), generated.splitlines(keepends=True)
+        )
+    )
     return "".join(diffs)
 
 
@@ -490,14 +511,16 @@ def assert_are_equal_ignore_spaces(generated_code: str, expected_code: str):
     expected_processed = remove_redundant_spaces(expected_code)
     if not generated_processed == expected_processed:
         diff_str = make_nice_code_diff(generated_processed, expected_processed)
-        logging.error(f"""assert_are_equal_ignore_spaces returns false 
+        logging.error(
+            f"""assert_are_equal_ignore_spaces returns false 
                     with diff= 
 {str(diff_str)}
                     expected_processed=
 {expected_processed}
                     and generated_processed=
 {generated_processed}
-        """)
+        """
+        )
 
         stack_lines = traceback.format_stack()
         error_line = stack_lines[-2]
@@ -512,14 +535,16 @@ def assert_are_codes_equal(generated_code: str, expected_code: str):
     expected_processed = strip_empty_lines(unindent_code(expected_code))
     if not generated_processed == expected_processed:
         diff_str = make_nice_code_diff(generated_processed, expected_processed)
-        logging.error(f"""assert_are_codes_equal returns false 
+        logging.error(
+            f"""assert_are_codes_equal returns false 
                     with diff= 
 {str(diff_str)}
                     expected_processed=
 {expected_processed}
                     and generated_processed=
 {generated_processed}
-        """)
+        """
+        )
 
         stack_lines = traceback.format_stack()
         error_line = stack_lines[-2]
@@ -642,7 +667,8 @@ def replace_in_string(input_string, replacements: Dict[str, str]) -> str:
 
 
 def replace_in_string_remove_line_if_none(
-        input_string: str, replacements: Dict[str, str]) -> str:
+    input_string: str, replacements: Dict[str, str]
+) -> str:
 
     r = input_string
 

@@ -1,4 +1,7 @@
-import os, sys; _THIS_DIR = os.path.dirname(__file__); sys.path.append(_THIS_DIR + "/../..")
+import os, sys
+
+_THIS_DIR = os.path.dirname(__file__)
+sys.path.append(_THIS_DIR + "/../..")
 
 import srcmlcpp
 from srcmlcpp.srcml_warnings import SrcMlExceptionDetailed
@@ -15,10 +18,18 @@ def test_warnings():
 
     got_exception = False
     try:
-        raise SrcMlExceptionDetailed(decl.srcml_element, "Artificial exception", options)
+        raise SrcMlExceptionDetailed(
+            decl.srcml_element, "Artificial exception", options
+        )
     except srcmlcpp.SrcMlException as e:
         got_exception = True
         msg = str(e)
-        for part in ["test_warning", "function_decl", "main.h:1:1", "void foo", "Artificial exception"]:
+        for part in [
+            "test_warning",
+            "function_decl",
+            "main.h:1:1",
+            "void foo",
+            "Artificial exception",
+        ]:
             assert part in msg
     assert got_exception == True

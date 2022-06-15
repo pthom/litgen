@@ -26,9 +26,9 @@ def _embed_element_into_unit(element: ET.Element) -> ET.Element:
 
 
 class _TimeStats:
-    nb_calls: int  = 0
-    total_time: float = 0.
-    _last_start_time: float = 0.
+    nb_calls: int = 0
+    total_time: float = 0.0
+    _last_start_time: float = 0.0
 
     def start(self):
         self.nb_calls += 1
@@ -47,7 +47,9 @@ class _SrcmlCaller:
     _stats_code_to_srcml: _TimeStats = _TimeStats()
     _stats_srcml_to_code: _TimeStats = _TimeStats()
 
-    def _call_subprocess(self, encoding: str, input_filename, output_filename, dump_positions: bool):
+    def _call_subprocess(
+        self, encoding: str, input_filename, output_filename, dump_positions: bool
+    ):
         position_arg = "--position" if dump_positions else ""
 
         shell_command = f"srcml -l C++ {input_filename} {position_arg} --xml-encoding {encoding} --src-encoding {encoding} -o {output_filename}"
@@ -58,16 +60,27 @@ class _SrcmlCaller:
             logging.error(f"_SrcmlCaller.call, error {e}")
             raise
 
-    def code_to_srcml(self, encoding: str, input_str, dump_positions: bool = False) -> ET.Element:
+    def code_to_srcml(
+        self, encoding: str, input_str, dump_positions: bool = False
+    ) -> ET.Element:
         """
         Calls srcml with the given code and return the srcml as xml Element
         """
         self._stats_code_to_srcml.start()
-        with tempfile.NamedTemporaryFile(suffix=".h", delete=False) as input_header_file:
+        with tempfile.NamedTemporaryFile(
+            suffix=".h", delete=False
+        ) as input_header_file:
             input_header_file.write(input_str.encode(encoding))
             input_header_file.close()
-            with tempfile.NamedTemporaryFile(suffix=".xml", delete=False) as output_xml_file:
-                self._call_subprocess(encoding, input_header_file.name, output_xml_file.name, dump_positions)
+            with tempfile.NamedTemporaryFile(
+                suffix=".xml", delete=False
+            ) as output_xml_file:
+                self._call_subprocess(
+                    encoding,
+                    input_header_file.name,
+                    output_xml_file.name,
+                    dump_positions,
+                )
                 output_bytes = output_xml_file.read()
                 os.remove(output_xml_file.name)
             os.remove(input_header_file.name)
@@ -90,8 +103,12 @@ class _SrcmlCaller:
             element_tree = ET.ElementTree(unit_element)
             element_tree.write(input_xml_file.name)
 
-            with tempfile.NamedTemporaryFile(delete=False, suffix=".h") as output_header_file:
-                self._call_subprocess(encoding, input_xml_file.name, output_header_file.name, False)
+            with tempfile.NamedTemporaryFile(
+                delete=False, suffix=".h"
+            ) as output_header_file:
+                self._call_subprocess(
+                    encoding, input_xml_file.name, output_header_file.name, False
+                )
                 output_bytes = output_header_file.read()
                 os.remove(output_header_file.name)
         os.remove(input_xml_file.name)
@@ -103,13 +120,17 @@ class _SrcmlCaller:
     def __del__(self):
         global _FLAG_PROFILE_SRCML_CALLS
         if _FLAG_PROFILE_SRCML_CALLS:
-            print(f"_SrcmlCaller: code_to_srcml {self._stats_code_to_srcml.stats_string()}    |    srcml_to_code {self._stats_srcml_to_code.stats_string()}")
+            print(
+                f"_SrcmlCaller: code_to_srcml {self._stats_code_to_srcml.stats_string()}    |    srcml_to_code {self._stats_srcml_to_code.stats_string()}"
+            )
 
 
 _SRCML_CALLER = _SrcmlCaller()
 
 
-def code_to_srcml(code: str, dump_positions: bool = True, encoding: str = "utf-8") -> ET.Element:
+def code_to_srcml(
+    code: str, dump_positions: bool = True, encoding: str = "utf-8"
+) -> ET.Element:
     return _SRCML_CALLER.code_to_srcml(encoding, code, dump_positions)
 
 

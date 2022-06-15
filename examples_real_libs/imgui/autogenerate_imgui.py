@@ -1,4 +1,7 @@
-import os, sys; THIS_DIR = os.path.dirname(__file__); sys.path = [THIS_DIR + "/.."] + sys.path # noqa
+import os, sys
+
+THIS_DIR = os.path.dirname(__file__)
+sys.path = [THIS_DIR + "/.."] + sys.path  # noqa
 import litgen
 
 
@@ -23,10 +26,12 @@ def autogenerate():
     # Configure options
     options = my_code_style_options()
 
-    litgen.generate_files(input_cpp_header=input_cpp_header,
-                          output_cpp_module_file=output_cpp_module,
-                          options=options,
-                          output_stub_pyi_file=output_stub_pyi_file)
+    litgen.generate_files(
+        input_cpp_header=input_cpp_header,
+        output_cpp_module_file=output_cpp_module,
+        options=options,
+        output_stub_pyi_file=output_stub_pyi_file,
+    )
 
 
 if __name__ == "__main__":

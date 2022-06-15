@@ -38,7 +38,7 @@ class SrcmlOptions:
     #
     # In this case, also fill header_guard_suffixes to exclude header_guards
     #
-    header_filter_preprocessor_regions:bool = True
+    header_filter_preprocessor_regions: bool = True
     header_guard_suffixes = ["_H", "HPP", "HXX"]
 
     # Encoding of python and C++ files

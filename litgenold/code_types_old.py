@@ -17,8 +17,8 @@ class CppParseException(Exception):
 
 @_dataclass
 class LineNumberedItem:
-    line_number: int = 0    # starting line of the struct / enum / function,
-                            # either in the whole code or inside a struct/enum
+    line_number: int = 0  # starting line of the struct / enum / function,
+    # either in the whole code or inside a struct/enum
 
 
 @_dataclass
@@ -30,15 +30,24 @@ class PydefCode(LineNumberedItem):
         * the body of an enum
         * the parameters of a function declaration
     """
+
     code_type: CppCodeType = CppCodeType.STRUCT
     name_cpp: str = ""
-    docstring_cpp: str = ""      # the short title just one line before the struct or function declaration
-    line_end: int = 0            # end line of the struct / enum / function
-    body_code_cpp: str = ""      # the code inside the struct or enum body, or inside the function input params signature
-    return_type_cpp: str = ""    # The return type (for functions only)
-    declaration_line: str = ""   # A verbatim copy of the first declaration line
+    docstring_cpp: str = (
+        ""  # the short title just one line before the struct or function declaration
+    )
+    line_end: int = 0  # end line of the struct / enum / function
+    body_code_cpp: str = ""  # the code inside the struct or enum body, or inside the function input params signature
+    return_type_cpp: str = ""  # The return type (for functions only)
+    declaration_line: str = ""  # A verbatim copy of the first declaration line
 
-    def __init__(self, code_type: CppCodeType, name_cpp: str = "", return_type_cpp: str = "", declaration_line: str = ""):
+    def __init__(
+        self,
+        code_type: CppCodeType,
+        name_cpp: str = "",
+        return_type_cpp: str = "",
+        declaration_line: str = "",
+    ):
         self.code_type = code_type
         self.name_cpp = name_cpp
         self.return_type_cpp = return_type_cpp
@@ -81,6 +90,7 @@ class CodeRegionComment(LineNumberedItem):
     ````
 
     """
+
     docstring_cpp: str = ""
 
 
@@ -120,7 +130,9 @@ class Variant_Attribute_Method_CodeRegion:
 @_dataclass
 class StructInfos:
     struct_code: PydefCode = None
-    attr_and_regions: List[Variant_Attribute_Method_CodeRegion] = _field(default_factory=list)
+    attr_and_regions: List[Variant_Attribute_Method_CodeRegion] = _field(
+        default_factory=list
+    )
 
     # Typed accessor
     def get_attr_and_regions(self) -> List[Variant_Attribute_Method_CodeRegion]:
@@ -131,9 +143,11 @@ class StructInfos:
 
 
 @_dataclass
-class EnumCpp98Infos():
+class EnumCpp98Infos:
     enum_code: PydefCode = None
-    attr_and_regions: List[Variant_Attribute_Method_CodeRegion] = _field(default_factory=list)
+    attr_and_regions: List[Variant_Attribute_Method_CodeRegion] = _field(
+        default_factory=list
+    )
 
     # Typed accessor
     def get_attr_and_regions(self) -> List[Variant_Attribute_Method_CodeRegion]:

@@ -18,6 +18,7 @@ from srcmlcpp.srcml_exception import SrcMlException
 #
 ###########################################
 
+
 @dataclass
 class CodePos:
     line: int = 0
@@ -52,15 +53,22 @@ def _extract_error_context(element: ET.Element) -> ErrorContext:
         full_code_lines = [""] + full_code.split("\n")
 
         if cpp_element.start() is not None and len(full_code) > 0:
-            concerned_lines = full_code_lines[cpp_element.start().line: cpp_element.end().line + 1]
+            concerned_lines = full_code_lines[
+                cpp_element.start().line : cpp_element.end().line + 1
+            ]
             start = CodePos(0, cpp_element.start().column)
-            end = CodePos(cpp_element.end().line - cpp_element.start().line, cpp_element.end().column)
+            end = CodePos(
+                cpp_element.end().line - cpp_element.start().line,
+                cpp_element.end().column,
+            )
             return ErrorContext(concerned_lines, start, end)
         else:
             return ErrorContext([], CodePos(), CodePos())
     else:
         original_code = srcmlcpp.srcml_to_code(element)
-        return ErrorContext(original_code.split("\n"), cpp_element.start(), cpp_element.end())
+        return ErrorContext(
+            original_code.split("\n"), cpp_element.start(), cpp_element.end()
+        )
 
 
 def _highlight_responsible_code(element: ET.Element) -> str:
@@ -75,9 +83,9 @@ def _show_element_info(element: ET.Element, encoding):
             header_filename = "Position"
         start = srcml_utils.element_start_position(element)
         if start is not None:
-            return f'{header_filename}:{start.line}:{start.column}'
+            return f"{header_filename}:{start.line}:{start.column}"
         else:
-            return f'{header_filename}'
+            return f"{header_filename}"
 
     element_tag = srcml_utils.clean_tag_or_attrib(element.tag)
     concerned_code = _highlight_responsible_code(element)
@@ -90,9 +98,9 @@ def _show_element_info(element: ET.Element, encoding):
 
 
 def _warning_detailed_info(
-        current_element: ET.Element = None,
-        additional_message: str = "",
-        options: SrcmlOptions = SrcmlOptions()
+    current_element: ET.Element = None,
+    additional_message: str = "",
+    options: SrcmlOptions = SrcmlOptions(),
 ):
     def _get_python_call_info():
         stack_lines = traceback.format_stack()
@@ -118,27 +126,32 @@ def _warning_detailed_info(
         message += show_python_callstack()
 
     if len(additional_message) > 0:
-        message = \
-            (code_utils.unindent_code(additional_message, flag_strip_empty_lines=True)
-             + "\n" + code_utils.unindent_code(message, flag_strip_empty_lines=True))
+        message = (
+            code_utils.unindent_code(additional_message, flag_strip_empty_lines=True)
+            + "\n"
+            + code_utils.unindent_code(message, flag_strip_empty_lines=True)
+        )
 
     return message
 
 
 class SrcMlExceptionDetailed(SrcMlException):
-    def __init__(self,
-                 current_element: ET.Element = None,
-                 additional_message="",
-                 options: SrcmlOptions = SrcmlOptions()
-                 ):
-        message = _warning_detailed_info(current_element, additional_message, options=options)
+    def __init__(
+        self,
+        current_element: ET.Element = None,
+        additional_message="",
+        options: SrcmlOptions = SrcmlOptions(),
+    ):
+        message = _warning_detailed_info(
+            current_element, additional_message, options=options
+        )
         super().__init__(message)
 
 
 def emit_srcml_warning(
-        current_element: ET.Element = None,
-        additional_message="",
-        options: SrcmlOptions = SrcmlOptions()
+    current_element: ET.Element = None,
+    additional_message="",
+    options: SrcmlOptions = SrcmlOptions(),
 ):
     if options.flag_quiet:
         return

@@ -104,7 +104,9 @@ unit
 
 def mark_empty_lines(code: str) -> str:
     lines = code.split("\n")
-    lines2 = list(map(lambda line: EMPTY_LINE_COMMENT if len(line.strip()) == 0 else line, lines))
+    lines2 = list(
+        map(lambda line: EMPTY_LINE_COMMENT if len(line.strip()) == 0 else line, lines)
+    )
     result = "\n".join(lines2)
     return result
 
@@ -144,21 +146,35 @@ def _group_consecutive_comments(srcml_code: ET.Element) -> ET.Element:
             previous_line = srcml_utils.element_end_position(previous_child).line
 
             # if this statement is a comment and the previous line was also a comment statement
-            if (previous_tag == "comment" and child_tag == "comment" and line ==  previous_line + 1):
+            if (
+                previous_tag == "comment"
+                and child_tag == "comment"
+                and line == previous_line + 1
+            ):
                 # We are almost certain that we should concatenate the comment
                 shall_concat_comment = True
                 # However, if the previous comment was an end-of-line comment for another C++ statement on the same line
                 # we shall not concat
                 if previous_previous_child is not None:
-                    previous_previous_tag = srcml_utils.clean_tag_or_attrib(previous_previous_child.tag)
-                    previous_previous_line = srcml_utils.element_end_position(previous_previous_child).line
-                    if previous_previous_line == previous_line and previous_previous_tag != "comment":
+                    previous_previous_tag = srcml_utils.clean_tag_or_attrib(
+                        previous_previous_child.tag
+                    )
+                    previous_previous_line = srcml_utils.element_end_position(
+                        previous_previous_child
+                    ).line
+                    if (
+                        previous_previous_line == previous_line
+                        and previous_previous_tag != "comment"
+                    ):
                         shall_concat_comment = False
                 # Also, if the previous comment was an `EMPTY_LINE_COMMENT` i.e it indicates a voluntarily empty line
                 # we shall not concat
                 current_comment = child.text
                 previous_comment = previous_child.text
-                if "_SRCML_EMPTY_LINE_" in previous_comment or "_SRCML_EMPTY_LINE_" in current_comment: # == EMPTY_LINE_COMMENT:
+                if (
+                    "_SRCML_EMPTY_LINE_" in previous_comment
+                    or "_SRCML_EMPTY_LINE_" in current_comment
+                ):  # == EMPTY_LINE_COMMENT:
                     shall_concat_comment = False
 
         if shall_concat_comment:
@@ -222,8 +238,8 @@ def _is_comment_on_previous_line(children: List[ET.Element], idx: int):
         is_comment = element_n0.tag() == "comment"
         are_next_same_types = element_n1.tag() == element_n2.tag()
         are_consecutive_lines = (
-                (element_n0.end().line + 1 == element_n1.start().line)
-            and (element_n1.end().line + 1 == element_n2.start().line))
+            element_n0.end().line + 1 == element_n1.start().line
+        ) and (element_n1.end().line + 1 == element_n2.start().line)
 
         r = is_comment and are_next_same_types and are_consecutive_lines
         return r
@@ -238,9 +254,12 @@ def _is_comment_on_previous_line(children: List[ET.Element], idx: int):
             if idx == len(children) - 2:
                 return True
             else:
-                next_next_element = CppElement(children[idx +  2])
-                if (next_next_element.tag() == "comment" and next_next_element.start().line == next_element.end().line
-                    and "return_value_policy::" not in next_next_element.text() ):
+                next_next_element = CppElement(children[idx + 2])
+                if (
+                    next_next_element.tag() == "comment"
+                    and next_next_element.start().line == next_element.end().line
+                    and "return_value_policy::" not in next_next_element.text()
+                ):
 
                     return False
                 else:
@@ -251,7 +270,7 @@ def _is_comment_on_previous_line(children: List[ET.Element], idx: int):
 def _remove_comment_tokens(comment: str) -> str:
     comment = comment.replace(COMMENT_NEW_LINE_TOKEN, "\n")
     if comment.startswith("/*") and comment.endswith("*/"):
-        return comment[2 : -2]
+        return comment[2:-2]
     else:
         lines = comment.split("\n")
         lines_processed = []

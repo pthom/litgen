@@ -1,4 +1,7 @@
-import os, sys; _THIS_DIR = os.path.dirname(__file__); sys.path.append(_THIS_DIR + "/../..")
+import os, sys
+
+_THIS_DIR = os.path.dirname(__file__)
+sys.path.append(_THIS_DIR + "/../..")
 
 import logging
 
@@ -14,7 +17,9 @@ def gen_pydef_code(code) -> Optional[str]:
     cpp_unit = srcmlcpp.code_to_cpp_unit(options.srcml_options, code)
     for child in cpp_unit.block_children:
         if isinstance(child, CppFunctionDecl) or isinstance(child, CppFunction):
-            generated_code = module_pydef_generator._generate_pydef_function(child, options)
+            generated_code = module_pydef_generator._generate_pydef_function(
+                child, options
+            )
             return generated_code
     return None
 
@@ -25,7 +30,9 @@ def test_mutable_buffer_return_int():
     """
     generated_code = gen_pydef_code(code)
     # logging. warning("\n" + generated_code)
-    code_utils.assert_are_codes_equal(generated_code, """
+    code_utils.assert_are_codes_equal(
+        generated_code,
+        """
         m.def("foo",
             [](py::array & buf)
             {
@@ -52,7 +59,8 @@ def test_mutable_buffer_return_int():
             },
             py::arg("buf")
         );
-    """)
+    """,
+    )
 
 
 def test_const_buffer_return_void_stride():
@@ -61,7 +69,9 @@ def test_const_buffer_return_void_stride():
     """
     generated_code = gen_pydef_code(code)
     # logging. warning("\n" + generated_code)
-    code_utils.assert_are_codes_equal(generated_code, """
+    code_utils.assert_are_codes_equal(
+        generated_code,
+        """
         m.def("foo",
             [](const py::array & buf, int stride = -1)
             {
@@ -92,7 +102,8 @@ def test_const_buffer_return_void_stride():
             },
             py::arg("buf"), py::arg("stride") = -1
         );
-    """)
+    """,
+    )
 
 
 def test_two_buffers():
@@ -101,7 +112,9 @@ def test_two_buffers():
     """
     generated_code = gen_pydef_code(code)
     # logging. warning("\n" + generated_code)
-    code_utils.assert_are_codes_equal(generated_code, """
+    code_utils.assert_are_codes_equal(
+        generated_code,
+        """
         m.def("foo",
             [](const py::array & buf1, const py::array & buf2)
             {
@@ -141,7 +154,8 @@ def test_two_buffers():
             },
             py::arg("buf1"), py::arg("buf2")
         );
-    """)
+    """,
+    )
 
 
 def test_template_buffer():
@@ -150,7 +164,9 @@ def test_template_buffer():
     """
     generated_code = gen_pydef_code(code)
     # logging. warning("\n" + generated_code)
-    code_utils.assert_are_codes_equal(generated_code, """
+    code_utils.assert_are_codes_equal(
+        generated_code,
+        """
         m.def("foo",
             [](const py::array & buf, bool flag)
             {
@@ -193,4 +209,5 @@ def test_template_buffer():
             },
             py::arg("buf"), py::arg("flag")
         );
-    """)
+    """,
+    )

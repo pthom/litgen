@@ -1,5 +1,8 @@
 import logging
-import os, sys; _THIS_DIR = os.path.dirname(__file__); sys.path.append(_THIS_DIR + "/../..")
+import os, sys
+
+_THIS_DIR = os.path.dirname(__file__)
+sys.path.append(_THIS_DIR + "/../..")
 
 from litgen.internal import module_pydef_generator, code_utils
 import srcmlcpp
@@ -10,6 +13,7 @@ from litgen.options import code_style_implot, code_style_immvision
 #################################
 #           Enums
 ################################
+
 
 def test_generate_pydef_enum():
     options = code_style_implot()
@@ -65,17 +69,16 @@ def test_generate_pydef_enum():
 
 
 def test_generate_pydef_function_cpp_code() -> str:
-
     def test_implot_easy():
         options = code_style_implot()
-        code = '''
+        code = """
             // Sets the format of numeric 
             // axis labels
             IMPLOT_API void SetupAxisFormat(ImAxis axis, const char* fmt);
-        '''
+        """
         cpp_unit = srcmlcpp.code_to_cpp_unit(options.srcml_options, code)
         generated_code = module_pydef_generator.generate_pydef(cpp_unit, options)
-        expected_code = '''
+        expected_code = """
         m.def("setup_axis_format",
             [](ImAxis axis, const char * fmt)
             {
@@ -84,7 +87,7 @@ def test_generate_pydef_function_cpp_code() -> str:
             py::arg("axis"), py::arg("fmt"),
             " Sets the format of numeric \\n axis labels"
         );
-        '''
+        """
         # logging.warning("\n" + generated_code)
         code_utils.assert_are_codes_equal(generated_code, expected_code)
 
@@ -92,13 +95,13 @@ def test_generate_pydef_function_cpp_code() -> str:
 
     def test_return_value_policy():
         options = code_style_implot()
-        code = '''
+        code = """
             // Returns a widget
             IMPLOT_API Widget* Foo();  // return_value_policy::reference
-        '''
+        """
         cpp_unit = srcmlcpp.code_to_cpp_unit(options.srcml_options, code)
         generated_code = module_pydef_generator.generate_pydef(cpp_unit, options)
-        expected_code = '''
+        expected_code = """
             m.def("foo",
                 []()
                 {
@@ -107,20 +110,20 @@ def test_generate_pydef_function_cpp_code() -> str:
                 " Returns a widget\\n\\n return_value_policy::reference",
                 pybind11::return_value_policy::reference
             );
-        '''
+        """
         code_utils.assert_are_codes_equal(generated_code, expected_code)
 
     test_return_value_policy()
 
     def test_implot_one_buffer():
         options = code_style_implot()
-        code = '''
+        code = """
             // Plots a standard 2D scatter plot. Default marker is ImPlotMarker_Circle.
             IMPLOT_TMP void PlotScatter(const T* values, int count);
-        '''
+        """
         cpp_unit = srcmlcpp.code_to_cpp_unit(options.srcml_options, code)
         generated_code = module_pydef_generator.generate_pydef(cpp_unit, options)
-        expected_code = '''
+        expected_code = """
             m.def("plot_scatter",
                 [](const py::array & values)
                 {
@@ -164,7 +167,7 @@ def test_generate_pydef_function_cpp_code() -> str:
                 py::arg("values"),
                 " Plots a standard 2D scatter plot. Default marker is ImPlotMarker_Circle."
             );
-       '''
+       """
         code_utils.assert_are_codes_equal(generated_code, expected_code)
 
     test_implot_one_buffer()
@@ -177,7 +180,7 @@ def test_generate_pydef_function_cpp_code() -> str:
         """
         cpp_unit = srcmlcpp.code_to_cpp_unit(options.srcml_options, code)
         generated_code = module_pydef_generator.generate_pydef(cpp_unit, options)
-        expected_code = '''
+        expected_code = """
             m.def("image",
                 [](const std::string & label_id, const cv::Mat & mat, ImageParams * params)
                 {
@@ -186,11 +189,10 @@ def test_generate_pydef_function_cpp_code() -> str:
                 py::arg("label_id"), py::arg("mat"), py::arg("params"),
                 " Display an image (requires OpenGL initialized)"
             );
-        '''
+        """
         code_utils.assert_are_codes_equal(generated_code, expected_code)
 
     test_immvision()
-
 
 
 """

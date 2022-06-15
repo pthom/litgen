@@ -14,7 +14,9 @@ def test_make_boxed_type():
 
     struct_code = boxed_type._struct_code()
     # logging.warning("\n" + struct_code)
-    code_utils.assert_are_codes_equal(struct_code, """
+    code_utils.assert_are_codes_equal(
+        struct_code,
+        """
         struct BoxedUnsignedLongLong
         {
             unsigned long long value;
@@ -22,7 +24,8 @@ def test_make_boxed_type():
             BoxedUnsignedLongLong(unsigned long long v) : value(v) {}
             std::string __repr__() { return std::string("BoxedUnsignedLongLong(") + std::to_string(value) + ")"; }
         };
-    """)
+    """,
+    )
 
     options = litgen.CodeStyleOptions()
     pydef_code = boxed_type._binding_code(options)
@@ -51,8 +54,10 @@ def test_make_boxed_type():
     # (We instantiated boxing for "unsigned long long" and "int")
     _ = cpp_to_python.BoxedImmutablePythonType("int")
     boxed_structs_code = cpp_to_python.BoxedImmutablePythonType.struct_codes()
-    #logging.warning("\n" + boxed_structs_code)
-    code_utils.assert_are_codes_equal(boxed_structs_code, """
+    # logging.warning("\n" + boxed_structs_code)
+    code_utils.assert_are_codes_equal(
+        boxed_structs_code,
+        """
         struct BoxedUnsignedLongLong
         {
             unsigned long long value;
@@ -67,10 +72,13 @@ def test_make_boxed_type():
             BoxedInt(int v) : value(v) {}
             std::string __repr__() { return std::string("BoxedInt(") + std::to_string(value) + ")"; }
         };
-    """)
+    """,
+    )
 
     binding_codes = cpp_to_python.BoxedImmutablePythonType.binding_codes(options)
-    code_utils.assert_are_codes_equal(binding_codes, """
+    code_utils.assert_are_codes_equal(
+        binding_codes,
+        """
         auto pyClassBoxedUnsignedLongLong = py::class_<BoxedUnsignedLongLong>
             (m, "BoxedUnsignedLongLong", "")
             .def_readwrite("value", &BoxedUnsignedLongLong::value, "")
@@ -99,4 +107,5 @@ def test_make_boxed_type():
                 }
             )
             ;
-    """)
+    """,
+    )

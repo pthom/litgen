@@ -1,4 +1,7 @@
-import os, sys; _THIS_DIR = os.path.dirname(__file__); sys.path.append(_THIS_DIR + "/../..")
+import os, sys
+
+_THIS_DIR = os.path.dirname(__file__)
+sys.path.append(_THIS_DIR + "/../..")
 
 import srcmlcpp
 from srcmlcpp import srcml_main
@@ -20,14 +23,19 @@ def play_parse(code):
 
 def play_imgui():
     options = litgen.code_style_imgui()
-    source_filename = os.path.realpath(_THIS_DIR + "/../../examples_real_libs/imgui/imgui/imgui.h")
+    source_filename = os.path.realpath(
+        _THIS_DIR + "/../../examples_real_libs/imgui/imgui/imgui.h"
+    )
     cpp_unit = srcmlcpp.file_to_cpp_unit(options.srcml_options, source_filename)
     # print(cpp_unit)
+
 
 def play_implot():
     options = litgen.code_style_implot()
     options.original_location_flag_show = True
-    source_filename = os.path.realpath(_THIS_DIR + "/../../examples_real_libs/implot/implot/implot.h")
+    source_filename = os.path.realpath(
+        _THIS_DIR + "/../../examples_real_libs/implot/implot/implot.h"
+    )
     cpp_unit = srcmlcpp.file_to_cpp_unit(options.srcml_options, source_filename)
     # print(cpp_unit)
     pydef_code = module_pydef_generator.generate_pydef(cpp_unit, options)
@@ -54,7 +62,8 @@ def play_pydef(code):
     pydef_code = litgen.generate_pydef(code, options, add_boxed_types_definitions=True)
     print(f">>>\n{pydef_code}<<<")
 
-#test_code()
+
+# test_code()
 
 
 def play_pyi(code):
@@ -77,7 +86,6 @@ def play_pyi(code):
 
     pyi_code = litgen.generate_pyi(code, options, add_boxed_types_definitions=True)
     print(f">>>\n{pyi_code}<<<")
-
 
 
 # IMGUI_API bool          Combo(const char* label, int* current_item, const char* const items[], int items_count);

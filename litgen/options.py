@@ -1,13 +1,15 @@
 from dataclasses import dataclass, field
 from typing import List, Dict
 
-from litgen.internal.code_utils import make_regex_any_variable_ending_with, make_regex_any_variable_starting_with
+from litgen.internal.code_utils import (
+    make_regex_any_variable_ending_with,
+    make_regex_any_variable_starting_with,
+)
 from srcmlcpp import SrcmlOptions
 
 
 class CodeStyleOptions:
-    """Configuration of the code generation (include / excludes, indentation, c++ to python translation settings, etc.)
-    """
+    """Configuration of the code generation (include / excludes, indentation, c++ to python translation settings, etc.)"""
 
     #
     # There are interesting options to set in SrcmlOptions (see srcmlcpp/srcml_options.py)
@@ -25,7 +27,6 @@ class CodeStyleOptions:
     # if showing location, how many parent folders shall be shown
     original_location_nb_parent_folders = 0
 
-
     #
     # List of code replacements when going from C++ to Python
     # These replacements are applied to type names (for example double -> float, vector-> List, etc)
@@ -33,7 +34,7 @@ class CodeStyleOptions:
     #
     # Note: you can prefill it with litgen.standard_replacements()
     #
-    code_replacements = [] # List[StringReplacement]
+    code_replacements = []  # List[StringReplacement]
 
     #
     # Indentation settings for the generated code
@@ -97,9 +98,11 @@ class CodeStyleOptions:
         "int64_t",
         "float",
         "double",
-        "long double"
+        "long double",
     ]
-    buffer_template_types: List[str] = ["T"] # Which means that templated functions using a buffer use T as a templated name
+    buffer_template_types: List[str] = [
+        "T"
+    ]  # Which means that templated functions using a buffer use T as a templated name
     buffer_size_names: List[str] = ["nb", "size", "count", "total", "n"]
 
     #
@@ -129,8 +132,8 @@ class CodeStyleOptions:
     # which can be read/written from python (this requires numpy)
     c_array_numeric_member_flag_replace = True
     # list of numeric types that can be stored in a numpy array
-    c_array_numeric_member_types = [     # don't include char !
-        "int",                           # See https://numpy.org/doc/stable/reference/generated/numpy.chararray.html
+    c_array_numeric_member_types = [  # don't include char !
+        "int",  # See https://numpy.org/doc/stable/reference/generated/numpy.chararray.html
         "unsigned int",
         "long",
         "unsigned long",
@@ -165,8 +168,7 @@ class CodeStyleOptions:
     # Shall we generate a __str__() method for structs
     generate_to_string: bool = False
     # Function that may generate additional code in the function defined in the  __init__.py file of the package
-    poub_init_function_python_additional_code = None # Callable[[FunctionsInfos], str]
-
+    poub_init_function_python_additional_code = None  # Callable[[FunctionsInfos], str]
 
     #
     # Sanity checks and utilities below
@@ -177,24 +179,26 @@ class CodeStyleOptions:
         # * concerning float and doubles, there is no standard for fixed size floats, so we have to cope with
         #   float, double and long double and their various platforms implementations...
         authorized_types = [
-            'uint8_t',
-            'int8_t',
-            'uint16_t',
-            'int16_t',
-            'uint32_t',
-            'int32_t',
-            'uint64_t',
-            'int64_t',
-            'float',
-            'double',
-            'long double'
+            "uint8_t",
+            "int8_t",
+            "uint16_t",
+            "int16_t",
+            "uint32_t",
+            "int32_t",
+            "uint64_t",
+            "int64_t",
+            "float",
+            "double",
+            "long double",
         ]
         for buffer_type in self.buffer_types:
             if buffer_type not in authorized_types:
-                raise ValueError(f"""
+                raise ValueError(
+                    f"""
                     options.build_types contains an unauthorized type: {buffer_type}
                     Authorized types are: { ", ".join(authorized_types) }
-                    """)
+                    """
+                )
 
     def indent_cpp_spaces(self):
         space = "\t" if self.cpp_indent_with_tabs else " "
@@ -220,11 +224,16 @@ def code_style_immvision() -> CodeStyleOptions:
     options.generate_to_string = True
     options.cpp_indent_size = 4
     options.srcml_options.functions_api_prefixes = ["IMMVISION_API"]
-    options.code_replacements = _code_replacements.standard_replacements() + _code_replacements.opencv_replacements()
+    options.code_replacements = (
+        _code_replacements.standard_replacements()
+        + _code_replacements.opencv_replacements()
+    )
 
     options.buffer_flag_replace_by_array = False
 
-    def init_function_python_additional_code_require_opengl_initialized(function_infos) -> str: # function_infos of type FunctionInfos
+    def init_function_python_additional_code_require_opengl_initialized(
+        function_infos,
+    ) -> str:  # function_infos of type FunctionInfos
         # make sure to transfer the ImGui context before doing anything related to ImGui or OpenGL
         title = function_infos.function_code.docstring_cpp
         if "opengl" in title.lower() and "initialized" in title.lower():
@@ -232,7 +241,9 @@ def code_style_immvision() -> CodeStyleOptions:
         else:
             return ""
 
-    options.poub_init_function_python_additional_code = init_function_python_additional_code_require_opengl_initialized
+    options.poub_init_function_python_additional_code = (
+        init_function_python_additional_code_require_opengl_initialized
+    )
 
     return options
 
@@ -249,9 +260,10 @@ def _preprocess_imgui_code(code):
     They are removed before processing the header, because they would not be correctly interpreted by srcml.
     """
     import re
+
     new_code = code
-    new_code  = re.sub(r'IM_FMTARGS\(\d\)', '', new_code)
-    new_code  = re.sub(r'IM_FMTLIST\(\d\)', '', new_code)
+    new_code = re.sub(r"IM_FMTARGS\(\d\)", "", new_code)
+    new_code = re.sub(r"IM_FMTLIST\(\d\)", "", new_code)
     return new_code
 
 
@@ -270,7 +282,17 @@ def code_style_imgui():
     options.srcml_options.header_guard_suffixes.append("IMGUI_DISABLE")
 
     options.buffer_types += ["float"]
-    options.c_array_numeric_member_types += ["ImGuiID", "ImS8", "ImU8", "ImS16", "ImU16", "ImS32", "ImU32", "ImS64", "ImU64"]
+    options.c_array_numeric_member_types += [
+        "ImGuiID",
+        "ImS8",
+        "ImU8",
+        "ImS16",
+        "ImU16",
+        "ImS32",
+        "ImU32",
+        "ImS64",
+        "ImU64",
+    ]
 
     options.srcml_options.code_preprocess_function = _preprocess_imgui_code
 
@@ -296,7 +318,6 @@ def code_style_imgui():
         # IMGUI_API ImVec2            CalcTextSizeA(float size, float max_width, float wrap_width, const char* text_begin, const char* text_end = NULL, const char** remaining = NULL) const; // utf8
         #                                                                                                                                                         ^
         r"\bCalcTextSizeA\b",
-
         # Exclude function whose name ends with V, like for example
         #       IMGUI_API void          TextV(const char* fmt, va_list args)                            IM_FMTLIST(1);
         # which are utilities for variadic print format
@@ -325,7 +346,6 @@ def code_style_implot():
 
     options.srcml_options.function_name_exclude_regexes = [
         #  Legitimate Excludes
-
         # Exclude functions whose name end with G, like for example
         #       IMPLOT_API void PlotLineG(const char* label_id, ImPlotGetter getter, void* data, int count);
         # which are made for specialized C/C++ getters
@@ -334,18 +354,12 @@ def code_style_implot():
         #       IMPLOT_API void TagXV(double x, const ImVec4& color, const char* fmt, va_list args) IM_FMTLIST(3);
         # which are utilities for variadic print format
         r"\w*V\Z",
-
-
         #  Excludes due to two-dimensional buffer
-
         #  PlotHeatmap(.., const T* values, int rows, int cols, !!!
         #                            ^          ^          ^
         "PlotHeatmap",
-
-
         #  Excludes due to antique style string vectors
         #  for which there is no generalizable parse
-
         # void SetupAxisTicks(ImAxis idx, const double* values, int n_ticks, const char* const labels[], bool show_default)
         #                                                            ^                           ^
         "SetupAxisTicks",
@@ -354,10 +368,9 @@ def code_style_implot():
         #                                            ^                                ^
         "PlotBarGroups",
         "PlotBarGroupsH",
-
         # void PlotPieChart(const char* const label_ids[], const T* values, int count, double x, double y, double radius, bool normalize=false, const char* label_fmt="%.1f", double angle0=90);
         #                                         ^                               ^
-        "PlotPieChart"
+        "PlotPieChart",
     ]
 
     return options

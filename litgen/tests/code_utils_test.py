@@ -1,4 +1,7 @@
-import os, sys; _THIS_DIR = os.path.dirname(__file__); sys.path.append(_THIS_DIR + "/../..")
+import os, sys
+
+_THIS_DIR = os.path.dirname(__file__)
+sys.path.append(_THIS_DIR + "/../..")
 import litgen.internal.code_utils as code_utils
 
 
@@ -59,12 +62,17 @@ def test_strip_empty_lines():
           struct Foo {
              int a = 1;
           };
-    """.split('\n')
+    """.split(
+        "\n"
+    )
     code_lines = code_utils.strip_empty_lines_in_list(code_lines)
     code_stripped = "\n".join(code_lines)
-    assert code_stripped == """          struct Foo {
+    assert (
+        code_stripped
+        == """          struct Foo {
              int a = 1;
           };"""
+    )
 
 
 def test_to_snake_case():
@@ -79,11 +87,14 @@ def test_unindent_code():
     if a > 10:
         return 0
     """
-    assert code_utils.unindent_code(code) == """
+    assert (
+        code_utils.unindent_code(code)
+        == """
 a = 5
 if a > 10:
     return 0
 """
+    )
 
 
 def test_var_name_contains_word():
@@ -104,16 +115,16 @@ def test_contains_word():
     assert code_utils.contains_word("Hello wonderful world", "world")
     assert not code_utils.contains_word("Hello wonderful world", "worl")
     assert not code_utils.contains_word("Hello wonderful world", "Hell")
-    assert not code_utils.contains_word('const int8_t*', 'T*')
+    assert not code_utils.contains_word("const int8_t*", "T*")
 
 
 def test_contains_pointer_type():
-    assert code_utils.contains_pointer_type('const int8_t*', 'int8_t*')
-    assert code_utils.contains_pointer_type('int8_t*', 'int8_t*')
-    assert not code_utils.contains_pointer_type('const int8_t*', 'T*')
+    assert code_utils.contains_pointer_type("const int8_t*", "int8_t*")
+    assert code_utils.contains_pointer_type("int8_t*", "int8_t*")
+    assert not code_utils.contains_pointer_type("const int8_t*", "T*")
 
-    assert not code_utils.contains_pointer_type('uint8_t*', 'int8_t*')
-    assert not code_utils.contains_pointer_type('int8_t*', 'uint8_t*')
+    assert not code_utils.contains_pointer_type("uint8_t*", "int8_t*")
+    assert not code_utils.contains_pointer_type("int8_t*", "uint8_t*")
 
 
 def test_assert_are_code_equal():
@@ -153,7 +164,7 @@ def test_line_comment_position():
     line = 'std::string r="// Tricky \\" string" // Final comment'
     assert code_utils.line_cpp_comment_position(line) == 36
 
-    line = 'std::string s="// Super \" Tricky string"'
+    line = 'std::string s="// Super " Tricky string"'
     assert code_utils.line_cpp_comment_position(line) is None
 
 
@@ -176,14 +187,16 @@ def test_join_lines_with_token_before_comment():
         "int a = 0",
         "int b = 1 // Dummy comment",
         'std::string r="// Tricky string" // Final comment',
-        'std::string s="// Tricky string"'
+        'std::string s="// Tricky string"',
     ]
 
     r = code_utils.join_lines_with_token_before_comment(lines, ",")
-    code_utils.assert_are_codes_equal(r, """
+    code_utils.assert_are_codes_equal(
+        r,
+        """
         int a = 0,
         int b = 1, // Dummy comment
         std::string r="// Tricky string", // Final comment
         std::string s="// Tricky string"
-    """)
-
+    """,
+    )

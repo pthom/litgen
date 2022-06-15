@@ -34,7 +34,8 @@ def run_local_command(cmd, quiet=False):
 
 
 def help():
-    print(f"""
+    print(
+        f"""
         Usage: {sys.argv[0]}    -build_image|-create_container|-bash|-remove_container| -remove_image
                               | exec [any command and args] 
 
@@ -77,13 +78,17 @@ def help():
 
             --show_command 
         Will not run the command, but show you its command line.
-        """)
+        """
+    )
 
 
 def run_docker_command(commands, quiet: bool, interactive: bool):
     in_bash_commands = f'/bin/bash -c "{commands}"'
     interactive_flag = "-it" if interactive else ""
-    run_local_command(f"docker start {DOCKER_CONTAINER_NAME} && docker exec {interactive_flag} {DOCKER_CONTAINER_NAME} {in_bash_commands}", quiet)
+    run_local_command(
+        f"docker start {DOCKER_CONTAINER_NAME} && docker exec {interactive_flag} {DOCKER_CONTAINER_NAME} {in_bash_commands}",
+        quiet,
+    )
 
 
 def main():
@@ -105,21 +110,29 @@ def main():
         except subprocess.CalledProcessError:
             pass
         run_local_command(f"docker build -t {DOCKER_IMAGE_NAME} .")
-        run_local_command(f"docker run --name {DOCKER_CONTAINER_NAME} -it -d -v {REPO_DIR}:{SOURCES_MOUNT_DIR} {DOCKER_IMAGE_NAME}  /bin/bash")
+        run_local_command(
+            f"docker run --name {DOCKER_CONTAINER_NAME} -it -d -v {REPO_DIR}:{SOURCES_MOUNT_DIR} {DOCKER_IMAGE_NAME}  /bin/bash"
+        )
     elif arg1 == "-build_image":
         my_chdir(THIS_DIR)
         run_local_command(f"docker build -t {DOCKER_IMAGE_NAME} .")
     elif arg1 == "-create_container":
-        run_local_command(f"docker run --name {DOCKER_CONTAINER_NAME} -it -d -v {REPO_DIR}:{SOURCES_MOUNT_DIR} {DOCKER_IMAGE_NAME}  /bin/bash")
+        run_local_command(
+            f"docker run --name {DOCKER_CONTAINER_NAME} -it -d -v {REPO_DIR}:{SOURCES_MOUNT_DIR} {DOCKER_IMAGE_NAME}  /bin/bash"
+        )
     elif arg1 == "-recreate_container":
         try:
             run_local_command(f"docker stop {DOCKER_CONTAINER_NAME}")
             run_local_command(f"docker rm {DOCKER_CONTAINER_NAME}")
         except subprocess.CalledProcessError:
             pass
-        run_local_command(f"docker run --name {DOCKER_CONTAINER_NAME} -it -d -v {REPO_DIR}:{SOURCES_MOUNT_DIR} {DOCKER_IMAGE_NAME}  /bin/bash")
+        run_local_command(
+            f"docker run --name {DOCKER_CONTAINER_NAME} -it -d -v {REPO_DIR}:{SOURCES_MOUNT_DIR} {DOCKER_IMAGE_NAME}  /bin/bash"
+        )
     elif arg1 == "-bash":
-        run_local_command(f"docker start {DOCKER_CONTAINER_NAME} && docker exec -it {DOCKER_CONTAINER_NAME} /bin/bash")
+        run_local_command(
+            f"docker start {DOCKER_CONTAINER_NAME} && docker exec -it {DOCKER_CONTAINER_NAME} /bin/bash"
+        )
     elif arg1 == "-remove_container":
         run_local_command(f"docker stop {DOCKER_CONTAINER_NAME}")
         run_local_command(f"docker rm {DOCKER_CONTAINER_NAME}")
@@ -128,7 +141,11 @@ def main():
     elif arg1 == "-remove_image":
         run_local_command(f"docker rmi {DOCKER_IMAGE_NAME}")
     elif arg1 == "-build_pip":
-        run_docker_command("/dvp/sources/scripts/build_utilities.py run -pybind_pip_install", quiet=True, interactive=False)
+        run_docker_command(
+            "/dvp/sources/scripts/build_utilities.py run -pybind_pip_install",
+            quiet=True,
+            interactive=False,
+        )
     elif arg1 == "exec_it":
         bash_commands = " ".join(sys.argv[2:])
         run_docker_command(bash_commands, quiet=False, interactive=True)

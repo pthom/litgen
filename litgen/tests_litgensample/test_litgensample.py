@@ -40,7 +40,6 @@ def test_c_array():
     assert a.value == 11
     assert b.value == 66
 
-
     # Test non const c arrays with struct type (which will *not* be boxed)
     #     MY_API inline void GetPoints(Point2 out[2]) { out[0] = {0, 1}; out[1] = {2, 3}; }
     a = litgensample.Point2()
@@ -60,9 +59,9 @@ def test_c_buffers():
     # templated call
     #
     # With default float type
-    x = np.array((1., 2., 3.))
-    litgensample.mul_inside_buffer(x, 3.)
-    assert (x == np.array((3., 6., 9.))).all()
+    x = np.array((1.0, 2.0, 3.0))
+    litgensample.mul_inside_buffer(x, 3.0)
+    assert (x == np.array((3.0, 6.0, 9.0))).all()
     # With default int type
     x = np.array((1, 2, 3))
     litgensample.mul_inside_buffer(x, 3)

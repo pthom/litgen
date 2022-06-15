@@ -1,4 +1,7 @@
-import os, sys; _THIS_DIR = os.path.dirname(__file__); sys.path.append(_THIS_DIR + "/../..")
+import os, sys
+
+_THIS_DIR = os.path.dirname(__file__)
+sys.path.append(_THIS_DIR + "/../..")
 
 import litgen
 from srcmlcpp.srcml_types import *
@@ -14,7 +17,9 @@ def test_c_string_list_simple():
     code = "void foo(const char * const items[], int items_count);"
     generated_code = to_pydef(code)
     # logging. warning("\n" + generated_code)
-    code_utils.assert_are_codes_equal(generated_code, """
+    code_utils.assert_are_codes_equal(
+        generated_code,
+        """
         m.def("foo",
             [](const std::vector<std::string> & items)
             {
@@ -32,14 +37,17 @@ def test_c_string_list_simple():
             },
             py::arg("items")
         );
-    """)
+    """,
+    )
 
 
 def test_mix_array_and_string_list():
     code = "int foo(const char * const items[], int items_count, int ouput[2]);"
     generated_code = to_pydef(code)
     # logging. warning("\n" + generated_code)
-    code_utils.assert_are_codes_equal(generated_code, """
+    code_utils.assert_are_codes_equal(
+        generated_code,
+        """
         m.def("foo",
             [](const std::vector<std::string> & items, BoxedInt & ouput_0, BoxedInt & ouput_1)
             {
@@ -70,4 +78,5 @@ def test_mix_array_and_string_list():
             },
             py::arg("items"), py::arg("ouput_0"), py::arg("ouput_1")
         );
-    """)
+    """,
+    )

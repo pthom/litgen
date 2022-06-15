@@ -1,7 +1,7 @@
 from typing import List, Any, Optional
 import logging
 
-import xml.etree.ElementTree as ET # noqa
+import xml.etree.ElementTree as ET  # noqa
 from xml.dom import minidom
 
 from srcmlcpp import srcml_caller
@@ -33,7 +33,7 @@ def copy_element_end_position(element_src: ET.Element, element_dst: ET.Element):
 
 def element_name(element: ET.Element) -> str:
     assert clean_tag_or_attrib(element.tag) == "name"
-    is_composed = (element.text is None)
+    is_composed = element.text is None
     name = srcml_caller.srcml_to_code(element).strip() if is_composed else element.text
     return name
 

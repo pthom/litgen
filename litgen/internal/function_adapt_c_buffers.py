@@ -3,25 +3,32 @@ import copy
 
 from litgen.generate_code import CodeStyleOptions
 from litgen.internal import code_utils, cpp_to_python
-from litgen.internal.cpp_function_adapted_params import CppFunctionDeclWithAdaptedParams, LambdaAdapter
+from litgen.internal.cpp_function_adapted_params import (
+    CppFunctionDeclWithAdaptedParams,
+    LambdaAdapter,
+)
 
 from srcmlcpp.srcml_types import CppFunctionDecl, CppParameter
 from srcmlcpp import srcml_warnings
 
 
 def _possible_buffer_pointer_types(options: CodeStyleOptions):
-    types = [t + "*" for t in options.buffer_types] \
-            + [t + " *" for t in options.buffer_types]
+    types = [t + "*" for t in options.buffer_types] + [
+        t + " *" for t in options.buffer_types
+    ]
     return types
 
 
 def _possible_buffer_template_pointer_types(options: CodeStyleOptions):
-    types = [t + "*" for t in options.buffer_template_types] \
-            + [t + " *" for t in options.buffer_template_types]
+    types = [t + "*" for t in options.buffer_template_types] + [
+        t + " *" for t in options.buffer_template_types
+    ]
     return types
 
 
-def _looks_like_param_buffer_standard(param: CppParameter, options: CodeStyleOptions) -> bool:
+def _looks_like_param_buffer_standard(
+    param: CppParameter, options: CodeStyleOptions
+) -> bool:
     if not options.buffer_flag_replace_by_array:
         return False
     for possible_buffer_type in _possible_buffer_pointer_types(options):
@@ -31,7 +38,9 @@ def _looks_like_param_buffer_standard(param: CppParameter, options: CodeStyleOpt
     return False
 
 
-def _looks_like_param_template_buffer(param: CppParameter, options: CodeStyleOptions) -> bool:
+def _looks_like_param_template_buffer(
+    param: CppParameter, options: CodeStyleOptions
+) -> bool:
     if not options.buffer_flag_replace_by_array:
         return False
     for possible_buffer_type in _possible_buffer_template_pointer_types(options):
@@ -41,12 +50,20 @@ def _looks_like_param_template_buffer(param: CppParameter, options: CodeStyleOpt
     return False
 
 
-def _name_looks_like_buffer_standard_or_template(param: CppParameter, options: CodeStyleOptions) -> bool:
-    return _looks_like_param_buffer_standard(param, options) or _looks_like_param_template_buffer(param, options)
+def _name_looks_like_buffer_standard_or_template(
+    param: CppParameter, options: CodeStyleOptions
+) -> bool:
+    return _looks_like_param_buffer_standard(
+        param, options
+    ) or _looks_like_param_template_buffer(param, options)
 
 
-def _name_looks_like_buffer_size(param: CppParameter, options: CodeStyleOptions) -> bool:
-    return code_utils.var_name_looks_like_size_name(param.variable_name(), options.buffer_size_names)
+def _name_looks_like_buffer_size(
+    param: CppParameter, options: CodeStyleOptions
+) -> bool:
+    return code_utils.var_name_looks_like_size_name(
+        param.variable_name(), options.buffer_size_names
+    )
 
 
 class _AdaptBuffersHelper:
@@ -54,7 +71,11 @@ class _AdaptBuffersHelper:
     function_infos: CppFunctionDecl
     options: CodeStyleOptions
 
-    def __init__(self, function_adapted_params: CppFunctionDeclWithAdaptedParams, options: CodeStyleOptions):
+    def __init__(
+        self,
+        function_adapted_params: CppFunctionDeclWithAdaptedParams,
+        options: CodeStyleOptions,
+    ):
         self.function_adapted_params = function_adapted_params
         self.function_infos = function_adapted_params.function_infos
         self.options = options
@@ -139,8 +160,9 @@ class _AdaptBuffersHelper:
         # Test if this is a size preceded by a buffer
         param_n0 = self._param(idx_param)
         param_n1 = self._param(idx_param - 1)
-        if (_name_looks_like_buffer_size(param_n0, self.options)
-                and _name_looks_like_buffer_standard_or_template(param_n1, self.options)):
+        if _name_looks_like_buffer_size(
+            param_n0, self.options
+        ) and _name_looks_like_buffer_standard_or_template(param_n1, self.options):
             return True
         return False
 
@@ -181,7 +203,9 @@ class _AdaptBuffersHelper:
             idx_size_param = idx_param + nb_additional_buffers + 1
             if idx_size_param >= nb_params:
                 return False
-            if not _name_looks_like_buffer_standard_or_template(self._param(idx_buffer_param), self.options):
+            if not _name_looks_like_buffer_standard_or_template(
+                self._param(idx_buffer_param), self.options
+            ):
                 return False
             if _name_looks_like_buffer_size(self._param(idx_size_param), self.options):
                 return True
@@ -203,7 +227,9 @@ class _AdaptBuffersHelper:
 
     def _adapted_cpp_parameters_template_static_cast(self, pyarray_type_char) -> str:
         adapted_cpp_params = []
-        for idx_param, param in enumerate(self.function_infos.parameter_list.parameters):
+        for idx_param, param in enumerate(
+            self.function_infos.parameter_list.parameters
+        ):
             if _looks_like_param_template_buffer(param, self.options):
                 param_name = self._buffer_from_pyarray_name(idx_param)
                 cpp_type = cpp_to_python.py_array_type_to_cpp_type(pyarray_type_char)
@@ -232,7 +258,7 @@ class _AdaptBuffersHelper:
             // If we reach this point, the array type is not supported!
             else
             {_i_}throw std::runtime_error(std::string("Bad array type ('") + {template_buffer_name}_type + "') for param {template_buffer_name}");
-        """ # noqa
+        """  # noqa
 
         def process_templates() -> str:
             options = self.options
@@ -249,12 +275,18 @@ class _AdaptBuffersHelper:
                 function_or_lambda_to_call = self.function_adapted_params.lambda_to_call
             else:
                 if self.function_adapted_params.is_method():
-                    function_or_lambda_to_call = "self." + self.function_adapted_params.function_infos.name
+                    function_or_lambda_to_call = (
+                        "self." + self.function_adapted_params.function_infos.name
+                    )
                 else:
-                    function_or_lambda_to_call = self.function_adapted_params.function_infos.name
+                    function_or_lambda_to_call = (
+                        self.function_adapted_params.function_infos.name
+                    )
 
             # Fill maybe_return
-            _fn_return_type = self.function_infos.full_return_type(options.srcml_options)
+            _fn_return_type = self.function_infos.full_return_type(
+                options.srcml_options
+            )
             maybe_return = "" if _fn_return_type == "void" else "return "
 
             #
@@ -265,7 +297,9 @@ class _AdaptBuffersHelper:
             # Add intro
             intro = template_intro
             intro = code_utils.unindent_code(intro, flag_strip_empty_lines=True)
-            intro = code_utils.replace_in_string(intro, {"template_buffer_name": template_buffer_name})
+            intro = code_utils.replace_in_string(
+                intro, {"template_buffer_name": template_buffer_name}
+            )
 
             full_code += intro + "\n"
 
@@ -276,29 +310,41 @@ class _AdaptBuffersHelper:
                 maybe_else = "" if i == 0 else "else "
 
                 # Fill adapted_cpp_parameters_with_static_cast
-                adapted_cpp_parameters_with_static_cast = \
+                adapted_cpp_parameters_with_static_cast = (
                     self._adapted_cpp_parameters_template_static_cast(pyarray_type_char)
+                )
 
-                loop_code = code_utils.unindent_code(template_loop_type, flag_strip_empty_lines=True) + "\n"
-                loop_code = code_utils.replace_in_string(loop_code, {
-                    "_i_": _i_,
-                    "maybe_else": maybe_else,
-                    "template_buffer_name": template_buffer_name,
-                    "pyarray_type_char": pyarray_type_char,
-                    "maybe_return": maybe_return,
-                    "function_or_lambda_to_call": function_or_lambda_to_call,
-                    "adapted_cpp_parameters_with_static_cast": adapted_cpp_parameters_with_static_cast,
-                })
+                loop_code = (
+                    code_utils.unindent_code(
+                        template_loop_type, flag_strip_empty_lines=True
+                    )
+                    + "\n"
+                )
+                loop_code = code_utils.replace_in_string(
+                    loop_code,
+                    {
+                        "_i_": _i_,
+                        "maybe_else": maybe_else,
+                        "template_buffer_name": template_buffer_name,
+                        "pyarray_type_char": pyarray_type_char,
+                        "maybe_return": maybe_return,
+                        "function_or_lambda_to_call": function_or_lambda_to_call,
+                        "adapted_cpp_parameters_with_static_cast": adapted_cpp_parameters_with_static_cast,
+                    },
+                )
 
                 full_code += loop_code
 
             # Add outro
             outro = template_outro
             outro = code_utils.unindent_code(outro, flag_strip_empty_lines=True)
-            outro = code_utils.replace_in_string(outro, {
-                "_i_": _i_,
-                "template_buffer_name": template_buffer_name,
-            })
+            outro = code_utils.replace_in_string(
+                outro,
+                {
+                    "_i_": _i_,
+                    "template_buffer_name": template_buffer_name,
+                },
+            )
 
             full_code += outro
             return full_code
@@ -336,7 +382,9 @@ class _AdaptBuffersHelper:
     def _last_idx_buffer_param_before(self, idx_param: int) -> Optional[int]:
         r = None
         for i, param in enumerate(self.function_infos.parameter_list.parameters):
-            if i <= idx_param and _name_looks_like_buffer_standard_or_template(param, self.options):
+            if i <= idx_param and _name_looks_like_buffer_standard_or_template(
+                param, self.options
+            ):
                 r = i
         return r
 
@@ -354,7 +402,7 @@ class _AdaptBuffersHelper:
 
     def _adapted_param_buffer_standard(self, idx_param: int):
         const_space_or_empty = "const " if self._is_const(idx_param) else ""
-        r = f"static_cast<{const_space_or_empty}{self._original_raw_type(idx_param)} *>({self._buffer_from_pyarray_name(idx_param)})" # noqa
+        r = f"static_cast<{const_space_or_empty}{self._original_raw_type(idx_param)} *>({self._buffer_from_pyarray_name(idx_param)})"  # noqa
         return r
 
     def _lambda_input_buffer_standard_convert_part(self, idx_param: int):
@@ -366,12 +414,16 @@ class _AdaptBuffersHelper:
                     // convert py::array to C standard buffer ({mutable_or_const})
                     {_._const_space_or_empty(idx_param)}void * {_._buffer_from_pyarray_name(idx_param)} = {_._param_name(idx_param)}.{mutable_or_empty}data();
                     py::ssize_t {_._pyarray_count(idx_param)} = {_._param_name(idx_param)}.shape()[0];
-                """ # noqa
-        template = code_utils.unindent_code(template, flag_strip_empty_lines=True) + "\n"
+                """  # noqa
+        template = (
+            code_utils.unindent_code(template, flag_strip_empty_lines=True) + "\n"
+        )
         return template
 
     def _expected_dtype_char(self, idx_param: int):
-        dtype_char = cpp_to_python.cpp_type_to_py_array_type(self._original_raw_type(idx_param))
+        dtype_char = cpp_to_python.cpp_type_to_py_array_type(
+            self._original_raw_type(idx_param)
+        )
         return dtype_char
 
     def _lambda_input_buffer_standard_check_part(self, idx_param: int):
@@ -387,7 +439,9 @@ class _AdaptBuffersHelper:
                                     (using py::array::dtype().char_() as an id)
                         )msg"));                
             """
-        template = code_utils.unindent_code(template, flag_strip_empty_lines=True) + "\n"
+        template = (
+            code_utils.unindent_code(template, flag_strip_empty_lines=True) + "\n"
+        )
         return template
 
     def _stride_adapted_name(self, idx_param):
@@ -418,7 +472,9 @@ class _AdaptBuffersHelper:
             if ({adapted_stride_name} == -1)
                 {adapted_stride_name} = (int){buffer_name}.itemsize();
         """
-        template = code_utils.unindent_code(template, flag_strip_empty_lines=True) + "\n"
+        template = (
+            code_utils.unindent_code(template, flag_strip_empty_lines=True) + "\n"
+        )
         return template
 
     def _new_param_stride(self, idx_param: int):
@@ -429,41 +485,41 @@ class _AdaptBuffersHelper:
         return new_stride_param
 
 
-def adapt_c_buffers(function_adapted_params: CppFunctionDeclWithAdaptedParams,
-                    options: CodeStyleOptions
-                    ) -> Optional[LambdaAdapter]:
+def adapt_c_buffers(
+    function_adapted_params: CppFunctionDeclWithAdaptedParams, options: CodeStyleOptions
+) -> Optional[LambdaAdapter]:
     """
-    We want to adapt functions that use C buffers like this:
-        MY_API inline int8_t foo(const int8_t* values, int count);
-`
+        We want to adapt functions that use C buffers like this:
+            MY_API inline int8_t foo(const int8_t* values, int count);
+    `
 
-    we will generate a lambda that looks like
-        m.def("foo",
-            [](py::array & values)
-            {
-                auto foo_adapt_c_buffers = [](py::array & values)
+        we will generate a lambda that looks like
+            m.def("foo",
+                [](py::array & values)
                 {
-                    // convert py::array to C standard buffer (mutable)
-                    void * values_from_pyarray = values.mutable_data();
-                    py::ssize_t values_count = values.shape()[0];
-                    char values_type = values.dtype().char_();
-                    if (values_type != 'b')
-                        throw std::runtime_error(std::string(R"msg(
-                                Bad type!  Expected a numpy array of native type:
-                                            int8_t *
-                                        Which is equivalent to
-                                            b
-                                        (using py::array::dtype().char_() as an id)
-                            )msg"));
+                    auto foo_adapt_c_buffers = [](py::array & values)
+                    {
+                        // convert py::array to C standard buffer (mutable)
+                        void * values_from_pyarray = values.mutable_data();
+                        py::ssize_t values_count = values.shape()[0];
+                        char values_type = values.dtype().char_();
+                        if (values_type != 'b')
+                            throw std::runtime_error(std::string(R"msg(
+                                    Bad type!  Expected a numpy array of native type:
+                                                int8_t *
+                                            Which is equivalent to
+                                                b
+                                            (using py::array::dtype().char_() as an id)
+                                )msg"));
 
-                    auto r = foo(static_cast<int8_t *>(values_from_pyarray), static_cast<int8_t>(values_count));
-                    return r;
-                };
+                        auto r = foo(static_cast<int8_t *>(values_from_pyarray), static_cast<int8_t>(values_count));
+                        return r;
+                    };
 
-                return foo_adapt_c_buffers(values);
-            },
-            py::arg("values")
-        );
+                    return foo_adapt_c_buffers(values);
+                },
+                py::arg("values")
+            );
 
     """
 
@@ -473,11 +529,15 @@ def adapt_c_buffers(function_adapted_params: CppFunctionDeclWithAdaptedParams,
         return None
 
     lambda_adapter = LambdaAdapter()
-    lambda_adapter.new_function_infos = copy.deepcopy(function_adapted_params.function_infos)
+    lambda_adapter.new_function_infos = copy.deepcopy(
+        function_adapted_params.function_infos
+    )
 
     new_function_params: List[CppParameter] = []
 
-    for idx_param, old_param in enumerate(function_adapted_params.function_infos.parameter_list.parameters):
+    for idx_param, old_param in enumerate(
+        function_adapted_params.function_infos.parameter_list.parameters
+    ):
         # Create new calling param
         new_param = helper.new_visible_interface_param(idx_param)
         if new_param is not None:
@@ -494,9 +554,13 @@ def adapt_c_buffers(function_adapted_params: CppFunctionDeclWithAdaptedParams,
 
     # replaces _make_adapted_lambda_code_end() for buffers (which are more complex)
     if helper.has_template_buffer_param():
-        lambda_adapter.lambda_template_end = helper.make_adapted_lambda_code_end_template_buffer()
+        lambda_adapter.lambda_template_end = (
+            helper.make_adapted_lambda_code_end_template_buffer()
+        )
 
     lambda_adapter.new_function_infos.parameter_list.parameters = new_function_params
-    lambda_adapter.lambda_name = function_adapted_params.function_infos.name + "_adapt_c_buffers"
+    lambda_adapter.lambda_name = (
+        function_adapted_params.function_infos.name + "_adapt_c_buffers"
+    )
 
     return lambda_adapter
