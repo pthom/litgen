@@ -82,6 +82,10 @@ def docstring_lines(
 
     docstring = cpp_element_c.cpp_element_comments.full_comment()
     docstring = _comment_apply_replacements(docstring, options)
+    if docstring.startswith('"'):
+        docstring = " " + docstring
+    if docstring.endswith('"'):
+        docstring = docstring + " "
 
     if len(docstring) == 0:
         return []
