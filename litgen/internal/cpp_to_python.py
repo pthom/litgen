@@ -1,4 +1,5 @@
 import pathlib
+import keyword
 from dataclasses import dataclass  # noqa
 from litgen import CodeStyleOptions
 from litgen.internal import code_replacements, code_utils
@@ -161,7 +162,10 @@ def type_to_python(type_cpp: str, options: CodeStyleOptions) -> str:
 
 
 def var_name_to_python(var_name: str, options: CodeStyleOptions) -> str:  # noqa
-    return code_utils.to_snake_case(var_name)
+    var_name_snake_case = code_utils.to_snake_case(var_name)
+    if var_name_snake_case in keyword.kwlist:
+        var_name_snake_case += "_"
+    return var_name_snake_case
 
 
 def decl_python_var_name(cpp_decl: CppDecl, options: CodeStyleOptions):
