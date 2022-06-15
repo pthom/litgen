@@ -61,7 +61,7 @@ class CppElementComments:
         return r
 
     def top_comment_code(self):
-        top_comments = map(lambda comment: "// " + comment, self.comment_on_previous_lines.splitlines())
+        top_comments = map(lambda comment: "//" + comment, self.comment_on_previous_lines.splitlines())
         top_comment = "\n".join(top_comments)
         if len(top_comment) > 0:
             top_comment += "\n"
@@ -71,7 +71,7 @@ class CppElementComments:
         if len(self.comment_end_of_line) == 0:
             return ""
         else:
-            return " // " + self.comment_end_of_line
+            return " //" + self.comment_end_of_line
 
     def add_eol_comment(self, comment):
         if len(self.comment_end_of_line) == 0:

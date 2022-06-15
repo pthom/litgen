@@ -27,10 +27,10 @@ def test_generate_pydef_enum():
         };        
     """
 
-    expected_generated_code1 = """py::enum_<MyEnum>(m, "MyEnum", py::arithmetic(), "This is the enum doc\\non two lines")
-    // A doc on several values 
-    // on several lines
-    .value("a", MyEnum_A, "Doc about A")
+    expected_generated_code1 = """py::enum_<MyEnum>(m, "MyEnum", py::arithmetic(), " This is the enum doc\\n on two lines")
+    //  A doc on several values
+    //  on several lines
+    .value("a", MyEnum_A, " Doc about A")
     .value("b", MyEnum_B, "");
     """
 
@@ -49,10 +49,10 @@ def test_generate_pydef_enum():
             COUNT
         };
     """
-    expected_generated_code2 = """py::enum_<MyEnum>(m, "MyEnum", py::arithmetic(), "This is the enum doc")
-    // A doc on several values
-    .value("a", MyEnum::A, "Doc about A")
-    .value("b", MyEnum::B, "Doc about B");
+    expected_generated_code2 = """py::enum_<MyEnum>(m, "MyEnum", py::arithmetic(), " This is the enum doc")
+    //  A doc on several values
+    .value("a", MyEnum::A, " Doc about A")
+    .value("b", MyEnum::B, " Doc about B");
     """
     cpp_unit2 = srcmlcpp.code_to_cpp_unit(options.srcml_options, code2)
     generated_code2 = module_pydef_generator.generate_pydef(cpp_unit2, options)
@@ -82,7 +82,7 @@ def test_generate_pydef_function_cpp_code() -> str:
                 SetupAxisFormat(axis, fmt);
             },
             py::arg("axis"), py::arg("fmt"),
-            "Sets the format of numeric \\naxis labels"
+            " Sets the format of numeric \\n axis labels"
         );
         '''
         # logging.warning("\n" + generated_code)
@@ -104,7 +104,7 @@ def test_generate_pydef_function_cpp_code() -> str:
                 {
                     return Foo();
                 },
-                "Returns a widget\\n\\nreturn_value_policy::reference",
+                " Returns a widget\\n\\n return_value_policy::reference",
                 pybind11::return_value_policy::reference
             );
         '''
@@ -162,7 +162,7 @@ def test_generate_pydef_function_cpp_code() -> str:
                     PlotScatter_adapt_c_buffers(values);
                 },
                 py::arg("values"),
-                "Plots a standard 2D scatter plot. Default marker is ImPlotMarker_Circle."
+                " Plots a standard 2D scatter plot. Default marker is ImPlotMarker_Circle."
             );
        '''
         code_utils.assert_are_codes_equal(generated_code, expected_code)
@@ -184,7 +184,7 @@ def test_generate_pydef_function_cpp_code() -> str:
                     return Image(label_id, mat, params);
                 },
                 py::arg("label_id"), py::arg("mat"), py::arg("params"),
-                "Display an image (requires OpenGL initialized)"
+                " Display an image (requires OpenGL initialized)"
             );
         '''
         code_utils.assert_are_codes_equal(generated_code, expected_code)
@@ -279,21 +279,21 @@ def test_generate_pydef_struct_cpp_code():
 
 
         auto pyClassMultiplier = py::class_<Multiplier>
-            (m, "Multiplier", "A dummy structure that likes to multiply")
+            (m, "Multiplier", " A dummy structure that likes to multiply")
             .def(py::init<>(),
-                "default constructor")
+                " default constructor")
             .def(py::init<int>(),
                 py::arg("_who"),
-                "Constructor with param")
+                " Constructor with param")
             .def("calculate_double",
                 [](Multiplier & self, int x = 21)
                 {
                     return self.CalculateDouble(x);
                 },
                 py::arg("x") = 21,
-                "Doubles the input number"
+                " Doubles the input number"
             )
-            .def_readwrite("who", &Multiplier::who, "Who is who?")
+            .def_readwrite("who", &Multiplier::who, " Who is who?")
             .def("__repr__", [](const Multiplier& v) { return ToString(v); });
     """
     # logging.warning("\n" + generated)

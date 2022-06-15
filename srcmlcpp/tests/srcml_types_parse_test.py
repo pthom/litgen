@@ -57,7 +57,9 @@ def test_parse_cpp_decl_statement():
     code = """
     int a = 42; // This is an EOL comment
     """
-    code_utils.assert_are_codes_equal(code_to_decl_statement(code), """
+    decl = code_to_decl_statement(code)
+    decl_str = str(decl)
+    code_utils.assert_are_codes_equal(decl_str, """
     int a = 42; // This is an EOL comment
     """)
 
@@ -172,41 +174,41 @@ def test_parse_struct():
     cpp_element_str = code_to_struct_decl(code)
 
     expected_code = """
-    // A somewhat contrived example
-    // of a templated Point structure
-    template<typename NumericType>
-    struct Point : public Object
-    {
-        public:// <default_access_type/>
-            // coordinates
-            NumericType x = NumericType{};
-            // coordinates
-            NumericType y = NumericType{};
-
-            // Constructor from coordinates
-            Point(T _x, T _y)<unprocessed_block/>
-            Point() // default constructor
-
-            T getX();
-            T getY(); // get y
-            T getZ();
-
-            //
-            // Norms: we provide
-            // * Norm2
-            // * NormManhattan
-            //
-
-            T Norm2(); // this is the euclidean norm
-            T NormManhattan()<unprocessed_block/> // this is the manhattan norm
-
-            <unprocessed_friend/>
-
-        private:
-            void Foo(); // A method that shall not be published
-            T x_old; // some members that shall not be published
-            T y_old; // some members that shall not be published
-    };
+        // A somewhat contrived example
+        // of a templated Point structure
+        template<typename NumericType>
+        struct Point : public Object
+        {
+            public:// <default_access_type/>
+                // coordinates
+                NumericType x = NumericType{};
+                // coordinates
+                NumericType y = NumericType{};
+        
+                // Constructor from coordinates
+                Point(T _x, T _y)<unprocessed_block/>
+                Point() // default constructor
+        
+                T getX();
+                T getY(); // get y
+                T getZ();
+        
+                //
+                //  Norms: we provide
+                //     * Norm2
+                //     * NormManhattan
+                //
+        
+                T Norm2(); // this is the euclidean norm
+                T NormManhattan()<unprocessed_block/> // this is the manhattan norm
+        
+                <unprocessed_friend/>
+        
+            private:
+                void Foo(); // A method that shall not be published
+                T x_old; // some members that shall not be published
+                T y_old; // some members that shall not be published
+        };
     """
 
     code_utils.assert_are_codes_equal(cpp_element_str, expected_code)

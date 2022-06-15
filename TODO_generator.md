@@ -1,17 +1,18 @@
-Finir refac Buffer
-Variadic: "%s", arg
+gen pyi class & structs
+    Il faut que pydef_generator (ou peut etre meme srcml_types) puisse faire un tri
+        Dans enum, supprimer count, precalculer valeur des decls des enum quand dependent du previous
+        Dans struct, il y a des traitement sur les membres (array et cie)
 
 + black
 + mypy
+imgui:
+    Handle widget input / output parameters
+        bool *, int *, float *, etc
+        float[2, 3, 4]
+        --> make return
 
 
 stub:
-    Pb avec buffer -> refactoring necessaire
-        MY_API inline void add_inside_buffer(uint8_t* array, size_t array_size, uint8_t number_to_add)
-                                                            ^should be removed
-    Pb avec variadics:
-        IMGUI_API void          Text(const char* fmt, ...)                                      IM_FMTARGS(1); // formatted text
-
     S'attendre a problem possible avec conversion enum / int:
         def begin_combo(    # imgui.h:509
         label: str,

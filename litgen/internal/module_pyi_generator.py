@@ -527,7 +527,10 @@ def _generate_pyi_struct_or_class(struct_infos: CppStruct, options: CodeStyleOpt
 def _generate_pyi_namespace(
         cpp_namespace: CppNamespace,
         options: CodeStyleOptions,
-        current_namespaces: List[str] = []) -> str:
+        current_namespaces=None) -> str:
+
+    if current_namespaces is None:
+        current_namespaces = []
 
     namespace_name = cpp_namespace.name
     new_namespaces = current_namespaces + [namespace_name]
