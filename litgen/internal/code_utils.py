@@ -198,9 +198,18 @@ def add_item_before_comment(code: str, item: str) -> str:
 
 
 def to_snake_case(name):
-    name = re.sub('(.)([A-Z][a-z]+)', r'\1_\2', name)
-    name = re.sub('__([A-Z])', r'_\1', name)
-    name = re.sub('([a-z0-9])([A-Z])', r'\1_\2', name)
+    if "re1" not in to_snake_case.__dict__:
+        to_snake_case.re1 = re.compile('(.)([A-Z][a-z]+)')
+        to_snake_case.re2 = re.compile('__([A-Z])')
+        to_snake_case.re3 = re.compile('([a-z0-9])([A-Z])')
+
+    name = to_snake_case.re1.sub(r'\1_\2', name)
+    name = to_snake_case.re2.sub(r'_\1', name)
+    name = to_snake_case.re3.sub(r'\1_\2', name)
+
+    #name = re.sub('(.)([A-Z][a-z]+)', r'\1_\2', name)
+    #name = re.sub('__([A-Z])', r'_\1', name)
+    #name = re.sub('([a-z0-9])([A-Z])', r'\1_\2', name)
     return name.lower()
 
 
@@ -551,7 +560,9 @@ def var_name_looks_like_size_name(var_name: str, possible_tokens: List[str]) -> 
     for possible_token in possible_tokens:
         if var_name_contains_word(var_name, possible_token):
             return True
-        for number_suffix in range(10):
+
+    for number_suffix in range(4):
+        for possible_token in possible_tokens:
             token_with_suffix = possible_token + str(number_suffix)
             if var_name_contains_word(var_name, token_with_suffix):
                 return True

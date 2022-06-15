@@ -185,6 +185,7 @@ class _AdaptBuffersHelper:
                 return False
             if _name_looks_like_buffer_size(self._param(idx_size_param), self.options):
                 return True
+            nb_additional_buffers += 1
 
         return False
 
