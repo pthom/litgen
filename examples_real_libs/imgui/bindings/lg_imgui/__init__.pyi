@@ -653,32 +653,32 @@ def text_unformatted(text: str, text_end: str = None) -> None:    # imgui.h:475
     pass
 
 
-def text(fmt: str, : ...) -> None:    # imgui.h:476
+def text(fmt: str) -> None:    # imgui.h:476
     """formatted text"""
     pass
 
 
-def text_colored(col: ImVec4, fmt: str, : ...) -> None:    # imgui.h:478
+def text_colored(col: ImVec4, fmt: str) -> None:    # imgui.h:478
     """shortcut for PushStyleColor(ImGuiCol_Text, col); Text(fmt, ...); PopStyleColor();"""
     pass
 
 
-def text_disabled(fmt: str, : ...) -> None:    # imgui.h:480
+def text_disabled(fmt: str) -> None:    # imgui.h:480
     """shortcut for PushStyleColor(ImGuiCol_Text, style.Colors[ImGuiCol_TextDisabled]); Text(fmt, ...); PopStyleColor();"""
     pass
 
 
-def text_wrapped(fmt: str, : ...) -> None:    # imgui.h:482
+def text_wrapped(fmt: str) -> None:    # imgui.h:482
     """shortcut for PushTextWrapPos(0.0f); Text(fmt, ...); PopTextWrapPos();. Note that this won't work on an auto-resizing window if there's no other widgets to extend the window width, yoy may need to set a size using SetNextWindowSize()."""
     pass
 
 
-def label_text(label: str, fmt: str, : ...) -> None:    # imgui.h:484
+def label_text(label: str, fmt: str) -> None:    # imgui.h:484
     """display text+label aligned the same way as value+label widgets"""
     pass
 
 
-def bullet_text(fmt: str, : ...) -> None:    # imgui.h:486
+def bullet_text(fmt: str) -> None:    # imgui.h:486
     """shortcut for Bullet()+Text()"""
     pass
 
@@ -1369,12 +1369,12 @@ def tree_node(label: str) -> bool:    # imgui.h:591
     pass
 
 
-def tree_node(str_id: str, fmt: str, : ...) -> bool:    # imgui.h:592
+def tree_node(str_id: str, fmt: str) -> bool:    # imgui.h:592
     """helper variation to easily decorelate the id from the displayed string. Read the FAQ about why and how to use ID. to align arbitrary text at the same level as a TreeNode() you can use Bullet()."""
     pass
 
 
-def tree_node(ptr_id: None, fmt: str, : ...) -> bool:    # imgui.h:593
+def tree_node(ptr_id: None, fmt: str) -> bool:    # imgui.h:593
     """""""
     pass
 
@@ -1383,21 +1383,11 @@ def tree_node_ex(label: str, flags: ImGuiTreeNodeFlags = 0) -> bool:    # imgui.
     pass
 
 
-def tree_node_ex(    # imgui.h:597
-    str_id: str,
-    flags: ImGuiTreeNodeFlags,
-    fmt: str,
-    : ...
-    ) -> bool:
+def tree_node_ex(str_id: str, flags: ImGuiTreeNodeFlags, fmt: str) -> bool:    # imgui.h:597
     pass
 
 
-def tree_node_ex(    # imgui.h:598
-    ptr_id: None,
-    flags: ImGuiTreeNodeFlags,
-    fmt: str,
-    : ...
-    ) -> bool:
+def tree_node_ex(ptr_id: None, flags: ImGuiTreeNodeFlags, fmt: str) -> bool:    # imgui.h:598
     pass
 
 
@@ -1586,7 +1576,7 @@ def end_tooltip() -> None:    # imgui.h:657
     pass
 
 
-def set_tooltip(fmt: str, : ...) -> None:    # imgui.h:658
+def set_tooltip(fmt: str) -> None:    # imgui.h:658
     """set a text-only tooltip, typically use with ImGui::IsItemHovered(). override any previous call to SetTooltip()."""
     pass
 
@@ -1896,7 +1886,7 @@ def log_buttons() -> None:    # imgui.h:787
     pass
 
 
-def log_text(fmt: str, : ...) -> None:    # imgui.h:788
+def log_text(fmt: str) -> None:    # imgui.h:788
     """pass text data straight to log (without being displayed)"""
     pass
 

@@ -1,5 +1,8 @@
-Refactor funct_w_lambda:
-    Variadic args
+Finir refac Buffer
+Variadic: "%s", arg
+
++ black
++ mypy
 
 
 stub:

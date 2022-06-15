@@ -1251,9 +1251,14 @@ void py_init_module_imgui(py::module& m)
 
 
     m.def("text",    // imgui.h:476
-        [](const char * fmt, ... )
+        [](const char * fmt)
         {
-            Text(fmt, );
+            auto Text_adapt_variadic_format = [](const char * fmt)
+            {
+                Text(fmt);
+            };
+
+            Text_adapt_variadic_format(fmt);
         },
         py::arg("fmt"),
         "formatted text"
@@ -1261,9 +1266,14 @@ void py_init_module_imgui(py::module& m)
 
 
     m.def("text_colored",    // imgui.h:478
-        [](const ImVec4 & col, const char * fmt, ... )
+        [](const ImVec4 & col, const char * fmt)
         {
-            TextColored(col, fmt, );
+            auto TextColored_adapt_variadic_format = [](const ImVec4 & col, const char * fmt)
+            {
+                TextColored(col, fmt);
+            };
+
+            TextColored_adapt_variadic_format(col, fmt);
         },
         py::arg("col"), py::arg("fmt"),
         "shortcut for PushStyleColor(ImGuiCol_Text, col); Text(fmt, ...); PopStyleColor();"
@@ -1271,9 +1281,14 @@ void py_init_module_imgui(py::module& m)
 
 
     m.def("text_disabled",    // imgui.h:480
-        [](const char * fmt, ... )
+        [](const char * fmt)
         {
-            TextDisabled(fmt, );
+            auto TextDisabled_adapt_variadic_format = [](const char * fmt)
+            {
+                TextDisabled(fmt);
+            };
+
+            TextDisabled_adapt_variadic_format(fmt);
         },
         py::arg("fmt"),
         "shortcut for PushStyleColor(ImGuiCol_Text, style.Colors[ImGuiCol_TextDisabled]); Text(fmt, ...); PopStyleColor();"
@@ -1281,9 +1296,14 @@ void py_init_module_imgui(py::module& m)
 
 
     m.def("text_wrapped",    // imgui.h:482
-        [](const char * fmt, ... )
+        [](const char * fmt)
         {
-            TextWrapped(fmt, );
+            auto TextWrapped_adapt_variadic_format = [](const char * fmt)
+            {
+                TextWrapped(fmt);
+            };
+
+            TextWrapped_adapt_variadic_format(fmt);
         },
         py::arg("fmt"),
         "shortcut for PushTextWrapPos(0.0f); Text(fmt, ...); PopTextWrapPos();. Note that this won't work on an auto-resizing window if there's no other widgets to extend the window width, yoy may need to set a size using SetNextWindowSize()."
@@ -1291,9 +1311,14 @@ void py_init_module_imgui(py::module& m)
 
 
     m.def("label_text",    // imgui.h:484
-        [](const char * label, const char * fmt, ... )
+        [](const char * label, const char * fmt)
         {
-            LabelText(label, fmt, );
+            auto LabelText_adapt_variadic_format = [](const char * label, const char * fmt)
+            {
+                LabelText(label, fmt);
+            };
+
+            LabelText_adapt_variadic_format(label, fmt);
         },
         py::arg("label"), py::arg("fmt"),
         "display text+label aligned the same way as value+label widgets"
@@ -1301,9 +1326,14 @@ void py_init_module_imgui(py::module& m)
 
 
     m.def("bullet_text",    // imgui.h:486
-        [](const char * fmt, ... )
+        [](const char * fmt)
         {
-            BulletText(fmt, );
+            auto BulletText_adapt_variadic_format = [](const char * fmt)
+            {
+                BulletText(fmt);
+            };
+
+            BulletText_adapt_variadic_format(fmt);
         },
         py::arg("fmt"),
         "shortcut for Bullet()+Text()"
@@ -2249,9 +2279,15 @@ void py_init_module_imgui(py::module& m)
 
 
     m.def("tree_node",    // imgui.h:592
-        [](const char * str_id, const char * fmt, ... )
+        [](const char * str_id, const char * fmt)
         {
-            return TreeNode(str_id, fmt, );
+            auto TreeNode_adapt_variadic_format = [](const char * str_id, const char * fmt)
+            {
+                auto r = TreeNode(str_id, fmt);
+                return r;
+            };
+
+            return TreeNode_adapt_variadic_format(str_id, fmt);
         },
         py::arg("str_id"), py::arg("fmt"),
         "helper variation to easily decorelate the id from the displayed string. Read the FAQ about why and how to use ID. to align arbitrary text at the same level as a TreeNode() you can use Bullet()."
@@ -2259,9 +2295,15 @@ void py_init_module_imgui(py::module& m)
 
 
     m.def("tree_node",    // imgui.h:593
-        [](const void * ptr_id, const char * fmt, ... )
+        [](const void * ptr_id, const char * fmt)
         {
-            return TreeNode(ptr_id, fmt, );
+            auto TreeNode_adapt_variadic_format = [](const void * ptr_id, const char * fmt)
+            {
+                auto r = TreeNode(ptr_id, fmt);
+                return r;
+            };
+
+            return TreeNode_adapt_variadic_format(ptr_id, fmt);
         },
         py::arg("ptr_id"), py::arg("fmt"),
         "\""
@@ -2278,18 +2320,30 @@ void py_init_module_imgui(py::module& m)
 
 
     m.def("tree_node_ex",    // imgui.h:597
-        [](const char * str_id, ImGuiTreeNodeFlags flags, const char * fmt, ... )
+        [](const char * str_id, ImGuiTreeNodeFlags flags, const char * fmt)
         {
-            return TreeNodeEx(str_id, flags, fmt, );
+            auto TreeNodeEx_adapt_variadic_format = [](const char * str_id, ImGuiTreeNodeFlags flags, const char * fmt)
+            {
+                auto r = TreeNodeEx(str_id, flags, fmt);
+                return r;
+            };
+
+            return TreeNodeEx_adapt_variadic_format(str_id, flags, fmt);
         },
         py::arg("str_id"), py::arg("flags"), py::arg("fmt")
     );
 
 
     m.def("tree_node_ex",    // imgui.h:598
-        [](const void * ptr_id, ImGuiTreeNodeFlags flags, const char * fmt, ... )
+        [](const void * ptr_id, ImGuiTreeNodeFlags flags, const char * fmt)
         {
-            return TreeNodeEx(ptr_id, flags, fmt, );
+            auto TreeNodeEx_adapt_variadic_format = [](const void * ptr_id, ImGuiTreeNodeFlags flags, const char * fmt)
+            {
+                auto r = TreeNodeEx(ptr_id, flags, fmt);
+                return r;
+            };
+
+            return TreeNodeEx_adapt_variadic_format(ptr_id, flags, fmt);
         },
         py::arg("ptr_id"), py::arg("flags"), py::arg("fmt")
     );
@@ -2617,9 +2671,14 @@ void py_init_module_imgui(py::module& m)
 
 
     m.def("set_tooltip",    // imgui.h:658
-        [](const char * fmt, ... )
+        [](const char * fmt)
         {
-            SetTooltip(fmt, );
+            auto SetTooltip_adapt_variadic_format = [](const char * fmt)
+            {
+                SetTooltip(fmt);
+            };
+
+            SetTooltip_adapt_variadic_format(fmt);
         },
         py::arg("fmt"),
         "set a text-only tooltip, typically use with ImGui::IsItemHovered(). override any previous call to SetTooltip()."
@@ -3080,9 +3139,14 @@ void py_init_module_imgui(py::module& m)
 
 
     m.def("log_text",    // imgui.h:788
-        [](const char * fmt, ... )
+        [](const char * fmt)
         {
-            LogText(fmt, );
+            auto LogText_adapt_variadic_format = [](const char * fmt)
+            {
+                LogText(fmt);
+            };
+
+            LogText_adapt_variadic_format(fmt);
         },
         py::arg("fmt"),
         "pass text data straight to log (without being displayed)"
@@ -4931,9 +4995,14 @@ void py_init_module_imgui(py::module& m)
             py::arg("str"), py::arg("str_end") = NULL
         )
         .def("appendf",    // imgui.h:2223
-            [](ImGuiTextBuffer & self, const char * fmt, ... )
+            [](ImGuiTextBuffer & self, const char * fmt)
             {
-                self.appendf(fmt, );
+                auto appendf_adapt_variadic_format = [&self](const char * fmt)
+                {
+                    self.appendf(fmt);
+                };
+
+                appendf_adapt_variadic_format(fmt);
             },
             py::arg("fmt")
         )

@@ -14,8 +14,9 @@ def make_function_params_adapter(
     from litgen.internal.function_adapt_c_arrays import adapt_c_arrays
     from litgen.internal.function_adapt_c_string_list import adapt_c_string_list
     from litgen.internal.function_adapt_c_buffers import adapt_c_buffers
+    from litgen.internal.function_adapt_variadic_format import adapt_variadic_format
 
-    all_adapters_functions = [adapt_c_buffers, adapt_c_arrays, adapt_c_string_list]
+    all_adapters_functions = [adapt_c_buffers, adapt_c_arrays, adapt_c_string_list, adapt_variadic_format]
 
     function_adapted_params = CppFunctionDeclWithAdaptedParams(function_infos, parent_struct_name)
 

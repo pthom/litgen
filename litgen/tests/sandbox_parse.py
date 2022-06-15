@@ -104,7 +104,7 @@ def play_pyi(code):
 # print(pydef_code)
 
 code = """
-MY_API inline void GetPoints(Point2 out[2]) { out[0] = {0, 1}; out[1] = {2, 3}; }
+MY_API int foo(const uint32_t *buf1, size_t count1, const uint32_t *buf2, size_t count2);
 """
 
 play_pydef(code)

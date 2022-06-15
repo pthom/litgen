@@ -41,105 +41,15 @@ def _looks_like_param_template_buffer(param: CppParameter, options: CodeStyleOpt
     return False
 
 
-def _looks_like_param_buffer_template_or_not(param: CppParameter, options: CodeStyleOptions) -> bool:
+def _name_looks_like_buffer_standard_or_template(param: CppParameter, options: CodeStyleOptions) -> bool:
     return _looks_like_param_buffer_standard(param, options) or _looks_like_param_template_buffer(param, options)
 
 
-def _looks_like_buffer_size_name(param: CppParameter, options: CodeStyleOptions) -> bool:
+def _name_looks_like_buffer_size(param: CppParameter, options: CodeStyleOptions) -> bool:
     return code_utils.var_name_looks_like_size_name(param.variable_name(), options.buffer_size_names)
 
 
-def is_buffer_size_name_at_idx(params: List[CppParameter], options: CodeStyleOptions, idx_param: int) -> bool:
-    if idx_param == 0:
-        return False
-
-    # Test if this is a size preceded by a buffer
-    param_n0 = params[idx_param]
-    param_n1 = params[idx_param - 1]
-    if _looks_like_buffer_size_name(param_n0, options) and _looks_like_param_buffer_template_or_not(param_n1, options):
-        return True
-
-    return False
-
-
-def _is_param_buffer_at_idx_template_or_not(params: List[CppParameter], options: CodeStyleOptions,
-                                            idx_param: int) -> bool:
-    if idx_param > len(params) - 2:
-        return False
-
-    if not _looks_like_param_buffer_template_or_not(params[idx_param], options):
-        return False
-
-    # Test if this is a buffer (optionally followed by other buffers), then followed by a size
-    nb_additional_buffers = 1
-    idx_next_param = idx_param + 1
-    while nb_additional_buffers < 5 and idx_next_param < len(params):
-        if _looks_like_buffer_size_name(params[idx_next_param], options):
-            return True
-        if not _looks_like_param_buffer_template_or_not(params[idx_next_param], options):
-            return False
-        idx_next_param += 1
-        nb_additional_buffers += 1
-
-    return False
-
-
-def _contains_buffer(params: List[CppParameter], options: CodeStyleOptions) -> bool:
-    for idx in range(len(params)):
-        if _is_param_buffer_at_idx_template_or_not(params, options, idx):
-            return True
-    return False
-
-
-def _contains_template_buffer(params: List[CppParameter], options: CodeStyleOptions) -> bool:
-    if not _contains_buffer(params, options):
-        return False
-    result = False
-    buffer_params_list = _buffer_params_list(params, options)
-    for buffer_param in buffer_params_list:
-        is_template_buffer = _looks_like_param_template_buffer(buffer_param, options)
-        if is_template_buffer:
-            result = True
-    return result
-
-
-def _first_template_buffer_param(params: List[CppParameter], options: CodeStyleOptions) -> Optional[CppParameter]:
-    buffer_params_list = _buffer_params_list(params, options)
-    for buffer_param in buffer_params_list:
-        is_template_buffer = _looks_like_param_template_buffer(buffer_param, options)
-        if is_template_buffer:
-            return buffer_param
-    return None
-
-
-def _first_buffer_param(params: List[CppParameter], options: CodeStyleOptions) -> Optional[CppParameter]:
-    buffer_params_list = _buffer_params_list(params, options)
-    for buffer_param in buffer_params_list:
-        is_buffer = _looks_like_param_buffer_template_or_not(buffer_param, options)
-        if is_buffer:
-            return buffer_param
-    return None
-
-
-def is_stride_param(param: CppParameter, options: CodeStyleOptions) -> bool:
-    """For `stride` parameters"""
-    if not options.buffer_flag_replace_by_array:
-        return False
-    param_default_value = param.default_value()
-    return param_default_value.strip().startswith("sizeof")
-
-
-def _buffer_params_list(params: List[CppParameter], options: CodeStyleOptions) -> List[CppParameter]:
-    if not options.buffer_flag_replace_by_array:
-        return []
-    r = []
-    for idx_param, param in enumerate(params):
-        if _is_param_buffer_at_idx_template_or_not(params, options, idx_param):
-            r.append(param)
-    return r
-
-
-class BufferStringReplacementHelper:
+class _AdaptBuffersHelper:
     function_adapted_params: CppFunctionDeclWithAdaptedParams
     function_infos: CppFunctionDecl
     options: CodeStyleOptions
@@ -148,63 +58,97 @@ class BufferStringReplacementHelper:
         self.function_adapted_params = function_adapted_params
         self.function_infos = function_adapted_params.function_infos
         self.options = options
-        # Check that there is one stride param at most
-        stride_params = list(
-            filter(lambda param: is_stride_param(param, self.options), self.function_infos.parameter_list.parameters))
-        if len(stride_params) > 1:
-            raise srcml_warnings.SrcMlException("More than one stride param found!")
+
+        if self.shall_adapt():
+            # Check that there is one stride param at most
+            nb_strides = 0
+            for idx_param in range(self._nb_params()):
+                if self._is_stride_param(idx_param):
+                    nb_strides += 1
+            if nb_strides > 1:
+                raise srcml_warnings.SrcMlException("More than one stride param found!")
 
     def lambda_input(self, idx_param: int):
-        param = self._param(idx_param)
-        if _looks_like_param_buffer_standard(param, self.options):
+        if self._is_buffer_standard(idx_param):
             r = self._lambda_input_buffer_standard_convert_part(idx_param)
             r += self._lambda_input_buffer_standard_check_part(idx_param)
             return r
-        elif is_stride_param(param, self.options):
+        elif self._is_stride_param(idx_param):
             r = self.lambda_input_stride_param(idx_param)
             return r
-        elif _looks_like_param_template_buffer(param, self.options):
+        elif self._is_buffer_template(idx_param):
             r = self._lambda_input_buffer_standard_convert_part(idx_param)
             return r
         else:
             return None
 
-    def _param(self, idx_param: int):
-        assert 0 <= idx_param < len(self.function_infos.parameter_list.parameters)
-        return self.function_infos.parameter_list.parameters[idx_param]
-
     def new_visible_interface_param(self, idx_param: int) -> Optional[CppParameter]:
         param = self._param(idx_param)
-        if _looks_like_param_buffer_template_or_not(param, self.options):
+        if self._is_buffer_template_or_not(idx_param):
             return self._new_param_buffer_standard(idx_param)
-        elif is_stride_param(param, self.options):
+        elif self._is_stride_param(idx_param):
             return self._new_param_stride(idx_param)
-        elif is_buffer_size_name_at_idx(self.function_infos.parameter_list.parameters, self.options, idx_param):
+        elif self._is_buffer_size(idx_param):
             return None
         else:
             return param
 
     def adapted_inner_param(self, idx_param: int) -> str:
         param = self._param(idx_param)
-        if _looks_like_param_buffer_standard(param, self.options):
+        if self._is_buffer_standard(idx_param):
             r = self._adapted_param_buffer_standard(idx_param)
             return r
-        elif _looks_like_buffer_size_name(param, self.options):
+        elif self._is_buffer_size(idx_param):
             r = self._adapted_param_buffer_size(idx_param)
             return r
-        elif is_stride_param(param, self.options):
+        elif self._is_stride_param(idx_param):
             r = self._adapted_param_stride(idx_param)
             return r
-        elif _looks_like_param_template_buffer(param, self.options):
+        elif self._is_buffer_template(idx_param):
             r = "adapted_param_looks_like_param_template_buffer"
             return r
         else:
             r = param.decl.name_without_array()
             return r
 
+    def shall_adapt(self) -> bool:
+        if not self.options.buffer_flag_replace_by_array:
+            return False
+        for idx in range(self._nb_params()):
+            if self._is_buffer_template_or_not(idx):
+                return True
+        return False
+
     def has_template_buffer_param(self):
         param = self._last_template_buffer_param()
         return param is not None
+
+    def _param(self, idx_param: int):
+        assert 0 <= idx_param < len(self.function_infos.parameter_list.parameters)
+        return self.function_infos.parameter_list.parameters[idx_param]
+
+    def _params(self):
+        return self.function_infos.parameter_list.parameters
+
+    def _nb_params(self):
+        return len(self._params())
+
+    def _is_buffer_size(self, idx_param: int) -> bool:
+        if idx_param == 0:
+            return False
+        # Test if this is a size preceded by a buffer
+        param_n0 = self._param(idx_param)
+        param_n1 = self._param(idx_param - 1)
+        if (_name_looks_like_buffer_size(param_n0, self.options)
+                and _name_looks_like_buffer_standard_or_template(param_n1, self.options)):
+            return True
+        return False
+
+    def _is_stride_param(self, idx_param) -> bool:
+        """For `stride` parameters"""
+        param = self._param(idx_param)
+        param_default_value = param.default_value()
+        return param_default_value.strip().startswith("sizeof")
 
     def _last_template_buffer_param(self) -> Optional[CppParameter]:
         params = self.function_infos.parameter_list.parameters
@@ -217,6 +161,44 @@ class BufferStringReplacementHelper:
             return None
         else:
             return template_buffer_params[-1]
+
+    def _is_buffer_template_or_not(self, idx_param: int) -> bool:
+        """
+        In this example:
+        foo(Widget *widgets, float *buf1, const uint_32_t *buf2, int bufs_count);
+                - widgets is not a buffer (type Widget is not acceptable, see options)
+                - buf2 is a buffer, because it is of an acceptable type, and followed by a buffer size
+                - buf2 is a buffer, because it is of an acceptable type, and followed by a series of buffer(s),
+                  followed by a buffer size
+        """
+        nb_params = len(self._params())
+
+        # Test if this is a buffer (optionally followed by other buffers), then followed by a size
+        nb_additional_buffers = 0
+        nb_max_additional_buffers = 5
+        while nb_additional_buffers < nb_max_additional_buffers:
+            idx_buffer_param = idx_param + nb_additional_buffers
+            idx_size_param = idx_param + nb_additional_buffers + 1
+            if idx_size_param >= nb_params:
+                return False
+            if not _name_looks_like_buffer_standard_or_template(self._param(idx_buffer_param), self.options):
+                return False
+            if _name_looks_like_buffer_size(self._param(idx_size_param), self.options):
+                return True
+
+        return False
+
+    def _is_buffer_template(self, idx_param: int) -> bool:
+        if not self._is_buffer_template_or_not(idx_param):
+            return False
+        r = _looks_like_param_template_buffer(self._param(idx_param), self.options)
+        return r
+
+    def _is_buffer_standard(self, idx_param: int) -> bool:
+        if not self._is_buffer_template_or_not(idx_param):
+            return False
+        r = not _looks_like_param_template_buffer(self._param(idx_param), self.options)
+        return r
 
     def _adapted_cpp_parameters_template_static_cast(self, pyarray_type_char) -> str:
         adapted_cpp_params = []
@@ -353,7 +335,7 @@ class BufferStringReplacementHelper:
     def _last_idx_buffer_param_before(self, idx_param: int) -> Optional[int]:
         r = None
         for i, param in enumerate(self.function_infos.parameter_list.parameters):
-            if i <= idx_param and _looks_like_param_buffer_template_or_not(param, self.options):
+            if i <= idx_param and _name_looks_like_buffer_standard_or_template(param, self.options):
                 r = i
         return r
 
@@ -484,26 +466,17 @@ def adapt_c_buffers(function_adapted_params: CppFunctionDeclWithAdaptedParams,
 
     """
 
-    if not options.buffer_flag_replace_by_array:
-        return None
+    helper = _AdaptBuffersHelper(function_adapted_params, options)
 
-    needs_adapt = False
-
-    old_function_params = function_adapted_params.function_infos.parameter_list.parameters
-    for i in range(len(old_function_params)):
-        if _is_param_buffer_at_idx_template_or_not(old_function_params, options, i):
-            needs_adapt = True
-
-    if not needs_adapt:
+    if not helper.shall_adapt():
         return None
 
     lambda_adapter = LambdaAdapter()
     lambda_adapter.new_function_infos = copy.deepcopy(function_adapted_params.function_infos)
 
     new_function_params: List[CppParameter] = []
-    helper = BufferStringReplacementHelper(function_adapted_params, options)
 
-    for idx_param, old_param in enumerate(old_function_params):
+    for idx_param, old_param in enumerate(function_adapted_params.function_infos.parameter_list.parameters):
         # Create new calling param
         new_param = helper.new_visible_interface_param(idx_param)
         if new_param is not None:
