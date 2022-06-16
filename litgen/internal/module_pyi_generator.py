@@ -201,7 +201,6 @@ def _generate_pyi_function(
     options: CodeStyleOptions,
     parent_struct_name: str = "",
 ) -> str:
-
     function_adapted_params = make_function_params_adapter(
         function_infos, options, parent_struct_name
     )

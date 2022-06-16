@@ -204,12 +204,6 @@ def default_value_to_python(default_value_cpp: str, options: CodeStyleOptions) -
     r = code_replacements.apply_code_replacements(
         default_value_cpp, options.code_replacements
     )
-
-    # Handle float numbers like 1.0f
-    if len(r) >= 2 and r[-1] == "f":
-        if is_float_str(r[:-1]):
-            return r[:-1]
-
     return r
 
 
