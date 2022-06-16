@@ -349,7 +349,7 @@ def _enum_remove_values_prefix(enum_name: str, value_name: str) -> str:
 def enum_value_name_to_python(enum: CppEnum, enum_element: CppDecl, options: CodeStyleOptions) -> str:
     value_name = enum_element.name_without_array()
 
-    if options.enum_flag_remove_values_prefix and enum.type != "class":
+    if options.enum_flag_remove_values_prefix and enum.enum_type != "class":
         value_name_no_prefix = _enum_remove_values_prefix(enum.enum_name, value_name)
         if len(value_name_no_prefix) == 0:
             value_name_no_prefix = value_name
@@ -365,7 +365,7 @@ def enum_element_is_count(enum: CppEnum, enum_element: CppDecl, options: CodeSty
     if not options.enum_flag_skip_count:
         return False
 
-    is_class_enum = enum.type == "class"
+    is_class_enum = enum.enum_type == "class"
     value_name = enum_element.name_without_array()
 
     if not code_utils.var_name_looks_like_size_name(value_name, options.buffer_size_names):

@@ -710,7 +710,7 @@ def parse_enum(options: SrcmlOptions, element_c: CppElementAndComment) -> CppEnu
     result = CppEnum(element_c.srcml_element, element_c.cpp_element_comments)
 
     if "type" in element_c.srcml_element.attrib.keys():
-        result.type = element_c.attribute_value("type")
+        result.enum_type = element_c.attribute_value("type")
 
     for child in element_c.srcml_element:
         child_tag = srcml_utils.clean_tag_or_attrib(child.tag)
