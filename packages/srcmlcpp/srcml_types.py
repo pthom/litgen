@@ -228,15 +228,8 @@ class CppElementAndComment(CppElement):
         return self.str_commented()
 
 
-@dataclass
-class CppBlockChild(CppElementAndComment):
-    """Abstract parent class: any token that can be embedded in a CppBlock (expr_stmt, function_decl, decl_stmt, ...)"""
 
-    def __init__(self, element: ET.Element, cpp_element_comments: CppElementComments):
-        super().__init__(element, cpp_element_comments)
-
-
-class CppUnprocessed(CppBlockChild):
+class CppUnprocessed(CppElementAndComment):
     """Any Cpp Element that is not yet processed by srcmlcpp
     We keep its original source under the form of a string
     """
@@ -255,7 +248,7 @@ class CppUnprocessed(CppBlockChild):
 
 
 @dataclass
-class CppBlock(CppElement):  # it is also a CppBlockChild
+class CppBlock(CppElement):  # it is also a CppElementAndComment
     """The class CppBlock is a container that represents any set of code  detected by srcML.
     It has several derived classes.
 
@@ -275,11 +268,11 @@ class CppBlock(CppElement):  # it is also a CppBlockChild
      https://www.srcmlcpp.org/doc/cpp_srcML.html#block
     """
 
-    block_children: List[CppBlockChild]
+    block_children: List[CppElementAndComment]
 
     def __init__(self, element: ET.Element):
         super().__init__(element)
-        self.block_children: List[CppBlockChild] = []
+        self.block_children: List[CppElementAndComment] = []
 
     def str_block(self, is_enum: bool = False):
         result = ""
@@ -322,7 +315,7 @@ class CppBlockContent(CppBlock):
 
 
 @dataclass
-class CppPublicProtectedPrivate(CppBlock):  # Also a CppBlockChild
+class CppPublicProtectedPrivate(CppBlock):  # Also a CppElementAndComment
     """A kind of block defined by a public/protected/private zone in a struct or in a class
 
     See https://www.srcmlcpp.org/doc/cpp_srcML.html#public-access-specifier
@@ -944,7 +937,7 @@ class CppSuperList(CppElement):
 
 
 @dataclass
-class CppStruct(CppBlockChild):
+class CppStruct(CppElementAndComment):
     """
     https://www.srcmlcpp.org/doc/cpp_srcML.html#struct-definition
     """
@@ -1023,7 +1016,7 @@ class CppClass(CppStruct):
 
 
 @dataclass
-class CppComment(CppBlockChild):
+class CppComment(CppElementAndComment):
     """
     https://www.srcmlcpp.org/doc/cpp_srcML.html#comment
     Warning, the text contains "//" or "/* ... */" and "\n"
@@ -1044,7 +1037,7 @@ class CppComment(CppBlockChild):
 
 
 @dataclass
-class CppNamespace(CppBlockChild):
+class CppNamespace(CppElementAndComment):
     """
     https://www.srcmlcpp.org/doc/cpp_srcML.html#namespace
     """
@@ -1067,7 +1060,7 @@ class CppNamespace(CppBlockChild):
 
 
 @dataclass
-class CppEnum(CppBlockChild):
+class CppEnum(CppElementAndComment):
     """
     https://www.srcmlcpp.org/doc/cpp_srcML.html#enum-definition
     https://www.srcmlcpp.org/doc/cpp_srcML.html#enum-class
