@@ -153,7 +153,7 @@ def parse_decl(
         if child_tag == "type":
             result.cpp_type = parse_type(options, child, previous_decl)
         elif child_tag == "name":
-            result.name = _parse_name(child)
+            result.decl_name_code = _parse_name(child)
         elif child_tag == "init":
             result.init = _parse_init_expr(child)
         elif child_tag == "range":

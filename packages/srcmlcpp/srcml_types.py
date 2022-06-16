@@ -446,27 +446,6 @@ class CppDecl(CppElementAndComment):
     """
     https://www.srcmlcpp.org/doc/cpp_srcML.html#variable-declaration
 
-    Notes:
-    * In certain cases, the name of a variable can be seen as a composition by srcML.
-      For example:
-
-        `int v[10];`
-
-      Will yield the following tree for the name:
-
-            <?xml version="1.0" ?>
-            <ns0:name>
-               <ns0:name>v</ns0:name>
-               <ns0:index>
-                  [
-                  <ns0:expr>
-                     <ns0:literal type="number">10</ns0:literal>
-                  </ns0:expr>
-                  ]
-               </ns0:index>
-            </ns0:name>
-
-      In this library, this name will be seen as "v[10]"
 
     * init represent the initial aka default value.
       With srcML, it is inside an <init><expr> node in srcML.
@@ -481,7 +460,15 @@ class CppDecl(CppElementAndComment):
     """  # noqa
 
     cpp_type: CppType
-    name: str = ""
+
+    # name_code: In certain cases, the name of a variable can be seen as a composition by srcML.
+    #   For example:
+    #
+    #     `int v[10];`
+    #
+    #   In this library, this name will be seen as "v[10]"
+    decl_name_code: str = ""
+
     init: str = ""  # initial or default value
     range: str = ""  # Will be filled for bitfield members
 
@@ -489,20 +476,20 @@ class CppDecl(CppElementAndComment):
         super().__init__(element, cpp_element_comments)
 
     def str_code(self):
-        r = srcml_utils.str_or_empty(self.cpp_type) + " " + str(self.name)
+        r = srcml_utils.str_or_empty(self.cpp_type) + " " + str(self.decl_name_code)
         if len(self.init) > 0:
             r += " = " + self.init
         return r
 
     def name_without_array(self):
-        if "[" in self.name:
-            return self.name[: self.name.index("[")]
+        if "[" in self.decl_name_code:
+            return self.decl_name_code[: self.decl_name_code.index("[")]
         else:
-            return self.name
+            return self.decl_name_code
 
     def has_name_or_ellipsis(self):
-        assert self.name is not None
-        if len(self.name) > 0:
+        assert self.decl_name_code is not None
+        if len(self.decl_name_code) > 0:
             return True
         elif "..." in self.cpp_type.modifiers:
             return True
@@ -527,7 +514,7 @@ class CppDecl(CppElementAndComment):
 
         nb_indirections = 0
         nb_indirections += self.cpp_type.modifiers.count("*")
-        if ("[]" in self.name) or ("[ ]" in self.name):
+        if ("[]" in self.decl_name_code) or ("[ ]" in self.decl_name_code):
             nb_indirections += 1
 
         r = is_const and is_char and nb_indirections == 2 and is_default_init
@@ -540,7 +527,7 @@ class CppDecl(CppElementAndComment):
         or
             int v[]
         """
-        return "[" in self.name and self.name.endswith("]")
+        return "[" in self.decl_name_code and self.decl_name_code.endswith("]")
 
     def name_c_array(self) -> str:
         """
@@ -549,7 +536,7 @@ class CppDecl(CppElementAndComment):
         It will return "v"
         """
         assert self.is_c_array()
-        r = self.name[: self.name.index("[")]
+        r = self.decl_name_code[: self.decl_name_code.index("[")]
         return r
 
     def c_array_size(self) -> Optional[int]:
@@ -560,8 +547,8 @@ class CppDecl(CppElementAndComment):
         """
         if not self.is_c_array():
             return None
-        pos = self.name.index("[")
-        size_str = self.name[pos + 1 : -1]
+        pos = self.decl_name_code.index("[")
+        size_str = self.decl_name_code[pos + 1: -1]
         try:
             size = int(size_str)
             return size
@@ -569,10 +556,10 @@ class CppDecl(CppElementAndComment):
             return None
 
     def c_array_size_str(self) -> Optional[str]:
-        if "[" not in self.name:
+        if "[" not in self.decl_name_code:
             return None
-        pos = self.name.index("[")
-        size_str = self.name[pos + 1 : -1].strip()
+        pos = self.decl_name_code.index("[")
+        size_str = self.decl_name_code[pos + 1: -1].strip()
         return size_str
 
     def is_const(self):
@@ -611,7 +598,7 @@ class CppDecl(CppElementAndComment):
         new_decl.cpp_type.names = [std_array_type_name]
 
         new_decl.cpp_type.specifiers.append("const")
-        new_decl.name = new_decl.name_c_array()
+        new_decl.decl_name_code = new_decl.name_c_array()
         return new_decl
 
     def is_immutable_for_python(self) -> bool:
@@ -652,7 +639,7 @@ class CppDecl(CppElementAndComment):
         new_decls = []
         for i in range(n):
             new_decl = copy.deepcopy(self)
-            new_decl.name = new_decl.name_c_array() + "_" + str(i)
+            new_decl.decl_name_code = new_decl.name_c_array() + "_" + str(i)
             new_decl.cpp_type.names = [cpp_type_name]
             new_decl.cpp_type.modifiers = ["&"]
             new_decls.append(new_decl)
