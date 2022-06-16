@@ -63,7 +63,7 @@ def test_make_function_params_adapter():
 def test_use_function_params_adapter_const():
     code = """MY_API void foo_const(const int input[2]);"""
     function_decl = get_first_function_decl(code)
-    generated_code = module_pydef_generator._generate_pydef_function(function_decl, OPTIONS)
+    generated_code = module_pydef_generator._generate_function(function_decl, OPTIONS)
     # logging. warning("\n" + generated_code)
     code_utils.assert_are_codes_equal(
         generated_code,
@@ -87,7 +87,7 @@ def test_use_function_params_adapter_const():
 def test_use_function_params_adapter_non_const():
     code = """MY_API void foo_non_const(int output[2]);"""
     function_decl = get_first_function_decl(code)
-    generated_code = module_pydef_generator._generate_pydef_function(function_decl, OPTIONS)
+    generated_code = module_pydef_generator._generate_function(function_decl, OPTIONS)
     # logging.warning("\n" + generated_code)
     code_utils.assert_are_codes_equal(
         generated_code,
@@ -118,7 +118,7 @@ def test_use_function_params_adapter_non_const():
 def test_mixture():
     code = """MY_API void foo(bool flag, const double v[2], double outputs[2]);"""
     function_decl = get_first_function_decl(code)
-    generated_code = module_pydef_generator._generate_pydef_function(function_decl, OPTIONS)
+    generated_code = module_pydef_generator._generate_function(function_decl, OPTIONS)
     code_utils.assert_are_codes_equal(
         generated_code,
         """
@@ -152,7 +152,7 @@ def test_mixture_no_replace():
 
     code = """MY_API void foo(bool flag, const double v[2], double outputs[2]);"""
     function_decl = get_first_function_decl(code)
-    generated_code = module_pydef_generator._generate_pydef_function(function_decl, options)
+    generated_code = module_pydef_generator._generate_function(function_decl, options)
     # logging.warning("\n" + generated_code)
     code_utils.assert_are_codes_equal(
         generated_code,

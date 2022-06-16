@@ -351,9 +351,12 @@ def escape_backslash_in_comments(comment: str) -> str:
 
 
 def format_cpp_comment_on_one_line(comment: str) -> str:
+    is_multiline = "\n" in comment
     comment = comment.replace("\n", "\\n")
     comment = comment.replace('"', '\\"')
     comment = escape_backslash_in_comments(comment)
+    if not is_multiline:
+        comment = comment.strip()
     return comment
 
 

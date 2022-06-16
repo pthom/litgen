@@ -19,17 +19,21 @@ from litgen.internal.cpp_function_adapted_params import CppFunctionDeclWithAdapt
 from litgen.internal.function_params_adapter import make_function_params_adapter
 
 
-def _add_new_lines(code: str, nb_lines_before: int = 0, nb_lines_after: int = 1) -> str:
+def _add_new_lines(code: str, nb_lines_before: int = 0, nb_lines_after: int = 0) -> str:
     r = "\n" * nb_lines_before + code + "\n" * nb_lines_after
     return r
 
 
-def _add_one_line_before(code: str) -> str:
+def _add_line_space_standard(code: str) -> str:
+    """Spacing for function and decls"""
     return _add_new_lines(code, nb_lines_before=1)
 
 
-def _add_two_lines_before(code: str) -> str:
-    return _add_new_lines(code, nb_lines_before=2, nb_lines_after=0)
+def _add_line_space_block(code: str) -> str:
+    """Spacing for enum, classes and namespaces
+
+    (will be 2 lines after and 2 lines before, when combined with _add_line_space_standard()"""
+    return _add_new_lines(code, nb_lines_before=2, nb_lines_after=1)
 
 
 #################################
@@ -37,7 +41,7 @@ def _add_two_lines_before(code: str) -> str:
 ################################
 
 
-def _generate_pydef_enum(enum: CppEnum, options: CodeStyleOptions) -> str:
+def _generate_enum(enum: CppEnum, options: CodeStyleOptions) -> str:
     enum_type = enum.attribute_value("type")
     enum_name = enum.enum_name
 
@@ -71,19 +75,15 @@ def _generate_pydef_enum(enum: CppEnum, options: CodeStyleOptions) -> str:
 
     result = code_intro
     for i, child in enumerate(enum.block.block_children):
-        if child.tag() == "comment":
-            result += (
-                code_utils.format_cpp_comment_multiline(
-                    child.text_or_empty(), indentation_str=options.indent_cpp_spaces()
-                )
-                + "\n"
-            )
-        elif child.tag() == "decl":
+        if child.tag() == "decl":
             result += make_value_code(cast(CppDecl, child))
+        elif child.tag() in ["comment"]:
+            pass
         else:
             raise srcmlcpp.SrcMlException(child.srcml_element, f"Unexpected tag {child.tag()} in enum")
     result = result[:-1]
     result = code_utils.add_item_before_comment(result, ";")
+    result += "\n"
     return result
 
 
@@ -155,7 +155,7 @@ def _function_return_value_policy(function_infos: CppFunctionDecl) -> str:
         return ""
 
 
-def _generate_pydef_function(
+def _generate_function(
     function_infos: CppFunctionDecl,
     options: CodeStyleOptions,
     parent_struct_name: str = "",
@@ -163,7 +163,7 @@ def _generate_pydef_function(
     function_adapted_params = make_function_params_adapter(function_infos, options, parent_struct_name)
 
     r = ""
-    r += _generate_pydef_function_impl(function_adapted_params, options, parent_struct_name)
+    r += _generate_function_impl(function_adapted_params, options, parent_struct_name)
     return r
 
 
@@ -199,7 +199,7 @@ def _generate_return_code(
     return code
 
 
-def _generate_pydef_function_impl(
+def _generate_function_impl(
     function_adapted_params: CppFunctionDeclWithAdaptedParams,
     options: CodeStyleOptions,
     parent_struct_name: str = "",
@@ -326,7 +326,7 @@ def _generate_pydef_function_impl(
 ################################
 
 
-def _generate_pydef_constructor(function_infos: CppConstructorDecl, options: CodeStyleOptions) -> str:
+def _generate_constructor(function_infos: CppConstructorDecl, options: CodeStyleOptions) -> str:
 
     if "delete" in function_infos.specifiers:
         return ""
@@ -362,7 +362,7 @@ def _generate_pydef_constructor(function_infos: CppConstructorDecl, options: Cod
     return code
 
 
-def _generate_pydef_method(function_infos: CppFunctionDecl, options: CodeStyleOptions, parent_struct_name: str) -> str:
+def _generate_method(function_infos: CppFunctionDecl, options: CodeStyleOptions, parent_struct_name: str) -> str:
     if function_infos.function_name == parent_struct_name:
         # Sometimes, srcml might see a constructor as a decl
         # Example:
@@ -370,9 +370,9 @@ def _generate_pydef_method(function_infos: CppFunctionDecl, options: CodeStyleOp
         # {
         #     IMGUI_API Foo();
         # };
-        return _generate_pydef_constructor(cast(CppConstructorDecl, function_infos), options)
+        return _generate_constructor(cast(CppConstructorDecl, function_infos), options)
     else:
-        return _generate_pydef_function(function_infos, options, parent_struct_name)
+        return _generate_function(function_infos, options, parent_struct_name)
 
 
 #################################
@@ -485,19 +485,19 @@ def _add_public_struct_elements(public_zone: CppPublicProtectedPrivate, struct_n
         # elif isinstance(public_child, CppComment):
         #     r += code_utils.format_cpp_comment_multiline(public_child.cpp_element_comments.full_comment(), 4) + "\n"
         elif isinstance(public_child, CppFunctionDecl):
-            code = _generate_pydef_method(
+            code = _generate_method(
                 function_infos=public_child,
                 options=options,
                 parent_struct_name=struct_name,
             )
             r = r + code
         elif isinstance(public_child, CppConstructorDecl):
-            code = _generate_pydef_constructor(function_infos=public_child, options=options)
+            code = _generate_constructor(function_infos=public_child, options=options)
             r = r + code
     return r
 
 
-def _generate_pydef_struct_or_class(struct_infos: CppStruct, options: CodeStyleOptions) -> str:
+def _generate_struct_or_class(struct_infos: CppStruct, options: CodeStyleOptions) -> str:
     struct_name = struct_infos.class_name
 
     if struct_infos.is_templated_class():
@@ -538,7 +538,7 @@ def _generate_pydef_struct_or_class(struct_infos: CppStruct, options: CodeStyleO
 #################################
 #           Namespace
 ################################
-def _generate_pydef_namespace(
+def _generate_namespace(
     cpp_namespace: CppNamespace,
     options: CodeStyleOptions,
     current_namespaces: List[str] = [],
@@ -575,13 +575,13 @@ def generate_pydef(
         if False:
             pass
         elif isinstance(cpp_element, CppFunctionDecl) or isinstance(cpp_element, CppFunction):
-            r += _add_one_line_before(_generate_pydef_function(cpp_element, options, parent_struct_name=""))
+            r += _add_line_space_standard(_generate_function(cpp_element, options, parent_struct_name=""))
         elif isinstance(cpp_element, CppEnum):
-            r += _add_two_lines_before(_generate_pydef_enum(cpp_element, options))
+            r += _add_line_space_block(_generate_enum(cpp_element, options))
         elif isinstance(cpp_element, CppStruct) or isinstance(cpp_element, CppClass):
-            r += _add_two_lines_before(_generate_pydef_struct_or_class(cpp_element, options))
+            r += _add_line_space_block(_generate_struct_or_class(cpp_element, options))
         elif isinstance(cpp_element, CppNamespace):
-            r += _add_two_lines_before(_generate_pydef_namespace(cpp_element, options, current_namespaces))
+            r += _add_line_space_block(_generate_namespace(cpp_element, options, current_namespaces))
 
     if add_boxed_types_definitions:
         boxed_structs = cpp_to_python.BoxedImmutablePythonType.struct_codes()

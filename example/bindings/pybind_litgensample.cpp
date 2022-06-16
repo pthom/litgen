@@ -20,14 +20,14 @@ void py_init_module_litgensample(py::module& m)
         unsigned long value;
         BoxedUnsignedLong() : value{} {}
         BoxedUnsignedLong(unsigned long v) : value(v) {}
-        std::string __repr__() { return std::string("BoxedUnsignedLong(") + std::to_string(value) + ")"; }
+        std::string __repr__() const { return std::string("BoxedUnsignedLong(") + std::to_string(value) + ")"; }
     };
     struct BoxedInt
     {
         int value;
         BoxedInt() : value{} {}
         BoxedInt(int v) : value(v) {}
-        std::string __repr__() { return std::string("BoxedInt(") + std::to_string(value) + ")"; }
+        std::string __repr__() const { return std::string("BoxedInt(") + std::to_string(value) + ")"; }
     };
 
 
@@ -39,12 +39,13 @@ void py_init_module_litgensample(py::module& m)
         .def(py::init<unsigned long>(),    // example_library/litgensample.h:5
             py::arg("v"))
         .def("__repr__",    // example_library/litgensample.h:6
-            [](BoxedUnsignedLong & self)
+            [](const BoxedUnsignedLong & self)
             {
                 return self.__repr__();
             }
         )
         ;
+
 
 
     auto pyClassBoxedInt = py::class_<BoxedInt>    // example_library/litgensample.h:1
@@ -54,7 +55,7 @@ void py_init_module_litgensample(py::module& m)
         .def(py::init<int>(),    // example_library/litgensample.h:5
             py::arg("v"))
         .def("__repr__",    // example_library/litgensample.h:6
-            [](BoxedInt & self)
+            [](const BoxedInt & self)
             {
                 return self.__repr__();
             }
@@ -63,20 +64,18 @@ void py_init_module_litgensample(py::module& m)
 
 
 
+
     // <namespace LiterateGeneratorExample>    // example_library/litgensample.h:18
 
 
-    py::enum_<MyEnum>(m, "MyEnum", py::arithmetic(), "A super nice enum\nfor demo purposes ( bool val = True )")    // example_library/litgensample.h:23
+    py::enum_<MyEnum>(m, "MyEnum", py::arithmetic(), " A super nice enum\n for demo purposes ( bool val = True )")    // example_library/litgensample.h:23
         .value("a", MyEnum_a, "This is value a")
         .value("aa", MyEnum_aa, "this is value aa")
         .value("aaa", MyEnum_aaa, "this is value aaa")
-        // _SRCML_EMPTY_LINE_
-        // Lonely comment
-        // _SRCML_EMPTY_LINE_
         .value("b", MyEnum_b, "This is value b")
-        // _SRCML_EMPTY_LINE_
-        .value("c", MyEnum_c, "This is c\nwith doc on several lines")
-    ;    // _SRCML_EMPTY_LINE_
+        .value("c", MyEnum_c, " This is c\n with doc on several lines");
+
+
     m.def("add_c_array2",    // example_library/litgensample.h:46
         [](const std::array<int, 2>& values)
         {
@@ -88,10 +87,8 @@ void py_init_module_litgensample(py::module& m)
 
             return add_c_array2_adapt_fixed_size_c_arrays(values);
         },
-        py::arg("values"),
-        "Tests with Boxed Numbers"
+        py::arg("values")
     );
-
 
     m.def("log_c_array2",    // example_library/litgensample.h:47
         [](const std::array<int, 2>& values)
@@ -105,7 +102,6 @@ void py_init_module_litgensample(py::module& m)
         },
         py::arg("values")
     );
-
 
     m.def("change_c_array2",    // example_library/litgensample.h:48
         [](BoxedUnsignedLong & values_0, BoxedUnsignedLong & values_1)
@@ -128,13 +124,13 @@ void py_init_module_litgensample(py::module& m)
     );
 
 
-
     auto pyClassPoint2 = py::class_<Point2>    // example_library/litgensample.h:54
         (m, "Point2", "Test with C array containing user defined struct (which will not be boxed)")
         .def(py::init<>()) // implicit default constructor
         .def_readwrite("x", &Point2::x, "")    // example_library/litgensample.h:56
         .def_readwrite("y", &Point2::y, "")    // example_library/litgensample.h:56
         ;
+
 
     m.def("get_points",    // example_library/litgensample.h:58
         [](Point2 & out_0, Point2 & out_1)
@@ -155,7 +151,6 @@ void py_init_module_litgensample(py::module& m)
         },
         py::arg("out_0"), py::arg("out_1")
     );
-
 
     m.def("add_inside_buffer",    // example_library/litgensample.h:65
         [](py::array & buffer, uint8_t number_to_add)
@@ -183,7 +178,6 @@ void py_init_module_litgensample(py::module& m)
         py::arg("buffer"), py::arg("number_to_add"),
         "Modifies a buffer by adding a value to its elements"
     );
-
 
     m.def("buffer_sum",    // example_library/litgensample.h:71
         [](const py::array & buffer, int stride = -1)
@@ -217,7 +211,6 @@ void py_init_module_litgensample(py::module& m)
         py::arg("buffer"), py::arg("stride") = -1,
         "Returns the sum of a const buffer"
     );
-
 
     m.def("add_inside_two_buffers",    // example_library/litgensample.h:79
         [](py::array & buffer_1, py::array & buffer_2, uint8_t number_to_add)
@@ -258,7 +251,6 @@ void py_init_module_litgensample(py::module& m)
         py::arg("buffer_1"), py::arg("buffer_2"), py::arg("number_to_add"),
         "Modifies two buffers"
     );
-
 
     m.def("mul_inside_buffer",    // example_library/litgensample.h:90
         [](py::array & buffer, double factor)
@@ -304,7 +296,6 @@ void py_init_module_litgensample(py::module& m)
         "Modify an array by multiplying its elements (template function!)"
     );
 
-
     m.def("c_string_list_total_size",    // example_library/litgensample.h:100
         [](const std::vector<std::string> & items, BoxedInt & output_0, BoxedInt & output_1)
         {
@@ -336,7 +327,6 @@ void py_init_module_litgensample(py::module& m)
         py::arg("items"), py::arg("output_0"), py::arg("output_1")
     );
 
-
     m.def("add",    // example_library/litgensample.h:112
         [](int a, int b)
         {
@@ -345,7 +335,6 @@ void py_init_module_litgensample(py::module& m)
         py::arg("a"), py::arg("b"),
         "Adds two numbers"
     );
-
 
     m.def("add",    // example_library/litgensample.h:115
         [](int a, int b, int c)
@@ -356,7 +345,6 @@ void py_init_module_litgensample(py::module& m)
         "Adds three numbers, with a surprise"
     );
 
-
     m.def("sub",    // example_library/litgensample.h:118
         [](int a, int b)
         {
@@ -365,7 +353,6 @@ void py_init_module_litgensample(py::module& m)
         py::arg("a"), py::arg("b")
     );
 
-
     m.def("mul",    // example_library/litgensample.h:120
         [](int a, int b)
         {
@@ -373,7 +360,6 @@ void py_init_module_litgensample(py::module& m)
         },
         py::arg("a"), py::arg("b")
     );
-
 
 
     auto pyClassFoo = py::class_<Foo>    // example_library/litgensample.h:123
@@ -413,6 +399,7 @@ void py_init_module_litgensample(py::module& m)
         )
         ;
 
+
     m.def("foo_instance",    // example_library/litgensample.h:154
         []()
         {
@@ -421,7 +408,6 @@ void py_init_module_litgensample(py::module& m)
         "return_value_policy::reference",
         pybind11::return_value_policy::reference
     );
-
     // </namespace LiterateGeneratorExample>
 
     // </autogen:pydef_cpp> // Autogenerated code end
