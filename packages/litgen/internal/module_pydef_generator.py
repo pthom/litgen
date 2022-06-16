@@ -43,13 +43,6 @@ class _LineSpacer:
         return r
 
 
-def _add_line_space_block(code: str) -> str:
-    """Spacing for enum, classes and namespaces
-
-    (will be 2 lines after and 2 lines before, when combined with _add_line_space_standard()"""
-    return _add_new_lines(code, nb_lines_before=2, nb_lines_after=1)
-
-
 #################################
 #           Enums
 ################################
@@ -405,7 +398,7 @@ def _add_struct_member_decl(cpp_decl: CppDecl, struct_name: str, options: CodeSt
         # We ignore bitfields
         return ""
 
-    if cpp_decl.is_c_array_fixed_size():
+    if cpp_decl.is_c_array_known_fixed_size(options.c_array_numeric_member_size_dict):
         # Cf. https://stackoverflow.com/questions/58718884/binding-an-array-using-pybind11
         array_typename = cpp_decl.cpp_type.str_code()
         if array_typename not in options.c_array_numeric_member_types:
@@ -430,32 +423,19 @@ def _add_struct_member_decl(cpp_decl: CppDecl, struct_name: str, options: CodeSt
             )
             return ""
 
-        array_size = cpp_decl.c_array_size()
+        array_size = cpp_decl.c_array_size_as_int(options.c_array_numeric_member_size_dict)
 
         if array_size is None:
-            array_size_str = cpp_decl.c_array_size_str()
-            assert array_size_str is not None
-            if array_size_str in options.c_array_numeric_member_size_dict.keys():
-                array_size = options.c_array_numeric_member_size_dict[array_size_str]
-                if type(array_size) != int:
-                    srcml_warnings.emit_srcml_warning(
-                        cpp_decl.srcml_element,
-                        """
-                        options.c_array_numeric_member_size_dict should contains [str,int] items !
-                        """,
-                        options.srcml_options,
-                    )
-                    return ""
-            else:
-                srcml_warnings.emit_srcml_warning(
-                    cpp_decl.srcml_element,
-                    f"""
-                    Detected a numeric C Style array, but will not export it because its size is not parsable.
-                        Hint: may be, add the value "{array_size_str}" to `options.c_array_numeric_member_size_dict`
-                    """,
-                    options.srcml_options,
-                )
-                return ""
+            array_size_str = cpp_decl.c_array_size_as_str()
+            srcml_warnings.emit_srcml_warning(
+                cpp_decl.srcml_element,
+                f"""
+                Detected a numeric C Style array, but will not export it because its size is not parsable.
+                    Hint: may be, add the value "{array_size_str}" to `options.c_array_numeric_member_size_dict`
+                """,
+                options.srcml_options,
+            )
+            return ""
 
         template_code = f"""
             .def_property("{name_python}", 
@@ -542,7 +522,9 @@ def _generate_struct_or_class(struct_infos: CppStruct, options: CodeStyleOptions
 
     for child in struct_infos.block.block_children:
         if child.tag() == "public":
-            zone_code = _add_public_struct_elements(public_zone=child, struct_name=struct_name, options=options)
+            zone_code = _add_public_struct_elements(
+                public_zone=cast(CppPublicProtectedPrivate, child), struct_name=struct_name, options=options
+            )
             r += code_utils.indent_code(zone_code, indent_str=options.indent_cpp_spaces())
     r = r + code_outro
     r = r + "\n"
@@ -624,7 +606,7 @@ def generate_pydef(
 
         if len(element_code) > 0:
             line_spacing = line_spacer.line_spaces(cpp_element)
-            code +=  (line_spacing + element_code)
+            code += line_spacing + element_code
 
     if add_boxed_types_definitions:
         code = generate_boxed_types_binding_code(options) + code

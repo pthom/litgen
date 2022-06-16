@@ -154,7 +154,7 @@ def parse_decl(
             result.cpp_type = parse_type(options, child, previous_decl)
         elif child_tag == "name":
             decl_name_and_array = _parse_name(child)
-            if "[" in decl_name_and_array and decl_name_and_array. endswith("]"):
+            if "[" in decl_name_and_array and decl_name_and_array.endswith("]"):
                 pos = decl_name_and_array.index("[")
                 result.decl_name = decl_name_and_array[:pos]
                 result.c_array_code = decl_name_and_array[pos:]

@@ -1,6 +1,6 @@
 from __future__ import annotations
 import copy
-from typing import List, Optional
+from typing import List, Optional, Dict
 import logging
 from dataclasses import dataclass
 
@@ -444,6 +444,9 @@ class CppType(CppElement):
         return self.str_code()
 
 
+StringToIntDict = Dict[str, int]
+
+
 @dataclass
 class CppDecl(CppElementAndComment):
     """
@@ -543,32 +546,50 @@ class CppDecl(CppElementAndComment):
         """
         return len(self.c_array_code) > 0
 
-    def c_array_size(self) -> Optional[int]:
+    def c_array_size_as_str(self) -> Optional[str]:
         """
         If this decl is a c array, return its size, e.g. for
-            int v[4]
-        It will return 4
+            int v[COUNT]
+        it will return "COUNT"
         """
         if not self.is_c_array():
             return None
         pos = self.c_array_code.index("[")
-        size_str = self.c_array_code[pos + 1: -1]
+        size_str = self.c_array_code[pos + 1 : -1]
+        return size_str
+
+    def c_array_size_as_int(self, size_dict: StringToIntDict) -> Optional[int]:
+        """
+        If this decl is a c array, return its size, e.g. for
+            int v[4]
+        It will return 4
+        However, it will return None for
+            int v[COUNT];  // where COUNT is a macro or constexpr value
+        Except if "COUNT" is a key of size_dict
+        """
+        size_as_str = self.c_array_size_as_str()
+        if size_as_str in size_dict:
+            return size_dict[size_as_str]
+
+        if size_as_str is None:
+            return None
+
         try:
-            size = int(size_str)
+            size = int(size_as_str)
             return size
         except ValueError:
             return None
 
-    def is_c_array_fixed_size(self):
+    def is_c_array_known_fixed_size(self, size_dict: StringToIntDict):
         """Returns true if this decl is a c array, and has a fixed size"""
-        return self.c_array_size() is not None
+        return self.c_array_size_as_int(size_dict) is not None
 
     def is_const(self):
         """
         Returns true if this decl is const"""
         return "const" in self.cpp_type.specifiers  # or "const" in self.cpp_type.names
 
-    def c_array_fixed_size_to_std_array(self) -> CppDecl:
+    def c_array_fixed_size_to_std_array(self, size_dict: StringToIntDict) -> CppDecl:
         """
         Processes decl that contains a *const* c style array of fixed size, e.g. `const int v[2]`
 
@@ -577,7 +598,7 @@ class CppDecl(CppElementAndComment):
         """
         is_const = "const" in self.cpp_type.specifiers
 
-        assert self.is_c_array_fixed_size()
+        assert self.is_c_array_known_fixed_size(size_dict)
         assert is_const
 
         # If the array is `const`, then we simply wrap it into a std::array, like this:
@@ -588,7 +609,7 @@ class CppDecl(CppElementAndComment):
         new_decl.cpp_type.specifiers.remove("const")
         cpp_type_name = new_decl.cpp_type.str_code()
 
-        std_array_type_name = f"std::array<{cpp_type_name}, {self.c_array_size()}>&"
+        std_array_type_name = f"std::array<{cpp_type_name}, {self.c_array_size_as_int(size_dict)}>&"
         new_decl.cpp_type.typenames = [std_array_type_name]
 
         new_decl.cpp_type.specifiers.append("const")
@@ -602,7 +623,7 @@ class CppDecl(CppElementAndComment):
         r = cpp_to_python.is_cpp_type_immutable_for_python(cpp_type_name)
         return r
 
-    def c_array_fixed_size_to_new_boxed_decls(self) -> List[CppDecl]:
+    def c_array_fixed_size_to_new_boxed_decls(self, size_dict: StringToIntDict) -> List[CppDecl]:
         """
         Processes decl that contains a *non const* c style array of fixed size, e.g. `int v[2]`
             * we may need to "Box" the values if they are of an immutable type in python,
@@ -618,7 +639,7 @@ class CppDecl(CppElementAndComment):
 
         is_const = "const" in self.cpp_type.specifiers
 
-        assert self.is_c_array_fixed_size()
+        assert self.is_c_array_known_fixed_size(size_dict)
         assert not is_const
 
         cpp_type_name = self.cpp_type.str_code()
@@ -627,7 +648,7 @@ class CppDecl(CppElementAndComment):
             boxed_type = cpp_to_python.BoxedImmutablePythonType(cpp_type_name)
             cpp_type_name = boxed_type.boxed_type_name()
 
-        n = self.c_array_size()
+        n = self.c_array_size_as_int(size_dict)
         assert n is not None
 
         new_decls = []
@@ -731,7 +752,7 @@ class CppParameterList(CppElement):
         self.parameters = []
 
     def types_names_default_for_signature_list(self):
-        """Returns a list like ["int a", "bool flag = true"] """
+        """Returns a list like ["int a", "bool flag = true"]"""
         params_strs = list(map(lambda param: param.type_name_default_for_signature(), self.parameters))
         return params_strs
 
@@ -1022,6 +1043,7 @@ class CppStruct(CppElementAndComment):
 
     def is_templated_class(self):
         return hasattr(self, "template")
+
 
 @dataclass
 class CppClass(CppStruct):

@@ -1,6 +1,6 @@
 import logging
 
-import pytest
+import pytest  # type: ignore
 
 from codemanip import code_utils
 import litgen

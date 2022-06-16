@@ -52,7 +52,7 @@ def adapt_c_arrays(
     needs_adapt = False
 
     for old_param in function_adapted_params.function_infos.parameter_list.parameters:
-        if old_param.decl.is_c_array_fixed_size():
+        if old_param.decl.is_c_array_known_fixed_size(options.c_array_numeric_member_size_dict):
             needs_adapt = True
 
     if not needs_adapt:
@@ -65,12 +65,12 @@ def adapt_c_arrays(
     new_function_params = []
     for old_param in old_function_params:
         was_replaced = False
-        if old_param.decl.is_c_array_fixed_size():
+        if old_param.decl.is_c_array_known_fixed_size(options.c_array_numeric_member_size_dict):
 
             if old_param.decl.is_const() and options.c_array_const_flag_replace:
                 was_replaced = True
                 # Create new calling param (const std::array &)
-                new_decl = old_param.decl.c_array_fixed_size_to_std_array()
+                new_decl = old_param.decl.c_array_fixed_size_to_std_array(options.c_array_numeric_member_size_dict)
                 new_param = copy.deepcopy(old_param)
                 new_param.decl = new_decl
                 new_function_params.append(new_param)
@@ -78,14 +78,16 @@ def adapt_c_arrays(
                 lambda_adapter.adapted_cpp_parameter_list.append(new_decl.decl_name + ".data()")
 
             elif not old_param.decl.is_const() and options.c_array_modifiable_flag_replace:
-                array_size = old_param.decl.c_array_size()
-                assert array_size is not None
+                array_size_int = old_param.decl.c_array_size_as_int(options.c_array_numeric_member_size_dict)
+                assert array_size_int is not None
 
-                if array_size <= options.c_array_modifiable_max_size:
+                if array_size_int <= options.c_array_modifiable_max_size:
 
                     was_replaced = True
 
-                    new_decls = old_param.decl.c_array_fixed_size_to_new_boxed_decls()
+                    new_decls = old_param.decl.c_array_fixed_size_to_new_boxed_decls(
+                        options.c_array_numeric_member_size_dict
+                    )
 
                     #
                     # Fill lambda_input_code and lambda_output_code
@@ -101,9 +103,7 @@ def adapt_c_arrays(
 
                     old_param_renamed = copy.deepcopy(old_param)
                     old_param_renamed.decl.decl_name = old_param_renamed.decl.decl_name + "_raw"
-                    lambda_adapter.lambda_input_code += (
-                        old_param_renamed.decl.str_code() + ";\n"
-                    )
+                    lambda_adapter.lambda_input_code += old_param_renamed.decl.str_code() + ";\n"
 
                     lambda_adapter.adapted_cpp_parameter_list.append(old_param_renamed.decl.decl_name)
 
