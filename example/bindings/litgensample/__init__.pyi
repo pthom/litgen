@@ -1,3 +1,5 @@
+from typing import List
+from typing import Literal # for enums annotations, when some enum values depend on other values of the same enum
 import numpy
 from enum import Enum
 
@@ -16,20 +18,20 @@ class MyEnum(Enum):    # example_library/litgensample.h:23
     a = 1    # This is value a
     aa = 2   # this is value aa
     aaa = 3  # this is value aaa
-    
+
     #  Lonely comment
-    
+
     #  This is value b
     b = 4
-    
+
     #  This is c
     #  with doc on several lines
-    c = a | b
-    
+    c = Literal[MyEnum.a] | Literal[MyEnum.b]
 
-# 
+
+#
 #  C Style array tests
-# 
+#
 
 #  Tests with Boxed Numbers
 def add_c_array2(values: List[int, 2]) -> int:    # example_library/litgensample.h:46
@@ -44,9 +46,9 @@ def change_c_array2(    # example_library/litgensample.h:48
 def get_points(out_0: Point2, out_1: Point2) -> None:    # example_library/litgensample.h:58
     pass
 
-# 
+#
 #  C Style buffer to numpy.ndarray tests
-# 
+#
 
 def add_inside_buffer(buffer: numpy.ndarray, number_to_add: int) -> None:    # example_library/litgensample.h:65
     """ Modifies a buffer by adding a value to its elements"""
@@ -67,9 +69,9 @@ def mul_inside_buffer(buffer: numpy.ndarray, factor: float) -> None:    # exampl
     """ Modify an array by multiplying its elements (template function!)"""
     pass
 
-# 
+#
 #  C String lists tests
-# 
+#
 
 def c_string_list_total_size(    # example_library/litgensample.h:100
     items: List[str],

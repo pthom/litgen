@@ -26,10 +26,8 @@ def _parse_string_replacement(line: str) -> StringReplacement:
 def _parse_string_replacements(lines: str) -> List[StringReplacement]:
     lines_vec = lines.split("\n")
     lines_vec = list(lines_vec)
-    lines_vec = map(lambda s: s.strip(), lines_vec)
-    lines_vec = list(lines_vec)
-    lines_vec = filter(lambda s: len(s) > 0, lines_vec)
-    lines_vec = list(lines_vec)
+    lines_vec = list(map(lambda s: s.strip(), lines_vec))
+    lines_vec = list(filter(lambda s: len(s) > 0, lines_vec))
     r = list(map(_parse_string_replacement, lines_vec))
     return r
 

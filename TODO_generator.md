@@ -4,8 +4,10 @@ gen pyi class & structs
         Dans struct, il y a des traitement sur les membres (array et cie)
 
 + black
-+ mypy
-imgui:
+  + Options / run black after generation
+
+mypy
+imgui:c
     Handle widget input / output parameters
         bool *, int *, float *, etc
         float[2, 3, 4]

@@ -73,6 +73,7 @@ def _add_stub_element(
     )
 
     all_lines = [first_line] + all_lines_except_first
+    all_lines = code_utils.strip_lines_right_space(all_lines)
 
     r = "\n".join(all_lines) + "\n"
 
@@ -155,7 +156,7 @@ def _make_enum_element_decl_lines(
 
         replacement = code_replacements.StringReplacement()
         replacement.replace_what = r"\b" + enum_decl_cpp_name + r"\b"
-        replacement.by_what = enum_decl_python_name
+        replacement.by_what = f"Literal[{enum.name}.{enum_decl_python_name}]"
         enum_element.init = code_replacements.apply_one_replacement(
             enum_element.init, replacement
         )

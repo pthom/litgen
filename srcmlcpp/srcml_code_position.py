@@ -1,3 +1,4 @@
+from __future__ import annotations
 from dataclasses import dataclass
 
 
@@ -12,7 +13,7 @@ class CodePosition:
         return f"{self.line}:{self.column}"
 
     @staticmethod
-    def from_string(s: str):  # -> CodePosition:
+    def from_string(s: str) -> CodePosition:
         """Parses a string like '3:5' which means line 3, column 5"""
         items = s.split(":")
         assert len(items) == 2

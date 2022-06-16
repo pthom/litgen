@@ -16,7 +16,7 @@ T = TypeVar("T")
 
 # transform a list into a list of adjacent pairs
 # For example : [a, b, c] -> [ [a, b], [b, c]]
-def overlapping_pairs(iterable: Iterable[T]) -> Tuple[T, T]:
+def overlapping_pairs(iterable: Iterable[T]):
     it = iter(iterable)
     a = next(it, None)
     b = None  # noqa
@@ -134,15 +134,20 @@ def align_python_comments_in_block_lines(lines: List[str]) -> List[str]:
     return out
 
 
+def strip_lines_right_space(lines: List[str]) -> List[str]:
+    lines_stripped = list(map(lambda line: line.rstrip() , lines))
+    return lines_stripped
+
+
 def align_python_comments_in_block(code: str) -> str:
     lines = code.split("\n")
 
-    comments_positions = list(map(line_python_comment_eol_position, lines))
-    comments_positions = list(filter(lambda v: v is not None, comments_positions))
+    comments_positions_or_none = list(map(line_python_comment_eol_position, lines))
+    comments_positions: List[int] = list(filter(lambda v: v is not None, comments_positions_or_none)) # type: ignore
 
     if len(comments_positions) > 0:
         new_lines = []
-        max_position = max(comments_positions)
+        max_position: int = max(comments_positions)
         for line in lines:
             comment_position = line_python_comment_eol_position(line)
             if comment_position is not None:
@@ -294,13 +299,13 @@ def indent_code(
     if indent_str is None:
         indent_str = " " * indent_size
 
-    def indent_line(line):
+    def indent_line(line: str) -> str:
         if len(line) == 0:
             return ""
         else:
             return indent_str + line
 
-    lines = map(indent_line, lines)
+    lines = list(map(indent_line, lines))
     return "\n".join(lines)
 
 
@@ -309,7 +314,7 @@ def indent_code_force(code: str, indent_size: int = 1, indent_str=""):
     lines = code.split("\n")
     if len(indent_str) == 0:
         indent_str = " " * indent_size
-    lines = map(lambda s: indent_str + s.strip(), lines)
+    lines = list(map(lambda s: indent_str + s.strip(), lines))
     return "\n".join(lines)
 
 
@@ -320,7 +325,7 @@ def format_python_comment(comment: str, indent_size: int) -> str:
     def indent_and_comment_line(line):
         return indent_str + line
 
-    lines = map(indent_and_comment_line, lines)
+    lines = list(map(indent_and_comment_line, lines))
     return "\n".join(lines)
 
 
@@ -561,7 +566,7 @@ def remove_end_of_line_cpp_comments(code: str) -> str:
             line = line[: line.index("//")]
         return line
 
-    lines = map(remove_comment, lines)
+    lines = list(map(remove_comment, lines))
     code = "\n".join(lines)
     return code
 
@@ -633,6 +638,7 @@ def does_match_regexes(regex_strs: List[str], word: str) -> bool:
     for regex_str in regex_strs:
         if does_match_regex(regex_str, word):
             return True
+    return False
 
 
 def make_regex_any_variable_ending_with(what_to_find: str) -> str:
@@ -667,7 +673,7 @@ def replace_in_string(input_string, replacements: Dict[str, str]) -> str:
 
 
 def replace_in_string_remove_line_if_none(
-    input_string: str, replacements: Dict[str, str]
+    input_string: str, replacements: Dict[str, Optional[str]]
 ) -> str:
 
     r = input_string

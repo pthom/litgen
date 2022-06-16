@@ -1,4 +1,4 @@
-from typing import Callable, List
+from typing import Callable, List, Optional
 
 
 class SrcmlOptions:
@@ -47,7 +47,7 @@ class SrcmlOptions:
     #
     # If you need to preprocess the code before parsing, fill this function
     #
-    code_preprocess_function: Callable[[str], str] = None
+    code_preprocess_function: Optional[Callable[[str], str]] = None
 
     #
     # Preserve empty lines, i.e. any empty line in the C++ code will be mentioned as a CppEmptyLine element

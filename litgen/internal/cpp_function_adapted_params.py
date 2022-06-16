@@ -30,7 +30,7 @@ class LambdaAdapter:
     # (advanced, currently used by adapt_c_buffers)
     lambda_template_end: Optional[str] = None
 
-    adapted_cpp_parameter_list: List[str] = None
+    adapted_cpp_parameter_list: List[str] = []
     new_function_infos: Optional[CppFunctionDecl] = None
 
     def __init__(self):

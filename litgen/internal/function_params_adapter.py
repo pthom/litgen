@@ -122,7 +122,6 @@ def _make_adapted_lambda_code(
     options: CodeStyleOptions,
     parent_struct_name,
 ):
-
     lambda_template_code = """
         auto {lambda_name} = [{lambda_captures}]({adapted_python_parameters})
         {

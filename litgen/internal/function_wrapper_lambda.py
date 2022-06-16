@@ -463,10 +463,10 @@ def _lambda_params_signature(
                 new_params.append(new_param)
                 flag_replaced = True
             # Process count params: do not use in the lambda signature
-            if is_buffer_size_name_at_idx(params, options, idx_param):
+            elif is_buffer_size_name_at_idx(params, options, idx_param):
                 flag_replaced = True
             # Process sizeof params (in the case of templated functions): set as -1 by default (the lambda code will initialize it if needed)
-            if is_default_sizeof_param(param, options):
+            elif is_default_sizeof_param(param, options):
                 new_param: CppParameter = copy.deepcopy(param)
                 new_param.init = "-1"
                 new_params.append(new_param)

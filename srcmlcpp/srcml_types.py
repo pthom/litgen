@@ -98,7 +98,7 @@ class CppElementComments:
 class CppElement:
     """Wrapper around a srcLML xml node."""
 
-    srcml_element: ET.Element = None
+    srcml_element: ET.Element
 
     def __init__(self, srcml_element: ET.Element):
         assert isinstance(srcml_element, ET.Element)
@@ -115,11 +115,11 @@ class CppElement:
         """Tail part of the xml element"""
         return srcml_utils.str_none_empty(self.srcml_element.tail)
 
-    def start(self) -> CodePosition:
+    def start(self) -> Optional[CodePosition]:
         """Start position in the C++ code"""
         return srcml_utils.element_start_position(self.srcml_element)
 
-    def end(self) -> CodePosition:
+    def end(self) -> Optional[CodePosition]:
         """End position in the C++ code"""
         return srcml_utils.element_end_position(self.srcml_element)
 

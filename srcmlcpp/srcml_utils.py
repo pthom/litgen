@@ -8,7 +8,7 @@ from srcmlcpp import srcml_caller
 from srcmlcpp.srcml_code_position import CodePosition
 
 
-def _element_position(element: ET.Element, start_or_end: str) -> CodePosition:
+def _element_position(element: ET.Element, start_or_end: str) -> Optional[CodePosition]:
     r = None
     for key, value in element.attrib.items():
         if clean_tag_or_attrib(key) == start_or_end:
@@ -16,11 +16,11 @@ def _element_position(element: ET.Element, start_or_end: str) -> CodePosition:
     return r
 
 
-def element_start_position(element: ET.Element) -> CodePosition:
+def element_start_position(element: ET.Element) -> Optional[CodePosition]:
     return _element_position(element, "start")
 
 
-def element_end_position(element: ET.Element) -> CodePosition:
+def element_end_position(element: ET.Element) -> Optional[CodePosition]:
     return _element_position(element, "end")
 
 

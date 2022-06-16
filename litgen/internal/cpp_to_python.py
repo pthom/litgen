@@ -35,7 +35,8 @@ def _info_original_location(
 
     _i_ = options.indent_cpp_spaces()
 
-    line = cpp_element.start().line
+    start = cpp_element.start()
+    line = start.line if start is not None else "unknown line"
     r = f"{_i_}{comment_token} {header_file}:{line}"
     return r
 
@@ -65,6 +66,8 @@ def _comment_apply_replacements(comment: str, options: CodeStyleOptions) -> str:
 
     if len(lines) == 0:
         return ""
+
+    lines = code_utils.strip_lines_right_space(lines)
 
     comment = "\n".join(lines)
     comment = code_replacements.apply_code_replacements(
@@ -144,6 +147,7 @@ def python_comment_previous_lines(
 
     lines = comment.split("\n")
     lines = list(map(lambda s: "# " + s, lines))
+    lines = code_utils.strip_lines_right_space(lines)
 
     return lines
 
@@ -265,7 +269,7 @@ def is_cpp_type_immutable_for_python(cpp_type: str):
 
 
 class BoxedImmutablePythonType:
-    static_list_of_instantiated_type = []
+    static_list_of_instantiated_type: List[str] = []
     cpp_type: str
 
     def __init__(self, cpp_type: str):
