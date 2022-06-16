@@ -248,7 +248,7 @@ class CppUnprocessed(CppElementAndComment):
 
 
 @dataclass
-class CppBlock(CppElement):  # it is also a CppElementAndComment
+class CppBlock(CppElementAndComment):
     """The class CppBlock is a container that represents any set of code  detected by srcML.
     It has several derived classes.
 
