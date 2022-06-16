@@ -1,3 +1,6 @@
+reactiver mypy sur example/
+    Savoir trouver definitions des BoxedTytpe dans .so
+
 decl_name_code -> decl_name et mettre array info ailleurs
 
 sub package adapt param
@@ -23,13 +26,13 @@ stub:
         flags: ImGuiComboFlags = 0
         ) -> bool:
 
-  
+
 PimpMyClass !
     srcmlcpp separated
     auto pImpl from cpp: pImpl class  => header decl + cpp imp non pImpl + Doc !
 
 
-  
+
 duplicate code_utils / add copy script
 
 imgui
@@ -69,11 +72,10 @@ Dyndoc !!!!
 
 
 Bugs:
-    - Static methods: cf https://pybind11-jagerman.readthedocs.io/en/stable/classes.html?highlight=static%20method#instance-and-static-fields 
+    - Static methods: cf https://pybind11-jagerman.readthedocs.io/en/stable/classes.html?highlight=static%20method#instance-and-static-fields
         use def_static
 
 - Later: folder in site-packages
 - code_replacement sur comments deconne:
     // Doubles the input number
     // i.e return "2 * x"    <== le * est supprimé
-

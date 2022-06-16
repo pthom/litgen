@@ -66,19 +66,19 @@ def standard_replacements() -> List[StringReplacement]:
     \blong \s*double\b -> float
     \bdouble\b -> float
     \bfloat\b -> float
-    
+
     \bconst \s*char*\b -> str
     \bconst \s*char *\b -> str
-    
+
     \bsize_t\b -> int
     \bstd::string\(\) -> ""
     \bstd::string\b -> str
     \btrue\b -> True
     \bfalse\b -> False
     \bstd::vector\s*<\s*([\w:]*)\s*> -> List[\1]
-    \bstd::array\s*<\s*([\w:]*)\s*,\s*([\w:])\s*> -> List[\1, \2]
+    \bstd::array\s*<\s*([\w:]*)\s*,\s*([\w:])\s*> -> List[\1]
 
-    \bvoid\b -> None    
+    \bvoid\b -> None
     \bNULL\b -> None
     \bnullptr\b -> None
 
@@ -88,10 +88,10 @@ def standard_replacements() -> List[StringReplacement]:
     \bDBL_MAX\b -> sys.float_info.max
     \bLDBL_MIN\b -> sys.float_info.min
     \bLDBL_MAX\b -> sys.float_info.max
-    
+
     \bpy::array\b -> numpy.ndarray
     \bT\b -> numpy.ndarray
-    
+
     \bconst\b -> REMOVE
     & -> REMOVE
     \* -> REMOVE
