@@ -224,10 +224,7 @@ def code_style_immvision() -> CodeStyleOptions:
     options.generate_to_string = True
     options.cpp_indent_size = 4
     options.srcml_options.functions_api_prefixes = ["IMMVISION_API"]
-    options.code_replacements = (
-        _code_replacements.standard_replacements()
-        + _code_replacements.opencv_replacements()
-    )
+    options.code_replacements = _code_replacements.standard_replacements() + _code_replacements.opencv_replacements()
 
     options.buffer_flag_replace_by_array = False
 
@@ -241,9 +238,7 @@ def code_style_immvision() -> CodeStyleOptions:
         else:
             return ""
 
-    options.poub_init_function_python_additional_code = (
-        init_function_python_additional_code_require_opengl_initialized
-    )
+    options.poub_init_function_python_additional_code = init_function_python_additional_code_require_opengl_initialized
 
     return options
 

@@ -23,9 +23,7 @@ def play_parse(code):
 
 def play_imgui():
     options = litgen.code_style_imgui()
-    source_filename = os.path.realpath(
-        _THIS_DIR + "/../../examples_real_libs/imgui/imgui/imgui.h"
-    )
+    source_filename = os.path.realpath(_THIS_DIR + "/../../examples_real_libs/imgui/imgui/imgui.h")
     cpp_unit = srcmlcpp.file_to_cpp_unit(options.srcml_options, source_filename)
     # print(cpp_unit)
 
@@ -33,9 +31,7 @@ def play_imgui():
 def play_implot():
     options = litgen.code_style_implot()
     options.original_location_flag_show = True
-    source_filename = os.path.realpath(
-        _THIS_DIR + "/../../examples_real_libs/implot/implot/implot.h"
-    )
+    source_filename = os.path.realpath(_THIS_DIR + "/../../examples_real_libs/implot/implot/implot.h")
     cpp_unit = srcmlcpp.file_to_cpp_unit(options.srcml_options, source_filename)
     # print(cpp_unit)
     pydef_code = module_pydef_generator.generate_pydef(cpp_unit, options)
@@ -81,5 +77,5 @@ code = """
 MY_API inline int buffer_sum(const uint8_t* buffer, size_t buffer_size, size_t stride= sizeof(uint8_t));
 """
 
-#play_pydef(code, options)
+# play_pydef(code, options)
 play_pyi(code, options)

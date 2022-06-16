@@ -12,9 +12,7 @@ import code_utils
 import cpp_to_python
 
 
-def generate_python_wrapper_init_code(
-    function_infos: FunctionsInfos, options: CodeStyleOptions
-) -> str:
+def generate_python_wrapper_init_code(function_infos: FunctionsInfos, options: CodeStyleOptions) -> str:
     """
     Should generate code like this:
 
@@ -27,13 +25,9 @@ def generate_python_wrapper_init_code(
         '''
         _cpp_immvision.image_display(image, image_display_size, refresh_image)
     """
-    py_function_name = cpp_to_python.function_name_to_python(
-        function_infos.function_name_cpp(), options
-    )
+    py_function_name = cpp_to_python.function_name_to_python(function_infos.function_name_cpp(), options)
     title = code_utils.indent_code(
-        cpp_to_python.docstring_python(
-            function_infos.function_code.docstring_cpp, options
-        ),
+        cpp_to_python.docstring_python(function_infos.function_code.docstring_cpp, options),
         4,
     )[4:]
 
@@ -45,19 +39,12 @@ def generate_python_wrapper_init_code(
     param_lines = []
     for param in function_infos.get_parameters():
         param_line = param_line_template
-        param_line = param_line.replace(
-            "PARAM_TYPE", cpp_to_python.type_to_python(param.type_cpp, options)
-        )
-        param_line = param_line.replace(
-            "PARAM_NAME", cpp_to_python.var_name_to_python(param.name_cpp, options)
-        )
+        param_line = param_line.replace("PARAM_TYPE", cpp_to_python.type_to_python(param.type_cpp, options))
+        param_line = param_line.replace("PARAM_NAME", cpp_to_python.var_name_to_python(param.name_cpp, options))
         if len(param.default_value_cpp) > 0:
             param_line = param_line.replace(
                 "PARAM_DEFAULT",
-                " = "
-                + cpp_to_python.default_value_to_python(
-                    param.default_value_cpp, options
-                ),
+                " = " + cpp_to_python.default_value_to_python(param.default_value_cpp, options),
             )
         else:
             param_line = param_line.replace(" PARAM_DEFAULT", "")

@@ -177,9 +177,7 @@ def write_code_between_markers(
     for code_line in input_code_lines:
         if code_marker_in in code_line:
             if is_inside_autogen_region:
-                raise RuntimeError(
-                    f"Encountered more than one code_marker: {code_marker_in}"
-                )
+                raise RuntimeError(f"Encountered more than one code_marker: {code_marker_in}")
             else:
                 is_inside_autogen_region = True
                 was_replacement_performed = True
@@ -191,9 +189,7 @@ def write_code_between_markers(
                 if flag_preserve_left_spaces:
                     output_code = output_code + code_to_insert
                 else:
-                    output_code = output_code + indent_code_force(
-                        code_to_insert, indent_size
-                    )
+                    output_code = output_code + indent_code_force(code_to_insert, indent_size)
         else:
             if not is_inside_autogen_region:
                 output_code = output_code + code_line + "\n"
@@ -264,11 +260,7 @@ def remove_trailing_spaces(line: str) -> str:
 
 def make_nice_code_diff(generated: str, expected: str) -> str:
     differ = difflib.Differ()
-    diffs = list(
-        differ.compare(
-            expected.splitlines(keepends=True), generated.splitlines(keepends=True)
-        )
-    )
+    diffs = list(differ.compare(expected.splitlines(keepends=True), generated.splitlines(keepends=True)))
     return "".join(diffs)
 
 
@@ -388,9 +380,7 @@ def parse_c_identifier_at_start(code: str) -> Tuple[str, int]:
 
 def parse_c_identifier_at_end(code: str) -> Tuple[str, int]:
     if len(code) == 0:
-        raise CppParseException(
-            "parse_c_identifier_at_start cannot accept empty strings"
-        )
+        raise CppParseException("parse_c_identifier_at_start cannot accept empty strings")
     if code[-1] not in VALID_IDENTIFIERS_CHARS:
         return "", -1
 
@@ -407,9 +397,7 @@ def parse_c_identifier_at_end(code: str) -> Tuple[str, int]:
         return "", -1
 
     if identifer in reserved_cpp_keywords():
-        raise CppParseException(
-            "parse_c_identifier_at_start cannot return a reserved keyword"
-        )
+        raise CppParseException("parse_c_identifier_at_start cannot return a reserved keyword")
 
     return identifer, pos
 
@@ -483,8 +471,7 @@ def parse_function_declaration(code_line: str) -> Optional[FunctionNameAndReturn
     # special case for operator()
     if (
         pos_first_paren > len("operator(")
-        and code_line[pos_first_paren - len("operator") : pos_first_paren + 2]
-        == "operator()"
+        and code_line[pos_first_paren - len("operator") : pos_first_paren + 2] == "operator()"
     ):
         pos_first_paren = find_first_paren_in_main_scope(pos_first_paren + 2)
 
@@ -500,15 +487,10 @@ def parse_function_declaration(code_line: str) -> Optional[FunctionNameAndReturn
             idx_start_fn_identifier = return_type_and_function_name.index(op)
 
     if idx_start_fn_identifier < 0:
-        function_name, idx_start_fn_identifier = parse_c_identifier_at_end(
-            return_type_and_function_name
-        )
+        function_name, idx_start_fn_identifier = parse_c_identifier_at_end(return_type_and_function_name)
 
     # Special case for destructors
-    if (
-        idx_start_fn_identifier > 0
-        and return_type_and_function_name[idx_start_fn_identifier - 1] == "~"
-    ):
+    if idx_start_fn_identifier > 0 and return_type_and_function_name[idx_start_fn_identifier - 1] == "~":
         function_name = "~" + function_name
         return_type_cpp = ""
         return FunctionNameAndReturnType(function_name, return_type_cpp)
@@ -526,9 +508,7 @@ def parse_function_declaration(code_line: str) -> Optional[FunctionNameAndReturn
         return_type_cpp = return_type_cpp.replace("static", "").strip()
         is_static = True
 
-    return FunctionNameAndReturnType(
-        function_name, return_type_cpp, is_static=is_static
-    )
+    return FunctionNameAndReturnType(function_name, return_type_cpp, is_static=is_static)
 
 
 def join_remove_empty(separator: str, strs: List[str]):

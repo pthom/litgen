@@ -100,9 +100,7 @@ class _SrcmlPreprocessorState:
                 self.count_preprocessor_tests += 1
 
     def shall_ignore(self) -> bool:
-        assert (
-            self.count_preprocessor_tests >= -1
-        )  # -1 because we can ignore the inclusion guard
+        assert self.count_preprocessor_tests >= -1  # -1 because we can ignore the inclusion guard
         if self.was_last_element_a_preprocessor_stmt:
             return True
         if srcml_utils.clean_tag_or_attrib(self.last_element.tag) == "comment":
@@ -116,9 +114,7 @@ class _SrcmlPreprocessorState:
             return False
 
 
-def filter_preprocessor_regions(
-    unit: ET.Element, header_guard_suffixes: List[str]
-) -> ET.Element:
+def filter_preprocessor_regions(unit: ET.Element, header_guard_suffixes: List[str]) -> ET.Element:
     filtered_unit = copy.deepcopy(unit)
     processor = _SrcmlPreprocessorState(header_guard_suffixes)
     children_to_remove = []

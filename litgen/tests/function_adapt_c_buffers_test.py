@@ -17,9 +17,7 @@ def gen_pydef_code(code) -> Optional[str]:
     cpp_unit = srcmlcpp.code_to_cpp_unit(options.srcml_options, code)
     for child in cpp_unit.block_children:
         if isinstance(child, CppFunctionDecl) or isinstance(child, CppFunction):
-            generated_code = module_pydef_generator._generate_pydef_function(
-                child, options
-            )
+            generated_code = module_pydef_generator._generate_pydef_function(child, options)
             return generated_code
     return None
 

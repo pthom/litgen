@@ -1,5 +1,7 @@
 from typing import List
-from typing import Literal # for enums annotations, when some enum values depend on other values of the same enum
+from typing import (
+    Literal,
+)  # for enums annotations, when some enum values depend on other values of the same enum
 import numpy
 from enum import Enum
 

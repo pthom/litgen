@@ -49,10 +49,7 @@ class CppElementComments:
     comment_end_of_line: str = ""
 
     def comment(self):
-        if (
-            len(self.comment_on_previous_lines) > 0
-            and len(self.comment_end_of_line) > 0
-        ):
+        if len(self.comment_on_previous_lines) > 0 and len(self.comment_end_of_line) > 0:
             return self.comment_on_previous_lines + "\n" + self.comment_end_of_line
         else:
             return self.comment_on_previous_lines + self.comment_end_of_line
@@ -65,9 +62,7 @@ class CppElementComments:
         return r
 
     def top_comment_code(self):
-        top_comments = map(
-            lambda comment: "//" + comment, self.comment_on_previous_lines.splitlines()
-        )
+        top_comments = map(lambda comment: "//" + comment, self.comment_on_previous_lines.splitlines())
         top_comment = "\n".join(top_comments)
         if len(top_comment) > 0:
             top_comment += "\n"
@@ -86,10 +81,7 @@ class CppElementComments:
             self.comment_end_of_line += " - " + comment
 
     def full_comment(self):
-        if (
-            len(self.comment_on_previous_lines) > 0
-            and len(self.comment_end_of_line) > 0
-        ):
+        if len(self.comment_on_previous_lines) > 0 and len(self.comment_end_of_line) > 0:
             return self.comment_on_previous_lines + "\n\n" + self.comment_end_of_line
         else:
             return self.comment_on_previous_lines + self.comment_end_of_line
@@ -214,9 +206,7 @@ class CppElementAndComment(CppElement):
         self.cpp_element_comments = cpp_element_comments
 
     def as_dict(self):
-        as_dict = code_utils.merge_dicts(
-            super().as_dict(), self.cpp_element_comments.as_dict()
-        )
+        as_dict = code_utils.merge_dicts(super().as_dict(), self.cpp_element_comments.as_dict())
         return as_dict
 
     def str_commented(self, is_enum: bool = False, is_decl_stmt: bool = False):
@@ -408,9 +398,7 @@ class CppType(CppElement):
         nb_const = self.specifiers.count("const")
 
         if nb_const > 2:
-            raise ValueError(
-                "I cannot handle more than two `const` occurrences in a type!"
-            )
+            raise ValueError("I cannot handle more than two `const` occurrences in a type!")
 
         specifiers = self.specifiers
         if nb_const == 2:
@@ -519,9 +507,7 @@ class CppDecl(CppElementAndComment):
         """
         is_const = "const" in self.cpp_type.specifiers
         is_char = self.cpp_type.names == ["char"]
-        is_default_init = (
-            self.init == "" or self.init == "NULL" or self.init == "nullptr"
-        )
+        is_default_init = self.init == "" or self.init == "NULL" or self.init == "nullptr"
 
         nb_indirections = 0
         nb_indirections += self.cpp_type.modifiers.count("*")
@@ -663,9 +649,7 @@ class CppDeclStatement(CppElementAndComment):
     https://www.srcmlcpp.org/doc/cpp_srcML.html#variable-declaration-statement
     """
 
-    cpp_decls: List[
-        CppDecl
-    ] = None  # A CppDeclStatement can initialize several variables
+    cpp_decls: List[CppDecl] = None  # A CppDeclStatement can initialize several variables
 
     def __init__(self, element: ET.Element, cpp_element_comments: CppElementComments):
         super().__init__(element, cpp_element_comments)
@@ -705,9 +689,7 @@ class CppParameter(CppElement):
             return str(self.decl)
         else:
             if self.template_type is None:
-                logging.warning(
-                    "CppParameter.__str__() with no decl and no template_type"
-                )
+                logging.warning("CppParameter.__str__() with no decl and no template_type")
             return str(self.template_type) + " " + self.template_name
 
     def __str__(self):
@@ -796,9 +778,7 @@ class CppFunctionDecl(CppElementAndComment):
     name: str = ""
     parameter_list: CppParameterList = None
     template: CppTemplate = None
-    is_auto_decl: bool = (
-        False  # True if it is a decl of the form `auto square(double) -> double`
-    )
+    is_auto_decl: bool = False  # True if it is a decl of the form `auto square(double) -> double`
 
     def __init__(self, element: ET.Element, cpp_element_comments: CppElementComments):
         super().__init__(element, cpp_element_comments)
@@ -1046,9 +1026,7 @@ class CppComment(CppBlockChild):
         super().__init__(element, cpp_element_comments)
 
     def str_code(self):
-        lines = self.comment.split(
-            "\n"
-        )  # split("\n") keeps empty lines (splitlines() does not!)
+        lines = self.comment.split("\n")  # split("\n") keeps empty lines (splitlines() does not!)
         lines = list(map(lambda s: "// " + s, lines))
         return "\n".join(lines)
 

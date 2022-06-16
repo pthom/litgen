@@ -45,9 +45,7 @@ def test_srcml_xml():
         r = "\n".join(lines[2:])
         return r
 
-    code_utils.assert_are_equal_ignore_spaces(
-        remove_first_two_lines(xml_str), remove_first_two_lines(expected_xml_str)
-    )
+    code_utils.assert_are_equal_ignore_spaces(remove_first_two_lines(xml_str), remove_first_two_lines(expected_xml_str))
 
 
 def test_srcml_does_not_modify_code():

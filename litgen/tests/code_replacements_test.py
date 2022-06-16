@@ -31,9 +31,7 @@ def test_code_replacements():
     assert r == "cv::Sizeounette Size s = Size()"
 
     s = "cv::Sizeounette cv::Size s = cv::Size()"
-    r = code_replacements.apply_code_replacements(
-        s, code_replacements.opencv_replacements()
-    )
+    r = code_replacements.apply_code_replacements(s, code_replacements.opencv_replacements())
     assert r == "cv::Sizeounette Size s = (0, 0)"
 
     s = "a = 1.5f;"

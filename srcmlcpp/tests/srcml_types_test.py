@@ -38,9 +38,7 @@ def test_is_c_string_list_ptr():
     assert to_decl("const char ** const items").is_c_string_list_ptr()
     assert to_decl("const char ** items").is_c_string_list_ptr()
 
-    assert not to_decl(
-        "const char ** const items=some_default_value()"
-    ).is_c_string_list_ptr()
+    assert not to_decl("const char ** const items=some_default_value()").is_c_string_list_ptr()
     assert to_decl("const char ** const items=nullptr").is_c_string_list_ptr()
     assert to_decl("const char ** const items=NULL").is_c_string_list_ptr()
 

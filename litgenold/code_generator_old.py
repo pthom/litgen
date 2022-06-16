@@ -43,9 +43,7 @@ def _run_codetype_and_generator(
     options: CodeStyleOptions,
 ) -> str:
 
-    pydef_codes = find_functions_structs_enums.find_functions_struct_or_enums(
-        header_code, code_type, options
-    )
+    pydef_codes = find_functions_structs_enums.find_functions_struct_or_enums(header_code, code_type, options)
 
     fn_code_generator = fn_code_generators[code_type]
     fn_infos_extractor = _fn_infos_extractors[code_type]
@@ -74,9 +72,7 @@ def _run_generate(
 
     generated_code = ""
     for code_type in CppCodeType:
-        generated_code += _run_codetype_and_generator(
-            header_code, code_type, fn_code_generators, options
-        )
+        generated_code += _run_codetype_and_generator(header_code, code_type, fn_code_generators, options)
 
     marker_in = f"<autogen:{marker_token}>"
     marker_out = f"</autogen:{marker_token}>"

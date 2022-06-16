@@ -53,9 +53,7 @@ def _extract_error_context(element: ET.Element) -> ErrorContext:
         full_code_lines = [""] + full_code.split("\n")
 
         if cpp_element.start() is not None and len(full_code) > 0:
-            concerned_lines = full_code_lines[
-                cpp_element.start().line : cpp_element.end().line + 1
-            ]
+            concerned_lines = full_code_lines[cpp_element.start().line : cpp_element.end().line + 1]
             start = CodePos(0, cpp_element.start().column)
             end = CodePos(
                 cpp_element.end().line - cpp_element.start().line,
@@ -66,9 +64,7 @@ def _extract_error_context(element: ET.Element) -> ErrorContext:
             return ErrorContext([], CodePos(), CodePos())
     else:
         original_code = srcmlcpp.srcml_to_code(element)
-        return ErrorContext(
-            original_code.split("\n"), cpp_element.start(), cpp_element.end()
-        )
+        return ErrorContext(original_code.split("\n"), cpp_element.start(), cpp_element.end())
 
 
 def _highlight_responsible_code(element: ET.Element) -> str:
@@ -142,9 +138,7 @@ class SrcMlExceptionDetailed(SrcMlException):
         additional_message="",
         options: SrcmlOptions = SrcmlOptions(),
     ):
-        message = _warning_detailed_info(
-            current_element, additional_message, options=options
-        )
+        message = _warning_detailed_info(current_element, additional_message, options=options)
         super().__init__(message)
 
 

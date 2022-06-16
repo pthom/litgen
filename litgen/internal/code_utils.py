@@ -86,9 +86,7 @@ def line_cpp_comment_position(code_line: str) -> Optional[int]:
     return None
 
 
-def line_python_comment_position(
-    code_line: str, skip_if_comment_only_line: bool = False
-) -> Optional[int]:
+def line_python_comment_position(code_line: str, skip_if_comment_only_line: bool = False) -> Optional[int]:
     """
     Note: parsing comment position in python is complex.
     This method applies naive strategies. May be use the python official parser module?
@@ -135,7 +133,7 @@ def align_python_comments_in_block_lines(lines: List[str]) -> List[str]:
 
 
 def strip_lines_right_space(lines: List[str]) -> List[str]:
-    lines_stripped = list(map(lambda line: line.rstrip() , lines))
+    lines_stripped = list(map(lambda line: line.rstrip(), lines))
     return lines_stripped
 
 
@@ -143,7 +141,7 @@ def align_python_comments_in_block(code: str) -> str:
     lines = code.split("\n")
 
     comments_positions_or_none = list(map(line_python_comment_eol_position, lines))
-    comments_positions: List[int] = list(filter(lambda v: v is not None, comments_positions_or_none)) # type: ignore
+    comments_positions: List[int] = list(filter(lambda v: v is not None, comments_positions_or_none))  # type: ignore
 
     if len(comments_positions) > 0:
         new_lines = []
@@ -269,9 +267,7 @@ def unindent_code(code: str, flag_strip_empty_lines: bool = False) -> str:
     return r
 
 
-def reindent_code(
-    code: str, indent_size: int = 4, skip_first_line=False, indent_str=""
-):
+def reindent_code(code: str, indent_size: int = 4, skip_first_line=False, indent_str=""):
     """change the global code indentation, but keep its inner indentation"""
     code = unindent_code(code)
     code = indent_code(
@@ -283,9 +279,7 @@ def reindent_code(
     return code
 
 
-def indent_code(
-    code: str, indent_size: int = 1, skip_first_line=False, indent_str=None
-):
+def indent_code(code: str, indent_size: int = 1, skip_first_line=False, indent_str=None):
     """add some space to the left of all lines"""
     if skip_first_line:
         lines = code.split("\n")
@@ -356,9 +350,7 @@ def format_cpp_comment_on_one_line(comment: str) -> str:
     return comment
 
 
-def format_cpp_comment_multiline(
-    comment: str, indentation_size: int = 4, indentation_str: str = ""
-):
+def format_cpp_comment_multiline(comment: str, indentation_size: int = 4, indentation_str: str = ""):
     lines = comment.split("\n")
     if len(indentation_str) == 0:
         indentation_str = " " * indentation_size
@@ -416,9 +408,7 @@ def write_code_between_markers(
     for code_line in input_code_lines:
         if code_marker_in in code_line:
             if is_inside_autogen_region:
-                raise RuntimeError(
-                    f"Encountered more than one code_marker: {code_marker_in}"
-                )
+                raise RuntimeError(f"Encountered more than one code_marker: {code_marker_in}")
             else:
                 is_inside_autogen_region = True
                 was_replacement_performed = True
@@ -503,11 +493,7 @@ def remove_trailing_spaces(line: str) -> str:
 
 def make_nice_code_diff(generated: str, expected: str) -> str:
     differ = difflib.Differ()
-    diffs = list(
-        differ.compare(
-            expected.splitlines(keepends=True), generated.splitlines(keepends=True)
-        )
-    )
+    diffs = list(differ.compare(expected.splitlines(keepends=True), generated.splitlines(keepends=True)))
     return "".join(diffs)
 
 
@@ -672,9 +658,7 @@ def replace_in_string(input_string, replacements: Dict[str, str]) -> str:
     return r
 
 
-def replace_in_string_remove_line_if_none(
-    input_string: str, replacements: Dict[str, Optional[str]]
-) -> str:
+def replace_in_string_remove_line_if_none(input_string: str, replacements: Dict[str, Optional[str]]) -> str:
 
     r = input_string
 

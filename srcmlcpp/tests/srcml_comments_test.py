@@ -12,9 +12,7 @@ def test_mark_empty_lines():
     code = srcml_comments._EXAMPLE_COMMENTS_TO_GROUPS
     code2 = srcml_comments.mark_empty_lines(code)
     lines2 = code2.split("\n")
-    lines2_empty = list(
-        filter(lambda line: line == srcml_comments.EMPTY_LINE_COMMENT, lines2)
-    )
+    lines2_empty = list(filter(lambda line: line == srcml_comments.EMPTY_LINE_COMMENT, lines2))
     assert len(lines2_empty) > 4
 
 
@@ -24,9 +22,7 @@ def test_group_consecutive_comment():
     srcml_grouped = srcml_comments._group_consecutive_comments(srcml_code)
     grouped_str = srcml_utils.srcml_to_str_readable(srcml_grouped)
     # logging.warning("\n" + grouped_str)
-    code_utils.assert_are_codes_equal(
-        grouped_str, srcml_comments._EXPECTED_COMMENTS_GROUPED
-    )
+    code_utils.assert_are_codes_equal(grouped_str, srcml_comments._EXPECTED_COMMENTS_GROUPED)
 
 
 def test_iterate_children_simple():
@@ -63,9 +59,7 @@ def test_iterate_children_with_comments():
     msgs = [str(child.as_dict()) for child in children_and_comments]
     msg = "\n".join(msgs)
     # logging.warning("\n" + msg)
-    code_utils.assert_are_codes_equal(
-        msg, srcml_comments.EXPECTED_CHILDREN_WITH_COMMENTS
-    )
+    code_utils.assert_are_codes_equal(msg, srcml_comments.EXPECTED_CHILDREN_WITH_COMMENTS)
 
 
 def test_group_comment():

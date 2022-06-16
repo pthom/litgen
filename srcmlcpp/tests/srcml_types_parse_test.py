@@ -23,9 +23,7 @@ def test_parse_cpp_decl_statement():
 
     # # Test with *, initial value and east/west const translation
     code = "int const *a=nullptr;"
-    code_utils.assert_are_equal_ignore_spaces(
-        code_to_decl_statement(code), "const int * a = nullptr;"
-    )
+    code_utils.assert_are_equal_ignore_spaces(code_to_decl_statement(code), "const int * a = nullptr;")
 
     # Test with several variables + modifiers
     code = "int a = 3, &b = b0, *c;"
@@ -44,9 +42,7 @@ def test_parse_cpp_decl_statement():
 
     # Test with a template type
     code = "std::map<int, std::string>x={1, 2, 3};"
-    code_utils.assert_are_codes_equal(
-        code_to_decl_statement(code), "std::map<int, std::string> x = {1, 2, 3};"
-    )
+    code_utils.assert_are_codes_equal(code_to_decl_statement(code), "std::map<int, std::string> x = {1, 2, 3};")
 
     # Test with a top comment for two decls in a decl_stmt
     code = """
@@ -95,9 +91,7 @@ def test_parse_function_decl():
 
     # Test with params and default values
     code = "int add(int a, int b = 5);"
-    code_utils.assert_are_codes_equal(
-        code_to_fn_decl(code), "int add(int a, int b = 5);"
-    )
+    code_utils.assert_are_codes_equal(code_to_fn_decl(code), "int add(int a, int b = 5);")
 
     # Test with template types and multiple spaces
     code = """
@@ -110,15 +104,11 @@ def test_parse_function_decl():
 
     # Test with type declared after ->
     code = "auto divide(int a, int b) -> double;"
-    code_utils.assert_are_codes_equal(
-        code_to_fn_decl(code), "double divide(int a, int b);"
-    )
+    code_utils.assert_are_codes_equal(code_to_fn_decl(code), "double divide(int a, int b);")
 
     # Test with inferred type
     code = "auto minimum(int&&a, int b = 5);"
-    code_utils.assert_are_codes_equal(
-        code_to_fn_decl(code), "auto minimum(int && a, int b = 5);"
-    )
+    code_utils.assert_are_codes_equal(code_to_fn_decl(code), "auto minimum(int && a, int b = 5);")
 
     # Test with top comment
     code = """
@@ -364,14 +354,10 @@ def do_parse_imgui_implot(filename):
 
 
 def test_parse_imgui():
-    source_filename = os.path.realpath(
-        _THIS_DIR + "/../../examples_real_libs/imgui/imgui/imgui.h"
-    )
+    source_filename = os.path.realpath(_THIS_DIR + "/../../examples_real_libs/imgui/imgui/imgui.h")
     do_parse_imgui_implot(source_filename)
 
 
 def test_parse_implot():
-    source_filename = os.path.realpath(
-        _THIS_DIR + "/../../examples_real_libs/implot/implot/implot.h"
-    )
+    source_filename = os.path.realpath(_THIS_DIR + "/../../examples_real_libs/implot/implot/implot.h")
     do_parse_imgui_implot(source_filename)

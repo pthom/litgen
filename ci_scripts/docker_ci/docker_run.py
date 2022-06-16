@@ -130,9 +130,7 @@ def main():
             f"docker run --name {DOCKER_CONTAINER_NAME} -it -d -v {REPO_DIR}:{SOURCES_MOUNT_DIR} {DOCKER_IMAGE_NAME}  /bin/bash"
         )
     elif arg1 == "-bash":
-        run_local_command(
-            f"docker start {DOCKER_CONTAINER_NAME} && docker exec -it {DOCKER_CONTAINER_NAME} /bin/bash"
-        )
+        run_local_command(f"docker start {DOCKER_CONTAINER_NAME} && docker exec -it {DOCKER_CONTAINER_NAME} /bin/bash")
     elif arg1 == "-remove_container":
         run_local_command(f"docker stop {DOCKER_CONTAINER_NAME}")
         run_local_command(f"docker rm {DOCKER_CONTAINER_NAME}")

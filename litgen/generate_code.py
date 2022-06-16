@@ -48,16 +48,12 @@ def _run_generate_file(
 
     header_code = code_utils.read_text_file(input_cpp_header)
 
-    generated_code = fn_code_generator(
-        header_code, options, add_boxed_types_definitions, filename=input_cpp_header
-    )
+    generated_code = fn_code_generator(header_code, options, add_boxed_types_definitions, filename=input_cpp_header)
 
     marker_in = f"<autogen:{marker_token}>"
     marker_out = f"</autogen:{marker_token}>"
 
-    code_utils.write_code_between_markers(
-        output_file, marker_in, marker_out, generated_code
-    )
+    code_utils.write_code_between_markers(output_file, marker_in, marker_out, generated_code)
 
 
 def generate_files(

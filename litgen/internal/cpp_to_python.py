@@ -20,9 +20,7 @@ def _filename_with_n_parent_folders(filename: str, n: int):
     return r
 
 
-def _info_original_location(
-    cpp_element: CppElement, options: CodeStyleOptions, comment_token: str
-):
+def _info_original_location(cpp_element: CppElement, options: CodeStyleOptions, comment_token: str):
 
     if not options.original_location_flag_show:
         return ""
@@ -70,16 +68,12 @@ def _comment_apply_replacements(comment: str, options: CodeStyleOptions) -> str:
     lines = code_utils.strip_lines_right_space(lines)
 
     comment = "\n".join(lines)
-    comment = code_replacements.apply_code_replacements(
-        comment, options.code_replacements
-    )
+    comment = code_replacements.apply_code_replacements(comment, options.code_replacements)
 
     return comment
 
 
-def docstring_lines(
-    cpp_element_c: CppElementAndComment, options: CodeStyleOptions
-) -> List[str]:
+def docstring_lines(cpp_element_c: CppElementAndComment, options: CodeStyleOptions) -> List[str]:
     """Return the comment of a CppElement under the form of a docstring, such as the one you are reading.
     Some replacements will be applied (for example true -> True, etc)
     """
@@ -108,30 +102,18 @@ def docstring_lines(
     return r
 
 
-def python_shall_place_comment_at_end_of_line(
-    cpp_element_c: CppElementAndComment, options: CodeStyleOptions
-) -> bool:
-    eol_comment = _comment_apply_replacements(
-        cpp_element_c.cpp_element_comments.comment_end_of_line, options
-    )
-    p_comment = _comment_apply_replacements(
-        cpp_element_c.cpp_element_comments.comment_on_previous_lines, options
-    )
+def python_shall_place_comment_at_end_of_line(cpp_element_c: CppElementAndComment, options: CodeStyleOptions) -> bool:
+    eol_comment = _comment_apply_replacements(cpp_element_c.cpp_element_comments.comment_end_of_line, options)
+    p_comment = _comment_apply_replacements(cpp_element_c.cpp_element_comments.comment_on_previous_lines, options)
     return len(eol_comment) > 0 and len(p_comment) == 0
 
 
-def python_comment_end_of_line(
-    cpp_element_c: CppElementAndComment, options: CodeStyleOptions
-) -> str:
-    eol_comment = _comment_apply_replacements(
-        cpp_element_c.cpp_element_comments.comment_end_of_line, options
-    )
+def python_comment_end_of_line(cpp_element_c: CppElementAndComment, options: CodeStyleOptions) -> str:
+    eol_comment = _comment_apply_replacements(cpp_element_c.cpp_element_comments.comment_end_of_line, options)
     return eol_comment
 
 
-def python_comment_previous_lines(
-    cpp_element_c: CppElementAndComment, options: CodeStyleOptions
-) -> List[str]:
+def python_comment_previous_lines(cpp_element_c: CppElementAndComment, options: CodeStyleOptions) -> List[str]:
     """See comment below"""
     # Returns the comment of a CppElement under the form of a python comment, such as the one you are reading.
     # Some replacements will be applied (for example true -> True, etc)
@@ -154,15 +136,11 @@ def python_comment_previous_lines(
 
 def docstring_python_one_line(title_cpp: str, options: CodeStyleOptions) -> str:
     """Formats a docstring on one cpp line. Used only in cpp bindings code"""
-    return code_utils.format_cpp_comment_on_one_line(
-        _comment_apply_replacements(title_cpp, options)
-    )
+    return code_utils.format_cpp_comment_on_one_line(_comment_apply_replacements(title_cpp, options))
 
 
 def type_to_python(type_cpp: str, options: CodeStyleOptions) -> str:
-    return code_replacements.apply_code_replacements(
-        type_cpp, options.code_replacements
-    ).strip()
+    return code_replacements.apply_code_replacements(type_cpp, options.code_replacements).strip()
 
 
 def var_name_to_python(var_name: str, options: CodeStyleOptions) -> str:  # noqa
@@ -180,15 +158,11 @@ def decl_python_var_name(cpp_decl: CppDecl, options: CodeStyleOptions):
 
 def decl_python_value(cpp_decl: CppDecl, options: CodeStyleOptions):
     value_cpp = cpp_decl.init
-    value_python = code_replacements.apply_code_replacements(
-        value_cpp, options.code_replacements
-    )
+    value_python = code_replacements.apply_code_replacements(value_cpp, options.code_replacements)
     return value_python
 
 
-def function_name_to_python(
-    function_name: str, options: CodeStyleOptions
-) -> str:  # noqa
+def function_name_to_python(function_name: str, options: CodeStyleOptions) -> str:  # noqa
     return code_utils.to_snake_case(function_name)
 
 
@@ -201,9 +175,7 @@ def is_float_str(s: str) -> bool:
 
 
 def default_value_to_python(default_value_cpp: str, options: CodeStyleOptions) -> str:
-    r = code_replacements.apply_code_replacements(
-        default_value_cpp, options.code_replacements
-    )
+    r = code_replacements.apply_code_replacements(default_value_cpp, options.code_replacements)
     return r
 
 
@@ -268,9 +240,7 @@ class BoxedImmutablePythonType:
 
     def __init__(self, cpp_type: str):
         if not is_cpp_type_immutable_for_python(cpp_type):
-            raise TypeError(
-                f"BoxedImmutablePythonType({cpp_type}) is seemingly not immutable"
-            )
+            raise TypeError(f"BoxedImmutablePythonType({cpp_type}) is seemingly not immutable")
         self.cpp_type = cpp_type
         if cpp_type not in BoxedImmutablePythonType.static_list_of_instantiated_type:
             BoxedImmutablePythonType.static_list_of_instantiated_type.append(cpp_type)
@@ -298,9 +268,7 @@ class BoxedImmutablePythonType:
         from litgen import generate_code
 
         struct_code = self._struct_code()
-        pydef_code = generate_code.generate_pydef(
-            struct_code, options, add_boxed_types_definitions=False
-        )
+        pydef_code = generate_code.generate_pydef(struct_code, options, add_boxed_types_definitions=False)
         return pydef_code
 
     @staticmethod
@@ -377,9 +345,7 @@ def _enum_remove_values_prefix(enum_name: str, value_name: str) -> str:
         return value_name
 
 
-def enum_value_name_to_python(
-    enum: CppEnum, enum_element: CppDecl, options: CodeStyleOptions
-) -> str:
+def enum_value_name_to_python(enum: CppEnum, enum_element: CppDecl, options: CodeStyleOptions) -> str:
     value_name = enum_element.name_without_array()
 
     if options.enum_flag_remove_values_prefix and enum.type != "class":
@@ -394,31 +360,23 @@ def enum_value_name_to_python(
     return r
 
 
-def enum_element_is_count(
-    enum: CppEnum, enum_element: CppDecl, options: CodeStyleOptions
-) -> bool:
+def enum_element_is_count(enum: CppEnum, enum_element: CppDecl, options: CodeStyleOptions) -> bool:
     if not options.enum_flag_skip_count:
         return False
 
     is_class_enum = enum.type == "class"
     value_name = enum_element.name_without_array()
 
-    if not code_utils.var_name_looks_like_size_name(
-        value_name, options.buffer_size_names
-    ):
+    if not code_utils.var_name_looks_like_size_name(value_name, options.buffer_size_names):
         return False
 
     if is_class_enum:
         return True
     else:
-        has_enum_name_part = code_utils.var_name_contains_word(
-            value_name.lower(), enum.name.lower()
-        )
+        has_enum_name_part = code_utils.var_name_contains_word(value_name.lower(), enum.name.lower())
         return has_enum_name_part
 
 
 def looks_like_size_param(param_c: CppParameter, options: CodeStyleOptions):
-    r = code_utils.var_name_looks_like_size_name(
-        param_c.decl.name_without_array(), options.buffer_size_names
-    )
+    r = code_utils.var_name_looks_like_size_name(param_c.decl.name_without_array(), options.buffer_size_names)
     return r
