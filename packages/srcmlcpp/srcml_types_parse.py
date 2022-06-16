@@ -401,7 +401,7 @@ def parse_super(options: SrcmlOptions, element: ET.Element) -> CppSuper:
             assert child.text is not None
             result.specifier = child.text
         elif child_tag == "name":
-            result.name = _parse_name(child)
+            result.superclass_name = _parse_name(child)
         else:
             raise SrcMlExceptionDetailed(child, f"unhandled tag {child_tag}", options)
 

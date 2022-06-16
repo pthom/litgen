@@ -907,16 +907,16 @@ class CppSuper(CppElement):
     """
 
     specifier: str = ""  # public, private or protected inheritance
-    name: str = ""  # name of the super class
+    superclass_name: str = ""  # name of the super class
 
     def __init__(self, element: ET.Element):
         super().__init__(element)
 
     def str_code(self):
         if len(self.specifier) > 0:
-            return f"{self.specifier} {self.name}"
+            return f"{self.specifier} {self.superclass_name}"
         else:
-            return self.name
+            return self.superclass_name
 
     def __str__(self):
         return self.str_code()
