@@ -1,6 +1,4 @@
-    CppElement.text(self) => text_or_empty()
-
-    name_without_array => name_only
+decl_name_code -> decl_name et mettre array info ailleurs
 
 sub package adapt param
 

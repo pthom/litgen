@@ -340,20 +340,20 @@ class CppPublicProtectedPrivate(CppBlock):  # Also a CppElementAndComment
     """
 
     access_type: str = ""  # "public", "private", or "protected"
-    type: str = ""  # "default" or "" ("default" means it was added automatically)
+    default_or_explicit: str = ""  # "default" or "" ("default" means it was added automatically)
 
     def __init__(self, element: ET.Element, access_type: str, type: str):
         super().__init__(element)
         assert type in [None, "", "default"]
         assert access_type in ["public", "protected", "private"]
         self.access_type = access_type
-        self.type = type
+        self.default_or_explicit = type
 
     def str_ppp(self):
         r = ""
 
         r += f"{self.access_type}" + ":"
-        if self.type == "default":
+        if self.default_or_explicit == "default":
             r += "// <default_access_type/>"
         r += "\n"
 
