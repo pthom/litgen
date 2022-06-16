@@ -67,9 +67,9 @@ def _make_adapted_lambda_code_end(
         function_or_lambda_to_call = function_adapted_params.lambda_to_call
     else:
         if is_method:
-            function_or_lambda_to_call = "self." + function_adapted_params.function_infos.name
+            function_or_lambda_to_call = "self." + function_adapted_params.function_infos.function_name
         else:
-            function_or_lambda_to_call = function_adapted_params.function_infos.name
+            function_or_lambda_to_call = function_adapted_params.function_infos.function_name
 
     # Fill maybe_return_r
     maybe_return_r = None if _fn_return_type == "void" else "return r"

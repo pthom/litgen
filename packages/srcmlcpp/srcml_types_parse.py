@@ -269,7 +269,7 @@ def fill_function_decl(
                 additional_type = parse_type(options, child, None)
                 function_decl.return_type.typenames += additional_type.typenames
         elif child_tag == "name":
-            function_decl.name = _parse_name(child)
+            function_decl.function_name = _parse_name(child)
         elif child_tag == "parameter_list":
             function_decl.parameter_list = parse_parameter_list(options, child)
         elif child_tag == "specifier":

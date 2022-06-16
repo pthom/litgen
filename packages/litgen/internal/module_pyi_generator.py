@@ -215,7 +215,7 @@ def _generate_pyi_function_impl(
 
     function_infos = function_adapted_params.function_infos
 
-    function_name_python = cpp_to_python.function_name_to_python(function_infos.name, options)
+    function_name_python = cpp_to_python.function_name_to_python(function_infos.function_name, options)
 
     return_type_python = cpp_to_python.type_to_python(function_infos.full_return_type(options.srcml_options), options)
 

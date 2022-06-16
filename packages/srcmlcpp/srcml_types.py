@@ -783,13 +783,13 @@ class CppFunctionDecl(CppElementAndComment):
     parameter_list: CppParameterList
     template: CppTemplate
     is_auto_decl: bool  # True if it is a decl of the form `auto square(double) -> double`
-    name: str
+    function_name: str
 
     def __init__(self, element: ET.Element, cpp_element_comments: CppElementComments):
         super().__init__(element, cpp_element_comments)
         self.specifiers: List[str] = []
         self.is_auto_decl = False
-        self.name = ""
+        self.function_name = ""
 
     def _str_signature(self):
         r = ""
@@ -797,7 +797,7 @@ class CppFunctionDecl(CppElementAndComment):
         if self.template is not None:
             r += f"template<{str(self.template)}>"
 
-        r += f"{self.return_type} {self.name}({self.parameter_list})"
+        r += f"{self.return_type} {self.function_name}({self.parameter_list})"
 
         if len(self.specifiers) > 0:
             specifiers_strs = map(str, self.specifiers)
@@ -991,7 +991,7 @@ class CppStruct(CppElementAndComment):
                     if isinstance(child, CppConstructorDecl):
                         found_non_default_ctor = True
                         break
-                    if isinstance(child, CppFunctionDecl) and child.name == self.name:
+                    if isinstance(child, CppFunctionDecl) and child.function_name == self.name:
                         found_non_default_ctor = True
                         break
 

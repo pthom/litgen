@@ -137,6 +137,6 @@ def adapt_c_string_list(
 
     lambda_adapter.new_function_infos.parameter_list.parameters = new_function_params
 
-    lambda_adapter.lambda_name = function_adapted_params.function_infos.name + "_adapt_c_string_list"
+    lambda_adapter.lambda_name = function_adapted_params.function_infos.function_name + "_adapt_c_string_list"
 
     return lambda_adapter

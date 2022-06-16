@@ -180,7 +180,7 @@ def _generate_return_code(
     function_to_call = (
         function_adapted_params.lambda_to_call
         if function_adapted_params.lambda_to_call is not None
-        else function_infos.name
+        else function_infos.function_name
     )
     # Fill params_call_inner
     params_call_inner = function_infos.parameter_list.names_only_for_call()
@@ -226,7 +226,7 @@ def _generate_pydef_function_impl(
 
     # fill module_or_class, function_name, location
     module_or_class = "" if is_method else "m"
-    function_name = cpp_to_python.function_name_to_python(function_infos.name, options)
+    function_name = cpp_to_python.function_name_to_python(function_infos.function_name, options)
     location = info_original_location_cpp(function_infos, options)
 
     # fill params_call_with_self_if_method
@@ -358,7 +358,7 @@ def _generate_pydef_constructor(function_infos: CppConstructorDecl, options: Cod
 
 
 def _generate_pydef_method(function_infos: CppFunctionDecl, options: CodeStyleOptions, parent_struct_name: str) -> str:
-    if function_infos.name == parent_struct_name:
+    if function_infos.function_name == parent_struct_name:
         # Sometimes, srcml might see a constructor as a decl
         # Example:
         # struct Foo

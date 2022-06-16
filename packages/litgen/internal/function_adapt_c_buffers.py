@@ -257,9 +257,9 @@ class _AdaptBuffersHelper:
                 function_or_lambda_to_call = self.function_adapted_params.lambda_to_call
             else:
                 if self.function_adapted_params.is_method():
-                    function_or_lambda_to_call = "self." + self.function_adapted_params.function_infos.name
+                    function_or_lambda_to_call = "self." + self.function_adapted_params.function_infos.function_name
                 else:
-                    function_or_lambda_to_call = self.function_adapted_params.function_infos.name
+                    function_or_lambda_to_call = self.function_adapted_params.function_infos.function_name
 
             # Fill maybe_return
             _fn_return_type = self.function_infos.full_return_type(options.srcml_options)
@@ -513,6 +513,6 @@ def adapt_c_buffers(
         lambda_adapter.lambda_template_end = helper.make_adapted_lambda_code_end_template_buffer()
 
     lambda_adapter.new_function_infos.parameter_list.parameters = new_function_params
-    lambda_adapter.lambda_name = function_adapted_params.function_infos.name + "_adapt_c_buffers"
+    lambda_adapter.lambda_name = function_adapted_params.function_infos.function_name + "_adapt_c_buffers"
 
     return lambda_adapter

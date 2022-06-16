@@ -53,6 +53,6 @@ def adapt_variadic_format(
     lambda_adapter.adapted_cpp_parameter_list.append(param_before_last.decl.name_without_array())
 
     lambda_adapter.new_function_infos.parameter_list.parameters = new_function_params
-    lambda_adapter.lambda_name = function_adapted_params.function_infos.name + "_adapt_variadic_format"
+    lambda_adapter.lambda_name = function_adapted_params.function_infos.function_name + "_adapt_variadic_format"
 
     return lambda_adapter
