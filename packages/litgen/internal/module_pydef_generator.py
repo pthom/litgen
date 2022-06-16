@@ -232,10 +232,13 @@ def _generate_pydef_function_impl(
     location = info_original_location_cpp(function_infos, options)
 
     # fill params_call_with_self_if_method
-    fn_parameters = copy.deepcopy(function_infos.parameter_list.parameters)
-    params_call_with_self_if_method = types_names_default_for_signature_parameters_list(
-        fn_parameters, add_self=is_method
-    )
+    _params_list = function_infos.parameter_list.types_names_default_for_signature_list()
+    if is_method:
+        _self_param = f"{parent_struct_name} & self"
+        if function_infos.is_const():
+            _self_param = "const " + _self_param
+        _params_list = [_self_param] + _params_list
+    params_call_with_self_if_method = ", ".join(_params_list)
 
     # fill return_code
     return_code = _generate_return_code(function_adapted_params, options, parent_struct_name)
@@ -497,7 +500,7 @@ def _add_public_struct_elements(public_zone: CppPublicProtectedPrivate, struct_n
 def _generate_pydef_struct_or_class(struct_infos: CppStruct, options: CodeStyleOptions) -> str:
     struct_name = struct_infos.class_name
 
-    if struct_infos.template is not None:
+    if struct_infos.is_templated_class():
         return ""
 
     _i_ = options.indent_cpp_spaces()

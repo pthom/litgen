@@ -75,10 +75,14 @@ options.original_location_flag_show = True
 
 
 code = """
-// Comment line 1
-// continued on line 2
-MY_API void foo();
+struct BoxedUnsignedLongLong
+{
+    unsigned long long value;
+    BoxedUnsignedLongLong() : value{} {}
+    BoxedUnsignedLongLong(unsigned long long v) : value(v) {}
+    std::string __repr__() { return std::string("BoxedUnsignedLongLong(") + std::to_string(value) + ")"; }
+};
 """
 
-# play_pydef(code, options)
-play_pyi(code, options)
+play_pydef(code, options)
+# play_pyi(code, options)

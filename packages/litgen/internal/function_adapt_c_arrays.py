@@ -105,7 +105,7 @@ def adapt_c_arrays(
                         old_param_renamed.decl.str_code() + f"[{len(new_decls)}]" + ";\n"
                     )
 
-                    lambda_adapter.adapted_cpp_parameter_list.append(old_param_renamed.decl.name_without_array())
+                    lambda_adapter.adapted_cpp_parameter_list.append(old_param_renamed.decl.decl_name)
 
                     for i, new_decl in enumerate(new_decls):
                         value_access = ".value" if old_param.decl.is_immutable_for_python() else ""
@@ -122,7 +122,7 @@ def adapt_c_arrays(
 
         if not was_replaced:
             new_function_params.append(old_param)
-            lambda_adapter.adapted_cpp_parameter_list.append(old_param.decl.name_without_array())
+            lambda_adapter.adapted_cpp_parameter_list.append(old_param.decl.decl_name)
 
     lambda_adapter.new_function_infos.parameter_list.parameters = new_function_params
 

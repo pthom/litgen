@@ -437,6 +437,9 @@ class CppType(CppElement):
 
         return r
 
+    def is_const(self):
+        return "const" in self.specifiers
+
     def __str__(self):
         return self.str_code()
 
@@ -482,7 +485,16 @@ class CppDecl(CppElementAndComment):
         r = ""
         if hasattr(self, "cpp_type"):
             r += str(self.cpp_type) + " "
-        r += str(self.decl_name)
+        r += self.decl_name + self.c_array_code
+        if len(self.initial_value_code) > 0:
+            r += " = " + self.initial_value_code
+        return r
+
+    def type_name_default_for_signature(self):
+        r = ""
+        if hasattr(self, "cpp_type"):
+            r += str(self.cpp_type) + " "
+        r += self.decl_name + self.c_array_code
         if len(self.initial_value_code) > 0:
             r += " = " + self.initial_value_code
         return r
@@ -668,6 +680,11 @@ class CppParameter(CppElement):
     def __init__(self, element: ET.Element):
         super().__init__(element)
 
+    def type_name_default_for_signature(self):
+        assert hasattr(self, "decl")
+        r = self.decl.type_name_default_for_signature()
+        return r
+
     def str_code(self):
         if hasattr(self, "decl"):
             assert not hasattr(self, "template_type")
@@ -691,14 +708,6 @@ class CppParameter(CppElement):
         return self.decl.decl_name
 
 
-def types_names_default_for_signature_parameters_list(parameters: List[CppParameter], add_self: bool = False) -> str:
-    params_strs = list(map(lambda param: str(param), parameters))
-    if add_self:
-        params_strs = ["self"] + params_strs
-    params_str = code_utils.join_remove_empty(", ", params_strs)
-    return params_str
-
-
 @dataclass
 class CppParameterList(CppElement):
     """
@@ -712,11 +721,19 @@ class CppParameterList(CppElement):
         super().__init__(element)
         self.parameters = []
 
-    def str_code(self):
-        return types_names_default_for_signature_parameters_list(self.parameters)
+    def types_names_default_for_signature_list(self):
+        """Returns a list like ["int a", "bool flag = true"] """
+        params_strs = list(map(lambda param: param.type_name_default_for_signature(), self.parameters))
+        return params_strs
 
-    def types_names_default_for_signature(self):
-        return self.str_code()
+    def types_names_default_for_signature_str(self):
+        """Returns a string like "int a, bool flag = true" """
+        params_strs = self.types_names_default_for_signature_list()
+        params_str = ", ".join(params_strs)
+        return params_str
+
+    def str_code(self):
+        return self.types_names_default_for_signature_str()
 
     def names_only_for_call(self):
         names = [param.variable_name() for param in self.parameters]
@@ -797,6 +814,9 @@ class CppFunctionDecl(CppElementAndComment):
         if r.startswith("inline "):
             r = r.replace("inline ", "")
         return r
+
+    def is_const(self):
+        return "const" in self.specifiers
 
     def __str__(self):
         return self.str_commented()
@@ -989,6 +1009,8 @@ class CppStruct(CppElementAndComment):
                             break
         return found_deleted_default_ctor
 
+    def is_templated_class(self):
+        return hasattr(self, "template")
 
 @dataclass
 class CppClass(CppStruct):

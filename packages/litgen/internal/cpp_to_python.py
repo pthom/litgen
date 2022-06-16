@@ -259,7 +259,7 @@ class BoxedImmutablePythonType:
                 {self.cpp_type} value;
                 {struct_name}() : value{{}} {{}}
                 {struct_name}({self.cpp_type} v) : value(v) {{}}
-                std::string __repr__() {{ return std::string("{struct_name}(") + std::to_string(value) + ")"; }}
+                std::string __repr__() const {{ return std::string("{struct_name}(") + std::to_string(value) + ")"; }}
             }};
         """
         struct_code = code_utils.unindent_code(struct_code, flag_strip_empty_lines=True)

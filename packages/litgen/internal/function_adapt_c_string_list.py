@@ -133,7 +133,7 @@ def adapt_c_string_list(
 
         if not was_replaced:
             new_function_params.append(old_param)
-            lambda_adapter.adapted_cpp_parameter_list.append(old_param.decl.name_without_array())
+            lambda_adapter.adapted_cpp_parameter_list.append(old_param.decl.decl_name)
 
     lambda_adapter.new_function_infos.parameter_list.parameters = new_function_params
 

@@ -45,12 +45,12 @@ def adapt_variadic_format(
     # process all params except last
     for old_param in old_function_params[:-2]:
         new_function_params.append(old_param)
-        lambda_adapter.adapted_cpp_parameter_list.append(old_param.decl.name_without_array())
+        lambda_adapter.adapted_cpp_parameter_list.append(old_param.decl.decl_name)
     # Process param_before_last (const char *)
     new_function_params.append(param_before_last)
     lambda_adapter.adapted_cpp_parameter_list.append('"%s"')
     # Process last_param
-    lambda_adapter.adapted_cpp_parameter_list.append(param_before_last.decl.name_without_array())
+    lambda_adapter.adapted_cpp_parameter_list.append(param_before_last.decl.decl_name)
 
     lambda_adapter.new_function_infos.parameter_list.parameters = new_function_params
     lambda_adapter.lambda_name = function_adapted_params.function_infos.function_name + "_adapt_variadic_format"

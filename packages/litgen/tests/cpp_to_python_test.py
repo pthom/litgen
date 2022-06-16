@@ -22,7 +22,7 @@ def test_make_boxed_type():
             unsigned long long value;
             BoxedUnsignedLongLong() : value{} {}
             BoxedUnsignedLongLong(unsigned long long v) : value(v) {}
-            std::string __repr__() { return std::string("BoxedUnsignedLongLong(") + std::to_string(value) + ")"; }
+            std::string __repr__() const { return std::string("BoxedUnsignedLongLong(") + std::to_string(value) + ")"; }
         };
     """,
     )
@@ -38,7 +38,7 @@ def test_make_boxed_type():
             .def(py::init<unsigned long long>(),
                 py::arg("v"))
             .def("__repr__",
-                [](BoxedUnsignedLongLong & self)
+                [](const BoxedUnsignedLongLong & self)
                 {
                     return self.__repr__();
                 }
@@ -63,14 +63,14 @@ def test_make_boxed_type():
             unsigned long long value;
             BoxedUnsignedLongLong() : value{} {}
             BoxedUnsignedLongLong(unsigned long long v) : value(v) {}
-            std::string __repr__() { return std::string("BoxedUnsignedLongLong(") + std::to_string(value) + ")"; }
+            std::string __repr__() const { return std::string("BoxedUnsignedLongLong(") + std::to_string(value) + ")"; }
         };
         struct BoxedInt
         {
             int value;
             BoxedInt() : value{} {}
             BoxedInt(int v) : value(v) {}
-            std::string __repr__() { return std::string("BoxedInt(") + std::to_string(value) + ")"; }
+            std::string __repr__() const { return std::string("BoxedInt(") + std::to_string(value) + ")"; }
         };
     """,
     )
@@ -86,7 +86,7 @@ def test_make_boxed_type():
             .def(py::init<unsigned long long>(),
                 py::arg("v"))
             .def("__repr__",
-                [](BoxedUnsignedLongLong & self)
+                [](const BoxedUnsignedLongLong & self)
                 {
                     return self.__repr__();
                 }
@@ -101,7 +101,7 @@ def test_make_boxed_type():
             .def(py::init<int>(),
                 py::arg("v"))
             .def("__repr__",
-                [](BoxedInt & self)
+                [](const BoxedInt & self)
                 {
                     return self.__repr__();
                 }
