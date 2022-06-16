@@ -94,7 +94,7 @@ def adapt_c_string_list(
                 new_decl.decl_name_code = new_decl.decl_name_code[: new_decl.decl_name_code.index("[")]
             new_decl.initial_value_code = ""
             new_decl.cpp_type.specifiers = ["const"]
-            new_decl.cpp_type.names = ["std::vector<std::string>"]
+            new_decl.cpp_type.typenames = ["std::vector<std::string>"]
             new_decl.cpp_type.modifiers = ["&"]
             new_function_params.append(new_param)
 
@@ -108,7 +108,7 @@ def adapt_c_string_list(
             param_name = new_decl.name_without_array()
             vec_name = f"{param_name}_ptrs"
             next_param = old_function_params[i + 1]
-            size_type = next_param.decl.cpp_type.names[0]
+            size_type = next_param.decl.cpp_type.typenames[0]
             size_name = next_param.decl.name_without_array()
 
             if size_type != "size_t" and size_type != "std::size_t":

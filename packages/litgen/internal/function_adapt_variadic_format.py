@@ -11,7 +11,7 @@ from srcmlcpp.srcml_types import CppParameter
 
 
 def is_variadic_format(param: CppParameter):
-    return param.decl.cpp_type.names == [] and param.decl.cpp_type.modifiers == ["..."]
+    return param.decl.cpp_type.typenames == [] and param.decl.cpp_type.modifiers == ["..."]
 
 
 def adapt_variadic_format(

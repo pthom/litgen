@@ -45,7 +45,7 @@ def parse_type(options: SrcmlOptions, element: ET.Element, previous_decl: Option
         child_tag = srcml_utils.clean_tag_or_attrib(child.tag)
         if child_tag == "name":
             typename = recompose_type_name(child)
-            result.names.append(typename)
+            result.typenames.append(typename)
         elif child_tag == "specifier":
             assert child.text is not None
             result.specifiers.append(child.text)
@@ -60,23 +60,23 @@ def parse_type(options: SrcmlOptions, element: ET.Element, previous_decl: Option
         else:
             raise SrcMlExceptionDetailed(child, f"unhandled tag {child_tag}", options)
 
-    if len(result.names) == 0 and "..." not in result.modifiers:
+    if len(result.typenames) == 0 and "..." not in result.modifiers:
         if previous_decl is None:
             raise SrcMlExceptionDetailed(result.srcml_element, "Can't find type name", options)
         assert previous_decl is not None
-        result.names = previous_decl.cpp_type.names
+        result.typenames = previous_decl.cpp_type.typenames
 
-    if len(result.names) == 0 and "..." not in result.modifiers:
+    if len(result.typenames) == 0 and "..." not in result.modifiers:
         raise SrcMlExceptionDetailed(result.srcml_element, "len(result.names) == 0!", options)
 
     # process api names
-    for name in result.names:
+    for name in result.typenames:
         is_api_name = False
         for api_prefix in options.functions_api_prefixes:
             if name.startswith(api_prefix):
                 is_api_name = True
         if is_api_name:
-            result.names.remove(name)
+            result.typenames.remove(name)
             result.specifiers = [name] + result.specifiers
 
     return result
@@ -262,12 +262,12 @@ def fill_function_decl(
     for child in element_c.srcml_element:
         child_tag = srcml_utils.clean_tag_or_attrib(child.tag)
         if child_tag == "type":
-            if function_decl.type is None or len(function_decl.type.names) == 0:
+            if function_decl.type is None or len(function_decl.type.typenames) == 0:
                 parsed_type = parse_type(options, child, None)
                 function_decl.type = parsed_type
             else:
                 additional_type = parse_type(options, child, None)
-                function_decl.type.names += additional_type.names
+                function_decl.type.typenames += additional_type.typenames
         elif child_tag == "name":
             function_decl.name = _parse_name(child)
         elif child_tag == "parameter_list":
@@ -288,8 +288,8 @@ def fill_function_decl(
         else:
             raise SrcMlExceptionDetailed(child, f"unhandled tag {child_tag}", options)
 
-    if len(function_decl.type.names) >= 2 and function_decl.type.names[0] == "auto":
-        function_decl.type.names = function_decl.type.names[1:]
+    if len(function_decl.type.typenames) >= 2 and function_decl.type.typenames[0] == "auto":
+        function_decl.type.typenames = function_decl.type.typenames[1:]
 
 
 def parse_function_decl(options: SrcmlOptions, element_c: CppElementAndComment) -> CppFunctionDecl:

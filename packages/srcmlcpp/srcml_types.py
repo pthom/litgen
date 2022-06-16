@@ -388,7 +388,7 @@ class CppType(CppElement):
         In order to simplify the process, we recompose this kind of type names into a simple string
     """
 
-    names: List[str]
+    typenames: List[str]
 
     # specifiers: could be ["const"], ["static", "const"], ["extern"], ["constexpr"], etc.
     specifiers: List[str]
@@ -402,7 +402,7 @@ class CppType(CppElement):
 
     def __init__(self, element: ET.Element):
         super().__init__(element)
-        self.names: List[str] = []
+        self.typenames: List[str] = []
         self.specifiers: List[str] = []
         self.modifiers: List[str] = []
 
@@ -426,7 +426,7 @@ class CppType(CppElement):
         specifiers_str = code_utils.join_remove_empty(" ", specifiers)
         modifiers_str = code_utils.join_remove_empty(" ", self.modifiers)
 
-        name = " ".join(self.names)
+        name = " ".join(self.typenames)
 
         name_and_arg = name
         strs = [specifiers_str, name_and_arg, modifiers_str]
@@ -509,7 +509,7 @@ class CppDecl(CppElementAndComment):
         :return:
         """
         is_const = "const" in self.cpp_type.specifiers
-        is_char = self.cpp_type.names == ["char"]
+        is_char = self.cpp_type.typenames == ["char"]
         is_default_init = self.initial_value_code == "" or self.initial_value_code == "NULL" or self.initial_value_code == "nullptr"
 
         nb_indirections = 0
@@ -595,7 +595,7 @@ class CppDecl(CppElementAndComment):
         cpp_type_name = new_decl.cpp_type.str_code()
 
         std_array_type_name = f"std::array<{cpp_type_name}, {self.c_array_size()}>&"
-        new_decl.cpp_type.names = [std_array_type_name]
+        new_decl.cpp_type.typenames = [std_array_type_name]
 
         new_decl.cpp_type.specifiers.append("const")
         new_decl.decl_name_code = new_decl.name_c_array()
@@ -640,7 +640,7 @@ class CppDecl(CppElementAndComment):
         for i in range(n):
             new_decl = copy.deepcopy(self)
             new_decl.decl_name_code = new_decl.name_c_array() + "_" + str(i)
-            new_decl.cpp_type.names = [cpp_type_name]
+            new_decl.cpp_type.typenames = [cpp_type_name]
             new_decl.cpp_type.modifiers = ["&"]
             new_decls.append(new_decl)
 

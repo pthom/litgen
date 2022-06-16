@@ -323,7 +323,7 @@ class _AdaptBuffersHelper:
 
     def _new_param_buffer_standard(self, idx_param: int) -> CppParameter:
         new_param = copy.deepcopy(self._param(idx_param))
-        new_param.decl.cpp_type.names = ["py::array"]
+        new_param.decl.cpp_type.typenames = ["py::array"]
         new_param.decl.cpp_type.modifiers = ["&"]
         if self._is_const(idx_param):
             new_param.decl.cpp_type.specifiers = ["const"]
@@ -333,7 +333,7 @@ class _AdaptBuffersHelper:
 
     def _adapted_param_buffer_size(self, idx_param: int):
         param = self._param(idx_param)
-        raw_size_type = param.decl.cpp_type.names[0]
+        raw_size_type = param.decl.cpp_type.typenames[0]
         count_variable = self._pyarray_count(idx_param)
         r = f"static_cast<{raw_size_type}>({count_variable})"
         return r
@@ -365,7 +365,7 @@ class _AdaptBuffersHelper:
         return "const " if self._is_const(idx_param) else ""
 
     def _original_raw_type(self, idx_param: int):
-        return self._param(idx_param).decl.cpp_type.names[0]
+        return self._param(idx_param).decl.cpp_type.typenames[0]
 
     def _adapted_param_buffer_standard(self, idx_param: int):
         const_space_or_empty = "const " if self._is_const(idx_param) else ""
@@ -413,7 +413,7 @@ class _AdaptBuffersHelper:
     def _adapted_param_stride(self, idx_param: int):
         stride_param = self._param(idx_param)
         stride_adapted_name = self._stride_adapted_name(idx_param)
-        stride_param_raw_type = stride_param.decl.cpp_type.names[0]
+        stride_param_raw_type = stride_param.decl.cpp_type.typenames[0]
         if stride_param_raw_type != "int":
             r = f"static_cast<{stride_param_raw_type}>({stride_adapted_name})"
         else:
@@ -440,7 +440,7 @@ class _AdaptBuffersHelper:
     def _new_param_stride(self, idx_param: int):
         stride_param = self._param(idx_param)
         new_stride_param = copy.deepcopy(stride_param)
-        new_stride_param.decl.cpp_type.names = ["int"]
+        new_stride_param.decl.cpp_type.typenames = ["int"]
         new_stride_param.decl.initial_value_code = "-1"
         return new_stride_param
 
