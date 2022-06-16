@@ -273,7 +273,8 @@ class CppBlock(CppElementAndComment):
     block_children: List[CppElementAndComment]
 
     def __init__(self, element: ET.Element):
-        super().__init__(element)
+        dummy_cpp_comments = CppElementComments()
+        super().__init__(element, dummy_cpp_comments)
         self.block_children: List[CppElementAndComment] = []
 
     def str_block(self, is_enum: bool = False):
