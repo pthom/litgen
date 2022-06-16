@@ -144,7 +144,7 @@ def _make_enum_element_decl_lines(
 
         replacement = code_replacements.StringReplacement()
         replacement.replace_what = r"\b" + enum_decl_cpp_name + r"\b"
-        replacement.by_what = f"Literal[{enum.name}.{enum_decl_python_name}]"
+        replacement.by_what = f"Literal[{enum.enum_name}.{enum_decl_python_name}]"
         enum_element.initial_value_code = code_replacements.apply_one_replacement(enum_element.initial_value_code, replacement)
         # enum_element.init = enum_element.init.replace(enum_decl_cpp_name, enum_decl_python_name)
         # code_utils.w
@@ -158,7 +158,7 @@ def _make_enum_element_decl_lines(
 
 
 def _generate_pyi_enum(enum: CppEnum, options: CodeStyleOptions) -> str:
-    first_code_line = f"class {enum.name}(Enum):"
+    first_code_line = f"class {enum.enum_name}(Enum):"
 
     body_lines: List[str] = []
 

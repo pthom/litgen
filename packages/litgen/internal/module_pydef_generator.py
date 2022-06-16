@@ -39,7 +39,7 @@ def _add_two_lines_before(code: str) -> str:
 
 def _generate_pydef_enum(enum: CppEnum, options: CodeStyleOptions) -> str:
     enum_type = enum.attribute_value("type")
-    enum_name = enum.name
+    enum_name = enum.enum_name
 
     _i_ = options.indent_cpp_spaces()
     comment = cpp_to_python.docstring_python_one_line(enum.cpp_element_comments.full_comment(), options)

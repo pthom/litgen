@@ -1076,7 +1076,7 @@ class CppEnum(CppElementAndComment):
 
     block: CppBlock
     type: str = ""  # "class" or ""
-    name: str = ""
+    enum_name: str = ""
 
     def __init__(self, element: ET.Element, cpp_element_comments: CppElementComments):
         super().__init__(element, cpp_element_comments)
@@ -1084,9 +1084,9 @@ class CppEnum(CppElementAndComment):
     def str_code(self):
         r = ""
         if self.type == "class":
-            r += f"enum class {self.name}\n"
+            r += f"enum class {self.enum_name}\n"
         else:
-            r += f"enum {self.name}\n"
+            r += f"enum {self.enum_name}\n"
         r += "{\n"
         block_code = self.block.str_block(is_enum=True)
         r += code_utils.indent_code(block_code, 4)
