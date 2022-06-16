@@ -539,7 +539,7 @@ def _generate_pydef_namespace(
     current_namespaces: List[str] = [],
 ) -> str:
 
-    namespace_name = cpp_namespace.name
+    namespace_name = cpp_namespace.ns_name
     new_namespaces = current_namespaces + [namespace_name]
     namespace_code = generate_pydef(cpp_namespace.block, options, new_namespaces)
     location = info_original_location_cpp(cpp_namespace, options)

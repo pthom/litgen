@@ -949,7 +949,7 @@ class CppStruct(CppElementAndComment):
     https://www.srcmlcpp.org/doc/cpp_srcML.html#struct-definition
     """
 
-    class_name: str
+    class_name: str # either the class or the struct name
     super_list: CppSuperList
     block: CppBlock
     template: CppTemplate  # for template classes or structs
@@ -1049,15 +1049,15 @@ class CppNamespace(CppElementAndComment):
     https://www.srcmlcpp.org/doc/cpp_srcML.html#namespace
     """
 
-    name: str
+    ns_name: str
     block: CppBlock
 
     def __init__(self, element: ET.Element, cpp_element_comments: CppElementComments):
         super().__init__(element, cpp_element_comments)
-        self.name = ""
+        self.ns_name = ""
 
     def str_code(self):
-        r = f"namespace {self.name}\n"
+        r = f"namespace {self.ns_name}\n"
         r += "{\n"
         r += code_utils.indent_code(str(self.block), 4)
         r += "}"

@@ -481,7 +481,7 @@ def _generate_pyi_namespace(cpp_namespace: CppNamespace, options: CodeStyleOptio
     if current_namespaces is None:
         current_namespaces = []
 
-    namespace_name = cpp_namespace.name
+    namespace_name = cpp_namespace.ns_name
     new_namespaces = current_namespaces + [namespace_name]
     namespace_code = generate_pyi(cpp_namespace.block, options, new_namespaces)
     location = cpp_to_python.info_original_location_python(cpp_namespace, options)
