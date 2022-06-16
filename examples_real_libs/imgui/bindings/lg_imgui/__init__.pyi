@@ -2864,6 +2864,8 @@ class ImGuiViewportFlags_(Enum):    # imgui.h:2904
 
 #  Include imgui_user.h at the end of imgui.h (convenient for user to only explicitly include vanilla imgui.h)
 
+
+
 # </autogen:pyi>
 
 # fmt: on
