@@ -19,14 +19,14 @@ void py_init_module_imgui(py::module& m)
         float value;
         BoxedFloat() : value{} {}
         BoxedFloat(float v) : value(v) {}
-        std::string __repr__() { return std::string("BoxedFloat(") + std::to_string(value) + ")"; }
+        std::string __repr__() const { return std::string("BoxedFloat(") + std::to_string(value) + ")"; }
     };
     struct BoxedInt
     {
         int value;
         BoxedInt() : value{} {}
         BoxedInt(int v) : value(v) {}
-        std::string __repr__() { return std::string("BoxedInt(") + std::to_string(value) + ")"; }
+        std::string __repr__() const { return std::string("BoxedInt(") + std::to_string(value) + ")"; }
     };
 
 
@@ -38,12 +38,13 @@ void py_init_module_imgui(py::module& m)
         .def(py::init<float>(),    // imgui.h:5
             py::arg("v"))
         .def("__repr__",    // imgui.h:6
-            [](BoxedFloat & self)
+            [](const BoxedFloat & self)
             {
                 return self.__repr__();
             }
         )
         ;
+
 
 
     auto pyClassBoxedInt = py::class_<BoxedInt>    // imgui.h:1
@@ -53,12 +54,13 @@ void py_init_module_imgui(py::module& m)
         .def(py::init<int>(),    // imgui.h:5
             py::arg("v"))
         .def("__repr__",    // imgui.h:6
-            [](BoxedInt & self)
+            [](const BoxedInt & self)
             {
                 return self.__repr__();
             }
         )
         ;
+
 
 
 
@@ -71,6 +73,7 @@ void py_init_module_imgui(py::module& m)
             py::arg("_x"),
             py::arg("_y"))
         ;
+
 
 
     auto pyClassImVec4 = py::class_<ImVec4>    // imgui.h:262
@@ -88,6 +91,7 @@ void py_init_module_imgui(py::module& m)
         ;
 
 
+
     // <namespace ImGui>    // imgui.h:278
 
     m.def("create_context",    // imgui.h:284
@@ -95,20 +99,17 @@ void py_init_module_imgui(py::module& m)
         {
             return CreateContext(shared_font_atlas);
         },
-        py::arg("shared_font_atlas") = NULL,
-        "Context creation and access\n- Each context create its own ImFontAtlas by default. You may instance one yourself and pass it to CreateContext() to share a font atlas between contexts.\n- DLL users: heaps and globals are not shared across DLL boundaries! You will need to call SetCurrentContext() + SetAllocatorFunctions()\nfor each static/DLL boundary you are calling from. Read \"Context and Memory Allocators\" section of imgui.cpp for details."
+        py::arg("shared_font_atlas") = None
     );
-
 
     m.def("destroy_context",    // imgui.h:285
         [](ImGuiContext * ctx = NULL)
         {
             DestroyContext(ctx);
         },
-        py::arg("ctx") = NULL,
+        py::arg("ctx") = None,
         "NULL = destroy current context"
     );
-
 
     m.def("get_current_context",    // imgui.h:286
         []()
@@ -116,7 +117,6 @@ void py_init_module_imgui(py::module& m)
             return GetCurrentContext();
         }
     );
-
 
     m.def("set_current_context",    // imgui.h:287
         [](ImGuiContext * ctx)
@@ -126,7 +126,6 @@ void py_init_module_imgui(py::module& m)
         py::arg("ctx")
     );
 
-
     m.def("get_io",    // imgui.h:290
         []()
         {
@@ -134,7 +133,6 @@ void py_init_module_imgui(py::module& m)
         },
         "access the IO structure (mouse/keyboard/gamepad inputs, time, various configuration options/flags)"
     );
-
 
     m.def("get_style",    // imgui.h:291
         []()
@@ -144,7 +142,6 @@ void py_init_module_imgui(py::module& m)
         "access the Style structure (colors, sizes). Always use PushStyleCol(), PushStyleVar() to modify style mid-frame!"
     );
 
-
     m.def("new_frame",    // imgui.h:292
         []()
         {
@@ -152,7 +149,6 @@ void py_init_module_imgui(py::module& m)
         },
         "start a new Dear ImGui frame, you can submit any command from this point until Render()/EndFrame()."
     );
-
 
     m.def("end_frame",    // imgui.h:293
         []()
@@ -162,7 +158,6 @@ void py_init_module_imgui(py::module& m)
         "ends the Dear ImGui frame. automatically called by Render(). If you don't need to render data (skipping rendering) you may call EndFrame() without Render()... but you'll have wasted CPU already! If you don't need to render, better to not create any windows and not call NewFrame() at all!"
     );
 
-
     m.def("render",    // imgui.h:294
         []()
         {
@@ -170,7 +165,6 @@ void py_init_module_imgui(py::module& m)
         },
         "ends the Dear ImGui frame, finalize the draw data. You can then get call GetDrawData()."
     );
-
 
     m.def("get_draw_data",    // imgui.h:295
         []()
@@ -180,56 +174,50 @@ void py_init_module_imgui(py::module& m)
         "valid after Render() and until the next call to NewFrame(). this is what you have to render."
     );
 
-
     m.def("show_demo_window",    // imgui.h:298
         [](bool * p_open = NULL)
         {
             ShowDemoWindow(p_open);
         },
-        py::arg("p_open") = NULL,
+        py::arg("p_open") = None,
         "create Demo window. demonstrate most ImGui features. call this to learn about the library! try to make it always available in your application!"
     );
-
 
     m.def("show_metrics_window",    // imgui.h:299
         [](bool * p_open = NULL)
         {
             ShowMetricsWindow(p_open);
         },
-        py::arg("p_open") = NULL,
+        py::arg("p_open") = None,
         "create Metrics/Debugger window. display Dear ImGui internals: windows, draw commands, various internal state, etc."
     );
-
 
     m.def("show_stack_tool_window",    // imgui.h:300
         [](bool * p_open = NULL)
         {
             ShowStackToolWindow(p_open);
         },
-        py::arg("p_open") = NULL,
+        py::arg("p_open") = None,
         "create Stack Tool window. hover items with mouse to query information about the source of their unique ID."
     );
-
 
     m.def("show_about_window",    // imgui.h:301
         [](bool * p_open = NULL)
         {
             ShowAboutWindow(p_open);
         },
-        py::arg("p_open") = NULL,
+        py::arg("p_open") = None,
         "create About window. display Dear ImGui version, credits and build/system information."
     );
-
 
     m.def("show_style_editor",    // imgui.h:302
         [](ImGuiStyle * ref = NULL)
         {
             ShowStyleEditor(ref);
         },
-        py::arg("ref") = NULL,
+        py::arg("ref") = None,
         "add style editor block (not a window). you can pass in a reference ImGuiStyle structure to compare to, revert to and save to (else it uses the default style)"
     );
-
 
     m.def("show_style_selector",    // imgui.h:303
         [](const char * label)
@@ -240,7 +228,6 @@ void py_init_module_imgui(py::module& m)
         "add style selector block (not a window), essentially a combo listing the default styles."
     );
 
-
     m.def("show_font_selector",    // imgui.h:304
         [](const char * label)
         {
@@ -250,7 +237,6 @@ void py_init_module_imgui(py::module& m)
         "add font selector block (not a window), essentially a combo listing the loaded fonts."
     );
 
-
     m.def("show_user_guide",    // imgui.h:305
         []()
         {
@@ -258,7 +244,6 @@ void py_init_module_imgui(py::module& m)
         },
         "add basic help/info block (not a window): how to manipulate ImGui as a end-user (mouse/keyboard controls)."
     );
-
 
     m.def("get_version",    // imgui.h:306
         []()
@@ -268,46 +253,40 @@ void py_init_module_imgui(py::module& m)
         "get the compiled version string e.g. \"1.80 WIP\" (essentially the value for IMGUI_VERSION from the compiled version of imgui.cpp)"
     );
 
-
     m.def("style_colors_dark",    // imgui.h:309
         [](ImGuiStyle * dst = NULL)
         {
             StyleColorsDark(dst);
         },
-        py::arg("dst") = NULL,
+        py::arg("dst") = None,
         "new, recommended style (default)"
     );
-
 
     m.def("style_colors_light",    // imgui.h:310
         [](ImGuiStyle * dst = NULL)
         {
             StyleColorsLight(dst);
         },
-        py::arg("dst") = NULL,
+        py::arg("dst") = None,
         "best used with borders and a custom, thicker font"
     );
-
 
     m.def("style_colors_classic",    // imgui.h:311
         [](ImGuiStyle * dst = NULL)
         {
             StyleColorsClassic(dst);
         },
-        py::arg("dst") = NULL,
+        py::arg("dst") = None,
         "classic imgui style"
     );
-
 
     m.def("begin",    // imgui.h:325
         [](const char * name, bool * p_open = NULL, ImGuiWindowFlags flags = 0)
         {
             return Begin(name, p_open, flags);
         },
-        py::arg("name"), py::arg("p_open") = NULL, py::arg("flags") = 0,
-        "Windows\n- Begin() = push window to the stack and start appending to it. End() = pop window from the stack.\n- Passing 'bool* p_open != NULL' shows a window-closing widget in the upper-right corner of the window,\nwhich clicking will set the boolean to false when clicked.\n- You may append multiple times to the same window during the same frame by calling Begin()/End() pairs multiple times.\nSome information such as 'flags' or 'p_open' will only be considered by the first call to Begin().\n- Begin() return false to indicate the window is collapsed or fully clipped, so you may early out and omit submitting\nanything to the window. Always call a matching End() for each Begin() call, regardless of its return value!\n[Important: due to legacy reason, this is inconsistent with most other functions such as BeginMenu/EndMenu,\nBeginPopup/EndPopup, etc. where the EndXXX call should only be called if the corresponding BeginXXX function\nreturned true. Begin and BeginChild are the only odd ones out. Will be fixed in a future update.]\n- Note that the bottom of window stack always contains a window called \"Debug\"."
+        py::arg("name"), py::arg("p_open") = None, py::arg("flags") = 0
     );
-
 
     m.def("end",    // imgui.h:326
         []()
@@ -316,25 +295,21 @@ void py_init_module_imgui(py::module& m)
         }
     );
 
-
     m.def("begin_child",    // imgui.h:336
         [](const char * str_id, const ImVec2 & size = ImVec2(0, 0), bool border = false, ImGuiWindowFlags flags = 0)
         {
             return BeginChild(str_id, size, border, flags);
         },
-        py::arg("str_id"), py::arg("size") = ImVec2(0, 0), py::arg("border") = false, py::arg("flags") = 0,
-        "Child Windows\n- Use child windows to begin into a self-contained independent scrolling/clipping regions within a host window. Child windows can embed their own child.\n- For each independent axis of 'size': ==0.0f: use remaining host window size / >0.0f: fixed size / <0.0f: use remaining window size minus abs(size) / Each axis can use a different mode, e.g. ImVec2(0,400).\n- BeginChild() returns false to indicate the window is collapsed or fully clipped, so you may early out and omit submitting anything to the window.\nAlways call a matching EndChild() for each BeginChild() call, regardless of its return value.\n[Important: due to legacy reason, this is inconsistent with most other functions such as BeginMenu/EndMenu,\nBeginPopup/EndPopup, etc. where the EndXXX call should only be called if the corresponding BeginXXX function\nreturned true. Begin and BeginChild are the only odd ones out. Will be fixed in a future update.]"
+        py::arg("str_id"), py::arg("size") = ImVec2(0, 0), py::arg("border") = False, py::arg("flags") = 0
     );
-
 
     m.def("begin_child",    // imgui.h:337
         [](ImGuiID id, const ImVec2 & size = ImVec2(0, 0), bool border = false, ImGuiWindowFlags flags = 0)
         {
             return BeginChild(id, size, border, flags);
         },
-        py::arg("id"), py::arg("size") = ImVec2(0, 0), py::arg("border") = false, py::arg("flags") = 0
+        py::arg("id"), py::arg("size") = ImVec2(0, 0), py::arg("border") = False, py::arg("flags") = 0
     );
-
 
     m.def("end_child",    // imgui.h:338
         []()
@@ -343,15 +318,12 @@ void py_init_module_imgui(py::module& m)
         }
     );
 
-
     m.def("is_window_appearing",    // imgui.h:342
         []()
         {
             return IsWindowAppearing();
-        },
-        "Windows Utilities\n- 'current window' = the window we are appending into while inside a Begin()/End() block. 'next window' = next window we will Begin() into."
+        }
     );
-
 
     m.def("is_window_collapsed",    // imgui.h:343
         []()
@@ -359,7 +331,6 @@ void py_init_module_imgui(py::module& m)
             return IsWindowCollapsed();
         }
     );
-
 
     m.def("is_window_focused",    // imgui.h:344
         [](ImGuiFocusedFlags flags = 0)
@@ -370,7 +341,6 @@ void py_init_module_imgui(py::module& m)
         "is current window focused? or its root/child, depending on flags. see flags for options."
     );
 
-
     m.def("is_window_hovered",    // imgui.h:345
         [](ImGuiHoveredFlags flags = 0)
         {
@@ -380,7 +350,6 @@ void py_init_module_imgui(py::module& m)
         "is current window hovered (and typically: not blocked by a popup/modal)? see flags for options. NB: If you are trying to check whether your mouse should be dispatched to imgui or to your app, you should use the 'io.WantCaptureMouse' boolean for that! Please read the FAQ!"
     );
 
-
     m.def("get_window_draw_list",    // imgui.h:346
         []()
         {
@@ -388,7 +357,6 @@ void py_init_module_imgui(py::module& m)
         },
         "get draw list associated to the current window, to append your own drawing primitives"
     );
-
 
     m.def("get_window_pos",    // imgui.h:347
         []()
@@ -398,7 +366,6 @@ void py_init_module_imgui(py::module& m)
         "get current window position in screen space (useful if you want to do your own drawing via the DrawList API)"
     );
 
-
     m.def("get_window_size",    // imgui.h:348
         []()
         {
@@ -406,7 +373,6 @@ void py_init_module_imgui(py::module& m)
         },
         "get current window size"
     );
-
 
     m.def("get_window_width",    // imgui.h:349
         []()
@@ -416,7 +382,6 @@ void py_init_module_imgui(py::module& m)
         "get current window width (shortcut for GetWindowSize().x)"
     );
 
-
     m.def("get_window_height",    // imgui.h:350
         []()
         {
@@ -424,7 +389,6 @@ void py_init_module_imgui(py::module& m)
         },
         "get current window height (shortcut for GetWindowSize().y)"
     );
-
 
     m.def("set_next_window_pos",    // imgui.h:354
         [](const ImVec2 & pos, ImGuiCond cond = 0, const ImVec2 & pivot = ImVec2(0, 0))
@@ -435,7 +399,6 @@ void py_init_module_imgui(py::module& m)
         "set next window position. call before Begin(). use pivot=(0.5f,0.5f) to center on given point, etc."
     );
 
-
     m.def("set_next_window_size",    // imgui.h:355
         [](const ImVec2 & size, ImGuiCond cond = 0)
         {
@@ -445,16 +408,14 @@ void py_init_module_imgui(py::module& m)
         "set next window size. set axis to 0.0f to force an auto-fit on this axis. call before Begin()"
     );
 
-
     m.def("set_next_window_size_constraints",    // imgui.h:356
         [](const ImVec2 & size_min, const ImVec2 & size_max, ImGuiSizeCallback custom_callback = NULL, void * custom_callback_data = NULL)
         {
             SetNextWindowSizeConstraints(size_min, size_max, custom_callback, custom_callback_data);
         },
-        py::arg("size_min"), py::arg("size_max"), py::arg("custom_callback") = NULL, py::arg("custom_callback_data") = NULL,
+        py::arg("size_min"), py::arg("size_max"), py::arg("custom_callback") = None, py::arg("custom_callback_data") = None,
         "set next window size limits. use -1,-1 on either X/Y axis to preserve the current size. Sizes will be rounded down. Use callback to apply non-trivial programmatic constraints."
     );
-
 
     m.def("set_next_window_content_size",    // imgui.h:357
         [](const ImVec2 & size)
@@ -465,7 +426,6 @@ void py_init_module_imgui(py::module& m)
         "set next window content size (~ scrollable client area, which enforce the range of scrollbars). Not including window decorations (title bar, menu bar, etc.) nor WindowPadding. set an axis to 0.0f to leave it automatic. call before Begin()"
     );
 
-
     m.def("set_next_window_collapsed",    // imgui.h:358
         [](bool collapsed, ImGuiCond cond = 0)
         {
@@ -475,7 +435,6 @@ void py_init_module_imgui(py::module& m)
         "set next window collapsed state. call before Begin()"
     );
 
-
     m.def("set_next_window_focus",    // imgui.h:359
         []()
         {
@@ -483,7 +442,6 @@ void py_init_module_imgui(py::module& m)
         },
         "set next window to be focused / top-most. call before Begin()"
     );
-
 
     m.def("set_next_window_bg_alpha",    // imgui.h:360
         [](float alpha)
@@ -494,7 +452,6 @@ void py_init_module_imgui(py::module& m)
         "set next window background color alpha. helper to easily override the Alpha component of ImGuiCol_WindowBg/ChildBg/PopupBg. you may also use ImGuiWindowFlags_NoBackground."
     );
 
-
     m.def("set_window_pos",    // imgui.h:361
         [](const ImVec2 & pos, ImGuiCond cond = 0)
         {
@@ -503,7 +460,6 @@ void py_init_module_imgui(py::module& m)
         py::arg("pos"), py::arg("cond") = 0,
         "(not recommended) set current window position - call within Begin()/End(). prefer using SetNextWindowPos(), as this may incur tearing and side-effects."
     );
-
 
     m.def("set_window_size",    // imgui.h:362
         [](const ImVec2 & size, ImGuiCond cond = 0)
@@ -514,7 +470,6 @@ void py_init_module_imgui(py::module& m)
         "(not recommended) set current window size - call within Begin()/End(). set to ImVec2(0, 0) to force an auto-fit. prefer using SetNextWindowSize(), as this may incur tearing and minor side-effects."
     );
 
-
     m.def("set_window_collapsed",    // imgui.h:363
         [](bool collapsed, ImGuiCond cond = 0)
         {
@@ -524,7 +479,6 @@ void py_init_module_imgui(py::module& m)
         "(not recommended) set current window collapsed state. prefer using SetNextWindowCollapsed()."
     );
 
-
     m.def("set_window_focus",    // imgui.h:364
         []()
         {
@@ -532,7 +486,6 @@ void py_init_module_imgui(py::module& m)
         },
         "(not recommended) set current window to be focused / top-most. prefer using SetNextWindowFocus()."
     );
-
 
     m.def("set_window_font_scale",    // imgui.h:365
         [](float scale)
@@ -543,7 +496,6 @@ void py_init_module_imgui(py::module& m)
         "[OBSOLETE] set font scale. Adjust IO.FontGlobalScale if you want to scale all windows. This is an old API! For correct scaling, prefer to reload font + rebuild ImFontAtlas + call style.ScaleAllSizes()."
     );
 
-
     m.def("set_window_pos",    // imgui.h:366
         [](const char * name, const ImVec2 & pos, ImGuiCond cond = 0)
         {
@@ -552,7 +504,6 @@ void py_init_module_imgui(py::module& m)
         py::arg("name"), py::arg("pos"), py::arg("cond") = 0,
         "set named window position."
     );
-
 
     m.def("set_window_size",    // imgui.h:367
         [](const char * name, const ImVec2 & size, ImGuiCond cond = 0)
@@ -563,7 +514,6 @@ void py_init_module_imgui(py::module& m)
         "set named window size. set axis to 0.0f to force an auto-fit on this axis."
     );
 
-
     m.def("set_window_collapsed",    // imgui.h:368
         [](const char * name, bool collapsed, ImGuiCond cond = 0)
         {
@@ -572,7 +522,6 @@ void py_init_module_imgui(py::module& m)
         py::arg("name"), py::arg("collapsed"), py::arg("cond") = 0,
         "set named window collapsed state"
     );
-
 
     m.def("set_window_focus",    // imgui.h:369
         [](const char * name)
@@ -583,7 +532,6 @@ void py_init_module_imgui(py::module& m)
         "set named window to be focused / top-most. use NULL to remove focus."
     );
 
-
     m.def("get_content_region_avail",    // imgui.h:374
         []()
         {
@@ -591,7 +539,6 @@ void py_init_module_imgui(py::module& m)
         },
         "== GetContentRegionMax() - GetCursorPos()"
     );
-
 
     m.def("get_content_region_max",    // imgui.h:375
         []()
@@ -601,7 +548,6 @@ void py_init_module_imgui(py::module& m)
         "current content boundaries (typically window boundaries including scrolling, or current column boundaries), in windows coordinates"
     );
 
-
     m.def("get_window_content_region_min",    // imgui.h:376
         []()
         {
@@ -609,7 +555,6 @@ void py_init_module_imgui(py::module& m)
         },
         "content boundaries min for the full window (roughly (0,0)-Scroll), in window coordinates"
     );
-
 
     m.def("get_window_content_region_max",    // imgui.h:377
         []()
@@ -619,7 +564,6 @@ void py_init_module_imgui(py::module& m)
         "content boundaries max for the full window (roughly (0,0)+Size-Scroll) where Size can be override with SetNextWindowContentSize(), in window coordinates"
     );
 
-
     m.def("get_scroll_x",    // imgui.h:380
         []()
         {
@@ -628,7 +572,6 @@ void py_init_module_imgui(py::module& m)
         "get scrolling amount [0 .. GetScrollMaxX()]"
     );
 
-
     m.def("get_scroll_y",    // imgui.h:381
         []()
         {
@@ -636,7 +579,6 @@ void py_init_module_imgui(py::module& m)
         },
         "get scrolling amount [0 .. GetScrollMaxY()]"
     );
-
 
     m.def("set_scroll_x",    // imgui.h:382
         [](float scroll_x)
@@ -647,7 +589,6 @@ void py_init_module_imgui(py::module& m)
         "set scrolling amount [0 .. GetScrollMaxX()]"
     );
 
-
     m.def("set_scroll_y",    // imgui.h:383
         [](float scroll_y)
         {
@@ -657,7 +598,6 @@ void py_init_module_imgui(py::module& m)
         "set scrolling amount [0 .. GetScrollMaxY()]"
     );
 
-
     m.def("get_scroll_max_x",    // imgui.h:384
         []()
         {
@@ -665,7 +605,6 @@ void py_init_module_imgui(py::module& m)
         },
         "get maximum scrolling amount ~~ ContentSize.x - WindowSize.x - DecorationsSize.x"
     );
-
 
     m.def("get_scroll_max_y",    // imgui.h:385
         []()
@@ -675,46 +614,41 @@ void py_init_module_imgui(py::module& m)
         "get maximum scrolling amount ~~ ContentSize.y - WindowSize.y - DecorationsSize.y"
     );
 
-
     m.def("set_scroll_here_x",    // imgui.h:386
         [](float center_x_ratio = 0.5f)
         {
             SetScrollHereX(center_x_ratio);
         },
-        py::arg("center_x_ratio") = 0.5f,
+        py::arg("center_x_ratio") = 0.5,
         "adjust scrolling amount to make current cursor position visible. center_x_ratio=0.0: left, 0.5: center, 1.0: right. When using to make a \"default/current item\" visible, consider using SetItemDefaultFocus() instead."
     );
-
 
     m.def("set_scroll_here_y",    // imgui.h:387
         [](float center_y_ratio = 0.5f)
         {
             SetScrollHereY(center_y_ratio);
         },
-        py::arg("center_y_ratio") = 0.5f,
+        py::arg("center_y_ratio") = 0.5,
         "adjust scrolling amount to make current cursor position visible. center_y_ratio=0.0: top, 0.5: center, 1.0: bottom. When using to make a \"default/current item\" visible, consider using SetItemDefaultFocus() instead."
     );
-
 
     m.def("set_scroll_from_pos_x",    // imgui.h:388
         [](float local_x, float center_x_ratio = 0.5f)
         {
             SetScrollFromPosX(local_x, center_x_ratio);
         },
-        py::arg("local_x"), py::arg("center_x_ratio") = 0.5f,
+        py::arg("local_x"), py::arg("center_x_ratio") = 0.5,
         "adjust scrolling amount to make given position visible. Generally GetCursorStartPos() + offset to compute a valid position."
     );
-
 
     m.def("set_scroll_from_pos_y",    // imgui.h:389
         [](float local_y, float center_y_ratio = 0.5f)
         {
             SetScrollFromPosY(local_y, center_y_ratio);
         },
-        py::arg("local_y"), py::arg("center_y_ratio") = 0.5f,
+        py::arg("local_y"), py::arg("center_y_ratio") = 0.5,
         "adjust scrolling amount to make given position visible. Generally GetCursorStartPos() + offset to compute a valid position."
     );
-
 
     m.def("push_font",    // imgui.h:392
         [](ImFont * font)
@@ -725,14 +659,12 @@ void py_init_module_imgui(py::module& m)
         "use NULL as a shortcut to push default font"
     );
 
-
     m.def("pop_font",    // imgui.h:393
         []()
         {
             PopFont();
         }
     );
-
 
     m.def("push_style_color",    // imgui.h:394
         [](ImGuiCol idx, ImU32 col)
@@ -743,7 +675,6 @@ void py_init_module_imgui(py::module& m)
         "modify a style color. always use this if you modify the style after NewFrame()."
     );
 
-
     m.def("push_style_color",    // imgui.h:395
         [](ImGuiCol idx, const ImVec4 & col)
         {
@@ -752,7 +683,6 @@ void py_init_module_imgui(py::module& m)
         py::arg("idx"), py::arg("col")
     );
 
-
     m.def("pop_style_color",    // imgui.h:396
         [](int count = 1)
         {
@@ -760,7 +690,6 @@ void py_init_module_imgui(py::module& m)
         },
         py::arg("count") = 1
     );
-
 
     m.def("push_style_var",    // imgui.h:397
         [](ImGuiStyleVar idx, float val)
@@ -771,7 +700,6 @@ void py_init_module_imgui(py::module& m)
         "modify a style float variable. always use this if you modify the style after NewFrame()."
     );
 
-
     m.def("push_style_var",    // imgui.h:398
         [](ImGuiStyleVar idx, const ImVec2 & val)
         {
@@ -781,7 +709,6 @@ void py_init_module_imgui(py::module& m)
         "modify a style ImVec2 variable. always use this if you modify the style after NewFrame()."
     );
 
-
     m.def("pop_style_var",    // imgui.h:399
         [](int count = 1)
         {
@@ -789,7 +716,6 @@ void py_init_module_imgui(py::module& m)
         },
         py::arg("count") = 1
     );
-
 
     m.def("push_allow_keyboard_focus",    // imgui.h:400
         [](bool allow_keyboard_focus)
@@ -800,14 +726,12 @@ void py_init_module_imgui(py::module& m)
         "== tab stop enable. Allow focusing using TAB/Shift-TAB, enabled by default but you can disable it for certain widgets"
     );
 
-
     m.def("pop_allow_keyboard_focus",    // imgui.h:401
         []()
         {
             PopAllowKeyboardFocus();
         }
     );
-
 
     m.def("push_button_repeat",    // imgui.h:402
         [](bool repeat)
@@ -818,14 +742,12 @@ void py_init_module_imgui(py::module& m)
         "in 'repeat' mode, Button*() functions return repeated true in a typematic manner (using io.KeyRepeatDelay/io.KeyRepeatRate setting). Note that you can call IsItemActive() after any Button() to tell if the button is held in the current frame."
     );
 
-
     m.def("pop_button_repeat",    // imgui.h:403
         []()
         {
             PopButtonRepeat();
         }
     );
-
 
     m.def("push_item_width",    // imgui.h:406
         [](float item_width)
@@ -836,14 +758,12 @@ void py_init_module_imgui(py::module& m)
         "push width of items for common large \"item+label\" widgets. >0.0f: width in pixels, <0.0f align xx pixels to the right of window (so -FLT_MIN always align width to the right side)."
     );
 
-
     m.def("pop_item_width",    // imgui.h:407
         []()
         {
             PopItemWidth();
         }
     );
-
 
     m.def("set_next_item_width",    // imgui.h:408
         [](float item_width)
@@ -854,7 +774,6 @@ void py_init_module_imgui(py::module& m)
         "set width of the _next_ common large \"item+label\" widget. >0.0f: width in pixels, <0.0f align xx pixels to the right of window (so -FLT_MIN always align width to the right side)"
     );
 
-
     m.def("calc_item_width",    // imgui.h:409
         []()
         {
@@ -863,16 +782,14 @@ void py_init_module_imgui(py::module& m)
         "width of item given pushed settings and current cursor position. NOT necessarily the width of last item unlike most 'Item' functions."
     );
 
-
     m.def("push_text_wrap_pos",    // imgui.h:410
         [](float wrap_local_pos_x = 0.0f)
         {
             PushTextWrapPos(wrap_local_pos_x);
         },
-        py::arg("wrap_local_pos_x") = 0.0f,
+        py::arg("wrap_local_pos_x") = 0.0,
         "push word-wrapping position for Text*() commands. < 0.0f: no wrapping; 0.0f: wrap to end of window (or column); > 0.0f: wrap at 'wrap_pos_x' position in window local space"
     );
-
 
     m.def("pop_text_wrap_pos",    // imgui.h:411
         []()
@@ -880,7 +797,6 @@ void py_init_module_imgui(py::module& m)
             PopTextWrapPos();
         }
     );
-
 
     m.def("get_font",    // imgui.h:415
         []()
@@ -890,7 +806,6 @@ void py_init_module_imgui(py::module& m)
         "get current font"
     );
 
-
     m.def("get_font_size",    // imgui.h:416
         []()
         {
@@ -898,7 +813,6 @@ void py_init_module_imgui(py::module& m)
         },
         "get current font size (= height in pixels) of current font with current scale applied"
     );
-
 
     m.def("get_font_tex_uv_white_pixel",    // imgui.h:417
         []()
@@ -908,16 +822,14 @@ void py_init_module_imgui(py::module& m)
         "get UV coordinate for a while pixel, useful to draw custom shapes via the ImDrawList API"
     );
 
-
     m.def("get_color_u32",    // imgui.h:418
         [](ImGuiCol idx, float alpha_mul = 1.0f)
         {
             return GetColorU32(idx, alpha_mul);
         },
-        py::arg("idx"), py::arg("alpha_mul") = 1.0f,
+        py::arg("idx"), py::arg("alpha_mul") = 1.0,
         "retrieve given style color with style alpha applied and optional extra alpha multiplier, packed as a 32-bit value suitable for ImDrawList"
     );
-
 
     m.def("get_color_u32",    // imgui.h:419
         [](const ImVec4 & col)
@@ -928,7 +840,6 @@ void py_init_module_imgui(py::module& m)
         "retrieve given color with style alpha applied, packed as a 32-bit value suitable for ImDrawList"
     );
 
-
     m.def("get_color_u32",    // imgui.h:420
         [](ImU32 col)
         {
@@ -937,7 +848,6 @@ void py_init_module_imgui(py::module& m)
         py::arg("col"),
         "retrieve given color with style alpha applied, packed as a 32-bit value suitable for ImDrawList"
     );
-
 
     m.def("get_style_color_vec4",    // imgui.h:421
         [](ImGuiCol idx)
@@ -948,7 +858,6 @@ void py_init_module_imgui(py::module& m)
         "retrieve style color as stored in ImGuiStyle structure. use to feed back into PushStyleColor(), otherwise use GetColorU32() to get style color with style alpha baked in."
     );
 
-
     m.def("separator",    // imgui.h:430
         []()
         {
@@ -957,16 +866,14 @@ void py_init_module_imgui(py::module& m)
         "separator, generally horizontal. inside a menu bar or in horizontal layout mode, this becomes a vertical separator."
     );
 
-
     m.def("same_line",    // imgui.h:431
         [](float offset_from_start_x = 0.0f, float spacing = -1.0f)
         {
             SameLine(offset_from_start_x, spacing);
         },
-        py::arg("offset_from_start_x") = 0.0f, py::arg("spacing") = -1.0f,
+        py::arg("offset_from_start_x") = 0.0, py::arg("spacing") = -1.0,
         "call between widgets or groups to layout them horizontally. X position given in window coordinates."
     );
-
 
     m.def("new_line",    // imgui.h:432
         []()
@@ -976,7 +883,6 @@ void py_init_module_imgui(py::module& m)
         "undo a SameLine() or force a new line when in an horizontal-layout context."
     );
 
-
     m.def("spacing",    // imgui.h:433
         []()
         {
@@ -984,7 +890,6 @@ void py_init_module_imgui(py::module& m)
         },
         "add vertical spacing."
     );
-
 
     m.def("dummy",    // imgui.h:434
         [](const ImVec2 & size)
@@ -995,26 +900,23 @@ void py_init_module_imgui(py::module& m)
         "add a dummy item of given size. unlike InvisibleButton(), Dummy() won't take the mouse click or be navigable into."
     );
 
-
     m.def("indent",    // imgui.h:435
         [](float indent_w = 0.0f)
         {
             Indent(indent_w);
         },
-        py::arg("indent_w") = 0.0f,
+        py::arg("indent_w") = 0.0,
         "move content position toward the right, by indent_w, or style.IndentSpacing if indent_w <= 0"
     );
-
 
     m.def("unindent",    // imgui.h:436
         [](float indent_w = 0.0f)
         {
             Unindent(indent_w);
         },
-        py::arg("indent_w") = 0.0f,
+        py::arg("indent_w") = 0.0,
         "move content position back to the left, by indent_w, or style.IndentSpacing if indent_w <= 0"
     );
-
 
     m.def("begin_group",    // imgui.h:437
         []()
@@ -1024,7 +926,6 @@ void py_init_module_imgui(py::module& m)
         "lock horizontal starting position"
     );
 
-
     m.def("end_group",    // imgui.h:438
         []()
         {
@@ -1032,7 +933,6 @@ void py_init_module_imgui(py::module& m)
         },
         "unlock horizontal starting position + capture the whole group bounding box into one \"item\" (so you can use IsItemHovered() or layout primitives such as SameLine() on whole group, etc.)"
     );
-
 
     m.def("get_cursor_pos",    // imgui.h:439
         []()
@@ -1042,24 +942,21 @@ void py_init_module_imgui(py::module& m)
         "cursor position in window coordinates (relative to window position)"
     );
 
-
     m.def("get_cursor_pos_x",    // imgui.h:440
         []()
         {
             return GetCursorPosX();
         },
-        "  (some functions are using window-relative coordinates, such as: GetCursorPos, GetCursorStartPos, GetContentRegionMax, GetWindowContentRegion* etc."
+        "(some functions are using window-relative coordinates, such as: GetCursorPos, GetCursorStartPos, GetContentRegionMax, GetWindowContentRegion* etc."
     );
-
 
     m.def("get_cursor_pos_y",    // imgui.h:441
         []()
         {
             return GetCursorPosY();
         },
-        "   other functions such as GetCursorScreenPos or everything in ImDrawList::"
+        "other functions such as GetCursorScreenPos or everything in ImDrawList::"
     );
-
 
     m.def("set_cursor_pos",    // imgui.h:442
         [](const ImVec2 & local_pos)
@@ -1067,9 +964,8 @@ void py_init_module_imgui(py::module& m)
             SetCursorPos(local_pos);
         },
         py::arg("local_pos"),
-        "   are using the main, absolute coordinate system."
+        "are using the main, absolute coordinate system."
     );
-
 
     m.def("set_cursor_pos_x",    // imgui.h:443
         [](float local_x)
@@ -1077,9 +973,8 @@ void py_init_module_imgui(py::module& m)
             SetCursorPosX(local_x);
         },
         py::arg("local_x"),
-        "   GetWindowPos() + GetCursorPos() == GetCursorScreenPos() etc.)"
+        "GetWindowPos() + GetCursorPos() == GetCursorScreenPos() etc.)"
     );
-
 
     m.def("set_cursor_pos_y",    // imgui.h:444
         [](float local_y)
@@ -1089,7 +984,6 @@ void py_init_module_imgui(py::module& m)
         py::arg("local_y")
     );
 
-
     m.def("get_cursor_start_pos",    // imgui.h:445
         []()
         {
@@ -1098,7 +992,6 @@ void py_init_module_imgui(py::module& m)
         "initial cursor position in window coordinates"
     );
 
-
     m.def("get_cursor_screen_pos",    // imgui.h:446
         []()
         {
@@ -1106,7 +999,6 @@ void py_init_module_imgui(py::module& m)
         },
         "cursor position in absolute coordinates (useful to work with ImDrawList API). generally top-left == GetMainViewport()->Pos == (0,0) in single viewport mode, and bottom-right == GetMainViewport()->Pos+Size == io.DisplaySize in single-viewport mode."
     );
-
 
     m.def("set_cursor_screen_pos",    // imgui.h:447
         [](const ImVec2 & pos)
@@ -1117,7 +1009,6 @@ void py_init_module_imgui(py::module& m)
         "cursor position in absolute coordinates"
     );
 
-
     m.def("align_text_to_frame_padding",    // imgui.h:448
         []()
         {
@@ -1125,7 +1016,6 @@ void py_init_module_imgui(py::module& m)
         },
         "vertically align upcoming text baseline to FramePadding.y so that it will align properly to regularly framed items (call if you have text on a line before a framed item)"
     );
-
 
     m.def("get_text_line_height",    // imgui.h:449
         []()
@@ -1135,7 +1025,6 @@ void py_init_module_imgui(py::module& m)
         "~ FontSize"
     );
 
-
     m.def("get_text_line_height_with_spacing",    // imgui.h:450
         []()
         {
@@ -1143,7 +1032,6 @@ void py_init_module_imgui(py::module& m)
         },
         "~ FontSize + style.ItemSpacing.y (distance in pixels between 2 consecutive lines of text)"
     );
-
 
     m.def("get_frame_height",    // imgui.h:451
         []()
@@ -1153,7 +1041,6 @@ void py_init_module_imgui(py::module& m)
         "~ FontSize + style.FramePadding.y * 2"
     );
 
-
     m.def("get_frame_height_with_spacing",    // imgui.h:452
         []()
         {
@@ -1161,7 +1048,6 @@ void py_init_module_imgui(py::module& m)
         },
         "~ FontSize + style.FramePadding.y * 2 + style.ItemSpacing.y (distance in pixels between 2 consecutive lines of framed widgets)"
     );
-
 
     m.def("push_id",    // imgui.h:465
         [](const char * str_id)
@@ -1172,7 +1058,6 @@ void py_init_module_imgui(py::module& m)
         "push string into the ID stack (will hash string)."
     );
 
-
     m.def("push_id",    // imgui.h:466
         [](const char * str_id_begin, const char * str_id_end)
         {
@@ -1181,7 +1066,6 @@ void py_init_module_imgui(py::module& m)
         py::arg("str_id_begin"), py::arg("str_id_end"),
         "push string into the ID stack (will hash string)."
     );
-
 
     m.def("push_id",    // imgui.h:467
         [](const void * ptr_id)
@@ -1192,7 +1076,6 @@ void py_init_module_imgui(py::module& m)
         "push pointer into the ID stack (will hash pointer)."
     );
 
-
     m.def("push_id",    // imgui.h:468
         [](int int_id)
         {
@@ -1202,7 +1085,6 @@ void py_init_module_imgui(py::module& m)
         "push integer into the ID stack (will hash integer)."
     );
 
-
     m.def("pop_id",    // imgui.h:469
         []()
         {
@@ -1210,7 +1092,6 @@ void py_init_module_imgui(py::module& m)
         },
         "pop from the ID stack."
     );
-
 
     m.def("get_id",    // imgui.h:470
         [](const char * str_id)
@@ -1221,7 +1102,6 @@ void py_init_module_imgui(py::module& m)
         "calculate unique ID (hash of whole ID stack + given parameter). e.g. if you want to query into ImGuiStorage yourself"
     );
 
-
     m.def("get_id",    // imgui.h:471
         [](const char * str_id_begin, const char * str_id_end)
         {
@@ -1229,7 +1109,6 @@ void py_init_module_imgui(py::module& m)
         },
         py::arg("str_id_begin"), py::arg("str_id_end")
     );
-
 
     m.def("get_id",    // imgui.h:472
         [](const void * ptr_id)
@@ -1239,16 +1118,14 @@ void py_init_module_imgui(py::module& m)
         py::arg("ptr_id")
     );
 
-
     m.def("text_unformatted",    // imgui.h:475
         [](const char * text, const char * text_end = NULL)
         {
             TextUnformatted(text, text_end);
         },
-        py::arg("text"), py::arg("text_end") = NULL,
+        py::arg("text"), py::arg("text_end") = None,
         "raw text without formatting. Roughly equivalent to Text(\"%s\", text) but: A) doesn't require null terminated string if 'text_end' is specified, B) it's faster, no memory copy is done, no buffer size limits, recommended for long chunks of text."
     );
-
 
     m.def("text",    // imgui.h:476
         [](const char * fmt)
@@ -1264,7 +1141,6 @@ void py_init_module_imgui(py::module& m)
         "formatted text"
     );
 
-
     m.def("text_colored",    // imgui.h:478
         [](const ImVec4 & col, const char * fmt)
         {
@@ -1278,7 +1154,6 @@ void py_init_module_imgui(py::module& m)
         py::arg("col"), py::arg("fmt"),
         "shortcut for PushStyleColor(ImGuiCol_Text, col); Text(fmt, ...); PopStyleColor();"
     );
-
 
     m.def("text_disabled",    // imgui.h:480
         [](const char * fmt)
@@ -1294,7 +1169,6 @@ void py_init_module_imgui(py::module& m)
         "shortcut for PushStyleColor(ImGuiCol_Text, style.Colors[ImGuiCol_TextDisabled]); Text(fmt, ...); PopStyleColor();"
     );
 
-
     m.def("text_wrapped",    // imgui.h:482
         [](const char * fmt)
         {
@@ -1308,7 +1182,6 @@ void py_init_module_imgui(py::module& m)
         py::arg("fmt"),
         "shortcut for PushTextWrapPos(0.0f); Text(fmt, ...); PopTextWrapPos();. Note that this won't work on an auto-resizing window if there's no other widgets to extend the window width, yoy may need to set a size using SetNextWindowSize()."
     );
-
 
     m.def("label_text",    // imgui.h:484
         [](const char * label, const char * fmt)
@@ -1324,7 +1197,6 @@ void py_init_module_imgui(py::module& m)
         "display text+label aligned the same way as value+label widgets"
     );
 
-
     m.def("bullet_text",    // imgui.h:486
         [](const char * fmt)
         {
@@ -1339,7 +1211,6 @@ void py_init_module_imgui(py::module& m)
         "shortcut for Bullet()+Text()"
     );
 
-
     m.def("button",    // imgui.h:492
         [](const char * label, const ImVec2 & size = ImVec2(0, 0))
         {
@@ -1348,7 +1219,6 @@ void py_init_module_imgui(py::module& m)
         py::arg("label"), py::arg("size") = ImVec2(0, 0),
         "button"
     );
-
 
     m.def("small_button",    // imgui.h:493
         [](const char * label)
@@ -1359,7 +1229,6 @@ void py_init_module_imgui(py::module& m)
         "button with FramePadding=(0,0) to easily embed within text"
     );
 
-
     m.def("invisible_button",    // imgui.h:494
         [](const char * str_id, const ImVec2 & size, ImGuiButtonFlags flags = 0)
         {
@@ -1368,7 +1237,6 @@ void py_init_module_imgui(py::module& m)
         py::arg("str_id"), py::arg("size"), py::arg("flags") = 0,
         "flexible button behavior without the visuals, frequently useful to build custom behaviors using the public api (along with IsItemActive, IsItemHovered, etc.)"
     );
-
 
     m.def("arrow_button",    // imgui.h:495
         [](const char * str_id, ImGuiDir dir)
@@ -1379,7 +1247,6 @@ void py_init_module_imgui(py::module& m)
         "square button with an arrow shape"
     );
 
-
     m.def("image",    // imgui.h:496
         [](ImTextureID user_texture_id, const ImVec2 & size, const ImVec2 & uv0 = ImVec2(0, 0), const ImVec2 & uv1 = ImVec2(1,1), const ImVec4 & tint_col = ImVec4(1,1,1,1), const ImVec4 & border_col = ImVec4(0,0,0,0))
         {
@@ -1387,7 +1254,6 @@ void py_init_module_imgui(py::module& m)
         },
         py::arg("user_texture_id"), py::arg("size"), py::arg("uv0") = ImVec2(0, 0), py::arg("uv1") = ImVec2(1,1), py::arg("tint_col") = ImVec4(1,1,1,1), py::arg("border_col") = ImVec4(0,0,0,0)
     );
-
 
     m.def("image_button",    // imgui.h:497
         [](ImTextureID user_texture_id, const ImVec2 & size, const ImVec2 & uv0 = ImVec2(0, 0), const ImVec2 & uv1 = ImVec2(1,1), int frame_padding = -1, const ImVec4 & bg_col = ImVec4(0,0,0,0), const ImVec4 & tint_col = ImVec4(1,1,1,1))
@@ -1398,7 +1264,6 @@ void py_init_module_imgui(py::module& m)
         "<0 frame_padding uses default frame padding settings. 0 for no padding"
     );
 
-
     m.def("checkbox",    // imgui.h:498
         [](const char * label, bool * v)
         {
@@ -1406,7 +1271,6 @@ void py_init_module_imgui(py::module& m)
         },
         py::arg("label"), py::arg("v")
     );
-
 
     m.def("checkbox_flags",    // imgui.h:499
         [](const char * label, int * flags, int flags_value)
@@ -1416,7 +1280,6 @@ void py_init_module_imgui(py::module& m)
         py::arg("label"), py::arg("flags"), py::arg("flags_value")
     );
 
-
     m.def("checkbox_flags",    // imgui.h:500
         [](const char * label, unsigned int * flags, unsigned int flags_value)
         {
@@ -1424,7 +1287,6 @@ void py_init_module_imgui(py::module& m)
         },
         py::arg("label"), py::arg("flags"), py::arg("flags_value")
     );
-
 
     m.def("radio_button",    // imgui.h:501
         [](const char * label, bool active)
@@ -1435,7 +1297,6 @@ void py_init_module_imgui(py::module& m)
         "use with e.g. if (RadioButton(\"one\", my_value==1)) { my_value = 1; }"
     );
 
-
     m.def("radio_button",    // imgui.h:502
         [](const char * label, int * v, int v_button)
         {
@@ -1445,15 +1306,13 @@ void py_init_module_imgui(py::module& m)
         "shortcut to handle the above pattern when value is an integer"
     );
 
-
     m.def("progress_bar",    // imgui.h:503
         [](float fraction, const ImVec2 & size_arg = ImVec2(-FLT_MIN, 0), const char * overlay = NULL)
         {
             ProgressBar(fraction, size_arg, overlay);
         },
-        py::arg("fraction"), py::arg("size_arg") = ImVec2(-FLT_MIN, 0), py::arg("overlay") = NULL
+        py::arg("fraction"), py::arg("size_arg") = ImVec2(-sys.float_info.min, 0), py::arg("overlay") = None
     );
-
 
     m.def("bullet",    // imgui.h:504
         []()
@@ -1463,16 +1322,13 @@ void py_init_module_imgui(py::module& m)
         "draw a small circle + keep the cursor on the same line. advance cursor x position by GetTreeNodeToLabelSpacing(), same distance that TreeNode() uses"
     );
 
-
     m.def("begin_combo",    // imgui.h:509
         [](const char * label, const char * preview_value, ImGuiComboFlags flags = 0)
         {
             return BeginCombo(label, preview_value, flags);
         },
-        py::arg("label"), py::arg("preview_value"), py::arg("flags") = 0,
-        "Widgets: Combo Box\n- The BeginCombo()/EndCombo() api allows you to manage your contents and selection state however you want it, by creating e.g. Selectable() items.\n- The old Combo() api are helpers over BeginCombo()/EndCombo() which are kept available for convenience purpose. This is analogous to how ListBox are created."
+        py::arg("label"), py::arg("preview_value"), py::arg("flags") = 0
     );
-
 
     m.def("end_combo",    // imgui.h:510
         []()
@@ -1481,7 +1337,6 @@ void py_init_module_imgui(py::module& m)
         },
         "only call EndCombo() if BeginCombo() returns true!"
     );
-
 
     m.def("combo",    // imgui.h:511
         [](const char * label, int * current_item, const std::vector<std::string> & items, int popup_max_height_in_items = -1)
@@ -1502,7 +1357,6 @@ void py_init_module_imgui(py::module& m)
         py::arg("label"), py::arg("current_item"), py::arg("items"), py::arg("popup_max_height_in_items") = -1
     );
 
-
     m.def("combo",    // imgui.h:512
         [](const char * label, int * current_item, const char * items_separated_by_zeros, int popup_max_height_in_items = -1)
         {
@@ -1512,16 +1366,14 @@ void py_init_module_imgui(py::module& m)
         "Separate items with \\0 within a string, end item-list with \\0\\0. e.g. \"One\\0Two\\0Three\\0\""
     );
 
-
     m.def("drag_float",    // imgui.h:527
         [](const char * label, float * v, float v_speed = 1.0f, float v_min = 0.0f, float v_max = 0.0f, const char * format = "%.3f", ImGuiSliderFlags flags = 0)
         {
             return DragFloat(label, v, v_speed, v_min, v_max, format, flags);
         },
-        py::arg("label"), py::arg("v"), py::arg("v_speed") = 1.0f, py::arg("v_min") = 0.0f, py::arg("v_max") = 0.0f, py::arg("format") = "%.3f", py::arg("flags") = 0,
+        py::arg("label"), py::arg("v"), py::arg("v_speed") = 1.0, py::arg("v_min") = 0.0, py::arg("v_max") = 0.0, py::arg("format") = "%.3", py::arg("flags") = 0,
         "If v_min >= v_max we have no bound"
     );
-
 
     m.def("drag_float2",    // imgui.h:528
         [](const char * label, BoxedFloat & v_0, BoxedFloat & v_1, float v_speed = 1.0f, float v_min = 0.0f, float v_max = 0.0f, const char * format = "%.3f", ImGuiSliderFlags flags = 0)
@@ -1541,9 +1393,8 @@ void py_init_module_imgui(py::module& m)
 
             return DragFloat2_adapt_fixed_size_c_arrays(label, v_0, v_1, v_speed, v_min, v_max, format, flags);
         },
-        py::arg("label"), py::arg("v_0"), py::arg("v_1"), py::arg("v_speed") = 1.0f, py::arg("v_min") = 0.0f, py::arg("v_max") = 0.0f, py::arg("format") = "%.3f", py::arg("flags") = 0
+        py::arg("label"), py::arg("v_0"), py::arg("v_1"), py::arg("v_speed") = 1.0, py::arg("v_min") = 0.0, py::arg("v_max") = 0.0, py::arg("format") = "%.3", py::arg("flags") = 0
     );
-
 
     m.def("drag_float3",    // imgui.h:529
         [](const char * label, BoxedFloat & v_0, BoxedFloat & v_1, BoxedFloat & v_2, float v_speed = 1.0f, float v_min = 0.0f, float v_max = 0.0f, const char * format = "%.3f", ImGuiSliderFlags flags = 0)
@@ -1565,9 +1416,8 @@ void py_init_module_imgui(py::module& m)
 
             return DragFloat3_adapt_fixed_size_c_arrays(label, v_0, v_1, v_2, v_speed, v_min, v_max, format, flags);
         },
-        py::arg("label"), py::arg("v_0"), py::arg("v_1"), py::arg("v_2"), py::arg("v_speed") = 1.0f, py::arg("v_min") = 0.0f, py::arg("v_max") = 0.0f, py::arg("format") = "%.3f", py::arg("flags") = 0
+        py::arg("label"), py::arg("v_0"), py::arg("v_1"), py::arg("v_2"), py::arg("v_speed") = 1.0, py::arg("v_min") = 0.0, py::arg("v_max") = 0.0, py::arg("format") = "%.3", py::arg("flags") = 0
     );
-
 
     m.def("drag_float4",    // imgui.h:530
         [](const char * label, BoxedFloat & v_0, BoxedFloat & v_1, BoxedFloat & v_2, BoxedFloat & v_3, float v_speed = 1.0f, float v_min = 0.0f, float v_max = 0.0f, const char * format = "%.3f", ImGuiSliderFlags flags = 0)
@@ -1591,28 +1441,25 @@ void py_init_module_imgui(py::module& m)
 
             return DragFloat4_adapt_fixed_size_c_arrays(label, v_0, v_1, v_2, v_3, v_speed, v_min, v_max, format, flags);
         },
-        py::arg("label"), py::arg("v_0"), py::arg("v_1"), py::arg("v_2"), py::arg("v_3"), py::arg("v_speed") = 1.0f, py::arg("v_min") = 0.0f, py::arg("v_max") = 0.0f, py::arg("format") = "%.3f", py::arg("flags") = 0
+        py::arg("label"), py::arg("v_0"), py::arg("v_1"), py::arg("v_2"), py::arg("v_3"), py::arg("v_speed") = 1.0, py::arg("v_min") = 0.0, py::arg("v_max") = 0.0, py::arg("format") = "%.3", py::arg("flags") = 0
     );
-
 
     m.def("drag_float_range2",    // imgui.h:531
         [](const char * label, float * v_current_min, float * v_current_max, float v_speed = 1.0f, float v_min = 0.0f, float v_max = 0.0f, const char * format = "%.3f", const char * format_max = NULL, ImGuiSliderFlags flags = 0)
         {
             return DragFloatRange2(label, v_current_min, v_current_max, v_speed, v_min, v_max, format, format_max, flags);
         },
-        py::arg("label"), py::arg("v_current_min"), py::arg("v_current_max"), py::arg("v_speed") = 1.0f, py::arg("v_min") = 0.0f, py::arg("v_max") = 0.0f, py::arg("format") = "%.3f", py::arg("format_max") = NULL, py::arg("flags") = 0
+        py::arg("label"), py::arg("v_current_min"), py::arg("v_current_max"), py::arg("v_speed") = 1.0, py::arg("v_min") = 0.0, py::arg("v_max") = 0.0, py::arg("format") = "%.3", py::arg("format_max") = None, py::arg("flags") = 0
     );
-
 
     m.def("drag_int",    // imgui.h:532
         [](const char * label, int * v, float v_speed = 1.0f, int v_min = 0, int v_max = 0, const char * format = "%d", ImGuiSliderFlags flags = 0)
         {
             return DragInt(label, v, v_speed, v_min, v_max, format, flags);
         },
-        py::arg("label"), py::arg("v"), py::arg("v_speed") = 1.0f, py::arg("v_min") = 0, py::arg("v_max") = 0, py::arg("format") = "%d", py::arg("flags") = 0,
+        py::arg("label"), py::arg("v"), py::arg("v_speed") = 1.0, py::arg("v_min") = 0, py::arg("v_max") = 0, py::arg("format") = "%d", py::arg("flags") = 0,
         "If v_min >= v_max we have no bound"
     );
-
 
     m.def("drag_int2",    // imgui.h:533
         [](const char * label, BoxedInt & v_0, BoxedInt & v_1, float v_speed = 1.0f, int v_min = 0, int v_max = 0, const char * format = "%d", ImGuiSliderFlags flags = 0)
@@ -1632,9 +1479,8 @@ void py_init_module_imgui(py::module& m)
 
             return DragInt2_adapt_fixed_size_c_arrays(label, v_0, v_1, v_speed, v_min, v_max, format, flags);
         },
-        py::arg("label"), py::arg("v_0"), py::arg("v_1"), py::arg("v_speed") = 1.0f, py::arg("v_min") = 0, py::arg("v_max") = 0, py::arg("format") = "%d", py::arg("flags") = 0
+        py::arg("label"), py::arg("v_0"), py::arg("v_1"), py::arg("v_speed") = 1.0, py::arg("v_min") = 0, py::arg("v_max") = 0, py::arg("format") = "%d", py::arg("flags") = 0
     );
-
 
     m.def("drag_int3",    // imgui.h:534
         [](const char * label, BoxedInt & v_0, BoxedInt & v_1, BoxedInt & v_2, float v_speed = 1.0f, int v_min = 0, int v_max = 0, const char * format = "%d", ImGuiSliderFlags flags = 0)
@@ -1656,9 +1502,8 @@ void py_init_module_imgui(py::module& m)
 
             return DragInt3_adapt_fixed_size_c_arrays(label, v_0, v_1, v_2, v_speed, v_min, v_max, format, flags);
         },
-        py::arg("label"), py::arg("v_0"), py::arg("v_1"), py::arg("v_2"), py::arg("v_speed") = 1.0f, py::arg("v_min") = 0, py::arg("v_max") = 0, py::arg("format") = "%d", py::arg("flags") = 0
+        py::arg("label"), py::arg("v_0"), py::arg("v_1"), py::arg("v_2"), py::arg("v_speed") = 1.0, py::arg("v_min") = 0, py::arg("v_max") = 0, py::arg("format") = "%d", py::arg("flags") = 0
     );
-
 
     m.def("drag_int4",    // imgui.h:535
         [](const char * label, BoxedInt & v_0, BoxedInt & v_1, BoxedInt & v_2, BoxedInt & v_3, float v_speed = 1.0f, int v_min = 0, int v_max = 0, const char * format = "%d", ImGuiSliderFlags flags = 0)
@@ -1682,46 +1527,41 @@ void py_init_module_imgui(py::module& m)
 
             return DragInt4_adapt_fixed_size_c_arrays(label, v_0, v_1, v_2, v_3, v_speed, v_min, v_max, format, flags);
         },
-        py::arg("label"), py::arg("v_0"), py::arg("v_1"), py::arg("v_2"), py::arg("v_3"), py::arg("v_speed") = 1.0f, py::arg("v_min") = 0, py::arg("v_max") = 0, py::arg("format") = "%d", py::arg("flags") = 0
+        py::arg("label"), py::arg("v_0"), py::arg("v_1"), py::arg("v_2"), py::arg("v_3"), py::arg("v_speed") = 1.0, py::arg("v_min") = 0, py::arg("v_max") = 0, py::arg("format") = "%d", py::arg("flags") = 0
     );
-
 
     m.def("drag_int_range2",    // imgui.h:536
         [](const char * label, int * v_current_min, int * v_current_max, float v_speed = 1.0f, int v_min = 0, int v_max = 0, const char * format = "%d", const char * format_max = NULL, ImGuiSliderFlags flags = 0)
         {
             return DragIntRange2(label, v_current_min, v_current_max, v_speed, v_min, v_max, format, format_max, flags);
         },
-        py::arg("label"), py::arg("v_current_min"), py::arg("v_current_max"), py::arg("v_speed") = 1.0f, py::arg("v_min") = 0, py::arg("v_max") = 0, py::arg("format") = "%d", py::arg("format_max") = NULL, py::arg("flags") = 0
+        py::arg("label"), py::arg("v_current_min"), py::arg("v_current_max"), py::arg("v_speed") = 1.0, py::arg("v_min") = 0, py::arg("v_max") = 0, py::arg("format") = "%d", py::arg("format_max") = None, py::arg("flags") = 0
     );
-
 
     m.def("drag_scalar",    // imgui.h:537
         [](const char * label, ImGuiDataType data_type, void * p_data, float v_speed = 1.0f, const void * p_min = NULL, const void * p_max = NULL, const char * format = NULL, ImGuiSliderFlags flags = 0)
         {
             return DragScalar(label, data_type, p_data, v_speed, p_min, p_max, format, flags);
         },
-        py::arg("label"), py::arg("data_type"), py::arg("p_data"), py::arg("v_speed") = 1.0f, py::arg("p_min") = NULL, py::arg("p_max") = NULL, py::arg("format") = NULL, py::arg("flags") = 0
+        py::arg("label"), py::arg("data_type"), py::arg("p_data"), py::arg("v_speed") = 1.0, py::arg("p_min") = None, py::arg("p_max") = None, py::arg("format") = None, py::arg("flags") = 0
     );
-
 
     m.def("drag_scalar_n",    // imgui.h:538
         [](const char * label, ImGuiDataType data_type, void * p_data, int components, float v_speed = 1.0f, const void * p_min = NULL, const void * p_max = NULL, const char * format = NULL, ImGuiSliderFlags flags = 0)
         {
             return DragScalarN(label, data_type, p_data, components, v_speed, p_min, p_max, format, flags);
         },
-        py::arg("label"), py::arg("data_type"), py::arg("p_data"), py::arg("components"), py::arg("v_speed") = 1.0f, py::arg("p_min") = NULL, py::arg("p_max") = NULL, py::arg("format") = NULL, py::arg("flags") = 0
+        py::arg("label"), py::arg("data_type"), py::arg("p_data"), py::arg("components"), py::arg("v_speed") = 1.0, py::arg("p_min") = None, py::arg("p_max") = None, py::arg("format") = None, py::arg("flags") = 0
     );
-
 
     m.def("slider_float",    // imgui.h:546
         [](const char * label, float * v, float v_min, float v_max, const char * format = "%.3f", ImGuiSliderFlags flags = 0)
         {
             return SliderFloat(label, v, v_min, v_max, format, flags);
         },
-        py::arg("label"), py::arg("v"), py::arg("v_min"), py::arg("v_max"), py::arg("format") = "%.3f", py::arg("flags") = 0,
+        py::arg("label"), py::arg("v"), py::arg("v_min"), py::arg("v_max"), py::arg("format") = "%.3", py::arg("flags") = 0,
         "adjust format to decorate the value with a prefix or a suffix for in-slider labels or unit display."
     );
-
 
     m.def("slider_float2",    // imgui.h:547
         [](const char * label, BoxedFloat & v_0, BoxedFloat & v_1, float v_min, float v_max, const char * format = "%.3f", ImGuiSliderFlags flags = 0)
@@ -1741,9 +1581,8 @@ void py_init_module_imgui(py::module& m)
 
             return SliderFloat2_adapt_fixed_size_c_arrays(label, v_0, v_1, v_min, v_max, format, flags);
         },
-        py::arg("label"), py::arg("v_0"), py::arg("v_1"), py::arg("v_min"), py::arg("v_max"), py::arg("format") = "%.3f", py::arg("flags") = 0
+        py::arg("label"), py::arg("v_0"), py::arg("v_1"), py::arg("v_min"), py::arg("v_max"), py::arg("format") = "%.3", py::arg("flags") = 0
     );
-
 
     m.def("slider_float3",    // imgui.h:548
         [](const char * label, BoxedFloat & v_0, BoxedFloat & v_1, BoxedFloat & v_2, float v_min, float v_max, const char * format = "%.3f", ImGuiSliderFlags flags = 0)
@@ -1765,9 +1604,8 @@ void py_init_module_imgui(py::module& m)
 
             return SliderFloat3_adapt_fixed_size_c_arrays(label, v_0, v_1, v_2, v_min, v_max, format, flags);
         },
-        py::arg("label"), py::arg("v_0"), py::arg("v_1"), py::arg("v_2"), py::arg("v_min"), py::arg("v_max"), py::arg("format") = "%.3f", py::arg("flags") = 0
+        py::arg("label"), py::arg("v_0"), py::arg("v_1"), py::arg("v_2"), py::arg("v_min"), py::arg("v_max"), py::arg("format") = "%.3", py::arg("flags") = 0
     );
-
 
     m.def("slider_float4",    // imgui.h:549
         [](const char * label, BoxedFloat & v_0, BoxedFloat & v_1, BoxedFloat & v_2, BoxedFloat & v_3, float v_min, float v_max, const char * format = "%.3f", ImGuiSliderFlags flags = 0)
@@ -1791,18 +1629,16 @@ void py_init_module_imgui(py::module& m)
 
             return SliderFloat4_adapt_fixed_size_c_arrays(label, v_0, v_1, v_2, v_3, v_min, v_max, format, flags);
         },
-        py::arg("label"), py::arg("v_0"), py::arg("v_1"), py::arg("v_2"), py::arg("v_3"), py::arg("v_min"), py::arg("v_max"), py::arg("format") = "%.3f", py::arg("flags") = 0
+        py::arg("label"), py::arg("v_0"), py::arg("v_1"), py::arg("v_2"), py::arg("v_3"), py::arg("v_min"), py::arg("v_max"), py::arg("format") = "%.3", py::arg("flags") = 0
     );
-
 
     m.def("slider_angle",    // imgui.h:550
         [](const char * label, float * v_rad, float v_degrees_min = -360.0f, float v_degrees_max = +360.0f, const char * format = "%.0f deg", ImGuiSliderFlags flags = 0)
         {
             return SliderAngle(label, v_rad, v_degrees_min, v_degrees_max, format, flags);
         },
-        py::arg("label"), py::arg("v_rad"), py::arg("v_degrees_min") = -360.0f, py::arg("v_degrees_max") = +360.0f, py::arg("format") = "%.0f deg", py::arg("flags") = 0
+        py::arg("label"), py::arg("v_rad"), py::arg("v_degrees_min") = -360.0, py::arg("v_degrees_max") = +360.0, py::arg("format") = "%.0 deg", py::arg("flags") = 0
     );
-
 
     m.def("slider_int",    // imgui.h:551
         [](const char * label, int * v, int v_min, int v_max, const char * format = "%d", ImGuiSliderFlags flags = 0)
@@ -1811,7 +1647,6 @@ void py_init_module_imgui(py::module& m)
         },
         py::arg("label"), py::arg("v"), py::arg("v_min"), py::arg("v_max"), py::arg("format") = "%d", py::arg("flags") = 0
     );
-
 
     m.def("slider_int2",    // imgui.h:552
         [](const char * label, BoxedInt & v_0, BoxedInt & v_1, int v_min, int v_max, const char * format = "%d", ImGuiSliderFlags flags = 0)
@@ -1833,7 +1668,6 @@ void py_init_module_imgui(py::module& m)
         },
         py::arg("label"), py::arg("v_0"), py::arg("v_1"), py::arg("v_min"), py::arg("v_max"), py::arg("format") = "%d", py::arg("flags") = 0
     );
-
 
     m.def("slider_int3",    // imgui.h:553
         [](const char * label, BoxedInt & v_0, BoxedInt & v_1, BoxedInt & v_2, int v_min, int v_max, const char * format = "%d", ImGuiSliderFlags flags = 0)
@@ -1857,7 +1691,6 @@ void py_init_module_imgui(py::module& m)
         },
         py::arg("label"), py::arg("v_0"), py::arg("v_1"), py::arg("v_2"), py::arg("v_min"), py::arg("v_max"), py::arg("format") = "%d", py::arg("flags") = 0
     );
-
 
     m.def("slider_int4",    // imgui.h:554
         [](const char * label, BoxedInt & v_0, BoxedInt & v_1, BoxedInt & v_2, BoxedInt & v_3, int v_min, int v_max, const char * format = "%d", ImGuiSliderFlags flags = 0)
@@ -1884,33 +1717,29 @@ void py_init_module_imgui(py::module& m)
         py::arg("label"), py::arg("v_0"), py::arg("v_1"), py::arg("v_2"), py::arg("v_3"), py::arg("v_min"), py::arg("v_max"), py::arg("format") = "%d", py::arg("flags") = 0
     );
 
-
     m.def("slider_scalar",    // imgui.h:555
         [](const char * label, ImGuiDataType data_type, void * p_data, const void * p_min, const void * p_max, const char * format = NULL, ImGuiSliderFlags flags = 0)
         {
             return SliderScalar(label, data_type, p_data, p_min, p_max, format, flags);
         },
-        py::arg("label"), py::arg("data_type"), py::arg("p_data"), py::arg("p_min"), py::arg("p_max"), py::arg("format") = NULL, py::arg("flags") = 0
+        py::arg("label"), py::arg("data_type"), py::arg("p_data"), py::arg("p_min"), py::arg("p_max"), py::arg("format") = None, py::arg("flags") = 0
     );
-
 
     m.def("slider_scalar_n",    // imgui.h:556
         [](const char * label, ImGuiDataType data_type, void * p_data, int components, const void * p_min, const void * p_max, const char * format = NULL, ImGuiSliderFlags flags = 0)
         {
             return SliderScalarN(label, data_type, p_data, components, p_min, p_max, format, flags);
         },
-        py::arg("label"), py::arg("data_type"), py::arg("p_data"), py::arg("components"), py::arg("p_min"), py::arg("p_max"), py::arg("format") = NULL, py::arg("flags") = 0
+        py::arg("label"), py::arg("data_type"), py::arg("p_data"), py::arg("components"), py::arg("p_min"), py::arg("p_max"), py::arg("format") = None, py::arg("flags") = 0
     );
-
 
     m.def("v_slider_float",    // imgui.h:557
         [](const char * label, const ImVec2 & size, float * v, float v_min, float v_max, const char * format = "%.3f", ImGuiSliderFlags flags = 0)
         {
             return VSliderFloat(label, size, v, v_min, v_max, format, flags);
         },
-        py::arg("label"), py::arg("size"), py::arg("v"), py::arg("v_min"), py::arg("v_max"), py::arg("format") = "%.3f", py::arg("flags") = 0
+        py::arg("label"), py::arg("size"), py::arg("v"), py::arg("v_min"), py::arg("v_max"), py::arg("format") = "%.3", py::arg("flags") = 0
     );
-
 
     m.def("v_slider_int",    // imgui.h:558
         [](const char * label, const ImVec2 & size, int * v, int v_min, int v_max, const char * format = "%d", ImGuiSliderFlags flags = 0)
@@ -1920,52 +1749,45 @@ void py_init_module_imgui(py::module& m)
         py::arg("label"), py::arg("size"), py::arg("v"), py::arg("v_min"), py::arg("v_max"), py::arg("format") = "%d", py::arg("flags") = 0
     );
 
-
     m.def("v_slider_scalar",    // imgui.h:559
         [](const char * label, const ImVec2 & size, ImGuiDataType data_type, void * p_data, const void * p_min, const void * p_max, const char * format = NULL, ImGuiSliderFlags flags = 0)
         {
             return VSliderScalar(label, size, data_type, p_data, p_min, p_max, format, flags);
         },
-        py::arg("label"), py::arg("size"), py::arg("data_type"), py::arg("p_data"), py::arg("p_min"), py::arg("p_max"), py::arg("format") = NULL, py::arg("flags") = 0
+        py::arg("label"), py::arg("size"), py::arg("data_type"), py::arg("p_data"), py::arg("p_min"), py::arg("p_max"), py::arg("format") = None, py::arg("flags") = 0
     );
-
 
     m.def("input_text",    // imgui.h:564
         [](const char * label, char * buf, size_t buf_size, ImGuiInputTextFlags flags = 0, ImGuiInputTextCallback callback = NULL, void * user_data = NULL)
         {
             return InputText(label, buf, buf_size, flags, callback, user_data);
         },
-        py::arg("label"), py::arg("buf"), py::arg("buf_size"), py::arg("flags") = 0, py::arg("callback") = NULL, py::arg("user_data") = NULL,
-        "Widgets: Input with Keyboard\n- If you want to use InputText() with std::string or any custom dynamic string type, see misc/cpp/imgui_stdlib.h and comments in imgui_demo.cpp.\n- Most of the ImGuiInputTextFlags flags are only useful for InputText() and not for InputFloatX, InputIntX, InputDouble etc."
+        py::arg("label"), py::arg("buf"), py::arg("buf_size"), py::arg("flags") = 0, py::arg("callback") = None, py::arg("user_data") = None
     );
-
 
     m.def("input_text_multiline",    // imgui.h:565
         [](const char * label, char * buf, size_t buf_size, const ImVec2 & size = ImVec2(0, 0), ImGuiInputTextFlags flags = 0, ImGuiInputTextCallback callback = NULL, void * user_data = NULL)
         {
             return InputTextMultiline(label, buf, buf_size, size, flags, callback, user_data);
         },
-        py::arg("label"), py::arg("buf"), py::arg("buf_size"), py::arg("size") = ImVec2(0, 0), py::arg("flags") = 0, py::arg("callback") = NULL, py::arg("user_data") = NULL
+        py::arg("label"), py::arg("buf"), py::arg("buf_size"), py::arg("size") = ImVec2(0, 0), py::arg("flags") = 0, py::arg("callback") = None, py::arg("user_data") = None
     );
-
 
     m.def("input_text_with_hint",    // imgui.h:566
         [](const char * label, const char * hint, char * buf, size_t buf_size, ImGuiInputTextFlags flags = 0, ImGuiInputTextCallback callback = NULL, void * user_data = NULL)
         {
             return InputTextWithHint(label, hint, buf, buf_size, flags, callback, user_data);
         },
-        py::arg("label"), py::arg("hint"), py::arg("buf"), py::arg("buf_size"), py::arg("flags") = 0, py::arg("callback") = NULL, py::arg("user_data") = NULL
+        py::arg("label"), py::arg("hint"), py::arg("buf"), py::arg("buf_size"), py::arg("flags") = 0, py::arg("callback") = None, py::arg("user_data") = None
     );
-
 
     m.def("input_float",    // imgui.h:567
         [](const char * label, float * v, float step = 0.0f, float step_fast = 0.0f, const char * format = "%.3f", ImGuiInputTextFlags flags = 0)
         {
             return InputFloat(label, v, step, step_fast, format, flags);
         },
-        py::arg("label"), py::arg("v"), py::arg("step") = 0.0f, py::arg("step_fast") = 0.0f, py::arg("format") = "%.3f", py::arg("flags") = 0
+        py::arg("label"), py::arg("v"), py::arg("step") = 0.0, py::arg("step_fast") = 0.0, py::arg("format") = "%.3", py::arg("flags") = 0
     );
-
 
     m.def("input_float2",    // imgui.h:568
         [](const char * label, BoxedFloat & v_0, BoxedFloat & v_1, const char * format = "%.3f", ImGuiInputTextFlags flags = 0)
@@ -1985,9 +1807,8 @@ void py_init_module_imgui(py::module& m)
 
             return InputFloat2_adapt_fixed_size_c_arrays(label, v_0, v_1, format, flags);
         },
-        py::arg("label"), py::arg("v_0"), py::arg("v_1"), py::arg("format") = "%.3f", py::arg("flags") = 0
+        py::arg("label"), py::arg("v_0"), py::arg("v_1"), py::arg("format") = "%.3", py::arg("flags") = 0
     );
-
 
     m.def("input_float3",    // imgui.h:569
         [](const char * label, BoxedFloat & v_0, BoxedFloat & v_1, BoxedFloat & v_2, const char * format = "%.3f", ImGuiInputTextFlags flags = 0)
@@ -2009,9 +1830,8 @@ void py_init_module_imgui(py::module& m)
 
             return InputFloat3_adapt_fixed_size_c_arrays(label, v_0, v_1, v_2, format, flags);
         },
-        py::arg("label"), py::arg("v_0"), py::arg("v_1"), py::arg("v_2"), py::arg("format") = "%.3f", py::arg("flags") = 0
+        py::arg("label"), py::arg("v_0"), py::arg("v_1"), py::arg("v_2"), py::arg("format") = "%.3", py::arg("flags") = 0
     );
-
 
     m.def("input_float4",    // imgui.h:570
         [](const char * label, BoxedFloat & v_0, BoxedFloat & v_1, BoxedFloat & v_2, BoxedFloat & v_3, const char * format = "%.3f", ImGuiInputTextFlags flags = 0)
@@ -2035,9 +1855,8 @@ void py_init_module_imgui(py::module& m)
 
             return InputFloat4_adapt_fixed_size_c_arrays(label, v_0, v_1, v_2, v_3, format, flags);
         },
-        py::arg("label"), py::arg("v_0"), py::arg("v_1"), py::arg("v_2"), py::arg("v_3"), py::arg("format") = "%.3f", py::arg("flags") = 0
+        py::arg("label"), py::arg("v_0"), py::arg("v_1"), py::arg("v_2"), py::arg("v_3"), py::arg("format") = "%.3", py::arg("flags") = 0
     );
-
 
     m.def("input_int",    // imgui.h:571
         [](const char * label, int * v, int step = 1, int step_fast = 100, ImGuiInputTextFlags flags = 0)
@@ -2046,7 +1865,6 @@ void py_init_module_imgui(py::module& m)
         },
         py::arg("label"), py::arg("v"), py::arg("step") = 1, py::arg("step_fast") = 100, py::arg("flags") = 0
     );
-
 
     m.def("input_int2",    // imgui.h:572
         [](const char * label, BoxedInt & v_0, BoxedInt & v_1, ImGuiInputTextFlags flags = 0)
@@ -2068,7 +1886,6 @@ void py_init_module_imgui(py::module& m)
         },
         py::arg("label"), py::arg("v_0"), py::arg("v_1"), py::arg("flags") = 0
     );
-
 
     m.def("input_int3",    // imgui.h:573
         [](const char * label, BoxedInt & v_0, BoxedInt & v_1, BoxedInt & v_2, ImGuiInputTextFlags flags = 0)
@@ -2092,7 +1909,6 @@ void py_init_module_imgui(py::module& m)
         },
         py::arg("label"), py::arg("v_0"), py::arg("v_1"), py::arg("v_2"), py::arg("flags") = 0
     );
-
 
     m.def("input_int4",    // imgui.h:574
         [](const char * label, BoxedInt & v_0, BoxedInt & v_1, BoxedInt & v_2, BoxedInt & v_3, ImGuiInputTextFlags flags = 0)
@@ -2119,33 +1935,29 @@ void py_init_module_imgui(py::module& m)
         py::arg("label"), py::arg("v_0"), py::arg("v_1"), py::arg("v_2"), py::arg("v_3"), py::arg("flags") = 0
     );
 
-
     m.def("input_double",    // imgui.h:575
         [](const char * label, double * v, double step = 0.0, double step_fast = 0.0, const char * format = "%.6f", ImGuiInputTextFlags flags = 0)
         {
             return InputDouble(label, v, step, step_fast, format, flags);
         },
-        py::arg("label"), py::arg("v"), py::arg("step") = 0.0, py::arg("step_fast") = 0.0, py::arg("format") = "%.6f", py::arg("flags") = 0
+        py::arg("label"), py::arg("v"), py::arg("step") = 0.0, py::arg("step_fast") = 0.0, py::arg("format") = "%.6", py::arg("flags") = 0
     );
-
 
     m.def("input_scalar",    // imgui.h:576
         [](const char * label, ImGuiDataType data_type, void * p_data, const void * p_step = NULL, const void * p_step_fast = NULL, const char * format = NULL, ImGuiInputTextFlags flags = 0)
         {
             return InputScalar(label, data_type, p_data, p_step, p_step_fast, format, flags);
         },
-        py::arg("label"), py::arg("data_type"), py::arg("p_data"), py::arg("p_step") = NULL, py::arg("p_step_fast") = NULL, py::arg("format") = NULL, py::arg("flags") = 0
+        py::arg("label"), py::arg("data_type"), py::arg("p_data"), py::arg("p_step") = None, py::arg("p_step_fast") = None, py::arg("format") = None, py::arg("flags") = 0
     );
-
 
     m.def("input_scalar_n",    // imgui.h:577
         [](const char * label, ImGuiDataType data_type, void * p_data, int components, const void * p_step = NULL, const void * p_step_fast = NULL, const char * format = NULL, ImGuiInputTextFlags flags = 0)
         {
             return InputScalarN(label, data_type, p_data, components, p_step, p_step_fast, format, flags);
         },
-        py::arg("label"), py::arg("data_type"), py::arg("p_data"), py::arg("components"), py::arg("p_step") = NULL, py::arg("p_step_fast") = NULL, py::arg("format") = NULL, py::arg("flags") = 0
+        py::arg("label"), py::arg("data_type"), py::arg("p_data"), py::arg("components"), py::arg("p_step") = None, py::arg("p_step_fast") = None, py::arg("format") = None, py::arg("flags") = 0
     );
-
 
     m.def("color_edit3",    // imgui.h:582
         [](const char * label, BoxedFloat & col_0, BoxedFloat & col_1, BoxedFloat & col_2, ImGuiColorEditFlags flags = 0)
@@ -2167,10 +1979,8 @@ void py_init_module_imgui(py::module& m)
 
             return ColorEdit3_adapt_fixed_size_c_arrays(label, col_0, col_1, col_2, flags);
         },
-        py::arg("label"), py::arg("col_0"), py::arg("col_1"), py::arg("col_2"), py::arg("flags") = 0,
-        "Widgets: Color Editor/Picker (tip: the ColorEdit* functions have a little color square that can be left-clicked to open a picker, and right-clicked to open an option menu.)\n- Note that in C++ a 'float v[X]' function argument is the _same_ as 'float* v', the array syntax is just a way to document the number of elements that are expected to be accessible.\n- You can pass the address of a first float element out of a contiguous structure, e.g. &myvector.x"
+        py::arg("label"), py::arg("col_0"), py::arg("col_1"), py::arg("col_2"), py::arg("flags") = 0
     );
-
 
     m.def("color_edit4",    // imgui.h:583
         [](const char * label, BoxedFloat & col_0, BoxedFloat & col_1, BoxedFloat & col_2, BoxedFloat & col_3, ImGuiColorEditFlags flags = 0)
@@ -2197,7 +2007,6 @@ void py_init_module_imgui(py::module& m)
         py::arg("label"), py::arg("col_0"), py::arg("col_1"), py::arg("col_2"), py::arg("col_3"), py::arg("flags") = 0
     );
 
-
     m.def("color_picker3",    // imgui.h:584
         [](const char * label, BoxedFloat & col_0, BoxedFloat & col_1, BoxedFloat & col_2, ImGuiColorEditFlags flags = 0)
         {
@@ -2221,7 +2030,6 @@ void py_init_module_imgui(py::module& m)
         py::arg("label"), py::arg("col_0"), py::arg("col_1"), py::arg("col_2"), py::arg("flags") = 0
     );
 
-
     m.def("color_picker4",    // imgui.h:585
         [](const char * label, BoxedFloat & col_0, BoxedFloat & col_1, BoxedFloat & col_2, BoxedFloat & col_3, ImGuiColorEditFlags flags = 0, const float * ref_col = NULL)
         {
@@ -2244,9 +2052,8 @@ void py_init_module_imgui(py::module& m)
 
             return ColorPicker4_adapt_fixed_size_c_arrays(label, col_0, col_1, col_2, col_3, flags, ref_col);
         },
-        py::arg("label"), py::arg("col_0"), py::arg("col_1"), py::arg("col_2"), py::arg("col_3"), py::arg("flags") = 0, py::arg("ref_col") = NULL
+        py::arg("label"), py::arg("col_0"), py::arg("col_1"), py::arg("col_2"), py::arg("col_3"), py::arg("flags") = 0, py::arg("ref_col") = None
     );
-
 
     m.def("color_button",    // imgui.h:586
         [](const char * desc_id, const ImVec4 & col, ImGuiColorEditFlags flags = 0, const ImVec2 & size = ImVec2(0, 0))
@@ -2257,7 +2064,6 @@ void py_init_module_imgui(py::module& m)
         "display a color square/button, hover for details, return true when pressed."
     );
 
-
     m.def("set_color_edit_options",    // imgui.h:587
         [](ImGuiColorEditFlags flags)
         {
@@ -2267,16 +2073,13 @@ void py_init_module_imgui(py::module& m)
         "initialize current options (generally on application startup) if you want to select a default format, picker type, etc. User will be able to change many settings, unless you pass the _NoOptions flag to your calls."
     );
 
-
     m.def("tree_node",    // imgui.h:591
         [](const char * label)
         {
             return TreeNode(label);
         },
-        py::arg("label"),
-        "Widgets: Trees\n- TreeNode functions return true when the node is open, in which case you need to also call TreePop() when you are finished displaying the tree node contents."
+        py::arg("label")
     );
-
 
     m.def("tree_node",    // imgui.h:592
         [](const char * str_id, const char * fmt)
@@ -2293,7 +2096,6 @@ void py_init_module_imgui(py::module& m)
         "helper variation to easily decorelate the id from the displayed string. Read the FAQ about why and how to use ID. to align arbitrary text at the same level as a TreeNode() you can use Bullet()."
     );
 
-
     m.def("tree_node",    // imgui.h:593
         [](const void * ptr_id, const char * fmt)
         {
@@ -2309,7 +2111,6 @@ void py_init_module_imgui(py::module& m)
         "\""
     );
 
-
     m.def("tree_node_ex",    // imgui.h:596
         [](const char * label, ImGuiTreeNodeFlags flags = 0)
         {
@@ -2317,7 +2118,6 @@ void py_init_module_imgui(py::module& m)
         },
         py::arg("label"), py::arg("flags") = 0
     );
-
 
     m.def("tree_node_ex",    // imgui.h:597
         [](const char * str_id, ImGuiTreeNodeFlags flags, const char * fmt)
@@ -2333,7 +2133,6 @@ void py_init_module_imgui(py::module& m)
         py::arg("str_id"), py::arg("flags"), py::arg("fmt")
     );
 
-
     m.def("tree_node_ex",    // imgui.h:598
         [](const void * ptr_id, ImGuiTreeNodeFlags flags, const char * fmt)
         {
@@ -2348,7 +2147,6 @@ void py_init_module_imgui(py::module& m)
         py::arg("ptr_id"), py::arg("flags"), py::arg("fmt")
     );
 
-
     m.def("tree_push",    // imgui.h:601
         [](const char * str_id)
         {
@@ -2358,16 +2156,14 @@ void py_init_module_imgui(py::module& m)
         "~ Indent()+PushId(). Already called by TreeNode() when returning true, but you can call TreePush/TreePop yourself if desired."
     );
 
-
     m.def("tree_push",    // imgui.h:602
         [](const void * ptr_id = NULL)
         {
             TreePush(ptr_id);
         },
-        py::arg("ptr_id") = NULL,
+        py::arg("ptr_id") = None,
         "\""
     );
-
 
     m.def("tree_pop",    // imgui.h:603
         []()
@@ -2377,7 +2173,6 @@ void py_init_module_imgui(py::module& m)
         "~ Unindent()+PopId()"
     );
 
-
     m.def("get_tree_node_to_label_spacing",    // imgui.h:604
         []()
         {
@@ -2385,7 +2180,6 @@ void py_init_module_imgui(py::module& m)
         },
         "horizontal distance preceding label when using TreeNode*() or Bullet() == (g.FontSize + style.FramePadding.x*2) for a regular unframed TreeNode"
     );
-
 
     m.def("collapsing_header",    // imgui.h:605
         [](const char * label, ImGuiTreeNodeFlags flags = 0)
@@ -2396,7 +2190,6 @@ void py_init_module_imgui(py::module& m)
         "if returning 'true' the header is open. doesn't indent nor push on ID stack. user doesn't have to call TreePop()."
     );
 
-
     m.def("collapsing_header",    // imgui.h:606
         [](const char * label, bool * p_visible, ImGuiTreeNodeFlags flags = 0)
         {
@@ -2405,7 +2198,6 @@ void py_init_module_imgui(py::module& m)
         py::arg("label"), py::arg("p_visible"), py::arg("flags") = 0,
         "when 'p_visible != NULL': if '*p_visible==true' display an additional small close button on upper right of the header which will set the bool to false when clicked, if '*p_visible==false' don't display the header."
     );
-
 
     m.def("set_next_item_open",    // imgui.h:607
         [](bool is_open, ImGuiCond cond = 0)
@@ -2416,16 +2208,14 @@ void py_init_module_imgui(py::module& m)
         "set next TreeNode/CollapsingHeader open state."
     );
 
-
     m.def("selectable",    // imgui.h:612
         [](const char * label, bool selected = false, ImGuiSelectableFlags flags = 0, const ImVec2 & size = ImVec2(0, 0))
         {
             return Selectable(label, selected, flags, size);
         },
-        py::arg("label"), py::arg("selected") = false, py::arg("flags") = 0, py::arg("size") = ImVec2(0, 0),
+        py::arg("label"), py::arg("selected") = False, py::arg("flags") = 0, py::arg("size") = ImVec2(0, 0),
         "\"bool selected\" carry the selection state (read-only). Selectable() is clicked is returns true so you can modify your selection state. size.x==0.0: use remaining width, size.x>0.0: specify width. size.y==0.0: use label height, size.y>0.0: specify height"
     );
-
 
     m.def("selectable",    // imgui.h:613
         [](const char * label, bool * p_selected, ImGuiSelectableFlags flags = 0, const ImVec2 & size = ImVec2(0, 0))
@@ -2436,7 +2226,6 @@ void py_init_module_imgui(py::module& m)
         "\"bool* p_selected\" point to the selection state (read-write), as a convenient helper."
     );
 
-
     m.def("begin_list_box",    // imgui.h:621
         [](const char * label, const ImVec2 & size = ImVec2(0, 0))
         {
@@ -2446,7 +2235,6 @@ void py_init_module_imgui(py::module& m)
         "open a framed scrolling region"
     );
 
-
     m.def("end_list_box",    // imgui.h:622
         []()
         {
@@ -2454,7 +2242,6 @@ void py_init_module_imgui(py::module& m)
         },
         "only call EndListBox() if BeginListBox() returned true!"
     );
-
 
     m.def("list_box",    // imgui.h:623
         [](const char * label, int * current_item, const std::vector<std::string> & items, int height_in_items = -1)
@@ -2474,7 +2261,6 @@ void py_init_module_imgui(py::module& m)
         },
         py::arg("label"), py::arg("current_item"), py::arg("items"), py::arg("height_in_items") = -1
     );
-
 
     m.def("plot_lines",    // imgui.h:628
         [](const char * label, const py::array & values, int values_offset = 0, const char * overlay_text = NULL, float scale_min = FLT_MAX, float scale_max = FLT_MAX, ImVec2 graph_size = ImVec2(0, 0), int stride = -1)
@@ -2504,10 +2290,8 @@ void py_init_module_imgui(py::module& m)
 
             PlotLines_adapt_c_buffers(label, values, values_offset, overlay_text, scale_min, scale_max, graph_size, stride);
         },
-        py::arg("label"), py::arg("values"), py::arg("values_offset") = 0, py::arg("overlay_text") = NULL, py::arg("scale_min") = FLT_MAX, py::arg("scale_max") = FLT_MAX, py::arg("graph_size") = ImVec2(0, 0), py::arg("stride") = -1,
-        "Widgets: Data Plotting\n- Consider using ImPlot (https://github.com/epezent/implot) which is much better!"
+        py::arg("label"), py::arg("values"), py::arg("values_offset") = 0, py::arg("overlay_text") = None, py::arg("scale_min") = sys.float_info.max, py::arg("scale_max") = sys.float_info.max, py::arg("graph_size") = ImVec2(0, 0), py::arg("stride") = -1
     );
-
 
     m.def("plot_histogram",    // imgui.h:630
         [](const char * label, const py::array & values, int values_offset = 0, const char * overlay_text = NULL, float scale_min = FLT_MAX, float scale_max = FLT_MAX, ImVec2 graph_size = ImVec2(0, 0), int stride = -1)
@@ -2537,19 +2321,16 @@ void py_init_module_imgui(py::module& m)
 
             PlotHistogram_adapt_c_buffers(label, values, values_offset, overlay_text, scale_min, scale_max, graph_size, stride);
         },
-        py::arg("label"), py::arg("values"), py::arg("values_offset") = 0, py::arg("overlay_text") = NULL, py::arg("scale_min") = FLT_MAX, py::arg("scale_max") = FLT_MAX, py::arg("graph_size") = ImVec2(0, 0), py::arg("stride") = -1
+        py::arg("label"), py::arg("values"), py::arg("values_offset") = 0, py::arg("overlay_text") = None, py::arg("scale_min") = sys.float_info.max, py::arg("scale_max") = sys.float_info.max, py::arg("graph_size") = ImVec2(0, 0), py::arg("stride") = -1
     );
-
 
     m.def("value",    // imgui.h:635
         [](const char * prefix, bool b)
         {
             Value(prefix, b);
         },
-        py::arg("prefix"), py::arg("b"),
-        "Widgets: Value() Helpers.\n- Those are merely shortcut to calling Text() with a format string. Output single value in \"name: value\" format (tip: freely declare more in your code to handle your types. you can add functions to the ImGui namespace)"
+        py::arg("prefix"), py::arg("b")
     );
-
 
     m.def("value",    // imgui.h:636
         [](const char * prefix, int v)
@@ -2559,7 +2340,6 @@ void py_init_module_imgui(py::module& m)
         py::arg("prefix"), py::arg("v")
     );
 
-
     m.def("value",    // imgui.h:637
         [](const char * prefix, unsigned int v)
         {
@@ -2568,15 +2348,13 @@ void py_init_module_imgui(py::module& m)
         py::arg("prefix"), py::arg("v")
     );
 
-
     m.def("value",    // imgui.h:638
         [](const char * prefix, float v, const char * float_format = NULL)
         {
             Value(prefix, v, float_format);
         },
-        py::arg("prefix"), py::arg("v"), py::arg("float_format") = NULL
+        py::arg("prefix"), py::arg("v"), py::arg("float_format") = None
     );
-
 
     m.def("begin_menu_bar",    // imgui.h:645
         []()
@@ -2586,7 +2364,6 @@ void py_init_module_imgui(py::module& m)
         "append to menu-bar of current window (requires ImGuiWindowFlags_MenuBar flag set on parent window)."
     );
 
-
     m.def("end_menu_bar",    // imgui.h:646
         []()
         {
@@ -2594,7 +2371,6 @@ void py_init_module_imgui(py::module& m)
         },
         "only call EndMenuBar() if BeginMenuBar() returns true!"
     );
-
 
     m.def("begin_main_menu_bar",    // imgui.h:647
         []()
@@ -2604,7 +2380,6 @@ void py_init_module_imgui(py::module& m)
         "create and append to a full screen menu-bar."
     );
 
-
     m.def("end_main_menu_bar",    // imgui.h:648
         []()
         {
@@ -2613,16 +2388,14 @@ void py_init_module_imgui(py::module& m)
         "only call EndMainMenuBar() if BeginMainMenuBar() returns true!"
     );
 
-
     m.def("begin_menu",    // imgui.h:649
         [](const char * label, bool enabled = true)
         {
             return BeginMenu(label, enabled);
         },
-        py::arg("label"), py::arg("enabled") = true,
+        py::arg("label"), py::arg("enabled") = True,
         "create a sub-menu entry. only call EndMenu() if this returns true!"
     );
-
 
     m.def("end_menu",    // imgui.h:650
         []()
@@ -2632,26 +2405,23 @@ void py_init_module_imgui(py::module& m)
         "only call EndMenu() if BeginMenu() returns true!"
     );
 
-
     m.def("menu_item",    // imgui.h:651
         [](const char * label, const char * shortcut = NULL, bool selected = false, bool enabled = true)
         {
             return MenuItem(label, shortcut, selected, enabled);
         },
-        py::arg("label"), py::arg("shortcut") = NULL, py::arg("selected") = false, py::arg("enabled") = true,
+        py::arg("label"), py::arg("shortcut") = None, py::arg("selected") = False, py::arg("enabled") = True,
         "return true when activated."
     );
-
 
     m.def("menu_item",    // imgui.h:652
         [](const char * label, const char * shortcut, bool * p_selected, bool enabled = true)
         {
             return MenuItem(label, shortcut, p_selected, enabled);
         },
-        py::arg("label"), py::arg("shortcut"), py::arg("p_selected"), py::arg("enabled") = true,
+        py::arg("label"), py::arg("shortcut"), py::arg("p_selected"), py::arg("enabled") = True,
         "return true when activated + toggle (*p_selected) if p_selected != NULL"
     );
-
 
     m.def("begin_tooltip",    // imgui.h:656
         []()
@@ -2661,14 +2431,12 @@ void py_init_module_imgui(py::module& m)
         "begin/append a tooltip window. to create full-featured tooltip (with any kind of items)."
     );
 
-
     m.def("end_tooltip",    // imgui.h:657
         []()
         {
             EndTooltip();
         }
     );
-
 
     m.def("set_tooltip",    // imgui.h:658
         [](const char * fmt)
@@ -2684,7 +2452,6 @@ void py_init_module_imgui(py::module& m)
         "set a text-only tooltip, typically use with ImGui::IsItemHovered(). override any previous call to SetTooltip()."
     );
 
-
     m.def("begin_popup",    // imgui.h:673
         [](const char * str_id, ImGuiWindowFlags flags = 0)
         {
@@ -2694,16 +2461,14 @@ void py_init_module_imgui(py::module& m)
         "return true if the popup is open, and you can start outputting to it."
     );
 
-
     m.def("begin_popup_modal",    // imgui.h:674
         [](const char * name, bool * p_open = NULL, ImGuiWindowFlags flags = 0)
         {
             return BeginPopupModal(name, p_open, flags);
         },
-        py::arg("name"), py::arg("p_open") = NULL, py::arg("flags") = 0,
+        py::arg("name"), py::arg("p_open") = None, py::arg("flags") = 0,
         "return true if the modal is open, and you can start outputting to it."
     );
-
 
     m.def("end_popup",    // imgui.h:675
         []()
@@ -2712,7 +2477,6 @@ void py_init_module_imgui(py::module& m)
         },
         "only call EndPopup() if BeginPopupXXX() returns true!"
     );
-
 
     m.def("open_popup",    // imgui.h:685
         [](const char * str_id, ImGuiPopupFlags popup_flags = 0)
@@ -2723,7 +2487,6 @@ void py_init_module_imgui(py::module& m)
         "call to mark popup as open (don't call every frame!)."
     );
 
-
     m.def("open_popup",    // imgui.h:686
         [](ImGuiID id, ImGuiPopupFlags popup_flags = 0)
         {
@@ -2733,16 +2496,14 @@ void py_init_module_imgui(py::module& m)
         "id overload to facilitate calling from nested stacks"
     );
 
-
     m.def("open_popup_on_item_click",    // imgui.h:687
         [](const char * str_id = NULL, ImGuiPopupFlags popup_flags = 1)
         {
             OpenPopupOnItemClick(str_id, popup_flags);
         },
-        py::arg("str_id") = NULL, py::arg("popup_flags") = 1,
+        py::arg("str_id") = None, py::arg("popup_flags") = 1,
         "helper to open popup when clicked on last item. Default to ImGuiPopupFlags_MouseButtonRight == 1. (note: actually triggers on the mouse _released_ event to be consistent with popup behaviors)"
     );
-
 
     m.def("close_current_popup",    // imgui.h:688
         []()
@@ -2752,36 +2513,32 @@ void py_init_module_imgui(py::module& m)
         "manually close the popup we have begin-ed into."
     );
 
-
     m.def("begin_popup_context_item",    // imgui.h:695
         [](const char * str_id = NULL, ImGuiPopupFlags popup_flags = 1)
         {
             return BeginPopupContextItem(str_id, popup_flags);
         },
-        py::arg("str_id") = NULL, py::arg("popup_flags") = 1,
+        py::arg("str_id") = None, py::arg("popup_flags") = 1,
         "open+begin popup when clicked on last item. Use str_id==NULL to associate the popup to previous item. If you want to use that on a non-interactive item such as Text() you need to pass in an explicit ID here. read comments in .cpp!"
     );
-
 
     m.def("begin_popup_context_window",    // imgui.h:696
         [](const char * str_id = NULL, ImGuiPopupFlags popup_flags = 1)
         {
             return BeginPopupContextWindow(str_id, popup_flags);
         },
-        py::arg("str_id") = NULL, py::arg("popup_flags") = 1,
+        py::arg("str_id") = None, py::arg("popup_flags") = 1,
         "open+begin popup when clicked on current window."
     );
-
 
     m.def("begin_popup_context_void",    // imgui.h:697
         [](const char * str_id = NULL, ImGuiPopupFlags popup_flags = 1)
         {
             return BeginPopupContextVoid(str_id, popup_flags);
         },
-        py::arg("str_id") = NULL, py::arg("popup_flags") = 1,
+        py::arg("str_id") = None, py::arg("popup_flags") = 1,
         "open+begin popup when clicked in void (where there are no windows)."
     );
-
 
     m.def("is_popup_open",    // imgui.h:703
         [](const char * str_id, ImGuiPopupFlags flags = 0)
@@ -2792,16 +2549,13 @@ void py_init_module_imgui(py::module& m)
         "return true if the popup is open."
     );
 
-
     m.def("begin_table",    // imgui.h:728
         [](const char * str_id, int column, ImGuiTableFlags flags = 0, const ImVec2 & outer_size = ImVec2(0.0f, 0.0f), float inner_width = 0.0f)
         {
             return BeginTable(str_id, column, flags, outer_size, inner_width);
         },
-        py::arg("str_id"), py::arg("column"), py::arg("flags") = 0, py::arg("outer_size") = ImVec2(0.0f, 0.0f), py::arg("inner_width") = 0.0f,
-        "Tables\n- Full-featured replacement for old Columns API.\n- See Demo->Tables for demo code. See top of imgui_tables.cpp for general commentary.\n- See ImGuiTableFlags_ and ImGuiTableColumnFlags_ enums for a description of available flags.\nThe typical call flow is:\n- 1. Call BeginTable(), early out if returning false.\n- 2. Optionally call TableSetupColumn() to submit column name/flags/defaults.\n- 3. Optionally call TableSetupScrollFreeze() to request scroll freezing of columns/rows.\n- 4. Optionally call TableHeadersRow() to submit a header row. Names are pulled from TableSetupColumn() data.\n- 5. Populate contents:\n- In most situations you can use TableNextRow() + TableSetColumnIndex(N) to start appending into a column.\n- If you are using tables as a sort of grid, where every columns is holding the same type of contents,\nyou may prefer using TableNextColumn() instead of TableNextRow() + TableSetColumnIndex().\nTableNextColumn() will automatically wrap-around into the next row if needed.\n- IMPORTANT: Comparatively to the old Columns() API, we need to call TableNextColumn() for the first column!\n- Summary of possible call flow:\n--------------------------------------------------------------------------------------------------------\nTableNextRow() -> TableSetColumnIndex(0) -> Text(\"Hello 0\") -> TableSetColumnIndex(1) -> Text(\"Hello 1\")  // OK\nTableNextRow() -> TableNextColumn()      -> Text(\"Hello 0\") -> TableNextColumn()      -> Text(\"Hello 1\")  // OK\nTableNextColumn()      -> Text(\"Hello 0\") -> TableNextColumn()      -> Text(\"Hello 1\")  // OK: TableNextColumn() automatically gets to next row!\nTableNextRow()                           -> Text(\"Hello 0\")                                               // Not OK! Missing TableSetColumnIndex() or TableNextColumn()! Text will not appear!\n--------------------------------------------------------------------------------------------------------\n- 5. Call EndTable()"
+        py::arg("str_id"), py::arg("column"), py::arg("flags") = 0, py::arg("outer_size") = ImVec2(0.0, 0.0), py::arg("inner_width") = 0.0
     );
-
 
     m.def("end_table",    // imgui.h:729
         []()
@@ -2811,16 +2565,14 @@ void py_init_module_imgui(py::module& m)
         "only call EndTable() if BeginTable() returns true!"
     );
 
-
     m.def("table_next_row",    // imgui.h:730
         [](ImGuiTableRowFlags row_flags = 0, float min_row_height = 0.0f)
         {
             TableNextRow(row_flags, min_row_height);
         },
-        py::arg("row_flags") = 0, py::arg("min_row_height") = 0.0f,
+        py::arg("row_flags") = 0, py::arg("min_row_height") = 0.0,
         "append into the first cell of a new row."
     );
-
 
     m.def("table_next_column",    // imgui.h:731
         []()
@@ -2829,7 +2581,6 @@ void py_init_module_imgui(py::module& m)
         },
         "append into the next column (or first column of next row if currently in last column). Return true when column is visible."
     );
-
 
     m.def("table_set_column_index",    // imgui.h:732
         [](int column_n)
@@ -2840,16 +2591,13 @@ void py_init_module_imgui(py::module& m)
         "append into the specified column. Return true when column is visible."
     );
 
-
     m.def("table_setup_column",    // imgui.h:742
         [](const char * label, ImGuiTableColumnFlags flags = 0, float init_width_or_weight = 0.0f, ImGuiID user_id = 0)
         {
             TableSetupColumn(label, flags, init_width_or_weight, user_id);
         },
-        py::arg("label"), py::arg("flags") = 0, py::arg("init_width_or_weight") = 0.0f, py::arg("user_id") = 0,
-        "Tables: Headers & Columns declaration\n- Use TableSetupColumn() to specify label, resizing policy, default width/weight, id, various other flags etc.\n- Use TableHeadersRow() to create a header row and automatically submit a TableHeader() for each column.\nHeaders are required to perform: reordering, sorting, and opening the context menu.\nThe context menu can also be made available in columns body using ImGuiTableFlags_ContextMenuInBody.\n- You may manually submit headers using TableNextRow() + TableHeader() calls, but this is only useful in\nsome advanced use cases (e.g. adding custom widgets in header row).\n- Use TableSetupScrollFreeze() to lock columns/rows so they stay visible when scrolled."
+        py::arg("label"), py::arg("flags") = 0, py::arg("init_width_or_weight") = 0.0, py::arg("user_id") = 0
     );
-
 
     m.def("table_setup_scroll_freeze",    // imgui.h:743
         [](int cols, int rows)
@@ -2860,7 +2608,6 @@ void py_init_module_imgui(py::module& m)
         "lock columns/rows so they stay visible when scrolled."
     );
 
-
     m.def("table_headers_row",    // imgui.h:744
         []()
         {
@@ -2868,7 +2615,6 @@ void py_init_module_imgui(py::module& m)
         },
         "submit all headers cells based on data provided to TableSetupColumn() + submit context menu"
     );
-
 
     m.def("table_header",    // imgui.h:745
         [](const char * label)
@@ -2879,7 +2625,6 @@ void py_init_module_imgui(py::module& m)
         "submit one header cell manually (rarely used)"
     );
 
-
     m.def("table_get_sort_specs",    // imgui.h:753
         []()
         {
@@ -2887,7 +2632,6 @@ void py_init_module_imgui(py::module& m)
         },
         "get latest sort specs for the table (NULL if not sorting).  Lifetime: don't hold on this pointer over multiple frames or past any subsequent call to BeginTable()."
     );
-
 
     m.def("table_get_column_count",    // imgui.h:754
         []()
@@ -2897,7 +2641,6 @@ void py_init_module_imgui(py::module& m)
         "return number of columns (value passed to BeginTable)"
     );
 
-
     m.def("table_get_column_index",    // imgui.h:755
         []()
         {
@@ -2906,7 +2649,6 @@ void py_init_module_imgui(py::module& m)
         "return current column index."
     );
 
-
     m.def("table_get_row_index",    // imgui.h:756
         []()
         {
@@ -2914,7 +2656,6 @@ void py_init_module_imgui(py::module& m)
         },
         "return current row index."
     );
-
 
     m.def("table_get_column_name",    // imgui.h:757
         [](int column_n = -1)
@@ -2925,7 +2666,6 @@ void py_init_module_imgui(py::module& m)
         "return \"\" if column didn't have a name declared by TableSetupColumn(). Pass -1 to use current column."
     );
 
-
     m.def("table_get_column_flags",    // imgui.h:758
         [](int column_n = -1)
         {
@@ -2934,7 +2674,6 @@ void py_init_module_imgui(py::module& m)
         py::arg("column_n") = -1,
         "return column flags so you can query their Enabled/Visible/Sorted/Hovered status flags. Pass -1 to use current column."
     );
-
 
     m.def("table_set_column_enabled",    // imgui.h:759
         [](int column_n, bool v)
@@ -2945,7 +2684,6 @@ void py_init_module_imgui(py::module& m)
         "change user accessible enabled/disabled state of a column. Set to false to hide the column. User can use the context menu to change this themselves (right-click in headers, or right-click in columns body with ImGuiTableFlags_ContextMenuInBody)"
     );
 
-
     m.def("table_set_bg_color",    // imgui.h:760
         [](ImGuiTableBgTarget target, ImU32 color, int column_n = -1)
         {
@@ -2955,16 +2693,13 @@ void py_init_module_imgui(py::module& m)
         "change the color of a cell, row, or column. See ImGuiTableBgTarget_ flags for details."
     );
 
-
     m.def("columns",    // imgui.h:764
         [](int count = 1, const char * id = NULL, bool border = true)
         {
             Columns(count, id, border);
         },
-        py::arg("count") = 1, py::arg("id") = NULL, py::arg("border") = true,
-        "Legacy Columns API (prefer using Tables!)\n- You can also use SameLine(pos_x) to mimic simplified columns."
+        py::arg("count") = 1, py::arg("id") = None, py::arg("border") = True
     );
-
 
     m.def("next_column",    // imgui.h:765
         []()
@@ -2974,7 +2709,6 @@ void py_init_module_imgui(py::module& m)
         "next column, defaults to current row or next row if the current row is finished"
     );
 
-
     m.def("get_column_index",    // imgui.h:766
         []()
         {
@@ -2982,7 +2716,6 @@ void py_init_module_imgui(py::module& m)
         },
         "get current column index"
     );
-
 
     m.def("get_column_width",    // imgui.h:767
         [](int column_index = -1)
@@ -2993,7 +2726,6 @@ void py_init_module_imgui(py::module& m)
         "get column width (in pixels). pass -1 to use current column"
     );
 
-
     m.def("set_column_width",    // imgui.h:768
         [](int column_index, float width)
         {
@@ -3002,7 +2734,6 @@ void py_init_module_imgui(py::module& m)
         py::arg("column_index"), py::arg("width"),
         "set column width (in pixels). pass -1 to use current column"
     );
-
 
     m.def("get_column_offset",    // imgui.h:769
         [](int column_index = -1)
@@ -3013,7 +2744,6 @@ void py_init_module_imgui(py::module& m)
         "get position of column line (in pixels, from the left side of the contents region). pass -1 to use current column, otherwise 0..GetColumnsCount() inclusive. column 0 is typically 0.0f"
     );
 
-
     m.def("set_column_offset",    // imgui.h:770
         [](int column_index, float offset_x)
         {
@@ -3023,14 +2753,12 @@ void py_init_module_imgui(py::module& m)
         "set position of column line (in pixels, from the left side of the contents region). pass -1 to use current column"
     );
 
-
     m.def("get_columns_count",    // imgui.h:771
         []()
         {
             return GetColumnsCount();
         }
     );
-
 
     m.def("begin_tab_bar",    // imgui.h:774
         [](const char * str_id, ImGuiTabBarFlags flags = 0)
@@ -3041,7 +2769,6 @@ void py_init_module_imgui(py::module& m)
         "create and append into a TabBar"
     );
 
-
     m.def("end_tab_bar",    // imgui.h:775
         []()
         {
@@ -3050,16 +2777,14 @@ void py_init_module_imgui(py::module& m)
         "only call EndTabBar() if BeginTabBar() returns true!"
     );
 
-
     m.def("begin_tab_item",    // imgui.h:776
         [](const char * label, bool * p_open = NULL, ImGuiTabItemFlags flags = 0)
         {
             return BeginTabItem(label, p_open, flags);
         },
-        py::arg("label"), py::arg("p_open") = NULL, py::arg("flags") = 0,
+        py::arg("label"), py::arg("p_open") = None, py::arg("flags") = 0,
         "create a Tab. Returns true if the Tab is selected."
     );
-
 
     m.def("end_tab_item",    // imgui.h:777
         []()
@@ -3068,7 +2793,6 @@ void py_init_module_imgui(py::module& m)
         },
         "only call EndTabItem() if BeginTabItem() returns true!"
     );
-
 
     m.def("tab_item_button",    // imgui.h:778
         [](const char * label, ImGuiTabItemFlags flags = 0)
@@ -3079,7 +2803,6 @@ void py_init_module_imgui(py::module& m)
         "create a Tab behaving like a button. return true when clicked. cannot be selected in the tab bar."
     );
 
-
     m.def("set_tab_item_closed",    // imgui.h:779
         [](const char * tab_or_docked_window_label)
         {
@@ -3088,7 +2811,6 @@ void py_init_module_imgui(py::module& m)
         py::arg("tab_or_docked_window_label"),
         "notify TabBar or Docking system of a closed tab/window ahead (useful to reduce visual flicker on reorderable tab bars). For tab-bar: call after BeginTabBar() and before Tab submissions. Otherwise call with a window name."
     );
-
 
     m.def("log_to_tty",    // imgui.h:783
         [](int auto_open_depth = -1)
@@ -3099,16 +2821,14 @@ void py_init_module_imgui(py::module& m)
         "start logging to tty (stdout)"
     );
 
-
     m.def("log_to_file",    // imgui.h:784
         [](int auto_open_depth = -1, const char * filename = NULL)
         {
             LogToFile(auto_open_depth, filename);
         },
-        py::arg("auto_open_depth") = -1, py::arg("filename") = NULL,
+        py::arg("auto_open_depth") = -1, py::arg("filename") = None,
         "start logging to file"
     );
-
 
     m.def("log_to_clipboard",    // imgui.h:785
         [](int auto_open_depth = -1)
@@ -3119,7 +2839,6 @@ void py_init_module_imgui(py::module& m)
         "start logging to OS clipboard"
     );
 
-
     m.def("log_finish",    // imgui.h:786
         []()
         {
@@ -3128,7 +2847,6 @@ void py_init_module_imgui(py::module& m)
         "stop logging (close file, etc.)"
     );
 
-
     m.def("log_buttons",    // imgui.h:787
         []()
         {
@@ -3136,7 +2854,6 @@ void py_init_module_imgui(py::module& m)
         },
         "helper to display buttons for logging to tty/file/clipboard"
     );
-
 
     m.def("log_text",    // imgui.h:788
         [](const char * fmt)
@@ -3152,7 +2869,6 @@ void py_init_module_imgui(py::module& m)
         "pass text data straight to log (without being displayed)"
     );
 
-
     m.def("begin_drag_drop_source",    // imgui.h:796
         [](ImGuiDragDropFlags flags = 0)
         {
@@ -3161,7 +2877,6 @@ void py_init_module_imgui(py::module& m)
         py::arg("flags") = 0,
         "call after submitting an item which may be dragged. when this return true, you can call SetDragDropPayload() + EndDragDropSource()"
     );
-
 
     m.def("set_drag_drop_payload",    // imgui.h:797
         [](const char * type, const void * data, size_t sz, ImGuiCond cond = 0)
@@ -3172,7 +2887,6 @@ void py_init_module_imgui(py::module& m)
         "type is a user defined string of maximum 32 characters. Strings starting with '_' are reserved for dear imgui internal types. Data is copied and held by imgui. Return true when payload has been accepted."
     );
 
-
     m.def("end_drag_drop_source",    // imgui.h:798
         []()
         {
@@ -3181,7 +2895,6 @@ void py_init_module_imgui(py::module& m)
         "only call EndDragDropSource() if BeginDragDropSource() returns true!"
     );
 
-
     m.def("begin_drag_drop_target",    // imgui.h:799
         []()
         {
@@ -3189,7 +2902,6 @@ void py_init_module_imgui(py::module& m)
         },
         "call after submitting an item that may receive a payload. If this returns true, you can call AcceptDragDropPayload() + EndDragDropTarget()"
     );
-
 
     m.def("accept_drag_drop_payload",    // imgui.h:800
         [](const char * type, ImGuiDragDropFlags flags = 0)
@@ -3200,7 +2912,6 @@ void py_init_module_imgui(py::module& m)
         "accept contents of a given type. If ImGuiDragDropFlags_AcceptBeforeDelivery is set you can peek into the payload before the mouse button is released."
     );
 
-
     m.def("end_drag_drop_target",    // imgui.h:801
         []()
         {
@@ -3208,7 +2919,6 @@ void py_init_module_imgui(py::module& m)
         },
         "only call EndDragDropTarget() if BeginDragDropTarget() returns true!"
     );
-
 
     m.def("get_drag_drop_payload",    // imgui.h:802
         []()
@@ -3218,16 +2928,13 @@ void py_init_module_imgui(py::module& m)
         "peek directly into the current payload from anywhere. may return NULL. use ImGuiPayload::IsDataType() to test for the payload type."
     );
 
-
     m.def("begin_disabled",    // imgui.h:808
         [](bool disabled = true)
         {
             BeginDisabled(disabled);
         },
-        py::arg("disabled") = true,
-        "Disabling [BETA API]\n- Disable all user interactions and dim items visuals (applying style.DisabledAlpha over current colors)\n- Those can be nested but it cannot be used to enable an already disabled section (a single BeginDisabled(true) in the stack is enough to keep everything disabled)\n- BeginDisabled(false) essentially does nothing useful but is provided to facilitate use of boolean expressions. If you can avoid calling BeginDisabled(False)/EndDisabled() best to avoid it."
+        py::arg("disabled") = True
     );
-
 
     m.def("end_disabled",    // imgui.h:809
         []()
@@ -3236,16 +2943,13 @@ void py_init_module_imgui(py::module& m)
         }
     );
 
-
     m.def("push_clip_rect",    // imgui.h:813
         [](const ImVec2 & clip_rect_min, const ImVec2 & clip_rect_max, bool intersect_with_current_clip_rect)
         {
             PushClipRect(clip_rect_min, clip_rect_max, intersect_with_current_clip_rect);
         },
-        py::arg("clip_rect_min"), py::arg("clip_rect_max"), py::arg("intersect_with_current_clip_rect"),
-        "Clipping\n- Mouse hovering is affected by ImGui::PushClipRect() calls, unlike direct calls to ImDrawList::PushClipRect() which are render only."
+        py::arg("clip_rect_min"), py::arg("clip_rect_max"), py::arg("intersect_with_current_clip_rect")
     );
-
 
     m.def("pop_clip_rect",    // imgui.h:814
         []()
@@ -3254,7 +2958,6 @@ void py_init_module_imgui(py::module& m)
         }
     );
 
-
     m.def("set_item_default_focus",    // imgui.h:818
         []()
         {
@@ -3262,7 +2965,6 @@ void py_init_module_imgui(py::module& m)
         },
         "make last item the default focused item of a window."
     );
-
 
     m.def("set_keyboard_focus_here",    // imgui.h:819
         [](int offset = 0)
@@ -3273,7 +2975,6 @@ void py_init_module_imgui(py::module& m)
         "focus keyboard on the next widget. Use positive 'offset' to access sub components of a multiple component widget. Use -1 to access previous widget."
     );
 
-
     m.def("is_item_hovered",    // imgui.h:824
         [](ImGuiHoveredFlags flags = 0)
         {
@@ -3283,7 +2984,6 @@ void py_init_module_imgui(py::module& m)
         "is the last item hovered? (and usable, aka not blocked by a popup, etc.). See ImGuiHoveredFlags for more options."
     );
 
-
     m.def("is_item_active",    // imgui.h:825
         []()
         {
@@ -3292,7 +2992,6 @@ void py_init_module_imgui(py::module& m)
         "is the last item active? (e.g. button being held, text field being edited. This will continuously return true while holding mouse button on an item. Items that don't interact will always return false)"
     );
 
-
     m.def("is_item_focused",    // imgui.h:826
         []()
         {
@@ -3300,7 +2999,6 @@ void py_init_module_imgui(py::module& m)
         },
         "is the last item focused for keyboard/gamepad navigation?"
     );
-
 
     m.def("is_item_clicked",    // imgui.h:827
         [](ImGuiMouseButton mouse_button = 0)
@@ -3311,7 +3009,6 @@ void py_init_module_imgui(py::module& m)
         "is the last item hovered and mouse clicked on? (**)  == IsMouseClicked(mouse_button) && IsItemHovered()Important. (**) this it NOT equivalent to the behavior of e.g. Button(). Read comments in function definition."
     );
 
-
     m.def("is_item_visible",    // imgui.h:828
         []()
         {
@@ -3319,7 +3016,6 @@ void py_init_module_imgui(py::module& m)
         },
         "is the last item visible? (items may be out of sight because of clipping/scrolling)"
     );
-
 
     m.def("is_item_edited",    // imgui.h:829
         []()
@@ -3329,7 +3025,6 @@ void py_init_module_imgui(py::module& m)
         "did the last item modify its underlying value this frame? or was pressed? This is generally the same as the \"bool\" return value of many widgets."
     );
 
-
     m.def("is_item_activated",    // imgui.h:830
         []()
         {
@@ -3337,7 +3032,6 @@ void py_init_module_imgui(py::module& m)
         },
         "was the last item just made active (item was previously inactive)."
     );
-
 
     m.def("is_item_deactivated",    // imgui.h:831
         []()
@@ -3347,7 +3041,6 @@ void py_init_module_imgui(py::module& m)
         "was the last item just made inactive (item was previously active). Useful for Undo/Redo patterns with widgets that requires continuous editing."
     );
 
-
     m.def("is_item_deactivated_after_edit",    // imgui.h:832
         []()
         {
@@ -3355,7 +3048,6 @@ void py_init_module_imgui(py::module& m)
         },
         "was the last item just made inactive and made a value change when it was active? (e.g. Slider/Drag moved). Useful for Undo/Redo patterns with widgets that requires continuous editing. Note that you may get false positives (some widgets such as Combo()/ListBox()/Selectable() will return true even when clicking an already selected item)."
     );
-
 
     m.def("is_item_toggled_open",    // imgui.h:833
         []()
@@ -3365,7 +3057,6 @@ void py_init_module_imgui(py::module& m)
         "was the last item open state toggled? set by TreeNode()."
     );
 
-
     m.def("is_any_item_hovered",    // imgui.h:834
         []()
         {
@@ -3373,7 +3064,6 @@ void py_init_module_imgui(py::module& m)
         },
         "is any item hovered?"
     );
-
 
     m.def("is_any_item_active",    // imgui.h:835
         []()
@@ -3383,7 +3073,6 @@ void py_init_module_imgui(py::module& m)
         "is any item active?"
     );
 
-
     m.def("is_any_item_focused",    // imgui.h:836
         []()
         {
@@ -3391,7 +3080,6 @@ void py_init_module_imgui(py::module& m)
         },
         "is any item focused?"
     );
-
 
     m.def("get_item_rect_min",    // imgui.h:837
         []()
@@ -3401,7 +3089,6 @@ void py_init_module_imgui(py::module& m)
         "get upper-left bounding rectangle of the last item (screen space)"
     );
 
-
     m.def("get_item_rect_max",    // imgui.h:838
         []()
         {
@@ -3409,7 +3096,6 @@ void py_init_module_imgui(py::module& m)
         },
         "get lower-right bounding rectangle of the last item (screen space)"
     );
-
 
     m.def("get_item_rect_size",    // imgui.h:839
         []()
@@ -3419,7 +3105,6 @@ void py_init_module_imgui(py::module& m)
         "get size of last item"
     );
 
-
     m.def("set_item_allow_overlap",    // imgui.h:840
         []()
         {
@@ -3427,7 +3112,6 @@ void py_init_module_imgui(py::module& m)
         },
         "allow last item to be overlapped by a subsequent item. sometimes useful with invisible buttons, selectables, etc. to catch unused area."
     );
-
 
     m.def("get_main_viewport",    // imgui.h:846
         []()
@@ -3437,7 +3121,6 @@ void py_init_module_imgui(py::module& m)
         "return primary/default viewport. This can never be NULL."
     );
 
-
     m.def("get_background_draw_list",    // imgui.h:849
         []()
         {
@@ -3446,7 +3129,6 @@ void py_init_module_imgui(py::module& m)
         "this draw list will be the first rendered one. Useful to quickly draw shapes/text behind dear imgui contents."
     );
 
-
     m.def("get_foreground_draw_list",    // imgui.h:850
         []()
         {
@@ -3454,7 +3136,6 @@ void py_init_module_imgui(py::module& m)
         },
         "this draw list will be the last rendered one. Useful to quickly draw shapes/text over dear imgui contents."
     );
-
 
     m.def("is_rect_visible",    // imgui.h:853
         [](const ImVec2 & size)
@@ -3465,7 +3146,6 @@ void py_init_module_imgui(py::module& m)
         "test if rectangle (of given size, starting from cursor position) is visible / not clipped."
     );
 
-
     m.def("is_rect_visible",    // imgui.h:854
         [](const ImVec2 & rect_min, const ImVec2 & rect_max)
         {
@@ -3475,7 +3155,6 @@ void py_init_module_imgui(py::module& m)
         "test if rectangle (in screen space) is visible / not clipped. to perform coarse clipping on user's side."
     );
 
-
     m.def("get_time",    // imgui.h:855
         []()
         {
@@ -3483,7 +3162,6 @@ void py_init_module_imgui(py::module& m)
         },
         "get global imgui time. incremented by io.DeltaTime every frame."
     );
-
 
     m.def("get_frame_count",    // imgui.h:856
         []()
@@ -3493,7 +3171,6 @@ void py_init_module_imgui(py::module& m)
         "get global imgui frame count. incremented by 1 every frame."
     );
 
-
     m.def("get_draw_list_shared_data",    // imgui.h:857
         []()
         {
@@ -3501,7 +3178,6 @@ void py_init_module_imgui(py::module& m)
         },
         "you may use this when creating your own ImDrawList instances."
     );
-
 
     m.def("get_style_color_name",    // imgui.h:858
         [](ImGuiCol idx)
@@ -3512,7 +3188,6 @@ void py_init_module_imgui(py::module& m)
         "get a string corresponding to the enum value (for display, saving, etc.)."
     );
 
-
     m.def("set_state_storage",    // imgui.h:859
         [](ImGuiStorage * storage)
         {
@@ -3522,14 +3197,12 @@ void py_init_module_imgui(py::module& m)
         "replace current window storage with our own (if you want to manipulate it yourself, typically clear subsection of it)"
     );
 
-
     m.def("get_state_storage",    // imgui.h:860
         []()
         {
             return GetStateStorage();
         }
     );
-
 
     m.def("begin_child_frame",    // imgui.h:861
         [](ImGuiID id, const ImVec2 & size, ImGuiWindowFlags flags = 0)
@@ -3540,7 +3213,6 @@ void py_init_module_imgui(py::module& m)
         "helper to create a child window / scrolling region that looks like a normal widget frame"
     );
 
-
     m.def("end_child_frame",    // imgui.h:862
         []()
         {
@@ -3549,35 +3221,30 @@ void py_init_module_imgui(py::module& m)
         "always call EndChildFrame() regardless of BeginChildFrame() return values (which indicates a collapsed/clipped window)"
     );
 
-
     m.def("calc_text_size",    // imgui.h:865
         [](const char * text, const char * text_end = NULL, bool hide_text_after_double_hash = false, float wrap_width = -1.0f)
         {
             return CalcTextSize(text, text_end, hide_text_after_double_hash, wrap_width);
         },
-        py::arg("text"), py::arg("text_end") = NULL, py::arg("hide_text_after_double_hash") = false, py::arg("wrap_width") = -1.0f,
+        py::arg("text"), py::arg("text_end") = None, py::arg("hide_text_after_double_hash") = False, py::arg("wrap_width") = -1.0,
         "Text Utilities"
     );
-
 
     m.def("color_convert_u32_to_float4",    // imgui.h:868
         [](ImU32 in)
         {
             return ColorConvertU32ToFloat4(in);
         },
-        py::arg("in"),
-        "Color Utilities"
+        py::arg("in_")
     );
-
 
     m.def("color_convert_float4_to_u32",    // imgui.h:869
         [](const ImVec4 & in)
         {
             return ColorConvertFloat4ToU32(in);
         },
-        py::arg("in")
+        py::arg("in_")
     );
-
 
     m.def("color_convert_hs_vto_rgb",    // imgui.h:871
         [](float h, float s, float v, float & out_r, float & out_g, float & out_b)
@@ -3586,7 +3253,6 @@ void py_init_module_imgui(py::module& m)
         },
         py::arg("h"), py::arg("s"), py::arg("v"), py::arg("out_r"), py::arg("out_g"), py::arg("out_b")
     );
-
 
     m.def("is_key_down",    // imgui.h:879
         [](ImGuiKey key)
@@ -3597,16 +3263,14 @@ void py_init_module_imgui(py::module& m)
         "is key being held."
     );
 
-
     m.def("is_key_pressed",    // imgui.h:880
         [](ImGuiKey key, bool repeat = true)
         {
             return IsKeyPressed(key, repeat);
         },
-        py::arg("key"), py::arg("repeat") = true,
+        py::arg("key"), py::arg("repeat") = True,
         "was key pressed (went from !Down to Down)? if repeat=true, uses io.KeyRepeatDelay / KeyRepeatRate"
     );
-
 
     m.def("is_key_released",    // imgui.h:881
         [](ImGuiKey key)
@@ -3617,7 +3281,6 @@ void py_init_module_imgui(py::module& m)
         "was key released (went from Down to !Down)?"
     );
 
-
     m.def("get_key_pressed_amount",    // imgui.h:882
         [](ImGuiKey key, float repeat_delay, float rate)
         {
@@ -3626,7 +3289,6 @@ void py_init_module_imgui(py::module& m)
         py::arg("key"), py::arg("repeat_delay"), py::arg("rate"),
         "uses provided repeat rate/delay. return a count, most often 0 or 1 but might be >1 if RepeatRate is small enough that DeltaTime > RepeatRate"
     );
-
 
     m.def("get_key_name",    // imgui.h:883
         [](ImGuiKey key)
@@ -3637,7 +3299,6 @@ void py_init_module_imgui(py::module& m)
         "[DEBUG] returns English name of the key. Those names a provided for debugging purpose and are not meant to be saved persistently not compared."
     );
 
-
     m.def("set_next_frame_want_capture_keyboard",    // imgui.h:884
         [](bool want_capture_keyboard)
         {
@@ -3646,7 +3307,6 @@ void py_init_module_imgui(py::module& m)
         py::arg("want_capture_keyboard"),
         "Override io.WantCaptureKeyboard flag next frame (said flag is left for your application to handle, typically when true it instructs your app to ignore inputs). e.g. force capture keyboard when your widget is being hovered. This is equivalent to setting \"io.WantCaptureKeyboard = want_capture_keyboard\"; after the next NewFrame() call."
     );
-
 
     m.def("is_mouse_down",    // imgui.h:890
         [](ImGuiMouseButton button)
@@ -3657,16 +3317,14 @@ void py_init_module_imgui(py::module& m)
         "is mouse button held?"
     );
 
-
     m.def("is_mouse_clicked",    // imgui.h:891
         [](ImGuiMouseButton button, bool repeat = false)
         {
             return IsMouseClicked(button, repeat);
         },
-        py::arg("button"), py::arg("repeat") = false,
+        py::arg("button"), py::arg("repeat") = False,
         "did mouse button clicked? (went from !Down to Down). Same as GetMouseClickedCount() == 1."
     );
-
 
     m.def("is_mouse_released",    // imgui.h:892
         [](ImGuiMouseButton button)
@@ -3677,7 +3335,6 @@ void py_init_module_imgui(py::module& m)
         "did mouse button released? (went from Down to !Down)"
     );
 
-
     m.def("is_mouse_double_clicked",    // imgui.h:893
         [](ImGuiMouseButton button)
         {
@@ -3686,7 +3343,6 @@ void py_init_module_imgui(py::module& m)
         py::arg("button"),
         "did mouse button double-clicked? Same as GetMouseClickedCount() == 2. (note that a double-click will also report IsMouseClicked() == true)"
     );
-
 
     m.def("get_mouse_clicked_count",    // imgui.h:894
         [](ImGuiMouseButton button)
@@ -3697,26 +3353,23 @@ void py_init_module_imgui(py::module& m)
         "return the number of successive mouse-clicks at the time where a click happen (otherwise 0)."
     );
 
-
     m.def("is_mouse_hovering_rect",    // imgui.h:895
         [](const ImVec2 & r_min, const ImVec2 & r_max, bool clip = true)
         {
             return IsMouseHoveringRect(r_min, r_max, clip);
         },
-        py::arg("r_min"), py::arg("r_max"), py::arg("clip") = true,
+        py::arg("r_min"), py::arg("r_max"), py::arg("clip") = True,
         "is mouse hovering given bounding rect (in screen space). clipped by current clipping settings, but disregarding of other consideration of focus/window ordering/popup-block."
     );
-
 
     m.def("is_mouse_pos_valid",    // imgui.h:896
         [](const ImVec2 * mouse_pos = NULL)
         {
             return IsMousePosValid(mouse_pos);
         },
-        py::arg("mouse_pos") = NULL,
+        py::arg("mouse_pos") = None,
         "by convention we use (-FLT_MAX,-FLT_MAX) to denote that there is no mouse available"
     );
-
 
     m.def("is_any_mouse_down",    // imgui.h:897
         []()
@@ -3726,7 +3379,6 @@ void py_init_module_imgui(py::module& m)
         "[WILL OBSOLETE] is any mouse button held? This was designed for backends, but prefer having backend maintain a mask of held mouse buttons, because upcoming input queue system will make this invalid."
     );
 
-
     m.def("get_mouse_pos",    // imgui.h:898
         []()
         {
@@ -3734,7 +3386,6 @@ void py_init_module_imgui(py::module& m)
         },
         "shortcut to ImGui::GetIO().MousePos provided by user, to be consistent with other calls"
     );
-
 
     m.def("get_mouse_pos_on_opening_current_popup",    // imgui.h:899
         []()
@@ -3744,26 +3395,23 @@ void py_init_module_imgui(py::module& m)
         "retrieve mouse position at the time of opening popup we have BeginPopup() into (helper to avoid user backing that value themselves)"
     );
 
-
     m.def("is_mouse_dragging",    // imgui.h:900
         [](ImGuiMouseButton button, float lock_threshold = -1.0f)
         {
             return IsMouseDragging(button, lock_threshold);
         },
-        py::arg("button"), py::arg("lock_threshold") = -1.0f,
+        py::arg("button"), py::arg("lock_threshold") = -1.0,
         "is mouse dragging? (if lock_threshold < -1.0f, uses io.MouseDraggingThreshold)"
     );
-
 
     m.def("get_mouse_drag_delta",    // imgui.h:901
         [](ImGuiMouseButton button = 0, float lock_threshold = -1.0f)
         {
             return GetMouseDragDelta(button, lock_threshold);
         },
-        py::arg("button") = 0, py::arg("lock_threshold") = -1.0f,
+        py::arg("button") = 0, py::arg("lock_threshold") = -1.0,
         "return the delta from the initial clicking position while the mouse button is pressed or was just released. This is locked and return 0.0f until the mouse moves past a distance threshold at least once (if lock_threshold < -1.0f, uses io.MouseDraggingThreshold)"
     );
-
 
     m.def("reset_mouse_drag_delta",    // imgui.h:902
         [](ImGuiMouseButton button = 0)
@@ -3773,7 +3421,6 @@ void py_init_module_imgui(py::module& m)
         py::arg("button") = 0
     );
 
-
     m.def("get_mouse_cursor",    // imgui.h:903
         []()
         {
@@ -3781,7 +3428,6 @@ void py_init_module_imgui(py::module& m)
         },
         "get desired cursor type, reset in ImGui::NewFrame(), this is updated during the frame. valid before Render(). If you use software rendering by setting io.MouseDrawCursor ImGui will render those for you"
     );
-
 
     m.def("set_mouse_cursor",    // imgui.h:904
         [](ImGuiMouseCursor cursor_type)
@@ -3792,7 +3438,6 @@ void py_init_module_imgui(py::module& m)
         "set desired cursor type"
     );
 
-
     m.def("set_next_frame_want_capture_mouse",    // imgui.h:905
         [](bool want_capture_mouse)
         {
@@ -3802,15 +3447,12 @@ void py_init_module_imgui(py::module& m)
         "Override io.WantCaptureMouse flag next frame (said flag is left for your application to handle, typical when true it instucts your app to ignore inputs). This is equivalent to setting \"io.WantCaptureMouse = want_capture_mouse;\" after the next NewFrame() call."
     );
 
-
     m.def("get_clipboard_text",    // imgui.h:909
         []()
         {
             return GetClipboardText();
-        },
-        "Clipboard Utilities\n- Also see the LogToClipboard() function to capture GUI into clipboard, or easily output text data to the clipboard."
+        }
     );
-
 
     m.def("set_clipboard_text",    // imgui.h:910
         [](const char * text)
@@ -3819,7 +3461,6 @@ void py_init_module_imgui(py::module& m)
         },
         py::arg("text")
     );
-
 
     m.def("load_ini_settings_from_disk",    // imgui.h:916
         [](const char * ini_filename)
@@ -3830,7 +3471,6 @@ void py_init_module_imgui(py::module& m)
         "call after CreateContext() and before the first call to NewFrame(). NewFrame() automatically calls LoadIniSettingsFromDisk(io.IniFilename)."
     );
 
-
     m.def("load_ini_settings_from_memory",    // imgui.h:917
         [](const char * ini_data, size_t ini_size = 0)
         {
@@ -3839,7 +3479,6 @@ void py_init_module_imgui(py::module& m)
         py::arg("ini_data"), py::arg("ini_size") = 0,
         "call after CreateContext() and before the first call to NewFrame() to provide .ini data from your own data source."
     );
-
 
     m.def("save_ini_settings_to_disk",    // imgui.h:918
         [](const char * ini_filename)
@@ -3850,26 +3489,22 @@ void py_init_module_imgui(py::module& m)
         "this is automatically called (if io.IniFilename is not empty) a few seconds after any modification that should be reflected in the .ini file (and also by DestroyContext)."
     );
 
-
     m.def("save_ini_settings_to_memory",    // imgui.h:919
         [](size_t * out_ini_size = NULL)
         {
             return SaveIniSettingsToMemory(out_ini_size);
         },
-        py::arg("out_ini_size") = NULL,
+        py::arg("out_ini_size") = None,
         "return a zero-terminated string with the .ini data which you can save by your own mean. call when io.WantSaveIniSettings is set, then save data by your own mean and clear io.WantSaveIniSettings."
     );
-
 
     m.def("debug_text_encoding",    // imgui.h:922
         [](const char * text)
         {
             DebugTextEncoding(text);
         },
-        py::arg("text"),
-        "Debug Utilities"
+        py::arg("text")
     );
-
 
     m.def("debug_check_version_and_data_layout",    // imgui.h:923
         [](const char * version_str, size_t sz_io, size_t sz_style, size_t sz_vec2, size_t sz_vec4, size_t sz_drawvert, size_t sz_drawidx)
@@ -3879,8 +3514,8 @@ void py_init_module_imgui(py::module& m)
         py::arg("version_str"), py::arg("sz_io"), py::arg("sz_style"), py::arg("sz_vec2"), py::arg("sz_vec4"), py::arg("sz_drawvert"), py::arg("sz_drawidx"),
         "This is called by IMGUI_CHECKVERSION() macro."
     );
-
     // </namespace ImGui>
+
 
 
     py::enum_<ImGuiWindowFlags_>(m, "ImGuiWindowFlags_", py::arithmetic(), "Flags for ImGui::Begin()")    // imgui.h:941
@@ -3908,15 +3543,14 @@ void py_init_module_imgui(py::module& m)
         .value("no_nav", ImGuiWindowFlags_NoNav, "")
         .value("no_decoration", ImGuiWindowFlags_NoDecoration, "")
         .value("no_inputs", ImGuiWindowFlags_NoInputs, "")
-        // _SRCML_EMPTY_LINE_
-        // [Internal]
         .value("nav_flattened", ImGuiWindowFlags_NavFlattened, "[BETA] On child window: allow gamepad/keyboard navigation to cross over parent border to this child or between sibling child windows.")
         .value("child_window", ImGuiWindowFlags_ChildWindow, "Don't use! For internal use by BeginChild()")
         .value("tooltip", ImGuiWindowFlags_Tooltip, "Don't use! For internal use by BeginTooltip()")
         .value("popup", ImGuiWindowFlags_Popup, "Don't use! For internal use by BeginPopup()")
         .value("modal", ImGuiWindowFlags_Modal, "Don't use! For internal use by BeginPopupModal()")
-        .value("child_menu", ImGuiWindowFlags_ChildMenu, "Don't use! For internal use by BeginMenu()")
-    ;    // ImGuiWindowFlags_ResizeFromAnySide    = 1 << 17,  // [Obsolete] --> Set io.ConfigWindowsResizeFromEdges=true and make sure mouse cursors are supported by backend (io.BackendFlags & ImGuiBackendFlags_HasMouseCursors)
+        .value("child_menu", ImGuiWindowFlags_ChildMenu, "Don't use! For internal use by BeginMenu()");
+
+
 
     py::enum_<ImGuiInputTextFlags_>(m, "ImGuiInputTextFlags_", py::arithmetic(), "Flags for ImGui::InputText()")    // imgui.h:979
         .value("none", ImGuiInputTextFlags_None, "")
@@ -3939,10 +3573,9 @@ void py_init_module_imgui(py::module& m)
         .value("no_undo_redo", ImGuiInputTextFlags_NoUndoRedo, "Disable undo/redo. Note that input text owns the text data while active, if you want to provide your own undo/redo stack you need e.g. to call ClearActiveID().")
         .value("chars_scientific", ImGuiInputTextFlags_CharsScientific, "Allow 0123456789.+-*/eE (Scientific notation input)")
         .value("callback_resize", ImGuiInputTextFlags_CallbackResize, "Callback on buffer capacity changes request (beyond 'buf_size' parameter value), allowing the string to grow. Notify when the string wants to be resized (for string types which hold a cache of their Size). You will be provided a new BufSize in the callback and NEED to honor it. (see misc/cpp/imgui_stdlib.h for an example of using this)")
-        .value("callback_edit", ImGuiInputTextFlags_CallbackEdit, "")
-        // Callback on any edit (note that InputText() already returns true on edit, the callback is useful mainly to manipulate the underlying buffer while focus is active)
-        // _SRCML_EMPTY_LINE_
-    ;    // Obsolete names (will be removed soon)
+        .value("callback_edit", ImGuiInputTextFlags_CallbackEdit, "");
+
+
 
     py::enum_<ImGuiTreeNodeFlags_>(m, "ImGuiTreeNodeFlags_", py::arithmetic(), "Flags for ImGui::TreeNodeEx(), ImGui::CollapsingHeader()")    // imgui.h:1010
         .value("none", ImGuiTreeNodeFlags_None, "")
@@ -3962,7 +3595,9 @@ void py_init_module_imgui(py::module& m)
         .value("nav_left_jumps_back_here", ImGuiTreeNodeFlags_NavLeftJumpsBackHere, "(WIP) Nav: left direction may move to this TreeNode() from any of its child (items submitted between TreeNode and TreePop)")
         .value("collapsing_header", ImGuiTreeNodeFlags_CollapsingHeader, "ImGuiTreeNodeFlags_NoScrollOnOpen     = 1 << 14,  // FIXME: TODO: Disable automatic scroll on TreePop() if node got just open and contents is not visible");
 
-    py::enum_<ImGuiPopupFlags_>(m, "ImGuiPopupFlags_", py::arithmetic(), "Flags for OpenPopup(), BeginPopupContext(), IsPopupOpen() functions.\n- To be backward compatible with older API which took an 'int mouse_button = 1' argument, we need to treat\nsmall flags values as a mouse button index, so we encode the mouse button in the first few bits of the flags.\nIt is therefore guaranteed to be legal to pass a mouse button index in ImGuiPopupFlags.\n- For the same reason, we exceptionally default the ImGuiPopupFlags argument of BeginPopupContextXXX functions to 1 instead of 0.\nIMPORTANT: because the default parameter is 1 (==ImGuiPopupFlags_MouseButtonRight), if you rely on the default parameter\nand want to another another flag, you need to pass in the ImGuiPopupFlags_MouseButtonRight flag.\n- Multiple buttons currently cannot be combined/or-ed in those functions (we could allow it later).")    // imgui.h:1039
+
+
+    py::enum_<ImGuiPopupFlags_>(m, "ImGuiPopupFlags_", py::arithmetic(), " Flags for OpenPopup(), BeginPopupContext(), IsPopupOpen() functions.\n - To be backward compatible with older API which took an 'int mouse_button = 1' argument, we need to treat\n   small flags values as a mouse button index, so we encode the mouse button in the first few bits of the flags.\n   It is therefore guaranteed to be legal to pass a mouse button index in ImGuiPopupFlags.\n - For the same reason, we exceptionally default the ImGuiPopupFlags argument of BeginPopupContextXXX functions to 1 instead of 0.\n   IMPORTANT: because the default parameter is 1 (==ImGuiPopupFlags_MouseButtonRight), if you rely on the default parameter\n   and want to another another flag, you need to pass in the ImGuiPopupFlags_MouseButtonRight flag.\n - Multiple buttons currently cannot be combined/or-ed in those functions (we could allow it later).")    // imgui.h:1039
         .value("none", ImGuiPopupFlags_None, "")
         .value("mouse_button_left", ImGuiPopupFlags_MouseButtonLeft, "For BeginPopupContext*(): open on Left Mouse release. Guaranteed to always be == 0 (same as ImGuiMouseButton_Left)")
         .value("mouse_button_right", ImGuiPopupFlags_MouseButtonRight, "For BeginPopupContext*(): open on Right Mouse release. Guaranteed to always be == 1 (same as ImGuiMouseButton_Right)")
@@ -3975,6 +3610,8 @@ void py_init_module_imgui(py::module& m)
         .value("any_popup_level", ImGuiPopupFlags_AnyPopupLevel, "For IsPopupOpen(): search/test at any level of the popup stack (default test in the current level)")
         .value("any_popup", ImGuiPopupFlags_AnyPopup, "");
 
+
+
     py::enum_<ImGuiSelectableFlags_>(m, "ImGuiSelectableFlags_", py::arithmetic(), "Flags for ImGui::Selectable()")    // imgui.h:1055
         .value("none", ImGuiSelectableFlags_None, "")
         .value("dont_close_popups", ImGuiSelectableFlags_DontClosePopups, "Clicking this don't close parent popup window")
@@ -3982,6 +3619,8 @@ void py_init_module_imgui(py::module& m)
         .value("allow_double_click", ImGuiSelectableFlags_AllowDoubleClick, "Generate press events on double clicks too")
         .value("disabled", ImGuiSelectableFlags_Disabled, "Cannot be selected, display grayed out text")
         .value("allow_item_overlap", ImGuiSelectableFlags_AllowItemOverlap, "(WIP) Hit testing to allow subsequent widgets to overlap this one");
+
+
 
     py::enum_<ImGuiComboFlags_>(m, "ImGuiComboFlags_", py::arithmetic(), "Flags for ImGui::BeginCombo()")    // imgui.h:1066
         .value("none", ImGuiComboFlags_None, "")
@@ -3993,6 +3632,8 @@ void py_init_module_imgui(py::module& m)
         .value("no_arrow_button", ImGuiComboFlags_NoArrowButton, "Display on the preview box without the square arrow button")
         .value("no_preview", ImGuiComboFlags_NoPreview, "Display only a square arrow button")
         .value("height_mask_", ImGuiComboFlags_HeightMask_, "");
+
+
 
     py::enum_<ImGuiTabBarFlags_>(m, "ImGuiTabBarFlags_", py::arithmetic(), "Flags for ImGui::BeginTabBar()")    // imgui.h:1080
         .value("none", ImGuiTabBarFlags_None, "")
@@ -4007,6 +3648,8 @@ void py_init_module_imgui(py::module& m)
         .value("fitting_policy_mask_", ImGuiTabBarFlags_FittingPolicyMask_, "")
         .value("fitting_policy_default_", ImGuiTabBarFlags_FittingPolicyDefault_, "");
 
+
+
     py::enum_<ImGuiTabItemFlags_>(m, "ImGuiTabItemFlags_", py::arithmetic(), "Flags for ImGui::BeginTabItem()")    // imgui.h:1096
         .value("none", ImGuiTabItemFlags_None, "")
         .value("unsaved_document", ImGuiTabItemFlags_UnsavedDocument, "Display a dot next to the title + tab is selected when clicking the X + closure is not assumed (will wait for user to stop submitting the tab). Otherwise closure is assumed when pressing the X, so if you keep submitting the tab may reappear at end of tab bar.")
@@ -4018,15 +3661,16 @@ void py_init_module_imgui(py::module& m)
         .value("leading", ImGuiTabItemFlags_Leading, "Enforce the tab position to the left of the tab bar (after the tab list popup button)")
         .value("trailing", ImGuiTabItemFlags_Trailing, "Enforce the tab position to the right of the tab bar (before the scrolling buttons)");
 
-    py::enum_<ImGuiTableFlags_>(m, "ImGuiTableFlags_", py::arithmetic(), "Flags for ImGui::BeginTable()\n- Important! Sizing policies have complex and subtle side effects, much more so than you would expect.\nRead comments/demos carefully + experiment with live demos to get acquainted with them.\n- The DEFAULT sizing policies are:\n- Default to ImGuiTableFlags_SizingFixedFit    if ScrollX is on, or if host window has ImGuiWindowFlags_AlwaysAutoResize.\n- Default to ImGuiTableFlags_SizingStretchSame if ScrollX is off.\n- When ScrollX is off:\n- Table defaults to ImGuiTableFlags_SizingStretchSame -> all Columns defaults to ImGuiTableColumnFlags_WidthStretch with same weight.\n- Columns sizing policy allowed: Stretch (default), Fixed/Auto.\n- Fixed Columns (if any) will generally obtain their requested width (unless the table cannot fit them all).\n- Stretch Columns will share the remaining width according to their respective weight.\n- Mixed Fixed/Stretch columns is possible but has various side-effects on resizing behaviors.\nThe typical use of mixing sizing policies is: any number of LEADING Fixed columns, followed by one or two TRAILING Stretch columns.\n(this is because the visible order of columns have subtle but necessary effects on how they react to manual resizing).\n- When ScrollX is on:\n- Table defaults to ImGuiTableFlags_SizingFixedFit -> all Columns defaults to ImGuiTableColumnFlags_WidthFixed\n- Columns sizing policy allowed: Fixed/Auto mostly.\n- Fixed Columns can be enlarged as needed. Table will show an horizontal scrollbar if needed.\n- When using auto-resizing (non-resizable) fixed columns, querying the content width to use item right-alignment e.g. SetNextItemWidth(-sys.float_info.min) doesn't make sense, would create a feedback loop.\n- Using Stretch columns OFTEN DOES NOT MAKE SENSE if ScrollX is on, UNLESS you have specified a value for 'inner_width' in BeginTable().\nIf you specify a value for 'inner_width' then effectively the scrolling space is known and Stretch or mixed Fixed/Stretch columns become meaningful again.\n- Read on documentation at the top of imgui_tables.cpp for details.")    // imgui.h:1131
-        .value("none", ImGuiTableFlags_None, "Features")
+
+
+    py::enum_<ImGuiTableFlags_>(m, "ImGuiTableFlags_", py::arithmetic(), " Flags for ImGui::BeginTable()\n - Important! Sizing policies have complex and subtle side effects, much more so than you would expect.\n   Read comments/demos carefully + experiment with live demos to get acquainted with them.\n - The DEFAULT sizing policies are:\n    - Default to ImGuiTableFlags_SizingFixedFit    if ScrollX is on, or if host window has ImGuiWindowFlags_AlwaysAutoResize.\n    - Default to ImGuiTableFlags_SizingStretchSame if ScrollX is off.\n - When ScrollX is off:\n    - Table defaults to ImGuiTableFlags_SizingStretchSame -> all Columns defaults to ImGuiTableColumnFlags_WidthStretch with same weight.\n    - Columns sizing policy allowed: Stretch (default), Fixed/Auto.\n    - Fixed Columns (if any) will generally obtain their requested width (unless the table cannot fit them all).\n    - Stretch Columns will share the remaining width according to their respective weight.\n    - Mixed Fixed/Stretch columns is possible but has various side-effects on resizing behaviors.\n      The typical use of mixing sizing policies is: any number of LEADING Fixed columns, followed by one or two TRAILING Stretch columns.\n      (this is because the visible order of columns have subtle but necessary effects on how they react to manual resizing).\n - When ScrollX is on:\n    - Table defaults to ImGuiTableFlags_SizingFixedFit -> all Columns defaults to ImGuiTableColumnFlags_WidthFixed\n    - Columns sizing policy allowed: Fixed/Auto mostly.\n    - Fixed Columns can be enlarged as needed. Table will show an horizontal scrollbar if needed.\n    - When using auto-resizing (non-resizable) fixed columns, querying the content width to use item right-alignment e.g. SetNextItemWidth(-sys.float_info.min) doesn't make sense, would create a feedback loop.\n    - Using Stretch columns OFTEN DOES NOT MAKE SENSE if ScrollX is on, UNLESS you have specified a value for 'inner_width' in BeginTable().\n      If you specify a value for 'inner_width' then effectively the scrolling space is known and Stretch or mixed Fixed/Stretch columns become meaningful again.\n - Read on documentation at the top of imgui_tables.cpp for details.")    // imgui.h:1131
+        .value("none", ImGuiTableFlags_None, "")
         .value("resizable", ImGuiTableFlags_Resizable, "Enable resizing columns.")
         .value("reorderable", ImGuiTableFlags_Reorderable, "Enable reordering columns in header row (need calling TableSetupColumn() + TableHeadersRow() to display headers)")
         .value("hideable", ImGuiTableFlags_Hideable, "Enable hiding/disabling columns in context menu.")
         .value("sortable", ImGuiTableFlags_Sortable, "Enable sorting. Call TableGetSortSpecs() to obtain sort specs. Also see ImGuiTableFlags_SortMulti and ImGuiTableFlags_SortTristate.")
         .value("no_saved_settings", ImGuiTableFlags_NoSavedSettings, "Disable persisting columns order, width and sort settings in the .ini file.")
         .value("context_menu_in_body", ImGuiTableFlags_ContextMenuInBody, "Right-click on columns body/contents will display table context menu. By default it is available in TableHeadersRow().")
-        // Decorations
         .value("row_bg", ImGuiTableFlags_RowBg, "Set each RowBg color with ImGuiCol_TableRowBg or ImGuiCol_TableRowBgAlt (equivalent of calling TableSetBgColor with ImGuiTableBgFlags_RowBg0 on each row manually)")
         .value("borders_inner_h", ImGuiTableFlags_BordersInnerH, "Draw horizontal borders between rows.")
         .value("borders_outer_h", ImGuiTableFlags_BordersOuterH, "Draw horizontal borders at the top and bottom.")
@@ -4039,35 +3683,28 @@ void py_init_module_imgui(py::module& m)
         .value("borders", ImGuiTableFlags_Borders, "Draw all borders.")
         .value("no_borders_in_body", ImGuiTableFlags_NoBordersInBody, "[ALPHA] Disable vertical borders in columns Body (borders will always appears in Headers). -> May move to style")
         .value("no_borders_in_body_until_resize", ImGuiTableFlags_NoBordersInBodyUntilResize, "[ALPHA] Disable vertical borders in columns Body until hovered for resize (borders will always appears in Headers). -> May move to style")
-        // Sizing Policy (read above for defaults)
         .value("sizing_fixed_fit", ImGuiTableFlags_SizingFixedFit, "Columns default to _WidthFixed or _WidthAuto (if resizable or not resizable), matching contents width.")
         .value("sizing_fixed_same", ImGuiTableFlags_SizingFixedSame, "Columns default to _WidthFixed or _WidthAuto (if resizable or not resizable), matching the maximum contents width of all columns. Implicitly enable ImGuiTableFlags_NoKeepColumnsVisible.")
         .value("sizing_stretch_prop", ImGuiTableFlags_SizingStretchProp, "Columns default to _WidthStretch with default weights proportional to each columns contents widths.")
         .value("sizing_stretch_same", ImGuiTableFlags_SizingStretchSame, "Columns default to _WidthStretch with default weights all equal, unless overridden by TableSetupColumn().")
-        // Sizing Extra Options
         .value("no_host_extend_x", ImGuiTableFlags_NoHostExtendX, "Make outer width auto-fit to columns, overriding outer_size.x value. Only available when ScrollX/ScrollY are disabled and Stretch columns are not used.")
         .value("no_host_extend_y", ImGuiTableFlags_NoHostExtendY, "Make outer height stop exactly at outer_size.y (prevent auto-extending table past the limit). Only available when ScrollX/ScrollY are disabled. Data below the limit will be clipped and not visible.")
         .value("no_keep_columns_visible", ImGuiTableFlags_NoKeepColumnsVisible, "Disable keeping column always minimally visible when ScrollX is off and table gets too small. Not recommended if columns are resizable.")
         .value("precise_widths", ImGuiTableFlags_PreciseWidths, "Disable distributing remainder width to stretched columns (width allocation on a 100-wide table with 3 columns: Without this flag: 33,33,34. With this flag: 33,33,33). With larger number of columns, resizing will appear to be less smooth.")
-        // Clipping
         .value("no_clip", ImGuiTableFlags_NoClip, "Disable clipping rectangle for every individual columns (reduce draw command count, items will be able to overflow into other columns). Generally incompatible with TableSetupScrollFreeze().")
-        // Padding
         .value("pad_outer_x", ImGuiTableFlags_PadOuterX, "Default if BordersOuterV is on. Enable outer-most padding. Generally desirable if you have headers.")
         .value("no_pad_outer_x", ImGuiTableFlags_NoPadOuterX, "Default if BordersOuterV is off. Disable outer-most padding.")
         .value("no_pad_inner_x", ImGuiTableFlags_NoPadInnerX, "Disable inner padding between columns (double inner padding if BordersOuterV is on, single inner padding if BordersOuterV is off).")
-        // Scrolling
         .value("scroll_x", ImGuiTableFlags_ScrollX, "Enable horizontal scrolling. Require 'outer_size' parameter of BeginTable() to specify the container size. Changes default sizing policy. Because this create a child window, ScrollY is currently generally recommended when using ScrollX.")
         .value("scroll_y", ImGuiTableFlags_ScrollY, "Enable vertical scrolling. Require 'outer_size' parameter of BeginTable() to specify the container size.")
-        // Sorting
         .value("sort_multi", ImGuiTableFlags_SortMulti, "Hold shift when clicking headers to sort on multiple column. TableGetSortSpecs() may return specs where (SpecsCount > 1).")
         .value("sort_tristate", ImGuiTableFlags_SortTristate, "Allow no sorting, disable default sorting. TableGetSortSpecs() may return specs where (SpecsCount == 0).")
-        // _SRCML_EMPTY_LINE_
-        .value("sizing_mask_", ImGuiTableFlags_SizingMask_, "[Internal] Combinations and masks")
-        // _SRCML_EMPTY_LINE_
-    ;    // Obsolete names (will be removed soon)
+        .value("sizing_mask_", ImGuiTableFlags_SizingMask_, "[Internal] Combinations and masks");
+
+
 
     py::enum_<ImGuiTableColumnFlags_>(m, "ImGuiTableColumnFlags_", py::arithmetic(), "Flags for ImGui::TableSetupColumn()")    // imgui.h:1188
-        .value("none", ImGuiTableColumnFlags_None, "Input configuration flags")
+        .value("none", ImGuiTableColumnFlags_None, "")
         .value("disabled", ImGuiTableColumnFlags_Disabled, "Overriding/master disable flag: hide column, won't show in context menu (unlike calling TableSetColumnEnabled() which manipulates the user accessible state)")
         .value("default_hide", ImGuiTableColumnFlags_DefaultHide, "Default as a hidden/disabled column.")
         .value("default_sort", ImGuiTableColumnFlags_DefaultSort, "Default as a sorting column.")
@@ -4086,30 +3723,30 @@ void py_init_module_imgui(py::module& m)
         .value("prefer_sort_descending", ImGuiTableColumnFlags_PreferSortDescending, "Make the initial sort direction Descending when first sorting on this column.")
         .value("indent_enable", ImGuiTableColumnFlags_IndentEnable, "Use current Indent value when entering cell (default for column 0).")
         .value("indent_disable", ImGuiTableColumnFlags_IndentDisable, "Ignore current Indent value when entering cell (default for columns > 0). Indentation changes _within_ the cell will still be honored.")
-        // _SRCML_EMPTY_LINE_
-        // Output status flags, read-only via TableGetColumnFlags()
         .value("is_enabled", ImGuiTableColumnFlags_IsEnabled, "Status: is enabled == not hidden by user/api (referred to as \"Hide\" in _DefaultHide and _NoHide) flags.")
         .value("is_visible", ImGuiTableColumnFlags_IsVisible, "Status: is visible == is enabled AND not clipped by scrolling.")
         .value("is_sorted", ImGuiTableColumnFlags_IsSorted, "Status: is currently part of the sort specs")
         .value("is_hovered", ImGuiTableColumnFlags_IsHovered, "Status: is hovered by mouse")
-        // _SRCML_EMPTY_LINE_
-        .value("width_mask_", ImGuiTableColumnFlags_WidthMask_, "[Internal] Combinations and masks")
+        .value("width_mask_", ImGuiTableColumnFlags_WidthMask_, "")
         .value("indent_mask_", ImGuiTableColumnFlags_IndentMask_, "")
         .value("status_mask_", ImGuiTableColumnFlags_StatusMask_, "")
-        .value("no_direct_resize_", ImGuiTableColumnFlags_NoDirectResize_, "")
-        // [Internal] Disable user resizing this column directly (it may however we resized indirectly from its left edge)
-        // _SRCML_EMPTY_LINE_
-    ;    // Obsolete names (will be removed soon)
+        .value("no_direct_resize_", ImGuiTableColumnFlags_NoDirectResize_, "");
+
+
 
     py::enum_<ImGuiTableRowFlags_>(m, "ImGuiTableRowFlags_", py::arithmetic(), "Flags for ImGui::TableNextRow()")    // imgui.h:1230
         .value("none", ImGuiTableRowFlags_None, "")
         .value("headers", ImGuiTableRowFlags_Headers, "Identify header row (set default background color + width of its contents accounted differently for auto column width)");
 
-    py::enum_<ImGuiTableBgTarget_>(m, "ImGuiTableBgTarget_", py::arithmetic(), "Enum for ImGui::TableSetBgColor()\nBackground colors are rendering in 3 layers:\n- Layer 0: draw with RowBg0 color if set, otherwise draw with ColumnBg0 if set.\n- Layer 1: draw with RowBg1 color if set, otherwise draw with ColumnBg1 if set.\n- Layer 2: draw with CellBg color if set.\nThe purpose of the two row/columns layers is to let you decide if a background color changes should override or blend with the existing color.\nWhen using ImGuiTableFlags_RowBg on the table, each row has the RowBg0 color automatically set for odd/even rows.\nIf you set the color of RowBg0 target, your color will override the existing RowBg0 color.\nIf you set the color of RowBg1 or ColumnBg1 target, your color will blend over the RowBg0 color.")    // imgui.h:1245
+
+
+    py::enum_<ImGuiTableBgTarget_>(m, "ImGuiTableBgTarget_", py::arithmetic(), " Enum for ImGui::TableSetBgColor()\n Background colors are rendering in 3 layers:\n  - Layer 0: draw with RowBg0 color if set, otherwise draw with ColumnBg0 if set.\n  - Layer 1: draw with RowBg1 color if set, otherwise draw with ColumnBg1 if set.\n  - Layer 2: draw with CellBg color if set.\n The purpose of the two row/columns layers is to let you decide if a background color changes should override or blend with the existing color.\n When using ImGuiTableFlags_RowBg on the table, each row has the RowBg0 color automatically set for odd/even rows.\n If you set the color of RowBg0 target, your color will override the existing RowBg0 color.\n If you set the color of RowBg1 or ColumnBg1 target, your color will blend over the RowBg0 color.")    // imgui.h:1245
         .value("none", ImGuiTableBgTarget_None, "")
         .value("row_bg0", ImGuiTableBgTarget_RowBg0, "Set row background color 0 (generally used for background, automatically set when ImGuiTableFlags_RowBg is used)")
         .value("row_bg1", ImGuiTableBgTarget_RowBg1, "Set row background color 1 (generally used for selection marking)")
         .value("cell_bg", ImGuiTableBgTarget_CellBg, "Set cell background color (top-most color)");
+
+
 
     py::enum_<ImGuiFocusedFlags_>(m, "ImGuiFocusedFlags_", py::arithmetic(), "Flags for ImGui::IsWindowFocused()")    // imgui.h:1254
         .value("none", ImGuiFocusedFlags_None, "")
@@ -4119,15 +3756,15 @@ void py_init_module_imgui(py::module& m)
         .value("no_popup_hierarchy", ImGuiFocusedFlags_NoPopupHierarchy, "Do not consider popup hierarchy (do not treat popup emitter as parent of popup) (when used with _ChildWindows or _RootWindow)")
         .value("root_and_child_windows", ImGuiFocusedFlags_RootAndChildWindows, "ImGuiFocusedFlags_DockHierarchy               = 1 << 4,   // Consider docking hierarchy (treat dockspace host as parent of docked window) (when used with _ChildWindows or _RootWindow)");
 
-    py::enum_<ImGuiHoveredFlags_>(m, "ImGuiHoveredFlags_", py::arithmetic(), "Flags for ImGui::IsItemHovered(), ImGui::IsWindowHovered()\nNote: if you are trying to check whether your mouse should be dispatched to Dear ImGui or to your app, you should use 'io.WantCaptureMouse' instead! Please read the FAQ!\nNote: windows with the ImGuiWindowFlags_NoInputs flag are ignored by IsWindowHovered() calls.")    // imgui.h:1268
+
+
+    py::enum_<ImGuiHoveredFlags_>(m, "ImGuiHoveredFlags_", py::arithmetic(), " Flags for ImGui::IsItemHovered(), ImGui::IsWindowHovered()\n Note: if you are trying to check whether your mouse should be dispatched to Dear ImGui or to your app, you should use 'io.WantCaptureMouse' instead! Please read the FAQ!\n Note: windows with the ImGuiWindowFlags_NoInputs flag are ignored by IsWindowHovered() calls.")    // imgui.h:1268
         .value("none", ImGuiHoveredFlags_None, "Return true if directly over the item/window, not obstructed by another window, not obstructed by an active popup or modal blocking inputs under them.")
         .value("child_windows", ImGuiHoveredFlags_ChildWindows, "IsWindowHovered() only: Return true if any children of the window is hovered")
         .value("root_window", ImGuiHoveredFlags_RootWindow, "IsWindowHovered() only: Test from root window (top most parent of the current hierarchy)")
         .value("any_window", ImGuiHoveredFlags_AnyWindow, "IsWindowHovered() only: Return true if any window is hovered")
         .value("no_popup_hierarchy", ImGuiHoveredFlags_NoPopupHierarchy, "IsWindowHovered() only: Do not consider popup hierarchy (do not treat popup emitter as parent of popup) (when used with _ChildWindows or _RootWindow)")
-        // ImGuiHoveredFlags_DockHierarchy               = 1 << 4,   // IsWindowHovered() only: Consider docking hierarchy (treat dockspace host as parent of docked window) (when used with _ChildWindows or _RootWindow)
         .value("allow_when_blocked_by_popup", ImGuiHoveredFlags_AllowWhenBlockedByPopup, "Return true even if a popup window is normally blocking access to this item/window")
-        // ImGuiHoveredFlags_AllowWhenBlockedByModal     = 1 << 6,   // Return true even if a modal popup window is normally blocking access to this item/window. FIXME-TODO: Unavailable yet.
         .value("allow_when_blocked_by_active_item", ImGuiHoveredFlags_AllowWhenBlockedByActiveItem, "Return true even if an active item is blocking access to this item/window. Useful for Drag and Drop patterns.")
         .value("allow_when_overlapped", ImGuiHoveredFlags_AllowWhenOverlapped, "IsItemHovered() only: Return true even if the position is obstructed or overlapped by another window")
         .value("allow_when_disabled", ImGuiHoveredFlags_AllowWhenDisabled, "IsItemHovered() only: Return true even if the item is disabled")
@@ -4135,20 +3772,22 @@ void py_init_module_imgui(py::module& m)
         .value("rect_only", ImGuiHoveredFlags_RectOnly, "")
         .value("root_and_child_windows", ImGuiHoveredFlags_RootAndChildWindows, "");
 
+
+
     py::enum_<ImGuiDragDropFlags_>(m, "ImGuiDragDropFlags_", py::arithmetic(), "Flags for ImGui::BeginDragDropSource(), ImGui::AcceptDragDropPayload()")    // imgui.h:1287
         .value("none", ImGuiDragDropFlags_None, "")
-        // BeginDragDropSource() flags
         .value("source_no_preview_tooltip", ImGuiDragDropFlags_SourceNoPreviewTooltip, "By default, a successful call to BeginDragDropSource opens a tooltip so you can display a preview or description of the source contents. This flag disable this behavior.")
         .value("source_no_disable_hover", ImGuiDragDropFlags_SourceNoDisableHover, "By default, when dragging we clear data so that IsItemHovered() will return false, to avoid subsequent user code submitting tooltips. This flag disable this behavior so you can still call IsItemHovered() on the source item.")
         .value("source_no_hold_to_open_others", ImGuiDragDropFlags_SourceNoHoldToOpenOthers, "Disable the behavior that allows to open tree nodes and collapsing header by holding over them while dragging a source item.")
         .value("source_allow_null_id", ImGuiDragDropFlags_SourceAllowNullID, "Allow items such as Text(), Image() that have no unique identifier to be used as drag source, by manufacturing a temporary identifier based on their window-relative position. This is extremely unusual within the dear imgui ecosystem and so we made it explicit.")
         .value("source_extern", ImGuiDragDropFlags_SourceExtern, "External source (from outside of dear imgui), won't attempt to read current item/window info. Will always return true. Only one Extern source can be active simultaneously.")
         .value("source_auto_expire_payload", ImGuiDragDropFlags_SourceAutoExpirePayload, "Automatically expire the payload if the source cease to be submitted (otherwise payloads are persisting while being dragged)")
-        // AcceptDragDropPayload() flags
         .value("accept_before_delivery", ImGuiDragDropFlags_AcceptBeforeDelivery, "AcceptDragDropPayload() will returns true even before the mouse button is released. You can then call IsDelivery() to test if the payload needs to be delivered.")
         .value("accept_no_draw_default_rect", ImGuiDragDropFlags_AcceptNoDrawDefaultRect, "Do not draw the default highlight rectangle when hovering over target.")
         .value("accept_no_preview_tooltip", ImGuiDragDropFlags_AcceptNoPreviewTooltip, "Request hiding the BeginDragDropSource tooltip from the BeginDragDropTarget site.")
         .value("accept_peek_only", ImGuiDragDropFlags_AcceptPeekOnly, "For peeking ahead and inspecting the payload before delivery.");
+
+
 
     py::enum_<ImGuiDataType_>(m, "ImGuiDataType_", py::arithmetic(), "A primary data type")    // imgui.h:1309
         .value("s8", ImGuiDataType_S8, "signed char / char (with sensible compilers)")
@@ -4163,6 +3802,8 @@ void py_init_module_imgui(py::module& m)
         .value("double", ImGuiDataType_Double, "double")
         .value("count", ImGuiDataType_COUNT, "");
 
+
+
     py::enum_<ImGuiDir_>(m, "ImGuiDir_", py::arithmetic(), "A cardinal direction")    // imgui.h:1325
         .value("none", ImGuiDir_None, "")
         .value("left", ImGuiDir_Left, "")
@@ -4171,13 +3812,17 @@ void py_init_module_imgui(py::module& m)
         .value("down", ImGuiDir_Down, "")
         .value("count", ImGuiDir_COUNT, "");
 
+
+
     py::enum_<ImGuiSortDirection_>(m, "ImGuiSortDirection_", py::arithmetic(), "A sorting direction")    // imgui.h:1336
         .value("none", ImGuiSortDirection_None, "")
         .value("ascending", ImGuiSortDirection_Ascending, "Ascending = 0->9, A->Z etc.")
         .value("descending", ImGuiSortDirection_Descending, "Descending = 9->0, Z->A etc.");
 
-    py::enum_<ImGuiKey_>(m, "ImGuiKey_", py::arithmetic(), "Keys value 0 to 511 are left unused as legacy native/opaque key values (< 1.87)\nKeys value >= 512 are named keys (>= 1.87)")    // imgui.h:1345
-        .value("none", ImGuiKey_None, "Keyboard")
+
+
+    py::enum_<ImGuiKey_>(m, "ImGuiKey_", py::arithmetic(), " Keys value 0 to 511 are left unused as legacy native/opaque key values (< 1.87)\n Keys value >= 512 are named keys (>= 1.87)")    // imgui.h:1345
+        .value("none", ImGuiKey_None, "")
         .value("tab", ImGuiKey_Tab, "== ImGuiKey_NamedKey_BEGIN")
         .value("left_arrow", ImGuiKey_LeftArrow, "")
         .value("right_arrow", ImGuiKey_RightArrow, "")
@@ -4283,8 +3928,6 @@ void py_init_module_imgui(py::module& m)
         .value("keypad_add", ImGuiKey_KeypadAdd, "")
         .value("keypad_enter", ImGuiKey_KeypadEnter, "")
         .value("keypad_equal", ImGuiKey_KeypadEqual, "")
-        // _SRCML_EMPTY_LINE_
-        // Gamepad (some of those are analog values, 0.0f to 1.0f)                              // NAVIGATION action
         .value("gamepad_start", ImGuiKey_GamepadStart, "Menu (Xbox)          + (Switch)   Start/Options (PS) // --")
         .value("gamepad_back", ImGuiKey_GamepadBack, "View (Xbox)          - (Switch)   Share (PS)         // --")
         .value("gamepad_face_up", ImGuiKey_GamepadFaceUp, "Y (Xbox)             X (Switch)   Triangle (PS)      // -> ImGuiNavInput_Input")
@@ -4309,19 +3952,16 @@ void py_init_module_imgui(py::module& m)
         .value("gamepad_r_stick_down", ImGuiKey_GamepadRStickDown, "[Analog]")
         .value("gamepad_r_stick_left", ImGuiKey_GamepadRStickLeft, "[Analog]")
         .value("gamepad_r_stick_right", ImGuiKey_GamepadRStickRight, "[Analog]")
-        // _SRCML_EMPTY_LINE_
-        .value("mod_ctrl", ImGuiKey_ModCtrl, "Keyboard Modifiers (explicitly submitted by backend via AddKeyEvent() calls)\n- This is mirroring the data also written to io.KeyCtrl, io.KeyShift, io.KeyAlt, io.KeySuper, in a format allowing\nthem to be accessed via standard key API, allowing calls such as IsKeyPressed(), IsKeyReleased(), querying duration etc.\n- Code polling every keys (e.g. an interface to detect a key press for input mapping) might want to ignore those\nand prefer using the real keys (e.g. ImGuiKey_LeftCtrl, ImGuiKey_RightCtrl instead of ImGuiKey_ModCtrl).\n- In theory the value of keyboard modifiers should be roughly equivalent to a logical or of the equivalent left/right keys.\nIn practice: it's complicated; mods are often provided from different sources. Keyboard layout, IME, sticky keys and\nbackends tend to interfere and break that equivalence. The safer decision is to relay that ambiguity down to the end-user...")
+        .value("mod_ctrl", ImGuiKey_ModCtrl, " Keyboard Modifiers (explicitly submitted by backend via AddKeyEvent() calls)\n - This is mirroring the data also written to io.KeyCtrl, io.KeyShift, io.KeyAlt, io.KeySuper, in a format allowing\n   them to be accessed via standard key API, allowing calls such as IsKeyPressed(), IsKeyReleased(), querying duration etc.\n - Code polling every keys (e.g. an interface to detect a key press for input mapping) might want to ignore those\n   and prefer using the real keys (e.g. ImGuiKey_LeftCtrl, ImGuiKey_RightCtrl instead of ImGuiKey_ModCtrl).\n - In theory the value of keyboard modifiers should be roughly equivalent to a logical or of the equivalent left/right keys.\n   In practice: it's complicated; mods are often provided from different sources. Keyboard layout, IME, sticky keys and\n   backends tend to interfere and break that equivalence. The safer decision is to relay that ambiguity down to the end-user...")
         .value("mod_shift", ImGuiKey_ModShift, "")
         .value("mod_alt", ImGuiKey_ModAlt, "")
         .value("mod_super", ImGuiKey_ModSuper, "")
-        // _SRCML_EMPTY_LINE_
-        // End of list
         .value("count", ImGuiKey_COUNT, "No valid ImGuiKey is ever greater than this value")
-        // _SRCML_EMPTY_LINE_
-        .value("named_key_begin", ImGuiKey_NamedKey_BEGIN, "[Internal] Prior to 1.87 we required user to fill io.KeysDown[512] using their own native index + a io.KeyMap[] array.\nWe are ditching this method but keeping a legacy path for user code doing e.g. IsKeyPressed(MY_NATIVE_KEY_CODE)")
+        .value("named_key_begin", ImGuiKey_NamedKey_BEGIN, "")
         .value("named_key_end", ImGuiKey_NamedKey_END, "")
-        .value("named_key_count", ImGuiKey_NamedKey_COUNT, "")
-    ;    // _SRCML_EMPTY_LINE_
+        .value("named_key_count", ImGuiKey_NamedKey_COUNT, "");
+
+
 
     py::enum_<ImGuiModFlags_>(m, "ImGuiModFlags_", py::arithmetic(), "Helper \"flags\" version of key-mods to store and compare multiple key-mods easily. Sometimes used for storage (e.g. io.KeyMods) but otherwise not much used in public API.")    // imgui.h:1457
         .value("none", ImGuiModFlags_None, "")
@@ -4330,8 +3970,9 @@ void py_init_module_imgui(py::module& m)
         .value("alt", ImGuiModFlags_Alt, "Menu")
         .value("super", ImGuiModFlags_Super, "Cmd/Super/Windows key");
 
-    py::enum_<ImGuiNavInput_>(m, "ImGuiNavInput_", py::arithmetic(), "Gamepad/Keyboard navigation\nSince >= 1.87 backends you generally don't need to care about this enum since io.NavInputs[] is setup automatically. This might become private/internal some day.\nKeyboard: Set io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard to enable. NewFrame() will automatically fill io.NavInputs[] based on your io.AddKeyEvent() calls.\nGamepad:  Set io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad to enable. Backend: set ImGuiBackendFlags_HasGamepad and fill the io.NavInputs[] fields before calling NewFrame(). Note that io.NavInputs[] is cleared by EndFrame().\nRead instructions in imgui.cpp for more details. Download PNG/PSD at http://dearimgui.org/controls_sheets.")    // imgui.h:1471
-        // Gamepad Mapping
+
+
+    py::enum_<ImGuiNavInput_>(m, "ImGuiNavInput_", py::arithmetic(), " Gamepad/Keyboard navigation\n Since >= 1.87 backends you generally don't need to care about this enum since io.NavInputs[] is setup automatically. This might become private/internal some day.\n Keyboard: Set io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard to enable. NewFrame() will automatically fill io.NavInputs[] based on your io.AddKeyEvent() calls.\n Gamepad:  Set io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad to enable. Backend: set ImGuiBackendFlags_HasGamepad and fill the io.NavInputs[] fields before calling NewFrame(). Note that io.NavInputs[] is cleared by EndFrame().\n Read instructions in imgui.cpp for more details. Download PNG/PSD at http://dearimgui.org/controls_sheets.")    // imgui.h:1471
         .value("activate", ImGuiNavInput_Activate, "Activate / Open / Toggle / Tweak value       // e.g. Cross  (PS4), A (Xbox), A (Switch), Space (Keyboard)")
         .value("cancel", ImGuiNavInput_Cancel, "Cancel / Close / Exit                        // e.g. Circle (PS4), B (Xbox), B (Switch), Escape (Keyboard)")
         .value("input", ImGuiNavInput_Input, "Text input / On-Screen keyboard              // e.g. Triang.(PS4), Y (Xbox), X (Switch), Return (Keyboard)")
@@ -4348,14 +3989,13 @@ void py_init_module_imgui(py::module& m)
         .value("focus_next", ImGuiNavInput_FocusNext, "Focus Prev window (w/ PadMenu)               // e.g. R1 or R2 (PS4), RB or RT (Xbox), R or ZL (Switch)")
         .value("tweak_slow", ImGuiNavInput_TweakSlow, "Slower tweaks                                // e.g. L1 or L2 (PS4), LB or LT (Xbox), L or ZL (Switch)")
         .value("tweak_fast", ImGuiNavInput_TweakFast, "Faster tweaks                                // e.g. R1 or R2 (PS4), RB or RT (Xbox), R or ZL (Switch)")
-        // _SRCML_EMPTY_LINE_
-        // [Internal] Don't use directly! This is used internally to differentiate keyboard from gamepad inputs for behaviors that require to differentiate them.
-        // Keyboard behavior that have no corresponding gamepad mapping (e.g. CTRL+TAB) will be directly reading from keyboard keys instead of io.NavInputs[].
         .value("key_left_", ImGuiNavInput_KeyLeft_, "Move left                                    // = Arrow keys")
         .value("key_right_", ImGuiNavInput_KeyRight_, "Move right")
         .value("key_up_", ImGuiNavInput_KeyUp_, "Move up")
         .value("key_down_", ImGuiNavInput_KeyDown_, "Move down")
         .value("count", ImGuiNavInput_COUNT, "");
+
+
 
     py::enum_<ImGuiConfigFlags_>(m, "ImGuiConfigFlags_", py::arithmetic(), "Configuration flags stored in io.ConfigFlags. Set by user/application.")    // imgui.h:1501
         .value("none", ImGuiConfigFlags_None, "")
@@ -4365,10 +4005,10 @@ void py_init_module_imgui(py::module& m)
         .value("nav_no_capture_keyboard", ImGuiConfigFlags_NavNoCaptureKeyboard, "Instruct navigation to not set the io.WantCaptureKeyboard flag when io.NavActive is set.")
         .value("no_mouse", ImGuiConfigFlags_NoMouse, "Instruct imgui to clear mouse position/buttons in NewFrame(). This allows ignoring the mouse information set by the backend.")
         .value("no_mouse_cursor_change", ImGuiConfigFlags_NoMouseCursorChange, "Instruct backend to not alter mouse cursor shape and visibility. Use if the backend cursor changes are interfering with yours and you don't want to use SetMouseCursor() to change mouse cursor. You may want to honor requests from imgui by reading GetMouseCursor() yourself instead.")
-        // _SRCML_EMPTY_LINE_
-        // User storage (to allow your backend/engine to communicate to code that may be shared between multiple projects. Those flags are NOT used by core Dear ImGui)
         .value("is_srgb", ImGuiConfigFlags_IsSRGB, "Application is SRGB-aware.")
         .value("is_touch_screen", ImGuiConfigFlags_IsTouchScreen, "Application is using a touch screen instead of a mouse.");
+
+
 
     py::enum_<ImGuiBackendFlags_>(m, "ImGuiBackendFlags_", py::arithmetic(), "Backend capabilities flags stored in io.BackendFlags. Set by imgui_impl_xxx or custom backend.")    // imgui.h:1517
         .value("none", ImGuiBackendFlags_None, "")
@@ -4376,6 +4016,8 @@ void py_init_module_imgui(py::module& m)
         .value("has_mouse_cursors", ImGuiBackendFlags_HasMouseCursors, "Backend Platform supports honoring GetMouseCursor() value to change the OS cursor shape.")
         .value("has_set_mouse_pos", ImGuiBackendFlags_HasSetMousePos, "Backend Platform supports io.WantSetMousePos requests to reposition the OS mouse position (only used if ImGuiConfigFlags_NavEnableSetMousePos is set).")
         .value("renderer_has_vtx_offset", ImGuiBackendFlags_RendererHasVtxOffset, "Backend Renderer supports ImDrawCmd::VtxOffset. This enables output of large meshes (64K+ vertices) while still using 16-bit indices.");
+
+
 
     py::enum_<ImGuiCol_>(m, "ImGuiCol_", py::arithmetic(), "Enumeration for PushStyleColor() / PopStyleColor()")    // imgui.h:1527
         .value("text", ImGuiCol_Text, "")
@@ -4433,8 +4075,9 @@ void py_init_module_imgui(py::module& m)
         .value("modal_window_dim_bg", ImGuiCol_ModalWindowDimBg, "Darken/colorize entire screen behind a modal window, when one is active")
         .value("count", ImGuiCol_COUNT, "");
 
-    py::enum_<ImGuiStyleVar_>(m, "ImGuiStyleVar_", py::arithmetic(), "Enumeration for PushStyleVar() / PopStyleVar() to temporarily modify the ImGuiStyle structure.\n- The enum only refers to fields of ImGuiStyle which makes sense to be pushed/popped inside UI code.\nDuring initialization or between frames, feel free to just poke into ImGuiStyle directly.\n- Tip: Use your programming IDE navigation facilities on the names in the _second column_ below to find the actual members and their description.\nIn Visual Studio IDE: CTRL+comma (\"Edit.GoToAll\") can follow symbols in comments, whereas CTRL+F12 (\"Edit.GoToImplementation\") cannot.\nWith Visual Assist installed: ALT+G (\"VAssistX.GoToImplementation\") can also follow symbols in comments.\n- When changing this enum, you need to update the associated internal table GStyleVarInfo[] accordingly. This is where we link enum values to members offset/type.")    // imgui.h:1592
-        // Enum name --------------------- // Member in ImGuiStyle structure (see ImGuiStyle for descriptions)
+
+
+    py::enum_<ImGuiStyleVar_>(m, "ImGuiStyleVar_", py::arithmetic(), " Enumeration for PushStyleVar() / PopStyleVar() to temporarily modify the ImGuiStyle structure.\n - The enum only refers to fields of ImGuiStyle which makes sense to be pushed/popped inside UI code.\n   During initialization or between frames, feel free to just poke into ImGuiStyle directly.\n - Tip: Use your programming IDE navigation facilities on the names in the _second column_ below to find the actual members and their description.\n   In Visual Studio IDE: CTRL+comma (\"Edit.GoToAll\") can follow symbols in comments, whereas CTRL+F12 (\"Edit.GoToImplementation\") cannot.\n   With Visual Assist installed: ALT+G (\"VAssistX.GoToImplementation\") can also follow symbols in comments.\n - When changing this enum, you need to update the associated internal table GStyleVarInfo[] accordingly. This is where we link enum values to members offset/type.")    // imgui.h:1592
         .value("alpha", ImGuiStyleVar_Alpha, "float     Alpha")
         .value("disabled_alpha", ImGuiStyleVar_DisabledAlpha, "float     DisabledAlpha")
         .value("window_padding", ImGuiStyleVar_WindowPadding, "ImVec2    WindowPadding")
@@ -4462,33 +4105,34 @@ void py_init_module_imgui(py::module& m)
         .value("selectable_text_align", ImGuiStyleVar_SelectableTextAlign, "ImVec2    SelectableTextAlign")
         .value("count", ImGuiStyleVar_COUNT, "");
 
+
+
     py::enum_<ImGuiButtonFlags_>(m, "ImGuiButtonFlags_", py::arithmetic(), "Flags for InvisibleButton() [extended in imgui_internal.h]")    // imgui.h:1624
         .value("none", ImGuiButtonFlags_None, "")
         .value("mouse_button_left", ImGuiButtonFlags_MouseButtonLeft, "React on left mouse button (default)")
         .value("mouse_button_right", ImGuiButtonFlags_MouseButtonRight, "React on right mouse button")
         .value("mouse_button_middle", ImGuiButtonFlags_MouseButtonMiddle, "React on center mouse button")
-        // _SRCML_EMPTY_LINE_
-        .value("mouse_button_mask_", ImGuiButtonFlags_MouseButtonMask_, "[Internal]")
+        .value("mouse_button_mask_", ImGuiButtonFlags_MouseButtonMask_, "")
         .value("mouse_button_default_", ImGuiButtonFlags_MouseButtonDefault_, "");
+
+
 
     py::enum_<ImGuiColorEditFlags_>(m, "ImGuiColorEditFlags_", py::arithmetic(), "Flags for ColorEdit3() / ColorEdit4() / ColorPicker3() / ColorPicker4() / ColorButton()")    // imgui.h:1637
         .value("none", ImGuiColorEditFlags_None, "")
-        .value("no_alpha", ImGuiColorEditFlags_NoAlpha, "             // ColorEdit, ColorPicker, ColorButton: ignore Alpha component (will only read 3 components from the input pointer).")
-        .value("no_picker", ImGuiColorEditFlags_NoPicker, "             // ColorEdit: disable picker when clicking on color square.")
-        .value("no_options", ImGuiColorEditFlags_NoOptions, "             // ColorEdit: disable toggling options menu when right-clicking on inputs/small preview.")
-        .value("no_small_preview", ImGuiColorEditFlags_NoSmallPreview, "             // ColorEdit, ColorPicker: disable color square preview next to the inputs. (e.g. to show only the inputs)")
-        .value("no_inputs", ImGuiColorEditFlags_NoInputs, "             // ColorEdit, ColorPicker: disable inputs sliders/text widgets (e.g. to show only the small preview color square).")
-        .value("no_tooltip", ImGuiColorEditFlags_NoTooltip, "             // ColorEdit, ColorPicker, ColorButton: disable tooltip when hovering the preview.")
-        .value("no_label", ImGuiColorEditFlags_NoLabel, "             // ColorEdit, ColorPicker: disable display of inline text label (the label is still forwarded to the tooltip and picker).")
-        .value("no_side_preview", ImGuiColorEditFlags_NoSidePreview, "             // ColorPicker: disable bigger color preview on right side of the picker, use small color square preview instead.")
-        .value("no_drag_drop", ImGuiColorEditFlags_NoDragDrop, "             // ColorEdit: disable drag and drop target. ColorButton: disable drag and drop source.")
-        .value("no_border", ImGuiColorEditFlags_NoBorder, "             // ColorButton: disable border (which is enforced by default)")
-        // _SRCML_EMPTY_LINE_
-        // User Options (right-click on widget to change some of them).
-        .value("alpha_bar", ImGuiColorEditFlags_AlphaBar, "             // ColorEdit, ColorPicker: show vertical alpha bar/gradient in picker.")
-        .value("alpha_preview", ImGuiColorEditFlags_AlphaPreview, "             // ColorEdit, ColorPicker, ColorButton: display preview as a transparent color over a checkerboard, instead of opaque.")
-        .value("alpha_preview_half", ImGuiColorEditFlags_AlphaPreviewHalf, "             // ColorEdit, ColorPicker, ColorButton: display half opaque / half checkerboard, instead of opaque.")
-        .value("hdr", ImGuiColorEditFlags_HDR, "             // (WIP) ColorEdit: Currently only disable 0.0f..1.0f limits in RGBA edition (note: you probably want to use ImGuiColorEditFlags_Float flag as well).")
+        .value("no_alpha", ImGuiColorEditFlags_NoAlpha, "// ColorEdit, ColorPicker, ColorButton: ignore Alpha component (will only read 3 components from the input pointer).")
+        .value("no_picker", ImGuiColorEditFlags_NoPicker, "// ColorEdit: disable picker when clicking on color square.")
+        .value("no_options", ImGuiColorEditFlags_NoOptions, "// ColorEdit: disable toggling options menu when right-clicking on inputs/small preview.")
+        .value("no_small_preview", ImGuiColorEditFlags_NoSmallPreview, "// ColorEdit, ColorPicker: disable color square preview next to the inputs. (e.g. to show only the inputs)")
+        .value("no_inputs", ImGuiColorEditFlags_NoInputs, "// ColorEdit, ColorPicker: disable inputs sliders/text widgets (e.g. to show only the small preview color square).")
+        .value("no_tooltip", ImGuiColorEditFlags_NoTooltip, "// ColorEdit, ColorPicker, ColorButton: disable tooltip when hovering the preview.")
+        .value("no_label", ImGuiColorEditFlags_NoLabel, "// ColorEdit, ColorPicker: disable display of inline text label (the label is still forwarded to the tooltip and picker).")
+        .value("no_side_preview", ImGuiColorEditFlags_NoSidePreview, "// ColorPicker: disable bigger color preview on right side of the picker, use small color square preview instead.")
+        .value("no_drag_drop", ImGuiColorEditFlags_NoDragDrop, "// ColorEdit: disable drag and drop target. ColorButton: disable drag and drop source.")
+        .value("no_border", ImGuiColorEditFlags_NoBorder, "// ColorButton: disable border (which is enforced by default)")
+        .value("alpha_bar", ImGuiColorEditFlags_AlphaBar, "// ColorEdit, ColorPicker: show vertical alpha bar/gradient in picker.")
+        .value("alpha_preview", ImGuiColorEditFlags_AlphaPreview, "// ColorEdit, ColorPicker, ColorButton: display preview as a transparent color over a checkerboard, instead of opaque.")
+        .value("alpha_preview_half", ImGuiColorEditFlags_AlphaPreviewHalf, "// ColorEdit, ColorPicker, ColorButton: display half opaque / half checkerboard, instead of opaque.")
+        .value("hdr", ImGuiColorEditFlags_HDR, "// (WIP) ColorEdit: Currently only disable 0.0f..1.0f limits in RGBA edition (note: you probably want to use ImGuiColorEditFlags_Float flag as well).")
         .value("display_rgb", ImGuiColorEditFlags_DisplayRGB, "[Display]    // ColorEdit: override _display_ type among RGB/HSV/Hex. ColorPicker: select any combination using one or more of RGB/HSV/Hex.")
         .value("display_hsv", ImGuiColorEditFlags_DisplayHSV, "[Display]    // \"")
         .value("display_hex", ImGuiColorEditFlags_DisplayHex, "[Display]    // \"")
@@ -4498,35 +4142,33 @@ void py_init_module_imgui(py::module& m)
         .value("picker_hue_wheel", ImGuiColorEditFlags_PickerHueWheel, "[Picker]     // ColorPicker: wheel for Hue, triangle for Sat/Value.")
         .value("input_rgb", ImGuiColorEditFlags_InputRGB, "[Input]      // ColorEdit, ColorPicker: input and output data in RGB format.")
         .value("input_hsv", ImGuiColorEditFlags_InputHSV, "[Input]      // ColorEdit, ColorPicker: input and output data in HSV format.")
-        // _SRCML_EMPTY_LINE_
-        .value("default_options_", ImGuiColorEditFlags_DefaultOptions_, "Defaults Options. You can set application defaults using SetColorEditOptions(). The intent is that you probably don't want to\noverride them in most of your calls. Let the user choose via the option menu and/or call SetColorEditOptions() once during startup.")
-        // _SRCML_EMPTY_LINE_
-        .value("display_mask_", ImGuiColorEditFlags_DisplayMask_, "[Internal] Masks")
+        .value("default_options_", ImGuiColorEditFlags_DefaultOptions_, " Defaults Options. You can set application defaults using SetColorEditOptions(). The intent is that you probably don't want to\n override them in most of your calls. Let the user choose via the option menu and/or call SetColorEditOptions() once during startup.")
+        .value("display_mask_", ImGuiColorEditFlags_DisplayMask_, "")
         .value("data_type_mask_", ImGuiColorEditFlags_DataTypeMask_, "")
         .value("picker_mask_", ImGuiColorEditFlags_PickerMask_, "")
-        .value("input_mask_", ImGuiColorEditFlags_InputMask_, "")
-        // _SRCML_EMPTY_LINE_
-        // Obsolete names (will be removed)
-    ;    // ImGuiColorEditFlags_RGB = ImGuiColorEditFlags_DisplayRGB, ImGuiColorEditFlags_HSV = ImGuiColorEditFlags_DisplayHSV, ImGuiColorEditFlags_HEX = ImGuiColorEditFlags_DisplayHex  // [renamed in 1.69]
+        .value("input_mask_", ImGuiColorEditFlags_InputMask_, "");
 
-    py::enum_<ImGuiSliderFlags_>(m, "ImGuiSliderFlags_", py::arithmetic(), "Flags for DragFloat(), DragInt(), SliderFloat(), SliderInt() etc.\nWe use the same sets of flags for DragXXX() and SliderXXX() functions as the features are the same and it makes it easier to swap them.")    // imgui.h:1682
+
+
+    py::enum_<ImGuiSliderFlags_>(m, "ImGuiSliderFlags_", py::arithmetic(), " Flags for DragFloat(), DragInt(), SliderFloat(), SliderInt() etc.\n We use the same sets of flags for DragXXX() and SliderXXX() functions as the features are the same and it makes it easier to swap them.")    // imgui.h:1682
         .value("none", ImGuiSliderFlags_None, "")
         .value("always_clamp", ImGuiSliderFlags_AlwaysClamp, "Clamp value to min/max bounds when input manually with CTRL+Click. By default CTRL+Click allows going out of bounds.")
         .value("logarithmic", ImGuiSliderFlags_Logarithmic, "Make the widget logarithmic (linear otherwise). Consider using ImGuiSliderFlags_NoRoundToFormat with this if using a format-string with small amount of digits.")
         .value("no_round_to_format", ImGuiSliderFlags_NoRoundToFormat, "Disable rounding underlying value to match precision of the display format string (e.g. %.3f values are rounded to those 3 digits)")
         .value("no_input", ImGuiSliderFlags_NoInput, "Disable CTRL+Click or Enter key allowing to input text directly into the widget")
-        .value("invalid_mask_", ImGuiSliderFlags_InvalidMask_, "")
-        // [Internal] We treat using those bits as being potentially a 'float power' argument from the previous API that has got miscast to this enum, and will trigger an assert if needed.
-        // _SRCML_EMPTY_LINE_
-    ;    // Obsolete names (will be removed)
+        .value("invalid_mask_", ImGuiSliderFlags_InvalidMask_, "");
 
-    py::enum_<ImGuiMouseButton_>(m, "ImGuiMouseButton_", py::arithmetic(), "Identify a mouse button.\nThose values are guaranteed to be stable and we frequently use 0/1 directly. Named enums provided for convenience.")    // imgui.h:1699
+
+
+    py::enum_<ImGuiMouseButton_>(m, "ImGuiMouseButton_", py::arithmetic(), " Identify a mouse button.\n Those values are guaranteed to be stable and we frequently use 0/1 directly. Named enums provided for convenience.")    // imgui.h:1699
         .value("left", ImGuiMouseButton_Left, "")
         .value("right", ImGuiMouseButton_Right, "")
         .value("middle", ImGuiMouseButton_Middle, "")
         .value("count", ImGuiMouseButton_COUNT, "");
 
-    py::enum_<ImGuiMouseCursor_>(m, "ImGuiMouseCursor_", py::arithmetic(), "Enumeration for GetMouseCursor()\nUser code may request backend to display given cursor by calling SetMouseCursor(), which is why we have some cursors that are marked unused here")    // imgui.h:1709
+
+
+    py::enum_<ImGuiMouseCursor_>(m, "ImGuiMouseCursor_", py::arithmetic(), " Enumeration for GetMouseCursor()\n User code may request backend to display given cursor by calling SetMouseCursor(), which is why we have some cursors that are marked unused here")    // imgui.h:1709
         .value("none", ImGuiMouseCursor_None, "")
         .value("arrow", ImGuiMouseCursor_Arrow, "")
         .value("text_input", ImGuiMouseCursor_TextInput, "When hovering over InputText, etc.")
@@ -4539,12 +4181,16 @@ void py_init_module_imgui(py::module& m)
         .value("not_allowed", ImGuiMouseCursor_NotAllowed, "When hovering something with disallowed interaction. Usually a crossed circle.")
         .value("count", ImGuiMouseCursor_COUNT, "");
 
-    py::enum_<ImGuiCond_>(m, "ImGuiCond_", py::arithmetic(), "Enumeration for ImGui::SetWindow(), SetNextWindow(), SetNextItem() functions\nRepresent a condition.\nImportant: Treat as a regular enum! Do NOT combine multiple values using binary operators! All the functions above treat 0 as a shortcut to ImGuiCond_Always.")    // imgui.h:1727
+
+
+    py::enum_<ImGuiCond_>(m, "ImGuiCond_", py::arithmetic(), " Enumeration for ImGui::SetWindow(), SetNextWindow(), SetNextItem() functions\n Represent a condition.\n Important: Treat as a regular enum! Do NOT combine multiple values using binary operators! All the functions above treat 0 as a shortcut to ImGuiCond_Always.")    // imgui.h:1727
         .value("none", ImGuiCond_None, "No condition (always set the variable), same as _Always")
         .value("always", ImGuiCond_Always, "No condition (always set the variable)")
         .value("once", ImGuiCond_Once, "Set the variable once per runtime session (only the first call will succeed)")
         .value("first_use_ever", ImGuiCond_FirstUseEver, "Set the variable if the object/window has no persistently saved data (no entry in .ini file)")
         .value("appearing", ImGuiCond_Appearing, "Set the variable if the object/window is appearing after being hidden/inactive (or the first time)");
+
+
 
     auto pyClassImNewWrapper = py::class_<ImNewWrapper>    // imgui.h:1746
         (m, "ImNewWrapper", "")
@@ -4554,23 +4200,25 @@ void py_init_module_imgui(py::module& m)
 
 
 
+
+
     auto pyClassImGuiStyle = py::class_<ImGuiStyle>    // imgui.h:1838
         (m, "ImGuiStyle", "")
         .def_readwrite("alpha", &ImGuiStyle::Alpha, "Global alpha applies to everything in Dear ImGui.")    // imgui.h:1840
         .def_readwrite("disabled_alpha", &ImGuiStyle::DisabledAlpha, "Additional alpha multiplier applied by BeginDisabled(). Multiply over current value of Alpha.")    // imgui.h:1841
         .def_readwrite("window_padding", &ImGuiStyle::WindowPadding, "Padding within a window.")    // imgui.h:1842
-        .def_readwrite("window_rounding", &ImGuiStyle::WindowRounding, "Radius of window corners rounding. Set to 0.0f to have rectangular windows. Large values tend to lead to variety of artifacts and are not recommended.")    // imgui.h:1843
-        .def_readwrite("window_border_size", &ImGuiStyle::WindowBorderSize, "Thickness of border around windows. Generally set to 0.0f or 1.0f. (Other values are not well tested and more CPU/GPU costly).")    // imgui.h:1844
+        .def_readwrite("window_rounding", &ImGuiStyle::WindowRounding, "Radius of window corners rounding. Set to 0.0 to have rectangular windows. Large values tend to lead to variety of artifacts and are not recommended.")    // imgui.h:1843
+        .def_readwrite("window_border_size", &ImGuiStyle::WindowBorderSize, "Thickness of border around windows. Generally set to 0.0 or 1.0. (Other values are not well tested and more CPU/GPU costly).")    // imgui.h:1844
         .def_readwrite("window_min_size", &ImGuiStyle::WindowMinSize, "Minimum window size. This is a global setting. If you want to constraint individual windows, use SetNextWindowSizeConstraints().")    // imgui.h:1845
-        .def_readwrite("window_title_align", &ImGuiStyle::WindowTitleAlign, "Alignment for title bar text. Defaults to (0.0f,0.5f) for left-aligned,vertically centered.")    // imgui.h:1846
+        .def_readwrite("window_title_align", &ImGuiStyle::WindowTitleAlign, "Alignment for title bar text. Defaults to (0.0,0.5) for left-aligned,vertically centered.")    // imgui.h:1846
         .def_readwrite("window_menu_button_position", &ImGuiStyle::WindowMenuButtonPosition, "Side of the collapsing/docking button in the title bar (None/Left/Right). Defaults to ImGuiDir_Left.")    // imgui.h:1847
-        .def_readwrite("child_rounding", &ImGuiStyle::ChildRounding, "Radius of child window corners rounding. Set to 0.0f to have rectangular windows.")    // imgui.h:1848
-        .def_readwrite("child_border_size", &ImGuiStyle::ChildBorderSize, "Thickness of border around child windows. Generally set to 0.0f or 1.0f. (Other values are not well tested and more CPU/GPU costly).")    // imgui.h:1849
+        .def_readwrite("child_rounding", &ImGuiStyle::ChildRounding, "Radius of child window corners rounding. Set to 0.0 to have rectangular windows.")    // imgui.h:1848
+        .def_readwrite("child_border_size", &ImGuiStyle::ChildBorderSize, "Thickness of border around child windows. Generally set to 0.0 or 1.0. (Other values are not well tested and more CPU/GPU costly).")    // imgui.h:1849
         .def_readwrite("popup_rounding", &ImGuiStyle::PopupRounding, "Radius of popup window corners rounding. (Note that tooltip windows use WindowRounding)")    // imgui.h:1850
-        .def_readwrite("popup_border_size", &ImGuiStyle::PopupBorderSize, "Thickness of border around popup/tooltip windows. Generally set to 0.0f or 1.0f. (Other values are not well tested and more CPU/GPU costly).")    // imgui.h:1851
+        .def_readwrite("popup_border_size", &ImGuiStyle::PopupBorderSize, "Thickness of border around popup/tooltip windows. Generally set to 0.0 or 1.0. (Other values are not well tested and more CPU/GPU costly).")    // imgui.h:1851
         .def_readwrite("frame_padding", &ImGuiStyle::FramePadding, "Padding within a framed rectangle (used by most widgets).")    // imgui.h:1852
-        .def_readwrite("frame_rounding", &ImGuiStyle::FrameRounding, "Radius of frame corners rounding. Set to 0.0f to have rectangular frame (used by most widgets).")    // imgui.h:1853
-        .def_readwrite("frame_border_size", &ImGuiStyle::FrameBorderSize, "Thickness of border around frames. Generally set to 0.0f or 1.0f. (Other values are not well tested and more CPU/GPU costly).")    // imgui.h:1854
+        .def_readwrite("frame_rounding", &ImGuiStyle::FrameRounding, "Radius of frame corners rounding. Set to 0.0 to have rectangular frame (used by most widgets).")    // imgui.h:1853
+        .def_readwrite("frame_border_size", &ImGuiStyle::FrameBorderSize, "Thickness of border around frames. Generally set to 0.0 or 1.0. (Other values are not well tested and more CPU/GPU costly).")    // imgui.h:1854
         .def_readwrite("item_spacing", &ImGuiStyle::ItemSpacing, "Horizontal and vertical spacing between widgets/lines.")    // imgui.h:1855
         .def_readwrite("item_inner_spacing", &ImGuiStyle::ItemInnerSpacing, "Horizontal and vertical spacing between within elements of a composed widget (e.g. a slider and its label).")    // imgui.h:1856
         .def_readwrite("cell_padding", &ImGuiStyle::CellPadding, "Padding within a table cell")    // imgui.h:1857
@@ -4580,14 +4228,14 @@ void py_init_module_imgui(py::module& m)
         .def_readwrite("scrollbar_size", &ImGuiStyle::ScrollbarSize, "Width of the vertical scrollbar, Height of the horizontal scrollbar.")    // imgui.h:1861
         .def_readwrite("scrollbar_rounding", &ImGuiStyle::ScrollbarRounding, "Radius of grab corners for scrollbar.")    // imgui.h:1862
         .def_readwrite("grab_min_size", &ImGuiStyle::GrabMinSize, "Minimum width/height of a grab box for slider/scrollbar.")    // imgui.h:1863
-        .def_readwrite("grab_rounding", &ImGuiStyle::GrabRounding, "Radius of grabs corners rounding. Set to 0.0f to have rectangular slider grabs.")    // imgui.h:1864
+        .def_readwrite("grab_rounding", &ImGuiStyle::GrabRounding, "Radius of grabs corners rounding. Set to 0.0 to have rectangular slider grabs.")    // imgui.h:1864
         .def_readwrite("log_slider_deadzone", &ImGuiStyle::LogSliderDeadzone, "The size in pixels of the dead-zone around zero on logarithmic sliders that cross zero.")    // imgui.h:1865
-        .def_readwrite("tab_rounding", &ImGuiStyle::TabRounding, "Radius of upper corners of a tab. Set to 0.0f to have rectangular tabs.")    // imgui.h:1866
+        .def_readwrite("tab_rounding", &ImGuiStyle::TabRounding, "Radius of upper corners of a tab. Set to 0.0 to have rectangular tabs.")    // imgui.h:1866
         .def_readwrite("tab_border_size", &ImGuiStyle::TabBorderSize, "Thickness of border around tabs.")    // imgui.h:1867
-        .def_readwrite("tab_min_width_for_close_button", &ImGuiStyle::TabMinWidthForCloseButton, "Minimum width for close button to appears on an unselected tab when hovered. Set to 0.0f to always show when hovering, set to sys.float_info.max to never show close button unless selected.")    // imgui.h:1868
+        .def_readwrite("tab_min_width_for_close_button", &ImGuiStyle::TabMinWidthForCloseButton, "Minimum width for close button to appears on an unselected tab when hovered. Set to 0.0 to always show when hovering, set to sys.float_info.max to never show close button unless selected.")    // imgui.h:1868
         .def_readwrite("color_button_position", &ImGuiStyle::ColorButtonPosition, "Side of the color button in the ColorEdit4 widget (left/right). Defaults to ImGuiDir_Right.")    // imgui.h:1869
-        .def_readwrite("button_text_align", &ImGuiStyle::ButtonTextAlign, "Alignment of button text when button is larger than text. Defaults to (0.5f, 0.5f) (centered).")    // imgui.h:1870
-        .def_readwrite("selectable_text_align", &ImGuiStyle::SelectableTextAlign, "Alignment of selectable text. Defaults to (0.0f, 0.0f) (top-left aligned). It's generally important to keep this left-aligned if you want to lay multiple items on a same line.")    // imgui.h:1871
+        .def_readwrite("button_text_align", &ImGuiStyle::ButtonTextAlign, "Alignment of button text when button is larger than text. Defaults to (0.5, 0.5) (centered).")    // imgui.h:1870
+        .def_readwrite("selectable_text_align", &ImGuiStyle::SelectableTextAlign, "Alignment of selectable text. Defaults to (0.0, 0.0) (top-left aligned). It's generally important to keep this left-aligned if you want to lay multiple items on a same line.")    // imgui.h:1871
         .def_readwrite("display_window_padding", &ImGuiStyle::DisplayWindowPadding, "Window position are clamped to be visible within the display area or monitors by at least this amount. Only applies to regular windows.")    // imgui.h:1872
         .def_readwrite("display_safe_area_padding", &ImGuiStyle::DisplaySafeAreaPadding, "If you cannot see the edges of your screen (e.g. on a TV) increase the safe area padding. Apply to popups/tooltips as well regular windows. NB: Prefer configuring your TV sets correctly!")    // imgui.h:1873
         .def_readwrite("mouse_cursor_scale", &ImGuiStyle::MouseCursorScale, "Scale software rendered mouse cursor (when io.MouseDrawCursor is enabled). May be removed later.")    // imgui.h:1874
@@ -4596,6 +4244,7 @@ void py_init_module_imgui(py::module& m)
         .def_readwrite("anti_aliased_fill", &ImGuiStyle::AntiAliasedFill, "Enable anti-aliased edges around filled shapes (rounded rectangles, circles, etc.). Disable if you are really tight on CPU/GPU. Latched at the beginning of the frame (copied to ImDrawList).")    // imgui.h:1877
         .def_readwrite("curve_tessellation_tol", &ImGuiStyle::CurveTessellationTol, "Tessellation tolerance when using PathBezierCurveTo() without a specific number of segments. Decrease for highly tessellated curves (higher quality, more polygons), increase to reduce quality.")    // imgui.h:1878
         .def_readwrite("circle_tessellation_max_error", &ImGuiStyle::CircleTessellationMaxError, "Maximum error (in pixels) allowed when using AddCircle()/AddCircleFilled() or drawing rounded corner rectangles with no explicit segment count specified. Decrease for higher quality but more geometry.")    // imgui.h:1879
+        .def_readwrite("colors", &ImGuiStyle::Colors, "")    // imgui.h:1880
         .def(py::init<>())    // imgui.h:1882
         .def("scale_all_sizes",    // imgui.h:1883
             [](ImGuiStyle & self, float scale_factor)
@@ -4607,14 +4256,16 @@ void py_init_module_imgui(py::module& m)
         ;
 
 
+
     auto pyClassImGuiKeyData = py::class_<ImGuiKeyData>    // imgui.h:1895
-        (m, "ImGuiKeyData", "[Internal] Storage used by IsKeyDown(), IsKeyPressed() etc functions.\nIf prior to 1.87 you used io.KeysDownDuration[] (which was marked as internal), you should use GetKeyData(key)->DownDuration and not io.KeysData[key]->DownDuration.")
+        (m, "ImGuiKeyData", " [Internal] Storage used by IsKeyDown(), IsKeyPressed() etc functions.\n If prior to 1.87 you used io.KeysDownDuration[] (which was marked as internal), you should use GetKeyData(key)->DownDuration and not io.KeysData[key]->DownDuration.")
         .def(py::init<>()) // implicit default constructor
         .def_readwrite("down", &ImGuiKeyData::Down, "True for if key is down")    // imgui.h:1897
-        .def_readwrite("down_duration", &ImGuiKeyData::DownDuration, "Duration the key has been down (<0.0f: not pressed, 0.0f: just pressed, >0.0f: time held)")    // imgui.h:1898
+        .def_readwrite("down_duration", &ImGuiKeyData::DownDuration, "Duration the key has been down (<0.0: not pressed, 0.0: just pressed, >0.0: time held)")    // imgui.h:1898
         .def_readwrite("down_duration_prev", &ImGuiKeyData::DownDurationPrev, "Last frame duration the key has been down")    // imgui.h:1899
-        .def_readwrite("analog_value", &ImGuiKeyData::AnalogValue, "0.0f..1.0f for gamepad values")    // imgui.h:1900
+        .def_readwrite("analog_value", &ImGuiKeyData::AnalogValue, "0.0..1.0 for gamepad values")    // imgui.h:1900
         ;
+
 
 
     auto pyClassImGuiIO = py::class_<ImGuiIO>    // imgui.h:1903
@@ -4622,18 +4273,18 @@ void py_init_module_imgui(py::module& m)
         .def_readwrite("config_flags", &ImGuiIO::ConfigFlags, "= 0              // See ImGuiConfigFlags_ enum. Set by user/application. Gamepad/keyboard navigation options, etc.")    // imgui.h:1909
         .def_readwrite("backend_flags", &ImGuiIO::BackendFlags, "= 0              // See ImGuiBackendFlags_ enum. Set by backend (imgui_impl_xxx files or custom backend) to communicate features supported by the backend.")    // imgui.h:1910
         .def_readwrite("display_size", &ImGuiIO::DisplaySize, "<unset>          // Main display size, in pixels (generally == GetMainViewport()->Size). May change every frame.")    // imgui.h:1911
-        .def_readwrite("delta_time", &ImGuiIO::DeltaTime, "= 1.0f/60.0f     // Time elapsed since last frame, in seconds. May change every frame.")    // imgui.h:1912
-        .def_readwrite("ini_saving_rate", &ImGuiIO::IniSavingRate, "= 5.0f           // Minimum time between saving positions/sizes to .ini file, in seconds.")    // imgui.h:1913
+        .def_readwrite("delta_time", &ImGuiIO::DeltaTime, "= 1.0/60.0     // Time elapsed since last frame, in seconds. May change every frame.")    // imgui.h:1912
+        .def_readwrite("ini_saving_rate", &ImGuiIO::IniSavingRate, "= 5.0           // Minimum time between saving positions/sizes to .ini file, in seconds.")    // imgui.h:1913
         .def_readwrite("ini_filename", &ImGuiIO::IniFilename, "= \"imgui.ini\"    // Path to .ini file (important: default \"imgui.ini\" is relative to current working dir!). Set None to disable automatic .ini loading/saving or if you want to manually call LoadIniSettingsXXX() / SaveIniSettingsXXX() functions.")    // imgui.h:1914
         .def_readwrite("log_filename", &ImGuiIO::LogFilename, "= \"imgui_log.txt\"// Path to .log file (default parameter to ImGui::LogToFile when no file is specified).")    // imgui.h:1915
-        .def_readwrite("mouse_double_click_time", &ImGuiIO::MouseDoubleClickTime, "= 0.30f          // Time for a float-click, in seconds.")    // imgui.h:1916
-        .def_readwrite("mouse_double_click_max_dist", &ImGuiIO::MouseDoubleClickMaxDist, "= 6.0f           // Distance threshold to stay in to validate a float-click, in pixels.")    // imgui.h:1917
-        .def_readwrite("mouse_drag_threshold", &ImGuiIO::MouseDragThreshold, "= 6.0f           // Distance threshold before considering we are dragging.")    // imgui.h:1918
-        .def_readwrite("key_repeat_delay", &ImGuiIO::KeyRepeatDelay, "= 0.250f         // When holding a key/button, time before it starts repeating, in seconds (for buttons in Repeat mode, etc.).")    // imgui.h:1919
-        .def_readwrite("key_repeat_rate", &ImGuiIO::KeyRepeatRate, "= 0.050f         // When holding a key/button, rate at which it repeats, in seconds.")    // imgui.h:1920
+        .def_readwrite("mouse_double_click_time", &ImGuiIO::MouseDoubleClickTime, "= 0.30          // Time for a float-click, in seconds.")    // imgui.h:1916
+        .def_readwrite("mouse_double_click_max_dist", &ImGuiIO::MouseDoubleClickMaxDist, "= 6.0           // Distance threshold to stay in to validate a float-click, in pixels.")    // imgui.h:1917
+        .def_readwrite("mouse_drag_threshold", &ImGuiIO::MouseDragThreshold, "= 6.0           // Distance threshold before considering we are dragging.")    // imgui.h:1918
+        .def_readwrite("key_repeat_delay", &ImGuiIO::KeyRepeatDelay, "= 0.250         // When holding a key/button, time before it starts repeating, in seconds (for buttons in Repeat mode, etc.).")    // imgui.h:1919
+        .def_readwrite("key_repeat_rate", &ImGuiIO::KeyRepeatRate, "= 0.050         // When holding a key/button, rate at which it repeats, in seconds.")    // imgui.h:1920
         .def_readwrite("user_data", &ImGuiIO::UserData, "= None           // Store your own data for retrieval by callbacks.")    // imgui.h:1921
         .def_readwrite("fonts", &ImGuiIO::Fonts, "<auto>           // Font atlas: load, rasterize and pack one or more fonts into a single texture.")    // imgui.h:1923
-        .def_readwrite("font_global_scale", &ImGuiIO::FontGlobalScale, "= 1.0f           // Global scale all fonts")    // imgui.h:1924
+        .def_readwrite("font_global_scale", &ImGuiIO::FontGlobalScale, "= 1.0           // Global scale all fonts")    // imgui.h:1924
         .def_readwrite("font_allow_user_scaling", &ImGuiIO::FontAllowUserScaling, "= False          // Allow user scaling text of individual window with CTRL+Wheel.")    // imgui.h:1925
         .def_readwrite("font_default", &ImGuiIO::FontDefault, "= None           // Font to use on NewFrame(). Use None to uses Fonts->Fonts[0].")    // imgui.h:1926
         .def_readwrite("display_framebuffer_scale", &ImGuiIO::DisplayFramebufferScale, "= (1, 1)         // For retina display or other situations where window coordinates are different from framebuffer coordinates. This generally ends up in ImDrawData::FramebufferScale.")    // imgui.h:1927
@@ -4644,7 +4295,7 @@ void py_init_module_imgui(py::module& m)
         .def_readwrite("config_drag_click_to_input_text", &ImGuiIO::ConfigDragClickToInputText, "= False          // [BETA] Enable turning DragXXX widgets into text input with a simple mouse click-release (without moving). Not desirable on devices without a keyboard.")    // imgui.h:1934
         .def_readwrite("config_windows_resize_from_edges", &ImGuiIO::ConfigWindowsResizeFromEdges, "= True           // Enable resizing of windows from their edges and from the lower-left corner. This requires (io.BackendFlags  ImGuiBackendFlags_HasMouseCursors) because it needs mouse cursor feedback. (This used to be a per-window ImGuiWindowFlags_ResizeFromAnySide flag)")    // imgui.h:1935
         .def_readwrite("config_windows_move_from_title_bar_only", &ImGuiIO::ConfigWindowsMoveFromTitleBarOnly, "= False       // Enable allowing to move windows only when clicking on their title bar. Does not apply to windows without a title bar.")    // imgui.h:1936
-        .def_readwrite("config_memory_compact_timer", &ImGuiIO::ConfigMemoryCompactTimer, "= 60.0f          // Timer (in seconds) to free transient windows/tables memory buffers when unused. Set to -1.0f to disable.")    // imgui.h:1937
+        .def_readwrite("config_memory_compact_timer", &ImGuiIO::ConfigMemoryCompactTimer, "= 60.0          // Timer (in seconds) to free transient windows/tables memory buffers when unused. Set to -1.0 to disable.")    // imgui.h:1937
         .def_readwrite("backend_platform_name", &ImGuiIO::BackendPlatformName, "= None")    // imgui.h:1945
         .def_readwrite("backend_renderer_name", &ImGuiIO::BackendRendererName, "= None")    // imgui.h:1946
         .def_readwrite("backend_platform_user_data", &ImGuiIO::BackendPlatformUserData, "= None           // User data for platform backend")    // imgui.h:1947
@@ -4781,7 +4432,9 @@ void py_init_module_imgui(py::module& m)
         .def_readwrite("key_shift", &ImGuiIO::KeyShift, "Keyboard modifier down: Shift")    // imgui.h:2026
         .def_readwrite("key_alt", &ImGuiIO::KeyAlt, "Keyboard modifier down: Alt")    // imgui.h:2027
         .def_readwrite("key_super", &ImGuiIO::KeySuper, "Keyboard modifier down: Cmd/Super/Windows")    // imgui.h:2028
+        .def_readwrite("nav_inputs", &ImGuiIO::NavInputs, "Gamepad inputs. Cleared back to zero by EndFrame(). Keyboard keys will be auto-mapped and be written here by NewFrame().")    // imgui.h:2029
         .def_readwrite("key_mods", &ImGuiIO::KeyMods, "Key mods flags (same as io.KeyCtrl/KeyShift/KeyAlt/KeySuper but merged into flags), updated by NewFrame()")    // imgui.h:2032
+        .def_readwrite("keys_data", &ImGuiIO::KeysData, "Key state for all known keys. Use IsKeyXXX() functions to access this.")    // imgui.h:2033
         .def_readwrite("want_capture_mouse_unless_popup_close", &ImGuiIO::WantCaptureMouseUnlessPopupClose, "Alternative to WantCaptureMouse: (WantCaptureMouse == True  WantCaptureMouseUnlessPopupClose == False) when a click over None is expected to close a popup.")    // imgui.h:2034
         .def_readwrite("mouse_pos_prev", &ImGuiIO::MousePosPrev, "Previous mouse position (note that MouseDelta is not necessary == MousePos-MousePosPrev, in case either position is invalid)")    // imgui.h:2035
         .def_property("mouse_clicked_time",
@@ -4861,7 +4514,9 @@ void py_init_module_imgui(py::module& m)
                 auto base = pybind11::array(dtype, {5}, {sizeof(float)});
                 return pybind11::array(dtype, {5}, {sizeof(float)}, self.MouseDragMaxDistanceSqr, base);
             }, [](ImGuiIO& self) {})
-        .def_readwrite("pen_pressure", &ImGuiIO::PenPressure, "Touch/Pen pressure (0.0f to 1.0f, should be >0.0f only when MouseDown[0] == True). Helper storage currently unused by Dear ImGui.")    // imgui.h:2050
+        .def_readwrite("nav_inputs_down_duration", &ImGuiIO::NavInputsDownDuration, "")    // imgui.h:2048
+        .def_readwrite("nav_inputs_down_duration_prev", &ImGuiIO::NavInputsDownDurationPrev, "")    // imgui.h:2049
+        .def_readwrite("pen_pressure", &ImGuiIO::PenPressure, "Touch/Pen pressure (0.0 to 1.0, should be >0.0 only when MouseDown[0] == True). Helper storage currently unused by Dear ImGui.")    // imgui.h:2050
         .def_readwrite("app_focus_lost", &ImGuiIO::AppFocusLost, "Only modify via AddFocusEvent()")    // imgui.h:2051
         .def_readwrite("app_accepting_events", &ImGuiIO::AppAcceptingEvents, "Only modify via SetAppAcceptingEvents()")    // imgui.h:2052
         .def_readwrite("backend_using_legacy_key_arrays", &ImGuiIO::BackendUsingLegacyKeyArrays, "-1: unknown, 0: using AddKeyEvent(), 1: using legacy io.KeysDown[]")    // imgui.h:2053
@@ -4872,8 +4527,9 @@ void py_init_module_imgui(py::module& m)
         ;
 
 
+
     auto pyClassImGuiInputTextCallbackData = py::class_<ImGuiInputTextCallbackData>    // imgui.h:2074
-        (m, "ImGuiInputTextCallbackData", "Shared state of InputText(), passed as an argument to your callback when a ImGuiInputTextFlags_Callback flag is used.\nThe callback function should return 0 by default.\nCallbacks (follow a flag name and see comments in ImGuiInputTextFlags_ declarations for more details)\n- ImGuiInputTextFlags_CallbackEdit:        Callback on buffer edit (note that InputText() already returns True on edit, the callback is useful mainly to manipulate the underlying buffer while focus is active)\n- ImGuiInputTextFlags_CallbackAlways:      Callback on each iteration\n- ImGuiInputTextFlags_CallbackCompletion:  Callback on pressing TAB\n- ImGuiInputTextFlags_CallbackHistory:     Callback on pressing Up/Down arrows\n- ImGuiInputTextFlags_CallbackCharFilter:  Callback on character inputs to replace or discard them. Modify 'EventChar' to replace or discard, or return 1 in callback to discard.\n- ImGuiInputTextFlags_CallbackResize:      Callback on buffer capacity changes request (beyond 'buf_size' parameter value), allowing the string to grow.")
+        (m, "ImGuiInputTextCallbackData", " Shared state of InputText(), passed as an argument to your callback when a ImGuiInputTextFlags_Callback flag is used.\n The callback function should return 0 by default.\n Callbacks (follow a flag name and see comments in ImGuiInputTextFlags_ declarations for more details)\n - ImGuiInputTextFlags_CallbackEdit:        Callback on buffer edit (note that InputText() already returns True on edit, the callback is useful mainly to manipulate the underlying buffer while focus is active)\n - ImGuiInputTextFlags_CallbackAlways:      Callback on each iteration\n - ImGuiInputTextFlags_CallbackCompletion:  Callback on pressing TAB\n - ImGuiInputTextFlags_CallbackHistory:     Callback on pressing Up/Down arrows\n - ImGuiInputTextFlags_CallbackCharFilter:  Callback on character inputs to replace or discard them. Modify 'EventChar' to replace or discard, or return 1 in callback to discard.\n - ImGuiInputTextFlags_CallbackResize:      Callback on buffer capacity changes request (beyond 'buf_size' parameter value), allowing the string to grow.")
         .def_readwrite("event_flag", &ImGuiInputTextCallbackData::EventFlag, "One ImGuiInputTextFlags_Callback    // Read-only")    // imgui.h:2076
         .def_readwrite("flags", &ImGuiInputTextCallbackData::Flags, "What user passed to InputText()      // Read-only")    // imgui.h:2077
         .def_readwrite("user_data", &ImGuiInputTextCallbackData::UserData, "What user passed to InputText()      // Read-only")    // imgui.h:2078
@@ -4883,11 +4539,10 @@ void py_init_module_imgui(py::module& m)
         .def_readwrite("buf_text_len", &ImGuiInputTextCallbackData::BufTextLen, "Text length (in bytes)               // Read-write   // [Resize,Completion,History,Always] Exclude zero-terminator storage. In C land: == strlen(some_text), in C++ land: string.length()")    // imgui.h:2086
         .def_readwrite("buf_size", &ImGuiInputTextCallbackData::BufSize, "Buffer size (in bytes) = capacity+1  // Read-only    // [Resize,Completion,History,Always] Include zero-terminator storage. In C land == ARRAYSIZE(my_char_array), in C++ land: string.capacity()+1")    // imgui.h:2087
         .def_readwrite("buf_dirty", &ImGuiInputTextCallbackData::BufDirty, "Set if you modify Buf/BufTextLen!    // Write        // [Completion,History,Always]")    // imgui.h:2088
-        .def_readwrite("cursor_pos", &ImGuiInputTextCallbackData::CursorPos, "                                     // Read-write   // [Completion,History,Always]")    // imgui.h:2089
-        .def_readwrite("selection_start", &ImGuiInputTextCallbackData::SelectionStart, "                                     // Read-write   // [Completion,History,Always] == to SelectionEnd when no selection)")    // imgui.h:2090
-        .def_readwrite("selection_end", &ImGuiInputTextCallbackData::SelectionEnd, "                                     // Read-write   // [Completion,History,Always]")    // imgui.h:2091
-        .def(py::init<>(),    // imgui.h:2095
-            "Helper functions for text manipulation.\nUse those function to benefit from the CallbackResize behaviors. Calling those function reset the selection.")
+        .def_readwrite("cursor_pos", &ImGuiInputTextCallbackData::CursorPos, "// Read-write   // [Completion,History,Always]")    // imgui.h:2089
+        .def_readwrite("selection_start", &ImGuiInputTextCallbackData::SelectionStart, "// Read-write   // [Completion,History,Always] == to SelectionEnd when no selection)")    // imgui.h:2090
+        .def_readwrite("selection_end", &ImGuiInputTextCallbackData::SelectionEnd, "// Read-write   // [Completion,History,Always]")    // imgui.h:2091
+        .def(py::init<>())    // imgui.h:2095
         .def("delete_chars",    // imgui.h:2096
             [](ImGuiInputTextCallbackData & self, int pos, int bytes_count)
             {
@@ -4900,19 +4555,21 @@ void py_init_module_imgui(py::module& m)
             {
                 self.InsertChars(pos, text, text_end);
             },
-            py::arg("pos"), py::arg("text"), py::arg("text_end") = NULL
+            py::arg("pos"), py::arg("text"), py::arg("text_end") = None
         )
         ;
 
 
+
     auto pyClassImGuiSizeCallbackData = py::class_<ImGuiSizeCallbackData>    // imgui.h:2105
-        (m, "ImGuiSizeCallbackData", "Resizing callback data to apply custom constraint. As enabled by SetNextWindowSizeConstraints(). Callback is called during the next Begin().\nNB: For basic min/max size constraint on each axis you don't need to use the callback! The SetNextWindowSizeConstraints() parameters are enough.")
+        (m, "ImGuiSizeCallbackData", " Resizing callback data to apply custom constraint. As enabled by SetNextWindowSizeConstraints(). Callback is called during the next Begin().\n NB: For basic min/max size constraint on each axis you don't need to use the callback! The SetNextWindowSizeConstraints() parameters are enough.")
         .def(py::init<>()) // implicit default constructor
         .def_readwrite("user_data", &ImGuiSizeCallbackData::UserData, "Read-only.   What user passed to SetNextWindowSizeConstraints()")    // imgui.h:2107
         .def_readwrite("pos", &ImGuiSizeCallbackData::Pos, "Read-only.   Window position, for reference.")    // imgui.h:2108
         .def_readwrite("current_size", &ImGuiSizeCallbackData::CurrentSize, "Read-only.   Current window size.")    // imgui.h:2109
         .def_readwrite("desired_size", &ImGuiSizeCallbackData::DesiredSize, "Read-write.  Desired size, based on user's mouse position. Write to this field to restrain resizing.")    // imgui.h:2110
         ;
+
 
 
     auto pyClassImGuiPayload = py::class_<ImGuiPayload>    // imgui.h:2114
@@ -4922,10 +4579,12 @@ void py_init_module_imgui(py::module& m)
         .def_readwrite("source_id", &ImGuiPayload::SourceId, "Source item id")    // imgui.h:2121
         .def_readwrite("source_parent_id", &ImGuiPayload::SourceParentId, "Source parent id (if available)")    // imgui.h:2122
         .def_readwrite("data_frame_count", &ImGuiPayload::DataFrameCount, "Data timestamp")    // imgui.h:2123
+        .def_readwrite("data_type", &ImGuiPayload::DataType, "Data type tag (short user-supplied string, 32 characters max)")    // imgui.h:2124
         .def_readwrite("preview", &ImGuiPayload::Preview, "Set when AcceptDragDropPayload() was called and mouse has been hovering the target item (nb: handle overlapping drag targets)")    // imgui.h:2125
         .def_readwrite("delivery", &ImGuiPayload::Delivery, "Set when AcceptDragDropPayload() was called and mouse button is released over the target item.")    // imgui.h:2126
         .def(py::init<>())    // imgui.h:2128
         ;
+
 
 
     auto pyClassImGuiTableColumnSortSpecs = py::class_<ImGuiTableColumnSortSpecs>    // imgui.h:2136
@@ -4937,8 +4596,9 @@ void py_init_module_imgui(py::module& m)
         ;
 
 
+
     auto pyClassImGuiTableSortSpecs = py::class_<ImGuiTableSortSpecs>    // imgui.h:2150
-        (m, "ImGuiTableSortSpecs", "Sorting specifications for a table (often handling sort specs for a single column, occasionally more)\nObtained by calling TableGetSortSpecs().\nWhen 'SpecsDirty == True' you can sort your data. It will be True with sorting specs have changed since last call, or the first time.\nMake sure to set 'SpecsDirty = False' after sorting, else you may wastefully sort your data every frame!")
+        (m, "ImGuiTableSortSpecs", " Sorting specifications for a table (often handling sort specs for a single column, occasionally more)\n Obtained by calling TableGetSortSpecs().\n When 'SpecsDirty == True' you can sort your data. It will be True with sorting specs have changed since last call, or the first time.\n Make sure to set 'SpecsDirty = False' after sorting, else you may wastefully sort your data every frame!")
         .def_readwrite("specs", &ImGuiTableSortSpecs::Specs, "Pointer to sort spec array.")    // imgui.h:2152
         .def_readwrite("specs_count", &ImGuiTableSortSpecs::SpecsCount, "Sort spec count. Most often 1. May be > 1 when ImGuiTableFlags_SortMulti is enabled. May be == 0 when ImGuiTableFlags_SortTristate is enabled.")    // imgui.h:2153
         .def_readwrite("specs_dirty", &ImGuiTableSortSpecs::SpecsDirty, "Set to True when specs have changed since last time! Use this to sort again, then clear the flag.")    // imgui.h:2154
@@ -4946,11 +4606,13 @@ void py_init_module_imgui(py::module& m)
         ;
 
 
+
     auto pyClassImGuiOnceUponAFrame = py::class_<ImGuiOnceUponAFrame>    // imgui.h:2173
-        (m, "ImGuiOnceUponAFrame", "Helper: Execute a block of code at maximum once a frame. Convenient if you want to quickly create an UI within deep-nested code that runs multiple times every frame.\nUsage: static ImGuiOnceUponAFrame oaf; if (oaf) ImGui::Text(\"This will be called only once per frame\");")
+        (m, "ImGuiOnceUponAFrame", " Helper: Execute a block of code at maximum once a frame. Convenient if you want to quickly create an UI within deep-nested code that runs multiple times every frame.\n Usage: static ImGuiOnceUponAFrame oaf; if (oaf) ImGui::Text(\"This will be called only once per frame\");")
         .def(py::init<>())    // imgui.h:2175
         .def_readwrite("ref_frame", &ImGuiOnceUponAFrame::RefFrame, "")    // imgui.h:2176
         ;
+
 
 
     auto pyClassImGuiTextFilter = py::class_<ImGuiTextFilter>    // imgui.h:2181
@@ -4962,15 +4624,15 @@ void py_init_module_imgui(py::module& m)
             {
                 return self.Draw(label, width);
             },
-            py::arg("label") = "Filter (inc,-exc)", py::arg("width") = 0.0f,
+            py::arg("label") = "Filter (inc,-exc)", py::arg("width") = 0.0,
             "Helper calling InputText+Build"
         )
         .def("pass_filter",    // imgui.h:2185
-            [](ImGuiTextFilter & self, const char * text, const char * text_end = NULL)
+            [](const ImGuiTextFilter & self, const char * text, const char * text_end = NULL)
             {
                 return self.PassFilter(text, text_end);
             },
-            py::arg("text"), py::arg("text_end") = NULL
+            py::arg("text"), py::arg("text_end") = None
         )
         .def("build",    // imgui.h:2186
             [](ImGuiTextFilter & self)
@@ -4983,8 +4645,9 @@ void py_init_module_imgui(py::module& m)
         ;
 
 
+
     auto pyClassImGuiTextBuffer = py::class_<ImGuiTextBuffer>    // imgui.h:2208
-        (m, "ImGuiTextBuffer", "Helper: Growable text buffer for logging/accumulating text\n(this could be called 'ImGuiTextBuilder' / 'ImGuiStringBuilder')")
+        (m, "ImGuiTextBuffer", " Helper: Growable text buffer for logging/accumulating text\n (this could be called 'ImGuiTextBuilder' / 'ImGuiStringBuilder')")
         .def_readwrite("buf", &ImGuiTextBuffer::Buf, "")    // imgui.h:2210
         .def(py::init<>())    // imgui.h:2213
         .def("append",    // imgui.h:2222
@@ -4992,7 +4655,7 @@ void py_init_module_imgui(py::module& m)
             {
                 self.append(str, str_end);
             },
-            py::arg("str"), py::arg("str_end") = NULL
+            py::arg("str"), py::arg("str_end") = None
         )
         .def("appendf",    // imgui.h:2223
             [](ImGuiTextBuffer & self, const char * fmt)
@@ -5016,12 +4679,13 @@ void py_init_module_imgui(py::module& m)
         ;
 
 
+
     auto pyClassImGuiStorage = py::class_<ImGuiStorage>    // imgui.h:2235
-        (m, "ImGuiStorage", "Helper: Key->Value storage\nTypically you don't have to worry about this since a storage is held within each Window.\nWe use it to e.g. store collapse state for a tree (Int 0/1)\nThis is optimized for efficient lookup (dichotomy into a contiguous buffer) and rare insertion (typically tied to user interactions aka max once a frame)\nYou can use it as custom user storage for temporary values. Declare your own storage if, for example:\n- You want to manipulate the open/close state of a particular sub-tree in your interface (tree node uses Int 0/1 to store their state).\n- You want to store custom debug data easily without adding or editing structures in your code (probably not efficient, but convenient)\nTypes are NOT stored, so it is up to you to make sure your Key don't collide with different types.")
+        (m, "ImGuiStorage", " Helper: Key->Value storage\n Typically you don't have to worry about this since a storage is held within each Window.\n We use it to e.g. store collapse state for a tree (Int 0/1)\n This is optimized for efficient lookup (dichotomy into a contiguous buffer) and rare insertion (typically tied to user interactions aka max once a frame)\n You can use it as custom user storage for temporary values. Declare your own storage if, for example:\n - You want to manipulate the open/close state of a particular sub-tree in your interface (tree node uses Int 0/1 to store their state).\n - You want to store custom debug data easily without adding or editing structures in your code (probably not efficient, but convenient)\n Types are NOT stored, so it is up to you to make sure your Key don't collide with different types.")
         .def(py::init<>()) // implicit default constructor
         .def_readwrite("data", &ImGuiStorage::Data, "")    // imgui.h:2247
         .def("get_int",    // imgui.h:2253
-            [](ImGuiStorage & self, ImGuiID key, int default_val = 0)
+            [](const ImGuiStorage & self, ImGuiID key, int default_val = 0)
             {
                 return self.GetInt(key, default_val);
             },
@@ -5035,11 +4699,11 @@ void py_init_module_imgui(py::module& m)
             py::arg("key"), py::arg("val")
         )
         .def("get_bool",    // imgui.h:2255
-            [](ImGuiStorage & self, ImGuiID key, bool default_val = false)
+            [](const ImGuiStorage & self, ImGuiID key, bool default_val = false)
             {
                 return self.GetBool(key, default_val);
             },
-            py::arg("key"), py::arg("default_val") = false
+            py::arg("key"), py::arg("default_val") = False
         )
         .def("set_bool",    // imgui.h:2256
             [](ImGuiStorage & self, ImGuiID key, bool val)
@@ -5049,11 +4713,11 @@ void py_init_module_imgui(py::module& m)
             py::arg("key"), py::arg("val")
         )
         .def("get_float",    // imgui.h:2257
-            [](ImGuiStorage & self, ImGuiID key, float default_val = 0.0f)
+            [](const ImGuiStorage & self, ImGuiID key, float default_val = 0.0f)
             {
                 return self.GetFloat(key, default_val);
             },
-            py::arg("key"), py::arg("default_val") = 0.0f
+            py::arg("key"), py::arg("default_val") = 0.0
         )
         .def("set_float",    // imgui.h:2258
             [](ImGuiStorage & self, ImGuiID key, float val)
@@ -5063,7 +4727,7 @@ void py_init_module_imgui(py::module& m)
             py::arg("key"), py::arg("val")
         )
         .def("get_void_ptr",    // imgui.h:2259
-            [](ImGuiStorage & self, ImGuiID key)
+            [](const ImGuiStorage & self, ImGuiID key)
             {
                 return self.GetVoidPtr(key);
             },
@@ -5082,29 +4746,28 @@ void py_init_module_imgui(py::module& m)
             {
                 return self.GetIntRef(key, default_val);
             },
-            py::arg("key"), py::arg("default_val") = 0,
-            "- Get***Ref() functions finds pair, insert on demand if missing, return pointer. Useful if you intend to do Get+Set.\n- References are only valid until a new value is added to the storage. Calling a Set***() function or a Get***Ref() function invalidates the pointer.\n- A typical use case where this is convenient for quick hacking (e.g. add storage during a live Edit&Continue session if you can't modify existing struct)\nfloat* pvar = ImGui::GetFloatRef(key); ImGui::SliderFloat(\"var\", pvar, 0, 100.0f); some_var += *pvar;"
+            py::arg("key"), py::arg("default_val") = 0
         )
         .def("get_bool_ref",    // imgui.h:2267
             [](ImGuiStorage & self, ImGuiID key, bool default_val = false)
             {
                 return self.GetBoolRef(key, default_val);
             },
-            py::arg("key"), py::arg("default_val") = false
+            py::arg("key"), py::arg("default_val") = False
         )
         .def("get_float_ref",    // imgui.h:2268
             [](ImGuiStorage & self, ImGuiID key, float default_val = 0.0f)
             {
                 return self.GetFloatRef(key, default_val);
             },
-            py::arg("key"), py::arg("default_val") = 0.0f
+            py::arg("key"), py::arg("default_val") = 0.0
         )
         .def("get_void_ptr_ref",    // imgui.h:2269
             [](ImGuiStorage & self, ImGuiID key, void * default_val = NULL)
             {
                 return self.GetVoidPtrRef(key, default_val);
             },
-            py::arg("key"), py::arg("default_val") = NULL
+            py::arg("key"), py::arg("default_val") = None
         )
         .def("set_all_int",    // imgui.h:2272
             [](ImGuiStorage & self, int val)
@@ -5124,8 +4787,9 @@ void py_init_module_imgui(py::module& m)
         ;
 
 
+
     auto pyClassImGuiListClipper = py::class_<ImGuiListClipper>    // imgui.h:2298
-        (m, "ImGuiListClipper", "Helper: Manually clip large list of items.\nIf you have lots evenly spaced items and you have a random access to the list, you can perform coarse\nclipping based on visibility to only submit items that are in view.\nThe clipper calculates the range of visible items and advance the cursor to compensate for the non-visible items we have skipped.\n(Dear ImGui already clip items based on their bounds but: it needs to first layout the item to do so, and generally\nfetching/submitting your own data incurs additional cost. Coarse clipping using ImGuiListClipper allows you to easily\nscale using lists with tens of thousands of items without a problem)\nUsage:\nImGuiListClipper clipper;\nclipper.Begin(1000);         // We have 1000 elements, evenly spaced.\nwhile (clipper.Step())\nfor (int i = clipper.DisplayStart; i < clipper.DisplayEnd; i++)\nImGui::Text(\"line number %d\", i);\nGenerally what happens is:\n- Clipper lets you process the first element (DisplayStart = 0, DisplayEnd = 1) regardless of it being visible or not.\n- User code submit that one element.\n- Clipper can measure the height of the first element\n- Clipper calculate the actual range of elements to display based on the current clipping rectangle, position the cursor before the first visible element.\n- User code submit visible elements.\n- The clipper also handles various subtleties related to keyboard/gamepad navigation, wrapping etc.")
+        (m, "ImGuiListClipper", " Helper: Manually clip large list of items.\n If you have lots evenly spaced items and you have a random access to the list, you can perform coarse\n clipping based on visibility to only submit items that are in view.\n The clipper calculates the range of visible items and advance the cursor to compensate for the non-visible items we have skipped.\n (Dear ImGui already clip items based on their bounds but: it needs to first layout the item to do so, and generally\n  fetching/submitting your own data incurs additional cost. Coarse clipping using ImGuiListClipper allows you to easily\n  scale using lists with tens of thousands of items without a problem)\n Usage:\n   ImGuiListClipper clipper;\n   clipper.Begin(1000);         // We have 1000 elements, evenly spaced.\n   while (clipper.Step())\n       for (int i = clipper.DisplayStart; i < clipper.DisplayEnd; i++)\n           ImGui::Text(\"line number %d\", i);\n Generally what happens is:\n - Clipper lets you process the first element (DisplayStart = 0, DisplayEnd = 1) regardless of it being visible or not.\n - User code submit that one element.\n - Clipper can measure the height of the first element\n - Clipper calculate the actual range of elements to display based on the current clipping rectangle, position the cursor before the first visible element.\n - User code submit visible elements.\n - The clipper also handles various subtleties related to keyboard/gamepad navigation, wrapping etc.")
         .def_readwrite("display_start", &ImGuiListClipper::DisplayStart, "First item to display, updated by each call to Step()")    // imgui.h:2300
         .def_readwrite("display_end", &ImGuiListClipper::DisplayEnd, "End of items to display (exclusive)")    // imgui.h:2301
         .def_readwrite("items_count", &ImGuiListClipper::ItemsCount, "[Internal] Number of items")    // imgui.h:2302
@@ -5133,13 +4797,13 @@ void py_init_module_imgui(py::module& m)
         .def_readwrite("start_pos_y", &ImGuiListClipper::StartPosY, "[Internal] Cursor position at the time of Begin() or after table frozen rows are all processed")    // imgui.h:2304
         .def_readwrite("temp_data", &ImGuiListClipper::TempData, "[Internal] Internal data")    // imgui.h:2305
         .def(py::init<>(),    // imgui.h:2309
-            "items_count: Use INT_MAX if you don't know how many items you have (in which case the cursor won't be advanced in the final step)\nitems_height: Use -1.0f to be calculated automatically on first step. Otherwise pass in the distance between your items, typically GetTextLineHeightWithSpacing() or GetFrameHeightWithSpacing().")
+            " items_count: Use INT_MAX if you don't know how many items you have (in which case the cursor won't be advanced in the final step)\n items_height: Use -1.0 to be calculated automatically on first step. Otherwise pass in the distance between your items, typically GetTextLineHeightWithSpacing() or GetFrameHeightWithSpacing().")
         .def("begin",    // imgui.h:2311
             [](ImGuiListClipper & self, int items_count, float items_height = -1.0f)
             {
                 self.Begin(items_count, items_height);
             },
-            py::arg("items_count"), py::arg("items_height") = -1.0f
+            py::arg("items_count"), py::arg("items_height") = -1.0
         )
         .def("end",    // imgui.h:2312
             [](ImGuiListClipper & self)
@@ -5166,15 +4830,16 @@ void py_init_module_imgui(py::module& m)
         ;
 
 
+
     auto pyClassImColor = py::class_<ImColor>    // imgui.h:2349
-        (m, "ImColor", "Helper: ImColor() implicitly converts colors to either ImU32 (packed 4x1 byte) or ImVec4 (4x1 float)\nPrefer using IM_COL32() macros if you want a guaranteed compile-time ImU32 for usage with ImDrawList API.\nAvoid storing ImColor! Store either u32 of ImVec4. This is not a full-featured color class. MAY OBSOLETE.\nNone of the ImGui API are using ImColor directly but you can use it as a convenience to pass colors in either ImU32 or ImVec4 formats. Explicitly cast to ImU32 or ImVec4 if needed.")
+        (m, "ImColor", " Helper: ImColor() implicitly converts colors to either ImU32 (packed 4x1 byte) or ImVec4 (4x1 float)\n Prefer using IM_COL32() macros if you want a guaranteed compile-time ImU32 for usage with ImDrawList API.\n Avoid storing ImColor! Store either u32 of ImVec4. This is not a full-featured color class. MAY OBSOLETE.\n None of the ImGui API are using ImColor directly but you can use it as a convenience to pass colors in either ImU32 or ImVec4 formats. Explicitly cast to ImU32 or ImVec4 if needed.")
         .def_readwrite("value", &ImColor::Value, "")    // imgui.h:2351
         .def(py::init<>())    // imgui.h:2353
         .def(py::init<float, float, float, float>(),    // imgui.h:2354
             py::arg("r"),
             py::arg("g"),
             py::arg("b"),
-            py::arg("a") = 1.0f)
+            py::arg("a") = 1.0)
         .def(py::init<const ImVec4 &>(),    // imgui.h:2355
             py::arg("col"))
         .def(py::init<int, int, int, int>(),    // imgui.h:2356
@@ -5187,8 +4852,9 @@ void py_init_module_imgui(py::module& m)
         ;
 
 
+
     auto pyClassImDrawCmd = py::class_<ImDrawCmd>    // imgui.h:2398
-        (m, "ImDrawCmd", "Typically, 1 command = 1 GPU draw call (unless command is a callback)\n- VtxOffset: When 'io.BackendFlags  ImGuiBackendFlags_RendererHasVtxOffset' is enabled,\nthis fields allow us to render meshes larger than 64K vertices while keeping 16-bit indices.\nBackends made for <1.71. will typically ignore the VtxOffset fields.\n- The ClipRect/TextureId/VtxOffset fields must be contiguous as we memcmp() them together (this is asserted for).")
+        (m, "ImDrawCmd", " Typically, 1 command = 1 GPU draw call (unless command is a callback)\n - VtxOffset: When 'io.BackendFlags  ImGuiBackendFlags_RendererHasVtxOffset' is enabled,\n   this fields allow us to render meshes larger than 64K vertices while keeping 16-bit indices.\n   Backends made for <1.71. will typically ignore the VtxOffset fields.\n - The ClipRect/TextureId/VtxOffset fields must be contiguous as we memcmp() them together (this is asserted for).")
         .def_readwrite("clip_rect", &ImDrawCmd::ClipRect, "44  // Clipping rectangle (x1, y1, x2, y2). Subtract ImDrawData->DisplayPos to get clipping rectangle in \"viewport\" coordinates")    // imgui.h:2400
         .def_readwrite("texture_id", &ImDrawCmd::TextureId, "4-8  // User-provided texture ID. Set by user in ImfontAtlas::SetTexID() for fonts or passed to Image() functions. Ignore if never using images or multiple fonts atlas.")    // imgui.h:2401
         .def_readwrite("vtx_offset", &ImDrawCmd::VtxOffset, "4    // Start offset in vertex buffer. ImGuiBackendFlags_RendererHasVtxOffset: always 0, otherwise may be >0 to support meshes larger than 64K vertices with 16-bit indices.")    // imgui.h:2402
@@ -5200,6 +4866,7 @@ void py_init_module_imgui(py::module& m)
         ;
 
 
+
     auto pyClassImDrawCmdHeader = py::class_<ImDrawCmdHeader>    // imgui.h:2431
         (m, "ImDrawCmdHeader", "[Internal] For use by ImDrawList")
         .def(py::init<>()) // implicit default constructor
@@ -5207,6 +4874,7 @@ void py_init_module_imgui(py::module& m)
         .def_readwrite("texture_id", &ImDrawCmdHeader::TextureId, "")    // imgui.h:2434
         .def_readwrite("vtx_offset", &ImDrawCmdHeader::VtxOffset, "")    // imgui.h:2435
         ;
+
 
 
     auto pyClassImDrawChannel = py::class_<ImDrawChannel>    // imgui.h:2439
@@ -5217,8 +4885,9 @@ void py_init_module_imgui(py::module& m)
         ;
 
 
+
     auto pyClassImDrawListSplitter = py::class_<ImDrawListSplitter>    // imgui.h:2448
-        (m, "ImDrawListSplitter", "Split/Merge functions are used to split the draw list into different layers which can be drawn into out of order.\nThis is used by the Columns/Tables API, so items of each column can be batched together in a same draw call.")
+        (m, "ImDrawListSplitter", " Split/Merge functions are used to split the draw list into different layers which can be drawn into out of order.\n This is used by the Columns/Tables API, so items of each column can be batched together in a same draw call.")
         .def_readwrite("_current", &ImDrawListSplitter::_Current, "Current channel number (0)")    // imgui.h:2450
         .def_readwrite("_count", &ImDrawListSplitter::_Count, "Number of active channels (1+)")    // imgui.h:2451
         .def_readwrite("_channels", &ImDrawListSplitter::_Channels, "Draw channels (not resized down so _Count might be < Channels.Size)")    // imgui.h:2452
@@ -5253,7 +4922,8 @@ void py_init_module_imgui(py::module& m)
         ;
 
 
-    py::enum_<ImDrawFlags_>(m, "ImDrawFlags_", py::arithmetic(), "Flags for ImDrawList functions\n(Legacy: bit 0 must always correspond to ImDrawFlags_Closed to be backward compatible with old API using a bool. Bits 1..3 must be unused)")    // imgui.h:2465
+
+    py::enum_<ImDrawFlags_>(m, "ImDrawFlags_", py::arithmetic(), " Flags for ImDrawList functions\n (Legacy: bit 0 must always correspond to ImDrawFlags_Closed to be backward compatible with old API using a bool. Bits 1..3 must be unused)")    // imgui.h:2465
         .value("none", ImDrawFlags_None, "")
         .value("closed", ImDrawFlags_Closed, "PathStroke(), AddPolyline(): specify that shape should be closed (Important: this is always == 1 for legacy reason)")
         .value("round_corners_top_left", ImDrawFlags_RoundCornersTopLeft, "AddRect(), AddRectFilled(), PathRect(): enable rounding top-left corner only (when rounding > 0.0f, we default to all corners). Was 0x01.")
@@ -5269,15 +4939,19 @@ void py_init_module_imgui(py::module& m)
         .value("round_corners_default_", ImDrawFlags_RoundCornersDefault_, "Default to ALL corners if none of the _RoundCornersXX flags are specified.")
         .value("round_corners_mask_", ImDrawFlags_RoundCornersMask_, "");
 
-    py::enum_<ImDrawListFlags_>(m, "ImDrawListFlags_", py::arithmetic(), "Flags for ImDrawList instance. Those are set automatically by ImGui:: functions from ImGuiIO settings, and generally not manipulated directly.\nIt is however possible to temporarily alter flags between calls to ImDrawList:: functions.")    // imgui.h:2485
+
+
+    py::enum_<ImDrawListFlags_>(m, "ImDrawListFlags_", py::arithmetic(), " Flags for ImDrawList instance. Those are set automatically by ImGui:: functions from ImGuiIO settings, and generally not manipulated directly.\n It is however possible to temporarily alter flags between calls to ImDrawList:: functions.")    // imgui.h:2485
         .value("none", ImDrawListFlags_None, "")
         .value("anti_aliased_lines", ImDrawListFlags_AntiAliasedLines, "Enable anti-aliased lines/borders (*2 the number of triangles for 1.0f wide line or lines thin enough to be drawn using textures, otherwise *3 the number of triangles)")
         .value("anti_aliased_lines_use_tex", ImDrawListFlags_AntiAliasedLinesUseTex, "Enable anti-aliased lines/borders using textures when possible. Require backend to render with bilinear filtering (NOT point/nearest filtering).")
         .value("anti_aliased_fill", ImDrawListFlags_AntiAliasedFill, "Enable anti-aliased edge around filled shapes (rounded rectangles, circles).")
         .value("allow_vtx_offset", ImDrawListFlags_AllowVtxOffset, "Can emit 'VtxOffset > 0' to allow large meshes. Set when 'ImGuiBackendFlags_RendererHasVtxOffset' is enabled.");
 
+
+
     auto pyClassImDrawList = py::class_<ImDrawList>    // imgui.h:2503
-        (m, "ImDrawList", "Draw command list\nThis is the low-level list of polygons that ImGui:: functions are filling. At the end of the frame,\nall command lists are passed to your ImGuiIO::RenderDrawListFn function for rendering.\nEach dear imgui window contains its own ImDrawList. You can use ImGui::GetWindowDrawList() to\naccess the current window draw list and draw custom primitives.\nYou can interleave normal ImGui:: calls and adding primitives to the current draw list.\nIn single viewport mode, top-left is == GetMainViewport()->Pos (generally 0,0), bottom-right is == GetMainViewport()->Pos+Size (generally io.DisplaySize).\nYou are totally free to apply whatever transformation matrix to want to the data (depending on the use of the transformation you may want to apply it to ClipRect as well!)\nImportant: Primitives are always added to the list and not culled (culling is done at higher-level by ImGui:: functions), if you use this API a lot consider coarse culling your drawn objects.")
+        (m, "ImDrawList", " Draw command list\n This is the low-level list of polygons that ImGui:: functions are filling. At the end of the frame,\n all command lists are passed to your ImGuiIO::RenderDrawListFn function for rendering.\n Each dear imgui window contains its own ImDrawList. You can use ImGui::GetWindowDrawList() to\n access the current window draw list and draw custom primitives.\n You can interleave normal ImGui:: calls and adding primitives to the current draw list.\n In single viewport mode, top-left is == GetMainViewport()->Pos (generally 0,0), bottom-right is == GetMainViewport()->Pos+Size (generally io.DisplaySize).\n You are totally free to apply whatever transformation matrix to want to the data (depending on the use of the transformation you may want to apply it to ClipRect as well!)\n Important: Primitives are always added to the list and not culled (culling is done at higher-level by ImGui:: functions), if you use this API a lot consider coarse culling your drawn objects.")
         .def_readwrite("cmd_buffer", &ImDrawList::CmdBuffer, "Draw commands. Typically 1 command = 1 GPU draw call, unless the command is a callback.")    // imgui.h:2506
         .def_readwrite("idx_buffer", &ImDrawList::IdxBuffer, "Index buffer. Each command consume ImDrawCmd::ElemCount of those")    // imgui.h:2507
         .def_readwrite("vtx_buffer", &ImDrawList::VtxBuffer, "Vertex buffer.")    // imgui.h:2508
@@ -5301,7 +4975,7 @@ void py_init_module_imgui(py::module& m)
             {
                 self.PushClipRect(clip_rect_min, clip_rect_max, intersect_with_current_clip_rect);
             },
-            py::arg("clip_rect_min"), py::arg("clip_rect_max"), py::arg("intersect_with_current_clip_rect") = false,
+            py::arg("clip_rect_min"), py::arg("clip_rect_max"), py::arg("intersect_with_current_clip_rect") = False,
             "Render-level scissoring. This is passed down to your render function but not used for CPU-side coarse clipping. Prefer using higher-level ImGui::PushClipRect() to affect logic (hit-testing and widget culling)"
         )
         .def("push_clip_rect_full_screen",    // imgui.h:2529
@@ -5334,15 +5008,14 @@ void py_init_module_imgui(py::module& m)
             {
                 self.AddLine(p1, p2, col, thickness);
             },
-            py::arg("p1"), py::arg("p2"), py::arg("col"), py::arg("thickness") = 1.0f,
-            "Primitives\n- Filled shapes must always use clockwise winding order. The anti-aliasing fringe depends on it. Counter-clockwise shapes will have \"inward\" anti-aliasing.\n- For rectangular primitives, \"p_min\" and \"p_max\" represent the upper-left and lower-right corners.\n- For circle primitives, use \"num_segments == 0\" to automatically calculate tessellation (preferred).\nIn older versions (until Dear ImGui 1.77) the AddCircle functions defaulted to num_segments == 12.\nIn future versions we will use textures to provide cheaper and higher-quality circles.\nUse AddNgon() and AddNgonFilled() functions if you need to guaranteed a specific number of sides."
+            py::arg("p1"), py::arg("p2"), py::arg("col"), py::arg("thickness") = 1.0
         )
         .def("add_rect",    // imgui.h:2544
             [](ImDrawList & self, const ImVec2 & p_min, const ImVec2 & p_max, ImU32 col, float rounding = 0.0f, ImDrawFlags flags = 0, float thickness = 1.0f)
             {
                 self.AddRect(p_min, p_max, col, rounding, flags, thickness);
             },
-            py::arg("p_min"), py::arg("p_max"), py::arg("col"), py::arg("rounding") = 0.0f, py::arg("flags") = 0, py::arg("thickness") = 1.0f,
+            py::arg("p_min"), py::arg("p_max"), py::arg("col"), py::arg("rounding") = 0.0, py::arg("flags") = 0, py::arg("thickness") = 1.0,
             "a: upper-left, b: lower-right (== upper-left + size)"
         )
         .def("add_rect_filled",    // imgui.h:2545
@@ -5350,7 +5023,7 @@ void py_init_module_imgui(py::module& m)
             {
                 self.AddRectFilled(p_min, p_max, col, rounding, flags);
             },
-            py::arg("p_min"), py::arg("p_max"), py::arg("col"), py::arg("rounding") = 0.0f, py::arg("flags") = 0,
+            py::arg("p_min"), py::arg("p_max"), py::arg("col"), py::arg("rounding") = 0.0, py::arg("flags") = 0,
             "a: upper-left, b: lower-right (== upper-left + size)"
         )
         .def("add_rect_filled_multi_color",    // imgui.h:2546
@@ -5365,7 +5038,7 @@ void py_init_module_imgui(py::module& m)
             {
                 self.AddQuad(p1, p2, p3, p4, col, thickness);
             },
-            py::arg("p1"), py::arg("p2"), py::arg("p3"), py::arg("p4"), py::arg("col"), py::arg("thickness") = 1.0f
+            py::arg("p1"), py::arg("p2"), py::arg("p3"), py::arg("p4"), py::arg("col"), py::arg("thickness") = 1.0
         )
         .def("add_quad_filled",    // imgui.h:2548
             [](ImDrawList & self, const ImVec2 & p1, const ImVec2 & p2, const ImVec2 & p3, const ImVec2 & p4, ImU32 col)
@@ -5379,7 +5052,7 @@ void py_init_module_imgui(py::module& m)
             {
                 self.AddTriangle(p1, p2, p3, col, thickness);
             },
-            py::arg("p1"), py::arg("p2"), py::arg("p3"), py::arg("col"), py::arg("thickness") = 1.0f
+            py::arg("p1"), py::arg("p2"), py::arg("p3"), py::arg("col"), py::arg("thickness") = 1.0
         )
         .def("add_triangle_filled",    // imgui.h:2550
             [](ImDrawList & self, const ImVec2 & p1, const ImVec2 & p2, const ImVec2 & p3, ImU32 col)
@@ -5393,7 +5066,7 @@ void py_init_module_imgui(py::module& m)
             {
                 self.AddCircle(center, radius, col, num_segments, thickness);
             },
-            py::arg("center"), py::arg("radius"), py::arg("col"), py::arg("num_segments") = 0, py::arg("thickness") = 1.0f
+            py::arg("center"), py::arg("radius"), py::arg("col"), py::arg("num_segments") = 0, py::arg("thickness") = 1.0
         )
         .def("add_circle_filled",    // imgui.h:2552
             [](ImDrawList & self, const ImVec2 & center, float radius, ImU32 col, int num_segments = 0)
@@ -5407,7 +5080,7 @@ void py_init_module_imgui(py::module& m)
             {
                 self.AddNgon(center, radius, col, num_segments, thickness);
             },
-            py::arg("center"), py::arg("radius"), py::arg("col"), py::arg("num_segments"), py::arg("thickness") = 1.0f
+            py::arg("center"), py::arg("radius"), py::arg("col"), py::arg("num_segments"), py::arg("thickness") = 1.0
         )
         .def("add_ngon_filled",    // imgui.h:2554
             [](ImDrawList & self, const ImVec2 & center, float radius, ImU32 col, int num_segments)
@@ -5421,14 +5094,14 @@ void py_init_module_imgui(py::module& m)
             {
                 self.AddText(pos, col, text_begin, text_end);
             },
-            py::arg("pos"), py::arg("col"), py::arg("text_begin"), py::arg("text_end") = NULL
+            py::arg("pos"), py::arg("col"), py::arg("text_begin"), py::arg("text_end") = None
         )
         .def("add_text",    // imgui.h:2556
             [](ImDrawList & self, const ImFont * font, float font_size, const ImVec2 & pos, ImU32 col, const char * text_begin, const char * text_end = NULL, float wrap_width = 0.0f, const ImVec4 * cpu_fine_clip_rect = NULL)
             {
                 self.AddText(font, font_size, pos, col, text_begin, text_end, wrap_width, cpu_fine_clip_rect);
             },
-            py::arg("font"), py::arg("font_size"), py::arg("pos"), py::arg("col"), py::arg("text_begin"), py::arg("text_end") = NULL, py::arg("wrap_width") = 0.0f, py::arg("cpu_fine_clip_rect") = NULL
+            py::arg("font"), py::arg("font_size"), py::arg("pos"), py::arg("col"), py::arg("text_begin"), py::arg("text_end") = None, py::arg("wrap_width") = 0.0, py::arg("cpu_fine_clip_rect") = None
         )
         .def("add_polyline",    // imgui.h:2557
             [](ImDrawList & self, const ImVec2 * points, int num_points, ImU32 col, ImDrawFlags flags, float thickness)
@@ -5465,8 +5138,7 @@ void py_init_module_imgui(py::module& m)
             {
                 self.AddImage(user_texture_id, p_min, p_max, uv_min, uv_max, col);
             },
-            py::arg("user_texture_id"), py::arg("p_min"), py::arg("p_max"), py::arg("uv_min") = ImVec2(0, 0), py::arg("uv_max") = ImVec2(1, 1), py::arg("col") = IM_COL32_WHITE,
-            "Image primitives\n- Read FAQ to understand what ImTextureID is.\n- \"p_min\" and \"p_max\" represent the upper-left and lower-right corners of the rectangle.\n- \"uv_min\" and \"uv_max\" represent the normalized texture coordinates to use for those corners. Using (0,0)->(1,1) texture coordinates will generally display the entire texture."
+            py::arg("user_texture_id"), py::arg("p_min"), py::arg("p_max"), py::arg("uv_min") = ImVec2(0, 0), py::arg("uv_max") = ImVec2(1, 1), py::arg("col") = IM_COL32_WHITE
         )
         .def("add_image_quad",    // imgui.h:2567
             [](ImDrawList & self, ImTextureID user_texture_id, const ImVec2 & p1, const ImVec2 & p2, const ImVec2 & p3, const ImVec2 & p4, const ImVec2 & uv1 = ImVec2(0, 0), const ImVec2 & uv2 = ImVec2(1, 0), const ImVec2 & uv3 = ImVec2(1, 1), const ImVec2 & uv4 = ImVec2(0, 1), ImU32 col = IM_COL32_WHITE)
@@ -5518,7 +5190,7 @@ void py_init_module_imgui(py::module& m)
             {
                 self.PathRect(rect_min, rect_max, rounding, flags);
             },
-            py::arg("rect_min"), py::arg("rect_max"), py::arg("rounding") = 0.0f, py::arg("flags") = 0
+            py::arg("rect_min"), py::arg("rect_max"), py::arg("rounding") = 0.0, py::arg("flags") = 0
         )
         .def("add_callback",    // imgui.h:2584
             [](ImDrawList & self, ImDrawCallback callback, void * callback_data)
@@ -5536,7 +5208,7 @@ void py_init_module_imgui(py::module& m)
             "This is useful if you need to forcefully create a new draw call (to allow for dependent rendering / blending). Otherwise primitives are merged into the same draw-call as much as possible"
         )
         .def("clone_output",    // imgui.h:2586
-            [](ImDrawList & self)
+            [](const ImDrawList & self)
             {
                 return self.CloneOutput();
             },
@@ -5547,8 +5219,7 @@ void py_init_module_imgui(py::module& m)
             {
                 self.PrimReserve(idx_count, vtx_count);
             },
-            py::arg("idx_count"), py::arg("vtx_count"),
-            "Advanced: Primitives allocations\n- We render triangles (three vertices)\n- All primitives needs to be reserved via PrimReserve() beforehand."
+            py::arg("idx_count"), py::arg("vtx_count")
         )
         .def("prim_unreserve",    // imgui.h:2602
             [](ImDrawList & self, int idx_count, int vtx_count)
@@ -5569,8 +5240,7 @@ void py_init_module_imgui(py::module& m)
             [](ImDrawList & self)
             {
                 self._ResetForNewFrame();
-            },
-            "[Internal helpers]"
+            }
         )
         .def("_clear_free_memory",    // imgui.h:2617
             [](ImDrawList & self)
@@ -5609,7 +5279,7 @@ void py_init_module_imgui(py::module& m)
             }
         )
         .def("_calc_circle_auto_segment_count",    // imgui.h:2623
-            [](ImDrawList & self, float radius)
+            [](const ImDrawList & self, float radius)
             {
                 return self._CalcCircleAutoSegmentCount(radius);
             },
@@ -5632,8 +5302,9 @@ void py_init_module_imgui(py::module& m)
         ;
 
 
+
     auto pyClassImDrawData = py::class_<ImDrawData>    // imgui.h:2631
-        (m, "ImDrawData", "All draw data to render a Dear ImGui frame\n(NB: the style and the naming convention here is a little inconsistent, we currently preserve them for backward compatibility purpose,\nas this is one of the oldest structure exposed by the library! Basically, ImDrawList == CmdList)")
+        (m, "ImDrawData", " All draw data to render a Dear ImGui frame\n (NB: the style and the naming convention here is a little inconsistent, we currently preserve them for backward compatibility purpose,\n as this is one of the oldest structure exposed by the library! Basically, ImDrawList == CmdList)")
         .def_readwrite("valid", &ImDrawData::Valid, "Only valid after Render() is called and before the next NewFrame() is called.")    // imgui.h:2633
         .def_readwrite("cmd_lists_count", &ImDrawData::CmdListsCount, "Number of ImDrawList to render")    // imgui.h:2634
         .def_readwrite("total_idx_count", &ImDrawData::TotalIdxCount, "For convenience, sum of all ImDrawList's IdxBuffer.Size")    // imgui.h:2635
@@ -5661,13 +5332,14 @@ void py_init_module_imgui(py::module& m)
         ;
 
 
+
     auto pyClassImFontConfig = py::class_<ImFontConfig>    // imgui.h:2653
         (m, "ImFontConfig", "")
-        .def_readwrite("font_data", &ImFontConfig::FontData, "         // TTF/OTF data")    // imgui.h:2655
-        .def_readwrite("font_data_size", &ImFontConfig::FontDataSize, "         // TTF/OTF data size")    // imgui.h:2656
+        .def_readwrite("font_data", &ImFontConfig::FontData, "// TTF/OTF data")    // imgui.h:2655
+        .def_readwrite("font_data_size", &ImFontConfig::FontDataSize, "// TTF/OTF data size")    // imgui.h:2656
         .def_readwrite("font_data_owned_by_atlas", &ImFontConfig::FontDataOwnedByAtlas, "True     // TTF/OTF data ownership taken by the container ImFontAtlas (will delete memory itself).")    // imgui.h:2657
         .def_readwrite("font_no", &ImFontConfig::FontNo, "0        // Index of font within TTF/OTF file")    // imgui.h:2658
-        .def_readwrite("size_pixels", &ImFontConfig::SizePixels, "         // Size in pixels for rasterizer (more or less maps to the resulting font height).")    // imgui.h:2659
+        .def_readwrite("size_pixels", &ImFontConfig::SizePixels, "// Size in pixels for rasterizer (more or less maps to the resulting font height).")    // imgui.h:2659
         .def_readwrite("oversample_h", &ImFontConfig::OversampleH, "3        // Rasterize at higher quality for sub-pixel positioning. Note the difference between 2 and 3 is minimal so you can reduce this to 2 to save memory. Read https://github.com/nothings/stb/blob/master/tests/oversample/README.md for details.")    // imgui.h:2660
         .def_readwrite("oversample_v", &ImFontConfig::OversampleV, "1        // Rasterize at higher quality for sub-pixel positioning. This is not really useful as we don't use sub-pixel positions on the Y axis.")    // imgui.h:2661
         .def_readwrite("pixel_snap_h", &ImFontConfig::PixelSnapH, "False    // Align every glyph to pixel boundary. Useful e.g. if you are merging a non-pixel aligned font with the default font. If enabled, you can set OversampleH/V to 1.")    // imgui.h:2662
@@ -5678,15 +5350,16 @@ void py_init_module_imgui(py::module& m)
         .def_readwrite("glyph_max_advance_x", &ImFontConfig::GlyphMaxAdvanceX, "sys.float_info.max  // Maximum AdvanceX for glyphs")    // imgui.h:2667
         .def_readwrite("merge_mode", &ImFontConfig::MergeMode, "False    // Merge into previous ImFont, so you can combine multiple inputs font into one ImFont (e.g. ASCII font + icons + Japanese glyphs). You may want to use GlyphOffset.y when merge font of different heights.")    // imgui.h:2668
         .def_readwrite("font_builder_flags", &ImFontConfig::FontBuilderFlags, "0        // Settings for custom font builder. THIS IS BUILDER IMPLEMENTATION DEPENDENT. Leave as zero if unsure.")    // imgui.h:2669
-        .def_readwrite("rasterizer_multiply", &ImFontConfig::RasterizerMultiply, "1.0f     // Brighten (>1.0f) or darken (<1.0f) font output. Brightening small fonts may be a good workaround to make them more readable.")    // imgui.h:2670
+        .def_readwrite("rasterizer_multiply", &ImFontConfig::RasterizerMultiply, "1.0     // Brighten (>1.0) or darken (<1.0) font output. Brightening small fonts may be a good workaround to make them more readable.")    // imgui.h:2670
         .def_readwrite("ellipsis_char", &ImFontConfig::EllipsisChar, "-1       // Explicitly specify unicode codepoint of ellipsis character. When fonts are being merged first specified ellipsis will be used.")    // imgui.h:2671
         .def_readwrite("dst_font", &ImFontConfig::DstFont, "")    // imgui.h:2675
         .def(py::init<>())    // imgui.h:2677
         ;
 
 
+
     auto pyClassImFontGlyph = py::class_<ImFontGlyph>    // imgui.h:2682
-        (m, "ImFontGlyph", "Hold rendering data for one glyph.\n(Note: some language parsers may fail to convert the 31+1 bitfield members, in this case maybe drop store a single u32 or we can rework this)")
+        (m, "ImFontGlyph", " Hold rendering data for one glyph.\n (Note: some language parsers may fail to convert the 31+1 bitfield members, in this case maybe drop store a single u32 or we can rework this)")
         .def(py::init<>()) // implicit default constructor
         .def_readwrite("advance_x", &ImFontGlyph::AdvanceX, "Distance to next character (= data from font + ImFontConfig::GlyphExtraSpacing.x baked in)")    // imgui.h:2687
         .def_readwrite("x0", &ImFontGlyph::X0, "Glyph corners")    // imgui.h:2688
@@ -5700,8 +5373,9 @@ void py_init_module_imgui(py::module& m)
         ;
 
 
+
     auto pyClassImFontGlyphRangesBuilder = py::class_<ImFontGlyphRangesBuilder>    // imgui.h:2694
-        (m, "ImFontGlyphRangesBuilder", "Helper to build glyph ranges from text/string data. Feed your application strings/characters to it then call BuildRanges().\nThis is essentially a tightly packed of vector of 64k booleans = 8KB storage.")
+        (m, "ImFontGlyphRangesBuilder", " Helper to build glyph ranges from text/string data. Feed your application strings/characters to it then call BuildRanges().\n This is essentially a tightly packed of vector of 64k booleans = 8KB storage.")
         .def_readwrite("used_chars", &ImFontGlyphRangesBuilder::UsedChars, "Store 1-bit per Unicode code point (0=unused, 1=used)")    // imgui.h:2696
         .def(py::init<>())    // imgui.h:2698
         .def("add_text",    // imgui.h:2703
@@ -5709,7 +5383,7 @@ void py_init_module_imgui(py::module& m)
             {
                 self.AddText(text, text_end);
             },
-            py::arg("text"), py::arg("text_end") = NULL,
+            py::arg("text"), py::arg("text_end") = None,
             "Add string (each character of the UTF-8 string are added)"
         )
         .def("add_ranges",    // imgui.h:2704
@@ -5731,6 +5405,7 @@ void py_init_module_imgui(py::module& m)
         ;
 
 
+
     auto pyClassImFontAtlasCustomRect = py::class_<ImFontAtlasCustomRect>    // imgui.h:2709
         (m, "ImFontAtlasCustomRect", "See ImFontAtlas::AddCustomRectXXX functions.")
         .def_readwrite("width", &ImFontAtlasCustomRect::Width, "Input    // Desired rectangle dimension")    // imgui.h:2711
@@ -5745,14 +5420,17 @@ void py_init_module_imgui(py::module& m)
         ;
 
 
+
     py::enum_<ImFontAtlasFlags_>(m, "ImFontAtlasFlags_", py::arithmetic(), "Flags for ImFontAtlas build")    // imgui.h:2722
         .value("none", ImFontAtlasFlags_None, "")
         .value("no_power_of_two_height", ImFontAtlasFlags_NoPowerOfTwoHeight, "Don't round the height to next power of two")
         .value("no_mouse_cursors", ImFontAtlasFlags_NoMouseCursors, "Don't build software mouse cursors into the atlas (save a little texture memory)")
         .value("no_baked_lines", ImFontAtlasFlags_NoBakedLines, "Don't build thick line textures into the atlas (save a little texture memory, allow support for point/nearest filtering). The AntiAliasedLinesUseTex features uses them, otherwise they will be rendered using polygons (more expensive for CPU/GPU).");
 
+
+
     auto pyClassImFontAtlas = py::class_<ImFontAtlas>    // imgui.h:2747
-        (m, "ImFontAtlas", "Load and rasterize multiple TTF/OTF fonts into a same texture. The font atlas will build a single texture holding:\n- One or more fonts.\n- Custom graphics data needed to render the shapes needed by Dear ImGui.\n- Mouse cursor shapes for software cursor rendering (unless setting 'Flags |= ImFontAtlasFlags_NoMouseCursors' in the font atlas).\nIt is the user-code responsibility to setup/build the atlas, then upload the pixel data into a texture accessible by your graphics api.\n- Optionally, call any of the AddFont functions. If you don't call any, the default font embedded in the code will be loaded for you.\n- Call GetTexDataAsAlpha8() or GetTexDataAsRGBA32() to build and retrieve pixels data.\n- Upload the pixels data into a texture within your graphics system (see imgui_impl_xxxx.cpp examples)\n- Call SetTexID(my_tex_id); and pass the pointer/identifier to your texture in a format natural to your graphics API.\nThis value will be passed back to you during rendering to identify the texture. Read FAQ entry about ImTextureID for more details.\nCommon pitfalls:\n- If you pass a 'glyph_ranges' array to AddFont functions, you need to make sure that your array persist up until the\natlas is build (when calling GetTexData or Build()). We only copy the pointer, not the data.\n- Important: By default, AddFontFromMemoryTTF() takes ownership of the data. Even though we are not writing to it, we will free the pointer on destruction.\nYou can set font_cfg->FontDataOwnedByAtlas=False to keep ownership of your data and it won't be freed,\n- Even though many functions are suffixed with \"TTF\", OTF data is supported just as well.\n- This is an old API and it is currently awkward for those and and various other reasons! We will address them in the future!")
+        (m, "ImFontAtlas", " Load and rasterize multiple TTF/OTF fonts into a same texture. The font atlas will build a single texture holding:\n  - One or more fonts.\n  - Custom graphics data needed to render the shapes needed by Dear ImGui.\n  - Mouse cursor shapes for software cursor rendering (unless setting 'Flags |= ImFontAtlasFlags_NoMouseCursors' in the font atlas).\n It is the user-code responsibility to setup/build the atlas, then upload the pixel data into a texture accessible by your graphics api.\n  - Optionally, call any of the AddFont functions. If you don't call any, the default font embedded in the code will be loaded for you.\n  - Call GetTexDataAsAlpha8() or GetTexDataAsRGBA32() to build and retrieve pixels data.\n  - Upload the pixels data into a texture within your graphics system (see imgui_impl_xxxx.cpp examples)\n  - Call SetTexID(my_tex_id); and pass the pointer/identifier to your texture in a format natural to your graphics API.\n    This value will be passed back to you during rendering to identify the texture. Read FAQ entry about ImTextureID for more details.\n Common pitfalls:\n - If you pass a 'glyph_ranges' array to AddFont functions, you need to make sure that your array persist up until the\n   atlas is build (when calling GetTexData or Build()). We only copy the pointer, not the data.\n - Important: By default, AddFontFromMemoryTTF() takes ownership of the data. Even though we are not writing to it, we will free the pointer on destruction.\n   You can set font_cfg->FontDataOwnedByAtlas=False to keep ownership of your data and it won't be freed,\n - Even though many functions are suffixed with \"TTF\", OTF data is supported just as well.\n - This is an old API and it is currently awkward for those and and various other reasons! We will address them in the future!")
         .def(py::init<>())    // imgui.h:2749
         .def("add_font",    // imgui.h:2751
             [](ImFontAtlas & self, const ImFontConfig * font_cfg)
@@ -5766,21 +5444,21 @@ void py_init_module_imgui(py::module& m)
             {
                 return self.AddFontDefault(font_cfg);
             },
-            py::arg("font_cfg") = NULL
+            py::arg("font_cfg") = None
         )
         .def("add_font_from_file_ttf",    // imgui.h:2753
             [](ImFontAtlas & self, const char * filename, float size_pixels, const ImFontConfig * font_cfg = NULL, const ImWchar * glyph_ranges = NULL)
             {
                 return self.AddFontFromFileTTF(filename, size_pixels, font_cfg, glyph_ranges);
             },
-            py::arg("filename"), py::arg("size_pixels"), py::arg("font_cfg") = NULL, py::arg("glyph_ranges") = NULL
+            py::arg("filename"), py::arg("size_pixels"), py::arg("font_cfg") = None, py::arg("glyph_ranges") = None
         )
         .def("add_font_from_memory_ttf",    // imgui.h:2754
             [](ImFontAtlas & self, void * font_data, int font_size, float size_pixels, const ImFontConfig * font_cfg = NULL, const ImWchar * glyph_ranges = NULL)
             {
                 return self.AddFontFromMemoryTTF(font_data, font_size, size_pixels, font_cfg, glyph_ranges);
             },
-            py::arg("font_data"), py::arg("font_size"), py::arg("size_pixels"), py::arg("font_cfg") = NULL, py::arg("glyph_ranges") = NULL,
+            py::arg("font_data"), py::arg("font_size"), py::arg("size_pixels"), py::arg("font_cfg") = None, py::arg("glyph_ranges") = None,
             "Note: Transfer ownership of 'ttf_data' to ImFontAtlas! Will be deleted after destruction of the atlas. Set font_cfg->FontDataOwnedByAtlas=false to keep ownership of your data and it won't be freed."
         )
         .def("add_font_from_memory_compressed_ttf",    // imgui.h:2755
@@ -5788,7 +5466,7 @@ void py_init_module_imgui(py::module& m)
             {
                 return self.AddFontFromMemoryCompressedTTF(compressed_font_data, compressed_font_size, size_pixels, font_cfg, glyph_ranges);
             },
-            py::arg("compressed_font_data"), py::arg("compressed_font_size"), py::arg("size_pixels"), py::arg("font_cfg") = NULL, py::arg("glyph_ranges") = NULL,
+            py::arg("compressed_font_data"), py::arg("compressed_font_size"), py::arg("size_pixels"), py::arg("font_cfg") = None, py::arg("glyph_ranges") = None,
             "'compressed_font_data' still owned by caller. Compress with binary_to_compressed_c.cpp."
         )
         .def("add_font_from_memory_compressed_base85_ttf",    // imgui.h:2756
@@ -5796,7 +5474,7 @@ void py_init_module_imgui(py::module& m)
             {
                 return self.AddFontFromMemoryCompressedBase85TTF(compressed_font_data_base85, size_pixels, font_cfg, glyph_ranges);
             },
-            py::arg("compressed_font_data_base85"), py::arg("size_pixels"), py::arg("font_cfg") = NULL, py::arg("glyph_ranges") = NULL,
+            py::arg("compressed_font_data_base85"), py::arg("size_pixels"), py::arg("font_cfg") = None, py::arg("glyph_ranges") = None,
             "'compressed_font_data_base85' still owned by caller. Compress with binary_to_compressed_c.cpp with -base85 parameter."
         )
         .def("clear_input_data",    // imgui.h:2757
@@ -5895,8 +5573,7 @@ void py_init_module_imgui(py::module& m)
             {
                 return self.AddCustomRectRegular(width, height);
             },
-            py::arg("width"), py::arg("height"),
-            "You can request arbitrary rectangles to be packed into the atlas, for your own purposes.\n- After calling Build(), you can query the rectangle position and render your pixels.\n- If you render colored output, set 'atlas->TexPixelsUseColors = true' as this may help some backends decide of prefered texture format.\n- You can also request your rectangles to be mapped as font glyph (given a font + Unicode point),\nso you can render e.g. custom colorful icons and use them as regular glyphs.\n- Read docs/FONTS.md for more details about using colorful icons.\n- Note: this API may be redesigned later in order to support multi-monitor varying DPI settings."
+            py::arg("width"), py::arg("height")
         )
         .def("add_custom_rect_font_glyph",    // imgui.h:2801
             [](ImFontAtlas & self, ImFont * font, ImWchar id, int width, int height, float advance_x, const ImVec2 & offset = ImVec2(0, 0))
@@ -5941,11 +5618,12 @@ void py_init_module_imgui(py::module& m)
         .def_readwrite("tex_pixels_rgba32", &ImFontAtlas::TexPixelsRGBA32, "4 component per pixel, each component is unsigned 8-bit. Total size = TexWidth  TexHeight  4")    // imgui.h:2823
         .def_readwrite("tex_width", &ImFontAtlas::TexWidth, "Texture width calculated during Build().")    // imgui.h:2824
         .def_readwrite("tex_height", &ImFontAtlas::TexHeight, "Texture height calculated during Build().")    // imgui.h:2825
-        .def_readwrite("tex_uv_scale", &ImFontAtlas::TexUvScale, "= (1.0f/TexWidth, 1.0f/TexHeight)")    // imgui.h:2826
+        .def_readwrite("tex_uv_scale", &ImFontAtlas::TexUvScale, "= (1.0/TexWidth, 1.0/TexHeight)")    // imgui.h:2826
         .def_readwrite("tex_uv_white_pixel", &ImFontAtlas::TexUvWhitePixel, "Texture coordinates to a white pixel")    // imgui.h:2827
         .def_readwrite("fonts", &ImFontAtlas::Fonts, "Hold all the fonts returned by AddFont. Fonts[0] is the default font upon calling ImGui::NewFrame(), use ImGui::PushFont()/PopFont() to change the current font.")    // imgui.h:2828
         .def_readwrite("custom_rects", &ImFontAtlas::CustomRects, "Rectangles for packing custom texture data into the atlas.")    // imgui.h:2829
         .def_readwrite("config_data", &ImFontAtlas::ConfigData, "Configuration data")    // imgui.h:2830
+        .def_readwrite("tex_uv_lines", &ImFontAtlas::TexUvLines, "UVs for baked anti-aliased lines")    // imgui.h:2831
         .def_readwrite("font_builder_io", &ImFontAtlas::FontBuilderIO, "Opaque interface to a font builder (default to stb_truetype, can be changed to use FreeType by defining IMGUI_ENABLE_FREETYPE).")    // imgui.h:2834
         .def_readwrite("font_builder_flags", &ImFontAtlas::FontBuilderFlags, "Shared flags (for all fonts) for custom font builder. THIS IS BUILD IMPLEMENTATION DEPENDENT. Per-font override is also available in ImFontConfig.")    // imgui.h:2835
         .def_readwrite("pack_id_mouse_cursors", &ImFontAtlas::PackIdMouseCursors, "Custom texture rectangle ID for white pixel and mouse cursors")    // imgui.h:2838
@@ -5953,8 +5631,9 @@ void py_init_module_imgui(py::module& m)
         ;
 
 
+
     auto pyClassImFont = py::class_<ImFont>    // imgui.h:2848
-        (m, "ImFont", "Font runtime data and rendering\nImFontAtlas automatically loads a default embedded font for you when you call GetTexDataAsAlpha8() or GetTexDataAsRGBA32().")
+        (m, "ImFont", " Font runtime data and rendering\n ImFontAtlas automatically loads a default embedded font for you when you call GetTexDataAsAlpha8() or GetTexDataAsRGBA32().")
         .def_readwrite("index_advance_x", &ImFont::IndexAdvanceX, "12-16 // out //            // Sparse. Glyphs->AdvanceX in a directly indexable way (cache-friendly for CalcTextSize functions which only this this info, and are often bottleneck in large UI).")    // imgui.h:2851
         .def_readwrite("fallback_advance_x", &ImFont::FallbackAdvanceX, "4     // out // = FallbackGlyph->AdvanceX")    // imgui.h:2852
         .def_readwrite("font_size", &ImFont::FontSize, "4     // in  //            // Height of characters/line, set during loading (don't change after loading)")    // imgui.h:2853
@@ -5968,53 +5647,53 @@ void py_init_module_imgui(py::module& m)
         .def_readwrite("ellipsis_char", &ImFont::EllipsisChar, "2     // out // = '...'    // Character used for ellipsis rendering.")    // imgui.h:2865
         .def_readwrite("dot_char", &ImFont::DotChar, "2     // out // = '.'      // Character used for ellipsis rendering (if a single '...' character isn't found)")    // imgui.h:2866
         .def_readwrite("dirty_lookup_tables", &ImFont::DirtyLookupTables, "1     // out //")    // imgui.h:2867
-        .def_readwrite("scale", &ImFont::Scale, "4     // in  // = 1.f      // Base font scale, multiplied by the per-window font scale which you can adjust with SetWindowFontScale()")    // imgui.h:2868
+        .def_readwrite("scale", &ImFont::Scale, "4     // in  // = 1.      // Base font scale, multiplied by the per-window font scale which you can adjust with SetWindowFontScale()")    // imgui.h:2868
         .def_readwrite("ascent", &ImFont::Ascent, "4+4   // out //            // Ascent: distance from top to bottom of e.g. 'A' [0..FontSize]")    // imgui.h:2869
         .def_readwrite("descent", &ImFont::Descent, "4+4   // out //            // Ascent: distance from top to bottom of e.g. 'A' [0..FontSize]")    // imgui.h:2869
         .def_readwrite("metrics_total_surface", &ImFont::MetricsTotalSurface, "4     // out //            // Total surface in pixels to get an idea of the font rasterization/texture cost (not exact, we approximate the cost of padding between glyphs)")    // imgui.h:2870
+        .def_readwrite("used4k_pages_map", &ImFont::Used4kPagesMap, "2 bytes if ImWchar=ImWchar16, 34 bytes if ImWchar==ImWchar32. Store 1-bit for each block of 4K codepoints that has one active glyph. This is mainly used to facilitate iterations across all used codepoints.")    // imgui.h:2871
         .def(py::init<>(),    // imgui.h:2874
             "Methods")
         .def("find_glyph",    // imgui.h:2876
-            [](ImFont & self, ImWchar c)
+            [](const ImFont & self, ImWchar c)
             {
                 return self.FindGlyph(c);
             },
             py::arg("c")
         )
         .def("find_glyph_no_fallback",    // imgui.h:2877
-            [](ImFont & self, ImWchar c)
+            [](const ImFont & self, ImWchar c)
             {
                 return self.FindGlyphNoFallback(c);
             },
             py::arg("c")
         )
         .def("calc_word_wrap_position_a",    // imgui.h:2885
-            [](ImFont & self, float scale, const char * text, const char * text_end, float wrap_width)
+            [](const ImFont & self, float scale, const char * text, const char * text_end, float wrap_width)
             {
                 return self.CalcWordWrapPositionA(scale, text, text_end, wrap_width);
             },
             py::arg("scale"), py::arg("text"), py::arg("text_end"), py::arg("wrap_width")
         )
         .def("render_char",    // imgui.h:2886
-            [](ImFont & self, ImDrawList * draw_list, float size, const ImVec2 & pos, ImU32 col, ImWchar c)
+            [](const ImFont & self, ImDrawList * draw_list, float size, const ImVec2 & pos, ImU32 col, ImWchar c)
             {
                 self.RenderChar(draw_list, size, pos, col, c);
             },
             py::arg("draw_list"), py::arg("size"), py::arg("pos"), py::arg("col"), py::arg("c")
         )
         .def("render_text",    // imgui.h:2887
-            [](ImFont & self, ImDrawList * draw_list, float size, const ImVec2 & pos, ImU32 col, const ImVec4 & clip_rect, const char * text_begin, const char * text_end, float wrap_width = 0.0f, bool cpu_fine_clip = false)
+            [](const ImFont & self, ImDrawList * draw_list, float size, const ImVec2 & pos, ImU32 col, const ImVec4 & clip_rect, const char * text_begin, const char * text_end, float wrap_width = 0.0f, bool cpu_fine_clip = false)
             {
                 self.RenderText(draw_list, size, pos, col, clip_rect, text_begin, text_end, wrap_width, cpu_fine_clip);
             },
-            py::arg("draw_list"), py::arg("size"), py::arg("pos"), py::arg("col"), py::arg("clip_rect"), py::arg("text_begin"), py::arg("text_end"), py::arg("wrap_width") = 0.0f, py::arg("cpu_fine_clip") = false
+            py::arg("draw_list"), py::arg("size"), py::arg("pos"), py::arg("col"), py::arg("clip_rect"), py::arg("text_begin"), py::arg("text_end"), py::arg("wrap_width") = 0.0, py::arg("cpu_fine_clip") = False
         )
         .def("build_lookup_table",    // imgui.h:2890
             [](ImFont & self)
             {
                 self.BuildLookupTable();
-            },
-            "[Internal] Don't use!"
+            }
         )
         .def("clear_output_data",    // imgui.h:2891
             [](ImFont & self)
@@ -6041,7 +5720,7 @@ void py_init_module_imgui(py::module& m)
             {
                 self.AddRemapChar(dst, src, overwrite_dst);
             },
-            py::arg("dst"), py::arg("src"), py::arg("overwrite_dst") = true,
+            py::arg("dst"), py::arg("src"), py::arg("overwrite_dst") = True,
             "Makes 'dst' character/glyph points to 'src' character/glyph. Currently needs to be called AFTER fonts have been built."
         )
         .def("set_glyph_visible",    // imgui.h:2895
@@ -6061,14 +5740,17 @@ void py_init_module_imgui(py::module& m)
         ;
 
 
+
     py::enum_<ImGuiViewportFlags_>(m, "ImGuiViewportFlags_", py::arithmetic(), "Flags stored in ImGuiViewport::Flags, giving indications to the platform backends.")    // imgui.h:2904
         .value("none", ImGuiViewportFlags_None, "")
         .value("is_platform_window", ImGuiViewportFlags_IsPlatformWindow, "Represent a Platform Window")
         .value("is_platform_monitor", ImGuiViewportFlags_IsPlatformMonitor, "Represent a Platform Monitor (unused yet)")
         .value("owned_by_app", ImGuiViewportFlags_OwnedByApp, "Platform Window: is created/managed by the application (rather than a dear imgui backend)");
 
+
+
     auto pyClassImGuiViewport = py::class_<ImGuiViewport>    // imgui.h:2919
-        (m, "ImGuiViewport", "- Currently represents the Platform Window created by the application which is hosting our Dear ImGui windows.\n- In 'docking' branch with multi-viewport enabled, we extend this concept to have multiple active viewports.\n- In the future we will extend this concept further to also represent Platform Monitor and support a \"no main platform window\" operation mode.\n- About Main Area vs Work Area:\n- Main Area = entire viewport.\n- Work Area = entire viewport minus sections used by main menu bars (for platform windows), or by task bar (for platform monitor).\n- Windows are generally trying to stay within the Work Area of their host viewport.")
+        (m, "ImGuiViewport", " - Currently represents the Platform Window created by the application which is hosting our Dear ImGui windows.\n - In 'docking' branch with multi-viewport enabled, we extend this concept to have multiple active viewports.\n - In the future we will extend this concept further to also represent Platform Monitor and support a \"no main platform window\" operation mode.\n - About Main Area vs Work Area:\n   - Main Area = entire viewport.\n   - Work Area = entire viewport minus sections used by main menu bars (for platform windows), or by task bar (for platform monitor).\n   - Windows are generally trying to stay within the Work Area of their host viewport.")
         .def_readwrite("flags", &ImGuiViewport::Flags, "See ImGuiViewportFlags_")    // imgui.h:2921
         .def_readwrite("pos", &ImGuiViewport::Pos, "Main Area: Position of the viewport (Dear ImGui coordinates are the same as OS desktop/native coordinates)")    // imgui.h:2922
         .def_readwrite("size", &ImGuiViewport::Size, "Main Area: Size of the viewport.")    // imgui.h:2923
@@ -6079,6 +5761,7 @@ void py_init_module_imgui(py::module& m)
         ;
 
 
+
     auto pyClassImGuiPlatformImeData = py::class_<ImGuiPlatformImeData>    // imgui.h:2942
         (m, "ImGuiPlatformImeData", "(Optional) Support for IME (Input Method Editor) via the io.SetPlatformImeDataFn() function.")
         .def_readwrite("want_visible", &ImGuiPlatformImeData::WantVisible, "A widget wants the IME to be visible")    // imgui.h:2944
@@ -6086,6 +5769,7 @@ void py_init_module_imgui(py::module& m)
         .def_readwrite("input_line_height", &ImGuiPlatformImeData::InputLineHeight, "Line height")    // imgui.h:2946
         .def(py::init<>())    // imgui.h:2948
         ;
+
 
 
     // <namespace ImGui>    // imgui.h:2957
