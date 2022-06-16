@@ -4204,7 +4204,6 @@ void py_init_module_imgui(py::module& m)
         .def_readwrite("anti_aliased_fill", &ImGuiStyle::AntiAliasedFill, "Enable anti-aliased edges around filled shapes (rounded rectangles, circles, etc.). Disable if you are really tight on CPU/GPU. Latched at the beginning of the frame (copied to ImDrawList).")    // imgui.h:1877
         .def_readwrite("curve_tessellation_tol", &ImGuiStyle::CurveTessellationTol, "Tessellation tolerance when using PathBezierCurveTo() without a specific number of segments. Decrease for highly tessellated curves (higher quality, more polygons), increase to reduce quality.")    // imgui.h:1878
         .def_readwrite("circle_tessellation_max_error", &ImGuiStyle::CircleTessellationMaxError, "Maximum error (in pixels) allowed when using AddCircle()/AddCircleFilled() or drawing rounded corner rectangles with no explicit segment count specified. Decrease for higher quality but more geometry.")    // imgui.h:1879
-        .def_readwrite("colors", &ImGuiStyle::Colors, "")    // imgui.h:1880
         .def(py::init<>())    // imgui.h:1882
         .def("scale_all_sizes",    // imgui.h:1883
             [](ImGuiStyle & self, float scale_factor)
@@ -4390,9 +4389,7 @@ void py_init_module_imgui(py::module& m)
         .def_readwrite("key_shift", &ImGuiIO::KeyShift, "Keyboard modifier down: Shift")    // imgui.h:2026
         .def_readwrite("key_alt", &ImGuiIO::KeyAlt, "Keyboard modifier down: Alt")    // imgui.h:2027
         .def_readwrite("key_super", &ImGuiIO::KeySuper, "Keyboard modifier down: Cmd/Super/Windows")    // imgui.h:2028
-        .def_readwrite("nav_inputs", &ImGuiIO::NavInputs, "Gamepad inputs. Cleared back to zero by EndFrame(). Keyboard keys will be auto-mapped and be written here by NewFrame().")    // imgui.h:2029
         .def_readwrite("key_mods", &ImGuiIO::KeyMods, "Key mods flags (same as io.KeyCtrl/KeyShift/KeyAlt/KeySuper but merged into flags), updated by NewFrame()")    // imgui.h:2032
-        .def_readwrite("keys_data", &ImGuiIO::KeysData, "Key state for all known keys. Use IsKeyXXX() functions to access this.")    // imgui.h:2033
         .def_readwrite("want_capture_mouse_unless_popup_close", &ImGuiIO::WantCaptureMouseUnlessPopupClose, "Alternative to WantCaptureMouse: (WantCaptureMouse == True  WantCaptureMouseUnlessPopupClose == False) when a click over None is expected to close a popup.")    // imgui.h:2034
         .def_readwrite("mouse_pos_prev", &ImGuiIO::MousePosPrev, "Previous mouse position (note that MouseDelta is not necessary == MousePos-MousePosPrev, in case either position is invalid)")    // imgui.h:2035
         .def_property("mouse_clicked_time",
@@ -4472,8 +4469,6 @@ void py_init_module_imgui(py::module& m)
                 auto base = pybind11::array(dtype, {5}, {sizeof(float)});
                 return pybind11::array(dtype, {5}, {sizeof(float)}, self.MouseDragMaxDistanceSqr, base);
             }, [](ImGuiIO& self) {})
-        .def_readwrite("nav_inputs_down_duration", &ImGuiIO::NavInputsDownDuration, "")    // imgui.h:2048
-        .def_readwrite("nav_inputs_down_duration_prev", &ImGuiIO::NavInputsDownDurationPrev, "")    // imgui.h:2049
         .def_readwrite("pen_pressure", &ImGuiIO::PenPressure, "Touch/Pen pressure (0.0 to 1.0, should be >0.0 only when MouseDown[0] == True). Helper storage currently unused by Dear ImGui.")    // imgui.h:2050
         .def_readwrite("app_focus_lost", &ImGuiIO::AppFocusLost, "Only modify via AddFocusEvent()")    // imgui.h:2051
         .def_readwrite("app_accepting_events", &ImGuiIO::AppAcceptingEvents, "Only modify via SetAppAcceptingEvents()")    // imgui.h:2052
@@ -4534,7 +4529,6 @@ void py_init_module_imgui(py::module& m)
         .def_readwrite("source_id", &ImGuiPayload::SourceId, "Source item id")    // imgui.h:2121
         .def_readwrite("source_parent_id", &ImGuiPayload::SourceParentId, "Source parent id (if available)")    // imgui.h:2122
         .def_readwrite("data_frame_count", &ImGuiPayload::DataFrameCount, "Data timestamp")    // imgui.h:2123
-        .def_readwrite("data_type", &ImGuiPayload::DataType, "Data type tag (short user-supplied string, 32 characters max)")    // imgui.h:2124
         .def_readwrite("preview", &ImGuiPayload::Preview, "Set when AcceptDragDropPayload() was called and mouse has been hovering the target item (nb: handle overlapping drag targets)")    // imgui.h:2125
         .def_readwrite("delivery", &ImGuiPayload::Delivery, "Set when AcceptDragDropPayload() was called and mouse button is released over the target item.")    // imgui.h:2126
         .def(py::init<>())    // imgui.h:2128
@@ -5556,7 +5550,6 @@ void py_init_module_imgui(py::module& m)
         .def_readwrite("fonts", &ImFontAtlas::Fonts, "Hold all the fonts returned by AddFont. Fonts[0] is the default font upon calling ImGui::NewFrame(), use ImGui::PushFont()/PopFont() to change the current font.")    // imgui.h:2828
         .def_readwrite("custom_rects", &ImFontAtlas::CustomRects, "Rectangles for packing custom texture data into the atlas.")    // imgui.h:2829
         .def_readwrite("config_data", &ImFontAtlas::ConfigData, "Configuration data")    // imgui.h:2830
-        .def_readwrite("tex_uv_lines", &ImFontAtlas::TexUvLines, "UVs for baked anti-aliased lines")    // imgui.h:2831
         .def_readwrite("font_builder_io", &ImFontAtlas::FontBuilderIO, "Opaque interface to a font builder (default to stb_truetype, can be changed to use FreeType by defining IMGUI_ENABLE_FREETYPE).")    // imgui.h:2834
         .def_readwrite("font_builder_flags", &ImFontAtlas::FontBuilderFlags, "Shared flags (for all fonts) for custom font builder. THIS IS BUILD IMPLEMENTATION DEPENDENT. Per-font override is also available in ImFontConfig.")    // imgui.h:2835
         .def_readwrite("pack_id_mouse_cursors", &ImFontAtlas::PackIdMouseCursors, "Custom texture rectangle ID for white pixel and mouse cursors")    // imgui.h:2838
@@ -5583,7 +5576,6 @@ void py_init_module_imgui(py::module& m)
         .def_readwrite("ascent", &ImFont::Ascent, "4+4   // out //            // Ascent: distance from top to bottom of e.g. 'A' [0..FontSize]")    // imgui.h:2869
         .def_readwrite("descent", &ImFont::Descent, "4+4   // out //            // Ascent: distance from top to bottom of e.g. 'A' [0..FontSize]")    // imgui.h:2869
         .def_readwrite("metrics_total_surface", &ImFont::MetricsTotalSurface, "4     // out //            // Total surface in pixels to get an idea of the font rasterization/texture cost (not exact, we approximate the cost of padding between glyphs)")    // imgui.h:2870
-        .def_readwrite("used4k_pages_map", &ImFont::Used4kPagesMap, "2 bytes if ImWchar=ImWchar16, 34 bytes if ImWchar==ImWchar32. Store 1-bit for each block of 4K codepoints that has one active glyph. This is mainly used to facilitate iterations across all used codepoints.")    // imgui.h:2871
         .def(py::init<>(),    // imgui.h:2874
             "Methods")
         .def("find_glyph",    // imgui.h:2876

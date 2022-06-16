@@ -3,6 +3,7 @@
 #include <cstring>
 #include <stdint.h>
 #include <stdio.h>
+#include <string>
 #include <memory>
 #include <vector>
 #include <array>
@@ -14,6 +15,22 @@
 #ifdef OBSCURE_OPTION
 void SomeFunctionThatShouldNotBeIncluded();
 #endif // #ifdef OBSCURE_OPTION
+
+struct BoxedUnsignedLong // MY_API
+{
+    unsigned long value;
+    BoxedUnsignedLong() : value{} {}
+    BoxedUnsignedLong(unsigned long v) : value(v) {}
+    std::string __repr__() const { return std::string("BoxedUnsignedLong(") + std::to_string(value) + ")"; }
+};
+
+struct BoxedInt // MY_API
+{
+    int value;
+    BoxedInt() : value{} {}
+    BoxedInt(int v) : value(v) {}
+    std::string __repr__() const { return std::string("BoxedInt(") + std::to_string(value) + ")"; }
+};
 
 namespace LiterateGeneratorExample // MY_API
 {
@@ -130,10 +147,15 @@ namespace LiterateGeneratorExample // MY_API
         //
 
         //
-        // Test with numeric arrays
+        // Test with numeric arrays which should be converted to py::array
         //
         int values[2] = {0, 1};
         bool flags[3] = {false, true, false};
+
+
+        // These should not be exported (cannot fit in a py::array)
+        Point2 points[2];
+
 
         // Multiplication factor
         int factor = 10;

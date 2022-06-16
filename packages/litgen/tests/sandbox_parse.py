@@ -75,7 +75,10 @@ options.original_location_flag_show = True
 
 
 code = """
-    MY_API ImGuiContext* CreateContext(ImFontAtlas* shared_font_atlas = NULL);
+struct Foo // MY_API
+{
+    uint8_t values2[55];
+};
 """
 
 play_pydef(code, options)

@@ -340,7 +340,7 @@ def _generate_constructor(function_infos: CppConstructorDecl, options: CodeStyle
     A constructor decl look like this
         .def(py::init<ARG_TYPES_LIST>(),
         PY_ARG_LIST
-        DOC_STRING);    
+        DOC_STRING);
     """
 
     _i_ = options.indent_cpp_spaces()
@@ -396,15 +396,26 @@ def _add_struct_member_decl(cpp_decl: CppDecl, struct_name: str, options: CodeSt
         # We ignore bitfields
         return ""
 
-    if cpp_decl.is_c_array_known_fixed_size(options.c_array_numeric_member_size_dict):
+    if cpp_decl.is_c_array_fixed_size_unparsable(options.c_array_numeric_member_size_dict):
+        srcml_warnings.emit_srcml_warning(
+            cpp_decl.srcml_element,
+            """
+            Can't parse the size of this array.
+            Hint: use a vector, or extend `options.c_array_numeric_member_types`
+            """,
+            options.srcml_options,
+        )
+        return ""
+
+    elif cpp_decl.is_c_array_known_fixed_size(options.c_array_numeric_member_size_dict):
         # Cf. https://stackoverflow.com/questions/58718884/binding-an-array-using-pybind11
         array_typename = cpp_decl.cpp_type.str_code()
         if array_typename not in options.c_array_numeric_member_types:
             srcml_warnings.emit_srcml_warning(
                 cpp_decl.srcml_element,
                 """
-                Only numeric C Style arrays are supported 
-                    Hint: use a vector, or extend `options.c_array_numeric_member_types`
+                Only numeric C Style arrays are supported
+                Hint: use a vector, or extend `options.c_array_numeric_member_types`
                 """,
                 options.srcml_options,
             )
@@ -415,7 +426,7 @@ def _add_struct_member_decl(cpp_decl: CppDecl, struct_name: str, options: CodeSt
                 cpp_decl.srcml_element,
                 """
                 Detected a numeric C Style array, but will not export it.
-                    Hint: set `options.c_array_numeric_member_flag_replace = True`
+                Hint: set `options.c_array_numeric_member_flag_replace = True`
                 """,
                 options.srcml_options,
             )
@@ -429,15 +440,15 @@ def _add_struct_member_decl(cpp_decl: CppDecl, struct_name: str, options: CodeSt
                 cpp_decl.srcml_element,
                 f"""
                 Detected a numeric C Style array, but will not export it because its size is not parsable.
-                    Hint: may be, add the value "{array_size_str}" to `options.c_array_numeric_member_size_dict`
+                Hint: may be, add the value "{array_size_str}" to `options.c_array_numeric_member_size_dict`
                 """,
                 options.srcml_options,
             )
             return ""
 
         template_code = f"""
-            .def_property("{name_python}", 
-                []({struct_name} &self) -> pybind11::array 
+            .def_property("{name_python}",
+                []({struct_name} &self) -> pybind11::array
                 {{
                     auto dtype = pybind11::dtype(pybind11::format_descriptor<{array_typename}>::format());
                     auto base = pybind11::array(dtype, {{{array_size}}}, {{sizeof({array_typename})}});

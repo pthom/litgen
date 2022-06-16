@@ -13,9 +13,11 @@ from enum import Enum
 
 
 
-# <namespace LiterateGeneratorExample>    # example_library/litgensample.h:18
 
-class MyEnum(Enum):    # example_library/litgensample.h:23
+
+# <namespace LiterateGeneratorExample>    # example_library/litgensample.h:35
+
+class MyEnum(Enum):    # example_library/litgensample.h:40
     """ A super nice enum
      for demo purposes ( bool val = True )
     """
@@ -38,29 +40,29 @@ class MyEnum(Enum):    # example_library/litgensample.h:23
 #
 
 #  Tests with Boxed Numbers
-def add_c_array2(values: List[int, 2]) -> int:    # example_library/litgensample.h:46
+def add_c_array2(values: List[int]) -> int:    # example_library/litgensample.h:63
     pass
-def log_c_array2(values: List[int, 2]) -> None:    # example_library/litgensample.h:47
+def log_c_array2(values: List[int]) -> None:    # example_library/litgensample.h:64
     pass
-def change_c_array2(    # example_library/litgensample.h:48
+def change_c_array2(    # example_library/litgensample.h:65
     values_0: BoxedUnsignedLong,
     values_1: BoxedUnsignedLong
     ) -> None:
     pass
-def get_points(out_0: Point2, out_1: Point2) -> None:    # example_library/litgensample.h:58
+def get_points(out_0: Point2, out_1: Point2) -> None:    # example_library/litgensample.h:75
     pass
 
 #
 #  C Style buffer to numpy.ndarray tests
 #
 
-def add_inside_buffer(buffer: numpy.ndarray, number_to_add: int) -> None:    # example_library/litgensample.h:65
+def add_inside_buffer(buffer: numpy.ndarray, number_to_add: int) -> None:    # example_library/litgensample.h:82
     """ Modifies a buffer by adding a value to its elements"""
     pass
-def buffer_sum(buffer: numpy.ndarray, stride: int = -1) -> int:    # example_library/litgensample.h:71
+def buffer_sum(buffer: numpy.ndarray, stride: int = -1) -> int:    # example_library/litgensample.h:88
     """ Returns the sum of a  buffer"""
     pass
-def add_inside_two_buffers(    # example_library/litgensample.h:79
+def add_inside_two_buffers(    # example_library/litgensample.h:96
     buffer_1: numpy.ndarray,
     buffer_2: numpy.ndarray,
     number_to_add: int
@@ -69,7 +71,7 @@ def add_inside_two_buffers(    # example_library/litgensample.h:79
     pass
 
 
-def mul_inside_buffer(buffer: numpy.ndarray, factor: float) -> None:    # example_library/litgensample.h:90
+def mul_inside_buffer(buffer: numpy.ndarray, factor: float) -> None:    # example_library/litgensample.h:107
     """ Modify an array by multiplying its elements (template function!)"""
     pass
 
@@ -77,30 +79,31 @@ def mul_inside_buffer(buffer: numpy.ndarray, factor: float) -> None:    # exampl
 #  C String lists tests
 #
 
-def c_string_list_total_size(    # example_library/litgensample.h:100
+def c_string_list_total_size(    # example_library/litgensample.h:117
     items: List[str],
     output_0: BoxedInt,
     output_1: BoxedInt
     ) -> int:
     pass
 
-def add(a: int, b: int) -> int:    # example_library/litgensample.h:112
+
+def add(a: int, b: int) -> int:    # example_library/litgensample.h:129
     """ Adds two numbers"""
     pass
 
-def add(a: int, b: int, c: int) -> int:    # example_library/litgensample.h:115
+def add(a: int, b: int, c: int) -> int:    # example_library/litgensample.h:132
     """ Adds three numbers, with a surprise"""
     pass
 
 
-def sub(a: int, b: int) -> int:    # example_library/litgensample.h:118
+def sub(a: int, b: int) -> int:    # example_library/litgensample.h:135
     pass
 
-def mul(a: int, b: int) -> int:    # example_library/litgensample.h:120
+def mul(a: int, b: int) -> int:    # example_library/litgensample.h:137
     pass
 
 
-def foo_instance() -> Foo:    # example_library/litgensample.h:154
+def foo_instance() -> Foo:    # example_library/litgensample.h:176
     """ return_value_policy::reference"""
     pass
 

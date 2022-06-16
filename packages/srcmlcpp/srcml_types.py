@@ -555,9 +555,9 @@ class CppDecl(CppElementAndComment):
 
     def c_array_size_as_str(self) -> Optional[str]:
         """
-        If this decl is a c array, return its size, e.g. for
-            int v[COUNT]
-        it will return "COUNT"
+        If this decl is a c array, return its size, e.g.
+            * for `int v[COUNT]` it will return "COUNT"
+            * for `int v[]` it will return ""
         """
         if not self.is_c_array():
             return None
@@ -588,8 +588,34 @@ class CppDecl(CppElementAndComment):
             return None
 
     def is_c_array_known_fixed_size(self, size_dict: StringToIntDict):
-        """Returns true if this decl is a c array, and has a fixed size"""
+        """Returns true if this decl is a c array, and has a fixed size which we can interpret
+        either via the code, or through size_dict
+        """
         return self.c_array_size_as_int(size_dict) is not None
+
+    def is_c_array_no_size(self, size_dict: StringToIntDict):
+        """Returns true if this decl is a c array, and has a no fixed size, e.g.
+        int a[];
+        """
+        is_array = self.is_c_array()
+        if not is_array:
+            return False
+        size_str = self.c_array_size_as_str()
+        assert size_str is not None
+        has_size = len(size_str.strip()) > 0
+        return is_array and not has_size
+
+    def is_c_array_fixed_size_unparsable(self, size_dict: StringToIntDict):
+        is_array = self.is_c_array()
+        if not is_array:
+            return False
+
+        size_str = self.c_array_size_as_str()
+        assert size_str is not None
+        has_size = len(size_str.strip()) > 0
+        array_size_as_int = self.c_array_size_as_int(size_dict)
+        r = is_array and has_size and (array_size_as_int is None)
+        return r
 
     def is_const(self):
         """
