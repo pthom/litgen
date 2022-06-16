@@ -42,18 +42,7 @@ def play_implot():
     print(pydef_code)
 
 
-def play_pydef(code):
-    # options = litgen.options.code_style_implot()
-    # options.srcml_options.functions_api_prefixes = ["MY_API"]
-    # options.srcml_options.api_suffixes = ["MY_API"]
-
-    options = litgen.options.CodeStyleOptions()
-    options.srcml_options.functions_api_prefixes = ["MY_API"]
-
-    # options = litgen.code_style_imgui()
-
-    options.original_location_flag_show = True
-
+def play_pydef(code, options):
     # from srcmlcpp import srcml_utils
     # xml = srcmlcpp.code_to_srcml(code, dump_positions=False)
     # # print(srcml_utils.srcml_to_str_readable(xml))
@@ -66,19 +55,7 @@ def play_pydef(code):
 # test_code()
 
 
-def play_pyi(code):
-    # options = litgen.options.code_style_implot()
-    # options.srcml_options.functions_api_prefixes = ["MY_API"]
-    # options.srcml_options.api_suffixes = ["MY_API"]
-
-    # options = litgen.options.CodeStyleOptions()
-    # options.cpp_indent_size = 4
-    # options.cpp_indent_with_tabs = False
-
-    options = litgen.code_style_imgui()
-
-    options.original_location_flag_show = True
-
+def play_pyi(code, options):
     # from srcmlcpp import srcml_utils
     # xml = srcmlcpp.code_to_srcml(code, dump_positions=False)
     # # print(srcml_utils.srcml_to_str_readable(xml))
@@ -88,31 +65,21 @@ def play_pyi(code):
     print(f">>>\n{pyi_code}<<<")
 
 
-# IMGUI_API bool          Combo(const char* label, int* current_item, const char* const items[], int items_count);
-# options = code_style_implot()
+# options = litgen.options.code_style_implot()
 # options.srcml_options.functions_api_prefixes = ["MY_API"]
-# play_parse(code)
-# code = """
-# template<typename T> IMGUI_API void foo();
-# """
-# play_pydef(code)
-# play_imgui()
+# options.srcml_options.api_suffixes = ["MY_API"]
 
-# play_implot()
+options = litgen.options.CodeStyleOptions()
+options.srcml_options.functions_api_prefixes = ["MY_API"]
 
+# options = litgen.code_style_imgui()
 
-# import litgen
-# options = litgen.CodeStyleOptions()
-# options.srcml_options.functions_api_prefixes = ["MY_API", "IMGUI_API"]
-# code = """
-# const char ** const items=some_default_value();
-# """
-#
-# pydef_code = litgen.generate_pydef(code, options)
-# print(pydef_code)
+options.original_location_flag_show = True
+
 
 code = """
-MY_API int foo(const uint32_t *buf1, size_t count1, const uint32_t *buf2, size_t count2);
+MY_API inline int buffer_sum(const uint8_t* buffer, size_t buffer_size, size_t stride= sizeof(uint8_t));
 """
 
-play_pydef(code)
+#play_pydef(code, options)
+play_pyi(code, options)
