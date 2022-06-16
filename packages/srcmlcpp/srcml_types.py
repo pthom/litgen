@@ -100,11 +100,13 @@ class CppElement:
         assert isinstance(srcml_element, ET.Element)
         self.srcml_element = srcml_element
 
-    def tag(self):
+    def tag(self) -> str:
+        assert self.srcml_element.tag is not None
         return srcml_utils.clean_tag_or_attrib(self.srcml_element.tag)
 
-    def text(self):
-        """Text part of the xml element"""
+    def text(self) -> str:
+        """Text part of the xml element.
+        Warning: Will return empty string if not found"""
         return srcml_utils.str_none_empty(self.srcml_element.text)
 
     def tail(self):
@@ -145,7 +147,7 @@ class CppElement:
         else:
             return None
 
-    def str_code_verbatim(self):
+    def str_code_verbatim(self) -> str:
         """Return the exact C++ code from which this xml node was constructed by calling the executable srcml"""
         return srcml_caller.srcml_to_code(self.srcml_element)
 
@@ -185,21 +187,6 @@ class CppElement:
 
 
 @dataclass
-class CppEmptyLine(CppElement):
-    def __init__(self, element: ET.Element):
-        super().__init__(element)
-
-    def str_code(self):
-        return ""
-
-    def str_commented(self, is_enum: bool = False, is_decl_stmt: bool = False):  # noqa
-        return ""
-
-    def __str__(self):
-        return ""
-
-
-@dataclass
 class CppElementAndComment(CppElement):
     """A CppElement to which we add comments"""
 
@@ -227,6 +214,21 @@ class CppElementAndComment(CppElement):
     def __str__(self):
         return self.str_commented()
 
+
+@dataclass
+class CppEmptyLine(CppElementAndComment):
+    def __init__(self, element: ET.Element):
+        dummy_comments = CppElementComments()
+        super().__init__(element, dummy_comments)
+
+    def str_code(self):
+        return ""
+
+    def str_commented(self, is_enum: bool = False, is_decl_stmt: bool = False):  # noqa
+        return ""
+
+    def __str__(self):
+        return ""
 
 
 class CppUnprocessed(CppElementAndComment):

@@ -1,3 +1,6 @@
+    CppElement.text(self) => text_or_empty()
+
+
 sub package adapt param
 
 gen pyi class & structs
