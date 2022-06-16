@@ -155,7 +155,8 @@ def _group_consecutive_comments(srcml_code: ET.Element) -> ET.Element:
                     if previous_previous_child is not None:
                         previous_previous_tag = srcml_utils.clean_tag_or_attrib(previous_previous_child.tag)
                         previous_previous_position = srcml_utils.element_end_position(previous_previous_child)
-                        if (previous_previous_position is not None
+                        if (
+                            previous_previous_position is not None
                             and previous_previous_position.line == previous_line
                             and previous_previous_tag != "comment"
                         ):
@@ -166,9 +167,7 @@ def _group_consecutive_comments(srcml_code: ET.Element) -> ET.Element:
                     current_comment = child.text
                     previous_comment = previous_child.text
                     if current_comment is not None and previous_comment is not None:
-                        if (
-                            "_SRCML_EMPTY_LINE_" in previous_comment or "_SRCML_EMPTY_LINE_" in current_comment
-                        ):
+                        if "_SRCML_EMPTY_LINE_" in previous_comment or "_SRCML_EMPTY_LINE_" in current_comment:
                             shall_concat_comment = False
 
         if shall_concat_comment:
@@ -248,7 +247,12 @@ def _is_comment_on_previous_line(children: List[ET.Element], idx: int):
         element_start = element.start()
         element_end = element.end()
         next_element_start = next_element.start()
-        if element_start is not None and element_end is not None and next_element_start is not None and element_end.line + 1 == next_element_start.line:
+        if (
+            element_start is not None
+            and element_end is not None
+            and next_element_start is not None
+            and element_end.line + 1 == next_element_start.line
+        ):
             if idx == len(children) - 2:
                 return True
             else:

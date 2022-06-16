@@ -20,7 +20,6 @@ from srcmlcpp.srcml_exception import SrcMlException
 ###########################################
 
 
-
 @dataclass
 class ErrorContext:
     concerned_lines: List[str]

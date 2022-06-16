@@ -824,6 +824,7 @@ class CppFunction(CppFunctionDecl):
     """
     https://www.srcmlcpp.org/doc/cpp_srcML.html#function-definition
     """
+
     block: CppUnprocessed
 
     def __init__(self, element: ET.Element, cpp_element_comments: CppElementComments):
@@ -876,6 +877,7 @@ class CppConstructor(CppConstructorDecl):
     """
     https://www.srcmlcpp.org/doc/cpp_srcML.html#constructor
     """
+
     block: CppUnprocessed
     member_init_list: CppUnprocessed
 
@@ -1092,7 +1094,7 @@ class CppEnum(CppElementAndComment):
         return self.str_code()
 
     def get_enum_decls(self) -> List[CppDecl]:
-        r:List[CppDecl] = []
+        r: List[CppDecl] = []
         for child in self.block.block_children:
             if isinstance(child, CppDecl):
                 r.append(child)

@@ -134,7 +134,7 @@ def _parse_name(element: ET.Element) -> str:
     if element.text is None:
         name = srcml_caller.srcml_to_code(element).strip()
     else:
-        name= element.text
+        name = element.text
     return name
 
 
@@ -545,7 +545,11 @@ def shall_ignore_comment(cpp_comment: CppComment, last_ignored_child: Optional[C
 
         comment_start = cpp_comment.start()
         last_ignore_child_end = last_ignored_child.end()
-        if comment_start is not None and last_ignore_child_end is not None and comment_start.line == last_ignore_child_end.line:
+        if (
+            comment_start is not None
+            and last_ignore_child_end is not None
+            and comment_start.line == last_ignore_child_end.line
+        ):
             # When there is an explanation following a typedef or a struct forward decl,
             # we keep both the code (as a comment) and its comment
             if last_ignored_child.tag() in ["typedef", "struct_decl"]:
@@ -575,7 +579,9 @@ def fill_block(options: SrcmlOptions, element: ET.Element, inout_block_content: 
             if child_tag == "decl_stmt":
                 inout_block_content.block_children.append(parse_decl_stmt(options, child_c))
             elif child_tag == "decl":
-                if child_name is not None and code_utils.does_match_regexes(options.decl_name_exclude_regexes, child_name):
+                if child_name is not None and code_utils.does_match_regexes(
+                    options.decl_name_exclude_regexes, child_name
+                ):
                     continue
                 inout_block_content.block_children.append(parse_decl(options, child_c, None))
 
@@ -641,7 +647,9 @@ def parse_unit(options: SrcmlOptions, element: ET.Element) -> CppUnit:
     return cpp_unit
 
 
-def parse_block_content(options: SrcmlOptions, element_c: CppElementAndComment): # element: ET.Element) -> CppBlockContent:
+def parse_block_content(
+    options: SrcmlOptions, element_c: CppElementAndComment
+):  # element: ET.Element) -> CppBlockContent:
     """
     https://www.srcmlcpp.org/doc/cpp_srcML.html#block_content
     """
