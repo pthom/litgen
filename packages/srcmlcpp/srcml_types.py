@@ -281,7 +281,7 @@ class CppBlock(CppElementAndComment):
              Inside srcML we have this: <block><private or public>CODE</private or public></block>
              Inside python, the block is handled by `CppPublicProtectedPrivate` (which derives from `CppBlock`)
 
-     https://www.srcmlcpp.org/doc/cpp_srcML.html#block
+     https://www.srcml.org/doc/cpp_srcML.html#block
     """
 
     block_children: List[CppElementAndComment]
@@ -335,19 +335,19 @@ class CppBlockContent(CppBlock):
 class CppPublicProtectedPrivate(CppBlock):  # Also a CppElementAndComment
     """A kind of block defined by a public/protected/private zone in a struct or in a class
 
-    See https://www.srcmlcpp.org/doc/cpp_srcML.html#public-access-specifier
+    See https://www.srcml.org/doc/cpp_srcML.html#public-access-specifier
     Note: this is not a direct adaptation. Here we merge the different access types, and we derive from CppBlockContent
     """
 
     access_type: str = ""  # "public", "private", or "protected"
     default_or_explicit: str = ""  # "default" or "" ("default" means it was added automatically)
 
-    def __init__(self, element: ET.Element, access_type: str, type: str):
+    def __init__(self, element: ET.Element, access_type: str, default_or_explicit: str):
         super().__init__(element)
-        assert type in [None, "", "default"]
+        assert default_or_explicit in [None, "", "default"]
         assert access_type in ["public", "protected", "private"]
         self.access_type = access_type
-        self.default_or_explicit = type
+        self.default_or_explicit = default_or_explicit
 
     def str_ppp(self):
         r = ""
@@ -374,7 +374,7 @@ class CppPublicProtectedPrivate(CppBlock):  # Also a CppElementAndComment
 class CppType(CppElement):
     """
     Describes a full C++ type, as seen by srcML
-    See https://www.srcmlcpp.org/doc/cpp_srcML.html#type
+    See https://www.srcml.org/doc/cpp_srcML.html#type
 
     A type name can be composed of several names, for example:
 
@@ -444,18 +444,21 @@ class CppType(CppElement):
 @dataclass
 class CppDecl(CppElementAndComment):
     """
-    https://www.srcmlcpp.org/doc/cpp_srcML.html#variable-declaration
+    https://www.srcml.org/doc/cpp_srcML.html#variable-declaration
     """
 
     cpp_type: CppType
 
-    # decl_name_code: In certain cases, the name of a variable can be seen as a composition by srcML.
-    #   For example:
+    # decl_name, i.e. the variable name
+    decl_name: str = ""
+
+    # c_array_code will only be filled if this decl looks like:
+    #   *  `int a[]:`      <-- in this case, c_array_code="[]"
+    #   or
+    #   *  `int a[10]:`      <-- in this case, c_array_code="[10]"
     #
-    #     `int v[10];`
-    #
-    #   In this library, this name will be seen as "v[10]"
-    decl_name_code: str = ""
+    # In other cases, it will be an empty string
+    c_array_code: str = ""
 
     # * init represent the initial aka default value.
     # With srcML, it is inside an <init><expr> node in srcML.
@@ -476,20 +479,14 @@ class CppDecl(CppElementAndComment):
         super().__init__(element, cpp_element_comments)
 
     def str_code(self):
-        r = srcml_utils.str_or_empty(self.cpp_type) + " " + str(self.decl_name_code)
+        r = srcml_utils.str_or_empty(self.cpp_type) + " " + str(self.decl_name)
         if len(self.initial_value_code) > 0:
             r += " = " + self.initial_value_code
         return r
 
-    def name_without_array(self):
-        if "[" in self.decl_name_code:
-            return self.decl_name_code[: self.decl_name_code.index("[")]
-        else:
-            return self.decl_name_code
-
     def has_name_or_ellipsis(self):
-        assert self.decl_name_code is not None
-        if len(self.decl_name_code) > 0:
+        assert self.decl_name is not None
+        if len(self.decl_name) > 0:
             return True
         elif "..." in self.cpp_type.modifiers:
             return True
@@ -516,7 +513,7 @@ class CppDecl(CppElementAndComment):
 
         nb_indirections = 0
         nb_indirections += self.cpp_type.modifiers.count("*")
-        if ("[]" in self.decl_name_code) or ("[ ]" in self.decl_name_code):
+        if ("[]" in self.decl_name) or ("[ ]" in self.decl_name):
             nb_indirections += 1
 
         r = is_const and is_char and nb_indirections == 2 and is_default_init
@@ -529,17 +526,7 @@ class CppDecl(CppElementAndComment):
         or
             int v[]
         """
-        return "[" in self.decl_name_code and self.decl_name_code.endswith("]")
-
-    def name_c_array(self) -> str:
-        """
-        If this decl is a c array, return the param name, e.g. for
-            int v[4]
-        It will return "v"
-        """
-        assert self.is_c_array()
-        r = self.decl_name_code[: self.decl_name_code.index("[")]
-        return r
+        return len(self.c_array_code) > 0
 
     def c_array_size(self) -> Optional[int]:
         """
@@ -549,33 +536,22 @@ class CppDecl(CppElementAndComment):
         """
         if not self.is_c_array():
             return None
-        pos = self.decl_name_code.index("[")
-        size_str = self.decl_name_code[pos + 1 : -1]
+        pos = self.c_array_code.index("[")
+        size_str = self.c_array_code[pos + 1: -1]
         try:
             size = int(size_str)
             return size
         except ValueError:
             return None
 
-    def c_array_size_str(self) -> Optional[str]:
-        if "[" not in self.decl_name_code:
-            return None
-        pos = self.decl_name_code.index("[")
-        size_str = self.decl_name_code[pos + 1 : -1].strip()
-        return size_str
+    def is_c_array_fixed_size(self):
+        """Returns true if this decl is a c array, and has a fixed size"""
+        return self.c_array_size() is not None
 
     def is_const(self):
         """
         Returns true if this decl is const"""
         return "const" in self.cpp_type.specifiers  # or "const" in self.cpp_type.names
-
-    def is_c_array_fixed_size(self):
-        """Returns true if this decl is a c array, and has a fixed size"""
-        size_str = self.c_array_size_str()
-        if size_str is None:
-            return False
-        r = len(size_str) > 0
-        return r
 
     def c_array_fixed_size_to_std_array(self) -> CppDecl:
         """
@@ -600,7 +576,7 @@ class CppDecl(CppElementAndComment):
         new_decl.cpp_type.typenames = [std_array_type_name]
 
         new_decl.cpp_type.specifiers.append("const")
-        new_decl.decl_name_code = new_decl.name_c_array()
+        new_decl.decl_name = new_decl.decl_name
         return new_decl
 
     def is_immutable_for_python(self) -> bool:
@@ -610,7 +586,7 @@ class CppDecl(CppElementAndComment):
         r = cpp_to_python.is_cpp_type_immutable_for_python(cpp_type_name)
         return r
 
-    def c_array_fixed_size_to_new_modifiable_decls(self) -> List[CppDecl]:
+    def c_array_fixed_size_to_new_boxed_decls(self) -> List[CppDecl]:
         """
         Processes decl that contains a *non const* c style array of fixed size, e.g. `int v[2]`
             * we may need to "Box" the values if they are of an immutable type in python,
@@ -641,7 +617,7 @@ class CppDecl(CppElementAndComment):
         new_decls = []
         for i in range(n):
             new_decl = copy.deepcopy(self)
-            new_decl.decl_name_code = new_decl.name_c_array() + "_" + str(i)
+            new_decl.decl_name = new_decl.decl_name + "_" + str(i)
             new_decl.cpp_type.typenames = [cpp_type_name]
             new_decl.cpp_type.modifiers = ["&"]
             new_decls.append(new_decl)
@@ -652,7 +628,7 @@ class CppDecl(CppElementAndComment):
 @dataclass
 class CppDeclStatement(CppElementAndComment):
     """
-    https://www.srcmlcpp.org/doc/cpp_srcML.html#variable-declaration-statement
+    https://www.srcml.org/doc/cpp_srcML.html#variable-declaration-statement
     """
 
     cpp_decls: List[CppDecl]  # A CppDeclStatement can initialize several variables
@@ -678,7 +654,7 @@ class CppDeclStatement(CppElementAndComment):
 @dataclass
 class CppParameter(CppElement):
     """
-    https://www.srcmlcpp.org/doc/cpp_srcML.html#function-declaration
+    https://www.srcml.org/doc/cpp_srcML.html#function-declaration
     """
 
     decl: CppDecl
@@ -709,7 +685,7 @@ class CppParameter(CppElement):
         return self.decl.initial_value_code
 
     def variable_name(self):
-        return self.decl.name_without_array()
+        return self.decl.decl_name
 
 
 def types_names_default_for_signature_parameters_list(parameters: List[CppParameter], add_self: bool = False) -> str:
@@ -724,7 +700,7 @@ def types_names_default_for_signature_parameters_list(parameters: List[CppParame
 class CppParameterList(CppElement):
     """
     List of parameters of a function
-    https://www.srcmlcpp.org/doc/cpp_srcML.html#function-declaration
+    https://www.srcml.org/doc/cpp_srcML.html#function-declaration
     """
 
     parameters: List[CppParameter]
@@ -757,7 +733,7 @@ class CppParameterList(CppElement):
 class CppTemplate(CppElement):
     """
     Template parameters of a function, struct or class
-    https://www.srcmlcpp.org/doc/cpp_srcML.html#template
+    https://www.srcml.org/doc/cpp_srcML.html#template
     """
 
     parameter_list: CppParameterList
@@ -777,7 +753,7 @@ class CppTemplate(CppElement):
 @dataclass
 class CppFunctionDecl(CppElementAndComment):
     """
-    https://www.srcmlcpp.org/doc/cpp_srcML.html#function-declaration
+    https://www.srcml.org/doc/cpp_srcML.html#function-declaration
     """
 
     specifiers: List[str]  # "const" or ""
@@ -796,7 +772,7 @@ class CppFunctionDecl(CppElementAndComment):
     def _str_signature(self):
         r = ""
 
-        if self.template is not None:
+        if hasattr(self, "template"):
             r += f"template<{str(self.template)}>"
 
         r += f"{self.return_type} {self.function_name}({self.parameter_list})"
@@ -826,7 +802,7 @@ class CppFunctionDecl(CppElementAndComment):
 @dataclass
 class CppFunction(CppFunctionDecl):
     """
-    https://www.srcmlcpp.org/doc/cpp_srcML.html#function-definition
+    https://www.srcml.org/doc/cpp_srcML.html#function-definition
     """
 
     block: CppUnprocessed
@@ -850,7 +826,7 @@ class CppFunction(CppFunctionDecl):
 @dataclass
 class CppConstructorDecl(CppElementAndComment):
     """
-    https://www.srcmlcpp.org/doc/cpp_srcML.html#constructor-declaration
+    https://www.srcml.org/doc/cpp_srcML.html#constructor-declaration
     """
 
     specifiers: List[str]
@@ -879,7 +855,7 @@ class CppConstructorDecl(CppElementAndComment):
 @dataclass
 class CppConstructor(CppConstructorDecl):
     """
-    https://www.srcmlcpp.org/doc/cpp_srcML.html#constructor
+    https://www.srcml.org/doc/cpp_srcML.html#constructor
     """
 
     block: CppUnprocessed
@@ -905,7 +881,7 @@ class CppConstructor(CppConstructorDecl):
 class CppSuper(CppElement):
     """
     Define a super classes of a struct or class
-    https://www.srcmlcpp.org/doc/cpp_srcML.html#struct-definition
+    https://www.srcml.org/doc/cpp_srcML.html#struct-definition
     """
 
     specifier: str = ""  # public, private or protected inheritance
@@ -928,7 +904,7 @@ class CppSuper(CppElement):
 class CppSuperList(CppElement):
     """
     Define a list of super classes of a struct or class
-    https://www.srcmlcpp.org/doc/cpp_srcML.html#struct-definition
+    https://www.srcml.org/doc/cpp_srcML.html#struct-definition
     """
 
     super_list: List[CppSuper]
@@ -948,7 +924,7 @@ class CppSuperList(CppElement):
 @dataclass
 class CppStruct(CppElementAndComment):
     """
-    https://www.srcmlcpp.org/doc/cpp_srcML.html#struct-definition
+    https://www.srcml.org/doc/cpp_srcML.html#struct-definition
     """
 
     class_name: str  # either the class or the struct name
@@ -962,7 +938,7 @@ class CppStruct(CppElementAndComment):
 
     def str_code(self):
         r = ""
-        if self.template is not None:
+        if hasattr(self, "template"):
             r += str(self.template)
 
         if isinstance(self, CppClass):
@@ -971,7 +947,7 @@ class CppStruct(CppElementAndComment):
             r += "struct "
         r += f"{self.class_name}"
 
-        if self.super_list is not None and len(str(self.super_list)) > 0:
+        if hasattr(self, "super_list") and len(str(self.super_list)) > 0:
             r += str(self.super_list)
 
         r += "\n"
@@ -1014,7 +990,7 @@ class CppStruct(CppElementAndComment):
 @dataclass
 class CppClass(CppStruct):
     """
-    https://www.srcmlcpp.org/doc/cpp_srcML.html#class-definition
+    https://www.srcml.org/doc/cpp_srcML.html#class-definition
     """
 
     def __init__(self, element: ET.Element, cpp_element_comments: CppElementComments):
@@ -1027,7 +1003,7 @@ class CppClass(CppStruct):
 @dataclass
 class CppComment(CppElementAndComment):
     """
-    https://www.srcmlcpp.org/doc/cpp_srcML.html#comment
+    https://www.srcml.org/doc/cpp_srcML.html#comment
     Warning, the text contains "//" or "/* ... */" and "\n"
     """
 
@@ -1048,7 +1024,7 @@ class CppComment(CppElementAndComment):
 @dataclass
 class CppNamespace(CppElementAndComment):
     """
-    https://www.srcmlcpp.org/doc/cpp_srcML.html#namespace
+    https://www.srcml.org/doc/cpp_srcML.html#namespace
     """
 
     ns_name: str
@@ -1072,8 +1048,8 @@ class CppNamespace(CppElementAndComment):
 @dataclass
 class CppEnum(CppElementAndComment):
     """
-    https://www.srcmlcpp.org/doc/cpp_srcML.html#enum-definition
-    https://www.srcmlcpp.org/doc/cpp_srcML.html#enum-class
+    https://www.srcml.org/doc/cpp_srcML.html#enum-definition
+    https://www.srcml.org/doc/cpp_srcML.html#enum-class
     """
 
     block: CppBlock

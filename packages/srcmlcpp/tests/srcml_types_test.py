@@ -26,7 +26,7 @@ def test_c_array_fixed_size_to_std_array():
 
     code = "int v[2]"
     cpp_decl = to_decl(code)
-    new_decls = cpp_decl.c_array_fixed_size_to_new_modifiable_decls()
+    new_decls = cpp_decl.c_array_fixed_size_to_new_boxed_decls()
     assert len(new_decls) == 2
     code_utils.assert_are_codes_equal(new_decls[0], "BoxedInt & v_0")
     code_utils.assert_are_codes_equal(new_decls[1], "BoxedInt & v_1")

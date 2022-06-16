@@ -114,7 +114,7 @@ class _AdaptBuffersHelper:
             r = "adapted_param_looks_like_param_template_buffer"
             return r
         else:
-            r = param.decl.name_without_array()
+            r = param.decl.decl_name
             return r
 
     def shall_adapt(self) -> bool:
@@ -250,7 +250,7 @@ class _AdaptBuffersHelper:
             # Fill template_buffer_name
             _template_buffer_param = self._last_template_buffer_param()
             assert _template_buffer_param is not None
-            template_buffer_name = _template_buffer_param.decl.name_without_array()
+            template_buffer_name = _template_buffer_param.decl.decl_name
 
             # Fill function_or_lambda_to_call
             if self.function_adapted_params.lambda_to_call is not None:
@@ -339,7 +339,7 @@ class _AdaptBuffersHelper:
         return r
 
     def _param_name(self, idx_param: int):
-        return self._param(idx_param).decl.name_without_array()
+        return self._param(idx_param).decl.decl_name
 
     def _is_const(self, idx_param: int):
         r = "const" in self._param(idx_param).decl.cpp_type.specifiers
@@ -423,7 +423,7 @@ class _AdaptBuffersHelper:
     def lambda_input_stride_param(self, idx_param: int):
         stride_param = self._param(idx_param)
         adapted_stride_name = self._stride_adapted_name(idx_param)
-        param_stride_name = stride_param.decl.name_without_array()
+        param_stride_name = stride_param.decl.decl_name
 
         idx_buffer_param_before = self._last_idx_buffer_param_before(idx_param)
         assert idx_buffer_param_before is not None

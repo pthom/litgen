@@ -40,13 +40,13 @@ def test_iterate_children_simple():
     msg = "\n".join(msgs)
     # logging.warning("\n" + msg)
     expected = """
-        {'tag': 'comment', 'name': '', 'text': ' _SRCML_EMPTY_LINE_', 'start': '1:1', 'end': '1:21', 'comment_top': '', 'comment_eol': ''}
-        {'tag': 'comment', 'name': '', 'text': ' _SRCML_EMPTY_LINE_', 'start': '2:1', 'end': '2:21', 'comment_top': '', 'comment_eol': ''}
+        {'tag': 'comment', 'name': '__NONE__', 'text': ' _SRCML_EMPTY_LINE_', 'start': '1:1', 'end': '1:21', 'comment_top': '', 'comment_eol': ''}
+        {'tag': 'comment', 'name': '__NONE__', 'text': ' _SRCML_EMPTY_LINE_', 'start': '2:1', 'end': '2:21', 'comment_top': '', 'comment_eol': ''}
         {'tag': 'function_decl', 'name': 'Boo1', 'text': '', 'start': '3:5', 'end': '3:16', 'comment_top': '', 'comment_eol': ''}
         {'tag': 'function_decl', 'name': 'Boo2', 'text': '', 'start': '4:5', 'end': '4:16', 'comment_top': '', 'comment_eol': ' get y'}
         {'tag': 'function_decl', 'name': 'Boo3', 'text': '', 'start': '5:5', 'end': '5:16', 'comment_top': '', 'comment_eol': ''}
-        {'tag': 'comment', 'name': '', 'text': ' _SRCML_EMPTY_LINE_', 'start': '6:1', 'end': '6:21', 'comment_top': '', 'comment_eol': ''}
-        {'tag': 'comment', 'name': '', 'text': ' _SRCML_EMPTY_LINE_', 'start': '7:1', 'end': '7:21', 'comment_top': '', 'comment_eol': ''}
+        {'tag': 'comment', 'name': '__NONE__', 'text': ' _SRCML_EMPTY_LINE_', 'start': '6:1', 'end': '6:21', 'comment_top': '', 'comment_eol': ''}
+        {'tag': 'comment', 'name': '__NONE__', 'text': ' _SRCML_EMPTY_LINE_', 'start': '7:1', 'end': '7:21', 'comment_top': '', 'comment_eol': ''}
     """
 
     code_utils.assert_are_codes_equal(msg, expected)
@@ -59,7 +59,7 @@ def test_iterate_children_with_comments():
     msgs = [str(child.as_dict()) for child in children_and_comments]
     msg = "\n".join(msgs)
     # logging.warning("\n" + msg)
-    code_utils.assert_are_codes_equal(msg, srcml_comments.EXPECTED_CHILDREN_WITH_COMMENTS)
+    code_utils.assert_are_codes_equal(msg, srcml_comments._EXPECTED_CHILDREN_WITH_COMMENTS)
 
 
 def test_group_comment():

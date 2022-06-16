@@ -127,7 +127,7 @@ def _make_enum_element_decl_lines(
                 )
                 return []
 
-    enum_element.decl_name_code = cpp_to_python.enum_value_name_to_python(enum, enum_element, options)
+    enum_element.decl_name = cpp_to_python.enum_value_name_to_python(enum, enum_element, options)
 
     #
     # Sometimes, enum decls have interdependent values like this:
@@ -139,7 +139,7 @@ def _make_enum_element_decl_lines(
     # So, we search and replace enum strings in the default value (.init)
     #
     for enum_decl in enum.get_enum_decls():
-        enum_decl_cpp_name = enum_decl.name_without_array()
+        enum_decl_cpp_name = enum_decl.decl_name
         enum_decl_python_name = cpp_to_python.enum_value_name_to_python(enum, enum_decl, options)
 
         replacement = code_replacements.StringReplacement()
@@ -196,7 +196,7 @@ def _generate_pyi_function(
 def _paramlist_call_strs(param_list: CppParameterList, options: CodeStyleOptions) -> List[str]:
     r = []
     for param in param_list.parameters:
-        param_name_python = cpp_to_python.var_name_to_python(param.decl.name_without_array(), options)
+        param_name_python = cpp_to_python.var_name_to_python(param.decl.decl_name, options)
         param_type_cpp = param.decl.cpp_type.str_code()
         param_type_python = cpp_to_python.type_to_python(param_type_cpp, options)
         param_default_value = cpp_to_python.default_value_to_python(param.default_value(), options)
@@ -295,7 +295,7 @@ def _generate_pyi_method(function_infos: CppFunctionDecl, options: CodeStyleOpti
 
     return ""
 
-    if function_infos.decl_name_code == parent_struct_name:
+    if function_infos.decl_name == parent_struct_name:
         # Sometimes, srcml might see a constructor as a decl
         # Example:
         # struct Foo
@@ -317,7 +317,7 @@ def _add_struct_member_decl(cpp_decl: CppDecl, struct_name: str, options: CodeSt
     return ""
 
     # _i_ = options.indent_python_spaces()
-    # name_cpp = cpp_decl.name_without_array()
+    # name_cpp = cpp_decl.decl_name
     # name_python = cpp_to_python.var_name_to_python(name_cpp, options)
     # comment = cpp_decl.cpp_element_comments.full_comment()
     # location = info_cpp_element_original_location(cpp_decl, options)

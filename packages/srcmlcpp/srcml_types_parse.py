@@ -18,7 +18,7 @@ def parse_unprocessed(options: SrcmlOptions, element_c: CppElementAndComment) ->
 
 def parse_type(options: SrcmlOptions, element: ET.Element, previous_decl: Optional[CppDecl]) -> CppType:
     """
-    https://www.srcmlcpp.org/doc/cpp_srcML.html#type
+    https://www.srcml.org/doc/cpp_srcML.html#type
 
     A type name can be composed of several names, for example:
 
@@ -144,7 +144,7 @@ def parse_decl(
     previous_decl: Optional[CppDecl],
 ) -> CppDecl:
     """
-    https://www.srcmlcpp.org/doc/cpp_srcML.html#variable-declaration-statement
+    https://www.srcml.org/doc/cpp_srcML.html#variable-declaration-statement
     """
     assert element_c.tag() == "decl"
     result = CppDecl(element_c.srcml_element, element_c.cpp_element_comments)
@@ -153,7 +153,13 @@ def parse_decl(
         if child_tag == "type":
             result.cpp_type = parse_type(options, child, previous_decl)
         elif child_tag == "name":
-            result.decl_name_code = _parse_name(child)
+            decl_name_and_array = _parse_name(child)
+            if "[" in decl_name_and_array and decl_name_and_array. endswith("]"):
+                pos = decl_name_and_array.index("[")
+                result.decl_name = decl_name_and_array[:pos]
+                result.c_array_code = decl_name_and_array[pos:]
+            else:
+                result.decl_name = decl_name_and_array
         elif child_tag == "init":
             result.initial_value_code = _parse_init_expr(child)
         elif child_tag == "range":
@@ -167,8 +173,8 @@ def parse_decl(
 
 def parse_decl_stmt(options: SrcmlOptions, element_c: CppElementAndComment) -> CppDeclStatement:
     """
-    https://www.srcmlcpp.org/doc/cpp_srcML.html#variable-declaration-statement
-    https://www.srcmlcpp.org/doc/cpp_srcML.html#variable-declaration
+    https://www.srcml.org/doc/cpp_srcML.html#variable-declaration-statement
+    https://www.srcml.org/doc/cpp_srcML.html#variable-declaration
     """
     assert element_c.tag() == "decl_stmt"
 
@@ -197,7 +203,7 @@ def parse_decl_stmt(options: SrcmlOptions, element_c: CppElementAndComment) -> C
 
 def parse_parameter(options: SrcmlOptions, element: ET.Element) -> CppParameter:
     """
-    https://www.srcmlcpp.org/doc/cpp_srcML.html#function-declaration
+    https://www.srcml.org/doc/cpp_srcML.html#function-declaration
     """
     assert srcml_utils.clean_tag_or_attrib(element.tag) == "parameter"
     result = CppParameter(element)
@@ -225,7 +231,7 @@ def parse_parameter(options: SrcmlOptions, element: ET.Element) -> CppParameter:
 
 def parse_parameter_list(options: SrcmlOptions, element: ET.Element) -> CppParameterList:
     """
-    https://www.srcmlcpp.org/doc/cpp_srcML.html#function-declaration
+    https://www.srcml.org/doc/cpp_srcML.html#function-declaration
     """
     assert srcml_utils.clean_tag_or_attrib(element.tag) == "parameter_list"
     result = CppParameterList(element)
@@ -241,7 +247,7 @@ def parse_parameter_list(options: SrcmlOptions, element: ET.Element) -> CppParam
 def parse_template(options: SrcmlOptions, element: ET.Element) -> CppTemplate:
     """
     Template parameters of a function, struct or class
-    https://www.srcmlcpp.org/doc/cpp_srcML.html#template
+    https://www.srcml.org/doc/cpp_srcML.html#template
     """
     assert srcml_utils.clean_tag_or_attrib(element.tag) == "template"
     result = CppTemplate(element)
@@ -262,7 +268,7 @@ def fill_function_decl(
     for child in element_c.srcml_element:
         child_tag = srcml_utils.clean_tag_or_attrib(child.tag)
         if child_tag == "type":
-            if function_decl.return_type is None or len(function_decl.return_type.typenames) == 0:
+            if not hasattr(function_decl, "return_type") or len(function_decl.return_type.typenames) == 0:
                 parsed_type = parse_type(options, child, None)
                 function_decl.return_type = parsed_type
             else:
@@ -294,7 +300,7 @@ def fill_function_decl(
 
 def parse_function_decl(options: SrcmlOptions, element_c: CppElementAndComment) -> CppFunctionDecl:
     """
-    https://www.srcmlcpp.org/doc/cpp_srcML.html#function-declaration
+    https://www.srcml.org/doc/cpp_srcML.html#function-declaration
     """
     assert element_c.tag() == "function_decl"
     result = CppFunctionDecl(element_c.srcml_element, element_c.cpp_element_comments)
@@ -304,7 +310,7 @@ def parse_function_decl(options: SrcmlOptions, element_c: CppElementAndComment) 
 
 def parse_function(options: SrcmlOptions, element_c: CppElementAndComment) -> CppFunction:
     """
-    https://www.srcmlcpp.org/doc/cpp_srcML.html#function-definition
+    https://www.srcml.org/doc/cpp_srcML.html#function-definition
     """
     assert element_c.tag() == "function"
     result = CppFunction(element_c.srcml_element, element_c.cpp_element_comments)
@@ -357,7 +363,7 @@ def fill_constructor_decl(
 
 def parse_constructor_decl(options: SrcmlOptions, element_c: CppElementAndComment) -> CppConstructorDecl:
     """
-    https://www.srcmlcpp.org/doc/cpp_srcML.html#constructor-declaration
+    https://www.srcml.org/doc/cpp_srcML.html#constructor-declaration
     """
     assert element_c.tag() == "constructor_decl"
     result = CppConstructorDecl(element_c.srcml_element, element_c.cpp_element_comments)
@@ -367,7 +373,7 @@ def parse_constructor_decl(options: SrcmlOptions, element_c: CppElementAndCommen
 
 def parse_constructor(options: SrcmlOptions, element_c: CppElementAndComment) -> CppConstructor:
     """
-    https://www.srcmlcpp.org/doc/cpp_srcML.html#function-definition
+    https://www.srcml.org/doc/cpp_srcML.html#function-definition
     """
     assert element_c.tag() == "constructor"
     result = CppConstructor(element_c.srcml_element, element_c.cpp_element_comments)
@@ -391,7 +397,7 @@ def parse_constructor(options: SrcmlOptions, element_c: CppElementAndComment) ->
 def parse_super(options: SrcmlOptions, element: ET.Element) -> CppSuper:
     """
     Define a super classes of a struct or class
-    https://www.srcmlcpp.org/doc/cpp_srcML.html#struct-definition
+    https://www.srcml.org/doc/cpp_srcML.html#struct-definition
     """
     assert srcml_utils.clean_tag_or_attrib(element.tag) == "super"
     result = CppSuper(element)
@@ -411,7 +417,7 @@ def parse_super(options: SrcmlOptions, element: ET.Element) -> CppSuper:
 def parse_super_list(options: SrcmlOptions, element: ET.Element) -> CppSuperList:
     """
     Define a list of super classes of a struct or class
-    https://www.srcmlcpp.org/doc/cpp_srcML.html#struct-definition
+    https://www.srcml.org/doc/cpp_srcML.html#struct-definition
     """
     assert srcml_utils.clean_tag_or_attrib(element.tag) == "super_list"
     result = CppSuperList(element)
@@ -444,8 +450,8 @@ def _add_comment_child_before_block(element_c: CppElementAndComment, child: ET.E
 
 def parse_struct_or_class(options: SrcmlOptions, element_c: CppElementAndComment) -> CppStruct:
     """
-    https://www.srcmlcpp.org/doc/cpp_srcML.html#struct-definition
-    https://www.srcmlcpp.org/doc/cpp_srcML.html#class-definition
+    https://www.srcml.org/doc/cpp_srcML.html#struct-definition
+    https://www.srcml.org/doc/cpp_srcML.html#class-definition
     """
     element_tag = element_c.tag()
     assert element_tag in ["struct", "class"]
@@ -474,7 +480,7 @@ def parse_struct_or_class(options: SrcmlOptions, element_c: CppElementAndComment
 
 def parse_public_protected_private(options: SrcmlOptions, element_c: CppElementAndComment) -> CppPublicProtectedPrivate:
     """
-    See https://www.srcmlcpp.org/doc/cpp_srcML.html#public-access-specifier
+    See https://www.srcml.org/doc/cpp_srcML.html#public-access-specifier
     Note: this is not a direct adaptation. Here we merge the different access types
     """
     access_type = element_c.tag()
@@ -488,7 +494,7 @@ def parse_public_protected_private(options: SrcmlOptions, element_c: CppElementA
 
 def parse_block(options: SrcmlOptions, element: ET.Element) -> CppBlock:
     """
-    https://www.srcmlcpp.org/doc/cpp_srcML.html#block
+    https://www.srcml.org/doc/cpp_srcML.html#block
     """
     assert srcml_utils.clean_tag_or_attrib(element.tag) == "block"
 
@@ -562,7 +568,7 @@ def shall_ignore_comment(cpp_comment: CppComment, last_ignored_child: Optional[C
 
 def fill_block(options: SrcmlOptions, element: ET.Element, inout_block_content: CppBlock):
     """
-    https://www.srcmlcpp.org/doc/cpp_srcML.html#block_content
+    https://www.srcml.org/doc/cpp_srcML.html#block_content
     """
 
     last_ignored_child: Optional[CppElementAndComment] = None
@@ -651,7 +657,7 @@ def parse_block_content(
     options: SrcmlOptions, element_c: CppElementAndComment
 ):  # element: ET.Element) -> CppBlockContent:
     """
-    https://www.srcmlcpp.org/doc/cpp_srcML.html#block_content
+    https://www.srcml.org/doc/cpp_srcML.html#block_content
     """
     assert element_c.tag() == "block_content"
 
@@ -662,7 +668,7 @@ def parse_block_content(
 
 def parse_comment(options: SrcmlOptions, element_c: CppElementAndComment) -> CppComment:
     """
-    https://www.srcmlcpp.org/doc/cpp_srcML.html#comment
+    https://www.srcml.org/doc/cpp_srcML.html#comment
     """
     assert element_c.tag() == "comment"
     assert len(element_c.srcml_element) == 0  # a comment has no child
@@ -683,7 +689,7 @@ def parse_comment(options: SrcmlOptions, element_c: CppElementAndComment) -> Cpp
 
 def parse_namespace(options: SrcmlOptions, element_c: CppElementAndComment) -> CppNamespace:
     """
-    https://www.srcmlcpp.org/doc/cpp_srcML.html#namespace
+    https://www.srcml.org/doc/cpp_srcML.html#namespace
     """
     assert element_c.tag() == "namespace"
     result = CppNamespace(element_c.srcml_element, element_c.cpp_element_comments)
@@ -703,8 +709,8 @@ def parse_namespace(options: SrcmlOptions, element_c: CppElementAndComment) -> C
 
 def parse_enum(options: SrcmlOptions, element_c: CppElementAndComment) -> CppEnum:
     """
-    https://www.srcmlcpp.org/doc/cpp_srcML.html#enum-definition
-    https://www.srcmlcpp.org/doc/cpp_srcML.html#enum-class
+    https://www.srcml.org/doc/cpp_srcML.html#enum-definition
+    https://www.srcml.org/doc/cpp_srcML.html#enum-class
     """
     assert element_c.tag() == "enum"
     result = CppEnum(element_c.srcml_element, element_c.cpp_element_comments)

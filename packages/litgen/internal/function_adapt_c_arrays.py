@@ -75,7 +75,7 @@ def adapt_c_arrays(
                 new_param.decl = new_decl
                 new_function_params.append(new_param)
                 # Fill adapted_cpp_parameter_list (those that will call the original C style function)
-                lambda_adapter.adapted_cpp_parameter_list.append(new_decl.name_without_array() + ".data()")
+                lambda_adapter.adapted_cpp_parameter_list.append(new_decl.decl_name + ".data()")
 
             if not old_param.decl.is_const() and options.c_array_modifiable_flag_replace:
                 array_size = old_param.decl.c_array_size()
@@ -85,7 +85,7 @@ def adapt_c_arrays(
 
                     was_replaced = True
 
-                    new_decls = old_param.decl.c_array_fixed_size_to_new_modifiable_decls()
+                    new_decls = old_param.decl.c_array_fixed_size_to_new_boxed_decls()
 
                     #
                     # Fill lambda_input_code and lambda_output_code
@@ -100,7 +100,7 @@ def adapt_c_arrays(
                     # output_1.value = output_raw[1];
 
                     old_param_renamed = copy.deepcopy(old_param)
-                    old_param_renamed.decl.decl_name_code = old_param_renamed.decl.name_c_array() + "_raw"
+                    old_param_renamed.decl.decl_name = old_param_renamed.decl.decl_name + "_raw"
                     lambda_adapter.lambda_input_code += (
                         old_param_renamed.decl.str_code() + f"[{len(new_decls)}]" + ";\n"
                     )
@@ -110,10 +110,10 @@ def adapt_c_arrays(
                     for i, new_decl in enumerate(new_decls):
                         value_access = ".value" if old_param.decl.is_immutable_for_python() else ""
                         lambda_adapter.lambda_input_code += (
-                            f"{old_param_renamed.decl.decl_name_code}[{i}] = {new_decl.decl_name_code}{value_access};\n"
+                            f"{old_param_renamed.decl.decl_name}[{i}] = {new_decl.decl_name}{value_access};\n"
                         )
                         lambda_adapter.lambda_output_code += (
-                            f"{new_decl.decl_name_code}{value_access} = {old_param_renamed.decl.decl_name_code}[{i}];\n"
+                            f"{new_decl.decl_name}{value_access} = {old_param_renamed.decl.decl_name}[{i}];\n"
                         )
 
                         new_param = copy.deepcopy(old_param)

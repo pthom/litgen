@@ -75,7 +75,9 @@ options.original_location_flag_show = True
 
 
 code = """
-MY_API inline int buffer_sum(const uint8_t* buffer, size_t buffer_size, size_t stride= sizeof(uint8_t));
+// Comment line 1
+// continued on line 2
+MY_API void foo();
 """
 
 # play_pydef(code, options)

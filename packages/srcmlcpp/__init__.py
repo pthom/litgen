@@ -1,5 +1,5 @@
 """
-Interface to srcML (https://www.srcmlcpp.org/)
+Interface to srcML (https://www.srcml.org/)
 """
 import os, sys
 

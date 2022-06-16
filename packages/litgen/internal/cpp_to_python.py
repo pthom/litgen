@@ -152,7 +152,7 @@ def var_name_to_python(var_name: str, options: CodeStyleOptions) -> str:  # noqa
 
 
 def decl_python_var_name(cpp_decl: CppDecl, options: CodeStyleOptions):
-    var_cpp_name = cpp_decl.name_without_array()
+    var_cpp_name = cpp_decl.decl_name
     var_python_name = var_name_to_python(var_cpp_name, options)
     return var_python_name
 
@@ -347,7 +347,7 @@ def _enum_remove_values_prefix(enum_name: str, value_name: str) -> str:
 
 
 def enum_value_name_to_python(enum: CppEnum, enum_element: CppDecl, options: CodeStyleOptions) -> str:
-    value_name = enum_element.name_without_array()
+    value_name = enum_element.decl_name
 
     if options.enum_flag_remove_values_prefix and enum.enum_type != "class":
         value_name_no_prefix = _enum_remove_values_prefix(enum.enum_name, value_name)
@@ -366,7 +366,7 @@ def enum_element_is_count(enum: CppEnum, enum_element: CppDecl, options: CodeSty
         return False
 
     is_class_enum = enum.enum_type == "class"
-    value_name = enum_element.name_without_array()
+    value_name = enum_element.decl_name
 
     if not code_utils.var_name_looks_like_size_name(value_name, options.buffer_size_names):
         return False
@@ -379,5 +379,5 @@ def enum_element_is_count(enum: CppEnum, enum_element: CppDecl, options: CodeSty
 
 
 def looks_like_size_param(param_c: CppParameter, options: CodeStyleOptions):
-    r = code_utils.var_name_looks_like_size_name(param_c.decl.name_without_array(), options.buffer_size_names)
+    r = code_utils.var_name_looks_like_size_name(param_c.decl.decl_name, options.buffer_size_names)
     return r

@@ -90,8 +90,8 @@ def adapt_c_string_list(
             #
             new_param = copy.deepcopy(old_param)
             new_decl = new_param.decl
-            if "[" in new_decl.decl_name_code:
-                new_decl.decl_name_code = new_decl.decl_name_code[: new_decl.decl_name_code.index("[")]
+            if new_decl.is_c_array():
+                new_decl.c_array_code = ""
             new_decl.initial_value_code = ""
             new_decl.cpp_type.specifiers = ["const"]
             new_decl.cpp_type.typenames = ["std::vector<std::string>"]
@@ -105,11 +105,11 @@ def adapt_c_string_list(
             # for (const auto &s : items)                            // lambda_input_code
             #     items_ptrs.push_back(s.c_str());
             # int items_size = static_cast<int>(items.size());
-            param_name = new_decl.name_without_array()
+            param_name = new_decl.decl_name
             vec_name = f"{param_name}_ptrs"
             next_param = old_function_params[i + 1]
             size_type = next_param.decl.cpp_type.typenames[0]
-            size_name = next_param.decl.name_without_array()
+            size_name = next_param.decl.decl_name
 
             if size_type != "size_t" and size_type != "std::size_t":
                 static_cast_str = f"static_cast<{size_type}>"

@@ -12,8 +12,8 @@ def test_parse_cpp_decl_statement():
     options = SrcmlOptions()
 
     def code_to_decl_statement(code):
-        element = srcml_main.get_only_child_with_tag(options, code, "decl_stmt")
-        cpp_decl_statement = srcml_types_parse.parse_decl_stmt(options, element)
+        element_c = srcml_main.get_only_child_with_tag(options, code, "decl_stmt")
+        cpp_decl_statement = srcml_types_parse.parse_decl_stmt(options, element_c)
         cpp_decl_statement_str = str(cpp_decl_statement)
         return cpp_decl_statement
 
@@ -353,11 +353,11 @@ def do_parse_imgui_implot(filename):
     assert len(lines) > 500
 
 
-def test_parse_imgui():
-    source_filename = os.path.realpath(_THIS_DIR + "/../../../examples_real_libs/imgui/imgui/imgui.h")
-    do_parse_imgui_implot(source_filename)
-
-
-def test_parse_implot():
-    source_filename = os.path.realpath(_THIS_DIR + "/../../../examples_real_libs/implot/implot/implot.h")
-    do_parse_imgui_implot(source_filename)
+# def test_parse_imgui():
+#     source_filename = os.path.realpath(_THIS_DIR + "/../../../examples_real_libs/imgui/imgui/imgui.h")
+#     do_parse_imgui_implot(source_filename)
+#
+#
+# def test_parse_implot():
+#     source_filename = os.path.realpath(_THIS_DIR + "/../../../examples_real_libs/implot/implot/implot.h")
+#     do_parse_imgui_implot(source_filename)
