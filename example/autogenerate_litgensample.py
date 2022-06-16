@@ -45,6 +45,7 @@ def autogenerate():
         output_cpp_module_file=output_cpp_module,
         options=options,
         output_stub_pyi_file=output_stub_pyi_file,
+        add_boxed_types_definitions=True
     )
 
 

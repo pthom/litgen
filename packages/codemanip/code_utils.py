@@ -403,11 +403,6 @@ def write_code_between_markers(
     flag_preserve_indentation: bool = True,
 ):
 
-    while code_to_insert.endswith("\n\n"):
-        code_to_insert = code_to_insert[:-1]
-    while code_to_insert.startswith("\n\n"):
-        code_to_insert = code_to_insert[1:]
-
     assert os.path.isfile(inout_filename)
     input_code = read_text_file(inout_filename)
     input_code_lines = input_code.split("\n")
