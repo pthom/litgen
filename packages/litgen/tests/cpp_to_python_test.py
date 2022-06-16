@@ -43,7 +43,7 @@ def test_make_boxed_type():
                     return self.__repr__();
                 }
             )
-            ; 
+            ;
     """
     code_utils.assert_are_codes_equal(pydef_code, expected_code)
 
@@ -92,8 +92,6 @@ def test_make_boxed_type():
                 }
             )
             ;
-
-
         auto pyClassBoxedInt = py::class_<BoxedInt>
             (m, "BoxedInt", "")
             .def_readwrite("value", &BoxedInt::value, "")

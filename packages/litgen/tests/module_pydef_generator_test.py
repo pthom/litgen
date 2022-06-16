@@ -23,19 +23,17 @@ def test_generate_pydef_enum():
         // This is the enum doc
         // on two lines
         enum MyEnum {
-            // A doc on several values 
+            // A doc on several values
             // on several lines
             MyEnum_A = 0, // Doc about A
-            MyEnum_B,     
+            MyEnum_B,
             // Count the number of values in the enum
             MyEnum_COUNT
-        };        
+        };
     """
 
     expected_generated_code1 = """py::enum_<MyEnum>(m, "MyEnum", py::arithmetic(), " This is the enum doc\\n on two lines")
-    //  A doc on several values
-    //  on several lines
-    .value("a", MyEnum_A, " Doc about A")
+    .value("a", MyEnum_A, "Doc about A")
     .value("b", MyEnum_B, "");
     """
 
@@ -54,10 +52,9 @@ def test_generate_pydef_enum():
             COUNT
         };
     """
-    expected_generated_code2 = """py::enum_<MyEnum>(m, "MyEnum", py::arithmetic(), " This is the enum doc")
-    //  A doc on several values
-    .value("a", MyEnum::A, " Doc about A")
-    .value("b", MyEnum::B, " Doc about B");
+    expected_generated_code2 = """py::enum_<MyEnum>(m, "MyEnum", py::arithmetic(), "This is the enum doc")
+    .value("a", MyEnum::A, "Doc about A")
+    .value("b", MyEnum::B, "Doc about B");
     """
     cpp_unit2 = srcmlcpp.code_to_cpp_unit(options.srcml_options, code2)
     generated_code2 = module_pydef_generator.generate_pydef(cpp_unit2, options)
@@ -73,7 +70,7 @@ def test_generate_pydef_function_cpp_code():
     def test_implot_easy():
         options = code_style_implot()
         code = """
-            // Sets the format of numeric 
+            // Sets the format of numeric
             // axis labels
             IMPLOT_API void SetupAxisFormat(ImAxis axis, const char* fmt);
         """
@@ -86,7 +83,7 @@ def test_generate_pydef_function_cpp_code():
                 SetupAxisFormat(axis, fmt);
             },
             py::arg("axis"), py::arg("fmt"),
-            " Sets the format of numeric \\n axis labels"
+            " Sets the format of numeric\\n axis labels"
         );
         """
         # logging.warning("\n" + generated_code)
@@ -133,7 +130,7 @@ def test_generate_pydef_function_cpp_code():
                         // convert py::array to C standard buffer (const)
                         const void * values_from_pyarray = values.data();
                         py::ssize_t values_count = values.shape()[0];
-            
+
                         // call the correct template version by casting
                         char values_type = values.dtype().char_();
                         if (values_type == 'B')
@@ -162,11 +159,11 @@ def test_generate_pydef_function_cpp_code():
                         else
                             throw std::runtime_error(std::string("Bad array type ('") + values_type + "') for param values");
                     };
-            
+
                     PlotScatter_adapt_c_buffers(values);
                 },
                 py::arg("values"),
-                " Plots a standard 2D scatter plot. Default marker is ImPlotMarker_Circle."
+                "Plots a standard 2D scatter plot. Default marker is ImPlotMarker_Circle."
             );
        """
         code_utils.assert_are_codes_equal(generated_code, expected_code)
@@ -188,7 +185,7 @@ def test_generate_pydef_function_cpp_code():
                     return Image(label_id, mat, params);
                 },
                 py::arg("label_id"), py::arg("mat"), py::arg("params"),
-                " Display an image (requires OpenGL initialized)"
+                "Display an image (requires OpenGL initialized)"
             );
         """
         code_utils.assert_are_codes_equal(generated_code, expected_code)
@@ -260,17 +257,17 @@ def test_generate_pydef_struct_cpp_code():
     options = code_style_immvision()
     code = """
         // A dummy structure that likes to multiply
-        struct Multiplier 
-        { 
+        struct Multiplier
+        {
             Multiplier(); // default constructor
-            
+
             // Constructor with param
-            Multiplier(int _who): who(_who) {}; 
-            
+            Multiplier(int _who): who(_who) {};
+
             // Doubles the input number
-            IMMVISION_API int CalculateDouble(int x = 21) 
-            { 
-                return x * 2; 
+            IMMVISION_API int CalculateDouble(int x = 21)
+            {
+                return x * 2;
             }
             // Who is who?
             int who = 627;
@@ -282,21 +279,21 @@ def test_generate_pydef_struct_cpp_code():
 
 
         auto pyClassMultiplier = py::class_<Multiplier>
-            (m, "Multiplier", " A dummy structure that likes to multiply")
+            (m, "Multiplier", "A dummy structure that likes to multiply")
             .def(py::init<>(),
-                " default constructor")
+                "default constructor")
             .def(py::init<int>(),
                 py::arg("_who"),
-                " Constructor with param")
+                "Constructor with param")
             .def("calculate_double",
                 [](Multiplier & self, int x = 21)
                 {
                     return self.CalculateDouble(x);
                 },
                 py::arg("x") = 21,
-                " Doubles the input number"
+                "Doubles the input number"
             )
-            .def_readwrite("who", &Multiplier::who, " Who is who?")
+            .def_readwrite("who", &Multiplier::who, "Who is who?")
             .def("__repr__", [](const Multiplier& v) { return ToString(v); });
     """
     # logging.warning("\n" + generated)
