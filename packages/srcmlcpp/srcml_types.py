@@ -445,23 +445,11 @@ class CppType(CppElement):
 class CppDecl(CppElementAndComment):
     """
     https://www.srcmlcpp.org/doc/cpp_srcML.html#variable-declaration
-
-
-    * init represent the initial aka default value.
-      With srcML, it is inside an <init><expr> node in srcML.
-      Here we retransform it to C++ code for simplicity
-        For example:
-            int a = 5;
-
-            leads to:
-            <decl_stmt><decl><type><name>int</name></type> <name>a</name> <init>= <expr><literal type="number">5</literal></expr></init></decl>;</decl_stmt>
-
-            Which is transcribed as "5"
-    """  # noqa
+    """
 
     cpp_type: CppType
 
-    # name_code: In certain cases, the name of a variable can be seen as a composition by srcML.
+    # decl_name_code: In certain cases, the name of a variable can be seen as a composition by srcML.
     #   For example:
     #
     #     `int v[10];`
@@ -469,16 +457,28 @@ class CppDecl(CppElementAndComment):
     #   In this library, this name will be seen as "v[10]"
     decl_name_code: str = ""
 
-    init: str = ""  # initial or default value
-    range: str = ""  # Will be filled for bitfield members
+    # * init represent the initial aka default value.
+    # With srcML, it is inside an <init><expr> node in srcML.
+    # Here we retransform it to C++ code for simplicity
+    #
+    #     For example:
+    #     int a = 5;
+    #
+    #     leads to:
+    #     <decl_stmt><decl><type><name>int</name></type> <name>a</name> <init>= <expr><literal type="number">5</literal></expr></init></decl>;</decl_stmt>
+    #
+    #     Which is transcribed as "5"
+    initial_value_code: str = ""  # initial or default value
+
+    bitfield_range: str = ""  # Will be filled for bitfield members
 
     def __init__(self, element: ET.Element, cpp_element_comments: CppElementComments):
         super().__init__(element, cpp_element_comments)
 
     def str_code(self):
         r = srcml_utils.str_or_empty(self.cpp_type) + " " + str(self.decl_name_code)
-        if len(self.init) > 0:
-            r += " = " + self.init
+        if len(self.initial_value_code) > 0:
+            r += " = " + self.initial_value_code
         return r
 
     def name_without_array(self):
@@ -510,7 +510,7 @@ class CppDecl(CppElementAndComment):
         """
         is_const = "const" in self.cpp_type.specifiers
         is_char = self.cpp_type.names == ["char"]
-        is_default_init = self.init == "" or self.init == "NULL" or self.init == "nullptr"
+        is_default_init = self.initial_value_code == "" or self.initial_value_code == "NULL" or self.initial_value_code == "nullptr"
 
         nb_indirections = 0
         nb_indirections += self.cpp_type.modifiers.count("*")
@@ -704,7 +704,7 @@ class CppParameter(CppElement):
         return r
 
     def default_value(self):
-        return self.decl.init
+        return self.decl.initial_value_code
 
     def variable_name(self):
         return self.decl.name_without_array()

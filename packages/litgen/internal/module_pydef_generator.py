@@ -50,7 +50,7 @@ def _generate_pydef_enum(enum: CppEnum, options: CodeStyleOptions) -> str:
     def make_value_code(enum_decl: CppDecl):
         code = f'{_i_}.value("VALUE_NAME_PYTHON", VALUE_NAME_CPP, "VALUE_COMMENT")\n'
 
-        value_name_cpp = enum_decl.name
+        value_name_cpp = enum_decl.decl_name_code
         value_name_python = cpp_to_python.enum_value_name_to_python(enum, enum_decl, options)
 
         if enum_type == "class":
@@ -382,7 +382,7 @@ def _add_struct_member_decl(cpp_decl: CppDecl, struct_name: str, options: CodeSt
     comment = cpp_decl.cpp_element_comments.full_comment()
     location = info_original_location_cpp(cpp_decl, options)
 
-    if len(cpp_decl.range) > 0:
+    if len(cpp_decl.bitfield_range) > 0:
         # We ignore bitfields
         return ""
 

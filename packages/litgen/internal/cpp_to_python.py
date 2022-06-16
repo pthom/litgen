@@ -158,7 +158,7 @@ def decl_python_var_name(cpp_decl: CppDecl, options: CodeStyleOptions):
 
 
 def decl_python_value(cpp_decl: CppDecl, options: CodeStyleOptions):
-    value_cpp = cpp_decl.init
+    value_cpp = cpp_decl.initial_value_code
     value_python = code_replacements.apply_code_replacements(value_cpp, options.code_replacements)
     return value_python
 

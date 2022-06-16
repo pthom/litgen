@@ -155,10 +155,10 @@ def parse_decl(
         elif child_tag == "name":
             result.decl_name_code = _parse_name(child)
         elif child_tag == "init":
-            result.init = _parse_init_expr(child)
+            result.initial_value_code = _parse_init_expr(child)
         elif child_tag == "range":
             # this is for C bit fields
-            result.range = srcml_caller.srcml_to_code(child)
+            result.bitfield_range = srcml_caller.srcml_to_code(child)
         else:
             raise SrcMlExceptionDetailed(child, f"unhandled tag {child_tag}", options)
 

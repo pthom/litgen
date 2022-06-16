@@ -100,7 +100,7 @@ def adapt_c_arrays(
                     # output_1.value = output_raw[1];
 
                     old_param_renamed = copy.deepcopy(old_param)
-                    old_param_renamed.decl.name = old_param_renamed.decl.name_c_array() + "_raw"
+                    old_param_renamed.decl.decl_name_code = old_param_renamed.decl.name_c_array() + "_raw"
                     lambda_adapter.lambda_input_code += (
                         old_param_renamed.decl.str_code() + f"[{len(new_decls)}]" + ";\n"
                     )
@@ -110,10 +110,10 @@ def adapt_c_arrays(
                     for i, new_decl in enumerate(new_decls):
                         value_access = ".value" if old_param.decl.is_immutable_for_python() else ""
                         lambda_adapter.lambda_input_code += (
-                            f"{old_param_renamed.decl.name}[{i}] = {new_decl.name}{value_access};\n"
+                            f"{old_param_renamed.decl.decl_name_code}[{i}] = {new_decl.decl_name_code}{value_access};\n"
                         )
                         lambda_adapter.lambda_output_code += (
-                            f"{new_decl.name}{value_access} = {old_param_renamed.decl.name}[{i}];\n"
+                            f"{new_decl.decl_name_code}{value_access} = {old_param_renamed.decl.decl_name_code}[{i}];\n"
                         )
 
                         new_param = copy.deepcopy(old_param)

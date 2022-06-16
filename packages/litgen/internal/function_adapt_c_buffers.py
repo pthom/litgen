@@ -441,7 +441,7 @@ class _AdaptBuffersHelper:
         stride_param = self._param(idx_param)
         new_stride_param = copy.deepcopy(stride_param)
         new_stride_param.decl.cpp_type.names = ["int"]
-        new_stride_param.decl.init = "-1"
+        new_stride_param.decl.initial_value_code = "-1"
         return new_stride_param
 
 

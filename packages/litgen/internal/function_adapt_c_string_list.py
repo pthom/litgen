@@ -90,9 +90,9 @@ def adapt_c_string_list(
             #
             new_param = copy.deepcopy(old_param)
             new_decl = new_param.decl
-            if "[" in new_decl.name:
-                new_decl.name = new_decl.name[: new_decl.name.index("[")]
-            new_decl.init = ""
+            if "[" in new_decl.decl_name_code:
+                new_decl.decl_name_code = new_decl.decl_name_code[: new_decl.decl_name_code.index("[")]
+            new_decl.initial_value_code = ""
             new_decl.cpp_type.specifiers = ["const"]
             new_decl.cpp_type.names = ["std::vector<std::string>"]
             new_decl.cpp_type.modifiers = ["&"]

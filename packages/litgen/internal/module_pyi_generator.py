@@ -107,16 +107,16 @@ def _make_enum_element_decl_lines(
     if cpp_to_python.enum_element_is_count(enum, enum_element, options):
         return []
 
-    if len(enum_element.init) == 0:
+    if len(enum_element.initial_value_code) == 0:
         if previous_enum_element is None:
             # the first element of an enum has a default value of 0
-            enum_element.init = "0"
-            enum_element_orig.init = enum_element.init
+            enum_element.initial_value_code = "0"
+            enum_element_orig.initial_value_code = enum_element.initial_value_code
         else:
             try:
-                previous_value = int(previous_enum_element.init)
-                enum_element.init = str(previous_value + 1)
-                enum_element_orig.init = enum_element.init
+                previous_value = int(previous_enum_element.initial_value_code)
+                enum_element.initial_value_code = str(previous_value + 1)
+                enum_element_orig.initial_value_code = enum_element.initial_value_code
             except ValueError:
                 srcml_warnings.emit_srcml_warning(
                     enum_element.srcml_element,
@@ -127,7 +127,7 @@ def _make_enum_element_decl_lines(
                 )
                 return []
 
-    enum_element.name = cpp_to_python.enum_value_name_to_python(enum, enum_element, options)
+    enum_element.decl_name_code = cpp_to_python.enum_value_name_to_python(enum, enum_element, options)
 
     #
     # Sometimes, enum decls have interdependent values like this:
@@ -145,7 +145,7 @@ def _make_enum_element_decl_lines(
         replacement = code_replacements.StringReplacement()
         replacement.replace_what = r"\b" + enum_decl_cpp_name + r"\b"
         replacement.by_what = f"Literal[{enum.name}.{enum_decl_python_name}]"
-        enum_element.init = code_replacements.apply_one_replacement(enum_element.init, replacement)
+        enum_element.initial_value_code = code_replacements.apply_one_replacement(enum_element.initial_value_code, replacement)
         # enum_element.init = enum_element.init.replace(enum_decl_cpp_name, enum_decl_python_name)
         # code_utils.w
 
@@ -293,7 +293,7 @@ def _generate_pyi_method(function_infos: CppFunctionDecl, options: CodeStyleOpti
 
     return ""
 
-    if function_infos.name == parent_struct_name:
+    if function_infos.decl_name_code == parent_struct_name:
         # Sometimes, srcml might see a constructor as a decl
         # Example:
         # struct Foo
