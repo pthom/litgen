@@ -69,7 +69,7 @@ def test_generate_pydef_enum():
 ################################
 
 
-def test_generate_pydef_function_cpp_code() -> str:
+def test_generate_pydef_function_cpp_code():
     def test_implot_easy():
         options = code_style_implot()
         code = """

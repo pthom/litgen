@@ -1,4 +1,4 @@
-from typing import cast
+from typing import cast, Union
 import copy
 import logging
 import os, sys
@@ -77,7 +77,7 @@ def _generate_pydef_enum(enum: CppEnum, options: CodeStyleOptions) -> str:
                 + "\n"
             )
         elif child.tag() == "decl":
-            result += make_value_code(cast(CppDecl,child))
+            result += make_value_code(cast(CppDecl, child))
         else:
             raise srcmlcpp.SrcMlException(child.srcml_element, f"Unexpected tag {child.tag()} in enum")
     result = result[:-1]
@@ -90,33 +90,32 @@ def _generate_pydef_enum(enum: CppEnum, options: CodeStyleOptions) -> str:
 ################################
 
 
-def pyarg_code(function_infos: CppFunctionDecl, options: CodeStyleOptions) -> str:
+def pyarg_code(function_infos: Union[CppFunctionDecl, CppConstructorDecl], options: CodeStyleOptions) -> str:
     _i_ = options.indent_cpp_spaces()
 
     param_lines = []
-    code_inner_defaultvalue = f'py::arg("ARG_NAME_PYTHON") = ARG_DEFAULT_VALUE'
-    code_inner_nodefaultvalue = f'py::arg("ARG_NAME_PYTHON")'
+    param_template = 'py::arg("{argname_python}"){maybe_equal}{maybe_defaultvalue_python}'
 
     for idx_param, param in enumerate(function_infos.parameter_list.parameters):
-        param_default_value = param.default_value()
-        if len(param_default_value) > 0:
-            if is_default_sizeof_param(param, options):
-                default_value_cpp = "-1"
-            else:
-                default_value_cpp = param_default_value
-            param_line = code_inner_defaultvalue.replace(
-                "ARG_NAME_PYTHON",
-                cpp_to_python.var_name_to_python(param.variable_name(), options),
-            ).replace("ARG_DEFAULT_VALUE", default_value_cpp)
+
+        param_default_value_cpp = param.default_value()
+        if len(param_default_value_cpp) > 0:
+            maybe_defaultvalue_python = cpp_to_python.default_value_to_python(param_default_value_cpp, options)
+            maybe_equal = " = "
         else:
-            if is_buffer_size_name_at_idx(function_infos.parameter_list, options, idx_param):
-                continue
-            if is_param_variadic_format(function_infos.parameter_list, options, idx_param):
-                continue
-            param_line = code_inner_nodefaultvalue.replace(
-                "ARG_NAME_PYTHON",
-                cpp_to_python.var_name_to_python(param.variable_name(), options),
-            )
+            maybe_defaultvalue_python = ""
+            maybe_equal = ""
+
+        argname_python = cpp_to_python.var_name_to_python(param.decl.name_without_array(), options)
+
+        param_line = code_utils.replace_in_string(
+            param_template,
+            {
+                "argname_python": argname_python,
+                "maybe_equal": maybe_equal,
+                "maybe_defaultvalue_python": maybe_defaultvalue_python,
+            },
+        )
 
         param_lines.append(param_line)
 
@@ -126,7 +125,7 @@ def pyarg_code(function_infos: CppFunctionDecl, options: CodeStyleOptions) -> st
     return code
 
 
-def pyarg_code_list(function_infos: CppFunctionDecl, options: CodeStyleOptions) -> List[str]:
+def pyarg_code_list(function_infos: Union[CppFunctionDecl, CppConstructorDecl], options: CodeStyleOptions) -> List[str]:
     code = pyarg_code(function_infos, options)
     if len(code) == 0:
         return []
@@ -232,9 +231,9 @@ def _generate_pydef_function_impl(
 
     # fill params_call_with_self_if_method
     fn_parameters = copy.deepcopy(function_infos.parameter_list.parameters)
-    if is_method:
-        fn_parameters = [f"{parent_struct_name} & self"] + fn_parameters
-    params_call_with_self_if_method = types_names_default_for_signature_parameters_list(fn_parameters)
+    params_call_with_self_if_method = types_names_default_for_signature_parameters_list(
+        fn_parameters, add_self=is_method
+    )
 
     # fill return_code
     return_code = _generate_return_code(function_adapted_params, options, parent_struct_name)
@@ -322,7 +321,7 @@ def _generate_pydef_function_impl(
 ################################
 
 
-def _generate_pydef_constructor(function_infos: CppFunctionDecl, options: CodeStyleOptions) -> str:
+def _generate_pydef_constructor(function_infos: CppConstructorDecl, options: CodeStyleOptions) -> str:
 
     if "delete" in function_infos.specifiers:
         return ""
@@ -366,7 +365,7 @@ def _generate_pydef_method(function_infos: CppFunctionDecl, options: CodeStyleOp
         # {
         #     IMGUI_API Foo();
         # };
-        return _generate_pydef_constructor(function_infos, options)
+        return _generate_pydef_constructor(cast(CppConstructorDecl, function_infos), options)
     else:
         return _generate_pydef_function(function_infos, options, parent_struct_name)
 
@@ -416,6 +415,7 @@ def _add_struct_member_decl(cpp_decl: CppDecl, struct_name: str, options: CodeSt
 
         if array_size is None:
             array_size_str = cpp_decl.c_array_size_str()
+            assert array_size_str is not None
             if array_size_str in options.c_array_numeric_member_size_dict.keys():
                 array_size = options.c_array_numeric_member_size_dict[array_size_str]
                 if type(array_size) != int:
@@ -559,7 +559,7 @@ def _generate_pydef_namespace(
 
 
 def generate_pydef(
-    cpp_unit: CppUnit,
+    cpp_unit: Union[CppUnit, CppBlock],
     options: CodeStyleOptions,
     current_namespaces: List[str] = [],
     add_boxed_types_definitions: bool = False,

@@ -708,11 +708,12 @@ class CppParameter(CppElement):
         return self.decl.name_without_array()
 
 
-def types_names_default_for_signature_parameters_list(
-    parameters: List[CppParameter],
-) -> str:
-    strs = list(map(lambda param: str(param), parameters))
-    return code_utils.join_remove_empty(", ", strs)
+def types_names_default_for_signature_parameters_list(parameters: List[CppParameter], add_self: bool = False) -> str:
+    params_strs = list(map(lambda param: str(param), parameters))
+    if add_self:
+        params_strs = ["self"] + params_strs
+    params_str = code_utils.join_remove_empty(", ", params_strs)
+    return params_str
 
 
 @dataclass

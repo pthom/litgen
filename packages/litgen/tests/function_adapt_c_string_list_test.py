@@ -7,7 +7,7 @@ import litgen
 from srcmlcpp.srcml_types import *
 
 
-def to_pydef(code) -> CppFunctionDecl:
+def to_pydef(code) -> str:
     options = litgen.CodeStyleOptions()
     pydef_code = litgen.generate_pydef(code, options)
     return pydef_code

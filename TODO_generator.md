@@ -1,5 +1,6 @@
     CppElement.text(self) => text_or_empty()
 
+    name_without_array => name_only
 
 sub package adapt param
 

@@ -1,11 +1,12 @@
+from typing import List, Dict, Optional, Callable
 from dataclasses import dataclass, field
-from typing import List, Dict
 
 from codemanip.code_utils import (
     make_regex_any_variable_ending_with,
     make_regex_any_variable_starting_with,
 )
 from codemanip import code_replacements
+from codemanip.code_replacements import StringReplacement
 from srcmlcpp import SrcmlOptions
 
 
@@ -35,7 +36,7 @@ class CodeStyleOptions:
     #
     # Note: you can prefill it with litgen.standard_replacements()
     #
-    code_replacements = []  # List[StringReplacement]
+    code_replacements: List[StringReplacement] = []
 
     #
     # Indentation settings for the generated code
@@ -169,7 +170,7 @@ class CodeStyleOptions:
     # Shall we generate a __str__() method for structs
     generate_to_string: bool = False
     # Function that may generate additional code in the function defined in the  __init__.py file of the package
-    poub_init_function_python_additional_code = None  # Callable[[FunctionsInfos], str]
+    # poub_init_function_python_additional_code: Optional[Callable[[FunctionsInfos], str]]
 
     #
     # Sanity checks and utilities below
@@ -237,7 +238,7 @@ def code_style_immvision() -> CodeStyleOptions:
         else:
             return ""
 
-    options.poub_init_function_python_additional_code = init_function_python_additional_code_require_opengl_initialized
+    # options.poub_init_function_python_additional_code = init_function_python_additional_code_require_opengl_initialized
 
     return options
 

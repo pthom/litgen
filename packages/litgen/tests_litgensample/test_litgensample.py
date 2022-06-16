@@ -1,4 +1,4 @@
-import litgensample
+import litgensample  # type: ignore
 import numpy as np
 
 
