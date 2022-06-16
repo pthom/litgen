@@ -1,3 +1,6 @@
+packages root directory
+code_utils separate package (codemanip)
+
 gen pyi class & structs
     Il faut que pydef_generator (ou peut etre meme srcml_types) puisse faire un tri
         Dans enum, supprimer count, precalculer valeur des decls des enum quand dependent du previous

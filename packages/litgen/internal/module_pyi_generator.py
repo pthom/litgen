@@ -1,8 +1,9 @@
+import copy
+import logging
 import os, sys
 
 _THIS_DIR = os.path.dirname(__file__)
 sys.path = [_THIS_DIR + "/.."] + sys.path
-import logging
 
 import srcmlcpp
 from srcmlcpp.srcml_types import *

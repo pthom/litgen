@@ -15,6 +15,8 @@ setup(
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/pthom/litgen",
-    packages=find_packages(where="."),
+    # packages=['litgen', 'litgen.internal', 'srcmlcpp'],
+    packages=find_packages(where="packages"),
+    package_dir={"": "packages"},
     zip_safe=False,
 )

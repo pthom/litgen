@@ -33,11 +33,11 @@ title "Install litgen"
 pip install .
 
 title "Run srcmlcpp tests"
-cd "$REPO_DIR"/srcmlcpp
+cd "$REPO_DIR"/packages/srcmlcpp
 pytest
 
 title "Run litgen tests"
-cd "$REPO_DIR"/litgen
+cd "$REPO_DIR"/packages/litgen
 pytest
 
 title "Build litgensample"
@@ -45,10 +45,9 @@ cd "$REPO_DIR"/example
 pip install .
 
 title "Test litgensample"
-cd "$REPO_DIR"/litgen/tests_litgensample
+cd "$REPO_DIR"/packages/litgen/tests_litgensample
 python test_litgensample.py
 
 title "Build lg-imgui"
 cd "$REPO_DIR"/examples_real_libs/imgui
 pip install .
-

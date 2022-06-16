@@ -64,12 +64,9 @@ def generate_files(
     add_boxed_types_definitions: bool = True,
 ):
 
-    # _run_generate_file(input_cpp_header,
-    #                    output_cpp_module_file,
-    #                    generate_pydef,
-    #                    "pydef_cpp",
-    #                    options,
-    #                    add_boxed_types_definitions)
+    _run_generate_file(
+        input_cpp_header, output_cpp_module_file, generate_pydef, "pydef_cpp", options, add_boxed_types_definitions
+    )
 
     _run_generate_file(
         input_cpp_header,
