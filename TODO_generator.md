@@ -1,18 +1,14 @@
+sub package adapt param
+gen pyi class & structs
+Il faut que pydef_generator (ou peut etre meme srcml_types) puisse faire un tri
+Dans enum, supprimer count, precalculer valeur des decls des enum quand dependent du previous
+Dans struct, il y a des traitement sur les membres (array et cie)
+--> faire equivalent de adapt_function pour structs et enums
+
 reactiver mypy sur example/
     Savoir trouver definitions des BoxedTytpe dans .so
 
-decl_name_code -> decl_name et mettre array info ailleurs
-
-sub package adapt param
-
-gen pyi class & structs
-    Il faut que pydef_generator (ou peut etre meme srcml_types) puisse faire un tri
-        Dans enum, supprimer count, precalculer valeur des decls des enum quand dependent du previous
-        Dans struct, il y a des traitement sur les membres (array et cie)
-        --> faire equivalent de adapt_function pour structs et enums
-mypy
-imgui:c
-    Handle widget input / output parameters
+imgui: Handle widget input / output parameters
         bool *, int *, float *, etc
         float[2, 3, 4]
         --> make return
