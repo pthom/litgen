@@ -5,3 +5,4 @@ matplotlib
 scikit-build
 black
 mypy
+pre-commit

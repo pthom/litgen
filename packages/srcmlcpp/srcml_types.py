@@ -1,3 +1,10 @@
+"""
+Types that will represent the AST parsed by srcML in an actionnable way under python.
+
+See doc/srcml_cpp_doc.png
+"""
+
+
 from __future__ import annotations
 import copy
 from typing import List, Optional, Dict

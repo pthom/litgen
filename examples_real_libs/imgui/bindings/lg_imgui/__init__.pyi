@@ -2842,11 +2842,9 @@ class ImGuiViewportFlags_(Enum):    # imgui.h:2904
     is_platform_monitor = 1 << 1  # Represent a Platform Monitor (unused yet)
     owned_by_app = 1 << 2         # Platform Window: is created/managed by the application (rather than a dear imgui backend)
 
-
 # -----------------------------------------------------------------------------
 #  [SECTION] Platform Dependent Interfaces
 # -----------------------------------------------------------------------------
-
 
 # -----------------------------------------------------------------------------
 #  [SECTION] Obsolete functions and types
@@ -2857,14 +2855,9 @@ class ImGuiViewportFlags_(Enum):    # imgui.h:2904
 # <namespace ImGui>    # imgui.h:2957
 # </namespace ImGui>
 
-
 # -----------------------------------------------------------------------------
 
-
-
 #  Include imgui_user.h at the end of imgui.h (convenient for user to only explicitly include vanilla imgui.h)
-
-
 
 # </autogen:pyi>
 

@@ -84,7 +84,6 @@ def c_string_list_total_size(    # example_library/litgensample.h:100
     ) -> int:
     pass
 
-
 def add(a: int, b: int) -> int:    # example_library/litgensample.h:112
     """ Adds two numbers"""
     pass
