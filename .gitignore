@@ -13,3 +13,4 @@ scratch.txt
 voiladoc/
 venv_ci
 .ipynb_checkpoints/
+.mypy_cache

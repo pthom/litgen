@@ -16,12 +16,6 @@ from litgen import CodeStyleOptions
 from litgen.internal import cpp_to_python
 from litgen.internal.cpp_function_adapted_params import CppFunctionDeclWithAdaptedParams
 from litgen.internal.function_params_adapter import make_function_params_adapter
-from litgen.internal.function_wrapper_lambda import (
-    make_function_wrapper_lambda_impl,
-    is_default_sizeof_param,
-    is_buffer_size_name_at_idx,
-    is_param_variadic_format,
-)
 
 
 #################################

@@ -33,8 +33,11 @@ def parse_type(options: SrcmlOptions, element: ET.Element, previous_decl: Option
     """
 
     def recompose_type_name(element: ET.Element) -> str:
-        is_composed_type = element.text is None
-        return srcml_caller.srcml_to_code(element).strip() if is_composed_type else element.text
+        if element.text is None:
+            # case for composed type
+            return srcml_caller.srcml_to_code(element).strip()
+        else:
+            return element.text
 
     assert srcml_utils.clean_tag_or_attrib(element.tag) == "type"
     result = CppType(element)
@@ -44,12 +47,14 @@ def parse_type(options: SrcmlOptions, element: ET.Element, previous_decl: Option
             typename = recompose_type_name(child)
             result.names.append(typename)
         elif child_tag == "specifier":
+            assert child.text is not None
             result.specifiers.append(child.text)
         elif child_tag == "modifier":
-            modifier = child.text
-            if modifier not in CppType.authorized_modifiers():
-                raise SrcMlExceptionDetailed(child, f'modifier "{modifier}" is not authorized', options)
-            result.modifiers.append(child.text)
+            modifier_text = child.text
+            assert modifier_text is not None
+            if modifier_text not in CppType.authorized_modifiers():
+                raise SrcMlExceptionDetailed(child, f'modifier "{modifier_text}" is not authorized', options)
+            result.modifiers.append(modifier_text)
         # elif child_tag == "argument_list":
         #     result.argument_list.append(child.text)
         else:
@@ -110,8 +115,9 @@ def _parse_init_expr(element: ET.Element) -> str:
 
     expr = srcml_utils.child_with_tag(element, "expr")
     if expr is not None:
-        if expr_literal_value(expr) is not None:
-            r = expr_literal_value(expr)
+        eval_literal_value = expr_literal_value(expr)
+        if eval_literal_value is not None:
+            r = eval_literal_value
         else:
             r = srcml_caller.srcml_to_code(expr)
     else:
@@ -633,7 +639,7 @@ def parse_block_content(options: SrcmlOptions, element: ET.Element) -> CppBlockC
     assert srcml_utils.clean_tag_or_attrib(element.tag) == "block_content"
 
     block_content = CppBlockContent(element)
-    fill_block(element, block_content)
+    fill_block(options, element, block_content)
     return block_content
 
 

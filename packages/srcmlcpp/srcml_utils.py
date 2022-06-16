@@ -31,13 +31,6 @@ def copy_element_end_position(element_src: ET.Element, element_dst: ET.Element):
             element_dst.attrib[key] = end_position
 
 
-def element_name(element: ET.Element) -> str:
-    assert clean_tag_or_attrib(element.tag) == "name"
-    is_composed = element.text is None
-    name = srcml_caller.srcml_to_code(element).strip() if is_composed else element.text
-    return name
-
-
 def children_with_tag(element: ET.Element, tag: str) -> List[ET.Element]:
     r = []
     for child in element:

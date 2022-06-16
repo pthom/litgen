@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Optional
 import copy
 
 import xml.etree.ElementTree as ET
@@ -53,7 +53,7 @@ class _SrcmlPreprocessorState:
 
     was_last_element_a_preprocessor_stmt: bool = False
     last_preprocessor_stmt_line: int = -1
-    last_element: ET.Element = None
+    last_element: Optional[ET.Element] = None
 
     count_preprocessor_tests = 0
 
@@ -64,9 +64,10 @@ class _SrcmlPreprocessorState:
         self.last_element = element
         tag = srcml_utils.clean_tag_or_attrib(element.tag)
 
-        if srcml_utils.element_end_position(element) is None:
+        end = srcml_utils.element_end_position(element)
+        if end is None:
             return
-        element_line = srcml_utils.element_end_position(element).line
+        element_line = end.line
 
         def extract_ifndef_name():
             for child in element:
@@ -103,10 +104,14 @@ class _SrcmlPreprocessorState:
         assert self.count_preprocessor_tests >= -1  # -1 because we can ignore the inclusion guard
         if self.was_last_element_a_preprocessor_stmt:
             return True
+        if self.last_element is None:
+            return False
         if srcml_utils.clean_tag_or_attrib(self.last_element.tag) == "comment":
-            comment_line = srcml_utils.element_start_position(self.last_element).line
-            if comment_line == self.last_preprocessor_stmt_line:
-                return True
+            start = srcml_utils.element_start_position(self.last_element)
+            if start is not None:
+                comment_line = start.line
+                if comment_line == self.last_preprocessor_stmt_line:
+                    return True
 
         if self.count_preprocessor_tests > 0:
             return True

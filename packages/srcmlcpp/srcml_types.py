@@ -45,8 +45,12 @@ class CppElementComments:
          ````
     """
 
-    comment_on_previous_lines: str = ""
-    comment_end_of_line: str = ""
+    comment_on_previous_lines: str
+    comment_end_of_line: str
+
+    def __init__(self):
+        self.comment_on_previous_lines = ""
+        self.comment_end_of_line = ""
 
     def comment(self):
         if len(self.comment_on_previous_lines) > 0 and len(self.comment_end_of_line) > 0:
@@ -123,6 +127,7 @@ class CppElement:
         if not self.has_name():
             return None
         name_element = srcml_utils.child_with_tag(self.srcml_element, "name")
+        assert name_element is not None
         if name_element.text is not None:
             return name_element.text
         else:
@@ -236,10 +241,11 @@ class CppUnprocessed(CppBlockChild):
     We keep its original source under the form of a string
     """
 
-    code: str = ""
+    code: str
 
     def __init__(self, element: ET.Element, cpp_element_comments: CppElementComments):
         super().__init__(element, cpp_element_comments)
+        self.code = ""
 
     def str_code(self):
         return f"<unprocessed_{self.tag()}/>"
@@ -269,7 +275,7 @@ class CppBlock(CppElement):  # it is also a CppBlockChild
      https://www.srcmlcpp.org/doc/cpp_srcML.html#block
     """
 
-    block_children: List[CppBlockChild] = None
+    block_children: List[CppBlockChild]
 
     def __init__(self, element: ET.Element):
         super().__init__(element)
@@ -372,13 +378,13 @@ class CppType(CppElement):
         In order to simplify the process, we recompose this kind of type names into a simple string
     """
 
-    names: List[str] = None
+    names: List[str]
 
     # specifiers: could be ["const"], ["static", "const"], ["extern"], ["constexpr"], etc.
-    specifiers: List[str] = None
+    specifiers: List[str]
 
     # modifiers: could be ["*"], ["&&"], ["&"], ["*", "*"], ["..."]
-    modifiers: List[str] = None
+    modifiers: List[str]
 
     # template arguments types i.e ["int"] for vector<int>
     # (this will not be filled: see note about composed types)
@@ -464,7 +470,7 @@ class CppDecl(CppElementAndComment):
             Which is transcribed as "5"
     """  # noqa
 
-    cpp_type: CppType = None
+    cpp_type: CppType
     name: str = ""
     init: str = ""  # initial or default value
     range: str = ""  # Will be filled for bitfield members
@@ -631,6 +637,7 @@ class CppDecl(CppElementAndComment):
             cpp_type_name = boxed_type.boxed_type_name()
 
         n = self.c_array_size()
+        assert n is not None
 
         new_decls = []
         for i in range(n):
@@ -649,7 +656,7 @@ class CppDeclStatement(CppElementAndComment):
     https://www.srcmlcpp.org/doc/cpp_srcML.html#variable-declaration-statement
     """
 
-    cpp_decls: List[CppDecl] = None  # A CppDeclStatement can initialize several variables
+    cpp_decls: List[CppDecl]  # A CppDeclStatement can initialize several variables
 
     def __init__(self, element: ET.Element, cpp_element_comments: CppElementComments):
         super().__init__(element, cpp_element_comments)
@@ -675,9 +682,9 @@ class CppParameter(CppElement):
     https://www.srcmlcpp.org/doc/cpp_srcML.html#function-declaration
     """
 
-    decl: CppDecl = None
+    decl: CppDecl
 
-    template_type: CppType = None  # This is only for template's CppParameterList
+    template_type: CppType  # This is only for template's CppParameterList
     template_name: str = ""
 
     def __init__(self, element: ET.Element):
@@ -720,7 +727,7 @@ class CppParameterList(CppElement):
     https://www.srcmlcpp.org/doc/cpp_srcML.html#function-declaration
     """
 
-    parameters: List[CppParameter] = None
+    parameters: List[CppParameter]
 
     def __init__(self, element: ET.Element):
         super().__init__(element)
@@ -753,11 +760,11 @@ class CppTemplate(CppElement):
     https://www.srcmlcpp.org/doc/cpp_srcML.html#template
     """
 
-    parameter_list: CppParameterList = None
+    parameter_list: CppParameterList
 
     def __init__(self, element: ET.Element):
         super().__init__(element)
-        self.parameter_list: List[CppParameterList] = []
+        self.parameter_list = CppParameterList(element)
 
     def str_code(self):
         params_str = f"template<{str(self.parameter_list)}>\n"
@@ -773,16 +780,18 @@ class CppFunctionDecl(CppElementAndComment):
     https://www.srcmlcpp.org/doc/cpp_srcML.html#function-declaration
     """
 
-    specifiers: List[str] = None  # "const" or ""
-    type: CppType = None
-    name: str = ""
-    parameter_list: CppParameterList = None
-    template: CppTemplate = None
-    is_auto_decl: bool = False  # True if it is a decl of the form `auto square(double) -> double`
+    specifiers: List[str]  # "const" or ""
+    type: CppType
+    parameter_list: CppParameterList
+    template: CppTemplate
+    is_auto_decl: bool  # True if it is a decl of the form `auto square(double) -> double`
+    name: str
 
     def __init__(self, element: ET.Element, cpp_element_comments: CppElementComments):
         super().__init__(element, cpp_element_comments)
         self.specifiers: List[str] = []
+        self.is_auto_decl = False
+        self.name = ""
 
     def _str_signature(self):
         r = ""
@@ -819,8 +828,7 @@ class CppFunction(CppFunctionDecl):
     """
     https://www.srcmlcpp.org/doc/cpp_srcML.html#function-definition
     """
-
-    block: CppUnprocessed = None
+    block: CppUnprocessed
 
     def __init__(self, element: ET.Element, cpp_element_comments: CppElementComments):
         super().__init__(element, cpp_element_comments)
@@ -845,12 +853,13 @@ class CppConstructorDecl(CppElementAndComment):
     """
 
     specifiers: List[str]
-    name: str = ""
-    parameter_list: CppParameterList = None
+    parameter_list: CppParameterList
+    name: str
 
     def __init__(self, element: ET.Element, cpp_element_comments: CppElementComments):
         super().__init__(element, cpp_element_comments)
         self.specifiers: List[str] = []
+        self.name = ""
 
     def _str_signature(self):
         r = f"{self.name}({self.parameter_list})"
@@ -871,9 +880,8 @@ class CppConstructor(CppConstructorDecl):
     """
     https://www.srcmlcpp.org/doc/cpp_srcML.html#constructor
     """
-
-    block: CppUnprocessed = None
-    member_init_list: CppUnprocessed = None
+    block: CppUnprocessed
+    member_init_list: CppUnprocessed
 
     def __init__(self, element: ET.Element, cpp_element_comments: CppElementComments):
         super().__init__(element, cpp_element_comments)
@@ -941,13 +949,14 @@ class CppStruct(CppBlockChild):
     https://www.srcmlcpp.org/doc/cpp_srcML.html#struct-definition
     """
 
-    name: str = ""
-    super_list: CppSuperList = None
-    block: CppBlock = None
-    template: CppTemplate = None  # for template classes or structs
+    name: str
+    super_list: CppSuperList
+    block: CppBlock
+    template: CppTemplate  # for template classes or structs
 
     def __init__(self, element: ET.Element, cpp_element_comments: CppElementComments):
         super().__init__(element, cpp_element_comments)
+        self.name = ""
 
     def str_code(self):
         r = ""
@@ -1087,7 +1096,7 @@ class CppEnum(CppBlockChild):
         return self.str_code()
 
     def get_enum_decls(self) -> List[CppDecl]:
-        r = []
+        r:List[CppDecl] = []
         for child in self.block.block_children:
             if isinstance(child, CppDecl):
                 r.append(child)
