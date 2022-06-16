@@ -949,14 +949,14 @@ class CppStruct(CppElementAndComment):
     https://www.srcmlcpp.org/doc/cpp_srcML.html#struct-definition
     """
 
-    name: str
+    class_name: str
     super_list: CppSuperList
     block: CppBlock
     template: CppTemplate  # for template classes or structs
 
     def __init__(self, element: ET.Element, cpp_element_comments: CppElementComments):
         super().__init__(element, cpp_element_comments)
-        self.name = ""
+        self.class_name = ""
 
     def str_code(self):
         r = ""
@@ -967,7 +967,7 @@ class CppStruct(CppElementAndComment):
             r += "class "
         elif isinstance(self, CppStruct):
             r += "struct "
-        r += f"{self.name}"
+        r += f"{self.class_name}"
 
         if self.super_list is not None and len(str(self.super_list)) > 0:
             r += str(self.super_list)
@@ -991,7 +991,7 @@ class CppStruct(CppElementAndComment):
                     if isinstance(child, CppConstructorDecl):
                         found_non_default_ctor = True
                         break
-                    if isinstance(child, CppFunctionDecl) and child.function_name == self.name:
+                    if isinstance(child, CppFunctionDecl) and child.function_name == self.class_name:
                         found_non_default_ctor = True
                         break
 

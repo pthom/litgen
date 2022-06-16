@@ -493,7 +493,7 @@ def _add_public_struct_elements(public_zone: CppPublicProtectedPrivate, struct_n
 
 
 def _generate_pydef_struct_or_class(struct_infos: CppStruct, options: CodeStyleOptions) -> str:
-    struct_name = struct_infos.name
+    struct_name = struct_infos.class_name
 
     if struct_infos.template is not None:
         return ""

@@ -457,7 +457,7 @@ def parse_struct_or_class(options: SrcmlOptions, element_c: CppElementAndComment
     for child in element_c.srcml_element:
         child_tag = srcml_utils.clean_tag_or_attrib(child.tag)
         if child_tag == "name":
-            result.name = _parse_name(child)
+            result.class_name = _parse_name(child)
         elif child_tag == "super_list":
             result.super_list = parse_super_list(options, child)
         elif child_tag == "block":
