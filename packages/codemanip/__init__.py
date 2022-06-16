@@ -9,3 +9,4 @@ _THIS_DIR = os.path.dirname(__file__)
 sys.path.append("_THIS_DIR/..")
 
 from codemanip import code_utils, code_replacements
+from codemanip.code_position import CodePosition

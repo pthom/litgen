@@ -100,7 +100,7 @@ def standard_replacements() -> List[StringReplacement]:
     ([+-]?[0-9]+([.][0-9]*)?|[.][0-9]+)(f?) -> \1
     """
 
-    # Note: the two last regexes replace C numbers list 1.5f or 1.5d by 1.5
+    # Note: the two last regexes replace C numbers like 1.5f or 1.5d by 1.5
     return _parse_string_replacements(replacements)
 
 

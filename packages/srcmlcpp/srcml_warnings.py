@@ -1,12 +1,12 @@
 import sys
-from typing import List
+from typing import List, Optional
 from dataclasses import dataclass
 import xml.etree.ElementTree as ET  # noqa
 import logging
 import traceback
 import inspect
 
-from codemanip import code_utils
+from codemanip import code_utils, CodePosition
 import srcmlcpp
 from srcmlcpp import srcml_main, srcml_types, srcml_utils
 from srcmlcpp.srcml_options import SrcmlOptions
@@ -20,17 +20,12 @@ from srcmlcpp.srcml_exception import SrcMlException
 ###########################################
 
 
-@dataclass
-class CodePos:
-    line: int = 0
-    col: int = 0
-
 
 @dataclass
 class ErrorContext:
     concerned_lines: List[str]
-    start: CodePos = CodePos()
-    end: CodePos = CodePos()
+    start: Optional[CodePosition] = None
+    end: Optional[CodePosition] = None
 
     def __str__(self):
         msg = ""
@@ -53,16 +48,18 @@ def _extract_error_context(element: ET.Element) -> ErrorContext:
     if len(full_code) > 0:
         full_code_lines = [""] + full_code.split("\n")
 
-        if cpp_element.start() is not None and len(full_code) > 0:
-            concerned_lines = full_code_lines[cpp_element.start().line : cpp_element.end().line + 1]
-            start = CodePos(0, cpp_element.start().column)
-            end = CodePos(
-                cpp_element.end().line - cpp_element.start().line,
-                cpp_element.end().column,
+        start = cpp_element.start()
+        end = cpp_element.end()
+        if start is not None and end is not None and len(full_code) > 0:
+            concerned_lines = full_code_lines[start.line : end.line + 1]
+            new_start = CodePosition(0, start.column)
+            new_end = CodePosition(
+                end.line - start.line,
+                end.column,
             )
-            return ErrorContext(concerned_lines, start, end)
+            return ErrorContext(concerned_lines, new_start, new_end)
         else:
-            return ErrorContext([], CodePos(), CodePos())
+            return ErrorContext([], CodePosition(), CodePosition())
     else:
         original_code = srcmlcpp.srcml_to_code(element)
         return ErrorContext(original_code.split("\n"), cpp_element.start(), cpp_element.end())

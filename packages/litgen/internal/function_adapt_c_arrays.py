@@ -79,6 +79,7 @@ def adapt_c_arrays(
 
             if not old_param.decl.is_const() and options.c_array_modifiable_flag_replace:
                 array_size = old_param.decl.c_array_size()
+                assert array_size is not None
 
                 if array_size <= options.c_array_modifiable_max_size:
 

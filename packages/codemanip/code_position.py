@@ -6,8 +6,8 @@ from dataclasses import dataclass
 class CodePosition:
     """Position of an element in the code"""
 
-    line: int
-    column: int
+    line: int = -1
+    column: int = -1
 
     def __str__(self):
         return f"{self.line}:{self.column}"

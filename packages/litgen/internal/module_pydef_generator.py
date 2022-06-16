@@ -1,3 +1,4 @@
+from typing import cast
 import copy
 import logging
 import os, sys
@@ -16,12 +17,6 @@ from litgen.internal import cpp_to_python
 from litgen.internal.cpp_to_python import info_original_location_cpp
 from litgen.internal.cpp_function_adapted_params import CppFunctionDeclWithAdaptedParams
 from litgen.internal.function_params_adapter import make_function_params_adapter
-from litgen.internal.function_wrapper_lambda import (
-    make_function_wrapper_lambda_impl,
-    is_default_sizeof_param,
-    is_buffer_size_name_at_idx,
-    is_param_variadic_format,
-)
 
 
 def _add_new_lines(code: str, nb_lines_before: int = 0, nb_lines_after: int = 1) -> str:
@@ -82,7 +77,7 @@ def _generate_pydef_enum(enum: CppEnum, options: CodeStyleOptions) -> str:
                 + "\n"
             )
         elif child.tag() == "decl":
-            result += make_value_code(child)
+            result += make_value_code(cast(CppDecl,child))
         else:
             raise srcmlcpp.SrcMlException(child.srcml_element, f"Unexpected tag {child.tag()} in enum")
     result = result[:-1]
@@ -246,14 +241,15 @@ def _generate_pydef_function_impl(
 
     # fill lambda_adapter_code
     lambda_adapter_code = function_adapted_params.cpp_adapter_code
+
     if lambda_adapter_code is not None:
         lambda_adapter_code = code_utils.indent_code(
             lambda_adapter_code,
             indent_str=options.indent_cpp_spaces() * 2,
             skip_first_line=True,
         )
-        if lambda_adapter_code[-1] == "\n":
-            lambda_adapter_code = lambda_adapter_code[:-1]
+        if lambda_adapter_code[-1] == "\n":  # type: ignore
+            lambda_adapter_code = lambda_adapter_code[:-1]  # type: ignore
 
     # fill maybe_empty_line, semicolon_if_not_method
     maybe_empty_line = "" if lambda_adapter_code is not None else None

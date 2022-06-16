@@ -249,6 +249,7 @@ class _AdaptBuffersHelper:
 
             # Fill template_buffer_name
             _template_buffer_param = self._last_template_buffer_param()
+            assert _template_buffer_param is not None
             template_buffer_name = _template_buffer_param.decl.name_without_array()
 
             # Fill function_or_lambda_to_call
@@ -425,6 +426,7 @@ class _AdaptBuffersHelper:
         param_stride_name = stride_param.decl.name_without_array()
 
         idx_buffer_param_before = self._last_idx_buffer_param_before(idx_param)
+        assert idx_buffer_param_before is not None
         buffer_name = self._param_name(idx_buffer_param_before)
         template = f"""
             // process stride default value (which was a sizeof in C++)

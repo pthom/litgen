@@ -136,6 +136,7 @@ def _make_adapted_lambda_code(
     lambda_captures = ", ".join(_lambda_captures_list)
 
     # Fill adapted_python_parameters
+    assert lambda_adapter.new_function_infos is not None
     adapted_python_parameters = lambda_adapter.new_function_infos.parameter_list.str_code()
 
     # Fill maybe_lambda_input_code
@@ -197,5 +198,7 @@ def apply_lambda_adapter(
         function_adapted_params.cpp_adapter_code = lambda_code
     else:
         function_adapted_params.cpp_adapter_code += lambda_code
+
+    assert lambda_adapter.new_function_infos is not None
     function_adapted_params.function_infos = lambda_adapter.new_function_infos
     function_adapted_params.lambda_to_call = lambda_adapter.lambda_name

@@ -19,7 +19,7 @@ from srcmlcpp.srcml_types import (
 
 def adapt_c_string_list(
     function_adapted_params: CppFunctionDeclWithAdaptedParams, options: CodeStyleOptions
-) -> LambdaAdapter:
+) -> Optional[LambdaAdapter]:
     """
     We want to adapt functions that use fixed size C string list like those:
         void foo(const char * const items[], int items_count);
