@@ -779,7 +779,7 @@ class CppFunctionDecl(CppElementAndComment):
     """
 
     specifiers: List[str]  # "const" or ""
-    type: CppType
+    return_type: CppType
     parameter_list: CppParameterList
     template: CppTemplate
     is_auto_decl: bool  # True if it is a decl of the form `auto square(double) -> double`
@@ -797,7 +797,7 @@ class CppFunctionDecl(CppElementAndComment):
         if self.template is not None:
             r += f"template<{str(self.template)}>"
 
-        r += f"{self.type} {self.name}({self.parameter_list})"
+        r += f"{self.return_type} {self.name}({self.parameter_list})"
 
         if len(self.specifiers) > 0:
             specifiers_strs = map(str, self.specifiers)
@@ -810,7 +810,7 @@ class CppFunctionDecl(CppElementAndComment):
         return r
 
     def full_return_type(self, options: SrcmlOptions):
-        r = self.type.str_code()
+        r = self.return_type.str_code()
         for prefix in options.functions_api_prefixes:
             r = r.replace(prefix + " ", "")
         if r.startswith("inline "):

@@ -262,12 +262,12 @@ def fill_function_decl(
     for child in element_c.srcml_element:
         child_tag = srcml_utils.clean_tag_or_attrib(child.tag)
         if child_tag == "type":
-            if function_decl.type is None or len(function_decl.type.typenames) == 0:
+            if function_decl.return_type is None or len(function_decl.return_type.typenames) == 0:
                 parsed_type = parse_type(options, child, None)
-                function_decl.type = parsed_type
+                function_decl.return_type = parsed_type
             else:
                 additional_type = parse_type(options, child, None)
-                function_decl.type.typenames += additional_type.typenames
+                function_decl.return_type.typenames += additional_type.typenames
         elif child_tag == "name":
             function_decl.name = _parse_name(child)
         elif child_tag == "parameter_list":
@@ -288,8 +288,8 @@ def fill_function_decl(
         else:
             raise SrcMlExceptionDetailed(child, f"unhandled tag {child_tag}", options)
 
-    if len(function_decl.type.typenames) >= 2 and function_decl.type.typenames[0] == "auto":
-        function_decl.type.typenames = function_decl.type.typenames[1:]
+    if len(function_decl.return_type.typenames) >= 2 and function_decl.return_type.typenames[0] == "auto":
+        function_decl.return_type.typenames = function_decl.return_type.typenames[1:]
 
 
 def parse_function_decl(options: SrcmlOptions, element_c: CppElementAndComment) -> CppFunctionDecl:
