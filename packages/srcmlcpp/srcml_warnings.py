@@ -6,8 +6,9 @@ import logging
 import traceback
 import inspect
 
+from codemanip import code_utils
 import srcmlcpp
-from srcmlcpp import code_utils, srcml_main, srcml_types, srcml_utils
+from srcmlcpp import srcml_main, srcml_types, srcml_utils
 from srcmlcpp.srcml_options import SrcmlOptions
 from srcmlcpp.srcml_exception import SrcMlException
 

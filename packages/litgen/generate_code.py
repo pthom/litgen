@@ -1,8 +1,9 @@
 import os
 
+from codemanip import code_utils
 import litgen.internal.module_pydef_generator
 from litgen import CodeStyleOptions
-from litgen.internal import code_utils, module_pydef_generator, module_pyi_generator
+from litgen.internal import module_pydef_generator, module_pyi_generator
 import srcmlcpp
 
 

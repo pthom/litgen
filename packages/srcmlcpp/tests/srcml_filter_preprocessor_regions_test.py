@@ -3,7 +3,7 @@ import os, sys
 _THIS_DIR = os.path.dirname(__file__)
 sys.path.append(_THIS_DIR + "/../..")
 
-from srcmlcpp import code_utils
+from codemanip import code_utils
 import srcmlcpp
 from srcmlcpp import srcml_filter_preprocessor_regions, srcml_caller
 

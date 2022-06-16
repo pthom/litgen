@@ -3,7 +3,7 @@ import os, sys
 _THIS_DIR = os.path.dirname(__file__)
 sys.path.append(_THIS_DIR + "/../..")
 
-from litgen.internal import code_replacements
+from codemanip import code_replacements
 
 
 def test_code_replacements():

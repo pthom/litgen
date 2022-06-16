@@ -3,9 +3,10 @@ import os, sys
 _THIS_DIR = os.path.dirname(__file__)
 sys.path.append(_THIS_DIR + "/../..")
 
+from codemanip import code_utils
 import srcmlcpp
 from srcmlcpp import srcml_main
-from litgen.internal import code_utils, module_pydef_generator
+from litgen.internal import module_pydef_generator
 import litgen
 
 

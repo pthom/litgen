@@ -1,10 +1,11 @@
 from dataclasses import dataclass, field
 from typing import List, Dict
 
-from litgen.internal.code_utils import (
+from codemanip.code_utils import (
     make_regex_any_variable_ending_with,
     make_regex_any_variable_starting_with,
 )
+from codemanip import code_replacements
 from srcmlcpp import SrcmlOptions
 
 
@@ -218,13 +219,11 @@ class CodeStyleOptions:
 
 
 def code_style_immvision() -> CodeStyleOptions:
-    import internal.code_replacements as _code_replacements
-
     options = CodeStyleOptions()
     options.generate_to_string = True
     options.cpp_indent_size = 4
     options.srcml_options.functions_api_prefixes = ["IMMVISION_API"]
-    options.code_replacements = _code_replacements.standard_replacements() + _code_replacements.opencv_replacements()
+    options.code_replacements = code_replacements.standard_replacements() + code_replacements.opencv_replacements()
 
     options.buffer_flag_replace_by_array = False
 
@@ -263,8 +262,6 @@ def _preprocess_imgui_code(code):
 
 
 def code_style_imgui():
-    from litgen.internal import code_replacements
-
     options = CodeStyleOptions()
 
     options.generate_to_string = False

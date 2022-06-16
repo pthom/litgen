@@ -32,6 +32,10 @@ pip install -r requirements.txt
 title "Install litgen"
 pip install .
 
+title "Run codemanip tests"
+cd "$REPO_DIR"/packages/codemanip
+pytest
+
 title "Run srcmlcpp tests"
 cd "$REPO_DIR"/packages/srcmlcpp
 pytest

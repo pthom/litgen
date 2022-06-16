@@ -6,7 +6,7 @@ import pytest
 _THIS_DIR = os.path.dirname(__file__)
 sys.path.append(_THIS_DIR + "/../..")
 
-from litgen.internal import code_utils
+from codemanip import code_utils
 from litgen.options import CodeStyleOptions, code_style_implot
 import litgen
 from litgen.internal.function_params_adapter import make_function_params_adapter

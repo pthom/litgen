@@ -3,7 +3,7 @@ from litgen.internal.cpp_function_adapted_params import (
     CppFunctionDeclWithAdaptedParams,
     LambdaAdapter,
 )
-from litgen.internal import code_utils
+from codemanip import code_utils
 
 from srcmlcpp.srcml_types import CppFunctionDecl
 

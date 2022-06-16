@@ -2,9 +2,9 @@ import logging
 
 import pytest
 
+from codemanip import code_utils
 import litgen
 from litgen.internal import cpp_to_python
-from litgen.internal import code_utils
 from litgen.options import code_style_implot
 
 

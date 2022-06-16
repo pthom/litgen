@@ -1,8 +1,9 @@
 import pathlib
 import keyword
 from dataclasses import dataclass  # noqa
+
+from codemanip import code_replacements, code_utils
 from litgen import CodeStyleOptions
-from litgen.internal import code_replacements, code_utils
 from srcmlcpp.srcml_types import *
 from srcmlcpp import srcml_main
 

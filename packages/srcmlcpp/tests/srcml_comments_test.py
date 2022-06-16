@@ -3,9 +3,9 @@ import os, sys
 _THIS_DIR = os.path.dirname(__file__)
 sys.path.append(_THIS_DIR + "/../..")
 
+from codemanip import code_utils
 import srcmlcpp
 from srcmlcpp import srcml_utils, srcml_comments, srcml_caller
-from srcmlcpp import code_utils
 
 
 def test_mark_empty_lines():

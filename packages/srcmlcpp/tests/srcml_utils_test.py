@@ -3,8 +3,8 @@ import os, sys
 _THIS_DIR = os.path.dirname(__file__)
 sys.path.append(_THIS_DIR + "/../..")
 
+from codemanip import code_utils
 import srcmlcpp
-from srcmlcpp import code_utils
 
 
 def test_srcml_to_str_readable():

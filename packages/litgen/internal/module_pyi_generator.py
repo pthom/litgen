@@ -5,13 +5,15 @@ import os, sys
 _THIS_DIR = os.path.dirname(__file__)
 sys.path = [_THIS_DIR + "/.."] + sys.path
 
+from codemanip import code_utils, code_replacements
+
 import srcmlcpp
 from srcmlcpp.srcml_types import *
 from srcmlcpp import srcml_main
 from srcmlcpp import srcml_warnings
 
 from litgen import CodeStyleOptions
-from litgen.internal import cpp_to_python, code_utils, code_replacements
+from litgen.internal import cpp_to_python
 from litgen.internal.cpp_function_adapted_params import CppFunctionDeclWithAdaptedParams
 from litgen.internal.function_params_adapter import make_function_params_adapter
 from litgen.internal.function_wrapper_lambda import (

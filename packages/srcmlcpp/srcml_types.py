@@ -6,7 +6,8 @@ from dataclasses import dataclass
 
 import xml.etree.ElementTree as ET  # noqa
 
-from srcmlcpp import code_utils, srcml_utils, srcml_caller
+from codemanip import code_utils
+from srcmlcpp import srcml_utils, srcml_caller
 from srcmlcpp.srcml_options import SrcmlOptions
 from srcmlcpp.srcml_code_position import CodePosition
 

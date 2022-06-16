@@ -3,8 +3,8 @@ import os, sys
 _THIS_DIR = os.path.dirname(__file__)
 sys.path.append(_THIS_DIR + "/../..")
 
+from codemanip import code_utils
 from srcmlcpp import srcml_caller, srcml_utils
-from srcmlcpp import code_utils
 
 
 def assert_code_unmodified_by_srcml(code: str):

@@ -1,7 +1,7 @@
+from codemanip import code_utils
 import srcmlcpp
 from srcmlcpp import srcml_main, srcml_types_parse
 from srcmlcpp.srcml_types import *
-from srcmlcpp import code_utils
 
 
 def to_decl(code):

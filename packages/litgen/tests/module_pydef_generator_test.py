@@ -4,7 +4,8 @@ import os, sys
 _THIS_DIR = os.path.dirname(__file__)
 sys.path.append(_THIS_DIR + "/../..")
 
-from litgen.internal import module_pydef_generator, code_utils
+from codemanip import code_utils
+from litgen.internal import module_pydef_generator
 import srcmlcpp
 from litgen import CodeStyleOptions
 from litgen.options import code_style_implot, code_style_immvision

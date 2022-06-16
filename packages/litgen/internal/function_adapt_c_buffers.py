@@ -1,8 +1,9 @@
 from typing import Optional, List
 import copy
 
+from codemanip import code_utils
 from litgen.generate_code import CodeStyleOptions
-from litgen.internal import code_utils, cpp_to_python
+from litgen.internal import cpp_to_python
 from litgen.internal.cpp_function_adapted_params import (
     CppFunctionDeclWithAdaptedParams,
     LambdaAdapter,
