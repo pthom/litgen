@@ -510,7 +510,9 @@ class CppDecl(CppElementAndComment):
         """
         is_const = "const" in self.cpp_type.specifiers
         is_char = self.cpp_type.typenames == ["char"]
-        is_default_init = self.initial_value_code == "" or self.initial_value_code == "NULL" or self.initial_value_code == "nullptr"
+        is_default_init = (
+            self.initial_value_code == "" or self.initial_value_code == "NULL" or self.initial_value_code == "nullptr"
+        )
 
         nb_indirections = 0
         nb_indirections += self.cpp_type.modifiers.count("*")
@@ -548,7 +550,7 @@ class CppDecl(CppElementAndComment):
         if not self.is_c_array():
             return None
         pos = self.decl_name_code.index("[")
-        size_str = self.decl_name_code[pos + 1: -1]
+        size_str = self.decl_name_code[pos + 1 : -1]
         try:
             size = int(size_str)
             return size
@@ -559,7 +561,7 @@ class CppDecl(CppElementAndComment):
         if "[" not in self.decl_name_code:
             return None
         pos = self.decl_name_code.index("[")
-        size_str = self.decl_name_code[pos + 1: -1].strip()
+        size_str = self.decl_name_code[pos + 1 : -1].strip()
         return size_str
 
     def is_const(self):
@@ -853,7 +855,7 @@ class CppConstructorDecl(CppElementAndComment):
 
     specifiers: List[str]
     parameter_list: CppParameterList
-    constructor_name: str # will be equal to the class or struct name
+    constructor_name: str  # will be equal to the class or struct name
 
     def __init__(self, element: ET.Element, cpp_element_comments: CppElementComments):
         super().__init__(element, cpp_element_comments)
@@ -949,7 +951,7 @@ class CppStruct(CppElementAndComment):
     https://www.srcmlcpp.org/doc/cpp_srcML.html#struct-definition
     """
 
-    class_name: str # either the class or the struct name
+    class_name: str  # either the class or the struct name
     super_list: CppSuperList
     block: CppBlock
     template: CppTemplate  # for template classes or structs
