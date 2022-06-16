@@ -4,3 +4,4 @@ numpy
 matplotlib
 scikit-build
 black
+mypy
