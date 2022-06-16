@@ -189,7 +189,7 @@ def _is_comment_end_of_line(children: List[ET.Element], idx: int):
     element = CppElement(children[idx])
     previous_element = CppElement(children[idx - 1])
     if element.tag() == "comment" and previous_element.tag() != "comment":
-        if EMPTY_LINE_COMMENT_CONTENT in element.text():
+        if EMPTY_LINE_COMMENT_CONTENT in element.text_or_empty():
             return False
         elm_start = element.start()
         elm_end = element.end()
@@ -242,7 +242,7 @@ def _is_comment_on_previous_line(children: List[ET.Element], idx: int):
         return False
 
     if element.tag() == "comment" and next_element.tag() != "comment":
-        if EMPTY_LINE_COMMENT_CONTENT in element.text():
+        if EMPTY_LINE_COMMENT_CONTENT in element.text_or_empty():
             return False
         element_start = element.start()
         element_end = element.end()
@@ -264,7 +264,7 @@ def _is_comment_on_previous_line(children: List[ET.Element], idx: int):
                     and next_next_element_end is not None
                     and next_next_element.tag() == "comment"
                     and next_next_element_start.line == next_next_element_end.line
-                    and "return_value_policy::" not in next_next_element.text()
+                    and "return_value_policy::" not in next_next_element.text_or_empty()
                 ):
 
                     return False

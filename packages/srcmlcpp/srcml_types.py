@@ -104,14 +104,14 @@ class CppElement:
         assert self.srcml_element.tag is not None
         return srcml_utils.clean_tag_or_attrib(self.srcml_element.tag)
 
-    def text(self) -> str:
+    def text_or_empty(self) -> str:
         """Text part of the xml element.
         Warning: Will return empty string if not found"""
-        return srcml_utils.str_none_empty(self.srcml_element.text)
+        return srcml_utils.str_or_empty(self.srcml_element.text)
 
-    def tail(self):
+    def tail_or_empty(self):
         """Tail part of the xml element"""
-        return srcml_utils.str_none_empty(self.srcml_element.tail)
+        return srcml_utils.str_or_empty(self.srcml_element.tail)
 
     def start(self) -> Optional[CodePosition]:
         """Start position in the C++ code"""
@@ -176,7 +176,7 @@ class CppElement:
         as_dict = {
             "tag": self.tag(),
             "name": self.name_or_empty(),
-            "text": self.text(),
+            "text": self.text_or_empty(),
             "start": str(self.start()),
             "end": str(self.end()),
         }
@@ -475,7 +475,7 @@ class CppDecl(CppElementAndComment):
         super().__init__(element, cpp_element_comments)
 
     def str_code(self):
-        r = srcml_utils.str_none_empty(self.cpp_type) + " " + str(self.name)
+        r = srcml_utils.str_or_empty(self.cpp_type) + " " + str(self.name)
         if len(self.init) > 0:
             r += " = " + self.init
         return r

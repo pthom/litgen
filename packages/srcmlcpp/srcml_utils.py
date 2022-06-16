@@ -80,7 +80,7 @@ def clean_tag_or_attrib(tag_name: str) -> str:
     return tag_name
 
 
-def str_none_empty(what: Any):
+def str_or_empty(what: Any):
     return "" if what is None else str(what)
 
 

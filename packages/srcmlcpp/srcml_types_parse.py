@@ -669,7 +669,7 @@ def parse_comment(options: SrcmlOptions, element_c: CppElementAndComment) -> Cpp
 
     result = CppComment(element_c.srcml_element, element_c.cpp_element_comments)
 
-    comment = element_c.text()
+    comment = element_c.text_or_empty()
     lines = comment.split("\n")
     if len(lines) > 1:
         lines = list(map(lambda line: "" if "_SRCML_EMPTY_LINE_" in line else line, lines))

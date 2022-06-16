@@ -73,7 +73,7 @@ def _generate_pydef_enum(enum: CppEnum, options: CodeStyleOptions) -> str:
     for i, child in enumerate(enum.block.block_children):
         if child.tag() == "comment":
             result += (
-                code_utils.format_cpp_comment_multiline(child.text(), indentation_str=options.indent_cpp_spaces())
+                code_utils.format_cpp_comment_multiline(child.text_or_empty(), indentation_str=options.indent_cpp_spaces())
                 + "\n"
             )
         elif child.tag() == "decl":
