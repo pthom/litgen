@@ -77,7 +77,7 @@ def adapt_c_arrays(
                 # Fill adapted_cpp_parameter_list (those that will call the original C style function)
                 lambda_adapter.adapted_cpp_parameter_list.append(new_decl.decl_name + ".data()")
 
-            if not old_param.decl.is_const() and options.c_array_modifiable_flag_replace:
+            elif not old_param.decl.is_const() and options.c_array_modifiable_flag_replace:
                 array_size = old_param.decl.c_array_size()
                 assert array_size is not None
 
@@ -102,7 +102,7 @@ def adapt_c_arrays(
                     old_param_renamed = copy.deepcopy(old_param)
                     old_param_renamed.decl.decl_name = old_param_renamed.decl.decl_name + "_raw"
                     lambda_adapter.lambda_input_code += (
-                        old_param_renamed.decl.str_code() + f"[{len(new_decls)}]" + ";\n"
+                        old_param_renamed.decl.str_code() + ";\n"
                     )
 
                     lambda_adapter.adapted_cpp_parameter_list.append(old_param_renamed.decl.decl_name)

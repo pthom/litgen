@@ -583,6 +583,7 @@ class CppDecl(CppElementAndComment):
         # If the array is `const`, then we simply wrap it into a std::array, like this:
         # `const int v[2]` --> `[ const std::array<int, 2> v ]`
         new_decl = copy.deepcopy(self)
+        new_decl.c_array_code = ""
 
         new_decl.cpp_type.specifiers.remove("const")
         cpp_type_name = new_decl.cpp_type.str_code()
@@ -635,6 +636,7 @@ class CppDecl(CppElementAndComment):
             new_decl.decl_name = new_decl.decl_name + "_" + str(i)
             new_decl.cpp_type.typenames = [cpp_type_name]
             new_decl.cpp_type.modifiers = ["&"]
+            new_decl.c_array_code = ""
             new_decls.append(new_decl)
 
         return new_decls
@@ -681,6 +683,8 @@ class CppParameter(CppElement):
         super().__init__(element)
 
     def type_name_default_for_signature(self):
+        if not hasattr(self, "decl"):
+            breakpoint()
         assert hasattr(self, "decl")
         r = self.decl.type_name_default_for_signature()
         return r
@@ -693,6 +697,11 @@ class CppParameter(CppElement):
             if not hasattr(self, "template_type"):
                 logging.warning("CppParameter.__str__() with no decl and no template_type")
             return str(self.template_type) + " " + self.template_name
+
+    def str_template_type(self):
+        assert hasattr(self, "template_type")
+        r = str(self.template_type) + " " + self.template_name
+        return r
 
     def __str__(self):
         return self.str_code()
@@ -763,7 +772,9 @@ class CppTemplate(CppElement):
         self.parameter_list = CppParameterList(element)
 
     def str_code(self):
-        params_str = f"template<{str(self.parameter_list)}>\n"
+        typelist = [param.str_template_type() for param in self.parameter_list.parameters]
+        typelist_str = ", ".join(typelist)
+        params_str = f"template<{typelist_str}>\n"
         return params_str
 
     def __str__(self):
