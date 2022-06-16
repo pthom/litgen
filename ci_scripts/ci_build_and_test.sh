@@ -29,7 +29,12 @@ title "Install requirements"
 pip install -r requirements-dev.txt
 pip install -r requirements.txt
 
-title "Install litgen"
+title "Run mypy static checker"
+cd "$REPO_DIR"/packages
+mypy .
+
+title "Install litgen and its sub-packages (codemanip, srcmlcpp and litgen)"
+cd "$REPO_DIR"
 pip install .
 
 title "Run codemanip tests"
