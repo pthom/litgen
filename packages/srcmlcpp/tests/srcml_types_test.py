@@ -13,7 +13,7 @@ def to_decl(code):
 
 def test_c_array_fixed_size_to_std_array():
     options = srcmlcpp.SrcmlOptions()
-    size_dict = {"COUNT" : 3}
+    size_dict = {"COUNT": 3}
 
     code = "const int v[COUNT]"
     cpp_decl = to_decl(code)

@@ -103,16 +103,14 @@ def pyarg_code(function_infos: Union[CppFunctionDecl, CppConstructorDecl], optio
     _i_ = options.indent_cpp_spaces()
 
     param_lines = []
-    param_template = 'py::arg("{argname_python}"){maybe_equal}{maybe_defaultvalue_python}'
+    param_template = 'py::arg("{argname_python}"){maybe_equal}{maybe_defaultvalue_cpp}'
 
     for idx_param, param in enumerate(function_infos.parameter_list.parameters):
 
-        param_default_value_cpp = param.default_value()
-        if len(param_default_value_cpp) > 0:
-            maybe_defaultvalue_python = cpp_to_python.default_value_to_python(param_default_value_cpp, options)
+        maybe_defaultvalue_cpp = param.default_value()
+        if len(maybe_defaultvalue_cpp) > 0:
             maybe_equal = " = "
         else:
-            maybe_defaultvalue_python = ""
             maybe_equal = ""
 
         argname_python = cpp_to_python.var_name_to_python(param.decl.decl_name, options)
@@ -122,7 +120,7 @@ def pyarg_code(function_infos: Union[CppFunctionDecl, CppConstructorDecl], optio
             {
                 "argname_python": argname_python,
                 "maybe_equal": maybe_equal,
-                "maybe_defaultvalue_python": maybe_defaultvalue_python,
+                "maybe_defaultvalue_cpp": maybe_defaultvalue_cpp,
             },
         )
 

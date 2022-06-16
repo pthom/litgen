@@ -95,7 +95,7 @@ void py_init_module_imgui(py::module& m)
         {
             return CreateContext(shared_font_atlas);
         },
-        py::arg("shared_font_atlas") = None
+        py::arg("shared_font_atlas") = NULL
     );
 
     m.def("destroy_context",    // imgui.h:285
@@ -103,7 +103,7 @@ void py_init_module_imgui(py::module& m)
         {
             DestroyContext(ctx);
         },
-        py::arg("ctx") = None,
+        py::arg("ctx") = NULL,
         "NULL = destroy current context"
     );
 
@@ -175,7 +175,7 @@ void py_init_module_imgui(py::module& m)
         {
             ShowDemoWindow(p_open);
         },
-        py::arg("p_open") = None,
+        py::arg("p_open") = NULL,
         "create Demo window. demonstrate most ImGui features. call this to learn about the library! try to make it always available in your application!"
     );
 
@@ -184,7 +184,7 @@ void py_init_module_imgui(py::module& m)
         {
             ShowMetricsWindow(p_open);
         },
-        py::arg("p_open") = None,
+        py::arg("p_open") = NULL,
         "create Metrics/Debugger window. display Dear ImGui internals: windows, draw commands, various internal state, etc."
     );
 
@@ -193,7 +193,7 @@ void py_init_module_imgui(py::module& m)
         {
             ShowStackToolWindow(p_open);
         },
-        py::arg("p_open") = None,
+        py::arg("p_open") = NULL,
         "create Stack Tool window. hover items with mouse to query information about the source of their unique ID."
     );
 
@@ -202,7 +202,7 @@ void py_init_module_imgui(py::module& m)
         {
             ShowAboutWindow(p_open);
         },
-        py::arg("p_open") = None,
+        py::arg("p_open") = NULL,
         "create About window. display Dear ImGui version, credits and build/system information."
     );
 
@@ -211,7 +211,7 @@ void py_init_module_imgui(py::module& m)
         {
             ShowStyleEditor(ref);
         },
-        py::arg("ref") = None,
+        py::arg("ref") = NULL,
         "add style editor block (not a window). you can pass in a reference ImGuiStyle structure to compare to, revert to and save to (else it uses the default style)"
     );
 
@@ -254,7 +254,7 @@ void py_init_module_imgui(py::module& m)
         {
             StyleColorsDark(dst);
         },
-        py::arg("dst") = None,
+        py::arg("dst") = NULL,
         "new, recommended style (default)"
     );
 
@@ -263,7 +263,7 @@ void py_init_module_imgui(py::module& m)
         {
             StyleColorsLight(dst);
         },
-        py::arg("dst") = None,
+        py::arg("dst") = NULL,
         "best used with borders and a custom, thicker font"
     );
 
@@ -272,7 +272,7 @@ void py_init_module_imgui(py::module& m)
         {
             StyleColorsClassic(dst);
         },
-        py::arg("dst") = None,
+        py::arg("dst") = NULL,
         "classic imgui style"
     );
 
@@ -281,7 +281,7 @@ void py_init_module_imgui(py::module& m)
         {
             return Begin(name, p_open, flags);
         },
-        py::arg("name"), py::arg("p_open") = None, py::arg("flags") = 0
+        py::arg("name"), py::arg("p_open") = NULL, py::arg("flags") = 0
     );
 
     m.def("end",    // imgui.h:326
@@ -296,7 +296,7 @@ void py_init_module_imgui(py::module& m)
         {
             return BeginChild(str_id, size, border, flags);
         },
-        py::arg("str_id"), py::arg("size") = ImVec2(0, 0), py::arg("border") = False, py::arg("flags") = 0
+        py::arg("str_id"), py::arg("size") = ImVec2(0, 0), py::arg("border") = false, py::arg("flags") = 0
     );
 
     m.def("begin_child",    // imgui.h:337
@@ -304,7 +304,7 @@ void py_init_module_imgui(py::module& m)
         {
             return BeginChild(id, size, border, flags);
         },
-        py::arg("id"), py::arg("size") = ImVec2(0, 0), py::arg("border") = False, py::arg("flags") = 0
+        py::arg("id"), py::arg("size") = ImVec2(0, 0), py::arg("border") = false, py::arg("flags") = 0
     );
 
     m.def("end_child",    // imgui.h:338
@@ -409,7 +409,7 @@ void py_init_module_imgui(py::module& m)
         {
             SetNextWindowSizeConstraints(size_min, size_max, custom_callback, custom_callback_data);
         },
-        py::arg("size_min"), py::arg("size_max"), py::arg("custom_callback") = None, py::arg("custom_callback_data") = None,
+        py::arg("size_min"), py::arg("size_max"), py::arg("custom_callback") = NULL, py::arg("custom_callback_data") = NULL,
         "set next window size limits. use -1,-1 on either X/Y axis to preserve the current size. Sizes will be rounded down. Use callback to apply non-trivial programmatic constraints."
     );
 
@@ -615,7 +615,7 @@ void py_init_module_imgui(py::module& m)
         {
             SetScrollHereX(center_x_ratio);
         },
-        py::arg("center_x_ratio") = 0.5,
+        py::arg("center_x_ratio") = 0.5f,
         "adjust scrolling amount to make current cursor position visible. center_x_ratio=0.0: left, 0.5: center, 1.0: right. When using to make a \"default/current item\" visible, consider using SetItemDefaultFocus() instead."
     );
 
@@ -624,7 +624,7 @@ void py_init_module_imgui(py::module& m)
         {
             SetScrollHereY(center_y_ratio);
         },
-        py::arg("center_y_ratio") = 0.5,
+        py::arg("center_y_ratio") = 0.5f,
         "adjust scrolling amount to make current cursor position visible. center_y_ratio=0.0: top, 0.5: center, 1.0: bottom. When using to make a \"default/current item\" visible, consider using SetItemDefaultFocus() instead."
     );
 
@@ -633,7 +633,7 @@ void py_init_module_imgui(py::module& m)
         {
             SetScrollFromPosX(local_x, center_x_ratio);
         },
-        py::arg("local_x"), py::arg("center_x_ratio") = 0.5,
+        py::arg("local_x"), py::arg("center_x_ratio") = 0.5f,
         "adjust scrolling amount to make given position visible. Generally GetCursorStartPos() + offset to compute a valid position."
     );
 
@@ -642,7 +642,7 @@ void py_init_module_imgui(py::module& m)
         {
             SetScrollFromPosY(local_y, center_y_ratio);
         },
-        py::arg("local_y"), py::arg("center_y_ratio") = 0.5,
+        py::arg("local_y"), py::arg("center_y_ratio") = 0.5f,
         "adjust scrolling amount to make given position visible. Generally GetCursorStartPos() + offset to compute a valid position."
     );
 
@@ -783,7 +783,7 @@ void py_init_module_imgui(py::module& m)
         {
             PushTextWrapPos(wrap_local_pos_x);
         },
-        py::arg("wrap_local_pos_x") = 0.0,
+        py::arg("wrap_local_pos_x") = 0.0f,
         "push word-wrapping position for Text*() commands. < 0.0f: no wrapping; 0.0f: wrap to end of window (or column); > 0.0f: wrap at 'wrap_pos_x' position in window local space"
     );
 
@@ -823,7 +823,7 @@ void py_init_module_imgui(py::module& m)
         {
             return GetColorU32(idx, alpha_mul);
         },
-        py::arg("idx"), py::arg("alpha_mul") = 1.0,
+        py::arg("idx"), py::arg("alpha_mul") = 1.0f,
         "retrieve given style color with style alpha applied and optional extra alpha multiplier, packed as a 32-bit value suitable for ImDrawList"
     );
 
@@ -867,7 +867,7 @@ void py_init_module_imgui(py::module& m)
         {
             SameLine(offset_from_start_x, spacing);
         },
-        py::arg("offset_from_start_x") = 0.0, py::arg("spacing") = -1.0,
+        py::arg("offset_from_start_x") = 0.0f, py::arg("spacing") = -1.0f,
         "call between widgets or groups to layout them horizontally. X position given in window coordinates."
     );
 
@@ -901,7 +901,7 @@ void py_init_module_imgui(py::module& m)
         {
             Indent(indent_w);
         },
-        py::arg("indent_w") = 0.0,
+        py::arg("indent_w") = 0.0f,
         "move content position toward the right, by indent_w, or style.IndentSpacing if indent_w <= 0"
     );
 
@@ -910,7 +910,7 @@ void py_init_module_imgui(py::module& m)
         {
             Unindent(indent_w);
         },
-        py::arg("indent_w") = 0.0,
+        py::arg("indent_w") = 0.0f,
         "move content position back to the left, by indent_w, or style.IndentSpacing if indent_w <= 0"
     );
 
@@ -1119,7 +1119,7 @@ void py_init_module_imgui(py::module& m)
         {
             TextUnformatted(text, text_end);
         },
-        py::arg("text"), py::arg("text_end") = None,
+        py::arg("text"), py::arg("text_end") = NULL,
         "raw text without formatting. Roughly equivalent to Text(\"%s\", text) but: A) doesn't require null terminated string if 'text_end' is specified, B) it's faster, no memory copy is done, no buffer size limits, recommended for long chunks of text."
     );
 
@@ -1307,7 +1307,7 @@ void py_init_module_imgui(py::module& m)
         {
             ProgressBar(fraction, size_arg, overlay);
         },
-        py::arg("fraction"), py::arg("size_arg") = ImVec2(-sys.float_info.min, 0), py::arg("overlay") = None
+        py::arg("fraction"), py::arg("size_arg") = ImVec2(-FLT_MIN, 0), py::arg("overlay") = NULL
     );
 
     m.def("bullet",    // imgui.h:504
@@ -1367,7 +1367,7 @@ void py_init_module_imgui(py::module& m)
         {
             return DragFloat(label, v, v_speed, v_min, v_max, format, flags);
         },
-        py::arg("label"), py::arg("v"), py::arg("v_speed") = 1.0, py::arg("v_min") = 0.0, py::arg("v_max") = 0.0, py::arg("format") = "%.3", py::arg("flags") = 0,
+        py::arg("label"), py::arg("v"), py::arg("v_speed") = 1.0f, py::arg("v_min") = 0.0f, py::arg("v_max") = 0.0f, py::arg("format") = "%.3f", py::arg("flags") = 0,
         "If v_min >= v_max we have no bound"
     );
 
@@ -1389,7 +1389,7 @@ void py_init_module_imgui(py::module& m)
 
             return DragFloat2_adapt_fixed_size_c_arrays(label, v_0, v_1, v_speed, v_min, v_max, format, flags);
         },
-        py::arg("label"), py::arg("v_0"), py::arg("v_1"), py::arg("v_speed") = 1.0, py::arg("v_min") = 0.0, py::arg("v_max") = 0.0, py::arg("format") = "%.3", py::arg("flags") = 0
+        py::arg("label"), py::arg("v_0"), py::arg("v_1"), py::arg("v_speed") = 1.0f, py::arg("v_min") = 0.0f, py::arg("v_max") = 0.0f, py::arg("format") = "%.3f", py::arg("flags") = 0
     );
 
     m.def("drag_float3",    // imgui.h:529
@@ -1412,7 +1412,7 @@ void py_init_module_imgui(py::module& m)
 
             return DragFloat3_adapt_fixed_size_c_arrays(label, v_0, v_1, v_2, v_speed, v_min, v_max, format, flags);
         },
-        py::arg("label"), py::arg("v_0"), py::arg("v_1"), py::arg("v_2"), py::arg("v_speed") = 1.0, py::arg("v_min") = 0.0, py::arg("v_max") = 0.0, py::arg("format") = "%.3", py::arg("flags") = 0
+        py::arg("label"), py::arg("v_0"), py::arg("v_1"), py::arg("v_2"), py::arg("v_speed") = 1.0f, py::arg("v_min") = 0.0f, py::arg("v_max") = 0.0f, py::arg("format") = "%.3f", py::arg("flags") = 0
     );
 
     m.def("drag_float4",    // imgui.h:530
@@ -1437,7 +1437,7 @@ void py_init_module_imgui(py::module& m)
 
             return DragFloat4_adapt_fixed_size_c_arrays(label, v_0, v_1, v_2, v_3, v_speed, v_min, v_max, format, flags);
         },
-        py::arg("label"), py::arg("v_0"), py::arg("v_1"), py::arg("v_2"), py::arg("v_3"), py::arg("v_speed") = 1.0, py::arg("v_min") = 0.0, py::arg("v_max") = 0.0, py::arg("format") = "%.3", py::arg("flags") = 0
+        py::arg("label"), py::arg("v_0"), py::arg("v_1"), py::arg("v_2"), py::arg("v_3"), py::arg("v_speed") = 1.0f, py::arg("v_min") = 0.0f, py::arg("v_max") = 0.0f, py::arg("format") = "%.3f", py::arg("flags") = 0
     );
 
     m.def("drag_float_range2",    // imgui.h:531
@@ -1445,7 +1445,7 @@ void py_init_module_imgui(py::module& m)
         {
             return DragFloatRange2(label, v_current_min, v_current_max, v_speed, v_min, v_max, format, format_max, flags);
         },
-        py::arg("label"), py::arg("v_current_min"), py::arg("v_current_max"), py::arg("v_speed") = 1.0, py::arg("v_min") = 0.0, py::arg("v_max") = 0.0, py::arg("format") = "%.3", py::arg("format_max") = None, py::arg("flags") = 0
+        py::arg("label"), py::arg("v_current_min"), py::arg("v_current_max"), py::arg("v_speed") = 1.0f, py::arg("v_min") = 0.0f, py::arg("v_max") = 0.0f, py::arg("format") = "%.3f", py::arg("format_max") = NULL, py::arg("flags") = 0
     );
 
     m.def("drag_int",    // imgui.h:532
@@ -1453,7 +1453,7 @@ void py_init_module_imgui(py::module& m)
         {
             return DragInt(label, v, v_speed, v_min, v_max, format, flags);
         },
-        py::arg("label"), py::arg("v"), py::arg("v_speed") = 1.0, py::arg("v_min") = 0, py::arg("v_max") = 0, py::arg("format") = "%d", py::arg("flags") = 0,
+        py::arg("label"), py::arg("v"), py::arg("v_speed") = 1.0f, py::arg("v_min") = 0, py::arg("v_max") = 0, py::arg("format") = "%d", py::arg("flags") = 0,
         "If v_min >= v_max we have no bound"
     );
 
@@ -1475,7 +1475,7 @@ void py_init_module_imgui(py::module& m)
 
             return DragInt2_adapt_fixed_size_c_arrays(label, v_0, v_1, v_speed, v_min, v_max, format, flags);
         },
-        py::arg("label"), py::arg("v_0"), py::arg("v_1"), py::arg("v_speed") = 1.0, py::arg("v_min") = 0, py::arg("v_max") = 0, py::arg("format") = "%d", py::arg("flags") = 0
+        py::arg("label"), py::arg("v_0"), py::arg("v_1"), py::arg("v_speed") = 1.0f, py::arg("v_min") = 0, py::arg("v_max") = 0, py::arg("format") = "%d", py::arg("flags") = 0
     );
 
     m.def("drag_int3",    // imgui.h:534
@@ -1498,7 +1498,7 @@ void py_init_module_imgui(py::module& m)
 
             return DragInt3_adapt_fixed_size_c_arrays(label, v_0, v_1, v_2, v_speed, v_min, v_max, format, flags);
         },
-        py::arg("label"), py::arg("v_0"), py::arg("v_1"), py::arg("v_2"), py::arg("v_speed") = 1.0, py::arg("v_min") = 0, py::arg("v_max") = 0, py::arg("format") = "%d", py::arg("flags") = 0
+        py::arg("label"), py::arg("v_0"), py::arg("v_1"), py::arg("v_2"), py::arg("v_speed") = 1.0f, py::arg("v_min") = 0, py::arg("v_max") = 0, py::arg("format") = "%d", py::arg("flags") = 0
     );
 
     m.def("drag_int4",    // imgui.h:535
@@ -1523,7 +1523,7 @@ void py_init_module_imgui(py::module& m)
 
             return DragInt4_adapt_fixed_size_c_arrays(label, v_0, v_1, v_2, v_3, v_speed, v_min, v_max, format, flags);
         },
-        py::arg("label"), py::arg("v_0"), py::arg("v_1"), py::arg("v_2"), py::arg("v_3"), py::arg("v_speed") = 1.0, py::arg("v_min") = 0, py::arg("v_max") = 0, py::arg("format") = "%d", py::arg("flags") = 0
+        py::arg("label"), py::arg("v_0"), py::arg("v_1"), py::arg("v_2"), py::arg("v_3"), py::arg("v_speed") = 1.0f, py::arg("v_min") = 0, py::arg("v_max") = 0, py::arg("format") = "%d", py::arg("flags") = 0
     );
 
     m.def("drag_int_range2",    // imgui.h:536
@@ -1531,7 +1531,7 @@ void py_init_module_imgui(py::module& m)
         {
             return DragIntRange2(label, v_current_min, v_current_max, v_speed, v_min, v_max, format, format_max, flags);
         },
-        py::arg("label"), py::arg("v_current_min"), py::arg("v_current_max"), py::arg("v_speed") = 1.0, py::arg("v_min") = 0, py::arg("v_max") = 0, py::arg("format") = "%d", py::arg("format_max") = None, py::arg("flags") = 0
+        py::arg("label"), py::arg("v_current_min"), py::arg("v_current_max"), py::arg("v_speed") = 1.0f, py::arg("v_min") = 0, py::arg("v_max") = 0, py::arg("format") = "%d", py::arg("format_max") = NULL, py::arg("flags") = 0
     );
 
     m.def("drag_scalar",    // imgui.h:537
@@ -1539,7 +1539,7 @@ void py_init_module_imgui(py::module& m)
         {
             return DragScalar(label, data_type, p_data, v_speed, p_min, p_max, format, flags);
         },
-        py::arg("label"), py::arg("data_type"), py::arg("p_data"), py::arg("v_speed") = 1.0, py::arg("p_min") = None, py::arg("p_max") = None, py::arg("format") = None, py::arg("flags") = 0
+        py::arg("label"), py::arg("data_type"), py::arg("p_data"), py::arg("v_speed") = 1.0f, py::arg("p_min") = NULL, py::arg("p_max") = NULL, py::arg("format") = NULL, py::arg("flags") = 0
     );
 
     m.def("drag_scalar_n",    // imgui.h:538
@@ -1547,7 +1547,7 @@ void py_init_module_imgui(py::module& m)
         {
             return DragScalarN(label, data_type, p_data, components, v_speed, p_min, p_max, format, flags);
         },
-        py::arg("label"), py::arg("data_type"), py::arg("p_data"), py::arg("components"), py::arg("v_speed") = 1.0, py::arg("p_min") = None, py::arg("p_max") = None, py::arg("format") = None, py::arg("flags") = 0
+        py::arg("label"), py::arg("data_type"), py::arg("p_data"), py::arg("components"), py::arg("v_speed") = 1.0f, py::arg("p_min") = NULL, py::arg("p_max") = NULL, py::arg("format") = NULL, py::arg("flags") = 0
     );
 
     m.def("slider_float",    // imgui.h:546
@@ -1555,7 +1555,7 @@ void py_init_module_imgui(py::module& m)
         {
             return SliderFloat(label, v, v_min, v_max, format, flags);
         },
-        py::arg("label"), py::arg("v"), py::arg("v_min"), py::arg("v_max"), py::arg("format") = "%.3", py::arg("flags") = 0,
+        py::arg("label"), py::arg("v"), py::arg("v_min"), py::arg("v_max"), py::arg("format") = "%.3f", py::arg("flags") = 0,
         "adjust format to decorate the value with a prefix or a suffix for in-slider labels or unit display."
     );
 
@@ -1577,7 +1577,7 @@ void py_init_module_imgui(py::module& m)
 
             return SliderFloat2_adapt_fixed_size_c_arrays(label, v_0, v_1, v_min, v_max, format, flags);
         },
-        py::arg("label"), py::arg("v_0"), py::arg("v_1"), py::arg("v_min"), py::arg("v_max"), py::arg("format") = "%.3", py::arg("flags") = 0
+        py::arg("label"), py::arg("v_0"), py::arg("v_1"), py::arg("v_min"), py::arg("v_max"), py::arg("format") = "%.3f", py::arg("flags") = 0
     );
 
     m.def("slider_float3",    // imgui.h:548
@@ -1600,7 +1600,7 @@ void py_init_module_imgui(py::module& m)
 
             return SliderFloat3_adapt_fixed_size_c_arrays(label, v_0, v_1, v_2, v_min, v_max, format, flags);
         },
-        py::arg("label"), py::arg("v_0"), py::arg("v_1"), py::arg("v_2"), py::arg("v_min"), py::arg("v_max"), py::arg("format") = "%.3", py::arg("flags") = 0
+        py::arg("label"), py::arg("v_0"), py::arg("v_1"), py::arg("v_2"), py::arg("v_min"), py::arg("v_max"), py::arg("format") = "%.3f", py::arg("flags") = 0
     );
 
     m.def("slider_float4",    // imgui.h:549
@@ -1625,7 +1625,7 @@ void py_init_module_imgui(py::module& m)
 
             return SliderFloat4_adapt_fixed_size_c_arrays(label, v_0, v_1, v_2, v_3, v_min, v_max, format, flags);
         },
-        py::arg("label"), py::arg("v_0"), py::arg("v_1"), py::arg("v_2"), py::arg("v_3"), py::arg("v_min"), py::arg("v_max"), py::arg("format") = "%.3", py::arg("flags") = 0
+        py::arg("label"), py::arg("v_0"), py::arg("v_1"), py::arg("v_2"), py::arg("v_3"), py::arg("v_min"), py::arg("v_max"), py::arg("format") = "%.3f", py::arg("flags") = 0
     );
 
     m.def("slider_angle",    // imgui.h:550
@@ -1633,7 +1633,7 @@ void py_init_module_imgui(py::module& m)
         {
             return SliderAngle(label, v_rad, v_degrees_min, v_degrees_max, format, flags);
         },
-        py::arg("label"), py::arg("v_rad"), py::arg("v_degrees_min") = -360.0, py::arg("v_degrees_max") = +360.0, py::arg("format") = "%.0 deg", py::arg("flags") = 0
+        py::arg("label"), py::arg("v_rad"), py::arg("v_degrees_min") = -360.0f, py::arg("v_degrees_max") = +360.0f, py::arg("format") = "%.0f deg", py::arg("flags") = 0
     );
 
     m.def("slider_int",    // imgui.h:551
@@ -1718,7 +1718,7 @@ void py_init_module_imgui(py::module& m)
         {
             return SliderScalar(label, data_type, p_data, p_min, p_max, format, flags);
         },
-        py::arg("label"), py::arg("data_type"), py::arg("p_data"), py::arg("p_min"), py::arg("p_max"), py::arg("format") = None, py::arg("flags") = 0
+        py::arg("label"), py::arg("data_type"), py::arg("p_data"), py::arg("p_min"), py::arg("p_max"), py::arg("format") = NULL, py::arg("flags") = 0
     );
 
     m.def("slider_scalar_n",    // imgui.h:556
@@ -1726,7 +1726,7 @@ void py_init_module_imgui(py::module& m)
         {
             return SliderScalarN(label, data_type, p_data, components, p_min, p_max, format, flags);
         },
-        py::arg("label"), py::arg("data_type"), py::arg("p_data"), py::arg("components"), py::arg("p_min"), py::arg("p_max"), py::arg("format") = None, py::arg("flags") = 0
+        py::arg("label"), py::arg("data_type"), py::arg("p_data"), py::arg("components"), py::arg("p_min"), py::arg("p_max"), py::arg("format") = NULL, py::arg("flags") = 0
     );
 
     m.def("v_slider_float",    // imgui.h:557
@@ -1734,7 +1734,7 @@ void py_init_module_imgui(py::module& m)
         {
             return VSliderFloat(label, size, v, v_min, v_max, format, flags);
         },
-        py::arg("label"), py::arg("size"), py::arg("v"), py::arg("v_min"), py::arg("v_max"), py::arg("format") = "%.3", py::arg("flags") = 0
+        py::arg("label"), py::arg("size"), py::arg("v"), py::arg("v_min"), py::arg("v_max"), py::arg("format") = "%.3f", py::arg("flags") = 0
     );
 
     m.def("v_slider_int",    // imgui.h:558
@@ -1750,7 +1750,7 @@ void py_init_module_imgui(py::module& m)
         {
             return VSliderScalar(label, size, data_type, p_data, p_min, p_max, format, flags);
         },
-        py::arg("label"), py::arg("size"), py::arg("data_type"), py::arg("p_data"), py::arg("p_min"), py::arg("p_max"), py::arg("format") = None, py::arg("flags") = 0
+        py::arg("label"), py::arg("size"), py::arg("data_type"), py::arg("p_data"), py::arg("p_min"), py::arg("p_max"), py::arg("format") = NULL, py::arg("flags") = 0
     );
 
     m.def("input_text",    // imgui.h:564
@@ -1758,7 +1758,7 @@ void py_init_module_imgui(py::module& m)
         {
             return InputText(label, buf, buf_size, flags, callback, user_data);
         },
-        py::arg("label"), py::arg("buf"), py::arg("buf_size"), py::arg("flags") = 0, py::arg("callback") = None, py::arg("user_data") = None
+        py::arg("label"), py::arg("buf"), py::arg("buf_size"), py::arg("flags") = 0, py::arg("callback") = NULL, py::arg("user_data") = NULL
     );
 
     m.def("input_text_multiline",    // imgui.h:565
@@ -1766,7 +1766,7 @@ void py_init_module_imgui(py::module& m)
         {
             return InputTextMultiline(label, buf, buf_size, size, flags, callback, user_data);
         },
-        py::arg("label"), py::arg("buf"), py::arg("buf_size"), py::arg("size") = ImVec2(0, 0), py::arg("flags") = 0, py::arg("callback") = None, py::arg("user_data") = None
+        py::arg("label"), py::arg("buf"), py::arg("buf_size"), py::arg("size") = ImVec2(0, 0), py::arg("flags") = 0, py::arg("callback") = NULL, py::arg("user_data") = NULL
     );
 
     m.def("input_text_with_hint",    // imgui.h:566
@@ -1774,7 +1774,7 @@ void py_init_module_imgui(py::module& m)
         {
             return InputTextWithHint(label, hint, buf, buf_size, flags, callback, user_data);
         },
-        py::arg("label"), py::arg("hint"), py::arg("buf"), py::arg("buf_size"), py::arg("flags") = 0, py::arg("callback") = None, py::arg("user_data") = None
+        py::arg("label"), py::arg("hint"), py::arg("buf"), py::arg("buf_size"), py::arg("flags") = 0, py::arg("callback") = NULL, py::arg("user_data") = NULL
     );
 
     m.def("input_float",    // imgui.h:567
@@ -1782,7 +1782,7 @@ void py_init_module_imgui(py::module& m)
         {
             return InputFloat(label, v, step, step_fast, format, flags);
         },
-        py::arg("label"), py::arg("v"), py::arg("step") = 0.0, py::arg("step_fast") = 0.0, py::arg("format") = "%.3", py::arg("flags") = 0
+        py::arg("label"), py::arg("v"), py::arg("step") = 0.0f, py::arg("step_fast") = 0.0f, py::arg("format") = "%.3f", py::arg("flags") = 0
     );
 
     m.def("input_float2",    // imgui.h:568
@@ -1803,7 +1803,7 @@ void py_init_module_imgui(py::module& m)
 
             return InputFloat2_adapt_fixed_size_c_arrays(label, v_0, v_1, format, flags);
         },
-        py::arg("label"), py::arg("v_0"), py::arg("v_1"), py::arg("format") = "%.3", py::arg("flags") = 0
+        py::arg("label"), py::arg("v_0"), py::arg("v_1"), py::arg("format") = "%.3f", py::arg("flags") = 0
     );
 
     m.def("input_float3",    // imgui.h:569
@@ -1826,7 +1826,7 @@ void py_init_module_imgui(py::module& m)
 
             return InputFloat3_adapt_fixed_size_c_arrays(label, v_0, v_1, v_2, format, flags);
         },
-        py::arg("label"), py::arg("v_0"), py::arg("v_1"), py::arg("v_2"), py::arg("format") = "%.3", py::arg("flags") = 0
+        py::arg("label"), py::arg("v_0"), py::arg("v_1"), py::arg("v_2"), py::arg("format") = "%.3f", py::arg("flags") = 0
     );
 
     m.def("input_float4",    // imgui.h:570
@@ -1851,7 +1851,7 @@ void py_init_module_imgui(py::module& m)
 
             return InputFloat4_adapt_fixed_size_c_arrays(label, v_0, v_1, v_2, v_3, format, flags);
         },
-        py::arg("label"), py::arg("v_0"), py::arg("v_1"), py::arg("v_2"), py::arg("v_3"), py::arg("format") = "%.3", py::arg("flags") = 0
+        py::arg("label"), py::arg("v_0"), py::arg("v_1"), py::arg("v_2"), py::arg("v_3"), py::arg("format") = "%.3f", py::arg("flags") = 0
     );
 
     m.def("input_int",    // imgui.h:571
@@ -1936,7 +1936,7 @@ void py_init_module_imgui(py::module& m)
         {
             return InputDouble(label, v, step, step_fast, format, flags);
         },
-        py::arg("label"), py::arg("v"), py::arg("step") = 0.0, py::arg("step_fast") = 0.0, py::arg("format") = "%.6", py::arg("flags") = 0
+        py::arg("label"), py::arg("v"), py::arg("step") = 0.0, py::arg("step_fast") = 0.0, py::arg("format") = "%.6f", py::arg("flags") = 0
     );
 
     m.def("input_scalar",    // imgui.h:576
@@ -1944,7 +1944,7 @@ void py_init_module_imgui(py::module& m)
         {
             return InputScalar(label, data_type, p_data, p_step, p_step_fast, format, flags);
         },
-        py::arg("label"), py::arg("data_type"), py::arg("p_data"), py::arg("p_step") = None, py::arg("p_step_fast") = None, py::arg("format") = None, py::arg("flags") = 0
+        py::arg("label"), py::arg("data_type"), py::arg("p_data"), py::arg("p_step") = NULL, py::arg("p_step_fast") = NULL, py::arg("format") = NULL, py::arg("flags") = 0
     );
 
     m.def("input_scalar_n",    // imgui.h:577
@@ -1952,7 +1952,7 @@ void py_init_module_imgui(py::module& m)
         {
             return InputScalarN(label, data_type, p_data, components, p_step, p_step_fast, format, flags);
         },
-        py::arg("label"), py::arg("data_type"), py::arg("p_data"), py::arg("components"), py::arg("p_step") = None, py::arg("p_step_fast") = None, py::arg("format") = None, py::arg("flags") = 0
+        py::arg("label"), py::arg("data_type"), py::arg("p_data"), py::arg("components"), py::arg("p_step") = NULL, py::arg("p_step_fast") = NULL, py::arg("format") = NULL, py::arg("flags") = 0
     );
 
     m.def("color_edit3",    // imgui.h:582
@@ -2048,7 +2048,7 @@ void py_init_module_imgui(py::module& m)
 
             return ColorPicker4_adapt_fixed_size_c_arrays(label, col_0, col_1, col_2, col_3, flags, ref_col);
         },
-        py::arg("label"), py::arg("col_0"), py::arg("col_1"), py::arg("col_2"), py::arg("col_3"), py::arg("flags") = 0, py::arg("ref_col") = None
+        py::arg("label"), py::arg("col_0"), py::arg("col_1"), py::arg("col_2"), py::arg("col_3"), py::arg("flags") = 0, py::arg("ref_col") = NULL
     );
 
     m.def("color_button",    // imgui.h:586
@@ -2157,7 +2157,7 @@ void py_init_module_imgui(py::module& m)
         {
             TreePush(ptr_id);
         },
-        py::arg("ptr_id") = None,
+        py::arg("ptr_id") = NULL,
         "\""
     );
 
@@ -2209,7 +2209,7 @@ void py_init_module_imgui(py::module& m)
         {
             return Selectable(label, selected, flags, size);
         },
-        py::arg("label"), py::arg("selected") = False, py::arg("flags") = 0, py::arg("size") = ImVec2(0, 0),
+        py::arg("label"), py::arg("selected") = false, py::arg("flags") = 0, py::arg("size") = ImVec2(0, 0),
         "\"bool selected\" carry the selection state (read-only). Selectable() is clicked is returns true so you can modify your selection state. size.x==0.0: use remaining width, size.x>0.0: specify width. size.y==0.0: use label height, size.y>0.0: specify height"
     );
 
@@ -2286,7 +2286,7 @@ void py_init_module_imgui(py::module& m)
 
             PlotLines_adapt_c_buffers(label, values, values_offset, overlay_text, scale_min, scale_max, graph_size, stride);
         },
-        py::arg("label"), py::arg("values"), py::arg("values_offset") = 0, py::arg("overlay_text") = None, py::arg("scale_min") = sys.float_info.max, py::arg("scale_max") = sys.float_info.max, py::arg("graph_size") = ImVec2(0, 0), py::arg("stride") = -1
+        py::arg("label"), py::arg("values"), py::arg("values_offset") = 0, py::arg("overlay_text") = NULL, py::arg("scale_min") = FLT_MAX, py::arg("scale_max") = FLT_MAX, py::arg("graph_size") = ImVec2(0, 0), py::arg("stride") = -1
     );
 
     m.def("plot_histogram",    // imgui.h:630
@@ -2317,7 +2317,7 @@ void py_init_module_imgui(py::module& m)
 
             PlotHistogram_adapt_c_buffers(label, values, values_offset, overlay_text, scale_min, scale_max, graph_size, stride);
         },
-        py::arg("label"), py::arg("values"), py::arg("values_offset") = 0, py::arg("overlay_text") = None, py::arg("scale_min") = sys.float_info.max, py::arg("scale_max") = sys.float_info.max, py::arg("graph_size") = ImVec2(0, 0), py::arg("stride") = -1
+        py::arg("label"), py::arg("values"), py::arg("values_offset") = 0, py::arg("overlay_text") = NULL, py::arg("scale_min") = FLT_MAX, py::arg("scale_max") = FLT_MAX, py::arg("graph_size") = ImVec2(0, 0), py::arg("stride") = -1
     );
 
     m.def("value",    // imgui.h:635
@@ -2349,7 +2349,7 @@ void py_init_module_imgui(py::module& m)
         {
             Value(prefix, v, float_format);
         },
-        py::arg("prefix"), py::arg("v"), py::arg("float_format") = None
+        py::arg("prefix"), py::arg("v"), py::arg("float_format") = NULL
     );
 
     m.def("begin_menu_bar",    // imgui.h:645
@@ -2389,7 +2389,7 @@ void py_init_module_imgui(py::module& m)
         {
             return BeginMenu(label, enabled);
         },
-        py::arg("label"), py::arg("enabled") = True,
+        py::arg("label"), py::arg("enabled") = true,
         "create a sub-menu entry. only call EndMenu() if this returns true!"
     );
 
@@ -2406,7 +2406,7 @@ void py_init_module_imgui(py::module& m)
         {
             return MenuItem(label, shortcut, selected, enabled);
         },
-        py::arg("label"), py::arg("shortcut") = None, py::arg("selected") = False, py::arg("enabled") = True,
+        py::arg("label"), py::arg("shortcut") = NULL, py::arg("selected") = false, py::arg("enabled") = true,
         "return true when activated."
     );
 
@@ -2415,7 +2415,7 @@ void py_init_module_imgui(py::module& m)
         {
             return MenuItem(label, shortcut, p_selected, enabled);
         },
-        py::arg("label"), py::arg("shortcut"), py::arg("p_selected"), py::arg("enabled") = True,
+        py::arg("label"), py::arg("shortcut"), py::arg("p_selected"), py::arg("enabled") = true,
         "return true when activated + toggle (*p_selected) if p_selected != NULL"
     );
 
@@ -2462,7 +2462,7 @@ void py_init_module_imgui(py::module& m)
         {
             return BeginPopupModal(name, p_open, flags);
         },
-        py::arg("name"), py::arg("p_open") = None, py::arg("flags") = 0,
+        py::arg("name"), py::arg("p_open") = NULL, py::arg("flags") = 0,
         "return true if the modal is open, and you can start outputting to it."
     );
 
@@ -2497,7 +2497,7 @@ void py_init_module_imgui(py::module& m)
         {
             OpenPopupOnItemClick(str_id, popup_flags);
         },
-        py::arg("str_id") = None, py::arg("popup_flags") = 1,
+        py::arg("str_id") = NULL, py::arg("popup_flags") = 1,
         "helper to open popup when clicked on last item. Default to ImGuiPopupFlags_MouseButtonRight == 1. (note: actually triggers on the mouse _released_ event to be consistent with popup behaviors)"
     );
 
@@ -2514,7 +2514,7 @@ void py_init_module_imgui(py::module& m)
         {
             return BeginPopupContextItem(str_id, popup_flags);
         },
-        py::arg("str_id") = None, py::arg("popup_flags") = 1,
+        py::arg("str_id") = NULL, py::arg("popup_flags") = 1,
         "open+begin popup when clicked on last item. Use str_id==NULL to associate the popup to previous item. If you want to use that on a non-interactive item such as Text() you need to pass in an explicit ID here. read comments in .cpp!"
     );
 
@@ -2523,7 +2523,7 @@ void py_init_module_imgui(py::module& m)
         {
             return BeginPopupContextWindow(str_id, popup_flags);
         },
-        py::arg("str_id") = None, py::arg("popup_flags") = 1,
+        py::arg("str_id") = NULL, py::arg("popup_flags") = 1,
         "open+begin popup when clicked on current window."
     );
 
@@ -2532,7 +2532,7 @@ void py_init_module_imgui(py::module& m)
         {
             return BeginPopupContextVoid(str_id, popup_flags);
         },
-        py::arg("str_id") = None, py::arg("popup_flags") = 1,
+        py::arg("str_id") = NULL, py::arg("popup_flags") = 1,
         "open+begin popup when clicked in void (where there are no windows)."
     );
 
@@ -2550,7 +2550,7 @@ void py_init_module_imgui(py::module& m)
         {
             return BeginTable(str_id, column, flags, outer_size, inner_width);
         },
-        py::arg("str_id"), py::arg("column"), py::arg("flags") = 0, py::arg("outer_size") = ImVec2(0.0, 0.0), py::arg("inner_width") = 0.0
+        py::arg("str_id"), py::arg("column"), py::arg("flags") = 0, py::arg("outer_size") = ImVec2(0.0f, 0.0f), py::arg("inner_width") = 0.0f
     );
 
     m.def("end_table",    // imgui.h:729
@@ -2566,7 +2566,7 @@ void py_init_module_imgui(py::module& m)
         {
             TableNextRow(row_flags, min_row_height);
         },
-        py::arg("row_flags") = 0, py::arg("min_row_height") = 0.0,
+        py::arg("row_flags") = 0, py::arg("min_row_height") = 0.0f,
         "append into the first cell of a new row."
     );
 
@@ -2592,7 +2592,7 @@ void py_init_module_imgui(py::module& m)
         {
             TableSetupColumn(label, flags, init_width_or_weight, user_id);
         },
-        py::arg("label"), py::arg("flags") = 0, py::arg("init_width_or_weight") = 0.0, py::arg("user_id") = 0
+        py::arg("label"), py::arg("flags") = 0, py::arg("init_width_or_weight") = 0.0f, py::arg("user_id") = 0
     );
 
     m.def("table_setup_scroll_freeze",    // imgui.h:743
@@ -2694,7 +2694,7 @@ void py_init_module_imgui(py::module& m)
         {
             Columns(count, id, border);
         },
-        py::arg("count") = 1, py::arg("id") = None, py::arg("border") = True
+        py::arg("count") = 1, py::arg("id") = NULL, py::arg("border") = true
     );
 
     m.def("next_column",    // imgui.h:765
@@ -2778,7 +2778,7 @@ void py_init_module_imgui(py::module& m)
         {
             return BeginTabItem(label, p_open, flags);
         },
-        py::arg("label"), py::arg("p_open") = None, py::arg("flags") = 0,
+        py::arg("label"), py::arg("p_open") = NULL, py::arg("flags") = 0,
         "create a Tab. Returns true if the Tab is selected."
     );
 
@@ -2822,7 +2822,7 @@ void py_init_module_imgui(py::module& m)
         {
             LogToFile(auto_open_depth, filename);
         },
-        py::arg("auto_open_depth") = -1, py::arg("filename") = None,
+        py::arg("auto_open_depth") = -1, py::arg("filename") = NULL,
         "start logging to file"
     );
 
@@ -2929,7 +2929,7 @@ void py_init_module_imgui(py::module& m)
         {
             BeginDisabled(disabled);
         },
-        py::arg("disabled") = True
+        py::arg("disabled") = true
     );
 
     m.def("end_disabled",    // imgui.h:809
@@ -3222,7 +3222,7 @@ void py_init_module_imgui(py::module& m)
         {
             return CalcTextSize(text, text_end, hide_text_after_double_hash, wrap_width);
         },
-        py::arg("text"), py::arg("text_end") = None, py::arg("hide_text_after_double_hash") = False, py::arg("wrap_width") = -1.0,
+        py::arg("text"), py::arg("text_end") = NULL, py::arg("hide_text_after_double_hash") = false, py::arg("wrap_width") = -1.0f,
         "Text Utilities"
     );
 
@@ -3264,7 +3264,7 @@ void py_init_module_imgui(py::module& m)
         {
             return IsKeyPressed(key, repeat);
         },
-        py::arg("key"), py::arg("repeat") = True,
+        py::arg("key"), py::arg("repeat") = true,
         "was key pressed (went from !Down to Down)? if repeat=true, uses io.KeyRepeatDelay / KeyRepeatRate"
     );
 
@@ -3318,7 +3318,7 @@ void py_init_module_imgui(py::module& m)
         {
             return IsMouseClicked(button, repeat);
         },
-        py::arg("button"), py::arg("repeat") = False,
+        py::arg("button"), py::arg("repeat") = false,
         "did mouse button clicked? (went from !Down to Down). Same as GetMouseClickedCount() == 1."
     );
 
@@ -3354,7 +3354,7 @@ void py_init_module_imgui(py::module& m)
         {
             return IsMouseHoveringRect(r_min, r_max, clip);
         },
-        py::arg("r_min"), py::arg("r_max"), py::arg("clip") = True,
+        py::arg("r_min"), py::arg("r_max"), py::arg("clip") = true,
         "is mouse hovering given bounding rect (in screen space). clipped by current clipping settings, but disregarding of other consideration of focus/window ordering/popup-block."
     );
 
@@ -3363,7 +3363,7 @@ void py_init_module_imgui(py::module& m)
         {
             return IsMousePosValid(mouse_pos);
         },
-        py::arg("mouse_pos") = None,
+        py::arg("mouse_pos") = NULL,
         "by convention we use (-FLT_MAX,-FLT_MAX) to denote that there is no mouse available"
     );
 
@@ -3396,7 +3396,7 @@ void py_init_module_imgui(py::module& m)
         {
             return IsMouseDragging(button, lock_threshold);
         },
-        py::arg("button"), py::arg("lock_threshold") = -1.0,
+        py::arg("button"), py::arg("lock_threshold") = -1.0f,
         "is mouse dragging? (if lock_threshold < -1.0f, uses io.MouseDraggingThreshold)"
     );
 
@@ -3405,7 +3405,7 @@ void py_init_module_imgui(py::module& m)
         {
             return GetMouseDragDelta(button, lock_threshold);
         },
-        py::arg("button") = 0, py::arg("lock_threshold") = -1.0,
+        py::arg("button") = 0, py::arg("lock_threshold") = -1.0f,
         "return the delta from the initial clicking position while the mouse button is pressed or was just released. This is locked and return 0.0f until the mouse moves past a distance threshold at least once (if lock_threshold < -1.0f, uses io.MouseDraggingThreshold)"
     );
 
@@ -3490,7 +3490,7 @@ void py_init_module_imgui(py::module& m)
         {
             return SaveIniSettingsToMemory(out_ini_size);
         },
-        py::arg("out_ini_size") = None,
+        py::arg("out_ini_size") = NULL,
         "return a zero-terminated string with the .ini data which you can save by your own mean. call when io.WantSaveIniSettings is set, then save data by your own mean and clear io.WantSaveIniSettings."
     );
 
@@ -4512,7 +4512,7 @@ void py_init_module_imgui(py::module& m)
             {
                 self.InsertChars(pos, text, text_end);
             },
-            py::arg("pos"), py::arg("text"), py::arg("text_end") = None
+            py::arg("pos"), py::arg("text"), py::arg("text_end") = NULL
         )
         ;
 
@@ -4575,7 +4575,7 @@ void py_init_module_imgui(py::module& m)
             {
                 return self.Draw(label, width);
             },
-            py::arg("label") = "Filter (inc,-exc)", py::arg("width") = 0.0,
+            py::arg("label") = "Filter (inc,-exc)", py::arg("width") = 0.0f,
             "Helper calling InputText+Build"
         )
         .def("pass_filter",    // imgui.h:2185
@@ -4583,7 +4583,7 @@ void py_init_module_imgui(py::module& m)
             {
                 return self.PassFilter(text, text_end);
             },
-            py::arg("text"), py::arg("text_end") = None
+            py::arg("text"), py::arg("text_end") = NULL
         )
         .def("build",    // imgui.h:2186
             [](ImGuiTextFilter & self)
@@ -4605,7 +4605,7 @@ void py_init_module_imgui(py::module& m)
             {
                 self.append(str, str_end);
             },
-            py::arg("str"), py::arg("str_end") = None
+            py::arg("str"), py::arg("str_end") = NULL
         )
         .def("appendf",    // imgui.h:2223
             [](ImGuiTextBuffer & self, const char * fmt)
@@ -4652,7 +4652,7 @@ void py_init_module_imgui(py::module& m)
             {
                 return self.GetBool(key, default_val);
             },
-            py::arg("key"), py::arg("default_val") = False
+            py::arg("key"), py::arg("default_val") = false
         )
         .def("set_bool",    // imgui.h:2256
             [](ImGuiStorage & self, ImGuiID key, bool val)
@@ -4666,7 +4666,7 @@ void py_init_module_imgui(py::module& m)
             {
                 return self.GetFloat(key, default_val);
             },
-            py::arg("key"), py::arg("default_val") = 0.0
+            py::arg("key"), py::arg("default_val") = 0.0f
         )
         .def("set_float",    // imgui.h:2258
             [](ImGuiStorage & self, ImGuiID key, float val)
@@ -4702,21 +4702,21 @@ void py_init_module_imgui(py::module& m)
             {
                 return self.GetBoolRef(key, default_val);
             },
-            py::arg("key"), py::arg("default_val") = False
+            py::arg("key"), py::arg("default_val") = false
         )
         .def("get_float_ref",    // imgui.h:2268
             [](ImGuiStorage & self, ImGuiID key, float default_val = 0.0f)
             {
                 return self.GetFloatRef(key, default_val);
             },
-            py::arg("key"), py::arg("default_val") = 0.0
+            py::arg("key"), py::arg("default_val") = 0.0f
         )
         .def("get_void_ptr_ref",    // imgui.h:2269
             [](ImGuiStorage & self, ImGuiID key, void * default_val = NULL)
             {
                 return self.GetVoidPtrRef(key, default_val);
             },
-            py::arg("key"), py::arg("default_val") = None
+            py::arg("key"), py::arg("default_val") = NULL
         )
         .def("set_all_int",    // imgui.h:2272
             [](ImGuiStorage & self, int val)
@@ -4751,7 +4751,7 @@ void py_init_module_imgui(py::module& m)
             {
                 self.Begin(items_count, items_height);
             },
-            py::arg("items_count"), py::arg("items_height") = -1.0
+            py::arg("items_count"), py::arg("items_height") = -1.0f
         )
         .def("end",    // imgui.h:2312
             [](ImGuiListClipper & self)
@@ -4786,7 +4786,7 @@ void py_init_module_imgui(py::module& m)
             py::arg("r"),
             py::arg("g"),
             py::arg("b"),
-            py::arg("a") = 1.0)
+            py::arg("a") = 1.0f)
         .def(py::init<const ImVec4 &>(),    // imgui.h:2355
             py::arg("col"))
         .def(py::init<int, int, int, int>(),    // imgui.h:2356
@@ -4915,7 +4915,7 @@ void py_init_module_imgui(py::module& m)
             {
                 self.PushClipRect(clip_rect_min, clip_rect_max, intersect_with_current_clip_rect);
             },
-            py::arg("clip_rect_min"), py::arg("clip_rect_max"), py::arg("intersect_with_current_clip_rect") = False,
+            py::arg("clip_rect_min"), py::arg("clip_rect_max"), py::arg("intersect_with_current_clip_rect") = false,
             "Render-level scissoring. This is passed down to your render function but not used for CPU-side coarse clipping. Prefer using higher-level ImGui::PushClipRect() to affect logic (hit-testing and widget culling)"
         )
         .def("push_clip_rect_full_screen",    // imgui.h:2529
@@ -4948,14 +4948,14 @@ void py_init_module_imgui(py::module& m)
             {
                 self.AddLine(p1, p2, col, thickness);
             },
-            py::arg("p1"), py::arg("p2"), py::arg("col"), py::arg("thickness") = 1.0
+            py::arg("p1"), py::arg("p2"), py::arg("col"), py::arg("thickness") = 1.0f
         )
         .def("add_rect",    // imgui.h:2544
             [](ImDrawList & self, const ImVec2 & p_min, const ImVec2 & p_max, ImU32 col, float rounding = 0.0f, ImDrawFlags flags = 0, float thickness = 1.0f)
             {
                 self.AddRect(p_min, p_max, col, rounding, flags, thickness);
             },
-            py::arg("p_min"), py::arg("p_max"), py::arg("col"), py::arg("rounding") = 0.0, py::arg("flags") = 0, py::arg("thickness") = 1.0,
+            py::arg("p_min"), py::arg("p_max"), py::arg("col"), py::arg("rounding") = 0.0f, py::arg("flags") = 0, py::arg("thickness") = 1.0f,
             "a: upper-left, b: lower-right (== upper-left + size)"
         )
         .def("add_rect_filled",    // imgui.h:2545
@@ -4963,7 +4963,7 @@ void py_init_module_imgui(py::module& m)
             {
                 self.AddRectFilled(p_min, p_max, col, rounding, flags);
             },
-            py::arg("p_min"), py::arg("p_max"), py::arg("col"), py::arg("rounding") = 0.0, py::arg("flags") = 0,
+            py::arg("p_min"), py::arg("p_max"), py::arg("col"), py::arg("rounding") = 0.0f, py::arg("flags") = 0,
             "a: upper-left, b: lower-right (== upper-left + size)"
         )
         .def("add_rect_filled_multi_color",    // imgui.h:2546
@@ -4978,7 +4978,7 @@ void py_init_module_imgui(py::module& m)
             {
                 self.AddQuad(p1, p2, p3, p4, col, thickness);
             },
-            py::arg("p1"), py::arg("p2"), py::arg("p3"), py::arg("p4"), py::arg("col"), py::arg("thickness") = 1.0
+            py::arg("p1"), py::arg("p2"), py::arg("p3"), py::arg("p4"), py::arg("col"), py::arg("thickness") = 1.0f
         )
         .def("add_quad_filled",    // imgui.h:2548
             [](ImDrawList & self, const ImVec2 & p1, const ImVec2 & p2, const ImVec2 & p3, const ImVec2 & p4, ImU32 col)
@@ -4992,7 +4992,7 @@ void py_init_module_imgui(py::module& m)
             {
                 self.AddTriangle(p1, p2, p3, col, thickness);
             },
-            py::arg("p1"), py::arg("p2"), py::arg("p3"), py::arg("col"), py::arg("thickness") = 1.0
+            py::arg("p1"), py::arg("p2"), py::arg("p3"), py::arg("col"), py::arg("thickness") = 1.0f
         )
         .def("add_triangle_filled",    // imgui.h:2550
             [](ImDrawList & self, const ImVec2 & p1, const ImVec2 & p2, const ImVec2 & p3, ImU32 col)
@@ -5006,7 +5006,7 @@ void py_init_module_imgui(py::module& m)
             {
                 self.AddCircle(center, radius, col, num_segments, thickness);
             },
-            py::arg("center"), py::arg("radius"), py::arg("col"), py::arg("num_segments") = 0, py::arg("thickness") = 1.0
+            py::arg("center"), py::arg("radius"), py::arg("col"), py::arg("num_segments") = 0, py::arg("thickness") = 1.0f
         )
         .def("add_circle_filled",    // imgui.h:2552
             [](ImDrawList & self, const ImVec2 & center, float radius, ImU32 col, int num_segments = 0)
@@ -5020,7 +5020,7 @@ void py_init_module_imgui(py::module& m)
             {
                 self.AddNgon(center, radius, col, num_segments, thickness);
             },
-            py::arg("center"), py::arg("radius"), py::arg("col"), py::arg("num_segments"), py::arg("thickness") = 1.0
+            py::arg("center"), py::arg("radius"), py::arg("col"), py::arg("num_segments"), py::arg("thickness") = 1.0f
         )
         .def("add_ngon_filled",    // imgui.h:2554
             [](ImDrawList & self, const ImVec2 & center, float radius, ImU32 col, int num_segments)
@@ -5034,14 +5034,14 @@ void py_init_module_imgui(py::module& m)
             {
                 self.AddText(pos, col, text_begin, text_end);
             },
-            py::arg("pos"), py::arg("col"), py::arg("text_begin"), py::arg("text_end") = None
+            py::arg("pos"), py::arg("col"), py::arg("text_begin"), py::arg("text_end") = NULL
         )
         .def("add_text",    // imgui.h:2556
             [](ImDrawList & self, const ImFont * font, float font_size, const ImVec2 & pos, ImU32 col, const char * text_begin, const char * text_end = NULL, float wrap_width = 0.0f, const ImVec4 * cpu_fine_clip_rect = NULL)
             {
                 self.AddText(font, font_size, pos, col, text_begin, text_end, wrap_width, cpu_fine_clip_rect);
             },
-            py::arg("font"), py::arg("font_size"), py::arg("pos"), py::arg("col"), py::arg("text_begin"), py::arg("text_end") = None, py::arg("wrap_width") = 0.0, py::arg("cpu_fine_clip_rect") = None
+            py::arg("font"), py::arg("font_size"), py::arg("pos"), py::arg("col"), py::arg("text_begin"), py::arg("text_end") = NULL, py::arg("wrap_width") = 0.0f, py::arg("cpu_fine_clip_rect") = NULL
         )
         .def("add_polyline",    // imgui.h:2557
             [](ImDrawList & self, const ImVec2 * points, int num_points, ImU32 col, ImDrawFlags flags, float thickness)
@@ -5130,7 +5130,7 @@ void py_init_module_imgui(py::module& m)
             {
                 self.PathRect(rect_min, rect_max, rounding, flags);
             },
-            py::arg("rect_min"), py::arg("rect_max"), py::arg("rounding") = 0.0, py::arg("flags") = 0
+            py::arg("rect_min"), py::arg("rect_max"), py::arg("rounding") = 0.0f, py::arg("flags") = 0
         )
         .def("add_callback",    // imgui.h:2584
             [](ImDrawList & self, ImDrawCallback callback, void * callback_data)
@@ -5319,7 +5319,7 @@ void py_init_module_imgui(py::module& m)
             {
                 self.AddText(text, text_end);
             },
-            py::arg("text"), py::arg("text_end") = None,
+            py::arg("text"), py::arg("text_end") = NULL,
             "Add string (each character of the UTF-8 string are added)"
         )
         .def("add_ranges",    // imgui.h:2704
@@ -5377,21 +5377,21 @@ void py_init_module_imgui(py::module& m)
             {
                 return self.AddFontDefault(font_cfg);
             },
-            py::arg("font_cfg") = None
+            py::arg("font_cfg") = NULL
         )
         .def("add_font_from_file_ttf",    // imgui.h:2753
             [](ImFontAtlas & self, const char * filename, float size_pixels, const ImFontConfig * font_cfg = NULL, const ImWchar * glyph_ranges = NULL)
             {
                 return self.AddFontFromFileTTF(filename, size_pixels, font_cfg, glyph_ranges);
             },
-            py::arg("filename"), py::arg("size_pixels"), py::arg("font_cfg") = None, py::arg("glyph_ranges") = None
+            py::arg("filename"), py::arg("size_pixels"), py::arg("font_cfg") = NULL, py::arg("glyph_ranges") = NULL
         )
         .def("add_font_from_memory_ttf",    // imgui.h:2754
             [](ImFontAtlas & self, void * font_data, int font_size, float size_pixels, const ImFontConfig * font_cfg = NULL, const ImWchar * glyph_ranges = NULL)
             {
                 return self.AddFontFromMemoryTTF(font_data, font_size, size_pixels, font_cfg, glyph_ranges);
             },
-            py::arg("font_data"), py::arg("font_size"), py::arg("size_pixels"), py::arg("font_cfg") = None, py::arg("glyph_ranges") = None,
+            py::arg("font_data"), py::arg("font_size"), py::arg("size_pixels"), py::arg("font_cfg") = NULL, py::arg("glyph_ranges") = NULL,
             "Note: Transfer ownership of 'ttf_data' to ImFontAtlas! Will be deleted after destruction of the atlas. Set font_cfg->FontDataOwnedByAtlas=false to keep ownership of your data and it won't be freed."
         )
         .def("add_font_from_memory_compressed_ttf",    // imgui.h:2755
@@ -5399,7 +5399,7 @@ void py_init_module_imgui(py::module& m)
             {
                 return self.AddFontFromMemoryCompressedTTF(compressed_font_data, compressed_font_size, size_pixels, font_cfg, glyph_ranges);
             },
-            py::arg("compressed_font_data"), py::arg("compressed_font_size"), py::arg("size_pixels"), py::arg("font_cfg") = None, py::arg("glyph_ranges") = None,
+            py::arg("compressed_font_data"), py::arg("compressed_font_size"), py::arg("size_pixels"), py::arg("font_cfg") = NULL, py::arg("glyph_ranges") = NULL,
             "'compressed_font_data' still owned by caller. Compress with binary_to_compressed_c.cpp."
         )
         .def("add_font_from_memory_compressed_base85_ttf",    // imgui.h:2756
@@ -5407,7 +5407,7 @@ void py_init_module_imgui(py::module& m)
             {
                 return self.AddFontFromMemoryCompressedBase85TTF(compressed_font_data_base85, size_pixels, font_cfg, glyph_ranges);
             },
-            py::arg("compressed_font_data_base85"), py::arg("size_pixels"), py::arg("font_cfg") = None, py::arg("glyph_ranges") = None,
+            py::arg("compressed_font_data_base85"), py::arg("size_pixels"), py::arg("font_cfg") = NULL, py::arg("glyph_ranges") = NULL,
             "'compressed_font_data_base85' still owned by caller. Compress with binary_to_compressed_c.cpp with -base85 parameter."
         )
         .def("clear_input_data",    // imgui.h:2757
@@ -5619,7 +5619,7 @@ void py_init_module_imgui(py::module& m)
             {
                 self.RenderText(draw_list, size, pos, col, clip_rect, text_begin, text_end, wrap_width, cpu_fine_clip);
             },
-            py::arg("draw_list"), py::arg("size"), py::arg("pos"), py::arg("col"), py::arg("clip_rect"), py::arg("text_begin"), py::arg("text_end"), py::arg("wrap_width") = 0.0, py::arg("cpu_fine_clip") = False
+            py::arg("draw_list"), py::arg("size"), py::arg("pos"), py::arg("col"), py::arg("clip_rect"), py::arg("text_begin"), py::arg("text_end"), py::arg("wrap_width") = 0.0f, py::arg("cpu_fine_clip") = false
         )
         .def("build_lookup_table",    // imgui.h:2890
             [](ImFont & self)
@@ -5652,7 +5652,7 @@ void py_init_module_imgui(py::module& m)
             {
                 self.AddRemapChar(dst, src, overwrite_dst);
             },
-            py::arg("dst"), py::arg("src"), py::arg("overwrite_dst") = True,
+            py::arg("dst"), py::arg("src"), py::arg("overwrite_dst") = true,
             "Makes 'dst' character/glyph points to 'src' character/glyph. Currently needs to be called AFTER fonts have been built."
         )
         .def("set_glyph_visible",    // imgui.h:2895

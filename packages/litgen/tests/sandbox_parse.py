@@ -75,13 +75,7 @@ options.original_location_flag_show = True
 
 
 code = """
-struct BoxedUnsignedLongLong
-{
-    unsigned long long value;
-    BoxedUnsignedLongLong() : value{} {}
-    BoxedUnsignedLongLong(unsigned long long v) : value(v) {}
-    std::string __repr__() { return std::string("BoxedUnsignedLongLong(") + std::to_string(value) + ")"; }
-};
+    MY_API ImGuiContext* CreateContext(ImFontAtlas* shared_font_atlas = NULL);
 """
 
 play_pydef(code, options)
