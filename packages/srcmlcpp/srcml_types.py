@@ -479,7 +479,10 @@ class CppDecl(CppElementAndComment):
         super().__init__(element, cpp_element_comments)
 
     def str_code(self):
-        r = srcml_utils.str_or_empty(self.cpp_type) + " " + str(self.decl_name)
+        r = ""
+        if hasattr(self, "cpp_type"):
+            r += str(self.cpp_type) + " "
+        r += str(self.decl_name)
         if len(self.initial_value_code) > 0:
             r += " = " + self.initial_value_code
         return r
@@ -513,7 +516,7 @@ class CppDecl(CppElementAndComment):
 
         nb_indirections = 0
         nb_indirections += self.cpp_type.modifiers.count("*")
-        if ("[]" in self.decl_name) or ("[ ]" in self.decl_name):
+        if len(self.c_array_code) > 0:
             nb_indirections += 1
 
         r = is_const and is_char and nb_indirections == 2 and is_default_init
@@ -666,11 +669,11 @@ class CppParameter(CppElement):
         super().__init__(element)
 
     def str_code(self):
-        if self.decl is not None:
-            assert self.template_type is None
+        if hasattr(self, "decl"):
+            assert not hasattr(self, "template_type")
             return str(self.decl)
         else:
-            if self.template_type is None:
+            if not hasattr(self, "template_type"):
                 logging.warning("CppParameter.__str__() with no decl and no template_type")
             return str(self.template_type) + " " + self.template_name
 

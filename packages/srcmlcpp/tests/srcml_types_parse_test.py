@@ -289,44 +289,44 @@ def test_parse_unit():
     cpp_element_str = code_to_unit(code)
 
     expected_code = """
-    <unprocessed_define/>
-
-    namespace MyApi
-    {
-
-        // Foo class
-        class FooStruct
+        <unprocessed_define/>
+        
+        namespace MyApi
         {
-            private:// <default_access_type/>
-                int mA;
-                int mB;
-            public:
-                // Constructor with a and b
-                FooStruct(int a, int b)<unprocessed_block/>
-
-                int add(int x)<unprocessed_block/> // an addition
-        };
-
-        enum FooEnum
+        
+            // Foo class
+            class FooStruct
+            {
+                private:// <default_access_type/>
+                    int mA;
+                    int mB;
+                public:
+                    // Constructor with a and b
+                    FooStruct(int a, int b)<unprocessed_block/>
+        
+                    int add(int x)<unprocessed_block/> // an addition
+            };
+        
+            enum FooEnum
+            {
+                FooEnum_A = 1, // A Value
+                FooEnum_B,
+                FooEnum_C,
+                FooEnum_Count // Count nb of elements
+            };
+        
+            enum class FooEnum2
+            {
+                A = 1,
+                B,
+                C,
+                Count
+            };
+        } // namespace MyApi
+        namespace MyApi2
         {
-             FooEnum_A = 1, // A Value
-             FooEnum_B,
-             FooEnum_C,
-             FooEnum_Count // Count nb of elements
-        };
-
-        enum class FooEnum2
-        {
-             A = 1,
-             B,
-             C,
-             Count
-        };
-    } // namespace MyApi
-    namespace MyApi2
-    {
-        void Foo2();
-    }
+            void Foo2();
+        }
     """
 
     code_utils.assert_are_codes_equal(cpp_element_str, expected_code)

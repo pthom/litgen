@@ -50,7 +50,7 @@ def _generate_pydef_enum(enum: CppEnum, options: CodeStyleOptions) -> str:
     def make_value_code(enum_decl: CppDecl):
         code = f'{_i_}.value("VALUE_NAME_PYTHON", VALUE_NAME_CPP, "VALUE_COMMENT")\n'
 
-        value_name_cpp = enum_decl.decl_name_code
+        value_name_cpp = enum_decl.decl_name
         value_name_python = cpp_to_python.enum_value_name_to_python(enum, enum_decl, options)
 
         if enum_type == "class":
@@ -108,7 +108,7 @@ def pyarg_code(function_infos: Union[CppFunctionDecl, CppConstructorDecl], optio
             maybe_defaultvalue_python = ""
             maybe_equal = ""
 
-        argname_python = cpp_to_python.var_name_to_python(param.decl.name_without_array(), options)
+        argname_python = cpp_to_python.var_name_to_python(param.decl.decl_name, options)
 
         param_line = code_utils.replace_in_string(
             param_template,
@@ -379,7 +379,7 @@ def _generate_pydef_method(function_infos: CppFunctionDecl, options: CodeStyleOp
 
 def _add_struct_member_decl(cpp_decl: CppDecl, struct_name: str, options: CodeStyleOptions) -> str:
     _i_ = options.indent_cpp_spaces()
-    name_cpp = cpp_decl.name_without_array()
+    name_cpp = cpp_decl.decl_name
     name_python = cpp_to_python.var_name_to_python(name_cpp, options)
     comment = cpp_decl.cpp_element_comments.full_comment()
     location = info_original_location_cpp(cpp_decl, options)

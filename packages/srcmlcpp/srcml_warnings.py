@@ -32,7 +32,7 @@ class ErrorContext:
             msg += line + "\n"
             if self.start is not None:
                 if i == self.start.line:
-                    nb_spaces = self.start.col - 1
+                    nb_spaces = self.start.column - 1
                     if nb_spaces < 0:
                         nb_spaces = 0
                     msg += " " * nb_spaces + "^" + "\n"
