@@ -178,7 +178,7 @@ def parse_decl_stmt(options: SrcmlOptions, element_c: CppElementAndComment) -> C
         child_c = copy.deepcopy(element_c)
         child_c.srcml_element = child
         if child_c.tag() == "decl":
-            child_name = child_c.name()
+            child_name = child_c.name_code()
             assert child_name is not None
             if code_utils.does_match_regexes(options.decl_name_exclude_regexes, child_name):
                 continue
@@ -567,13 +567,13 @@ def fill_block(options: SrcmlOptions, element: ET.Element, inout_block_content: 
 
     last_ignored_child: Optional[CppElementAndComment] = None
 
-    children = srcml_main.get_children_with_comments(options, element)
+    children: List[CppElementAndComment] = srcml_main.get_children_with_comments(options, element)
     for i, child_c in enumerate(children):
         if not _shall_publish(child_c, options):
             continue
 
         child_tag = child_c.tag()
-        child_name = child_c.name()
+        child_name = child_c.name_code()
 
         try:
             if child_tag == "decl_stmt":

@@ -41,6 +41,13 @@ def run_length_encode(in_list: List[T]) -> List[Tuple[T, int]]:
     return out_list
 
 
+def str_or_none_token(s: Optional[str]) -> str:
+    if s is None:
+        return "__NONE__"
+    else:
+        return s
+
+
 def strip_empty_lines_in_list(code_lines: List[str]) -> List[str]:
     code_lines = list(itertools.dropwhile(lambda s: len(s.strip()) == 0, code_lines))
     code_lines = list(reversed(code_lines))

@@ -125,7 +125,27 @@ class CppElement:
         name_children = srcml_utils.children_with_tag(self.srcml_element, "name")
         return len(name_children) == 1
 
-    def name(self) -> Optional[str]:
+    def name_code(self) -> Optional[str]:
+        """Returns the C++ code corresponding to the name extracted from the srcML xml tree.
+
+        * In simple cases, it will be a simple text extraction, for example with the code:
+            int a = 10;
+          The decl name node will look like
+            <name>a</name>
+
+        * Sometimes, we will need to call srcml to reconstruct the code.
+          For example, with the code:
+            int* a[10];
+          The decl name node will look like
+               <name>
+                    <name>a</name>
+                    <index>[
+                        <expr>
+                            <literal type="number">10</literal>
+                        </expr>]
+                    </index>
+                </name>
+        """
         if not self.has_name():
             return None
         name_element = srcml_utils.child_with_tag(self.srcml_element, "name")
@@ -134,12 +154,6 @@ class CppElement:
             return name_element.text
         else:
             return srcml_caller.srcml_to_code(name_element)
-
-    def name_or_empty(self):
-        if not self.has_name():
-            return ""
-        else:
-            return self.name()
 
     def attribute_value(self, attr_name):
         if attr_name in self.srcml_element.attrib:
@@ -175,7 +189,7 @@ class CppElement:
     def as_dict(self):
         as_dict = {
             "tag": self.tag(),
-            "name": self.name_or_empty(),
+            "name": code_utils.str_or_none_token(self.name_code()),
             "text": self.text_or_empty(),
             "start": str(self.start()),
             "end": str(self.end()),
@@ -1048,11 +1062,12 @@ class CppNamespace(CppElementAndComment):
     https://www.srcmlcpp.org/doc/cpp_srcML.html#namespace
     """
 
-    name: str = ""
-    block: CppBlock = None
+    name: str
+    block: CppBlock
 
     def __init__(self, element: ET.Element, cpp_element_comments: CppElementComments):
         super().__init__(element, cpp_element_comments)
+        self.name = ""
 
     def str_code(self):
         r = f"namespace {self.name}\n"
@@ -1072,9 +1087,9 @@ class CppEnum(CppElementAndComment):
     https://www.srcmlcpp.org/doc/cpp_srcML.html#enum-class
     """
 
+    block: CppBlock
     type: str = ""  # "class" or ""
     name: str = ""
-    block: CppBlock = None
 
     def __init__(self, element: ET.Element, cpp_element_comments: CppElementComments):
         super().__init__(element, cpp_element_comments)
