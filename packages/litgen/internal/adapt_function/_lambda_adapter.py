@@ -1,7 +1,7 @@
 from typing import List, Optional
 
-from litgen import LitgenOptions
 from litgen.internal.adapt_function.adapted_function import AdaptedFunction
+from litgen.options import LitgenOptions
 from srcmlcpp.srcml_types import CppFunctionDecl
 
 

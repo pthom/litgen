@@ -3,7 +3,7 @@ import pathlib
 from dataclasses import dataclass  # noqa
 
 from codemanip import code_replacements, code_utils
-from litgen import LitgenOptions
+from litgen.options import LitgenOptions
 from srcmlcpp import srcml_main
 from srcmlcpp.srcml_types import *
 

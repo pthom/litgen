@@ -6,3 +6,9 @@ pip install -r requirements.txt
 pip install -r requirements-dev.txt
 pre-commit install
 ````
+
+Regularly run [importanize](https://github.com/miki725/importanize), to reorder the imports:
+````
+cd packages
+importanize
+````

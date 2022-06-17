@@ -7,3 +7,4 @@ black
 mypy
 pre-commit
 jupyter-black
+importanize

@@ -6,12 +6,12 @@ from typing import Union
 
 import srcmlcpp
 from codemanip import code_replacements, code_utils
-from litgen import LitgenOptions
 from litgen.internal import cpp_to_python
 from litgen.internal.adapt_function import (
     AdaptedFunction,
     make_adapted_function,
 )
+from litgen.options import LitgenOptions
 from srcmlcpp import srcml_main, srcml_warnings
 from srcmlcpp.srcml_types import *
 
