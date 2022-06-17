@@ -5,6 +5,10 @@ repos:
         -   id: check-yaml
         -   id: end-of-file-fixer
         -   id: trailing-whitespace
+        -   id: check-json
+        -   id: check-symlinks
+        -   id: check-xml
+        -   id: fix-byte-order-marker
 
   - repo: local
     hooks:
