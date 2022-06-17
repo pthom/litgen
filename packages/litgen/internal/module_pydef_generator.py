@@ -15,7 +15,7 @@ from codemanip import code_replacements, code_utils
 from litgen import CodeStyleOptions
 from litgen.internal import cpp_to_python
 from litgen.internal.cpp_to_python import info_original_location_cpp
-from litgen.internal.function_adapt import AdaptedFunction, make_function_params_adapter
+from litgen.internal.function_adapt import AdaptedFunction, make_adapted_function
 
 
 class _LineSpacer:
@@ -164,7 +164,7 @@ def _generate_function(
     options: CodeStyleOptions,
     parent_struct_name: str = "",
 ) -> str:
-    adapted_function = make_function_params_adapter(function_infos, options, parent_struct_name)
+    adapted_function = make_adapted_function(function_infos, options, parent_struct_name)
 
     r = ""
     r += _generate_function_impl(adapted_function, options, parent_struct_name)

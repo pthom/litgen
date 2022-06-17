@@ -10,8 +10,8 @@ sys.path.append(_THIS_DIR + "/../..")
 from codemanip import code_utils
 from litgen.options import CodeStyleOptions, code_style_implot
 import litgen
-from litgen.internal.function_adapt import make_function_params_adapter
-from litgen.internal.function_adapt import function_adapt_c_arrays
+from litgen.internal.function_adapt import make_adapted_function
+from litgen.internal.function_adapt import adapt_c_arrays
 from litgen.internal import module_pydef_generator, cpp_to_python
 import srcmlcpp
 from srcmlcpp.srcml_types import *
@@ -32,7 +32,7 @@ def test_make_function_params_adapter():
     def make_adapted_function(code):
         function_decl = get_first_function_decl(code)
         struct_name = ""
-        adapted_function = make_function_params_adapter(function_decl, OPTIONS, struct_name)
+        adapted_function = make_adapted_function(function_decl, OPTIONS, struct_name)
         return adapted_function
 
     # Easy test with const

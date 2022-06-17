@@ -3,22 +3,20 @@ from litgen.internal.function_adapt import (
     AdaptedFunction,
     LambdaAdapter,
 )
-
 from codemanip import code_utils
-
 from srcmlcpp.srcml_types import CppFunctionDecl
 
 
-def make_function_params_adapter(
+def make_adapted_function(
     function_infos: CppFunctionDecl,
     options: CodeStyleOptions,
     parent_struct_name: str = "",
 ) -> AdaptedFunction:
 
-    from litgen.internal.function_adapt.function_adapt_c_arrays import adapt_c_arrays
-    from litgen.internal.function_adapt.function_adapt_c_string_list import adapt_c_string_list
-    from litgen.internal.function_adapt.function_adapt_c_buffers import adapt_c_buffers
-    from litgen.internal.function_adapt.function_adapt_variadic_format import adapt_variadic_format
+    from litgen.internal.function_adapt.adapt_c_arrays import adapt_c_arrays
+    from litgen.internal.function_adapt.adapt_c_string_list import adapt_c_string_list
+    from litgen.internal.function_adapt.adapt_c_buffers import adapt_c_buffers
+    from litgen.internal.function_adapt.adapt_variadic_format import adapt_variadic_format
 
     all_adapters_functions = [
         adapt_c_buffers,

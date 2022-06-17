@@ -16,7 +16,7 @@ from srcmlcpp import srcml_warnings
 from litgen import CodeStyleOptions
 from litgen.internal import cpp_to_python
 from litgen.internal.function_adapt import AdaptedFunction
-from litgen.internal.function_adapt import make_function_params_adapter
+from litgen.internal.function_adapt import make_adapted_function
 
 
 #################################
@@ -187,7 +187,7 @@ def _generate_pyi_function(
     options: CodeStyleOptions,
     parent_struct_name: str = "",
 ) -> str:
-    adapted_function = make_function_params_adapter(function_infos, options, parent_struct_name)
+    adapted_function = make_adapted_function(function_infos, options, parent_struct_name)
 
     r = _generate_pyi_function_impl(adapted_function, options, parent_struct_name)
     return r
