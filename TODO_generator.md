@@ -28,13 +28,7 @@ PimpMyClass !
     auto pImpl from cpp: pImpl class  => header decl + cpp imp non pImpl + Doc !
 
 
-
-duplicate code_utils / add copy script
-
-imgui
-    CI compile
-    pyi
-    widgets avec int*, float*, bool* : Boxer
+widgets avec int*, float*, bool* : Boxer
 
 implot SetupAxisTicks uses a string list, parameters order reversed!
 

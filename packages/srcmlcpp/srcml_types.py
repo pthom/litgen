@@ -1,6 +1,20 @@
 """
 Types that will represent the AST parsed by srcML in an actionnable way under python.
 
+* `CppElement` is a wrapper around a srcLML xml node (it contains an exact copy of the original code)
+* `CppElementAndComment` is a documented C++ element (with its comments on previous lines and at the end of line)
+
+All elements are stored.
+
+All declarations are stored in a corresponding object:
+    * function -> CppFunction
+     * struct -> CppStruct
+    * enums -> CppEnum
+    * etc.
+
+Implementations (expressions, function calls, etc) are stored as CppUnprocessed. It is still possible to retriveve their
+original code.
+
 See doc/srcml_cpp_doc.png
 """
 
@@ -101,6 +115,9 @@ class CppElementComments:
 class CppElement:
     """Wrapper around a srcLML xml node."""
 
+    # srcml_element is an XML node obtained from srcML.
+    # It contains the code location, and can be used to restore the exact code from which it was constructed.
+    # Its tag describe the type of element (decl, function, namespace, etc)
     srcml_element: ET.Element
 
     def __init__(self, srcml_element: ET.Element):
@@ -481,9 +498,15 @@ class CppDecl(CppElementAndComment):
     #     int a = 5;
     #
     #     leads to:
-    #     <decl_stmt><decl><type><name>int</name></type> <name>a</name> <init>= <expr><literal type="number">5</literal></expr></init></decl>;</decl_stmt>
+    #         <decl_stmt>
+    #             <decl>
+    #                 <type> <name>int</name> </type>
+    #                 <name>a</name>
+    #                 <init>= <expr> <literal type="number">5</literal> </expr> </init>
+    #             </decl>;
+    #         </decl_stmt>
     #
-    #     Which is transcribed as "5"
+    # And `<init>= <expr> <literal type="number">5</literal> </expr> </init>` is transcribed as "5"
     initial_value_code: str = ""  # initial or default value
 
     bitfield_range: str = ""  # Will be filled for bitfield members
