@@ -2,7 +2,7 @@ from typing import Optional, List
 import copy
 
 from codemanip import code_utils
-from litgen.generate_code import CodeStyleOptions
+from litgen.generate_code import LitgenOptions
 from litgen.internal import cpp_to_python
 from litgen.internal.function_adapt import (
     AdaptedFunction,
@@ -13,17 +13,17 @@ from srcmlcpp.srcml_types import CppFunctionDecl, CppParameter
 from srcmlcpp import srcml_warnings
 
 
-def _possible_buffer_pointer_types(options: CodeStyleOptions):
+def _possible_buffer_pointer_types(options: LitgenOptions):
     types = [t + "*" for t in options.buffer_types] + [t + " *" for t in options.buffer_types]
     return types
 
 
-def _possible_buffer_template_pointer_types(options: CodeStyleOptions):
+def _possible_buffer_template_pointer_types(options: LitgenOptions):
     types = [t + "*" for t in options.buffer_template_types] + [t + " *" for t in options.buffer_template_types]
     return types
 
 
-def _looks_like_param_buffer_standard(param: CppParameter, options: CodeStyleOptions) -> bool:
+def _looks_like_param_buffer_standard(param: CppParameter, options: LitgenOptions) -> bool:
     if not options.buffer_flag_replace_by_array:
         return False
     for possible_buffer_type in _possible_buffer_pointer_types(options):
@@ -33,7 +33,7 @@ def _looks_like_param_buffer_standard(param: CppParameter, options: CodeStyleOpt
     return False
 
 
-def _looks_like_param_template_buffer(param: CppParameter, options: CodeStyleOptions) -> bool:
+def _looks_like_param_template_buffer(param: CppParameter, options: LitgenOptions) -> bool:
     if not options.buffer_flag_replace_by_array:
         return False
     for possible_buffer_type in _possible_buffer_template_pointer_types(options):
@@ -43,23 +43,23 @@ def _looks_like_param_template_buffer(param: CppParameter, options: CodeStyleOpt
     return False
 
 
-def _name_looks_like_buffer_standard_or_template(param: CppParameter, options: CodeStyleOptions) -> bool:
+def _name_looks_like_buffer_standard_or_template(param: CppParameter, options: LitgenOptions) -> bool:
     return _looks_like_param_buffer_standard(param, options) or _looks_like_param_template_buffer(param, options)
 
 
-def _name_looks_like_buffer_size(param: CppParameter, options: CodeStyleOptions) -> bool:
+def _name_looks_like_buffer_size(param: CppParameter, options: LitgenOptions) -> bool:
     return code_utils.var_name_looks_like_size_name(param.variable_name(), options.buffer_size_names)
 
 
 class _AdaptBuffersHelper:
     adapted_function: AdaptedFunction
     function_infos: CppFunctionDecl
-    options: CodeStyleOptions
+    options: LitgenOptions
 
     def __init__(
         self,
         adapted_function: AdaptedFunction,
-        options: CodeStyleOptions,
+        options: LitgenOptions,
     ):
         self.adapted_function = adapted_function
         self.function_infos = adapted_function.function_infos
@@ -445,7 +445,7 @@ class _AdaptBuffersHelper:
         return new_stride_param
 
 
-def adapt_c_buffers(adapted_function: AdaptedFunction, options: CodeStyleOptions) -> Optional[LambdaAdapter]:
+def adapt_c_buffers(adapted_function: AdaptedFunction, options: LitgenOptions) -> Optional[LambdaAdapter]:
     """
         We want to adapt functions that use C buffers like this:
             MY_API inline int8_t foo(const int8_t* values, int count);

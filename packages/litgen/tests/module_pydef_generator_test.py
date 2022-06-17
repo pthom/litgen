@@ -7,7 +7,7 @@ sys.path.append(_THIS_DIR + "/../..")
 from codemanip import code_utils
 from litgen.internal import module_pydef_generator
 import srcmlcpp
-from litgen import CodeStyleOptions
+from litgen import LitgenOptions
 from litgen.options import code_style_implot, code_style_immvision
 
 

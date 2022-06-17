@@ -8,7 +8,7 @@ _THIS_DIR = os.path.dirname(__file__)
 sys.path.append(_THIS_DIR + "/../..")
 
 from codemanip import code_utils
-from litgen.options import CodeStyleOptions, code_style_implot
+from litgen.options import LitgenOptions, code_style_implot
 import litgen
 from litgen.internal.function_adapt import make_adapted_function
 from litgen.internal.function_adapt import adapt_c_arrays
@@ -146,7 +146,7 @@ def test_mixture():
 
 
 def test_mixture_no_replace():
-    options = litgen.CodeStyleOptions()
+    options = litgen.LitgenOptions()
     options.c_array_const_flag_replace = True
     options.c_array_modifiable_flag_replace = False
 
@@ -181,7 +181,7 @@ def test_in_method():
             IMGUI_API bool thing(Point2 out[2]);
         };
     """
-    options = litgen.CodeStyleOptions()
+    options = litgen.LitgenOptions()
     generated_code = litgen.generate_pydef(code, options)
     # logging.warning("\n" + generated_code)
     code_utils.assert_are_codes_equal(

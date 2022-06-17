@@ -1,7 +1,7 @@
 from typing import Optional, List
 import copy
 
-from litgen.generate_code import CodeStyleOptions, code_utils
+from litgen.generate_code import LitgenOptions, code_utils
 from litgen.internal import cpp_to_python
 from litgen.internal.function_adapt import (
     AdaptedFunction,
@@ -17,7 +17,7 @@ from srcmlcpp.srcml_types import (
 )
 
 
-def adapt_c_string_list(adapted_function: AdaptedFunction, options: CodeStyleOptions) -> Optional[LambdaAdapter]:
+def adapt_c_string_list(adapted_function: AdaptedFunction, options: LitgenOptions) -> Optional[LambdaAdapter]:
     """
     We want to adapt functions that use fixed size C string list like those:
         void foo(const char * const items[], int items_count);

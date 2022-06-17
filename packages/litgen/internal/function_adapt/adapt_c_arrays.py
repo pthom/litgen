@@ -1,7 +1,7 @@
 from typing import List, Optional
 import copy
 
-from litgen.generate_code import CodeStyleOptions
+from litgen.generate_code import LitgenOptions
 from litgen.internal.function_adapt import (
     AdaptedFunction,
     LambdaAdapter,
@@ -10,7 +10,7 @@ from litgen.internal.function_adapt import (
 from srcmlcpp.srcml_types import CppParameter
 
 
-def adapt_c_arrays(adapted_function: AdaptedFunction, options: CodeStyleOptions) -> Optional[LambdaAdapter]:
+def adapt_c_arrays(adapted_function: AdaptedFunction, options: LitgenOptions) -> Optional[LambdaAdapter]:
     """
     We want to adapt functions that use fixed size C arrays like those:
         `void foo_const(const int input[2])` or `void foo_non_const(int output[2])`

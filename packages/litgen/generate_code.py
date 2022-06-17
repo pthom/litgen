@@ -2,14 +2,14 @@ import os
 
 from codemanip import code_utils
 import litgen.internal.module_pydef_generator
-from litgen import CodeStyleOptions
+from litgen import LitgenOptions
 from litgen.internal import module_pydef_generator, module_pyi_generator
 import srcmlcpp
 
 
 def generate_pydef(
     code: str,
-    options: CodeStyleOptions,
+    options: LitgenOptions,
     add_boxed_types_definitions: bool = False,
     filename: str = "",
 ) -> str:
@@ -23,7 +23,7 @@ def generate_pydef(
 
 def generate_pyi(
     code: str,
-    options: CodeStyleOptions,
+    options: LitgenOptions,
     add_boxed_types_definitions: bool = False,
     filename: str = "",
 ) -> str:
@@ -44,7 +44,7 @@ def _run_generate_file(
     output_file: str,
     fn_code_generator,
     marker_token: str,
-    options: CodeStyleOptions,
+    options: LitgenOptions,
     add_boxed_types_definitions: bool,
 ):
     assert os.path.isfile(input_cpp_header)
@@ -65,7 +65,7 @@ def _run_generate_file(
 def generate_files(
     input_cpp_header: str,
     output_cpp_module_file: str,
-    options: CodeStyleOptions,
+    options: LitgenOptions,
     output_stub_pyi_file: str = "",
     add_boxed_types_definitions: bool = True,
 ):

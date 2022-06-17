@@ -1,7 +1,7 @@
 from typing import List, Optional
 import copy
 
-from litgen.generate_code import CodeStyleOptions
+from litgen.generate_code import LitgenOptions
 from litgen.internal.function_adapt import (
     AdaptedFunction,
     LambdaAdapter,
@@ -14,7 +14,7 @@ def is_variadic_format(param: CppParameter):
     return param.decl.cpp_type.typenames == [] and param.decl.cpp_type.modifiers == ["..."]
 
 
-def adapt_variadic_format(adapted_function: AdaptedFunction, options: CodeStyleOptions) -> Optional[LambdaAdapter]:
+def adapt_variadic_format(adapted_function: AdaptedFunction, options: LitgenOptions) -> Optional[LambdaAdapter]:
     """A function like
         void Text(const char* fmt, ...)
     will be published in python as

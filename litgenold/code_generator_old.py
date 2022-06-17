@@ -4,7 +4,7 @@
 # from codemanip import code_utils
 # from options import code_style_implot, code_style_immvision
 # from code_types import *
-# from options import CodeStyleOptions
+# from options import LitgenOptions
 # from internal import function_parser, enum_parser, struct_parser
 # from internal import function_generator, enum_generator, struct_generator
 # from internal import find_functions_structs_enums
@@ -40,7 +40,7 @@
 #     header_code: str,
 #     code_type: CppCodeType,
 #     fn_code_generators,
-#     options: CodeStyleOptions,
+#     options: LitgenOptions,
 # ) -> str:
 #
 #     pydef_codes = find_functions_structs_enums.find_functions_struct_or_enums(header_code, code_type, options)
@@ -61,7 +61,7 @@
 #     output_file: str,
 #     fn_code_generators,
 #     marker_token: str,
-#     options: CodeStyleOptions,
+#     options: LitgenOptions,
 # ):
 #     assert os.path.isfile(input_cpp_header)
 #     assert os.path.isfile(output_file)
@@ -89,7 +89,7 @@
 # def generate(
 #     input_cpp_header: str,
 #     output_cpp_module_file: str,
-#     options: CodeStyleOptions,
+#     options: LitgenOptions,
 #     output_stub_pyi_file: str = "",
 # ):
 #

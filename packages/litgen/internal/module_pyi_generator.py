@@ -13,7 +13,7 @@ from srcmlcpp.srcml_types import *
 from srcmlcpp import srcml_main
 from srcmlcpp import srcml_warnings
 
-from litgen import CodeStyleOptions
+from litgen import LitgenOptions
 from litgen.internal import cpp_to_python
 from litgen.internal.function_adapt import AdaptedFunction
 from litgen.internal.function_adapt import make_adapted_function
@@ -29,14 +29,14 @@ def _add_new_lines(code: str, nb_lines_before: int = 0, nb_lines_after: int = 1)
     return r
 
 
-def _add_one_line_before(code: str, options: CodeStyleOptions) -> str:
+def _add_one_line_before(code: str, options: LitgenOptions) -> str:
     if options.srcml_options.preserve_empty_lines:
         return code
     else:
         return _add_new_lines(code, nb_lines_before=1)
 
 
-def _add_two_lines_before(code: str, options: CodeStyleOptions) -> str:
+def _add_two_lines_before(code: str, options: LitgenOptions) -> str:
     if options.srcml_options.preserve_empty_lines:
         return code
     else:
@@ -46,7 +46,7 @@ def _add_two_lines_before(code: str, options: CodeStyleOptions) -> str:
 def _add_stub_element(
     cpp_element: CppElementAndComment,
     first_code_line: str,
-    options: CodeStyleOptions,
+    options: LitgenOptions,
     body_lines: List[str] = [],
     fn_params_and_return: str = "",
 ) -> str:
@@ -76,7 +76,7 @@ def _add_stub_element(
     return r
 
 
-def _make_decl_lines(cpp_decl: CppDecl, options: CodeStyleOptions) -> List[str]:
+def _make_decl_lines(cpp_decl: CppDecl, options: LitgenOptions) -> List[str]:
     var_name = cpp_to_python.decl_python_var_name(cpp_decl, options)
     var_value = cpp_to_python.decl_python_value(cpp_decl, options)
 
@@ -99,7 +99,7 @@ def _make_enum_element_decl_lines(
     enum: CppEnum,
     enum_element_orig: CppDecl,
     previous_enum_element: Optional[CppDecl],
-    options: CodeStyleOptions,
+    options: LitgenOptions,
 ) -> List[str]:
 
     enum_element = copy.deepcopy(enum_element_orig)
@@ -159,7 +159,7 @@ def _make_enum_element_decl_lines(
 ################################
 
 
-def _generate_pyi_enum(enum: CppEnum, options: CodeStyleOptions) -> str:
+def _generate_pyi_enum(enum: CppEnum, options: LitgenOptions) -> str:
     first_code_line = f"class {enum.enum_name}(Enum):"
 
     body_lines: List[str] = []
@@ -184,7 +184,7 @@ def _generate_pyi_enum(enum: CppEnum, options: CodeStyleOptions) -> str:
 
 def _generate_pyi_function(
     function_infos: CppFunctionDecl,
-    options: CodeStyleOptions,
+    options: LitgenOptions,
     parent_struct_name: str = "",
 ) -> str:
     adapted_function = make_adapted_function(function_infos, options, parent_struct_name)
@@ -193,7 +193,7 @@ def _generate_pyi_function(
     return r
 
 
-def _paramlist_call_strs(param_list: CppParameterList, options: CodeStyleOptions) -> List[str]:
+def _paramlist_call_strs(param_list: CppParameterList, options: LitgenOptions) -> List[str]:
     r = []
     for param in param_list.parameters:
         param_name_python = cpp_to_python.var_name_to_python(param.decl.decl_name, options)
@@ -211,7 +211,7 @@ def _paramlist_call_strs(param_list: CppParameterList, options: CodeStyleOptions
 
 def _generate_pyi_function_impl(
     adapted_function: AdaptedFunction,
-    options: CodeStyleOptions,
+    options: LitgenOptions,
     parent_struct_name: str = "",
 ) -> str:
 
@@ -254,7 +254,7 @@ def _generate_pyi_function_impl(
 ################################
 
 
-def _generate_pyi_constructor(function_infos: CppFunctionDecl, options: CodeStyleOptions) -> str:
+def _generate_pyi_constructor(function_infos: CppFunctionDecl, options: LitgenOptions) -> str:
     return ""
 
     # if "delete" in function_infos.specifiers:
@@ -291,7 +291,7 @@ def _generate_pyi_constructor(function_infos: CppFunctionDecl, options: CodeStyl
     # return code
 
 
-def _generate_pyi_method(function_infos: CppFunctionDecl, options: CodeStyleOptions, parent_struct_name: str) -> str:
+def _generate_pyi_method(function_infos: CppFunctionDecl, options: LitgenOptions, parent_struct_name: str) -> str:
 
     return ""
 
@@ -312,7 +312,7 @@ def _generate_pyi_method(function_infos: CppFunctionDecl, options: CodeStyleOpti
 ################################
 
 
-def _add_struct_member_decl(cpp_decl: CppDecl, struct_name: str, options: CodeStyleOptions) -> str:
+def _add_struct_member_decl(cpp_decl: CppDecl, struct_name: str, options: LitgenOptions) -> str:
 
     return ""
 
@@ -401,7 +401,7 @@ def _add_struct_member_decl(cpp_decl: CppDecl, struct_name: str, options: CodeSt
     #     return r
 
 
-def _add_struct_member_decl_stmt(cpp_decl_stmt: CppDeclStatement, struct_name: str, options: CodeStyleOptions):
+def _add_struct_member_decl_stmt(cpp_decl_stmt: CppDeclStatement, struct_name: str, options: LitgenOptions):
     return ""
 
     r = ""
@@ -410,7 +410,7 @@ def _add_struct_member_decl_stmt(cpp_decl_stmt: CppDeclStatement, struct_name: s
     return r
 
 
-def _add_public_struct_elements(public_zone: CppPublicProtectedPrivate, struct_name: str, options: CodeStyleOptions):
+def _add_public_struct_elements(public_zone: CppPublicProtectedPrivate, struct_name: str, options: LitgenOptions):
     return ""
 
     r = ""
@@ -435,7 +435,7 @@ def _add_public_struct_elements(public_zone: CppPublicProtectedPrivate, struct_n
     return r
 
 
-def _generate_pyi_struct_or_class(struct_infos: CppStruct, options: CodeStyleOptions) -> str:
+def _generate_pyi_struct_or_class(struct_infos: CppStruct, options: LitgenOptions) -> str:
     return ""
 
     # struct_name = struct_infos.name
@@ -478,7 +478,7 @@ def _generate_pyi_struct_or_class(struct_infos: CppStruct, options: CodeStyleOpt
 #################################
 #           Namespace
 ################################
-def _generate_pyi_namespace(cpp_namespace: CppNamespace, options: CodeStyleOptions, current_namespaces=None) -> str:
+def _generate_pyi_namespace(cpp_namespace: CppNamespace, options: LitgenOptions, current_namespaces=None) -> str:
 
     if current_namespaces is None:
         current_namespaces = []
@@ -504,7 +504,7 @@ def _generate_pyi_namespace(cpp_namespace: CppNamespace, options: CodeStyleOptio
 
 def generate_pyi(
     cpp_unit: Union[CppUnit, CppBlock],
-    options: CodeStyleOptions,
+    options: LitgenOptions,
     current_namespaces: List[str] = [],
     add_boxed_types_definitions: bool = False,
 ) -> str:

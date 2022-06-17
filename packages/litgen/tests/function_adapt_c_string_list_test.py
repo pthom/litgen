@@ -8,7 +8,7 @@ from srcmlcpp.srcml_types import *
 
 
 def to_pydef(code) -> str:
-    options = litgen.CodeStyleOptions()
+    options = litgen.LitgenOptions()
     pydef_code = litgen.generate_pydef(code, options)
     return pydef_code
 
@@ -29,10 +29,10 @@ def test_c_string_list_simple():
                     for (const auto& v: items)
                         items_ptrs.push_back(v.c_str());
                     int items_count = static_cast<int>(items.size());
-        
+
                     foo(items_ptrs.data(), items_count);
                 };
-        
+
                 foo_adapt_c_string_list(items);
             },
             py::arg("items")
@@ -56,9 +56,9 @@ def test_mix_array_and_string_list():
                     int ouput_raw[2];
                     ouput_raw[0] = ouput_0.value;
                     ouput_raw[1] = ouput_1.value;
-        
+
                     auto r = foo(items, items_count, ouput_raw);
-        
+
                     ouput_0.value = ouput_raw[0];
                     ouput_1.value = ouput_raw[1];
                     return r;
@@ -69,11 +69,11 @@ def test_mix_array_and_string_list():
                     for (const auto& v: items)
                         items_ptrs.push_back(v.c_str());
                     int items_count = static_cast<int>(items.size());
-        
+
                     auto r = foo_adapt_fixed_size_c_arrays(items_ptrs.data(), items_count, ouput_0, ouput_1);
                     return r;
                 };
-        
+
                 return foo_adapt_c_string_list(items, ouput_0, ouput_1);
             },
             py::arg("items"), py::arg("ouput_0"), py::arg("ouput_1")

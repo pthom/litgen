@@ -10,7 +10,7 @@ from codemanip.code_replacements import StringReplacement
 from srcmlcpp import SrcmlOptions
 
 
-class CodeStyleOptions:
+class LitgenOptions:
     """Configuration of the code generation (include / excludes, indentation, c++ to python translation settings, etc.)"""
 
     #
@@ -219,8 +219,8 @@ class CodeStyleOptions:
 #
 
 
-def code_style_immvision() -> CodeStyleOptions:
-    options = CodeStyleOptions()
+def code_style_immvision() -> LitgenOptions:
+    options = LitgenOptions()
     options.generate_to_string = True
     options.cpp_indent_size = 4
     options.srcml_options.functions_api_prefixes = ["IMMVISION_API"]
@@ -263,7 +263,7 @@ def _preprocess_imgui_code(code):
 
 
 def code_style_imgui():
-    options = CodeStyleOptions()
+    options = LitgenOptions()
 
     options.generate_to_string = False
     options.cpp_indent_size = 4

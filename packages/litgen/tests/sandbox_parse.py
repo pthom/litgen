@@ -66,7 +66,7 @@ def play_pyi(code, options):
 # options.srcml_options.functions_api_prefixes = ["MY_API"]
 # options.srcml_options.api_suffixes = ["MY_API"]
 
-options = litgen.options.CodeStyleOptions()
+options = litgen.options.LitgenOptions()
 options.srcml_options.functions_api_prefixes = ["MY_API"]
 
 # options = litgen.code_style_imgui()

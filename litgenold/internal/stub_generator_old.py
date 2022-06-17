@@ -1,6 +1,6 @@
 # import code_replacements
 # from code_types import *
-# from options import CodeStyleOptions
+# from options import LitgenOptions
 # import code_utils, cpp_to_python
 # import function_generator
 # import copy
@@ -11,14 +11,14 @@
 # )
 #
 #
-# def _indent_spacing(indent_level: int, options: CodeStyleOptions):
+# def _indent_spacing(indent_level: int, options: LitgenOptions):
 #     return " " * indent_level * options.python_indent_size
 #
 #
 # def _py_layout_comment(
 #     comment,
 #     indent_level: int,
-#     options: CodeStyleOptions,
+#     options: LitgenOptions,
 #     nb_empty_comment_lines_around: int = 0,
 #     nb_empty_lines_around: int = 0,
 # ) -> List[str]:
@@ -37,7 +37,7 @@
 #     return r
 #
 #
-# def _py_layout_region_comment(comment, indent_level: int, options: CodeStyleOptions) -> List[str]:
+# def _py_layout_region_comment(comment, indent_level: int, options: LitgenOptions) -> List[str]:
 #     return _py_layout_comment(
 #         comment,
 #         indent_level,
@@ -47,7 +47,7 @@
 #     )
 #
 #
-# def _py_layout_title(title: str, indent_level: int, options: CodeStyleOptions) -> List[str]:
+# def _py_layout_title(title: str, indent_level: int, options: LitgenOptions) -> List[str]:
 #     lines = title.splitlines(keepends=False)
 #     spacing = _indent_spacing(indent_level, options)
 #     if len(lines) == 0:
@@ -60,7 +60,7 @@
 #     return r
 #
 #
-# def _py_dump_attr(attr: PydefAttribute, indent_level: int, options: CodeStyleOptions) -> List[str]:
+# def _py_dump_attr(attr: PydefAttribute, indent_level: int, options: LitgenOptions) -> List[str]:
 #     spacing = _indent_spacing(indent_level, options)
 #
 #     comment_python = cpp_to_python.docstring_python(attr.docstring_cpp, options)
@@ -79,7 +79,7 @@
 #     return comment_lines + [attr_decl_line]
 #
 #
-# def _py_filter_function_args(function_infos: FunctionsInfos, options: CodeStyleOptions) -> List[PydefAttribute]:
+# def _py_filter_function_args(function_infos: FunctionsInfos, options: LitgenOptions) -> List[PydefAttribute]:
 #     out_params: List[PydefAttribute] = []
 #     initial_params = function_infos.get_parameters()
 #     for idx_param, param in enumerate(initial_params):
@@ -98,7 +98,7 @@
 #     return out_params
 #
 #
-# def py_function_declaration(function_infos: FunctionsInfos, options: CodeStyleOptions) -> str:
+# def py_function_declaration(function_infos: FunctionsInfos, options: LitgenOptions) -> str:
 #     function_name_python = cpp_to_python.function_name_to_python(function_infos.function_name_cpp(), options)
 #     params_str = cpp_to_python.attrs_python_name_type_default(function_infos.get_parameters(), options)
 #     return_type_python = cpp_to_python.type_to_python(function_infos.return_type_cpp(), options)
@@ -110,7 +110,7 @@
 #     return code
 #
 #
-# def _py_dump_function(function: FunctionsInfos, indent_level: int, options: CodeStyleOptions):
+# def _py_dump_function(function: FunctionsInfos, indent_level: int, options: LitgenOptions):
 #     spacing = _indent_spacing(indent_level, options)
 #     function_params_filtered = copy.deepcopy(function)
 #     function_params_filtered.parameters = _py_filter_function_args(function_params_filtered, options)
@@ -125,7 +125,7 @@
 #     struct_name: str,
 #     method: FunctionsInfos,
 #     indent_level: int,
-#     options: CodeStyleOptions,
+#     options: LitgenOptions,
 # ):
 #     # skip destructors
 #     if method.function_name_cpp() == "~" + struct_name:
@@ -153,7 +153,7 @@
 #     return method_code_lines
 #
 #
-# def generate_struct_stub(struct_infos: StructInfos, options: CodeStyleOptions) -> str:
+# def generate_struct_stub(struct_infos: StructInfos, options: LitgenOptions) -> str:
 #     code_lines = []
 #
 #     code_lines.append(f"class {struct_infos.struct_name()}:")
@@ -183,7 +183,7 @@
 #     return code
 #
 #
-# def generate_function_stub(function_infos: FunctionsInfos, options: CodeStyleOptions) -> str:
+# def generate_function_stub(function_infos: FunctionsInfos, options: LitgenOptions) -> str:
 #     code_lines = []
 #     code_lines += _py_dump_function(function_infos, indent_level=0, options=options)
 #     code = "\n".join(code_lines)
@@ -193,7 +193,7 @@
 # ################# Oldies
 #
 #
-# def oldie_generate_python_wrapper_class_code(struct_infos: StructInfos, options: CodeStyleOptions) -> str:
+# def oldie_generate_python_wrapper_class_code(struct_infos: StructInfos, options: LitgenOptions) -> str:
 #     """
 #         Should generate a python class that wraps the native code, and looks like this:
 #

@@ -1,6 +1,6 @@
 # from code_types import *
 # import code_types
-# from options import CodeStyleOptions
+# from options import LitgenOptions
 # from function_wrapper_lambda import (
 #     make_function_wrapper_lambda,
 #     make_method_wrapper_lambda,
@@ -12,7 +12,7 @@
 # import cpp_to_python
 #
 #
-# def generate_python_wrapper_init_code(function_infos: FunctionsInfos, options: CodeStyleOptions) -> str:
+# def generate_python_wrapper_init_code(function_infos: FunctionsInfos, options: LitgenOptions) -> str:
 #     """
 #     Should generate code like this:
 #

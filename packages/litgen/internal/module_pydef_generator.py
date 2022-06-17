@@ -12,7 +12,7 @@ from srcmlcpp import srcml_main
 from srcmlcpp import srcml_warnings
 
 from codemanip import code_replacements, code_utils
-from litgen import CodeStyleOptions
+from litgen import LitgenOptions
 from litgen.internal import cpp_to_python
 from litgen.internal.cpp_to_python import info_original_location_cpp
 from litgen.internal.function_adapt import AdaptedFunction, make_adapted_function
@@ -47,7 +47,7 @@ class _LineSpacer:
 ################################
 
 
-def _generate_enum(enum: CppEnum, options: CodeStyleOptions) -> str:
+def _generate_enum(enum: CppEnum, options: LitgenOptions) -> str:
     enum_type = enum.attribute_value("type")
     enum_name = enum.enum_name
 
@@ -98,7 +98,7 @@ def _generate_enum(enum: CppEnum, options: CodeStyleOptions) -> str:
 ################################
 
 
-def pyarg_code(function_infos: Union[CppFunctionDecl, CppConstructorDecl], options: CodeStyleOptions) -> str:
+def pyarg_code(function_infos: Union[CppFunctionDecl, CppConstructorDecl], options: LitgenOptions) -> str:
     _i_ = options.indent_cpp_spaces()
 
     param_lines = []
@@ -131,7 +131,7 @@ def pyarg_code(function_infos: Union[CppFunctionDecl, CppConstructorDecl], optio
     return code
 
 
-def pyarg_code_list(function_infos: Union[CppFunctionDecl, CppConstructorDecl], options: CodeStyleOptions) -> List[str]:
+def pyarg_code_list(function_infos: Union[CppFunctionDecl, CppConstructorDecl], options: LitgenOptions) -> List[str]:
     code = pyarg_code(function_infos, options)
     if len(code) == 0:
         return []
@@ -161,7 +161,7 @@ def _function_return_value_policy(function_infos: CppFunctionDecl) -> str:
 
 def _generate_function(
     function_infos: CppFunctionDecl,
-    options: CodeStyleOptions,
+    options: LitgenOptions,
     parent_struct_name: str = "",
 ) -> str:
     adapted_function = make_adapted_function(function_infos, options, parent_struct_name)
@@ -173,7 +173,7 @@ def _generate_function(
 
 def _generate_return_code(
     adapted_function: AdaptedFunction,
-    options: CodeStyleOptions,
+    options: LitgenOptions,
     parent_struct_name: str = "",
 ):
     function_infos = adapted_function.function_infos
@@ -203,7 +203,7 @@ def _generate_return_code(
 
 def _generate_function_impl(
     adapted_function: AdaptedFunction,
-    options: CodeStyleOptions,
+    options: LitgenOptions,
     parent_struct_name: str = "",
 ) -> str:
 
@@ -328,7 +328,7 @@ def _generate_function_impl(
 ################################
 
 
-def _generate_constructor(function_infos: CppConstructorDecl, options: CodeStyleOptions) -> str:
+def _generate_constructor(function_infos: CppConstructorDecl, options: LitgenOptions) -> str:
 
     if "delete" in function_infos.specifiers:
         return ""
@@ -364,7 +364,7 @@ def _generate_constructor(function_infos: CppConstructorDecl, options: CodeStyle
     return code
 
 
-def _generate_method(function_infos: CppFunctionDecl, options: CodeStyleOptions, parent_struct_name: str) -> str:
+def _generate_method(function_infos: CppFunctionDecl, options: LitgenOptions, parent_struct_name: str) -> str:
     if function_infos.function_name == parent_struct_name:
         # Sometimes, srcml might see a constructor as a decl
         # Example:
@@ -382,7 +382,7 @@ def _generate_method(function_infos: CppFunctionDecl, options: CodeStyleOptions,
 ################################
 
 
-def _add_struct_member_decl(cpp_decl: CppDecl, struct_name: str, options: CodeStyleOptions) -> str:
+def _add_struct_member_decl(cpp_decl: CppDecl, struct_name: str, options: LitgenOptions) -> str:
     _i_ = options.indent_cpp_spaces()
     name_cpp = cpp_decl.decl_name
     name_python = cpp_to_python.var_name_to_python(name_cpp, options)
@@ -467,14 +467,14 @@ def _add_struct_member_decl(cpp_decl: CppDecl, struct_name: str, options: CodeSt
         return r
 
 
-def _add_struct_member_decl_stmt(cpp_decl_stmt: CppDeclStatement, struct_name: str, options: CodeStyleOptions):
+def _add_struct_member_decl_stmt(cpp_decl_stmt: CppDeclStatement, struct_name: str, options: LitgenOptions):
     r = ""
     for cpp_decl in cpp_decl_stmt.cpp_decls:
         r += _add_struct_member_decl(cpp_decl, struct_name, options)
     return r
 
 
-def _add_public_struct_elements(public_zone: CppPublicProtectedPrivate, struct_name: str, options: CodeStyleOptions):
+def _add_public_struct_elements(public_zone: CppPublicProtectedPrivate, struct_name: str, options: LitgenOptions):
     r = ""
     for public_child in public_zone.block_children:
         if isinstance(public_child, CppDeclStatement):
@@ -497,7 +497,7 @@ def _add_public_struct_elements(public_zone: CppPublicProtectedPrivate, struct_n
     return r
 
 
-def _generate_struct_or_class(struct_infos: CppStruct, options: CodeStyleOptions) -> str:
+def _generate_struct_or_class(struct_infos: CppStruct, options: LitgenOptions) -> str:
     struct_name = struct_infos.class_name
 
     if struct_infos.is_templated_class():
@@ -542,7 +542,7 @@ def _generate_struct_or_class(struct_infos: CppStruct, options: CodeStyleOptions
 ################################
 def _generate_namespace(
     cpp_namespace: CppNamespace,
-    options: CodeStyleOptions,
+    options: LitgenOptions,
     current_namespaces: List[str] = [],
 ) -> str:
 
@@ -565,7 +565,7 @@ def _generate_namespace(
 ################################
 
 
-def generate_boxed_types_binding_code(options: CodeStyleOptions):
+def generate_boxed_types_binding_code(options: LitgenOptions):
     boxed_structs = cpp_to_python.BoxedImmutablePythonType.struct_codes()
     boxed_bindings = cpp_to_python.BoxedImmutablePythonType.binding_codes(options)
     if len(boxed_structs) > 0:
@@ -589,7 +589,7 @@ def generate_boxed_types_binding_code(options: CodeStyleOptions):
 
 def generate_pydef(
     cpp_unit: Union[CppUnit, CppBlock],
-    options: CodeStyleOptions,
+    options: LitgenOptions,
     current_namespaces: List[str] = [],
     add_boxed_types_definitions: bool = False,
 ) -> str:

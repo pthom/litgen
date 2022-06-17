@@ -1,4 +1,4 @@
-from litgen.options import CodeStyleOptions
+from litgen.options import LitgenOptions
 from litgen.internal.function_adapt import (
     AdaptedFunction,
     LambdaAdapter,
@@ -9,7 +9,7 @@ from srcmlcpp.srcml_types import CppFunctionDecl
 
 def make_adapted_function(
     function_infos: CppFunctionDecl,
-    options: CodeStyleOptions,
+    options: LitgenOptions,
     parent_struct_name: str = "",
 ) -> AdaptedFunction:
 
@@ -38,7 +38,7 @@ def make_adapted_function(
 def _make_adapted_lambda_code_end(
     adapted_function: AdaptedFunction,
     lambda_adapter: LambdaAdapter,
-    options: CodeStyleOptions,
+    options: LitgenOptions,
     parent_struct_name,
 ):
 
@@ -106,7 +106,7 @@ def _make_adapted_lambda_code_end(
 def _make_adapted_lambda_code(
     adapted_function: AdaptedFunction,
     lambda_adapter: LambdaAdapter,
-    options: CodeStyleOptions,
+    options: LitgenOptions,
     parent_struct_name,
 ):
     lambda_template_code = """
@@ -185,7 +185,7 @@ def _make_adapted_lambda_code(
 def apply_lambda_adapter(
     adapted_function: AdaptedFunction,
     lambda_adapter: LambdaAdapter,
-    options: CodeStyleOptions,
+    options: LitgenOptions,
     parent_struct_name,
 ):
 

@@ -13,7 +13,7 @@ assert os.path.isdir(CPP_GENERATED_PYBIND_DIR)
 
 
 def my_code_style_options():
-    options = litgen.CodeStyleOptions()
+    options = litgen.LitgenOptions()
     options.cpp_indent_size = 4
 
     options.srcml_options = srcmlcpp.SrcmlOptions()

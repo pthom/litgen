@@ -27,7 +27,7 @@ def test_make_boxed_type():
     """,
     )
 
-    options = litgen.CodeStyleOptions()
+    options = litgen.LitgenOptions()
     pydef_code = boxed_type._binding_code(options)
     # logging.warning("\n" + pydef_code)
     expected_code = """
