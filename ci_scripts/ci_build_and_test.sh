@@ -37,25 +37,13 @@ title "Install litgen and its sub-packages (codemanip, srcmlcpp and litgen)"
 cd "$REPO_DIR"
 pip install .
 
-title "Run codemanip tests"
-cd "$REPO_DIR"/packages/codemanip
-pytest
-
-title "Run srcmlcpp tests"
-cd "$REPO_DIR"/packages/srcmlcpp
-pytest
-
-title "Run litgen tests"
-cd "$REPO_DIR"/packages/litgen
-pytest
-
 title "Build litgensample"
 cd "$REPO_DIR"/example
 pip install .
 
-title "Test litgensample"
-cd "$REPO_DIR"/packages/litgen/tests_litgensample
-python test_litgensample.py
+title "Run pytest (will test codemanip, srcmlcpp, litgen, and litgensample)"
+cd "$REPO_DIR"/example
+pip install .
 
 title "Build lg-imgui"
 cd "$REPO_DIR"/examples_real_libs/imgui

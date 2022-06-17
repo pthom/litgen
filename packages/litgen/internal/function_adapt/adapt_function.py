@@ -1,6 +1,5 @@
 from typing import List, Optional
 from dataclasses import dataclass
-
 from srcmlcpp.srcml_types import CppFunctionDecl
 
 
