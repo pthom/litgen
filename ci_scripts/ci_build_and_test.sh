@@ -30,7 +30,7 @@ pip install -r requirements-dev.txt
 pip install -r requirements.txt
 
 title "Run mypy static checker"
-cd "$REPO_DIR"/packages
+cd "$REPO_DIR"
 mypy .
 
 title "Install litgen and its sub-packages (codemanip, srcmlcpp and litgen)"
