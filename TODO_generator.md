@@ -6,9 +6,6 @@
   --> faire equivalent de adapt_function pour structs et enums
 
 
-* reactiver mypy sur example: a faire apres avoir la generation des structs
-  Savoir trouver definitions des BoxedTytpe dans .so
-
 imgui: Handle widget input / output parameters
         bool *, int *, float *, etc
         float[2, 3, 4]

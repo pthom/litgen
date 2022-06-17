@@ -10,9 +10,9 @@ sys.path.append(_THIS_DIR + "/../..")
 from codemanip import code_utils
 from litgen.options import CodeStyleOptions, code_style_implot
 import litgen
-from litgen.internal.function_params_adapter import make_function_params_adapter
-from litgen.internal import function_adapt_c_arrays, cpp_to_python
-from litgen.internal import module_pydef_generator
+from litgen.internal.function_adapt import make_function_params_adapter
+from litgen.internal.function_adapt import function_adapt_c_arrays
+from litgen.internal import module_pydef_generator, cpp_to_python
 import srcmlcpp
 from srcmlcpp.srcml_types import *
 
@@ -165,7 +165,7 @@ def test_mixture_no_replace():
                     auto r = foo(flag, v.data(), outputs);
                     return r;
                 };
-        
+
                 return foo_adapt_fixed_size_c_arrays(flag, v, outputs);
             },
             py::arg("flag"), py::arg("v"), py::arg("outputs")
@@ -179,7 +179,7 @@ def test_in_method():
         struct Foo
         {
             IMGUI_API bool thing(Point2 out[2]);
-        };    
+        };
     """
     options = litgen.CodeStyleOptions()
     generated_code = litgen.generate_pydef(code, options)
@@ -198,14 +198,14 @@ def test_in_method():
                         Point2 out_raw[2];
                         out_raw[0] = out_0;
                         out_raw[1] = out_1;
-        
+
                         auto r = self.thing(out_raw);
-        
+
                         out_0 = out_raw[0];
                         out_1 = out_raw[1];
                         return r;
                     };
-        
+
                     return thing_adapt_fixed_size_c_arrays(out_0, out_1);
                 },
                 py::arg("out_0"), py::arg("out_1")

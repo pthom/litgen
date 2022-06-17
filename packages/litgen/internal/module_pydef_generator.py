@@ -15,8 +15,7 @@ from codemanip import code_replacements, code_utils
 from litgen import CodeStyleOptions
 from litgen.internal import cpp_to_python
 from litgen.internal.cpp_to_python import info_original_location_cpp
-from litgen.internal.cpp_function_adapted_params import CppFunctionDeclWithAdaptedParams
-from litgen.internal.function_params_adapter import make_function_params_adapter
+from litgen.internal.function_adapt import CppFunctionDeclWithAdaptedParams, make_function_params_adapter
 
 
 class _LineSpacer:

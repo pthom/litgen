@@ -15,8 +15,8 @@ from srcmlcpp import srcml_warnings
 
 from litgen import CodeStyleOptions
 from litgen.internal import cpp_to_python
-from litgen.internal.cpp_function_adapted_params import CppFunctionDeclWithAdaptedParams
-from litgen.internal.function_params_adapter import make_function_params_adapter
+from litgen.internal.function_adapt import CppFunctionDeclWithAdaptedParams
+from litgen.internal.function_adapt import make_function_params_adapter
 
 
 #################################

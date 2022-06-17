@@ -4,7 +4,7 @@ import copy
 from codemanip import code_utils
 from litgen.generate_code import CodeStyleOptions
 from litgen.internal import cpp_to_python
-from litgen.internal.cpp_function_adapted_params import (
+from litgen.internal.function_adapt import (
     CppFunctionDeclWithAdaptedParams,
     LambdaAdapter,
 )
@@ -397,10 +397,10 @@ class _AdaptBuffersHelper:
                     throw std::runtime_error(std::string(R"msg(
                             Bad type!  Expected a numpy array of native type:
                                         {_._const_space_or_empty(idx_param)}{_._original_raw_type(idx_param)} *
-                                    Which is equivalent to 
+                                    Which is equivalent to
                                         {_._expected_dtype_char(idx_param)}
                                     (using py::array::dtype().char_() as an id)
-                        )msg"));                
+                        )msg"));
             """
         template = code_utils.unindent_code(template, flag_strip_empty_lines=True) + "\n"
         return template

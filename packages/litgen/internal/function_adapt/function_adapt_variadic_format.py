@@ -2,7 +2,7 @@ from typing import List, Optional
 import copy
 
 from litgen.generate_code import CodeStyleOptions
-from litgen.internal.function_params_adapter import (
+from litgen.internal.function_adapt import (
     CppFunctionDeclWithAdaptedParams,
     LambdaAdapter,
 )
