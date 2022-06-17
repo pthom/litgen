@@ -6,3 +6,4 @@ scikit-build
 black
 mypy
 pre-commit
+jupyter-black
