@@ -220,7 +220,7 @@ def parse_parameter(options: SrcmlOptions, element: ET.Element) -> CppParameter:
         elif child_tag == "function_decl":
             raise SrcMlExceptionDetailed(
                 child,
-                f"A function uses a function_decl as a param. It was discarded",
+                f"Can't use a function_decl as a param.",
                 options,
             )
         else:
