@@ -1,7 +1,6 @@
-import os, sys
+import os
+import sys
 
-THIS_DIR = os.path.dirname(__file__)
-sys.path = [THIS_DIR + "/.."] + sys.path  # noqa
 import litgen
 
 

@@ -1,9 +1,11 @@
-import os, sys
+import os
+import sys
+
+from codemanip import code_utils
+
 
 _THIS_DIR = os.path.dirname(__file__)
 sys.path.append(_THIS_DIR + "/../..")
-
-from codemanip import code_utils
 
 
 def test_line_python_comment_position():
@@ -59,7 +61,7 @@ aa = 5 # c
 
 def test_strip_empty_lines():
     code_lines = """
-    
+
           struct Foo {
              int a = 1;
           };

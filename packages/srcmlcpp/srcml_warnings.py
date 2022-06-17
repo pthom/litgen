@@ -1,16 +1,16 @@
-import sys
-from typing import List, Optional
-from dataclasses import dataclass
-import xml.etree.ElementTree as ET  # noqa
-import logging
-import traceback
 import inspect
+import logging
+import sys
+import traceback
+from dataclasses import dataclass
+from typing import List, Optional
+from xml.etree import ElementTree as ET  # noqa
 
-from codemanip import code_utils, CodePosition
 import srcmlcpp
+from codemanip import CodePosition, code_utils
 from srcmlcpp import srcml_main, srcml_types, srcml_utils
-from srcmlcpp.srcml_options import SrcmlOptions
 from srcmlcpp.srcml_exception import SrcMlException
+from srcmlcpp.srcml_options import SrcmlOptions
 
 
 ###########################################
@@ -82,7 +82,7 @@ def _show_element_info(element: ET.Element, encoding):
 
     element_tag = srcml_utils.clean_tag_or_attrib(element.tag)
     concerned_code = _highlight_responsible_code(element)
-    message = f"""        
+    message = f"""
     While parsing a "{element_tag}", corresponding to this C++ code:
     {file_location(element)}
 {code_utils.indent_code(concerned_code, 12)}

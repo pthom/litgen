@@ -1,9 +1,12 @@
-import os, sys
+import os
+import sys
+
+import litgen
+import srcmlcpp
+
 
 THIS_DIR = os.path.dirname(__file__)
 sys.path = [THIS_DIR + "/.."] + sys.path
-import litgen
-import srcmlcpp
 
 THIS_DIR = os.path.dirname(__file__)
 CPP_HEADERS_DIR = THIS_DIR + "/example_library"

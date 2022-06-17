@@ -1,11 +1,13 @@
-from typing import Callable, Iterable, Optional
 import copy
-
-import xml.etree.ElementTree as ET
-from typing import List
+from typing import Callable, Iterable, List, Optional
+from xml.etree import ElementTree as ET
 
 from srcmlcpp import srcml_utils
-from srcmlcpp.srcml_types import CppElementAndComment, CppElement, CppElementComments
+from srcmlcpp.srcml_types import (
+    CppElement,
+    CppElementAndComment,
+    CppElementComments,
+)
 
 
 COMMENT_NEW_LINE_TOKEN = "_SRCML_LINEFEED_"

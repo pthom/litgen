@@ -21,14 +21,13 @@ See doc/srcml_cpp_doc.png
 
 from __future__ import annotations
 import copy
-from typing import List, Optional, Dict
 import logging
 from dataclasses import dataclass
+from typing import Dict, List, Optional
+from xml.etree import ElementTree as ET  # noqa
 
-import xml.etree.ElementTree as ET  # noqa
-
-from codemanip import code_utils, CodePosition
-from srcmlcpp import srcml_utils, srcml_caller
+from codemanip import CodePosition, code_utils
+from srcmlcpp import srcml_caller, srcml_utils
 from srcmlcpp.srcml_options import SrcmlOptions
 
 

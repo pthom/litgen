@@ -1,14 +1,15 @@
-import os, sys
+import logging
+import os
+import sys
+
+import litgen
+import srcmlcpp
+from litgen.internal import module_pydef_generator
+from srcmlcpp.srcml_types import *
+
 
 _THIS_DIR = os.path.dirname(__file__)
 sys.path.append(_THIS_DIR + "/../..")
-
-import logging
-
-import litgen
-from litgen.internal import module_pydef_generator
-import srcmlcpp
-from srcmlcpp.srcml_types import *
 
 
 def gen_pydef_code(code) -> Optional[str]:
@@ -173,7 +174,7 @@ def test_template_buffer():
                     // convert py::array to C standard buffer (const)
                     const void * buf_from_pyarray = buf.data();
                     py::ssize_t buf_count = buf.shape()[0];
-        
+
                     // call the correct template version by casting
                     char buf_type = buf.dtype().char_();
                     if (buf_type == 'B')
@@ -202,7 +203,7 @@ def test_template_buffer():
                     else
                         throw std::runtime_error(std::string("Bad array type ('") + buf_type + "') for param buf");
                 };
-        
+
                 return foo_adapt_c_buffers(buf, flag);
             },
             py::arg("buf"), py::arg("flag")

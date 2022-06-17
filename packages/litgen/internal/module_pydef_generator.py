@@ -1,21 +1,20 @@
-from typing import cast, Union
 import copy
 import logging
-import os, sys
-
-_THIS_DIR = os.path.dirname(__file__)
-sys.path = [_THIS_DIR + "/.."] + sys.path
+import os
+import sys
+from typing import Union, cast
 
 import srcmlcpp
-from srcmlcpp.srcml_types import *
-from srcmlcpp import srcml_main
-from srcmlcpp import srcml_warnings
-
 from codemanip import code_replacements, code_utils
 from litgen import LitgenOptions
 from litgen.internal import cpp_to_python
+from litgen.internal.adapt_function import (
+    AdaptedFunction,
+    make_adapted_function,
+)
 from litgen.internal.cpp_to_python import info_original_location_cpp
-from litgen.internal.adapt_function import AdaptedFunction, make_adapted_function
+from srcmlcpp import srcml_main, srcml_warnings
+from srcmlcpp.srcml_types import *
 
 
 class _LineSpacer:

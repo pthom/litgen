@@ -1,9 +1,11 @@
-import os, sys
+import os
+import sys
+
+from codemanip import code_replacements
+
 
 _THIS_DIR = os.path.dirname(__file__)
 sys.path.append(_THIS_DIR + "/../..")
-
-from codemanip import code_replacements
 
 
 def test_code_replacements():

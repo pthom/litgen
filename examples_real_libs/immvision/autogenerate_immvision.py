@@ -1,12 +1,9 @@
-import os, sys
-
-THIS_DIR = os.path.dirname(__file__)
-sys.path = [THIS_DIR + "/../../pybind_autogenerator"] + sys.path
+import os
 import sys
+import time
+
 
 THIS_DIR = os.path.dirname(__file__)
-sys.path.append(THIS_DIR + "/../py-mahi-gui/scripts/code_parser")
-import time
 
 
 REPO_DIR = os.path.realpath(THIS_DIR + "/../..")

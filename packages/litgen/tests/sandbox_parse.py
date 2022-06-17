@@ -1,13 +1,15 @@
-import os, sys
+import os
+import sys
+
+import litgen
+import srcmlcpp
+from codemanip import code_utils
+from litgen.internal import module_pydef_generator
+from srcmlcpp import srcml_main
+
 
 _THIS_DIR = os.path.dirname(__file__)
 sys.path.append(_THIS_DIR + "/../..")
-
-from codemanip import code_utils
-import srcmlcpp
-from srcmlcpp import srcml_main
-from litgen.internal import module_pydef_generator
-import litgen
 
 
 def read_file_content(filename):

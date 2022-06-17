@@ -1,10 +1,12 @@
-import os, sys
+import os
+import sys
+
+import srcmlcpp
+from codemanip import code_utils
+
 
 _THIS_DIR = os.path.dirname(__file__)
 sys.path.append(_THIS_DIR + "/../..")
-
-from codemanip import code_utils
-import srcmlcpp
 
 
 def test_srcml_to_str_readable():
@@ -15,7 +17,7 @@ struct Foo
     Foo(int x) : mX(x) {}
     int mX = 0;
 private:
-    void Priv();    
+    void Priv();
 };
 """
 

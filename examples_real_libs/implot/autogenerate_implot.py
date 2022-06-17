@@ -1,14 +1,13 @@
-import os, sys
+import os
+import sys
 
-THIS_DIR = os.path.dirname(__file__)
-sys.path = [THIS_DIR + "/../../pybind_autogenerator"] + sys.path
 from code_generator import (
-    perform_generation,
-    remove_all_generated_code,
     CppCodeType,
     code_style_implot,
+    perform_generation,
+    remove_all_generated_code,
 )
-import os
+
 
 THIS_DIR = os.path.dirname(__file__)
 IMPLOT_DIR = (

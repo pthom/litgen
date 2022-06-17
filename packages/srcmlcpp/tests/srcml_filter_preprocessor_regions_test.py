@@ -1,11 +1,13 @@
-import os, sys
+import os
+import sys
+
+import srcmlcpp
+from codemanip import code_utils
+from srcmlcpp import srcml_caller, srcml_filter_preprocessor_regions
+
 
 _THIS_DIR = os.path.dirname(__file__)
 sys.path.append(_THIS_DIR + "/../..")
-
-from codemanip import code_utils
-import srcmlcpp
-from srcmlcpp import srcml_filter_preprocessor_regions, srcml_caller
 
 
 def test_preprocessor_test_state_and_inclusion_guards():

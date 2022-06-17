@@ -1,14 +1,15 @@
-import os.path
-import re
-from typing import List, Optional, Iterable, TypeVar, Tuple, Dict
+import difflib
 import itertools
 import logging
-import difflib
+import os.path
+import re
 import traceback
+from typing import Dict, Iterable, List, Optional, Tuple, TypeVar
+
 
 """Low level code utilities
 
-Note: This module shall work standalone, and not depend on anything inside litgen or srcmlcpp! 
+Note: This module shall work standalone, and not depend on anything inside litgen or srcmlcpp!
 """
 
 T = TypeVar("T")
@@ -508,8 +509,8 @@ def assert_are_equal_ignore_spaces(generated_code: str, expected_code: str):
     if not generated_processed == expected_processed:
         diff_str = make_nice_code_diff(generated_processed, expected_processed)
         logging.error(
-            f"""assert_are_equal_ignore_spaces returns false 
-                    with diff= 
+            f"""assert_are_equal_ignore_spaces returns false
+                    with diff=
 {str(diff_str)}
                     expected_processed=
 {expected_processed}
@@ -532,8 +533,8 @@ def assert_are_codes_equal(generated_code: str, expected_code: str):
     if not generated_processed == expected_processed:
         diff_str = make_nice_code_diff(generated_processed, expected_processed)
         logging.error(
-            f"""assert_are_codes_equal returns false 
-                    with diff= 
+            f"""assert_are_codes_equal returns false
+                    with diff=
 {str(diff_str)}
                     expected_processed=
 {expected_processed}

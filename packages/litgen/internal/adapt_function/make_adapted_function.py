@@ -1,7 +1,7 @@
-from litgen.options import LitgenOptions
+from codemanip import code_utils
 from litgen.internal.adapt_function import AdaptedFunction
 from litgen.internal.adapt_function._lambda_adapter import LambdaAdapter
-from codemanip import code_utils
+from litgen.options import LitgenOptions
 from srcmlcpp.srcml_types import CppFunctionDecl
 
 

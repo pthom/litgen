@@ -1,10 +1,12 @@
-import os, sys
-
-_THIS_DIR = os.path.dirname(__file__)
-sys.path.append(_THIS_DIR + "/../..")
+import os
+import sys
 
 from codemanip import code_utils
 from srcmlcpp import srcml_caller, srcml_utils
+
+
+_THIS_DIR = os.path.dirname(__file__)
+sys.path.append(_THIS_DIR + "/../..")
 
 
 def assert_code_unmodified_by_srcml(code: str):
@@ -26,17 +28,17 @@ def test_srcml_xml():
               <ns0:type>
                  <ns0:name>int</ns0:name>
               </ns0:type>
-               
+
               <ns0:name>a</ns0:name>
-               
+
               <ns0:init>
-                 = 
+                 =
                  <ns0:expr>
                     <ns0:literal type="number">1</ns0:literal>
                  </ns0:expr>
               </ns0:init>
            </ns0:decl>
-        </ns0:unit>    
+        </ns0:unit>
     """
 
     def remove_first_two_lines(s: str):
@@ -57,7 +59,7 @@ def test_srcml_does_not_modify_code():
     #define TRUC
     // A super nice function
     template<typename T> constexpr T add(const T& a, T b) { return a + b;}
-    
+
     /* A dummy comment */
                             ;;TRUC;;TRUC; TRUC TRUC   ;;;; // and some gratuitous elements
     // A lambda

@@ -1,11 +1,14 @@
-import os, sys
+import os
+import sys
 
-_THIS_DIR = os.path.dirname(__file__)
-sys.path.append("_THIS_DIR/..")
-
-from codemanip.code_replacements import standard_replacements, opencv_replacements
-
-from litgen.options import LitgenOptions
-from litgen.options import code_style_imgui, code_style_implot, code_style_immvision
-
+from codemanip.code_replacements import (
+    opencv_replacements,
+    standard_replacements,
+)
+from litgen.options import (
+    LitgenOptions,
+    code_style_imgui,
+    code_style_immvision,
+    code_style_implot,
+)
 from litgen.generate_code import generate_files, generate_pydef, generate_pyi

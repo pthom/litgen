@@ -1,11 +1,9 @@
-import os, sys
-
-_THIS_DIR = os.path.dirname(__file__)
-sys.path.append(_THIS_DIR + "/../..")
+import os
+import sys
 
 import srcmlcpp
-from srcmlcpp.srcml_warnings import SrcMlExceptionDetailed
 from srcmlcpp.srcml_options import SrcmlOptions
+from srcmlcpp.srcml_warnings import SrcMlExceptionDetailed
 
 
 def test_warnings():

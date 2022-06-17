@@ -2,8 +2,8 @@ import logging
 
 import pytest  # type: ignore
 
-from codemanip import code_utils
 import litgen
+from codemanip import code_utils
 from litgen.internal import cpp_to_python
 from litgen.options import code_style_implot
 

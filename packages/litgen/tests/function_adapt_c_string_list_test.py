@@ -1,10 +1,12 @@
-import os, sys
-
-_THIS_DIR = os.path.dirname(__file__)
-sys.path.append(_THIS_DIR + "/../..")
+import os
+import sys
 
 import litgen
 from srcmlcpp.srcml_types import *
+
+
+_THIS_DIR = os.path.dirname(__file__)
+sys.path.append(_THIS_DIR + "/../..")
 
 
 def to_pydef(code) -> str:

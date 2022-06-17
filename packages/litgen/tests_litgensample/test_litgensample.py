@@ -1,5 +1,6 @@
-import litgensample  # type: ignore
 import numpy as np
+
+import litgensample  # type: ignore
 
 
 def test_c_array():

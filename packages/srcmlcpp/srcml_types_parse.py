@@ -1,13 +1,13 @@
-from srcmlcpp.srcml_types import *
 from srcmlcpp import (
     srcml_caller,
+    srcml_comments,
+    srcml_main,
     srcml_utils,
     srcml_warnings,
-    srcml_main,
-    srcml_comments,
 )
-from srcmlcpp.srcml_warnings import SrcMlExceptionDetailed
 from srcmlcpp.srcml_options import SrcmlOptions
+from srcmlcpp.srcml_types import *
+from srcmlcpp.srcml_warnings import SrcMlExceptionDetailed
 
 
 def parse_unprocessed(options: SrcmlOptions, element_c: CppElementAndComment) -> CppUnprocessed:  # noqa

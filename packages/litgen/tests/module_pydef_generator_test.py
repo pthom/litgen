@@ -1,14 +1,16 @@
 import logging
-import os, sys
+import os
+import sys
+
+import srcmlcpp
+from codemanip import code_utils
+from litgen import LitgenOptions
+from litgen.internal import module_pydef_generator
+from litgen.options import code_style_immvision, code_style_implot
+
 
 _THIS_DIR = os.path.dirname(__file__)
 sys.path.append(_THIS_DIR + "/../..")
-
-from codemanip import code_utils
-from litgen.internal import module_pydef_generator
-import srcmlcpp
-from litgen import LitgenOptions
-from litgen.options import code_style_implot, code_style_immvision
 
 
 #################################

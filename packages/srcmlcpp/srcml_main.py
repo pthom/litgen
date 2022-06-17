@@ -1,17 +1,16 @@
-from typing import List
-from dataclasses import dataclass
 import logging
-
-import xml.etree.ElementTree as ET
+from dataclasses import dataclass
+from typing import List
+from xml.etree import ElementTree as ET
 
 from srcmlcpp import (
-    srcml_types,
-    srcml_comments,
-    srcml_types_parse,
     srcml_caller,
+    srcml_comments,
+    srcml_filter_preprocessor_regions,
+    srcml_types,
+    srcml_types_parse,
     srcml_utils,
 )
-from srcmlcpp import srcml_filter_preprocessor_regions
 from srcmlcpp.srcml_options import SrcmlOptions
 
 

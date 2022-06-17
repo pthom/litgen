@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
 
-import sys
-import subprocess
 import os
+import subprocess
+import sys
+
 
 INVOKE_DIR = os.getcwd()
 THIS_DIR = os.path.dirname(os.path.realpath(__file__))
@@ -37,46 +38,46 @@ def help():
     print(
         f"""
         Usage: {sys.argv[0]}    -build_image|-create_container|-bash|-remove_container| -remove_image
-                              | exec [any command and args] 
+                              | exec [any command and args]
 
                               [--show_command]
-        
-            {sys.argv[0]} -full_build 
-        Will build the image, create and start a container based on this image 
+
+            {sys.argv[0]} -full_build
+        Will build the image, create and start a container based on this image
         (any previously running container named {DOCKER_CONTAINER_NAME} will be removed
 
-            {sys.argv[0]} -build_image 
+            {sys.argv[0]} -build_image
         Will build the image (call this first). It will be called {DOCKER_IMAGE_NAME}
 
-            {sys.argv[0]} -create_container 
-        Will create a container called {DOCKER_CONTAINER_NAME} from this image, 
+            {sys.argv[0]} -create_container
+        Will create a container called {DOCKER_CONTAINER_NAME} from this image,
         where the sources are mounted at {SOURCES_MOUNT_DIR}.
-        This container will start in detached mode (-d). Call this after build_image. 
+        This container will start in detached mode (-d). Call this after build_image.
 
-            {sys.argv[0]} -recreate_container 
+            {sys.argv[0]} -recreate_container
         Will recreate a container called {DOCKER_CONTAINER_NAME} from this image
         and delete any previous container with this name.
-        
-            {sys.argv[0]} -bash 
+
+            {sys.argv[0]} -bash
         Will log you into a bash session in the previously created container.
 
             {sys.argv[0]} -build_pip
         Will start the container and build the pip project
 
-            {sys.argv[0]} -remove_container 
+            {sys.argv[0]} -remove_container
         Will remove the container (you will lose all modifications in the Docker container)
-        
-            {sys.argv[0]} -remove_image 
+
+            {sys.argv[0]} -remove_image
         Will remove the image
 
             {sys.argv[0]} exec [any command and args]
         Will start the container and run the commands given after "exec".
-        For example, "{sys.argv[0]} exec ls -al" will list the files.  
+        For example, "{sys.argv[0]} exec ls -al" will list the files.
 
             {sys.argv[0]} exec_it [any command and args]
         Will start the container and run the commands given after "exec_it" in interactive mode
 
-            --show_command 
+            --show_command
         Will not run the command, but show you its command line.
         """
     )

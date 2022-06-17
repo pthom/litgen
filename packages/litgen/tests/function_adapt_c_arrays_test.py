@@ -1,20 +1,21 @@
-from typing import Optional
 import logging
-import os, sys
+import os
+import sys
+from typing import Optional
 
 import pytest  # type: ignore
 
-_THIS_DIR = os.path.dirname(__file__)
-sys.path.append(_THIS_DIR + "/../..")
-
-from codemanip import code_utils
-from litgen.options import LitgenOptions, code_style_implot
 import litgen
-from litgen.internal.adapt_function import make_adapted_function
-from litgen.internal.adapt_function import _adapt_c_arrays
-from litgen.internal import module_pydef_generator, cpp_to_python
 import srcmlcpp
+from codemanip import code_utils
+from litgen.internal import cpp_to_python, module_pydef_generator
+from litgen.internal.adapt_function import (
+    _adapt_c_arrays,
+    make_adapted_function,
+)
+from litgen.options import LitgenOptions, code_style_implot
 from srcmlcpp.srcml_types import *
+
 
 OPTIONS = litgen.options.code_style_implot()
 OPTIONS.srcml_options.functions_api_prefixes = ["MY_API"]

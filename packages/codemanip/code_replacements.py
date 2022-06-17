@@ -1,6 +1,6 @@
+import re
 from dataclasses import dataclass
 from typing import List
-import re
 
 
 @dataclass

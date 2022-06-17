@@ -1,10 +1,10 @@
 import os
 
-from codemanip import code_utils
 import litgen.internal.module_pydef_generator
+import srcmlcpp
+from codemanip import code_utils
 from litgen import LitgenOptions
 from litgen.internal import module_pydef_generator, module_pyi_generator
-import srcmlcpp
 
 
 def generate_pydef(

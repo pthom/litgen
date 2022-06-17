@@ -1,8 +1,7 @@
-from typing import List, Any, Optional
 import logging
-
-import xml.etree.ElementTree as ET  # noqa
+from typing import Any, List, Optional
 from xml.dom import minidom
+from xml.etree import ElementTree as ET  # noqa
 
 from codemanip import CodePosition
 from srcmlcpp import srcml_caller
