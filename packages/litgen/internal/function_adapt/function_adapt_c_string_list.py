@@ -8,7 +8,6 @@ from litgen.internal.function_adapt import (
     LambdaAdapter,
 )
 
-
 from srcmlcpp.srcml_types import (
     CppFunctionDecl,
     CppParameter,
