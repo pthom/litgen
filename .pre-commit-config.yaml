@@ -6,9 +6,19 @@ repos:
         -   id: end-of-file-fixer
         -   id: trailing-whitespace
 
-  -   repo: https://github.com/psf/black
-      rev: 22.3.0
-      hooks:
+  - repo: local
+    hooks:
+        - id: mypy-static-checking
+          name: "Static type checking with mypy"
+          entry: bash -c 'echo "Running mypy hook" && mypy .'
+          language: system
+          types: [python]
+          pass_filenames: false
+          always_run: true
+
+  - repo: https://github.com/psf/black
+    rev: 22.3.0
+    hooks:
         - id: black
           language_version: python3.9
 
