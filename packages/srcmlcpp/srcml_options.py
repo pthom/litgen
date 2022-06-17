@@ -1,4 +1,4 @@
-from typing import Callable, List, Optional
+from typing import Callable, List, Optional, Dict
 
 
 class SrcmlOptions:
@@ -29,6 +29,14 @@ class SrcmlOptions:
     # Exclude certain declarations, (namespace variables, struct and class members) by a regex on their name
     decl_name_exclude_regexes: List[str] = []
 
+    #
+    # List of named possible numbers or sizes (fill it if some number/sizes are defined by macros or constexpr values)
+    # For example it could store `{ "SPACE_DIMENSIONS" : 3 }` if the C++ code uses a macro `SPACE_DIMENSIONS`
+    named_number_macros: Dict[str, int] = {}
+
+    #
+    # Header cleaning
+    #
     # Set header_filter_preprocessor_regions to True if the header has regions like
     #       #ifdef SOME_RARE_OPTION
     #           // code we want to exclude
@@ -66,3 +74,4 @@ class SrcmlOptions:
     def __init__(self):
         self.api_suffixes = []
         self.functions_api_prefixes = []
+        self.named_number_macros = {}

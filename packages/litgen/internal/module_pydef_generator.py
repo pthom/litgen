@@ -268,8 +268,8 @@ def _generate_function_impl(
         maybe_py_arg = None
 
     # fill maybe_docstring
-    maybe_docstring = function_infos.cpp_element_comments.full_comment()
-    if len(maybe_docstring) == 0:
+    maybe_docstring: Optional[str] = function_infos.cpp_element_comments.full_comment()
+    if maybe_docstring is not None and len(maybe_docstring) == 0:
         maybe_docstring = None
     else:
         maybe_docstring = '"' + code_utils.format_cpp_comment_on_one_line(maybe_docstring) + '"'
@@ -392,7 +392,7 @@ def _add_struct_member_decl(cpp_decl: CppDecl, struct_name: str, options: Litgen
         # We ignore bitfields
         return ""
 
-    if cpp_decl.is_c_array_fixed_size_unparsable(options.c_array_numeric_member_size_dict):
+    if cpp_decl.is_c_array_fixed_size_unparsable(options.srcml_options):
         srcml_warnings.emit_srcml_warning(
             cpp_decl.srcml_element,
             """
@@ -403,7 +403,7 @@ def _add_struct_member_decl(cpp_decl: CppDecl, struct_name: str, options: Litgen
         )
         return ""
 
-    elif cpp_decl.is_c_array_known_fixed_size(options.c_array_numeric_member_size_dict):
+    elif cpp_decl.is_c_array_known_fixed_size(options.srcml_options):
         # Cf. https://stackoverflow.com/questions/58718884/binding-an-array-using-pybind11
         array_typename = cpp_decl.cpp_type.str_code()
         if array_typename not in options.c_array_numeric_member_types:
@@ -428,7 +428,7 @@ def _add_struct_member_decl(cpp_decl: CppDecl, struct_name: str, options: Litgen
             )
             return ""
 
-        array_size = cpp_decl.c_array_size_as_int(options.c_array_numeric_member_size_dict)
+        array_size = cpp_decl.c_array_size_as_int(options.srcml_options)
 
         if array_size is None:
             array_size_str = cpp_decl.c_array_size_as_str()

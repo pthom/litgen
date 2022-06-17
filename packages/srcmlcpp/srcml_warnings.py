@@ -69,7 +69,7 @@ def _highlight_responsible_code(element: ET.Element) -> str:
     return str(error_context)
 
 
-def _show_element_info(element: ET.Element, encoding):
+def _show_element_info(element: ET.Element, encoding) -> str:
     def file_location(element: ET.Element):
         header_filename = srcml_main.srcml_main_context().current_parsed_file
         if len(header_filename) == 0:
@@ -94,12 +94,15 @@ def _warning_detailed_info(
     current_element: ET.Element = None,
     additional_message: str = "",
     options: SrcmlOptions = SrcmlOptions(),
-):
+) -> str:
     def _get_python_call_info():
         stack_lines = traceback.format_stack()
         error_line = stack_lines[-4]
-        frame = inspect.currentframe()
-        caller_function_name = inspect.getframeinfo(frame.f_back.f_back.f_back).function
+        frame = inspect.currentframe()  # type: ignore
+        if frame is not None:
+            caller_function_name = inspect.getframeinfo(frame.f_back.f_back.f_back).function  # type: ignore
+        else:
+            caller_function_name = ""
         return caller_function_name, error_line
 
     python_caller_function_name, python_error_line = _get_python_call_info()

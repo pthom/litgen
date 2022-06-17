@@ -214,23 +214,23 @@ def add_item_before_comment(code: str, item: str) -> str:
     return r
 
 
-def to_snake_case(name):
+def to_snake_case(name) -> str:
     if "re1" not in to_snake_case.__dict__:
-        to_snake_case.re1 = re.compile("(.)([A-Z][a-z]+)")
-        to_snake_case.re2 = re.compile("__([A-Z])")
-        to_snake_case.re3 = re.compile("([a-z0-9])([A-Z])")
+        to_snake_case.re1 = re.compile("(.)([A-Z][a-z]+)")  # type: ignore
+        to_snake_case.re2 = re.compile("__([A-Z])")  # type: ignore
+        to_snake_case.re3 = re.compile("([a-z0-9])([A-Z])")  # type: ignore
 
-    name = to_snake_case.re1.sub(r"\1_\2", name)
-    name = to_snake_case.re2.sub(r"_\1", name)
-    name = to_snake_case.re3.sub(r"\1_\2", name)
+    name = to_snake_case.re1.sub(r"\1_\2", name)  # type: ignore
+    name = to_snake_case.re2.sub(r"_\1", name)  # type: ignore
+    name = to_snake_case.re3.sub(r"\1_\2", name)  # type: ignore
 
     # name = re.sub('(.)([A-Z][a-z]+)', r'\1_\2', name)
     # name = re.sub('__([A-Z])', r'_\1', name)
     # name = re.sub('([a-z0-9])([A-Z])', r'\1_\2', name)
-    return name.lower()
+    return name.lower()  # type: ignore
 
 
-def to_camel_case(name):
+def to_camel_case(name) -> str:
     r = "".join(word.title() for word in name.split("_"))
     return r
 
@@ -245,7 +245,7 @@ def escape_new_lines(code: str) -> str:
     return code.replace("\n", "\\n").replace('"', '\\"')
 
 
-def write_text_file(filename: str, content: str):
+def write_text_file(filename: str, content: str) -> None:
     old_content = read_text_file(filename)
     if content != old_content:
         with open(filename, "w") as f:
@@ -275,7 +275,7 @@ def unindent_code(code: str, flag_strip_empty_lines: bool = False) -> str:
     return r
 
 
-def reindent_code(code: str, indent_size: int = 4, skip_first_line=False, indent_str=""):
+def reindent_code(code: str, indent_size: int = 4, skip_first_line=False, indent_str="") -> str:
     """change the global code indentation, but keep its inner indentation"""
     code = unindent_code(code)
     code = indent_code(
@@ -287,7 +287,7 @@ def reindent_code(code: str, indent_size: int = 4, skip_first_line=False, indent
     return code
 
 
-def indent_code(code: str, indent_size: int = 1, skip_first_line=False, indent_str=None):
+def indent_code(code: str, indent_size: int = 1, skip_first_line=False, indent_str: Optional[str] = None) -> str:
     """add some space to the left of all lines"""
     if skip_first_line:
         lines = code.split("\n")
@@ -299,24 +299,30 @@ def indent_code(code: str, indent_size: int = 1, skip_first_line=False, indent_s
 
     lines = code.split("\n")
     if indent_str is None:
-        indent_str = " " * indent_size
+        indent_str_value = " " * indent_size
+    else:
+        indent_str_value = indent_str
 
     def indent_line(line: str) -> str:
         if len(line) == 0:
             return ""
         else:
-            return indent_str + line
+            return indent_str_value + line
 
     lines = list(map(indent_line, lines))
     return "\n".join(lines)
 
 
-def indent_code_force(code: str, indent_size: int = 1, indent_str=""):
+def indent_code_force(code: str, indent_size: int = 1, indent_str="") -> str:
     """violently remove all space at the left, thus removing the inner indentation"""
     lines = code.split("\n")
     if len(indent_str) == 0:
         indent_str = " " * indent_size
-    lines = list(map(lambda s: indent_str + s.strip(), lines))
+
+    def do_indent(s: str):
+        return indent_str + s.strip()
+
+    lines = list(map(do_indent, lines))
     return "\n".join(lines)
 
 
@@ -351,7 +357,9 @@ def escape_backslash_in_comments(comment: str) -> str:
     return r
 
 
-def format_cpp_comment_on_one_line(comment: str) -> str:
+def format_cpp_comment_on_one_line(comment: Optional[str]) -> str:
+    if comment is None:
+        return ""
     is_multiline = "\n" in comment
     comment = comment.replace("\n", "\\n")
     comment = comment.replace('"', '\\"')
@@ -361,7 +369,7 @@ def format_cpp_comment_on_one_line(comment: str) -> str:
     return comment
 
 
-def format_cpp_comment_multiline(comment: str, indentation_size: int = 4, indentation_str: str = ""):
+def format_cpp_comment_multiline(comment: str, indentation_size: int = 4, indentation_str: str = "") -> str:
     lines = comment.split("\n")
     if len(indentation_str) == 0:
         indentation_str = " " * indentation_size
@@ -472,13 +480,14 @@ def remove_redundant_spaces(code: str) -> str:
     return result
 
 
-def count_spaces_at_start_of_line(line: str):
+def count_spaces_at_start_of_line(line: str) -> int:
     nb_spaces_this_line = 0
     for char in line:
         if char == " ":
             nb_spaces_this_line += 1
         else:
             return nb_spaces_this_line
+    return nb_spaces_this_line
 
 
 def compute_code_indent_size(code: str) -> int:
@@ -563,19 +572,19 @@ def remove_end_of_line_cpp_comments(code: str) -> str:
     return code
 
 
-def join_remove_empty(separator: str, strs: List[str]):
+def join_remove_empty(separator: str, strs: List[str]) -> str:
     non_empty_strs = filter(lambda s: len(s) > 0, strs)
     r = separator.join(non_empty_strs)
     return r
 
 
-def contains_word(where_to_search: str, word: str):
+def contains_word(where_to_search: str, word: str) -> bool:
     word = word.replace("*", "\\*")
     regex_str = r"\b" + word + r"\b"
     return does_match_regex(regex_str, where_to_search)
 
 
-def contains_word_boundary_left_only(where_to_search: str, word: str):
+def contains_word_boundary_left_only(where_to_search: str, word: str) -> bool:
     word = word.replace("*", "\\*")
     regex_str = r"\b" + word
     return does_match_regex(regex_str, where_to_search)
@@ -594,7 +603,7 @@ def var_name_looks_like_size_name(var_name: str, possible_tokens: List[str]) -> 
     return False
 
 
-def var_name_contains_word(var_name: str, word: str):
+def var_name_contains_word(var_name: str, word: str) -> bool:
     var_name = to_snake_case(var_name).strip()
     word = word.lower()
     if " " in var_name:
@@ -606,7 +615,7 @@ def var_name_contains_word(var_name: str, word: str):
     return False
 
 
-def contains_pointer_type(full_type_str: str, type_to_search: str):
+def contains_pointer_type(full_type_str: str, type_to_search: str) -> bool:
     if type_to_search.endswith("*"):
         type_to_search = type_to_search[:-1]
 
@@ -656,7 +665,7 @@ def merge_dicts(dict1, dict2):
     return res
 
 
-def replace_in_string(input_string, replacements: Dict[str, str]) -> str:
+def replace_in_string(input_string: str, replacements: Dict[str, str]) -> str:
     r = input_string
     for search, replace in replacements.items():
         full_search = "{" + search + "}"

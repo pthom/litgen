@@ -1,6 +1,6 @@
 import logging
 from dataclasses import dataclass
-from typing import List, Optional, Type
+from typing import List, Optional, Type, cast, TypeVar
 from xml.etree import ElementTree as ET
 
 from srcmlcpp import (
@@ -13,6 +13,7 @@ from srcmlcpp import (
     srcml_warnings,
 )
 from srcmlcpp.srcml_options import SrcmlOptions
+from srcmlcpp.srcml_types import *
 
 
 @dataclass
@@ -40,10 +41,10 @@ class _SrcmlMainContext:
         self._current_parsed_file_unit_code = value
 
 
-def srcml_main_context():
+def srcml_main_context() -> _SrcmlMainContext:
     if not hasattr(srcml_main_context, "instance"):
-        srcml_main_context.instance = _SrcmlMainContext()
-    return srcml_main_context.instance
+        srcml_main_context.instance = _SrcmlMainContext()  # type: ignore
+    return srcml_main_context.instance  # type: ignore
 
 
 def get_children_with_comments(options: SrcmlOptions, srcml_xml: ET.Element) -> List[srcml_types.CppElementAndComment]:
@@ -109,9 +110,20 @@ def code_first_child_of_type(
     cpp_unit = code_to_cpp_unit(options, code)
     for child in cpp_unit.block_children:
         if isinstance(child, type_of_cpp_element):
-            return child
+            return child  # type: ignore
     raise srcml_warnings.SrcMlException(f"Could not find a child of type {type_of_cpp_element}")
-    return None
+
+
+def code_first_enum(options: SrcmlOptions, code: str) -> srcml_types.CppEnum:
+    return cast(CppEnum, code_first_child_of_type(options, CppEnum, code))
+
+
+def code_first_decl(options: SrcmlOptions, code: str) -> srcml_types.CppDecl:
+    return cast(CppDecl, code_first_child_of_type(options, CppDecl, code))
+
+
+def code_first_struct(options: SrcmlOptions, code: str) -> srcml_types.CppStruct:
+    return cast(CppStruct, code_first_child_of_type(options, CppStruct, code))
 
 
 def _tests_only_get_only_child_with_tag(options: SrcmlOptions, code: str, tag: str) -> srcml_types.CppElementAndComment:

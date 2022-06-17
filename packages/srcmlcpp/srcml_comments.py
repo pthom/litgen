@@ -127,6 +127,8 @@ def _group_consecutive_comments(srcml_code: ET.Element) -> ET.Element:
             previous_child = child_copy
 
         def concat_comment():
+            assert child.text is not None
+            assert previous_child is not None and previous_child.text is not None
             comment_raw = child.text
             if comment_raw.startswith("//"):
                 comment_raw = comment_raw[2:]

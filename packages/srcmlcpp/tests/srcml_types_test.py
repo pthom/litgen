@@ -13,21 +13,21 @@ def to_decl(code):
 
 def test_c_array_fixed_size_to_std_array():
     options = srcmlcpp.SrcmlOptions()
-    size_dict = {"COUNT": 3}
+    options.named_number_macros = {"COUNT": 3}
 
     code = "const int v[COUNT]"
     cpp_decl = to_decl(code)
-    new_decl = cpp_decl.c_array_fixed_size_to_std_array(size_dict)
+    new_decl = cpp_decl.c_array_fixed_size_to_std_array(options)
     code_utils.assert_are_codes_equal(new_decl, "const std::array<int, 3>& v")
 
     code = "const unsigned int v[3]"
     cpp_decl = to_decl(code)
-    new_decl = cpp_decl.c_array_fixed_size_to_std_array(size_dict)
+    new_decl = cpp_decl.c_array_fixed_size_to_std_array(options)
     code_utils.assert_are_codes_equal(new_decl, "const std::array<unsigned int, 3>& v")
 
     code = "int v[2]"
     cpp_decl = to_decl(code)
-    new_decls = cpp_decl.c_array_fixed_size_to_new_boxed_decls(size_dict)
+    new_decls = cpp_decl.c_array_fixed_size_to_new_boxed_decls(options)
     assert len(new_decls) == 2
     code_utils.assert_are_codes_equal(new_decls[0], "BoxedInt & v_0")
     code_utils.assert_are_codes_equal(new_decls[1], "BoxedInt & v_1")

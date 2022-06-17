@@ -486,7 +486,6 @@ def parse_public_protected_private(options: SrcmlOptions, element_c: CppElementA
     access_type = element_c.tag()
     assert access_type in ["public", "protected", "private"]
     type = element_c.attribute_value("type")
-
     block_content = CppPublicProtectedPrivate(element_c.srcml_element, access_type, type)
     fill_block(options, element_c.srcml_element, block_content)
     return block_content
@@ -505,7 +504,11 @@ def parse_block(options: SrcmlOptions, element: ET.Element) -> CppBlock:
 
 def is_operator_function(element_c: CppElementAndComment) -> bool:
     assert element_c.tag() in ["function", "function_decl"]
-    return element_c.attribute_value("type") == "operator"
+    type_attr = element_c.attribute_value("type")
+    if type_attr is None:
+        return False
+    else:
+        return type_attr == "operator"
 
 
 def _shall_publish_function(function_c: CppElementAndComment, options: SrcmlOptions):
@@ -716,7 +719,9 @@ def parse_enum(options: SrcmlOptions, element_c: CppElementAndComment) -> CppEnu
     result = CppEnum(element_c.srcml_element, element_c.cpp_element_comments)
 
     if "type" in element_c.srcml_element.attrib.keys():
-        result.enum_type = element_c.attribute_value("type")
+        enum_type = element_c.attribute_value("type")
+        assert enum_type is not None
+        result.enum_type = enum_type
 
     for child in element_c.srcml_element:
         child_tag = srcml_utils.clean_tag_or_attrib(child.tag)

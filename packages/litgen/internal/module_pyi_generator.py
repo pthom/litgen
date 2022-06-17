@@ -61,7 +61,11 @@ def _add_stub_element(
         all_lines_except_first += ["pass"]
 
     _i_ = options.indent_python_spaces()
-    all_lines_except_first = list(map(lambda s: _i_ + s, all_lines_except_first))
+
+    def indent_one_line(s: str):
+        return _i_ + s
+
+    all_lines_except_first = list(map(indent_one_line, all_lines_except_first))
 
     all_lines_except_first = code_utils.align_python_comments_in_block_lines(all_lines_except_first)
 
@@ -135,7 +139,7 @@ def _make_enum_element_decl_lines(
     #
     # So, we search and replace enum strings in the default value (.init)
     #
-    for enum_decl in enum.get_enum_decls():
+    for enum_decl in enum.get_enum_decls_poub():
         enum_decl_cpp_name = enum_decl.decl_name
         enum_decl_python_name = cpp_to_python.enum_value_name_to_python(enum, enum_decl, options)
 

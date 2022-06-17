@@ -51,13 +51,13 @@ def child_with_tag(element: ET.Element, tag: str) -> Optional[ET.Element]:
         return children[0]
 
 
-def srcml_to_str(element: ET.Element, bare=False):
+def srcml_to_str(element: ET.Element, bare=False) -> str:
     xmlstr_raw = ET.tostring(element, encoding="unicode")
     if bare:
         return xmlstr_raw
 
     try:
-        xmlstr = minidom.parseString(ET.tostring(element)).toprettyxml(indent="   ")
+        xmlstr: str = minidom.parseString(ET.tostring(element)).toprettyxml(indent="   ")
     except Exception:
         xmlstr = xmlstr_raw
 
@@ -79,11 +79,11 @@ def clean_tag_or_attrib(tag_name: str) -> str:
     return tag_name
 
 
-def str_or_empty(what: Any):
+def str_or_empty(what: Any) -> str:
     return "" if what is None else str(what)
 
 
-def _extract_interesting_text(element: ET.Element):
+def _extract_interesting_text(element: ET.Element) -> str:
     if element.text is None:
         return ""
     text = element.text.replace("\n", " ").strip()
@@ -92,7 +92,7 @@ def _extract_interesting_text(element: ET.Element):
     return text
 
 
-def _extract_interesting_tail(element: ET.Element):
+def _extract_interesting_tail(element: ET.Element) -> str:
     if element.tail is None:
         return ""
     text = element.tail.replace("\n", " ").strip()
@@ -104,7 +104,7 @@ def _extract_interesting_tail(element: ET.Element):
 _PREVIOUS_INFO_POSITION = ""
 
 
-def _info_element_position(element: ET.Element):
+def _info_element_position(element: ET.Element) -> str:
     global _PREVIOUS_INFO_POSITION
     start, end = element_start_position(element), element_end_position(element)
     if start is None or end is None:
@@ -121,8 +121,10 @@ def _info_element_position(element: ET.Element):
         return ""
 
 
-def srcml_to_str_readable(srcml_element: ET.Element, level=0) -> str:
+def srcml_to_str_readable(srcml_element: ET.Element, level: int = 0) -> str:
     indent_str = "    " * level
+
+    msg: str
     msg = indent_str + clean_tag_or_attrib(srcml_element.tag)
     text = _extract_interesting_text(srcml_element)
     if len(text) > 0:

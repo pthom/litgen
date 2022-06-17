@@ -126,7 +126,7 @@ class _AdaptBuffersHelper:
         param = self._last_template_buffer_param()
         return param is not None
 
-    def _param(self, idx_param: int):
+    def _param(self, idx_param: int) -> CppParameter:
         assert 0 <= idx_param < len(self.function_infos.parameter_list.parameters)
         return self.function_infos.parameter_list.parameters[idx_param]
 
@@ -328,21 +328,21 @@ class _AdaptBuffersHelper:
             new_param.decl.cpp_type.specifiers = []
         return new_param
 
-    def _adapted_param_buffer_size(self, idx_param: int):
+    def _adapted_param_buffer_size(self, idx_param: int) -> str:
         param = self._param(idx_param)
         raw_size_type = param.decl.cpp_type.typenames[0]
         count_variable = self._pyarray_count(idx_param)
         r = f"static_cast<{raw_size_type}>({count_variable})"
         return r
 
-    def _param_name(self, idx_param: int):
+    def _param_name(self, idx_param: int) -> str:
         return self._param(idx_param).decl.decl_name
 
-    def _is_const(self, idx_param: int):
+    def _is_const(self, idx_param: int) -> bool:
         r = "const" in self._param(idx_param).decl.cpp_type.specifiers
         return r
 
-    def _buffer_from_pyarray_name(self, idx_param: int):
+    def _buffer_from_pyarray_name(self, idx_param: int) -> str:
         return f"{self._param_name(idx_param)}_from_pyarray"
 
     def _last_idx_buffer_param_before(self, idx_param: int) -> Optional[int]:
@@ -352,24 +352,24 @@ class _AdaptBuffersHelper:
                 r = i
         return r
 
-    def _pyarray_count(self, idx_param: int):
+    def _pyarray_count(self, idx_param: int) -> str:
         last_idx_buffer_param = self._last_idx_buffer_param_before(idx_param)
         if last_idx_buffer_param is None:
             raise srcml_warnings.SrcMlException("No previous buffer param!")
         return f"{self._param_name(last_idx_buffer_param)}_count"
 
-    def _const_space_or_empty(self, idx_param: int):
+    def _const_space_or_empty(self, idx_param: int) -> str:
         return "const " if self._is_const(idx_param) else ""
 
-    def _original_raw_type(self, idx_param: int):
+    def _original_raw_type(self, idx_param: int) -> str:
         return self._param(idx_param).decl.cpp_type.typenames[0]
 
-    def _adapted_param_buffer_standard(self, idx_param: int):
+    def _adapted_param_buffer_standard(self, idx_param: int) -> str:
         const_space_or_empty = "const " if self._is_const(idx_param) else ""
         r = f"static_cast<{const_space_or_empty}{self._original_raw_type(idx_param)} *>({self._buffer_from_pyarray_name(idx_param)})"  # noqa
         return r
 
-    def _lambda_input_buffer_standard_convert_part(self, idx_param: int):
+    def _lambda_input_buffer_standard_convert_part(self, idx_param: int) -> str:
         mutable_or_empty = "" if self._is_const(idx_param) else "mutable_"
         mutable_or_const = "const" if self._is_const(idx_param) else "mutable"
 
@@ -404,6 +404,7 @@ class _AdaptBuffersHelper:
 
     def _stride_adapted_name(self, idx_param):
         idx_buffer_param_before = self._last_idx_buffer_param_before(idx_param)
+        assert idx_buffer_param_before is not None
         adapted_stride_name = f"{self._param_name(idx_buffer_param_before)}_stride"
         return adapted_stride_name
 
@@ -434,7 +435,7 @@ class _AdaptBuffersHelper:
         template = code_utils.unindent_code(template, flag_strip_empty_lines=True) + "\n"
         return template
 
-    def _new_param_stride(self, idx_param: int):
+    def _new_param_stride(self, idx_param: int) -> CppParameter:
         stride_param = self._param(idx_param)
         new_stride_param = copy.deepcopy(stride_param)
         new_stride_param.decl.cpp_type.typenames = ["int"]

@@ -13,7 +13,7 @@ Code utilities for transcription from C++ to Python
 """
 
 
-def _filename_with_n_parent_folders(filename: str, n: int):
+def _filename_with_n_parent_folders(filename: str, n: int) -> str:
     path = pathlib.Path(filename)
     index_start = len(path.parts) - 1 - n
     if index_start < 0:
@@ -22,7 +22,7 @@ def _filename_with_n_parent_folders(filename: str, n: int):
     return r
 
 
-def _info_original_location(cpp_element: CppElement, options: LitgenOptions, comment_token: str):
+def _info_original_location(cpp_element: CppElement, options: LitgenOptions, comment_token: str) -> str:
 
     if not options.original_location_flag_show:
         return ""
@@ -41,11 +41,11 @@ def _info_original_location(cpp_element: CppElement, options: LitgenOptions, com
     return r
 
 
-def info_original_location_cpp(cpp_element: CppElement, options: LitgenOptions):
+def info_original_location_cpp(cpp_element: CppElement, options: LitgenOptions) -> str:
     return _info_original_location(cpp_element, options, "//")
 
 
-def info_original_location_python(cpp_element: CppElement, options: LitgenOptions):
+def info_original_location_python(cpp_element: CppElement, options: LitgenOptions) -> str:
     return _info_original_location(cpp_element, options, "#")
 
 
@@ -145,20 +145,25 @@ def type_to_python(type_cpp: str, options: LitgenOptions) -> str:
     return code_replacements.apply_code_replacements(type_cpp, options.code_replacements).strip()
 
 
+def add_underscore_if_python_reserved_word(name: str) -> str:
+    if name in keyword.kwlist:
+        name += "_"
+    return name
+
+
 def var_name_to_python(var_name: str, options: LitgenOptions) -> str:  # noqa
     var_name_snake_case = code_utils.to_snake_case(var_name)
-    if var_name_snake_case in keyword.kwlist:
-        var_name_snake_case += "_"
-    return var_name_snake_case
+    r = add_underscore_if_python_reserved_word(var_name_snake_case)
+    return r
 
 
-def decl_python_var_name(cpp_decl: CppDecl, options: LitgenOptions):
+def decl_python_var_name(cpp_decl: CppDecl, options: LitgenOptions) -> str:
     var_cpp_name = cpp_decl.decl_name
     var_python_name = var_name_to_python(var_cpp_name, options)
     return var_python_name
 
 
-def decl_python_value(cpp_decl: CppDecl, options: LitgenOptions):
+def decl_python_value(cpp_decl: CppDecl, options: LitgenOptions) -> str:
     value_cpp = cpp_decl.initial_value_code
     value_python = code_replacements.apply_code_replacements(value_cpp, options.code_replacements)
     return value_python
@@ -227,7 +232,7 @@ def cpp_numeric_types():
     return r
 
 
-def is_cpp_type_immutable_for_python(cpp_type: str):
+def is_cpp_type_immutable_for_python(cpp_type: str) -> bool:
     if cpp_type in cpp_numeric_types():
         return True
     if cpp_type in ["string", "std::string"]:
@@ -247,7 +252,7 @@ class BoxedImmutablePythonType:
         if cpp_type not in BoxedImmutablePythonType.static_list_of_instantiated_type:
             BoxedImmutablePythonType.static_list_of_instantiated_type.append(cpp_type)
 
-    def boxed_type_name(self):
+    def boxed_type_name(self) -> str:
         boxed_name = "Boxed" + _cpp_type_to_camel_case_no_space(self.cpp_type)
         return boxed_name
 
@@ -274,7 +279,7 @@ class BoxedImmutablePythonType:
         return pydef_code
 
     @staticmethod
-    def struct_codes():
+    def struct_codes() -> str:
         r = ""
         for cpp_type in BoxedImmutablePythonType.static_list_of_instantiated_type:
             boxed_type = BoxedImmutablePythonType(cpp_type)
@@ -282,7 +287,7 @@ class BoxedImmutablePythonType:
         return r
 
     @staticmethod
-    def binding_codes(options: LitgenOptions):
+    def binding_codes(options: LitgenOptions) -> str:
         options_no_api = copy.deepcopy(options)
         options_no_api.srcml_options.api_suffixes = []
         options_no_api.srcml_options.functions_api_prefixes = []
@@ -379,6 +384,6 @@ def enum_element_is_count(enum: CppEnum, enum_element: CppDecl, options: LitgenO
         return has_enum_name_part
 
 
-def looks_like_size_param(param_c: CppParameter, options: LitgenOptions):
+def looks_like_size_param(param_c: CppParameter, options: LitgenOptions) -> bool:
     r = code_utils.var_name_looks_like_size_name(param_c.decl.decl_name, options.buffer_size_names)
     return r

@@ -1,3 +1,4 @@
+# type: ignore
 import numpy as np
 
 import litgensample  # type: ignore
@@ -8,13 +9,13 @@ def test_c_array():
     # Test const c arrays / non void function
     # MY_API inline int add_c_array2(const int values[2]) { return values[0] + values[1];}
     #
-    a = (5, 6)
+    a = [5, 6]
     r = litgensample.add_c_array2(a)
     assert r == 11
 
     got_exception = False
     try:
-        litgensample.add_c_array2((1, 2, 3))
+        litgensample.add_c_array2([1, 2, 3])
     except TypeError:
         got_exception = True
     assert got_exception
@@ -23,9 +24,8 @@ def test_c_array():
     # Test const c arrays / void function
     # MY_API inline void log_c_array2(const int values[2]) { printf("%i, %i\n", values[0], values[1]); }
     #
-    a = (5, 6)
-    r = litgensample.log_c_array2(a)  # This should print "5, 6\n"
-    assert r is None
+    a = [5, 6]
+    litgensample.log_c_array2(a)  # This should print "5, 6\n"
 
     #
     # Test non const c arrays with numeric type (which will be boxed)
@@ -43,10 +43,10 @@ def test_c_array():
 
     # Test non const c arrays with struct type (which will *not* be boxed)
     #     MY_API inline void GetPoints(Point2 out[2]) { out[0] = {0, 1}; out[1] = {2, 3}; }
-    a = litgensample.Point2()
-    b = litgensample.Point2()
-    litgensample.get_points(a, b)
-    assert a.x == 0 and a.y == 1 and b.x == 2 and b.y == 3
+    pt1 = litgensample.Point2()
+    pt2 = litgensample.Point2()
+    litgensample.get_points(pt1, pt2)
+    assert pt1.x == 0 and pt1.y == 1 and pt2.x == 2 and pt2.y == 3
 
 
 def test_c_buffers():

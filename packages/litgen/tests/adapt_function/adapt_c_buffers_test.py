@@ -12,7 +12,7 @@ _THIS_DIR = os.path.dirname(__file__)
 sys.path.append(_THIS_DIR + "/../..")
 
 
-def gen_pydef_code(code) -> Optional[str]:
+def gen_pydef_code(code) -> str:
     options = litgen.options.code_style_implot()
     options.srcml_options.functions_api_prefixes = ["MY_API"]
     cpp_unit = srcmlcpp.code_to_cpp_unit(options.srcml_options, code)
@@ -20,7 +20,7 @@ def gen_pydef_code(code) -> Optional[str]:
         if isinstance(child, CppFunctionDecl) or isinstance(child, CppFunction):
             generated_code = module_pydef_generator._generate_function(child, options)
             return generated_code
-    return None
+    raise ValueError("oops")
 
 
 def test_mutable_buffer_return_int():

@@ -47,7 +47,7 @@ def adapt_c_arrays(adapted_function: AdaptedFunction, options: LitgenOptions) ->
     needs_adapt = False
 
     for old_param in adapted_function.function_infos.parameter_list.parameters:
-        if old_param.decl.is_c_array_known_fixed_size(options.c_array_numeric_member_size_dict):
+        if old_param.decl.is_c_array_known_fixed_size(options.srcml_options):
             needs_adapt = True
 
     if not needs_adapt:
@@ -60,12 +60,12 @@ def adapt_c_arrays(adapted_function: AdaptedFunction, options: LitgenOptions) ->
     new_function_params = []
     for old_param in old_function_params:
         was_replaced = False
-        if old_param.decl.is_c_array_known_fixed_size(options.c_array_numeric_member_size_dict):
+        if old_param.decl.is_c_array_known_fixed_size(options.srcml_options):
 
             if old_param.decl.is_const() and options.c_array_const_flag_replace:
                 was_replaced = True
                 # Create new calling param (const std::array &)
-                new_decl = old_param.decl.c_array_fixed_size_to_std_array(options.c_array_numeric_member_size_dict)
+                new_decl = old_param.decl.c_array_fixed_size_to_std_array(options.srcml_options)
                 new_param = copy.deepcopy(old_param)
                 new_param.decl = new_decl
                 new_function_params.append(new_param)
@@ -73,16 +73,14 @@ def adapt_c_arrays(adapted_function: AdaptedFunction, options: LitgenOptions) ->
                 lambda_adapter.adapted_cpp_parameter_list.append(new_decl.decl_name + ".data()")
 
             elif not old_param.decl.is_const() and options.c_array_modifiable_flag_replace:
-                array_size_int = old_param.decl.c_array_size_as_int(options.c_array_numeric_member_size_dict)
+                array_size_int = old_param.decl.c_array_size_as_int(options.srcml_options)
                 assert array_size_int is not None
 
                 if array_size_int <= options.c_array_modifiable_max_size:
 
                     was_replaced = True
 
-                    new_decls = old_param.decl.c_array_fixed_size_to_new_boxed_decls(
-                        options.c_array_numeric_member_size_dict
-                    )
+                    new_decls = old_param.decl.c_array_fixed_size_to_new_boxed_decls(options.srcml_options)
 
                     #
                     # Fill lambda_input_code and lambda_output_code

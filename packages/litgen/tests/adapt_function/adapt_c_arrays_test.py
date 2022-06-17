@@ -21,12 +21,12 @@ OPTIONS = litgen.options.code_style_implot()
 OPTIONS.srcml_options.functions_api_prefixes = ["MY_API"]
 
 
-def get_first_function_decl(code) -> Optional[CppFunctionDecl]:
+def get_first_function_decl(code) -> CppFunctionDecl:
     cpp_unit = srcmlcpp.code_to_cpp_unit(OPTIONS.srcml_options, code)
     for child in cpp_unit.block_children:
         if isinstance(child, CppFunctionDecl) or isinstance(child, CppFunction):
             return child
-    return None
+    raise ValueError("not found")
 
 
 def test_make_function_params_adapter():

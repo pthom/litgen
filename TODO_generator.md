@@ -1,3 +1,6 @@
+S'arranger pour que mypy ou un linter repere les erreurs de variables pas declarees.
+Cf status de ce repo.
+
 * package function_adapt
   * renames
   * API avec derivation

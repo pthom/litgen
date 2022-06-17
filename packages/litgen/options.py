@@ -154,8 +154,6 @@ class LitgenOptions:
         "int64_t",
         "bool",
     ]
-    # List of named possible sizes (fill it if some sizes are defined by macros or constexpr values)
-    c_array_numeric_member_size_dict: Dict[str, int] = {}
 
     # If c_string_list_flag_replace is active, then C string lists `(const char **, size_t)`
     # will be replaced by `const std::vector<std::string>&`. For example:
