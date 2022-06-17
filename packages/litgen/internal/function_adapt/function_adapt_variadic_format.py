@@ -3,7 +3,7 @@ import copy
 
 from litgen.generate_code import CodeStyleOptions
 from litgen.internal.function_adapt import (
-    CppFunctionDeclWithAdaptedParams,
+    AdaptedFunction,
     LambdaAdapter,
 )
 
@@ -14,9 +14,7 @@ def is_variadic_format(param: CppParameter):
     return param.decl.cpp_type.typenames == [] and param.decl.cpp_type.modifiers == ["..."]
 
 
-def adapt_variadic_format(
-    function_adapted_params: CppFunctionDeclWithAdaptedParams, options: CodeStyleOptions
-) -> Optional[LambdaAdapter]:
+def adapt_variadic_format(adapted_function: AdaptedFunction, options: CodeStyleOptions) -> Optional[LambdaAdapter]:
     """A function like
         void Text(const char* fmt, ...)
     will be published in python as
@@ -25,7 +23,7 @@ def adapt_variadic_format(
         Text("%s", s.c_str());
     """
 
-    old_function_params: List[CppParameter] = function_adapted_params.function_infos.parameter_list.parameters
+    old_function_params: List[CppParameter] = adapted_function.function_infos.parameter_list.parameters
 
     # Variadic params are always last
     if len(old_function_params) < 2:
@@ -39,7 +37,7 @@ def adapt_variadic_format(
 
     lambda_adapter = LambdaAdapter()
 
-    lambda_adapter.new_function_infos = copy.deepcopy(function_adapted_params.function_infos)
+    lambda_adapter.new_function_infos = copy.deepcopy(adapted_function.function_infos)
     new_function_params = []
 
     # process all params except last
@@ -53,6 +51,6 @@ def adapt_variadic_format(
     lambda_adapter.adapted_cpp_parameter_list.append(param_before_last.decl.decl_name)
 
     lambda_adapter.new_function_infos.parameter_list.parameters = new_function_params
-    lambda_adapter.lambda_name = function_adapted_params.function_infos.function_name + "_adapt_variadic_format"
+    lambda_adapter.lambda_name = adapted_function.function_infos.function_name + "_adapt_variadic_format"
 
     return lambda_adapter

@@ -1,6 +1,6 @@
 from litgen.options import CodeStyleOptions
 from litgen.internal.function_adapt import (
-    CppFunctionDeclWithAdaptedParams,
+    AdaptedFunction,
     LambdaAdapter,
 )
 
@@ -13,7 +13,7 @@ def make_function_params_adapter(
     function_infos: CppFunctionDecl,
     options: CodeStyleOptions,
     parent_struct_name: str = "",
-) -> CppFunctionDeclWithAdaptedParams:
+) -> AdaptedFunction:
 
     from litgen.internal.function_adapt.function_adapt_c_arrays import adapt_c_arrays
     from litgen.internal.function_adapt.function_adapt_c_string_list import adapt_c_string_list
@@ -27,18 +27,18 @@ def make_function_params_adapter(
         adapt_variadic_format,
     ]
 
-    function_adapted_params = CppFunctionDeclWithAdaptedParams(function_infos, parent_struct_name)
+    adapted_function = AdaptedFunction(function_infos, parent_struct_name)
 
     for adapter_function in all_adapters_functions:
-        lambda_adapter = adapter_function(function_adapted_params, options)
+        lambda_adapter = adapter_function(adapted_function, options)
         if lambda_adapter is not None:
-            apply_lambda_adapter(function_adapted_params, lambda_adapter, options, parent_struct_name)
+            apply_lambda_adapter(adapted_function, lambda_adapter, options, parent_struct_name)
 
-    return function_adapted_params
+    return adapted_function
 
 
 def _make_adapted_lambda_code_end(
-    function_adapted_params: CppFunctionDeclWithAdaptedParams,
+    adapted_function: AdaptedFunction,
     lambda_adapter: LambdaAdapter,
     options: CodeStyleOptions,
     parent_struct_name,
@@ -60,17 +60,17 @@ def _make_adapted_lambda_code_end(
     adapted_cpp_parameters = ", ".join(lambda_adapter.adapted_cpp_parameter_list)
 
     # Fill auto_r_equal_or_void
-    _fn_return_type = function_adapted_params.function_infos.full_return_type(options.srcml_options)
+    _fn_return_type = adapted_function.function_infos.full_return_type(options.srcml_options)
     auto_r_equal_or_void = "auto r = " if _fn_return_type != "void" else ""
 
     # Fill function_or_lambda_to_call
-    if function_adapted_params.lambda_to_call is not None:
-        function_or_lambda_to_call = function_adapted_params.lambda_to_call
+    if adapted_function.lambda_to_call is not None:
+        function_or_lambda_to_call = adapted_function.lambda_to_call
     else:
         if is_method:
-            function_or_lambda_to_call = "self." + function_adapted_params.function_infos.function_name
+            function_or_lambda_to_call = "self." + adapted_function.function_infos.function_name
         else:
-            function_or_lambda_to_call = function_adapted_params.function_infos.function_name
+            function_or_lambda_to_call = adapted_function.function_infos.function_name
 
     # Fill maybe_return_r
     maybe_return_r = None if _fn_return_type == "void" else "return r"
@@ -106,7 +106,7 @@ def _make_adapted_lambda_code_end(
 
 
 def _make_adapted_lambda_code(
-    function_adapted_params: CppFunctionDeclWithAdaptedParams,
+    adapted_function: AdaptedFunction,
     lambda_adapter: LambdaAdapter,
     options: CodeStyleOptions,
     parent_struct_name,
@@ -130,8 +130,8 @@ def _make_adapted_lambda_code(
 
     # Fill lambda_captures
     _lambda_captures_list = []
-    if function_adapted_params.lambda_to_call is not None:
-        _lambda_captures_list.append("&" + function_adapted_params.lambda_to_call)
+    if adapted_function.lambda_to_call is not None:
+        _lambda_captures_list.append("&" + adapted_function.lambda_to_call)
     elif is_method:
         _lambda_captures_list.append("&self")
     lambda_captures = ", ".join(_lambda_captures_list)
@@ -155,7 +155,7 @@ def _make_adapted_lambda_code(
         lambda_template_end = lambda_adapter.lambda_template_end
     else:
         lambda_template_end = _make_adapted_lambda_code_end(
-            function_adapted_params, lambda_adapter, options, parent_struct_name
+            adapted_function, lambda_adapter, options, parent_struct_name
         )
     lambda_template_end = code_utils.indent_code(
         lambda_template_end,
@@ -185,21 +185,21 @@ def _make_adapted_lambda_code(
 
 
 def apply_lambda_adapter(
-    function_adapted_params: CppFunctionDeclWithAdaptedParams,
+    adapted_function: AdaptedFunction,
     lambda_adapter: LambdaAdapter,
     options: CodeStyleOptions,
     parent_struct_name,
 ):
 
     # Get the full lambda code
-    lambda_code = _make_adapted_lambda_code(function_adapted_params, lambda_adapter, options, parent_struct_name)
+    lambda_code = _make_adapted_lambda_code(adapted_function, lambda_adapter, options, parent_struct_name)
 
-    # And modify function_adapted_params
-    if function_adapted_params.cpp_adapter_code is None:
-        function_adapted_params.cpp_adapter_code = lambda_code
+    # And modify adapted_function
+    if adapted_function.cpp_adapter_code is None:
+        adapted_function.cpp_adapter_code = lambda_code
     else:
-        function_adapted_params.cpp_adapter_code += lambda_code
+        adapted_function.cpp_adapter_code += lambda_code
 
     assert lambda_adapter.new_function_infos is not None
-    function_adapted_params.function_infos = lambda_adapter.new_function_infos
-    function_adapted_params.lambda_to_call = lambda_adapter.lambda_name
+    adapted_function.function_infos = lambda_adapter.new_function_infos
+    adapted_function.lambda_to_call = lambda_adapter.lambda_name

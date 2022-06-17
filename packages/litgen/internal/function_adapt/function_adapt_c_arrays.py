@@ -3,16 +3,14 @@ import copy
 
 from litgen.generate_code import CodeStyleOptions
 from litgen.internal.function_adapt import (
-    CppFunctionDeclWithAdaptedParams,
+    AdaptedFunction,
     LambdaAdapter,
 )
 
 from srcmlcpp.srcml_types import CppParameter
 
 
-def adapt_c_arrays(
-    function_adapted_params: CppFunctionDeclWithAdaptedParams, options: CodeStyleOptions
-) -> Optional[LambdaAdapter]:
+def adapt_c_arrays(adapted_function: AdaptedFunction, options: CodeStyleOptions) -> Optional[LambdaAdapter]:
     """
     We want to adapt functions that use fixed size C arrays like those:
         `void foo_const(const int input[2])` or `void foo_non_const(int output[2])`
@@ -51,7 +49,7 @@ def adapt_c_arrays(
 
     needs_adapt = False
 
-    for old_param in function_adapted_params.function_infos.parameter_list.parameters:
+    for old_param in adapted_function.function_infos.parameter_list.parameters:
         if old_param.decl.is_c_array_known_fixed_size(options.c_array_numeric_member_size_dict):
             needs_adapt = True
 
@@ -60,8 +58,8 @@ def adapt_c_arrays(
 
     lambda_adapter = LambdaAdapter()
 
-    lambda_adapter.new_function_infos = copy.deepcopy(function_adapted_params.function_infos)
-    old_function_params: List[CppParameter] = function_adapted_params.function_infos.parameter_list.parameters
+    lambda_adapter.new_function_infos = copy.deepcopy(adapted_function.function_infos)
+    old_function_params: List[CppParameter] = adapted_function.function_infos.parameter_list.parameters
     new_function_params = []
     for old_param in old_function_params:
         was_replaced = False
@@ -126,6 +124,6 @@ def adapt_c_arrays(
 
     lambda_adapter.new_function_infos.parameter_list.parameters = new_function_params
 
-    lambda_adapter.lambda_name = function_adapted_params.function_infos.function_name + "_adapt_fixed_size_c_arrays"
+    lambda_adapter.lambda_name = adapted_function.function_infos.function_name + "_adapt_fixed_size_c_arrays"
 
     return lambda_adapter

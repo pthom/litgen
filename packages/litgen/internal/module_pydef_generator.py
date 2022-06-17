@@ -15,7 +15,7 @@ from codemanip import code_replacements, code_utils
 from litgen import CodeStyleOptions
 from litgen.internal import cpp_to_python
 from litgen.internal.cpp_to_python import info_original_location_cpp
-from litgen.internal.function_adapt import CppFunctionDeclWithAdaptedParams, make_function_params_adapter
+from litgen.internal.function_adapt import AdaptedFunction, make_function_params_adapter
 
 
 class _LineSpacer:
@@ -164,29 +164,27 @@ def _generate_function(
     options: CodeStyleOptions,
     parent_struct_name: str = "",
 ) -> str:
-    function_adapted_params = make_function_params_adapter(function_infos, options, parent_struct_name)
+    adapted_function = make_function_params_adapter(function_infos, options, parent_struct_name)
 
     r = ""
-    r += _generate_function_impl(function_adapted_params, options, parent_struct_name)
+    r += _generate_function_impl(adapted_function, options, parent_struct_name)
     return r
 
 
 def _generate_return_code(
-    function_adapted_params: CppFunctionDeclWithAdaptedParams,
+    adapted_function: AdaptedFunction,
     options: CodeStyleOptions,
     parent_struct_name: str = "",
 ):
-    function_infos = function_adapted_params.function_infos
+    function_infos = adapted_function.function_infos
     template_code = "{return_or_nothing}{self_prefix}{function_to_call}({params_call_inner})"
     is_method = len(parent_struct_name) > 0
 
     return_or_nothing = "return " if function_infos.full_return_type(options.srcml_options) != "void" else ""
-    self_prefix = "self." if (is_method and function_adapted_params.lambda_to_call is None) else ""
+    self_prefix = "self." if (is_method and adapted_function.lambda_to_call is None) else ""
     # fill function_to_call
     function_to_call = (
-        function_adapted_params.lambda_to_call
-        if function_adapted_params.lambda_to_call is not None
-        else function_infos.function_name
+        adapted_function.lambda_to_call if adapted_function.lambda_to_call is not None else function_infos.function_name
     )
     # Fill params_call_inner
     params_call_inner = function_infos.parameter_list.names_only_for_call()
@@ -204,7 +202,7 @@ def _generate_return_code(
 
 
 def _generate_function_impl(
-    function_adapted_params: CppFunctionDeclWithAdaptedParams,
+    adapted_function: AdaptedFunction,
     options: CodeStyleOptions,
     parent_struct_name: str = "",
 ) -> str:
@@ -224,7 +222,7 @@ def _generate_function_impl(
         1:
     ]
 
-    function_infos = function_adapted_params.function_infos
+    function_infos = adapted_function.function_infos
     is_method = len(parent_struct_name) > 0
 
     # fill _i_
@@ -245,10 +243,10 @@ def _generate_function_impl(
     params_call_with_self_if_method = ", ".join(_params_list)
 
     # fill return_code
-    return_code = _generate_return_code(function_adapted_params, options, parent_struct_name)
+    return_code = _generate_return_code(adapted_function, options, parent_struct_name)
 
     # fill lambda_adapter_code
-    lambda_adapter_code = function_adapted_params.cpp_adapter_code
+    lambda_adapter_code = adapted_function.cpp_adapter_code
 
     if lambda_adapter_code is not None:
         lambda_adapter_code = code_utils.indent_code(

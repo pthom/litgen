@@ -32,30 +32,30 @@ def test_make_function_params_adapter():
     def make_adapted_function(code):
         function_decl = get_first_function_decl(code)
         struct_name = ""
-        function_adapted_params = make_function_params_adapter(function_decl, OPTIONS, struct_name)
-        return function_adapted_params
+        adapted_function = make_function_params_adapter(function_decl, OPTIONS, struct_name)
+        return adapted_function
 
     # Easy test with const
     code = """MY_API void foo(const int v[2]);"""
-    function_adapted_params = make_adapted_function(code)
+    adapted_function = make_adapted_function(code)
     code_utils.assert_are_codes_equal(
-        function_adapted_params.function_infos,
+        adapted_function.function_infos,
         "MY_API void foo(const std::array<int, 2>& v);",
     )
 
     # Less easy test with non const
     code = """MY_API void foo(unsigned long long v[2]);"""
-    function_adapted_params = make_adapted_function(code)
+    adapted_function = make_adapted_function(code)
     code_utils.assert_are_codes_equal(
-        function_adapted_params.function_infos,
+        adapted_function.function_infos,
         "MY_API void foo(BoxedUnsignedLongLong & v_0, BoxedUnsignedLongLong & v_1);",
     )
 
     # Full test with a mixture
     code = """MY_API void foo(bool flag, const double v[2], double outputs[2]);"""
-    function_adapted_params = make_adapted_function(code)
+    adapted_function = make_adapted_function(code)
     code_utils.assert_are_codes_equal(
-        function_adapted_params.function_infos,
+        adapted_function.function_infos,
         "MY_API void foo(bool flag, const std::array<double, 2>& v, BoxedDouble & outputs_0, BoxedDouble & outputs_1);",
     )
 

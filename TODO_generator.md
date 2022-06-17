@@ -1,5 +1,7 @@
-* pytest full
-* mypy precommit
+* package function_adapt
+  * renames
+  * API avec derivation
+
 * sub package adapt param
   * gen pyi class & structs
   Il faut que pydef_generator (ou peut etre meme srcml_types) puisse faire un tri

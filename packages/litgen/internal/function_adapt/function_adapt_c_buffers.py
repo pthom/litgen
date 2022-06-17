@@ -5,7 +5,7 @@ from codemanip import code_utils
 from litgen.generate_code import CodeStyleOptions
 from litgen.internal import cpp_to_python
 from litgen.internal.function_adapt import (
-    CppFunctionDeclWithAdaptedParams,
+    AdaptedFunction,
     LambdaAdapter,
 )
 
@@ -52,17 +52,17 @@ def _name_looks_like_buffer_size(param: CppParameter, options: CodeStyleOptions)
 
 
 class _AdaptBuffersHelper:
-    function_adapted_params: CppFunctionDeclWithAdaptedParams
+    adapted_function: AdaptedFunction
     function_infos: CppFunctionDecl
     options: CodeStyleOptions
 
     def __init__(
         self,
-        function_adapted_params: CppFunctionDeclWithAdaptedParams,
+        adapted_function: AdaptedFunction,
         options: CodeStyleOptions,
     ):
-        self.function_adapted_params = function_adapted_params
-        self.function_infos = function_adapted_params.function_infos
+        self.adapted_function = adapted_function
+        self.function_infos = adapted_function.function_infos
         self.options = options
 
         if self.shall_adapt():
@@ -253,13 +253,13 @@ class _AdaptBuffersHelper:
             template_buffer_name = _template_buffer_param.decl.decl_name
 
             # Fill function_or_lambda_to_call
-            if self.function_adapted_params.lambda_to_call is not None:
-                function_or_lambda_to_call = self.function_adapted_params.lambda_to_call
+            if self.adapted_function.lambda_to_call is not None:
+                function_or_lambda_to_call = self.adapted_function.lambda_to_call
             else:
-                if self.function_adapted_params.is_method():
-                    function_or_lambda_to_call = "self." + self.function_adapted_params.function_infos.function_name
+                if self.adapted_function.is_method():
+                    function_or_lambda_to_call = "self." + self.adapted_function.function_infos.function_name
                 else:
-                    function_or_lambda_to_call = self.function_adapted_params.function_infos.function_name
+                    function_or_lambda_to_call = self.adapted_function.function_infos.function_name
 
             # Fill maybe_return
             _fn_return_type = self.function_infos.full_return_type(options.srcml_options)
@@ -445,9 +445,7 @@ class _AdaptBuffersHelper:
         return new_stride_param
 
 
-def adapt_c_buffers(
-    function_adapted_params: CppFunctionDeclWithAdaptedParams, options: CodeStyleOptions
-) -> Optional[LambdaAdapter]:
+def adapt_c_buffers(adapted_function: AdaptedFunction, options: CodeStyleOptions) -> Optional[LambdaAdapter]:
     """
         We want to adapt functions that use C buffers like this:
             MY_API inline int8_t foo(const int8_t* values, int count);
@@ -483,17 +481,17 @@ def adapt_c_buffers(
 
     """
 
-    helper = _AdaptBuffersHelper(function_adapted_params, options)
+    helper = _AdaptBuffersHelper(adapted_function, options)
 
     if not helper.shall_adapt():
         return None
 
     lambda_adapter = LambdaAdapter()
-    lambda_adapter.new_function_infos = copy.deepcopy(function_adapted_params.function_infos)
+    lambda_adapter.new_function_infos = copy.deepcopy(adapted_function.function_infos)
 
     new_function_params: List[CppParameter] = []
 
-    for idx_param, old_param in enumerate(function_adapted_params.function_infos.parameter_list.parameters):
+    for idx_param, old_param in enumerate(adapted_function.function_infos.parameter_list.parameters):
         # Create new calling param
         new_param = helper.new_visible_interface_param(idx_param)
         if new_param is not None:
@@ -513,6 +511,6 @@ def adapt_c_buffers(
         lambda_adapter.lambda_template_end = helper.make_adapted_lambda_code_end_template_buffer()
 
     lambda_adapter.new_function_infos.parameter_list.parameters = new_function_params
-    lambda_adapter.lambda_name = function_adapted_params.function_infos.function_name + "_adapt_c_buffers"
+    lambda_adapter.lambda_name = adapted_function.function_infos.function_name + "_adapt_c_buffers"
 
     return lambda_adapter

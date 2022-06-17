@@ -5,7 +5,7 @@ from srcmlcpp.srcml_types import CppFunctionDecl
 
 
 @dataclass
-class CppFunctionDeclWithAdaptedParams:
+class AdaptedFunction:
     function_infos: CppFunctionDecl
     parent_struct_name: str
     cpp_adapter_code: Optional[str] = None

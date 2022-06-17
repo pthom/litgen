@@ -4,7 +4,7 @@ import copy
 from litgen.generate_code import CodeStyleOptions, code_utils
 from litgen.internal import cpp_to_python
 from litgen.internal.function_adapt import (
-    CppFunctionDeclWithAdaptedParams,
+    AdaptedFunction,
     LambdaAdapter,
 )
 
@@ -17,9 +17,7 @@ from srcmlcpp.srcml_types import (
 )
 
 
-def adapt_c_string_list(
-    function_adapted_params: CppFunctionDeclWithAdaptedParams, options: CodeStyleOptions
-) -> Optional[LambdaAdapter]:
+def adapt_c_string_list(adapted_function: AdaptedFunction, options: CodeStyleOptions) -> Optional[LambdaAdapter]:
     """
     We want to adapt functions that use fixed size C string list like those:
         void foo(const char * const items[], int items_count);
@@ -44,7 +42,7 @@ def adapt_c_string_list(
     if not options.c_string_list_flag_replace:
         return None
 
-    old_function_params: List[CppParameter] = function_adapted_params.function_infos.parameter_list.parameters
+    old_function_params: List[CppParameter] = adapted_function.function_infos.parameter_list.parameters
 
     def needs_adapt():
         param_0: CppParameter
@@ -61,7 +59,7 @@ def adapt_c_string_list(
 
     _i_ = options.indent_cpp_spaces()
 
-    lambda_adapter.new_function_infos = copy.deepcopy(function_adapted_params.function_infos)
+    lambda_adapter.new_function_infos = copy.deepcopy(adapted_function.function_infos)
     new_function_params = []
 
     def is_c_string_list(i: int):
@@ -137,6 +135,6 @@ def adapt_c_string_list(
 
     lambda_adapter.new_function_infos.parameter_list.parameters = new_function_params
 
-    lambda_adapter.lambda_name = function_adapted_params.function_infos.function_name + "_adapt_c_string_list"
+    lambda_adapter.lambda_name = adapted_function.function_infos.function_name + "_adapt_c_string_list"
 
     return lambda_adapter
