@@ -36,7 +36,7 @@ namespace LiterateGeneratorExample // MY_API
 {
 
     // A super nice enum
-    // for demo purposes ( bool val = true )
+    // for demo purposes ( bool val = false )
     enum MyEnum     // MY_API
     {
         MyEnum_a = 1, // This is value a
@@ -129,7 +129,7 @@ namespace LiterateGeneratorExample // MY_API
     MY_API inline int add(int a, int b) { return a + b; }
 
     // Adds three numbers, with a surprise
-    MY_API inline int add(int a, int b, int c) { return a + b + c + 4; }
+    // MY_API inline int add(int a, int b, int c) { return a + b + c + 4; }
 
 
     MY_API int sub(int a, int b) { return a - b; }

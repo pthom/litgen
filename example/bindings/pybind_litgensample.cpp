@@ -34,7 +34,7 @@ void py_init_module_litgensample(py::module& m)
 
 
     // <namespace LiterateGeneratorExample>    // example_library/litgensample.h:35
-    py::enum_<MyEnum>(m, "MyEnum", py::arithmetic(), " A super nice enum\n for demo purposes ( bool val = True )")    // example_library/litgensample.h:40
+    py::enum_<MyEnum>(m, "MyEnum", py::arithmetic(), " A super nice enum\n for demo purposes ( bool val = False )")    // example_library/litgensample.h:40
         .value("a", MyEnum_a, "This is value a")
         .value("aa", MyEnum_aa, "this is value aa")
         .value("aaa", MyEnum_aaa, "this is value aaa")
@@ -300,15 +300,6 @@ void py_init_module_litgensample(py::module& m)
         },
         py::arg("a"), py::arg("b"),
         "Adds two numbers"
-    );
-
-    m.def("add",    // example_library/litgensample.h:132
-        [](int a, int b, int c)
-        {
-            return add(a, b, c);
-        },
-        py::arg("a"), py::arg("b"), py::arg("c"),
-        "Adds three numbers, with a surprise"
     );
 
     m.def("sub",    // example_library/litgensample.h:135

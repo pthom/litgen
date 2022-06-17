@@ -75,9 +75,20 @@ options.original_location_flag_show = True
 
 
 code = """
-struct Foo // MY_API
+struct BoxedUnsignedLong // MY_API
 {
-    uint8_t values2[55];
+    unsigned long value;
+    BoxedUnsignedLong() : value{} {}
+    BoxedUnsignedLong(unsigned long v) : value(v) {}
+    std::string __repr__() const { return std::string("BoxedUnsignedLong(") + std::to_string(value) + ")"; }
+};
+
+struct BoxedInt // MY_API
+{
+    int value;
+    BoxedInt() : value{} {}
+    BoxedInt(int v) : value(v) {}
+    std::string __repr__() const { return std::string("BoxedInt(") + std::to_string(value) + ")"; }
 };
 """
 

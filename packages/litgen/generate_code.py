@@ -31,6 +31,10 @@ def generate_pyi(
     generated_code = module_pyi_generator.generate_pyi(
         cpp_unit, options, add_boxed_types_definitions=add_boxed_types_definitions
     )
+
+    while len(generated_code) > 0 and generated_code[-2:] == "\n\n":
+        generated_code += generated_code[:-1]
+
     return generated_code
 
 
