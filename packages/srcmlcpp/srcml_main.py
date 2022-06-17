@@ -1,6 +1,6 @@
 import logging
 from dataclasses import dataclass
-from typing import List
+from typing import List, Optional, Type
 from xml.etree import ElementTree as ET
 
 from srcmlcpp import (
@@ -10,6 +10,7 @@ from srcmlcpp import (
     srcml_types,
     srcml_types_parse,
     srcml_utils,
+    srcml_warnings,
 )
 from srcmlcpp.srcml_options import SrcmlOptions
 
@@ -102,15 +103,20 @@ def file_to_cpp_unit(options: SrcmlOptions, filename: str = "") -> srcml_types.C
     return cpp_unit
 
 
-def get_only_child_with_tag(options: SrcmlOptions, code: str, tag: str) -> srcml_types.CppElementAndComment:
+def code_first_child_of_type(
+    options: SrcmlOptions, type_of_cpp_element: Type, code: str
+) -> srcml_types.CppElementAndComment:
+    cpp_unit = code_to_cpp_unit(options, code)
+    for child in cpp_unit.block_children:
+        if isinstance(child, type_of_cpp_element):
+            return child
+    raise srcml_warnings.SrcMlException(f"Could not find a child of type {type_of_cpp_element}")
+    return None
+
+
+def _tests_only_get_only_child_with_tag(options: SrcmlOptions, code: str, tag: str) -> srcml_types.CppElementAndComment:
     srcml_unit = code_to_srcml_unit(options, code)
     children = get_children_with_comments(options, srcml_unit)
     children_with_tag = list(filter(lambda child: child.tag() == tag, children))
     assert len(children_with_tag) == 1
     return children_with_tag[0]
-
-
-def get_unit_children(options: SrcmlOptions, code: str) -> List[srcml_types.CppElementAndComment]:
-    srcml_unit = code_to_srcml_unit(options, code)
-    children = get_children_with_comments(options, srcml_unit)
-    return children

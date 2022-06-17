@@ -6,7 +6,7 @@ from srcmlcpp.srcml_types import *
 
 def to_decl(code):
     options = srcmlcpp.SrcmlOptions()
-    element = srcml_main.get_only_child_with_tag(options, code, "decl")
+    element = srcml_main._tests_only_get_only_child_with_tag(options, code, "decl")
     cpp_decl = srcml_types_parse.parse_decl(options, element, None)
     return cpp_decl
 

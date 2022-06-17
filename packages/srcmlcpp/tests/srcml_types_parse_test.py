@@ -4,6 +4,7 @@ import sys
 from codemanip import code_utils
 from srcmlcpp import srcml_main, srcml_types_parse
 from srcmlcpp.srcml_options import SrcmlOptions
+from srcmlcpp import srcml_types
 
 
 _THIS_DIR = os.path.dirname(__file__)
@@ -14,7 +15,7 @@ def test_parse_cpp_decl_statement():
     options = SrcmlOptions()
 
     def code_to_decl_statement(code):
-        element_c = srcml_main.get_only_child_with_tag(options, code, "decl_stmt")
+        element_c = srcml_main._tests_only_get_only_child_with_tag(options, code, "decl_stmt")
         cpp_decl_statement = srcml_types_parse.parse_decl_stmt(options, element_c)
         cpp_decl_statement_str = str(cpp_decl_statement)
         return cpp_decl_statement
@@ -82,7 +83,7 @@ def test_parse_function_decl():
     options = SrcmlOptions()
 
     def code_to_fn_decl(code):
-        element = srcml_main.get_only_child_with_tag(options, code, "function_decl")
+        element = srcml_main._tests_only_get_only_child_with_tag(options, code, "function_decl")
         fn_decl = srcml_types_parse.parse_function_decl(options, element)
         fn_decl_str = str(fn_decl)
         return fn_decl
@@ -128,7 +129,7 @@ def test_parse_function():
     options = SrcmlOptions()
 
     def code_to_fn_decl(code):
-        element = srcml_main.get_only_child_with_tag(options, code, "function")
+        element = srcml_main._tests_only_get_only_child_with_tag(options, code, "function")
         fn = srcml_types_parse.parse_function(options, element)
         fn_str = str(fn)
         return fn
@@ -152,7 +153,7 @@ def test_parse_struct():
     options = SrcmlOptions()
 
     def code_to_struct_decl(code):
-        element_c = srcml_main.get_only_child_with_tag(options, code, "struct")
+        element_c = srcml_main._tests_only_get_only_child_with_tag(options, code, "struct")
         cpp_element = srcml_types_parse.parse_struct_or_class(options, element_c)
         cpp_element_str = str(cpp_element)
         # logging.warning("\n" + cpp_element_str)
