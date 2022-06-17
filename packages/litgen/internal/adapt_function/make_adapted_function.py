@@ -1,8 +1,6 @@
 from litgen.options import LitgenOptions
-from litgen.internal.function_adapt import (
-    AdaptedFunction,
-    LambdaAdapter,
-)
+from litgen.internal.adapt_function import AdaptedFunction
+from litgen.internal.adapt_function._lambda_adapter import LambdaAdapter
 from codemanip import code_utils
 from srcmlcpp.srcml_types import CppFunctionDecl
 
@@ -13,10 +11,10 @@ def make_adapted_function(
     parent_struct_name: str = "",
 ) -> AdaptedFunction:
 
-    from litgen.internal.function_adapt.adapt_c_arrays import adapt_c_arrays
-    from litgen.internal.function_adapt.adapt_c_string_list import adapt_c_string_list
-    from litgen.internal.function_adapt.adapt_c_buffers import adapt_c_buffers
-    from litgen.internal.function_adapt.adapt_variadic_format import adapt_variadic_format
+    from litgen.internal.adapt_function._adapt_c_arrays import adapt_c_arrays
+    from litgen.internal.adapt_function._adapt_c_string_list import adapt_c_string_list
+    from litgen.internal.adapt_function._adapt_c_buffers import adapt_c_buffers
+    from litgen.internal.adapt_function._adapt_variadic_format import adapt_variadic_format
 
     all_adapters_functions = [
         adapt_c_buffers,
@@ -30,7 +28,7 @@ def make_adapted_function(
     for adapter_function in all_adapters_functions:
         lambda_adapter = adapter_function(adapted_function, options)
         if lambda_adapter is not None:
-            apply_lambda_adapter(adapted_function, lambda_adapter, options, parent_struct_name)
+            _apply_lambda_adapter(adapted_function, lambda_adapter, options, parent_struct_name)
 
     return adapted_function
 
@@ -182,7 +180,7 @@ def _make_adapted_lambda_code(
     return lambda_code
 
 
-def apply_lambda_adapter(
+def _apply_lambda_adapter(
     adapted_function: AdaptedFunction,
     lambda_adapter: LambdaAdapter,
     options: LitgenOptions,

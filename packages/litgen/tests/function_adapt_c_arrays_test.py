@@ -10,8 +10,8 @@ sys.path.append(_THIS_DIR + "/../..")
 from codemanip import code_utils
 from litgen.options import LitgenOptions, code_style_implot
 import litgen
-from litgen.internal.function_adapt import make_adapted_function
-from litgen.internal.function_adapt import adapt_c_arrays
+from litgen.internal.adapt_function import make_adapted_function
+from litgen.internal.adapt_function import _adapt_c_arrays
 from litgen.internal import module_pydef_generator, cpp_to_python
 import srcmlcpp
 from srcmlcpp.srcml_types import *

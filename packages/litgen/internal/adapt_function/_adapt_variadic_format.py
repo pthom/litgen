@@ -2,10 +2,8 @@ from typing import List, Optional
 import copy
 
 from litgen.generate_code import LitgenOptions
-from litgen.internal.function_adapt import (
-    AdaptedFunction,
-    LambdaAdapter,
-)
+from litgen.internal.adapt_function import AdaptedFunction
+from litgen.internal.adapt_function._lambda_adapter import LambdaAdapter
 
 from srcmlcpp.srcml_types import CppParameter
 

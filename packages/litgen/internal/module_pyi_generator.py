@@ -15,8 +15,8 @@ from srcmlcpp import srcml_warnings
 
 from litgen import LitgenOptions
 from litgen.internal import cpp_to_python
-from litgen.internal.function_adapt import AdaptedFunction
-from litgen.internal.function_adapt import make_adapted_function
+from litgen.internal.adapt_function import AdaptedFunction
+from litgen.internal.adapt_function import make_adapted_function
 
 
 #################################
