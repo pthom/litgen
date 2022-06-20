@@ -91,7 +91,12 @@ def test_adapted_function_stub():
     options.original_location_flag_show = True
 
     code = """
-    int Foo(int a, std::vector<int>& values, std::vector<int>& values2, bool flag = true); // Doc about foo (flag = true)
+    // This is foo's doc:
+    //     :param buffer & count: modifiable buffer and its size
+    //     :param out_values: output double values
+    //     :param in_flags: input bool flags
+    //     :param text and ... : formatted text
+    void Foo(uint8_t * buffer, size_t count, double out_values[2], const bool in_flags[2], const char* text, ...);
     """
     fn = srcml_main.code_first_function_decl(options.srcml_options, code)
     struct_name = ""

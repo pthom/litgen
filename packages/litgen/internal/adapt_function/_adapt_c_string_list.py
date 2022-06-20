@@ -39,7 +39,7 @@ def adapt_c_string_list(adapted_function: AdaptedFunction) -> Optional[LambdaAda
     if not options.c_string_list_flag_replace:
         return None
 
-    old_function_params: List[CppParameter] = adapted_function.function_infos.parameter_list.parameters
+    old_function_params: List[CppParameter] = adapted_function.cpp_adapted_function.parameter_list.parameters
 
     def needs_adapt():
         param_0: CppParameter
@@ -56,7 +56,7 @@ def adapt_c_string_list(adapted_function: AdaptedFunction) -> Optional[LambdaAda
 
     _i_ = options.indent_cpp_spaces()
 
-    lambda_adapter.new_function_infos = copy.deepcopy(adapted_function.function_infos)
+    lambda_adapter.new_function_infos = copy.deepcopy(adapted_function.cpp_adapted_function)
     new_function_params = []
 
     def is_c_string_list(i: int):
@@ -132,6 +132,6 @@ def adapt_c_string_list(adapted_function: AdaptedFunction) -> Optional[LambdaAda
 
     lambda_adapter.new_function_infos.parameter_list.parameters = new_function_params
 
-    lambda_adapter.lambda_name = adapted_function.function_infos.function_name + "_adapt_c_string_list"
+    lambda_adapter.lambda_name = adapted_function.cpp_adapted_function.function_name + "_adapt_c_string_list"
 
     return lambda_adapter

@@ -213,7 +213,7 @@ def _generate_pyi_function_impl(
     parent_struct_name: str = "",
 ) -> str:
 
-    function_infos = adapted_function.function_infos
+    function_infos = adapted_function.cpp_adapted_function
 
     function_name_python = cpp_to_python.function_name_to_python(function_infos.function_name, options)
 

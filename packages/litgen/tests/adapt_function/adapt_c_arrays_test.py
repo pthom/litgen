@@ -38,7 +38,7 @@ def test_make_function_params_adapter():
     code = """MY_API void foo(const int v[2]);"""
     adapted_function = my_make_adapted_function(code)
     code_utils.assert_are_codes_equal(
-        adapted_function.function_infos,
+        adapted_function.cpp_adapted_function,
         "MY_API void foo(const std::array<int, 2>& v);",
     )
 
@@ -46,7 +46,7 @@ def test_make_function_params_adapter():
     code = """MY_API void foo(unsigned long long v[2]);"""
     adapted_function = my_make_adapted_function(code)
     code_utils.assert_are_codes_equal(
-        adapted_function.function_infos,
+        adapted_function.cpp_adapted_function,
         "MY_API void foo(BoxedUnsignedLongLong & v_0, BoxedUnsignedLongLong & v_1);",
     )
 
@@ -54,7 +54,7 @@ def test_make_function_params_adapter():
     code = """MY_API void foo(bool flag, const double v[2], double outputs[2]);"""
     adapted_function = my_make_adapted_function(code)
     code_utils.assert_are_codes_equal(
-        adapted_function.function_infos,
+        adapted_function.cpp_adapted_function,
         "MY_API void foo(bool flag, const std::array<double, 2>& v, BoxedDouble & outputs_0, BoxedDouble & outputs_1);",
     )
 

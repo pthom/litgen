@@ -172,7 +172,7 @@ def _generate_return_code(
     options: LitgenOptions,
     parent_struct_name: str = "",
 ):
-    function_infos = adapted_function.function_infos
+    function_infos = adapted_function.cpp_adapted_function
     template_code = "{return_or_nothing}{self_prefix}{function_to_call}({params_call_inner})"
     is_method = len(parent_struct_name) > 0
 
@@ -218,7 +218,7 @@ def _generate_function_impl(
         1:
     ]
 
-    function_infos = adapted_function.function_infos
+    function_infos = adapted_function.cpp_adapted_function
     is_method = len(parent_struct_name) > 0
 
     # fill _i_

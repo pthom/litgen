@@ -46,7 +46,7 @@ def adapt_c_arrays(adapted_function: AdaptedFunction) -> Optional[LambdaAdapter]
 
     needs_adapt = False
 
-    for old_param in adapted_function.function_infos.parameter_list.parameters:
+    for old_param in adapted_function.cpp_adapted_function.parameter_list.parameters:
         if old_param.decl.is_c_array_known_fixed_size(options.srcml_options):
             needs_adapt = True
 
@@ -55,8 +55,8 @@ def adapt_c_arrays(adapted_function: AdaptedFunction) -> Optional[LambdaAdapter]
 
     lambda_adapter = LambdaAdapter()
 
-    lambda_adapter.new_function_infos = copy.deepcopy(adapted_function.function_infos)
-    old_function_params: List[CppParameter] = adapted_function.function_infos.parameter_list.parameters
+    lambda_adapter.new_function_infos = copy.deepcopy(adapted_function.cpp_adapted_function)
+    old_function_params: List[CppParameter] = adapted_function.cpp_adapted_function.parameter_list.parameters
     new_function_params = []
     for old_param in old_function_params:
         was_replaced = False
@@ -119,6 +119,6 @@ def adapt_c_arrays(adapted_function: AdaptedFunction) -> Optional[LambdaAdapter]
 
     lambda_adapter.new_function_infos.parameter_list.parameters = new_function_params
 
-    lambda_adapter.lambda_name = adapted_function.function_infos.function_name + "_adapt_fixed_size_c_arrays"
+    lambda_adapter.lambda_name = adapted_function.cpp_adapted_function.function_name + "_adapt_fixed_size_c_arrays"
 
     return lambda_adapter

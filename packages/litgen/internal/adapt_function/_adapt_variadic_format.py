@@ -20,7 +20,7 @@ def adapt_variadic_format(adapted_function: AdaptedFunction) -> Optional[LambdaA
         Text("%s", s.c_str());
     """
     options = adapted_function.options
-    old_function_params: List[CppParameter] = adapted_function.function_infos.parameter_list.parameters
+    old_function_params: List[CppParameter] = adapted_function.cpp_adapted_function.parameter_list.parameters
 
     # Variadic params are always last
     if len(old_function_params) < 2:
@@ -34,7 +34,7 @@ def adapt_variadic_format(adapted_function: AdaptedFunction) -> Optional[LambdaA
 
     lambda_adapter = LambdaAdapter()
 
-    lambda_adapter.new_function_infos = copy.deepcopy(adapted_function.function_infos)
+    lambda_adapter.new_function_infos = copy.deepcopy(adapted_function.cpp_adapted_function)
     new_function_params = []
 
     # process all params except last
@@ -48,6 +48,6 @@ def adapt_variadic_format(adapted_function: AdaptedFunction) -> Optional[LambdaA
     lambda_adapter.adapted_cpp_parameter_list.append(param_before_last.decl.decl_name)
 
     lambda_adapter.new_function_infos.parameter_list.parameters = new_function_params
-    lambda_adapter.lambda_name = adapted_function.function_infos.function_name + "_adapt_variadic_format"
+    lambda_adapter.lambda_name = adapted_function.cpp_adapted_function.function_name + "_adapt_variadic_format"
 
     return lambda_adapter

@@ -59,7 +59,7 @@ class _AdaptBuffersHelper:
         options: LitgenOptions,
     ):
         self.adapted_function = adapted_function
-        self.function_infos = adapted_function.function_infos
+        self.function_infos = adapted_function.cpp_adapted_function
         self.options = options
 
         if self.shall_adapt():
@@ -254,9 +254,9 @@ class _AdaptBuffersHelper:
                 function_or_lambda_to_call = self.adapted_function.lambda_to_call
             else:
                 if self.adapted_function.is_method():
-                    function_or_lambda_to_call = "self." + self.adapted_function.function_infos.function_name
+                    function_or_lambda_to_call = "self." + self.adapted_function.cpp_adapted_function.function_name
                 else:
-                    function_or_lambda_to_call = self.adapted_function.function_infos.function_name
+                    function_or_lambda_to_call = self.adapted_function.cpp_adapted_function.function_name
 
             # Fill maybe_return
             _fn_return_type = self.function_infos.full_return_type(options.srcml_options)
@@ -485,11 +485,11 @@ def adapt_c_buffers(adapted_function: AdaptedFunction) -> Optional[LambdaAdapter
         return None
 
     lambda_adapter = LambdaAdapter()
-    lambda_adapter.new_function_infos = copy.deepcopy(adapted_function.function_infos)
+    lambda_adapter.new_function_infos = copy.deepcopy(adapted_function.cpp_adapted_function)
 
     new_function_params: List[CppParameter] = []
 
-    for idx_param, old_param in enumerate(adapted_function.function_infos.parameter_list.parameters):
+    for idx_param, old_param in enumerate(adapted_function.cpp_adapted_function.parameter_list.parameters):
         # Create new calling param
         new_param = helper.new_visible_interface_param(idx_param)
         if new_param is not None:
@@ -509,6 +509,6 @@ def adapt_c_buffers(adapted_function: AdaptedFunction) -> Optional[LambdaAdapter
         lambda_adapter.lambda_template_end = helper.make_adapted_lambda_code_end_template_buffer()
 
     lambda_adapter.new_function_infos.parameter_list.parameters = new_function_params
-    lambda_adapter.lambda_name = adapted_function.function_infos.function_name + "_adapt_c_buffers"
+    lambda_adapter.lambda_name = adapted_function.cpp_adapted_function.function_name + "_adapt_c_buffers"
 
     return lambda_adapter

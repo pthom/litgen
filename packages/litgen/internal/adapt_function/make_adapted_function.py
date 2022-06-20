@@ -39,7 +39,7 @@ def _make_adapted_lambda_code_end(adapted_function: AdaptedFunction, lambda_adap
     adapted_cpp_parameters = ", ".join(lambda_adapter.adapted_cpp_parameter_list)
 
     # Fill auto_r_equal_or_void
-    _fn_return_type = adapted_function.function_infos.full_return_type(options.srcml_options)
+    _fn_return_type = adapted_function.cpp_adapted_function.full_return_type(options.srcml_options)
     auto_r_equal_or_void = "auto r = " if _fn_return_type != "void" else ""
 
     # Fill function_or_lambda_to_call
@@ -47,9 +47,9 @@ def _make_adapted_lambda_code_end(adapted_function: AdaptedFunction, lambda_adap
         function_or_lambda_to_call = adapted_function.lambda_to_call
     else:
         if adapted_function.is_method():
-            function_or_lambda_to_call = "self." + adapted_function.function_infos.function_name
+            function_or_lambda_to_call = "self." + adapted_function.cpp_adapted_function.function_name
         else:
-            function_or_lambda_to_call = adapted_function.function_infos.function_name
+            function_or_lambda_to_call = adapted_function.cpp_adapted_function.function_name
 
     # Fill maybe_return_r
     maybe_return_r = None if _fn_return_type == "void" else "return r"
@@ -168,5 +168,5 @@ def _apply_lambda_adapter(adapted_function: AdaptedFunction, lambda_adapter: Lam
         adapted_function.cpp_adapter_code += lambda_code
 
     assert lambda_adapter.new_function_infos is not None
-    adapted_function.function_infos = lambda_adapter.new_function_infos
+    adapted_function.cpp_adapted_function = lambda_adapter.new_function_infos
     adapted_function.lambda_to_call = lambda_adapter.lambda_name
