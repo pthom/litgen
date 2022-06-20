@@ -70,7 +70,7 @@
 #     attr_decl_line = attr_decl_line.replace("NAME_PYTHON", cpp_to_python.var_name_to_python(attr.name_cpp, options))
 #     attr_decl_line = attr_decl_line.replace("TYPE_PYTHON", cpp_to_python.type_to_python(attr.type_cpp, options))
 #
-#     default_value_python = cpp_to_python.default_value_to_python(attr.default_value_cpp, options)
+#     default_value_python = cpp_to_python.var_value_to_python(attr.default_value_cpp, options)
 #     if len(default_value_python) > 0:
 #         attr_decl_line = attr_decl_line.replace("DEFAULT_VALUE_PYTHON", " = " + default_value_python)
 #     else:
@@ -239,7 +239,7 @@
 #         out = out.replace("ATTR_TYPE", cpp_to_python.type_to_python(attr.type_cpp, options))
 #         out = out.replace(
 #             "ATTR_DEFAULT",
-#             cpp_to_python.default_value_to_python(attr.default_value_cpp, options),
+#             cpp_to_python.var_value_to_python(attr.default_value_cpp, options),
 #         )
 #         return out
 #

@@ -45,8 +45,8 @@ class LitgenOptions:
     # Size of an indentation in the python stubs
     python_indent_size = 4
     python_ident_with_tabs: bool = False
-    # Insert as many empty lines in the python stub as found in the header file
-    python_keep_empty_lines: bool = True
+    # Insert as many empty lines in the python stub as found in the header file, keep comments layout, etc.
+    python_reproduce_cpp_layout: bool = True
     # Reformat the generated python to remove long series of empty lines (disabled if < 0)
     python_max_consecutive_empty_lines: int = -1
     # The generated code will try to adhere to this max length

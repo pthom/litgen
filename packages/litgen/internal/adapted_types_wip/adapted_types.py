@@ -1,17 +1,18 @@
 from __future__ import annotations
-from abc import ABC, abstractmethod
+import abc
 from dataclasses import dataclass
-from typing import cast, List, Union
+from typing import cast, List, Union, Any
+
+from codemanip import code_replacements
 
 from srcmlcpp.srcml_types import *
 
-from litgen import LitgenOptions
-from litgen.internal.adapt_function import AdaptedFunction
+from litgen.options import LitgenOptions
 from litgen.internal import cpp_to_python
 
 
 @dataclass
-class AdaptedElement(ABC):
+class AdaptedElement:  # (abc.ABC):  # Cannot be abstract (mypy limitation:  https://github.com/python/mypy/issues/5374)
     _cpp_element: CppElementAndComment
     options: LitgenOptions
 
@@ -19,9 +20,45 @@ class AdaptedElement(ABC):
         self._cpp_element = cpp_element
         self.options = options
 
-    def cpp_element(self):
-        # please implement cpp_element in derived classes
-        assert False
+    def _str_stub_layout_lines(
+        self,
+        title_lines: List[str],
+        body_lines: List[str] = [],
+    ) -> List[str]:
+        """Common layout for class, enum, and functions stubs
+        :param title_lines: class, enum or function decl + function params. Will be followed by docstring
+        :param body_lines: body lines for enums and classes, [] for functions
+        :return: a list of python pyi code lines for the stub declaration
+        """
+
+        # Preprocess: add location on first line
+        assert len(title_lines) > 0
+        first_line = title_lines[0] + cpp_to_python.info_original_location_python(self._cpp_element, self.options)
+        title_lines = [first_line] + title_lines[1:]
+
+        # Preprocess: align comments in body
+        if len(body_lines) == 0:
+            body_lines = ["pass"]
+        body_lines = code_utils.align_python_comments_in_block_lines(body_lines)
+
+        all_lines = title_lines
+        all_lines += cpp_to_python.docstring_lines(self.cpp_element(), self.options)
+        all_lines += body_lines
+
+        all_lines = code_utils.indent_code_lines(
+            all_lines, skip_first_line=True, indent_str=self.options.indent_python_spaces()
+        )
+        all_lines.append("")
+        return all_lines
+
+    # @abc.abstractmethod
+    def cpp_element(self) -> Any:
+        # please implement cpp_element in derived classes, it should return the correct CppElement type
+        pass
+
+    # @abc.abstractmethod
+    def _str_stub_lines(self):
+        pass
 
 
 @dataclass
@@ -29,8 +66,16 @@ class AdaptedEmptyLine(AdaptedElement):
     def __init__(self, cpp_empty_line: CppEmptyLine, options: LitgenOptions):
         super().__init__(cpp_empty_line, options)
 
+    # override
     def cpp_element(self) -> CppEmptyLine:
         return cast(CppEmptyLine, self._cpp_element)
+
+    # override
+    def _str_stub_lines(self) -> List[str]:
+        if self.options.python_reproduce_cpp_layout:
+            return [""]
+        else:
+            return []
 
 
 @dataclass
@@ -38,33 +83,98 @@ class AdaptedDecl(AdaptedElement):
     def __init__(self, decl: CppDecl, options: LitgenOptions):
         super().__init__(decl, options)
 
-    def cpp_element(self):
+    # override
+    def cpp_element(self) -> CppDecl:
         return cast(CppDecl, self._cpp_element)
 
+    def decl_name(self) -> str:
+        # le code de decl_python_var_name pourrait revenir ici
+        decl_name_cpp = self.cpp_element().decl_name
+        decl_name_python = cpp_to_python.var_name_to_python(decl_name_cpp, self.options)
+        return decl_name_python
 
-# @dataclass
-# class AdaptedEnumDecl(AdaptedDecl):
-#
-#     # C/C++  Enums members do not always state their value
-#     enum_value: str
-#
-#     def __init__(self, decl: CppDecl, previous_decl: Optional[AdaptedEnumDecl], options: LitgenOptions):
-#         super().__init__(decl, options)
-#         self._fill_value(previous_decl)
-#
-#     def cpp_element(self):
-#         return cast(CppDecl, self._cpp_element)
-#
-#     def _fill_value(self, previous_decl: Optional[AdaptedEnumDecl]):
-#         # This belongs to CppEnum !!!
-#         cpp_value_code = self.cpp_element().initial_value_code
-#         if len(cpp_value_code) > 0:
-#             self.enum_value = cpp_value_code
-#         elif previous_decl is None:
-#             # The first enum member value is 0 by default in C/C++
-#             self.enum_value = "0"
-#         else:
-#             assert len(previous_decl.enum_value) > 0
+    def decl_value(self) -> str:
+        decl_value_cpp = self.cpp_element().initial_value_code
+        decl_value_python = cpp_to_python.var_value_to_python(decl_value_cpp, self.options)
+        return decl_value_python
+
+    # override
+    def _str_stub_lines(self) -> List[str]:
+        lines = []
+
+        decl_part = f"{self.decl_name()} = {self.decl_value()}"
+
+        cpp_decl = self.cpp_element()
+        if cpp_to_python.python_shall_place_comment_at_end_of_line(cpp_decl, self.options):
+            decl_line = decl_part + "  #" + cpp_to_python.python_comment_end_of_line(cpp_decl, self.options)
+            lines.append(decl_line)
+        else:
+            comment_lines = cpp_to_python.python_comment_previous_lines(cpp_decl, self.options)
+            lines += comment_lines
+            lines.append(decl_part)
+
+        return lines
+
+
+@dataclass
+class AdaptedEnumDecl(AdaptedDecl):
+    enum_parent: AdaptedEnum
+
+    def __init__(self, decl: CppDecl, enum_parent: AdaptedEnum, options: LitgenOptions):
+        self.enum_parent = enum_parent
+        super().__init__(decl, options)
+
+    # override
+    def cpp_element(self) -> CppDecl:
+        return cast(CppDecl, self._cpp_element)
+
+    def decl_value(self):
+        decl_value_cpp = self.cpp_element().initial_value_code
+        decl_value_python = cpp_to_python.var_value_to_python(decl_value_cpp, self.options)
+        #
+        # Sometimes, enum decls have interdependent values like this:
+        #     enum MyEnum {
+        #         MyEnum_a = 1, MyEnum_b,
+        #         MyEnum_foo = MyEnum_a | MyEnum_b    //
+        #     };
+        #
+        # So, we search and replace enum strings in the default value (.init)
+        #
+        for other_enum_member in self.enum_parent.cpp_element().get_children_with_filled_decl_values(
+            self.options.srcml_options
+        ):
+            if isinstance(other_enum_member, CppDecl):
+                other_enum_value_cpp_name = other_enum_member.name_code()
+                assert other_enum_value_cpp_name is not None
+                other_enum_value_python_name = cpp_to_python.enum_value_name_to_python(
+                    self.enum_parent.cpp_element(), other_enum_member, self.options
+                )
+                enum_name = self.enum_parent.enum_name_python()
+
+                replacement = code_replacements.StringReplacement()
+                replacement.replace_what = r"\b" + other_enum_value_cpp_name + r"\b"
+                replacement.by_what = f"Literal[{enum_name}.{other_enum_value_python_name}]"
+                decl_value_python = code_replacements.apply_one_replacement(decl_value_python, replacement)
+
+        return decl_value_python
+
+    # override
+    def _str_stub_lines(self) -> List[str]:
+        lines = []
+        decl_name = self.decl_name()
+        decl_value = self.decl_value()
+        decl_part = f"{decl_name} = {decl_value}"
+
+        cpp_decl = self.cpp_element()
+        if cpp_to_python.python_shall_place_comment_at_end_of_line(cpp_decl, self.options):
+            decl_line = decl_part + "  #" + cpp_to_python.python_comment_end_of_line(cpp_decl, self.options)
+            lines.append(decl_line)
+        else:
+            comment_lines = cpp_to_python.python_comment_previous_lines(cpp_decl, self.options)
+            lines += comment_lines
+            lines.append(decl_part)
+
+        return lines
 
 
 @dataclass
@@ -72,8 +182,20 @@ class AdaptedComment(AdaptedElement):
     def __init(self, cpp_comment: CppComment, options: LitgenOptions):
         super().__init__(cpp_comment, options)
 
-    def cpp_element(self):
+    # override
+    def cpp_element(self) -> CppComment:
         return cast(CppComment, self._cpp_element)
+
+    # override
+    def _str_stub_lines(self) -> List[str]:
+        comment_cpp = self.cpp_element().comment
+        comment_python = cpp_to_python._comment_apply_replacements(comment_cpp, self.options)
+
+        def add_comment_token(line: str):
+            return "# " + line
+
+        comment_python_lines = list(map(add_comment_token, comment_python.split("\n")))
+        return comment_python_lines
 
 
 @dataclass
@@ -81,8 +203,13 @@ class AdaptedConstructor(AdaptedElement):
     def __init__(self, ctor: CppConstructorDecl, options: LitgenOptions):
         super().__init__(ctor, options)
 
-    def cpp_element(self):
+    # override
+    def cpp_element(self) -> CppConstructorDecl:
         return cast(CppConstructorDecl, self._cpp_element)
+
+    # override
+    def _str_stub_lines(self) -> List[str]:
+        raise ValueError("To be completed")
 
 
 @dataclass
@@ -90,12 +217,17 @@ class AdaptedClass(AdaptedElement):
     def __init__(self, class_: CppStruct, options: LitgenOptions):
         super().__init__(class_, options)
 
+    # override
     def cpp_element(self) -> CppStruct:
         return cast(CppStruct, self._cpp_element)
 
-    def class_name_python(self):
+    def class_name_python(self) -> str:
         r = cpp_to_python.add_underscore_if_python_reserved_word(self.cpp_element().class_name)
         return r
+
+    # override
+    def _str_stub_lines(self) -> List[str]:
+        raise ValueError("To be completed")
 
 
 @dataclass
@@ -107,14 +239,15 @@ class AdaptedEnum(AdaptedElement):
         self.children = []
         self._fill_children()
 
-    def cpp_element(self):
+    # override
+    def cpp_element(self) -> CppEnum:
         return cast(CppEnum, self._cpp_element)
 
-    def enum_name_python(self):
+    def enum_name_python(self) -> str:
         r = cpp_to_python.add_underscore_if_python_reserved_word(self.cpp_element().enum_name)
         return r
 
-    def _fill_children(self):
+    def _fill_children(self) -> None:
         children_with_values = self.cpp_element().get_children_with_filled_decl_values(self.options.srcml_options)
         for c_child in children_with_values:
             if isinstance(c_child, CppEmptyLine):
@@ -122,7 +255,7 @@ class AdaptedEnum(AdaptedElement):
             elif isinstance(c_child, CppComment):
                 self.children.append(AdaptedComment(c_child, self.options))
             elif isinstance(c_child, CppDecl):
-                new_adapted_decl = AdaptedDecl(c_child, self.options)
+                new_adapted_decl = AdaptedEnumDecl(c_child, self, self.options)
                 is_count = cpp_to_python.enum_element_is_count(
                     self.cpp_element(), new_adapted_decl.cpp_element(), self.options
                 )
@@ -133,11 +266,61 @@ class AdaptedEnum(AdaptedElement):
         decls = list(filter(lambda c: isinstance(c, AdaptedDecl), self.children))
         return cast(List[AdaptedDecl], decls)
 
+    # override
+    def _str_stub_lines(self) -> List[str]:
+        title_line = f"class {self.cpp_element().enum_name}(Enum):"
+
+        body_lines: List[str] = []
+        for child in self.children:
+            body_lines += child._str_stub_lines()
+
+        all_lines = self._str_stub_layout_lines([title_line], body_lines)
+        return all_lines
+
+    def str_stub(self) -> str:
+        stub_lines = self._str_stub_lines()
+        r = "\n".join(stub_lines)
+        return r
+
+    def __str__(self) -> str:
+        return self.str_stub()
+
+
+@dataclass
+class AdaptedFunction(AdaptedElement):
+    function_infos: CppFunctionDecl
+    parent_struct_name: str
+    cpp_adapter_code: Optional[str] = None
+    lambda_to_call: Optional[str] = None
+
+    def __init__(self, function_infos: CppFunctionDecl, parent_struct_name: str, options: LitgenOptions):
+        self.function_infos = function_infos
+        self.parent_struct_name = parent_struct_name
+        self.cpp_adapter_code = None
+        self.lambda_to_call = None
+        super().__init__(function_infos, options)
+
+    def is_method(self):
+        return len(self.parent_struct_name) > 0
+
+    # override
+    def cpp_element(self) -> CppFunctionDecl:
+        return cast(CppFunctionDecl, self._cpp_element)
+
+    # override
+    def _str_stub_lines(self) -> List[str]:
+        raise ValueError("To be completed")
+
 
 @dataclass
 class AdaptedCppUnit(AdaptedElement):
     def __init__(self, cpp_unit: CppUnit, options: LitgenOptions):
         super().__init__(cpp_unit, options)
 
-    def cpp_element(self):
+    # override
+    def cpp_element(self) -> CppUnit:
         return cast(CppUnit, self._cpp_element)
+
+    # override
+    def _str_stub_lines(self) -> List[str]:
+        raise ValueError("To be completed")

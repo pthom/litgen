@@ -287,15 +287,32 @@ def reindent_code(code: str, indent_size: int = 4, skip_first_line=False, indent
     return code
 
 
-def indent_code(code: str, indent_size: int = 1, skip_first_line=False, indent_str: Optional[str] = None) -> str:
+def indent_code_lines(
+    code_lines: List[str],
+    indent_size: int = 1,
+    skip_first_line=False,
+    indent_str: Optional[str] = None,
+    rstrip: bool = True,
+) -> List[str]:
+    code = "\n".join(code_lines)
+    r_str = indent_code(code, indent_size, skip_first_line, indent_str)
+    r = r_str.split("\n")
+    return r
+
+
+def indent_code(
+    code: str, indent_size: int = 1, skip_first_line=False, indent_str: Optional[str] = None, rstrip: bool = True
+) -> str:
     """add some space to the left of all lines"""
     if skip_first_line:
         lines = code.split("\n")
         if len(lines) == 1:
             return code
         first_line = lines[0]
+        if rstrip:
+            first_line = first_line.rstrip()
         rest = "\n".join(lines[1:])
-        return first_line + "\n" + indent_code(rest, indent_size, False, indent_str)
+        return first_line + "\n" + indent_code(rest, indent_size, False, indent_str, rstrip)
 
     lines = code.split("\n")
     if indent_str is None:
@@ -307,7 +324,10 @@ def indent_code(code: str, indent_size: int = 1, skip_first_line=False, indent_s
         if len(line) == 0:
             return ""
         else:
-            return indent_str_value + line
+            if rstrip:
+                return indent_str_value + line.rstrip()
+            else:
+                return indent_str_value + line
 
     lines = list(map(indent_line, lines))
     return "\n".join(lines)

@@ -44,7 +44,7 @@
 #         if len(param.default_value_cpp) > 0:
 #             param_line = param_line.replace(
 #                 "PARAM_DEFAULT",
-#                 " = " + cpp_to_python.default_value_to_python(param.default_value_cpp, options),
+#                 " = " + cpp_to_python.var_value_to_python(param.default_value_cpp, options),
 #             )
 #         else:
 #             param_line = param_line.replace(" PARAM_DEFAULT", "")

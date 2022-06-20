@@ -23,7 +23,7 @@ def make_adapted_function(
         adapt_variadic_format,
     ]
 
-    adapted_function = AdaptedFunction(function_infos, parent_struct_name)
+    adapted_function = AdaptedFunction(function_infos, parent_struct_name, options)
 
     for adapter_function in all_adapters_functions:
         lambda_adapter = adapter_function(adapted_function, options)

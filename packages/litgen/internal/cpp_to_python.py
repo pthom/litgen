@@ -1,11 +1,12 @@
+import copy
 import keyword
 import pathlib
 from dataclasses import dataclass  # noqa
+from typing import List
 
 from codemanip import code_replacements, code_utils
 from litgen.options import LitgenOptions
 from srcmlcpp import srcml_main
-from srcmlcpp.srcml_types import *
 
 
 """
@@ -20,33 +21,6 @@ def _filename_with_n_parent_folders(filename: str, n: int) -> str:
         index_start = 0
     r = "/".join(path.parts[index_start:])
     return r
-
-
-def _info_original_location(cpp_element: CppElement, options: LitgenOptions, comment_token: str) -> str:
-
-    if not options.original_location_flag_show:
-        return ""
-
-    nb_folders = options.original_location_nb_parent_folders
-    header_file = srcml_main.srcml_main_context().current_parsed_file
-    header_file = _filename_with_n_parent_folders(header_file, nb_folders)
-    if len(header_file) == 0:
-        header_file = "Line"
-
-    _i_ = options.indent_cpp_spaces()
-
-    start = cpp_element.start()
-    line = start.line if start is not None else "unknown line"
-    r = f"{_i_}{comment_token} {header_file}:{line}"
-    return r
-
-
-def info_original_location_cpp(cpp_element: CppElement, options: LitgenOptions) -> str:
-    return _info_original_location(cpp_element, options, "//")
-
-
-def info_original_location_python(cpp_element: CppElement, options: LitgenOptions) -> str:
-    return _info_original_location(cpp_element, options, "#")
 
 
 def _comment_apply_replacements(comment: str, options: LitgenOptions) -> str:
@@ -75,67 +49,6 @@ def _comment_apply_replacements(comment: str, options: LitgenOptions) -> str:
     return comment
 
 
-def docstring_lines(cpp_element_c: CppElementAndComment, options: LitgenOptions) -> List[str]:
-    """Return the comment of a CppElement under the form of a docstring, such as the one you are reading.
-    Some replacements will be applied (for example true -> True, etc)
-    """
-
-    docstring = cpp_element_c.cpp_element_comments.full_comment()
-    docstring = _comment_apply_replacements(docstring, options)
-    if docstring.startswith('"'):
-        docstring = " " + docstring
-    if docstring.endswith('"'):
-        docstring = docstring + " "
-
-    if len(docstring) == 0:
-        return []
-
-    lines = docstring.split("\n")
-
-    r = []  # noqa
-    r.append(f'''"""''' + lines[0])
-    r += lines[1:]
-
-    if len(r) == 1:
-        r[0] += '''"""'''
-    else:
-        r.append('"""')
-
-    return r
-
-
-def python_shall_place_comment_at_end_of_line(cpp_element_c: CppElementAndComment, options: LitgenOptions) -> bool:
-    eol_comment = _comment_apply_replacements(cpp_element_c.cpp_element_comments.comment_end_of_line, options)
-    p_comment = _comment_apply_replacements(cpp_element_c.cpp_element_comments.comment_on_previous_lines, options)
-    return len(eol_comment) > 0 and len(p_comment) == 0
-
-
-def python_comment_end_of_line(cpp_element_c: CppElementAndComment, options: LitgenOptions) -> str:
-    eol_comment = _comment_apply_replacements(cpp_element_c.cpp_element_comments.comment_end_of_line, options)
-    return eol_comment
-
-
-def python_comment_previous_lines(cpp_element_c: CppElementAndComment, options: LitgenOptions) -> List[str]:
-    """See comment below"""
-    # Returns the comment of a CppElement under the form of a python comment, such as the one you are reading.
-    # Some replacements will be applied (for example true -> True, etc)
-
-    comment = cpp_element_c.cpp_element_comments.full_comment()
-    if isinstance(cpp_element_c, CppComment):
-        comment = cpp_element_c.comment
-
-    comment = _comment_apply_replacements(comment, options)
-
-    if len(comment) == 0:
-        return []
-
-    lines = comment.split("\n")
-    lines = list(map(lambda s: "# " + s, lines))
-    lines = code_utils.strip_lines_right_space(lines)
-
-    return lines
-
-
 def docstring_python_one_line(title_cpp: str, options: LitgenOptions) -> str:
     """Formats a docstring on one cpp line. Used only in cpp bindings code"""
     return code_utils.format_cpp_comment_on_one_line(_comment_apply_replacements(title_cpp, options))
@@ -157,16 +70,11 @@ def var_name_to_python(var_name: str, options: LitgenOptions) -> str:  # noqa
     return r
 
 
-def decl_python_var_name(cpp_decl: CppDecl, options: LitgenOptions) -> str:
-    var_cpp_name = cpp_decl.decl_name
-    var_python_name = var_name_to_python(var_cpp_name, options)
-    return var_python_name
-
-
-def decl_python_value(cpp_decl: CppDecl, options: LitgenOptions) -> str:
-    value_cpp = cpp_decl.initial_value_code
-    value_python = code_replacements.apply_code_replacements(value_cpp, options.code_replacements)
-    return value_python
+def var_value_to_python(default_value_cpp: str, options: LitgenOptions) -> str:
+    r = code_replacements.apply_code_replacements(default_value_cpp, options.code_replacements)
+    for number_macro, value in options.srcml_options.named_number_macros.items():
+        r = r.replace(number_macro, str(value))
+    return r
 
 
 def function_name_to_python(function_name: str, options: LitgenOptions) -> str:  # noqa
@@ -179,11 +87,6 @@ def is_float_str(s: str) -> bool:
     except ValueError:
         return False
     return True
-
-
-def default_value_to_python(default_value_cpp: str, options: LitgenOptions) -> str:
-    r = code_replacements.apply_code_replacements(default_value_cpp, options.code_replacements)
-    return r
 
 
 def _cpp_type_to_camel_case_no_space(cpp_type: str) -> str:
@@ -350,6 +253,118 @@ def _enum_remove_values_prefix(enum_name: str, value_name: str) -> str:
         return value_name[len(enum_name) :]
     else:
         return value_name
+
+
+##################################################################################################################
+#
+# CppElements related below (migrate to adapted_types sub package later ?)
+#
+##################################################################################################################
+
+
+from srcmlcpp.srcml_types import *
+
+
+def decl_python_var_name(cpp_decl: CppDecl, options: LitgenOptions) -> str:
+    var_cpp_name = cpp_decl.decl_name
+    var_python_name = var_name_to_python(var_cpp_name, options)
+    return var_python_name
+
+
+def decl_python_value(cpp_decl: CppDecl, options: LitgenOptions) -> str:
+    value_cpp = cpp_decl.initial_value_code
+    value_python = var_value_to_python(value_cpp, options)
+    return value_python
+
+
+def _info_original_location(cpp_element: CppElement, options: LitgenOptions, comment_token: str) -> str:
+
+    if not options.original_location_flag_show:
+        return ""
+
+    nb_folders = options.original_location_nb_parent_folders
+    header_file = srcml_main.srcml_main_context().current_parsed_file
+    header_file = _filename_with_n_parent_folders(header_file, nb_folders)
+    if len(header_file) == 0:
+        header_file = "Line"
+
+    _i_ = options.indent_cpp_spaces()
+
+    start = cpp_element.start()
+    line = start.line if start is not None else "unknown line"
+    r = f"{_i_}{comment_token} {header_file}:{line}"
+    return r
+
+
+def info_original_location_cpp(cpp_element: CppElement, options: LitgenOptions) -> str:
+    return _info_original_location(cpp_element, options, "//")
+
+
+def info_original_location_python(cpp_element: CppElement, options: LitgenOptions) -> str:
+    return _info_original_location(cpp_element, options, "#")
+
+
+def docstring_lines(cpp_element_c: CppElementAndComment, options: LitgenOptions) -> List[str]:
+    """Return the comment of a CppElement under the form of a docstring, such as the one you are reading.
+    Some replacements will be applied (for example true -> True, etc)
+    """
+
+    docstring = cpp_element_c.cpp_element_comments.full_comment()
+    docstring = _comment_apply_replacements(docstring, options)
+    if docstring.startswith('"'):
+        docstring = " " + docstring
+    if docstring.endswith('"'):
+        docstring = docstring + " "
+
+    if len(docstring) == 0:
+        return []
+
+    lines = docstring.split("\n")
+
+    r = []  # noqa
+    r.append(f'''"""''' + lines[0])
+    r += lines[1:]
+
+    if len(r) == 1:
+        r[0] += '''"""'''
+    else:
+        r.append('"""')
+
+    return r
+
+
+def python_shall_place_comment_at_end_of_line(cpp_element_c: CppElementAndComment, options: LitgenOptions) -> bool:
+    if not options.python_reproduce_cpp_layout:
+        return False
+    eol_comment = _comment_apply_replacements(cpp_element_c.cpp_element_comments.comment_end_of_line, options)
+    p_comment = _comment_apply_replacements(cpp_element_c.cpp_element_comments.comment_on_previous_lines, options)
+    return len(eol_comment) > 0 and len(p_comment) == 0
+
+
+def python_comment_end_of_line(cpp_element_c: CppElementAndComment, options: LitgenOptions) -> str:
+    eol_comment = _comment_apply_replacements(cpp_element_c.cpp_element_comments.comment_end_of_line, options)
+    return eol_comment
+
+
+def python_comment_previous_lines(cpp_element_c: CppElementAndComment, options: LitgenOptions) -> List[str]:
+    """See comment below"""
+    # Returns the comment of a CppElement under the form of a python comment, such as the one you are reading.
+    # Some replacements will be applied (for example true -> True, etc)
+
+    comment = cpp_element_c.cpp_element_comments.full_comment()
+    if isinstance(cpp_element_c, CppComment):
+        comment = cpp_element_c.comment
+
+    comment = _comment_apply_replacements(comment, options)
+
+    if len(comment) == 0:
+        return []
+
+    lines = comment.split("\n")
+    lines = list(map(lambda s: "# " + s, lines))
+    lines = code_utils.strip_lines_right_space(lines)
+
+    return lines
 
 
 def enum_value_name_to_python(enum: CppEnum, enum_element: CppDecl, options: LitgenOptions) -> str:

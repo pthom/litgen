@@ -170,7 +170,7 @@ def _generate_pyi_enum(enum: CppEnum, options: LitgenOptions) -> str:
         if isinstance(child, CppDecl):
             body_lines += _make_enum_element_decl_lines(enum, child, previous_enum_element, options)
             previous_enum_element = child
-        if isinstance(child, CppEmptyLine) and options.python_keep_empty_lines:
+        if isinstance(child, CppEmptyLine) and options.python_reproduce_cpp_layout:
             body_lines.append("")
         if isinstance(child, CppComment):
             body_lines += cpp_to_python.python_comment_previous_lines(child, options)
@@ -200,7 +200,7 @@ def _paramlist_call_strs(param_list: CppParameterList, options: LitgenOptions) -
         param_name_python = cpp_to_python.var_name_to_python(param.decl.decl_name, options)
         param_type_cpp = param.decl.cpp_type.str_code()
         param_type_python = cpp_to_python.type_to_python(param_type_cpp, options)
-        param_default_value = cpp_to_python.default_value_to_python(param.default_value(), options)
+        param_default_value = cpp_to_python.var_value_to_python(param.default_value(), options)
 
         param_code = f"{param_name_python}: {param_type_python}"
         if len(param_default_value) > 0:
@@ -419,7 +419,7 @@ def _add_public_struct_elements(public_zone: CppPublicProtectedPrivate, struct_n
         if isinstance(public_child, CppDeclStatement):
             code = _add_struct_member_decl_stmt(cpp_decl_stmt=public_child, struct_name=struct_name, options=options)
             r += code
-        elif isinstance(public_child, CppEmptyLine) and options.python_keep_empty_lines:
+        elif isinstance(public_child, CppEmptyLine) and options.python_reproduce_cpp_layout:
             r += "\n"
         # elif isinstance(public_child, CppComment):
         #     r += code_utils.format_cpp_comment_multiline(public_child.cpp_element_comments.full_comment(), 4) + "\n"
@@ -514,7 +514,7 @@ def generate_pyi(
     for i, child in enumerate(cpp_unit.block_children):
         if False:
             pass
-        if isinstance(child, CppEmptyLine) and options.python_keep_empty_lines:
+        if isinstance(child, CppEmptyLine) and options.python_reproduce_cpp_layout:
             r += "\n"
         if isinstance(child, CppComment):
             r += "\n".join(cpp_to_python.python_comment_previous_lines(child, options)) + "\n"
