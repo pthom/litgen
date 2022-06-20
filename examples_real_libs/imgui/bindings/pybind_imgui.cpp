@@ -104,7 +104,7 @@ void py_init_module_imgui(py::module& m)
             DestroyContext(ctx);
         },
         py::arg("ctx") = NULL,
-        "NULL = destroy current context"
+        "None = destroy current context"
     );
 
     m.def("get_current_context",    // imgui.h:286
@@ -392,7 +392,7 @@ void py_init_module_imgui(py::module& m)
             SetNextWindowPos(pos, cond, pivot);
         },
         py::arg("pos"), py::arg("cond") = 0, py::arg("pivot") = ImVec2(0, 0),
-        "set next window position. call before Begin(). use pivot=(0.5f,0.5f) to center on given point, etc."
+        "set next window position. call before Begin(). use pivot=(0.5,0.5) to center on given point, etc."
     );
 
     m.def("set_next_window_size",    // imgui.h:355
@@ -401,7 +401,7 @@ void py_init_module_imgui(py::module& m)
             SetNextWindowSize(size, cond);
         },
         py::arg("size"), py::arg("cond") = 0,
-        "set next window size. set axis to 0.0f to force an auto-fit on this axis. call before Begin()"
+        "set next window size. set axis to 0.0 to force an auto-fit on this axis. call before Begin()"
     );
 
     m.def("set_next_window_size_constraints",    // imgui.h:356
@@ -419,7 +419,7 @@ void py_init_module_imgui(py::module& m)
             SetNextWindowContentSize(size);
         },
         py::arg("size"),
-        "set next window content size (~ scrollable client area, which enforce the range of scrollbars). Not including window decorations (title bar, menu bar, etc.) nor WindowPadding. set an axis to 0.0f to leave it automatic. call before Begin()"
+        "set next window content size (~ scrollable client area, which enforce the range of scrollbars). Not including window decorations (title bar, menu bar, etc.) nor WindowPadding. set an axis to 0.0 to leave it automatic. call before Begin()"
     );
 
     m.def("set_next_window_collapsed",    // imgui.h:358
@@ -507,7 +507,7 @@ void py_init_module_imgui(py::module& m)
             SetWindowSize(name, size, cond);
         },
         py::arg("name"), py::arg("size"), py::arg("cond") = 0,
-        "set named window size. set axis to 0.0f to force an auto-fit on this axis."
+        "set named window size. set axis to 0.0 to force an auto-fit on this axis."
     );
 
     m.def("set_window_collapsed",    // imgui.h:368
@@ -525,7 +525,7 @@ void py_init_module_imgui(py::module& m)
             SetWindowFocus(name);
         },
         py::arg("name"),
-        "set named window to be focused / top-most. use NULL to remove focus."
+        "set named window to be focused / top-most. use None to remove focus."
     );
 
     m.def("get_content_region_avail",    // imgui.h:374
@@ -652,7 +652,7 @@ void py_init_module_imgui(py::module& m)
             PushFont(font);
         },
         py::arg("font"),
-        "use NULL as a shortcut to push default font"
+        "use None as a shortcut to push default font"
     );
 
     m.def("pop_font",    // imgui.h:393
@@ -735,7 +735,7 @@ void py_init_module_imgui(py::module& m)
             PushButtonRepeat(repeat);
         },
         py::arg("repeat"),
-        "in 'repeat' mode, Button*() functions return repeated true in a typematic manner (using io.KeyRepeatDelay/io.KeyRepeatRate setting). Note that you can call IsItemActive() after any Button() to tell if the button is held in the current frame."
+        "in 'repeat' mode, Button() functions return repeated True in a typematic manner (using io.KeyRepeatDelay/io.KeyRepeatRate setting). Note that you can call IsItemActive() after any Button() to tell if the button is held in the current frame."
     );
 
     m.def("pop_button_repeat",    // imgui.h:403
@@ -751,7 +751,7 @@ void py_init_module_imgui(py::module& m)
             PushItemWidth(item_width);
         },
         py::arg("item_width"),
-        "push width of items for common large \"item+label\" widgets. >0.0f: width in pixels, <0.0f align xx pixels to the right of window (so -FLT_MIN always align width to the right side)."
+        "push width of items for common large \"item+label\" widgets. >0.0: width in pixels, <0.0 align xx pixels to the right of window (so -sys.float_info.min always align width to the right side)."
     );
 
     m.def("pop_item_width",    // imgui.h:407
@@ -767,7 +767,7 @@ void py_init_module_imgui(py::module& m)
             SetNextItemWidth(item_width);
         },
         py::arg("item_width"),
-        "set width of the _next_ common large \"item+label\" widget. >0.0f: width in pixels, <0.0f align xx pixels to the right of window (so -FLT_MIN always align width to the right side)"
+        "set width of the _next_ common large \"item+label\" widget. >0.0: width in pixels, <0.0 align xx pixels to the right of window (so -sys.float_info.min always align width to the right side)"
     );
 
     m.def("calc_item_width",    // imgui.h:409
@@ -784,7 +784,7 @@ void py_init_module_imgui(py::module& m)
             PushTextWrapPos(wrap_local_pos_x);
         },
         py::arg("wrap_local_pos_x") = 0.0f,
-        "push word-wrapping position for Text*() commands. < 0.0f: no wrapping; 0.0f: wrap to end of window (or column); > 0.0f: wrap at 'wrap_pos_x' position in window local space"
+        "push word-wrapping position for Text() commands. < 0.0: no wrapping; 0.0: wrap to end of window (or column); > 0.0: wrap at 'wrap_pos_x' position in window local space"
     );
 
     m.def("pop_text_wrap_pos",    // imgui.h:411
@@ -943,7 +943,7 @@ void py_init_module_imgui(py::module& m)
         {
             return GetCursorPosX();
         },
-        "(some functions are using window-relative coordinates, such as: GetCursorPos, GetCursorStartPos, GetContentRegionMax, GetWindowContentRegion* etc."
+        "(some functions are using window-relative coordinates, such as: GetCursorPos, GetCursorStartPos, GetContentRegionMax, GetWindowContentRegion etc."
     );
 
     m.def("get_cursor_pos_y",    // imgui.h:441
@@ -1034,7 +1034,7 @@ void py_init_module_imgui(py::module& m)
         {
             return GetFrameHeight();
         },
-        "~ FontSize + style.FramePadding.y * 2"
+        "~ FontSize + style.FramePadding.y  2"
     );
 
     m.def("get_frame_height_with_spacing",    // imgui.h:452
@@ -1042,7 +1042,7 @@ void py_init_module_imgui(py::module& m)
         {
             return GetFrameHeightWithSpacing();
         },
-        "~ FontSize + style.FramePadding.y * 2 + style.ItemSpacing.y (distance in pixels between 2 consecutive lines of framed widgets)"
+        "~ FontSize + style.FramePadding.y  2 + style.ItemSpacing.y (distance in pixels between 2 consecutive lines of framed widgets)"
     );
 
     m.def("push_id",    // imgui.h:465
@@ -1120,7 +1120,7 @@ void py_init_module_imgui(py::module& m)
             TextUnformatted(text, text_end);
         },
         py::arg("text"), py::arg("text_end") = NULL,
-        "raw text without formatting. Roughly equivalent to Text(\"%s\", text) but: A) doesn't require null terminated string if 'text_end' is specified, B) it's faster, no memory copy is done, no buffer size limits, recommended for long chunks of text."
+        "raw text without formatting. Roughly equivalent to Text(\"%s\", text) but: A) doesn't require null terminated string if 'text_end' is specified, B) it's faster, no memory copy is done, no buffer size limits, recommended for int chunks of text."
     );
 
     m.def("text",    // imgui.h:476
@@ -1176,7 +1176,7 @@ void py_init_module_imgui(py::module& m)
             TextWrapped_adapt_variadic_format(fmt);
         },
         py::arg("fmt"),
-        "shortcut for PushTextWrapPos(0.0f); Text(fmt, ...); PopTextWrapPos();. Note that this won't work on an auto-resizing window if there's no other widgets to extend the window width, yoy may need to set a size using SetNextWindowSize()."
+        "shortcut for PushTextWrapPos(0.0); Text(fmt, ...); PopTextWrapPos();. Note that this won't work on an auto-resizing window if there's no other widgets to extend the window width, yoy may need to set a size using SetNextWindowSize()."
     );
 
     m.def("label_text",    // imgui.h:484
@@ -1331,7 +1331,7 @@ void py_init_module_imgui(py::module& m)
         {
             EndCombo();
         },
-        "only call EndCombo() if BeginCombo() returns true!"
+        "only call EndCombo() if BeginCombo() returns True!"
     );
 
     m.def("combo",    // imgui.h:511
@@ -2057,7 +2057,7 @@ void py_init_module_imgui(py::module& m)
             return ColorButton(desc_id, col, flags, size);
         },
         py::arg("desc_id"), py::arg("col"), py::arg("flags") = 0, py::arg("size") = ImVec2(0, 0),
-        "display a color square/button, hover for details, return true when pressed."
+        "display a color square/button, hover for details, return True when pressed."
     );
 
     m.def("set_color_edit_options",    // imgui.h:587
@@ -2149,7 +2149,7 @@ void py_init_module_imgui(py::module& m)
             TreePush(str_id);
         },
         py::arg("str_id"),
-        "~ Indent()+PushId(). Already called by TreeNode() when returning true, but you can call TreePush/TreePop yourself if desired."
+        "~ Indent()+PushId(). Already called by TreeNode() when returning True, but you can call TreePush/TreePop yourself if desired."
     );
 
     m.def("tree_push",    // imgui.h:602
@@ -2174,7 +2174,7 @@ void py_init_module_imgui(py::module& m)
         {
             return GetTreeNodeToLabelSpacing();
         },
-        "horizontal distance preceding label when using TreeNode*() or Bullet() == (g.FontSize + style.FramePadding.x*2) for a regular unframed TreeNode"
+        "horizontal distance preceding label when using TreeNode() or Bullet() == (g.FontSize + style.FramePadding.x2) for a regular unframed TreeNode"
     );
 
     m.def("collapsing_header",    // imgui.h:605
@@ -2183,7 +2183,7 @@ void py_init_module_imgui(py::module& m)
             return CollapsingHeader(label, flags);
         },
         py::arg("label"), py::arg("flags") = 0,
-        "if returning 'true' the header is open. doesn't indent nor push on ID stack. user doesn't have to call TreePop()."
+        "if returning 'True' the header is open. doesn't indent nor push on ID stack. user doesn't have to call TreePop()."
     );
 
     m.def("collapsing_header",    // imgui.h:606
@@ -2192,7 +2192,7 @@ void py_init_module_imgui(py::module& m)
             return CollapsingHeader(label, p_visible, flags);
         },
         py::arg("label"), py::arg("p_visible"), py::arg("flags") = 0,
-        "when 'p_visible != NULL': if '*p_visible==true' display an additional small close button on upper right of the header which will set the bool to false when clicked, if '*p_visible==false' don't display the header."
+        "when 'p_visible != None': if 'p_visible==True' display an additional small close button on upper right of the header which will set the bool to False when clicked, if 'p_visible==False' don't display the header."
     );
 
     m.def("set_next_item_open",    // imgui.h:607
@@ -2210,7 +2210,7 @@ void py_init_module_imgui(py::module& m)
             return Selectable(label, selected, flags, size);
         },
         py::arg("label"), py::arg("selected") = false, py::arg("flags") = 0, py::arg("size") = ImVec2(0, 0),
-        "\"bool selected\" carry the selection state (read-only). Selectable() is clicked is returns true so you can modify your selection state. size.x==0.0: use remaining width, size.x>0.0: specify width. size.y==0.0: use label height, size.y>0.0: specify height"
+        "\"bool selected\" carry the selection state (read-only). Selectable() is clicked is returns True so you can modify your selection state. size.x==0.0: use remaining width, size.x>0.0: specify width. size.y==0.0: use label height, size.y>0.0: specify height"
     );
 
     m.def("selectable",    // imgui.h:613
@@ -2219,7 +2219,7 @@ void py_init_module_imgui(py::module& m)
             return Selectable(label, p_selected, flags, size);
         },
         py::arg("label"), py::arg("p_selected"), py::arg("flags") = 0, py::arg("size") = ImVec2(0, 0),
-        "\"bool* p_selected\" point to the selection state (read-write), as a convenient helper."
+        "\"bool p_selected\" point to the selection state (read-write), as a convenient helper."
     );
 
     m.def("begin_list_box",    // imgui.h:621
@@ -2236,7 +2236,7 @@ void py_init_module_imgui(py::module& m)
         {
             EndListBox();
         },
-        "only call EndListBox() if BeginListBox() returned true!"
+        "only call EndListBox() if BeginListBox() returned True!"
     );
 
     m.def("list_box",    // imgui.h:623
@@ -2365,7 +2365,7 @@ void py_init_module_imgui(py::module& m)
         {
             EndMenuBar();
         },
-        "only call EndMenuBar() if BeginMenuBar() returns true!"
+        "only call EndMenuBar() if BeginMenuBar() returns True!"
     );
 
     m.def("begin_main_menu_bar",    // imgui.h:647
@@ -2381,7 +2381,7 @@ void py_init_module_imgui(py::module& m)
         {
             EndMainMenuBar();
         },
-        "only call EndMainMenuBar() if BeginMainMenuBar() returns true!"
+        "only call EndMainMenuBar() if BeginMainMenuBar() returns True!"
     );
 
     m.def("begin_menu",    // imgui.h:649
@@ -2390,7 +2390,7 @@ void py_init_module_imgui(py::module& m)
             return BeginMenu(label, enabled);
         },
         py::arg("label"), py::arg("enabled") = true,
-        "create a sub-menu entry. only call EndMenu() if this returns true!"
+        "create a sub-menu entry. only call EndMenu() if this returns True!"
     );
 
     m.def("end_menu",    // imgui.h:650
@@ -2398,7 +2398,7 @@ void py_init_module_imgui(py::module& m)
         {
             EndMenu();
         },
-        "only call EndMenu() if BeginMenu() returns true!"
+        "only call EndMenu() if BeginMenu() returns True!"
     );
 
     m.def("menu_item",    // imgui.h:651
@@ -2407,7 +2407,7 @@ void py_init_module_imgui(py::module& m)
             return MenuItem(label, shortcut, selected, enabled);
         },
         py::arg("label"), py::arg("shortcut") = NULL, py::arg("selected") = false, py::arg("enabled") = true,
-        "return true when activated."
+        "return True when activated."
     );
 
     m.def("menu_item",    // imgui.h:652
@@ -2416,7 +2416,7 @@ void py_init_module_imgui(py::module& m)
             return MenuItem(label, shortcut, p_selected, enabled);
         },
         py::arg("label"), py::arg("shortcut"), py::arg("p_selected"), py::arg("enabled") = true,
-        "return true when activated + toggle (*p_selected) if p_selected != NULL"
+        "return True when activated + toggle (p_selected) if p_selected != None"
     );
 
     m.def("begin_tooltip",    // imgui.h:656
@@ -2454,7 +2454,7 @@ void py_init_module_imgui(py::module& m)
             return BeginPopup(str_id, flags);
         },
         py::arg("str_id"), py::arg("flags") = 0,
-        "return true if the popup is open, and you can start outputting to it."
+        "return True if the popup is open, and you can start outputting to it."
     );
 
     m.def("begin_popup_modal",    // imgui.h:674
@@ -2463,7 +2463,7 @@ void py_init_module_imgui(py::module& m)
             return BeginPopupModal(name, p_open, flags);
         },
         py::arg("name"), py::arg("p_open") = NULL, py::arg("flags") = 0,
-        "return true if the modal is open, and you can start outputting to it."
+        "return True if the modal is open, and you can start outputting to it."
     );
 
     m.def("end_popup",    // imgui.h:675
@@ -2471,7 +2471,7 @@ void py_init_module_imgui(py::module& m)
         {
             EndPopup();
         },
-        "only call EndPopup() if BeginPopupXXX() returns true!"
+        "only call EndPopup() if BeginPopupXXX() returns True!"
     );
 
     m.def("open_popup",    // imgui.h:685
@@ -2515,7 +2515,7 @@ void py_init_module_imgui(py::module& m)
             return BeginPopupContextItem(str_id, popup_flags);
         },
         py::arg("str_id") = NULL, py::arg("popup_flags") = 1,
-        "open+begin popup when clicked on last item. Use str_id==NULL to associate the popup to previous item. If you want to use that on a non-interactive item such as Text() you need to pass in an explicit ID here. read comments in .cpp!"
+        "open+begin popup when clicked on last item. Use str_id==None to associate the popup to previous item. If you want to use that on a non-interactive item such as Text() you need to pass in an explicit ID here. read comments in .cpp!"
     );
 
     m.def("begin_popup_context_window",    // imgui.h:696
@@ -2533,7 +2533,7 @@ void py_init_module_imgui(py::module& m)
             return BeginPopupContextVoid(str_id, popup_flags);
         },
         py::arg("str_id") = NULL, py::arg("popup_flags") = 1,
-        "open+begin popup when clicked in void (where there are no windows)."
+        "open+begin popup when clicked in None (where there are no windows)."
     );
 
     m.def("is_popup_open",    // imgui.h:703
@@ -2542,7 +2542,7 @@ void py_init_module_imgui(py::module& m)
             return IsPopupOpen(str_id, flags);
         },
         py::arg("str_id"), py::arg("flags") = 0,
-        "return true if the popup is open."
+        "return True if the popup is open."
     );
 
     m.def("begin_table",    // imgui.h:728
@@ -2558,7 +2558,7 @@ void py_init_module_imgui(py::module& m)
         {
             EndTable();
         },
-        "only call EndTable() if BeginTable() returns true!"
+        "only call EndTable() if BeginTable() returns True!"
     );
 
     m.def("table_next_row",    // imgui.h:730
@@ -2575,7 +2575,7 @@ void py_init_module_imgui(py::module& m)
         {
             return TableNextColumn();
         },
-        "append into the next column (or first column of next row if currently in last column). Return true when column is visible."
+        "append into the next column (or first column of next row if currently in last column). Return True when column is visible."
     );
 
     m.def("table_set_column_index",    // imgui.h:732
@@ -2584,7 +2584,7 @@ void py_init_module_imgui(py::module& m)
             return TableSetColumnIndex(column_n);
         },
         py::arg("column_n"),
-        "append into the specified column. Return true when column is visible."
+        "append into the specified column. Return True when column is visible."
     );
 
     m.def("table_setup_column",    // imgui.h:742
@@ -2626,7 +2626,7 @@ void py_init_module_imgui(py::module& m)
         {
             return TableGetSortSpecs();
         },
-        "get latest sort specs for the table (NULL if not sorting).  Lifetime: don't hold on this pointer over multiple frames or past any subsequent call to BeginTable()."
+        "get latest sort specs for the table (None if not sorting).  Lifetime: don't hold on this pointer over multiple frames or past any subsequent call to BeginTable()."
     );
 
     m.def("table_get_column_count",    // imgui.h:754
@@ -2677,7 +2677,7 @@ void py_init_module_imgui(py::module& m)
             TableSetColumnEnabled(column_n, v);
         },
         py::arg("column_n"), py::arg("v"),
-        "change user accessible enabled/disabled state of a column. Set to false to hide the column. User can use the context menu to change this themselves (right-click in headers, or right-click in columns body with ImGuiTableFlags_ContextMenuInBody)"
+        "change user accessible enabled/disabled state of a column. Set to False to hide the column. User can use the context menu to change this themselves (right-click in headers, or right-click in columns body with ImGuiTableFlags_ContextMenuInBody)"
     );
 
     m.def("table_set_bg_color",    // imgui.h:760
@@ -2737,7 +2737,7 @@ void py_init_module_imgui(py::module& m)
             return GetColumnOffset(column_index);
         },
         py::arg("column_index") = -1,
-        "get position of column line (in pixels, from the left side of the contents region). pass -1 to use current column, otherwise 0..GetColumnsCount() inclusive. column 0 is typically 0.0f"
+        "get position of column line (in pixels, from the left side of the contents region). pass -1 to use current column, otherwise 0..GetColumnsCount() inclusive. column 0 is typically 0.0"
     );
 
     m.def("set_column_offset",    // imgui.h:770
@@ -2770,7 +2770,7 @@ void py_init_module_imgui(py::module& m)
         {
             EndTabBar();
         },
-        "only call EndTabBar() if BeginTabBar() returns true!"
+        "only call EndTabBar() if BeginTabBar() returns True!"
     );
 
     m.def("begin_tab_item",    // imgui.h:776
@@ -2779,7 +2779,7 @@ void py_init_module_imgui(py::module& m)
             return BeginTabItem(label, p_open, flags);
         },
         py::arg("label"), py::arg("p_open") = NULL, py::arg("flags") = 0,
-        "create a Tab. Returns true if the Tab is selected."
+        "create a Tab. Returns True if the Tab is selected."
     );
 
     m.def("end_tab_item",    // imgui.h:777
@@ -2787,7 +2787,7 @@ void py_init_module_imgui(py::module& m)
         {
             EndTabItem();
         },
-        "only call EndTabItem() if BeginTabItem() returns true!"
+        "only call EndTabItem() if BeginTabItem() returns True!"
     );
 
     m.def("tab_item_button",    // imgui.h:778
@@ -2796,7 +2796,7 @@ void py_init_module_imgui(py::module& m)
             return TabItemButton(label, flags);
         },
         py::arg("label"), py::arg("flags") = 0,
-        "create a Tab behaving like a button. return true when clicked. cannot be selected in the tab bar."
+        "create a Tab behaving like a button. return True when clicked. cannot be selected in the tab bar."
     );
 
     m.def("set_tab_item_closed",    // imgui.h:779
@@ -2871,7 +2871,7 @@ void py_init_module_imgui(py::module& m)
             return BeginDragDropSource(flags);
         },
         py::arg("flags") = 0,
-        "call after submitting an item which may be dragged. when this return true, you can call SetDragDropPayload() + EndDragDropSource()"
+        "call after submitting an item which may be dragged. when this return True, you can call SetDragDropPayload() + EndDragDropSource()"
     );
 
     m.def("set_drag_drop_payload",    // imgui.h:797
@@ -2880,7 +2880,7 @@ void py_init_module_imgui(py::module& m)
             return SetDragDropPayload(type, data, sz, cond);
         },
         py::arg("type"), py::arg("data"), py::arg("sz"), py::arg("cond") = 0,
-        "type is a user defined string of maximum 32 characters. Strings starting with '_' are reserved for dear imgui internal types. Data is copied and held by imgui. Return true when payload has been accepted."
+        "type is a user defined string of maximum 32 characters. Strings starting with '_' are reserved for dear imgui internal types. Data is copied and held by imgui. Return True when payload has been accepted."
     );
 
     m.def("end_drag_drop_source",    // imgui.h:798
@@ -2888,7 +2888,7 @@ void py_init_module_imgui(py::module& m)
         {
             EndDragDropSource();
         },
-        "only call EndDragDropSource() if BeginDragDropSource() returns true!"
+        "only call EndDragDropSource() if BeginDragDropSource() returns True!"
     );
 
     m.def("begin_drag_drop_target",    // imgui.h:799
@@ -2896,7 +2896,7 @@ void py_init_module_imgui(py::module& m)
         {
             return BeginDragDropTarget();
         },
-        "call after submitting an item that may receive a payload. If this returns true, you can call AcceptDragDropPayload() + EndDragDropTarget()"
+        "call after submitting an item that may receive a payload. If this returns True, you can call AcceptDragDropPayload() + EndDragDropTarget()"
     );
 
     m.def("accept_drag_drop_payload",    // imgui.h:800
@@ -2913,7 +2913,7 @@ void py_init_module_imgui(py::module& m)
         {
             EndDragDropTarget();
         },
-        "only call EndDragDropTarget() if BeginDragDropTarget() returns true!"
+        "only call EndDragDropTarget() if BeginDragDropTarget() returns True!"
     );
 
     m.def("get_drag_drop_payload",    // imgui.h:802
@@ -2921,7 +2921,7 @@ void py_init_module_imgui(py::module& m)
         {
             return GetDragDropPayload();
         },
-        "peek directly into the current payload from anywhere. may return NULL. use ImGuiPayload::IsDataType() to test for the payload type."
+        "peek directly into the current payload from anywhere. may return None. use ImGuiPayload::IsDataType() to test for the payload type."
     );
 
     m.def("begin_disabled",    // imgui.h:808
@@ -2985,7 +2985,7 @@ void py_init_module_imgui(py::module& m)
         {
             return IsItemActive();
         },
-        "is the last item active? (e.g. button being held, text field being edited. This will continuously return true while holding mouse button on an item. Items that don't interact will always return false)"
+        "is the last item active? (e.g. button being held, text field being edited. This will continuously return True while holding mouse button on an item. Items that don't interact will always return False)"
     );
 
     m.def("is_item_focused",    // imgui.h:826
@@ -3002,7 +3002,7 @@ void py_init_module_imgui(py::module& m)
             return IsItemClicked(mouse_button);
         },
         py::arg("mouse_button") = 0,
-        "is the last item hovered and mouse clicked on? (**)  == IsMouseClicked(mouse_button) && IsItemHovered()Important. (**) this it NOT equivalent to the behavior of e.g. Button(). Read comments in function definition."
+        "is the last item hovered and mouse clicked on? ()  == IsMouseClicked(mouse_button)  IsItemHovered()Important. () this it NOT equivalent to the behavior of e.g. Button(). Read comments in function definition."
     );
 
     m.def("is_item_visible",    // imgui.h:828
@@ -3042,7 +3042,7 @@ void py_init_module_imgui(py::module& m)
         {
             return IsItemDeactivatedAfterEdit();
         },
-        "was the last item just made inactive and made a value change when it was active? (e.g. Slider/Drag moved). Useful for Undo/Redo patterns with widgets that requires continuous editing. Note that you may get false positives (some widgets such as Combo()/ListBox()/Selectable() will return true even when clicking an already selected item)."
+        "was the last item just made inactive and made a value change when it was active? (e.g. Slider/Drag moved). Useful for Undo/Redo patterns with widgets that requires continuous editing. Note that you may get False positives (some widgets such as Combo()/ListBox()/Selectable() will return True even when clicking an already selected item)."
     );
 
     m.def("is_item_toggled_open",    // imgui.h:833
@@ -3114,7 +3114,7 @@ void py_init_module_imgui(py::module& m)
         {
             return GetMainViewport();
         },
-        "return primary/default viewport. This can never be NULL."
+        "return primary/default viewport. This can never be None."
     );
 
     m.def("get_background_draw_list",    // imgui.h:849
@@ -3265,7 +3265,7 @@ void py_init_module_imgui(py::module& m)
             return IsKeyPressed(key, repeat);
         },
         py::arg("key"), py::arg("repeat") = true,
-        "was key pressed (went from !Down to Down)? if repeat=true, uses io.KeyRepeatDelay / KeyRepeatRate"
+        "was key pressed (went from !Down to Down)? if repeat=True, uses io.KeyRepeatDelay / KeyRepeatRate"
     );
 
     m.def("is_key_released",    // imgui.h:881
@@ -3301,7 +3301,7 @@ void py_init_module_imgui(py::module& m)
             SetNextFrameWantCaptureKeyboard(want_capture_keyboard);
         },
         py::arg("want_capture_keyboard"),
-        "Override io.WantCaptureKeyboard flag next frame (said flag is left for your application to handle, typically when true it instructs your app to ignore inputs). e.g. force capture keyboard when your widget is being hovered. This is equivalent to setting \"io.WantCaptureKeyboard = want_capture_keyboard\"; after the next NewFrame() call."
+        "Override io.WantCaptureKeyboard flag next frame (said flag is left for your application to handle, typically when True it instructs your app to ignore inputs). e.g. force capture keyboard when your widget is being hovered. This is equivalent to setting \"io.WantCaptureKeyboard = want_capture_keyboard\"; after the next NewFrame() call."
     );
 
     m.def("is_mouse_down",    // imgui.h:890
@@ -3337,7 +3337,7 @@ void py_init_module_imgui(py::module& m)
             return IsMouseDoubleClicked(button);
         },
         py::arg("button"),
-        "did mouse button double-clicked? Same as GetMouseClickedCount() == 2. (note that a double-click will also report IsMouseClicked() == true)"
+        "did mouse button float-clicked? Same as GetMouseClickedCount() == 2. (note that a float-click will also report IsMouseClicked() == True)"
     );
 
     m.def("get_mouse_clicked_count",    // imgui.h:894
@@ -3364,7 +3364,7 @@ void py_init_module_imgui(py::module& m)
             return IsMousePosValid(mouse_pos);
         },
         py::arg("mouse_pos") = NULL,
-        "by convention we use (-FLT_MAX,-FLT_MAX) to denote that there is no mouse available"
+        "by convention we use (-sys.float_info.max,-sys.float_info.max) to denote that there is no mouse available"
     );
 
     m.def("is_any_mouse_down",    // imgui.h:897
@@ -3397,7 +3397,7 @@ void py_init_module_imgui(py::module& m)
             return IsMouseDragging(button, lock_threshold);
         },
         py::arg("button"), py::arg("lock_threshold") = -1.0f,
-        "is mouse dragging? (if lock_threshold < -1.0f, uses io.MouseDraggingThreshold)"
+        "is mouse dragging? (if lock_threshold < -1.0, uses io.MouseDraggingThreshold)"
     );
 
     m.def("get_mouse_drag_delta",    // imgui.h:901
@@ -3406,7 +3406,7 @@ void py_init_module_imgui(py::module& m)
             return GetMouseDragDelta(button, lock_threshold);
         },
         py::arg("button") = 0, py::arg("lock_threshold") = -1.0f,
-        "return the delta from the initial clicking position while the mouse button is pressed or was just released. This is locked and return 0.0f until the mouse moves past a distance threshold at least once (if lock_threshold < -1.0f, uses io.MouseDraggingThreshold)"
+        "return the delta from the initial clicking position while the mouse button is pressed or was just released. This is locked and return 0.0 until the mouse moves past a distance threshold at least once (if lock_threshold < -1.0, uses io.MouseDraggingThreshold)"
     );
 
     m.def("reset_mouse_drag_delta",    // imgui.h:902
@@ -3440,7 +3440,7 @@ void py_init_module_imgui(py::module& m)
             SetNextFrameWantCaptureMouse(want_capture_mouse);
         },
         py::arg("want_capture_mouse"),
-        "Override io.WantCaptureMouse flag next frame (said flag is left for your application to handle, typical when true it instucts your app to ignore inputs). This is equivalent to setting \"io.WantCaptureMouse = want_capture_mouse;\" after the next NewFrame() call."
+        "Override io.WantCaptureMouse flag next frame (said flag is left for your application to handle, typical when True it instucts your app to ignore inputs). This is equivalent to setting \"io.WantCaptureMouse = want_capture_mouse;\" after the next NewFrame() call."
     );
 
     m.def("get_clipboard_text",    // imgui.h:909
@@ -3514,646 +3514,646 @@ void py_init_module_imgui(py::module& m)
 
 
     py::enum_<ImGuiWindowFlags_>(m, "ImGuiWindowFlags_", py::arithmetic(), "Flags for ImGui::Begin()")    // imgui.h:941
-    .value("none", ImGuiWindowFlags_None, "")
-    .value("no_title_bar", ImGuiWindowFlags_NoTitleBar, "Disable title-bar")
-    .value("no_resize", ImGuiWindowFlags_NoResize, "Disable user resizing with the lower-right grip")
-    .value("no_move", ImGuiWindowFlags_NoMove, "Disable user moving the window")
-    .value("no_scrollbar", ImGuiWindowFlags_NoScrollbar, "Disable scrollbars (window can still scroll with mouse or programmatically)")
-    .value("no_scroll_with_mouse", ImGuiWindowFlags_NoScrollWithMouse, "Disable user vertically scrolling with mouse wheel. On child window, mouse wheel will be forwarded to the parent unless NoScrollbar is also set.")
-    .value("no_collapse", ImGuiWindowFlags_NoCollapse, "Disable user collapsing window by float-clicking on it. Also referred to as Window Menu Button (e.g. within a docking node).")
-    .value("always_auto_resize", ImGuiWindowFlags_AlwaysAutoResize, "Resize every window to its content every frame")
-    .value("no_background", ImGuiWindowFlags_NoBackground, "Disable drawing background color (WindowBg, etc.) and outside border. Similar as using SetNextWindowBgAlpha(0.0).")
-    .value("no_saved_settings", ImGuiWindowFlags_NoSavedSettings, "Never load/save settings in .ini file")
-    .value("no_mouse_inputs", ImGuiWindowFlags_NoMouseInputs, "Disable catching mouse, hovering test with pass through.")
-    .value("menu_bar", ImGuiWindowFlags_MenuBar, "Has a menu-bar")
-    .value("horizontal_scrollbar", ImGuiWindowFlags_HorizontalScrollbar, "Allow horizontal scrollbar to appear (off by default). You may use SetNextWindowContentSize(ImVec2(width,0.0)); prior to calling Begin() to specify width. Read code in imgui_demo in the \"Horizontal Scrolling\" section.")
-    .value("no_focus_on_appearing", ImGuiWindowFlags_NoFocusOnAppearing, "Disable taking focus when transitioning from hidden to visible state")
-    .value("no_bring_to_front_on_focus", ImGuiWindowFlags_NoBringToFrontOnFocus, "Disable bringing window to front when taking focus (e.g. clicking on it or programmatically giving it focus)")
-    .value("always_vertical_scrollbar", ImGuiWindowFlags_AlwaysVerticalScrollbar, "Always show vertical scrollbar (even if ContentSize.y < Size.y)")
-    .value("always_horizontal_scrollbar", ImGuiWindowFlags_AlwaysHorizontalScrollbar, "Always show horizontal scrollbar (even if ContentSize.x < Size.x)")
-    .value("always_use_window_padding", ImGuiWindowFlags_AlwaysUseWindowPadding, "Ensure child windows without border uses style.WindowPadding (ignored by default for non-bordered child windows, because more convenient)")
-    .value("no_nav_inputs", ImGuiWindowFlags_NoNavInputs, "No gamepad/keyboard navigation within the window")
-    .value("no_nav_focus", ImGuiWindowFlags_NoNavFocus, "No focusing toward this window with gamepad/keyboard navigation (e.g. skipped by CTRL+TAB)")
-    .value("unsaved_document", ImGuiWindowFlags_UnsavedDocument, "Display a dot next to the title. When used in a tab/docking context, tab is selected when clicking the X + closure is not assumed (will wait for user to stop submitting the tab). Otherwise closure is assumed when pressing the X, so if you keep submitting the tab may reappear at end of tab bar.")
-    .value("no_nav", ImGuiWindowFlags_NoNav, "")
-    .value("no_decoration", ImGuiWindowFlags_NoDecoration, "")
-    .value("no_inputs", ImGuiWindowFlags_NoInputs, "")
-    .value("nav_flattened", ImGuiWindowFlags_NavFlattened, "[BETA] On child window: allow gamepad/keyboard navigation to cross over parent border to this child or between sibling child windows.")
-    .value("child_window", ImGuiWindowFlags_ChildWindow, "Don't use! For internal use by BeginChild()")
-    .value("tooltip", ImGuiWindowFlags_Tooltip, "Don't use! For internal use by BeginTooltip()")
-    .value("popup", ImGuiWindowFlags_Popup, "Don't use! For internal use by BeginPopup()")
-    .value("modal", ImGuiWindowFlags_Modal, "Don't use! For internal use by BeginPopupModal()")
-    .value("child_menu", ImGuiWindowFlags_ChildMenu, "Don't use! For internal use by BeginMenu()");
+        .value("none", ImGuiWindowFlags_None, "")
+        .value("no_title_bar", ImGuiWindowFlags_NoTitleBar, "Disable title-bar")
+        .value("no_resize", ImGuiWindowFlags_NoResize, "Disable user resizing with the lower-right grip")
+        .value("no_move", ImGuiWindowFlags_NoMove, "Disable user moving the window")
+        .value("no_scrollbar", ImGuiWindowFlags_NoScrollbar, "Disable scrollbars (window can still scroll with mouse or programmatically)")
+        .value("no_scroll_with_mouse", ImGuiWindowFlags_NoScrollWithMouse, "Disable user vertically scrolling with mouse wheel. On child window, mouse wheel will be forwarded to the parent unless NoScrollbar is also set.")
+        .value("no_collapse", ImGuiWindowFlags_NoCollapse, "Disable user collapsing window by float-clicking on it. Also referred to as Window Menu Button (e.g. within a docking node).")
+        .value("always_auto_resize", ImGuiWindowFlags_AlwaysAutoResize, "Resize every window to its content every frame")
+        .value("no_background", ImGuiWindowFlags_NoBackground, "Disable drawing background color (WindowBg, etc.) and outside border. Similar as using SetNextWindowBgAlpha(0.0).")
+        .value("no_saved_settings", ImGuiWindowFlags_NoSavedSettings, "Never load/save settings in .ini file")
+        .value("no_mouse_inputs", ImGuiWindowFlags_NoMouseInputs, "Disable catching mouse, hovering test with pass through.")
+        .value("menu_bar", ImGuiWindowFlags_MenuBar, "Has a menu-bar")
+        .value("horizontal_scrollbar", ImGuiWindowFlags_HorizontalScrollbar, "Allow horizontal scrollbar to appear (off by default). You may use SetNextWindowContentSize(ImVec2(width,0.0)); prior to calling Begin() to specify width. Read code in imgui_demo in the \"Horizontal Scrolling\" section.")
+        .value("no_focus_on_appearing", ImGuiWindowFlags_NoFocusOnAppearing, "Disable taking focus when transitioning from hidden to visible state")
+        .value("no_bring_to_front_on_focus", ImGuiWindowFlags_NoBringToFrontOnFocus, "Disable bringing window to front when taking focus (e.g. clicking on it or programmatically giving it focus)")
+        .value("always_vertical_scrollbar", ImGuiWindowFlags_AlwaysVerticalScrollbar, "Always show vertical scrollbar (even if ContentSize.y < Size.y)")
+        .value("always_horizontal_scrollbar", ImGuiWindowFlags_AlwaysHorizontalScrollbar, "Always show horizontal scrollbar (even if ContentSize.x < Size.x)")
+        .value("always_use_window_padding", ImGuiWindowFlags_AlwaysUseWindowPadding, "Ensure child windows without border uses style.WindowPadding (ignored by default for non-bordered child windows, because more convenient)")
+        .value("no_nav_inputs", ImGuiWindowFlags_NoNavInputs, "No gamepad/keyboard navigation within the window")
+        .value("no_nav_focus", ImGuiWindowFlags_NoNavFocus, "No focusing toward this window with gamepad/keyboard navigation (e.g. skipped by CTRL+TAB)")
+        .value("unsaved_document", ImGuiWindowFlags_UnsavedDocument, "Display a dot next to the title. When used in a tab/docking context, tab is selected when clicking the X + closure is not assumed (will wait for user to stop submitting the tab). Otherwise closure is assumed when pressing the X, so if you keep submitting the tab may reappear at end of tab bar.")
+        .value("no_nav", ImGuiWindowFlags_NoNav, "")
+        .value("no_decoration", ImGuiWindowFlags_NoDecoration, "")
+        .value("no_inputs", ImGuiWindowFlags_NoInputs, "")
+        .value("nav_flattened", ImGuiWindowFlags_NavFlattened, "[BETA] On child window: allow gamepad/keyboard navigation to cross over parent border to this child or between sibling child windows.")
+        .value("child_window", ImGuiWindowFlags_ChildWindow, "Don't use! For internal use by BeginChild()")
+        .value("tooltip", ImGuiWindowFlags_Tooltip, "Don't use! For internal use by BeginTooltip()")
+        .value("popup", ImGuiWindowFlags_Popup, "Don't use! For internal use by BeginPopup()")
+        .value("modal", ImGuiWindowFlags_Modal, "Don't use! For internal use by BeginPopupModal()")
+        .value("child_menu", ImGuiWindowFlags_ChildMenu, "Don't use! For internal use by BeginMenu()");
 
 
     py::enum_<ImGuiInputTextFlags_>(m, "ImGuiInputTextFlags_", py::arithmetic(), "Flags for ImGui::InputText()")    // imgui.h:979
-    .value("none", ImGuiInputTextFlags_None, "")
-    .value("chars_decimal", ImGuiInputTextFlags_CharsDecimal, "Allow 0123456789.+-/")
-    .value("chars_hexadecimal", ImGuiInputTextFlags_CharsHexadecimal, "Allow 0123456789ABCDEFabcdef")
-    .value("chars_uppercase", ImGuiInputTextFlags_CharsUppercase, "Turn a..z into A..Z")
-    .value("chars_no_blank", ImGuiInputTextFlags_CharsNoBlank, "Filter out spaces, tabs")
-    .value("auto_select_all", ImGuiInputTextFlags_AutoSelectAll, "Select entire text when first taking mouse focus")
-    .value("enter_returns_true", ImGuiInputTextFlags_EnterReturnsTrue, "Return 'True' when Enter is pressed (as opposed to every time the value was modified). Consider looking at the IsItemDeactivatedAfterEdit() function.")
-    .value("callback_completion", ImGuiInputTextFlags_CallbackCompletion, "Callback on pressing TAB (for completion handling)")
-    .value("callback_history", ImGuiInputTextFlags_CallbackHistory, "Callback on pressing Up/Down arrows (for history handling)")
-    .value("callback_always", ImGuiInputTextFlags_CallbackAlways, "Callback on each iteration. User code may query cursor position, modify text buffer.")
-    .value("callback_char_filter", ImGuiInputTextFlags_CallbackCharFilter, "Callback on character inputs to replace or discard them. Modify 'EventChar' to replace or discard, or return 1 in callback to discard.")
-    .value("allow_tab_input", ImGuiInputTextFlags_AllowTabInput, "Pressing TAB input a '\t' character into the text field")
-    .value("ctrl_enter_for_new_line", ImGuiInputTextFlags_CtrlEnterForNewLine, "In multi-line mode, unfocus with Enter, add new line with Ctrl+Enter (default is opposite: unfocus with Ctrl+Enter, add line with Enter).")
-    .value("no_horizontal_scroll", ImGuiInputTextFlags_NoHorizontalScroll, "Disable following the cursor horizontally")
-    .value("always_overwrite", ImGuiInputTextFlags_AlwaysOverwrite, "Overwrite mode")
-    .value("read_only", ImGuiInputTextFlags_ReadOnly, "Read-only mode")
-    .value("password", ImGuiInputTextFlags_Password, "Password mode, display all characters as ''")
-    .value("no_undo_redo", ImGuiInputTextFlags_NoUndoRedo, "Disable undo/redo. Note that input text owns the text data while active, if you want to provide your own undo/redo stack you need e.g. to call ClearActiveID().")
-    .value("chars_scientific", ImGuiInputTextFlags_CharsScientific, "Allow 0123456789.+-/eE (Scientific notation input)")
-    .value("callback_resize", ImGuiInputTextFlags_CallbackResize, "Callback on buffer capacity changes request (beyond 'buf_size' parameter value), allowing the string to grow. Notify when the string wants to be resized (for string types which hold a cache of their Size). You will be provided a new BufSize in the callback and NEED to honor it. (see misc/cpp/imgui_stdlib.h for an example of using this)")
-    .value("callback_edit", ImGuiInputTextFlags_CallbackEdit, "");
+        .value("none", ImGuiInputTextFlags_None, "")
+        .value("chars_decimal", ImGuiInputTextFlags_CharsDecimal, "Allow 0123456789.+-/")
+        .value("chars_hexadecimal", ImGuiInputTextFlags_CharsHexadecimal, "Allow 0123456789ABCDEFabcdef")
+        .value("chars_uppercase", ImGuiInputTextFlags_CharsUppercase, "Turn a..z into A..Z")
+        .value("chars_no_blank", ImGuiInputTextFlags_CharsNoBlank, "Filter out spaces, tabs")
+        .value("auto_select_all", ImGuiInputTextFlags_AutoSelectAll, "Select entire text when first taking mouse focus")
+        .value("enter_returns_true", ImGuiInputTextFlags_EnterReturnsTrue, "Return 'True' when Enter is pressed (as opposed to every time the value was modified). Consider looking at the IsItemDeactivatedAfterEdit() function.")
+        .value("callback_completion", ImGuiInputTextFlags_CallbackCompletion, "Callback on pressing TAB (for completion handling)")
+        .value("callback_history", ImGuiInputTextFlags_CallbackHistory, "Callback on pressing Up/Down arrows (for history handling)")
+        .value("callback_always", ImGuiInputTextFlags_CallbackAlways, "Callback on each iteration. User code may query cursor position, modify text buffer.")
+        .value("callback_char_filter", ImGuiInputTextFlags_CallbackCharFilter, "Callback on character inputs to replace or discard them. Modify 'EventChar' to replace or discard, or return 1 in callback to discard.")
+        .value("allow_tab_input", ImGuiInputTextFlags_AllowTabInput, "Pressing TAB input a '\t' character into the text field")
+        .value("ctrl_enter_for_new_line", ImGuiInputTextFlags_CtrlEnterForNewLine, "In multi-line mode, unfocus with Enter, add new line with Ctrl+Enter (default is opposite: unfocus with Ctrl+Enter, add line with Enter).")
+        .value("no_horizontal_scroll", ImGuiInputTextFlags_NoHorizontalScroll, "Disable following the cursor horizontally")
+        .value("always_overwrite", ImGuiInputTextFlags_AlwaysOverwrite, "Overwrite mode")
+        .value("read_only", ImGuiInputTextFlags_ReadOnly, "Read-only mode")
+        .value("password", ImGuiInputTextFlags_Password, "Password mode, display all characters as ''")
+        .value("no_undo_redo", ImGuiInputTextFlags_NoUndoRedo, "Disable undo/redo. Note that input text owns the text data while active, if you want to provide your own undo/redo stack you need e.g. to call ClearActiveID().")
+        .value("chars_scientific", ImGuiInputTextFlags_CharsScientific, "Allow 0123456789.+-/eE (Scientific notation input)")
+        .value("callback_resize", ImGuiInputTextFlags_CallbackResize, "Callback on buffer capacity changes request (beyond 'buf_size' parameter value), allowing the string to grow. Notify when the string wants to be resized (for string types which hold a cache of their Size). You will be provided a new BufSize in the callback and NEED to honor it. (see misc/cpp/imgui_stdlib.h for an example of using this)")
+        .value("callback_edit", ImGuiInputTextFlags_CallbackEdit, "");
 
 
     py::enum_<ImGuiTreeNodeFlags_>(m, "ImGuiTreeNodeFlags_", py::arithmetic(), "Flags for ImGui::TreeNodeEx(), ImGui::CollapsingHeader()")    // imgui.h:1010
-    .value("none", ImGuiTreeNodeFlags_None, "")
-    .value("selected", ImGuiTreeNodeFlags_Selected, "Draw as selected")
-    .value("framed", ImGuiTreeNodeFlags_Framed, "Draw frame with background (e.g. for CollapsingHeader)")
-    .value("allow_item_overlap", ImGuiTreeNodeFlags_AllowItemOverlap, "Hit testing to allow subsequent widgets to overlap this one")
-    .value("no_tree_push_on_open", ImGuiTreeNodeFlags_NoTreePushOnOpen, "Don't do a TreePush() when open (e.g. for CollapsingHeader) = no extra indent nor pushing on ID stack")
-    .value("no_auto_open_on_log", ImGuiTreeNodeFlags_NoAutoOpenOnLog, "Don't automatically and temporarily open node when Logging is active (by default logging will automatically open tree nodes)")
-    .value("default_open", ImGuiTreeNodeFlags_DefaultOpen, "Default node to be open")
-    .value("open_on_double_click", ImGuiTreeNodeFlags_OpenOnDoubleClick, "Need float-click to open node")
-    .value("open_on_arrow", ImGuiTreeNodeFlags_OpenOnArrow, "Only open when clicking on the arrow part. If ImGuiTreeNodeFlags_OpenOnDoubleClick is also set, single-click arrow or float-click all box to open.")
-    .value("leaf", ImGuiTreeNodeFlags_Leaf, "No collapsing, no arrow (use as a convenience for leaf nodes).")
-    .value("bullet", ImGuiTreeNodeFlags_Bullet, "Display a bullet instead of arrow")
-    .value("frame_padding", ImGuiTreeNodeFlags_FramePadding, "Use FramePadding (even for an unframed text node) to vertically align text baseline to regular widget height. Equivalent to calling AlignTextToFramePadding().")
-    .value("span_avail_width", ImGuiTreeNodeFlags_SpanAvailWidth, "Extend hit box to the right-most edge, even if not framed. This is not the default in order to allow adding other items on the same line. In the future we may refactor the hit system to be front-to-back, allowing natural overlaps and then this can become the default.")
-    .value("span_full_width", ImGuiTreeNodeFlags_SpanFullWidth, "Extend hit box to the left-most and right-most edges (bypass the indented area).")
-    .value("nav_left_jumps_back_here", ImGuiTreeNodeFlags_NavLeftJumpsBackHere, "(WIP) Nav: left direction may move to this TreeNode() from any of its child (items submitted between TreeNode and TreePop)")
-    .value("collapsing_header", ImGuiTreeNodeFlags_CollapsingHeader, "ImGuiTreeNodeFlags_NoScrollOnOpen     = 1 << 14,  // FIXME: TODO: Disable automatic scroll on TreePop() if node got just open and contents is not visible");
+        .value("none", ImGuiTreeNodeFlags_None, "")
+        .value("selected", ImGuiTreeNodeFlags_Selected, "Draw as selected")
+        .value("framed", ImGuiTreeNodeFlags_Framed, "Draw frame with background (e.g. for CollapsingHeader)")
+        .value("allow_item_overlap", ImGuiTreeNodeFlags_AllowItemOverlap, "Hit testing to allow subsequent widgets to overlap this one")
+        .value("no_tree_push_on_open", ImGuiTreeNodeFlags_NoTreePushOnOpen, "Don't do a TreePush() when open (e.g. for CollapsingHeader) = no extra indent nor pushing on ID stack")
+        .value("no_auto_open_on_log", ImGuiTreeNodeFlags_NoAutoOpenOnLog, "Don't automatically and temporarily open node when Logging is active (by default logging will automatically open tree nodes)")
+        .value("default_open", ImGuiTreeNodeFlags_DefaultOpen, "Default node to be open")
+        .value("open_on_double_click", ImGuiTreeNodeFlags_OpenOnDoubleClick, "Need float-click to open node")
+        .value("open_on_arrow", ImGuiTreeNodeFlags_OpenOnArrow, "Only open when clicking on the arrow part. If ImGuiTreeNodeFlags_OpenOnDoubleClick is also set, single-click arrow or float-click all box to open.")
+        .value("leaf", ImGuiTreeNodeFlags_Leaf, "No collapsing, no arrow (use as a convenience for leaf nodes).")
+        .value("bullet", ImGuiTreeNodeFlags_Bullet, "Display a bullet instead of arrow")
+        .value("frame_padding", ImGuiTreeNodeFlags_FramePadding, "Use FramePadding (even for an unframed text node) to vertically align text baseline to regular widget height. Equivalent to calling AlignTextToFramePadding().")
+        .value("span_avail_width", ImGuiTreeNodeFlags_SpanAvailWidth, "Extend hit box to the right-most edge, even if not framed. This is not the default in order to allow adding other items on the same line. In the future we may refactor the hit system to be front-to-back, allowing natural overlaps and then this can become the default.")
+        .value("span_full_width", ImGuiTreeNodeFlags_SpanFullWidth, "Extend hit box to the left-most and right-most edges (bypass the indented area).")
+        .value("nav_left_jumps_back_here", ImGuiTreeNodeFlags_NavLeftJumpsBackHere, "(WIP) Nav: left direction may move to this TreeNode() from any of its child (items submitted between TreeNode and TreePop)")
+        .value("collapsing_header", ImGuiTreeNodeFlags_CollapsingHeader, "ImGuiTreeNodeFlags_NoScrollOnOpen     = 1 << 14,  // FIXME: TODO: Disable automatic scroll on TreePop() if node got just open and contents is not visible");
 
 
     py::enum_<ImGuiPopupFlags_>(m, "ImGuiPopupFlags_", py::arithmetic(), " Flags for OpenPopup(), BeginPopupContext(), IsPopupOpen() functions.\n - To be backward compatible with older API which took an 'int mouse_button = 1' argument, we need to treat\n   small flags values as a mouse button index, so we encode the mouse button in the first few bits of the flags.\n   It is therefore guaranteed to be legal to pass a mouse button index in ImGuiPopupFlags.\n - For the same reason, we exceptionally default the ImGuiPopupFlags argument of BeginPopupContextXXX functions to 1 instead of 0.\n   IMPORTANT: because the default parameter is 1 (==ImGuiPopupFlags_MouseButtonRight), if you rely on the default parameter\n   and want to another another flag, you need to pass in the ImGuiPopupFlags_MouseButtonRight flag.\n - Multiple buttons currently cannot be combined/or-ed in those functions (we could allow it later).")    // imgui.h:1039
-    .value("none", ImGuiPopupFlags_None, "")
-    .value("mouse_button_left", ImGuiPopupFlags_MouseButtonLeft, "For BeginPopupContext(): open on Left Mouse release. Guaranteed to always be == 0 (same as ImGuiMouseButton_Left)")
-    .value("mouse_button_right", ImGuiPopupFlags_MouseButtonRight, "For BeginPopupContext(): open on Right Mouse release. Guaranteed to always be == 1 (same as ImGuiMouseButton_Right)")
-    .value("mouse_button_middle", ImGuiPopupFlags_MouseButtonMiddle, "For BeginPopupContext(): open on Middle Mouse release. Guaranteed to always be == 2 (same as ImGuiMouseButton_Middle)")
-    .value("mouse_button_mask_", ImGuiPopupFlags_MouseButtonMask_, "")
-    .value("mouse_button_default_", ImGuiPopupFlags_MouseButtonDefault_, "")
-    .value("no_open_over_existing_popup", ImGuiPopupFlags_NoOpenOverExistingPopup, "For OpenPopup(), BeginPopupContext(): don't open if there's already a popup at the same level of the popup stack")
-    .value("no_open_over_items", ImGuiPopupFlags_NoOpenOverItems, "For BeginPopupContextWindow(): don't return True when hovering items, only when hovering empty space")
-    .value("any_popup_id", ImGuiPopupFlags_AnyPopupId, "For IsPopupOpen(): ignore the ImGuiID parameter and test for any popup.")
-    .value("any_popup_level", ImGuiPopupFlags_AnyPopupLevel, "For IsPopupOpen(): search/test at any level of the popup stack (default test in the current level)")
-    .value("any_popup", ImGuiPopupFlags_AnyPopup, "");
+        .value("none", ImGuiPopupFlags_None, "")
+        .value("mouse_button_left", ImGuiPopupFlags_MouseButtonLeft, "For BeginPopupContext(): open on Left Mouse release. Guaranteed to always be == 0 (same as ImGuiMouseButton_Left)")
+        .value("mouse_button_right", ImGuiPopupFlags_MouseButtonRight, "For BeginPopupContext(): open on Right Mouse release. Guaranteed to always be == 1 (same as ImGuiMouseButton_Right)")
+        .value("mouse_button_middle", ImGuiPopupFlags_MouseButtonMiddle, "For BeginPopupContext(): open on Middle Mouse release. Guaranteed to always be == 2 (same as ImGuiMouseButton_Middle)")
+        .value("mouse_button_mask_", ImGuiPopupFlags_MouseButtonMask_, "")
+        .value("mouse_button_default_", ImGuiPopupFlags_MouseButtonDefault_, "")
+        .value("no_open_over_existing_popup", ImGuiPopupFlags_NoOpenOverExistingPopup, "For OpenPopup(), BeginPopupContext(): don't open if there's already a popup at the same level of the popup stack")
+        .value("no_open_over_items", ImGuiPopupFlags_NoOpenOverItems, "For BeginPopupContextWindow(): don't return True when hovering items, only when hovering empty space")
+        .value("any_popup_id", ImGuiPopupFlags_AnyPopupId, "For IsPopupOpen(): ignore the ImGuiID parameter and test for any popup.")
+        .value("any_popup_level", ImGuiPopupFlags_AnyPopupLevel, "For IsPopupOpen(): search/test at any level of the popup stack (default test in the current level)")
+        .value("any_popup", ImGuiPopupFlags_AnyPopup, "");
 
 
     py::enum_<ImGuiSelectableFlags_>(m, "ImGuiSelectableFlags_", py::arithmetic(), "Flags for ImGui::Selectable()")    // imgui.h:1055
-    .value("none", ImGuiSelectableFlags_None, "")
-    .value("dont_close_popups", ImGuiSelectableFlags_DontClosePopups, "Clicking this don't close parent popup window")
-    .value("span_all_columns", ImGuiSelectableFlags_SpanAllColumns, "Selectable frame can span all columns (text will still fit in current column)")
-    .value("allow_double_click", ImGuiSelectableFlags_AllowDoubleClick, "Generate press events on float clicks too")
-    .value("disabled", ImGuiSelectableFlags_Disabled, "Cannot be selected, display grayed out text")
-    .value("allow_item_overlap", ImGuiSelectableFlags_AllowItemOverlap, "(WIP) Hit testing to allow subsequent widgets to overlap this one");
+        .value("none", ImGuiSelectableFlags_None, "")
+        .value("dont_close_popups", ImGuiSelectableFlags_DontClosePopups, "Clicking this don't close parent popup window")
+        .value("span_all_columns", ImGuiSelectableFlags_SpanAllColumns, "Selectable frame can span all columns (text will still fit in current column)")
+        .value("allow_double_click", ImGuiSelectableFlags_AllowDoubleClick, "Generate press events on float clicks too")
+        .value("disabled", ImGuiSelectableFlags_Disabled, "Cannot be selected, display grayed out text")
+        .value("allow_item_overlap", ImGuiSelectableFlags_AllowItemOverlap, "(WIP) Hit testing to allow subsequent widgets to overlap this one");
 
 
     py::enum_<ImGuiComboFlags_>(m, "ImGuiComboFlags_", py::arithmetic(), "Flags for ImGui::BeginCombo()")    // imgui.h:1066
-    .value("none", ImGuiComboFlags_None, "")
-    .value("popup_align_left", ImGuiComboFlags_PopupAlignLeft, "Align the popup toward the left by default")
-    .value("height_small", ImGuiComboFlags_HeightSmall, "Max ~4 items visible. Tip: If you want your combo popup to be a specific size you can use SetNextWindowSizeConstraints() prior to calling BeginCombo()")
-    .value("height_regular", ImGuiComboFlags_HeightRegular, "Max ~8 items visible (default)")
-    .value("height_large", ImGuiComboFlags_HeightLarge, "Max ~20 items visible")
-    .value("height_largest", ImGuiComboFlags_HeightLargest, "As many fitting items as possible")
-    .value("no_arrow_button", ImGuiComboFlags_NoArrowButton, "Display on the preview box without the square arrow button")
-    .value("no_preview", ImGuiComboFlags_NoPreview, "Display only a square arrow button")
-    .value("height_mask_", ImGuiComboFlags_HeightMask_, "");
+        .value("none", ImGuiComboFlags_None, "")
+        .value("popup_align_left", ImGuiComboFlags_PopupAlignLeft, "Align the popup toward the left by default")
+        .value("height_small", ImGuiComboFlags_HeightSmall, "Max ~4 items visible. Tip: If you want your combo popup to be a specific size you can use SetNextWindowSizeConstraints() prior to calling BeginCombo()")
+        .value("height_regular", ImGuiComboFlags_HeightRegular, "Max ~8 items visible (default)")
+        .value("height_large", ImGuiComboFlags_HeightLarge, "Max ~20 items visible")
+        .value("height_largest", ImGuiComboFlags_HeightLargest, "As many fitting items as possible")
+        .value("no_arrow_button", ImGuiComboFlags_NoArrowButton, "Display on the preview box without the square arrow button")
+        .value("no_preview", ImGuiComboFlags_NoPreview, "Display only a square arrow button")
+        .value("height_mask_", ImGuiComboFlags_HeightMask_, "");
 
 
     py::enum_<ImGuiTabBarFlags_>(m, "ImGuiTabBarFlags_", py::arithmetic(), "Flags for ImGui::BeginTabBar()")    // imgui.h:1080
-    .value("none", ImGuiTabBarFlags_None, "")
-    .value("reorderable", ImGuiTabBarFlags_Reorderable, "Allow manually dragging tabs to re-order them + New tabs are appended at the end of list")
-    .value("auto_select_new_tabs", ImGuiTabBarFlags_AutoSelectNewTabs, "Automatically select new tabs when they appear")
-    .value("tab_list_popup_button", ImGuiTabBarFlags_TabListPopupButton, "Disable buttons to open the tab list popup")
-    .value("no_close_with_middle_mouse_button", ImGuiTabBarFlags_NoCloseWithMiddleMouseButton, "Disable behavior of closing tabs (that are submitted with p_open != None) with middle mouse button. You can still repro this behavior on user's side with if (IsItemHovered()  IsMouseClicked(2)) p_open = False.")
-    .value("no_tab_list_scrolling_buttons", ImGuiTabBarFlags_NoTabListScrollingButtons, "Disable scrolling buttons (apply when fitting policy is ImGuiTabBarFlags_FittingPolicyScroll)")
-    .value("no_tooltip", ImGuiTabBarFlags_NoTooltip, "Disable tooltips when hovering a tab")
-    .value("fitting_policy_resize_down", ImGuiTabBarFlags_FittingPolicyResizeDown, "Resize tabs when they don't fit")
-    .value("fitting_policy_scroll", ImGuiTabBarFlags_FittingPolicyScroll, "Add scroll buttons when tabs don't fit")
-    .value("fitting_policy_mask_", ImGuiTabBarFlags_FittingPolicyMask_, "")
-    .value("fitting_policy_default_", ImGuiTabBarFlags_FittingPolicyDefault_, "");
+        .value("none", ImGuiTabBarFlags_None, "")
+        .value("reorderable", ImGuiTabBarFlags_Reorderable, "Allow manually dragging tabs to re-order them + New tabs are appended at the end of list")
+        .value("auto_select_new_tabs", ImGuiTabBarFlags_AutoSelectNewTabs, "Automatically select new tabs when they appear")
+        .value("tab_list_popup_button", ImGuiTabBarFlags_TabListPopupButton, "Disable buttons to open the tab list popup")
+        .value("no_close_with_middle_mouse_button", ImGuiTabBarFlags_NoCloseWithMiddleMouseButton, "Disable behavior of closing tabs (that are submitted with p_open != None) with middle mouse button. You can still repro this behavior on user's side with if (IsItemHovered()  IsMouseClicked(2)) p_open = False.")
+        .value("no_tab_list_scrolling_buttons", ImGuiTabBarFlags_NoTabListScrollingButtons, "Disable scrolling buttons (apply when fitting policy is ImGuiTabBarFlags_FittingPolicyScroll)")
+        .value("no_tooltip", ImGuiTabBarFlags_NoTooltip, "Disable tooltips when hovering a tab")
+        .value("fitting_policy_resize_down", ImGuiTabBarFlags_FittingPolicyResizeDown, "Resize tabs when they don't fit")
+        .value("fitting_policy_scroll", ImGuiTabBarFlags_FittingPolicyScroll, "Add scroll buttons when tabs don't fit")
+        .value("fitting_policy_mask_", ImGuiTabBarFlags_FittingPolicyMask_, "")
+        .value("fitting_policy_default_", ImGuiTabBarFlags_FittingPolicyDefault_, "");
 
 
     py::enum_<ImGuiTabItemFlags_>(m, "ImGuiTabItemFlags_", py::arithmetic(), "Flags for ImGui::BeginTabItem()")    // imgui.h:1096
-    .value("none", ImGuiTabItemFlags_None, "")
-    .value("unsaved_document", ImGuiTabItemFlags_UnsavedDocument, "Display a dot next to the title + tab is selected when clicking the X + closure is not assumed (will wait for user to stop submitting the tab). Otherwise closure is assumed when pressing the X, so if you keep submitting the tab may reappear at end of tab bar.")
-    .value("set_selected", ImGuiTabItemFlags_SetSelected, "Trigger flag to programmatically make the tab selected when calling BeginTabItem()")
-    .value("no_close_with_middle_mouse_button", ImGuiTabItemFlags_NoCloseWithMiddleMouseButton, "Disable behavior of closing tabs (that are submitted with p_open != None) with middle mouse button. You can still repro this behavior on user's side with if (IsItemHovered()  IsMouseClicked(2)) p_open = False.")
-    .value("no_push_id", ImGuiTabItemFlags_NoPushId, "Don't call PushID(tab->ID)/PopID() on BeginTabItem()/EndTabItem()")
-    .value("no_tooltip", ImGuiTabItemFlags_NoTooltip, "Disable tooltip for the given tab")
-    .value("no_reorder", ImGuiTabItemFlags_NoReorder, "Disable reordering this tab or having another tab cross over this tab")
-    .value("leading", ImGuiTabItemFlags_Leading, "Enforce the tab position to the left of the tab bar (after the tab list popup button)")
-    .value("trailing", ImGuiTabItemFlags_Trailing, "Enforce the tab position to the right of the tab bar (before the scrolling buttons)");
+        .value("none", ImGuiTabItemFlags_None, "")
+        .value("unsaved_document", ImGuiTabItemFlags_UnsavedDocument, "Display a dot next to the title + tab is selected when clicking the X + closure is not assumed (will wait for user to stop submitting the tab). Otherwise closure is assumed when pressing the X, so if you keep submitting the tab may reappear at end of tab bar.")
+        .value("set_selected", ImGuiTabItemFlags_SetSelected, "Trigger flag to programmatically make the tab selected when calling BeginTabItem()")
+        .value("no_close_with_middle_mouse_button", ImGuiTabItemFlags_NoCloseWithMiddleMouseButton, "Disable behavior of closing tabs (that are submitted with p_open != None) with middle mouse button. You can still repro this behavior on user's side with if (IsItemHovered()  IsMouseClicked(2)) p_open = False.")
+        .value("no_push_id", ImGuiTabItemFlags_NoPushId, "Don't call PushID(tab->ID)/PopID() on BeginTabItem()/EndTabItem()")
+        .value("no_tooltip", ImGuiTabItemFlags_NoTooltip, "Disable tooltip for the given tab")
+        .value("no_reorder", ImGuiTabItemFlags_NoReorder, "Disable reordering this tab or having another tab cross over this tab")
+        .value("leading", ImGuiTabItemFlags_Leading, "Enforce the tab position to the left of the tab bar (after the tab list popup button)")
+        .value("trailing", ImGuiTabItemFlags_Trailing, "Enforce the tab position to the right of the tab bar (before the scrolling buttons)");
 
 
     py::enum_<ImGuiTableFlags_>(m, "ImGuiTableFlags_", py::arithmetic(), " Flags for ImGui::BeginTable()\n - Important! Sizing policies have complex and subtle side effects, much more so than you would expect.\n   Read comments/demos carefully + experiment with live demos to get acquainted with them.\n - The DEFAULT sizing policies are:\n    - Default to ImGuiTableFlags_SizingFixedFit    if ScrollX is on, or if host window has ImGuiWindowFlags_AlwaysAutoResize.\n    - Default to ImGuiTableFlags_SizingStretchSame if ScrollX is off.\n - When ScrollX is off:\n    - Table defaults to ImGuiTableFlags_SizingStretchSame -> all Columns defaults to ImGuiTableColumnFlags_WidthStretch with same weight.\n    - Columns sizing policy allowed: Stretch (default), Fixed/Auto.\n    - Fixed Columns (if any) will generally obtain their requested width (unless the table cannot fit them all).\n    - Stretch Columns will share the remaining width according to their respective weight.\n    - Mixed Fixed/Stretch columns is possible but has various side-effects on resizing behaviors.\n      The typical use of mixing sizing policies is: any number of LEADING Fixed columns, followed by one or two TRAILING Stretch columns.\n      (this is because the visible order of columns have subtle but necessary effects on how they react to manual resizing).\n - When ScrollX is on:\n    - Table defaults to ImGuiTableFlags_SizingFixedFit -> all Columns defaults to ImGuiTableColumnFlags_WidthFixed\n    - Columns sizing policy allowed: Fixed/Auto mostly.\n    - Fixed Columns can be enlarged as needed. Table will show an horizontal scrollbar if needed.\n    - When using auto-resizing (non-resizable) fixed columns, querying the content width to use item right-alignment e.g. SetNextItemWidth(-sys.float_info.min) doesn't make sense, would create a feedback loop.\n    - Using Stretch columns OFTEN DOES NOT MAKE SENSE if ScrollX is on, UNLESS you have specified a value for 'inner_width' in BeginTable().\n      If you specify a value for 'inner_width' then effectively the scrolling space is known and Stretch or mixed Fixed/Stretch columns become meaningful again.\n - Read on documentation at the top of imgui_tables.cpp for details.")    // imgui.h:1131
-    .value("none", ImGuiTableFlags_None, "")
-    .value("resizable", ImGuiTableFlags_Resizable, "Enable resizing columns.")
-    .value("reorderable", ImGuiTableFlags_Reorderable, "Enable reordering columns in header row (need calling TableSetupColumn() + TableHeadersRow() to display headers)")
-    .value("hideable", ImGuiTableFlags_Hideable, "Enable hiding/disabling columns in context menu.")
-    .value("sortable", ImGuiTableFlags_Sortable, "Enable sorting. Call TableGetSortSpecs() to obtain sort specs. Also see ImGuiTableFlags_SortMulti and ImGuiTableFlags_SortTristate.")
-    .value("no_saved_settings", ImGuiTableFlags_NoSavedSettings, "Disable persisting columns order, width and sort settings in the .ini file.")
-    .value("context_menu_in_body", ImGuiTableFlags_ContextMenuInBody, "Right-click on columns body/contents will display table context menu. By default it is available in TableHeadersRow().")
-    .value("row_bg", ImGuiTableFlags_RowBg, "Set each RowBg color with ImGuiCol_TableRowBg or ImGuiCol_TableRowBgAlt (equivalent of calling TableSetBgColor with ImGuiTableBgFlags_RowBg0 on each row manually)")
-    .value("borders_inner_h", ImGuiTableFlags_BordersInnerH, "Draw horizontal borders between rows.")
-    .value("borders_outer_h", ImGuiTableFlags_BordersOuterH, "Draw horizontal borders at the top and bottom.")
-    .value("borders_inner_v", ImGuiTableFlags_BordersInnerV, "Draw vertical borders between columns.")
-    .value("borders_outer_v", ImGuiTableFlags_BordersOuterV, "Draw vertical borders on the left and right sides.")
-    .value("borders_h", ImGuiTableFlags_BordersH, "Draw horizontal borders.")
-    .value("borders_v", ImGuiTableFlags_BordersV, "Draw vertical borders.")
-    .value("borders_inner", ImGuiTableFlags_BordersInner, "Draw inner borders.")
-    .value("borders_outer", ImGuiTableFlags_BordersOuter, "Draw outer borders.")
-    .value("borders", ImGuiTableFlags_Borders, "Draw all borders.")
-    .value("no_borders_in_body", ImGuiTableFlags_NoBordersInBody, "[ALPHA] Disable vertical borders in columns Body (borders will always appears in Headers). -> May move to style")
-    .value("no_borders_in_body_until_resize", ImGuiTableFlags_NoBordersInBodyUntilResize, "[ALPHA] Disable vertical borders in columns Body until hovered for resize (borders will always appears in Headers). -> May move to style")
-    .value("sizing_fixed_fit", ImGuiTableFlags_SizingFixedFit, "Columns default to _WidthFixed or _WidthAuto (if resizable or not resizable), matching contents width.")
-    .value("sizing_fixed_same", ImGuiTableFlags_SizingFixedSame, "Columns default to _WidthFixed or _WidthAuto (if resizable or not resizable), matching the maximum contents width of all columns. Implicitly enable ImGuiTableFlags_NoKeepColumnsVisible.")
-    .value("sizing_stretch_prop", ImGuiTableFlags_SizingStretchProp, "Columns default to _WidthStretch with default weights proportional to each columns contents widths.")
-    .value("sizing_stretch_same", ImGuiTableFlags_SizingStretchSame, "Columns default to _WidthStretch with default weights all equal, unless overridden by TableSetupColumn().")
-    .value("no_host_extend_x", ImGuiTableFlags_NoHostExtendX, "Make outer width auto-fit to columns, overriding outer_size.x value. Only available when ScrollX/ScrollY are disabled and Stretch columns are not used.")
-    .value("no_host_extend_y", ImGuiTableFlags_NoHostExtendY, "Make outer height stop exactly at outer_size.y (prevent auto-extending table past the limit). Only available when ScrollX/ScrollY are disabled. Data below the limit will be clipped and not visible.")
-    .value("no_keep_columns_visible", ImGuiTableFlags_NoKeepColumnsVisible, "Disable keeping column always minimally visible when ScrollX is off and table gets too small. Not recommended if columns are resizable.")
-    .value("precise_widths", ImGuiTableFlags_PreciseWidths, "Disable distributing remainder width to stretched columns (width allocation on a 100-wide table with 3 columns: Without this flag: 33,33,34. With this flag: 33,33,33). With larger number of columns, resizing will appear to be less smooth.")
-    .value("no_clip", ImGuiTableFlags_NoClip, "Disable clipping rectangle for every individual columns (reduce draw command count, items will be able to overflow into other columns). Generally incompatible with TableSetupScrollFreeze().")
-    .value("pad_outer_x", ImGuiTableFlags_PadOuterX, "Default if BordersOuterV is on. Enable outer-most padding. Generally desirable if you have headers.")
-    .value("no_pad_outer_x", ImGuiTableFlags_NoPadOuterX, "Default if BordersOuterV is off. Disable outer-most padding.")
-    .value("no_pad_inner_x", ImGuiTableFlags_NoPadInnerX, "Disable inner padding between columns (float inner padding if BordersOuterV is on, single inner padding if BordersOuterV is off).")
-    .value("scroll_x", ImGuiTableFlags_ScrollX, "Enable horizontal scrolling. Require 'outer_size' parameter of BeginTable() to specify the container size. Changes default sizing policy. Because this create a child window, ScrollY is currently generally recommended when using ScrollX.")
-    .value("scroll_y", ImGuiTableFlags_ScrollY, "Enable vertical scrolling. Require 'outer_size' parameter of BeginTable() to specify the container size.")
-    .value("sort_multi", ImGuiTableFlags_SortMulti, "Hold shift when clicking headers to sort on multiple column. TableGetSortSpecs() may return specs where (SpecsCount > 1).")
-    .value("sort_tristate", ImGuiTableFlags_SortTristate, "Allow no sorting, disable default sorting. TableGetSortSpecs() may return specs where (SpecsCount == 0).")
-    .value("sizing_mask_", ImGuiTableFlags_SizingMask_, "[Internal] Combinations and masks");
+        .value("none", ImGuiTableFlags_None, "")
+        .value("resizable", ImGuiTableFlags_Resizable, "Enable resizing columns.")
+        .value("reorderable", ImGuiTableFlags_Reorderable, "Enable reordering columns in header row (need calling TableSetupColumn() + TableHeadersRow() to display headers)")
+        .value("hideable", ImGuiTableFlags_Hideable, "Enable hiding/disabling columns in context menu.")
+        .value("sortable", ImGuiTableFlags_Sortable, "Enable sorting. Call TableGetSortSpecs() to obtain sort specs. Also see ImGuiTableFlags_SortMulti and ImGuiTableFlags_SortTristate.")
+        .value("no_saved_settings", ImGuiTableFlags_NoSavedSettings, "Disable persisting columns order, width and sort settings in the .ini file.")
+        .value("context_menu_in_body", ImGuiTableFlags_ContextMenuInBody, "Right-click on columns body/contents will display table context menu. By default it is available in TableHeadersRow().")
+        .value("row_bg", ImGuiTableFlags_RowBg, "Set each RowBg color with ImGuiCol_TableRowBg or ImGuiCol_TableRowBgAlt (equivalent of calling TableSetBgColor with ImGuiTableBgFlags_RowBg0 on each row manually)")
+        .value("borders_inner_h", ImGuiTableFlags_BordersInnerH, "Draw horizontal borders between rows.")
+        .value("borders_outer_h", ImGuiTableFlags_BordersOuterH, "Draw horizontal borders at the top and bottom.")
+        .value("borders_inner_v", ImGuiTableFlags_BordersInnerV, "Draw vertical borders between columns.")
+        .value("borders_outer_v", ImGuiTableFlags_BordersOuterV, "Draw vertical borders on the left and right sides.")
+        .value("borders_h", ImGuiTableFlags_BordersH, "Draw horizontal borders.")
+        .value("borders_v", ImGuiTableFlags_BordersV, "Draw vertical borders.")
+        .value("borders_inner", ImGuiTableFlags_BordersInner, "Draw inner borders.")
+        .value("borders_outer", ImGuiTableFlags_BordersOuter, "Draw outer borders.")
+        .value("borders", ImGuiTableFlags_Borders, "Draw all borders.")
+        .value("no_borders_in_body", ImGuiTableFlags_NoBordersInBody, "[ALPHA] Disable vertical borders in columns Body (borders will always appears in Headers). -> May move to style")
+        .value("no_borders_in_body_until_resize", ImGuiTableFlags_NoBordersInBodyUntilResize, "[ALPHA] Disable vertical borders in columns Body until hovered for resize (borders will always appears in Headers). -> May move to style")
+        .value("sizing_fixed_fit", ImGuiTableFlags_SizingFixedFit, "Columns default to _WidthFixed or _WidthAuto (if resizable or not resizable), matching contents width.")
+        .value("sizing_fixed_same", ImGuiTableFlags_SizingFixedSame, "Columns default to _WidthFixed or _WidthAuto (if resizable or not resizable), matching the maximum contents width of all columns. Implicitly enable ImGuiTableFlags_NoKeepColumnsVisible.")
+        .value("sizing_stretch_prop", ImGuiTableFlags_SizingStretchProp, "Columns default to _WidthStretch with default weights proportional to each columns contents widths.")
+        .value("sizing_stretch_same", ImGuiTableFlags_SizingStretchSame, "Columns default to _WidthStretch with default weights all equal, unless overridden by TableSetupColumn().")
+        .value("no_host_extend_x", ImGuiTableFlags_NoHostExtendX, "Make outer width auto-fit to columns, overriding outer_size.x value. Only available when ScrollX/ScrollY are disabled and Stretch columns are not used.")
+        .value("no_host_extend_y", ImGuiTableFlags_NoHostExtendY, "Make outer height stop exactly at outer_size.y (prevent auto-extending table past the limit). Only available when ScrollX/ScrollY are disabled. Data below the limit will be clipped and not visible.")
+        .value("no_keep_columns_visible", ImGuiTableFlags_NoKeepColumnsVisible, "Disable keeping column always minimally visible when ScrollX is off and table gets too small. Not recommended if columns are resizable.")
+        .value("precise_widths", ImGuiTableFlags_PreciseWidths, "Disable distributing remainder width to stretched columns (width allocation on a 100-wide table with 3 columns: Without this flag: 33,33,34. With this flag: 33,33,33). With larger number of columns, resizing will appear to be less smooth.")
+        .value("no_clip", ImGuiTableFlags_NoClip, "Disable clipping rectangle for every individual columns (reduce draw command count, items will be able to overflow into other columns). Generally incompatible with TableSetupScrollFreeze().")
+        .value("pad_outer_x", ImGuiTableFlags_PadOuterX, "Default if BordersOuterV is on. Enable outer-most padding. Generally desirable if you have headers.")
+        .value("no_pad_outer_x", ImGuiTableFlags_NoPadOuterX, "Default if BordersOuterV is off. Disable outer-most padding.")
+        .value("no_pad_inner_x", ImGuiTableFlags_NoPadInnerX, "Disable inner padding between columns (float inner padding if BordersOuterV is on, single inner padding if BordersOuterV is off).")
+        .value("scroll_x", ImGuiTableFlags_ScrollX, "Enable horizontal scrolling. Require 'outer_size' parameter of BeginTable() to specify the container size. Changes default sizing policy. Because this create a child window, ScrollY is currently generally recommended when using ScrollX.")
+        .value("scroll_y", ImGuiTableFlags_ScrollY, "Enable vertical scrolling. Require 'outer_size' parameter of BeginTable() to specify the container size.")
+        .value("sort_multi", ImGuiTableFlags_SortMulti, "Hold shift when clicking headers to sort on multiple column. TableGetSortSpecs() may return specs where (SpecsCount > 1).")
+        .value("sort_tristate", ImGuiTableFlags_SortTristate, "Allow no sorting, disable default sorting. TableGetSortSpecs() may return specs where (SpecsCount == 0).")
+        .value("sizing_mask_", ImGuiTableFlags_SizingMask_, "[Internal] Combinations and masks");
 
 
     py::enum_<ImGuiTableColumnFlags_>(m, "ImGuiTableColumnFlags_", py::arithmetic(), "Flags for ImGui::TableSetupColumn()")    // imgui.h:1188
-    .value("none", ImGuiTableColumnFlags_None, "")
-    .value("disabled", ImGuiTableColumnFlags_Disabled, "Overriding/master disable flag: hide column, won't show in context menu (unlike calling TableSetColumnEnabled() which manipulates the user accessible state)")
-    .value("default_hide", ImGuiTableColumnFlags_DefaultHide, "Default as a hidden/disabled column.")
-    .value("default_sort", ImGuiTableColumnFlags_DefaultSort, "Default as a sorting column.")
-    .value("width_stretch", ImGuiTableColumnFlags_WidthStretch, "Column will stretch. Preferable with horizontal scrolling disabled (default if table sizing policy is _SizingStretchSame or _SizingStretchProp).")
-    .value("width_fixed", ImGuiTableColumnFlags_WidthFixed, "Column will not stretch. Preferable with horizontal scrolling enabled (default if table sizing policy is _SizingFixedFit and table is resizable).")
-    .value("no_resize", ImGuiTableColumnFlags_NoResize, "Disable manual resizing.")
-    .value("no_reorder", ImGuiTableColumnFlags_NoReorder, "Disable manual reordering this column, this will also prevent other columns from crossing over this column.")
-    .value("no_hide", ImGuiTableColumnFlags_NoHide, "Disable ability to hide/disable this column.")
-    .value("no_clip", ImGuiTableColumnFlags_NoClip, "Disable clipping for this column (all NoClip columns will render in a same draw command).")
-    .value("no_sort", ImGuiTableColumnFlags_NoSort, "Disable ability to sort on this field (even if ImGuiTableFlags_Sortable is set on the table).")
-    .value("no_sort_ascending", ImGuiTableColumnFlags_NoSortAscending, "Disable ability to sort in the ascending direction.")
-    .value("no_sort_descending", ImGuiTableColumnFlags_NoSortDescending, "Disable ability to sort in the descending direction.")
-    .value("no_header_label", ImGuiTableColumnFlags_NoHeaderLabel, "TableHeadersRow() will not submit label for this column. Convenient for some small columns. Name will still appear in context menu.")
-    .value("no_header_width", ImGuiTableColumnFlags_NoHeaderWidth, "Disable header text width contribution to automatic column width.")
-    .value("prefer_sort_ascending", ImGuiTableColumnFlags_PreferSortAscending, "Make the initial sort direction Ascending when first sorting on this column (default).")
-    .value("prefer_sort_descending", ImGuiTableColumnFlags_PreferSortDescending, "Make the initial sort direction Descending when first sorting on this column.")
-    .value("indent_enable", ImGuiTableColumnFlags_IndentEnable, "Use current Indent value when entering cell (default for column 0).")
-    .value("indent_disable", ImGuiTableColumnFlags_IndentDisable, "Ignore current Indent value when entering cell (default for columns > 0). Indentation changes _within_ the cell will still be honored.")
-    .value("is_enabled", ImGuiTableColumnFlags_IsEnabled, "Status: is enabled == not hidden by user/api (referred to as \"Hide\" in _DefaultHide and _NoHide) flags.")
-    .value("is_visible", ImGuiTableColumnFlags_IsVisible, "Status: is visible == is enabled AND not clipped by scrolling.")
-    .value("is_sorted", ImGuiTableColumnFlags_IsSorted, "Status: is currently part of the sort specs")
-    .value("is_hovered", ImGuiTableColumnFlags_IsHovered, "Status: is hovered by mouse")
-    .value("width_mask_", ImGuiTableColumnFlags_WidthMask_, "")
-    .value("indent_mask_", ImGuiTableColumnFlags_IndentMask_, "")
-    .value("status_mask_", ImGuiTableColumnFlags_StatusMask_, "")
-    .value("no_direct_resize_", ImGuiTableColumnFlags_NoDirectResize_, "");
+        .value("none", ImGuiTableColumnFlags_None, "")
+        .value("disabled", ImGuiTableColumnFlags_Disabled, "Overriding/master disable flag: hide column, won't show in context menu (unlike calling TableSetColumnEnabled() which manipulates the user accessible state)")
+        .value("default_hide", ImGuiTableColumnFlags_DefaultHide, "Default as a hidden/disabled column.")
+        .value("default_sort", ImGuiTableColumnFlags_DefaultSort, "Default as a sorting column.")
+        .value("width_stretch", ImGuiTableColumnFlags_WidthStretch, "Column will stretch. Preferable with horizontal scrolling disabled (default if table sizing policy is _SizingStretchSame or _SizingStretchProp).")
+        .value("width_fixed", ImGuiTableColumnFlags_WidthFixed, "Column will not stretch. Preferable with horizontal scrolling enabled (default if table sizing policy is _SizingFixedFit and table is resizable).")
+        .value("no_resize", ImGuiTableColumnFlags_NoResize, "Disable manual resizing.")
+        .value("no_reorder", ImGuiTableColumnFlags_NoReorder, "Disable manual reordering this column, this will also prevent other columns from crossing over this column.")
+        .value("no_hide", ImGuiTableColumnFlags_NoHide, "Disable ability to hide/disable this column.")
+        .value("no_clip", ImGuiTableColumnFlags_NoClip, "Disable clipping for this column (all NoClip columns will render in a same draw command).")
+        .value("no_sort", ImGuiTableColumnFlags_NoSort, "Disable ability to sort on this field (even if ImGuiTableFlags_Sortable is set on the table).")
+        .value("no_sort_ascending", ImGuiTableColumnFlags_NoSortAscending, "Disable ability to sort in the ascending direction.")
+        .value("no_sort_descending", ImGuiTableColumnFlags_NoSortDescending, "Disable ability to sort in the descending direction.")
+        .value("no_header_label", ImGuiTableColumnFlags_NoHeaderLabel, "TableHeadersRow() will not submit label for this column. Convenient for some small columns. Name will still appear in context menu.")
+        .value("no_header_width", ImGuiTableColumnFlags_NoHeaderWidth, "Disable header text width contribution to automatic column width.")
+        .value("prefer_sort_ascending", ImGuiTableColumnFlags_PreferSortAscending, "Make the initial sort direction Ascending when first sorting on this column (default).")
+        .value("prefer_sort_descending", ImGuiTableColumnFlags_PreferSortDescending, "Make the initial sort direction Descending when first sorting on this column.")
+        .value("indent_enable", ImGuiTableColumnFlags_IndentEnable, "Use current Indent value when entering cell (default for column 0).")
+        .value("indent_disable", ImGuiTableColumnFlags_IndentDisable, "Ignore current Indent value when entering cell (default for columns > 0). Indentation changes _within_ the cell will still be honored.")
+        .value("is_enabled", ImGuiTableColumnFlags_IsEnabled, "Status: is enabled == not hidden by user/api (referred to as \"Hide\" in _DefaultHide and _NoHide) flags.")
+        .value("is_visible", ImGuiTableColumnFlags_IsVisible, "Status: is visible == is enabled AND not clipped by scrolling.")
+        .value("is_sorted", ImGuiTableColumnFlags_IsSorted, "Status: is currently part of the sort specs")
+        .value("is_hovered", ImGuiTableColumnFlags_IsHovered, "Status: is hovered by mouse")
+        .value("width_mask_", ImGuiTableColumnFlags_WidthMask_, "")
+        .value("indent_mask_", ImGuiTableColumnFlags_IndentMask_, "")
+        .value("status_mask_", ImGuiTableColumnFlags_StatusMask_, "")
+        .value("no_direct_resize_", ImGuiTableColumnFlags_NoDirectResize_, "");
 
 
     py::enum_<ImGuiTableRowFlags_>(m, "ImGuiTableRowFlags_", py::arithmetic(), "Flags for ImGui::TableNextRow()")    // imgui.h:1230
-    .value("none", ImGuiTableRowFlags_None, "")
-    .value("headers", ImGuiTableRowFlags_Headers, "Identify header row (set default background color + width of its contents accounted differently for auto column width)");
+        .value("none", ImGuiTableRowFlags_None, "")
+        .value("headers", ImGuiTableRowFlags_Headers, "Identify header row (set default background color + width of its contents accounted differently for auto column width)");
 
 
     py::enum_<ImGuiTableBgTarget_>(m, "ImGuiTableBgTarget_", py::arithmetic(), " Enum for ImGui::TableSetBgColor()\n Background colors are rendering in 3 layers:\n  - Layer 0: draw with RowBg0 color if set, otherwise draw with ColumnBg0 if set.\n  - Layer 1: draw with RowBg1 color if set, otherwise draw with ColumnBg1 if set.\n  - Layer 2: draw with CellBg color if set.\n The purpose of the two row/columns layers is to let you decide if a background color changes should override or blend with the existing color.\n When using ImGuiTableFlags_RowBg on the table, each row has the RowBg0 color automatically set for odd/even rows.\n If you set the color of RowBg0 target, your color will override the existing RowBg0 color.\n If you set the color of RowBg1 or ColumnBg1 target, your color will blend over the RowBg0 color.")    // imgui.h:1245
-    .value("none", ImGuiTableBgTarget_None, "")
-    .value("row_bg0", ImGuiTableBgTarget_RowBg0, "Set row background color 0 (generally used for background, automatically set when ImGuiTableFlags_RowBg is used)")
-    .value("row_bg1", ImGuiTableBgTarget_RowBg1, "Set row background color 1 (generally used for selection marking)")
-    .value("cell_bg", ImGuiTableBgTarget_CellBg, "Set cell background color (top-most color)");
+        .value("none", ImGuiTableBgTarget_None, "")
+        .value("row_bg0", ImGuiTableBgTarget_RowBg0, "Set row background color 0 (generally used for background, automatically set when ImGuiTableFlags_RowBg is used)")
+        .value("row_bg1", ImGuiTableBgTarget_RowBg1, "Set row background color 1 (generally used for selection marking)")
+        .value("cell_bg", ImGuiTableBgTarget_CellBg, "Set cell background color (top-most color)");
 
 
     py::enum_<ImGuiFocusedFlags_>(m, "ImGuiFocusedFlags_", py::arithmetic(), "Flags for ImGui::IsWindowFocused()")    // imgui.h:1254
-    .value("none", ImGuiFocusedFlags_None, "")
-    .value("child_windows", ImGuiFocusedFlags_ChildWindows, "Return True if any children of the window is focused")
-    .value("root_window", ImGuiFocusedFlags_RootWindow, "Test from root window (top most parent of the current hierarchy)")
-    .value("any_window", ImGuiFocusedFlags_AnyWindow, "Return True if any window is focused. Important: If you are trying to tell how to dispatch your low-level inputs, do NOT use this. Use 'io.WantCaptureMouse' instead! Please read the FAQ!")
-    .value("no_popup_hierarchy", ImGuiFocusedFlags_NoPopupHierarchy, "Do not consider popup hierarchy (do not treat popup emitter as parent of popup) (when used with _ChildWindows or _RootWindow)")
-    .value("root_and_child_windows", ImGuiFocusedFlags_RootAndChildWindows, "ImGuiFocusedFlags_DockHierarchy               = 1 << 4,   // Consider docking hierarchy (treat dockspace host as parent of docked window) (when used with _ChildWindows or _RootWindow)");
+        .value("none", ImGuiFocusedFlags_None, "")
+        .value("child_windows", ImGuiFocusedFlags_ChildWindows, "Return True if any children of the window is focused")
+        .value("root_window", ImGuiFocusedFlags_RootWindow, "Test from root window (top most parent of the current hierarchy)")
+        .value("any_window", ImGuiFocusedFlags_AnyWindow, "Return True if any window is focused. Important: If you are trying to tell how to dispatch your low-level inputs, do NOT use this. Use 'io.WantCaptureMouse' instead! Please read the FAQ!")
+        .value("no_popup_hierarchy", ImGuiFocusedFlags_NoPopupHierarchy, "Do not consider popup hierarchy (do not treat popup emitter as parent of popup) (when used with _ChildWindows or _RootWindow)")
+        .value("root_and_child_windows", ImGuiFocusedFlags_RootAndChildWindows, "ImGuiFocusedFlags_DockHierarchy               = 1 << 4,   // Consider docking hierarchy (treat dockspace host as parent of docked window) (when used with _ChildWindows or _RootWindow)");
 
 
     py::enum_<ImGuiHoveredFlags_>(m, "ImGuiHoveredFlags_", py::arithmetic(), " Flags for ImGui::IsItemHovered(), ImGui::IsWindowHovered()\n Note: if you are trying to check whether your mouse should be dispatched to Dear ImGui or to your app, you should use 'io.WantCaptureMouse' instead! Please read the FAQ!\n Note: windows with the ImGuiWindowFlags_NoInputs flag are ignored by IsWindowHovered() calls.")    // imgui.h:1268
-    .value("none", ImGuiHoveredFlags_None, "Return True if directly over the item/window, not obstructed by another window, not obstructed by an active popup or modal blocking inputs under them.")
-    .value("child_windows", ImGuiHoveredFlags_ChildWindows, "IsWindowHovered() only: Return True if any children of the window is hovered")
-    .value("root_window", ImGuiHoveredFlags_RootWindow, "IsWindowHovered() only: Test from root window (top most parent of the current hierarchy)")
-    .value("any_window", ImGuiHoveredFlags_AnyWindow, "IsWindowHovered() only: Return True if any window is hovered")
-    .value("no_popup_hierarchy", ImGuiHoveredFlags_NoPopupHierarchy, "IsWindowHovered() only: Do not consider popup hierarchy (do not treat popup emitter as parent of popup) (when used with _ChildWindows or _RootWindow)")
-    .value("allow_when_blocked_by_popup", ImGuiHoveredFlags_AllowWhenBlockedByPopup, "Return True even if a popup window is normally blocking access to this item/window")
-    .value("allow_when_blocked_by_active_item", ImGuiHoveredFlags_AllowWhenBlockedByActiveItem, "Return True even if an active item is blocking access to this item/window. Useful for Drag and Drop patterns.")
-    .value("allow_when_overlapped", ImGuiHoveredFlags_AllowWhenOverlapped, "IsItemHovered() only: Return True even if the position is obstructed or overlapped by another window")
-    .value("allow_when_disabled", ImGuiHoveredFlags_AllowWhenDisabled, "IsItemHovered() only: Return True even if the item is disabled")
-    .value("no_nav_override", ImGuiHoveredFlags_NoNavOverride, "Disable using gamepad/keyboard navigation state when active, always query mouse.")
-    .value("rect_only", ImGuiHoveredFlags_RectOnly, "")
-    .value("root_and_child_windows", ImGuiHoveredFlags_RootAndChildWindows, "");
+        .value("none", ImGuiHoveredFlags_None, "Return True if directly over the item/window, not obstructed by another window, not obstructed by an active popup or modal blocking inputs under them.")
+        .value("child_windows", ImGuiHoveredFlags_ChildWindows, "IsWindowHovered() only: Return True if any children of the window is hovered")
+        .value("root_window", ImGuiHoveredFlags_RootWindow, "IsWindowHovered() only: Test from root window (top most parent of the current hierarchy)")
+        .value("any_window", ImGuiHoveredFlags_AnyWindow, "IsWindowHovered() only: Return True if any window is hovered")
+        .value("no_popup_hierarchy", ImGuiHoveredFlags_NoPopupHierarchy, "IsWindowHovered() only: Do not consider popup hierarchy (do not treat popup emitter as parent of popup) (when used with _ChildWindows or _RootWindow)")
+        .value("allow_when_blocked_by_popup", ImGuiHoveredFlags_AllowWhenBlockedByPopup, "Return True even if a popup window is normally blocking access to this item/window")
+        .value("allow_when_blocked_by_active_item", ImGuiHoveredFlags_AllowWhenBlockedByActiveItem, "Return True even if an active item is blocking access to this item/window. Useful for Drag and Drop patterns.")
+        .value("allow_when_overlapped", ImGuiHoveredFlags_AllowWhenOverlapped, "IsItemHovered() only: Return True even if the position is obstructed or overlapped by another window")
+        .value("allow_when_disabled", ImGuiHoveredFlags_AllowWhenDisabled, "IsItemHovered() only: Return True even if the item is disabled")
+        .value("no_nav_override", ImGuiHoveredFlags_NoNavOverride, "Disable using gamepad/keyboard navigation state when active, always query mouse.")
+        .value("rect_only", ImGuiHoveredFlags_RectOnly, "")
+        .value("root_and_child_windows", ImGuiHoveredFlags_RootAndChildWindows, "");
 
 
     py::enum_<ImGuiDragDropFlags_>(m, "ImGuiDragDropFlags_", py::arithmetic(), "Flags for ImGui::BeginDragDropSource(), ImGui::AcceptDragDropPayload()")    // imgui.h:1287
-    .value("none", ImGuiDragDropFlags_None, "")
-    .value("source_no_preview_tooltip", ImGuiDragDropFlags_SourceNoPreviewTooltip, "By default, a successful call to BeginDragDropSource opens a tooltip so you can display a preview or description of the source contents. This flag disable this behavior.")
-    .value("source_no_disable_hover", ImGuiDragDropFlags_SourceNoDisableHover, "By default, when dragging we clear data so that IsItemHovered() will return False, to avoid subsequent user code submitting tooltips. This flag disable this behavior so you can still call IsItemHovered() on the source item.")
-    .value("source_no_hold_to_open_others", ImGuiDragDropFlags_SourceNoHoldToOpenOthers, "Disable the behavior that allows to open tree nodes and collapsing header by holding over them while dragging a source item.")
-    .value("source_allow_null_id", ImGuiDragDropFlags_SourceAllowNullID, "Allow items such as Text(), Image() that have no unique identifier to be used as drag source, by manufacturing a temporary identifier based on their window-relative position. This is extremely unusual within the dear imgui ecosystem and so we made it explicit.")
-    .value("source_extern", ImGuiDragDropFlags_SourceExtern, "External source (from outside of dear imgui), won't attempt to read current item/window info. Will always return True. Only one Extern source can be active simultaneously.")
-    .value("source_auto_expire_payload", ImGuiDragDropFlags_SourceAutoExpirePayload, "Automatically expire the payload if the source cease to be submitted (otherwise payloads are persisting while being dragged)")
-    .value("accept_before_delivery", ImGuiDragDropFlags_AcceptBeforeDelivery, "AcceptDragDropPayload() will returns True even before the mouse button is released. You can then call IsDelivery() to test if the payload needs to be delivered.")
-    .value("accept_no_draw_default_rect", ImGuiDragDropFlags_AcceptNoDrawDefaultRect, "Do not draw the default highlight rectangle when hovering over target.")
-    .value("accept_no_preview_tooltip", ImGuiDragDropFlags_AcceptNoPreviewTooltip, "Request hiding the BeginDragDropSource tooltip from the BeginDragDropTarget site.")
-    .value("accept_peek_only", ImGuiDragDropFlags_AcceptPeekOnly, "For peeking ahead and inspecting the payload before delivery.");
+        .value("none", ImGuiDragDropFlags_None, "")
+        .value("source_no_preview_tooltip", ImGuiDragDropFlags_SourceNoPreviewTooltip, "By default, a successful call to BeginDragDropSource opens a tooltip so you can display a preview or description of the source contents. This flag disable this behavior.")
+        .value("source_no_disable_hover", ImGuiDragDropFlags_SourceNoDisableHover, "By default, when dragging we clear data so that IsItemHovered() will return False, to avoid subsequent user code submitting tooltips. This flag disable this behavior so you can still call IsItemHovered() on the source item.")
+        .value("source_no_hold_to_open_others", ImGuiDragDropFlags_SourceNoHoldToOpenOthers, "Disable the behavior that allows to open tree nodes and collapsing header by holding over them while dragging a source item.")
+        .value("source_allow_null_id", ImGuiDragDropFlags_SourceAllowNullID, "Allow items such as Text(), Image() that have no unique identifier to be used as drag source, by manufacturing a temporary identifier based on their window-relative position. This is extremely unusual within the dear imgui ecosystem and so we made it explicit.")
+        .value("source_extern", ImGuiDragDropFlags_SourceExtern, "External source (from outside of dear imgui), won't attempt to read current item/window info. Will always return True. Only one Extern source can be active simultaneously.")
+        .value("source_auto_expire_payload", ImGuiDragDropFlags_SourceAutoExpirePayload, "Automatically expire the payload if the source cease to be submitted (otherwise payloads are persisting while being dragged)")
+        .value("accept_before_delivery", ImGuiDragDropFlags_AcceptBeforeDelivery, "AcceptDragDropPayload() will returns True even before the mouse button is released. You can then call IsDelivery() to test if the payload needs to be delivered.")
+        .value("accept_no_draw_default_rect", ImGuiDragDropFlags_AcceptNoDrawDefaultRect, "Do not draw the default highlight rectangle when hovering over target.")
+        .value("accept_no_preview_tooltip", ImGuiDragDropFlags_AcceptNoPreviewTooltip, "Request hiding the BeginDragDropSource tooltip from the BeginDragDropTarget site.")
+        .value("accept_peek_only", ImGuiDragDropFlags_AcceptPeekOnly, "For peeking ahead and inspecting the payload before delivery.");
 
 
     py::enum_<ImGuiDataType_>(m, "ImGuiDataType_", py::arithmetic(), "A primary data type")    // imgui.h:1309
-    .value("s8", ImGuiDataType_S8, "signed char / char (with sensible compilers)")
-    .value("u8", ImGuiDataType_U8, "unsigned char")
-    .value("s16", ImGuiDataType_S16, "short")
-    .value("u16", ImGuiDataType_U16, "unsigned short")
-    .value("s32", ImGuiDataType_S32, "int")
-    .value("u32", ImGuiDataType_U32, "int")
-    .value("s64", ImGuiDataType_S64, "int int / __int64")
-    .value("u64", ImGuiDataType_U64, "int int / unsigned __int64")
-    .value("float", ImGuiDataType_Float, "float")
-    .value("double", ImGuiDataType_Double, "float")
-    .value("count", ImGuiDataType_COUNT, "");
+        .value("s8", ImGuiDataType_S8, "signed char / char (with sensible compilers)")
+        .value("u8", ImGuiDataType_U8, "unsigned char")
+        .value("s16", ImGuiDataType_S16, "short")
+        .value("u16", ImGuiDataType_U16, "unsigned short")
+        .value("s32", ImGuiDataType_S32, "int")
+        .value("u32", ImGuiDataType_U32, "int")
+        .value("s64", ImGuiDataType_S64, "int int / __int64")
+        .value("u64", ImGuiDataType_U64, "int int / unsigned __int64")
+        .value("float", ImGuiDataType_Float, "float")
+        .value("double", ImGuiDataType_Double, "float")
+        .value("count", ImGuiDataType_COUNT, "");
 
 
     py::enum_<ImGuiDir_>(m, "ImGuiDir_", py::arithmetic(), "A cardinal direction")    // imgui.h:1325
-    .value("none", ImGuiDir_None, "")
-    .value("left", ImGuiDir_Left, "")
-    .value("right", ImGuiDir_Right, "")
-    .value("up", ImGuiDir_Up, "")
-    .value("down", ImGuiDir_Down, "")
-    .value("count", ImGuiDir_COUNT, "");
+        .value("none", ImGuiDir_None, "")
+        .value("left", ImGuiDir_Left, "")
+        .value("right", ImGuiDir_Right, "")
+        .value("up", ImGuiDir_Up, "")
+        .value("down", ImGuiDir_Down, "")
+        .value("count", ImGuiDir_COUNT, "");
 
 
     py::enum_<ImGuiSortDirection_>(m, "ImGuiSortDirection_", py::arithmetic(), "A sorting direction")    // imgui.h:1336
-    .value("none", ImGuiSortDirection_None, "")
-    .value("ascending", ImGuiSortDirection_Ascending, "Ascending = 0->9, A->Z etc.")
-    .value("descending", ImGuiSortDirection_Descending, "Descending = 9->0, Z->A etc.");
+        .value("none", ImGuiSortDirection_None, "")
+        .value("ascending", ImGuiSortDirection_Ascending, "Ascending = 0->9, A->Z etc.")
+        .value("descending", ImGuiSortDirection_Descending, "Descending = 9->0, Z->A etc.");
 
 
     py::enum_<ImGuiKey_>(m, "ImGuiKey_", py::arithmetic(), " Keys value 0 to 511 are left unused as legacy native/opaque key values (< 1.87)\n Keys value >= 512 are named keys (>= 1.87)")    // imgui.h:1345
-    .value("none", ImGuiKey_None, "")
-    .value("tab", ImGuiKey_Tab, "== ImGuiKey_NamedKey_BEGIN")
-    .value("left_arrow", ImGuiKey_LeftArrow, "")
-    .value("right_arrow", ImGuiKey_RightArrow, "")
-    .value("up_arrow", ImGuiKey_UpArrow, "")
-    .value("down_arrow", ImGuiKey_DownArrow, "")
-    .value("page_up", ImGuiKey_PageUp, "")
-    .value("page_down", ImGuiKey_PageDown, "")
-    .value("home", ImGuiKey_Home, "")
-    .value("end", ImGuiKey_End, "")
-    .value("insert", ImGuiKey_Insert, "")
-    .value("delete", ImGuiKey_Delete, "")
-    .value("backspace", ImGuiKey_Backspace, "")
-    .value("space", ImGuiKey_Space, "")
-    .value("enter", ImGuiKey_Enter, "")
-    .value("escape", ImGuiKey_Escape, "")
-    .value("left_ctrl", ImGuiKey_LeftCtrl, "")
-    .value("left_shift", ImGuiKey_LeftShift, "")
-    .value("left_alt", ImGuiKey_LeftAlt, "")
-    .value("left_super", ImGuiKey_LeftSuper, "")
-    .value("right_ctrl", ImGuiKey_RightCtrl, "")
-    .value("right_shift", ImGuiKey_RightShift, "")
-    .value("right_alt", ImGuiKey_RightAlt, "")
-    .value("right_super", ImGuiKey_RightSuper, "")
-    .value("menu", ImGuiKey_Menu, "")
-    .value("_0", ImGuiKey_0, "")
-    .value("_1", ImGuiKey_1, "")
-    .value("_2", ImGuiKey_2, "")
-    .value("_3", ImGuiKey_3, "")
-    .value("_4", ImGuiKey_4, "")
-    .value("_5", ImGuiKey_5, "")
-    .value("_6", ImGuiKey_6, "")
-    .value("_7", ImGuiKey_7, "")
-    .value("_8", ImGuiKey_8, "")
-    .value("_9", ImGuiKey_9, "")
-    .value("a", ImGuiKey_A, "")
-    .value("b", ImGuiKey_B, "")
-    .value("c", ImGuiKey_C, "")
-    .value("d", ImGuiKey_D, "")
-    .value("e", ImGuiKey_E, "")
-    .value("f", ImGuiKey_F, "")
-    .value("g", ImGuiKey_G, "")
-    .value("h", ImGuiKey_H, "")
-    .value("i", ImGuiKey_I, "")
-    .value("j", ImGuiKey_J, "")
-    .value("k", ImGuiKey_K, "")
-    .value("l", ImGuiKey_L, "")
-    .value("m", ImGuiKey_M, "")
-    .value("n", ImGuiKey_N, "")
-    .value("o", ImGuiKey_O, "")
-    .value("p", ImGuiKey_P, "")
-    .value("q", ImGuiKey_Q, "")
-    .value("r", ImGuiKey_R, "")
-    .value("s", ImGuiKey_S, "")
-    .value("t", ImGuiKey_T, "")
-    .value("u", ImGuiKey_U, "")
-    .value("v", ImGuiKey_V, "")
-    .value("w", ImGuiKey_W, "")
-    .value("x", ImGuiKey_X, "")
-    .value("y", ImGuiKey_Y, "")
-    .value("z", ImGuiKey_Z, "")
-    .value("f1", ImGuiKey_F1, "")
-    .value("f2", ImGuiKey_F2, "")
-    .value("f3", ImGuiKey_F3, "")
-    .value("f4", ImGuiKey_F4, "")
-    .value("f5", ImGuiKey_F5, "")
-    .value("f6", ImGuiKey_F6, "")
-    .value("f7", ImGuiKey_F7, "")
-    .value("f8", ImGuiKey_F8, "")
-    .value("f9", ImGuiKey_F9, "")
-    .value("f10", ImGuiKey_F10, "")
-    .value("f11", ImGuiKey_F11, "")
-    .value("f12", ImGuiKey_F12, "")
-    .value("apostrophe", ImGuiKey_Apostrophe, "'")
-    .value("comma", ImGuiKey_Comma, ",")
-    .value("minus", ImGuiKey_Minus, "-")
-    .value("period", ImGuiKey_Period, ".")
-    .value("slash", ImGuiKey_Slash, "/")
-    .value("semicolon", ImGuiKey_Semicolon, ";")
-    .value("equal", ImGuiKey_Equal, "=")
-    .value("left_bracket", ImGuiKey_LeftBracket, "[")
-    .value("backslash", ImGuiKey_Backslash, "\\ (this text inhibit multiline comment caused by backslash)")
-    .value("right_bracket", ImGuiKey_RightBracket, "]")
-    .value("grave_accent", ImGuiKey_GraveAccent, "`")
-    .value("caps_lock", ImGuiKey_CapsLock, "")
-    .value("scroll_lock", ImGuiKey_ScrollLock, "")
-    .value("num_lock", ImGuiKey_NumLock, "")
-    .value("print_screen", ImGuiKey_PrintScreen, "")
-    .value("pause", ImGuiKey_Pause, "")
-    .value("keypad0", ImGuiKey_Keypad0, "")
-    .value("keypad1", ImGuiKey_Keypad1, "")
-    .value("keypad2", ImGuiKey_Keypad2, "")
-    .value("keypad3", ImGuiKey_Keypad3, "")
-    .value("keypad4", ImGuiKey_Keypad4, "")
-    .value("keypad5", ImGuiKey_Keypad5, "")
-    .value("keypad6", ImGuiKey_Keypad6, "")
-    .value("keypad7", ImGuiKey_Keypad7, "")
-    .value("keypad8", ImGuiKey_Keypad8, "")
-    .value("keypad9", ImGuiKey_Keypad9, "")
-    .value("keypad_decimal", ImGuiKey_KeypadDecimal, "")
-    .value("keypad_divide", ImGuiKey_KeypadDivide, "")
-    .value("keypad_multiply", ImGuiKey_KeypadMultiply, "")
-    .value("keypad_subtract", ImGuiKey_KeypadSubtract, "")
-    .value("keypad_add", ImGuiKey_KeypadAdd, "")
-    .value("keypad_enter", ImGuiKey_KeypadEnter, "")
-    .value("keypad_equal", ImGuiKey_KeypadEqual, "")
-    .value("gamepad_start", ImGuiKey_GamepadStart, "Menu (Xbox)          + (Switch)   Start/Options (PS) // --")
-    .value("gamepad_back", ImGuiKey_GamepadBack, "View (Xbox)          - (Switch)   Share (PS)         // --")
-    .value("gamepad_face_up", ImGuiKey_GamepadFaceUp, "Y (Xbox)             X (Switch)   Triangle (PS)      // -> ImGuiNavInput_Input")
-    .value("gamepad_face_down", ImGuiKey_GamepadFaceDown, "A (Xbox)             B (Switch)   Cross (PS)         // -> ImGuiNavInput_Activate")
-    .value("gamepad_face_left", ImGuiKey_GamepadFaceLeft, "X (Xbox)             Y (Switch)   Square (PS)        // -> ImGuiNavInput_Menu")
-    .value("gamepad_face_right", ImGuiKey_GamepadFaceRight, "B (Xbox)             A (Switch)   Circle (PS)        // -> ImGuiNavInput_Cancel")
-    .value("gamepad_dpad_up", ImGuiKey_GamepadDpadUp, "D-pad Up                                             // -> ImGuiNavInput_DpadUp")
-    .value("gamepad_dpad_down", ImGuiKey_GamepadDpadDown, "D-pad Down                                           // -> ImGuiNavInput_DpadDown")
-    .value("gamepad_dpad_left", ImGuiKey_GamepadDpadLeft, "D-pad Left                                           // -> ImGuiNavInput_DpadLeft")
-    .value("gamepad_dpad_right", ImGuiKey_GamepadDpadRight, "D-pad Right                                          // -> ImGuiNavInput_DpadRight")
-    .value("gamepad_l1", ImGuiKey_GamepadL1, "L Bumper (Xbox)      L (Switch)   L1 (PS)            // -> ImGuiNavInput_FocusPrev + ImGuiNavInput_TweakSlow")
-    .value("gamepad_r1", ImGuiKey_GamepadR1, "R Bumper (Xbox)      R (Switch)   R1 (PS)            // -> ImGuiNavInput_FocusNext + ImGuiNavInput_TweakFast")
-    .value("gamepad_l2", ImGuiKey_GamepadL2, "L Trigger (Xbox)     ZL (Switch)  L2 (PS) [Analog]")
-    .value("gamepad_r2", ImGuiKey_GamepadR2, "R Trigger (Xbox)     ZR (Switch)  R2 (PS) [Analog]")
-    .value("gamepad_l3", ImGuiKey_GamepadL3, "L Thumbstick (Xbox)  L3 (Switch)  L3 (PS)")
-    .value("gamepad_r3", ImGuiKey_GamepadR3, "R Thumbstick (Xbox)  R3 (Switch)  R3 (PS)")
-    .value("gamepad_l_stick_up", ImGuiKey_GamepadLStickUp, "[Analog]                                             // -> ImGuiNavInput_LStickUp")
-    .value("gamepad_l_stick_down", ImGuiKey_GamepadLStickDown, "[Analog]                                             // -> ImGuiNavInput_LStickDown")
-    .value("gamepad_l_stick_left", ImGuiKey_GamepadLStickLeft, "[Analog]                                             // -> ImGuiNavInput_LStickLeft")
-    .value("gamepad_l_stick_right", ImGuiKey_GamepadLStickRight, "[Analog]                                             // -> ImGuiNavInput_LStickRight")
-    .value("gamepad_r_stick_up", ImGuiKey_GamepadRStickUp, "[Analog]")
-    .value("gamepad_r_stick_down", ImGuiKey_GamepadRStickDown, "[Analog]")
-    .value("gamepad_r_stick_left", ImGuiKey_GamepadRStickLeft, "[Analog]")
-    .value("gamepad_r_stick_right", ImGuiKey_GamepadRStickRight, "[Analog]")
-    .value("mod_ctrl", ImGuiKey_ModCtrl, " Keyboard Modifiers (explicitly submitted by backend via AddKeyEvent() calls)\n - This is mirroring the data also written to io.KeyCtrl, io.KeyShift, io.KeyAlt, io.KeySuper, in a format allowing\n   them to be accessed via standard key API, allowing calls such as IsKeyPressed(), IsKeyReleased(), querying duration etc.\n - Code polling every keys (e.g. an interface to detect a key press for input mapping) might want to ignore those\n   and prefer using the real keys (e.g. ImGuiKey_LeftCtrl, ImGuiKey_RightCtrl instead of ImGuiKey_ModCtrl).\n - In theory the value of keyboard modifiers should be roughly equivalent to a logical or of the equivalent left/right keys.\n   In practice: it's complicated; mods are often provided from different sources. Keyboard layout, IME, sticky keys and\n   backends tend to interfere and break that equivalence. The safer decision is to relay that ambiguity down to the end-user...")
-    .value("mod_shift", ImGuiKey_ModShift, "")
-    .value("mod_alt", ImGuiKey_ModAlt, "")
-    .value("mod_super", ImGuiKey_ModSuper, "")
-    .value("count", ImGuiKey_COUNT, "No valid ImGuiKey is ever greater than this value")
-    .value("named_key_begin", ImGuiKey_NamedKey_BEGIN, "")
-    .value("named_key_end", ImGuiKey_NamedKey_END, "")
-    .value("named_key_count", ImGuiKey_NamedKey_COUNT, "");
+        .value("none", ImGuiKey_None, "")
+        .value("tab", ImGuiKey_Tab, "== ImGuiKey_NamedKey_BEGIN")
+        .value("left_arrow", ImGuiKey_LeftArrow, "")
+        .value("right_arrow", ImGuiKey_RightArrow, "")
+        .value("up_arrow", ImGuiKey_UpArrow, "")
+        .value("down_arrow", ImGuiKey_DownArrow, "")
+        .value("page_up", ImGuiKey_PageUp, "")
+        .value("page_down", ImGuiKey_PageDown, "")
+        .value("home", ImGuiKey_Home, "")
+        .value("end", ImGuiKey_End, "")
+        .value("insert", ImGuiKey_Insert, "")
+        .value("delete", ImGuiKey_Delete, "")
+        .value("backspace", ImGuiKey_Backspace, "")
+        .value("space", ImGuiKey_Space, "")
+        .value("enter", ImGuiKey_Enter, "")
+        .value("escape", ImGuiKey_Escape, "")
+        .value("left_ctrl", ImGuiKey_LeftCtrl, "")
+        .value("left_shift", ImGuiKey_LeftShift, "")
+        .value("left_alt", ImGuiKey_LeftAlt, "")
+        .value("left_super", ImGuiKey_LeftSuper, "")
+        .value("right_ctrl", ImGuiKey_RightCtrl, "")
+        .value("right_shift", ImGuiKey_RightShift, "")
+        .value("right_alt", ImGuiKey_RightAlt, "")
+        .value("right_super", ImGuiKey_RightSuper, "")
+        .value("menu", ImGuiKey_Menu, "")
+        .value("_0", ImGuiKey_0, "")
+        .value("_1", ImGuiKey_1, "")
+        .value("_2", ImGuiKey_2, "")
+        .value("_3", ImGuiKey_3, "")
+        .value("_4", ImGuiKey_4, "")
+        .value("_5", ImGuiKey_5, "")
+        .value("_6", ImGuiKey_6, "")
+        .value("_7", ImGuiKey_7, "")
+        .value("_8", ImGuiKey_8, "")
+        .value("_9", ImGuiKey_9, "")
+        .value("a", ImGuiKey_A, "")
+        .value("b", ImGuiKey_B, "")
+        .value("c", ImGuiKey_C, "")
+        .value("d", ImGuiKey_D, "")
+        .value("e", ImGuiKey_E, "")
+        .value("f", ImGuiKey_F, "")
+        .value("g", ImGuiKey_G, "")
+        .value("h", ImGuiKey_H, "")
+        .value("i", ImGuiKey_I, "")
+        .value("j", ImGuiKey_J, "")
+        .value("k", ImGuiKey_K, "")
+        .value("l", ImGuiKey_L, "")
+        .value("m", ImGuiKey_M, "")
+        .value("n", ImGuiKey_N, "")
+        .value("o", ImGuiKey_O, "")
+        .value("p", ImGuiKey_P, "")
+        .value("q", ImGuiKey_Q, "")
+        .value("r", ImGuiKey_R, "")
+        .value("s", ImGuiKey_S, "")
+        .value("t", ImGuiKey_T, "")
+        .value("u", ImGuiKey_U, "")
+        .value("v", ImGuiKey_V, "")
+        .value("w", ImGuiKey_W, "")
+        .value("x", ImGuiKey_X, "")
+        .value("y", ImGuiKey_Y, "")
+        .value("z", ImGuiKey_Z, "")
+        .value("f1", ImGuiKey_F1, "")
+        .value("f2", ImGuiKey_F2, "")
+        .value("f3", ImGuiKey_F3, "")
+        .value("f4", ImGuiKey_F4, "")
+        .value("f5", ImGuiKey_F5, "")
+        .value("f6", ImGuiKey_F6, "")
+        .value("f7", ImGuiKey_F7, "")
+        .value("f8", ImGuiKey_F8, "")
+        .value("f9", ImGuiKey_F9, "")
+        .value("f10", ImGuiKey_F10, "")
+        .value("f11", ImGuiKey_F11, "")
+        .value("f12", ImGuiKey_F12, "")
+        .value("apostrophe", ImGuiKey_Apostrophe, "'")
+        .value("comma", ImGuiKey_Comma, ",")
+        .value("minus", ImGuiKey_Minus, "-")
+        .value("period", ImGuiKey_Period, ".")
+        .value("slash", ImGuiKey_Slash, "/")
+        .value("semicolon", ImGuiKey_Semicolon, ";")
+        .value("equal", ImGuiKey_Equal, "=")
+        .value("left_bracket", ImGuiKey_LeftBracket, "[")
+        .value("backslash", ImGuiKey_Backslash, "\\ (this text inhibit multiline comment caused by backslash)")
+        .value("right_bracket", ImGuiKey_RightBracket, "]")
+        .value("grave_accent", ImGuiKey_GraveAccent, "`")
+        .value("caps_lock", ImGuiKey_CapsLock, "")
+        .value("scroll_lock", ImGuiKey_ScrollLock, "")
+        .value("num_lock", ImGuiKey_NumLock, "")
+        .value("print_screen", ImGuiKey_PrintScreen, "")
+        .value("pause", ImGuiKey_Pause, "")
+        .value("keypad0", ImGuiKey_Keypad0, "")
+        .value("keypad1", ImGuiKey_Keypad1, "")
+        .value("keypad2", ImGuiKey_Keypad2, "")
+        .value("keypad3", ImGuiKey_Keypad3, "")
+        .value("keypad4", ImGuiKey_Keypad4, "")
+        .value("keypad5", ImGuiKey_Keypad5, "")
+        .value("keypad6", ImGuiKey_Keypad6, "")
+        .value("keypad7", ImGuiKey_Keypad7, "")
+        .value("keypad8", ImGuiKey_Keypad8, "")
+        .value("keypad9", ImGuiKey_Keypad9, "")
+        .value("keypad_decimal", ImGuiKey_KeypadDecimal, "")
+        .value("keypad_divide", ImGuiKey_KeypadDivide, "")
+        .value("keypad_multiply", ImGuiKey_KeypadMultiply, "")
+        .value("keypad_subtract", ImGuiKey_KeypadSubtract, "")
+        .value("keypad_add", ImGuiKey_KeypadAdd, "")
+        .value("keypad_enter", ImGuiKey_KeypadEnter, "")
+        .value("keypad_equal", ImGuiKey_KeypadEqual, "")
+        .value("gamepad_start", ImGuiKey_GamepadStart, "Menu (Xbox)          + (Switch)   Start/Options (PS) // --")
+        .value("gamepad_back", ImGuiKey_GamepadBack, "View (Xbox)          - (Switch)   Share (PS)         // --")
+        .value("gamepad_face_up", ImGuiKey_GamepadFaceUp, "Y (Xbox)             X (Switch)   Triangle (PS)      // -> ImGuiNavInput_Input")
+        .value("gamepad_face_down", ImGuiKey_GamepadFaceDown, "A (Xbox)             B (Switch)   Cross (PS)         // -> ImGuiNavInput_Activate")
+        .value("gamepad_face_left", ImGuiKey_GamepadFaceLeft, "X (Xbox)             Y (Switch)   Square (PS)        // -> ImGuiNavInput_Menu")
+        .value("gamepad_face_right", ImGuiKey_GamepadFaceRight, "B (Xbox)             A (Switch)   Circle (PS)        // -> ImGuiNavInput_Cancel")
+        .value("gamepad_dpad_up", ImGuiKey_GamepadDpadUp, "D-pad Up                                             // -> ImGuiNavInput_DpadUp")
+        .value("gamepad_dpad_down", ImGuiKey_GamepadDpadDown, "D-pad Down                                           // -> ImGuiNavInput_DpadDown")
+        .value("gamepad_dpad_left", ImGuiKey_GamepadDpadLeft, "D-pad Left                                           // -> ImGuiNavInput_DpadLeft")
+        .value("gamepad_dpad_right", ImGuiKey_GamepadDpadRight, "D-pad Right                                          // -> ImGuiNavInput_DpadRight")
+        .value("gamepad_l1", ImGuiKey_GamepadL1, "L Bumper (Xbox)      L (Switch)   L1 (PS)            // -> ImGuiNavInput_FocusPrev + ImGuiNavInput_TweakSlow")
+        .value("gamepad_r1", ImGuiKey_GamepadR1, "R Bumper (Xbox)      R (Switch)   R1 (PS)            // -> ImGuiNavInput_FocusNext + ImGuiNavInput_TweakFast")
+        .value("gamepad_l2", ImGuiKey_GamepadL2, "L Trigger (Xbox)     ZL (Switch)  L2 (PS) [Analog]")
+        .value("gamepad_r2", ImGuiKey_GamepadR2, "R Trigger (Xbox)     ZR (Switch)  R2 (PS) [Analog]")
+        .value("gamepad_l3", ImGuiKey_GamepadL3, "L Thumbstick (Xbox)  L3 (Switch)  L3 (PS)")
+        .value("gamepad_r3", ImGuiKey_GamepadR3, "R Thumbstick (Xbox)  R3 (Switch)  R3 (PS)")
+        .value("gamepad_l_stick_up", ImGuiKey_GamepadLStickUp, "[Analog]                                             // -> ImGuiNavInput_LStickUp")
+        .value("gamepad_l_stick_down", ImGuiKey_GamepadLStickDown, "[Analog]                                             // -> ImGuiNavInput_LStickDown")
+        .value("gamepad_l_stick_left", ImGuiKey_GamepadLStickLeft, "[Analog]                                             // -> ImGuiNavInput_LStickLeft")
+        .value("gamepad_l_stick_right", ImGuiKey_GamepadLStickRight, "[Analog]                                             // -> ImGuiNavInput_LStickRight")
+        .value("gamepad_r_stick_up", ImGuiKey_GamepadRStickUp, "[Analog]")
+        .value("gamepad_r_stick_down", ImGuiKey_GamepadRStickDown, "[Analog]")
+        .value("gamepad_r_stick_left", ImGuiKey_GamepadRStickLeft, "[Analog]")
+        .value("gamepad_r_stick_right", ImGuiKey_GamepadRStickRight, "[Analog]")
+        .value("mod_ctrl", ImGuiKey_ModCtrl, " Keyboard Modifiers (explicitly submitted by backend via AddKeyEvent() calls)\n - This is mirroring the data also written to io.KeyCtrl, io.KeyShift, io.KeyAlt, io.KeySuper, in a format allowing\n   them to be accessed via standard key API, allowing calls such as IsKeyPressed(), IsKeyReleased(), querying duration etc.\n - Code polling every keys (e.g. an interface to detect a key press for input mapping) might want to ignore those\n   and prefer using the real keys (e.g. ImGuiKey_LeftCtrl, ImGuiKey_RightCtrl instead of ImGuiKey_ModCtrl).\n - In theory the value of keyboard modifiers should be roughly equivalent to a logical or of the equivalent left/right keys.\n   In practice: it's complicated; mods are often provided from different sources. Keyboard layout, IME, sticky keys and\n   backends tend to interfere and break that equivalence. The safer decision is to relay that ambiguity down to the end-user...")
+        .value("mod_shift", ImGuiKey_ModShift, "")
+        .value("mod_alt", ImGuiKey_ModAlt, "")
+        .value("mod_super", ImGuiKey_ModSuper, "")
+        .value("count", ImGuiKey_COUNT, "No valid ImGuiKey is ever greater than this value")
+        .value("named_key_begin", ImGuiKey_NamedKey_BEGIN, "")
+        .value("named_key_end", ImGuiKey_NamedKey_END, "")
+        .value("named_key_count", ImGuiKey_NamedKey_COUNT, "");
 
 
     py::enum_<ImGuiModFlags_>(m, "ImGuiModFlags_", py::arithmetic(), "Helper \"flags\" version of key-mods to store and compare multiple key-mods easily. Sometimes used for storage (e.g. io.KeyMods) but otherwise not much used in public API.")    // imgui.h:1457
-    .value("none", ImGuiModFlags_None, "")
-    .value("ctrl", ImGuiModFlags_Ctrl, "")
-    .value("shift", ImGuiModFlags_Shift, "")
-    .value("alt", ImGuiModFlags_Alt, "Menu")
-    .value("super", ImGuiModFlags_Super, "Cmd/Super/Windows key");
+        .value("none", ImGuiModFlags_None, "")
+        .value("ctrl", ImGuiModFlags_Ctrl, "")
+        .value("shift", ImGuiModFlags_Shift, "")
+        .value("alt", ImGuiModFlags_Alt, "Menu")
+        .value("super", ImGuiModFlags_Super, "Cmd/Super/Windows key");
 
 
     py::enum_<ImGuiNavInput_>(m, "ImGuiNavInput_", py::arithmetic(), " Gamepad/Keyboard navigation\n Since >= 1.87 backends you generally don't need to care about this enum since io.NavInputs[] is setup automatically. This might become private/internal some day.\n Keyboard: Set io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard to enable. NewFrame() will automatically fill io.NavInputs[] based on your io.AddKeyEvent() calls.\n Gamepad:  Set io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad to enable. Backend: set ImGuiBackendFlags_HasGamepad and fill the io.NavInputs[] fields before calling NewFrame(). Note that io.NavInputs[] is cleared by EndFrame().\n Read instructions in imgui.cpp for more details. Download PNG/PSD at http://dearimgui.org/controls_sheets.")    // imgui.h:1471
-    .value("activate", ImGuiNavInput_Activate, "Activate / Open / Toggle / Tweak value       // e.g. Cross  (PS4), A (Xbox), A (Switch), Space (Keyboard)")
-    .value("cancel", ImGuiNavInput_Cancel, "Cancel / Close / Exit                        // e.g. Circle (PS4), B (Xbox), B (Switch), Escape (Keyboard)")
-    .value("input", ImGuiNavInput_Input, "Text input / On-Screen keyboard              // e.g. Triang.(PS4), Y (Xbox), X (Switch), Return (Keyboard)")
-    .value("menu", ImGuiNavInput_Menu, "Tap: Toggle menu / Hold: Focus, Move, Resize // e.g. Square (PS4), X (Xbox), Y (Switch), Alt (Keyboard)")
-    .value("dpad_left", ImGuiNavInput_DpadLeft, "Move / Tweak / Resize window (w/ PadMenu)    // e.g. D-pad Left/Right/Up/Down (Gamepads), Arrow keys (Keyboard)")
-    .value("dpad_right", ImGuiNavInput_DpadRight, "")
-    .value("dpad_up", ImGuiNavInput_DpadUp, "")
-    .value("dpad_down", ImGuiNavInput_DpadDown, "")
-    .value("l_stick_left", ImGuiNavInput_LStickLeft, "Scroll / Move window (w/ PadMenu)            // e.g. Left Analog Stick Left/Right/Up/Down")
-    .value("l_stick_right", ImGuiNavInput_LStickRight, "")
-    .value("l_stick_up", ImGuiNavInput_LStickUp, "")
-    .value("l_stick_down", ImGuiNavInput_LStickDown, "")
-    .value("focus_prev", ImGuiNavInput_FocusPrev, "Focus Next window (w/ PadMenu)               // e.g. L1 or L2 (PS4), LB or LT (Xbox), L or ZL (Switch)")
-    .value("focus_next", ImGuiNavInput_FocusNext, "Focus Prev window (w/ PadMenu)               // e.g. R1 or R2 (PS4), RB or RT (Xbox), R or ZL (Switch)")
-    .value("tweak_slow", ImGuiNavInput_TweakSlow, "Slower tweaks                                // e.g. L1 or L2 (PS4), LB or LT (Xbox), L or ZL (Switch)")
-    .value("tweak_fast", ImGuiNavInput_TweakFast, "Faster tweaks                                // e.g. R1 or R2 (PS4), RB or RT (Xbox), R or ZL (Switch)")
-    .value("key_left_", ImGuiNavInput_KeyLeft_, "Move left                                    // = Arrow keys")
-    .value("key_right_", ImGuiNavInput_KeyRight_, "Move right")
-    .value("key_up_", ImGuiNavInput_KeyUp_, "Move up")
-    .value("key_down_", ImGuiNavInput_KeyDown_, "Move down")
-    .value("count", ImGuiNavInput_COUNT, "");
+        .value("activate", ImGuiNavInput_Activate, "Activate / Open / Toggle / Tweak value       // e.g. Cross  (PS4), A (Xbox), A (Switch), Space (Keyboard)")
+        .value("cancel", ImGuiNavInput_Cancel, "Cancel / Close / Exit                        // e.g. Circle (PS4), B (Xbox), B (Switch), Escape (Keyboard)")
+        .value("input", ImGuiNavInput_Input, "Text input / On-Screen keyboard              // e.g. Triang.(PS4), Y (Xbox), X (Switch), Return (Keyboard)")
+        .value("menu", ImGuiNavInput_Menu, "Tap: Toggle menu / Hold: Focus, Move, Resize // e.g. Square (PS4), X (Xbox), Y (Switch), Alt (Keyboard)")
+        .value("dpad_left", ImGuiNavInput_DpadLeft, "Move / Tweak / Resize window (w/ PadMenu)    // e.g. D-pad Left/Right/Up/Down (Gamepads), Arrow keys (Keyboard)")
+        .value("dpad_right", ImGuiNavInput_DpadRight, "")
+        .value("dpad_up", ImGuiNavInput_DpadUp, "")
+        .value("dpad_down", ImGuiNavInput_DpadDown, "")
+        .value("l_stick_left", ImGuiNavInput_LStickLeft, "Scroll / Move window (w/ PadMenu)            // e.g. Left Analog Stick Left/Right/Up/Down")
+        .value("l_stick_right", ImGuiNavInput_LStickRight, "")
+        .value("l_stick_up", ImGuiNavInput_LStickUp, "")
+        .value("l_stick_down", ImGuiNavInput_LStickDown, "")
+        .value("focus_prev", ImGuiNavInput_FocusPrev, "Focus Next window (w/ PadMenu)               // e.g. L1 or L2 (PS4), LB or LT (Xbox), L or ZL (Switch)")
+        .value("focus_next", ImGuiNavInput_FocusNext, "Focus Prev window (w/ PadMenu)               // e.g. R1 or R2 (PS4), RB or RT (Xbox), R or ZL (Switch)")
+        .value("tweak_slow", ImGuiNavInput_TweakSlow, "Slower tweaks                                // e.g. L1 or L2 (PS4), LB or LT (Xbox), L or ZL (Switch)")
+        .value("tweak_fast", ImGuiNavInput_TweakFast, "Faster tweaks                                // e.g. R1 or R2 (PS4), RB or RT (Xbox), R or ZL (Switch)")
+        .value("key_left_", ImGuiNavInput_KeyLeft_, "Move left                                    // = Arrow keys")
+        .value("key_right_", ImGuiNavInput_KeyRight_, "Move right")
+        .value("key_up_", ImGuiNavInput_KeyUp_, "Move up")
+        .value("key_down_", ImGuiNavInput_KeyDown_, "Move down")
+        .value("count", ImGuiNavInput_COUNT, "");
 
 
     py::enum_<ImGuiConfigFlags_>(m, "ImGuiConfigFlags_", py::arithmetic(), "Configuration flags stored in io.ConfigFlags. Set by user/application.")    // imgui.h:1501
-    .value("none", ImGuiConfigFlags_None, "")
-    .value("nav_enable_keyboard", ImGuiConfigFlags_NavEnableKeyboard, "Master keyboard navigation enable flag. NewFrame() will automatically fill io.NavInputs[] based on io.AddKeyEvent() calls")
-    .value("nav_enable_gamepad", ImGuiConfigFlags_NavEnableGamepad, "Master gamepad navigation enable flag. This is mostly to instruct your imgui backend to fill io.NavInputs[]. Backend also needs to set ImGuiBackendFlags_HasGamepad.")
-    .value("nav_enable_set_mouse_pos", ImGuiConfigFlags_NavEnableSetMousePos, "Instruct navigation to move the mouse cursor. May be useful on TV/console systems where moving a virtual mouse is awkward. Will update io.MousePos and set io.WantSetMousePos=True. If enabled you MUST honor io.WantSetMousePos requests in your backend, otherwise ImGui will react as if the mouse is jumping around back and forth.")
-    .value("nav_no_capture_keyboard", ImGuiConfigFlags_NavNoCaptureKeyboard, "Instruct navigation to not set the io.WantCaptureKeyboard flag when io.NavActive is set.")
-    .value("no_mouse", ImGuiConfigFlags_NoMouse, "Instruct imgui to clear mouse position/buttons in NewFrame(). This allows ignoring the mouse information set by the backend.")
-    .value("no_mouse_cursor_change", ImGuiConfigFlags_NoMouseCursorChange, "Instruct backend to not alter mouse cursor shape and visibility. Use if the backend cursor changes are interfering with yours and you don't want to use SetMouseCursor() to change mouse cursor. You may want to honor requests from imgui by reading GetMouseCursor() yourself instead.")
-    .value("is_srgb", ImGuiConfigFlags_IsSRGB, "Application is SRGB-aware.")
-    .value("is_touch_screen", ImGuiConfigFlags_IsTouchScreen, "Application is using a touch screen instead of a mouse.");
+        .value("none", ImGuiConfigFlags_None, "")
+        .value("nav_enable_keyboard", ImGuiConfigFlags_NavEnableKeyboard, "Master keyboard navigation enable flag. NewFrame() will automatically fill io.NavInputs[] based on io.AddKeyEvent() calls")
+        .value("nav_enable_gamepad", ImGuiConfigFlags_NavEnableGamepad, "Master gamepad navigation enable flag. This is mostly to instruct your imgui backend to fill io.NavInputs[]. Backend also needs to set ImGuiBackendFlags_HasGamepad.")
+        .value("nav_enable_set_mouse_pos", ImGuiConfigFlags_NavEnableSetMousePos, "Instruct navigation to move the mouse cursor. May be useful on TV/console systems where moving a virtual mouse is awkward. Will update io.MousePos and set io.WantSetMousePos=True. If enabled you MUST honor io.WantSetMousePos requests in your backend, otherwise ImGui will react as if the mouse is jumping around back and forth.")
+        .value("nav_no_capture_keyboard", ImGuiConfigFlags_NavNoCaptureKeyboard, "Instruct navigation to not set the io.WantCaptureKeyboard flag when io.NavActive is set.")
+        .value("no_mouse", ImGuiConfigFlags_NoMouse, "Instruct imgui to clear mouse position/buttons in NewFrame(). This allows ignoring the mouse information set by the backend.")
+        .value("no_mouse_cursor_change", ImGuiConfigFlags_NoMouseCursorChange, "Instruct backend to not alter mouse cursor shape and visibility. Use if the backend cursor changes are interfering with yours and you don't want to use SetMouseCursor() to change mouse cursor. You may want to honor requests from imgui by reading GetMouseCursor() yourself instead.")
+        .value("is_srgb", ImGuiConfigFlags_IsSRGB, "Application is SRGB-aware.")
+        .value("is_touch_screen", ImGuiConfigFlags_IsTouchScreen, "Application is using a touch screen instead of a mouse.");
 
 
     py::enum_<ImGuiBackendFlags_>(m, "ImGuiBackendFlags_", py::arithmetic(), "Backend capabilities flags stored in io.BackendFlags. Set by imgui_impl_xxx or custom backend.")    // imgui.h:1517
-    .value("none", ImGuiBackendFlags_None, "")
-    .value("has_gamepad", ImGuiBackendFlags_HasGamepad, "Backend Platform supports gamepad and currently has one connected.")
-    .value("has_mouse_cursors", ImGuiBackendFlags_HasMouseCursors, "Backend Platform supports honoring GetMouseCursor() value to change the OS cursor shape.")
-    .value("has_set_mouse_pos", ImGuiBackendFlags_HasSetMousePos, "Backend Platform supports io.WantSetMousePos requests to reposition the OS mouse position (only used if ImGuiConfigFlags_NavEnableSetMousePos is set).")
-    .value("renderer_has_vtx_offset", ImGuiBackendFlags_RendererHasVtxOffset, "Backend Renderer supports ImDrawCmd::VtxOffset. This enables output of large meshes (64K+ vertices) while still using 16-bit indices.");
+        .value("none", ImGuiBackendFlags_None, "")
+        .value("has_gamepad", ImGuiBackendFlags_HasGamepad, "Backend Platform supports gamepad and currently has one connected.")
+        .value("has_mouse_cursors", ImGuiBackendFlags_HasMouseCursors, "Backend Platform supports honoring GetMouseCursor() value to change the OS cursor shape.")
+        .value("has_set_mouse_pos", ImGuiBackendFlags_HasSetMousePos, "Backend Platform supports io.WantSetMousePos requests to reposition the OS mouse position (only used if ImGuiConfigFlags_NavEnableSetMousePos is set).")
+        .value("renderer_has_vtx_offset", ImGuiBackendFlags_RendererHasVtxOffset, "Backend Renderer supports ImDrawCmd::VtxOffset. This enables output of large meshes (64K+ vertices) while still using 16-bit indices.");
 
 
     py::enum_<ImGuiCol_>(m, "ImGuiCol_", py::arithmetic(), "Enumeration for PushStyleColor() / PopStyleColor()")    // imgui.h:1527
-    .value("text", ImGuiCol_Text, "")
-    .value("text_disabled", ImGuiCol_TextDisabled, "")
-    .value("window_bg", ImGuiCol_WindowBg, "Background of normal windows")
-    .value("child_bg", ImGuiCol_ChildBg, "Background of child windows")
-    .value("popup_bg", ImGuiCol_PopupBg, "Background of popups, menus, tooltips windows")
-    .value("border", ImGuiCol_Border, "")
-    .value("border_shadow", ImGuiCol_BorderShadow, "")
-    .value("frame_bg", ImGuiCol_FrameBg, "Background of checkbox, radio button, plot, slider, text input")
-    .value("frame_bg_hovered", ImGuiCol_FrameBgHovered, "")
-    .value("frame_bg_active", ImGuiCol_FrameBgActive, "")
-    .value("title_bg", ImGuiCol_TitleBg, "")
-    .value("title_bg_active", ImGuiCol_TitleBgActive, "")
-    .value("title_bg_collapsed", ImGuiCol_TitleBgCollapsed, "")
-    .value("menu_bar_bg", ImGuiCol_MenuBarBg, "")
-    .value("scrollbar_bg", ImGuiCol_ScrollbarBg, "")
-    .value("scrollbar_grab", ImGuiCol_ScrollbarGrab, "")
-    .value("scrollbar_grab_hovered", ImGuiCol_ScrollbarGrabHovered, "")
-    .value("scrollbar_grab_active", ImGuiCol_ScrollbarGrabActive, "")
-    .value("check_mark", ImGuiCol_CheckMark, "")
-    .value("slider_grab", ImGuiCol_SliderGrab, "")
-    .value("slider_grab_active", ImGuiCol_SliderGrabActive, "")
-    .value("button", ImGuiCol_Button, "")
-    .value("button_hovered", ImGuiCol_ButtonHovered, "")
-    .value("button_active", ImGuiCol_ButtonActive, "")
-    .value("header", ImGuiCol_Header, "Header colors are used for CollapsingHeader, TreeNode, Selectable, MenuItem")
-    .value("header_hovered", ImGuiCol_HeaderHovered, "")
-    .value("header_active", ImGuiCol_HeaderActive, "")
-    .value("separator", ImGuiCol_Separator, "")
-    .value("separator_hovered", ImGuiCol_SeparatorHovered, "")
-    .value("separator_active", ImGuiCol_SeparatorActive, "")
-    .value("resize_grip", ImGuiCol_ResizeGrip, "Resize grip in lower-right and lower-left corners of windows.")
-    .value("resize_grip_hovered", ImGuiCol_ResizeGripHovered, "")
-    .value("resize_grip_active", ImGuiCol_ResizeGripActive, "")
-    .value("tab", ImGuiCol_Tab, "TabItem in a TabBar")
-    .value("tab_hovered", ImGuiCol_TabHovered, "")
-    .value("tab_active", ImGuiCol_TabActive, "")
-    .value("tab_unfocused", ImGuiCol_TabUnfocused, "")
-    .value("tab_unfocused_active", ImGuiCol_TabUnfocusedActive, "")
-    .value("plot_lines", ImGuiCol_PlotLines, "")
-    .value("plot_lines_hovered", ImGuiCol_PlotLinesHovered, "")
-    .value("plot_histogram", ImGuiCol_PlotHistogram, "")
-    .value("plot_histogram_hovered", ImGuiCol_PlotHistogramHovered, "")
-    .value("table_header_bg", ImGuiCol_TableHeaderBg, "Table header background")
-    .value("table_border_strong", ImGuiCol_TableBorderStrong, "Table outer and header borders (prefer using Alpha=1.0 here)")
-    .value("table_border_light", ImGuiCol_TableBorderLight, "Table inner borders (prefer using Alpha=1.0 here)")
-    .value("table_row_bg", ImGuiCol_TableRowBg, "Table row background (even rows)")
-    .value("table_row_bg_alt", ImGuiCol_TableRowBgAlt, "Table row background (odd rows)")
-    .value("text_selected_bg", ImGuiCol_TextSelectedBg, "")
-    .value("drag_drop_target", ImGuiCol_DragDropTarget, "Rectangle highlighting a drop target")
-    .value("nav_highlight", ImGuiCol_NavHighlight, "Gamepad/keyboard: current highlighted item")
-    .value("nav_windowing_highlight", ImGuiCol_NavWindowingHighlight, "Highlight window when using CTRL+TAB")
-    .value("nav_windowing_dim_bg", ImGuiCol_NavWindowingDimBg, "Darken/colorize entire screen behind the CTRL+TAB window list, when active")
-    .value("modal_window_dim_bg", ImGuiCol_ModalWindowDimBg, "Darken/colorize entire screen behind a modal window, when one is active")
-    .value("count", ImGuiCol_COUNT, "");
+        .value("text", ImGuiCol_Text, "")
+        .value("text_disabled", ImGuiCol_TextDisabled, "")
+        .value("window_bg", ImGuiCol_WindowBg, "Background of normal windows")
+        .value("child_bg", ImGuiCol_ChildBg, "Background of child windows")
+        .value("popup_bg", ImGuiCol_PopupBg, "Background of popups, menus, tooltips windows")
+        .value("border", ImGuiCol_Border, "")
+        .value("border_shadow", ImGuiCol_BorderShadow, "")
+        .value("frame_bg", ImGuiCol_FrameBg, "Background of checkbox, radio button, plot, slider, text input")
+        .value("frame_bg_hovered", ImGuiCol_FrameBgHovered, "")
+        .value("frame_bg_active", ImGuiCol_FrameBgActive, "")
+        .value("title_bg", ImGuiCol_TitleBg, "")
+        .value("title_bg_active", ImGuiCol_TitleBgActive, "")
+        .value("title_bg_collapsed", ImGuiCol_TitleBgCollapsed, "")
+        .value("menu_bar_bg", ImGuiCol_MenuBarBg, "")
+        .value("scrollbar_bg", ImGuiCol_ScrollbarBg, "")
+        .value("scrollbar_grab", ImGuiCol_ScrollbarGrab, "")
+        .value("scrollbar_grab_hovered", ImGuiCol_ScrollbarGrabHovered, "")
+        .value("scrollbar_grab_active", ImGuiCol_ScrollbarGrabActive, "")
+        .value("check_mark", ImGuiCol_CheckMark, "")
+        .value("slider_grab", ImGuiCol_SliderGrab, "")
+        .value("slider_grab_active", ImGuiCol_SliderGrabActive, "")
+        .value("button", ImGuiCol_Button, "")
+        .value("button_hovered", ImGuiCol_ButtonHovered, "")
+        .value("button_active", ImGuiCol_ButtonActive, "")
+        .value("header", ImGuiCol_Header, "Header colors are used for CollapsingHeader, TreeNode, Selectable, MenuItem")
+        .value("header_hovered", ImGuiCol_HeaderHovered, "")
+        .value("header_active", ImGuiCol_HeaderActive, "")
+        .value("separator", ImGuiCol_Separator, "")
+        .value("separator_hovered", ImGuiCol_SeparatorHovered, "")
+        .value("separator_active", ImGuiCol_SeparatorActive, "")
+        .value("resize_grip", ImGuiCol_ResizeGrip, "Resize grip in lower-right and lower-left corners of windows.")
+        .value("resize_grip_hovered", ImGuiCol_ResizeGripHovered, "")
+        .value("resize_grip_active", ImGuiCol_ResizeGripActive, "")
+        .value("tab", ImGuiCol_Tab, "TabItem in a TabBar")
+        .value("tab_hovered", ImGuiCol_TabHovered, "")
+        .value("tab_active", ImGuiCol_TabActive, "")
+        .value("tab_unfocused", ImGuiCol_TabUnfocused, "")
+        .value("tab_unfocused_active", ImGuiCol_TabUnfocusedActive, "")
+        .value("plot_lines", ImGuiCol_PlotLines, "")
+        .value("plot_lines_hovered", ImGuiCol_PlotLinesHovered, "")
+        .value("plot_histogram", ImGuiCol_PlotHistogram, "")
+        .value("plot_histogram_hovered", ImGuiCol_PlotHistogramHovered, "")
+        .value("table_header_bg", ImGuiCol_TableHeaderBg, "Table header background")
+        .value("table_border_strong", ImGuiCol_TableBorderStrong, "Table outer and header borders (prefer using Alpha=1.0 here)")
+        .value("table_border_light", ImGuiCol_TableBorderLight, "Table inner borders (prefer using Alpha=1.0 here)")
+        .value("table_row_bg", ImGuiCol_TableRowBg, "Table row background (even rows)")
+        .value("table_row_bg_alt", ImGuiCol_TableRowBgAlt, "Table row background (odd rows)")
+        .value("text_selected_bg", ImGuiCol_TextSelectedBg, "")
+        .value("drag_drop_target", ImGuiCol_DragDropTarget, "Rectangle highlighting a drop target")
+        .value("nav_highlight", ImGuiCol_NavHighlight, "Gamepad/keyboard: current highlighted item")
+        .value("nav_windowing_highlight", ImGuiCol_NavWindowingHighlight, "Highlight window when using CTRL+TAB")
+        .value("nav_windowing_dim_bg", ImGuiCol_NavWindowingDimBg, "Darken/colorize entire screen behind the CTRL+TAB window list, when active")
+        .value("modal_window_dim_bg", ImGuiCol_ModalWindowDimBg, "Darken/colorize entire screen behind a modal window, when one is active")
+        .value("count", ImGuiCol_COUNT, "");
 
 
     py::enum_<ImGuiStyleVar_>(m, "ImGuiStyleVar_", py::arithmetic(), " Enumeration for PushStyleVar() / PopStyleVar() to temporarily modify the ImGuiStyle structure.\n - The enum only refers to fields of ImGuiStyle which makes sense to be pushed/popped inside UI code.\n   During initialization or between frames, feel free to just poke into ImGuiStyle directly.\n - Tip: Use your programming IDE navigation facilities on the names in the _second column_ below to find the actual members and their description.\n   In Visual Studio IDE: CTRL+comma (\"Edit.GoToAll\") can follow symbols in comments, whereas CTRL+F12 (\"Edit.GoToImplementation\") cannot.\n   With Visual Assist installed: ALT+G (\"VAssistX.GoToImplementation\") can also follow symbols in comments.\n - When changing this enum, you need to update the associated internal table GStyleVarInfo[] accordingly. This is where we link enum values to members offset/type.")    // imgui.h:1592
-    .value("alpha", ImGuiStyleVar_Alpha, "float     Alpha")
-    .value("disabled_alpha", ImGuiStyleVar_DisabledAlpha, "float     DisabledAlpha")
-    .value("window_padding", ImGuiStyleVar_WindowPadding, "ImVec2    WindowPadding")
-    .value("window_rounding", ImGuiStyleVar_WindowRounding, "float     WindowRounding")
-    .value("window_border_size", ImGuiStyleVar_WindowBorderSize, "float     WindowBorderSize")
-    .value("window_min_size", ImGuiStyleVar_WindowMinSize, "ImVec2    WindowMinSize")
-    .value("window_title_align", ImGuiStyleVar_WindowTitleAlign, "ImVec2    WindowTitleAlign")
-    .value("child_rounding", ImGuiStyleVar_ChildRounding, "float     ChildRounding")
-    .value("child_border_size", ImGuiStyleVar_ChildBorderSize, "float     ChildBorderSize")
-    .value("popup_rounding", ImGuiStyleVar_PopupRounding, "float     PopupRounding")
-    .value("popup_border_size", ImGuiStyleVar_PopupBorderSize, "float     PopupBorderSize")
-    .value("frame_padding", ImGuiStyleVar_FramePadding, "ImVec2    FramePadding")
-    .value("frame_rounding", ImGuiStyleVar_FrameRounding, "float     FrameRounding")
-    .value("frame_border_size", ImGuiStyleVar_FrameBorderSize, "float     FrameBorderSize")
-    .value("item_spacing", ImGuiStyleVar_ItemSpacing, "ImVec2    ItemSpacing")
-    .value("item_inner_spacing", ImGuiStyleVar_ItemInnerSpacing, "ImVec2    ItemInnerSpacing")
-    .value("indent_spacing", ImGuiStyleVar_IndentSpacing, "float     IndentSpacing")
-    .value("cell_padding", ImGuiStyleVar_CellPadding, "ImVec2    CellPadding")
-    .value("scrollbar_size", ImGuiStyleVar_ScrollbarSize, "float     ScrollbarSize")
-    .value("scrollbar_rounding", ImGuiStyleVar_ScrollbarRounding, "float     ScrollbarRounding")
-    .value("grab_min_size", ImGuiStyleVar_GrabMinSize, "float     GrabMinSize")
-    .value("grab_rounding", ImGuiStyleVar_GrabRounding, "float     GrabRounding")
-    .value("tab_rounding", ImGuiStyleVar_TabRounding, "float     TabRounding")
-    .value("button_text_align", ImGuiStyleVar_ButtonTextAlign, "ImVec2    ButtonTextAlign")
-    .value("selectable_text_align", ImGuiStyleVar_SelectableTextAlign, "ImVec2    SelectableTextAlign")
-    .value("count", ImGuiStyleVar_COUNT, "");
+        .value("alpha", ImGuiStyleVar_Alpha, "float     Alpha")
+        .value("disabled_alpha", ImGuiStyleVar_DisabledAlpha, "float     DisabledAlpha")
+        .value("window_padding", ImGuiStyleVar_WindowPadding, "ImVec2    WindowPadding")
+        .value("window_rounding", ImGuiStyleVar_WindowRounding, "float     WindowRounding")
+        .value("window_border_size", ImGuiStyleVar_WindowBorderSize, "float     WindowBorderSize")
+        .value("window_min_size", ImGuiStyleVar_WindowMinSize, "ImVec2    WindowMinSize")
+        .value("window_title_align", ImGuiStyleVar_WindowTitleAlign, "ImVec2    WindowTitleAlign")
+        .value("child_rounding", ImGuiStyleVar_ChildRounding, "float     ChildRounding")
+        .value("child_border_size", ImGuiStyleVar_ChildBorderSize, "float     ChildBorderSize")
+        .value("popup_rounding", ImGuiStyleVar_PopupRounding, "float     PopupRounding")
+        .value("popup_border_size", ImGuiStyleVar_PopupBorderSize, "float     PopupBorderSize")
+        .value("frame_padding", ImGuiStyleVar_FramePadding, "ImVec2    FramePadding")
+        .value("frame_rounding", ImGuiStyleVar_FrameRounding, "float     FrameRounding")
+        .value("frame_border_size", ImGuiStyleVar_FrameBorderSize, "float     FrameBorderSize")
+        .value("item_spacing", ImGuiStyleVar_ItemSpacing, "ImVec2    ItemSpacing")
+        .value("item_inner_spacing", ImGuiStyleVar_ItemInnerSpacing, "ImVec2    ItemInnerSpacing")
+        .value("indent_spacing", ImGuiStyleVar_IndentSpacing, "float     IndentSpacing")
+        .value("cell_padding", ImGuiStyleVar_CellPadding, "ImVec2    CellPadding")
+        .value("scrollbar_size", ImGuiStyleVar_ScrollbarSize, "float     ScrollbarSize")
+        .value("scrollbar_rounding", ImGuiStyleVar_ScrollbarRounding, "float     ScrollbarRounding")
+        .value("grab_min_size", ImGuiStyleVar_GrabMinSize, "float     GrabMinSize")
+        .value("grab_rounding", ImGuiStyleVar_GrabRounding, "float     GrabRounding")
+        .value("tab_rounding", ImGuiStyleVar_TabRounding, "float     TabRounding")
+        .value("button_text_align", ImGuiStyleVar_ButtonTextAlign, "ImVec2    ButtonTextAlign")
+        .value("selectable_text_align", ImGuiStyleVar_SelectableTextAlign, "ImVec2    SelectableTextAlign")
+        .value("count", ImGuiStyleVar_COUNT, "");
 
 
     py::enum_<ImGuiButtonFlags_>(m, "ImGuiButtonFlags_", py::arithmetic(), "Flags for InvisibleButton() [extended in imgui_internal.h]")    // imgui.h:1624
-    .value("none", ImGuiButtonFlags_None, "")
-    .value("mouse_button_left", ImGuiButtonFlags_MouseButtonLeft, "React on left mouse button (default)")
-    .value("mouse_button_right", ImGuiButtonFlags_MouseButtonRight, "React on right mouse button")
-    .value("mouse_button_middle", ImGuiButtonFlags_MouseButtonMiddle, "React on center mouse button")
-    .value("mouse_button_mask_", ImGuiButtonFlags_MouseButtonMask_, "")
-    .value("mouse_button_default_", ImGuiButtonFlags_MouseButtonDefault_, "");
+        .value("none", ImGuiButtonFlags_None, "")
+        .value("mouse_button_left", ImGuiButtonFlags_MouseButtonLeft, "React on left mouse button (default)")
+        .value("mouse_button_right", ImGuiButtonFlags_MouseButtonRight, "React on right mouse button")
+        .value("mouse_button_middle", ImGuiButtonFlags_MouseButtonMiddle, "React on center mouse button")
+        .value("mouse_button_mask_", ImGuiButtonFlags_MouseButtonMask_, "")
+        .value("mouse_button_default_", ImGuiButtonFlags_MouseButtonDefault_, "");
 
 
     py::enum_<ImGuiColorEditFlags_>(m, "ImGuiColorEditFlags_", py::arithmetic(), "Flags for ColorEdit3() / ColorEdit4() / ColorPicker3() / ColorPicker4() / ColorButton()")    // imgui.h:1637
-    .value("none", ImGuiColorEditFlags_None, "")
-    .value("no_alpha", ImGuiColorEditFlags_NoAlpha, "// ColorEdit, ColorPicker, ColorButton: ignore Alpha component (will only read 3 components from the input pointer).")
-    .value("no_picker", ImGuiColorEditFlags_NoPicker, "// ColorEdit: disable picker when clicking on color square.")
-    .value("no_options", ImGuiColorEditFlags_NoOptions, "// ColorEdit: disable toggling options menu when right-clicking on inputs/small preview.")
-    .value("no_small_preview", ImGuiColorEditFlags_NoSmallPreview, "// ColorEdit, ColorPicker: disable color square preview next to the inputs. (e.g. to show only the inputs)")
-    .value("no_inputs", ImGuiColorEditFlags_NoInputs, "// ColorEdit, ColorPicker: disable inputs sliders/text widgets (e.g. to show only the small preview color square).")
-    .value("no_tooltip", ImGuiColorEditFlags_NoTooltip, "// ColorEdit, ColorPicker, ColorButton: disable tooltip when hovering the preview.")
-    .value("no_label", ImGuiColorEditFlags_NoLabel, "// ColorEdit, ColorPicker: disable display of inline text label (the label is still forwarded to the tooltip and picker).")
-    .value("no_side_preview", ImGuiColorEditFlags_NoSidePreview, "// ColorPicker: disable bigger color preview on right side of the picker, use small color square preview instead.")
-    .value("no_drag_drop", ImGuiColorEditFlags_NoDragDrop, "// ColorEdit: disable drag and drop target. ColorButton: disable drag and drop source.")
-    .value("no_border", ImGuiColorEditFlags_NoBorder, "// ColorButton: disable border (which is enforced by default)")
-    .value("alpha_bar", ImGuiColorEditFlags_AlphaBar, "// ColorEdit, ColorPicker: show vertical alpha bar/gradient in picker.")
-    .value("alpha_preview", ImGuiColorEditFlags_AlphaPreview, "// ColorEdit, ColorPicker, ColorButton: display preview as a transparent color over a checkerboard, instead of opaque.")
-    .value("alpha_preview_half", ImGuiColorEditFlags_AlphaPreviewHalf, "// ColorEdit, ColorPicker, ColorButton: display half opaque / half checkerboard, instead of opaque.")
-    .value("hdr", ImGuiColorEditFlags_HDR, "// (WIP) ColorEdit: Currently only disable 0.0..1.0 limits in RGBA edition (note: you probably want to use ImGuiColorEditFlags_Float flag as well).")
-    .value("display_rgb", ImGuiColorEditFlags_DisplayRGB, "[Display]    // ColorEdit: override _display_ type among RGB/HSV/Hex. ColorPicker: select any combination using one or more of RGB/HSV/Hex.")
-    .value("display_hsv", ImGuiColorEditFlags_DisplayHSV, "[Display]    // \"")
-    .value("display_hex", ImGuiColorEditFlags_DisplayHex, "[Display]    // \"")
-    .value("uint8", ImGuiColorEditFlags_Uint8, "[DataType]   // ColorEdit, ColorPicker, ColorButton: _display_ values formatted as 0..255.")
-    .value("float", ImGuiColorEditFlags_Float, "[DataType]   // ColorEdit, ColorPicker, ColorButton: _display_ values formatted as 0.0..1.0 floats instead of 0..255 integers. No round-trip of value via integers.")
-    .value("picker_hue_bar", ImGuiColorEditFlags_PickerHueBar, "[Picker]     // ColorPicker: bar for Hue, rectangle for Sat/Value.")
-    .value("picker_hue_wheel", ImGuiColorEditFlags_PickerHueWheel, "[Picker]     // ColorPicker: wheel for Hue, triangle for Sat/Value.")
-    .value("input_rgb", ImGuiColorEditFlags_InputRGB, "[Input]      // ColorEdit, ColorPicker: input and output data in RGB format.")
-    .value("input_hsv", ImGuiColorEditFlags_InputHSV, "[Input]      // ColorEdit, ColorPicker: input and output data in HSV format.")
-    .value("default_options_", ImGuiColorEditFlags_DefaultOptions_, " Defaults Options. You can set application defaults using SetColorEditOptions(). The intent is that you probably don't want to\n override them in most of your calls. Let the user choose via the option menu and/or call SetColorEditOptions() once during startup.")
-    .value("display_mask_", ImGuiColorEditFlags_DisplayMask_, "")
-    .value("data_type_mask_", ImGuiColorEditFlags_DataTypeMask_, "")
-    .value("picker_mask_", ImGuiColorEditFlags_PickerMask_, "")
-    .value("input_mask_", ImGuiColorEditFlags_InputMask_, "");
+        .value("none", ImGuiColorEditFlags_None, "")
+        .value("no_alpha", ImGuiColorEditFlags_NoAlpha, "// ColorEdit, ColorPicker, ColorButton: ignore Alpha component (will only read 3 components from the input pointer).")
+        .value("no_picker", ImGuiColorEditFlags_NoPicker, "// ColorEdit: disable picker when clicking on color square.")
+        .value("no_options", ImGuiColorEditFlags_NoOptions, "// ColorEdit: disable toggling options menu when right-clicking on inputs/small preview.")
+        .value("no_small_preview", ImGuiColorEditFlags_NoSmallPreview, "// ColorEdit, ColorPicker: disable color square preview next to the inputs. (e.g. to show only the inputs)")
+        .value("no_inputs", ImGuiColorEditFlags_NoInputs, "// ColorEdit, ColorPicker: disable inputs sliders/text widgets (e.g. to show only the small preview color square).")
+        .value("no_tooltip", ImGuiColorEditFlags_NoTooltip, "// ColorEdit, ColorPicker, ColorButton: disable tooltip when hovering the preview.")
+        .value("no_label", ImGuiColorEditFlags_NoLabel, "// ColorEdit, ColorPicker: disable display of inline text label (the label is still forwarded to the tooltip and picker).")
+        .value("no_side_preview", ImGuiColorEditFlags_NoSidePreview, "// ColorPicker: disable bigger color preview on right side of the picker, use small color square preview instead.")
+        .value("no_drag_drop", ImGuiColorEditFlags_NoDragDrop, "// ColorEdit: disable drag and drop target. ColorButton: disable drag and drop source.")
+        .value("no_border", ImGuiColorEditFlags_NoBorder, "// ColorButton: disable border (which is enforced by default)")
+        .value("alpha_bar", ImGuiColorEditFlags_AlphaBar, "// ColorEdit, ColorPicker: show vertical alpha bar/gradient in picker.")
+        .value("alpha_preview", ImGuiColorEditFlags_AlphaPreview, "// ColorEdit, ColorPicker, ColorButton: display preview as a transparent color over a checkerboard, instead of opaque.")
+        .value("alpha_preview_half", ImGuiColorEditFlags_AlphaPreviewHalf, "// ColorEdit, ColorPicker, ColorButton: display half opaque / half checkerboard, instead of opaque.")
+        .value("hdr", ImGuiColorEditFlags_HDR, "// (WIP) ColorEdit: Currently only disable 0.0..1.0 limits in RGBA edition (note: you probably want to use ImGuiColorEditFlags_Float flag as well).")
+        .value("display_rgb", ImGuiColorEditFlags_DisplayRGB, "[Display]    // ColorEdit: override _display_ type among RGB/HSV/Hex. ColorPicker: select any combination using one or more of RGB/HSV/Hex.")
+        .value("display_hsv", ImGuiColorEditFlags_DisplayHSV, "[Display]    // \"")
+        .value("display_hex", ImGuiColorEditFlags_DisplayHex, "[Display]    // \"")
+        .value("uint8", ImGuiColorEditFlags_Uint8, "[DataType]   // ColorEdit, ColorPicker, ColorButton: _display_ values formatted as 0..255.")
+        .value("float", ImGuiColorEditFlags_Float, "[DataType]   // ColorEdit, ColorPicker, ColorButton: _display_ values formatted as 0.0..1.0 floats instead of 0..255 integers. No round-trip of value via integers.")
+        .value("picker_hue_bar", ImGuiColorEditFlags_PickerHueBar, "[Picker]     // ColorPicker: bar for Hue, rectangle for Sat/Value.")
+        .value("picker_hue_wheel", ImGuiColorEditFlags_PickerHueWheel, "[Picker]     // ColorPicker: wheel for Hue, triangle for Sat/Value.")
+        .value("input_rgb", ImGuiColorEditFlags_InputRGB, "[Input]      // ColorEdit, ColorPicker: input and output data in RGB format.")
+        .value("input_hsv", ImGuiColorEditFlags_InputHSV, "[Input]      // ColorEdit, ColorPicker: input and output data in HSV format.")
+        .value("default_options_", ImGuiColorEditFlags_DefaultOptions_, " Defaults Options. You can set application defaults using SetColorEditOptions(). The intent is that you probably don't want to\n override them in most of your calls. Let the user choose via the option menu and/or call SetColorEditOptions() once during startup.")
+        .value("display_mask_", ImGuiColorEditFlags_DisplayMask_, "")
+        .value("data_type_mask_", ImGuiColorEditFlags_DataTypeMask_, "")
+        .value("picker_mask_", ImGuiColorEditFlags_PickerMask_, "")
+        .value("input_mask_", ImGuiColorEditFlags_InputMask_, "");
 
 
     py::enum_<ImGuiSliderFlags_>(m, "ImGuiSliderFlags_", py::arithmetic(), " Flags for DragFloat(), DragInt(), SliderFloat(), SliderInt() etc.\n We use the same sets of flags for DragXXX() and SliderXXX() functions as the features are the same and it makes it easier to swap them.")    // imgui.h:1682
-    .value("none", ImGuiSliderFlags_None, "")
-    .value("always_clamp", ImGuiSliderFlags_AlwaysClamp, "Clamp value to min/max bounds when input manually with CTRL+Click. By default CTRL+Click allows going out of bounds.")
-    .value("logarithmic", ImGuiSliderFlags_Logarithmic, "Make the widget logarithmic (linear otherwise). Consider using ImGuiSliderFlags_NoRoundToFormat with this if using a format-string with small amount of digits.")
-    .value("no_round_to_format", ImGuiSliderFlags_NoRoundToFormat, "Disable rounding underlying value to match precision of the display format string (e.g. %.3 values are rounded to those 3 digits)")
-    .value("no_input", ImGuiSliderFlags_NoInput, "Disable CTRL+Click or Enter key allowing to input text directly into the widget")
-    .value("invalid_mask_", ImGuiSliderFlags_InvalidMask_, "");
+        .value("none", ImGuiSliderFlags_None, "")
+        .value("always_clamp", ImGuiSliderFlags_AlwaysClamp, "Clamp value to min/max bounds when input manually with CTRL+Click. By default CTRL+Click allows going out of bounds.")
+        .value("logarithmic", ImGuiSliderFlags_Logarithmic, "Make the widget logarithmic (linear otherwise). Consider using ImGuiSliderFlags_NoRoundToFormat with this if using a format-string with small amount of digits.")
+        .value("no_round_to_format", ImGuiSliderFlags_NoRoundToFormat, "Disable rounding underlying value to match precision of the display format string (e.g. %.3 values are rounded to those 3 digits)")
+        .value("no_input", ImGuiSliderFlags_NoInput, "Disable CTRL+Click or Enter key allowing to input text directly into the widget")
+        .value("invalid_mask_", ImGuiSliderFlags_InvalidMask_, "");
 
 
     py::enum_<ImGuiMouseButton_>(m, "ImGuiMouseButton_", py::arithmetic(), " Identify a mouse button.\n Those values are guaranteed to be stable and we frequently use 0/1 directly. Named enums provided for convenience.")    // imgui.h:1699
-    .value("left", ImGuiMouseButton_Left, "")
-    .value("right", ImGuiMouseButton_Right, "")
-    .value("middle", ImGuiMouseButton_Middle, "")
-    .value("count", ImGuiMouseButton_COUNT, "");
+        .value("left", ImGuiMouseButton_Left, "")
+        .value("right", ImGuiMouseButton_Right, "")
+        .value("middle", ImGuiMouseButton_Middle, "")
+        .value("count", ImGuiMouseButton_COUNT, "");
 
 
     py::enum_<ImGuiMouseCursor_>(m, "ImGuiMouseCursor_", py::arithmetic(), " Enumeration for GetMouseCursor()\n User code may request backend to display given cursor by calling SetMouseCursor(), which is why we have some cursors that are marked unused here")    // imgui.h:1709
-    .value("none", ImGuiMouseCursor_None, "")
-    .value("arrow", ImGuiMouseCursor_Arrow, "")
-    .value("text_input", ImGuiMouseCursor_TextInput, "When hovering over InputText, etc.")
-    .value("resize_all", ImGuiMouseCursor_ResizeAll, "(Unused by Dear ImGui functions)")
-    .value("resize_ns", ImGuiMouseCursor_ResizeNS, "When hovering over an horizontal border")
-    .value("resize_ew", ImGuiMouseCursor_ResizeEW, "When hovering over a vertical border or a column")
-    .value("resize_nesw", ImGuiMouseCursor_ResizeNESW, "When hovering over the bottom-left corner of a window")
-    .value("resize_nwse", ImGuiMouseCursor_ResizeNWSE, "When hovering over the bottom-right corner of a window")
-    .value("hand", ImGuiMouseCursor_Hand, "(Unused by Dear ImGui functions. Use for e.g. hyperlinks)")
-    .value("not_allowed", ImGuiMouseCursor_NotAllowed, "When hovering something with disallowed interaction. Usually a crossed circle.")
-    .value("count", ImGuiMouseCursor_COUNT, "");
+        .value("none", ImGuiMouseCursor_None, "")
+        .value("arrow", ImGuiMouseCursor_Arrow, "")
+        .value("text_input", ImGuiMouseCursor_TextInput, "When hovering over InputText, etc.")
+        .value("resize_all", ImGuiMouseCursor_ResizeAll, "(Unused by Dear ImGui functions)")
+        .value("resize_ns", ImGuiMouseCursor_ResizeNS, "When hovering over an horizontal border")
+        .value("resize_ew", ImGuiMouseCursor_ResizeEW, "When hovering over a vertical border or a column")
+        .value("resize_nesw", ImGuiMouseCursor_ResizeNESW, "When hovering over the bottom-left corner of a window")
+        .value("resize_nwse", ImGuiMouseCursor_ResizeNWSE, "When hovering over the bottom-right corner of a window")
+        .value("hand", ImGuiMouseCursor_Hand, "(Unused by Dear ImGui functions. Use for e.g. hyperlinks)")
+        .value("not_allowed", ImGuiMouseCursor_NotAllowed, "When hovering something with disallowed interaction. Usually a crossed circle.")
+        .value("count", ImGuiMouseCursor_COUNT, "");
 
 
     py::enum_<ImGuiCond_>(m, "ImGuiCond_", py::arithmetic(), " Enumeration for ImGui::SetWindow(), SetNextWindow(), SetNextItem() functions\n Represent a condition.\n Important: Treat as a regular enum! Do NOT combine multiple values using binary operators! All the functions above treat 0 as a shortcut to ImGuiCond_Always.")    // imgui.h:1727
-    .value("none", ImGuiCond_None, "No condition (always set the variable), same as _Always")
-    .value("always", ImGuiCond_Always, "No condition (always set the variable)")
-    .value("once", ImGuiCond_Once, "Set the variable once per runtime session (only the first call will succeed)")
-    .value("first_use_ever", ImGuiCond_FirstUseEver, "Set the variable if the object/window has no persistently saved data (no entry in .ini file)")
-    .value("appearing", ImGuiCond_Appearing, "Set the variable if the object/window is appearing after being hidden/inactive (or the first time)");
+        .value("none", ImGuiCond_None, "No condition (always set the variable), same as _Always")
+        .value("always", ImGuiCond_Always, "No condition (always set the variable)")
+        .value("once", ImGuiCond_Once, "Set the variable once per runtime session (only the first call will succeed)")
+        .value("first_use_ever", ImGuiCond_FirstUseEver, "Set the variable if the object/window has no persistently saved data (no entry in .ini file)")
+        .value("appearing", ImGuiCond_Appearing, "Set the variable if the object/window is appearing after being hidden/inactive (or the first time)");
 
 
     auto pyClassImNewWrapper = py::class_<ImNewWrapper>    // imgui.h:1746
@@ -4281,7 +4281,7 @@ void py_init_module_imgui(py::module& m)
                 self.AddMousePosEvent(x, y);
             },
             py::arg("x"), py::arg("y"),
-            "Queue a mouse position update. Use -FLT_MAX,-FLT_MAX to signify no mouse (e.g. app not focused and not hovered)"
+            "Queue a mouse position update. Use -sys.float_info.max,-sys.float_info.max to signify no mouse (e.g. app not focused and not hovered)"
         )
         .def("add_mouse_button_event",    // imgui.h:1974
             [](ImGuiIO & self, int button, bool down)
@@ -4345,7 +4345,7 @@ void py_init_module_imgui(py::module& m)
                 self.SetAppAcceptingEvents(accepting_events);
             },
             py::arg("accepting_events"),
-            "Set master flag for accepting key/mouse/text events (default to true). Useful if you have native dialog boxes that are interrupting your application loop/refresh, and you want to disable events being queued while your app is frozen."
+            "Set master flag for accepting key/mouse/text events (default to True). Useful if you have native dialog boxes that are interrupting your application loop/refresh, and you want to disable events being queued while your app is frozen."
         )
         .def("clear_input_characters",    // imgui.h:1983
             [](ImGuiIO & self)
@@ -4675,7 +4675,7 @@ void py_init_module_imgui(py::module& m)
                 return self.GetVoidPtr(key);
             },
             py::arg("key"),
-            "default_val is NULL"
+            "default_val is None"
         )
         .def("set_void_ptr",    // imgui.h:2260
             [](ImGuiStorage & self, ImGuiID key, void * val)
@@ -4752,14 +4752,14 @@ void py_init_module_imgui(py::module& m)
             {
                 self.End();
             },
-            "Automatically called on the last call of Step() that returns false."
+            "Automatically called on the last call of Step() that returns False."
         )
         .def("step",    // imgui.h:2313
             [](ImGuiListClipper & self)
             {
                 return self.Step();
             },
-            "Call until it returns false. The DisplayStart/DisplayEnd fields will be set and you can process/draw those items."
+            "Call until it returns False. The DisplayStart/DisplayEnd fields will be set and you can process/draw those items."
         )
         .def("force_display_range_by_indices",    // imgui.h:2316
             [](ImGuiListClipper & self, int item_min, int item_max)
@@ -4860,28 +4860,28 @@ void py_init_module_imgui(py::module& m)
 
 
     py::enum_<ImDrawFlags_>(m, "ImDrawFlags_", py::arithmetic(), " Flags for ImDrawList functions\n (Legacy: bit 0 must always correspond to ImDrawFlags_Closed to be backward compatible with old API using a bool. Bits 1..3 must be unused)")    // imgui.h:2465
-    .value("none", ImDrawFlags_None, "")
-    .value("closed", ImDrawFlags_Closed, "PathStroke(), AddPolyline(): specify that shape should be closed (Important: this is always == 1 for legacy reason)")
-    .value("round_corners_top_left", ImDrawFlags_RoundCornersTopLeft, "AddRect(), AddRectFilled(), PathRect(): enable rounding top-left corner only (when rounding > 0.0, we default to all corners). Was 0x01.")
-    .value("round_corners_top_right", ImDrawFlags_RoundCornersTopRight, "AddRect(), AddRectFilled(), PathRect(): enable rounding top-right corner only (when rounding > 0.0, we default to all corners). Was 0x02.")
-    .value("round_corners_bottom_left", ImDrawFlags_RoundCornersBottomLeft, "AddRect(), AddRectFilled(), PathRect(): enable rounding bottom-left corner only (when rounding > 0.0, we default to all corners). Was 0x04.")
-    .value("round_corners_bottom_right", ImDrawFlags_RoundCornersBottomRight, "AddRect(), AddRectFilled(), PathRect(): enable rounding bottom-right corner only (when rounding > 0.0, we default to all corners). Wax 0x08.")
-    .value("round_corners_none", ImDrawFlags_RoundCornersNone, "AddRect(), AddRectFilled(), PathRect(): disable rounding on all corners (when rounding > 0.0). This is NOT zero, NOT an implicit flag!")
-    .value("round_corners_top", ImDrawFlags_RoundCornersTop, "")
-    .value("round_corners_bottom", ImDrawFlags_RoundCornersBottom, "")
-    .value("round_corners_left", ImDrawFlags_RoundCornersLeft, "")
-    .value("round_corners_right", ImDrawFlags_RoundCornersRight, "")
-    .value("round_corners_all", ImDrawFlags_RoundCornersAll, "")
-    .value("round_corners_default_", ImDrawFlags_RoundCornersDefault_, "Default to ALL corners if none of the _RoundCornersXX flags are specified.")
-    .value("round_corners_mask_", ImDrawFlags_RoundCornersMask_, "");
+        .value("none", ImDrawFlags_None, "")
+        .value("closed", ImDrawFlags_Closed, "PathStroke(), AddPolyline(): specify that shape should be closed (Important: this is always == 1 for legacy reason)")
+        .value("round_corners_top_left", ImDrawFlags_RoundCornersTopLeft, "AddRect(), AddRectFilled(), PathRect(): enable rounding top-left corner only (when rounding > 0.0, we default to all corners). Was 0x01.")
+        .value("round_corners_top_right", ImDrawFlags_RoundCornersTopRight, "AddRect(), AddRectFilled(), PathRect(): enable rounding top-right corner only (when rounding > 0.0, we default to all corners). Was 0x02.")
+        .value("round_corners_bottom_left", ImDrawFlags_RoundCornersBottomLeft, "AddRect(), AddRectFilled(), PathRect(): enable rounding bottom-left corner only (when rounding > 0.0, we default to all corners). Was 0x04.")
+        .value("round_corners_bottom_right", ImDrawFlags_RoundCornersBottomRight, "AddRect(), AddRectFilled(), PathRect(): enable rounding bottom-right corner only (when rounding > 0.0, we default to all corners). Wax 0x08.")
+        .value("round_corners_none", ImDrawFlags_RoundCornersNone, "AddRect(), AddRectFilled(), PathRect(): disable rounding on all corners (when rounding > 0.0). This is NOT zero, NOT an implicit flag!")
+        .value("round_corners_top", ImDrawFlags_RoundCornersTop, "")
+        .value("round_corners_bottom", ImDrawFlags_RoundCornersBottom, "")
+        .value("round_corners_left", ImDrawFlags_RoundCornersLeft, "")
+        .value("round_corners_right", ImDrawFlags_RoundCornersRight, "")
+        .value("round_corners_all", ImDrawFlags_RoundCornersAll, "")
+        .value("round_corners_default_", ImDrawFlags_RoundCornersDefault_, "Default to ALL corners if none of the _RoundCornersXX flags are specified.")
+        .value("round_corners_mask_", ImDrawFlags_RoundCornersMask_, "");
 
 
     py::enum_<ImDrawListFlags_>(m, "ImDrawListFlags_", py::arithmetic(), " Flags for ImDrawList instance. Those are set automatically by ImGui:: functions from ImGuiIO settings, and generally not manipulated directly.\n It is however possible to temporarily alter flags between calls to ImDrawList:: functions.")    // imgui.h:2485
-    .value("none", ImDrawListFlags_None, "")
-    .value("anti_aliased_lines", ImDrawListFlags_AntiAliasedLines, "Enable anti-aliased lines/borders (2 the number of triangles for 1.0 wide line or lines thin enough to be drawn using textures, otherwise 3 the number of triangles)")
-    .value("anti_aliased_lines_use_tex", ImDrawListFlags_AntiAliasedLinesUseTex, "Enable anti-aliased lines/borders using textures when possible. Require backend to render with bilinear filtering (NOT point/nearest filtering).")
-    .value("anti_aliased_fill", ImDrawListFlags_AntiAliasedFill, "Enable anti-aliased edge around filled shapes (rounded rectangles, circles).")
-    .value("allow_vtx_offset", ImDrawListFlags_AllowVtxOffset, "Can emit 'VtxOffset > 0' to allow large meshes. Set when 'ImGuiBackendFlags_RendererHasVtxOffset' is enabled.");
+        .value("none", ImDrawListFlags_None, "")
+        .value("anti_aliased_lines", ImDrawListFlags_AntiAliasedLines, "Enable anti-aliased lines/borders (2 the number of triangles for 1.0 wide line or lines thin enough to be drawn using textures, otherwise 3 the number of triangles)")
+        .value("anti_aliased_lines_use_tex", ImDrawListFlags_AntiAliasedLinesUseTex, "Enable anti-aliased lines/borders using textures when possible. Require backend to render with bilinear filtering (NOT point/nearest filtering).")
+        .value("anti_aliased_fill", ImDrawListFlags_AntiAliasedFill, "Enable anti-aliased edge around filled shapes (rounded rectangles, circles).")
+        .value("allow_vtx_offset", ImDrawListFlags_AllowVtxOffset, "Can emit 'VtxOffset > 0' to allow large meshes. Set when 'ImGuiBackendFlags_RendererHasVtxOffset' is enabled.");
 
 
     auto pyClassImDrawList = py::class_<ImDrawList>    // imgui.h:2503
@@ -5350,10 +5350,10 @@ void py_init_module_imgui(py::module& m)
 
 
     py::enum_<ImFontAtlasFlags_>(m, "ImFontAtlasFlags_", py::arithmetic(), "Flags for ImFontAtlas build")    // imgui.h:2722
-    .value("none", ImFontAtlasFlags_None, "")
-    .value("no_power_of_two_height", ImFontAtlasFlags_NoPowerOfTwoHeight, "Don't round the height to next power of two")
-    .value("no_mouse_cursors", ImFontAtlasFlags_NoMouseCursors, "Don't build software mouse cursors into the atlas (save a little texture memory)")
-    .value("no_baked_lines", ImFontAtlasFlags_NoBakedLines, "Don't build thick line textures into the atlas (save a little texture memory, allow support for point/nearest filtering). The AntiAliasedLinesUseTex features uses them, otherwise they will be rendered using polygons (more expensive for CPU/GPU).");
+        .value("none", ImFontAtlasFlags_None, "")
+        .value("no_power_of_two_height", ImFontAtlasFlags_NoPowerOfTwoHeight, "Don't round the height to next power of two")
+        .value("no_mouse_cursors", ImFontAtlasFlags_NoMouseCursors, "Don't build software mouse cursors into the atlas (save a little texture memory)")
+        .value("no_baked_lines", ImFontAtlasFlags_NoBakedLines, "Don't build thick line textures into the atlas (save a little texture memory, allow support for point/nearest filtering). The AntiAliasedLinesUseTex features uses them, otherwise they will be rendered using polygons (more expensive for CPU/GPU).");
 
 
     auto pyClassImFontAtlas = py::class_<ImFontAtlas>    // imgui.h:2747
@@ -5386,7 +5386,7 @@ void py_init_module_imgui(py::module& m)
                 return self.AddFontFromMemoryTTF(font_data, font_size, size_pixels, font_cfg, glyph_ranges);
             },
             py::arg("font_data"), py::arg("font_size"), py::arg("size_pixels"), py::arg("font_cfg") = NULL, py::arg("glyph_ranges") = NULL,
-            "Note: Transfer ownership of 'ttf_data' to ImFontAtlas! Will be deleted after destruction of the atlas. Set font_cfg->FontDataOwnedByAtlas=false to keep ownership of your data and it won't be freed."
+            "Note: Transfer ownership of 'ttf_data' to ImFontAtlas! Will be deleted after destruction of the atlas. Set font_cfg->FontDataOwnedByAtlas=False to keep ownership of your data and it won't be freed."
         )
         .def("add_font_from_memory_compressed_ttf",    // imgui.h:2755
             [](ImFontAtlas & self, const void * compressed_font_data, int compressed_font_size, float size_pixels, const ImFontConfig * font_cfg = NULL, const ImWchar * glyph_ranges = NULL)
@@ -5437,7 +5437,7 @@ void py_init_module_imgui(py::module& m)
             {
                 return self.Build();
             },
-            "Build pixels data. This is called automatically for you by the GetTexData*** functions."
+            "Build pixels data. This is called automatically for you by the GetTexData functions."
         )
         .def("get_glyph_ranges_default",    // imgui.h:2780
             [](ImFontAtlas & self)
@@ -5665,10 +5665,10 @@ void py_init_module_imgui(py::module& m)
 
 
     py::enum_<ImGuiViewportFlags_>(m, "ImGuiViewportFlags_", py::arithmetic(), "Flags stored in ImGuiViewport::Flags, giving indications to the platform backends.")    // imgui.h:2904
-    .value("none", ImGuiViewportFlags_None, "")
-    .value("is_platform_window", ImGuiViewportFlags_IsPlatformWindow, "Represent a Platform Window")
-    .value("is_platform_monitor", ImGuiViewportFlags_IsPlatformMonitor, "Represent a Platform Monitor (unused yet)")
-    .value("owned_by_app", ImGuiViewportFlags_OwnedByApp, "Platform Window: is created/managed by the application (rather than a dear imgui backend)");
+        .value("none", ImGuiViewportFlags_None, "")
+        .value("is_platform_window", ImGuiViewportFlags_IsPlatformWindow, "Represent a Platform Window")
+        .value("is_platform_monitor", ImGuiViewportFlags_IsPlatformMonitor, "Represent a Platform Monitor (unused yet)")
+        .value("owned_by_app", ImGuiViewportFlags_OwnedByApp, "Platform Window: is created/managed by the application (rather than a dear imgui backend)");
 
 
     auto pyClassImGuiViewport = py::class_<ImGuiViewport>    // imgui.h:2919

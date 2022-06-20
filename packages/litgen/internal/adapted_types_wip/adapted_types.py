@@ -85,10 +85,7 @@ class AdaptedElement:  # (abc.ABC):  # Cannot be abstract (mypy limitation:  htt
 
     def str_pydef(self) -> str:
         pydef_lines = self._str_pydef_lines()
-        pydef_lines_indented = code_utils.indent_code_lines(
-            pydef_lines, skip_first_line=True, indent_str=self.options.indent_cpp_spaces()
-        )
-        r = "\n".join(pydef_lines_indented) + "\n"
+        r = "\n".join(pydef_lines) + "\n"
         return r
 
 
@@ -148,6 +145,27 @@ class AdaptedDecl(AdaptedElement):
             lines.append(decl_part)
 
         return lines
+
+    def _str_pydef_as_pyarg(self) -> str:
+        param_template = 'py::arg("{argname_python}"){maybe_equal}{maybe_defaultvalue_cpp}'
+
+        maybe_defaultvalue_cpp = self.cpp_element().initial_value_code
+        if len(maybe_defaultvalue_cpp) > 0:
+            maybe_equal = " = "
+        else:
+            maybe_equal = ""
+
+        argname_python = self.decl_name_python()
+
+        param_line = code_utils.replace_in_string(
+            param_template,
+            {
+                "argname_python": argname_python,
+                "maybe_equal": maybe_equal,
+                "maybe_defaultvalue_cpp": maybe_defaultvalue_cpp,
+            },
+        )
+        return param_line
 
     # override
     def _str_pydef_lines(self) -> List[str]:
@@ -374,6 +392,10 @@ class AdaptedEnum(AdaptedElement):
         last_line = lines[-1]
         last_line = code_utils.add_item_before_comment(last_line, ";")
         lines[-1] = last_line
+
+        # indent lines
+        lines = code_utils.indent_code_lines(lines, skip_first_line=True, indent_str=self.options.indent_cpp_spaces())
+
         return lines
 
     def __str__(self) -> str:
@@ -565,9 +587,178 @@ class AdaptedFunction(AdaptedElement):
     #
     # _str_pydef_lines()
     #
+
+    def _pydef_pyarg_list(self) -> List[str]:
+        pyarg_strs: List[str] = []
+        for param in self.cpp_adapted_function.parameter_list.parameters:
+            adapted_decl = AdaptedDecl(param.decl, self.options)
+            pyarg_str = adapted_decl._str_pydef_as_pyarg()
+            pyarg_strs.append(pyarg_str)
+        return pyarg_strs
+
+    def _pydef_function_return_value_policy(self) -> str:
+        """Parses the return_value_policy from the function end of line comment
+        For example:
+            // A static instance (which python shall not delete, as enforced by the marker return_policy below)
+            static Foo& Instance() { static Foo instance; return instance; }       // return_value_policy::reference
+        """
+        token = "return_value_policy::"
+        eol_comment = self.cpp_element().cpp_element_comments.eol_comment_code()
+        if "return_value_policy::" in eol_comment:
+            return_value_policy = eol_comment[eol_comment.index(token) + len(token) :]
+            return return_value_policy
+        else:
+            return ""
+
+    def _pydef_return_str(self) -> str:
+        """Creates the return part of the pydef"""
+
+        template_code = "{return_or_nothing}{self_prefix}{function_to_call}({params_call_inner})"
+
+        return_or_nothing = (
+            "return " if self.cpp_adapted_function.full_return_type(self.options.srcml_options) != "void" else ""
+        )
+        self_prefix = "self." if (self.is_method() and self.lambda_to_call is None) else ""
+        # fill function_to_call
+        function_to_call = (
+            self.lambda_to_call if self.lambda_to_call is not None else self.cpp_adapted_function.function_name
+        )
+        # Fill params_call_inner
+        params_call_inner = self.cpp_adapted_function.parameter_list.names_only_for_call()
+
+        code = code_utils.replace_in_string(
+            template_code,
+            {
+                "return_or_nothing": return_or_nothing,
+                "self_prefix": self_prefix,
+                "function_to_call": function_to_call,
+                "params_call_inner": params_call_inner,
+            },
+        )
+        return code
+
+    def _pydef_full_str_impl(self) -> str:
+        """Create the full code of the pydef"""
+
+        template_code = code_utils.unindent_code(
+            """
+            {module_or_class}.def("{function_name}",{location}
+            {_i_}[]({params_call_with_self_if_method})
+            {_i_}{
+            {_i_}{_i_}{lambda_adapter_code}
+            {maybe_empty_line}
+            {_i_}{_i_}{return_code};
+            {_i_}}{maybe_comma}
+            {_i_}{maybe_py_arg}{maybe_comma}
+            {_i_}{maybe_docstring}{maybe_comma}
+            {_i_}{maybe_return_value_policy}{maybe_comma}
+            ){semicolon_if_not_method}"""
+        )[1:]
+
+        function_infos = self.cpp_adapted_function
+
+        # fill _i_
+        _i_ = self.options.indent_cpp_spaces()
+
+        # fill module_or_class, function_name, location
+        module_or_class = "" if self.is_method() else "m"
+        function_name = self.function_name_python()
+        location = self.info_original_location_cpp()
+
+        # fill params_call_with_self_if_method
+        _params_list = function_infos.parameter_list.types_names_default_for_signature_list()
+        if self.is_method():
+            _self_param = f"{self.parent_struct_name} & self"
+            if function_infos.is_const():
+                _self_param = "const " + _self_param
+            _params_list = [_self_param] + _params_list
+        params_call_with_self_if_method = ", ".join(_params_list)
+
+        # fill return_code
+        return_code = self._pydef_return_str()
+
+        # fill lambda_adapter_code
+        lambda_adapter_code = self.cpp_adapter_code
+
+        if lambda_adapter_code is not None:
+            lambda_adapter_code = code_utils.indent_code(
+                lambda_adapter_code,
+                indent_str=self.options.indent_cpp_spaces() * 2,
+                skip_first_line=True,
+            )
+            if lambda_adapter_code[-1] == "\n":  # type: ignore
+                lambda_adapter_code = lambda_adapter_code[:-1]  # type: ignore
+
+        # fill maybe_empty_line, semicolon_if_not_method
+        maybe_empty_line = "" if lambda_adapter_code is not None else None
+        semicolon_if_not_method = ";" if not self.is_method() else ""
+
+        # fill maybe_py_arg
+        pyarg_codes = self._pydef_pyarg_list()
+        if len(pyarg_codes) > 0:
+            maybe_py_arg = ", ".join(pyarg_codes)
+        else:
+            maybe_py_arg = None
+
+        # fill maybe_docstring
+        maybe_docstring = self.comment_pydef_one_line()
+        if len(maybe_docstring) == 0:
+            maybe_docstring = None
+        else:
+            maybe_docstring = f'"{maybe_docstring}"'
+
+        # Fill maybe_return_value_policy
+        return_value_policy = self._pydef_function_return_value_policy()
+        if len(return_value_policy) > 0:
+            maybe_return_value_policy = f"pybind11::return_value_policy::{return_value_policy}"
+        else:
+            maybe_return_value_policy = None
+
+        # Apply simple replacements
+        template_code = code_utils.replace_in_string(
+            template_code,
+            {
+                "_i_": _i_,
+                "module_or_class": module_or_class,
+                "function_name": function_name,
+                "location": location,
+                "return_code": return_code,
+                "params_call_with_self_if_method": params_call_with_self_if_method,
+                "semicolon_if_not_method": semicolon_if_not_method,
+            },
+        )
+
+        # Apply replacements with possible line removal
+        template_code = code_utils.replace_in_string_remove_line_if_none(
+            template_code,
+            {
+                "lambda_adapter_code": lambda_adapter_code,
+                "maybe_empty_line": maybe_empty_line,
+                "maybe_docstring": maybe_docstring,
+                "maybe_return_value_policy": maybe_return_value_policy,
+                "maybe_py_arg": maybe_py_arg,
+            },
+        )
+
+        # Process maybe_comma
+        lines = template_code.split("\n")
+        new_lines = []
+        for i, line in enumerate(lines):
+            if "{maybe_comma}" in line:
+                if i == len(lines) - 2:
+                    line = line.replace("{maybe_comma}", "")
+                else:
+                    line = line.replace("{maybe_comma}", ",")
+            new_lines.append(line)
+        template_code = "\n".join(new_lines)
+
+        return template_code
+
     # override
     def _str_pydef_lines(self) -> List[str]:
-        raise ValueError("Not implemented")
+        code = self._pydef_full_str_impl()
+        lines = code.split("\n")
+        return lines
 
 
 @dataclass

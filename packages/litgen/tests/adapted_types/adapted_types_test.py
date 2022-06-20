@@ -141,3 +141,16 @@ def test_adapted_function_stub():
             pass
     ''',
     )
+
+
+def test_adapted_function_pydef_simple():
+    options = litgen.LitgenOptions()
+    code = """
+    int add(int a, int b) { return a + b; }
+    """
+    fn = srcml_main.code_first_function_decl(options.srcml_options, code)
+    struct_name = ""
+    adapted_function = AdaptedFunction(fn, struct_name, options)
+
+    pydef_code = adapted_function.str_pydef()
+    logging.warning("\n>>>" + pydef_code + "<<<")

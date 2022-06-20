@@ -101,21 +101,6 @@ def pyarg_code_list(function_infos: Union[CppFunctionDecl, CppConstructorDecl], 
     return r
 
 
-def _function_return_value_policy(function_infos: CppFunctionDecl) -> str:
-    """Parses the return_value_policy from the function end of line comment
-    For example:
-        // A static instance (which python shall not delete, as enforced by the marker return_policy below)
-        static Foo& Instance() { static Foo instance; return instance; }       // return_value_policy::reference
-    """
-    token = "return_value_policy::"
-    eol_comment = function_infos.cpp_element_comments.eol_comment_code()
-    if "return_value_policy::" in eol_comment:
-        return_value_policy = eol_comment[eol_comment.index(token) + len(token) :]
-        return return_value_policy
-    else:
-        return ""
-
-
 def _generate_function(
     function_infos: CppFunctionDecl,
     options: LitgenOptions,
@@ -128,156 +113,13 @@ def _generate_function(
     return r
 
 
-def _generate_return_code(
-    adapted_function: AdaptedFunction,
-    options: LitgenOptions,
-    parent_struct_name: str = "",
-):
-    function_infos = adapted_function.cpp_adapted_function
-    template_code = "{return_or_nothing}{self_prefix}{function_to_call}({params_call_inner})"
-    is_method = len(parent_struct_name) > 0
-
-    return_or_nothing = "return " if function_infos.full_return_type(options.srcml_options) != "void" else ""
-    self_prefix = "self." if (is_method and adapted_function.lambda_to_call is None) else ""
-    # fill function_to_call
-    function_to_call = (
-        adapted_function.lambda_to_call if adapted_function.lambda_to_call is not None else function_infos.function_name
-    )
-    # Fill params_call_inner
-    params_call_inner = function_infos.parameter_list.names_only_for_call()
-
-    code = code_utils.replace_in_string(
-        template_code,
-        {
-            "return_or_nothing": return_or_nothing,
-            "self_prefix": self_prefix,
-            "function_to_call": function_to_call,
-            "params_call_inner": params_call_inner,
-        },
-    )
-    return code
-
-
 def _generate_function_impl(
     adapted_function: AdaptedFunction,
     options: LitgenOptions,
     parent_struct_name: str = "",
 ) -> str:
-
-    template_code = """
-{module_or_class}.def("{function_name}",{location}
-{_i_}[]({params_call_with_self_if_method})
-{_i_}{
-{_i_}{_i_}{lambda_adapter_code}
-{maybe_empty_line}
-{_i_}{_i_}{return_code};
-{_i_}}{maybe_comma}
-{_i_}{maybe_py_arg}{maybe_comma}
-{_i_}{maybe_docstring}{maybe_comma}
-{_i_}{maybe_return_value_policy}{maybe_comma}
-){semicolon_if_not_method}"""[
-        1:
-    ]
-
-    function_infos = adapted_function.cpp_adapted_function
-    is_method = len(parent_struct_name) > 0
-
-    # fill _i_
-    _i_ = options.indent_cpp_spaces()
-
-    # fill module_or_class, function_name, location
-    module_or_class = "" if is_method else "m"
-    function_name = cpp_to_python.function_name_to_python(function_infos.function_name, options)
-    location = info_original_location_cpp(function_infos, options)
-
-    # fill params_call_with_self_if_method
-    _params_list = function_infos.parameter_list.types_names_default_for_signature_list()
-    if is_method:
-        _self_param = f"{parent_struct_name} & self"
-        if function_infos.is_const():
-            _self_param = "const " + _self_param
-        _params_list = [_self_param] + _params_list
-    params_call_with_self_if_method = ", ".join(_params_list)
-
-    # fill return_code
-    return_code = _generate_return_code(adapted_function, options, parent_struct_name)
-
-    # fill lambda_adapter_code
-    lambda_adapter_code = adapted_function.cpp_adapter_code
-
-    if lambda_adapter_code is not None:
-        lambda_adapter_code = code_utils.indent_code(
-            lambda_adapter_code,
-            indent_str=options.indent_cpp_spaces() * 2,
-            skip_first_line=True,
-        )
-        if lambda_adapter_code[-1] == "\n":  # type: ignore
-            lambda_adapter_code = lambda_adapter_code[:-1]  # type: ignore
-
-    # fill maybe_empty_line, semicolon_if_not_method
-    maybe_empty_line = "" if lambda_adapter_code is not None else None
-    semicolon_if_not_method = ";" if not is_method else ""
-
-    # fill maybe_py_arg
-    pyarg_codes = pyarg_code_list(function_infos, options)
-    if len(pyarg_codes) > 0:
-        maybe_py_arg = ", ".join(pyarg_codes)
-    else:
-        maybe_py_arg = None
-
-    # fill maybe_docstring
-    maybe_docstring: Optional[str] = function_infos.cpp_element_comments.full_comment()
-    if maybe_docstring is not None and len(maybe_docstring) == 0:
-        maybe_docstring = None
-    else:
-        maybe_docstring = '"' + code_utils.format_cpp_comment_on_one_line(maybe_docstring) + '"'
-
-    # Fill maybe_return_value_policy
-    return_value_policy = _function_return_value_policy(function_infos)
-    if len(return_value_policy) > 0:
-        maybe_return_value_policy = f"pybind11::return_value_policy::{return_value_policy}"
-    else:
-        maybe_return_value_policy = None
-
-    # Apply simple replacements
-    template_code = code_utils.replace_in_string(
-        template_code,
-        {
-            "_i_": _i_,
-            "module_or_class": module_or_class,
-            "function_name": function_name,
-            "location": location,
-            "return_code": return_code,
-            "params_call_with_self_if_method": params_call_with_self_if_method,
-            "semicolon_if_not_method": semicolon_if_not_method,
-        },
-    )
-
-    # Apply replacements with possible line removal
-    template_code = code_utils.replace_in_string_remove_line_if_none(
-        template_code,
-        {
-            "lambda_adapter_code": lambda_adapter_code,
-            "maybe_empty_line": maybe_empty_line,
-            "maybe_docstring": maybe_docstring,
-            "maybe_return_value_policy": maybe_return_value_policy,
-            "maybe_py_arg": maybe_py_arg,
-        },
-    )
-
-    # Process maybe_comma
-    lines = template_code.split("\n")
-    new_lines = []
-    for i, line in enumerate(lines):
-        if "{maybe_comma}" in line:
-            if i == len(lines) - 2:
-                line = line.replace("{maybe_comma}", "")
-            else:
-                line = line.replace("{maybe_comma}", ",")
-        new_lines.append(line)
-    template_code = "\n".join(new_lines) + "\n"
-
-    return template_code
+    r = adapted_function.str_pydef()
+    return r
 
 
 #################################

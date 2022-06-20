@@ -175,7 +175,7 @@ void py_init_module_litgensample(py::module& m)
             return buffer_sum_adapt_c_buffers(buffer, stride);
         },
         py::arg("buffer"), py::arg("stride") = -1,
-        "Returns the sum of a const buffer"
+        "Returns the sum of a  buffer"
     );
 
     m.def("add_inside_two_buffers",    // example_library/litgensample.h:96
