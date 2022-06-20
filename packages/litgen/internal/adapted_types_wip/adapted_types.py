@@ -294,11 +294,15 @@ class AdaptedFunction(AdaptedElement):
     lambda_to_call: Optional[str] = None
 
     def __init__(self, function_infos: CppFunctionDecl, parent_struct_name: str, options: LitgenOptions):
+        from litgen.internal.adapt_function.make_adapted_function import apply_all_adapters
+
         self.function_infos = function_infos
         self.parent_struct_name = parent_struct_name
         self.cpp_adapter_code = None
         self.lambda_to_call = None
         super().__init__(function_infos, options)
+
+        apply_all_adapters(self)
 
     # override
     def cpp_element(self) -> CppFunctionDecl:

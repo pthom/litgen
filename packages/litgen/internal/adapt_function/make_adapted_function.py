@@ -1,5 +1,5 @@
 from codemanip import code_utils
-from litgen.internal.adapt_function import AdaptedFunction
+from litgen.internal.adapted_types_wip.adapted_types import AdaptedFunction
 from litgen.internal.adapt_function._lambda_adapter import LambdaAdapter
 from litgen.options import LitgenOptions
 from srcmlcpp.srcml_types import CppFunctionDecl
@@ -21,17 +21,6 @@ def apply_all_adapters(inout_adapted_function: AdaptedFunction) -> None:
         lambda_adapter = adapter_function(inout_adapted_function)
         if lambda_adapter is not None:
             _apply_lambda_adapter(inout_adapted_function, lambda_adapter)
-
-
-def make_adapted_function_with_cpp_adapter_code(
-    function_infos: CppFunctionDecl,
-    options: LitgenOptions,
-    parent_struct_name: str = "",
-) -> AdaptedFunction:
-
-    adapted_function = AdaptedFunction(function_infos, parent_struct_name, options)
-    apply_all_adapters(adapted_function)
-    return adapted_function
 
 
 def _make_adapted_lambda_code_end(adapted_function: AdaptedFunction, lambda_adapter: LambdaAdapter):

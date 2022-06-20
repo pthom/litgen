@@ -10,10 +10,6 @@ import srcmlcpp
 from codemanip import code_utils
 from litgen.internal import cpp_to_python, module_pydef_generator
 from litgen.internal.adapted_types_wip.adapted_types import AdaptedFunction
-from litgen.internal.adapt_function import (
-    _adapt_c_arrays,
-    apply_all_adapters,
-)
 from litgen.options import LitgenOptions, code_style_implot
 from srcmlcpp.srcml_types import *
 
@@ -36,7 +32,6 @@ def test_make_function_params_adapter():
         options = litgen.LitgenOptions()
         parent_struct_name = ""
         adapted_function = AdaptedFunction(function_decl, parent_struct_name, options)
-        apply_all_adapters(adapted_function)
         return adapted_function
 
     # Easy test with const
