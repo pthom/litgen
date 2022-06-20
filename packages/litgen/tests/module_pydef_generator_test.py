@@ -37,9 +37,10 @@ def test_generate_pydef_enum():
         };
     """
 
-    expected_generated_code1 = """py::enum_<MyEnum>(m, "MyEnum", py::arithmetic(), " This is the enum doc\\n on two lines")
-    .value("a", MyEnum_A, "Doc about A")
-    .value("b", MyEnum_B, "");
+    expected_generated_code1 = """
+    py::enum_<MyEnum>(m, "MyEnum", py::arithmetic(), " This is the enum doc\\n on two lines")
+        .value("a", MyEnum_A, "Doc about A")
+        .value("b", MyEnum_B, "");
     """
 
     cpp_unit1 = srcmlcpp.code_to_cpp_unit(options.srcml_options, code1)
@@ -57,9 +58,10 @@ def test_generate_pydef_enum():
             COUNT
         };
     """
-    expected_generated_code2 = """py::enum_<MyEnum>(m, "MyEnum", py::arithmetic(), "This is the enum doc")
-    .value("a", MyEnum::A, "Doc about A")
-    .value("b", MyEnum::B, "Doc about B");
+    expected_generated_code2 = """
+    py::enum_<MyEnum>(m, "MyEnum", py::arithmetic(), "This is the enum doc")
+        .value("a", MyEnum::A, "Doc about A")
+        .value("b", MyEnum::B, "Doc about B");
     """
     cpp_unit2 = srcmlcpp.code_to_cpp_unit(options.srcml_options, code2)
     generated_code2 = module_pydef_generator.generate_pydef(cpp_unit2, options)

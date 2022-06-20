@@ -49,8 +49,8 @@ def _comment_apply_replacements(comment: str, options: LitgenOptions) -> str:
     return comment
 
 
-def docstring_python_one_line(title_cpp: str, options: LitgenOptions) -> str:
-    """Formats a docstring on one cpp line. Used only in cpp bindings code"""
+def comment_pydef_one_line(title_cpp: str, options: LitgenOptions) -> str:
+    """Formats a docstring on one cpp line. Used only in cpp pydef bindings code"""
     return code_utils.format_cpp_comment_on_one_line(_comment_apply_replacements(title_cpp, options))
 
 
@@ -277,7 +277,7 @@ def decl_python_value(cpp_decl: CppDecl, options: LitgenOptions) -> str:
     return value_python
 
 
-def _info_original_location(cpp_element: CppElement, options: LitgenOptions, comment_token: str) -> str:
+def info_original_location(cpp_element: CppElement, options: LitgenOptions, comment_token: str) -> str:
 
     if not options.original_location_flag_show:
         return ""
@@ -297,11 +297,11 @@ def _info_original_location(cpp_element: CppElement, options: LitgenOptions, com
 
 
 def info_original_location_cpp(cpp_element: CppElement, options: LitgenOptions) -> str:
-    return _info_original_location(cpp_element, options, "//")
+    return info_original_location(cpp_element, options, "//")
 
 
 def info_original_location_python(cpp_element: CppElement, options: LitgenOptions) -> str:
-    return _info_original_location(cpp_element, options, "#")
+    return info_original_location(cpp_element, options, "#")
 
 
 def docstring_lines(cpp_element_c: CppElementAndComment, options: LitgenOptions) -> List[str]:

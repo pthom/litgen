@@ -29,7 +29,7 @@ from xml.etree import ElementTree as ET  # noqa
 from codemanip import CodePosition, code_utils
 from srcmlcpp import srcml_caller, srcml_utils
 from srcmlcpp.srcml_options import SrcmlOptions
-from srcmlcpp.srcml_warnings import SrcMlExceptionDetailed
+from srcmlcpp.srcml_warnings import SrcMlExceptionDetailed, emit_srcml_warning
 
 
 """
@@ -1204,7 +1204,7 @@ class CppEnum(CppElementAndComment):
                 r.append(child)
         return r
 
-    def get_children_with_filled_decl_values(self, options: SrcmlOptions):
+    def get_children_with_filled_decl_values(self, options: SrcmlOptions) -> List[CppElementAndComment]:
         children: List[CppElementAndComment] = []
 
         last_decl: Optional[CppDecl] = None
@@ -1236,7 +1236,7 @@ class CppEnum(CppElementAndComment):
                             last_decl_value_int = int(last_decl_value_str)
                             decl_with_value.initial_value_code = str(last_decl_value_int + 1)
                         except ValueError:
-                            raise SrcMlExceptionDetailed(
+                            emit_srcml_warning(
                                 decl.srcml_element,
                                 """
                                 Cannot parse the value of this enum element.

@@ -20,6 +20,16 @@ class AdaptedElement:  # (abc.ABC):  # Cannot be abstract (mypy limitation:  htt
         self._cpp_element = cpp_element
         self.options = options
 
+    def _info_original_location(self, comment_token: str) -> str:
+        r = cpp_to_python.info_original_location(self._cpp_element, self.options, comment_token)
+        return r
+
+    def info_original_location_cpp(self) -> str:
+        return self._info_original_location("//")
+
+    def info_original_location_python(self) -> str:
+        return self._info_original_location("#")
+
     def _str_stub_layout_lines(
         self,
         title_lines: List[str],
@@ -33,7 +43,7 @@ class AdaptedElement:  # (abc.ABC):  # Cannot be abstract (mypy limitation:  htt
 
         # Preprocess: add location on first line
         assert len(title_lines) > 0
-        first_line = title_lines[0] + cpp_to_python.info_original_location_python(self._cpp_element, self.options)
+        first_line = title_lines[0] + self.info_original_location_python()
         title_lines = [first_line] + title_lines[1:]
 
         # Preprocess: align comments in body
@@ -57,12 +67,28 @@ class AdaptedElement:  # (abc.ABC):  # Cannot be abstract (mypy limitation:  htt
         pass
 
     # @abc.abstractmethod
-    def _str_stub_lines(self):
+    def _str_stub_lines(self) -> List[str]:
         pass
+
+    # @abc.abstractmethod
+    def _str_pydef_lines(self) -> List[str]:
+        pass
+
+    def comment_pydef_one_line(self):
+        r = cpp_to_python.comment_pydef_one_line(self._cpp_element.cpp_element_comments.full_comment(), self.options)
+        return r
 
     def str_stub(self) -> str:
         stub_lines = self._str_stub_lines()
         r = "\n".join(stub_lines)
+        return r
+
+    def str_pydef(self) -> str:
+        pydef_lines = self._str_pydef_lines()
+        pydef_lines_indented = code_utils.indent_code_lines(
+            pydef_lines, skip_first_line=True, indent_str=self.options.indent_cpp_spaces()
+        )
+        r = "\n".join(pydef_lines_indented) + "\n"
         return r
 
 
@@ -82,6 +108,10 @@ class AdaptedEmptyLine(AdaptedElement):
         else:
             return []
 
+    # override
+    def _str_pydef_lines(self) -> List[str]:
+        return []
+
 
 @dataclass
 class AdaptedDecl(AdaptedElement):
@@ -92,13 +122,12 @@ class AdaptedDecl(AdaptedElement):
     def cpp_element(self) -> CppDecl:
         return cast(CppDecl, self._cpp_element)
 
-    def decl_name(self) -> str:
-        # le code de decl_python_var_name pourrait revenir ici
+    def decl_name_python(self) -> str:
         decl_name_cpp = self.cpp_element().decl_name
         decl_name_python = cpp_to_python.var_name_to_python(decl_name_cpp, self.options)
         return decl_name_python
 
-    def decl_value(self) -> str:
+    def decl_value_python(self) -> str:
         decl_value_cpp = self.cpp_element().initial_value_code
         decl_value_python = cpp_to_python.var_value_to_python(decl_value_cpp, self.options)
         return decl_value_python
@@ -107,7 +136,7 @@ class AdaptedDecl(AdaptedElement):
     def _str_stub_lines(self) -> List[str]:
         lines = []
 
-        decl_part = f"{self.decl_name()} = {self.decl_value()}"
+        decl_part = f"{self.decl_name_python()} = {self.decl_value_python()}"
 
         cpp_decl = self.cpp_element()
         if cpp_to_python.python_shall_place_comment_at_end_of_line(cpp_decl, self.options):
@@ -119,6 +148,10 @@ class AdaptedDecl(AdaptedElement):
             lines.append(decl_part)
 
         return lines
+
+    # override
+    def _str_pydef_lines(self) -> List[str]:
+        raise ValueError("Not implemented")
 
 
 @dataclass
@@ -133,14 +166,23 @@ class AdaptedEnumDecl(AdaptedDecl):
     def cpp_element(self) -> CppDecl:
         return cast(CppDecl, self._cpp_element)
 
-    def decl_name(self) -> str:
+    def decl_name_cpp_decorated(self) -> str:
+        is_class_enum = self.enum_parent.cpp_element().enum_type == "class"
+        decl_name_cpp = self.cpp_element().decl_name
+        if not is_class_enum:
+            return decl_name_cpp
+        else:
+            r = self.enum_parent.cpp_element().enum_name + "::" + decl_name_cpp
+            return r
+
+    def decl_name_python(self) -> str:
         decl_name_cpp = self.cpp_element().decl_name
         decl_name_python = cpp_to_python.enum_value_name_to_python(
             self.enum_parent.cpp_element(), self.cpp_element(), self.options
         )
         return decl_name_python
 
-    def decl_value(self):
+    def decl_value_python(self):
         decl_value_cpp = self.cpp_element().initial_value_code
         decl_value_python = cpp_to_python.var_value_to_python(decl_value_cpp, self.options)
         #
@@ -152,29 +194,26 @@ class AdaptedEnumDecl(AdaptedDecl):
         #
         # So, we search and replace enum strings in the default value (.init)
         #
-        for other_enum_member in self.enum_parent.cpp_element().get_children_with_filled_decl_values(
-            self.options.srcml_options
-        ):
-            if isinstance(other_enum_member, CppDecl):
-                other_enum_value_cpp_name = other_enum_member.name_code()
-                assert other_enum_value_cpp_name is not None
-                other_enum_value_python_name = cpp_to_python.enum_value_name_to_python(
-                    self.enum_parent.cpp_element(), other_enum_member, self.options
-                )
-                enum_name = self.enum_parent.enum_name_python()
+        for other_enum_member in self.enum_parent.adapted_enum_decls:
+            other_enum_value_cpp_name = other_enum_member.cpp_element().name_code()
+            assert other_enum_value_cpp_name is not None
+            other_enum_value_python_name = cpp_to_python.enum_value_name_to_python(
+                self.enum_parent.cpp_element(), other_enum_member.cpp_element(), self.options
+            )
+            enum_name = self.enum_parent.enum_name_python()
 
-                replacement = code_replacements.StringReplacement()
-                replacement.replace_what = r"\b" + other_enum_value_cpp_name + r"\b"
-                replacement.by_what = f"Literal[{enum_name}.{other_enum_value_python_name}]"
-                decl_value_python = code_replacements.apply_one_replacement(decl_value_python, replacement)
+            replacement = code_replacements.StringReplacement()
+            replacement.replace_what = r"\b" + other_enum_value_cpp_name + r"\b"
+            replacement.by_what = f"Literal[{enum_name}.{other_enum_value_python_name}]"
+            decl_value_python = code_replacements.apply_one_replacement(decl_value_python, replacement)
 
         return decl_value_python
 
     # override
     def _str_stub_lines(self) -> List[str]:
         lines = []
-        decl_name = self.decl_name()
-        decl_value = self.decl_value()
+        decl_name = self.decl_name_python()
+        decl_value = self.decl_value_python()
         decl_part = f"{decl_name} = {decl_value}"
 
         cpp_decl = self.cpp_element()
@@ -187,6 +226,14 @@ class AdaptedEnumDecl(AdaptedDecl):
             lines.append(decl_part)
 
         return lines
+
+    # override
+    def _str_pydef_lines(self) -> List[str]:
+        decl_name_cpp = self.decl_name_cpp_decorated()
+        decl_name_python = self.decl_name_python()
+        value_comment = self.comment_pydef_one_line()
+        line = f'.value("{decl_name_python}", {decl_name_cpp}, "{value_comment}")'
+        return [line]
 
 
 @dataclass
@@ -209,6 +256,10 @@ class AdaptedComment(AdaptedElement):
         comment_python_lines = list(map(add_comment_token, comment_python.split("\n")))
         return comment_python_lines
 
+    # override
+    def _str_pydef_lines(self) -> List[str]:
+        return []
+
 
 @dataclass
 class AdaptedConstructor(AdaptedElement):
@@ -222,6 +273,10 @@ class AdaptedConstructor(AdaptedElement):
     # override
     def _str_stub_lines(self) -> List[str]:
         raise ValueError("To be completed")
+
+    # override
+    def _str_pydef_lines(self) -> List[str]:
+        raise ValueError("Not implemented")
 
 
 @dataclass
@@ -241,14 +296,20 @@ class AdaptedClass(AdaptedElement):
     def _str_stub_lines(self) -> List[str]:
         raise ValueError("To be completed")
 
+    # override
+    def _str_pydef_lines(self) -> List[str]:
+        raise ValueError("Not implemented")
+
 
 @dataclass
 class AdaptedEnum(AdaptedElement):
-    children: List[Union[AdaptedDecl, AdaptedEmptyLine, AdaptedComment]]
+    adapted_children: List[Union[AdaptedDecl, AdaptedEmptyLine, AdaptedComment]]
+    adapted_enum_decls: List[AdaptedEnumDecl]
 
     def __init__(self, enum_: CppEnum, options: LitgenOptions):
         super().__init__(enum_, options)
-        self.children = []
+        self.adapted_children = []
+        self.adapted_enum_decls = []
         self._fill_children()
 
     # override
@@ -263,19 +324,18 @@ class AdaptedEnum(AdaptedElement):
         children_with_values = self.cpp_element().get_children_with_filled_decl_values(self.options.srcml_options)
         for c_child in children_with_values:
             if isinstance(c_child, CppEmptyLine):
-                self.children.append(AdaptedEmptyLine(c_child, self.options))
+                self.adapted_children.append(AdaptedEmptyLine(c_child, self.options))
             elif isinstance(c_child, CppComment):
-                self.children.append(AdaptedComment(c_child, self.options))
+                self.adapted_children.append(AdaptedComment(c_child, self.options))
             elif isinstance(c_child, CppDecl):
-                new_adapted_decl = AdaptedEnumDecl(c_child, self, self.options)
-                is_count = cpp_to_python.enum_element_is_count(
-                    self.cpp_element(), new_adapted_decl.cpp_element(), self.options
-                )
+                is_count = cpp_to_python.enum_element_is_count(self.cpp_element(), c_child, self.options)
                 if not is_count:
-                    self.children.append(new_adapted_decl)
+                    new_adapted_decl = AdaptedEnumDecl(c_child, self, self.options)
+                    self.adapted_children.append(new_adapted_decl)
+                    self.adapted_enum_decls.append(new_adapted_decl)
 
-    def get_decls(self) -> List[AdaptedDecl]:
-        decls = list(filter(lambda c: isinstance(c, AdaptedDecl), self.children))
+    def get_adapted_decls(self) -> List[AdaptedDecl]:
+        decls = list(filter(lambda c: isinstance(c, AdaptedDecl), self.adapted_children))
         return cast(List[AdaptedDecl], decls)
 
     # override
@@ -283,11 +343,38 @@ class AdaptedEnum(AdaptedElement):
         title_line = f"class {self.cpp_element().enum_name}(Enum):"
 
         body_lines: List[str] = []
-        for child in self.children:
+        for child in self.adapted_children:
             body_lines += child._str_stub_lines()
 
         all_lines = self._str_stub_layout_lines([title_line], body_lines)
         return all_lines
+
+    # override
+    def _str_pydef_lines(self) -> List[str]:
+        enum_name_cpp = self.cpp_element().enum_name
+        enum_name_python = self.enum_name_python()
+        comment = self.comment_pydef_one_line()
+        location = self.info_original_location_cpp()
+
+        lines: List[str] = []
+
+        # Enum decl first line
+        enum_decl_line = f'py::enum_<{enum_name_cpp}>(m, "{enum_name_python}", py::arithmetic(), "{comment}"){location}'
+        lines += [enum_decl_line]
+
+        # Enum values
+        for child in self.adapted_children:
+            if isinstance(child, AdaptedEnumDecl):
+                adapted_decl = cast(AdaptedEnumDecl, child)
+                value_decl_lines = adapted_decl._str_pydef_lines()
+                lines += value_decl_lines
+
+        # Add ; on the last line
+        assert len(lines) > 0
+        last_line = lines[-1]
+        last_line = code_utils.add_item_before_comment(last_line, ";")
+        lines[-1] = last_line
+        return lines
 
     def __str__(self) -> str:
         return self.str_stub()
@@ -438,6 +525,9 @@ class AdaptedFunction(AdaptedElement):
             r.append(param_code)
         return r
 
+    #
+    # _str_stub_lines()
+    #
     # override
     def _str_stub_lines(self) -> List[str]:
         function_def_code = f"def {self.function_name_python()}("
@@ -472,6 +562,13 @@ class AdaptedFunction(AdaptedElement):
         r = self._str_stub_layout_lines(title_lines, body_lines)
         return r
 
+    #
+    # _str_pydef_lines()
+    #
+    # override
+    def _str_pydef_lines(self) -> List[str]:
+        raise ValueError("Not implemented")
+
 
 @dataclass
 class AdaptedCppUnit(AdaptedElement):
@@ -485,3 +582,7 @@ class AdaptedCppUnit(AdaptedElement):
     # override
     def _str_stub_lines(self) -> List[str]:
         raise ValueError("To be completed")
+
+    # override
+    def _str_pydef_lines(self) -> List[str]:
+        raise ValueError("Not implemented")

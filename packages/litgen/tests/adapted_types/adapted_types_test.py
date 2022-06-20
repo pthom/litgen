@@ -32,7 +32,7 @@ enum Foo
     """
     enum = srcml_main.code_first_enum(options.srcml_options, code)
     adapted_enum = AdaptedEnum(enum, options)
-    decls = adapted_enum.get_decls()
+    decls = adapted_enum.get_adapted_decls()
 
     # Test parsing and adapt: count should be removed, members should be renamed, comment should be processed
     assert len(decls) == 5  # Foo_count should have been removed (becua
@@ -45,6 +45,7 @@ enum Foo
     # Test generated stub code (with python_reproduce_cpp_layout=True)
     options.python_reproduce_cpp_layout = True
     stub_code = str(adapted_enum)
+    # logging.warning("\n>>>" + stub_code + "<<<")
     code_utils.assert_are_codes_equal(
         stub_code,
         '''
@@ -52,21 +53,22 @@ enum Foo
             """ Doc about Foo
              On several lines
             """
-            foo_a = 0                                                 # This is a
+            a = 0                                                 # This is a
 
             #  And this is b and c's comment
-            foo_b = 1
-            foo_c = 256
+            b = 1
+            c = 256
 
-            foo_d = Literal[Foo.a] | Literal[Foo.b] + Literal[Foo.c]  # And a computed value
+            d = Literal[Foo.a] | Literal[Foo.b] + Literal[Foo.c]  # And a computed value
 
-            foo_e = 4
+            e = 4
     ''',
     )
 
     # Test generated stub code (with python_reproduce_cpp_layout=False)
     options.python_reproduce_cpp_layout = False
     stub_code = str(adapted_enum)
+    # logging.warning("\n>>>" + stub_code + "<<<")
     code_utils.assert_are_codes_equal(
         stub_code,
         '''
@@ -75,14 +77,30 @@ enum Foo
              On several lines
             """
             #  This is a
-            foo_a = 0
+            a = 0
             #  And this is b and c's comment
-            foo_b = 1
-            foo_c = 256
+            b = 1
+            c = 256
             #  And a computed value
-            foo_d = Literal[Foo.a] | Literal[Foo.b] + Literal[Foo.c]
-            foo_e = 4
+            d = Literal[Foo.a] | Literal[Foo.b] + Literal[Foo.c]
+            e = 4
         ''',
+    )
+
+    # Test generated pydef code
+    options.original_location_flag_show = True
+    pydef_code = adapted_enum.str_pydef()
+    # logging.warning("\n>>>" + pydef_code + "<<<")
+    code_utils.assert_are_codes_equal(
+        pydef_code,
+        """
+        py::enum_<Foo>(m, "Foo", py::arithmetic(), " Doc about Foo\\n On several lines")    // Line:4
+            .value("a", Foo_a, "This is a")
+            .value("b", Foo_b, "")
+            .value("c", Foo_c, "")
+            .value("d", Foo_d, "And a computed value")
+            .value("e", Foo_e, "");
+    """,
     )
 
 
@@ -102,8 +120,24 @@ def test_adapted_function_stub():
     struct_name = ""
     adapted_function = AdaptedFunction(fn, struct_name, options)
 
-    stub = adapted_function.str_stub()
-    logging.warning("\n" + stub)
-
-
-# test_adapted_enum()
+    stub_code = adapted_function.str_stub()
+    # logging.warning("\n>>>" + stub_code + "<<<")
+    code_utils.assert_are_codes_equal(
+        stub_code,
+        '''
+        def foo(    # Line:7
+            buffer: numpy.ndarray,
+            out_values_0: BoxedDouble,
+            out_values_1: BoxedDouble,
+            in_flags: List[bool],
+            text: str
+            ) -> None:
+            """ This is foo's doc:
+                 :param buffer  count: modifiable buffer and its size
+                 :param out_values: output float values
+                 :param in_flags: input bool flags
+                 :param text and ... : formatted text
+            """
+            pass
+    ''',
+    )

@@ -1,6 +1,7 @@
+* Move & rename module_pydef_generator_test.py
+
 * package function_adapt
   * renames
-  * API avec derivation
 
 * sub package adapt param
   * gen pyi class & structs

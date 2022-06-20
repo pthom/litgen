@@ -9,6 +9,7 @@ from codemanip import code_replacements, code_utils
 from litgen.internal import cpp_to_python
 from litgen.internal.adapted_types_wip.adapted_types import AdaptedFunction
 from litgen.internal.cpp_to_python import info_original_location_cpp
+from litgen.internal.adapted_types_wip.adapted_types import *
 from litgen.options import LitgenOptions
 from srcmlcpp import srcml_main, srcml_warnings
 from srcmlcpp.srcml_types import *
@@ -44,49 +45,9 @@ class _LineSpacer:
 
 
 def _generate_enum(enum: CppEnum, options: LitgenOptions) -> str:
-    enum_type = enum.attribute_value("type")
-    enum_name = enum.enum_name
-
-    _i_ = options.indent_cpp_spaces()
-    comment = cpp_to_python.docstring_python_one_line(enum.cpp_element_comments.full_comment(), options)
-    location = info_original_location_cpp(enum, options)
-
-    code_intro = f'py::enum_<{enum_name}>(m, "{enum_name}", py::arithmetic(), "{comment}"){location}\n'
-
-    def make_value_code(enum_decl: CppDecl):
-        code = f'{_i_}.value("VALUE_NAME_PYTHON", VALUE_NAME_CPP, "VALUE_COMMENT")\n'
-
-        value_name_cpp = enum_decl.decl_name
-        value_name_python = cpp_to_python.enum_value_name_to_python(enum, enum_decl, options)
-
-        if enum_type == "class":
-            value_name_cpp_str = enum_name + "::" + value_name_cpp
-        else:
-            value_name_cpp_str = value_name_cpp
-
-        code = code.replace("VALUE_NAME_PYTHON", value_name_python)
-        code = code.replace("VALUE_NAME_CPP", value_name_cpp_str)
-        code = code.replace(
-            "VALUE_COMMENT",
-            code_utils.format_cpp_comment_on_one_line(enum_decl.cpp_element_comments.full_comment()),
-        )
-
-        if cpp_to_python.enum_element_is_count(enum, enum_decl, options):
-            return ""
-        return code
-
-    result = code_intro
-    for i, child in enumerate(enum.block.block_children):
-        if child.tag() == "decl":
-            result += make_value_code(cast(CppDecl, child))
-        elif child.tag() in ["comment"]:
-            pass
-        else:
-            raise srcmlcpp.SrcMlException(child.srcml_element, f"Unexpected tag {child.tag()} in enum")
-    result = result[:-1]
-    result = code_utils.add_item_before_comment(result, ";")
-    result += "\n"
-    return result
+    adapted_enum = AdaptedEnum(enum, options)
+    r = adapted_enum.str_pydef()
+    return r
 
 
 #################################
@@ -339,7 +300,7 @@ def _generate_constructor(function_infos: CppConstructorDecl, options: LitgenOpt
     _i_ = options.indent_cpp_spaces()
 
     params_str = function_infos.parameter_list.types_only_for_template()
-    doc_string = cpp_to_python.docstring_python_one_line(function_infos.cpp_element_comments.full_comment(), options)
+    doc_string = cpp_to_python.comment_pydef_one_line(function_infos.cpp_element_comments.full_comment(), options)
     location = info_original_location_cpp(function_infos, options)
 
     code_lines = []
@@ -459,7 +420,7 @@ def _add_struct_member_decl(cpp_decl: CppDecl, struct_name: str, options: Litgen
         r = code_inner_member
         r = r.replace("MEMBER_NAME_PYTHON", name_python)
         r = r.replace("MEMBER_NAME_CPP", name_cpp)
-        r = r.replace("MEMBER_COMMENT", cpp_to_python.docstring_python_one_line(comment, options))
+        r = r.replace("MEMBER_COMMENT", cpp_to_python.comment_pydef_one_line(comment, options))
         return r
 
 
@@ -501,7 +462,7 @@ def _generate_struct_or_class(struct_infos: CppStruct, options: LitgenOptions) -
 
     _i_ = options.indent_cpp_spaces()
 
-    comment = cpp_to_python.docstring_python_one_line(struct_infos.cpp_element_comments.full_comment(), options)
+    comment = cpp_to_python.comment_pydef_one_line(struct_infos.cpp_element_comments.full_comment(), options)
     location = info_original_location_cpp(struct_infos, options)
 
     code_intro = ""
