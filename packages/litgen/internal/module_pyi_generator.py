@@ -7,7 +7,7 @@ from typing import Union
 import srcmlcpp
 from codemanip import code_replacements, code_utils
 from litgen.internal import cpp_to_python
-from litgen.internal.adapted_types_wip.adapted_types import AdaptedFunction
+from litgen.internal.adapted_types_wip.adapted_types import *
 from litgen.options import LitgenOptions
 from srcmlcpp import srcml_main, srcml_warnings
 from srcmlcpp.srcml_types import *
@@ -37,141 +37,14 @@ def _add_two_lines_before(code: str, options: LitgenOptions) -> str:
         return _add_new_lines(code, nb_lines_before=2, nb_lines_after=0)
 
 
-def _add_stub_element(
-    cpp_element: CppElementAndComment,
-    first_code_line: str,
-    options: LitgenOptions,
-    body_lines: List[str] = [],
-    fn_params_and_return: str = "",
-) -> str:
-    """Common layout for class, enum, and functions stubs"""
-
-    location = cpp_to_python.info_original_location_python(cpp_element, options)
-    first_line = first_code_line + location
-
-    all_lines_except_first = []
-    if len(fn_params_and_return) > 0:
-        all_lines_except_first += fn_params_and_return.split("\n")
-    all_lines_except_first += cpp_to_python.docstring_lines(cpp_element, options)
-    all_lines_except_first += body_lines
-    if len(body_lines) == 0:
-        all_lines_except_first += ["pass"]
-
-    _i_ = options.indent_python_spaces()
-
-    def indent_one_line(s: str):
-        return _i_ + s
-
-    all_lines_except_first = list(map(indent_one_line, all_lines_except_first))
-
-    all_lines_except_first = code_utils.align_python_comments_in_block_lines(all_lines_except_first)
-
-    all_lines = [first_line] + all_lines_except_first
-    all_lines = code_utils.strip_lines_right_space(all_lines)
-
-    r = "\n".join(all_lines) + "\n"
-
-    return r
-
-
-def _make_decl_lines(cpp_decl: CppDecl, options: LitgenOptions) -> List[str]:
-    var_name = cpp_to_python.decl_python_var_name(cpp_decl, options)
-    var_value = cpp_to_python.decl_python_value(cpp_decl, options)
-
-    lines = []
-
-    decl_part = f"{var_name} = {var_value}"
-
-    if cpp_to_python.python_shall_place_comment_at_end_of_line(cpp_decl, options):
-        decl_line = decl_part + "  #" + cpp_to_python.python_comment_end_of_line(cpp_decl, options)
-        lines.append(decl_line)
-    else:
-        comment_lines = cpp_to_python.python_comment_previous_lines(cpp_decl, options)
-        lines += comment_lines
-        lines.append(decl_part)
-
-    return lines
-
-
-def _make_enum_element_decl_lines(
-    enum: CppEnum,
-    enum_element_orig: CppDecl,
-    previous_enum_element: Optional[CppDecl],
-    options: LitgenOptions,
-) -> List[str]:
-
-    enum_element = copy.deepcopy(enum_element_orig)
-
-    if cpp_to_python.enum_element_is_count(enum, enum_element, options):
-        return []
-
-    if len(enum_element.initial_value_code) == 0:
-        if previous_enum_element is None:
-            # the first element of an enum has a default value of 0
-            enum_element.initial_value_code = "0"
-            enum_element_orig.initial_value_code = enum_element.initial_value_code
-        else:
-            try:
-                previous_value = int(previous_enum_element.initial_value_code)
-                enum_element.initial_value_code = str(previous_value + 1)
-                enum_element_orig.initial_value_code = enum_element.initial_value_code
-            except ValueError:
-                srcml_warnings.emit_srcml_warning(
-                    enum_element.srcml_element,
-                    """
-                        Cannot compute the value of an enum element (previous element value is not an int), it was skipped!
-                        """,
-                    options.srcml_options,
-                )
-                return []
-
-    enum_element.decl_name = cpp_to_python.enum_value_name_to_python(enum, enum_element, options)
-
-    #
-    # Sometimes, enum decls have interdependent values like this:
-    #     enum MyEnum {
-    #         MyEnum_a = 1, MyEnum_b,
-    #         MyEnum_foo = MyEnum_a | MyEnum_b    //
-    #     };
-    #
-    # So, we search and replace enum strings in the default value (.init)
-    #
-    for enum_decl in enum.get_enum_decls_poub():
-        enum_decl_cpp_name = enum_decl.decl_name
-        enum_decl_python_name = cpp_to_python.enum_value_name_to_python(enum, enum_decl, options)
-
-        replacement = code_replacements.StringReplacement()
-        replacement.replace_what = r"\b" + enum_decl_cpp_name + r"\b"
-        replacement.by_what = f"Literal[{enum.enum_name}.{enum_decl_python_name}]"
-        enum_element.initial_value_code = code_replacements.apply_one_replacement(
-            enum_element.initial_value_code, replacement
-        )
-        # enum_element.init = enum_element.init.replace(enum_decl_cpp_name, enum_decl_python_name)
-        # code_utils.w
-
-    return _make_decl_lines(enum_element, options)
-
-
 #################################
 #           Enums
 ################################
 
 
 def _generate_pyi_enum(enum: CppEnum, options: LitgenOptions) -> str:
-    first_code_line = f"class {enum.enum_name}(Enum):"
-
-    body_lines: List[str] = []
-
-    previous_enum_element: Optional[CppDecl] = None
-    for child in enum.block.block_children:
-        if isinstance(child, CppDecl):
-            body_lines += _make_enum_element_decl_lines(enum, child, previous_enum_element, options)
-            previous_enum_element = child
-        if isinstance(child, CppEmptyLine) and options.python_reproduce_cpp_layout:
-            body_lines.append("")
-        if isinstance(child, CppComment):
-            body_lines += cpp_to_python.python_comment_previous_lines(child, options)
-    r = _add_stub_element(enum, first_code_line, options, body_lines)
+    adapted_enum = AdaptedEnum(enum, options)
+    r = adapted_enum.str_stub()
     return r
 
 
@@ -185,65 +58,9 @@ def _generate_pyi_function(
     options: LitgenOptions,
     parent_struct_name: str = "",
 ) -> str:
+
     adapted_function = AdaptedFunction(function_infos, parent_struct_name, options)
-
-    r = _generate_pyi_function_impl(adapted_function, options, parent_struct_name)
-    return r
-
-
-def _paramlist_call_strs(param_list: CppParameterList, options: LitgenOptions) -> List[str]:
-    r = []
-    for param in param_list.parameters:
-        param_name_python = cpp_to_python.var_name_to_python(param.decl.decl_name, options)
-        param_type_cpp = param.decl.cpp_type.str_code()
-        param_type_python = cpp_to_python.type_to_python(param_type_cpp, options)
-        param_default_value = cpp_to_python.var_value_to_python(param.default_value(), options)
-
-        param_code = f"{param_name_python}: {param_type_python}"
-        if len(param_default_value) > 0:
-            param_code += f" = {param_default_value}"
-
-        r.append(param_code)
-    return r
-
-
-def _generate_pyi_function_impl(
-    adapted_function: AdaptedFunction,
-    options: LitgenOptions,
-    parent_struct_name: str = "",
-) -> str:
-
-    function_infos = adapted_function.cpp_adapted_function
-
-    function_name_python = cpp_to_python.function_name_to_python(function_infos.function_name, options)
-
-    return_type_python = cpp_to_python.type_to_python(function_infos.full_return_type(options.srcml_options), options)
-
-    first_code_line = f"def {function_name_python}("
-
-    params_strs = _paramlist_call_strs(function_infos.parameter_list, options)
-    return_line = f") -> {return_type_python}:"
-
-    # Try to add all params and return type on the same line
-    def all_on_one_line():
-        first_code_line_full = first_code_line
-        first_code_line_full += ", ".join(params_strs)
-        first_code_line_full += return_line
-        if len(first_code_line_full) < options.python_max_line_length:
-            return first_code_line_full
-        else:
-            return None
-
-    if all_on_one_line() is not None:
-        first_code_line = all_on_one_line()
-        params_and_return_str = ""
-    else:
-        params_and_return_str = ",\n".join(params_strs) + "\n" + return_line
-
-    body_lines: List[str] = []
-
-    r = _add_stub_element(function_infos, first_code_line, options, body_lines, params_and_return_str)
-
+    r = adapted_function.str_stub()
     return r
 
 

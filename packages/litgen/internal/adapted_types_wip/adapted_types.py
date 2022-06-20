@@ -133,6 +133,13 @@ class AdaptedEnumDecl(AdaptedDecl):
     def cpp_element(self) -> CppDecl:
         return cast(CppDecl, self._cpp_element)
 
+    def decl_name(self) -> str:
+        decl_name_cpp = self.cpp_element().decl_name
+        decl_name_python = cpp_to_python.enum_value_name_to_python(
+            self.enum_parent.cpp_element(), self.cpp_element(), self.options
+        )
+        return decl_name_python
+
     def decl_value(self):
         decl_value_cpp = self.cpp_element().initial_value_code
         decl_value_python = cpp_to_python.var_value_to_python(decl_value_cpp, self.options)
