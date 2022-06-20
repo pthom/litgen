@@ -69,8 +69,7 @@ void py_init_module_imgui(py::module& m)
         .def_readwrite("y", &ImVec2::y, "")    // imgui.h:251
         .def(py::init<>())    // imgui.h:252
         .def(py::init<float, float>(),    // imgui.h:253
-            py::arg("_x"),
-            py::arg("_y"))
+            py::arg("_x"), py::arg("_y"))
         ;
 
 
@@ -82,10 +81,7 @@ void py_init_module_imgui(py::module& m)
         .def_readwrite("w", &ImVec4::w, "")    // imgui.h:264
         .def(py::init<>())    // imgui.h:265
         .def(py::init<float, float, float, float>(),    // imgui.h:266
-            py::arg("_x"),
-            py::arg("_y"),
-            py::arg("_z"),
-            py::arg("_w"))
+            py::arg("_x"), py::arg("_y"), py::arg("_z"), py::arg("_w"))
         ;
 
 
@@ -4777,17 +4773,11 @@ void py_init_module_imgui(py::module& m)
         .def_readwrite("value", &ImColor::Value, "")    // imgui.h:2351
         .def(py::init<>())    // imgui.h:2353
         .def(py::init<float, float, float, float>(),    // imgui.h:2354
-            py::arg("r"),
-            py::arg("g"),
-            py::arg("b"),
-            py::arg("a") = 1.0f)
+            py::arg("r"), py::arg("g"), py::arg("b"), py::arg("a") = 1.0f)
         .def(py::init<const ImVec4 &>(),    // imgui.h:2355
             py::arg("col"))
         .def(py::init<int, int, int, int>(),    // imgui.h:2356
-            py::arg("r"),
-            py::arg("g"),
-            py::arg("b"),
-            py::arg("a") = 255)
+            py::arg("r"), py::arg("g"), py::arg("b"), py::arg("a") = 255)
         .def(py::init<ImU32>(),    // imgui.h:2357
             py::arg("rgba"))
         ;

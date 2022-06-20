@@ -347,7 +347,7 @@ def fill_constructor_decl(
     for child in element_c.srcml_element:
         child_tag = srcml_utils.clean_tag_or_attrib(child.tag)
         if child_tag == "name":
-            constructor_decl.constructor_name = _parse_name(child)
+            constructor_decl.function_name = _parse_name(child)
         elif child_tag == "parameter_list":
             constructor_decl.parameter_list = parse_parameter_list(options, child)
         elif child_tag == "specifier":

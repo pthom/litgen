@@ -944,22 +944,18 @@ class CppFunction(CppFunctionDecl):
 
 
 @dataclass
-class CppConstructorDecl(CppElementAndComment):
+class CppConstructorDecl(CppFunctionDecl):
     """
     https://www.srcml.org/doc/cpp_srcML.html#constructor-declaration
     """
 
-    specifiers: List[str]
-    parameter_list: CppParameterList
-    constructor_name: str  # will be equal to the class or struct name
-
     def __init__(self, element: ET.Element, cpp_element_comments: CppElementComments):
         super().__init__(element, cpp_element_comments)
         self.specifiers: List[str] = []
-        self.constructor_name = ""
+        self.function_name = ""
 
     def _str_signature(self) -> str:
-        r = f"{self.constructor_name}({self.parameter_list})"
+        r = f"{self.function_name}({self.parameter_list})"
         if len(self.specifiers) > 0:
             specifiers_strs = map(str, self.specifiers)
             r = r + " " + " ".join(specifiers_strs)

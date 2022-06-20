@@ -55,52 +55,6 @@ def _generate_enum(enum: CppEnum, options: LitgenOptions) -> str:
 ################################
 
 
-def pyarg_code(function_infos: Union[CppFunctionDecl, CppConstructorDecl], options: LitgenOptions) -> str:
-    _i_ = options.indent_cpp_spaces()
-
-    param_lines = []
-    param_template = 'py::arg("{argname_python}"){maybe_equal}{maybe_defaultvalue_cpp}'
-
-    for idx_param, param in enumerate(function_infos.parameter_list.parameters):
-
-        maybe_defaultvalue_cpp = param.default_value()
-        if len(maybe_defaultvalue_cpp) > 0:
-            maybe_equal = " = "
-        else:
-            maybe_equal = ""
-
-        argname_python = cpp_to_python.var_name_to_python(param.decl.decl_name, options)
-
-        param_line = code_utils.replace_in_string(
-            param_template,
-            {
-                "argname_python": argname_python,
-                "maybe_equal": maybe_equal,
-                "maybe_defaultvalue_cpp": maybe_defaultvalue_cpp,
-            },
-        )
-
-        param_lines.append(param_line)
-
-    code = code_utils.join_lines_with_token_before_comment(param_lines, ",")
-    if len(param_lines) > 0:
-        code += ","
-    return code
-
-
-def pyarg_code_list(function_infos: Union[CppFunctionDecl, CppConstructorDecl], options: LitgenOptions) -> List[str]:
-    code = pyarg_code(function_infos, options)
-    if len(code) == 0:
-        return []
-    lines = code.split("\n")
-    r = []
-    for line in lines:
-        if line.endswith(","):
-            line = line[:-1]
-        r.append(line)
-    return r
-
-
 def _generate_function(
     function_infos: CppFunctionDecl,
     options: LitgenOptions,
@@ -127,53 +81,14 @@ def _generate_function_impl(
 ################################
 
 
-def _generate_constructor(function_infos: CppConstructorDecl, options: LitgenOptions) -> str:
-
-    if "delete" in function_infos.specifiers:
-        return ""
-
-    """
-    A constructor decl look like this
-        .def(py::init<ARG_TYPES_LIST>(),
-        PY_ARG_LIST
-        DOC_STRING);
-    """
-
-    _i_ = options.indent_cpp_spaces()
-
-    params_str = function_infos.parameter_list.types_only_for_template()
-    doc_string = cpp_to_python.comment_pydef_one_line(function_infos.cpp_element_comments.full_comment(), options)
-    location = info_original_location_cpp(function_infos, options)
-
-    code_lines = []
-    code_lines.append(f".def(py::init<{params_str}>(){location}")
-    code_lines += pyarg_code_list(function_infos, options)
-    if len(doc_string) > 0:
-        code_lines.append(f'"{doc_string}"')
-
-    # indent lines after first
-    for i in range(1, len(code_lines)):
-        code_lines[i] = _i_ + code_lines[i]
-
-    code_lines[-1] = code_utils.add_item_before_comment(code_lines[-1], ")")
-
-    code = code_utils.join_lines_with_token_before_comment(code_lines, ",")
-    code += "\n"
-
-    return code
+def _generate_constructor(function_infos: CppConstructorDecl, options: LitgenOptions, parent_struct_name: str) -> str:
+    adapted_function = AdaptedFunction(function_infos, parent_struct_name, options)
+    r = adapted_function.str_pydef()
+    return r
 
 
 def _generate_method(function_infos: CppFunctionDecl, options: LitgenOptions, parent_struct_name: str) -> str:
-    if function_infos.function_name == parent_struct_name:
-        # Sometimes, srcml might see a constructor as a decl
-        # Example:
-        # struct Foo
-        # {
-        #     IMGUI_API Foo();
-        # };
-        return _generate_constructor(cast(CppConstructorDecl, function_infos), options)
-    else:
-        return _generate_function(function_infos, options, parent_struct_name)
+    return _generate_function(function_infos, options, parent_struct_name)
 
 
 #################################
@@ -291,7 +206,7 @@ def _add_public_struct_elements(public_zone: CppPublicProtectedPrivate, struct_n
             )
             r = r + code
         elif isinstance(public_child, CppConstructorDecl):
-            code = _generate_constructor(function_infos=public_child, options=options)
+            code = _generate_constructor(function_infos=public_child, options=options, parent_struct_name=struct_name)
             r = r + code
     return r
 

@@ -390,7 +390,7 @@ class AdaptedEnum(AdaptedElement):
         # Add ; on the last line
         assert len(lines) > 0
         last_line = lines[-1]
-        last_line = code_utils.add_item_before_comment(last_line, ";")
+        last_line = code_utils.add_item_before_cpp_comment(last_line, ";")
         lines[-1] = last_line
 
         # indent lines
@@ -522,6 +522,10 @@ class AdaptedFunction(AdaptedElement):
     def is_method(self):
         return len(self.parent_struct_name) > 0
 
+    def is_constructor(self):
+        r = self.is_method() and self.cpp_adapted_function.function_name == self.parent_struct_name
+        return r
+
     def function_name_python(self):
         r = cpp_to_python.function_name_to_python(self.cpp_adapted_function.function_name, self.options)
         return r
@@ -637,6 +641,68 @@ class AdaptedFunction(AdaptedElement):
         )
         return code
 
+    def _pydef_constructor_str(self) -> str:
+        """
+        A constructor decl look like this
+            .def(py::init<ARG_TYPES_LIST>(),
+            PY_ARG_LIST
+            DOC_STRING);
+        """
+
+        template_code = code_utils.unindent_code(
+            """
+            .def(py::init<{arg_types}>(){maybe_comma}{location}
+            {_i_}{maybe_pyarg}{maybe_comma}
+            {_i_}{maybe_docstring}"""
+        )[1:]
+
+        function_infos = self.cpp_element()
+
+        if "delete" in function_infos.specifiers:
+            return ""
+
+        _i_ = self.options.indent_cpp_spaces()
+
+        arg_types = function_infos.parameter_list.types_only_for_template()
+        location = self.info_original_location_cpp()
+
+        if len(self._pydef_pyarg_list()) > 0:
+            maybe_pyarg = ", ".join(self._pydef_pyarg_list())
+        else:
+            maybe_pyarg = None
+
+        if len(self.comment_pydef_one_line()) > 0:
+            maybe_docstring = f'"{self.comment_pydef_one_line()}"'
+        else:
+            maybe_docstring = None
+
+        # Apply simple replacements
+        code = template_code
+        code = code_utils.replace_in_string(
+            code,
+            {
+                "_i_": _i_,
+                "location": location,
+                "arg_types": arg_types,
+            },
+        )
+
+        # Apply replacements with possible line removal
+        code = code_utils.replace_in_string_remove_line_if_none(
+            code,
+            {
+                "maybe_docstring": maybe_docstring,
+                "maybe_pyarg": maybe_pyarg,
+            },
+        )
+
+        # Process maybe_comma
+        code = code_utils.replace_maybe_comma(code)
+
+        code = code_utils.add_item_before_cpp_comment(code, ")")
+
+        return code
+
     def _pydef_full_str_impl(self) -> str:
         """Create the full code of the pydef"""
 
@@ -715,8 +781,9 @@ class AdaptedFunction(AdaptedElement):
             maybe_return_value_policy = None
 
         # Apply simple replacements
-        template_code = code_utils.replace_in_string(
-            template_code,
+        code = template_code
+        code = code_utils.replace_in_string(
+            code,
             {
                 "_i_": _i_,
                 "module_or_class": module_or_class,
@@ -729,8 +796,8 @@ class AdaptedFunction(AdaptedElement):
         )
 
         # Apply replacements with possible line removal
-        template_code = code_utils.replace_in_string_remove_line_if_none(
-            template_code,
+        code = code_utils.replace_in_string_remove_line_if_none(
+            code,
             {
                 "lambda_adapter_code": lambda_adapter_code,
                 "maybe_empty_line": maybe_empty_line,
@@ -741,22 +808,16 @@ class AdaptedFunction(AdaptedElement):
         )
 
         # Process maybe_comma
-        lines = template_code.split("\n")
-        new_lines = []
-        for i, line in enumerate(lines):
-            if "{maybe_comma}" in line:
-                if i == len(lines) - 2:
-                    line = line.replace("{maybe_comma}", "")
-                else:
-                    line = line.replace("{maybe_comma}", ",")
-            new_lines.append(line)
-        template_code = "\n".join(new_lines)
+        code = code_utils.replace_maybe_comma(code, nb_skipped_final_lines=1)
 
-        return template_code
+        return code
 
     # override
     def _str_pydef_lines(self) -> List[str]:
-        code = self._pydef_full_str_impl()
+        if self.is_constructor():
+            code = self._pydef_constructor_str()
+        else:
+            code = self._pydef_full_str_impl()
         lines = code.split("\n")
         return lines
 

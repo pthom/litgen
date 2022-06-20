@@ -171,7 +171,7 @@ def align_python_comments_in_block(code: str) -> str:
     return r
 
 
-def last_code_position_before_comment(code_line: str) -> int:
+def last_code_position_before_cpp_comment(code_line: str) -> int:
     pos = line_cpp_comment_position(code_line)
     if pos is None:
         return len(code_line.rstrip())
@@ -188,12 +188,12 @@ def last_code_position_before_comment(code_line: str) -> int:
     return pos
 
 
-def join_lines_with_token_before_comment(lines: List[str], token: str) -> str:
+def join_lines_with_token_before_cpp_comment(lines: List[str], token: str) -> str:
     if len(lines) == 0:
         return ""
 
     def add_token_to_line(line):
-        pos = last_code_position_before_comment(line)
+        pos = last_code_position_before_cpp_comment(line)
         rr = line[:pos] + token + line[pos:]
         return rr
 
@@ -202,12 +202,12 @@ def join_lines_with_token_before_comment(lines: List[str], token: str) -> str:
     return r
 
 
-def add_item_before_comment(code: str, item: str) -> str:
+def add_item_before_cpp_comment(code: str, item: str) -> str:
     if len(code) == 0:
         return item
     lines = code.split("\n")
     last_line = lines[-1]
-    pos = last_code_position_before_comment(last_line)
+    pos = last_code_position_before_cpp_comment(last_line)
     last_line = last_line[:pos] + item + last_line[pos:]
     lines[-1] = last_line
     r = "\n".join(lines)
@@ -709,4 +709,19 @@ def replace_in_string_remove_line_if_none(input_string: str, replacements: Dict[
             full_search = "{" + search + "}"
             r = r.replace(full_search, replace)
 
+    return r
+
+
+def replace_maybe_comma(code: str, nb_skipped_final_lines: int = 0) -> str:
+    """Replace all occurrences of {maybe_comma} by a ',' if it is not on the last line, else by empty."""
+    lines = code.split("\n")
+    new_lines = []
+    for i, line in enumerate(lines):
+        if "{maybe_comma}" in line:
+            if i == len(lines) - 1 - nb_skipped_final_lines:
+                line = line.replace("{maybe_comma}", "")
+            else:
+                line = line.replace("{maybe_comma}", ",")
+        new_lines.append(line)
+    r = "\n".join(new_lines)
     return r
