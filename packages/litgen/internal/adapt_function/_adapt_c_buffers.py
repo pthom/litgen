@@ -443,7 +443,7 @@ class _AdaptBuffersHelper:
         return new_stride_param
 
 
-def adapt_c_buffers(adapted_function: AdaptedFunction, options: LitgenOptions) -> Optional[LambdaAdapter]:
+def adapt_c_buffers(adapted_function: AdaptedFunction) -> Optional[LambdaAdapter]:
     """
         We want to adapt functions that use C buffers like this:
             MY_API inline int8_t foo(const int8_t* values, int count);
@@ -478,7 +478,7 @@ def adapt_c_buffers(adapted_function: AdaptedFunction, options: LitgenOptions) -
             );
 
     """
-
+    options = adapted_function.options
     helper = _AdaptBuffersHelper(adapted_function, options)
 
     if not helper.shall_adapt():

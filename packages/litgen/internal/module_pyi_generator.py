@@ -9,7 +9,7 @@ from codemanip import code_replacements, code_utils
 from litgen.internal import cpp_to_python
 from litgen.internal.adapt_function import (
     AdaptedFunction,
-    make_adapted_function,
+    apply_all_adapters,
 )
 from litgen.options import LitgenOptions
 from srcmlcpp import srcml_main, srcml_warnings
@@ -188,7 +188,8 @@ def _generate_pyi_function(
     options: LitgenOptions,
     parent_struct_name: str = "",
 ) -> str:
-    adapted_function = make_adapted_function(function_infos, options, parent_struct_name)
+    adapted_function = AdaptedFunction(function_infos, parent_struct_name, options)
+    apply_all_adapters(adapted_function)
 
     r = _generate_pyi_function_impl(adapted_function, options, parent_struct_name)
     return r

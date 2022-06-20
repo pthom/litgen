@@ -86,4 +86,19 @@ enum Foo
     )
 
 
-test_adapted_enum()
+def test_adapted_function_stub():
+    options = litgen.LitgenOptions()
+    options.original_location_flag_show = True
+
+    code = """
+    int Foo(int a, std::vector<int>& values, std::vector<int>& values2, bool flag = true); // Doc about foo (flag = true)
+    """
+    fn = srcml_main.code_first_function_decl(options.srcml_options, code)
+    struct_name = ""
+    adapted_function = AdaptedFunction(fn, struct_name, options)
+
+    stub = adapted_function.str_stub()
+    logging.warning("\n" + stub)
+
+
+# test_adapted_enum()

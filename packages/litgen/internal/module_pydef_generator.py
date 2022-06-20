@@ -7,10 +7,8 @@ from typing import Union, cast
 import srcmlcpp
 from codemanip import code_replacements, code_utils
 from litgen.internal import cpp_to_python
-from litgen.internal.adapt_function import (
-    AdaptedFunction,
-    make_adapted_function,
-)
+from litgen.internal.adapted_types_wip.adapted_types import AdaptedFunction
+from litgen.internal.adapt_function import apply_all_adapters
 from litgen.internal.cpp_to_python import info_original_location_cpp
 from litgen.options import LitgenOptions
 from srcmlcpp import srcml_main, srcml_warnings
@@ -163,7 +161,8 @@ def _generate_function(
     options: LitgenOptions,
     parent_struct_name: str = "",
 ) -> str:
-    adapted_function = make_adapted_function(function_infos, options, parent_struct_name)
+    adapted_function = AdaptedFunction(function_infos, parent_struct_name, options)
+    apply_all_adapters(adapted_function)
 
     r = ""
     r += _generate_function_impl(adapted_function, options, parent_struct_name)

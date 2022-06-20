@@ -114,6 +114,10 @@ def code_first_child_of_type(
     raise srcml_warnings.SrcMlException(f"Could not find a child of type {type_of_cpp_element}")
 
 
+def code_first_function_decl(options: SrcmlOptions, code: str) -> srcml_types.CppFunctionDecl:
+    return cast(CppFunctionDecl, code_first_child_of_type(options, CppFunctionDecl, code))
+
+
 def code_first_enum(options: SrcmlOptions, code: str) -> srcml_types.CppEnum:
     return cast(CppEnum, code_first_child_of_type(options, CppEnum, code))
 

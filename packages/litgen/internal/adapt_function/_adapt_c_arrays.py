@@ -7,7 +7,7 @@ from litgen.internal.adapt_function._lambda_adapter import LambdaAdapter
 from srcmlcpp.srcml_types import CppParameter
 
 
-def adapt_c_arrays(adapted_function: AdaptedFunction, options: LitgenOptions) -> Optional[LambdaAdapter]:
+def adapt_c_arrays(adapted_function: AdaptedFunction) -> Optional[LambdaAdapter]:
     """
     We want to adapt functions that use fixed size C arrays like those:
         `void foo_const(const int input[2])` or `void foo_non_const(int output[2])`
@@ -40,7 +40,7 @@ def adapt_c_arrays(adapted_function: AdaptedFunction, options: LitgenOptions) ->
                 foo_non_const_adapt_fixed_size_c_arrays(output_0, output_1);
             }
     """
-
+    options = adapted_function.options
     if not options.c_array_const_flag_replace and not options.c_array_modifiable_flag_replace:
         return None
 

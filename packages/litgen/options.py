@@ -210,6 +210,7 @@ class LitgenOptions:
 
     def __init__(self):
         self.srcml_options = SrcmlOptions()
+        self.code_replacements = code_replacements.standard_replacements()
 
 
 #

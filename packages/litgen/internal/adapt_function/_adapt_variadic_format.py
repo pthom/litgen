@@ -11,7 +11,7 @@ def is_variadic_format(param: CppParameter):
     return param.decl.cpp_type.typenames == [] and param.decl.cpp_type.modifiers == ["..."]
 
 
-def adapt_variadic_format(adapted_function: AdaptedFunction, options: LitgenOptions) -> Optional[LambdaAdapter]:
+def adapt_variadic_format(adapted_function: AdaptedFunction) -> Optional[LambdaAdapter]:
     """A function like
         void Text(const char* fmt, ...)
     will be published in python as
@@ -19,7 +19,7 @@ def adapt_variadic_format(adapted_function: AdaptedFunction, options: LitgenOpti
     and call
         Text("%s", s.c_str());
     """
-
+    options = adapted_function.options
     old_function_params: List[CppParameter] = adapted_function.function_infos.parameter_list.parameters
 
     # Variadic params are always last

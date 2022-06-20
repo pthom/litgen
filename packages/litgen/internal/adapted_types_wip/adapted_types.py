@@ -60,6 +60,11 @@ class AdaptedElement:  # (abc.ABC):  # Cannot be abstract (mypy limitation:  htt
     def _str_stub_lines(self):
         pass
 
+    def str_stub(self) -> str:
+        stub_lines = self._str_stub_lines()
+        r = "\n".join(stub_lines)
+        return r
+
 
 @dataclass
 class AdaptedEmptyLine(AdaptedElement):
@@ -277,11 +282,6 @@ class AdaptedEnum(AdaptedElement):
         all_lines = self._str_stub_layout_lines([title_line], body_lines)
         return all_lines
 
-    def str_stub(self) -> str:
-        stub_lines = self._str_stub_lines()
-        r = "\n".join(stub_lines)
-        return r
-
     def __str__(self) -> str:
         return self.str_stub()
 
@@ -300,16 +300,71 @@ class AdaptedFunction(AdaptedElement):
         self.lambda_to_call = None
         super().__init__(function_infos, options)
 
-    def is_method(self):
-        return len(self.parent_struct_name) > 0
-
     # override
     def cpp_element(self) -> CppFunctionDecl:
         return cast(CppFunctionDecl, self._cpp_element)
 
+    def is_method(self):
+        return len(self.parent_struct_name) > 0
+
+    def function_name_python(self):
+        r = cpp_to_python.function_name_to_python(self.function_infos.function_name, self.options)
+        return r
+
+    def return_type_python(self):
+        return_type_cpp = self.function_infos.full_return_type(self.options.srcml_options)
+        return_type_python = cpp_to_python.type_to_python(return_type_cpp, self.options)
+        return return_type_python
+
+    def _paramlist_call_python(self) -> List[str]:
+        cpp_parameters = self.cpp_element().parameter_list.parameters
+        r = []
+        for param in cpp_parameters:
+            param_name_python = cpp_to_python.var_name_to_python(param.decl.decl_name, self.options)
+            param_type_cpp = param.decl.cpp_type.str_code()
+            param_type_python = cpp_to_python.type_to_python(param_type_cpp, self.options)
+            param_default_value = cpp_to_python.var_value_to_python(param.default_value(), self.options)
+
+            param_code = f"{param_name_python}: {param_type_python}"
+            if len(param_default_value) > 0:
+                param_code += f" = {param_default_value}"
+
+            r.append(param_code)
+        return r
+
     # override
     def _str_stub_lines(self) -> List[str]:
-        raise ValueError("To be completed")
+        function_def_code = f"def {self.function_name_python()}("
+        return_code = f") -> {self.return_type_python()}:"
+        params_strs = self._paramlist_call_python()
+
+        # Try to add function decl + all params and return type on the same line
+        def function_name_and_params_on_one_line() -> Optional[str]:
+            first_code_line_full = function_def_code
+            first_code_line_full += ", ".join(params_strs)
+            first_code_line_full += return_code
+            if len(first_code_line_full) < self.options.python_max_line_length:
+                return first_code_line_full
+            else:
+                return None
+
+        # Else put params one by line
+        def function_name_and_params_line_by_line() -> List[str]:
+            params_strs_comma = []
+            for i, param_str in enumerate(params_strs):
+                if i < len(params_strs) - 1:
+                    params_strs_comma.append(param_str + ", ")
+                else:
+                    params_strs_comma.append(param_str)
+            lines = [function_def_code] + params_strs_comma + [return_code]
+            return lines
+
+        all_on_one_line = function_name_and_params_on_one_line()
+
+        title_lines = [all_on_one_line] if all_on_one_line is not None else function_name_and_params_line_by_line()
+        body_lines: List[str] = []
+        r = self._str_stub_layout_lines(title_lines, body_lines)
+        return r
 
 
 @dataclass

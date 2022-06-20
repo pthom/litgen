@@ -14,7 +14,7 @@ from srcmlcpp.srcml_types import (
 )
 
 
-def adapt_c_string_list(adapted_function: AdaptedFunction, options: LitgenOptions) -> Optional[LambdaAdapter]:
+def adapt_c_string_list(adapted_function: AdaptedFunction) -> Optional[LambdaAdapter]:
     """
     We want to adapt functions that use fixed size C string list like those:
         void foo(const char * const items[], int items_count);
@@ -35,7 +35,7 @@ def adapt_c_string_list(adapted_function: AdaptedFunction, options: LitgenOption
             return foo_adapt_c_string_list(items);
         },
     """
-
+    options = adapted_function.options
     if not options.c_string_list_flag_replace:
         return None
 

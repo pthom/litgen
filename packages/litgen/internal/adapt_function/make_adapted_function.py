@@ -5,12 +5,7 @@ from litgen.options import LitgenOptions
 from srcmlcpp.srcml_types import CppFunctionDecl
 
 
-def make_adapted_function(
-    function_infos: CppFunctionDecl,
-    options: LitgenOptions,
-    parent_struct_name: str = "",
-) -> AdaptedFunction:
-
+def apply_all_adapters(inout_adapted_function: AdaptedFunction) -> None:
     from litgen.internal.adapt_function._adapt_c_arrays import adapt_c_arrays
     from litgen.internal.adapt_function._adapt_c_string_list import adapt_c_string_list
     from litgen.internal.adapt_function._adapt_c_buffers import adapt_c_buffers
@@ -22,32 +17,31 @@ def make_adapted_function(
         adapt_c_string_list,
         adapt_variadic_format,
     ]
+    for adapter_function in all_adapters_functions:
+        lambda_adapter = adapter_function(inout_adapted_function)
+        if lambda_adapter is not None:
+            _apply_lambda_adapter(inout_adapted_function, lambda_adapter)
+
+
+def make_adapted_function_with_cpp_adapter_code(
+    function_infos: CppFunctionDecl,
+    options: LitgenOptions,
+    parent_struct_name: str = "",
+) -> AdaptedFunction:
 
     adapted_function = AdaptedFunction(function_infos, parent_struct_name, options)
-
-    for adapter_function in all_adapters_functions:
-        lambda_adapter = adapter_function(adapted_function, options)
-        if lambda_adapter is not None:
-            _apply_lambda_adapter(adapted_function, lambda_adapter, options, parent_struct_name)
-
+    apply_all_adapters(adapted_function)
     return adapted_function
 
 
-def _make_adapted_lambda_code_end(
-    adapted_function: AdaptedFunction,
-    lambda_adapter: LambdaAdapter,
-    options: LitgenOptions,
-    parent_struct_name,
-):
-
+def _make_adapted_lambda_code_end(adapted_function: AdaptedFunction, lambda_adapter: LambdaAdapter):
+    options = adapted_function.options
     lambda_template_code = """
         {auto_r_equal_or_void}{function_or_lambda_to_call}({adapted_cpp_parameters});
         {maybe_lambda_output_code}
         {maybe_return_r};
     """
     lambda_template_code = code_utils.unindent_code(lambda_template_code, flag_strip_empty_lines=True)
-
-    is_method = len(parent_struct_name) > 0
 
     # Fill _i_
     _i_ = options.indent_cpp_spaces()
@@ -63,7 +57,7 @@ def _make_adapted_lambda_code_end(
     if adapted_function.lambda_to_call is not None:
         function_or_lambda_to_call = adapted_function.lambda_to_call
     else:
-        if is_method:
+        if adapted_function.is_method():
             function_or_lambda_to_call = "self." + adapted_function.function_infos.function_name
         else:
             function_or_lambda_to_call = adapted_function.function_infos.function_name
@@ -101,12 +95,7 @@ def _make_adapted_lambda_code_end(
     return lambda_code
 
 
-def _make_adapted_lambda_code(
-    adapted_function: AdaptedFunction,
-    lambda_adapter: LambdaAdapter,
-    options: LitgenOptions,
-    parent_struct_name,
-):
+def _make_adapted_lambda_code(adapted_function: AdaptedFunction, lambda_adapter: LambdaAdapter):
     lambda_template_code = """
         auto {lambda_name} = [{lambda_captures}]({adapted_python_parameters})
         {
@@ -114,9 +103,8 @@ def _make_adapted_lambda_code(
         {_i_}{lambda_template_end}
         };
     """
+    options = adapted_function.options
     lambda_template_code = code_utils.unindent_code(lambda_template_code, flag_strip_empty_lines=True) + "\n"
-
-    is_method = len(parent_struct_name) > 0
 
     # Fill _i_
     _i_ = options.indent_cpp_spaces()
@@ -128,7 +116,7 @@ def _make_adapted_lambda_code(
     _lambda_captures_list = []
     if adapted_function.lambda_to_call is not None:
         _lambda_captures_list.append("&" + adapted_function.lambda_to_call)
-    elif is_method:
+    elif adapted_function.is_method():
         _lambda_captures_list.append("&self")
     lambda_captures = ", ".join(_lambda_captures_list)
 
@@ -150,9 +138,7 @@ def _make_adapted_lambda_code(
     if lambda_adapter.lambda_template_end is not None:
         lambda_template_end = lambda_adapter.lambda_template_end
     else:
-        lambda_template_end = _make_adapted_lambda_code_end(
-            adapted_function, lambda_adapter, options, parent_struct_name
-        )
+        lambda_template_end = _make_adapted_lambda_code_end(adapted_function, lambda_adapter)
     lambda_template_end = code_utils.indent_code(
         lambda_template_end,
         indent_str=options.indent_cpp_spaces(),
@@ -180,15 +166,11 @@ def _make_adapted_lambda_code(
     return lambda_code
 
 
-def _apply_lambda_adapter(
-    adapted_function: AdaptedFunction,
-    lambda_adapter: LambdaAdapter,
-    options: LitgenOptions,
-    parent_struct_name,
-):
+def _apply_lambda_adapter(adapted_function: AdaptedFunction, lambda_adapter: LambdaAdapter):
+    options = adapted_function.options
 
     # Get the full lambda code
-    lambda_code = _make_adapted_lambda_code(adapted_function, lambda_adapter, options, parent_struct_name)
+    lambda_code = _make_adapted_lambda_code(adapted_function, lambda_adapter)
 
     # And modify adapted_function
     if adapted_function.cpp_adapter_code is None:

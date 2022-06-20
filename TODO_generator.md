@@ -1,6 +1,3 @@
-S'arranger pour que mypy ou un linter repere les erreurs de variables pas declarees.
-Cf status de ce repo.
-
 * package function_adapt
   * renames
   * API avec derivation
@@ -8,7 +5,6 @@ Cf status de ce repo.
 * sub package adapt param
   * gen pyi class & structs
   Il faut que pydef_generator (ou peut etre meme srcml_types) puisse faire un tri
-  Dans enum, supprimer count, precalculer valeur des decls des enum quand dependent du previous
   Dans struct, il y a des traitement sur les membres (array et cie)
   --> faire equivalent de adapt_function pour structs et enums
 
