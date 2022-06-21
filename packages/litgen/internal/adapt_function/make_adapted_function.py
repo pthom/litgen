@@ -1,6 +1,6 @@
 from codemanip import code_utils
-from litgen.internal.adapted_types_wip.adapted_types import AdaptedFunction
 from litgen.internal.adapt_function._lambda_adapter import LambdaAdapter
+from litgen.internal.adapted_types_wip.adapted_types import AdaptedFunction
 from litgen.options import LitgenOptions
 from srcmlcpp.srcml_types import CppFunctionDecl
 

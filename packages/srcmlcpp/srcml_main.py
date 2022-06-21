@@ -1,6 +1,6 @@
 import logging
 from dataclasses import dataclass
-from typing import List, Optional, Type, cast, TypeVar
+from typing import List, Optional, Type, TypeVar, cast
 from xml.etree import ElementTree as ET
 
 from srcmlcpp import (

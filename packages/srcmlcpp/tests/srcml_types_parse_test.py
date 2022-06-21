@@ -2,9 +2,8 @@ import os
 import sys
 
 from codemanip import code_utils
-from srcmlcpp import srcml_main, srcml_types_parse
+from srcmlcpp import srcml_main, srcml_types, srcml_types_parse
 from srcmlcpp.srcml_options import SrcmlOptions
-from srcmlcpp import srcml_types
 
 
 _THIS_DIR = os.path.dirname(__file__)

@@ -7,6 +7,7 @@ from typing import List
 from codemanip import code_replacements, code_utils
 from litgen.options import LitgenOptions
 from srcmlcpp import srcml_main
+from srcmlcpp.srcml_types import *
 
 
 """
@@ -263,9 +264,6 @@ def _enum_remove_values_prefix(enum_name: str, value_name: str) -> str:
 # CppElements related below (migrate to adapted_types sub package later ?)
 #
 ##################################################################################################################
-
-
-from srcmlcpp.srcml_types import *
 
 
 def decl_python_var_name(cpp_decl: CppDecl, options: LitgenOptions) -> str:

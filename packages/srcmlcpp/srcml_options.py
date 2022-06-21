@@ -1,4 +1,4 @@
-from typing import Callable, List, Optional, Dict
+from typing import Callable, Dict, List, Optional
 
 
 class SrcmlOptions:

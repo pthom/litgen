@@ -1,12 +1,22 @@
 import difflib
-from srcmlcpp.srcml_types import CppParameter
-
 import itertools
 import logging
 import os.path
 import re
 import traceback
-from typing import Iterator, Union, Dict, Iterable, List, Optional, Tuple, TypeVar, Any
+from typing import (
+    Any,
+    Dict,
+    Iterable,
+    Iterator,
+    List,
+    Optional,
+    Tuple,
+    TypeVar,
+    Union,
+)
+
+from srcmlcpp.srcml_types import CppParameter
 
 
 """Low level code utilities

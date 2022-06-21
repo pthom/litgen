@@ -12,3 +12,6 @@ Regularly run [importanize](https://github.com/miki725/importanize), to reorder 
 cd packages
 importanize
 ````
+
+
+Use monkeytype to add annotations: https://github.com/Instagram/MonkeyType

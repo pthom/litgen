@@ -7,10 +7,10 @@ import pytest  # type: ignore
 
 import litgen
 import srcmlcpp
-from srcmlcpp.srcml_types import *
 from codemanip import code_utils
 from litgen.internal import cpp_to_python, module_pydef_generator
 from litgen.options import LitgenOptions, code_style_implot
+from srcmlcpp.srcml_types import *
 
 
 @dataclass

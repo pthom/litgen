@@ -1,11 +1,11 @@
 import os
+from typing import Callable
 
 import litgen.internal.module_pydef_generator
 import srcmlcpp
 from codemanip import code_utils
 from litgen.internal import module_pydef_generator, module_pyi_generator
 from litgen.options import LitgenOptions
-from typing import Callable
 
 
 def generate_pydef(

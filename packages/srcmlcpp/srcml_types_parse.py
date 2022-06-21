@@ -1,3 +1,5 @@
+from typing import Optional
+
 from srcmlcpp import (
     srcml_caller,
     srcml_comments,
@@ -8,7 +10,6 @@ from srcmlcpp import (
 from srcmlcpp.srcml_options import SrcmlOptions
 from srcmlcpp.srcml_types import *
 from srcmlcpp.srcml_warnings import SrcMlExceptionDetailed
-from typing import Optional
 
 
 def parse_unprocessed(options: SrcmlOptions, element_c: CppElementAndComment) -> CppUnprocessed:  # noqa

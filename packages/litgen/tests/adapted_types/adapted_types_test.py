@@ -1,12 +1,10 @@
 import pytest  # type:ignore
 
+import litgen
 import srcmlcpp
+from litgen.internal.adapted_types_wip.adapted_types import *
 from srcmlcpp import srcml_main
 from srcmlcpp.srcml_types import *
-from litgen.internal.adapted_types_wip.adapted_types import *
-
-import litgen
-from litgen.internal.adapted_types_wip.adapted_types import *
 
 
 def to_adapted_decl(code, options: LitgenOptions) -> AdaptedDecl:
