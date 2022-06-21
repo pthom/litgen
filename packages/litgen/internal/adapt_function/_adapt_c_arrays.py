@@ -4,7 +4,7 @@ from typing import List, Optional
 from srcmlcpp.srcml_types import CppParameter
 
 from litgen.internal.adapt_function._lambda_adapter import LambdaAdapter
-from litgen.internal.adapted_types.adapted_types import (
+from litgen.internal.adapted_types import (
     AdaptedFunction,
     AdaptedParameter,
 )

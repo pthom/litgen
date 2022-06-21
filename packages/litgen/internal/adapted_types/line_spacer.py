@@ -1,6 +1,6 @@
-from typing import Optional
+from typing import Optional, List
 
-from litgen.internal.adapted_types.adapted_types import *
+from litgen.internal.adapted_types.all_types import *
 
 
 class LineSpacer:

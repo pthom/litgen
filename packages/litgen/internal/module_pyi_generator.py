@@ -4,7 +4,7 @@ from codemanip import code_utils
 
 from srcmlcpp.srcml_types import *
 
-from litgen.internal.adapted_types.adapted_types import *
+from litgen.internal.adapted_types import *
 from litgen.options import LitgenOptions
 
 

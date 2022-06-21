@@ -1,4 +1,3 @@
-Re-sort imports
 separate adapted_types
 Rewrite history
 move tests / gen code

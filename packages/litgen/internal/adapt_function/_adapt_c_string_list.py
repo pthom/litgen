@@ -6,7 +6,7 @@ from srcmlcpp.srcml_types import CppParameter
 from litgen.generate_code import code_utils
 from litgen.internal import cpp_to_python
 from litgen.internal.adapt_function._lambda_adapter import LambdaAdapter
-from litgen.internal.adapted_types.adapted_types import AdaptedFunction
+from litgen.internal.adapted_types import AdaptedFunction
 
 
 def adapt_c_string_list(adapted_function: AdaptedFunction) -> Optional[LambdaAdapter]:

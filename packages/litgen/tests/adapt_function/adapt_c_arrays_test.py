@@ -5,7 +5,7 @@ from srcmlcpp.srcml_types import *
 
 import litgen
 from litgen import LitgenOptions
-from litgen.internal.adapted_types.adapted_types import AdaptedFunction
+from litgen.internal.adapted_types import AdaptedFunction
 
 
 def gen_pydef_code(code: str, options: Optional[LitgenOptions] = None) -> str:

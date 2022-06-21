@@ -5,7 +5,7 @@ from srcmlcpp import srcml_main
 from srcmlcpp.srcml_types import *
 
 import litgen
-from litgen.internal.adapted_types.adapted_types import AdaptedFunction
+from litgen.internal.adapted_types import AdaptedFunction
 
 
 _THIS_DIR = os.path.dirname(__file__)
