@@ -6,6 +6,7 @@ from typing import cast, List, Union, Any
 from codemanip import code_replacements
 
 from srcmlcpp.srcml_types import *
+from srcmlcpp.srcml_warnings import emit_srcml_warning, SrcMlExceptionDetailed
 
 from litgen.options import LitgenOptions
 from litgen.internal import cpp_to_python
@@ -68,11 +69,11 @@ class AdaptedElement:  # (abc.ABC):  # Cannot be abstract (mypy limitation:  htt
 
     # @abc.abstractmethod
     def _str_stub_lines(self) -> List[str]:
-        pass
+        raise NotImplementedError()
 
     # @abc.abstractmethod
     def _str_pydef_lines(self) -> List[str]:
-        pass
+        raise NotImplementedError()
 
     def comment_pydef_one_line(self):
         r = cpp_to_python.comment_pydef_one_line(self._cpp_element.cpp_element_comments.full_comment(), self.options)
@@ -111,6 +112,28 @@ class AdaptedEmptyLine(AdaptedElement):
 
 
 @dataclass
+class AdaptedParameter(AdaptedElement):
+    def __init__(self, param: CppParameter, options: LitgenOptions):
+        super().__init__(param, options)
+
+    # override
+    def cpp_element(self) -> CppParameter:
+        return cast(CppParameter, self._cpp_element)
+
+    # override
+    def _str_stub_lines(self) -> List[str]:
+        raise NotImplementedError()
+
+    # override
+    def _str_pydef_lines(self) -> List[str]:
+        raise NotImplementedError()
+
+    def adapted_decl(self) -> AdaptedDecl:
+        adapted_decl = AdaptedDecl(self.cpp_element().decl, self.options)
+        return adapted_decl
+
+
+@dataclass
 class AdaptedDecl(AdaptedElement):
     def __init__(self, decl: CppDecl, options: LitgenOptions):
         super().__init__(decl, options)
@@ -118,6 +141,14 @@ class AdaptedDecl(AdaptedElement):
     # override
     def cpp_element(self) -> CppDecl:
         return cast(CppDecl, self._cpp_element)
+
+    def decl_name_cpp(self) -> str:
+        decl_name_cpp = self.cpp_element().decl_name
+        return decl_name_cpp
+
+    def decl_value_cpp(self) -> str:
+        decl_value_cpp = self.cpp_element().initial_value_code
+        return decl_value_cpp
 
     def decl_name_python(self) -> str:
         decl_name_cpp = self.cpp_element().decl_name
@@ -128,6 +159,77 @@ class AdaptedDecl(AdaptedElement):
         decl_value_cpp = self.cpp_element().initial_value_code
         decl_value_python = cpp_to_python.var_value_to_python(decl_value_cpp, self.options)
         return decl_value_python
+
+    def is_immutable_for_python(self) -> bool:
+        cpp_type_name = self.cpp_element().cpp_type.str_code()
+        r = cpp_to_python.is_cpp_type_immutable_for_python(cpp_type_name)
+        return r
+
+    def c_array_fixed_size_to_const_std_array(self) -> AdaptedDecl:
+        """
+        Processes decl that contains a *const* c style array of fixed size, e.g. `const int v[2]`
+
+        We simply wrap it into a std::array, like this:
+                `const int v[2]` --> `const std::array<int, 2> v`
+        """
+        cpp_element = self.cpp_element()
+        assert cpp_element.is_c_array_known_fixed_size(self.options.srcml_options)
+        assert cpp_element.is_const()
+        array_size = cpp_element.c_array_size_as_int(self.options.srcml_options)
+
+        # If the array is `const`, then we simply wrap it into a std::array, like this:
+        # `const int v[2]` --> `[ const std::array<int, 2> v ]`
+        new_cpp_decl = copy.deepcopy(self.cpp_element())
+        new_cpp_decl.c_array_code = ""
+
+        new_cpp_decl.cpp_type.specifiers.remove("const")
+        cpp_type_name = new_cpp_decl.cpp_type.str_code()
+
+        std_array_type_name = f"std::array<{cpp_type_name}, {array_size}>&"
+        new_cpp_decl.cpp_type.typenames = [std_array_type_name]
+
+        new_cpp_decl.cpp_type.specifiers.append("const")
+        new_cpp_decl.decl_name = new_cpp_decl.decl_name
+
+        new_adapted_decl = AdaptedDecl(new_cpp_decl, self.options)
+        return new_adapted_decl
+
+    def c_array_fixed_size_to_mutable_new_boxed_decls(self) -> List[AdaptedDecl]:
+        """
+        Processes decl that contains a *non const* c style array of fixed size, e.g. `int v[2]`
+            * we may need to "Box" the values if they are of an immutable type in python,
+            * we separate the array into several arguments
+            For example:
+                `int v[2]`
+            Becomes:
+                `[ BoxedInt v_0, BoxedInt v_1 ]`
+
+        :return: a list of CppDecls as described before
+        """
+        cpp_element = self.cpp_element()
+        srcml_options = self.options.srcml_options
+        array_size = cpp_element.c_array_size_as_int(srcml_options)
+
+        assert array_size is not None
+        assert cpp_element.is_c_array_known_fixed_size(srcml_options)
+        assert not cpp_element.is_const()
+
+        cpp_type_name = cpp_element.cpp_type.str_code()
+
+        if cpp_to_python.is_cpp_type_immutable_for_python(cpp_type_name):
+            boxed_type = cpp_to_python.BoxedImmutablePythonType(cpp_type_name)
+            cpp_type_name = boxed_type.boxed_type_name()
+
+        new_decls: List[AdaptedDecl] = []
+        for i in range(array_size):
+            new_decl = copy.deepcopy(self)
+            new_decl.cpp_element().decl_name = new_decl.cpp_element().decl_name + "_" + str(i)
+            new_decl.cpp_element().cpp_type.typenames = [cpp_type_name]
+            new_decl.cpp_element().cpp_type.modifiers = ["&"]
+            new_decl.cpp_element().c_array_code = ""
+            new_decls.append(new_decl)
+
+        return new_decls
 
     # override
     def _str_stub_lines(self) -> List[str]:
@@ -534,6 +636,13 @@ class AdaptedFunction(AdaptedElement):
         return_type_cpp = self.cpp_adapted_function.full_return_type(self.options.srcml_options)
         return_type_python = cpp_to_python.type_to_python(return_type_cpp, self.options)
         return return_type_python
+
+    def adapted_parameters(self) -> List[AdaptedParameter]:
+        r: List[AdaptedParameter] = []
+        for param in self.cpp_adapted_function.parameter_list.parameters:
+            adapted_param = AdaptedParameter(param, self.options)
+            r.append(adapted_param)
+        return r
 
     def _paramlist_call_python(self) -> List[str]:
         cpp_parameters = self.cpp_adapted_function.parameter_list.parameters

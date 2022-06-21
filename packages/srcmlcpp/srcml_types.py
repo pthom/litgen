@@ -657,79 +657,6 @@ class CppDecl(CppElementAndComment):
         Returns true if this decl is const"""
         return "const" in self.cpp_type.specifiers  # or "const" in self.cpp_type.names
 
-    def is_immutable_for_python(self) -> bool:
-        from litgen.internal import cpp_to_python
-
-        cpp_type_name = self.cpp_type.str_code()
-        r = cpp_to_python.is_cpp_type_immutable_for_python(cpp_type_name)
-        return r
-
-    def c_array_fixed_size_to_const_std_array(self, options: SrcmlOptions) -> CppDecl:
-        """
-        Processes decl that contains a *const* c style array of fixed size, e.g. `const int v[2]`
-
-        We simply wrap it into a std::array, like this:
-                `const int v[2]` --> `const std::array<int, 2> v`
-        """
-        is_const = "const" in self.cpp_type.specifiers
-
-        assert self.is_c_array_known_fixed_size(options)
-        assert is_const
-
-        # If the array is `const`, then we simply wrap it into a std::array, like this:
-        # `const int v[2]` --> `[ const std::array<int, 2> v ]`
-        new_decl = copy.deepcopy(self)
-        new_decl.c_array_code = ""
-
-        new_decl.cpp_type.specifiers.remove("const")
-        cpp_type_name = new_decl.cpp_type.str_code()
-
-        std_array_type_name = f"std::array<{cpp_type_name}, {self.c_array_size_as_int(options)}>&"
-        new_decl.cpp_type.typenames = [std_array_type_name]
-
-        new_decl.cpp_type.specifiers.append("const")
-        new_decl.decl_name = new_decl.decl_name
-        return new_decl
-
-    def c_array_fixed_size_to_mutable_new_boxed_decls(self, options: SrcmlOptions) -> List[CppDecl]:
-        """
-        Processes decl that contains a *non const* c style array of fixed size, e.g. `int v[2]`
-            * we may need to "Box" the values if they are of an immutable type in python,
-            * we separate the array into several arguments
-            For example:
-                `int v[2]`
-            Becomes:
-                `[ BoxedInt v_0, BoxedInt v_1 ]`
-
-        :return: a list of CppDecls as described before
-        """
-        from litgen.internal import cpp_to_python
-
-        is_const = "const" in self.cpp_type.specifiers
-
-        assert self.is_c_array_known_fixed_size(options)
-        assert not is_const
-
-        cpp_type_name = self.cpp_type.str_code()
-
-        if cpp_to_python.is_cpp_type_immutable_for_python(cpp_type_name):
-            boxed_type = cpp_to_python.BoxedImmutablePythonType(cpp_type_name)
-            cpp_type_name = boxed_type.boxed_type_name()
-
-        n = self.c_array_size_as_int(options)
-        assert n is not None
-
-        new_decls = []
-        for i in range(n):
-            new_decl = copy.deepcopy(self)
-            new_decl.decl_name = new_decl.decl_name + "_" + str(i)
-            new_decl.cpp_type.typenames = [cpp_type_name]
-            new_decl.cpp_type.modifiers = ["&"]
-            new_decl.c_array_code = ""
-            new_decls.append(new_decl)
-
-        return new_decls
-
 
 @dataclass
 class CppDeclStatement(CppElementAndComment):
@@ -758,7 +685,7 @@ class CppDeclStatement(CppElementAndComment):
 
 
 @dataclass
-class CppParameter(CppElement):
+class CppParameter(CppElementAndComment):
     """
     https://www.srcml.org/doc/cpp_srcML.html#function-declaration
     """
@@ -769,7 +696,8 @@ class CppParameter(CppElement):
     template_name: str = ""
 
     def __init__(self, element: ET.Element):
-        super().__init__(element)
+        dummy_cpp_element_comments = CppElementComments()
+        super().__init__(element, dummy_cpp_element_comments)
 
     def type_name_default_for_signature(self):
         assert hasattr(self, "decl")
@@ -788,6 +716,10 @@ class CppParameter(CppElement):
     def str_template_type(self):
         assert hasattr(self, "template_type")
         r = str(self.template_type) + " " + self.template_name
+        return r
+
+    def is_template_param(self):
+        r = hasattr(self, "template_type")
         return r
 
     def __str__(self) -> str:

@@ -6,31 +6,8 @@ from srcmlcpp.srcml_types import *
 
 def to_decl(code):
     options = srcmlcpp.SrcmlOptions()
-    element = srcml_main._tests_only_get_only_child_with_tag(options, code, "decl")
-    cpp_decl = srcml_types_parse.parse_decl(options, element, None)
+    cpp_decl = srcml_main.code_first_decl(options, code)
     return cpp_decl
-
-
-def test_c_array_fixed_size_to_std_array():
-    options = srcmlcpp.SrcmlOptions()
-    options.named_number_macros = {"COUNT": 3}
-
-    code = "const int v[COUNT]"
-    cpp_decl = to_decl(code)
-    new_decl = cpp_decl.c_array_fixed_size_to_const_std_array(options)
-    code_utils.assert_are_codes_equal(new_decl, "const std::array<int, 3>& v")
-
-    code = "const unsigned int v[3]"
-    cpp_decl = to_decl(code)
-    new_decl = cpp_decl.c_array_fixed_size_to_const_std_array(options)
-    code_utils.assert_are_codes_equal(new_decl, "const std::array<unsigned int, 3>& v")
-
-    code = "int v[2]"
-    cpp_decl = to_decl(code)
-    new_decls = cpp_decl.c_array_fixed_size_to_mutable_new_boxed_decls(options)
-    assert len(new_decls) == 2
-    code_utils.assert_are_codes_equal(new_decls[0], "BoxedInt & v_0")
-    code_utils.assert_are_codes_equal(new_decls[1], "BoxedInt & v_1")
 
 
 def test_is_c_string_list_ptr():

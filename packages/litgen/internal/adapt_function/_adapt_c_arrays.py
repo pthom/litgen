@@ -2,7 +2,7 @@ import copy
 from typing import List, Optional
 
 from litgen.generate_code import LitgenOptions
-from litgen.internal.adapted_types_wip.adapted_types import AdaptedFunction
+from litgen.internal.adapted_types_wip.adapted_types import AdaptedFunction, AdaptedDecl, AdaptedParameter
 from litgen.internal.adapt_function._lambda_adapter import LambdaAdapter
 from srcmlcpp.srcml_types import CppParameter
 
@@ -46,8 +46,8 @@ def adapt_c_arrays(adapted_function: AdaptedFunction) -> Optional[LambdaAdapter]
 
     needs_adapt = False
 
-    for old_param in adapted_function.cpp_adapted_function.parameter_list.parameters:
-        if old_param.decl.is_c_array_known_fixed_size(options.srcml_options):
+    for old_adapted_param in adapted_function.adapted_parameters():
+        if old_adapted_param.cpp_element().decl.is_c_array_known_fixed_size(options.srcml_options):
             needs_adapt = True
 
     if not needs_adapt:
@@ -56,31 +56,38 @@ def adapt_c_arrays(adapted_function: AdaptedFunction) -> Optional[LambdaAdapter]
     lambda_adapter = LambdaAdapter()
 
     lambda_adapter.new_function_infos = copy.deepcopy(adapted_function.cpp_adapted_function)
-    old_function_params: List[CppParameter] = adapted_function.cpp_adapted_function.parameter_list.parameters
-    new_function_params = []
-    for old_param in old_function_params:
-        was_replaced = False
-        if old_param.decl.is_c_array_known_fixed_size(options.srcml_options):
 
-            if old_param.decl.is_const() and options.c_array_const_flag_replace:
+    # old_function_params: List[CppParameter] = adapted_function.cpp_adapted_function.parameter_list.parameters
+    old_function_params: List[AdaptedParameter] = adapted_function.adapted_parameters()
+
+    new_function_params: List[CppParameter] = []
+    for old_adapted_param in old_function_params:
+        was_replaced = False
+        old_cpp_decl = old_adapted_param.adapted_decl().cpp_element()
+        if old_cpp_decl.is_c_array_known_fixed_size(options.srcml_options):
+
+            if old_cpp_decl.is_const() and options.c_array_const_flag_replace:
                 was_replaced = True
                 # Create new calling param (const std::array &)
-                new_decl = old_param.decl.c_array_fixed_size_to_const_std_array(options.srcml_options)
-                new_param = copy.deepcopy(old_param)
-                new_param.decl = new_decl
+                new_adapted_decl = old_adapted_param.adapted_decl().c_array_fixed_size_to_const_std_array()
+
+                new_param = CppParameter(
+                    old_adapted_param.cpp_element().srcml_element
+                )  # copy.deepcopy(old_adapted_decl)
+                new_param.decl = new_adapted_decl.cpp_element()
                 new_function_params.append(new_param)
                 # Fill adapted_cpp_parameter_list (those that will call the original C style function)
-                lambda_adapter.adapted_cpp_parameter_list.append(new_decl.decl_name + ".data()")
+                lambda_adapter.adapted_cpp_parameter_list.append(new_adapted_decl.decl_name_cpp() + ".data()")
 
-            elif not old_param.decl.is_const() and options.c_array_modifiable_flag_replace:
-                array_size_int = old_param.decl.c_array_size_as_int(options.srcml_options)
+            elif not old_cpp_decl.is_const() and options.c_array_modifiable_flag_replace:
+                array_size_int = old_cpp_decl.c_array_size_as_int(options.srcml_options)
                 assert array_size_int is not None
 
                 if array_size_int <= options.c_array_modifiable_max_size:
 
                     was_replaced = True
 
-                    new_decls = old_param.decl.c_array_fixed_size_to_mutable_new_boxed_decls(options.srcml_options)
+                    new_adapted_decls = old_adapted_param.adapted_decl().c_array_fixed_size_to_mutable_new_boxed_decls()
 
                     #
                     # Fill lambda_input_code and lambda_output_code
@@ -94,28 +101,30 @@ def adapt_c_arrays(adapted_function: AdaptedFunction) -> Optional[LambdaAdapter]
                     # output_0.value = output_raw[0];   // `lambda_output_code`
                     # output_1.value = output_raw[1];
 
-                    old_param_renamed = copy.deepcopy(old_param)
-                    old_param_renamed.decl.decl_name = old_param_renamed.decl.decl_name + "_raw"
-                    lambda_adapter.lambda_input_code += old_param_renamed.decl.str_code() + ";\n"
+                    old_adapted_param_renamed = copy.deepcopy(old_adapted_param)
+                    old_adapted_param_renamed.cpp_element().decl.decl_name = (
+                        old_adapted_param_renamed.cpp_element().decl.decl_name + "_raw"
+                    )
+                    lambda_adapter.lambda_input_code += old_adapted_param_renamed.cpp_element().str_code() + ";\n"
 
-                    lambda_adapter.adapted_cpp_parameter_list.append(old_param_renamed.decl.decl_name)
+                    lambda_adapter.adapted_cpp_parameter_list.append(
+                        old_adapted_param_renamed.cpp_element().decl.decl_name
+                    )
 
-                    for i, new_decl in enumerate(new_decls):
-                        value_access = ".value" if old_param.decl.is_immutable_for_python() else ""
-                        lambda_adapter.lambda_input_code += (
-                            f"{old_param_renamed.decl.decl_name}[{i}] = {new_decl.decl_name}{value_access};\n"
-                        )
-                        lambda_adapter.lambda_output_code += (
-                            f"{new_decl.decl_name}{value_access} = {old_param_renamed.decl.decl_name}[{i}];\n"
-                        )
+                    for i, new_adapted_decl in enumerate(new_adapted_decls):
+                        value_access = ".value" if old_adapted_param.adapted_decl().is_immutable_for_python() else ""
+                        lambda_adapter.lambda_input_code += f"{old_adapted_param_renamed.adapted_decl().decl_name_cpp()}[{i}] = {new_adapted_decl.decl_name_cpp()}{value_access};\n"
+                        lambda_adapter.lambda_output_code += f"{new_adapted_decl.decl_name_cpp()}{value_access} = {old_adapted_param_renamed.adapted_decl().decl_name_cpp()}[{i}];\n"
 
-                        new_param = copy.deepcopy(old_param)
-                        new_param.decl = new_decl
+                        new_param = CppParameter(
+                            old_adapted_param.cpp_element().srcml_element
+                        )  # copy.deepcopy(old_adapted_decl)
+                        new_param.decl = new_adapted_decl.cpp_element()
                         new_function_params.append(new_param)
 
         if not was_replaced:
-            new_function_params.append(old_param)
-            lambda_adapter.adapted_cpp_parameter_list.append(old_param.decl.decl_name)
+            new_function_params.append(old_adapted_param.cpp_element())
+            lambda_adapter.adapted_cpp_parameter_list.append(old_cpp_decl.decl_name)
 
     lambda_adapter.new_function_infos.parameter_list.parameters = new_function_params
 
