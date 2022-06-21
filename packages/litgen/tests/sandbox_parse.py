@@ -20,7 +20,7 @@ def read_file_content(filename):
 
 def play_parse(code):
     options = litgen.code_style_imgui()
-    cpp_unit = srcmlcpp.code_to_cpp_unit(options, code)
+    cpp_unit = srcmlcpp.code_to_cpp_unit(options.srcml_options, code)
     print(cpp_unit)
 
 
@@ -41,7 +41,7 @@ def play_implot():
     print(pydef_code)
 
 
-def play_pydef(code, options):
+def play_pydef(code, options) -> None:
     # from srcmlcpp import srcml_utils
     # xml = srcmlcpp.code_to_srcml(code, dump_positions=False)
     # # print(srcml_utils.srcml_to_str_readable(xml))

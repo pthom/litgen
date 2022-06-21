@@ -14,7 +14,7 @@ sys.path.append(_THIS_DIR + "/../..")
 def test_parse_cpp_decl_statement():
     options = SrcmlOptions()
 
-    def code_to_decl_statement(code):
+    def code_to_decl_statement(code) -> srcml_types.CppDeclStatement:
         element_c = srcml_main._tests_only_get_only_child_with_tag(options, code, "decl_stmt")
         cpp_decl_statement = srcml_types_parse.parse_decl_stmt(options, element_c)
         cpp_decl_statement_str = str(cpp_decl_statement)
@@ -82,7 +82,7 @@ def test_parse_cpp_decl_statement():
 def test_parse_function_decl():
     options = SrcmlOptions()
 
-    def code_to_fn_decl(code):
+    def code_to_fn_decl(code) -> srcml_types.CppFunctionDecl:
         element = srcml_main._tests_only_get_only_child_with_tag(options, code, "function_decl")
         fn_decl = srcml_types_parse.parse_function_decl(options, element)
         fn_decl_str = str(fn_decl)
@@ -128,7 +128,7 @@ def test_parse_function_decl():
 def test_parse_function():
     options = SrcmlOptions()
 
-    def code_to_fn_decl(code):
+    def code_to_fn_decl(code) -> srcml_types.CppFunctionDecl:
         element = srcml_main._tests_only_get_only_child_with_tag(options, code, "function")
         fn = srcml_types_parse.parse_function(options, element)
         fn_str = str(fn)
@@ -152,7 +152,7 @@ def test_parse_function():
 def test_parse_struct():
     options = SrcmlOptions()
 
-    def code_to_struct_decl(code):
+    def code_to_struct_decl(code) -> str:
         element_c = srcml_main._tests_only_get_only_child_with_tag(options, code, "struct")
         cpp_element = srcml_types_parse.parse_struct_or_class(options, element_c)
         cpp_element_str = str(cpp_element)
@@ -238,7 +238,7 @@ def test_parse_struct():
 def test_parse_unit():
     options = SrcmlOptions()
 
-    def code_to_unit(code):
+    def code_to_unit_str(code) -> str:
         srcml_unit = srcml_main.code_to_srcml_unit(options, code)
         cpp_element = srcml_types_parse.parse_unit(options, srcml_unit)
         cpp_element_str = str(cpp_element)
@@ -289,7 +289,7 @@ def test_parse_unit():
     #endif // #ifndef MY_API_H
     """
 
-    cpp_element_str = code_to_unit(code)
+    cpp_element_str = code_to_unit_str(code)
 
     expected_code = """
         <unprocessed_define/>
@@ -335,7 +335,7 @@ def test_parse_unit():
     code_utils.assert_are_codes_equal(cpp_element_str, expected_code)
 
 
-def do_parse_imgui_implot(filename):
+def do_parse_imgui_implot(filename) -> None:
     def preprocess_imgui_code(code):
         import re
 

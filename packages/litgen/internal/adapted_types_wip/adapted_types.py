@@ -17,7 +17,7 @@ class AdaptedElement:  # (abc.ABC):  # Cannot be abstract (mypy limitation:  htt
     _cpp_element: CppElementAndComment
     options: LitgenOptions
 
-    def __init__(self, cpp_element: CppElementAndComment, options: LitgenOptions):
+    def __init__(self, cpp_element: CppElementAndComment, options: LitgenOptions) -> None:
         self._cpp_element = cpp_element
         self.options = options
 
@@ -75,7 +75,7 @@ class AdaptedElement:  # (abc.ABC):  # Cannot be abstract (mypy limitation:  htt
     def _str_pydef_lines(self) -> List[str]:
         raise NotImplementedError()
 
-    def comment_pydef_one_line(self):
+    def comment_pydef_one_line(self) -> str:
         r = cpp_to_python.comment_pydef_one_line(self._cpp_element.cpp_element_comments.full_comment(), self.options)
         return r
 
@@ -92,7 +92,7 @@ class AdaptedElement:  # (abc.ABC):  # Cannot be abstract (mypy limitation:  htt
 
 @dataclass
 class AdaptedEmptyLine(AdaptedElement):
-    def __init__(self, cpp_empty_line: CppEmptyLine, options: LitgenOptions):
+    def __init__(self, cpp_empty_line: CppEmptyLine, options: LitgenOptions) -> None:
         super().__init__(cpp_empty_line, options)
 
     # override
@@ -113,7 +113,7 @@ class AdaptedEmptyLine(AdaptedElement):
 
 @dataclass
 class AdaptedParameter(AdaptedElement):
-    def __init__(self, param: CppParameter, options: LitgenOptions):
+    def __init__(self, param: CppParameter, options: LitgenOptions) -> None:
         super().__init__(param, options)
 
     # override
@@ -135,7 +135,7 @@ class AdaptedParameter(AdaptedElement):
 
 @dataclass
 class AdaptedDecl(AdaptedElement):
-    def __init__(self, decl: CppDecl, options: LitgenOptions):
+    def __init__(self, decl: CppDecl, options: LitgenOptions) -> None:
         super().__init__(decl, options)
 
     # override
@@ -269,7 +269,7 @@ class AdaptedDecl(AdaptedElement):
 class AdaptedEnumDecl(AdaptedDecl):
     enum_parent: AdaptedEnum
 
-    def __init__(self, decl: CppDecl, enum_parent: AdaptedEnum, options: LitgenOptions):
+    def __init__(self, decl: CppDecl, enum_parent: AdaptedEnum, options: LitgenOptions) -> None:
         self.enum_parent = enum_parent
         super().__init__(decl, options)
 
@@ -293,7 +293,7 @@ class AdaptedEnumDecl(AdaptedDecl):
         )
         return decl_name_python
 
-    def decl_value_python(self):
+    def decl_value_python(self) -> str:
         decl_value_cpp = self.cpp_element().initial_value_code
         decl_value_python = cpp_to_python.var_value_to_python(decl_value_cpp, self.options)
         #
@@ -507,7 +507,7 @@ class AdaptedEnum(AdaptedElement):
     adapted_children: List[Union[AdaptedDecl, AdaptedEmptyLine, AdaptedComment]]
     adapted_enum_decls: List[AdaptedEnumDecl]
 
-    def __init__(self, enum_: CppEnum, options: LitgenOptions):
+    def __init__(self, enum_: CppEnum, options: LitgenOptions) -> None:
         super().__init__(enum_, options)
         self.adapted_children = []
         self.adapted_enum_decls = []
@@ -687,7 +687,7 @@ class AdaptedFunction(AdaptedElement):
     cpp_adapter_code: Optional[str] = None
     lambda_to_call: Optional[str] = None
 
-    def __init__(self, function_infos: CppFunctionDecl, parent_struct_name: str, options: LitgenOptions):
+    def __init__(self, function_infos: CppFunctionDecl, parent_struct_name: str, options: LitgenOptions) -> None:
         from litgen.internal.adapt_function.make_adapted_function import apply_all_adapters
 
         self.cpp_adapted_function = function_infos
@@ -702,18 +702,18 @@ class AdaptedFunction(AdaptedElement):
     def cpp_element(self) -> CppFunctionDecl:
         return cast(CppFunctionDecl, self._cpp_element)
 
-    def is_method(self):
+    def is_method(self) -> bool:
         return len(self.parent_struct_name) > 0
 
-    def is_constructor(self):
+    def is_constructor(self) -> bool:
         r = self.is_method() and self.cpp_adapted_function.function_name == self.parent_struct_name
         return r
 
-    def function_name_python(self):
+    def function_name_python(self) -> str:
         r = cpp_to_python.function_name_to_python(self.cpp_adapted_function.function_name, self.options)
         return r
 
-    def return_type_python(self):
+    def return_type_python(self) -> str:
         return_type_cpp = self.cpp_adapted_function.full_return_type(self.options.srcml_options)
         return_type_python = cpp_to_python.type_to_python(return_type_cpp, self.options)
         return return_type_python
@@ -957,11 +957,11 @@ class AdaptedFunction(AdaptedElement):
             maybe_py_arg = None
 
         # fill maybe_docstring
-        maybe_docstring = self.comment_pydef_one_line()
-        if len(maybe_docstring) == 0:
+        comment = self.comment_pydef_one_line()
+        if len(comment) == 0:
             maybe_docstring = None
         else:
-            maybe_docstring = f'"{maybe_docstring}"'
+            maybe_docstring = f'"{comment}"'
 
         # Fill maybe_return_value_policy
         return_value_policy = self._pydef_function_return_value_policy()

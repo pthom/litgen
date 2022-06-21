@@ -41,7 +41,7 @@ def adapt_c_string_list(adapted_function: AdaptedFunction) -> Optional[LambdaAda
 
     old_function_params: List[CppParameter] = adapted_function.cpp_adapted_function.parameter_list.parameters
 
-    def needs_adapt():
+    def needs_adapt() -> bool:
         param_0: CppParameter
         param_1: CppParameter
         for param_0, param_1 in code_utils.overlapping_pairs(old_function_params):

@@ -15,7 +15,7 @@ assert os.path.isdir(CPP_HEADERS_DIR)
 assert os.path.isdir(CPP_GENERATED_PYBIND_DIR)
 
 
-def my_code_style_options():
+def my_code_style_options() -> litgen.LitgenOptions:
     options = litgen.LitgenOptions()
     options.cpp_indent_size = 4
 
@@ -35,7 +35,7 @@ def my_code_style_options():
     return options
 
 
-def autogenerate():
+def autogenerate() -> None:
     input_cpp_header = CPP_HEADERS_DIR + "/litgensample.h"
     output_cpp_module = CPP_GENERATED_PYBIND_DIR + "/pybind_litgensample.cpp"
     output_stub_pyi_file = CPP_GENERATED_PYBIND_DIR + "/litgensample/__init__.pyi"

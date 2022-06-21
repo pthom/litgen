@@ -2,7 +2,7 @@ import copy
 import logging
 import os
 import sys
-from typing import Union, cast
+from typing import List, Union, cast
 
 import srcmlcpp
 from codemanip import code_replacements, code_utils
@@ -18,7 +18,7 @@ from srcmlcpp.srcml_types import *
 class _LineSpacer:
     last_element: Optional[CppElementAndComment] = None
 
-    def line_spaces(self, element: CppElementAndComment):
+    def line_spaces(self, element: CppElementAndComment) -> str:
         if self.last_element is None:
             self.last_element = element
             return ""
@@ -181,14 +181,16 @@ def _add_struct_member_decl(cpp_decl: CppDecl, struct_name: str, options: Litgen
         return r
 
 
-def _add_struct_member_decl_stmt(cpp_decl_stmt: CppDeclStatement, struct_name: str, options: LitgenOptions):
+def _add_struct_member_decl_stmt(cpp_decl_stmt: CppDeclStatement, struct_name: str, options: LitgenOptions) -> str:
     r = ""
     for cpp_decl in cpp_decl_stmt.cpp_decls:
         r += _add_struct_member_decl(cpp_decl, struct_name, options)
     return r
 
 
-def _add_public_struct_elements(public_zone: CppPublicProtectedPrivate, struct_name: str, options: LitgenOptions):
+def _add_public_struct_elements(
+    public_zone: CppPublicProtectedPrivate, struct_name: str, options: LitgenOptions
+) -> str:
     r = ""
     for public_child in public_zone.block_children:
         if isinstance(public_child, CppDeclStatement):
@@ -279,7 +281,7 @@ def _generate_namespace(
 ################################
 
 
-def generate_boxed_types_binding_code(options: LitgenOptions):
+def generate_boxed_types_binding_code(options: LitgenOptions) -> str:
     boxed_structs = cpp_to_python.BoxedImmutablePythonType.struct_codes()
     boxed_bindings = cpp_to_python.BoxedImmutablePythonType.binding_codes(options)
     if len(boxed_structs) > 0:

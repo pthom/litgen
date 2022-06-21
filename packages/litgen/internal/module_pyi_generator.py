@@ -2,7 +2,7 @@ import copy
 import logging
 import os
 import sys
-from typing import Union
+from typing import Any, List, Optional, Union
 
 import srcmlcpp
 from codemanip import code_replacements, code_utils
@@ -293,7 +293,9 @@ def _generate_pyi_struct_or_class(struct_infos: CppStruct, options: LitgenOption
 #################################
 #           Namespace
 ################################
-def _generate_pyi_namespace(cpp_namespace: CppNamespace, options: LitgenOptions, current_namespaces=None) -> str:
+def _generate_pyi_namespace(
+    cpp_namespace: CppNamespace, options: LitgenOptions, current_namespaces: Optional[List[str]] = None
+) -> str:
 
     if current_namespaces is None:
         current_namespaces = []

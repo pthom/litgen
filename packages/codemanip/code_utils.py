@@ -1,10 +1,12 @@
 import difflib
+from srcmlcpp.srcml_types import CppParameter
+
 import itertools
 import logging
 import os.path
 import re
 import traceback
-from typing import Dict, Iterable, List, Optional, Tuple, TypeVar
+from typing import Iterator, Union, Dict, Iterable, List, Optional, Tuple, TypeVar, Any
 
 
 """Low level code utilities
@@ -17,13 +19,14 @@ T = TypeVar("T")
 
 # transform a list into a list of adjacent pairs
 # For example : [a, b, c] -> [ [a, b], [b, c]]
-def overlapping_pairs(iterable: Iterable[T]):
+def overlapping_pairs(iterable: Iterable[T]) -> Iterator[Tuple[T, T]]:
     it = iter(iterable)
+
     a = next(it, None)
-    b = None  # noqa
-    for b in it:
-        yield a, b
-        a = b
+    if a is not None:
+        for b in it:
+            yield a, b
+            a = b
 
 
 def run_length_encode(in_list: List[T]) -> List[Tuple[T, int]]:
@@ -214,7 +217,7 @@ def add_item_before_cpp_comment(code: str, item: str) -> str:
     return r
 
 
-def to_snake_case(name) -> str:
+def to_snake_case(name: str) -> str:
     if "re1" not in to_snake_case.__dict__:
         to_snake_case.re1 = re.compile("(.)([A-Z][a-z]+)")  # type: ignore
         to_snake_case.re2 = re.compile("__([A-Z])")  # type: ignore
@@ -290,7 +293,7 @@ def reindent_code(code: str, indent_size: int = 4, skip_first_line=False, indent
 def indent_code_lines(
     code_lines: List[str],
     indent_size: int = 1,
-    skip_first_line=False,
+    skip_first_line: bool = False,
     indent_str: Optional[str] = None,
     rstrip: bool = True,
 ) -> List[str]:
@@ -301,7 +304,11 @@ def indent_code_lines(
 
 
 def indent_code(
-    code: str, indent_size: int = 1, skip_first_line=False, indent_str: Optional[str] = None, rstrip: bool = True
+    code: str,
+    indent_size: int = 1,
+    skip_first_line: bool = False,
+    indent_str: Optional[str] = None,
+    rstrip: bool = True,
 ) -> str:
     """add some space to the left of all lines"""
     if skip_first_line:
@@ -414,7 +421,7 @@ def cpp_comment_remove_comment_markers(comment: str) -> str:
         return result
 
 
-def spaces_or_tabs_at_line_start(line) -> str:
+def spaces_or_tabs_at_line_start(line: str) -> str:
     r = ""
     for i, c in enumerate(line):
         if c == " " or c == "\t":
@@ -430,7 +437,7 @@ def write_code_between_markers(
     code_marker_out: str,
     code_to_insert: str,
     flag_preserve_indentation: bool = True,
-):
+) -> None:
 
     assert os.path.isfile(inout_filename)
     input_code = read_text_file(inout_filename)
@@ -532,7 +539,7 @@ def make_nice_code_diff(generated: str, expected: str) -> str:
     return "".join(diffs)
 
 
-def assert_are_equal_ignore_spaces(generated_code: str, expected_code: str):
+def assert_are_equal_ignore_spaces(generated_code: Any, expected_code: str):
     generated_processed = remove_redundant_spaces(str(generated_code))
     expected_processed = remove_redundant_spaces(expected_code)
     if not generated_processed == expected_processed:
@@ -555,7 +562,7 @@ def assert_are_equal_ignore_spaces(generated_code: str, expected_code: str):
     assert generated_processed == expected_processed
 
 
-def assert_are_codes_equal(generated_code: str, expected_code: str):
+def assert_are_codes_equal(generated_code: Any, expected_code: str):
     generated_code_str = str(generated_code)
     generated_processed = strip_empty_lines(unindent_code(generated_code_str))
     expected_processed = strip_empty_lines(unindent_code(expected_code))
@@ -680,7 +687,7 @@ def make_regex_any_variable_starting_with(what_to_find: str) -> str:
     return regex
 
 
-def merge_dicts(dict1, dict2):
+def merge_dicts(dict1: Dict[str, Any], dict2: Dict[str, Any]) -> Dict[str, Any]:
     res = {**dict1, **dict2}
     return res
 

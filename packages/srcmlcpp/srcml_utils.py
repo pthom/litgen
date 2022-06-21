@@ -3,7 +3,7 @@ from typing import Any, List, Optional
 from xml.dom import minidom
 from xml.etree import ElementTree as ET  # noqa
 
-from codemanip import CodePosition
+from codemanip.code_position import CodePosition
 from srcmlcpp import srcml_caller
 
 
@@ -23,7 +23,7 @@ def element_end_position(element: ET.Element) -> Optional[CodePosition]:
     return _element_position(element, "end")
 
 
-def copy_element_end_position(element_src: ET.Element, element_dst: ET.Element):
+def copy_element_end_position(element_src: ET.Element, element_dst: ET.Element) -> None:
     for key, value in element_src.attrib.items():
         if clean_tag_or_attrib(key) == "end":
             end_position = value

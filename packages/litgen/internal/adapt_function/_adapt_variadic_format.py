@@ -7,7 +7,7 @@ from litgen.internal.adapt_function._lambda_adapter import LambdaAdapter
 from srcmlcpp.srcml_types import CppParameter
 
 
-def is_variadic_format(param: CppParameter):
+def is_variadic_format(param: CppParameter) -> bool:
     return param.decl.cpp_type.typenames == [] and param.decl.cpp_type.modifiers == ["..."]
 
 

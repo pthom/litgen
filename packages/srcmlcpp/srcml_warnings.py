@@ -3,11 +3,12 @@ import logging
 import sys
 import traceback
 from dataclasses import dataclass
-from typing import List, Optional
+from typing import List, Optional, Tuple
 from xml.etree import ElementTree as ET  # noqa
 
 import srcmlcpp
-from codemanip import CodePosition, code_utils
+from codemanip.code_position import CodePosition
+import codemanip.code_utils as code_utils
 from srcmlcpp import srcml_main, srcml_types, srcml_utils
 from srcmlcpp.srcml_exception import SrcMlException
 from srcmlcpp.srcml_options import SrcmlOptions
@@ -26,7 +27,7 @@ class ErrorContext:
     start: Optional[CodePosition] = None
     end: Optional[CodePosition] = None
 
-    def __str__(self):
+    def __str__(self) -> str:
         msg = ""
         for i, line in enumerate(self.concerned_lines):
             msg += line + "\n"
@@ -69,7 +70,7 @@ def _highlight_responsible_code(element: ET.Element) -> str:
     return str(error_context)
 
 
-def _show_element_info(element: ET.Element, encoding) -> str:
+def _show_element_info(element: ET.Element, encoding: str) -> str:
     def file_location(element: ET.Element):
         header_filename = srcml_main.srcml_main_context().current_parsed_file
         if len(header_filename) == 0:
@@ -95,7 +96,7 @@ def _warning_detailed_info(
     additional_message: str = "",
     options: SrcmlOptions = SrcmlOptions(),
 ) -> str:
-    def _get_python_call_info():
+    def _get_python_call_info() -> Tuple[str, str]:
         stack_lines = traceback.format_stack()
         error_line = stack_lines[-4]
         frame = inspect.currentframe()  # type: ignore
@@ -107,7 +108,7 @@ def _warning_detailed_info(
 
     python_caller_function_name, python_error_line = _get_python_call_info()
 
-    def show_python_callstack():
+    def show_python_callstack() -> str:
         return f"""
                 Python call stack info:
         {code_utils.indent_code(python_error_line, 4)}
@@ -135,18 +136,18 @@ class SrcMlExceptionDetailed(SrcMlException):
     def __init__(
         self,
         current_element: ET.Element = None,
-        additional_message="",
+        additional_message: str = "",
         options: SrcmlOptions = SrcmlOptions(),
-    ):
+    ) -> None:
         message = _warning_detailed_info(current_element, additional_message, options=options)
         super().__init__(message)
 
 
 def emit_srcml_warning(
     current_element: ET.Element = None,
-    additional_message="",
+    additional_message: str = "",
     options: SrcmlOptions = SrcmlOptions(),
-):
+) -> None:
     if options.flag_quiet:
         return
     message = _warning_detailed_info(current_element, additional_message, options)
@@ -158,7 +159,7 @@ def emit_srcml_warning(
         print("Warning: " + message, file=sys.stderr)
 
 
-def emit_warning(message: str, options: SrcmlOptions):
+def emit_warning(message: str, options: SrcmlOptions) -> None:
     if options.flag_quiet:
         return
     in_pytest = "pytest" in sys.modules

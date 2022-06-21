@@ -74,7 +74,7 @@ def test_generate_pydef_enum():
 
 
 def test_generate_pydef_function_cpp_code():
-    def test_implot_easy():
+    def test_implot_easy() -> None:
         options = code_style_implot()
         code = """
             // Sets the format of numeric
@@ -98,7 +98,7 @@ def test_generate_pydef_function_cpp_code():
 
     test_implot_easy()
 
-    def test_return_value_policy():
+    def test_return_value_policy() -> None:
         options = code_style_implot()
         code = """
             // Returns a widget
@@ -120,7 +120,7 @@ def test_generate_pydef_function_cpp_code():
 
     test_return_value_policy()
 
-    def test_implot_one_buffer():
+    def test_implot_one_buffer() -> None:
         options = code_style_implot()
         code = """
             // Plots a standard 2D scatter plot. Default marker is ImPlotMarker_Circle.
@@ -177,7 +177,7 @@ def test_generate_pydef_function_cpp_code():
 
     test_implot_one_buffer()
 
-    def test_immvision():
+    def test_immvision() -> None:
         options = code_style_immvision()
         code = """
             // Display an image (requires OpenGL initialized)

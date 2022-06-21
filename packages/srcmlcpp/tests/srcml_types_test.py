@@ -4,7 +4,7 @@ from srcmlcpp import srcml_main, srcml_types_parse
 from srcmlcpp.srcml_types import *
 
 
-def to_decl(code):
+def to_decl(code) -> CppDecl:
     options = srcmlcpp.SrcmlOptions()
     cpp_decl = srcml_main.code_first_decl(options, code)
     return cpp_decl

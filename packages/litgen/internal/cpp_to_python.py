@@ -128,7 +128,7 @@ CPP_PYTHON_NUMERIC_SYNONYMS = [
 ]
 
 
-def cpp_numeric_types():
+def cpp_numeric_types() -> List[str]:
     r = []
     for t in CPP_PYTHON_NUMERIC_SYNONYMS:
         r.append(t.cpp_type)
@@ -148,7 +148,7 @@ class BoxedImmutablePythonType:
     static_list_of_instantiated_type: List[str] = []
     cpp_type: str
 
-    def __init__(self, cpp_type: str):
+    def __init__(self, cpp_type: str) -> None:
         if not is_cpp_type_immutable_for_python(cpp_type):
             raise TypeError(f"BoxedImmutablePythonType({cpp_type}) is seemingly not immutable")
         self.cpp_type = cpp_type
@@ -224,8 +224,11 @@ _PY_ARRAY_TYPE_TO_CPP_TYPE = {
 }
 
 
-def py_array_types():
-    return _PY_ARRAY_TYPE_TO_CPP_TYPE.keys()
+def py_array_types() -> List[str]:
+    r: List[str] = []
+    for type_ in _PY_ARRAY_TYPE_TO_CPP_TYPE.keys():
+        r.append(type_)
+    return r
 
 
 def py_array_type_to_cpp_type(py_array_type: str) -> str:

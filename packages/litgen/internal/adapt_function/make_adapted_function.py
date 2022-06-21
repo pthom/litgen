@@ -23,7 +23,7 @@ def apply_all_adapters(inout_adapted_function: AdaptedFunction) -> None:
             _apply_lambda_adapter(inout_adapted_function, lambda_adapter)
 
 
-def _make_adapted_lambda_code_end(adapted_function: AdaptedFunction, lambda_adapter: LambdaAdapter):
+def _make_adapted_lambda_code_end(adapted_function: AdaptedFunction, lambda_adapter: LambdaAdapter) -> str:
     options = adapted_function.options
     lambda_template_code = """
         {auto_r_equal_or_void}{function_or_lambda_to_call}({adapted_cpp_parameters});
@@ -84,7 +84,7 @@ def _make_adapted_lambda_code_end(adapted_function: AdaptedFunction, lambda_adap
     return lambda_code
 
 
-def _make_adapted_lambda_code(adapted_function: AdaptedFunction, lambda_adapter: LambdaAdapter):
+def _make_adapted_lambda_code(adapted_function: AdaptedFunction, lambda_adapter: LambdaAdapter) -> str:
     lambda_template_code = """
         auto {lambda_name} = [{lambda_captures}]({adapted_python_parameters})
         {
@@ -155,7 +155,7 @@ def _make_adapted_lambda_code(adapted_function: AdaptedFunction, lambda_adapter:
     return lambda_code
 
 
-def _apply_lambda_adapter(adapted_function: AdaptedFunction, lambda_adapter: LambdaAdapter):
+def _apply_lambda_adapter(adapted_function: AdaptedFunction, lambda_adapter: LambdaAdapter) -> None:
     options = adapted_function.options
 
     # Get the full lambda code

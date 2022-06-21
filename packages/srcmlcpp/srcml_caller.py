@@ -30,11 +30,11 @@ class _TimeStats:
     total_time: float = 0.0
     _last_start_time: float = 0.0
 
-    def start(self):
+    def start(self) -> None:
         self.nb_calls += 1
         self._last_start_time = time.time()
 
-    def stop(self):
+    def stop(self) -> None:
         self.total_time += time.time() - self._last_start_time
 
     def stats_string(self) -> str:
@@ -47,7 +47,7 @@ class _SrcmlCaller:
     _stats_code_to_srcml: _TimeStats = _TimeStats()
     _stats_srcml_to_code: _TimeStats = _TimeStats()
 
-    def _call_subprocess(self, encoding: str, input_filename, output_filename, dump_positions: bool):
+    def _call_subprocess(self, encoding: str, input_filename: str, output_filename: str, dump_positions: bool) -> None:
         position_arg = "--position" if dump_positions else ""
 
         shell_command = f"srcml -l C++ {input_filename} {position_arg} --xml-encoding {encoding} --src-encoding {encoding} -o {output_filename}"
@@ -58,7 +58,7 @@ class _SrcmlCaller:
             logging.error(f"_SrcmlCaller.call, error {e}")
             raise
 
-    def code_to_srcml(self, encoding: str, input_str, dump_positions: bool = False) -> ET.Element:
+    def code_to_srcml(self, encoding: str, input_str: str, dump_positions: bool = False) -> ET.Element:
         """
         Calls srcml with the given code and return the srcml as xml Element
         """

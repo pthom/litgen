@@ -71,7 +71,7 @@ class SrcmlOptions:
     # Show python callstack when warnings are raised
     flag_show_python_callstack: bool = False
 
-    def __init__(self):
+    def __init__(self) -> None:
         self.api_suffixes = []
         self.functions_api_prefixes = []
         self.named_number_macros = {}

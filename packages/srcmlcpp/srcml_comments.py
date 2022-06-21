@@ -119,14 +119,14 @@ def _group_consecutive_comments(srcml_code: ET.Element) -> ET.Element:
 
     for child in srcml_code:
 
-        def add_child():
+        def add_child() -> None:
             nonlocal previous_child, previous_previous_child
             child_copy = copy.deepcopy(child)
             srcml_grouped.append(child_copy)
             previous_previous_child = previous_child
             previous_child = child_copy
 
-        def concat_comment():
+        def concat_comment() -> None:
             assert child.text is not None
             assert previous_child is not None and previous_child.text is not None
             comment_raw = child.text
@@ -185,7 +185,7 @@ def _group_consecutive_comments(srcml_code: ET.Element) -> ET.Element:
     return srcml_grouped
 
 
-def _is_comment_end_of_line(children: List[ET.Element], idx: int):
+def _is_comment_end_of_line(children: List[ET.Element], idx: int) -> bool:
     if not 0 <= idx < len(children):
         return False
     if idx == 0:
@@ -206,7 +206,7 @@ def _is_comment_end_of_line(children: List[ET.Element], idx: int):
     return False
 
 
-def _is_comment_on_previous_line(children: List[ET.Element], idx: int):
+def _is_comment_on_previous_line(children: List[ET.Element], idx: int) -> bool:
     if not 0 <= idx < len(children):
         return False
     if idx == len(children) - 1:
@@ -217,7 +217,7 @@ def _is_comment_on_previous_line(children: List[ET.Element], idx: int):
     element = CppElement(children[idx])
     next_element = CppElement(children[idx + 1])
 
-    def is_group_comment():
+    def is_group_comment() -> bool:
         """
         Test if this is a comment on a group of several items of the same type on consecutive lines
         (in which case, it does not belong to the first function, but should be standalone)

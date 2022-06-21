@@ -17,6 +17,6 @@ class LambdaAdapter:
     adapted_cpp_parameter_list: List[str] = []
     new_function_infos: Optional[CppFunctionDecl] = None
 
-    def __init__(self):
+    def __init__(self) -> None:
         self.new_function_infos = None
         self.adapted_cpp_parameter_list = []

@@ -8,6 +8,7 @@ from srcmlcpp import (
 from srcmlcpp.srcml_options import SrcmlOptions
 from srcmlcpp.srcml_types import *
 from srcmlcpp.srcml_warnings import SrcMlExceptionDetailed
+from typing import Optional
 
 
 def parse_unprocessed(options: SrcmlOptions, element_c: CppElementAndComment) -> CppUnprocessed:  # noqa
@@ -240,7 +241,7 @@ def parse_parameter_list(options: SrcmlOptions, element: ET.Element) -> CppParam
         if child_tag == "parameter":
             result.parameters.append(parse_parameter(options, child))
         else:
-            raise SrcMlExceptionDetailed(child, result)
+            raise SrcMlExceptionDetailed(child, "unhandled tag", options)
     return result
 
 
@@ -264,7 +265,7 @@ def fill_function_decl(
     options: SrcmlOptions,
     element_c: CppElementAndComment,
     function_decl: CppFunctionDecl,
-):
+) -> None:
     for child in element_c.srcml_element:
         child_tag = srcml_utils.clean_tag_or_attrib(child.tag)
         if child_tag == "type":
@@ -343,7 +344,7 @@ def fill_constructor_decl(
     options: SrcmlOptions,
     element_c: CppElementAndComment,
     constructor_decl: CppConstructorDecl,
-):
+) -> None:
     for child in element_c.srcml_element:
         child_tag = srcml_utils.clean_tag_or_attrib(child.tag)
         if child_tag == "name":
@@ -511,7 +512,7 @@ def is_operator_function(element_c: CppElementAndComment) -> bool:
         return type_attr == "operator"
 
 
-def _shall_publish_function(function_c: CppElementAndComment, options: SrcmlOptions):
+def _shall_publish_function(function_c: CppElementAndComment, options: SrcmlOptions) -> bool:
     if len(options.functions_api_prefixes) == 0:
         return True
     for child_fn in function_c.srcml_element:
@@ -526,7 +527,7 @@ def _shall_publish_function(function_c: CppElementAndComment, options: SrcmlOpti
     return False
 
 
-def _shall_publish(cpp_element: CppElementAndComment, options: SrcmlOptions):
+def _shall_publish(cpp_element: CppElementAndComment, options: SrcmlOptions) -> bool:
     tag = cpp_element.tag()
     if tag in ["function", "function_decl"]:
         return _shall_publish_function(cpp_element, options)
@@ -547,7 +548,7 @@ def _shall_publish(cpp_element: CppElementAndComment, options: SrcmlOptions):
         return True
 
 
-def shall_ignore_comment(cpp_comment: CppComment, last_ignored_child: Optional[CppElementAndComment]):
+def shall_ignore_comment(cpp_comment: CppComment, last_ignored_child: Optional[CppElementAndComment]) -> bool:
     ignore_comment = False
     if last_ignored_child is not None:
         last_ignore_child_end = last_ignored_child.end()
@@ -569,7 +570,7 @@ def shall_ignore_comment(cpp_comment: CppComment, last_ignored_child: Optional[C
     return ignore_comment
 
 
-def fill_block(options: SrcmlOptions, element: ET.Element, inout_block_content: CppBlock):
+def fill_block(options: SrcmlOptions, element: ET.Element, inout_block_content: CppBlock) -> None:
     """
     https://www.srcml.org/doc/cpp_srcML.html#block_content
     """

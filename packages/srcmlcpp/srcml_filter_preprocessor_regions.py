@@ -1,4 +1,6 @@
 import copy
+from xml.etree.ElementTree import Element
+
 from typing import List, Optional
 from xml.etree import ElementTree as ET
 
@@ -57,10 +59,10 @@ class _SrcmlPreprocessorState:
 
     count_preprocessor_tests = 0
 
-    def __init__(self, header_guard_suffixes):
+    def __init__(self, header_guard_suffixes: List[str]) -> None:
         self.header_guard_suffixes = header_guard_suffixes
 
-    def process_tag(self, element: ET.Element):
+    def process_tag(self, element: ET.Element) -> None:
         self.last_element = element
         tag = srcml_utils.clean_tag_or_attrib(element.tag)
 
@@ -69,13 +71,14 @@ class _SrcmlPreprocessorState:
             return
         element_line = end.line
 
-        def extract_ifndef_name():
+        def extract_ifndef_name() -> str:
             for child in element:
                 if srcml_utils.clean_tag_or_attrib(child.tag) == "name":
+                    assert child.text is not None
                     return child.text
             return ""
 
-        def is_inclusion_guard_ifndef():
+        def is_inclusion_guard_ifndef() -> bool:
             ifndef_name = extract_ifndef_name()
             for suffix in self.header_guard_suffixes:
                 if ifndef_name.upper().endswith(suffix.upper()):

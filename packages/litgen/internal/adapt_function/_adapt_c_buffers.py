@@ -1,5 +1,5 @@
 import copy
-from typing import List, Optional
+from typing import Any, Union, List, Optional
 
 from codemanip import code_utils
 from litgen.generate_code import LitgenOptions
@@ -10,12 +10,12 @@ from srcmlcpp import srcml_warnings
 from srcmlcpp.srcml_types import CppFunctionDecl, CppParameter
 
 
-def _possible_buffer_pointer_types(options: LitgenOptions):
+def _possible_buffer_pointer_types(options: LitgenOptions) -> List[str]:
     types = [t + "*" for t in options.buffer_types] + [t + " *" for t in options.buffer_types]
     return types
 
 
-def _possible_buffer_template_pointer_types(options: LitgenOptions):
+def _possible_buffer_template_pointer_types(options: LitgenOptions) -> List[str]:
     types = [t + "*" for t in options.buffer_template_types] + [t + " *" for t in options.buffer_template_types]
     return types
 
@@ -57,7 +57,7 @@ class _AdaptBuffersHelper:
         self,
         adapted_function: AdaptedFunction,
         options: LitgenOptions,
-    ):
+    ) -> None:
         self.adapted_function = adapted_function
         self.function_infos = adapted_function.cpp_adapted_function
         self.options = options
@@ -71,7 +71,7 @@ class _AdaptBuffersHelper:
             if nb_strides > 1:
                 raise srcml_warnings.SrcMlException("More than one stride param found!")
 
-    def lambda_input(self, idx_param: int):
+    def lambda_input(self, idx_param: int) -> Optional[str]:
         if self._is_buffer_standard(idx_param):
             r = self._lambda_input_buffer_standard_convert_part(idx_param)
             r += self._lambda_input_buffer_standard_check_part(idx_param)
@@ -122,7 +122,7 @@ class _AdaptBuffersHelper:
                 return True
         return False
 
-    def has_template_buffer_param(self):
+    def has_template_buffer_param(self) -> bool:
         param = self._last_template_buffer_param()
         return param is not None
 
@@ -130,10 +130,10 @@ class _AdaptBuffersHelper:
         assert 0 <= idx_param < len(self.function_infos.parameter_list.parameters)
         return self.function_infos.parameter_list.parameters[idx_param]
 
-    def _params(self):
+    def _params(self) -> List[CppParameter]:
         return self.function_infos.parameter_list.parameters
 
-    def _nb_params(self):
+    def _nb_params(self) -> int:
         return len(self._params())
 
     def _is_buffer_size(self, idx_param: int) -> bool:
@@ -148,7 +148,7 @@ class _AdaptBuffersHelper:
             return True
         return False
 
-    def _is_stride_param(self, idx_param) -> bool:
+    def _is_stride_param(self, idx_param: int) -> bool:
         """For `stride` parameters"""
         param = self._param(idx_param)
         param_default_value = param.default_value()
@@ -382,11 +382,11 @@ class _AdaptBuffersHelper:
         template = code_utils.unindent_code(template, flag_strip_empty_lines=True) + "\n"
         return template
 
-    def _expected_dtype_char(self, idx_param: int):
+    def _expected_dtype_char(self, idx_param: int) -> str:
         dtype_char = cpp_to_python.cpp_type_to_py_array_type(self._original_raw_type(idx_param))
         return dtype_char
 
-    def _lambda_input_buffer_standard_check_part(self, idx_param: int):
+    def _lambda_input_buffer_standard_check_part(self, idx_param: int) -> str:
         _ = self
         template = f"""
                 char {_._param_name(idx_param)}_type = {_._param_name(idx_param)}.dtype().char_();
@@ -402,13 +402,13 @@ class _AdaptBuffersHelper:
         template = code_utils.unindent_code(template, flag_strip_empty_lines=True) + "\n"
         return template
 
-    def _stride_adapted_name(self, idx_param):
+    def _stride_adapted_name(self, idx_param: int) -> str:
         idx_buffer_param_before = self._last_idx_buffer_param_before(idx_param)
         assert idx_buffer_param_before is not None
         adapted_stride_name = f"{self._param_name(idx_buffer_param_before)}_stride"
         return adapted_stride_name
 
-    def _adapted_param_stride(self, idx_param: int):
+    def _adapted_param_stride(self, idx_param: int) -> str:
         stride_param = self._param(idx_param)
         stride_adapted_name = self._stride_adapted_name(idx_param)
         stride_param_raw_type = stride_param.decl.cpp_type.typenames[0]
@@ -418,7 +418,7 @@ class _AdaptBuffersHelper:
             r = stride_adapted_name
         return r
 
-    def lambda_input_stride_param(self, idx_param: int):
+    def lambda_input_stride_param(self, idx_param: int) -> str:
         stride_param = self._param(idx_param)
         adapted_stride_name = self._stride_adapted_name(idx_param)
         param_stride_name = stride_param.decl.decl_name

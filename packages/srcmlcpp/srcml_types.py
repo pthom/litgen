@@ -26,7 +26,8 @@ from dataclasses import dataclass
 from typing import Dict, List, Optional, cast
 from xml.etree import ElementTree as ET  # noqa
 
-from codemanip import CodePosition, code_utils
+from codemanip.code_position import CodePosition
+import codemanip.code_utils as code_utils
 from srcmlcpp import srcml_caller, srcml_utils
 from srcmlcpp.srcml_options import SrcmlOptions
 from srcmlcpp.srcml_warnings import SrcMlExceptionDetailed, emit_srcml_warning
@@ -88,7 +89,7 @@ class CppElementComments:
     comment_on_previous_lines: str
     comment_end_of_line: str
 
-    def __init__(self):
+    def __init__(self) -> None:
         self.comment_on_previous_lines = ""
         self.comment_end_of_line = ""
 
@@ -118,7 +119,7 @@ class CppElementComments:
         else:
             return " //" + self.comment_end_of_line
 
-    def add_eol_comment(self, comment):
+    def add_eol_comment(self, comment) -> None:
         if len(self.comment_end_of_line) == 0:
             self.comment_end_of_line = comment
         else:
@@ -139,7 +140,7 @@ class CppElement:
     # Its tag describe the type of element (decl, function, namespace, etc)
     srcml_element: ET.Element
 
-    def __init__(self, srcml_element: ET.Element):
+    def __init__(self, srcml_element: ET.Element) -> None:
         assert isinstance(srcml_element, ET.Element)
         self.srcml_element = srcml_element
 
@@ -200,7 +201,7 @@ class CppElement:
         else:
             return srcml_caller.srcml_to_code(name_element)
 
-    def attribute_value(self, attr_name) -> Optional[str]:
+    def attribute_value(self, attr_name: str) -> Optional[str]:
         if attr_name in self.srcml_element.attrib:
             return self.srcml_element.attrib[attr_name]
         else:
@@ -231,7 +232,7 @@ class CppElement:
         """Returns the xml tree as a xml string representation"""
         return srcml_utils.srcml_to_str(self.srcml_element)
 
-    def as_dict(self):
+    def as_dict(self) -> Dict[str, str]:
         as_dict = {
             "tag": self.tag(),
             "name": code_utils.str_or_none_token(self.name_code()),
@@ -251,12 +252,12 @@ class CppElementAndComment(CppElement):
 
     cpp_element_comments: CppElementComments
 
-    def __init__(self, element: ET.Element, cpp_element_comments: CppElementComments):
+    def __init__(self, element: ET.Element, cpp_element_comments: CppElementComments) -> None:
         assert isinstance(element, ET.Element)
         super().__init__(element)
         self.cpp_element_comments = cpp_element_comments
 
-    def as_dict(self):
+    def as_dict(self) -> Dict[str, str]:
         as_dict = code_utils.merge_dicts(super().as_dict(), self.cpp_element_comments.as_dict())
         return as_dict
 
@@ -276,7 +277,7 @@ class CppElementAndComment(CppElement):
 
 @dataclass
 class CppEmptyLine(CppElementAndComment):
-    def __init__(self, element: ET.Element):
+    def __init__(self, element: ET.Element) -> None:
         dummy_comments = CppElementComments()
         super().__init__(element, dummy_comments)
 
@@ -297,7 +298,7 @@ class CppUnprocessed(CppElementAndComment):
 
     code: str
 
-    def __init__(self, element: ET.Element, cpp_element_comments: CppElementComments):
+    def __init__(self, element: ET.Element, cpp_element_comments: CppElementComments) -> None:
         super().__init__(element, cpp_element_comments)
         self.code = ""
 
@@ -331,7 +332,7 @@ class CppBlock(CppElementAndComment):
 
     block_children: List[CppElementAndComment]
 
-    def __init__(self, element: ET.Element):
+    def __init__(self, element: ET.Element) -> None:
         dummy_cpp_comments = CppElementComments()
         super().__init__(element, dummy_cpp_comments)
         self.block_children: List[CppElementAndComment] = []
@@ -356,7 +357,7 @@ class CppBlock(CppElementAndComment):
 class CppUnit(CppBlock):
     """A kind of block representing a full file."""
 
-    def __init__(self, element: ET.Element):
+    def __init__(self, element: ET.Element) -> None:
         super().__init__(element)
 
     def __str__(self) -> str:
@@ -387,7 +388,7 @@ class CppPublicProtectedPrivate(CppBlock):  # Also a CppElementAndComment
     access_type: str = ""  # "public", "private", or "protected"
     default_or_explicit: str = ""  # "default" or "" ("default" means it was added automatically)
 
-    def __init__(self, element: ET.Element, access_type: str, default_or_explicit: Optional[str]):
+    def __init__(self, element: ET.Element, access_type: str, default_or_explicit: Optional[str]) -> None:
         super().__init__(element)
         assert default_or_explicit in [None, "", "default"]
         assert access_type in ["public", "protected", "private"]
@@ -445,14 +446,14 @@ class CppType(CppElement):
     # (this will not be filled: see note about composed types)
     # argument_list: List[str]
 
-    def __init__(self, element: ET.Element):
+    def __init__(self, element: ET.Element) -> None:
         super().__init__(element)
         self.typenames: List[str] = []
         self.specifiers: List[str] = []
         self.modifiers: List[str] = []
 
     @staticmethod
-    def authorized_modifiers():
+    def authorized_modifiers() -> List[str]:
         return ["*", "&", "&&", "..."]
 
     def str_code(self) -> str:
@@ -529,7 +530,7 @@ class CppDecl(CppElementAndComment):
 
     bitfield_range: str = ""  # Will be filled for bitfield members
 
-    def __init__(self, element: ET.Element, cpp_element_comments: CppElementComments):
+    def __init__(self, element: ET.Element, cpp_element_comments: CppElementComments) -> None:
         super().__init__(element, cpp_element_comments)
 
     def str_code(self) -> str:
@@ -562,7 +563,7 @@ class CppDecl(CppElementAndComment):
         r = self.str_commented()
         return r
 
-    def is_c_string_list_ptr(self):
+    def is_c_string_list_ptr(self) -> bool:
         """
         Returns true if this decl looks like a const C string double pointer.
         Examples:
@@ -585,7 +586,7 @@ class CppDecl(CppElementAndComment):
         r = is_const and is_char and nb_indirections == 2 and is_default_init
         return r
 
-    def is_bitfield(self):
+    def is_bitfield(self) -> bool:
         return len(self.bitfield_range) > 0
 
     def is_c_array(self) -> bool:
@@ -622,7 +623,7 @@ class CppDecl(CppElementAndComment):
         maybe_size = _int_from_str_or_dict(size_as_str, options)
         return maybe_size
 
-    def is_c_array_known_fixed_size(self, options: SrcmlOptions):
+    def is_c_array_known_fixed_size(self, options: SrcmlOptions) -> bool:
         """Returns true if this decl is a c array, and has a fixed size which we can interpret
         either via the code, or through size_dict
         """
@@ -640,7 +641,7 @@ class CppDecl(CppElementAndComment):
         has_size = len(size_str.strip()) > 0
         return is_array and not has_size
 
-    def is_c_array_fixed_size_unparsable(self, options: SrcmlOptions):
+    def is_c_array_fixed_size_unparsable(self, options: SrcmlOptions) -> bool:
         is_array = self.is_c_array()
         if not is_array:
             return False
@@ -652,7 +653,7 @@ class CppDecl(CppElementAndComment):
         r = is_array and has_size and (array_size_as_int is None)
         return r
 
-    def is_const(self):
+    def is_const(self) -> bool:
         """
         Returns true if this decl is const"""
         return "const" in self.cpp_type.specifiers  # or "const" in self.cpp_type.names
@@ -666,7 +667,7 @@ class CppDeclStatement(CppElementAndComment):
 
     cpp_decls: List[CppDecl]  # A CppDeclStatement can initialize several variables
 
-    def __init__(self, element: ET.Element, cpp_element_comments: CppElementComments):
+    def __init__(self, element: ET.Element, cpp_element_comments: CppElementComments) -> None:
         super().__init__(element, cpp_element_comments)
         self.cpp_decls: List[CppDecl] = []
 
@@ -695,11 +696,11 @@ class CppParameter(CppElementAndComment):
     template_type: CppType  # This is only for template's CppParameterList
     template_name: str = ""
 
-    def __init__(self, element: ET.Element):
+    def __init__(self, element: ET.Element) -> None:
         dummy_cpp_element_comments = CppElementComments()
         super().__init__(element, dummy_cpp_element_comments)
 
-    def type_name_default_for_signature(self):
+    def type_name_default_for_signature(self) -> str:
         assert hasattr(self, "decl")
         r = self.decl.type_name_default_for_signature()
         return r
@@ -713,12 +714,12 @@ class CppParameter(CppElementAndComment):
                 logging.warning("CppParameter.__str__() with no decl and no template_type")
             return str(self.template_type) + " " + self.template_name
 
-    def str_template_type(self):
+    def str_template_type(self) -> str:
         assert hasattr(self, "template_type")
         r = str(self.template_type) + " " + self.template_name
         return r
 
-    def is_template_param(self):
+    def is_template_param(self) -> bool:
         r = hasattr(self, "template_type")
         return r
 
@@ -745,7 +746,7 @@ class CppParameterList(CppElement):
 
     parameters: List[CppParameter]
 
-    def __init__(self, element: ET.Element):
+    def __init__(self, element: ET.Element) -> None:
         super().__init__(element)
         self.parameters = []
 
@@ -763,12 +764,12 @@ class CppParameterList(CppElement):
     def str_code(self) -> str:
         return self.types_names_default_for_signature_str()
 
-    def names_only_for_call(self):
+    def names_only_for_call(self) -> str:
         names = [param.variable_name() for param in self.parameters]
         r = ", ".join(names)
         return r
 
-    def types_only_for_template(self):
+    def types_only_for_template(self) -> str:
         types = [param.full_type() for param in self.parameters]
         r = ", ".join(types)
         return r
@@ -786,7 +787,7 @@ class CppTemplate(CppElement):
 
     parameter_list: CppParameterList
 
-    def __init__(self, element: ET.Element):
+    def __init__(self, element: ET.Element) -> None:
         super().__init__(element)
         self.parameter_list = CppParameterList(element)
 
@@ -813,7 +814,7 @@ class CppFunctionDecl(CppElementAndComment):
     is_auto_decl: bool  # True if it is a decl of the form `auto square(double) -> double`
     function_name: str
 
-    def __init__(self, element: ET.Element, cpp_element_comments: CppElementComments):
+    def __init__(self, element: ET.Element, cpp_element_comments: CppElementComments) -> None:
         super().__init__(element, cpp_element_comments)
         self.specifiers: List[str] = []
         self.is_auto_decl = False
@@ -837,7 +838,7 @@ class CppFunctionDecl(CppElementAndComment):
         r = self._str_signature() + ";"
         return r
 
-    def full_return_type(self, options: SrcmlOptions):
+    def full_return_type(self, options: SrcmlOptions) -> str:
         r = self.return_type.str_code()
         for prefix in options.functions_api_prefixes:
             r = r.replace(prefix + " ", "")
@@ -845,7 +846,7 @@ class CppFunctionDecl(CppElementAndComment):
             r = r.replace("inline ", "")
         return r
 
-    def is_const(self):
+    def is_const(self) -> bool:
         return "const" in self.specifiers
 
     def __str__(self) -> str:
@@ -860,7 +861,7 @@ class CppFunction(CppFunctionDecl):
 
     block: CppUnprocessed
 
-    def __init__(self, element: ET.Element, cpp_element_comments: CppElementComments):
+    def __init__(self, element: ET.Element, cpp_element_comments: CppElementComments) -> None:
         super().__init__(element, cpp_element_comments)
 
     def str_code(self) -> str:
@@ -882,7 +883,7 @@ class CppConstructorDecl(CppFunctionDecl):
     https://www.srcml.org/doc/cpp_srcML.html#constructor-declaration
     """
 
-    def __init__(self, element: ET.Element, cpp_element_comments: CppElementComments):
+    def __init__(self, element: ET.Element, cpp_element_comments: CppElementComments) -> None:
         super().__init__(element, cpp_element_comments)
         self.specifiers: List[str] = []
         self.function_name = ""
@@ -910,7 +911,7 @@ class CppConstructor(CppConstructorDecl):
     block: CppUnprocessed
     member_init_list: CppUnprocessed
 
-    def __init__(self, element: ET.Element, cpp_element_comments: CppElementComments):
+    def __init__(self, element: ET.Element, cpp_element_comments: CppElementComments) -> None:
         super().__init__(element, cpp_element_comments)
 
     def str_code(self) -> str:
@@ -981,7 +982,7 @@ class CppStruct(CppElementAndComment):
     block: CppBlock
     template: CppTemplate  # for template classes or structs
 
-    def __init__(self, element: ET.Element, cpp_element_comments: CppElementComments):
+    def __init__(self, element: ET.Element, cpp_element_comments: CppElementComments) -> None:
         super().__init__(element, cpp_element_comments)
         self.class_name = ""
 
@@ -1035,7 +1036,7 @@ class CppStruct(CppElementAndComment):
                             break
         return found_deleted_default_ctor
 
-    def is_templated_class(self):
+    def is_templated_class(self) -> bool:
         return hasattr(self, "template")
 
     def get_public_elements(self) -> List[CppElementAndComment]:
@@ -1073,7 +1074,7 @@ class CppComment(CppElementAndComment):
 
     comment: str
 
-    def __init__(self, element: ET.Element, cpp_element_comments: CppElementComments):
+    def __init__(self, element: ET.Element, cpp_element_comments: CppElementComments) -> None:
         super().__init__(element, cpp_element_comments)
 
     def str_code(self) -> str:
@@ -1094,7 +1095,7 @@ class CppNamespace(CppElementAndComment):
     ns_name: str
     block: CppBlock
 
-    def __init__(self, element: ET.Element, cpp_element_comments: CppElementComments):
+    def __init__(self, element: ET.Element, cpp_element_comments: CppElementComments) -> None:
         super().__init__(element, cpp_element_comments)
         self.ns_name = ""
 
@@ -1120,7 +1121,7 @@ class CppEnum(CppElementAndComment):
     enum_type: str = ""  # "class" or ""
     enum_name: str = ""
 
-    def __init__(self, element: ET.Element, cpp_element_comments: CppElementComments):
+    def __init__(self, element: ET.Element, cpp_element_comments: CppElementComments) -> None:
         super().__init__(element, cpp_element_comments)
 
     def str_code(self) -> str:

@@ -5,6 +5,7 @@ import srcmlcpp
 from codemanip import code_utils
 from litgen.internal import module_pydef_generator, module_pyi_generator
 from litgen.options import LitgenOptions
+from typing import Callable
 
 
 def generate_pydef(
@@ -42,11 +43,11 @@ def generate_pyi(
 def _run_generate_file(
     input_cpp_header: str,
     output_file: str,
-    fn_code_generator,
+    fn_code_generator: Callable,
     marker_token: str,
     options: LitgenOptions,
     add_boxed_types_definitions: bool,
-):
+) -> None:
     assert os.path.isfile(input_cpp_header)
     assert os.path.isfile(output_file)
 
@@ -68,7 +69,7 @@ def generate_files(
     options: LitgenOptions,
     output_stub_pyi_file: str = "",
     add_boxed_types_definitions: bool = True,
-):
+) -> None:
 
     _run_generate_file(
         input_cpp_header, output_cpp_module_file, generate_pydef, "pydef_cpp", options, add_boxed_types_definitions

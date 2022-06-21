@@ -26,8 +26,8 @@ def get_first_function_decl(code) -> CppFunctionDecl:
     raise ValueError("not found")
 
 
-def test_make_function_params_adapter():
-    def my_make_adapted_function(code):
+def test_make_function_params_adapter() -> None:
+    def my_make_adapted_function(code) -> AdaptedFunction:
         function_decl = get_first_function_decl(code)
         options = litgen.LitgenOptions()
         parent_struct_name = ""

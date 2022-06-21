@@ -173,7 +173,7 @@ class LitgenOptions:
     #
     # Sanity checks and utilities below
     #
-    def assert_buffer_types_are_ok(self):
+    def assert_buffer_types_are_ok(self) -> None:
         # the only authorized type are those for which the size is known with certainty
         # * int and long are not acceptable candidates: use int8_t, uint_8t, int32_t, etc.
         # * concerning float and doubles, there is no standard for fixed size floats, so we have to cope with
@@ -200,15 +200,15 @@ class LitgenOptions:
                     """
                 )
 
-    def indent_cpp_spaces(self):
+    def indent_cpp_spaces(self) -> str:
         space = "\t" if self.cpp_indent_with_tabs else " "
         return space * self.cpp_indent_size
 
-    def indent_python_spaces(self):
+    def indent_python_spaces(self) -> str:
         space = "\t" if self.python_ident_with_tabs else " "
         return space * self.python_indent_size
 
-    def __init__(self):
+    def __init__(self) -> None:
         self.srcml_options = SrcmlOptions()
         self.code_replacements = code_replacements.standard_replacements()
 
@@ -242,7 +242,7 @@ def code_style_immvision() -> LitgenOptions:
     return options
 
 
-def _preprocess_imgui_code(code):
+def _preprocess_imgui_code(code: str) -> str:
     """
     The imgui code uses two macros (IM_FMTARGS and IM_FMTLIST) which help the compiler
         #define IM_FMTARGS(FMT)             __attribute__((format(printf, FMT, FMT+1)))
@@ -261,7 +261,7 @@ def _preprocess_imgui_code(code):
     return new_code
 
 
-def code_style_imgui():
+def code_style_imgui() -> LitgenOptions:
     options = LitgenOptions()
 
     options.generate_to_string = False
@@ -332,7 +332,7 @@ def code_style_imgui():
     return options
 
 
-def code_style_implot():
+def code_style_implot() -> LitgenOptions:
     options = code_style_imgui()
     options.srcml_options.functions_api_prefixes = ["IMPLOT_API", "IMPLOT_TMP"]
 
