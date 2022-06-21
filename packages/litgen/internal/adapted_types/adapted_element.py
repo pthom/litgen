@@ -32,7 +32,7 @@ class AdaptedElement:  # (abc.ABC):  # Cannot be abstract (mypy limitation:  htt
         """Common layout for class, enum, and functions stubs
         :param title_lines: class, enum or function decl + function params. Will be followed by docstring
         :param body_lines: body lines for enums and classes, [] for functions
-        :return: a list of python pyi code lines for the stub declaration
+        :return: a list of python code lines for the stub declaration
         """
 
         # Preprocess: add location on first line

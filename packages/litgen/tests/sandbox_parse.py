@@ -54,13 +54,13 @@ def play_pydef(code, options) -> None:
 # test_code()
 
 
-def play_pyi(code, options):
+def play_stub(code, options):
     # from srcmlcpp import srcml_utils
     # xml = srcmlcpp.code_to_srcml(code, dump_positions=False)
     # # print(srcml_utils.srcml_to_str_readable(xml))
     # print(srcml_utils.srcml_to_str(xml))
 
-    pyi_code = litgen.generate_pyi(code, options, add_boxed_types_definitions=True)
+    pyi_code = litgen.generate_stub(code, options, add_boxed_types_definitions=True)
     print(f">>>\n{pyi_code}<<<")
 
 
@@ -95,4 +95,4 @@ struct BoxedInt // MY_API
 """
 
 play_pydef(code, options)
-# play_pyi(code, options)
+# play_stub(code, options)

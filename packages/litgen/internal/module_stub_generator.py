@@ -8,7 +8,7 @@ from litgen.internal.adapted_types import *
 from litgen.options import LitgenOptions
 
 
-def generate_pyi(
+def generate_stub(
     cpp_unit: Union[CppUnit, CppBlock],
     options: LitgenOptions,
     current_namespaces: List[str] = [],

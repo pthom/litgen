@@ -5,7 +5,7 @@ from codemanip import code_utils
 
 import srcmlcpp
 
-from litgen.internal import module_pydef_generator, module_pyi_generator
+from litgen.internal import module_pydef_generator, module_stub_generator
 from litgen.options import LitgenOptions
 
 
@@ -41,14 +41,14 @@ def generate_pydef(
     return generated_code
 
 
-def generate_pyi(
+def generate_stub(
     code: str,
     options: LitgenOptions,
     add_boxed_types_definitions: bool = False,
     filename: str = "",
 ) -> str:
     cpp_unit = srcmlcpp.code_to_cpp_unit(options.srcml_options, code, filename=filename)
-    generated_code = module_pyi_generator.generate_pyi(
+    generated_code = module_stub_generator.generate_stub(
         cpp_unit, options, add_boxed_types_definitions=add_boxed_types_definitions
     )
 
@@ -97,7 +97,7 @@ def generate_files(
     _run_generate_file(
         input_cpp_header,
         output_stub_pyi_file,
-        generate_pyi,
+        generate_stub,
         "pyi",
         options,
         add_boxed_types_definitions,

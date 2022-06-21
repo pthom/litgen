@@ -1,3 +1,6 @@
+rename pyi to stub
+? normalize code and options order in functions params ? options comes first!
+
 add unit test pyi generation
 
 group pydef and pyi generation
@@ -7,8 +10,6 @@ https://stackoverflow.com/questions/8820276/docstring-for-variable -> Use typing
 
 * Move & rename module_pydef_generator_test.py
 
-? normalize code and options order in functions params ? options comes first!
-rename pyi to stub
 
 
 imgui: Handle widget input / output parameters
