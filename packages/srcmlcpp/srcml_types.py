@@ -39,7 +39,7 @@ from srcmlcpp.srcml_warnings import emit_srcml_warning
 StringToIntDict = Dict[str, int]
 
 
-def _int_from_str_or_dict(int_str: Optional[str], options: SrcmlOptions) -> Optional[int]:
+def _int_from_str_or_dict(options: SrcmlOptions, int_str: Optional[str]) -> Optional[int]:
     if int_str is None:
         return None
 
@@ -621,7 +621,7 @@ class CppDecl(CppElementAndComment):
         Except if "COUNT" is a key of size_dict
         """
         size_as_str = self.c_array_size_as_str()
-        maybe_size = _int_from_str_or_dict(size_as_str, options)
+        maybe_size = _int_from_str_or_dict(options, size_as_str)
         return maybe_size
 
     def is_c_array_known_fixed_size(self, options: SrcmlOptions) -> bool:
@@ -1183,11 +1183,11 @@ class CppEnum(CppElementAndComment):
                             decl_with_value.initial_value_code = str(last_decl_value_int + 1)
                         except ValueError:
                             emit_srcml_warning(
+                                options,
                                 decl.srcml_element,
                                 """
                                 Cannot parse the value of this enum element.
                                 Hint: maybe add an entry to SrcmlOptions.named_number_macros""",
-                                options,
                             )
 
                 last_decl = decl_with_value

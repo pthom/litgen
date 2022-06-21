@@ -9,13 +9,13 @@ from litgen.options import LitgenOptions
 
 
 def generate_stub(
-    cpp_unit: Union[CppUnit, CppBlock],
     options: LitgenOptions,
+    cpp_unit: Union[CppUnit, CppBlock],
     current_namespaces: List[str] = [],
     add_boxed_types_definitions: bool = False,
 ) -> str:
 
-    adapted_block = AdaptedBlock(cpp_unit, options)
+    adapted_block = AdaptedBlock(options, cpp_unit)
     block_code = adapted_block.str_stub()
 
     if add_boxed_types_definitions:

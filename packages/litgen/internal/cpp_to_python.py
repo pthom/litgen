@@ -26,7 +26,7 @@ def _filename_with_n_parent_folders(filename: str, n: int) -> str:
     return r
 
 
-def _comment_apply_replacements(comment: str, options: LitgenOptions) -> str:
+def _comment_apply_replacements(options: LitgenOptions, comment: str) -> str:
     """Make some replacements in a C++ comment in order to adapt it to python
     (strip empty lines, remove API markers, apply replacements)
     """
@@ -52,12 +52,12 @@ def _comment_apply_replacements(comment: str, options: LitgenOptions) -> str:
     return comment
 
 
-def comment_pydef_one_line(title_cpp: str, options: LitgenOptions) -> str:
+def comment_pydef_one_line(options: LitgenOptions, title_cpp: str) -> str:
     """Formats a docstring on one cpp line. Used only in cpp pydef bindings code"""
-    return code_utils.format_cpp_comment_on_one_line(_comment_apply_replacements(title_cpp, options))
+    return code_utils.format_cpp_comment_on_one_line(_comment_apply_replacements(options, title_cpp))
 
 
-def type_to_python(type_cpp: str, options: LitgenOptions) -> str:
+def type_to_python(options: LitgenOptions, type_cpp: str) -> str:
     return code_replacements.apply_code_replacements(type_cpp, options.code_replacements).strip()
 
 
@@ -67,20 +67,20 @@ def add_underscore_if_python_reserved_word(name: str) -> str:
     return name
 
 
-def var_name_to_python(var_name: str, options: LitgenOptions) -> str:  # noqa
+def var_name_to_python(options: LitgenOptions, var_name: str) -> str:  # noqa
     var_name_snake_case = code_utils.to_snake_case(var_name)
     r = add_underscore_if_python_reserved_word(var_name_snake_case)
     return r
 
 
-def var_value_to_python(default_value_cpp: str, options: LitgenOptions) -> str:
+def var_value_to_python(options: LitgenOptions, default_value_cpp: str) -> str:
     r = code_replacements.apply_code_replacements(default_value_cpp, options.code_replacements)
     for number_macro, value in options.srcml_options.named_number_macros.items():
         r = r.replace(number_macro, str(value))
     return r
 
 
-def function_name_to_python(function_name: str, options: LitgenOptions) -> str:  # noqa
+def function_name_to_python(options: LitgenOptions, function_name: str) -> str:  # noqa
     return code_utils.to_snake_case(function_name)
 
 
@@ -181,7 +181,7 @@ class BoxedImmutablePythonType:
         from litgen import generate_code
 
         struct_code = self._struct_code()
-        pydef_code = generate_code.generate_pydef(struct_code, options, add_boxed_types_definitions=False)
+        pydef_code = generate_code.generate_pydef(options, struct_code, add_boxed_types_definitions=False)
         return pydef_code
 
     @staticmethod
@@ -268,19 +268,19 @@ def _enum_remove_values_prefix(enum_name: str, value_name: str) -> str:
 ##################################################################################################################
 
 
-def decl_python_var_name(cpp_decl: CppDecl, options: LitgenOptions) -> str:
+def decl_python_var_name(options: LitgenOptions, cpp_decl: CppDecl) -> str:
     var_cpp_name = cpp_decl.decl_name
-    var_python_name = var_name_to_python(var_cpp_name, options)
+    var_python_name = var_name_to_python(options, var_cpp_name)
     return var_python_name
 
 
-def decl_python_value(cpp_decl: CppDecl, options: LitgenOptions) -> str:
+def decl_python_value(options: LitgenOptions, cpp_decl: CppDecl) -> str:
     value_cpp = cpp_decl.initial_value_code
-    value_python = var_value_to_python(value_cpp, options)
+    value_python = var_value_to_python(options, value_cpp)
     return value_python
 
 
-def info_original_location(cpp_element: CppElement, options: LitgenOptions, comment_token: str) -> str:
+def info_original_location(options: LitgenOptions, cpp_element: CppElement, comment_token: str) -> str:
 
     if not options.original_location_flag_show:
         return ""
@@ -299,21 +299,21 @@ def info_original_location(cpp_element: CppElement, options: LitgenOptions, comm
     return r
 
 
-def info_original_location_cpp(cpp_element: CppElement, options: LitgenOptions) -> str:
-    return info_original_location(cpp_element, options, "//")
+def info_original_location_cpp(options: LitgenOptions, cpp_element: CppElement) -> str:
+    return info_original_location(options, cpp_element, "//")
 
 
-def info_original_location_python(cpp_element: CppElement, options: LitgenOptions) -> str:
-    return info_original_location(cpp_element, options, "#")
+def info_original_location_python(options: LitgenOptions, cpp_element: CppElement) -> str:
+    return info_original_location(options, cpp_element, "#")
 
 
-def docstring_lines(cpp_element_c: CppElementAndComment, options: LitgenOptions) -> List[str]:
+def docstring_lines(options: LitgenOptions, cpp_element_c: CppElementAndComment) -> List[str]:
     """Return the comment of a CppElement under the form of a docstring, such as the one you are reading.
     Some replacements will be applied (for example true -> True, etc)
     """
 
     docstring = cpp_element_c.cpp_element_comments.full_comment()
-    docstring = _comment_apply_replacements(docstring, options)
+    docstring = _comment_apply_replacements(options, docstring)
     if docstring.startswith('"'):
         docstring = " " + docstring
     if docstring.endswith('"'):
@@ -336,20 +336,20 @@ def docstring_lines(cpp_element_c: CppElementAndComment, options: LitgenOptions)
     return r
 
 
-def python_shall_place_comment_at_end_of_line(cpp_element_c: CppElementAndComment, options: LitgenOptions) -> bool:
+def python_shall_place_comment_at_end_of_line(options: LitgenOptions, cpp_element_c: CppElementAndComment) -> bool:
     if not options.python_reproduce_cpp_layout:
         return False
-    eol_comment = _comment_apply_replacements(cpp_element_c.cpp_element_comments.comment_end_of_line, options)
-    p_comment = _comment_apply_replacements(cpp_element_c.cpp_element_comments.comment_on_previous_lines, options)
+    eol_comment = _comment_apply_replacements(options, cpp_element_c.cpp_element_comments.comment_end_of_line)
+    p_comment = _comment_apply_replacements(options, cpp_element_c.cpp_element_comments.comment_on_previous_lines)
     return len(eol_comment) > 0 and len(p_comment) == 0
 
 
-def python_comment_end_of_line(cpp_element_c: CppElementAndComment, options: LitgenOptions) -> str:
-    eol_comment = _comment_apply_replacements(cpp_element_c.cpp_element_comments.comment_end_of_line, options)
+def python_comment_end_of_line(options: LitgenOptions, cpp_element_c: CppElementAndComment) -> str:
+    eol_comment = _comment_apply_replacements(options, cpp_element_c.cpp_element_comments.comment_end_of_line)
     return eol_comment
 
 
-def python_comment_previous_lines(cpp_element_c: CppElementAndComment, options: LitgenOptions) -> List[str]:
+def python_comment_previous_lines(options: LitgenOptions, cpp_element_c: CppElementAndComment) -> List[str]:
     """See comment below"""
     # Returns the comment of a CppElement under the form of a python comment, such as the one you are reading.
     # Some replacements will be applied (for example true -> True, etc)
@@ -358,7 +358,7 @@ def python_comment_previous_lines(cpp_element_c: CppElementAndComment, options: 
     if isinstance(cpp_element_c, CppComment):
         comment = cpp_element_c.comment
 
-    comment = _comment_apply_replacements(comment, options)
+    comment = _comment_apply_replacements(options, comment)
 
     if len(comment) == 0:
         return []
@@ -370,7 +370,7 @@ def python_comment_previous_lines(cpp_element_c: CppElementAndComment, options: 
     return lines
 
 
-def enum_value_name_to_python(enum: CppEnum, enum_element: CppDecl, options: LitgenOptions) -> str:
+def enum_value_name_to_python(options: LitgenOptions, enum: CppEnum, enum_element: CppDecl) -> str:
     value_name = enum_element.decl_name
 
     if options.enum_flag_remove_values_prefix and enum.enum_type != "class":
@@ -381,11 +381,11 @@ def enum_value_name_to_python(enum: CppEnum, enum_element: CppDecl, options: Lit
             value_name_no_prefix = "_" + value_name_no_prefix
         value_name = value_name_no_prefix
 
-    r = var_name_to_python(value_name, options)
+    r = var_name_to_python(options, value_name)
     return r
 
 
-def enum_element_is_count(enum: CppEnum, enum_element: CppDecl, options: LitgenOptions) -> bool:
+def enum_element_is_count(options: LitgenOptions, enum: CppEnum, enum_element: CppDecl) -> bool:
     if not options.enum_flag_skip_count:
         return False
 
@@ -402,6 +402,6 @@ def enum_element_is_count(enum: CppEnum, enum_element: CppDecl, options: LitgenO
         return has_enum_name_part
 
 
-def looks_like_size_param(param_c: CppParameter, options: LitgenOptions) -> bool:
+def looks_like_size_param(options: LitgenOptions, param_c: CppParameter) -> bool:
     r = code_utils.var_name_looks_like_size_name(param_c.decl.decl_name, options.buffer_size_names)
     return r

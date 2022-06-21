@@ -13,7 +13,7 @@ def test_warnings():
 
     got_exception = False
     try:
-        raise SrcMlExceptionDetailed(decl.srcml_element, "Artificial exception", options)
+        raise SrcMlExceptionDetailed(options, decl.srcml_element, "Artificial exception")
     except SrcMlException as e:
         got_exception = True
         msg = str(e)

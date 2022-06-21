@@ -10,8 +10,8 @@ from litgen.options import LitgenOptions
 
 @dataclass
 class AdaptedEmptyLine(AdaptedElement):
-    def __init__(self, cpp_empty_line: CppEmptyLine, options: LitgenOptions) -> None:
-        super().__init__(cpp_empty_line, options)
+    def __init__(self, options: LitgenOptions, cpp_empty_line: CppEmptyLine) -> None:
+        super().__init__(options, cpp_empty_line)
 
     # override
     def cpp_element(self) -> CppEmptyLine:
@@ -31,8 +31,8 @@ class AdaptedEmptyLine(AdaptedElement):
 
 @dataclass
 class AdaptedComment(AdaptedElement):
-    def __init(self, cpp_comment: CppComment, options: LitgenOptions):
-        super().__init__(cpp_comment, options)
+    def __init__(self, options: LitgenOptions, cpp_comment: CppComment):
+        super().__init__(options, cpp_comment)
 
     # override
     def cpp_element(self) -> CppComment:
@@ -41,7 +41,7 @@ class AdaptedComment(AdaptedElement):
     # override
     def _str_stub_lines(self) -> List[str]:
         comment_cpp = self.cpp_element().comment
-        comment_python = cpp_to_python._comment_apply_replacements(comment_cpp, self.options)
+        comment_python = cpp_to_python._comment_apply_replacements(self.options, comment_cpp)
 
         def add_comment_token(line: str):
             return "# " + line

@@ -37,7 +37,7 @@ def play_implot():
     source_filename = os.path.realpath(_THIS_DIR + "/../../examples_real_libs/implot/implot/implot.h")
     cpp_unit = srcmlcpp.file_to_cpp_unit(options.srcml_options, source_filename)
     # print(cpp_unit)
-    pydef_code = module_pydef_generator.generate_pydef(cpp_unit, options)
+    pydef_code = module_pydef_generator.generate_pydef(options, cpp_unit)
     print(pydef_code)
 
 
@@ -47,7 +47,7 @@ def play_pydef(code, options) -> None:
     # # print(srcml_utils.srcml_to_str_readable(xml))
     # print(srcml_utils.srcml_to_str(xml))
 
-    pydef_code = litgen.generate_pydef(code, options, add_boxed_types_definitions=True)
+    pydef_code = litgen.generate_pydef(options, code, add_boxed_types_definitions=True)
     print(f">>>\n{pydef_code}<<<")
 
 
@@ -60,7 +60,7 @@ def play_stub(code, options):
     # # print(srcml_utils.srcml_to_str_readable(xml))
     # print(srcml_utils.srcml_to_str(xml))
 
-    pyi_code = litgen.generate_stub(code, options, add_boxed_types_definitions=True)
+    pyi_code = litgen.generate_stub(options, code, add_boxed_types_definitions=True)
     print(f">>>\n{pyi_code}<<<")
 
 

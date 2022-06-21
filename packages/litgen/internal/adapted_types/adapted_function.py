@@ -11,8 +11,8 @@ from litgen.options import LitgenOptions
 
 @dataclass
 class AdaptedParameter(AdaptedElement):
-    def __init__(self, param: CppParameter, options: LitgenOptions) -> None:
-        super().__init__(param, options)
+    def __init__(self, options: LitgenOptions, param: CppParameter) -> None:
+        super().__init__(options, param)
 
     # override
     def cpp_element(self) -> CppParameter:
@@ -27,14 +27,14 @@ class AdaptedParameter(AdaptedElement):
         raise NotImplementedError()
 
     def adapted_decl(self) -> AdaptedDecl:
-        adapted_decl = AdaptedDecl(self.cpp_element().decl, self.options)
+        adapted_decl = AdaptedDecl(self.options, self.cpp_element().decl)
         return adapted_decl
 
 
 @dataclass
 class AdaptedConstructor(AdaptedElement):
     def __init__(self, ctor: CppConstructorDecl, options: LitgenOptions):
-        super().__init__(ctor, options)
+        super().__init__(options, ctor)
 
     # override
     def cpp_element(self) -> CppConstructorDecl:
@@ -158,7 +158,7 @@ class AdaptedFunction(AdaptedElement):
         self.parent_struct_name = parent_struct_name
         self.cpp_adapter_code = None
         self.lambda_to_call = None
-        super().__init__(function_infos, options)
+        super().__init__(options, function_infos)
 
         apply_all_adapters(self)
 
@@ -174,18 +174,18 @@ class AdaptedFunction(AdaptedElement):
         return r
 
     def function_name_python(self) -> str:
-        r = cpp_to_python.function_name_to_python(self.cpp_adapted_function.function_name, self.options)
+        r = cpp_to_python.function_name_to_python(self.options, self.cpp_adapted_function.function_name)
         return r
 
     def return_type_python(self) -> str:
         return_type_cpp = self.cpp_adapted_function.full_return_type(self.options.srcml_options)
-        return_type_python = cpp_to_python.type_to_python(return_type_cpp, self.options)
+        return_type_python = cpp_to_python.type_to_python(self.options, return_type_cpp)
         return return_type_python
 
     def adapted_parameters(self) -> List[AdaptedParameter]:
         r: List[AdaptedParameter] = []
         for param in self.cpp_adapted_function.parameter_list.parameters:
-            adapted_param = AdaptedParameter(param, self.options)
+            adapted_param = AdaptedParameter(self.options, param)
             r.append(adapted_param)
         return r
 
@@ -193,10 +193,10 @@ class AdaptedFunction(AdaptedElement):
         cpp_parameters = self.cpp_adapted_function.parameter_list.parameters
         r = []
         for param in cpp_parameters:
-            param_name_python = cpp_to_python.var_name_to_python(param.decl.decl_name, self.options)
+            param_name_python = cpp_to_python.var_name_to_python(self.options, param.decl.decl_name)
             param_type_cpp = param.decl.cpp_type.str_code()
-            param_type_python = cpp_to_python.type_to_python(param_type_cpp, self.options)
-            param_default_value = cpp_to_python.var_value_to_python(param.default_value(), self.options)
+            param_type_python = cpp_to_python.type_to_python(self.options, param_type_cpp)
+            param_default_value = cpp_to_python.var_value_to_python(self.options, param.default_value())
 
             param_code = f"{param_name_python}: {param_type_python}"
             if len(param_default_value) > 0:
@@ -249,7 +249,7 @@ class AdaptedFunction(AdaptedElement):
     def _pydef_pyarg_list(self) -> List[str]:
         pyarg_strs: List[str] = []
         for param in self.cpp_adapted_function.parameter_list.parameters:
-            adapted_decl = AdaptedDecl(param.decl, self.options)
+            adapted_decl = AdaptedDecl(self.options, param.decl)
             pyarg_str = adapted_decl._str_pydef_as_pyarg()
             pyarg_strs.append(pyarg_str)
         return pyarg_strs

@@ -22,7 +22,7 @@ def _possible_buffer_template_pointer_types(options: LitgenOptions) -> List[str]
     return types
 
 
-def _looks_like_param_buffer_standard(param: CppParameter, options: LitgenOptions) -> bool:
+def _looks_like_param_buffer_standard(options: LitgenOptions, param: CppParameter) -> bool:
     if not options.buffer_flag_replace_by_array:
         return False
     for possible_buffer_type in _possible_buffer_pointer_types(options):
@@ -32,7 +32,7 @@ def _looks_like_param_buffer_standard(param: CppParameter, options: LitgenOption
     return False
 
 
-def _looks_like_param_template_buffer(param: CppParameter, options: LitgenOptions) -> bool:
+def _looks_like_param_template_buffer(options: LitgenOptions, param: CppParameter) -> bool:
     if not options.buffer_flag_replace_by_array:
         return False
     for possible_buffer_type in _possible_buffer_template_pointer_types(options):
@@ -42,11 +42,11 @@ def _looks_like_param_template_buffer(param: CppParameter, options: LitgenOption
     return False
 
 
-def _name_looks_like_buffer_standard_or_template(param: CppParameter, options: LitgenOptions) -> bool:
-    return _looks_like_param_buffer_standard(param, options) or _looks_like_param_template_buffer(param, options)
+def _name_looks_like_buffer_standard_or_template(options: LitgenOptions, param: CppParameter) -> bool:
+    return _looks_like_param_buffer_standard(options, param) or _looks_like_param_template_buffer(options, param)
 
 
-def _name_looks_like_buffer_size(param: CppParameter, options: LitgenOptions) -> bool:
+def _name_looks_like_buffer_size(options: LitgenOptions, param: CppParameter) -> bool:
     return code_utils.var_name_looks_like_size_name(param.variable_name(), options.buffer_size_names)
 
 
@@ -55,11 +55,7 @@ class _AdaptBuffersHelper:
     function_infos: CppFunctionDecl
     options: LitgenOptions
 
-    def __init__(
-        self,
-        adapted_function: AdaptedFunction,
-        options: LitgenOptions,
-    ) -> None:
+    def __init__(self, options: LitgenOptions, adapted_function: AdaptedFunction) -> None:
         self.adapted_function = adapted_function
         self.function_infos = adapted_function.cpp_adapted_function
         self.options = options
@@ -144,8 +140,8 @@ class _AdaptBuffersHelper:
         # Test if this is a size preceded by a buffer
         param_n0 = self._param(idx_param)
         param_n1 = self._param(idx_param - 1)
-        if _name_looks_like_buffer_size(param_n0, self.options) and _name_looks_like_buffer_standard_or_template(
-            param_n1, self.options
+        if _name_looks_like_buffer_size(self.options, param_n0) and _name_looks_like_buffer_standard_or_template(
+            self.options, param_n1
         ):
             return True
         return False
@@ -160,7 +156,7 @@ class _AdaptBuffersHelper:
         params = self.function_infos.parameter_list.parameters
 
         def is_template_buffer(param):
-            return _looks_like_param_template_buffer(param, self.options)
+            return _looks_like_param_template_buffer(self.options, param)
 
         template_buffer_params = list(filter(is_template_buffer, params))
         if len(template_buffer_params) == 0:
@@ -187,9 +183,9 @@ class _AdaptBuffersHelper:
             idx_size_param = idx_param + nb_additional_buffers + 1
             if idx_size_param >= nb_params:
                 return False
-            if not _name_looks_like_buffer_standard_or_template(self._param(idx_buffer_param), self.options):
+            if not _name_looks_like_buffer_standard_or_template(self.options, self._param(idx_buffer_param)):
                 return False
-            if _name_looks_like_buffer_size(self._param(idx_size_param), self.options):
+            if _name_looks_like_buffer_size(self.options, self._param(idx_size_param)):
                 return True
             nb_additional_buffers += 1
 
@@ -198,19 +194,19 @@ class _AdaptBuffersHelper:
     def _is_buffer_template(self, idx_param: int) -> bool:
         if not self._is_buffer_template_or_not(idx_param):
             return False
-        r = _looks_like_param_template_buffer(self._param(idx_param), self.options)
+        r = _looks_like_param_template_buffer(self.options, self._param(idx_param))
         return r
 
     def _is_buffer_standard(self, idx_param: int) -> bool:
         if not self._is_buffer_template_or_not(idx_param):
             return False
-        r = not _looks_like_param_template_buffer(self._param(idx_param), self.options)
+        r = not _looks_like_param_template_buffer(self.options, self._param(idx_param))
         return r
 
     def _adapted_cpp_parameters_template_static_cast(self, pyarray_type_char) -> str:
         adapted_cpp_params = []
         for idx_param, param in enumerate(self.function_infos.parameter_list.parameters):
-            if _looks_like_param_template_buffer(param, self.options):
+            if _looks_like_param_template_buffer(self.options, param):
                 param_name = self._buffer_from_pyarray_name(idx_param)
                 cpp_type = cpp_to_python.py_array_type_to_cpp_type(pyarray_type_char)
                 if self._is_const(idx_param):
@@ -350,7 +346,7 @@ class _AdaptBuffersHelper:
     def _last_idx_buffer_param_before(self, idx_param: int) -> Optional[int]:
         r = None
         for i, param in enumerate(self.function_infos.parameter_list.parameters):
-            if i <= idx_param and _name_looks_like_buffer_standard_or_template(param, self.options):
+            if i <= idx_param and _name_looks_like_buffer_standard_or_template(self.options, param):
                 r = i
         return r
 
@@ -481,7 +477,7 @@ def adapt_c_buffers(adapted_function: AdaptedFunction) -> Optional[LambdaAdapter
 
     """
     options = adapted_function.options
-    helper = _AdaptBuffersHelper(adapted_function, options)
+    helper = _AdaptBuffersHelper(options, adapted_function)
 
     if not helper.shall_adapt():
         return None

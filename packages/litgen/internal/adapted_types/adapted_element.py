@@ -12,12 +12,12 @@ class AdaptedElement:  # (abc.ABC):  # Cannot be abstract (mypy limitation:  htt
     _cpp_element: CppElementAndComment
     options: LitgenOptions
 
-    def __init__(self, cpp_element: CppElementAndComment, options: LitgenOptions) -> None:
+    def __init__(self, options: LitgenOptions, cpp_element: CppElementAndComment) -> None:
         self._cpp_element = cpp_element
         self.options = options
 
     def _info_original_location(self, comment_token: str) -> str:
-        r = cpp_to_python.info_original_location(self._cpp_element, self.options, comment_token)
+        r = cpp_to_python.info_original_location(self.options, self._cpp_element, comment_token)
         return r
 
     def info_original_location_cpp(self) -> str:
@@ -46,7 +46,7 @@ class AdaptedElement:  # (abc.ABC):  # Cannot be abstract (mypy limitation:  htt
         body_lines = code_utils.align_python_comments_in_block_lines(body_lines)
 
         all_lines = title_lines
-        all_lines += cpp_to_python.docstring_lines(self.cpp_element(), self.options)
+        all_lines += cpp_to_python.docstring_lines(self.options, self.cpp_element())
         all_lines += body_lines
 
         all_lines = code_utils.indent_code_lines(
@@ -69,7 +69,7 @@ class AdaptedElement:  # (abc.ABC):  # Cannot be abstract (mypy limitation:  htt
         raise NotImplementedError()
 
     def comment_pydef_one_line(self) -> str:
-        r = cpp_to_python.comment_pydef_one_line(self._cpp_element.cpp_element_comments.full_comment(), self.options)
+        r = cpp_to_python.comment_pydef_one_line(self.options, self._cpp_element.cpp_element_comments.full_comment())
         return r
 
     def str_stub(self) -> str:

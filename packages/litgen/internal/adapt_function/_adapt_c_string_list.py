@@ -40,7 +40,7 @@ def adapt_c_string_list(adapted_function: AdaptedFunction) -> Optional[LambdaAda
         param_0: CppParameter
         param_1: CppParameter
         for param_0, param_1 in code_utils.overlapping_pairs(old_function_params):
-            if param_0.decl.is_c_string_list_ptr() and cpp_to_python.looks_like_size_param(param_1, options):
+            if param_0.decl.is_c_string_list_ptr() and cpp_to_python.looks_like_size_param(options, param_1):
                 return True
         return False
 
@@ -59,7 +59,7 @@ def adapt_c_string_list(adapted_function: AdaptedFunction) -> Optional[LambdaAda
             return False
         param = old_function_params[i]
         param_next = old_function_params[i + 1]
-        r = param.decl.is_c_string_list_ptr() and cpp_to_python.looks_like_size_param(param_next, options)
+        r = param.decl.is_c_string_list_ptr() and cpp_to_python.looks_like_size_param(options, param_next)
         return r
 
     def is_c_string_list_size(i: int):
@@ -67,7 +67,7 @@ def adapt_c_string_list(adapted_function: AdaptedFunction) -> Optional[LambdaAda
             return False
         param = old_function_params[i]
         param_previous = old_function_params[i - 1]
-        r = param_previous.decl.is_c_string_list_ptr() and cpp_to_python.looks_like_size_param(param, options)
+        r = param_previous.decl.is_c_string_list_ptr() and cpp_to_python.looks_like_size_param(options, param)
         return r
 
     for i, old_param in enumerate(old_function_params):

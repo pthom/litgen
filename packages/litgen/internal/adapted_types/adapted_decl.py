@@ -11,8 +11,8 @@ from litgen.options import LitgenOptions
 
 @dataclass
 class AdaptedDecl(AdaptedElement):
-    def __init__(self, decl: CppDecl, options: LitgenOptions) -> None:
-        super().__init__(decl, options)
+    def __init__(self, options: LitgenOptions, decl: CppDecl) -> None:
+        super().__init__(options, decl)
 
     # override
     def cpp_element(self) -> CppDecl:
@@ -28,17 +28,17 @@ class AdaptedDecl(AdaptedElement):
 
     def decl_name_python(self) -> str:
         decl_name_cpp = self.cpp_element().decl_name
-        decl_name_python = cpp_to_python.var_name_to_python(decl_name_cpp, self.options)
+        decl_name_python = cpp_to_python.var_name_to_python(self.options, decl_name_cpp)
         return decl_name_python
 
     def decl_value_python(self) -> str:
         decl_value_cpp = self.cpp_element().initial_value_code
-        decl_value_python = cpp_to_python.var_value_to_python(decl_value_cpp, self.options)
+        decl_value_python = cpp_to_python.var_value_to_python(self.options, decl_value_cpp)
         return decl_value_python
 
     def decl_type_python(self) -> str:
         decl_type_cpp = self.cpp_element().cpp_type.str_code()
-        decl_type_python = cpp_to_python.type_to_python(decl_type_cpp, self.options)
+        decl_type_python = cpp_to_python.type_to_python(self.options, decl_type_cpp)
         return decl_type_python
 
     def is_immutable_for_python(self) -> bool:
@@ -72,7 +72,7 @@ class AdaptedDecl(AdaptedElement):
         new_cpp_decl.cpp_type.specifiers.append("const")
         new_cpp_decl.decl_name = new_cpp_decl.decl_name
 
-        new_adapted_decl = AdaptedDecl(new_cpp_decl, self.options)
+        new_adapted_decl = AdaptedDecl(self.options, new_cpp_decl)
         return new_adapted_decl
 
     def c_array_fixed_size_to_mutable_new_boxed_decls(self) -> List[AdaptedDecl]:

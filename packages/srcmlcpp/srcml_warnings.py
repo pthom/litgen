@@ -93,9 +93,7 @@ def _show_element_info(element: ET.Element, encoding: str) -> str:
 
 
 def _warning_detailed_info(
-    current_element: ET.Element = None,
-    additional_message: str = "",
-    options: SrcmlOptions = SrcmlOptions(),
+    options: SrcmlOptions, current_element: Optional[ET.Element], additional_message: str
 ) -> str:
     def _get_python_call_info() -> Tuple[str, str]:
         stack_lines = traceback.format_stack()
@@ -134,24 +132,17 @@ def _warning_detailed_info(
 
 
 class SrcMlExceptionDetailed(SrcMlException):
-    def __init__(
-        self,
-        current_element: ET.Element = None,
-        additional_message: str = "",
-        options: SrcmlOptions = SrcmlOptions(),
-    ) -> None:
-        message = _warning_detailed_info(current_element, additional_message, options=options)
+    def __init__(self, options: SrcmlOptions, current_element: Optional[ET.Element], additional_message: str) -> None:
+        message = _warning_detailed_info(
+            options=options, current_element=current_element, additional_message=additional_message
+        )
         super().__init__(message)
 
 
-def emit_srcml_warning(
-    current_element: ET.Element = None,
-    additional_message: str = "",
-    options: SrcmlOptions = SrcmlOptions(),
-) -> None:
+def emit_srcml_warning(options: SrcmlOptions, current_element: Optional[ET.Element], additional_message: str) -> None:
     if options.flag_quiet:
         return
-    message = _warning_detailed_info(current_element, additional_message, options)
+    message = _warning_detailed_info(options, current_element, additional_message)
 
     in_pytest = "pytest" in sys.modules
     if in_pytest:
@@ -160,7 +151,7 @@ def emit_srcml_warning(
         print("Warning: " + message, file=sys.stderr)
 
 
-def emit_warning(message: str, options: SrcmlOptions) -> None:
+def emit_warning(options: SrcmlOptions, message: str) -> None:
     if options.flag_quiet:
         return
     in_pytest = "pytest" in sys.modules

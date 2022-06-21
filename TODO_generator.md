@@ -1,10 +1,8 @@
-rename pyi to stub
 ? normalize code and options order in functions params ? options comes first!
 
 add unit test pyi generation
 
-group pydef and pyi generation
-    BoxedTypes
+BoxedTypes
 
 https://stackoverflow.com/questions/8820276/docstring-for-variable -> Use typing.Annotated to provide a docstring for variables.
 
@@ -54,9 +52,6 @@ Notes / Doc pybind11:
         enum / py::arithmetic() : add an option?
 
 - add namespace hierarchy in pydef ? With option ?
-- integration tests
-    - work on full gen (namespace, comment, etc)
-
 
 - toString en hackant str:
     l.Foo.__str__ = my_str

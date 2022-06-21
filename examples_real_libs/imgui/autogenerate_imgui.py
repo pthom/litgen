@@ -25,9 +25,9 @@ def autogenerate():
     options = my_code_style_options()
 
     litgen.generate_files(
+        options=options,
         input_cpp_header=input_cpp_header,
         output_cpp_module_file=output_cpp_module,
-        options=options,
         output_stub_pyi_file=output_stub_pyi_file,
     )
 

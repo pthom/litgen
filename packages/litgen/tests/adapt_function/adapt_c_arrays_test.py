@@ -175,7 +175,7 @@ def test_in_method():
         };
     """
     options = litgen.LitgenOptions()
-    generated_code = litgen.generate_pydef(code, options)
+    generated_code = litgen.generate_pydef(options, code)
     # logging.warning("\n" + generated_code)
     code_utils.assert_are_codes_equal(
         generated_code,

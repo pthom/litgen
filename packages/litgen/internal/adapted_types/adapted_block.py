@@ -29,8 +29,8 @@ class AdaptedBlock(AdaptedElement):
         ]
     ]
 
-    def __init__(self, block: CppBlock, options: LitgenOptions) -> None:
-        super().__init__(block, options)
+    def __init__(self, options: LitgenOptions, block: CppBlock) -> None:
+        super().__init__(options, block)
         self.adapted_elements = []
         self._fill_adapted_elements()
 
@@ -41,23 +41,23 @@ class AdaptedBlock(AdaptedElement):
     def _fill_adapted_elements(self) -> None:
         for child in self.cpp_element().block_children:
             if isinstance(child, CppEmptyLine):
-                self.adapted_elements.append(AdaptedEmptyLine(child, self.options))
+                self.adapted_elements.append(AdaptedEmptyLine(self.options, child))
             elif isinstance(child, CppComment):
-                self.adapted_elements.append(AdaptedComment(child, self.options))
+                self.adapted_elements.append(AdaptedComment(self.options, child))
             elif isinstance(child, CppStruct):
-                self.adapted_elements.append(AdaptedClass(child, self.options))
+                self.adapted_elements.append(AdaptedClass(self.options, child))
             elif isinstance(child, CppFunctionDecl):
                 no_class_name = ""
                 self.adapted_elements.append(AdaptedFunction(child, no_class_name, self.options))
             elif isinstance(child, CppEnum):
-                self.adapted_elements.append(AdaptedEnum(child, self.options))
+                self.adapted_elements.append(AdaptedEnum(self.options, child))
             elif isinstance(child, CppNamespace):
-                self.adapted_elements.append(AdaptedNamespace(child, self.options))  # type: ignore
+                self.adapted_elements.append(AdaptedNamespace(self.options, child))  # type: ignore
             elif isinstance(child, CppDeclStatement):
                 emit_srcml_warning(
+                    self.options.srcml_options,
                     child.srcml_element,
                     f"Block elements of type {child.tag()} are not supported in python conversion",
-                    self.options.srcml_options,
                 )
 
     # override
@@ -98,9 +98,9 @@ class AdaptedBlock(AdaptedElement):
 class AdaptedNamespace(AdaptedElement):
     adapted_block: AdaptedBlock
 
-    def __init__(self, namespace_: CppNamespace, options: LitgenOptions) -> None:
-        super().__init__(namespace_, options)
-        self.adapted_block = AdaptedBlock(self.cpp_element().block, self.options)
+    def __init__(self, options: LitgenOptions, namespace_: CppNamespace) -> None:
+        super().__init__(options, namespace_)
+        self.adapted_block = AdaptedBlock(self.options, self.cpp_element().block)
 
     def namespace_name(self) -> str:
         return self.cpp_element().ns_name
@@ -134,8 +134,8 @@ class AdaptedNamespace(AdaptedElement):
 
 
 class AdaptedUnit(AdaptedBlock):
-    def __init__(self, unit: CppUnit, options: LitgenOptions):
-        super().__init__(unit, options)
+    def __init__(self, options: LitgenOptions, unit: CppUnit):
+        super().__init__(options, unit)
 
     # override
     def cpp_element(self) -> CppUnit:

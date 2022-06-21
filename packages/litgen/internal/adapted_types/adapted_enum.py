@@ -20,9 +20,9 @@ from litgen.options import LitgenOptions
 class AdaptedEnumDecl(AdaptedDecl):
     enum_parent: AdaptedEnum
 
-    def __init__(self, decl: CppDecl, enum_parent: AdaptedEnum, options: LitgenOptions) -> None:
+    def __init__(self, options: LitgenOptions, decl: CppDecl, enum_parent: AdaptedEnum) -> None:
         self.enum_parent = enum_parent
-        super().__init__(decl, options)
+        super().__init__(options, decl)
 
     # override
     def cpp_element(self) -> CppDecl:
@@ -40,13 +40,13 @@ class AdaptedEnumDecl(AdaptedDecl):
     def decl_name_python(self) -> str:
         decl_name_cpp = self.cpp_element().decl_name
         decl_name_python = cpp_to_python.enum_value_name_to_python(
-            self.enum_parent.cpp_element(), self.cpp_element(), self.options
+            self.options, self.enum_parent.cpp_element(), self.cpp_element()
         )
         return decl_name_python
 
     def decl_value_python(self) -> str:
         decl_value_cpp = self.cpp_element().initial_value_code
-        decl_value_python = cpp_to_python.var_value_to_python(decl_value_cpp, self.options)
+        decl_value_python = cpp_to_python.var_value_to_python(self.options, decl_value_cpp)
         #
         # Sometimes, enum decls have interdependent values like this:
         #     enum MyEnum {
@@ -60,7 +60,7 @@ class AdaptedEnumDecl(AdaptedDecl):
             other_enum_value_cpp_name = other_enum_member.cpp_element().name_code()
             assert other_enum_value_cpp_name is not None
             other_enum_value_python_name = cpp_to_python.enum_value_name_to_python(
-                self.enum_parent.cpp_element(), other_enum_member.cpp_element(), self.options
+                self.options, self.enum_parent.cpp_element(), other_enum_member.cpp_element()
             )
             enum_name = self.enum_parent.enum_name_python()
 
@@ -79,11 +79,11 @@ class AdaptedEnumDecl(AdaptedDecl):
         decl_part = f"{decl_name} = {decl_value}"
 
         cpp_decl = self.cpp_element()
-        if cpp_to_python.python_shall_place_comment_at_end_of_line(cpp_decl, self.options):
-            decl_line = decl_part + "  #" + cpp_to_python.python_comment_end_of_line(cpp_decl, self.options)
+        if cpp_to_python.python_shall_place_comment_at_end_of_line(self.options, cpp_decl):
+            decl_line = decl_part + "  #" + cpp_to_python.python_comment_end_of_line(self.options, cpp_decl)
             lines.append(decl_line)
         else:
-            comment_lines = cpp_to_python.python_comment_previous_lines(cpp_decl, self.options)
+            comment_lines = cpp_to_python.python_comment_previous_lines(self.options, cpp_decl)
             lines += comment_lines
             lines.append(decl_part)
 
@@ -103,8 +103,8 @@ class AdaptedEnum(AdaptedElement):
     adapted_children: List[Union[AdaptedDecl, AdaptedEmptyLine, AdaptedComment]]
     adapted_enum_decls: List[AdaptedEnumDecl]
 
-    def __init__(self, enum_: CppEnum, options: LitgenOptions) -> None:
-        super().__init__(enum_, options)
+    def __init__(self, options: LitgenOptions, enum_: CppEnum) -> None:
+        super().__init__(options, enum_)
         self.adapted_children = []
         self.adapted_enum_decls = []
         self._fill_children()
@@ -121,13 +121,13 @@ class AdaptedEnum(AdaptedElement):
         children_with_values = self.cpp_element().get_children_with_filled_decl_values(self.options.srcml_options)
         for c_child in children_with_values:
             if isinstance(c_child, CppEmptyLine):
-                self.adapted_children.append(AdaptedEmptyLine(c_child, self.options))
+                self.adapted_children.append(AdaptedEmptyLine(self.options, c_child))
             elif isinstance(c_child, CppComment):
-                self.adapted_children.append(AdaptedComment(c_child, self.options))
+                self.adapted_children.append(AdaptedComment(self.options, c_child))
             elif isinstance(c_child, CppDecl):
-                is_count = cpp_to_python.enum_element_is_count(self.cpp_element(), c_child, self.options)
+                is_count = cpp_to_python.enum_element_is_count(self.options, self.cpp_element(), c_child)
                 if not is_count:
-                    new_adapted_decl = AdaptedEnumDecl(c_child, self, self.options)
+                    new_adapted_decl = AdaptedEnumDecl(self.options, c_child, self)
                     self.adapted_children.append(new_adapted_decl)
                     self.adapted_enum_decls.append(new_adapted_decl)
 
