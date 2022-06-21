@@ -1,12 +1,12 @@
 from __future__ import annotations
-from typing import cast
 from dataclasses import dataclass
-from typing import Any
+from typing import cast
 
 from srcmlcpp.srcml_types import *
-from litgen.options import LitgenOptions
+
 from litgen.internal import cpp_to_python
 from litgen.internal.adapted_types.adapted_element import AdaptedElement
+from litgen.options import LitgenOptions
 
 
 @dataclass

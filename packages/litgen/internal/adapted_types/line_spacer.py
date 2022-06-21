@@ -1,6 +1,11 @@
-from typing import Optional, List
+from typing import List, Optional
 
-from litgen.internal.adapted_types.all_types import *
+from litgen.internal.adapted_types.adapted_block import AdaptedNamespace
+from litgen.internal.adapted_types.adapted_class import AdaptedClass
+from litgen.internal.adapted_types.adapted_decl import AdaptedDecl
+from litgen.internal.adapted_types.adapted_element import AdaptedElement
+from litgen.internal.adapted_types.adapted_enum import AdaptedEnum
+from litgen.internal.adapted_types.adapted_function import AdaptedFunction
 
 
 class LineSpacer:

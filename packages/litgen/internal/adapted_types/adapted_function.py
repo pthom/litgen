@@ -1,13 +1,12 @@
-from typing import cast
 from dataclasses import dataclass
-from typing import Any, Union
+from typing import cast
 
-from codemanip import code_replacements
 from srcmlcpp.srcml_types import *
-from litgen.options import LitgenOptions
+
 from litgen.internal import cpp_to_python
-from litgen.internal.adapted_types.adapted_element import AdaptedElement
 from litgen.internal.adapted_types.adapted_decl import AdaptedDecl
+from litgen.internal.adapted_types.adapted_element import AdaptedElement
+from litgen.options import LitgenOptions
 
 
 @dataclass

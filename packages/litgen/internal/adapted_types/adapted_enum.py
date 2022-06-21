@@ -1,16 +1,19 @@
 from __future__ import annotations
-from typing import cast
 from dataclasses import dataclass
-from typing import Any, Union
+from typing import Union, cast
 
 from codemanip import code_replacements
-from srcmlcpp.srcml_types import *
-from litgen.options import LitgenOptions
-from litgen.internal import cpp_to_python
 
-from litgen.internal.adapted_types.adapted_element import AdaptedElement
+from srcmlcpp.srcml_types import *
+
+from litgen.internal import cpp_to_python
+from litgen.internal.adapted_types.adapted_comment import (
+    AdaptedComment,
+    AdaptedEmptyLine,
+)
 from litgen.internal.adapted_types.adapted_decl import AdaptedDecl
-from litgen.internal.adapted_types.adapted_comment import AdaptedEmptyLine, AdaptedComment
+from litgen.internal.adapted_types.adapted_element import AdaptedElement
+from litgen.options import LitgenOptions
 
 
 @dataclass

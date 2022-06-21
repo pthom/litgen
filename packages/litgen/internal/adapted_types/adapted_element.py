@@ -1,10 +1,10 @@
-from typing import cast
 from dataclasses import dataclass
 from typing import Any
 
 from srcmlcpp.srcml_types import *
-from litgen.options import LitgenOptions
+
 from litgen.internal import cpp_to_python
+from litgen.options import LitgenOptions
 
 
 @dataclass
