@@ -141,10 +141,10 @@ class AdaptedUnit(AdaptedBlock):
     def cpp_element(self) -> CppUnit:
         return cast(CppUnit, self._cpp_element)
 
-    # override
-    def _str_stub_lines(self) -> List[str]:
-        raise ValueError("To be completed")
+    # override : not needed, use AdaptedBlock version
+    # def _str_stub_lines(self) -> List[str]:
+    #     raise ValueError("To be completed")
 
-    # override
-    def _str_pydef_lines(self) -> List[str]:
-        raise ValueError("To be completed")
+    # override : not needed, use AdaptedBlock version
+    # def _str_pydef_lines(self) -> List[str]:
+    #     raise ValueError("To be completed")

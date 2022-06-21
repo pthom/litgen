@@ -1,9 +1,14 @@
+add unit test pyi generation
+
 group pydef and pyi generation
     BoxedTypes
 
 https://stackoverflow.com/questions/8820276/docstring-for-variable -> Use typing.Annotated to provide a docstring for variables.
 
 * Move & rename module_pydef_generator_test.py
+
+? normalize code and options order in functions params ? options comes first!
+rename pyi to stub
 
 
 imgui: Handle widget input / output parameters

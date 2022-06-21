@@ -75,3 +75,4 @@ class SrcmlOptions:
         self.api_suffixes = []
         self.functions_api_prefixes = []
         self.named_number_macros = {}
+        self.code_preprocess_function = None

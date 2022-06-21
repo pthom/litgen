@@ -9,6 +9,24 @@ from litgen.internal import module_pydef_generator, module_pyi_generator
 from litgen.options import LitgenOptions
 
 
+def code_to_pydef(options: LitgenOptions, code: str, filename: str = ""):
+    from litgen.internal.adapted_types import AdaptedUnit
+
+    cpp_unit = srcmlcpp.code_to_cpp_unit(options.srcml_options, code, filename)
+    adapted_unit = AdaptedUnit(cpp_unit, options)
+    r = adapted_unit.str_pydef()
+    return r
+
+
+def code_to_stub(options: LitgenOptions, code: str, filename: str = ""):
+    from litgen.internal.adapted_types import AdaptedUnit
+
+    cpp_unit = srcmlcpp.code_to_cpp_unit(options.srcml_options, code, filename)
+    adapted_unit = AdaptedUnit(cpp_unit, options)
+    r = adapted_unit.str_stub()
+    return r
+
+
 def generate_pydef(
     code: str,
     options: LitgenOptions,
