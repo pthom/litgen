@@ -2,7 +2,7 @@ import litgen
 import srcmlcpp
 from codemanip import code_utils
 from litgen.internal import module_pydef_generator
-from litgen.internal.adapted_types_wip.adapted_types import AdaptedFunction
+from litgen.internal.adapted_types.adapted_types import AdaptedFunction
 from srcmlcpp.srcml_types import *
 
 

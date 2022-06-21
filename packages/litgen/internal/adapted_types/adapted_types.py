@@ -1111,3 +1111,84 @@ class AdaptedFunction(AdaptedElement):
             code = self._pydef_full_str_impl()
         lines = code.split("\n")
         return lines
+
+
+@dataclass
+class AdaptedBlock(AdaptedElement):
+    adapted_elements: List[Union[AdaptedEmptyLine, AdaptedComment, AdaptedFunction, AdaptedClass]]
+
+    def __init__(self, block: CppBlock, options: LitgenOptions):
+        super().__init__(block, options)
+        self.adapted_elements = []
+        self._fill_adapted_elements()
+
+    # override
+    def cpp_element(self) -> CppBlock:
+        return cast(CppBlock, self._cpp_element)
+
+    def _fill_adapted_elements(self) -> None:
+        for child in self.cpp_element().block_children:
+            if isinstance(child, CppEmptyLine):
+                self.adapted_elements.append(AdaptedEmptyLine(child, self.options))
+            elif isinstance(child, CppComment):
+                self.adapted_elements.append(AdaptedComment(child, self.options))
+            elif isinstance(child, CppFunctionDecl):
+                no_class_name = ""
+                self.adapted_elements.append(AdaptedFunction(child, no_class_name, self.options))
+            elif isinstance(child, CppClass):
+                self.adapted_elements.append(AdaptedClass(child, self.options))
+            elif isinstance(child, CppDeclStatement):
+                emit_srcml_warning(
+                    child.srcml_element,
+                    f"Block elements of type {child.tag()} are not supported in python conversion",
+                    self.options.srcml_options,
+                )
+
+    # override
+    def _str_stub_lines(self) -> List[str]:
+        lines = []
+        for adapted_element in self.adapted_elements:
+            element_lines = adapted_element._str_stub_lines()
+            lines += element_lines
+        return lines
+
+    # override
+    def _str_pydef_lines(self) -> List[str]:
+        raise ValueError("To be completed")
+
+
+@dataclass
+class AdaptedNamespace(AdaptedElement):
+    def __init__(self, namespace_: CppNamespace, options: LitgenOptions):
+        super().__init__(namespace_, options)
+
+    # override
+    def cpp_element(self) -> CppNamespace:
+        return cast(CppNamespace, self._cpp_element)
+
+    # override
+    def _str_stub_lines(self) -> List[str]:
+        raise ValueError("To be completed")
+
+    # override
+    def _str_pydef_lines(self) -> List[str]:
+        raise ValueError("To be completed")
+
+
+class AdaptedUnit(AdaptedBlock):
+    def __init__(self, unit: CppUnit, options: LitgenOptions):
+        super().__init__(unit, options)
+
+    # override
+    def cpp_element(self) -> CppUnit:
+        return cast(CppUnit, self._cpp_element)
+
+        # override
+
+    def _str_stub_lines(self) -> List[str]:
+        raise ValueError("To be completed")
+
+        # override
+
+    def _str_pydef_lines(self) -> List[str]:
+        raise ValueError("To be completed")

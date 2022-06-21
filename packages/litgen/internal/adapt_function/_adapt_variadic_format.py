@@ -2,7 +2,7 @@ import copy
 from typing import List, Optional
 
 from litgen.internal.adapt_function._lambda_adapter import LambdaAdapter
-from litgen.internal.adapted_types_wip.adapted_types import AdaptedFunction
+from litgen.internal.adapted_types.adapted_types import AdaptedFunction
 from srcmlcpp.srcml_types import CppParameter
 
 

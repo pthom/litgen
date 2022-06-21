@@ -2,7 +2,7 @@ from typing import List, Union
 
 from codemanip import code_utils
 from litgen.internal import cpp_to_python
-from litgen.internal.adapted_types_wip.adapted_types import *
+from litgen.internal.adapted_types.adapted_types import *
 from litgen.internal.cpp_to_python import info_original_location_cpp
 from litgen.options import LitgenOptions
 from srcmlcpp.srcml_types import *
