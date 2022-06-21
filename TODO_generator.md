@@ -1,5 +1,3 @@
-? normalize code and options order in functions params ? options comes first!
-
 add unit test pyi generation
 
 BoxedTypes
