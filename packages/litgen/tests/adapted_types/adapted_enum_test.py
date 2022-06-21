@@ -18,7 +18,7 @@ enum Foo
 
     // And this is b and c's comment
     Foo_b,
-    Foo_c = MY_VALUE,
+    Foo_c = MY_VALUE,              // c has a special comment
 
     Foo_d = Foo_a | Foo_b + Foo_c, // And a computed value
 
@@ -52,9 +52,9 @@ enum Foo
             """
             a = 0                                                 # This is a
 
-            #  And this is b and c's comment
+            # And this is b and c's comment
             b = 1
-            c = 256
+            c = 256                                               # c has a special comment
 
             d = Literal[Foo.a] | Literal[Foo.b] + Literal[Foo.c]  # And a computed value
 
@@ -73,12 +73,16 @@ enum Foo
             """ Doc about Foo
              On several lines
             """
-            #  This is a
+
+            # This is a
             a = 0
-            #  And this is b and c's comment
+
+            # And this is b and c's comment
+
             b = 1
+            # c has a special comment
             c = 256
-            #  And a computed value
+            # And a computed value
             d = Literal[Foo.a] | Literal[Foo.b] + Literal[Foo.c]
             e = 4
         ''',
@@ -94,7 +98,7 @@ enum Foo
         py::enum_<Foo>(m, "Foo", py::arithmetic(), " Doc about Foo\\n On several lines")    // Line:4
             .value("a", Foo_a, "This is a")
             .value("b", Foo_b, "")
-            .value("c", Foo_c, "")
+            .value("c", Foo_c, "c has a special comment")
             .value("d", Foo_d, "And a computed value")
             .value("e", Foo_e, "");
     """,

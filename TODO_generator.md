@@ -14,6 +14,7 @@ imgui: Handle widget input / output parameters
         --> make return
 
 change licence (ethical license for large NNs)
+    -> message to science4all: https://www.facebook.com/Science4Allorg/
 
 stub:
     S'attendre a problem possible avec conversion enum / int:

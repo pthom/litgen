@@ -79,11 +79,11 @@ class AdaptedEnumDecl(AdaptedDecl):
         decl_part = f"{decl_name} = {decl_value}"
 
         cpp_decl = self.cpp_element()
-        if cpp_to_python.python_shall_place_comment_at_end_of_line(self.options, cpp_decl):
-            decl_line = decl_part + "  #" + cpp_to_python.python_comment_end_of_line(self.options, cpp_decl)
+        if self.comment_python_shall_place_at_end_of_line():
+            decl_line = decl_part + cpp_to_python.comment_python_end_of_line(self.options, cpp_decl)
             lines.append(decl_line)
         else:
-            comment_lines = cpp_to_python.python_comment_previous_lines(self.options, cpp_decl)
+            comment_lines = cpp_to_python.comment_python_previous_lines(self.options, cpp_decl)
             lines += comment_lines
             lines.append(decl_part)
 
@@ -137,11 +137,18 @@ class AdaptedEnum(AdaptedElement):
 
     # override
     def _str_stub_lines(self) -> List[str]:
+        from litgen.internal.adapted_types.line_spacer import LineSpacerPython
+
+        line_spacer = LineSpacerPython(self.options)
+
         title_line = f"class {self.cpp_element().enum_name}(Enum):"
 
         body_lines: List[str] = []
         for child in self.adapted_children:
-            body_lines += child._str_stub_lines()
+            element_lines = child._str_stub_lines()
+            spacing_lines = line_spacer.spacing_lines(child, element_lines)
+            body_lines += spacing_lines
+            body_lines += element_lines
 
         all_lines = self._str_stub_layout_lines([title_line], body_lines)
         return all_lines

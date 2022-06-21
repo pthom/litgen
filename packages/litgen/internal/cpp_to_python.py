@@ -336,20 +336,26 @@ def docstring_lines(options: LitgenOptions, cpp_element_c: CppElementAndComment)
     return r
 
 
-def python_shall_place_comment_at_end_of_line(options: LitgenOptions, cpp_element_c: CppElementAndComment) -> bool:
+def comment_python_shall_place_at_end_of_line(options: LitgenOptions, cpp_element_c: CppElementAndComment) -> bool:
     if not options.python_reproduce_cpp_layout:
         return False
     eol_comment = _comment_apply_replacements(options, cpp_element_c.cpp_element_comments.comment_end_of_line)
-    p_comment = _comment_apply_replacements(options, cpp_element_c.cpp_element_comments.comment_on_previous_lines)
-    return len(eol_comment) > 0 and len(p_comment) == 0
+    previous_lines_comment = _comment_apply_replacements(
+        options, cpp_element_c.cpp_element_comments.comment_on_previous_lines
+    )
+    return len(eol_comment) > 0 and len(previous_lines_comment) == 0
 
 
-def python_comment_end_of_line(options: LitgenOptions, cpp_element_c: CppElementAndComment) -> str:
+def comment_python_end_of_line(options: LitgenOptions, cpp_element_c: CppElementAndComment) -> str:
     eol_comment = _comment_apply_replacements(options, cpp_element_c.cpp_element_comments.comment_end_of_line)
-    return eol_comment
+    if len(eol_comment) > 0:
+        eol_comment_with_token = "  #" + eol_comment
+        return eol_comment_with_token
+    else:
+        return ""
 
 
-def python_comment_previous_lines(options: LitgenOptions, cpp_element_c: CppElementAndComment) -> List[str]:
+def comment_python_previous_lines(options: LitgenOptions, cpp_element_c: CppElementAndComment) -> List[str]:
     """See comment below"""
     # Returns the comment of a CppElement under the form of a python comment, such as the one you are reading.
     # Some replacements will be applied (for example true -> True, etc)
@@ -364,7 +370,14 @@ def python_comment_previous_lines(options: LitgenOptions, cpp_element_c: CppElem
         return []
 
     lines = comment.split("\n")
-    lines = list(map(lambda s: "# " + s, lines))
+
+    def add_hash(s: str):
+        if options.python_reproduce_cpp_layout:
+            return "#" + s
+        else:
+            return "# " + s.lstrip()
+
+    lines = list(map(add_hash, lines))
     lines = code_utils.strip_lines_right_space(lines)
 
     return lines

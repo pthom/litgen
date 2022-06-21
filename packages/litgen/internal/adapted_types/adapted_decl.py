@@ -134,26 +134,6 @@ class AdaptedDecl(AdaptedElement):
         )
         return param_line
 
-    def _str_stub_class_member(self) -> List[str]:
-        """pydef code for class members"""
-        decl_name_python = self.decl_name_python()
-        decl_type_python = self.decl_type_python()
-
-        default_value_python = self.decl_value_python()
-        if len(default_value_python) > 0:
-            maybe_defaultvalue_python = default_value_python
-            maybe_equal = " = "
-        else:
-            maybe_defaultvalue_python = ""
-            maybe_equal = ""
-
-        decl_template = f"{decl_name_python}:{decl_type_python}{maybe_equal}{maybe_defaultvalue_python}"
-
-        title_lines = [decl_template]
-        body_lines: List[str] = []
-        code_lines = self._str_stub_layout_lines(title_lines, body_lines, add_pass_if_empty_body=False)
-        return code_lines
-
     # override
     def _str_pydef_lines(self) -> List[str]:
         """intentionally not implemented, since it depends on the context

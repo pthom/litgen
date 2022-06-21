@@ -174,13 +174,19 @@ class AdaptedFunction(AdaptedElement):
         return r
 
     def function_name_python(self) -> str:
-        r = cpp_to_python.function_name_to_python(self.options, self.cpp_adapted_function.function_name)
-        return r
+        if self.cpp_adapted_function.function_name == self.parent_struct_name:
+            return "__init__"
+        else:
+            r = cpp_to_python.function_name_to_python(self.options, self.cpp_adapted_function.function_name)
+            return r
 
     def return_type_python(self) -> str:
-        return_type_cpp = self.cpp_adapted_function.full_return_type(self.options.srcml_options)
-        return_type_python = cpp_to_python.type_to_python(self.options, return_type_cpp)
-        return return_type_python
+        if self.is_constructor():
+            return "None"
+        else:
+            return_type_cpp = self.cpp_adapted_function.full_return_type(self.options.srcml_options)
+            return_type_python = cpp_to_python.type_to_python(self.options, return_type_cpp)
+            return return_type_python
 
     def adapted_parameters(self) -> List[AdaptedParameter]:
         r: List[AdaptedParameter] = []

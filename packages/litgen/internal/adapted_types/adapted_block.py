@@ -62,9 +62,9 @@ class AdaptedBlock(AdaptedElement):
 
     # override
     def _str_stub_lines(self) -> List[str]:
-        from litgen.internal.adapted_types.line_spacer import LineSpacer
+        from litgen.internal.adapted_types.line_spacer import LineSpacerCpp
 
-        line_spacer = LineSpacer()
+        line_spacer = LineSpacerCpp()
 
         lines = []
         for adapted_element in self.adapted_elements:
@@ -79,9 +79,9 @@ class AdaptedBlock(AdaptedElement):
 
     # override
     def _str_pydef_lines(self) -> List[str]:
-        from litgen.internal.adapted_types.line_spacer import LineSpacer
+        from litgen.internal.adapted_types.line_spacer import LineSpacerCpp
 
-        line_spacer = LineSpacer()
+        line_spacer = LineSpacerCpp()
 
         lines = []
         for adapted_element in self.adapted_elements:
