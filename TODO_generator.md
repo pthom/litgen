@@ -24,6 +24,11 @@ stub:
         flags: ImGuiComboFlags = 0
         ) -> bool:
 
+Ajout / pybind
+    Trampoline
+    Operators (https://pybind11.readthedocs.io/en/stable/advanced/classes.html#operator-overloading)
+
+
 
 PimpMyClass !
     srcmlcpp separated

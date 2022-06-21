@@ -65,7 +65,7 @@ def adapt_c_arrays(adapted_function: AdaptedFunction) -> Optional[LambdaAdapter]
             if old_param.decl.is_const() and options.c_array_const_flag_replace:
                 was_replaced = True
                 # Create new calling param (const std::array &)
-                new_decl = old_param.decl.c_array_fixed_size_to_std_array(options.srcml_options)
+                new_decl = old_param.decl.c_array_fixed_size_to_const_std_array(options.srcml_options)
                 new_param = copy.deepcopy(old_param)
                 new_param.decl = new_decl
                 new_function_params.append(new_param)
@@ -80,7 +80,7 @@ def adapt_c_arrays(adapted_function: AdaptedFunction) -> Optional[LambdaAdapter]
 
                     was_replaced = True
 
-                    new_decls = old_param.decl.c_array_fixed_size_to_new_boxed_decls(options.srcml_options)
+                    new_decls = old_param.decl.c_array_fixed_size_to_mutable_new_boxed_decls(options.srcml_options)
 
                     #
                     # Fill lambda_input_code and lambda_output_code

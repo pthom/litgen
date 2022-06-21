@@ -103,7 +103,7 @@ def _add_struct_member_decl(cpp_decl: CppDecl, struct_name: str, options: Litgen
     comment = cpp_decl.cpp_element_comments.full_comment()
     location = info_original_location_cpp(cpp_decl, options)
 
-    if len(cpp_decl.bitfield_range) > 0:
+    if len(cpp_decl.bitfield_range) > 0:  # is_bitfield()
         # We ignore bitfields
         return ""
 

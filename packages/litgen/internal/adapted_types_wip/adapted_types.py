@@ -820,21 +820,3 @@ class AdaptedFunction(AdaptedElement):
             code = self._pydef_full_str_impl()
         lines = code.split("\n")
         return lines
-
-
-@dataclass
-class AdaptedCppUnit(AdaptedElement):
-    def __init__(self, cpp_unit: CppUnit, options: LitgenOptions):
-        super().__init__(cpp_unit, options)
-
-    # override
-    def cpp_element(self) -> CppUnit:
-        return cast(CppUnit, self._cpp_element)
-
-    # override
-    def _str_stub_lines(self) -> List[str]:
-        raise ValueError("To be completed")
-
-    # override
-    def _str_pydef_lines(self) -> List[str]:
-        raise ValueError("Not implemented")

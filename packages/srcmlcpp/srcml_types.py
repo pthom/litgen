@@ -585,6 +585,9 @@ class CppDecl(CppElementAndComment):
         r = is_const and is_char and nb_indirections == 2 and is_default_init
         return r
 
+    def is_bitfield(self):
+        return len(self.bitfield_range) > 0
+
     def is_c_array(self) -> bool:
         """
         Returns true if this decl is a C style array, e.g.
@@ -654,7 +657,14 @@ class CppDecl(CppElementAndComment):
         Returns true if this decl is const"""
         return "const" in self.cpp_type.specifiers  # or "const" in self.cpp_type.names
 
-    def c_array_fixed_size_to_std_array(self, options: SrcmlOptions) -> CppDecl:
+    def is_immutable_for_python(self) -> bool:
+        from litgen.internal import cpp_to_python
+
+        cpp_type_name = self.cpp_type.str_code()
+        r = cpp_to_python.is_cpp_type_immutable_for_python(cpp_type_name)
+        return r
+
+    def c_array_fixed_size_to_const_std_array(self, options: SrcmlOptions) -> CppDecl:
         """
         Processes decl that contains a *const* c style array of fixed size, e.g. `const int v[2]`
 
@@ -681,14 +691,7 @@ class CppDecl(CppElementAndComment):
         new_decl.decl_name = new_decl.decl_name
         return new_decl
 
-    def is_immutable_for_python(self) -> bool:
-        from litgen.internal import cpp_to_python
-
-        cpp_type_name = self.cpp_type.str_code()
-        r = cpp_to_python.is_cpp_type_immutable_for_python(cpp_type_name)
-        return r
-
-    def c_array_fixed_size_to_new_boxed_decls(self, options: SrcmlOptions) -> List[CppDecl]:
+    def c_array_fixed_size_to_mutable_new_boxed_decls(self, options: SrcmlOptions) -> List[CppDecl]:
         """
         Processes decl that contains a *non const* c style array of fixed size, e.g. `int v[2]`
             * we may need to "Box" the values if they are of an immutable type in python,
@@ -769,8 +772,6 @@ class CppParameter(CppElement):
         super().__init__(element)
 
     def type_name_default_for_signature(self):
-        if not hasattr(self, "decl"):
-            breakpoint()
         assert hasattr(self, "decl")
         r = self.decl.type_name_default_for_signature()
         return r
@@ -1104,6 +1105,12 @@ class CppStruct(CppElementAndComment):
 
     def is_templated_class(self):
         return hasattr(self, "template")
+
+    def get_public_elements(self) -> List[CppElementAndComment]:
+        """
+        Returns the public members, constructors, and methods
+        """
+        pass
 
 
 @dataclass
