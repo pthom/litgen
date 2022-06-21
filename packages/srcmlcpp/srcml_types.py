@@ -895,6 +895,9 @@ class CppConstructorDecl(CppFunctionDecl):
             r = r + " " + " ".join(specifiers_strs)
         return r
 
+    def full_return_type(self, options: SrcmlOptions) -> str:
+        return ""
+
     def str_code(self) -> str:
         return self._str_signature()
 

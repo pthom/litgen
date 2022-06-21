@@ -1,3 +1,5 @@
+https://stackoverflow.com/questions/8820276/docstring-for-variable -> Use typing.Annotated to provide a docstring for variables.
+
 * Move & rename module_pydef_generator_test.py
 
 mypy: # disallow_untyped_calls = True # disallow_untyped_defs = True -> use https://github.com/dropbox/pyannotate

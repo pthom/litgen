@@ -31,9 +31,7 @@ class AdaptedElement:  # (abc.ABC):  # Cannot be abstract (mypy limitation:  htt
         return self._info_original_location("#")
 
     def _str_stub_layout_lines(
-        self,
-        title_lines: List[str],
-        body_lines: List[str] = [],
+        self, title_lines: List[str], body_lines: List[str] = [], add_pass_if_empty_body: bool = True
     ) -> List[str]:
         """Common layout for class, enum, and functions stubs
         :param title_lines: class, enum or function decl + function params. Will be followed by docstring
@@ -47,7 +45,7 @@ class AdaptedElement:  # (abc.ABC):  # Cannot be abstract (mypy limitation:  htt
         title_lines = [first_line] + title_lines[1:]
 
         # Preprocess: align comments in body
-        if len(body_lines) == 0:
+        if len(body_lines) == 0 and add_pass_if_empty_body:
             body_lines = ["pass"]
         body_lines = code_utils.align_python_comments_in_block_lines(body_lines)
 
@@ -159,6 +157,11 @@ class AdaptedDecl(AdaptedElement):
         decl_value_python = cpp_to_python.var_value_to_python(decl_value_cpp, self.options)
         return decl_value_python
 
+    def decl_type_python(self) -> str:
+        decl_type_cpp = self.cpp_element().cpp_type.str_code()
+        decl_type_python = cpp_to_python.type_to_python(decl_type_cpp, self.options)
+        return decl_type_python
+
     def is_immutable_for_python(self) -> bool:
         cpp_type_name = self.cpp_element().cpp_type.str_code()
         r = cpp_to_python.is_cpp_type_immutable_for_python(cpp_type_name)
@@ -251,6 +254,26 @@ class AdaptedDecl(AdaptedElement):
             },
         )
         return param_line
+
+    def _str_stub_class_member(self) -> List[str]:
+        """pydef code for class members"""
+        decl_name_python = self.decl_name_python()
+        decl_type_python = self.decl_type_python()
+
+        default_value_python = self.decl_value_python()
+        if len(default_value_python) > 0:
+            maybe_defaultvalue_python = default_value_python
+            maybe_equal = " = "
+        else:
+            maybe_defaultvalue_python = ""
+            maybe_equal = ""
+
+        decl_template = f"{decl_name_python}:{decl_type_python}{maybe_equal}{maybe_defaultvalue_python}"
+
+        title_lines = [decl_template]
+        body_lines: List[str] = []
+        code_lines = self._str_stub_layout_lines(title_lines, body_lines, add_pass_if_empty_body=False)
+        return code_lines
 
     # override
     def _str_pydef_lines(self) -> List[str]:
@@ -555,7 +578,20 @@ class AdaptedClass(AdaptedElement):
 
     # override
     def _str_stub_lines(self) -> List[str]:
-        raise ValueError("To be completed")
+        class_name = self.class_name_python()
+        title = f"class {class_name}:"
+        title_lines = [title]
+
+        body_lines: List[str] = []
+        for child in self.adapted_public_children:
+            if isinstance(child, AdaptedDecl):
+                child_lines = child._str_stub_class_member()
+            else:
+                child_lines = child._str_stub_lines()
+            body_lines += child_lines
+
+        r = self._str_stub_layout_lines(title_lines, body_lines)
+        return r
 
     # override
     def _str_pydef_lines(self) -> List[str]:
@@ -1162,11 +1198,18 @@ class AdaptedBlock(AdaptedElement):
 
     # override
     def _str_stub_lines(self) -> List[str]:
+        from litgen.internal.adapted_types.line_spacer import LineSpacer
+
+        line_spacer = LineSpacer()
 
         lines = []
         for adapted_element in self.adapted_elements:
-
             element_lines = adapted_element._str_stub_lines()
+
+            if not self.options.python_reproduce_cpp_layout:
+                spacing_lines = line_spacer.spacing_lines(adapted_element, element_lines)
+                lines += spacing_lines
+
             lines += element_lines
         return lines
 
@@ -1204,7 +1247,14 @@ class AdaptedNamespace(AdaptedElement):
 
     # override
     def _str_stub_lines(self) -> List[str]:
-        raise ValueError("To be completed")
+        # raise ValueError("To be completed")
+        lines: List[str] = []
+
+        lines.append(f"# <Namespace {self.namespace_name()}>")
+        lines += self.adapted_block._str_stub_lines()
+        lines.append(f"# </Namespace {self.namespace_name()}>")
+
+        return lines
 
     # override
     def _str_pydef_lines(self) -> List[str]:
