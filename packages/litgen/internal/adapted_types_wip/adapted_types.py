@@ -232,6 +232,7 @@ class AdaptedDecl(AdaptedElement):
         return new_decls
 
     def _str_pydef_as_pyarg(self) -> str:
+        """pydef code for function parameters"""
         param_template = 'py::arg("{argname_python}"){maybe_equal}{maybe_defaultvalue_cpp}'
 
         maybe_defaultvalue_cpp = self.cpp_element().initial_value_code
@@ -254,14 +255,14 @@ class AdaptedDecl(AdaptedElement):
 
     # override
     def _str_pydef_lines(self) -> List[str]:
-        # intentionally not implemented, since it depends on the context
-        # (is this decl a function param, a method member, an enum member, etc.)
+        """intentionally not implemented, since it depends on the context
+        (is this decl a function param, a method member, an enum member, etc.)"""
         raise ValueError("Not implemented")
 
     # override
     def _str_stub_lines(self) -> List[str]:
-        # intentionally not implemented, since it depends on the context
-        # (is this decl a function param, a method member, an enum member, etc.)
+        """intentionally not implemented, since it depends on the context
+        (is this decl a function param, a method member, an enum member, etc.)"""
         raise ValueError("Not implemented")
 
 
@@ -392,10 +393,11 @@ class AdaptedConstructor(AdaptedElement):
 
 @dataclass
 class AdaptedClass(AdaptedElement):
-    adapted_public_children: List[AdaptedElement]
+    adapted_public_children: List[Union[AdaptedEmptyLine, AdaptedComment, AdaptedDecl, AdaptedFunction]]
 
     def __init__(self, class_: CppStruct, options: LitgenOptions):
         super().__init__(class_, options)
+        self.adapted_public_children = []
         self._fill_public_children()
 
     # override
@@ -406,7 +408,19 @@ class AdaptedClass(AdaptedElement):
         r = cpp_to_python.add_underscore_if_python_reserved_word(self.cpp_element().class_name)
         return r
 
-    def _check_can_add_public_member_array_known_fixed_size(self, cpp_decl) -> bool:
+    def _is_member_numeric_array(self, adapted_decl: AdaptedDecl):
+        options = self.options
+        cpp_decl = adapted_decl.cpp_element()
+        array_typename = cpp_decl.cpp_type.str_code()
+        if array_typename not in options.c_array_numeric_member_types:
+            return False
+        if not options.c_array_numeric_member_flag_replace:
+            return False
+        if cpp_decl.c_array_size_as_int(options.srcml_options) is None:
+            return False
+        return True
+
+    def _check_can_add_public_member_array_known_fixed_size(self, cpp_decl: CppDecl) -> bool:
         # Cf. https://stackoverflow.com/questions/58718884/binding-an-array-using-pybind11
         options = self.options
         array_typename = cpp_decl.cpp_type.str_code()
@@ -493,13 +507,103 @@ class AdaptedClass(AdaptedElement):
                     self.options.srcml_options,
                 )
 
+    def _str_pydef_member_numeric_array(self, adapted_decl: AdaptedDecl) -> str:
+        assert adapted_decl in self.adapted_public_children
+        # Cf. https://stackoverflow.com/questions/58718884/binding-an-array-using-pybind11
+
+        struct_name = self.cpp_element().class_name
+        location = adapted_decl.info_original_location_cpp()
+        name_python = adapted_decl.decl_name_python()
+        name_cpp = adapted_decl.decl_name_cpp()
+        comment = adapted_decl.comment_pydef_one_line()
+
+        array_typename = adapted_decl.cpp_element().cpp_type.str_code()
+        array_size = adapted_decl.cpp_element().c_array_size_as_int(self.options.srcml_options)
+        assert array_size is not None
+
+        template_code = f"""
+            .def_property("{name_python}",{location}
+                []({struct_name} &self) -> pybind11::array
+                {{
+                    auto dtype = pybind11::dtype(pybind11::format_descriptor<{array_typename}>::format());
+                    auto base = pybind11::array(dtype, {{{array_size}}}, {{sizeof({array_typename})}});
+                    return pybind11::array(dtype, {{{array_size}}}, {{sizeof({array_typename})}}, self.{name_cpp}, base);
+                }}, []({struct_name}& self) {{}},
+                "{comment}")
+            """
+        r = code_utils.unindent_code(template_code, flag_strip_empty_lines=True) + "\n"
+        return r
+
+    def _str_pydef_member_readwrite_property(self, adapted_decl: AdaptedDecl) -> str:
+        assert adapted_decl in self.adapted_public_children
+
+        struct_name = self.cpp_element().class_name
+        location = adapted_decl.info_original_location_cpp()
+        name_python = adapted_decl.decl_name_python()
+        name_cpp = adapted_decl.decl_name_cpp()
+        comment = adapted_decl.comment_pydef_one_line()
+
+        r = f'.def_readwrite("{name_python}", &{struct_name}::{name_cpp}, "{comment}"){location}\n'
+        return r
+
+    def _str_pydef_member(self, adapted_decl: AdaptedDecl) -> str:
+        assert adapted_decl in self.adapted_public_children
+
+        if self._is_member_numeric_array(adapted_decl):
+            return self._str_pydef_member_numeric_array(adapted_decl)
+        else:
+            return self._str_pydef_member_readwrite_property(adapted_decl)
+
     # override
     def _str_stub_lines(self) -> List[str]:
         raise ValueError("To be completed")
 
     # override
     def _str_pydef_lines(self) -> List[str]:
-        raise ValueError("Not implemented")
+        if self.cpp_element().is_templated_class():
+            emit_srcml_warning(
+                self.cpp_element().srcml_element, "Template classes are not yet supported", self.options.srcml_options
+            )
+            return []
+
+        options = self.options
+        _i_ = options.indent_cpp_spaces()
+
+        struct_name = self.cpp_element().class_name
+        location = self.info_original_location_cpp()
+        comment = self.comment_pydef_one_line()
+
+        code_intro = ""
+        code_intro += f"auto pyClass{struct_name} = py::class_<{struct_name}>{location}\n"
+        code_intro += f'{_i_}(m, "{struct_name}", "{comment}")\n'
+
+        if options.generate_to_string:
+            code_outro = f'{_i_}.def("__repr__", [](const {struct_name}& v) {{ return ToString(v); }});'
+        else:
+            code_outro = f"{_i_};"
+
+        code = code_intro
+
+        if not self.cpp_element().has_non_default_ctor() and not self.cpp_element().has_deleted_default_ctor():
+            code += f"{_i_}.def(py::init<>()) // implicit default constructor\n"
+        if self.cpp_element().has_deleted_default_ctor():
+            code += f"{_i_}// (default constructor explicitly deleted)\n"
+
+        for child in self.adapted_public_children:
+            if isinstance(child, AdaptedEmptyLine) or isinstance(child, AdaptedComment):
+                continue  # not handled in pydef
+            elif isinstance(child, AdaptedDecl):
+                decl_code = self._str_pydef_member(child)
+                code += code_utils.indent_code(decl_code, indent_str=options.indent_cpp_spaces())
+            elif isinstance(child, AdaptedFunction):
+                # method
+                decl_code = child.str_pydef()
+                code += code_utils.indent_code(decl_code, indent_str=options.indent_cpp_spaces())
+
+        code = code + code_outro
+
+        lines = code.split("\n")
+        return lines
 
 
 @dataclass

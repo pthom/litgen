@@ -4158,6 +4158,9 @@ void py_init_module_imgui(py::module& m)
         ;
 
 
+
+
+
     auto pyClassImGuiStyle = py::class_<ImGuiStyle>    // imgui.h:1838
         (m, "ImGuiStyle", "")
         .def_readwrite("alpha", &ImGuiStyle::Alpha, "Global alpha applies to everything in Dear ImGui.")    // imgui.h:1840
@@ -4372,13 +4375,14 @@ void py_init_module_imgui(py::module& m)
         .def_readwrite("metrics_active_allocations", &ImGuiIO::MetricsActiveAllocations, "Number of active allocations, updated by MemAlloc/MemFree based on current context. May be off if you have multiple imgui contexts.")    // imgui.h:2004
         .def_readwrite("mouse_delta", &ImGuiIO::MouseDelta, "")    // imgui.h:2005
         .def_readwrite("mouse_pos", &ImGuiIO::MousePos, "Mouse position, in pixels. Set to ImVec2(-sys.float_info.max, -sys.float_info.max) if mouse is unavailable (on another screen, etc.)")    // imgui.h:2021
-        .def_property("mouse_down",
+        .def_property("mouse_down",    // imgui.h:2022
             [](ImGuiIO &self) -> pybind11::array
             {
                 auto dtype = pybind11::dtype(pybind11::format_descriptor<bool>::format());
                 auto base = pybind11::array(dtype, {5}, {sizeof(bool)});
                 return pybind11::array(dtype, {5}, {sizeof(bool)}, self.MouseDown, base);
-            }, [](ImGuiIO& self) {})
+            }, [](ImGuiIO& self) {},
+            "Mouse buttons: 0=left, 1=right, 2=middle + extras (ImGuiMouseButton_COUNT == 5). Dear ImGui mostly uses left and right buttons. Others buttons allows us to track if the mouse is being used by your application + available to user as a convenience via IsMouse API.")
         .def_readwrite("mouse_wheel", &ImGuiIO::MouseWheel, "Mouse wheel Vertical: 1 unit scrolls about 5 lines text.")    // imgui.h:2023
         .def_readwrite("mouse_wheel_h", &ImGuiIO::MouseWheelH, "Mouse wheel Horizontal. Most users don't have a mouse with an horizontal wheel, may not be filled by all backends.")    // imgui.h:2024
         .def_readwrite("key_ctrl", &ImGuiIO::KeyCtrl, "Keyboard modifier down: Control")    // imgui.h:2025
@@ -4388,83 +4392,94 @@ void py_init_module_imgui(py::module& m)
         .def_readwrite("key_mods", &ImGuiIO::KeyMods, "Key mods flags (same as io.KeyCtrl/KeyShift/KeyAlt/KeySuper but merged into flags), updated by NewFrame()")    // imgui.h:2032
         .def_readwrite("want_capture_mouse_unless_popup_close", &ImGuiIO::WantCaptureMouseUnlessPopupClose, "Alternative to WantCaptureMouse: (WantCaptureMouse == True  WantCaptureMouseUnlessPopupClose == False) when a click over None is expected to close a popup.")    // imgui.h:2034
         .def_readwrite("mouse_pos_prev", &ImGuiIO::MousePosPrev, "Previous mouse position (note that MouseDelta is not necessary == MousePos-MousePosPrev, in case either position is invalid)")    // imgui.h:2035
-        .def_property("mouse_clicked_time",
+        .def_property("mouse_clicked_time",    // imgui.h:2037
             [](ImGuiIO &self) -> pybind11::array
             {
                 auto dtype = pybind11::dtype(pybind11::format_descriptor<double>::format());
                 auto base = pybind11::array(dtype, {5}, {sizeof(double)});
                 return pybind11::array(dtype, {5}, {sizeof(double)}, self.MouseClickedTime, base);
-            }, [](ImGuiIO& self) {})
-        .def_property("mouse_clicked",
+            }, [](ImGuiIO& self) {},
+            "Time of last click (used to figure out float-click)")
+        .def_property("mouse_clicked",    // imgui.h:2038
             [](ImGuiIO &self) -> pybind11::array
             {
                 auto dtype = pybind11::dtype(pybind11::format_descriptor<bool>::format());
                 auto base = pybind11::array(dtype, {5}, {sizeof(bool)});
                 return pybind11::array(dtype, {5}, {sizeof(bool)}, self.MouseClicked, base);
-            }, [](ImGuiIO& self) {})
-        .def_property("mouse_double_clicked",
+            }, [](ImGuiIO& self) {},
+            "Mouse button went from !Down to Down (same as MouseClickedCount[x] != 0)")
+        .def_property("mouse_double_clicked",    // imgui.h:2039
             [](ImGuiIO &self) -> pybind11::array
             {
                 auto dtype = pybind11::dtype(pybind11::format_descriptor<bool>::format());
                 auto base = pybind11::array(dtype, {5}, {sizeof(bool)});
                 return pybind11::array(dtype, {5}, {sizeof(bool)}, self.MouseDoubleClicked, base);
-            }, [](ImGuiIO& self) {})
-        .def_property("mouse_clicked_count",
+            }, [](ImGuiIO& self) {},
+            "Has mouse button been float-clicked? (same as MouseClickedCount[x] == 2)")
+        .def_property("mouse_clicked_count",    // imgui.h:2040
             [](ImGuiIO &self) -> pybind11::array
             {
                 auto dtype = pybind11::dtype(pybind11::format_descriptor<ImU16>::format());
                 auto base = pybind11::array(dtype, {5}, {sizeof(ImU16)});
                 return pybind11::array(dtype, {5}, {sizeof(ImU16)}, self.MouseClickedCount, base);
-            }, [](ImGuiIO& self) {})
-        .def_property("mouse_clicked_last_count",
+            }, [](ImGuiIO& self) {},
+            "== 0 (not clicked), == 1 (same as MouseClicked[]), == 2 (float-clicked), == 3 (triple-clicked) etc. when going from !Down to Down")
+        .def_property("mouse_clicked_last_count",    // imgui.h:2041
             [](ImGuiIO &self) -> pybind11::array
             {
                 auto dtype = pybind11::dtype(pybind11::format_descriptor<ImU16>::format());
                 auto base = pybind11::array(dtype, {5}, {sizeof(ImU16)});
                 return pybind11::array(dtype, {5}, {sizeof(ImU16)}, self.MouseClickedLastCount, base);
-            }, [](ImGuiIO& self) {})
-        .def_property("mouse_released",
+            }, [](ImGuiIO& self) {},
+            "Count successive number of clicks. Stays valid after mouse release. Reset after another click is done.")
+        .def_property("mouse_released",    // imgui.h:2042
             [](ImGuiIO &self) -> pybind11::array
             {
                 auto dtype = pybind11::dtype(pybind11::format_descriptor<bool>::format());
                 auto base = pybind11::array(dtype, {5}, {sizeof(bool)});
                 return pybind11::array(dtype, {5}, {sizeof(bool)}, self.MouseReleased, base);
-            }, [](ImGuiIO& self) {})
-        .def_property("mouse_down_owned",
+            }, [](ImGuiIO& self) {},
+            "Mouse button went from Down to !Down")
+        .def_property("mouse_down_owned",    // imgui.h:2043
             [](ImGuiIO &self) -> pybind11::array
             {
                 auto dtype = pybind11::dtype(pybind11::format_descriptor<bool>::format());
                 auto base = pybind11::array(dtype, {5}, {sizeof(bool)});
                 return pybind11::array(dtype, {5}, {sizeof(bool)}, self.MouseDownOwned, base);
-            }, [](ImGuiIO& self) {})
-        .def_property("mouse_down_owned_unless_popup_close",
+            }, [](ImGuiIO& self) {},
+            "Track if button was clicked inside a dear imgui window or over None blocked by a popup. We don't request mouse capture from the application if click started outside ImGui bounds.")
+        .def_property("mouse_down_owned_unless_popup_close",    // imgui.h:2044
             [](ImGuiIO &self) -> pybind11::array
             {
                 auto dtype = pybind11::dtype(pybind11::format_descriptor<bool>::format());
                 auto base = pybind11::array(dtype, {5}, {sizeof(bool)});
                 return pybind11::array(dtype, {5}, {sizeof(bool)}, self.MouseDownOwnedUnlessPopupClose, base);
-            }, [](ImGuiIO& self) {})
-        .def_property("mouse_down_duration",
+            }, [](ImGuiIO& self) {},
+            "Track if button was clicked inside a dear imgui window.")
+        .def_property("mouse_down_duration",    // imgui.h:2045
             [](ImGuiIO &self) -> pybind11::array
             {
                 auto dtype = pybind11::dtype(pybind11::format_descriptor<float>::format());
                 auto base = pybind11::array(dtype, {5}, {sizeof(float)});
                 return pybind11::array(dtype, {5}, {sizeof(float)}, self.MouseDownDuration, base);
-            }, [](ImGuiIO& self) {})
-        .def_property("mouse_down_duration_prev",
+            }, [](ImGuiIO& self) {},
+            "Duration the mouse button has been down (0.0 == just clicked)")
+        .def_property("mouse_down_duration_prev",    // imgui.h:2046
             [](ImGuiIO &self) -> pybind11::array
             {
                 auto dtype = pybind11::dtype(pybind11::format_descriptor<float>::format());
                 auto base = pybind11::array(dtype, {5}, {sizeof(float)});
                 return pybind11::array(dtype, {5}, {sizeof(float)}, self.MouseDownDurationPrev, base);
-            }, [](ImGuiIO& self) {})
-        .def_property("mouse_drag_max_distance_sqr",
+            }, [](ImGuiIO& self) {},
+            "Previous time the mouse button has been down")
+        .def_property("mouse_drag_max_distance_sqr",    // imgui.h:2047
             [](ImGuiIO &self) -> pybind11::array
             {
                 auto dtype = pybind11::dtype(pybind11::format_descriptor<float>::format());
                 auto base = pybind11::array(dtype, {5}, {sizeof(float)});
                 return pybind11::array(dtype, {5}, {sizeof(float)}, self.MouseDragMaxDistanceSqr, base);
-            }, [](ImGuiIO& self) {})
+            }, [](ImGuiIO& self) {},
+            "Squared maximum distance of how much mouse has traveled from the clicking point (used for moving thresholds)")
         .def_readwrite("pen_pressure", &ImGuiIO::PenPressure, "Touch/Pen pressure (0.0 to 1.0, should be >0.0 only when MouseDown[0] == True). Helper storage currently unused by Dear ImGui.")    // imgui.h:2050
         .def_readwrite("app_focus_lost", &ImGuiIO::AppFocusLost, "Only modify via AddFocusEvent()")    // imgui.h:2051
         .def_readwrite("app_accepting_events", &ImGuiIO::AppAcceptingEvents, "Only modify via SetAppAcceptingEvents()")    // imgui.h:2052

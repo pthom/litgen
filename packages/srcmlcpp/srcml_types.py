@@ -28,6 +28,7 @@ from xml.etree import ElementTree as ET  # noqa
 
 from codemanip.code_position import CodePosition
 import codemanip.code_utils as code_utils
+
 from srcmlcpp import srcml_caller, srcml_utils
 from srcmlcpp.srcml_options import SrcmlOptions
 from srcmlcpp.srcml_warnings import SrcMlExceptionDetailed, emit_srcml_warning

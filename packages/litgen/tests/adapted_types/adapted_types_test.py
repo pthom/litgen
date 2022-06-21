@@ -182,4 +182,52 @@ def test_adapted_function_pydef_simple():
     adapted_function = AdaptedFunction(fn, struct_name, options)
 
     pydef_code = adapted_function.str_pydef()
-    logging.warning("\n>>>" + pydef_code + "<<<")
+    # logging.warning("\n>>>" + pydef_code + "<<<")
+    code_utils.assert_are_codes_equal(
+        pydef_code,
+        """
+        m.def("add",
+            [](int a, int b)
+            {
+                return add(a, b);
+            },
+            py::arg("a"), py::arg("b")
+        );
+    """,
+    )
+
+
+def test_adapted_struct():
+    options = litgen.LitgenOptions()
+    options.srcml_options.named_number_macros = {"MY_VALUE": 256}
+
+    code = """
+// Doc about Foo
+struct Foo
+{
+    int a;
+    int add(int v) { return v + a; }
+};
+    """
+    class_ = srcml_main.code_first_struct(options.srcml_options, code)
+    adapted_class = AdaptedClass(class_, options)
+
+    pydef_code = adapted_class.str_pydef()
+    # logging.warning("\n>>>" + pydef_code + "<<<")
+    code_utils.assert_are_codes_equal(
+        pydef_code,
+        """
+        auto pyClassFoo = py::class_<Foo>
+            (m, "Foo", "Doc about Foo")
+            .def(py::init<>()) // implicit default constructor
+            .def_readwrite("a", &Foo::a, "")
+            .def("add",
+                [](Foo & self, int v)
+                {
+                    return self.add(v);
+                },
+                py::arg("v")
+            )
+            ;
+    """,
+    )

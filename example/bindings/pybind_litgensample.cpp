@@ -322,20 +322,22 @@ void py_init_module_litgensample(py::module& m)
     auto pyClassFoo = py::class_<Foo>    // example_library/litgensample.h:140
         (m, "Foo", "A superb struct")
         .def(py::init<>())    // example_library/litgensample.h:142
-        .def_property("values",
+        .def_property("values",    // example_library/litgensample.h:152
             [](Foo &self) -> pybind11::array
             {
                 auto dtype = pybind11::dtype(pybind11::format_descriptor<int>::format());
                 auto base = pybind11::array(dtype, {2}, {sizeof(int)});
                 return pybind11::array(dtype, {2}, {sizeof(int)}, self.values, base);
-            }, [](Foo& self) {})
-        .def_property("flags",
+            }, [](Foo& self) {},
+            "")
+        .def_property("flags",    // example_library/litgensample.h:153
             [](Foo &self) -> pybind11::array
             {
                 auto dtype = pybind11::dtype(pybind11::format_descriptor<bool>::format());
                 auto base = pybind11::array(dtype, {3}, {sizeof(bool)});
                 return pybind11::array(dtype, {3}, {sizeof(bool)}, self.flags, base);
-            }, [](Foo& self) {})
+            }, [](Foo& self) {},
+            "")
         .def_readwrite("factor", &Foo::factor, "Multiplication factor")    // example_library/litgensample.h:161
         .def_readwrite("delta", &Foo::delta, "addition factor")    // example_library/litgensample.h:164
         .def("calc",    // example_library/litgensample.h:171

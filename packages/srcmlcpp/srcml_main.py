@@ -130,6 +130,10 @@ def code_first_struct(options: SrcmlOptions, code: str) -> srcml_types.CppStruct
     return cast(CppStruct, code_first_child_of_type(options, CppStruct, code))
 
 
+def code_first_class(options: SrcmlOptions, code: str) -> srcml_types.CppClass:
+    return cast(CppClass, code_first_child_of_type(options, CppClass, code))
+
+
 def _tests_only_get_only_child_with_tag(options: SrcmlOptions, code: str, tag: str) -> srcml_types.CppElementAndComment:
     srcml_unit = code_to_srcml_unit(options, code)
     children = get_children_with_comments(options, srcml_unit)

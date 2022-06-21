@@ -1,6 +1,7 @@
 * Move & rename module_pydef_generator_test.py
 
 mypy: # disallow_untyped_calls = True # disallow_untyped_defs = True -> use https://github.com/dropbox/pyannotate
+    or https://monkeytype.readthedocs.io/en/latest/index.html
 
 * package function_adapt
   * renames
