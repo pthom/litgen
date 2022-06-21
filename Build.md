@@ -8,18 +8,20 @@ pre-commit install
 ````
 
 Regularly run [importanize](https://github.com/miki725/importanize), to reorder the imports:
+
+Install importanize (from master branch, in submodule)
 ````
-cd packages
+cd ci_scripts/importanize
+pip install -v -e .
+cd -
+````
+
+Run importanize
+````
+# From repository root
 importanize
 ````
 
-Remove unused imports via
-````
-cd packages
-zimports . --multi-imports
-# Manual check needed after this (+mypy +pytest)
-# Re-run of importanize needed after this
-````
 
 
 Use monkeytype to add annotations: https://github.com/Instagram/MonkeyType

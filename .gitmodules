@@ -10,3 +10,6 @@
 [submodule "examples_real_libs/imgui/pybind11"]
 	path = examples_real_libs/imgui/pybind11
 	url = https://github.com/pybind/pybind11.git
+[submodule "ci_scripts/importanize"]
+	path = ci_scripts/importanize
+	url = https://github.com/miki725/importanize.git
