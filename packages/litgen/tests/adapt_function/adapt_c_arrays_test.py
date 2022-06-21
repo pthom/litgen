@@ -1,30 +1,39 @@
 import litgen
 import srcmlcpp
+
 from codemanip import code_utils
+
+from srcmlcpp.srcml_types import *
+from srcmlcpp import srcml_main
+
+from litgen import LitgenOptions
 from litgen.internal import module_pydef_generator
 from litgen.internal.adapted_types.adapted_types import AdaptedFunction
-from srcmlcpp.srcml_types import *
 
 
-OPTIONS = litgen.options.code_style_implot()
-OPTIONS.srcml_options.functions_api_prefixes = ["MY_API"]
+def gen_pydef_code(code: str, options: Optional[LitgenOptions] = None) -> str:
+    if options is None:
+        options = litgen.options.code_style_implot()
+        options.srcml_options.functions_api_prefixes = ["MY_API"]
+
+    struct_name = ""
+    cpp_function = srcml_main.code_first_function_decl(options.srcml_options, code)
+    adapted_function = AdaptedFunction(cpp_function, struct_name, options)
+    generated_code = adapted_function.str_pydef()
+    return generated_code
 
 
-def get_first_function_decl(code) -> CppFunctionDecl:
-    cpp_unit = srcmlcpp.code_to_cpp_unit(OPTIONS.srcml_options, code)
-    for child in cpp_unit.block_children:
-        if isinstance(child, CppFunctionDecl) or isinstance(child, CppFunction):
-            return child
-    raise ValueError("not found")
+def my_make_adapted_function(code) -> AdaptedFunction:
+    options = litgen.options.code_style_implot()
+    options.srcml_options.functions_api_prefixes = ["MY_API"]
+
+    function_decl = srcml_main.code_first_function_decl(options.srcml_options, code)
+    parent_struct_name = ""
+    adapted_function = AdaptedFunction(function_decl, parent_struct_name, options)
+    return adapted_function
 
 
 def test_make_function_params_adapter() -> None:
-    def my_make_adapted_function(code) -> AdaptedFunction:
-        function_decl = get_first_function_decl(code)
-        options = litgen.LitgenOptions()
-        parent_struct_name = ""
-        adapted_function = AdaptedFunction(function_decl, parent_struct_name, options)
-        return adapted_function
 
     # Easy test with const
     code = """MY_API void foo(const int v[2]);"""
@@ -53,8 +62,7 @@ def test_make_function_params_adapter() -> None:
 
 def test_use_function_params_adapter_const():
     code = """MY_API void foo_const(const int input[2]);"""
-    function_decl = get_first_function_decl(code)
-    generated_code = module_pydef_generator._generate_function(function_decl, OPTIONS)
+    generated_code = gen_pydef_code(code)
     # logging. warning("\n" + generated_code)
     code_utils.assert_are_codes_equal(
         generated_code,
@@ -77,8 +85,7 @@ def test_use_function_params_adapter_const():
 
 def test_use_function_params_adapter_non_const():
     code = """MY_API void foo_non_const(int output[2]);"""
-    function_decl = get_first_function_decl(code)
-    generated_code = module_pydef_generator._generate_function(function_decl, OPTIONS)
+    generated_code = gen_pydef_code(code)
     # logging.warning("\n" + generated_code)
     code_utils.assert_are_codes_equal(
         generated_code,
@@ -108,8 +115,7 @@ def test_use_function_params_adapter_non_const():
 
 def test_mixture():
     code = """MY_API void foo(bool flag, const double v[2], double outputs[2]);"""
-    function_decl = get_first_function_decl(code)
-    generated_code = module_pydef_generator._generate_function(function_decl, OPTIONS)
+    generated_code = gen_pydef_code(code)
     code_utils.assert_are_codes_equal(
         generated_code,
         """
@@ -142,8 +148,7 @@ def test_mixture_no_replace():
     options.c_array_modifiable_flag_replace = False
 
     code = """MY_API void foo(bool flag, const double v[2], double outputs[2]);"""
-    function_decl = get_first_function_decl(code)
-    generated_code = module_pydef_generator._generate_function(function_decl, options)
+    generated_code = gen_pydef_code(code, options)
     # logging.warning("\n" + generated_code)
     code_utils.assert_are_codes_equal(
         generated_code,

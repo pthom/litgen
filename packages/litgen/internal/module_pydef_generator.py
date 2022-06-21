@@ -8,121 +8,6 @@ from litgen.options import LitgenOptions
 from srcmlcpp.srcml_types import *
 
 
-class _LineSpacer:
-    last_element: Optional[CppElementAndComment] = None
-
-    def line_spaces(self, element: CppElementAndComment) -> str:
-        if self.last_element is None:
-            self.last_element = element
-            return ""
-
-        standout_types = [CppEnum, CppStruct, CppNamespace]
-
-        type_last = type(self.last_element)
-        type_current = type(element)
-
-        last_is_standout = type_last in standout_types
-        current_is_standout = type_current in standout_types
-
-        large_spacing = last_is_standout or current_is_standout
-        r = "\n\n" if large_spacing else "\n"
-
-        self.last_element = element
-
-        return r
-
-
-#################################
-#           Enums
-################################
-
-
-def _generate_enum(enum: CppEnum, options: LitgenOptions) -> str:
-    adapted_enum = AdaptedEnum(enum, options)
-    r = adapted_enum.str_pydef()
-    return r
-
-
-#################################
-#           Functions
-################################
-
-
-def _generate_function(
-    function_infos: CppFunctionDecl,
-    options: LitgenOptions,
-    parent_struct_name: str = "",
-) -> str:
-    adapted_function = AdaptedFunction(function_infos, parent_struct_name, options)
-
-    r = ""
-    r += _generate_function_impl(adapted_function, options, parent_struct_name)
-    return r
-
-
-def _generate_function_impl(
-    adapted_function: AdaptedFunction,
-    options: LitgenOptions,
-    parent_struct_name: str = "",
-) -> str:
-    r = adapted_function.str_pydef()
-    return r
-
-
-#################################
-#           Methods
-################################
-
-
-def _generate_constructor(function_infos: CppConstructorDecl, options: LitgenOptions, parent_struct_name: str) -> str:
-    adapted_function = AdaptedFunction(function_infos, parent_struct_name, options)
-    r = adapted_function.str_pydef()
-    return r
-
-
-def _generate_method(function_infos: CppFunctionDecl, options: LitgenOptions, parent_struct_name: str) -> str:
-    return _generate_function(function_infos, options, parent_struct_name)
-
-
-#################################
-#           Structs and classes
-################################
-
-
-def _generate_struct_or_class(struct_infos: CppStruct, options: LitgenOptions) -> str:
-    adapted_class = AdaptedClass(struct_infos, options)
-    r = adapted_class.str_pydef()
-    return r
-
-
-#################################
-#           Namespace
-################################
-def _generate_namespace(
-    cpp_namespace: CppNamespace,
-    options: LitgenOptions,
-    current_namespaces: List[str] = [],
-) -> str:
-
-    namespace_name = cpp_namespace.ns_name
-    new_namespaces = current_namespaces + [namespace_name]
-    namespace_code = generate_pydef(cpp_namespace.block, options, new_namespaces)
-    location = info_original_location_cpp(cpp_namespace, options)
-
-    namespace_code_commented = ""
-    namespace_code_commented += f"// <namespace {namespace_name}>{location}\n"
-    namespace_code_commented += namespace_code
-    namespace_code_commented += f"// </namespace {namespace_name}>"
-
-    namespace_code_commented += "\n"
-    return namespace_code_commented
-
-
-#################################
-#           All
-################################
-
-
 def generate_boxed_types_binding_code(options: LitgenOptions) -> str:
     boxed_structs = cpp_to_python.BoxedImmutablePythonType.struct_codes()
     boxed_bindings = cpp_to_python.BoxedImmutablePythonType.binding_codes(options)
@@ -152,27 +37,11 @@ def generate_pydef(
     add_boxed_types_definitions: bool = False,
 ) -> str:
 
-    line_spacer = _LineSpacer()
-    code = ""
-    for i, cpp_element in enumerate(cpp_unit.block_children):
-        element_code = ""
-
-        if False:
-            pass
-        elif isinstance(cpp_element, CppFunctionDecl) or isinstance(cpp_element, CppFunction):
-            element_code = _generate_function(cpp_element, options, parent_struct_name="")
-        elif isinstance(cpp_element, CppEnum):
-            element_code = _generate_enum(cpp_element, options)
-        elif isinstance(cpp_element, CppStruct) or isinstance(cpp_element, CppClass):
-            element_code = _generate_struct_or_class(cpp_element, options)
-        elif isinstance(cpp_element, CppNamespace):
-            element_code = _generate_namespace(cpp_element, options, current_namespaces)
-
-        if len(element_code) > 0:
-            line_spacing = line_spacer.line_spaces(cpp_element)
-            code += line_spacing + element_code
+    adapted_block = AdaptedBlock(cpp_unit, options)
+    block_code = adapted_block.str_pydef()
 
     if add_boxed_types_definitions:
-        code = generate_boxed_types_binding_code(options) + code
-
+        code = generate_boxed_types_binding_code(options) + block_code
+    else:
+        code = block_code
     return code

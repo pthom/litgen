@@ -1,10 +1,13 @@
 import os
 import sys
 
-import litgen
 import srcmlcpp
-from litgen.internal import module_pydef_generator
 from srcmlcpp.srcml_types import *
+from srcmlcpp import srcml_main
+
+import litgen
+from litgen.internal import module_pydef_generator
+from litgen.internal.adapted_types.adapted_types import AdaptedFunction
 
 
 _THIS_DIR = os.path.dirname(__file__)
@@ -14,12 +17,12 @@ sys.path.append(_THIS_DIR + "/../..")
 def gen_pydef_code(code) -> str:
     options = litgen.options.code_style_implot()
     options.srcml_options.functions_api_prefixes = ["MY_API"]
-    cpp_unit = srcmlcpp.code_to_cpp_unit(options.srcml_options, code)
-    for child in cpp_unit.block_children:
-        if isinstance(child, CppFunctionDecl) or isinstance(child, CppFunction):
-            generated_code = module_pydef_generator._generate_function(child, options)
-            return generated_code
-    raise ValueError("oops")
+
+    struct_name = ""
+    cpp_function = srcml_main.code_first_function_decl(options.srcml_options, code)
+    adapted_function = AdaptedFunction(cpp_function, struct_name, options)
+    generated_code = adapted_function.str_pydef()
+    return generated_code
 
 
 def test_mutable_buffer_return_int():
