@@ -1,15 +1,9 @@
-import copy
-import logging
-import os
-import sys
-from typing import Any, List, Optional, Union
+from typing import List, Optional, Union
 
-import srcmlcpp
-from codemanip import code_replacements, code_utils
+from codemanip import code_utils
 from litgen.internal import cpp_to_python
 from litgen.internal.adapted_types_wip.adapted_types import *
 from litgen.options import LitgenOptions
-from srcmlcpp import srcml_main, srcml_warnings
 from srcmlcpp.srcml_types import *
 
 

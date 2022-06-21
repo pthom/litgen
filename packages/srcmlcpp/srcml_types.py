@@ -30,7 +30,7 @@ from codemanip import code_utils
 from codemanip.code_position import CodePosition
 from srcmlcpp import srcml_caller, srcml_utils
 from srcmlcpp.srcml_options import SrcmlOptions
-from srcmlcpp.srcml_warnings import SrcMlExceptionDetailed, emit_srcml_warning
+from srcmlcpp.srcml_warnings import emit_srcml_warning
 
 
 """

@@ -1,15 +1,7 @@
-import logging
-import os
-import sys
 from typing import Optional
 
-import pytest  # type: ignore
-
-import litgen
 import srcmlcpp
-from codemanip import code_utils
-from litgen.internal import cpp_to_python, module_pydef_generator
-from litgen.options import LitgenOptions, code_style_implot
+from srcmlcpp import srcml_main
 from srcmlcpp.srcml_types import *
 
 
@@ -34,6 +26,6 @@ class AdaptedFunction2(CppFunctionDecl):
 def test_inherit():
     options = srcmlcpp.SrcmlOptions()
     code = "void Foo();"
-    cpp_function = srcmlcpp.code_first_child_of_type(options, CppFunctionDecl, code)
+    cpp_function = srcml_main.code_first_child_of_type(options, CppFunctionDecl, code)
     assert isinstance(cpp_function, CppFunctionDecl)
     a = AdaptedFunction2(cpp_function, "Foo")

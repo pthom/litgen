@@ -3,7 +3,7 @@ import sys
 
 import srcmlcpp
 from codemanip import code_utils
-from srcmlcpp import srcml_caller, srcml_comments, srcml_utils
+from srcmlcpp import srcml_comments, srcml_utils
 
 
 _THIS_DIR = os.path.dirname(__file__)

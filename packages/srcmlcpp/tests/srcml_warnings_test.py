@@ -1,9 +1,6 @@
-import os
-import sys
-
 import srcmlcpp
 from srcmlcpp.srcml_options import SrcmlOptions
-from srcmlcpp.srcml_warnings import SrcMlExceptionDetailed
+from srcmlcpp.srcml_warnings import SrcMlException, SrcMlExceptionDetailed
 
 
 def test_warnings():
@@ -17,7 +14,7 @@ def test_warnings():
     got_exception = False
     try:
         raise SrcMlExceptionDetailed(decl.srcml_element, "Artificial exception", options)
-    except srcmlcpp.SrcMlException as e:
+    except SrcMlException as e:
         got_exception = True
         msg = str(e)
         for part in [

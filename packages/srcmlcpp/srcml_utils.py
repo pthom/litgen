@@ -4,7 +4,6 @@ from xml.dom import minidom
 from xml.etree import ElementTree as ET  # noqa
 
 from codemanip.code_position import CodePosition
-from srcmlcpp import srcml_caller
 
 
 def _element_position(element: ET.Element, start_or_end: str) -> Optional[CodePosition]:

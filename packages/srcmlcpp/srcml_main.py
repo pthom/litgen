@@ -1,6 +1,5 @@
-import logging
 from dataclasses import dataclass
-from typing import List, Optional, Type, TypeVar, cast
+from typing import List, Type, cast
 from xml.etree import ElementTree as ET
 
 from srcmlcpp import (
@@ -9,7 +8,6 @@ from srcmlcpp import (
     srcml_filter_preprocessor_regions,
     srcml_types,
     srcml_types_parse,
-    srcml_utils,
     srcml_warnings,
 )
 from srcmlcpp.srcml_options import SrcmlOptions

@@ -3,9 +3,8 @@ import sys
 
 import litgen
 import srcmlcpp
-from codemanip import code_utils
 from litgen.internal import module_pydef_generator
-from srcmlcpp import srcml_main
+from litgen.options import code_style_imgui, code_style_implot
 
 
 _THIS_DIR = os.path.dirname(__file__)
@@ -19,20 +18,20 @@ def read_file_content(filename):
 
 
 def play_parse(code):
-    options = litgen.code_style_imgui()
+    options = code_style_imgui()
     cpp_unit = srcmlcpp.code_to_cpp_unit(options.srcml_options, code)
     print(cpp_unit)
 
 
 def play_imgui():
-    options = litgen.code_style_imgui()
+    options = code_style_imgui()
     source_filename = os.path.realpath(_THIS_DIR + "/../../examples_real_libs/imgui/imgui/imgui.h")
     cpp_unit = srcmlcpp.file_to_cpp_unit(options.srcml_options, source_filename)
     # print(cpp_unit)
 
 
 def play_implot():
-    options = litgen.code_style_implot()
+    options = code_style_implot()
     options.original_location_flag_show = True
     source_filename = os.path.realpath(_THIS_DIR + "/../../examples_real_libs/implot/implot/implot.h")
     cpp_unit = srcmlcpp.file_to_cpp_unit(options.srcml_options, source_filename)

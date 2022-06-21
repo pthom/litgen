@@ -1,6 +1,5 @@
 import srcmlcpp
-from codemanip import code_utils
-from srcmlcpp import srcml_main, srcml_types_parse
+from srcmlcpp import srcml_main
 from srcmlcpp.srcml_types import *
 
 

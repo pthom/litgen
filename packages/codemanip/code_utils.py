@@ -4,19 +4,7 @@ import logging
 import os.path
 import re
 import traceback
-from typing import (
-    Any,
-    Dict,
-    Iterable,
-    Iterator,
-    List,
-    Optional,
-    Tuple,
-    TypeVar,
-    Union,
-)
-
-from srcmlcpp.srcml_types import CppParameter
+from typing import Any, Dict, Iterable, Iterator, List, Optional, Tuple, TypeVar
 
 
 """Low level code utilities

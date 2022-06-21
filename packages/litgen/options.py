@@ -1,12 +1,7 @@
-from dataclasses import dataclass, field
-from typing import Callable, Dict, List, Optional
+from typing import List, Optional
 
 from codemanip import code_replacements
 from codemanip.code_replacements import StringReplacement
-from codemanip.code_utils import (
-    make_regex_any_variable_ending_with,
-    make_regex_any_variable_starting_with,
-)
 from srcmlcpp import SrcmlOptions
 
 

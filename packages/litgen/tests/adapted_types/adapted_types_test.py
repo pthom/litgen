@@ -1,7 +1,4 @@
-import pytest  # type:ignore
-
 import litgen
-import srcmlcpp
 from litgen.internal.adapted_types_wip.adapted_types import *
 from srcmlcpp import srcml_main
 from srcmlcpp.srcml_types import *

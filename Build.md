@@ -13,5 +13,13 @@ cd packages
 importanize
 ````
 
+Remove unused imports via
+````
+cd packages
+zimports . --multi-imports
+# Manual check needed after this (+mypy +pytest)
+# Re-run of importanize needed after this
+````
+
 
 Use monkeytype to add annotations: https://github.com/Instagram/MonkeyType

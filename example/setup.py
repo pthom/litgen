@@ -1,4 +1,4 @@
-from skbuild import setup  # This line replaces 'from setuptools import setup'
+from skbuild import setup
 
 
 # from setuptools import setup

@@ -1,7 +1,6 @@
 import copy
 from typing import List, Optional
 from xml.etree import ElementTree as ET
-from xml.etree.ElementTree import Element
 
 from srcmlcpp import srcml_utils
 

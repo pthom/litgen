@@ -1,5 +1,5 @@
 import copy
-from typing import Callable, Iterable, List, Optional
+from typing import List, Optional
 from xml.etree import ElementTree as ET
 
 from srcmlcpp import srcml_utils
