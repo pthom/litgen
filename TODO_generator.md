@@ -1,18 +1,13 @@
+Re-sort imports
+separate adapted_types
+Rewrite history
+move tests / gen code
+group pydef and pyi generation
+    BoxedTypes
+
 https://stackoverflow.com/questions/8820276/docstring-for-variable -> Use typing.Annotated to provide a docstring for variables.
 
 * Move & rename module_pydef_generator_test.py
-
-mypy: # disallow_untyped_calls = True # disallow_untyped_defs = True -> use https://github.com/dropbox/pyannotate
-    or https://monkeytype.readthedocs.io/en/latest/index.html
-
-* package function_adapt
-  * renames
-
-* sub package adapt param
-  * gen pyi class & structs
-  Il faut que pydef_generator (ou peut etre meme srcml_types) puisse faire un tri
-  Dans struct, il y a des traitement sur les membres (array et cie)
-  --> faire equivalent de adapt_function pour structs et enums
 
 
 imgui: Handle widget input / output parameters
@@ -20,6 +15,7 @@ imgui: Handle widget input / output parameters
         float[2, 3, 4]
         --> make return
 
+change licence (ethical license for large NNs)
 
 stub:
     S'attendre a problem possible avec conversion enum / int:
