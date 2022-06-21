@@ -1,7 +1,7 @@
 import copy
 from typing import List, Optional
 
-from srcmlcpp.srcml_types import CppParameter, CppParameterList, CppType
+from srcmlcpp.srcml_types import CppParameter
 
 from litgen.generate_code import code_utils
 from litgen.internal import cpp_to_python

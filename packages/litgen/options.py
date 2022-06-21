@@ -1,4 +1,4 @@
-from typing import List, Optional
+from typing import List
 
 from codemanip import code_replacements
 from codemanip.code_replacements import StringReplacement

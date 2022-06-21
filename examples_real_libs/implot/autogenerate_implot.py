@@ -1,12 +1,6 @@
 import os
-import sys
 
-from code_generator import (
-    CppCodeType,
-    code_style_implot,
-    perform_generation,
-    remove_all_generated_code,
-)
+from code_generator import CppCodeType, code_style_implot, perform_generation
 
 
 THIS_DIR = os.path.dirname(__file__)

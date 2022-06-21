@@ -1,8 +1,9 @@
 import os
 import sys
 
-import litgen
 import srcmlcpp
+
+import litgen
 
 
 THIS_DIR = os.path.dirname(__file__)
