@@ -1,6 +1,3 @@
-separate adapted_types
-Rewrite history
-move tests / gen code
 group pydef and pyi generation
     BoxedTypes
 
