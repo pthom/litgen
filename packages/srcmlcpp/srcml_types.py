@@ -1042,7 +1042,13 @@ class CppStruct(CppElementAndComment):
         """
         Returns the public members, constructors, and methods
         """
-        pass
+        r: List[CppElementAndComment] = []
+        for access_zone in self.block.block_children:
+            if isinstance(access_zone, CppPublicProtectedPrivate):
+                if access_zone.access_type == "public":
+                    for child in access_zone.block_children:
+                        r.append(child)
+        return r
 
 
 @dataclass

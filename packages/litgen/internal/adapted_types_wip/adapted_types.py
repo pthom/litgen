@@ -231,23 +231,6 @@ class AdaptedDecl(AdaptedElement):
 
         return new_decls
 
-    # override
-    def _str_stub_lines(self) -> List[str]:
-        lines = []
-
-        decl_part = f"{self.decl_name_python()} = {self.decl_value_python()}"
-
-        cpp_decl = self.cpp_element()
-        if cpp_to_python.python_shall_place_comment_at_end_of_line(cpp_decl, self.options):
-            decl_line = decl_part + "  #" + cpp_to_python.python_comment_end_of_line(cpp_decl, self.options)
-            lines.append(decl_line)
-        else:
-            comment_lines = cpp_to_python.python_comment_previous_lines(cpp_decl, self.options)
-            lines += comment_lines
-            lines.append(decl_part)
-
-        return lines
-
     def _str_pydef_as_pyarg(self) -> str:
         param_template = 'py::arg("{argname_python}"){maybe_equal}{maybe_defaultvalue_cpp}'
 
@@ -271,6 +254,14 @@ class AdaptedDecl(AdaptedElement):
 
     # override
     def _str_pydef_lines(self) -> List[str]:
+        # intentionally not implemented, since it depends on the context
+        # (is this decl a function param, a method member, an enum member, etc.)
+        raise ValueError("Not implemented")
+
+    # override
+    def _str_stub_lines(self) -> List[str]:
+        # intentionally not implemented, since it depends on the context
+        # (is this decl a function param, a method member, an enum member, etc.)
         raise ValueError("Not implemented")
 
 
@@ -401,8 +392,11 @@ class AdaptedConstructor(AdaptedElement):
 
 @dataclass
 class AdaptedClass(AdaptedElement):
+    adapted_public_children: List[AdaptedElement]
+
     def __init__(self, class_: CppStruct, options: LitgenOptions):
         super().__init__(class_, options)
+        self._fill_public_children()
 
     # override
     def cpp_element(self) -> CppStruct:
@@ -411,6 +405,93 @@ class AdaptedClass(AdaptedElement):
     def class_name_python(self) -> str:
         r = cpp_to_python.add_underscore_if_python_reserved_word(self.cpp_element().class_name)
         return r
+
+    def _check_can_add_public_member_array_known_fixed_size(self, cpp_decl) -> bool:
+        # Cf. https://stackoverflow.com/questions/58718884/binding-an-array-using-pybind11
+        options = self.options
+        array_typename = cpp_decl.cpp_type.str_code()
+        if array_typename not in options.c_array_numeric_member_types:
+            emit_srcml_warning(
+                cpp_decl.srcml_element,
+                """
+                AdaptedClass: Only numeric C Style arrays are supported
+                Hint: use a vector, or extend `options.c_array_numeric_member_types`
+                """,
+                options.srcml_options,
+            )
+            return False
+
+        if not options.c_array_numeric_member_flag_replace:
+            emit_srcml_warning(
+                cpp_decl.srcml_element,
+                """
+                AdaptedClass: Detected a numeric C Style array, but will not export it.
+                Hint: set `options.c_array_numeric_member_flag_replace = True`
+                """,
+                options.srcml_options,
+            )
+            return False
+
+        if cpp_decl.c_array_size_as_int(options.srcml_options) is None:
+            array_size_str = cpp_decl.c_array_size_as_str()
+            emit_srcml_warning(
+                cpp_decl.srcml_element,
+                f"""
+                    AdaptedClass: Detected a numeric C Style array, but will not export it because its size is not parsable.
+                    Hint: may be, add the value "{array_size_str}" to `options.c_array_numeric_member_size_dict`
+                    """,
+                options.srcml_options,
+            )
+            return False
+
+        return True
+
+    def _check_can_add_public_member(self, cpp_decl: CppDecl) -> bool:
+        if cpp_decl.is_bitfield():  # is_bitfield()
+            emit_srcml_warning(
+                cpp_decl.srcml_element,
+                f"AdaptedClass: Skipped bitfield member {cpp_decl.decl_name}",
+                self.options.srcml_options,
+            )
+            return False
+
+        elif cpp_decl.is_c_array_fixed_size_unparsable(self.options.srcml_options):
+            emit_srcml_warning(
+                cpp_decl.srcml_element,
+                """
+                AdaptedClass: Can't parse the size of this array.
+                Hint: use a vector, or extend `options.c_array_numeric_member_types`
+                """,
+                self.options.srcml_options,
+            )
+            return False
+
+        elif cpp_decl.is_c_array_known_fixed_size(self.options.srcml_options):
+            return self._check_can_add_public_member_array_known_fixed_size(cpp_decl)
+
+        else:
+            return True
+
+    def _fill_public_children(self) -> None:
+        for child in self.cpp_element().get_public_elements():
+            if isinstance(child, CppEmptyLine):
+                self.adapted_public_children.append(AdaptedEmptyLine(child, self.options))
+            elif isinstance(child, CppComment):
+                self.adapted_public_children.append(AdaptedComment(child, self.options))
+            elif isinstance(child, CppFunctionDecl):
+                class_name_cpp = self.cpp_element().class_name
+                self.adapted_public_children.append(AdaptedFunction(child, class_name_cpp, self.options))
+            elif isinstance(child, CppDeclStatement):
+                for cpp_decl in child.cpp_decls:
+                    if self._check_can_add_public_member(cpp_decl):
+                        adapted_decl = AdaptedDecl(cpp_decl, self.options)
+                        self.adapted_public_children.append(adapted_decl)
+            else:
+                emit_srcml_warning(
+                    child.srcml_element,
+                    f"Public elements of type {child.tag()} are not supported in python conversion",
+                    self.options.srcml_options,
+                )
 
     # override
     def _str_stub_lines(self) -> List[str]:
