@@ -1,5 +1,5 @@
 {
-  "formatter": "lines",
+  "formatter": "grouped",
   "groups": [
     {"type": "stdlib"},
     {"type": "sitepackages"},
@@ -13,7 +13,12 @@
     {"type": "local"}
   ],
   "exclude": [
-    "litgen/__init__.py"
+    "venv",
+    "build",
+    "ci_scripts",
+    "_skbuild",
+    "pybind11",
+    "litgenold"
   ],
   "allow_plugins": true
 }
