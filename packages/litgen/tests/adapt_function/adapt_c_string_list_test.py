@@ -1,8 +1,9 @@
 import os
 import sys
 
-import litgen
 from srcmlcpp.srcml_types import *
+
+import litgen
 
 
 _THIS_DIR = os.path.dirname(__file__)

@@ -1,8 +1,10 @@
 import os
 import sys
 
-import srcmlcpp
 from codemanip import code_utils
+
+import srcmlcpp
+
 from litgen.internal import module_pydef_generator
 from litgen.options import code_style_immvision, code_style_implot
 

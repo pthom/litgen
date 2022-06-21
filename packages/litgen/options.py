@@ -2,6 +2,7 @@ from typing import List, Optional
 
 from codemanip import code_replacements
 from codemanip.code_replacements import StringReplacement
+
 from srcmlcpp import SrcmlOptions
 
 

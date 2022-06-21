@@ -2,6 +2,7 @@ import os
 import sys
 
 from codemanip import code_utils
+
 from srcmlcpp import srcml_main, srcml_types, srcml_types_parse
 from srcmlcpp.srcml_options import SrcmlOptions
 

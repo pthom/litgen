@@ -6,9 +6,10 @@ from dataclasses import dataclass
 from typing import List, Optional, Tuple
 from xml.etree import ElementTree as ET  # noqa
 
-import srcmlcpp
 from codemanip import code_utils
 from codemanip.code_position import CodePosition
+
+import srcmlcpp
 from srcmlcpp import srcml_main, srcml_types, srcml_utils
 from srcmlcpp.srcml_exception import SrcMlException
 from srcmlcpp.srcml_options import SrcmlOptions

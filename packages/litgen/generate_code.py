@@ -1,8 +1,10 @@
 import os
 from typing import Callable
 
-import srcmlcpp
 from codemanip import code_utils
+
+import srcmlcpp
+
 from litgen.internal import module_pydef_generator, module_pyi_generator
 from litgen.options import LitgenOptions
 

@@ -1,0 +1,19 @@
+{
+  "formatter": "lines",
+  "groups": [
+    {"type": "stdlib"},
+    {"type": "sitepackages"},
+    {"type": "packages",
+     "packages": ["codemanip"]},
+    {"type": "packages",
+     "packages": ["srcmlcpp"]},
+    {"type": "packages",
+     "packages": ["litgen"]},
+    {"type": "remainder"},
+    {"type": "local"}
+  ],
+  "exclude": [
+    "litgen/__init__.py"
+  ],
+  "allow_plugins": true
+}

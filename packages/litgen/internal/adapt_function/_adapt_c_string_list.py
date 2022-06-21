@@ -1,11 +1,12 @@
 import copy
 from typing import List, Optional
 
+from srcmlcpp.srcml_types import CppParameter, CppParameterList, CppType
+
 from litgen.generate_code import code_utils
 from litgen.internal import cpp_to_python
 from litgen.internal.adapt_function._lambda_adapter import LambdaAdapter
 from litgen.internal.adapted_types.adapted_types import AdaptedFunction
-from srcmlcpp.srcml_types import CppParameter, CppParameterList, CppType
 
 
 def adapt_c_string_list(adapted_function: AdaptedFunction) -> Optional[LambdaAdapter]:

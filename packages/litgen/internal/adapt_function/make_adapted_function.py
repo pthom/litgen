@@ -1,4 +1,5 @@
 from codemanip import code_utils
+
 from litgen.internal.adapt_function._lambda_adapter import LambdaAdapter
 from litgen.internal.adapted_types.adapted_types import AdaptedFunction
 

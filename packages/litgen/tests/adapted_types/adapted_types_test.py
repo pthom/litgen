@@ -1,7 +1,8 @@
-import litgen
-from litgen.internal.adapted_types.adapted_types import *
 from srcmlcpp import srcml_main
 from srcmlcpp.srcml_types import *
+
+import litgen
+from litgen.internal.adapted_types.adapted_types import *
 
 
 def to_adapted_decl(code, options: LitgenOptions) -> AdaptedDecl:

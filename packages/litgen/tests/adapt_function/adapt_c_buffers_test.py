@@ -2,8 +2,8 @@ import os
 import sys
 
 import srcmlcpp
-from srcmlcpp.srcml_types import *
 from srcmlcpp import srcml_main
+from srcmlcpp.srcml_types import *
 
 import litgen
 from litgen.internal import module_pydef_generator

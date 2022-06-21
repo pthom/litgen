@@ -1,11 +1,13 @@
 from typing import List, Union
 
 from codemanip import code_utils
+
+from srcmlcpp.srcml_types import *
+
 from litgen.internal import cpp_to_python
 from litgen.internal.adapted_types.adapted_types import *
 from litgen.internal.cpp_to_python import info_original_location_cpp
 from litgen.options import LitgenOptions
-from srcmlcpp.srcml_types import *
 
 
 def generate_boxed_types_binding_code(options: LitgenOptions) -> str:

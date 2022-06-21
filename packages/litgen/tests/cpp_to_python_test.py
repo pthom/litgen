@@ -1,7 +1,8 @@
 import pytest
 
-import litgen
 from codemanip import code_utils
+
+import litgen
 from litgen.internal import cpp_to_python
 
 

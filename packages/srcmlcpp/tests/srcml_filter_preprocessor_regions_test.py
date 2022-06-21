@@ -1,8 +1,9 @@
 import os
 import sys
 
-import srcmlcpp
 from codemanip import code_utils
+
+import srcmlcpp
 from srcmlcpp import srcml_caller, srcml_filter_preprocessor_regions
 
 

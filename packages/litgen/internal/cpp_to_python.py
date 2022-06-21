@@ -5,9 +5,11 @@ from dataclasses import dataclass  # noqa
 from typing import List
 
 from codemanip import code_replacements, code_utils
-from litgen.options import LitgenOptions
+
 from srcmlcpp import srcml_main
 from srcmlcpp.srcml_types import *
+
+from litgen.options import LitgenOptions
 
 
 """

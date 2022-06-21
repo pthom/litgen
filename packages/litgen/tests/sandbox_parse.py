@@ -1,8 +1,9 @@
 import os
 import sys
 
-import litgen
 import srcmlcpp
+
+import litgen
 from litgen.internal import module_pydef_generator
 from litgen.options import code_style_imgui, code_style_implot
 

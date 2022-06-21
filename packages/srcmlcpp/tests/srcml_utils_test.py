@@ -1,8 +1,9 @@
 import os
 import sys
 
-import srcmlcpp
 from codemanip import code_utils
+
+import srcmlcpp
 
 
 _THIS_DIR = os.path.dirname(__file__)
