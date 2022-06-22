@@ -1,4 +1,14 @@
-add unit test pyi generation
+imgui / Todo:
+    * black / all
+    * Display original signature in comment
+    * ImVector -> List, reprendre impl (template), ou pycast
+
+struct ImGuiOnceUponAFrame
+{
+    ImGuiOnceUponAFrame() { RefFrame = -1; }
+    mutable int RefFrame; // ---> virer mutable
+    operator bool() const { int current_frame = ImGui::GetFrameCount(); if (RefFrame == current_frame) return false; RefFrame = current_frame; return true; }
+};
 
 Gerer overload multiples / methodes et functions dans stubs
 

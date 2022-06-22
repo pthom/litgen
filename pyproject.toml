@@ -4,4 +4,4 @@ requires = ["setuptools"]
 line-length = 120
 # A regex preceded with ^/ will apply only to files and directories
 # in the root of the project.
-extend-exclude = '''pybind11|importanize|lg_imgui'''
+extend-exclude = '''venv|pybind11|importanize|lg_imgui'''
