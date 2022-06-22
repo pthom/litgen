@@ -31,10 +31,31 @@ repos:
           pass_filenames: false
           always_run: true
 
-  - repo: https://github.com/psf/black
-    rev: 22.3.0
+  - repo: local
     hooks:
-        - id: black
-          language_version: python3.9
-          exclude: (lg_imgui)
-        - id: black-jupyter
+      - id: mypy-static-checking
+        name: "Static type checking with mypy"
+        entry: bash -c 'echo "Running mypy hook" && which mypy && mypy .'
+        language: system
+        types: [python]
+        pass_filenames: false
+        always_run: true
+
+  - repo: local
+    hooks:
+      - id: black-repo-wide
+        name: "Repo wide formatting checking with black"
+        entry: bash -c 'echo "Running black hook" && which black && black .'
+        language: system
+        types: [python]
+        pass_filenames: false
+        always_run: true
+
+#  - repo: https://github.com/psf/black
+#    rev: 22.3.0
+#    hooks:
+#        - id: black
+#          language_version: python3.9
+#          exclude: (lg_imgui)
+#          exclude_types: ["pyi"]
+#        - id: black-jupyter

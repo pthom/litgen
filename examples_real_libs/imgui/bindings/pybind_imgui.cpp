@@ -4158,9 +4158,6 @@ void py_init_module_imgui(py::module& m)
         ;
 
 
-
-
-
     auto pyClassImGuiStyle = py::class_<ImGuiStyle>    // imgui.h:1838
         (m, "ImGuiStyle", "")
         .def_readwrite("alpha", &ImGuiStyle::Alpha, "Global alpha applies to everything in Dear ImGui.")    // imgui.h:1840
@@ -4898,8 +4895,8 @@ void py_init_module_imgui(py::module& m)
         .def_readwrite("_vtx_current_idx", &ImDrawList::_VtxCurrentIdx, "[Internal] generally == VtxBuffer.Size unless we are past 64K vertices, in which case this gets reset to 0.")    // imgui.h:2512
         .def_readwrite("_data", &ImDrawList::_Data, "Pointer to shared draw data (you can use ImGui::GetDrawListSharedData() to get the one from current ImGui context)")    // imgui.h:2513
         .def_readwrite("_owner_name", &ImDrawList::_OwnerName, "Pointer to owner window's name for debugging")    // imgui.h:2514
-        .def_readwrite("_vtx_write_ptr", &ImDrawList::_VtxWritePtr, "[Internal] point within VtxBuffer.Data after each add command (to avoid using the ImVector<> operators too much)")    // imgui.h:2515
-        .def_readwrite("_idx_write_ptr", &ImDrawList::_IdxWritePtr, "[Internal] point within IdxBuffer.Data after each add command (to avoid using the ImVector<> operators too much)")    // imgui.h:2516
+        .def_readwrite("_vtx_write_ptr", &ImDrawList::_VtxWritePtr, "[Internal] point within VtxBuffer.Data after each add command (to avoid using the List[] operators too much)")    // imgui.h:2515
+        .def_readwrite("_idx_write_ptr", &ImDrawList::_IdxWritePtr, "[Internal] point within IdxBuffer.Data after each add command (to avoid using the List[] operators too much)")    // imgui.h:2516
         .def_readwrite("_clip_rect_stack", &ImDrawList::_ClipRectStack, "[Internal]")    // imgui.h:2517
         .def_readwrite("_texture_id_stack", &ImDrawList::_TextureIdStack, "[Internal]")    // imgui.h:2518
         .def_readwrite("_path", &ImDrawList::_Path, "[Internal] current path building")    // imgui.h:2519
