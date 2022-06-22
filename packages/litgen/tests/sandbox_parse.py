@@ -77,22 +77,11 @@ options.original_location_flag_show = True
 
 
 code = """
-struct BoxedUnsignedLong // MY_API
-{
-    unsigned long value;
-    BoxedUnsignedLong() : value{} {}
-    BoxedUnsignedLong(unsigned long v) : value(v) {}
-    std::string __repr__() const { return std::string("BoxedUnsignedLong(") + std::to_string(value) + ")"; }
-};
-
-struct BoxedInt // MY_API
-{
-    int value;
-    BoxedInt() : value{} {}
-    BoxedInt(int v) : value(v) {}
-    std::string __repr__() const { return std::string("BoxedInt(") + std::to_string(value) + ")"; }
-};
+typedef int ImGuiWindowFlags;       // -> enum ImGuiWindowFlags_     // Flags: for Begin(), BeginChild()
 """
-
-play_pydef(code, options)
+xml = srcmlcpp.code_to_srcml(code, False)
+# msg = srcmlcpp.srcml_to_str_readable(xml)
+msg = srcmlcpp.srcml_to_str(xml)
+print(msg)
+# play_pydef(code, options)
 # play_stub(code, options)
