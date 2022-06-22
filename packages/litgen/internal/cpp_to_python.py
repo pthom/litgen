@@ -281,13 +281,6 @@ def decl_python_value(options: LitgenOptions, cpp_decl: CppDecl) -> str:
     return value_python
 
 
-def info_original_signature(options: LitgenOptions, cpp_element: CppElement) -> str:
-    if not options.original_signature_flag_show:
-        return ""
-    cpp_code = srcmlcpp.srcml_to_code(cpp_element.srcml_element)
-    return cpp_code
-
-
 def info_original_location(options: LitgenOptions, cpp_element: CppElement, comment_token: str) -> str:
 
     if not options.original_location_flag_show:

@@ -87,7 +87,7 @@ class AdaptedEnumDecl(AdaptedDecl):
             lines += comment_lines
             lines.append(decl_part)
 
-        return lines
+        return self._cpp_original_code_lines() + lines
 
     # override
     def _str_pydef_lines(self) -> List[str]:

@@ -1,6 +1,7 @@
 from dataclasses import dataclass
 from typing import Any
 
+import srcmlcpp
 from srcmlcpp.srcml_types import *
 
 from litgen.internal import cpp_to_python
@@ -25,6 +26,20 @@ class AdaptedElement:  # (abc.ABC):  # Cannot be abstract (mypy limitation:  htt
 
     def info_original_location_python(self) -> str:
         return self._info_original_location("#")
+
+    def _cpp_original_code_lines(self) -> List[str]:
+        if not self.options.original_signature_flag_show:
+            return []
+
+        cpp_original_code = srcmlcpp.srcml_to_code(self._cpp_element.srcml_element)
+        cpp_original_code = code_utils.strip_empty_lines(cpp_original_code)
+        if len(cpp_original_code) == 0:
+            return []
+        else:
+            cpp_original_code_lines = cpp_original_code.split("\n")
+            cpp_original_code_lines = list(map(lambda s: "# " + s, cpp_original_code_lines))  # type: ignore
+            cpp_original_code_lines[0] += "    /* original C++ signature */"
+            return cpp_original_code_lines
 
     def _str_stub_layout_lines(self, title_lines: List[str], body_lines: List[str] = []) -> List[str]:
         """Common layout for class, enum, and functions stubs
@@ -54,17 +69,6 @@ class AdaptedElement:  # (abc.ABC):  # Cannot be abstract (mypy limitation:  htt
         all_lines = code_utils.indent_code_lines(
             all_lines, skip_first_line=True, indent_str=self.options.indent_python_spaces()
         )
-
-        if self.options.original_signature_flag_show:
-            interesting_elements_tags = ["function_decl"]
-            if self._cpp_element.tag() in interesting_elements_tags:
-                cpp_original_code = cpp_to_python.info_original_signature(self.options, self.cpp_element())
-                cpp_original_code = code_utils.strip_empty_lines(cpp_original_code)
-                if len(cpp_original_code) > 0:
-                    cpp_original_code_lines = cpp_original_code.split("\n")
-                    cpp_original_code_lines = list(map(lambda s: "# " + s, cpp_original_code_lines))  # type: ignore
-                    cpp_original_code_lines[0] += "    /* original C++ signature */"
-                    all_lines = cpp_original_code_lines + all_lines
 
         return all_lines
 

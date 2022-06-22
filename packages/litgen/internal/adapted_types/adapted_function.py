@@ -248,7 +248,9 @@ class AdaptedFunction(AdaptedElement):
 
         title_lines = [all_on_one_line] if all_on_one_line is not None else function_name_and_params_line_by_line()
         body_lines: List[str] = []
+
         r = self._str_stub_layout_lines(title_lines, body_lines)
+        r = self._cpp_original_code_lines() + r
         return r
 
     #
