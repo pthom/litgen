@@ -24,7 +24,7 @@ def test_adapted_function_stub():
         stub_code,
         '''
         def foo(    # Line:7
-            buffer: numpy.ndarray,
+            buffer: np.ndarray,
             out_values_0: BoxedDouble,
             out_values_1: BoxedDouble,
             in_flags: List[bool],

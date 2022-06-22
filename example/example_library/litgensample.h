@@ -19,16 +19,14 @@ void SomeFunctionThatShouldNotBeIncluded();
 struct BoxedUnsignedLong // MY_API
 {
     unsigned long value;
-    BoxedUnsignedLong() : value{} {}
-    BoxedUnsignedLong(unsigned long v) : value(v) {}
+    BoxedUnsignedLong(unsigned long v = {}) : value(v) {}
     std::string __repr__() const { return std::string("BoxedUnsignedLong(") + std::to_string(value) + ")"; }
 };
 
 struct BoxedInt // MY_API
 {
     int value;
-    BoxedInt() : value{} {}
-    BoxedInt(int v) : value(v) {}
+    BoxedInt(int v = {}) : value(v) {}
     std::string __repr__() const { return std::string("BoxedInt(") + std::to_string(value) + ")"; }
 };
 
@@ -152,10 +150,8 @@ namespace LiterateGeneratorExample // MY_API
         int values[2] = {0, 1};
         bool flags[3] = {false, true, false};
 
-
         // These should not be exported (cannot fit in a py::array)
         Point2 points[2];
-
 
         // Multiplication factor
         int factor = 10;
@@ -170,7 +166,7 @@ namespace LiterateGeneratorExample // MY_API
         // Do some math
         MY_API int calc(int x) { return x * factor + delta; }
 
-        MY_API static Foo& Instance() { static Foo instance; return instance; }       // return_value_policy::reference
+        static Foo& Instance() { static Foo instance; return instance; }       // return_value_policy::reference
     };
 
     MY_API Foo* FooInstance() { return & Foo::Instance(); } // return_value_policy::reference

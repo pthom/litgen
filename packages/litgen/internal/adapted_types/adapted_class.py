@@ -112,11 +112,22 @@ class AdaptedClassMember(AdaptedDecl):
         else:
             return super().decl_type_python()
 
-    def comment_array_type(self) -> str:
+    def decl_value_python(self) -> str:
+        if self._is_numeric_c_array():
+            return ""
+        else:
+            return super().decl_value_python()
+
+    def comment_array(self) -> str:
         if self._is_numeric_c_array():
             array_typename = self.cpp_element().cpp_type.str_code()
             array_size = self.cpp_element().c_array_size_as_int(self.options.srcml_options)
             msg = f"  # ndarray[type={array_typename}, size={array_size}]"
+
+            decl_value_python_original = super().decl_value_python()
+            if len(decl_value_python_original) > 0:
+                msg += " default:" + decl_value_python_original
+
             return msg
         else:
             return ""
@@ -185,11 +196,11 @@ class AdaptedClassMember(AdaptedDecl):
         else:
             maybe_comment = self.comment_python_end_of_line()
 
-        maybe_comment_array_type = self.comment_array_type()
+        maybe_comment_array = self.comment_array()
 
         location = self.info_original_location_python()
 
-        decl_template = f"{decl_name_python}:{decl_type_python}{maybe_equal}{maybe_defaultvalue_python}{maybe_comment_array_type}{maybe_comment}{location}"
+        decl_template = f"{decl_name_python}:{decl_type_python}{maybe_equal}{maybe_defaultvalue_python}{maybe_comment_array}{maybe_comment}{location}"
         code_lines += [decl_template]
 
         return code_lines

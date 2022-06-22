@@ -44,7 +44,7 @@ struct Foo
 
 
             # Doc about Methods
-            def add(v: int) -> int:
+            def add(self, v: int) -> int:
                 """ Simple addition"""
                 pass
     ''',
@@ -68,7 +68,7 @@ struct Foo
 
             # Doc about Methods
 
-            def add(v: int) -> int:
+            def add(self, v: int) -> int:
                 """ Simple addition"""
                 pass
     ''',
@@ -148,13 +148,13 @@ def test_struct_stub_complex():
         '''
         class Color4:
             """ A dummy class that handles 4 channel float colors"""
-            def __init__(values: List[float]) -> None:
+            def __init__(self, values: List[float]) -> None:
                 pass
 
-            def to_gray() -> float:
+            def to_gray(self) -> float:
                 """ Return the color as a float gray value"""
                 pass
-            def is_black() -> bool:
+            def is_black(self) -> bool:
                 """ Returns True if the color is pure black"""
                 pass
 

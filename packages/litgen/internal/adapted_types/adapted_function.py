@@ -209,6 +209,9 @@ class AdaptedFunction(AdaptedElement):
                 param_code += f" = {param_default_value}"
 
             r.append(param_code)
+
+        if self.is_method():
+            r = ["self"] + r
         return r
 
     #

@@ -89,8 +89,8 @@ def standard_replacements() -> List[StringReplacement]:
     \bLDBL_MIN\b -> sys.float_info.min
     \bLDBL_MAX\b -> sys.float_info.max
 
-    \bpy::array\b -> numpy.ndarray
-    \bT\b -> numpy.ndarray
+    \bpy::array\b -> np.ndarray
+    \bT\b -> np.ndarray
 
     \bconst\b -> REMOVE
     & -> REMOVE

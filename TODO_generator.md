@@ -1,5 +1,16 @@
 add unit test pyi generation
 
+Gerer overload multiples / methodes et functions dans stubs
+
+Probleme avec code ci-dessous: le constructeur est ignoré
+     struct BoxedUnsignedLong // MY_API
+      {
+      unsigned long value;
+      BoxedUnsignedLong(unsigned long v = {}) : value(v) {}
+      std::string __repr__() const { return std::string("BoxedUnsignedLong(") + std::to_string(value) + ")"; }
+      };
+
+
 BoxedTypes
 
 https://stackoverflow.com/questions/8820276/docstring-for-variable -> Use typing.Annotated to provide a docstring for variables.
