@@ -54,8 +54,18 @@ class AdaptedElement:  # (abc.ABC):  # Cannot be abstract (mypy limitation:  htt
         all_lines = code_utils.indent_code_lines(
             all_lines, skip_first_line=True, indent_str=self.options.indent_python_spaces()
         )
-        # if not self.options.python_reproduce_cpp_layout:
-        #     all_lines.append("")
+
+        if self.options.original_signature_flag_show:
+            interesting_elements_tags = ["function_decl"]
+            if self._cpp_element.tag() in interesting_elements_tags:
+                cpp_original_code = cpp_to_python.info_original_signature(self.options, self.cpp_element())
+                cpp_original_code = code_utils.strip_empty_lines(cpp_original_code)
+                if len(cpp_original_code) > 0:
+                    cpp_original_code_lines = cpp_original_code.split("\n")
+                    cpp_original_code_lines = list(map(lambda s: "# " + s, cpp_original_code_lines))  # type: ignore
+                    cpp_original_code_lines[0] += "    /* original C++ signature */"
+                    all_lines = cpp_original_code_lines + all_lines
+
         return all_lines
 
     # @abc.abstractmethod

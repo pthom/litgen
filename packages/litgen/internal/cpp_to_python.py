@@ -4,6 +4,7 @@ import pathlib
 from dataclasses import dataclass  # noqa
 from typing import List
 
+import srcmlcpp
 from codemanip import code_replacements, code_utils
 
 from srcmlcpp import srcml_main
@@ -278,6 +279,13 @@ def decl_python_value(options: LitgenOptions, cpp_decl: CppDecl) -> str:
     value_cpp = cpp_decl.initial_value_code
     value_python = var_value_to_python(options, value_cpp)
     return value_python
+
+
+def info_original_signature(options: LitgenOptions, cpp_element: CppElement) -> str:
+    if not options.original_signature_flag_show:
+        return ""
+    cpp_code = srcmlcpp.srcml_to_code(cpp_element.srcml_element)
+    return cpp_code
 
 
 def info_original_location(options: LitgenOptions, cpp_element: CppElement, comment_token: str) -> str:

@@ -19,11 +19,13 @@ class LitgenOptions:
     srcml_options: SrcmlOptions = SrcmlOptions()
 
     #
-    # Shall the binding show the original location of elements as a comment
+    # Shall the binding show the original location and or signature of elements as a comment
     #
     original_location_flag_show = False
     # if showing location, how many parent folders shall be shown
     original_location_nb_parent_folders = 0
+    # If True, the complete C++ original signature will be show as a comment in the python stub (pyi)
+    original_signature_flag_show = False
 
     #
     # List of code replacements when going from C++ to Python
@@ -269,6 +271,9 @@ def code_style_imgui() -> LitgenOptions:
         \bImVector\s*<\s*([\w:]*)\s*> -> List[\1]
         """
     )
+
+    options.original_location_flag_show = True
+    options.original_signature_flag_show = True
 
     options.buffer_flag_replace_by_array = True
 

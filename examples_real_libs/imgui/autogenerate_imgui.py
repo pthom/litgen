@@ -12,7 +12,6 @@ assert os.path.isdir(CPP_GENERATED_PYBIND_DIR)
 
 def my_code_style_options():
     options = litgen.code_style_imgui()
-    options.original_location_flag_show = True
     return options
 
 
