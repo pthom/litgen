@@ -23,7 +23,7 @@ def _parse_string_replacement(line: str) -> StringReplacement:
     return r
 
 
-def _parse_string_replacements(lines: str) -> List[StringReplacement]:
+def parse_string_replacements(lines: str) -> List[StringReplacement]:
     lines_vec = lines.split("\n")
     lines_vec = list(lines_vec)
     lines_vec = list(map(lambda s: s.strip(), lines_vec))
@@ -44,7 +44,7 @@ def opencv_replacements() -> List[StringReplacement]:
     \bcv::Point\b -> Point
     \bcv::Point2d\b -> Point2d
     """
-    return _parse_string_replacements(replacements)
+    return parse_string_replacements(replacements)
 
 
 def standard_replacements() -> List[StringReplacement]:
@@ -101,7 +101,7 @@ def standard_replacements() -> List[StringReplacement]:
     """
 
     # Note: the two last regexes replace C numbers like 1.5f or 1.5d by 1.5
-    return _parse_string_replacements(replacements)
+    return parse_string_replacements(replacements)
 
 
 def apply_one_replacement(s: str, replacement: StringReplacement) -> str:

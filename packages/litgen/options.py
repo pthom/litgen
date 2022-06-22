@@ -264,6 +264,12 @@ def code_style_imgui() -> LitgenOptions:
     options.cpp_indent_size = 4
 
     options.code_replacements = code_replacements.standard_replacements()
+    options.code_replacements += code_replacements.parse_string_replacements(
+        r"""
+        \bImVector\s*<\s*([\w:]*)\s*> -> List[\1]
+        """
+    )
+
     options.buffer_flag_replace_by_array = True
 
     options.srcml_options.functions_api_prefixes = ["IMGUI_API"]

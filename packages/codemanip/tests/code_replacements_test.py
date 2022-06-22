@@ -19,7 +19,7 @@ def test_code_replacements():
     replacements_str = r"""
     \bcv::Size\(\) -> (0, 0)
     """
-    replacements_list = code_replacements._parse_string_replacements(replacements_str)
+    replacements_list = code_replacements.parse_string_replacements(replacements_str)
     s = "cv::Sizeounette cv::Size s = cv::Size()"
     r = code_replacements.apply_one_replacement(s, replacements_list[0])
     assert r == "cv::Sizeounette cv::Size s = (0, 0)"
@@ -27,7 +27,7 @@ def test_code_replacements():
     replacements_str = r"""
     \bcv::Size\b -> Size
     """
-    replacements_list = code_replacements._parse_string_replacements(replacements_str)
+    replacements_list = code_replacements.parse_string_replacements(replacements_str)
     s = "cv::Sizeounette cv::Size s = cv::Size()"
     r = code_replacements.apply_one_replacement(s, replacements_list[0])
     assert r == "cv::Sizeounette Size s = Size()"
