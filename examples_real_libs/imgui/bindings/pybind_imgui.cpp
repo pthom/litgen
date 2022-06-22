@@ -3768,8 +3768,8 @@ void py_init_module_imgui(py::module& m)
     py::enum_<ImGuiDataType_>(m, "ImGuiDataType_", py::arithmetic(), "A primary data type")    // imgui.h:1309
         .value("s8", ImGuiDataType_S8, "signed char / char (with sensible compilers)")
         .value("u8", ImGuiDataType_U8, "unsigned char")
-        .value("s16", ImGuiDataType_S16, "short")
-        .value("u16", ImGuiDataType_U16, "unsigned short")
+        .value("s16", ImGuiDataType_S16, "int")
+        .value("u16", ImGuiDataType_U16, "int")
         .value("s32", ImGuiDataType_S32, "int")
         .value("u32", ImGuiDataType_U32, "int")
         .value("s64", ImGuiDataType_S64, "int int / __int64")
@@ -4620,13 +4620,6 @@ void py_init_module_imgui(py::module& m)
                 appendf_adapt_variadic_format(fmt);
             },
             py::arg("fmt")
-        )
-        .def("appendfv",    // imgui.h:2224
-            [](ImGuiTextBuffer & self, const char * fmt, va_list args)
-            {
-                self.appendfv(fmt, args);
-            },
-            py::arg("fmt"), py::arg("args")
         )
         ;
 

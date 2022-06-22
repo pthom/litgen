@@ -3105,7 +3105,7 @@ class ImGuiDragDropFlags_(Enum):    # imgui.h:1287
     # ImGuiDragDropFlags_AcceptPeekOnly               = ImGuiDragDropFlags_AcceptBeforeDelivery | ImGuiDragDropFlags_AcceptNoDrawDefaultRect      /* original C++ signature */
     accept_peek_only = Literal[ImGuiDragDropFlags_.accept_before_delivery] | Literal[ImGuiDragDropFlags_.accept_no_draw_default_rect]  # For peeking ahead and inspecting the payload before delivery.
 
-# Standard Drag and Drop payload types. You can define you own payload types using short strings. Types starting with '_' are defined by Dear ImGui.
+# Standard Drag and Drop payload types. You can define you own payload types using int strings. Types starting with '_' are defined by Dear ImGui.
 
 class ImGuiDataType_(Enum):    # imgui.h:1309
     """ A primary data type"""
@@ -3114,9 +3114,9 @@ class ImGuiDataType_(Enum):    # imgui.h:1309
     # ImGuiDataType_U8,           /* original C++ signature */
     u8 = 1      # unsigned char
     # ImGuiDataType_S16,          /* original C++ signature */
-    s16 = 2     # short
+    s16 = 2     # int
     # ImGuiDataType_U16,          /* original C++ signature */
-    u16 = 3     # unsigned short
+    u16 = 3     # int
     # ImGuiDataType_S32,          /* original C++ signature */
     s32 = 4     # int
     # ImGuiDataType_U32,          /* original C++ signature */
@@ -4444,7 +4444,7 @@ class ImGuiOnceUponAFrame:    # imgui.h:2173
     def __init__(self) -> None:    # imgui.h:2175
         pass
     # mutable int RefFrame;    /* original C++ signature */
-    ref_frame:mutable int          # imgui.h:2176
+    ref_frame:int                  # imgui.h:2176
 
 class ImGuiTextFilter:    # imgui.h:2181
     """ Helper: Parse and apply text filters. In format "aaaaa[,bbbb][,ccccc]" """
@@ -4482,9 +4482,6 @@ class ImGuiTextBuffer:    # imgui.h:2208
         pass
     # IMGUI_API void      appendf(const char* fmt, ...) ;    /* original C++ signature */
     def appendf(self, fmt: str) -> None:                        # imgui.h:2223
-        pass
-    # IMGUI_API void      appendfv(const char* fmt, va_list args) ;    /* original C++ signature */
-    def appendfv(self, fmt: str, args: va_list) -> None:        # imgui.h:2224
         pass
 
 class ImGuiStorage:    # imgui.h:2235
@@ -5355,13 +5352,13 @@ class ImFontGlyphRangesBuilder:    # imgui.h:2694
 class ImFontAtlasCustomRect:    # imgui.h:2709
     """ See ImFontAtlas::AddCustomRectXXX functions."""
     # unsigned short  Width,     /* original C++ signature */
-    width:unsigned short           # Input    // Desired rectangle dimension    # imgui.h:2711
+    width:int                      # Input    // Desired rectangle dimension    # imgui.h:2711
     # Height;    /* original C++ signature */
-    height:unsigned short          # Input    // Desired rectangle dimension    # imgui.h:2711
+    height:int                     # Input    // Desired rectangle dimension    # imgui.h:2711
     # unsigned short  X,     /* original C++ signature */
-    x:unsigned short               # Output   // Packed position in Atlas    # imgui.h:2712
+    x:int                          # Output   // Packed position in Atlas    # imgui.h:2712
     # Y;    /* original C++ signature */
-    y:unsigned short               # Output   // Packed position in Atlas    # imgui.h:2712
+    y:int                          # Output   // Packed position in Atlas    # imgui.h:2712
     # unsigned int    GlyphID;    /* original C++ signature */
     glyph_id:int                   # Input    // For custom font glyphs only (ID < 0x110000)    # imgui.h:2713
     # float           GlyphAdvanceX;    /* original C++ signature */
@@ -5643,7 +5640,7 @@ class ImFont:    # imgui.h:2848
     # const ImFontConfig*         ConfigData;    /* original C++ signature */
     config_data:ImFontConfig                                               # 4-8   // in  //            // Pointer within ContainerAtlas->ConfigData    # imgui.h:2862
     # short                       ConfigDataCount;    /* original C++ signature */
-    config_data_count:short                                                # 2     // in  // ~ 1        // Number of ImFontConfig involved in creating this font. Bigger than 1 when merging multiple font sources into one ImFont.    # imgui.h:2863
+    config_data_count:int                                                  # 2     // in  // ~ 1        // Number of ImFontConfig involved in creating this font. Bigger than 1 when merging multiple font sources into one ImFont.    # imgui.h:2863
     # ImWchar                     FallbackChar;    /* original C++ signature */
     fallback_char:ImWchar                                                  # 2     // out // = FFFD/'?' // Character used if a glyph isn't found.    # imgui.h:2864
     # ImWchar                     EllipsisChar;    /* original C++ signature */

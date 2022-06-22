@@ -58,8 +58,10 @@ def standard_replacements() -> List[StringReplacement]:
     \buint64_t\b -> int
     \bint64_t\b -> int
     \blong\b -> int
+    \bshort\b -> int
     \blong \s*long\b -> int
     \bunsigned \s*int\b -> int
+    \bunsigned \s*short\b -> int
     \bunsigned \s*long\b -> int
     \bunsigned \s*long long\b -> int
 
@@ -93,6 +95,7 @@ def standard_replacements() -> List[StringReplacement]:
     \bT\b -> np.ndarray
 
     \bconst\b -> REMOVE
+    \bmutable\b -> REMOVE
     & -> REMOVE
     \* -> REMOVE
 
