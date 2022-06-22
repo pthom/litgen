@@ -2954,24 +2954,6 @@ class ImNewWrapper:    # imgui.h:1746
 #   Do NOT use this class as a std::vector replacement in your own code! Many of the structures used by dear imgui can be safely initialized by a zero-memset.
 #-----------------------------------------------------------------------------
 
-class ImVector:    # imgui.h:1767
-    size:int                                                  # imgui.h:1770
-    capacity:int                                              # imgui.h:1771
-    data:np.ndarray                                           # imgui.h:1772
-
-    # Provide standard typedefs but we don't use them ourselves.
-
-    # Constructors, destructor
-    def __init__(self) -> None:                               # imgui.h:1780
-        pass
-    def __init__(self, src: ImVector<np.ndarray>) -> None:    # imgui.h:1781
-        pass
-
-
-
-
-
-    # NB: It is illegal to call push_back/push_front/insert with a reference pointing inside the ImVector data itself! e.g. v.push_back(v[10]) is forbidden.
 
 #-----------------------------------------------------------------------------
 # [SECTION] ImGuiStyle

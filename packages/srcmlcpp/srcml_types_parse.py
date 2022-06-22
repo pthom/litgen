@@ -625,9 +625,10 @@ def fill_block(options: SrcmlOptions, element: ET.Element, inout_block_content: 
                     if not shall_ignore_comment(cpp_comment, last_ignored_child):
                         inout_block_content.block_children.append(cpp_comment)
 
-            elif child_tag == "struct":
-                inout_block_content.block_children.append(parse_struct_or_class(options, child_c))
-            elif child_tag == "class":
+            elif child_tag == "struct" or child_tag == "class":
+                assert child_name is not None
+                if code_utils.does_match_regexes(options.class_name_exclude_regexes, child_name):
+                    continue
                 inout_block_content.block_children.append(parse_struct_or_class(options, child_c))
             elif child_tag == "namespace":
                 inout_block_content.block_children.append(parse_namespace(options, child_c))

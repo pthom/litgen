@@ -331,6 +331,8 @@ def code_style_imgui() -> LitgenOptions:
         r"\bCmdLists\b",
     ]
 
+    options.srcml_options.class_name_exclude_regexes = [r"^ImVector\b"]
+
     return options
 
 

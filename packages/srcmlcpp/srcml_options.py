@@ -28,6 +28,8 @@ class SrcmlOptions:
     function_name_exclude_regexes: List[str] = []
     # Exclude certain declarations, (namespace variables, struct and class members) by a regex on their name
     decl_name_exclude_regexes: List[str] = []
+    # Exclude certain classes and structs by a regex on their name
+    class_name_exclude_regexes: List[str] = []
 
     #
     # List of named possible numbers or sizes (fill it if some number/sizes are defined by macros or constexpr values)
