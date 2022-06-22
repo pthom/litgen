@@ -57,6 +57,9 @@ struct ImGuiViewport;               // A Platform Window (always only one in 'ma
 """
 # We forward declare only the opaque structures
 ImGuiContext = Any
+ImDrawListSharedData = Any
+ImDrawVert = Any
+ImFontBuilderIO = Any
 
 
 """
@@ -205,15 +208,61 @@ typedef void    (*ImGuiSizeCallback)(ImGuiSizeCallbackData* data);              
 typedef void*   (*ImGuiMemAllocFunc)(size_t sz, void* user_data);               // Function signature for ImGui::SetAllocatorFunctions()
 typedef void    (*ImGuiMemFreeFunc)(void* ptr, void* user_data);                // Function signature for ImGui::SetAllocatorFunctions()
 """
+"""
+#ifndef ImDrawCallback
+    typedef void (*ImDrawCallback)(const ImDrawList* parent_list, const ImDrawCmd* cmd);
+#endif
+"""
 ImGuiInputTextCallback = Any       # These types are C function pointers
 ImGuiSizeCallback = Any            # and thus will be instantiate from python
 ImGuiMemAllocFunc = Any
 ImGuiMemFreeFunc = Any
+ImDrawCallback = Any
 
 
+"""
+// Helpers macros to generate 32-bit encoded colors
+// User can declare their own format by #defining the 5 _SHIFT/_MASK macros in their imconfig file.
+#ifndef IM_COL32_R_SHIFT
+#ifdef IMGUI_USE_BGRA_PACKED_COLOR
+#define IM_COL32_R_SHIFT    16
+#define IM_COL32_G_SHIFT    8
+#define IM_COL32_B_SHIFT    0
+#define IM_COL32_A_SHIFT    24
+#define IM_COL32_A_MASK     0xFF000000
+#else
+#define IM_COL32_R_SHIFT    0
+#define IM_COL32_G_SHIFT    8
+#define IM_COL32_B_SHIFT    16
+#define IM_COL32_A_SHIFT    24
+#define IM_COL32_A_MASK     0xFF000000
+#endif
+#endif
+#define IM_COL32(R,G,B,A)    (((ImU32)(A)<<IM_COL32_A_SHIFT) | ((ImU32)(B)<<IM_COL32_B_SHIFT) | ((ImU32)(G)<<IM_COL32_G_SHIFT) | ((ImU32)(R)<<IM_COL32_R_SHIFT))
+#define IM_COL32_WHITE       IM_COL32(255,255,255,255)  // Opaque white = 0xFFFFFFFF
+#define IM_COL32_BLACK       IM_COL32(0,0,0,255)        // Opaque black
+#define IM_COL32_BLACK_TRANS IM_COL32(0,0,0,0)          // Transparent black = 0x00000000
+"""
+IM_COL32_R_SHIFT= 0
+IM_COL32_G_SHIFT = 8
+IM_COL32_B_SHIFT = 16
+IM_COL32_A_SHIFT = 24
 
 
-############################ </TODO GEN MANUAL NOW>#################
+def IM_COL32(r: ImU32, g: ImU32, b: ImU32, a: ImU32) -> ImU32:
+    r = ((a<<IM_COL32_A_SHIFT) | (b<<IM_COL32_B_SHIFT) | (g<<IM_COL32_G_SHIFT) | (r<<IM_COL32_R_SHIFT))
+    return r
+
+
+IM_COL32_WHITE = IM_COL32(255, 255, 255, 255)
+IM_COL32_BLACK = IM_COL32(0, 0, 0, 255)
+
+
+"""
+Additional customizations
+"""
+ImGuiTextRange = Any # internal structure of ImGuiTextFilter, composed of string pointers (cannot be easily adapted)
+ImGuiStoragePair = Any
 
 
 # Disable black formatter

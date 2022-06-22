@@ -1,6 +1,4 @@
 imgui / Todo:
-    * black / all
-    * Display original signature in comment
     * ImVector -> List, reprendre impl (template), ou pycast (exclu par regex pour l'instant)
 
 struct ImGuiOnceUponAFrame
