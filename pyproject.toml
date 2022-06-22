@@ -2,8 +2,6 @@
 requires = ["setuptools"]
 [tool.black]
 line-length = 120
-extend-exclude = '''
 # A regex preceded with ^/ will apply only to files and directories
 # in the root of the project.
-pybind11  # exclude a file named foo.py in the root of the project (in addition to the defaults)
-'''
+extend-exclude = '''pybind11|importanize|lg_imgui'''
