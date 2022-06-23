@@ -33,4 +33,9 @@ def autogenerate():
 
 if __name__ == "__main__":
     print("autogenerate_imgui")
+
+    import imgui_string_patch
+
+    imgui_string_patch.apply_imgui_string_patch()
+
     autogenerate()
