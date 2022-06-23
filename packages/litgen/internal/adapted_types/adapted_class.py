@@ -159,14 +159,21 @@ class AdaptedClassMember(AdaptedDecl):
         lines = r.split("\n")
         return lines
 
-    def _str_pydef_lines_readwrite_property(self) -> List[str]:
+    def _str_pydef_lines_field(self) -> List[str]:
         struct_name = self.class_parent.cpp_element().class_name
         location = self.info_original_location_cpp()
         name_python = self.decl_name_python()
         name_cpp = self.decl_name_cpp()
         comment = self.comment_pydef_one_line()
 
-        r = f'.def_readwrite("{name_python}", &{struct_name}::{name_cpp}, "{comment}"){location}'
+        pybind_definition_mode = "def_readwrite"
+        cpp_type = self.cpp_element().cpp_type
+        if cpp_type.is_const():
+            pybind_definition_mode = "def_readonly"
+        if cpp_type.is_static():
+            pybind_definition_mode += "_static"
+
+        r = f'.{pybind_definition_mode}("{name_python}", &{struct_name}::{name_cpp}, "{comment}"){location}'
         return [r]
 
     # override
@@ -211,7 +218,7 @@ class AdaptedClassMember(AdaptedDecl):
         if self._is_numeric_c_array():
             return self._str_pydef_lines_numeric_array()
         else:
-            return self._str_pydef_lines_readwrite_property()
+            return self._str_pydef_lines_field()
 
 
 @dataclass
