@@ -290,7 +290,7 @@ def code_style_imgui() -> LitgenOptions:
     )
 
     options.original_location_flag_show = True
-    # options.original_signature_flag_show = True
+    options.original_signature_flag_show = True
 
     options.buffer_flag_replace_by_array = True
 
