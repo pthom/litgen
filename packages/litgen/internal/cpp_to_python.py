@@ -60,7 +60,10 @@ def comment_pydef_one_line(options: LitgenOptions, title_cpp: str) -> str:
 
 
 def type_to_python(options: LitgenOptions, type_cpp: str) -> str:
-    return code_replacements.apply_code_replacements(type_cpp, options.code_replacements).strip()
+    r = type_cpp
+    r = r.replace("static ", "")
+    r = code_replacements.apply_code_replacements(r, options.code_replacements).strip()
+    return r
 
 
 def add_underscore_if_python_reserved_word(name: str) -> str:

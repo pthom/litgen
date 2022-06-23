@@ -40,25 +40,38 @@ def play_imgui():
     print(generated_code.pydef_code)
 
 
-def play_stub(code, options):
+def play_stub(code, options) -> None:
     pyi_code = litgen.code_to_stub(options, code)
     print(f">>>\n{pyi_code}<<<")
 
 
-options = litgen.options.LitgenOptions()
-options.srcml_options.functions_api_prefixes = ["MY_API"]
-options.original_location_flag_show = True
+def play_pydef(code, options) -> None:
+    pyi_code = litgen.code_to_pydef(options, code)
+    print(f">>>\n{pyi_code}<<<")
 
 
 code = """
-struct FooStruct
+struct Foo
 {
-    FooStruct(int v = 0 );
+    static const int a = 1;  // OK
+    // pass
+    void*       UserData;  // OK
+    ImFont*     FontDefault;  // OK
+
+    // read-only
+    const char* IniFilename; // OK
+
+    // remove ImWchar*, unsigned char *, unsigned int *, char *, const char *
+    char*           Buf;
+    const ImWchar *  GlyphRanges;
+    unsigned char *  TexPixelsAlpha8;
+    unsigned int *   TexPixelsRGBA32;
 };
+
 """
-srcml_options = srcmlcpp.SrcmlOptions()
-xml = srcmlcpp.code_to_srcml(code, dump_positions=False)
-str_xml = srcmlcpp.srcml_utils.srcml_to_str(xml)
-print(str_xml)
-# cpp_unit = srcmlcpp.code_to_cpp_unit(srcml_options, code)
-print("a")
+# options = litgen.options.LitgenOptions()
+# options.srcml_options.functions_api_prefixes = ["MY_API"]
+# options.original_location_flag_show = True
+options = code_style_imgui()
+play_stub(code, options)
+play_pydef(code, options)

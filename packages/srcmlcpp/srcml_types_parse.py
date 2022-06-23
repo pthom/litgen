@@ -192,7 +192,10 @@ def parse_decl_stmt(options: SrcmlOptions, element_c: CppElementAndComment) -> C
                 continue
 
             cpp_decl = parse_decl(options, child_c, previous_decl)
-            result.cpp_decls.append(cpp_decl)
+
+            cpp_decl_type = cpp_decl.cpp_type.str_code()
+            if not code_utils.does_match_regexes(options.decl_types_exclude_regexes, cpp_decl_type):
+                result.cpp_decls.append(cpp_decl)
             previous_decl = cpp_decl
         else:
             raise SrcMlExceptionDetailed(options, child, f"unhandled tag {child_c.tag()}")
@@ -590,8 +593,8 @@ def fill_block(options: SrcmlOptions, element: ET.Element, inout_block_content: 
                     options.decl_name_exclude_regexes, child_name
                 ):
                     continue
-                inout_block_content.block_children.append(parse_decl(options, child_c, None))
-
+                cpp_decl = parse_decl(options, child_c, None)
+                inout_block_content.block_children.append(cpp_decl)
             elif child_tag == "function_decl":
                 if is_operator_function(child_c):
                     srcml_warnings.emit_srcml_warning(options, child_c.srcml_element, "Operator functions are ignored")

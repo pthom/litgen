@@ -354,6 +354,13 @@ def code_style_imgui() -> LitgenOptions:
         r"\bCmdLists\b",
     ]
 
+    options.srcml_options.decl_types_exclude_regexes = [
+        "^char\s*\*",
+        "const ImWchar\s*\*",
+        "unsigned char\s*\*",
+        "unsigned int\s*\*",
+    ]
+
     options.srcml_options.class_name_exclude_regexes = [r"^ImVector\b"]
 
     return options

@@ -487,6 +487,9 @@ class CppType(CppElement):
     def is_const(self) -> bool:
         return "const" in self.specifiers
 
+    def is_static(self) -> bool:
+        return "static" in self.specifiers
+
     def is_raw_pointer(self) -> bool:
         return "*" in self.modifiers
 
