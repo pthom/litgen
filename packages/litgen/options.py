@@ -133,6 +133,13 @@ class LitgenOptions:
     c_array_modifiable_flag_replace = True
     c_array_modifiable_max_size = 10
 
+    # If c_string_list_flag_replace is active, then C string lists `(const char **, size_t)`
+    # will be replaced by `const std::vector<std::string>&`. For example:
+    #     void foo(const char * const items[], int items_count)
+    # will be transformed to:
+    #     void foo(const std::vector<std::string>& const items[])
+    c_string_list_flag_replace = True
+
     #
     # C style arrays structs and class members
     #
@@ -162,13 +169,6 @@ class LitgenOptions:
         "int64_t",
         "bool",
     ]
-
-    # If c_string_list_flag_replace is active, then C string lists `(const char **, size_t)`
-    # will be replaced by `const std::vector<std::string>&`. For example:
-    #     void foo(const char * const items[], int items_count)
-    # will be transformed to:
-    #     void foo(const std::vector<std::string>& const items[])
-    c_string_list_flag_replace = True
 
     #
     # Options that need rework

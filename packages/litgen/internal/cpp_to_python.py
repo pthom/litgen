@@ -155,7 +155,7 @@ def cpp_numeric_types() -> List[str]:
 def is_cpp_type_immutable_for_python(cpp_type: str) -> bool:
     if cpp_type in cpp_numeric_types():
         return True
-    if cpp_type in ["string", "std::string"]:
+    if cpp_type in ["string", "std::string", "bool"]:
         return True
     # Etc: handle tuple and complex numbers?
     return False
@@ -510,5 +510,7 @@ def cpp_type_default_python_value(cpp_type: str) -> Optional[str]:
             return "0."
     if cpp_type in ["std::string", "string"]:
         return '""'
+    if cpp_type in ["bool"]:
+        return "false"
 
     return None

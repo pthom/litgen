@@ -51,27 +51,12 @@ def play_pydef(code, options) -> None:
 
 
 code = """
-struct Foo
-{
-    static const int a = 1;  // OK
-    // pass
-    void*       UserData;  // OK
-    ImFont*     FontDefault;  // OK
-
-    // read-only
-    const char* IniFilename; // OK
-
-    // remove ImWchar*, unsigned char *, unsigned int *, char *, const char *
-    char*           Buf;
-    const ImWchar *  GlyphRanges;
-    unsigned char *  TexPixelsAlpha8;
-    unsigned int *   TexPixelsRGBA32;
-};
-
+void foo(std::vector<Widget>& v);
 """
-# options = litgen.options.LitgenOptions()
+options = litgen.options.LitgenOptions()
 # options.srcml_options.functions_api_prefixes = ["MY_API"]
 # options.original_location_flag_show = True
-options = code_style_imgui()
+# options = code_style_imgui()
+
 play_stub(code, options)
 play_pydef(code, options)

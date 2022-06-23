@@ -106,7 +106,17 @@ def test_c_array_numeric_member_types():
     assert (foo.flags == [True, True, False]).all()
 
 
-test_c_array()
-test_c_buffers()
-test_c_string_list()
-test_c_array_numeric_member_types()
+def test_pointers():
+    a = litgensample.BoxedBool(True)
+    print(f"test_pointers a={a}")
+    litgensample.toggle_bool(a)
+    print(f"test_pointers a={a}")
+
+
+# test_c_array()
+# test_c_buffers()
+# test_c_string_list()
+# test_c_array_numeric_member_types()t
+
+
+test_pointers()

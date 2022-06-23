@@ -65,7 +65,10 @@ class _BoxedImmutablePythonType_No_Registry:
         self.cpp_type = cpp_type
 
     def boxed_type_name(self) -> str:
-        boxed_name = "Boxed" + cpp_to_python.cpp_type_to_camel_case_no_space(self.cpp_type)
+        cpp_type = self.cpp_type
+        if cpp_type == "std::string":
+            cpp_type = "string"
+        boxed_name = "Boxed" + cpp_to_python.cpp_type_to_camel_case_no_space(cpp_type)
         return boxed_name
 
     def cpp_header_code(self, options: LitgenOptions) -> CppHeaderCode:

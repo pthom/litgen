@@ -1,52 +1,31 @@
 imgui / Todo:
-    * profile generate imgui
-    * patch on imgui code string
-    * ImVector -> List, reprendre impl (template), ou pycast (exclu par regex pour l'instant)
-    * interdire variables nommees str (cf input_text)
-    * Boxer les pointeur (SliderInt, input_text, etc.)
+* Box Pointers
+    Se passe comme si array de taille 1
+
+* Test work with pointers
 
 
-struct ImGuiOnceUponAFrame
-{
-    ImGuiOnceUponAFrame() { RefFrame = -1; }
-    mutable int RefFrame; // ---> virer mutable
-    operator bool() const { int current_frame = ImGui::GetFrameCount(); if (RefFrame == current_frame) return false; RefFrame = current_frame; return true; }
-};
+* Test use imgui a base de create context / destroy context
+* Handle opage pointers (create_context)
+* input Pointer to return output (tuple) ?
 
-Gerer overload multiples / methodes et functions dans stubs
-
-Probleme avec code ci-dessous: le constructeur est ignoré
-     struct BoxedUnsignedLong // MY_API
-      {
-      unsigned long value;
-      BoxedUnsignedLong(unsigned long v = {}) : value(v) {}
-      std::string __repr__() const { return std::string("BoxedUnsignedLong(") + std::to_string(value) + ")"; }
-      };
-
-
-BoxedTypes
-
-https://stackoverflow.com/questions/8820276/docstring-for-variable -> Use typing.Annotated to provide a docstring for variables.
-
-* Move & rename module_pydef_generator_test.py
-
+No:
+* profile generate imgui -> remove flag signature
+* ImVector -> List, reprendre impl (template), ou pycast (exclu par regex pour l'instant)
+* Boxer les pointeur (SliderInt, input_text, etc.)
 
 
 imgui: Handle widget input / output parameters
-        bool *, int *, float *, etc
-        float[2, 3, 4]
-        --> make return
+bool *, int *, float *, etc
+float[2, 3, 4]
+--> make return
+
+
+Gerer overload multiples / methodes et functions dans stubs
+
 
 change licence (ethical license for large NNs)
     -> message to science4all: https://www.facebook.com/Science4Allorg/
-
-stub:
-    S'attendre a problem possible avec conversion enum / int:
-        def begin_combo(    # imgui.h:509
-        label: str,
-        preview_value: str,
-        flags: ImGuiComboFlags = 0
-        ) -> bool:
 
 Ajout / pybind
     Trampoline
@@ -58,8 +37,6 @@ PimpMyClass !
     srcmlcpp separated
     auto pImpl from cpp: pImpl class  => header decl + cpp imp non pImpl + Doc !
 
-
-widgets avec int*, float*, bool* : Boxer
 
 implot SetupAxisTicks uses a string list, parameters order reversed!
 

@@ -19,6 +19,19 @@ void SomeFunctionThatShouldNotBeIncluded();
 
 namespace LiterateGeneratorExample // MY_API
 {
+    MY_API void ToggleBool(bool v[1])
+    {
+        printf("ToggleBool ptr=%p value=%s\n", v, (*v) ? "True" : "False");
+        *v = !(*v);
+    }
+
+//    MY_API void ToggleBool2(std::shared_ptr<bool> v) {
+//        bool *b = v.get();
+//        printf("ToggleBool2 ptr=%p value=%s\n", b, (*b) ? "True" : "False");
+//        *b = !(*b);
+//    }
+
+
 
     // A super nice enum
     // for demo purposes ( bool val = false )
@@ -158,15 +171,10 @@ namespace LiterateGeneratorExample // MY_API
 
     MY_API Foo* FooInstance() { return & Foo::Instance(); } // return_value_policy::reference
 
-//    MY_API void ToggleBool(bool *v) {
-//        printf("ToggleBool ptr=%p value=%s\n", v, (*v) ? "True" : "False");
-//        *v = !(*v);
-//    }
-//
-//    MY_API void ToggleBool2(std::shared_ptr<bool> v) {
-//        bool *b = v.get();
-//        printf("ToggleBool2 ptr=%p value=%s\n", b, (*b) ? "True" : "False");
-//        *b = !(*b);
-//    }
+
+    MY_API void setFooDeltaTo50_Pointer(Foo *f) { f->delta = 50;}
+    MY_API void setFooDeltaTo25_Ref(Foo &f) { f.delta = 25;}
+
+
 //
 } // namespace LiterateGeneratorExample
