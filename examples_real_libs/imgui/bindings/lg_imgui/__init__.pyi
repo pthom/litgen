@@ -627,7 +627,7 @@ def set_next_window_size_constraints(    # imgui.h:358
     size_min: ImVec2,
     size_max: ImVec2,
     custom_callback: ImGuiSizeCallback = None,
-    custom_callback_data: None = None
+    custom_callback_data: Any = None
     ) -> None:
     """ set next window size limits. use -1,-1 on either X/Y axis to preserve the current size. Sizes will be rounded down. Use callback to apply non-trivial programmatic constraints."""
     pass
@@ -968,7 +968,7 @@ def push_id(str_id_begin: str, str_id_end: str) -> None:    # imgui.h:468
     """ push string into the ID stack (will hash string)."""
     pass
 # IMGUI_API void          PushID(const void* ptr_id);                                         /* original C++ signature */
-def push_id(ptr_id: None) -> None:    # imgui.h:469
+def push_id(ptr_id: Any) -> None:    # imgui.h:469
     """ push pointer into the ID stack (will hash pointer)."""
     pass
 # IMGUI_API void          PushID(int int_id);                                                 /* original C++ signature */
@@ -987,7 +987,7 @@ def get_id(str_id: str) -> ImGuiID:    # imgui.h:472
 def get_id(str_id_begin: str, str_id_end: str) -> ImGuiID:    # imgui.h:473
     pass
 # IMGUI_API ImGuiID       GetID(const void* ptr_id);    /* original C++ signature */
-def get_id(ptr_id: None) -> ImGuiID:    # imgui.h:474
+def get_id(ptr_id: Any) -> ImGuiID:    # imgui.h:474
     pass
 
 # Widgets: Text
@@ -1270,10 +1270,10 @@ def drag_int_range2(    # imgui.h:538
 def drag_scalar(    # imgui.h:539
     label: str,
     data_type: ImGuiDataType,
-    p_data: None,
+    p_data: Any,
     v_speed: float = 1.0,
-    p_min: None = None,
-    p_max: None = None,
+    p_min: Any = None,
+    p_max: Any = None,
     format: str = None,
     flags: ImGuiSliderFlags = 0
     ) -> bool:
@@ -1282,11 +1282,11 @@ def drag_scalar(    # imgui.h:539
 def drag_scalar_n(    # imgui.h:540
     label: str,
     data_type: ImGuiDataType,
-    p_data: None,
+    p_data: Any,
     components: int,
     v_speed: float = 1.0,
-    p_min: None = None,
-    p_max: None = None,
+    p_min: Any = None,
+    p_max: Any = None,
     format: str = None,
     flags: ImGuiSliderFlags = 0
     ) -> bool:
@@ -1405,9 +1405,9 @@ def slider_int4(    # imgui.h:556
 def slider_scalar(    # imgui.h:557
     label: str,
     data_type: ImGuiDataType,
-    p_data: None,
-    p_min: None,
-    p_max: None,
+    p_data: Any,
+    p_min: Any,
+    p_max: Any,
     format: str = None,
     flags: ImGuiSliderFlags = 0
     ) -> bool:
@@ -1416,10 +1416,10 @@ def slider_scalar(    # imgui.h:557
 def slider_scalar_n(    # imgui.h:558
     label: str,
     data_type: ImGuiDataType,
-    p_data: None,
+    p_data: Any,
     components: int,
-    p_min: None,
-    p_max: None,
+    p_min: Any,
+    p_max: Any,
     format: str = None,
     flags: ImGuiSliderFlags = 0
     ) -> bool:
@@ -1451,9 +1451,9 @@ def v_slider_scalar(    # imgui.h:561
     label: str,
     size: ImVec2,
     data_type: ImGuiDataType,
-    p_data: None,
-    p_min: None,
-    p_max: None,
+    p_data: Any,
+    p_min: Any,
+    p_max: Any,
     format: str = None,
     flags: ImGuiSliderFlags = 0
     ) -> bool:
@@ -1467,7 +1467,7 @@ def input_text(    # imgui.h:565
     str: str,
     flags: ImGuiInputTextFlags = 0,
     callback: ImGuiInputTextCallback = None,
-    user_data: None = None
+    user_data: Any = None
     ) -> bool:
     pass
 # IMGUI_API bool  InputTextMultiline(const char* label, std::string* str, const ImVec2& size = ImVec2(0, 0), ImGuiInputTextFlags flags = 0, ImGuiInputTextCallback callback = NULL, void* user_data = NULL);    /* original C++ signature */
@@ -1477,7 +1477,7 @@ def input_text_multiline(    # imgui.h:566
     size: ImVec2 = ImVec2(0, 0),
     flags: ImGuiInputTextFlags = 0,
     callback: ImGuiInputTextCallback = None,
-    user_data: None = None
+    user_data: Any = None
     ) -> bool:
     pass
 # IMGUI_API bool  InputTextWithHint(const char* label, const char* hint, std::string* str, ImGuiInputTextFlags flags = 0, ImGuiInputTextCallback callback = NULL, void* user_data = NULL);    /* original C++ signature */
@@ -1487,7 +1487,7 @@ def input_text_with_hint(    # imgui.h:567
     str: str,
     flags: ImGuiInputTextFlags = 0,
     callback: ImGuiInputTextCallback = None,
-    user_data: None = None
+    user_data: Any = None
     ) -> bool:
     pass
 
@@ -1581,9 +1581,9 @@ def input_double(    # imgui.h:577
 def input_scalar(    # imgui.h:578
     label: str,
     data_type: ImGuiDataType,
-    p_data: None,
-    p_step: None = None,
-    p_step_fast: None = None,
+    p_data: Any,
+    p_step: Any = None,
+    p_step_fast: Any = None,
     format: str = None,
     flags: ImGuiInputTextFlags = 0
     ) -> bool:
@@ -1592,10 +1592,10 @@ def input_scalar(    # imgui.h:578
 def input_scalar_n(    # imgui.h:579
     label: str,
     data_type: ImGuiDataType,
-    p_data: None,
+    p_data: Any,
     components: int,
-    p_step: None = None,
-    p_step_fast: None = None,
+    p_step: Any = None,
+    p_step_fast: Any = None,
     format: str = None,
     flags: ImGuiInputTextFlags = 0
     ) -> bool:
@@ -1667,7 +1667,7 @@ def tree_node(str_id: str, fmt: str) -> bool:    # imgui.h:594
     """ helper variation to easily decorelate the id from the displayed string. Read the FAQ about why and how to use ID. to align arbitrary text at the same level as a TreeNode() you can use Bullet()."""
     pass
 # IMGUI_API bool          TreeNode(const void* ptr_id, const char* fmt, ...) ;       /* original C++ signature */
-def tree_node(ptr_id: None, fmt: str) -> bool:    # imgui.h:595
+def tree_node(ptr_id: Any, fmt: str) -> bool:    # imgui.h:595
     """ " """
     pass
 # IMGUI_API bool          TreeNodeEx(const char* label, ImGuiTreeNodeFlags flags = 0);    /* original C++ signature */
@@ -1677,14 +1677,14 @@ def tree_node_ex(label: str, flags: ImGuiTreeNodeFlags = 0) -> bool:    # imgui.
 def tree_node_ex(str_id: str, flags: ImGuiTreeNodeFlags, fmt: str) -> bool:    # imgui.h:599
     pass
 # IMGUI_API bool          TreeNodeEx(const void* ptr_id, ImGuiTreeNodeFlags flags, const char* fmt, ...) ;    /* original C++ signature */
-def tree_node_ex(ptr_id: None, flags: ImGuiTreeNodeFlags, fmt: str) -> bool:    # imgui.h:600
+def tree_node_ex(ptr_id: Any, flags: ImGuiTreeNodeFlags, fmt: str) -> bool:    # imgui.h:600
     pass
 # IMGUI_API void          TreePush(const char* str_id);                                           /* original C++ signature */
 def tree_push(str_id: str) -> None:    # imgui.h:603
     """ ~ Indent()+PushId(). Already called by TreeNode() when returning True, but you can call TreePush/TreePop yourself if desired."""
     pass
 # IMGUI_API void          TreePush(const void* ptr_id = NULL);                                    /* original C++ signature */
-def tree_push(ptr_id: None = None) -> None:    # imgui.h:604
+def tree_push(ptr_id: Any = None) -> None:    # imgui.h:604
     """ " """
     pass
 # IMGUI_API void          TreePop();                                                              /* original C++ signature */
@@ -2180,7 +2180,7 @@ def begin_drag_drop_source(flags: ImGuiDragDropFlags = 0) -> bool:    # imgui.h:
 # IMGUI_API bool          SetDragDropPayload(const char* type, const void* data, size_t sz, ImGuiCond cond = 0);      /* original C++ signature */
 def set_drag_drop_payload(    # imgui.h:799
     type: str,
-    data: None,
+    data: Any,
     sz: int,
     cond: ImGuiCond = 0
     ) -> bool:
@@ -4099,7 +4099,7 @@ class ImGuiIO:    # imgui.h:1905
     # float       KeyRepeatRate;    /* original C++ signature */
     key_repeat_rate:float                                                           # = 0.050         // When holding a key/button, rate at which it repeats, in seconds.    # imgui.h:1922
     # void*       UserData;    /* original C++ signature */
-    user_data:None                                                                  # = None           // Store your own data for retrieval by callbacks.    # imgui.h:1923
+    user_data:Any                                                                   # = None           // Store your own data for retrieval by callbacks.    # imgui.h:1923
 
     # ImFontAtlas*Fonts;    /* original C++ signature */
     fonts:ImFontAtlas                                                               # <auto>           // Font atlas: load, rasterize and pack one or more fonts into a single texture.    # imgui.h:1925
@@ -4141,16 +4141,16 @@ class ImGuiIO:    # imgui.h:1905
     # const char* BackendRendererName;    /* original C++ signature */
     backend_renderer_name:str                                                       # = None    # imgui.h:1948
     # void*       BackendPlatformUserData;    /* original C++ signature */
-    backend_platform_user_data:None                                                 # = None           // User data for platform backend    # imgui.h:1949
+    backend_platform_user_data:Any                                                  # = None           // User data for platform backend    # imgui.h:1949
     # void*       BackendRendererUserData;    /* original C++ signature */
-    backend_renderer_user_data:None                                                 # = None           // User data for renderer backend    # imgui.h:1950
+    backend_renderer_user_data:Any                                                  # = None           // User data for renderer backend    # imgui.h:1950
     # void*       BackendLanguageUserData;    /* original C++ signature */
-    backend_language_user_data:None                                                 # = None           // User data for non C++ programming language backend    # imgui.h:1951
+    backend_language_user_data:Any                                                  # = None           // User data for non C++ programming language backend    # imgui.h:1951
 
     # Optional: Access OS clipboard
     # (default to use native Win32 clipboard on Windows, otherwise uses a private clipboard. Override to access OS clipboard on other architectures)
     # void*       ClipboardUserData;    /* original C++ signature */
-    clipboard_user_data:None                                                        # imgui.h:1957
+    clipboard_user_data:Any                                                         # imgui.h:1957
 
 
     #------------------------------------------------------------------
@@ -4349,7 +4349,7 @@ class ImGuiInputTextCallbackData:    # imgui.h:2076
     # ImGuiInputTextFlags Flags;    /* original C++ signature */
     flags:ImGuiInputTextFlags                                                     # What user passed to InputText()      // Read-only    # imgui.h:2079
     # void*               UserData;    /* original C++ signature */
-    user_data:None                                                                # What user passed to InputText()      // Read-only    # imgui.h:2080
+    user_data:Any                                                                 # What user passed to InputText()      // Read-only    # imgui.h:2080
 
     # Arguments for the different callback events
     # - To modify the text buffer in a callback, prefer using the InsertChars() / DeleteChars() function. InsertChars() will take care of calling the resize callback if necessary.
@@ -4390,7 +4390,7 @@ class ImGuiSizeCallbackData:    # imgui.h:2107
      NB: For basic min/max size constraint on each axis you don't need to use the callback! The SetNextWindowSizeConstraints() parameters are enough.
     """
     # void*   UserData;    /* original C++ signature */
-    user_data:None       # Read-only.   What user passed to SetNextWindowSizeConstraints()    # imgui.h:2109
+    user_data:Any        # Read-only.   What user passed to SetNextWindowSizeConstraints()    # imgui.h:2109
     # ImVec2  Pos;    /* original C++ signature */
     pos:ImVec2           # Read-only.   Window position, for reference.    # imgui.h:2110
     # ImVec2  CurrentSize;    /* original C++ signature */
@@ -4402,7 +4402,7 @@ class ImGuiPayload:    # imgui.h:2116
     """ Data payload for Drag and Drop operations: AcceptDragDropPayload(), GetDragDropPayload()"""
     # Members
     # void*           Data;    /* original C++ signature */
-    data:None                      # Data (copied and owned by dear imgui)    # imgui.h:2119
+    data:Any                       # Data (copied and owned by dear imgui)    # imgui.h:2119
     # int             DataSize;    /* original C++ signature */
     data_size:int                  # Data size    # imgui.h:2120
 
@@ -4518,32 +4518,32 @@ class ImGuiStorage:    # imgui.h:2237
     """
 
     # ImVector<ImGuiStoragePair>      Data;    /* original C++ signature */
-    data:List[ImGuiStoragePair]                                                    # imgui.h:2249
+    data:List[ImGuiStoragePair]                                                  # imgui.h:2249
 
     # IMGUI_API int       GetInt(ImGuiID key, int default_val = 0) const;    /* original C++ signature */
-    def get_int(self, key: ImGuiID, default_val: int = 0) -> int:                  # imgui.h:2255
+    def get_int(self, key: ImGuiID, default_val: int = 0) -> int:                # imgui.h:2255
         pass
     # IMGUI_API void      SetInt(ImGuiID key, int val);    /* original C++ signature */
-    def set_int(self, key: ImGuiID, val: int) -> None:                             # imgui.h:2256
+    def set_int(self, key: ImGuiID, val: int) -> None:                           # imgui.h:2256
         pass
     # IMGUI_API bool      GetBool(ImGuiID key, bool default_val = false) const;    /* original C++ signature */
-    def get_bool(self, key: ImGuiID, default_val: bool = False) -> bool:           # imgui.h:2257
+    def get_bool(self, key: ImGuiID, default_val: bool = False) -> bool:         # imgui.h:2257
         pass
     # IMGUI_API void      SetBool(ImGuiID key, bool val);    /* original C++ signature */
-    def set_bool(self, key: ImGuiID, val: bool) -> None:                           # imgui.h:2258
+    def set_bool(self, key: ImGuiID, val: bool) -> None:                         # imgui.h:2258
         pass
     # IMGUI_API float     GetFloat(ImGuiID key, float default_val = 0.0f) const;    /* original C++ signature */
-    def get_float(self, key: ImGuiID, default_val: float = 0.0) -> float:          # imgui.h:2259
+    def get_float(self, key: ImGuiID, default_val: float = 0.0) -> float:        # imgui.h:2259
         pass
     # IMGUI_API void      SetFloat(ImGuiID key, float val);    /* original C++ signature */
-    def set_float(self, key: ImGuiID, val: float) -> None:                         # imgui.h:2260
+    def set_float(self, key: ImGuiID, val: float) -> None:                       # imgui.h:2260
         pass
     # IMGUI_API void*     GetVoidPtr(ImGuiID key) const;     /* original C++ signature */
-    def get_void_ptr(self, key: ImGuiID) -> None:                                  # imgui.h:2261
+    def get_void_ptr(self, key: ImGuiID) -> Any:                                 # imgui.h:2261
         """ default_val is None"""
         pass
     # IMGUI_API void      SetVoidPtr(ImGuiID key, void* val);    /* original C++ signature */
-    def set_void_ptr(self, key: ImGuiID, val: None) -> None:                       # imgui.h:2262
+    def set_void_ptr(self, key: ImGuiID, val: Any) -> None:                      # imgui.h:2262
         pass
 
     # - Get***Ref() functions finds pair, insert on demand if missing, return pointer. Useful if you intend to do Get+Set.
@@ -4551,25 +4551,25 @@ class ImGuiStorage:    # imgui.h:2237
     # - A typical use case where this is convenient for quick hacking (e.g. add storage during a live Edit&Continue session if you can't modify existing struct)
     #      float* pvar = ImGui::GetFloatRef(key); ImGui::SliderFloat("var", pvar, 0, 100.0); some_var += *pvar;
     # IMGUI_API int*      GetIntRef(ImGuiID key, int default_val = 0);    /* original C++ signature */
-    def get_int_ref(self, key: ImGuiID, default_val: int = 0) -> int:              # imgui.h:2268
+    def get_int_ref(self, key: ImGuiID, default_val: int = 0) -> int:            # imgui.h:2268
         pass
     # IMGUI_API bool*     GetBoolRef(ImGuiID key, bool default_val = false);    /* original C++ signature */
-    def get_bool_ref(self, key: ImGuiID, default_val: bool = False) -> bool:       # imgui.h:2269
+    def get_bool_ref(self, key: ImGuiID, default_val: bool = False) -> bool:     # imgui.h:2269
         pass
     # IMGUI_API float*    GetFloatRef(ImGuiID key, float default_val = 0.0f);    /* original C++ signature */
-    def get_float_ref(self, key: ImGuiID, default_val: float = 0.0) -> float:      # imgui.h:2270
+    def get_float_ref(self, key: ImGuiID, default_val: float = 0.0) -> float:    # imgui.h:2270
         pass
     # IMGUI_API void**    GetVoidPtrRef(ImGuiID key, void* default_val = NULL);    /* original C++ signature */
-    def get_void_ptr_ref(self, key: ImGuiID, default_val: None = None) -> None:    # imgui.h:2271
+    def get_void_ptr_ref(self, key: ImGuiID, default_val: Any = None) -> Any:    # imgui.h:2271
         pass
 
     # IMGUI_API void      SetAllInt(int val);    /* original C++ signature */
-    def set_all_int(self, val: int) -> None:                                       # imgui.h:2274
+    def set_all_int(self, val: int) -> None:                                     # imgui.h:2274
         """ Use on your own storage if you know only integer are being stored (open/close all tree nodes)"""
         pass
 
     # IMGUI_API void      BuildSortByKey();    /* original C++ signature */
-    def build_sort_by_key(self) -> None:                                           # imgui.h:2277
+    def build_sort_by_key(self) -> None:                                         # imgui.h:2277
         """ For quicker full rebuild of a storage (instead of an incremental one), you may add all your contents and then sort once."""
         pass
 
@@ -4606,7 +4606,7 @@ class ImGuiListClipper:    # imgui.h:2300
     # float           StartPosY;    /* original C++ signature */
     start_pos_y:float                                                                  # [Internal] Cursor position at the time of Begin() or after table frozen rows are all processed    # imgui.h:2306
     # void*           TempData;    /* original C++ signature */
-    temp_data:None                                                                     # [Internal] Internal data    # imgui.h:2307
+    temp_data:Any                                                                      # [Internal] Internal data    # imgui.h:2307
 
     # IMGUI_API ImGuiListClipper();    /* original C++ signature */
     def __init__(self) -> None:                                                        # imgui.h:2311
@@ -4697,7 +4697,7 @@ class ImDrawCmd:    # imgui.h:2400
     # unsigned int    ElemCount;    /* original C++ signature */
     elem_count:int                 # 4    // Number of indices (multiple of 3) to be rendered as triangles. Vertices are stored in the callee ImDrawList's vtx_buffer[] array, indices in idx_buffer[].    # imgui.h:2406
     # void*           UserCallbackData;    /* original C++ signature */
-    user_callback_data:None        # 4-8  // The draw callback code can access this.    # imgui.h:2408
+    user_callback_data:Any         # 4-8  // The draw callback code can access this.    # imgui.h:2408
 
     # ImDrawCmd() { memset(this, 0, sizeof(*this)); }     /* original C++ signature */
     def __init__(self) -> None:    # imgui.h:2410
@@ -4813,45 +4813,45 @@ class ImDrawList:    # imgui.h:2505
     """
     # This is what you have to render
     # ImVector<ImDrawCmd>     CmdBuffer;    /* original C++ signature */
-    cmd_buffer:List[ImDrawCmd]                                                        # Draw commands. Typically 1 command = 1 GPU draw call, unless the command is a callback.    # imgui.h:2508
+    cmd_buffer:List[ImDrawCmd]                                                       # Draw commands. Typically 1 command = 1 GPU draw call, unless the command is a callback.    # imgui.h:2508
     # ImVector<ImDrawIdx>     IdxBuffer;    /* original C++ signature */
-    idx_buffer:List[ImDrawIdx]                                                        # Index buffer. Each command consume ImDrawCmd::ElemCount of those    # imgui.h:2509
+    idx_buffer:List[ImDrawIdx]                                                       # Index buffer. Each command consume ImDrawCmd::ElemCount of those    # imgui.h:2509
     # ImVector<ImDrawVert>    VtxBuffer;    /* original C++ signature */
-    vtx_buffer:List[ImDrawVert]                                                       # Vertex buffer.    # imgui.h:2510
+    vtx_buffer:List[ImDrawVert]                                                      # Vertex buffer.    # imgui.h:2510
     # ImDrawListFlags         Flags;    /* original C++ signature */
-    flags:ImDrawListFlags                                                             # Flags, you may poke into these to adjust anti-aliasing settings per-primitive.    # imgui.h:2511
+    flags:ImDrawListFlags                                                            # Flags, you may poke into these to adjust anti-aliasing settings per-primitive.    # imgui.h:2511
 
     # [Internal, used while building lists]
     # unsigned int            _VtxCurrentIdx;    /* original C++ signature */
-    _vtx_current_idx:int                                                              # [Internal] generally == VtxBuffer.Size unless we are past 64K vertices, in which case this gets reset to 0.    # imgui.h:2514
+    _vtx_current_idx:int                                                             # [Internal] generally == VtxBuffer.Size unless we are past 64K vertices, in which case this gets reset to 0.    # imgui.h:2514
     # const ImDrawListSharedData* _Data;    /* original C++ signature */
-    _data:ImDrawListSharedData                                                        # Pointer to shared draw data (you can use ImGui::GetDrawListSharedData() to get the one from current ImGui context)    # imgui.h:2515
+    _data:ImDrawListSharedData                                                       # Pointer to shared draw data (you can use ImGui::GetDrawListSharedData() to get the one from current ImGui context)    # imgui.h:2515
     # const char*             _OwnerName;    /* original C++ signature */
-    _owner_name:str                                                                   # Pointer to owner window's name for debugging    # imgui.h:2516
+    _owner_name:str                                                                  # Pointer to owner window's name for debugging    # imgui.h:2516
     # ImDrawVert*             _VtxWritePtr;    /* original C++ signature */
-    _vtx_write_ptr:ImDrawVert                                                         # [Internal] point within VtxBuffer.Data after each add command (to avoid using the ImVector<> operators too much)    # imgui.h:2517
+    _vtx_write_ptr:ImDrawVert                                                        # [Internal] point within VtxBuffer.Data after each add command (to avoid using the ImVector<> operators too much)    # imgui.h:2517
     # ImDrawIdx*              _IdxWritePtr;    /* original C++ signature */
-    _idx_write_ptr:ImDrawIdx                                                          # [Internal] point within IdxBuffer.Data after each add command (to avoid using the ImVector<> operators too much)    # imgui.h:2518
+    _idx_write_ptr:ImDrawIdx                                                         # [Internal] point within IdxBuffer.Data after each add command (to avoid using the ImVector<> operators too much)    # imgui.h:2518
     # ImVector<ImVec4>        _ClipRectStack;    /* original C++ signature */
-    _clip_rect_stack:List[ImVec4]                                                     # [Internal]    # imgui.h:2519
+    _clip_rect_stack:List[ImVec4]                                                    # [Internal]    # imgui.h:2519
     # ImVector<ImTextureID>   _TextureIdStack;    /* original C++ signature */
-    _texture_id_stack:List[ImTextureID]                                               # [Internal]    # imgui.h:2520
+    _texture_id_stack:List[ImTextureID]                                              # [Internal]    # imgui.h:2520
     # ImVector<ImVec2>        _Path;    /* original C++ signature */
-    _path:List[ImVec2]                                                                # [Internal] current path building    # imgui.h:2521
+    _path:List[ImVec2]                                                               # [Internal] current path building    # imgui.h:2521
     # ImDrawCmdHeader         _CmdHeader;    /* original C++ signature */
-    _cmd_header:ImDrawCmdHeader                                                       # [Internal] template of active commands. Fields should match those of CmdBuffer.back().    # imgui.h:2522
+    _cmd_header:ImDrawCmdHeader                                                      # [Internal] template of active commands. Fields should match those of CmdBuffer.back().    # imgui.h:2522
     # ImDrawListSplitter      _Splitter;    /* original C++ signature */
-    _splitter:ImDrawListSplitter                                                      # [Internal] for channels api (note: prefer using your own persistent instance of ImDrawListSplitter!)    # imgui.h:2523
+    _splitter:ImDrawListSplitter                                                     # [Internal] for channels api (note: prefer using your own persistent instance of ImDrawListSplitter!)    # imgui.h:2523
     # float                   _FringeScale;    /* original C++ signature */
-    _fringe_scale:float                                                               # [Internal] anti-alias fringe is scaled by this value, this helps to keep things sharp while zooming at vertex buffer content    # imgui.h:2524
+    _fringe_scale:float                                                              # [Internal] anti-alias fringe is scaled by this value, this helps to keep things sharp while zooming at vertex buffer content    # imgui.h:2524
 
     # ImDrawList(const ImDrawListSharedData* shared_data) { memset(this, 0, sizeof(*this)); _Data = shared_data; }    /* original C++ signature */
-    def __init__(self, shared_data: ImDrawListSharedData) -> None:                    # imgui.h:2527
+    def __init__(self, shared_data: ImDrawListSharedData) -> None:                   # imgui.h:2527
         """ If you want to create ImDrawList instances, pass them ImGui::GetDrawListSharedData() or create and use your own ImDrawListSharedData (so you can use ImDrawList without ImGui)"""
         pass
 
     # IMGUI_API void  PushClipRect(const ImVec2& clip_rect_min, const ImVec2& clip_rect_max, bool intersect_with_current_clip_rect = false);      /* original C++ signature */
-    def push_clip_rect(                                                               # imgui.h:2530
+    def push_clip_rect(                                                              # imgui.h:2530
         self,
         clip_rect_min: ImVec2,
         clip_rect_max: ImVec2,
@@ -4860,16 +4860,16 @@ class ImDrawList:    # imgui.h:2505
         """ Render-level scissoring. This is passed down to your render function but not used for CPU-side coarse clipping. Prefer using higher-level ImGui::PushClipRect() to affect logic (hit-testing and widget culling)"""
         pass
     # IMGUI_API void  PushClipRectFullScreen();    /* original C++ signature */
-    def push_clip_rect_full_screen(self) -> None:                                     # imgui.h:2531
+    def push_clip_rect_full_screen(self) -> None:                                    # imgui.h:2531
         pass
     # IMGUI_API void  PopClipRect();    /* original C++ signature */
-    def pop_clip_rect(self) -> None:                                                  # imgui.h:2532
+    def pop_clip_rect(self) -> None:                                                 # imgui.h:2532
         pass
     # IMGUI_API void  PushTextureID(ImTextureID texture_id);    /* original C++ signature */
-    def push_texture_id(self, texture_id: ImTextureID) -> None:                       # imgui.h:2533
+    def push_texture_id(self, texture_id: ImTextureID) -> None:                      # imgui.h:2533
         pass
     # IMGUI_API void  PopTextureID();    /* original C++ signature */
-    def pop_texture_id(self) -> None:                                                 # imgui.h:2534
+    def pop_texture_id(self) -> None:                                                # imgui.h:2534
         pass
 
     # Primitives
@@ -4880,7 +4880,7 @@ class ImDrawList:    # imgui.h:2505
     #   In future versions we will use textures to provide cheaper and higher-quality circles.
     #   Use AddNgon() and AddNgonFilled() functions if you need to guaranteed a specific number of sides.
     # IMGUI_API void  AddLine(const ImVec2& p1, const ImVec2& p2, ImU32 col, float thickness = 1.0f);    /* original C++ signature */
-    def add_line(                                                                     # imgui.h:2545
+    def add_line(                                                                    # imgui.h:2545
         self,
         p1: ImVec2,
         p2: ImVec2,
@@ -4889,7 +4889,7 @@ class ImDrawList:    # imgui.h:2505
         ) -> None:
         pass
     # IMGUI_API void  AddRect(const ImVec2& p_min, const ImVec2& p_max, ImU32 col, float rounding = 0.0f, ImDrawFlags flags = 0, float thickness = 1.0f);       /* original C++ signature */
-    def add_rect(                                                                     # imgui.h:2546
+    def add_rect(                                                                    # imgui.h:2546
         self,
         p_min: ImVec2,
         p_max: ImVec2,
@@ -4901,7 +4901,7 @@ class ImDrawList:    # imgui.h:2505
         """ a: upper-left, b: lower-right (== upper-left + size)"""
         pass
     # IMGUI_API void  AddRectFilled(const ImVec2& p_min, const ImVec2& p_max, ImU32 col, float rounding = 0.0f, ImDrawFlags flags = 0);                         /* original C++ signature */
-    def add_rect_filled(                                                              # imgui.h:2547
+    def add_rect_filled(                                                             # imgui.h:2547
         self,
         p_min: ImVec2,
         p_max: ImVec2,
@@ -4912,7 +4912,7 @@ class ImDrawList:    # imgui.h:2505
         """ a: upper-left, b: lower-right (== upper-left + size)"""
         pass
     # IMGUI_API void  AddRectFilledMultiColor(const ImVec2& p_min, const ImVec2& p_max, ImU32 col_upr_left, ImU32 col_upr_right, ImU32 col_bot_right, ImU32 col_bot_left);    /* original C++ signature */
-    def add_rect_filled_multi_color(                                                  # imgui.h:2548
+    def add_rect_filled_multi_color(                                                 # imgui.h:2548
         self,
         p_min: ImVec2,
         p_max: ImVec2,
@@ -4923,7 +4923,7 @@ class ImDrawList:    # imgui.h:2505
         ) -> None:
         pass
     # IMGUI_API void  AddQuad(const ImVec2& p1, const ImVec2& p2, const ImVec2& p3, const ImVec2& p4, ImU32 col, float thickness = 1.0f);    /* original C++ signature */
-    def add_quad(                                                                     # imgui.h:2549
+    def add_quad(                                                                    # imgui.h:2549
         self,
         p1: ImVec2,
         p2: ImVec2,
@@ -4934,7 +4934,7 @@ class ImDrawList:    # imgui.h:2505
         ) -> None:
         pass
     # IMGUI_API void  AddQuadFilled(const ImVec2& p1, const ImVec2& p2, const ImVec2& p3, const ImVec2& p4, ImU32 col);    /* original C++ signature */
-    def add_quad_filled(                                                              # imgui.h:2550
+    def add_quad_filled(                                                             # imgui.h:2550
         self,
         p1: ImVec2,
         p2: ImVec2,
@@ -4944,7 +4944,7 @@ class ImDrawList:    # imgui.h:2505
         ) -> None:
         pass
     # IMGUI_API void  AddTriangle(const ImVec2& p1, const ImVec2& p2, const ImVec2& p3, ImU32 col, float thickness = 1.0f);    /* original C++ signature */
-    def add_triangle(                                                                 # imgui.h:2551
+    def add_triangle(                                                                # imgui.h:2551
         self,
         p1: ImVec2,
         p2: ImVec2,
@@ -4954,7 +4954,7 @@ class ImDrawList:    # imgui.h:2505
         ) -> None:
         pass
     # IMGUI_API void  AddTriangleFilled(const ImVec2& p1, const ImVec2& p2, const ImVec2& p3, ImU32 col);    /* original C++ signature */
-    def add_triangle_filled(                                                          # imgui.h:2552
+    def add_triangle_filled(                                                         # imgui.h:2552
         self,
         p1: ImVec2,
         p2: ImVec2,
@@ -4963,7 +4963,7 @@ class ImDrawList:    # imgui.h:2505
         ) -> None:
         pass
     # IMGUI_API void  AddCircle(const ImVec2& center, float radius, ImU32 col, int num_segments = 0, float thickness = 1.0f);    /* original C++ signature */
-    def add_circle(                                                                   # imgui.h:2553
+    def add_circle(                                                                  # imgui.h:2553
         self,
         center: ImVec2,
         radius: float,
@@ -4973,7 +4973,7 @@ class ImDrawList:    # imgui.h:2505
         ) -> None:
         pass
     # IMGUI_API void  AddCircleFilled(const ImVec2& center, float radius, ImU32 col, int num_segments = 0);    /* original C++ signature */
-    def add_circle_filled(                                                            # imgui.h:2554
+    def add_circle_filled(                                                           # imgui.h:2554
         self,
         center: ImVec2,
         radius: float,
@@ -4982,7 +4982,7 @@ class ImDrawList:    # imgui.h:2505
         ) -> None:
         pass
     # IMGUI_API void  AddNgon(const ImVec2& center, float radius, ImU32 col, int num_segments, float thickness = 1.0f);    /* original C++ signature */
-    def add_ngon(                                                                     # imgui.h:2555
+    def add_ngon(                                                                    # imgui.h:2555
         self,
         center: ImVec2,
         radius: float,
@@ -4992,7 +4992,7 @@ class ImDrawList:    # imgui.h:2505
         ) -> None:
         pass
     # IMGUI_API void  AddNgonFilled(const ImVec2& center, float radius, ImU32 col, int num_segments);    /* original C++ signature */
-    def add_ngon_filled(                                                              # imgui.h:2556
+    def add_ngon_filled(                                                             # imgui.h:2556
         self,
         center: ImVec2,
         radius: float,
@@ -5001,7 +5001,7 @@ class ImDrawList:    # imgui.h:2505
         ) -> None:
         pass
     # IMGUI_API void  AddText(const ImVec2& pos, ImU32 col, const char* text_begin, const char* text_end = NULL);    /* original C++ signature */
-    def add_text(                                                                     # imgui.h:2557
+    def add_text(                                                                    # imgui.h:2557
         self,
         pos: ImVec2,
         col: ImU32,
@@ -5010,7 +5010,7 @@ class ImDrawList:    # imgui.h:2505
         ) -> None:
         pass
     # IMGUI_API void  AddText(const ImFont* font, float font_size, const ImVec2& pos, ImU32 col, const char* text_begin, const char* text_end = NULL, float wrap_width = 0.0f, const ImVec4* cpu_fine_clip_rect = NULL);    /* original C++ signature */
-    def add_text(                                                                     # imgui.h:2558
+    def add_text(                                                                    # imgui.h:2558
         self,
         font: ImFont,
         font_size: float,
@@ -5023,7 +5023,7 @@ class ImDrawList:    # imgui.h:2505
         ) -> None:
         pass
     # IMGUI_API void  AddPolyline(const ImVec2* points, int num_points, ImU32 col, ImDrawFlags flags, float thickness);    /* original C++ signature */
-    def add_polyline(                                                                 # imgui.h:2559
+    def add_polyline(                                                                # imgui.h:2559
         self,
         points: ImVec2,
         num_points: int,
@@ -5033,7 +5033,7 @@ class ImDrawList:    # imgui.h:2505
         ) -> None:
         pass
     # IMGUI_API void  AddConvexPolyFilled(const ImVec2* points, int num_points, ImU32 col);    /* original C++ signature */
-    def add_convex_poly_filled(                                                       # imgui.h:2560
+    def add_convex_poly_filled(                                                      # imgui.h:2560
         self,
         points: ImVec2,
         num_points: int,
@@ -5041,7 +5041,7 @@ class ImDrawList:    # imgui.h:2505
         ) -> None:
         pass
     # IMGUI_API void  AddBezierCubic(const ImVec2& p1, const ImVec2& p2, const ImVec2& p3, const ImVec2& p4, ImU32 col, float thickness, int num_segments = 0);     /* original C++ signature */
-    def add_bezier_cubic(                                                             # imgui.h:2561
+    def add_bezier_cubic(                                                            # imgui.h:2561
         self,
         p1: ImVec2,
         p2: ImVec2,
@@ -5054,7 +5054,7 @@ class ImDrawList:    # imgui.h:2505
         """ Cubic Bezier (4 control points)"""
         pass
     # IMGUI_API void  AddBezierQuadratic(const ImVec2& p1, const ImVec2& p2, const ImVec2& p3, ImU32 col, float thickness, int num_segments = 0);                   /* original C++ signature */
-    def add_bezier_quadratic(                                                         # imgui.h:2562
+    def add_bezier_quadratic(                                                        # imgui.h:2562
         self,
         p1: ImVec2,
         p2: ImVec2,
@@ -5071,7 +5071,7 @@ class ImDrawList:    # imgui.h:2505
     # - "p_min" and "p_max" represent the upper-left and lower-right corners of the rectangle.
     # - "uv_min" and "uv_max" represent the normalized texture coordinates to use for those corners. Using (0,0)->(1,1) texture coordinates will generally display the entire texture.
     # IMGUI_API void  AddImage(ImTextureID user_texture_id, const ImVec2& p_min, const ImVec2& p_max, const ImVec2& uv_min = ImVec2(0, 0), const ImVec2& uv_max = ImVec2(1, 1), ImU32 col = IM_COL32_WHITE);    /* original C++ signature */
-    def add_image(                                                                    # imgui.h:2568
+    def add_image(                                                                   # imgui.h:2568
         self,
         user_texture_id: ImTextureID,
         p_min: ImVec2,
@@ -5082,7 +5082,7 @@ class ImDrawList:    # imgui.h:2505
         ) -> None:
         pass
     # IMGUI_API void  AddImageQuad(ImTextureID user_texture_id, const ImVec2& p1, const ImVec2& p2, const ImVec2& p3, const ImVec2& p4, const ImVec2& uv1 = ImVec2(0, 0), const ImVec2& uv2 = ImVec2(1, 0), const ImVec2& uv3 = ImVec2(1, 1), const ImVec2& uv4 = ImVec2(0, 1), ImU32 col = IM_COL32_WHITE);    /* original C++ signature */
-    def add_image_quad(                                                               # imgui.h:2569
+    def add_image_quad(                                                              # imgui.h:2569
         self,
         user_texture_id: ImTextureID,
         p1: ImVec2,
@@ -5097,7 +5097,7 @@ class ImDrawList:    # imgui.h:2505
         ) -> None:
         pass
     # IMGUI_API void  AddImageRounded(ImTextureID user_texture_id, const ImVec2& p_min, const ImVec2& p_max, const ImVec2& uv_min, const ImVec2& uv_max, ImU32 col, float rounding, ImDrawFlags flags = 0);    /* original C++ signature */
-    def add_image_rounded(                                                            # imgui.h:2570
+    def add_image_rounded(                                                           # imgui.h:2570
         self,
         user_texture_id: ImTextureID,
         p_min: ImVec2,
@@ -5113,7 +5113,7 @@ class ImDrawList:    # imgui.h:2505
     # Stateful path API, add points then finish with PathFillConvex() or PathStroke()
     # - Filled shapes must always use clockwise winding order. The anti-aliasing fringe depends on it. Counter-clockwise shapes will have "inward" anti-aliasing.
     # IMGUI_API void  PathArcTo(const ImVec2& center, float radius, float a_min, float a_max, int num_segments = 0);    /* original C++ signature */
-    def path_arc_to(                                                                  # imgui.h:2579
+    def path_arc_to(                                                                 # imgui.h:2579
         self,
         center: ImVec2,
         radius: float,
@@ -5123,7 +5123,7 @@ class ImDrawList:    # imgui.h:2505
         ) -> None:
         pass
     # IMGUI_API void  PathArcToFast(const ImVec2& center, float radius, int a_min_of_12, int a_max_of_12);                    /* original C++ signature */
-    def path_arc_to_fast(                                                             # imgui.h:2580
+    def path_arc_to_fast(                                                            # imgui.h:2580
         self,
         center: ImVec2,
         radius: float,
@@ -5133,7 +5133,7 @@ class ImDrawList:    # imgui.h:2505
         """ Use precomputed angles for a 12 steps circle"""
         pass
     # IMGUI_API void  PathBezierCubicCurveTo(const ImVec2& p2, const ImVec2& p3, const ImVec2& p4, int num_segments = 0);     /* original C++ signature */
-    def path_bezier_cubic_curve_to(                                                   # imgui.h:2581
+    def path_bezier_cubic_curve_to(                                                  # imgui.h:2581
         self,
         p2: ImVec2,
         p3: ImVec2,
@@ -5143,7 +5143,7 @@ class ImDrawList:    # imgui.h:2505
         """ Cubic Bezier (4 control points)"""
         pass
     # IMGUI_API void  PathBezierQuadraticCurveTo(const ImVec2& p2, const ImVec2& p3, int num_segments = 0);                   /* original C++ signature */
-    def path_bezier_quadratic_curve_to(                                               # imgui.h:2582
+    def path_bezier_quadratic_curve_to(                                              # imgui.h:2582
         self,
         p2: ImVec2,
         p3: ImVec2,
@@ -5152,7 +5152,7 @@ class ImDrawList:    # imgui.h:2505
         """ Quadratic Bezier (3 control points)"""
         pass
     # IMGUI_API void  PathRect(const ImVec2& rect_min, const ImVec2& rect_max, float rounding = 0.0f, ImDrawFlags flags = 0);    /* original C++ signature */
-    def path_rect(                                                                    # imgui.h:2583
+    def path_rect(                                                                   # imgui.h:2583
         self,
         rect_min: ImVec2,
         rect_max: ImVec2,
@@ -5163,15 +5163,15 @@ class ImDrawList:    # imgui.h:2505
 
     # Advanced
     # IMGUI_API void  AddCallback(ImDrawCallback callback, void* callback_data);      /* original C++ signature */
-    def add_callback(self, callback: ImDrawCallback, callback_data: None) -> None:    # imgui.h:2586
+    def add_callback(self, callback: ImDrawCallback, callback_data: Any) -> None:    # imgui.h:2586
         """ Your rendering function must check for 'UserCallback' in ImDrawCmd and call the function instead of rendering triangles."""
         pass
     # IMGUI_API void  AddDrawCmd();                                                   /* original C++ signature */
-    def add_draw_cmd(self) -> None:                                                   # imgui.h:2587
+    def add_draw_cmd(self) -> None:                                                  # imgui.h:2587
         """ This is useful if you need to forcefully create a new draw call (to allow for dependent rendering / blending). Otherwise primitives are merged into the same draw-call as much as possible"""
         pass
     # IMGUI_API ImDrawList* CloneOutput() const;                                      /* original C++ signature */
-    def clone_output(self) -> ImDrawList:                                             # imgui.h:2588
+    def clone_output(self) -> ImDrawList:                                            # imgui.h:2588
         """ Create a clone of the CmdBuffer/IdxBuffer/VtxBuffer."""
         pass
 
@@ -5186,13 +5186,13 @@ class ImDrawList:    # imgui.h:2505
     # - We render triangles (three vertices)
     # - All primitives needs to be reserved via PrimReserve() beforehand.
     # IMGUI_API void  PrimReserve(int idx_count, int vtx_count);    /* original C++ signature */
-    def prim_reserve(self, idx_count: int, vtx_count: int) -> None:                   # imgui.h:2603
+    def prim_reserve(self, idx_count: int, vtx_count: int) -> None:                  # imgui.h:2603
         pass
     # IMGUI_API void  PrimUnreserve(int idx_count, int vtx_count);    /* original C++ signature */
-    def prim_unreserve(self, idx_count: int, vtx_count: int) -> None:                 # imgui.h:2604
+    def prim_unreserve(self, idx_count: int, vtx_count: int) -> None:                # imgui.h:2604
         pass
     # IMGUI_API void  PrimRect(const ImVec2& a, const ImVec2& b, ImU32 col);          /* original C++ signature */
-    def prim_rect(self, a: ImVec2, b: ImVec2, col: ImU32) -> None:                    # imgui.h:2605
+    def prim_rect(self, a: ImVec2, b: ImVec2, col: ImU32) -> None:                   # imgui.h:2605
         """ Axis aligned rectangle (composed of two triangles)"""
         pass
     # Write vertex with unique index
@@ -5200,31 +5200,31 @@ class ImDrawList:    # imgui.h:2505
 
     # [Internal helpers]
     # IMGUI_API void  _ResetForNewFrame();    /* original C++ signature */
-    def _reset_for_new_frame(self) -> None:                                           # imgui.h:2618
+    def _reset_for_new_frame(self) -> None:                                          # imgui.h:2618
         pass
     # IMGUI_API void  _ClearFreeMemory();    /* original C++ signature */
-    def _clear_free_memory(self) -> None:                                             # imgui.h:2619
+    def _clear_free_memory(self) -> None:                                            # imgui.h:2619
         pass
     # IMGUI_API void  _PopUnusedDrawCmd();    /* original C++ signature */
-    def _pop_unused_draw_cmd(self) -> None:                                           # imgui.h:2620
+    def _pop_unused_draw_cmd(self) -> None:                                          # imgui.h:2620
         pass
     # IMGUI_API void  _TryMergeDrawCmds();    /* original C++ signature */
-    def _try_merge_draw_cmds(self) -> None:                                           # imgui.h:2621
+    def _try_merge_draw_cmds(self) -> None:                                          # imgui.h:2621
         pass
     # IMGUI_API void  _OnChangedClipRect();    /* original C++ signature */
-    def _on_changed_clip_rect(self) -> None:                                          # imgui.h:2622
+    def _on_changed_clip_rect(self) -> None:                                         # imgui.h:2622
         pass
     # IMGUI_API void  _OnChangedTextureID();    /* original C++ signature */
-    def _on_changed_texture_id(self) -> None:                                         # imgui.h:2623
+    def _on_changed_texture_id(self) -> None:                                        # imgui.h:2623
         pass
     # IMGUI_API void  _OnChangedVtxOffset();    /* original C++ signature */
-    def _on_changed_vtx_offset(self) -> None:                                         # imgui.h:2624
+    def _on_changed_vtx_offset(self) -> None:                                        # imgui.h:2624
         pass
     # IMGUI_API int   _CalcCircleAutoSegmentCount(float radius) const;    /* original C++ signature */
-    def _calc_circle_auto_segment_count(self, radius: float) -> int:                  # imgui.h:2625
+    def _calc_circle_auto_segment_count(self, radius: float) -> int:                 # imgui.h:2625
         pass
     # IMGUI_API void  _PathArcToFastEx(const ImVec2& center, float radius, int a_min_sample, int a_max_sample, int a_step);    /* original C++ signature */
-    def _path_arc_to_fast_ex(                                                         # imgui.h:2626
+    def _path_arc_to_fast_ex(                                                        # imgui.h:2626
         self,
         center: ImVec2,
         radius: float,
@@ -5234,7 +5234,7 @@ class ImDrawList:    # imgui.h:2505
         ) -> None:
         pass
     # IMGUI_API void  _PathArcToN(const ImVec2& center, float radius, float a_min, float a_max, int num_segments);    /* original C++ signature */
-    def _path_arc_to_n(                                                               # imgui.h:2627
+    def _path_arc_to_n(                                                              # imgui.h:2627
         self,
         center: ImVec2,
         radius: float,
@@ -5283,7 +5283,7 @@ class ImDrawData:    # imgui.h:2633
 
 class ImFontConfig:    # imgui.h:2655
     # void*           FontData;    /* original C++ signature */
-    font_data:None                 #          // TTF/OTF data    # imgui.h:2657
+    font_data:Any                  #          // TTF/OTF data    # imgui.h:2657
     # int             FontDataSize;    /* original C++ signature */
     font_data_size:int             #          // TTF/OTF data size    # imgui.h:2658
     # bool            FontDataOwnedByAtlas;    /* original C++ signature */
@@ -5444,7 +5444,7 @@ class ImFontAtlas:    # imgui.h:2749
     # IMGUI_API ImFont*           AddFontFromMemoryTTF(void* font_data, int font_size, float size_pixels, const ImFontConfig* font_cfg = NULL, const ImWchar* glyph_ranges = NULL);     /* original C++ signature */
     def add_font_from_memory_ttf(                                           # imgui.h:2756
         self,
-        font_data: None,
+        font_data: Any,
         font_size: int,
         size_pixels: float,
         font_cfg: ImFontConfig = None,
@@ -5455,7 +5455,7 @@ class ImFontAtlas:    # imgui.h:2749
     # IMGUI_API ImFont*           AddFontFromMemoryCompressedTTF(const void* compressed_font_data, int compressed_font_size, float size_pixels, const ImFontConfig* font_cfg = NULL, const ImWchar* glyph_ranges = NULL);     /* original C++ signature */
     def add_font_from_memory_compressed_ttf(                                # imgui.h:2757
         self,
-        compressed_font_data: None,
+        compressed_font_data: Any,
         compressed_font_size: int,
         size_pixels: float,
         font_cfg: ImFontConfig = None,
@@ -5806,7 +5806,7 @@ class ImGuiViewport:    # imgui.h:2921
 
     # Platform/Backend Dependent Data
     # void*               PlatformHandleRaw;    /* original C++ signature */
-    platform_handle_raw:None       # None* to hold lower-level, platform-native window handle (under Win32 this is expected to be a HWND, unused for other platforms)    # imgui.h:2930
+    platform_handle_raw:Any        # None* to hold lower-level, platform-native window handle (under Win32 this is expected to be a HWND, unused for other platforms)    # imgui.h:2930
 
     # ImGuiViewport()     { memset(this, 0, sizeof(*this)); }    /* original C++ signature */
     def __init__(self) -> None:    # imgui.h:2932

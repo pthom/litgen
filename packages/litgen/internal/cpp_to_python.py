@@ -429,6 +429,7 @@ def standard_code_replacements() -> List[StringReplacement]:
     \bstd::vector\s*<\s*([\w:]*)\s*> -> List[\1]
     \bstd::array\s*<\s*([\w:]*)\s*,\s*([\w:])\s*> -> List[\1]
 
+    \bvoid\s*\* -> Any
     \bvoid\b -> None
     \bNULL\b -> None
     \bnullptr\b -> None
