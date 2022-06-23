@@ -4358,8 +4358,6 @@ class ImGuiInputTextCallbackData:    # imgui.h:2076
     event_char:ImWchar                                                            # Character input                      // Read-write   // [CharFilter] Replace character with another one, or set to zero to drop. return 1 is equivalent to setting EventChar=0;    # imgui.h:2085
     # ImGuiKey            EventKey;    /* original C++ signature */
     event_key:ImGuiKey                                                            # Key pressed (Up/Down/TAB)            // Read-only    // [Completion,History]    # imgui.h:2086
-    # char*               Buf;    /* original C++ signature */
-    buf:char                                                                      # Text buffer                          // Read-write   // [Resize] Can replace pointer / [Completion,History,Always] Only write to pointed data, don't replace the actual pointer!    # imgui.h:2087
     # int                 BufTextLen;    /* original C++ signature */
     buf_text_len:int                                                              # Text length (in bytes)               // Read-write   // [Resize,Completion,History,Always] Exclude zero-terminator storage. In C land: == strlen(some_text), in C++ land: string.length()    # imgui.h:2088
     # int                 BufSize;    /* original C++ signature */
@@ -5302,8 +5300,6 @@ class ImFontConfig:    # imgui.h:2655
     glyph_extra_spacing:ImVec2     # 0, 0     // Extra spacing (in pixels) between glyphs. Only X axis is supported for now.    # imgui.h:2665
     # ImVec2          GlyphOffset;    /* original C++ signature */
     glyph_offset:ImVec2            # 0, 0     // Offset all glyphs from this font input.    # imgui.h:2666
-    # const ImWchar*  GlyphRanges;    /* original C++ signature */
-    glyph_ranges:ImWchar           # None     // Pointer to a user-provided list of Unicode range (2 value per range, values are inclusive, zero-terminated list). THE ARRAY DATA NEEDS TO PERSIST AS LONG AS THE FONT IS ALIVE.    # imgui.h:2667
     # float           GlyphMinAdvanceX;    /* original C++ signature */
     glyph_min_advance_x:float      # 0        // Minimum AdvanceX for glyphs, set Min to align font icons, set both Min/Max to enforce mono-space font    # imgui.h:2668
     # float           GlyphMaxAdvanceX;    /* original C++ signature */
@@ -5601,10 +5597,6 @@ class ImFontAtlas:    # imgui.h:2749
     tex_ready:bool                                                          # Set when texture was built matching current font input    # imgui.h:2822
     # bool                        TexPixelsUseColors;    /* original C++ signature */
     tex_pixels_use_colors:bool                                              # Tell whether our texture data is known to use colors (rather than just alpha channel), in order to help backend select a format.    # imgui.h:2823
-    # unsigned char*              TexPixelsAlpha8;    /* original C++ signature */
-    tex_pixels_alpha8:unsigned char                                         # 1 component per pixel, each component is unsigned 8-bit. Total size = TexWidth * TexHeight    # imgui.h:2824
-    # unsigned int*               TexPixelsRGBA32;    /* original C++ signature */
-    tex_pixels_rgba32:int                                                   # 4 component per pixel, each component is unsigned 8-bit. Total size = TexWidth * TexHeight * 4    # imgui.h:2825
     # int                         TexWidth;    /* original C++ signature */
     tex_width:int                                                           # Texture width calculated during Build().    # imgui.h:2826
     # int                         TexHeight;    /* original C++ signature */

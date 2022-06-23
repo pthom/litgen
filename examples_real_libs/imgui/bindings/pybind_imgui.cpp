@@ -4209,8 +4209,8 @@ void py_init_module_imgui(py::module& m)
         .def_readwrite("display_size", &ImGuiIO::DisplaySize, "<unset>          // Main display size, in pixels (generally == GetMainViewport()->Size). May change every frame.")    // imgui.h:1913
         .def_readwrite("delta_time", &ImGuiIO::DeltaTime, "= 1.0/60.0     // Time elapsed since last frame, in seconds. May change every frame.")    // imgui.h:1914
         .def_readwrite("ini_saving_rate", &ImGuiIO::IniSavingRate, "= 5.0           // Minimum time between saving positions/sizes to .ini file, in seconds.")    // imgui.h:1915
-        .def_readwrite("ini_filename", &ImGuiIO::IniFilename, "= \"imgui.ini\"    // Path to .ini file (important: default \"imgui.ini\" is relative to current working dir!). Set None to disable automatic .ini loading/saving or if you want to manually call LoadIniSettingsXXX() / SaveIniSettingsXXX() functions.")    // imgui.h:1916
-        .def_readwrite("log_filename", &ImGuiIO::LogFilename, "= \"imgui_log.txt\"// Path to .log file (default parameter to ImGui::LogToFile when no file is specified).")    // imgui.h:1917
+        .def_readonly("ini_filename", &ImGuiIO::IniFilename, "= \"imgui.ini\"    // Path to .ini file (important: default \"imgui.ini\" is relative to current working dir!). Set None to disable automatic .ini loading/saving or if you want to manually call LoadIniSettingsXXX() / SaveIniSettingsXXX() functions.")    // imgui.h:1916
+        .def_readonly("log_filename", &ImGuiIO::LogFilename, "= \"imgui_log.txt\"// Path to .log file (default parameter to ImGui::LogToFile when no file is specified).")    // imgui.h:1917
         .def_readwrite("mouse_double_click_time", &ImGuiIO::MouseDoubleClickTime, "= 0.30          // Time for a double-click, in seconds.")    // imgui.h:1918
         .def_readwrite("mouse_double_click_max_dist", &ImGuiIO::MouseDoubleClickMaxDist, "= 6.0           // Distance threshold to stay in to validate a double-click, in pixels.")    // imgui.h:1919
         .def_readwrite("mouse_drag_threshold", &ImGuiIO::MouseDragThreshold, "= 6.0           // Distance threshold before considering we are dragging.")    // imgui.h:1920
@@ -4230,8 +4230,8 @@ void py_init_module_imgui(py::module& m)
         .def_readwrite("config_windows_resize_from_edges", &ImGuiIO::ConfigWindowsResizeFromEdges, "= True           // Enable resizing of windows from their edges and from the lower-left corner. This requires (io.BackendFlags & ImGuiBackendFlags_HasMouseCursors) because it needs mouse cursor feedback. (This used to be a per-window ImGuiWindowFlags_ResizeFromAnySide flag)")    // imgui.h:1937
         .def_readwrite("config_windows_move_from_title_bar_only", &ImGuiIO::ConfigWindowsMoveFromTitleBarOnly, "= False       // Enable allowing to move windows only when clicking on their title bar. Does not apply to windows without a title bar.")    // imgui.h:1938
         .def_readwrite("config_memory_compact_timer", &ImGuiIO::ConfigMemoryCompactTimer, "= 60.0          // Timer (in seconds) to free transient windows/tables memory buffers when unused. Set to -1.0 to disable.")    // imgui.h:1939
-        .def_readwrite("backend_platform_name", &ImGuiIO::BackendPlatformName, "= None")    // imgui.h:1947
-        .def_readwrite("backend_renderer_name", &ImGuiIO::BackendRendererName, "= None")    // imgui.h:1948
+        .def_readonly("backend_platform_name", &ImGuiIO::BackendPlatformName, "= None")    // imgui.h:1947
+        .def_readonly("backend_renderer_name", &ImGuiIO::BackendRendererName, "= None")    // imgui.h:1948
         .def_readwrite("backend_platform_user_data", &ImGuiIO::BackendPlatformUserData, "= None           // User data for platform backend")    // imgui.h:1949
         .def_readwrite("backend_renderer_user_data", &ImGuiIO::BackendRendererUserData, "= None           // User data for renderer backend")    // imgui.h:1950
         .def_readwrite("backend_language_user_data", &ImGuiIO::BackendLanguageUserData, "= None           // User data for non C++ programming language backend")    // imgui.h:1951
@@ -4476,7 +4476,6 @@ void py_init_module_imgui(py::module& m)
         .def_readwrite("user_data", &ImGuiInputTextCallbackData::UserData, "What user passed to InputText()      // Read-only")    // imgui.h:2080
         .def_readwrite("event_char", &ImGuiInputTextCallbackData::EventChar, "Character input                      // Read-write   // [CharFilter] Replace character with another one, or set to zero to drop. return 1 is equivalent to setting EventChar=0;")    // imgui.h:2085
         .def_readwrite("event_key", &ImGuiInputTextCallbackData::EventKey, "Key pressed (Up/Down/TAB)            // Read-only    // [Completion,History]")    // imgui.h:2086
-        .def_readwrite("buf", &ImGuiInputTextCallbackData::Buf, "Text buffer                          // Read-write   // [Resize] Can replace pointer / [Completion,History,Always] Only write to pointed data, don't replace the actual pointer!")    // imgui.h:2087
         .def_readwrite("buf_text_len", &ImGuiInputTextCallbackData::BufTextLen, "Text length (in bytes)               // Read-write   // [Resize,Completion,History,Always] Exclude zero-terminator storage. In C land: == strlen(some_text), in C++ land: string.length()")    // imgui.h:2088
         .def_readwrite("buf_size", &ImGuiInputTextCallbackData::BufSize, "Buffer size (in bytes) = capacity+1  // Read-only    // [Resize,Completion,History,Always] Include zero-terminator storage. In C land == ARRAYSIZE(my_char_array), in C++ land: string.capacity()+1")    // imgui.h:2089
         .def_readwrite("buf_dirty", &ImGuiInputTextCallbackData::BufDirty, "Set if you modify Buf/BufTextLen!    // Write        // [Completion,History,Always]")    // imgui.h:2090
@@ -4535,7 +4534,7 @@ void py_init_module_imgui(py::module& m)
 
     auto pyClassImGuiTableSortSpecs = py::class_<ImGuiTableSortSpecs>    // imgui.h:2152
         (m, "ImGuiTableSortSpecs", " Sorting specifications for a table (often handling sort specs for a single column, occasionally more)\n Obtained by calling TableGetSortSpecs().\n When 'SpecsDirty == True' you can sort your data. It will be True with sorting specs have changed since last call, or the first time.\n Make sure to set 'SpecsDirty = False' after sorting, else you may wastefully sort your data every frame!")
-        .def_readwrite("specs", &ImGuiTableSortSpecs::Specs, "Pointer to sort spec array.")    // imgui.h:2154
+        .def_readonly("specs", &ImGuiTableSortSpecs::Specs, "Pointer to sort spec array.")    // imgui.h:2154
         .def_readwrite("specs_count", &ImGuiTableSortSpecs::SpecsCount, "Sort spec count. Most often 1. May be > 1 when ImGuiTableFlags_SortMulti is enabled. May be == 0 when ImGuiTableFlags_SortTristate is enabled.")    // imgui.h:2155
         .def_readwrite("specs_dirty", &ImGuiTableSortSpecs::SpecsDirty, "Set to True when specs have changed since last time! Use this to sort again, then clear the flag.")    // imgui.h:2156
         .def(py::init<>())    // imgui.h:2158
@@ -4867,8 +4866,8 @@ void py_init_module_imgui(py::module& m)
         .def_readwrite("vtx_buffer", &ImDrawList::VtxBuffer, "Vertex buffer.")    // imgui.h:2510
         .def_readwrite("flags", &ImDrawList::Flags, "Flags, you may poke into these to adjust anti-aliasing settings per-primitive.")    // imgui.h:2511
         .def_readwrite("_vtx_current_idx", &ImDrawList::_VtxCurrentIdx, "[Internal] generally == VtxBuffer.Size unless we are past 64K vertices, in which case this gets reset to 0.")    // imgui.h:2514
-        .def_readwrite("_data", &ImDrawList::_Data, "Pointer to shared draw data (you can use ImGui::GetDrawListSharedData() to get the one from current ImGui context)")    // imgui.h:2515
-        .def_readwrite("_owner_name", &ImDrawList::_OwnerName, "Pointer to owner window's name for debugging")    // imgui.h:2516
+        .def_readonly("_data", &ImDrawList::_Data, "Pointer to shared draw data (you can use ImGui::GetDrawListSharedData() to get the one from current ImGui context)")    // imgui.h:2515
+        .def_readonly("_owner_name", &ImDrawList::_OwnerName, "Pointer to owner window's name for debugging")    // imgui.h:2516
         .def_readwrite("_vtx_write_ptr", &ImDrawList::_VtxWritePtr, "[Internal] point within VtxBuffer.Data after each add command (to avoid using the ImVector<> operators too much)")    // imgui.h:2517
         .def_readwrite("_idx_write_ptr", &ImDrawList::_IdxWritePtr, "[Internal] point within IdxBuffer.Data after each add command (to avoid using the ImVector<> operators too much)")    // imgui.h:2518
         .def_readwrite("_clip_rect_stack", &ImDrawList::_ClipRectStack, "[Internal]")    // imgui.h:2519
@@ -5253,7 +5252,6 @@ void py_init_module_imgui(py::module& m)
         .def_readwrite("pixel_snap_h", &ImFontConfig::PixelSnapH, "False    // Align every glyph to pixel boundary. Useful e.g. if you are merging a non-pixel aligned font with the default font. If enabled, you can set OversampleH/V to 1.")    // imgui.h:2664
         .def_readwrite("glyph_extra_spacing", &ImFontConfig::GlyphExtraSpacing, "0, 0     // Extra spacing (in pixels) between glyphs. Only X axis is supported for now.")    // imgui.h:2665
         .def_readwrite("glyph_offset", &ImFontConfig::GlyphOffset, "0, 0     // Offset all glyphs from this font input.")    // imgui.h:2666
-        .def_readwrite("glyph_ranges", &ImFontConfig::GlyphRanges, "None     // Pointer to a user-provided list of Unicode range (2 value per range, values are inclusive, zero-terminated list). THE ARRAY DATA NEEDS TO PERSIST AS LONG AS THE FONT IS ALIVE.")    // imgui.h:2667
         .def_readwrite("glyph_min_advance_x", &ImFontConfig::GlyphMinAdvanceX, "0        // Minimum AdvanceX for glyphs, set Min to align font icons, set both Min/Max to enforce mono-space font")    // imgui.h:2668
         .def_readwrite("glyph_max_advance_x", &ImFontConfig::GlyphMaxAdvanceX, "FLT_MAX  // Maximum AdvanceX for glyphs")    // imgui.h:2669
         .def_readwrite("merge_mode", &ImFontConfig::MergeMode, "False    // Merge into previous ImFont, so you can combine multiple inputs font into one ImFont (e.g. ASCII font + icons + Japanese glyphs). You may want to use GlyphOffset.y when merge font of different heights.")    // imgui.h:2670
@@ -5517,8 +5515,6 @@ void py_init_module_imgui(py::module& m)
         .def_readwrite("locked", &ImFontAtlas::Locked, "Marked as Locked by ImGui::NewFrame() so attempt to modify the atlas will assert.")    // imgui.h:2818
         .def_readwrite("tex_ready", &ImFontAtlas::TexReady, "Set when texture was built matching current font input")    // imgui.h:2822
         .def_readwrite("tex_pixels_use_colors", &ImFontAtlas::TexPixelsUseColors, "Tell whether our texture data is known to use colors (rather than just alpha channel), in order to help backend select a format.")    // imgui.h:2823
-        .def_readwrite("tex_pixels_alpha8", &ImFontAtlas::TexPixelsAlpha8, "1 component per pixel, each component is unsigned 8-bit. Total size = TexWidth * TexHeight")    // imgui.h:2824
-        .def_readwrite("tex_pixels_rgba32", &ImFontAtlas::TexPixelsRGBA32, "4 component per pixel, each component is unsigned 8-bit. Total size = TexWidth * TexHeight * 4")    // imgui.h:2825
         .def_readwrite("tex_width", &ImFontAtlas::TexWidth, "Texture width calculated during Build().")    // imgui.h:2826
         .def_readwrite("tex_height", &ImFontAtlas::TexHeight, "Texture height calculated during Build().")    // imgui.h:2827
         .def_readwrite("tex_uv_scale", &ImFontAtlas::TexUvScale, "= (1.0/TexWidth, 1.0/TexHeight)")    // imgui.h:2828
@@ -5526,7 +5522,7 @@ void py_init_module_imgui(py::module& m)
         .def_readwrite("fonts", &ImFontAtlas::Fonts, "Hold all the fonts returned by AddFont*. Fonts[0] is the default font upon calling ImGui::NewFrame(), use ImGui::PushFont()/PopFont() to change the current font.")    // imgui.h:2830
         .def_readwrite("custom_rects", &ImFontAtlas::CustomRects, "Rectangles for packing custom texture data into the atlas.")    // imgui.h:2831
         .def_readwrite("config_data", &ImFontAtlas::ConfigData, "Configuration data")    // imgui.h:2832
-        .def_readwrite("font_builder_io", &ImFontAtlas::FontBuilderIO, "Opaque interface to a font builder (default to stb_truetype, can be changed to use FreeType by defining IMGUI_ENABLE_FREETYPE).")    // imgui.h:2836
+        .def_readonly("font_builder_io", &ImFontAtlas::FontBuilderIO, "Opaque interface to a font builder (default to stb_truetype, can be changed to use FreeType by defining IMGUI_ENABLE_FREETYPE).")    // imgui.h:2836
         .def_readwrite("font_builder_flags", &ImFontAtlas::FontBuilderFlags, "Shared flags (for all fonts) for custom font builder. THIS IS BUILD IMPLEMENTATION DEPENDENT. Per-font override is also available in ImFontConfig.")    // imgui.h:2837
         .def_readwrite("pack_id_mouse_cursors", &ImFontAtlas::PackIdMouseCursors, "Custom texture rectangle ID for white pixel and mouse cursors")    // imgui.h:2840
         .def_readwrite("pack_id_lines", &ImFontAtlas::PackIdLines, "Custom texture rectangle ID for baked anti-aliased lines")    // imgui.h:2841
@@ -5540,9 +5536,9 @@ void py_init_module_imgui(py::module& m)
         .def_readwrite("font_size", &ImFont::FontSize, "4     // in  //            // Height of characters/line, set during loading (don't change after loading)")    // imgui.h:2855
         .def_readwrite("index_lookup", &ImFont::IndexLookup, "12-16 // out //            // Sparse. Index glyphs by Unicode code-point.")    // imgui.h:2858
         .def_readwrite("glyphs", &ImFont::Glyphs, "12-16 // out //            // All glyphs.")    // imgui.h:2859
-        .def_readwrite("fallback_glyph", &ImFont::FallbackGlyph, "4-8   // out // = FindGlyph(FontFallbackChar)")    // imgui.h:2860
+        .def_readonly("fallback_glyph", &ImFont::FallbackGlyph, "4-8   // out // = FindGlyph(FontFallbackChar)")    // imgui.h:2860
         .def_readwrite("container_atlas", &ImFont::ContainerAtlas, "4-8   // out //            // What we has been loaded into")    // imgui.h:2863
-        .def_readwrite("config_data", &ImFont::ConfigData, "4-8   // in  //            // Pointer within ContainerAtlas->ConfigData")    // imgui.h:2864
+        .def_readonly("config_data", &ImFont::ConfigData, "4-8   // in  //            // Pointer within ContainerAtlas->ConfigData")    // imgui.h:2864
         .def_readwrite("config_data_count", &ImFont::ConfigDataCount, "2     // in  // ~ 1        // Number of ImFontConfig involved in creating this font. Bigger than 1 when merging multiple font sources into one ImFont.")    // imgui.h:2865
         .def_readwrite("fallback_char", &ImFont::FallbackChar, "2     // out // = FFFD/'?' // Character used if a glyph isn't found.")    // imgui.h:2866
         .def_readwrite("ellipsis_char", &ImFont::EllipsisChar, "2     // out // = '...'    // Character used for ellipsis rendering.")    // imgui.h:2867
