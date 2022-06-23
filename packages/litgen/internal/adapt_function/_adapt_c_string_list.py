@@ -1,9 +1,10 @@
 import copy
 from typing import List, Optional
 
+from codemanip import code_utils
+
 from srcmlcpp.srcml_types import CppParameter
 
-from litgen.generate_code import code_utils
 from litgen.internal import cpp_to_python
 from litgen.internal.adapt_function._lambda_adapter import LambdaAdapter
 from litgen.internal.adapted_types import AdaptedFunction

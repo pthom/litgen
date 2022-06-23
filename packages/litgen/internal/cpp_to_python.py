@@ -6,6 +6,7 @@ from typing import List
 
 import srcmlcpp
 from codemanip import code_replacements, code_utils
+from codemanip.code_replacements import StringReplacement
 
 from srcmlcpp import srcml_main
 from srcmlcpp.srcml_types import *
@@ -93,7 +94,7 @@ def is_float_str(s: str) -> bool:
     return True
 
 
-def _cpp_type_to_camel_case_no_space(cpp_type: str) -> str:
+def cpp_type_to_camel_case_no_space(cpp_type: str) -> str:
     items = cpp_type.split(" ")
 
     def capitalize_first_letter(s: str):
@@ -111,16 +112,16 @@ class CppPythonTypesSynonyms:
     python_type: str
 
 
-CPP_PYTHON_NUMERIC_SYNONYMS = [
+CPP_PYTHON_NUMERIC_INT_SYNONYMS = [
     CppPythonTypesSynonyms("int", "int"),
     CppPythonTypesSynonyms("unsigned int", "int"),
+    CppPythonTypesSynonyms("signed int", "int"),
     CppPythonTypesSynonyms("long", "int"),
     CppPythonTypesSynonyms("unsigned long", "int"),
+    CppPythonTypesSynonyms("signed long", "int"),
     CppPythonTypesSynonyms("long long", "int"),
     CppPythonTypesSynonyms("unsigned long long", "int"),
-    CppPythonTypesSynonyms("float", "float"),
-    CppPythonTypesSynonyms("double", "float"),
-    CppPythonTypesSynonyms("long double", "float"),
+    CppPythonTypesSynonyms("signed long long", "int"),
     CppPythonTypesSynonyms("uint8_t", "int"),
     CppPythonTypesSynonyms("int8_t", "int"),
     CppPythonTypesSynonyms("uint16_t", "int"),
@@ -130,6 +131,15 @@ CPP_PYTHON_NUMERIC_SYNONYMS = [
     CppPythonTypesSynonyms("uint64_t", "int"),
     CppPythonTypesSynonyms("int64_t", "int"),
 ]
+
+CPP_PYTHON_NUMERIC_FLOAT_SYNONYMS = [
+    CppPythonTypesSynonyms("float", "float"),
+    CppPythonTypesSynonyms("double", "float"),
+    CppPythonTypesSynonyms("long double", "float"),
+]
+
+
+CPP_PYTHON_NUMERIC_SYNONYMS = CPP_PYTHON_NUMERIC_INT_SYNONYMS + CPP_PYTHON_NUMERIC_FLOAT_SYNONYMS
 
 
 def cpp_numeric_types() -> List[str]:
@@ -146,63 +156,6 @@ def is_cpp_type_immutable_for_python(cpp_type: str) -> bool:
         return True
     # Etc: handle tuple and complex numbers?
     return False
-
-
-class BoxedImmutablePythonType:
-    static_list_of_instantiated_type: List[str] = []
-    cpp_type: str
-
-    def __init__(self, cpp_type: str) -> None:
-        if not is_cpp_type_immutable_for_python(cpp_type):
-            raise TypeError(f"BoxedImmutablePythonType({cpp_type}) is seemingly not immutable")
-        self.cpp_type = cpp_type
-        if cpp_type not in BoxedImmutablePythonType.static_list_of_instantiated_type:
-            BoxedImmutablePythonType.static_list_of_instantiated_type.append(cpp_type)
-
-    def boxed_type_name(self) -> str:
-        boxed_name = "Boxed" + _cpp_type_to_camel_case_no_space(self.cpp_type)
-        return boxed_name
-
-    def _struct_code(self) -> str:
-        struct_name = self.boxed_type_name()
-
-        struct_code = f"""
-            struct {struct_name}
-            {{
-                {self.cpp_type} value;
-                {struct_name}() : value{{}} {{}}
-                {struct_name}({self.cpp_type} v) : value(v) {{}}
-                std::string __repr__() const {{ return std::string("{struct_name}(") + std::to_string(value) + ")"; }}
-            }};
-        """
-        struct_code = code_utils.unindent_code(struct_code, flag_strip_empty_lines=True)
-        return struct_code
-
-    def _binding_code(self, options: LitgenOptions) -> str:
-        from litgen import generate_code
-
-        struct_code = self._struct_code()
-        pydef_code = generate_code.generate_pydef(options, struct_code, add_boxed_types_definitions=False)
-        return pydef_code
-
-    @staticmethod
-    def struct_codes() -> str:
-        r = ""
-        for cpp_type in BoxedImmutablePythonType.static_list_of_instantiated_type:
-            boxed_type = BoxedImmutablePythonType(cpp_type)
-            r += boxed_type._struct_code() + "\n"
-        return r
-
-    @staticmethod
-    def binding_codes(options: LitgenOptions) -> str:
-        options_no_api = copy.deepcopy(options)
-        options_no_api.srcml_options.api_suffixes = []
-        options_no_api.srcml_options.functions_api_prefixes = []
-        r = ""
-        for cpp_type in BoxedImmutablePythonType.static_list_of_instantiated_type:
-            boxed_type = BoxedImmutablePythonType(cpp_type)
-            r += boxed_type._binding_code(options_no_api)
-        return r
 
 
 """
@@ -419,3 +372,139 @@ def enum_element_is_count(options: LitgenOptions, enum: CppEnum, enum_element: C
 def looks_like_size_param(options: LitgenOptions, param_c: CppParameter) -> bool:
     r = code_utils.var_name_looks_like_size_name(param_c.decl.decl_name, options.buffer_size_names)
     return r
+
+
+def apply_black_formatter_pyi(options: LitgenOptions, code: str) -> str:
+    if not options.python_run_black_formatter:
+        return code
+
+    import black
+
+    black_mode = black.Mode()
+    black_mode.is_pyi = True
+    black_mode.target_versions = {black.TargetVersion.PY39}
+    black_mode.line_length = options.python_black_formatter_line_length
+
+    formatted_code = black.format_str(code, mode=black_mode)
+    return formatted_code
+
+
+def standard_code_replacements() -> List[StringReplacement]:
+    """Replacements for C++ code when translating to python.
+
+    Consists mostly of
+    * types translations
+    * NULL, nullptr, void translation
+    * number translation (e.g. `1.5f` -> `1.5`)
+    """
+    replacements = r"""
+    \buint8_t\b -> int
+    \bint8_t\b -> int
+    \buint16_t\b -> int
+    \bint16_t\b -> int
+    \buint32_t\b -> int
+    \bint32_t\b -> int
+    \buint64_t\b -> int
+    \bint64_t\b -> int
+    \blong\b -> int
+    \bshort\b -> int
+    \blong \s*long\b -> int
+    \bunsigned \s*int\b -> int
+    \bunsigned \s*short\b -> int
+    \bunsigned \s*long\b -> int
+    \bunsigned \s*long long\b -> int
+
+    \blong \s*double\b -> float
+    \bdouble\b -> float
+    \bfloat\b -> float
+
+    \bconst \s*char*\b -> str
+    \bconst \s*char *\b -> str
+
+    \bsize_t\b -> int
+    \bstd::string\(\) -> ""
+    \bstd::string\b -> str
+    \btrue\b -> True
+    \bfalse\b -> False
+    \bstd::vector\s*<\s*([\w:]*)\s*> -> List[\1]
+    \bstd::array\s*<\s*([\w:]*)\s*,\s*([\w:])\s*> -> List[\1]
+
+    \bvoid\b -> None
+    \bNULL\b -> None
+    \bnullptr\b -> None
+
+    \bFLT_MIN\b -> sys.float_info.min
+    \bFLT_MAX\b -> sys.float_info.max
+    \bDBL_MIN\b -> sys.float_info.min
+    \bDBL_MAX\b -> sys.float_info.max
+    \bLDBL_MIN\b -> sys.float_info.min
+    \bLDBL_MAX\b -> sys.float_info.max
+
+    \bpy::array\b -> np.ndarray
+    \bT\b -> np.ndarray
+
+    \bconst\b -> REMOVE
+    \bmutable\b -> REMOVE
+    & -> REMOVE
+    \* -> REMOVE
+
+    ([+-]?[0-9]+([.][0-9]*)?|[.][0-9]+)(d?) -> \1
+    ([+-]?[0-9]+([.][0-9]*)?|[.][0-9]+)(f?) -> \1
+    """
+    # Note: the two last regexes replace C numbers like 1.5f or 1.5d by 1.5
+
+    replaces = code_replacements.parse_string_replacements(replacements)
+    return replaces
+
+
+def standard_comment_replacements() -> List[StringReplacement]:
+    """Replacements for C++ code when translating to python.
+
+    Consists mostly of
+    * bool translation
+    * NULL, nullptr, void translation
+    * number translation (e.g. `1.5f` -> `1.5`)
+    """
+    replacements = r"""
+
+    \btrue\b -> True
+    \bfalse\b -> False
+
+    \bvoid\b -> None
+    \bNULL\b -> None
+    \bnullptr\b -> None
+
+    ([+-]?[0-9]+([.][0-9]*)?|[.][0-9]+)(d?) -> \1
+    ([+-]?[0-9]+([.][0-9]*)?|[.][0-9]+)(f?) -> \1
+    """
+
+    # Note: the two last regexes replace C numbers like 1.5f or 1.5d by 1.5
+    return code_replacements.parse_string_replacements(replacements)
+
+
+def opencv_replacements() -> List[StringReplacement]:
+    replacements = r"""
+    \bcv::Size\(\) -> (0, 0)
+    \bcv::Point\(-1, -1\) -> (-1, -1)
+    \bcv::Point2d\(-1., -1.\) -> (-1., -1.)
+    \bcv::Size\b -> Size
+    \bcv::Matx33d::eye\(\) -> np.eye(3)
+    \bcv::Matx33d\b -> Matx33d
+    \bcv::Mat\b -> np.ndarray
+    \bcv::Point\b -> Point
+    \bcv::Point2d\b -> Point2d
+    """
+    return code_replacements.parse_string_replacements(replacements)
+
+
+def cpp_type_default_python_value(cpp_type: str) -> Optional[str]:
+    for synonym in CPP_PYTHON_NUMERIC_INT_SYNONYMS:
+        if synonym.cpp_type == cpp_type:
+            return "0"
+    for synonym in CPP_PYTHON_NUMERIC_FLOAT_SYNONYMS:
+        if synonym.cpp_type == cpp_type:
+            return "0."
+    if cpp_type in ["std::string", "string"]:
+        return '""'
+
+    return None

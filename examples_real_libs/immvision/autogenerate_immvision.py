@@ -59,10 +59,10 @@ def autogenerate_immvision():
             struct_infos = code_generator.extract_struct_infos(pydef_code_struct, code_style_options)
             generated_code += generated_file.generator_function(struct_infos, code_style_options)
 
-        code_marker_in = f"<autogen:{generated_file.generator_type}>"
-        code_marker_out = f"</autogen:{generated_file.generator_type}>"
+        code_marker_in = f"<litgen_{generated_file.generator_type}>"
+        code_marker_out = f"</litgen_{generated_file.generator_type}>"
         flag_preserve_left_spaces = True
-        code_utils.write_code_between_markers(
+        code_utils.write_generated_code_between_markers(
             file_full_path(generated_file.filename),
             code_marker_in,
             code_marker_out,
@@ -93,10 +93,10 @@ def autogenerate_immvision():
             function_infos = code_generator.extract_function_infos(pydef_code_function, code_style_options)
             generated_code += generated_file.generator_function(function_infos, code_style_options)
 
-        code_marker_in = f"<autogen:{generated_file.generator_type}>"
-        code_marker_out = f"</autogen:{generated_file.generator_type}>"
+        code_marker_in = f"<litgen_{generated_file.generator_type}>"
+        code_marker_out = f"</litgen_{generated_file.generator_type}>"
         flag_preserve_left_spaces = True
-        code_utils.write_code_between_markers(
+        code_utils.write_generated_code_between_markers(
             file_full_path(generated_file.filename),
             code_marker_in,
             code_marker_out,

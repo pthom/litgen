@@ -16,19 +16,6 @@
 void SomeFunctionThatShouldNotBeIncluded();
 #endif // #ifdef OBSCURE_OPTION
 
-struct BoxedUnsignedLong // MY_API
-{
-    unsigned long value;
-    BoxedUnsignedLong(unsigned long v = {}) : value(v) {}
-    std::string __repr__() const { return std::string("BoxedUnsignedLong(") + std::to_string(value) + ")"; }
-};
-
-struct BoxedInt // MY_API
-{
-    int value;
-    BoxedInt(int v = {}) : value(v) {}
-    std::string __repr__() const { return std::string("BoxedInt(") + std::to_string(value) + ")"; }
-};
 
 namespace LiterateGeneratorExample // MY_API
 {

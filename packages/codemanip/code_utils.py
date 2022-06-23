@@ -429,15 +429,19 @@ def spaces_or_tabs_at_line_start(line: str) -> str:
     return r
 
 
-def write_code_between_markers(
+def write_generated_code_between_markers(
     inout_filename: str,
-    code_marker_in: str,
-    code_marker_out: str,
+    marker_token: str,
     code_to_insert: str,
     flag_preserve_indentation: bool = True,
 ) -> None:
 
-    assert os.path.isfile(inout_filename)
+    code_marker_in = f"<litgen_{marker_token}>"
+    code_marker_out = f"</litgen_{marker_token}>"
+
+    if not os.path.isfile(inout_filename):
+        raise FileNotFoundError(inout_filename)
+
     input_code = read_text_file(inout_filename)
     input_code_lines = input_code.split("\n")
 

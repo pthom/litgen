@@ -47,7 +47,7 @@ add_dependencies(${cpp_lib_name} ${autgenerate_name})
 #
 # Build python module that uses the library
 #
-set(python_module_sources bindings/module.cpp bindings/pybind_litgensample.cpp)
+set(python_module_sources bindings/module.cpp bindings/pybind_litgensample.cpp bindings/litgensample_boxed_types.h)
 pybind11_add_module(${python_native_module_name} ${python_module_sources})
 target_link_libraries(${python_native_module_name} PRIVATE ${cpp_lib_name})
 

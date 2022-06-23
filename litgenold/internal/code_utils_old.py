@@ -160,7 +160,7 @@
 #     return "\n".join(lines)
 #
 #
-# def write_code_between_markers(
+# def write_generated_code_between_markers(
 #     inout_filename: str,
 #     code_marker_in: str,
 #     code_marker_out: str,
@@ -204,7 +204,7 @@
 #
 #     if not was_replacement_performed:
 #         raise RuntimeError(
-#             f"write_code_between_markers: could not find marker {code_marker_in} in file {inout_filename}"
+#             f"write_generated_code_between_markers: could not find marker {code_marker_in} in file {inout_filename}"
 #         )
 #
 #     write_text_file(inout_filename, output_code)

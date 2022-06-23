@@ -10,7 +10,7 @@ from litgen.internal.adapted_types import AdaptedFunction
 
 def gen_pydef_code(code: str, options: Optional[LitgenOptions] = None) -> str:
     if options is None:
-        options = litgen.options.code_style_implot()
+        options = litgen.options.LitgenOptions()
         options.srcml_options.functions_api_prefixes = ["MY_API"]
 
     struct_name = ""
@@ -21,7 +21,7 @@ def gen_pydef_code(code: str, options: Optional[LitgenOptions] = None) -> str:
 
 
 def my_make_adapted_function(code) -> AdaptedFunction:
-    options = litgen.options.code_style_implot()
+    options = litgen.options.LitgenOptions()
     options.srcml_options.functions_api_prefixes = ["MY_API"]
 
     function_decl = srcml_main.code_first_function_decl(options.srcml_options, code)
@@ -175,7 +175,7 @@ def test_in_method():
         };
     """
     options = litgen.LitgenOptions()
-    generated_code = litgen.generate_pydef(options, code)
+    generated_code = litgen.code_to_pydef(options, code)
     # logging.warning("\n" + generated_code)
     code_utils.assert_are_codes_equal(
         generated_code,

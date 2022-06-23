@@ -13,7 +13,7 @@ sys.path.append(_THIS_DIR + "/../..")
 
 
 def gen_pydef_code(code) -> str:
-    options = litgen.options.code_style_implot()
+    options = litgen.options.LitgenOptions()
     options.srcml_options.functions_api_prefixes = ["MY_API"]
 
     struct_name = ""

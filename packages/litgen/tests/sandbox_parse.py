@@ -4,7 +4,6 @@ import sys
 import srcmlcpp
 
 import litgen
-from litgen.internal import module_pydef_generator
 from litgen.options import code_style_imgui, code_style_implot
 
 
@@ -24,64 +23,42 @@ def play_parse(code):
     print(cpp_unit)
 
 
-def play_imgui():
-    options = code_style_imgui()
-    source_filename = os.path.realpath(_THIS_DIR + "/../../examples_real_libs/imgui/imgui/imgui.h")
-    cpp_unit = srcmlcpp.file_to_cpp_unit(options.srcml_options, source_filename)
-    # print(cpp_unit)
-
-
 def play_implot():
     options = code_style_implot()
     options.original_location_flag_show = True
     source_filename = os.path.realpath(_THIS_DIR + "/../../examples_real_libs/implot/implot/implot.h")
-    cpp_unit = srcmlcpp.file_to_cpp_unit(options.srcml_options, source_filename)
-    # print(cpp_unit)
-    pydef_code = module_pydef_generator.generate_pydef(options, cpp_unit)
-    print(pydef_code)
+
+    generated_code = litgen.generate_code(options, filename=source_filename)
+    print(generated_code.pydef_code)
 
 
-def play_pydef(code, options) -> None:
-    # from srcmlcpp import srcml_utils
-    # xml = srcmlcpp.code_to_srcml(code, dump_positions=False)
-    # # print(srcml_utils.srcml_to_str_readable(xml))
-    # print(srcml_utils.srcml_to_str(xml))
+def play_imgui():
+    options = code_style_imgui()
+    source_filename = os.path.realpath(_THIS_DIR + "/../../examples_real_libs/imgui/imgui/imgui.h")
 
-    pydef_code = litgen.generate_pydef(options, code, add_boxed_types_definitions=True)
-    print(f">>>\n{pydef_code}<<<")
-
-
-# test_code()
+    generated_code = litgen.generate_code(options, filename=source_filename)
+    print(generated_code.pydef_code)
 
 
 def play_stub(code, options):
-    # from srcmlcpp import srcml_utils
-    # xml = srcmlcpp.code_to_srcml(code, dump_positions=False)
-    # # print(srcml_utils.srcml_to_str_readable(xml))
-    # print(srcml_utils.srcml_to_str(xml))
-
-    pyi_code = litgen.generate_stub(options, code, add_boxed_types_definitions=True)
+    pyi_code = litgen.code_to_stub(options, code)
     print(f">>>\n{pyi_code}<<<")
 
 
-# options = litgen.options.code_style_implot()
-# options.srcml_options.functions_api_prefixes = ["MY_API"]
-# options.srcml_options.api_suffixes = ["MY_API"]
-
 options = litgen.options.LitgenOptions()
 options.srcml_options.functions_api_prefixes = ["MY_API"]
-
-# options = litgen.code_style_imgui()
-
 options.original_location_flag_show = True
 
 
 code = """
-typedef int ImGuiWindowFlags;       // -> enum ImGuiWindowFlags_     // Flags: for Begin(), BeginChild()
+struct FooStruct
+{
+    FooStruct(int v = 0 );
+};
 """
-xml = srcmlcpp.code_to_srcml(code, False)
-# msg = srcmlcpp.srcml_to_str_readable(xml)
-msg = srcmlcpp.srcml_to_str(xml)
-print(msg)
-# play_pydef(code, options)
-# play_stub(code, options)
+srcml_options = srcmlcpp.SrcmlOptions()
+xml = srcmlcpp.code_to_srcml(code, dump_positions=False)
+str_xml = srcmlcpp.srcml_utils.srcml_to_str(xml)
+print(str_xml)
+# cpp_unit = srcmlcpp.code_to_cpp_unit(srcml_options, code)
+print("a")

@@ -74,10 +74,10 @@
 #     for code_type in CppCodeType:
 #         generated_code += _run_codetype_and_generator(header_code, code_type, fn_code_generators, options)
 #
-#     marker_in = f"<autogen:{marker_token}>"
-#     marker_out = f"</autogen:{marker_token}>"
+#     marker_in = f"<litgen_{marker_token}>"
+#     marker_out = f"</litgen_{marker_token}>"
 #
-#     code_utils.write_code_between_markers(
+#     code_utils.write_generated_code_between_markers(
 #         output_file,
 #         marker_in,
 #         marker_out,

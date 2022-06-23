@@ -3,11 +3,11 @@ from srcmlcpp.srcml_types import *
 
 import litgen
 from litgen.internal.adapted_types import *
-from litgen.options import code_style_implot, code_style_immvision
+from litgen.options import LitgenOptions, code_style_implot, code_style_immvision
 
 
 def test_adapted_function_stub():
-    options = litgen.LitgenOptions()
+    options = LitgenOptions()
     options.original_location_flag_show = True
 
     code = """
@@ -31,18 +31,18 @@ def test_adapted_function_stub():
             text: str
             ) -> None:
             """ This is foo's doc:
-                 :param buffer  count: modifiable buffer and its size
-                 :param out_values: output float values
+                 :param buffer & count: modifiable buffer and its size
+                 :param out_values: output double values
                  :param in_flags: input bool flags
                  :param text and ... : formatted text
             """
             pass
-    ''',
+        ''',
     )
 
 
 def test_adapted_function_pydef_simple():
-    options = litgen.LitgenOptions()
+    options = LitgenOptions()
     code = """
     int add(int a, int b) { return a + b; }
     """
@@ -71,21 +71,21 @@ def test_implot_easy() -> None:
     """
     generated_code = litgen.code_to_pydef(options, code)
     expected_code = """
-    m.def("setup_axis_format",
-        [](ImAxis axis, const char * fmt)
-        {
-            SetupAxisFormat(axis, fmt);
-        },
-        py::arg("axis"), py::arg("fmt"),
-        " Sets the format of numeric\\n axis labels"
-    );
+        m.def("setup_axis_format",    // Line:4
+            [](ImAxis axis, const char * fmt)
+            {
+                SetupAxisFormat(axis, fmt);
+            },
+            py::arg("axis"), py::arg("fmt"),
+            " Sets the format of numeric\\n axis labels"
+        );
     """
     # logging.warning("\n" + generated_code)
     code_utils.assert_are_codes_equal(generated_code, expected_code)
 
 
 def test_return_value_policy() -> None:
-    options = code_style_implot()
+    options = LitgenOptions()
     code = """
         // Returns a widget
         IMPLOT_API Widget* Foo();  // return_value_policy::reference
@@ -112,7 +112,7 @@ def test_implot_one_buffer() -> None:
     """
     generated_code = litgen.code_to_pydef(options, code)
     expected_code = """
-        m.def("plot_scatter",
+        m.def("plot_scatter",    // Line:3
             [](const py::array & values)
             {
                 auto PlotScatter_adapt_c_buffers = [](const py::array & values)

@@ -6,7 +6,7 @@ from codemanip import code_utils
 from srcmlcpp import srcml_warnings
 from srcmlcpp.srcml_types import CppFunctionDecl, CppParameter
 
-from litgen.generate_code import LitgenOptions
+from litgen.options import LitgenOptions
 from litgen.internal import cpp_to_python
 from litgen.internal.adapt_function._lambda_adapter import LambdaAdapter
 from litgen.internal.adapted_types import AdaptedFunction

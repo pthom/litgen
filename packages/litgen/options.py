@@ -40,7 +40,7 @@ class LitgenOptions:
     comments_replacements: List[StringReplacement] = []
 
     #
-    # Indentation settings for the generated code
+    # Layout settings for the generated python stub code
     #
 
     # Size of an indentation in the python stubs
@@ -54,6 +54,13 @@ class LitgenOptions:
     python_max_line_length = 80
     # Strip (remove) empty comment lines
     python_strip_empty_comment_lines: bool = False
+    # Run black formatter
+    python_run_black_formatter: bool = False
+    python_black_formatter_line_length: int = 88
+
+    #
+    # Layout settings for the C++ generated pydef code
+    #
 
     # Spacing option in C++ code
     cpp_indent_size: int = 4
@@ -210,9 +217,11 @@ class LitgenOptions:
         return space * self.python_indent_size
 
     def __init__(self) -> None:
+        from litgen.internal import cpp_to_python
+
         self.srcml_options = SrcmlOptions()
-        self.code_replacements = standard_code_replacements()
-        self.comments_replacements = standard_comment_replacements()
+        self.code_replacements = cpp_to_python.standard_code_replacements()
+        self.comments_replacements = cpp_to_python.standard_comment_replacements()
 
 
 #
@@ -221,11 +230,13 @@ class LitgenOptions:
 
 
 def code_style_immvision() -> LitgenOptions:
+    from litgen.internal import cpp_to_python
+
     options = LitgenOptions()
     options.generate_to_string = True
     options.cpp_indent_size = 4
     options.srcml_options.functions_api_prefixes = ["IMMVISION_API"]
-    options.code_replacements = standard_code_replacements() + opencv_replacements()
+    options.code_replacements = cpp_to_python.standard_code_replacements() + cpp_to_python.opencv_replacements()
 
     options.buffer_flag_replace_by_array = False
 
@@ -242,113 +253,6 @@ def code_style_immvision() -> LitgenOptions:
     # options.poub_init_function_python_additional_code = init_function_python_additional_code_require_opengl_initialized
 
     return options
-
-
-def standard_code_replacements() -> List[StringReplacement]:
-    """Replacements for C++ code when translating to python.
-
-    Consists mostly of
-    * types translations
-    * NULL, nullptr, void translation
-    * number translation (e.g. `1.5f` -> `1.5`)
-    """
-    replacements = r"""
-    \buint8_t\b -> int
-    \bint8_t\b -> int
-    \buint16_t\b -> int
-    \bint16_t\b -> int
-    \buint32_t\b -> int
-    \bint32_t\b -> int
-    \buint64_t\b -> int
-    \bint64_t\b -> int
-    \blong\b -> int
-    \bshort\b -> int
-    \blong \s*long\b -> int
-    \bunsigned \s*int\b -> int
-    \bunsigned \s*short\b -> int
-    \bunsigned \s*long\b -> int
-    \bunsigned \s*long long\b -> int
-
-    \blong \s*double\b -> float
-    \bdouble\b -> float
-    \bfloat\b -> float
-
-    \bconst \s*char*\b -> str
-    \bconst \s*char *\b -> str
-
-    \bsize_t\b -> int
-    \bstd::string\(\) -> ""
-    \bstd::string\b -> str
-    \btrue\b -> True
-    \bfalse\b -> False
-    \bstd::vector\s*<\s*([\w:]*)\s*> -> List[\1]
-    \bstd::array\s*<\s*([\w:]*)\s*,\s*([\w:])\s*> -> List[\1]
-
-    \bvoid\b -> None
-    \bNULL\b -> None
-    \bnullptr\b -> None
-
-    \bFLT_MIN\b -> sys.float_info.min
-    \bFLT_MAX\b -> sys.float_info.max
-    \bDBL_MIN\b -> sys.float_info.min
-    \bDBL_MAX\b -> sys.float_info.max
-    \bLDBL_MIN\b -> sys.float_info.min
-    \bLDBL_MAX\b -> sys.float_info.max
-
-    \bpy::array\b -> np.ndarray
-    \bT\b -> np.ndarray
-
-    \bconst\b -> REMOVE
-    \bmutable\b -> REMOVE
-    & -> REMOVE
-    \* -> REMOVE
-
-    ([+-]?[0-9]+([.][0-9]*)?|[.][0-9]+)(d?) -> \1
-    ([+-]?[0-9]+([.][0-9]*)?|[.][0-9]+)(f?) -> \1
-    """
-
-    # Note: the two last regexes replace C numbers like 1.5f or 1.5d by 1.5
-    return code_replacements.parse_string_replacements(replacements)
-
-
-def standard_comment_replacements() -> List[StringReplacement]:
-    """Replacements for C++ code when translating to python.
-
-    Consists mostly of
-    * bool translation
-    * NULL, nullptr, void translation
-    * number translation (e.g. `1.5f` -> `1.5`)
-    """
-    replacements = r"""
-
-    \btrue\b -> True
-    \bfalse\b -> False
-
-    \bvoid\b -> None
-    \bNULL\b -> None
-    \bnullptr\b -> None
-
-    ([+-]?[0-9]+([.][0-9]*)?|[.][0-9]+)(d?) -> \1
-    ([+-]?[0-9]+([.][0-9]*)?|[.][0-9]+)(f?) -> \1
-    """
-
-    # Note: the two last regexes replace C numbers like 1.5f or 1.5d by 1.5
-    return code_replacements.parse_string_replacements(replacements)
-
-
-def opencv_replacements() -> List[StringReplacement]:
-    replacements = r"""
-    \bcv::Size\(\) -> (0, 0)
-    \bcv::Point\(-1, -1\) -> (-1, -1)
-    \bcv::Point2d\(-1., -1.\) -> (-1., -1.)
-    \bcv::Size\b -> Size
-    \bcv::Matx33d::eye\(\) -> np.eye(3)
-    \bcv::Matx33d\b -> Matx33d
-    \bcv::Mat\b -> np.ndarray
-    \bcv::Point\b -> Point
-    \bcv::Point2d\b -> Point2d
-    """
-    return code_replacements.parse_string_replacements(replacements)
 
 
 def _preprocess_imgui_code(code: str) -> str:
@@ -371,12 +275,14 @@ def _preprocess_imgui_code(code: str) -> str:
 
 
 def code_style_imgui() -> LitgenOptions:
+    from litgen.internal import cpp_to_python
+
     options = LitgenOptions()
 
     options.generate_to_string = False
     options.cpp_indent_size = 4
 
-    options.code_replacements = standard_code_replacements()
+    options.code_replacements = cpp_to_python.standard_code_replacements()
     options.code_replacements += code_replacements.parse_string_replacements(
         r"""
         \bImVector\s*<\s*([\w:]*)\s*> -> List[\1]
