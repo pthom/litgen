@@ -48,7 +48,7 @@ def _comment_apply_replacements(options: LitgenOptions, comment: str) -> str:
     lines = code_utils.strip_lines_right_space(lines)
 
     comment = "\n".join(lines)
-    comment = code_replacements.apply_code_replacements(comment, options.code_replacements)
+    comment = code_replacements.apply_code_replacements(comment, options.comments_replacements)
 
     return comment
 

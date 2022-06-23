@@ -24,7 +24,6 @@ def my_code_style_options() -> litgen.LitgenOptions:
     options.srcml_options.functions_api_prefixes = ["MY_API"]
 
     options.srcml_options.api_suffixes = ["MY_API"]
-    options.code_replacements = litgen.standard_replacements()
 
     options.buffer_flag_replace_by_array = True
 

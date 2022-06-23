@@ -12,7 +12,7 @@ All declarations are stored in a corresponding object:
     * enums -> CppEnum
     * etc.
 
-Implementations (expressions, function calls, etc) are stored as CppUnprocessed. It is still possible to retriveve their
+Implementations (expressions, function calls, etc) are stored as CppUnprocessed. It is still possible to retrieve their
 original code.
 
 See doc/srcml_cpp_doc.png
