@@ -13,7 +13,7 @@ from xml.etree import ElementTree as ET
 ###########################################
 
 # Count the total time used by call to the exe srcml
-_FLAG_PROFILE_SRCML_CALLS: bool = False
+_FLAG_PROFILE_SRCML_CALLS: bool = True
 
 
 def _embed_element_into_unit(element: ET.Element) -> ET.Element:
