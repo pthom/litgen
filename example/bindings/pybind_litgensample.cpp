@@ -29,6 +29,18 @@ void py_init_module_litgensample(py::module& m)
             }
         )
         ;
+    auto pyClassBoxedString = py::class_<BoxedString>
+        (m, "BoxedString", "")
+        .def_readwrite("value", &BoxedString::value, "")
+        .def(py::init<std::string>(),
+            py::arg("v") = "")
+        .def("__repr__",
+            [](const BoxedString & self)
+            {
+                return self.__repr__();
+            }
+        )
+        ;
     auto pyClassBoxedUnsignedLong = py::class_<BoxedUnsignedLong>
         (m, "BoxedUnsignedLong", "")
         .def_readwrite("value", &BoxedUnsignedLong::value, "")
@@ -58,21 +70,29 @@ void py_init_module_litgensample(py::module& m)
 
     // <namespace LiterateGeneratorExample>
     m.def("toggle_bool",
-        [](BoxedBool & v_0)
+        [](BoxedBool & v)
         {
-            auto ToggleBool_adapt_fixed_size_c_arrays = [](BoxedBool & v_0)
+            auto ToggleBool_adapt_modifiable_immutable = [](BoxedBool & v)
             {
-                bool v_raw[1];
-                v_raw[0] = v_0.value;
-
-                ToggleBool(v_raw);
-
-                v_0.value = v_raw[0];
+                ToggleBool(& v.value);
             };
 
-            ToggleBool_adapt_fixed_size_c_arrays(v_0);
+            ToggleBool_adapt_modifiable_immutable(v);
         },
-        py::arg("v_0")
+        py::arg("v")
+    );
+
+    m.def("add_hello_to_string",
+        [](BoxedString & v)
+        {
+            auto AddHelloToString_adapt_modifiable_immutable = [](BoxedString & v)
+            {
+                AddHelloToString(& v.value);
+            };
+
+            AddHelloToString_adapt_modifiable_immutable(v);
+        },
+        py::arg("v")
     );
 
 

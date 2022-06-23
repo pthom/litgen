@@ -10,6 +10,12 @@ struct BoxedBool
     BoxedBool(bool v = false) : value(v) {}
     std::string __repr__() const { return std::string("BoxedBool(") + std::to_string(value) + ")"; }
 };
+struct BoxedString
+{
+    std::string value;
+    BoxedString(std::string v = "") : value(v) {}
+    std::string __repr__() const { return std::string("BoxedString(") + value + ")"; }
+};
 struct BoxedUnsignedLong
 {
     unsigned long value;

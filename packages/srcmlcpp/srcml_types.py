@@ -484,6 +484,10 @@ class CppType(CppElement):
 
         return r
 
+    def name_without_modifier_specifier(self) -> str:
+        name = " ".join(self.typenames)
+        return name
+
     def is_const(self) -> bool:
         return "const" in self.specifiers
 

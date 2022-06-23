@@ -42,7 +42,7 @@ class AdaptedDecl(AdaptedElement):
         return decl_type_python
 
     def is_immutable_for_python(self) -> bool:
-        cpp_type_name = self.cpp_element().cpp_type.str_code()
+        cpp_type_name = self.cpp_element().cpp_type.name_without_modifier_specifier()
         r = cpp_to_python.is_cpp_type_immutable_for_python(cpp_type_name)
         return r
 

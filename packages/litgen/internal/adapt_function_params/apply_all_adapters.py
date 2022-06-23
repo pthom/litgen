@@ -1,18 +1,20 @@
 from codemanip import code_utils
 
-from litgen.internal.adapt_function._lambda_adapter import LambdaAdapter
+from litgen.internal.adapt_function_params._lambda_adapter import LambdaAdapter
 from litgen.internal.adapted_types import AdaptedFunction
 
 
 def apply_all_adapters(inout_adapted_function: AdaptedFunction) -> None:
-    from litgen.internal.adapt_function._adapt_c_arrays import adapt_c_arrays
-    from litgen.internal.adapt_function._adapt_c_string_list import adapt_c_string_list
-    from litgen.internal.adapt_function._adapt_c_buffers import adapt_c_buffers
-    from litgen.internal.adapt_function._adapt_variadic_format import adapt_variadic_format
+    from litgen.internal.adapt_function_params._adapt_c_arrays import adapt_c_arrays
+    from litgen.internal.adapt_function_params._adapt_c_string_list import adapt_c_string_list
+    from litgen.internal.adapt_function_params._adapt_c_buffers import adapt_c_buffers
+    from litgen.internal.adapt_function_params._adapt_variadic_format import adapt_variadic_format
+    from litgen.internal.adapt_function_params.adapt_modifiable_immutable import adapt_modifiable_immutable
 
     all_adapters_functions = [
         adapt_c_buffers,
         adapt_c_arrays,
+        adapt_modifiable_immutable,  # must be done *after* adapt_c_buffers
         adapt_c_string_list,
         adapt_variadic_format,
     ]

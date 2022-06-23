@@ -26,6 +26,18 @@ class AdaptedParameter(AdaptedElement):
     def _str_pydef_lines(self) -> List[str]:
         raise NotImplementedError()
 
+    def is_modifiable_python_immutable(self) -> bool:
+        is_python_immutable = self.adapted_decl().is_immutable_for_python()
+
+        type_modifiers = self.cpp_element().decl.cpp_type.modifiers
+        type_specifiers = self.cpp_element().decl.cpp_type.specifiers
+
+        is_reference_or_pointer = (type_modifiers == ["*"]) or (type_modifiers == ["&"])
+        is_const = "const" in type_specifiers
+        is_modifiable = is_reference_or_pointer and not is_const
+        r = is_modifiable and is_python_immutable
+        return r
+
     def adapted_decl(self) -> AdaptedDecl:
         adapted_decl = AdaptedDecl(self.options, self.cpp_element().decl)
         return adapted_decl
@@ -152,7 +164,7 @@ class AdaptedFunction(AdaptedElement):
     lambda_to_call: Optional[str] = None
 
     def __init__(self, function_infos: CppFunctionDecl, parent_struct_name: str, options: LitgenOptions) -> None:
-        from litgen.internal import adapt_function
+        from litgen.internal import adapt_function_params
 
         self.cpp_adapted_function = function_infos
         self.parent_struct_name = parent_struct_name
@@ -160,7 +172,7 @@ class AdaptedFunction(AdaptedElement):
         self.lambda_to_call = None
         super().__init__(options, function_infos)
 
-        adapt_function.apply_all_adapters(self)
+        adapt_function_params.apply_all_adapters(self)
 
     # override
     def cpp_element(self) -> CppFunctionDecl:

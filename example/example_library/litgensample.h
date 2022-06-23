@@ -19,11 +19,16 @@ void SomeFunctionThatShouldNotBeIncluded();
 
 namespace LiterateGeneratorExample // MY_API
 {
-    MY_API void ToggleBool(bool v[1])
+    MY_API void ToggleBool(bool *v)
     {
         printf("ToggleBool ptr=%p value=%s\n", v, (*v) ? "True" : "False");
         *v = !(*v);
     }
+    MY_API void AddHelloToString(std::string *v)
+    {
+        (*v) = (*v) + "-hello";
+    }
+
 
 //    MY_API void ToggleBool2(std::shared_ptr<bool> v) {
 //        bool *b = v.get();

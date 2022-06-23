@@ -17,6 +17,12 @@ class BoxedBool:
         pass
     def __repr__(self) -> str:
         pass
+class BoxedString:
+    value:str
+    def __init__(self, v: str = "") -> None:
+        pass
+    def __repr__(self) -> str:
+        pass
 class BoxedUnsignedLong:
     value:int
     def __init__(self, v: int = 0) -> None:
@@ -37,8 +43,11 @@ class BoxedInt:
 
 
 # <Namespace LiterateGeneratorExample>
-def toggle_bool(v_0: BoxedBool) -> None:
+def toggle_bool(v: BoxedBool) -> None:
     pass
+def add_hello_to_string(v: BoxedString) -> None:
+    pass
+
 
 #    MY_API None ToggleBool2(std::shared_ptr<bool> v) {
 #        bool *b = v.get();

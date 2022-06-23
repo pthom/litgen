@@ -78,12 +78,16 @@ class _BoxedImmutablePythonType_No_Registry:
         struct_name = self.boxed_type_name()
         _i_ = options.indent_cpp_spaces()
 
+        std_to_string_value = "std::to_string(value)"
+        if self.cpp_type in ["string", "std::string"]:
+            std_to_string_value = "value"
+
         struct_code = f"""
             struct {struct_name}
             {{
             {_i_}{self.cpp_type} value;
             {_i_}{struct_name}({self.cpp_type} v = {cpp_type_default_value}) : value(v) {{}}
-            {_i_}std::string __repr__() const {{ return std::string("{struct_name}(") + std::to_string(value) + ")"; }}
+            {_i_}std::string __repr__() const {{ return std::string("{struct_name}(") + {std_to_string_value} + ")"; }}
             }};
         """
         struct_code = code_utils.unindent_code(struct_code, flag_strip_empty_lines=True) + "\n"

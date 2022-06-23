@@ -80,6 +80,12 @@ class LitgenOptions:
     #    enum MyEnum { MyEnum_A = 1, MyEnum_B = 1, MyEnum_COUNT };
     enum_flag_skip_count: bool = True
 
+    ################################################################################
+    ################################################################################
+    #    <adapt_function_params>
+    ################################################################################
+    ################################################################################
+
     #
     # C Buffers to py::array
     #
@@ -139,6 +145,22 @@ class LitgenOptions:
     # will be transformed to:
     #     void foo(const std::vector<std::string>& const items[])
     c_string_list_flag_replace = True
+
+    """
+    We want to adapt functions params that use modifiable pointer or reference to a type that is immutable in python.
+    For example
+        int foo(int* value)
+    From python, the adapted signature will be:
+        def foo(BoxedInt value) -> int
+    So that modification done on the C++ side can be seen from python.
+    """
+    fn_params_adapt_modifiable_immutable = True
+
+    ################################################################################
+    ################################################################################
+    #    </adapt_function_params>
+    ################################################################################
+    ################################################################################
 
     #
     # C style arrays structs and class members
