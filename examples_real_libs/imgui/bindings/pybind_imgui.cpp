@@ -4578,32 +4578,6 @@ void py_init_module_imgui(py::module& m)
         ;
 
 
-    auto pyClassImGuiTextBuffer = py::class_<ImGuiTextBuffer>    // imgui.h:2210
-        (m, "ImGuiTextBuffer", " Helper: Growable text buffer for logging/accumulating text\n (this could be called 'ImGuiTextBuilder' / 'ImGuiStringBuilder')")
-        .def_readwrite("buf", &ImGuiTextBuffer::Buf, "")    // imgui.h:2212
-        .def(py::init<>())    // imgui.h:2215
-        .def("append",    // imgui.h:2224
-            [](ImGuiTextBuffer & self, const char * str, const char * str_end = NULL)
-            {
-                self.append(str, str_end);
-            },
-            py::arg("str"), py::arg("str_end") = NULL
-        )
-        .def("appendf",    // imgui.h:2225
-            [](ImGuiTextBuffer & self, const char * fmt)
-            {
-                auto appendf_adapt_variadic_format = [&self](const char * fmt)
-                {
-                    self.appendf("%s", fmt);
-                };
-
-                appendf_adapt_variadic_format(fmt);
-            },
-            py::arg("fmt")
-        )
-        ;
-
-
     auto pyClassImGuiStorage = py::class_<ImGuiStorage>    // imgui.h:2237
         (m, "ImGuiStorage", " Helper: Key->Value storage\n Typically you don't have to worry about this since a storage is held within each Window.\n We use it to e.g. store collapse state for a tree (Int 0/1)\n This is optimized for efficient lookup (dichotomy into a contiguous buffer) and rare insertion (typically tied to user interactions aka max once a frame)\n You can use it as custom user storage for temporary values. Declare your own storage if, for example:\n - You want to manipulate the open/close state of a particular sub-tree in your interface (tree node uses Int 0/1 to store their state).\n - You want to store custom debug data easily without adding or editing structures in your code (probably not efficient, but convenient)\n Types are NOT stored, so it is up to you to make sure your Key don't collide with different types.")
         .def(py::init<>()) // implicit default constructor

@@ -361,7 +361,7 @@ def code_style_imgui() -> LitgenOptions:
         "unsigned int\s*\*",
     ]
 
-    options.srcml_options.class_name_exclude_regexes = [r"^ImVector\b"]
+    options.srcml_options.class_name_exclude_regexes = [r"^ImVector\b", "ImGuiTextBuffer"]
 
     return options
 

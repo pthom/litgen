@@ -8,15 +8,6 @@ import numpy
 ##################################################
 #    Manually inserted code (typedefs, etc.)
 ##################################################
-class BoxedFloat:
-    value: float
-
-class BoxedInt:
-    value: int
-
-class BoxedBool:
-    value: bool
-
 
 VoidPtr = Any
 
@@ -4487,22 +4478,6 @@ class ImGuiTextFilter:    # imgui.h:2183
     # int                     CountGrep;    /* original C++ signature */
     count_grep:int                                                                   # imgui.h:2205
 
-class ImGuiTextBuffer:    # imgui.h:2210
-    """ Helper: Growable text buffer for logging/accumulating text
-     (this could be called 'ImGuiTextBuilder' / 'ImGuiStringBuilder')
-    """
-    # ImVector<char>      Buf;    /* original C++ signature */
-    buf:List[char]                                              # imgui.h:2212
-
-    # ImGuiTextBuffer()   { }    /* original C++ signature */
-    def __init__(self) -> None:                                 # imgui.h:2215
-        pass
-    # IMGUI_API void      append(const char* str, const char* str_end = NULL);    /* original C++ signature */
-    def append(self, str: str, str_end: str = None) -> None:    # imgui.h:2224
-        pass
-    # IMGUI_API void      appendf(const char* fmt, ...) ;    /* original C++ signature */
-    def appendf(self, fmt: str) -> None:                        # imgui.h:2225
-        pass
 
 class ImGuiStorage:    # imgui.h:2237
     """ Helper: Key->Value storage
