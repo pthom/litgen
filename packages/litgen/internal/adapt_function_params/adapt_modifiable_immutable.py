@@ -1,6 +1,7 @@
 import copy
 from typing import List, Optional
 
+from codemanip import code_utils
 from srcmlcpp.srcml_types import CppParameter
 
 from litgen.internal.adapt_function_params._lambda_adapter import LambdaAdapter
@@ -64,6 +65,18 @@ def adapt_modifiable_immutable(adapted_function: AdaptedFunction) -> Optional[La
         if old_adapted_param.is_modifiable_python_immutable():
             was_replaced = True
 
+            is_pointer = old_adapted_param.cpp_element().decl.cpp_type.modifiers == ["*"]
+
+            # For signatures like
+            #       void foo(bool * flag = NULL);
+            # the python param type will be type Optional[BoxedBool]
+            def compute_is_optional_boxed_type() -> bool:
+                initial_value_cpp = old_adapted_param.cpp_element().decl.initial_value_code
+                is_initial_value_null = initial_value_cpp in ["NULL", "nullptr"]
+                return is_pointer and is_initial_value_null
+
+            is_optional_boxed_type = compute_is_optional_boxed_type()
+
             #
             # Create new calling param (BoxedType<T>)
             #
@@ -72,24 +85,52 @@ def adapt_modifiable_immutable(adapted_function: AdaptedFunction) -> Optional[La
                 old_adapted_param.cpp_element().decl.cpp_type.name_without_modifier_specifier()
             )
             new_decl = new_param.decl
-            new_decl.cpp_type.typenames = [boxed_type.boxed_type_name()]
+            if is_optional_boxed_type:
+                new_decl.cpp_type.typenames = [boxed_type.boxed_type_name()]
+                new_decl.cpp_type.modifiers = ["*"]
+                new_decl.initial_value_code = "nullptr"
+            else:
+                new_decl.cpp_type.typenames = [boxed_type.boxed_type_name()]
+                new_decl.cpp_type.modifiers = ["&"]
             new_decl.cpp_type.specifiers = []
-            new_decl.cpp_type.modifiers = ["&"]
             new_function_params.append(new_param)
 
             #
-            # Fill lambda_input_code: Not needed
+            # Fill lambda_input_code
             #
+            param_original_type = old_adapted_param.cpp_element().full_type()
+            param_name_value = old_adapted_param.cpp_element().decl.decl_name + "_boxed_value"
+            param_name = old_adapted_param.cpp_element().decl.decl_name
+            _i_ = adapted_function.options.indent_cpp_spaces()
+
+            if is_optional_boxed_type:
+                lambda_input_code = f"""
+                    {param_original_type} {param_name_value} = nullptr;
+                    if ({param_name} != nullptr)
+                    {_i_}{param_name_value} = & ({param_name}->value);
+                """
+            else:
+                if is_pointer:
+                    lambda_input_code = f"""
+                        {param_original_type} {param_name_value} = & ({param_name}.value);
+                        """
+                else:
+                    lambda_input_code = f"""
+                        {param_original_type} {param_name_value} = {param_name}.value;
+                        """
+
+            lambda_adapter.lambda_input_code += (
+                code_utils.unindent_code(lambda_input_code, flag_strip_empty_lines=True) + "\n"
+            )
 
             #
             # Fill adapted_cpp_parameter_list (those that will call the original C style function)
             #
-            needs_deref = old_adapted_param.cpp_element().decl.cpp_type.modifiers == ["*"]
             param_name = new_param.decl.decl_name
-            if needs_deref:
-                lambda_adapter.adapted_cpp_parameter_list.append(f"& {param_name}.value")
+            if is_pointer:
+                lambda_adapter.adapted_cpp_parameter_list.append(f"{param_name_value}")
             else:
-                lambda_adapter.adapted_cpp_parameter_list.append(f"{param_name}.value")
+                lambda_adapter.adapted_cpp_parameter_list.append(f"{param_name_value}")
 
         if not was_replaced:
             new_function_params.append(old_adapted_param.cpp_element())

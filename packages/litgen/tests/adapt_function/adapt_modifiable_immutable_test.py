@@ -14,18 +14,20 @@ def test_modifiable_immutable_simple():
     code_utils.assert_are_codes_equal(
         generated_code.pydef_code,
         """
-        m.def("foo",
-            [](BoxedFloat & v)
-            {
-                auto foo_adapt_modifiable_immutable = [](BoxedFloat & v)
+            m.def("foo",
+                [](BoxedFloat & v)
                 {
-                    foo(& v.value);
-                };
+                    auto foo_adapt_modifiable_immutable = [](BoxedFloat & v)
+                    {
+                        float * v_boxed_value = & (v.value);
 
-                foo_adapt_modifiable_immutable(v);
-            },
-            py::arg("v")
-        );
+                        foo(v_boxed_value);
+                    };
+
+                    foo_adapt_modifiable_immutable(v);
+                },
+                py::arg("v")
+            );
     """,
     )
 
@@ -36,6 +38,55 @@ def test_modifiable_immutable_simple():
         def foo(v: BoxedFloat) -> None:
             pass
     """,
+    )
+
+    code = "void foo(float * v = nullptr);"
+    generated_code = litgen.generate_code(options, code)
+    # logging.warning("\n" + generated_code.pydef_code)
+    code_utils.assert_are_codes_equal(
+        generated_code.pydef_code,
+        """
+        m.def("foo",
+            [](BoxedFloat * v = nullptr)
+            {
+                auto foo_adapt_modifiable_immutable = [](BoxedFloat * v = nullptr)
+                {
+                    float * v_boxed_value = nullptr;
+                    if (v != nullptr)
+                        v_boxed_value = & (v->value);
+
+                    foo(v_boxed_value);
+                };
+
+                foo_adapt_modifiable_immutable(v);
+            },
+            py::arg("v") = nullptr
+        );
+    """,
+    )
+
+    code = "int foo(float & v);"
+    generated_code = litgen.generate_code(options, code)
+    # logging.warning("\n" + generated_code.pydef_code)
+    code_utils.assert_are_codes_equal(
+        generated_code.pydef_code,
+        """
+        m.def("foo",
+            [](BoxedFloat & v)
+            {
+                auto foo_adapt_modifiable_immutable = [](BoxedFloat & v)
+                {
+                    float & v_boxed_value = v.value;
+
+                    auto r = foo(v_boxed_value);
+                    return r;
+                };
+
+                return foo_adapt_modifiable_immutable(v);
+            },
+            py::arg("v")
+        );
+        """,
     )
 
 

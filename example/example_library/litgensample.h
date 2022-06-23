@@ -19,25 +19,6 @@ void SomeFunctionThatShouldNotBeIncluded();
 
 namespace LiterateGeneratorExample // MY_API
 {
-    MY_API void ToggleBool(bool *v)
-    {
-        printf("ToggleBool ptr=%p value=%s\n", v, (*v) ? "True" : "False");
-        *v = !(*v);
-    }
-    MY_API void AddHelloToString(std::string *v)
-    {
-        (*v) = (*v) + "-hello";
-    }
-
-
-//    MY_API void ToggleBool2(std::shared_ptr<bool> v) {
-//        bool *b = v.get();
-//        printf("ToggleBool2 ptr=%p value=%s\n", b, (*b) ? "True" : "False");
-//        *b = !(*b);
-//    }
-
-
-
     // A super nice enum
     // for demo purposes ( bool val = false )
     enum MyEnum     // MY_API
@@ -128,6 +109,29 @@ namespace LiterateGeneratorExample // MY_API
     }
 
 
+    //
+    // Modifiable immutable python types test
+    //
+    // Test with pointer
+    MY_API void ToggleBoolPointer(bool *v)
+    {
+        *v = !(*v);
+    }
+    // Test with nullable pointer
+    MY_API void ToggleBoolNullable(bool *v = NULL)
+    {
+        if (v != NULL)
+            *v = !(*v);
+    }
+    // Test with reference
+    MY_API void ToggleBoolReference(bool &v)
+    {
+        v = !(v);
+    }
+
+
+
+
     // Adds two numbers
     MY_API inline int add(int a, int b) { return a + b; }
 
@@ -177,8 +181,7 @@ namespace LiterateGeneratorExample // MY_API
     MY_API Foo* FooInstance() { return & Foo::Instance(); } // return_value_policy::reference
 
 
-    MY_API void setFooDeltaTo50_Pointer(Foo *f) { f->delta = 50;}
-    MY_API void setFooDeltaTo25_Ref(Foo &f) { f.delta = 25;}
+
 
 
 //

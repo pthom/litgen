@@ -106,17 +106,21 @@ def test_c_array_numeric_member_types():
     assert (foo.flags == [True, True, False]).all()
 
 
-def test_pointers():
+def test_modifiable_immutable():
     a = litgensample.BoxedBool(True)
-    print(f"test_pointers a={a}")
-    litgensample.toggle_bool(a)
-    print(f"test_pointers a={a}")
+    assert a.value == True
+    litgensample.toggle_bool_pointer(a)
+    assert a.value == False
+    litgensample.toggle_bool_reference(a)
+    assert a.value == True
+    litgensample.toggle_bool_nullable(a)
+    assert a.value == False
+    litgensample.toggle_bool_nullable(None)
 
 
+test_modifiable_immutable()
 # test_c_array()
 # test_c_buffers()
 # test_c_string_list()
 # test_c_array_numeric_member_types()t
-
-
-test_pointers()
+# test_pointers()

@@ -51,17 +51,12 @@ def play_pydef(code, options) -> None:
 
 
 code = """
-    // Returns the sum of a const buffer
-    MY_API inline int buffer_sum(const uint8_t* buffer, size_t buffer_size, size_t stride= sizeof(uint8_t))
-    {
-        int sum = 0;
-        for (size_t i  = 0; i < buffer_size; ++i)
-            sum += (int)buffer[i];
-        return sum;
-    }
+void foo(bool * flag = nullptr);
+
+//void foo(bool &flag);
 """
 options = litgen.options.LitgenOptions()
-options.srcml_options.functions_api_prefixes = ["MY_API"]
+# options.srcml_options.functions_api_prefixes = ["MY_API"]
 # options.original_location_flag_show = True
 # options = code_style_imgui()
 
