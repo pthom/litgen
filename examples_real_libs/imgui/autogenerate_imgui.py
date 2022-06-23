@@ -40,3 +40,5 @@ if __name__ == "__main__":
     imgui_string_patch.apply_imgui_string_patch()
 
     autogenerate()
+
+    imgui_string_patch.revert_imgui_string_patch()

@@ -1,4 +1,6 @@
 imgui / Todo:
+    * profile generate imgui
+    * patch on imgui code string
     * ImVector -> List, reprendre impl (template), ou pycast (exclu par regex pour l'instant)
     * interdire variables nommees str (cf input_text)
     * Boxer les pointeur (SliderInt, input_text, etc.)
