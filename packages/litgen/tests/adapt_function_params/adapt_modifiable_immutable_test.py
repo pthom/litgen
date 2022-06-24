@@ -57,7 +57,7 @@ def test_modifiable_immutable_simple():
                 };
 
                 foo_adapt_modifiable_immutable(v);
-            },     py::arg("v") = nullptr);
+            },     py::arg("v") = py::none());
         """,
     )
 
