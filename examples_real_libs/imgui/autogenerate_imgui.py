@@ -35,9 +35,9 @@ def autogenerate():
 if __name__ == "__main__":
     print("autogenerate_imgui")
 
-    import imgui_litgen_patch
+    # import imgui_litgen_patch
 
-    imgui_litgen_patch.apply_imgui_patch()
+    # imgui_litgen_patch.apply_imgui_patch()
 
     autogenerate()
 

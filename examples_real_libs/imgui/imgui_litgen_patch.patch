@@ -1,130 +1,18 @@
-diff --git a/imgui.cpp b/imgui.cpp
-index 89204387..5e378317 100644
---- a/imgui.cpp
-+++ b/imgui.cpp
-@@ -2772,6 +2772,11 @@ ImGuiStyle& ImGui::GetStyle()
-     IM_ASSERT(GImGui != NULL && "No current context. Did you call ImGui::CreateContext() and ImGui::SetCurrentContext() ?");
-     return GImGui->Style;
- }
-+ImGuiStyle* ImGui::GetStylePtr()
-+{
-+    IM_ASSERT(GImGui != NULL && "No current context. Did you call ImGui::CreateContext() and ImGui::SetCurrentContext() ?");
-+    return &(GImGui->Style);
-+}
-
- ImU32 ImGui::GetColorU32(ImGuiCol idx, float alpha_mul)
- {
-@@ -3756,6 +3761,11 @@ ImGuiIO& ImGui::GetIO()
-     IM_ASSERT(GImGui != NULL && "No current context. Did you call ImGui::CreateContext() and ImGui::SetCurrentContext() ?");
-     return GImGui->IO;
- }
-+ImGuiIO* ImGui::GetIOPtr()
-+{
-+    IM_ASSERT(GImGui != NULL && "No current context. Did you call ImGui::CreateContext() and ImGui::SetCurrentContext() ?");
-+    return &(GImGui->IO);
-+}
-
- // Pass this to your backend rendering function! Valid after Render() and until the next call to NewFrame()
- ImDrawData* ImGui::GetDrawData()
 diff --git a/imgui.h b/imgui.h
-index c9bdb2d7..7e479806 100644
+index c9bdb2d7..939cb6e0 100644
 --- a/imgui.h
 +++ b/imgui.h
-@@ -1,6 +1,6 @@
+@@ -3052,4 +3052,13 @@ enum ImGuiKeyModFlags_ { ImGuiKeyModFlags_None = ImGuiModFlags_None, ImGuiKeyMod
+ #include "imgui_user.h"
+ #endif
+
 +#include <string>
- // dear imgui, v1.88 WIP
- // (headers)
--
- // Help:
- // - Read FAQ at http://dearimgui.org/faq
- // - Newcomers, read 'Programmer guide' in imgui.cpp for notes on how to setup Dear ImGui in your codebase.
-@@ -288,7 +288,9 @@ namespace ImGui
-
-     // Main
-     IMGUI_API ImGuiIO&      GetIO();                                    // access the IO structure (mouse/keyboard/gamepad inputs, time, various configuration options/flags)
-+    IMGUI_API ImGuiIO*      GetIOPtr(); //return_value_policy::reference    // access the IO structure (mouse/keyboard/gamepad inputs, time, various configuration options/flags)
-     IMGUI_API ImGuiStyle&   GetStyle();                                 // access the Style structure (colors, sizes). Always use PushStyleCol(), PushStyleVar() to modify style mid-frame!
-+    IMGUI_API ImGuiStyle*   GetStylePtr(); //return_value_policy::reference // access the Style structure (colors, sizes). Always use PushStyleCol(), PushStyleVar() to modify style mid-frame!
-     IMGUI_API void          NewFrame();                                 // start a new Dear ImGui frame, you can submit any command from this point until Render()/EndFrame().
-     IMGUI_API void          EndFrame();                                 // ends the Dear ImGui frame. automatically called by Render(). If you don't need to render data (skipping rendering) you may call EndFrame() without Render()... but you'll have wasted CPU already! If you don't need to render, better to not create any windows and not call NewFrame() at all!
-     IMGUI_API void          Render();                                   // ends the Dear ImGui frame, finalize the draw data. You can then get call GetDrawData().
-@@ -343,7 +345,7 @@ namespace ImGui
-     IMGUI_API bool          IsWindowCollapsed();
-     IMGUI_API bool          IsWindowFocused(ImGuiFocusedFlags flags=0); // is current window focused? or its root/child, depending on flags. see flags for options.
-     IMGUI_API bool          IsWindowHovered(ImGuiHoveredFlags flags=0); // is current window hovered (and typically: not blocked by a popup/modal)? see flags for options. NB: If you are trying to check whether your mouse should be dispatched to imgui or to your app, you should use the 'io.WantCaptureMouse' boolean for that! Please read the FAQ!
--    IMGUI_API ImDrawList*   GetWindowDrawList();                        // get draw list associated to the current window, to append your own drawing primitives
-+    IMGUI_API ImDrawList*   GetWindowDrawList(); // return_value_policy::reference // get draw list associated to the current window, to append your own drawing primitives
-     IMGUI_API ImVec2        GetWindowPos();                             // get current window position in screen space (useful if you want to do your own drawing via the DrawList API)
-     IMGUI_API ImVec2        GetWindowSize();                            // get current window size
-     IMGUI_API float         GetWindowWidth();                           // get current window width (shortcut for GetWindowSize().x)
-@@ -558,12 +560,15 @@ namespace ImGui
-     IMGUI_API bool          VSliderInt(const char* label, const ImVec2& size, int* v, int v_min, int v_max, const char* format = "%d", ImGuiSliderFlags flags = 0);
-     IMGUI_API bool          VSliderScalar(const char* label, const ImVec2& size, ImGuiDataType data_type, void* p_data, const void* p_min, const void* p_max, const char* format = NULL, ImGuiSliderFlags flags = 0);
-
-+
-     // Widgets: Input with Keyboard
--    // - If you want to use InputText() with std::string or any custom dynamic string type, see misc/cpp/imgui_stdlib.h and comments in imgui_demo.cpp.
-     // - Most of the ImGuiInputTextFlags flags are only useful for InputText() and not for InputFloatX, InputIntX, InputDouble etc.
-     IMGUI_API bool          InputText(const char* label, char* buf, size_t buf_size, ImGuiInputTextFlags flags = 0, ImGuiInputTextCallback callback = NULL, void* user_data = NULL);
-     IMGUI_API bool          InputTextMultiline(const char* label, char* buf, size_t buf_size, const ImVec2& size = ImVec2(0, 0), ImGuiInputTextFlags flags = 0, ImGuiInputTextCallback callback = NULL, void* user_data = NULL);
-     IMGUI_API bool          InputTextWithHint(const char* label, const char* hint, char* buf, size_t buf_size, ImGuiInputTextFlags flags = 0, ImGuiInputTextCallback callback = NULL, void* user_data = NULL);
++namespace ImGui
++{
 +    IMGUI_API bool          InputText(const char* label, std::string* str, ImGuiInputTextFlags flags = 0, ImGuiInputTextCallback callback = NULL, void* user_data = NULL);
 +    IMGUI_API bool          InputTextMultiline(const char* label, std::string* str, const ImVec2& size = ImVec2(0, 0), ImGuiInputTextFlags flags = 0, ImGuiInputTextCallback callback = NULL, void* user_data = NULL);
 +    IMGUI_API bool          InputTextWithHint(const char* label, const char* hint, std::string* str, ImGuiInputTextFlags flags = 0, ImGuiInputTextCallback callback = NULL, void* user_data = NULL);
-     IMGUI_API bool          InputFloat(const char* label, float* v, float step = 0.0f, float step_fast = 0.0f, const char* format = "%.3f", ImGuiInputTextFlags flags = 0);
-     IMGUI_API bool          InputFloat2(const char* label, float v[2], const char* format = "%.3f", ImGuiInputTextFlags flags = 0);
-     IMGUI_API bool          InputFloat3(const char* label, float v[3], const char* format = "%.3f", ImGuiInputTextFlags flags = 0);
-@@ -843,21 +848,21 @@ namespace ImGui
-     // - Currently represents the Platform Window created by the application which is hosting our Dear ImGui windows.
-     // - In 'docking' branch with multi-viewport enabled, we extend this concept to have multiple active viewports.
-     // - In the future we will extend this concept further to also represent Platform Monitor and support a "no main platform window" operation mode.
--    IMGUI_API ImGuiViewport* GetMainViewport();                                                 // return primary/default viewport. This can never be NULL.
-+    IMGUI_API ImGuiViewport* GetMainViewport(); // return_value_policy::reference               // return primary/default viewport. This can never be NULL.
-
-     // Background/Foreground Draw Lists
--    IMGUI_API ImDrawList*   GetBackgroundDrawList();                                            // this draw list will be the first rendered one. Useful to quickly draw shapes/text behind dear imgui contents.
--    IMGUI_API ImDrawList*   GetForegroundDrawList();                                            // this draw list will be the last rendered one. Useful to quickly draw shapes/text over dear imgui contents.
-+    IMGUI_API ImDrawList*   GetBackgroundDrawList(); // return_value_policy::reference          // this draw list will be the first rendered one. Useful to quickly draw shapes/text behind dear imgui contents.
-+    IMGUI_API ImDrawList*   GetForegroundDrawList(); // return_value_policy::reference          // this draw list will be the last rendered one. Useful to quickly draw shapes/text over dear imgui contents.
-
-     // Miscellaneous Utilities
-     IMGUI_API bool          IsRectVisible(const ImVec2& size);                                  // test if rectangle (of given size, starting from cursor position) is visible / not clipped.
-     IMGUI_API bool          IsRectVisible(const ImVec2& rect_min, const ImVec2& rect_max);      // test if rectangle (in screen space) is visible / not clipped. to perform coarse clipping on user's side.
-     IMGUI_API double        GetTime();                                                          // get global imgui time. incremented by io.DeltaTime every frame.
-     IMGUI_API int           GetFrameCount();                                                    // get global imgui frame count. incremented by 1 every frame.
--    IMGUI_API ImDrawListSharedData* GetDrawListSharedData();                                    // you may use this when creating your own ImDrawList instances.
-+    IMGUI_API ImDrawListSharedData* GetDrawListSharedData(); // return_value_policy::reference  // you may use this when creating your own ImDrawList instances.
-     IMGUI_API const char*   GetStyleColorName(ImGuiCol idx);                                    // get a string corresponding to the enum value (for display, saving, etc.).
-     IMGUI_API void          SetStateStorage(ImGuiStorage* storage);                             // replace current window storage with our own (if you want to manipulate it yourself, typically clear subsection of it)
--    IMGUI_API ImGuiStorage* GetStateStorage();
-+    IMGUI_API ImGuiStorage* GetStateStorage(); // return_value_policy::reference
-     IMGUI_API bool          BeginChildFrame(ImGuiID id, const ImVec2& size, ImGuiWindowFlags flags = 0); // helper to create a child window / scrolling region that looks like a normal widget frame
-     IMGUI_API void          EndChildFrame();                                                    // always call EndChildFrame() regardless of BeginChildFrame() return values (which indicates a collapsed/clipped window)
-
-diff --git a/misc/cpp/imgui_stdlib.cpp b/misc/cpp/imgui_stdlib.cpp
-index dd6bd8a5..5c45d545 100644
---- a/misc/cpp/imgui_stdlib.cpp
-+++ b/misc/cpp/imgui_stdlib.cpp
-@@ -35,6 +35,7 @@ static int InputTextCallback(ImGuiInputTextCallbackData* data)
-     return 0;
- }
-
++}
 +
- bool ImGui::InputText(const char* label, std::string* str, ImGuiInputTextFlags flags, ImGuiInputTextCallback callback, void* user_data)
- {
-     IM_ASSERT((flags & ImGuiInputTextFlags_CallbackResize) == 0);
-diff --git a/misc/cpp/imgui_stdlib.h b/misc/cpp/imgui_stdlib.h
-index 61afc098..86fecd35 100644
---- a/misc/cpp/imgui_stdlib.h
-+++ b/misc/cpp/imgui_stdlib.h
-@@ -12,7 +12,7 @@ namespace ImGui
- {
-     // ImGui::InputText() with std::string
-     // Because text input needs dynamic resizing, we need to setup a callback to grow the capacity
--    IMGUI_API bool  InputText(const char* label, std::string* str, ImGuiInputTextFlags flags = 0, ImGuiInputTextCallback callback = NULL, void* user_data = NULL);
--    IMGUI_API bool  InputTextMultiline(const char* label, std::string* str, const ImVec2& size = ImVec2(0, 0), ImGuiInputTextFlags flags = 0, ImGuiInputTextCallback callback = NULL, void* user_data = NULL);
--    IMGUI_API bool  InputTextWithHint(const char* label, const char* hint, std::string* str, ImGuiInputTextFlags flags = 0, ImGuiInputTextCallback callback = NULL, void* user_data = NULL);
-+    //IMGUI_API bool  InputText(const char* label, std::string* str, ImGuiInputTextFlags flags = 0, ImGuiInputTextCallback callback = NULL, void* user_data = NULL);
-+    //IMGUI_API bool  InputTextMultiline(const char* label, std::string* str, const ImVec2& size = ImVec2(0, 0), ImGuiInputTextFlags flags = 0, ImGuiInputTextCallback callback = NULL, void* user_data = NULL);
-+    //IMGUI_API bool  InputTextWithHint(const char* label, const char* hint, std::string* str, ImGuiInputTextFlags flags = 0, ImGuiInputTextCallback callback = NULL, void* user_data = NULL);
- }
++
+ #endif // #ifndef IMGUI_DISABLE

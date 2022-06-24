@@ -1,8 +1,8 @@
 import lg_imgui as imgui
 
 
-ctx = imgui.create_context(None)
-io = imgui.get_io_ptr()
+ctx = imgui.create_context()
+io = imgui.get_io()
 
 # Build atlas
 io.fonts.build()
@@ -13,8 +13,6 @@ for n in range(20):
     iod = io.display_size
     io.delta_time = 1.0 / 60.0
 
-    io2 = imgui.get_io_ptr()
-
     imgui.new_frame()
 
     f = imgui.BoxedFloat(0.0)
@@ -24,5 +22,4 @@ for n in range(20):
 
     imgui.render()
 
-print("DestroyContext()")
-imgui.destroy_context(None)
+imgui.destroy_context()
