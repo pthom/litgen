@@ -15,12 +15,14 @@ imgui_patch = patch.fromfile(patch_file)
 
 
 def apply_imgui_patch():
+    return
     patch_success = imgui_patch.apply(root=imgui_dir)
     if not patch_success:
         logging.warning("apply_imgui_patch failed")
 
 
 def revert_imgui_patch():
+    return
     patch_success = imgui_patch.revert(root=imgui_dir)
     if not patch_success:
         logging.warning("revert_imgui_patch failed")
