@@ -50,7 +50,7 @@ class LitgenOptions:
     python_reproduce_cpp_layout: bool = True
     # Reformat the generated python to remove long series of empty lines (disabled if < 0)
     python_max_consecutive_empty_lines: int = -1
-    # The generated code will try to adhere to this max length
+    # The generated code will try to adhere to this max length (if negative, this is ignored)
     python_max_line_length = 80
     # Strip (remove) empty comment lines
     python_strip_empty_comment_lines: bool = False
@@ -309,6 +309,7 @@ def code_style_imgui() -> LitgenOptions:
 
     options.generate_to_string = False
     options.cpp_indent_size = 4
+    options.python_max_line_length = -1  # in ImGui, the function decls are on *one* line
 
     options.code_replacements = cpp_to_python.standard_code_replacements()
     options.code_replacements += code_replacements.parse_string_replacements(
@@ -316,7 +317,7 @@ def code_style_imgui() -> LitgenOptions:
     )
 
     options.original_location_flag_show = True
-    options.original_signature_flag_show = True
+    options.original_signature_flag_show = False
 
     options.buffer_flag_replace_by_array = True
 

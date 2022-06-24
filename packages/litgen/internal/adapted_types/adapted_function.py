@@ -259,7 +259,10 @@ class AdaptedFunction(AdaptedElement):
             first_code_line_full += ", ".join(params_strs)
             first_code_line_full += return_code
             first_code_line_full += type_ignore
-            if len(first_code_line_full) < self.options.python_max_line_length:
+            if (
+                self.options.python_max_line_length <= 0
+                or len(first_code_line_full) < self.options.python_max_line_length
+            ):
                 return first_code_line_full
             else:
                 return None
