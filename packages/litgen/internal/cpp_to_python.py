@@ -72,10 +72,22 @@ def add_underscore_if_python_reserved_word(name: str) -> str:
     return name
 
 
-def var_name_to_python(options: LitgenOptions, var_name: str) -> str:  # noqa
-    var_name_snake_case = code_utils.to_snake_case(var_name)
-    r = add_underscore_if_python_reserved_word(var_name_snake_case)
-    return r
+def _function_or_var_name_to_python(options: LitgenOptions, name: str) -> str:  # noqa
+    if options.python_convert_to_snake_case:
+        name_snake_case = code_utils.to_snake_case(name)
+        r = add_underscore_if_python_reserved_word(name_snake_case)
+        return r
+    else:
+        r = add_underscore_if_python_reserved_word(name)
+        return r
+
+
+def function_name_to_python(options: LitgenOptions, name: str) -> str:
+    return _function_or_var_name_to_python(options, name)
+
+
+def var_name_to_python(options: LitgenOptions, name: str) -> str:
+    return _function_or_var_name_to_python(options, name)
 
 
 def var_value_to_python(options: LitgenOptions, default_value_cpp: str) -> str:
@@ -83,10 +95,6 @@ def var_value_to_python(options: LitgenOptions, default_value_cpp: str) -> str:
     for number_macro, value in options.srcml_options.named_number_macros.items():
         r = r.replace(number_macro, str(value))
     return r
-
-
-def function_name_to_python(options: LitgenOptions, function_name: str) -> str:  # noqa
-    return code_utils.to_snake_case(function_name)
 
 
 def is_float_str(s: str) -> bool:

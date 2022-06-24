@@ -43,6 +43,8 @@ class LitgenOptions:
     # Layout settings for the generated python stub code
     #
 
+    # Convert variables and functions names to snake_case (class, structs, and enums names are always preserved)
+    python_convert_to_snake_case: bool = True
     # Size of an indentation in the python stubs
     python_indent_size = 4
     python_ident_with_tabs: bool = False
@@ -309,13 +311,14 @@ def code_style_imgui() -> LitgenOptions:
 
     options.generate_to_string = False
     options.cpp_indent_size = 4
-    options.python_max_line_length = -1  # in ImGui, the function decls are on *one* line
 
     options.code_replacements = cpp_to_python.standard_code_replacements()
     options.code_replacements += code_replacements.parse_string_replacements(
         r"\bImVector\s*<\s*([\w:]*)\s*> -> List[\1]"
     )
 
+    options.python_max_line_length = -1  # in ImGui, the function decls are on *one* line
+    options.python_convert_to_snake_case = False
     options.original_location_flag_show = True
     options.original_signature_flag_show = False
 

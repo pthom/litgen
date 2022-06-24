@@ -424,73 +424,73 @@ class ImVec4:    # imgui.h:262
 # - Each context create its own ImFontAtlas by default. You may instance one yourself and pass it to CreateContext() to share a font atlas between contexts.
 # - DLL users: heaps and globals are not shared across DLL boundaries! You will need to call SetCurrentContext() + SetAllocatorFunctions()
 #   for each static/DLL boundary you are calling from. Read "Context and Memory Allocators" section of imgui.cpp for details.
-def create_context(shared_font_atlas: ImFontAtlas = None) -> ImGuiContext:    # imgui.h:284
+def CreateContext(shared_font_atlas: ImFontAtlas = None) -> ImGuiContext:    # imgui.h:284
     pass
-def destroy_context(ctx: ImGuiContext = None) -> None:    # imgui.h:285
+def DestroyContext(ctx: ImGuiContext = None) -> None:    # imgui.h:285
     """ None = destroy current context"""
     pass
-def get_current_context() -> ImGuiContext:    # imgui.h:286
+def GetCurrentContext() -> ImGuiContext:    # imgui.h:286
     pass
-def set_current_context(ctx: ImGuiContext) -> None:    # imgui.h:287
+def SetCurrentContext(ctx: ImGuiContext) -> None:    # imgui.h:287
     pass
 
 # Main
-def get_io() -> ImGuiIO:    # imgui.h:290
+def GetIO() -> ImGuiIO:    # imgui.h:290
     """ access the IO structure (mouse/keyboard/gamepad inputs, time, various configuration options/flags)"""
     pass
-def get_style() -> ImGuiStyle:    # imgui.h:291
+def GetStyle() -> ImGuiStyle:    # imgui.h:291
     """ access the Style structure (colors, sizes). Always use PushStyleCol(), PushStyleVar() to modify style mid-frame!"""
     pass
-def new_frame() -> None:    # imgui.h:292
+def NewFrame() -> None:    # imgui.h:292
     """ start a new Dear ImGui frame, you can submit any command from this point until Render()/EndFrame()."""
     pass
-def end_frame() -> None:    # imgui.h:293
+def EndFrame() -> None:    # imgui.h:293
     """ ends the Dear ImGui frame. automatically called by Render(). If you don't need to render data (skipping rendering) you may call EndFrame() without Render()... but you'll have wasted CPU already! If you don't need to render, better to not create any windows and not call NewFrame() at all!"""
     pass
-def render() -> None:    # imgui.h:294
+def Render() -> None:    # imgui.h:294
     """ ends the Dear ImGui frame, finalize the draw data. You can then get call GetDrawData()."""
     pass
-def get_draw_data() -> ImDrawData:    # imgui.h:295
+def GetDrawData() -> ImDrawData:    # imgui.h:295
     """ valid after Render() and until the next call to NewFrame(). this is what you have to render."""
     pass
 
 # Demo, Debug, Information
-def show_demo_window(p_open: BoxedBool = None) -> None:    # imgui.h:298
+def ShowDemoWindow(p_open: BoxedBool = None) -> None:    # imgui.h:298
     """ create Demo window. demonstrate most ImGui features. call this to learn about the library! try to make it always available in your application!"""
     pass
-def show_metrics_window(p_open: BoxedBool = None) -> None:    # imgui.h:299
+def ShowMetricsWindow(p_open: BoxedBool = None) -> None:    # imgui.h:299
     """ create Metrics/Debugger window. display Dear ImGui internals: windows, draw commands, various internal state, etc."""
     pass
-def show_stack_tool_window(p_open: BoxedBool = None) -> None:    # imgui.h:300
+def ShowStackToolWindow(p_open: BoxedBool = None) -> None:    # imgui.h:300
     """ create Stack Tool window. hover items with mouse to query information about the source of their unique ID."""
     pass
-def show_about_window(p_open: BoxedBool = None) -> None:    # imgui.h:301
+def ShowAboutWindow(p_open: BoxedBool = None) -> None:    # imgui.h:301
     """ create About window. display Dear ImGui version, credits and build/system information."""
     pass
-def show_style_editor(ref: ImGuiStyle = None) -> None:    # imgui.h:302
+def ShowStyleEditor(ref: ImGuiStyle = None) -> None:    # imgui.h:302
     """ add style editor block (not a window). you can pass in a reference ImGuiStyle structure to compare to, revert to and save to (else it uses the default style)"""
     pass
-def show_style_selector(label: str) -> bool:    # imgui.h:303
+def ShowStyleSelector(label: str) -> bool:    # imgui.h:303
     """ add style selector block (not a window), essentially a combo listing the default styles."""
     pass
-def show_font_selector(label: str) -> None:    # imgui.h:304
+def ShowFontSelector(label: str) -> None:    # imgui.h:304
     """ add font selector block (not a window), essentially a combo listing the loaded fonts."""
     pass
-def show_user_guide() -> None:    # imgui.h:305
+def ShowUserGuide() -> None:    # imgui.h:305
     """ add basic help/info block (not a window): how to manipulate ImGui as a end-user (mouse/keyboard controls)."""
     pass
-def get_version() -> str:    # imgui.h:306
+def GetVersion() -> str:    # imgui.h:306
     """ get the compiled version string e.g. "1.80 WIP" (essentially the value for IMGUI_VERSION from the compiled version of imgui.cpp)"""
     pass
 
 # Styles
-def style_colors_dark(dst: ImGuiStyle = None) -> None:    # imgui.h:309
+def StyleColorsDark(dst: ImGuiStyle = None) -> None:    # imgui.h:309
     """ new, recommended style (default)"""
     pass
-def style_colors_light(dst: ImGuiStyle = None) -> None:    # imgui.h:310
+def StyleColorsLight(dst: ImGuiStyle = None) -> None:    # imgui.h:310
     """ best used with borders and a custom, thicker font"""
     pass
-def style_colors_classic(dst: ImGuiStyle = None) -> None:    # imgui.h:311
+def StyleColorsClassic(dst: ImGuiStyle = None) -> None:    # imgui.h:311
     """ classic imgui style"""
     pass
 
@@ -506,9 +506,9 @@ def style_colors_classic(dst: ImGuiStyle = None) -> None:    # imgui.h:311
 #    BeginPopup/EndPopup, etc. where the EndXXX call should only be called if the corresponding BeginXXX function
 #    returned True. Begin and BeginChild are the only odd ones out. Will be fixed in a future update.]
 # - Note that the bottom of window stack always contains a window called "Debug".
-def begin(name: str, p_open: BoxedBool = None, flags: ImGuiWindowFlags = 0) -> bool:    # imgui.h:325
+def Begin(name: str, p_open: BoxedBool = None, flags: ImGuiWindowFlags = 0) -> bool:    # imgui.h:325
     pass
-def end() -> None:    # imgui.h:326
+def End() -> None:    # imgui.h:326
     pass
 
 # Child Windows
@@ -519,211 +519,211 @@ def end() -> None:    # imgui.h:326
 #   [Important: due to legacy reason, this is inconsistent with most other functions such as BeginMenu/EndMenu,
 #    BeginPopup/EndPopup, etc. where the EndXXX call should only be called if the corresponding BeginXXX function
 #    returned True. Begin and BeginChild are the only odd ones out. Will be fixed in a future update.]
-def begin_child(str_id: str, size: ImVec2 = ImVec2(0, 0), border: bool = False, flags: ImGuiWindowFlags = 0) -> bool:    # imgui.h:336
+def BeginChild(str_id: str, size: ImVec2 = ImVec2(0, 0), border: bool = False, flags: ImGuiWindowFlags = 0) -> bool:    # imgui.h:336
     pass
-def begin_child(id: ImGuiID, size: ImVec2 = ImVec2(0, 0), border: bool = False, flags: ImGuiWindowFlags = 0) -> bool:    # imgui.h:337
+def BeginChild(id: ImGuiID, size: ImVec2 = ImVec2(0, 0), border: bool = False, flags: ImGuiWindowFlags = 0) -> bool:    # imgui.h:337
     pass
-def end_child() -> None:    # imgui.h:338
+def EndChild() -> None:    # imgui.h:338
     pass
 
 # Windows Utilities
 # - 'current window' = the window we are appending into while inside a Begin()/End() block. 'next window' = next window we will Begin() into.
-def is_window_appearing() -> bool:    # imgui.h:342
+def IsWindowAppearing() -> bool:    # imgui.h:342
     pass
-def is_window_collapsed() -> bool:    # imgui.h:343
+def IsWindowCollapsed() -> bool:    # imgui.h:343
     pass
-def is_window_focused(flags: ImGuiFocusedFlags = 0) -> bool:    # imgui.h:344
+def IsWindowFocused(flags: ImGuiFocusedFlags = 0) -> bool:    # imgui.h:344
     """ is current window focused? or its root/child, depending on flags. see flags for options."""
     pass
-def is_window_hovered(flags: ImGuiHoveredFlags = 0) -> bool:    # imgui.h:345
+def IsWindowHovered(flags: ImGuiHoveredFlags = 0) -> bool:    # imgui.h:345
     """ is current window hovered (and typically: not blocked by a popup/modal)? see flags for options. NB: If you are trying to check whether your mouse should be dispatched to imgui or to your app, you should use the 'io.WantCaptureMouse' boolean for that! Please read the FAQ!"""
     pass
-def get_window_draw_list() -> ImDrawList:    # imgui.h:346
+def GetWindowDrawList() -> ImDrawList:    # imgui.h:346
     """ get draw list associated to the current window, to append your own drawing primitives"""
     pass
-def get_window_pos() -> ImVec2:    # imgui.h:347
+def GetWindowPos() -> ImVec2:    # imgui.h:347
     """ get current window position in screen space (useful if you want to do your own drawing via the DrawList API)"""
     pass
-def get_window_size() -> ImVec2:    # imgui.h:348
+def GetWindowSize() -> ImVec2:    # imgui.h:348
     """ get current window size"""
     pass
-def get_window_width() -> float:    # imgui.h:349
+def GetWindowWidth() -> float:    # imgui.h:349
     """ get current window width (shortcut for GetWindowSize().x)"""
     pass
-def get_window_height() -> float:    # imgui.h:350
+def GetWindowHeight() -> float:    # imgui.h:350
     """ get current window height (shortcut for GetWindowSize().y)"""
     pass
 
 # Window manipulation
 # - Prefer using SetNextXXX functions (before Begin) rather that SetXXX functions (after Begin).
-def set_next_window_pos(pos: ImVec2, cond: ImGuiCond = 0, pivot: ImVec2 = ImVec2(0, 0)) -> None:    # imgui.h:354
+def SetNextWindowPos(pos: ImVec2, cond: ImGuiCond = 0, pivot: ImVec2 = ImVec2(0, 0)) -> None:    # imgui.h:354
     """ set next window position. call before Begin(). use pivot=(0.5,0.5) to center on given point, etc."""
     pass
-def set_next_window_size(size: ImVec2, cond: ImGuiCond = 0) -> None:    # imgui.h:355
+def SetNextWindowSize(size: ImVec2, cond: ImGuiCond = 0) -> None:    # imgui.h:355
     """ set next window size. set axis to 0.0 to force an auto-fit on this axis. call before Begin()"""
     pass
-def set_next_window_size_constraints(size_min: ImVec2, size_max: ImVec2, custom_callback: ImGuiSizeCallback = None, custom_callback_data: Any = None) -> None:    # imgui.h:356
+def SetNextWindowSizeConstraints(size_min: ImVec2, size_max: ImVec2, custom_callback: ImGuiSizeCallback = None, custom_callback_data: Any = None) -> None:    # imgui.h:356
     """ set next window size limits. use -1,-1 on either X/Y axis to preserve the current size. Sizes will be rounded down. Use callback to apply non-trivial programmatic constraints."""
     pass
-def set_next_window_content_size(size: ImVec2) -> None:    # imgui.h:357
+def SetNextWindowContentSize(size: ImVec2) -> None:    # imgui.h:357
     """ set next window content size (~ scrollable client area, which enforce the range of scrollbars). Not including window decorations (title bar, menu bar, etc.) nor WindowPadding. set an axis to 0.0 to leave it automatic. call before Begin()"""
     pass
-def set_next_window_collapsed(collapsed: bool, cond: ImGuiCond = 0) -> None:    # imgui.h:358
+def SetNextWindowCollapsed(collapsed: bool, cond: ImGuiCond = 0) -> None:    # imgui.h:358
     """ set next window collapsed state. call before Begin()"""
     pass
-def set_next_window_focus() -> None:    # imgui.h:359
+def SetNextWindowFocus() -> None:    # imgui.h:359
     """ set next window to be focused / top-most. call before Begin()"""
     pass
-def set_next_window_bg_alpha(alpha: float) -> None:    # imgui.h:360
+def SetNextWindowBgAlpha(alpha: float) -> None:    # imgui.h:360
     """ set next window background color alpha. helper to easily override the Alpha component of ImGuiCol_WindowBg/ChildBg/PopupBg. you may also use ImGuiWindowFlags_NoBackground."""
     pass
-def set_window_pos(pos: ImVec2, cond: ImGuiCond = 0) -> None:    # imgui.h:361
+def SetWindowPos(pos: ImVec2, cond: ImGuiCond = 0) -> None:    # imgui.h:361
     """ (not recommended) set current window position - call within Begin()/End(). prefer using SetNextWindowPos(), as this may incur tearing and side-effects."""
     pass
-def set_window_size(size: ImVec2, cond: ImGuiCond = 0) -> None:    # imgui.h:362
+def SetWindowSize(size: ImVec2, cond: ImGuiCond = 0) -> None:    # imgui.h:362
     """ (not recommended) set current window size - call within Begin()/End(). set to ImVec2(0, 0) to force an auto-fit. prefer using SetNextWindowSize(), as this may incur tearing and minor side-effects."""
     pass
-def set_window_collapsed(collapsed: bool, cond: ImGuiCond = 0) -> None:    # imgui.h:363
+def SetWindowCollapsed(collapsed: bool, cond: ImGuiCond = 0) -> None:    # imgui.h:363
     """ (not recommended) set current window collapsed state. prefer using SetNextWindowCollapsed()."""
     pass
-def set_window_focus() -> None:    # imgui.h:364
+def SetWindowFocus() -> None:    # imgui.h:364
     """ (not recommended) set current window to be focused / top-most. prefer using SetNextWindowFocus()."""
     pass
-def set_window_font_scale(scale: float) -> None:    # imgui.h:365
+def SetWindowFontScale(scale: float) -> None:    # imgui.h:365
     """ [OBSOLETE] set font scale. Adjust IO.FontGlobalScale if you want to scale all windows. This is an old API! For correct scaling, prefer to reload font + rebuild ImFontAtlas + call style.ScaleAllSizes()."""
     pass
-def set_window_pos(name: str, pos: ImVec2, cond: ImGuiCond = 0) -> None:    # imgui.h:366
+def SetWindowPos(name: str, pos: ImVec2, cond: ImGuiCond = 0) -> None:    # imgui.h:366
     """ set named window position."""
     pass
-def set_window_size(name: str, size: ImVec2, cond: ImGuiCond = 0) -> None:    # imgui.h:367
+def SetWindowSize(name: str, size: ImVec2, cond: ImGuiCond = 0) -> None:    # imgui.h:367
     """ set named window size. set axis to 0.0 to force an auto-fit on this axis."""
     pass
-def set_window_collapsed(name: str, collapsed: bool, cond: ImGuiCond = 0) -> None:    # imgui.h:368
+def SetWindowCollapsed(name: str, collapsed: bool, cond: ImGuiCond = 0) -> None:    # imgui.h:368
     """ set named window collapsed state"""
     pass
-def set_window_focus(name: str) -> None:    # imgui.h:369
+def SetWindowFocus(name: str) -> None:    # imgui.h:369
     """ set named window to be focused / top-most. use None to remove focus."""
     pass
 
 # Content region
 # - Retrieve available space from a given point. GetContentRegionAvail() is frequently useful.
 # - Those functions are bound to be redesigned (they are confusing, incomplete and the Min/Max return values are in local window coordinates which increases confusion)
-def get_content_region_avail() -> ImVec2:    # imgui.h:374
+def GetContentRegionAvail() -> ImVec2:    # imgui.h:374
     """ == GetContentRegionMax() - GetCursorPos()"""
     pass
-def get_content_region_max() -> ImVec2:    # imgui.h:375
+def GetContentRegionMax() -> ImVec2:    # imgui.h:375
     """ current content boundaries (typically window boundaries including scrolling, or current column boundaries), in windows coordinates"""
     pass
-def get_window_content_region_min() -> ImVec2:    # imgui.h:376
+def GetWindowContentRegionMin() -> ImVec2:    # imgui.h:376
     """ content boundaries min for the full window (roughly (0,0)-Scroll), in window coordinates"""
     pass
-def get_window_content_region_max() -> ImVec2:    # imgui.h:377
+def GetWindowContentRegionMax() -> ImVec2:    # imgui.h:377
     """ content boundaries max for the full window (roughly (0,0)+Size-Scroll) where Size can be override with SetNextWindowContentSize(), in window coordinates"""
     pass
 
 # Windows Scrolling
-def get_scroll_x() -> float:    # imgui.h:380
+def GetScrollX() -> float:    # imgui.h:380
     """ get scrolling amount [0 .. GetScrollMaxX()]"""
     pass
-def get_scroll_y() -> float:    # imgui.h:381
+def GetScrollY() -> float:    # imgui.h:381
     """ get scrolling amount [0 .. GetScrollMaxY()]"""
     pass
-def set_scroll_x(scroll_x: float) -> None:    # imgui.h:382
+def SetScrollX(scroll_x: float) -> None:    # imgui.h:382
     """ set scrolling amount [0 .. GetScrollMaxX()]"""
     pass
-def set_scroll_y(scroll_y: float) -> None:    # imgui.h:383
+def SetScrollY(scroll_y: float) -> None:    # imgui.h:383
     """ set scrolling amount [0 .. GetScrollMaxY()]"""
     pass
-def get_scroll_max_x() -> float:    # imgui.h:384
+def GetScrollMaxX() -> float:    # imgui.h:384
     """ get maximum scrolling amount ~~ ContentSize.x - WindowSize.x - DecorationsSize.x"""
     pass
-def get_scroll_max_y() -> float:    # imgui.h:385
+def GetScrollMaxY() -> float:    # imgui.h:385
     """ get maximum scrolling amount ~~ ContentSize.y - WindowSize.y - DecorationsSize.y"""
     pass
-def set_scroll_here_x(center_x_ratio: float = 0.5) -> None:    # imgui.h:386
+def SetScrollHereX(center_x_ratio: float = 0.5) -> None:    # imgui.h:386
     """ adjust scrolling amount to make current cursor position visible. center_x_ratio=0.0: left, 0.5: center, 1.0: right. When using to make a "default/current item" visible, consider using SetItemDefaultFocus() instead."""
     pass
-def set_scroll_here_y(center_y_ratio: float = 0.5) -> None:    # imgui.h:387
+def SetScrollHereY(center_y_ratio: float = 0.5) -> None:    # imgui.h:387
     """ adjust scrolling amount to make current cursor position visible. center_y_ratio=0.0: top, 0.5: center, 1.0: bottom. When using to make a "default/current item" visible, consider using SetItemDefaultFocus() instead."""
     pass
-def set_scroll_from_pos_x(local_x: float, center_x_ratio: float = 0.5) -> None:    # imgui.h:388
+def SetScrollFromPosX(local_x: float, center_x_ratio: float = 0.5) -> None:    # imgui.h:388
     """ adjust scrolling amount to make given position visible. Generally GetCursorStartPos() + offset to compute a valid position."""
     pass
-def set_scroll_from_pos_y(local_y: float, center_y_ratio: float = 0.5) -> None:    # imgui.h:389
+def SetScrollFromPosY(local_y: float, center_y_ratio: float = 0.5) -> None:    # imgui.h:389
     """ adjust scrolling amount to make given position visible. Generally GetCursorStartPos() + offset to compute a valid position."""
     pass
 
 # Parameters stacks (shared)
-def push_font(font: ImFont) -> None:    # imgui.h:392
+def PushFont(font: ImFont) -> None:    # imgui.h:392
     """ use None as a shortcut to push default font"""
     pass
-def pop_font() -> None:    # imgui.h:393
+def PopFont() -> None:    # imgui.h:393
     pass
-def push_style_color(idx: ImGuiCol, col: ImU32) -> None:    # imgui.h:394
+def PushStyleColor(idx: ImGuiCol, col: ImU32) -> None:    # imgui.h:394
     """ modify a style color. always use this if you modify the style after NewFrame()."""
     pass
-def push_style_color(idx: ImGuiCol, col: ImVec4) -> None:    # imgui.h:395
+def PushStyleColor(idx: ImGuiCol, col: ImVec4) -> None:    # imgui.h:395
     pass
-def pop_style_color(count: int = 1) -> None:    # imgui.h:396
+def PopStyleColor(count: int = 1) -> None:    # imgui.h:396
     pass
-def push_style_var(idx: ImGuiStyleVar, val: float) -> None:    # imgui.h:397
+def PushStyleVar(idx: ImGuiStyleVar, val: float) -> None:    # imgui.h:397
     """ modify a style float variable. always use this if you modify the style after NewFrame()."""
     pass
-def push_style_var(idx: ImGuiStyleVar, val: ImVec2) -> None:    # imgui.h:398
+def PushStyleVar(idx: ImGuiStyleVar, val: ImVec2) -> None:    # imgui.h:398
     """ modify a style ImVec2 variable. always use this if you modify the style after NewFrame()."""
     pass
-def pop_style_var(count: int = 1) -> None:    # imgui.h:399
+def PopStyleVar(count: int = 1) -> None:    # imgui.h:399
     pass
-def push_allow_keyboard_focus(allow_keyboard_focus: bool) -> None:    # imgui.h:400
+def PushAllowKeyboardFocus(allow_keyboard_focus: bool) -> None:    # imgui.h:400
     """ == tab stop enable. Allow focusing using TAB/Shift-TAB, enabled by default but you can disable it for certain widgets"""
     pass
-def pop_allow_keyboard_focus() -> None:    # imgui.h:401
+def PopAllowKeyboardFocus() -> None:    # imgui.h:401
     pass
-def push_button_repeat(repeat: bool) -> None:    # imgui.h:402
+def PushButtonRepeat(repeat: bool) -> None:    # imgui.h:402
     """ in 'repeat' mode, Button*() functions return repeated True in a typematic manner (using io.KeyRepeatDelay/io.KeyRepeatRate setting). Note that you can call IsItemActive() after any Button() to tell if the button is held in the current frame."""
     pass
-def pop_button_repeat() -> None:    # imgui.h:403
+def PopButtonRepeat() -> None:    # imgui.h:403
     pass
 
 # Parameters stacks (current window)
-def push_item_width(item_width: float) -> None:    # imgui.h:406
+def PushItemWidth(item_width: float) -> None:    # imgui.h:406
     """ push width of items for common large "item+label" widgets. >0.0: width in pixels, <0.0 align xx pixels to the right of window (so -FLT_MIN always align width to the right side)."""
     pass
-def pop_item_width() -> None:    # imgui.h:407
+def PopItemWidth() -> None:    # imgui.h:407
     pass
-def set_next_item_width(item_width: float) -> None:    # imgui.h:408
+def SetNextItemWidth(item_width: float) -> None:    # imgui.h:408
     """ set width of the _next_ common large "item+label" widget. >0.0: width in pixels, <0.0 align xx pixels to the right of window (so -FLT_MIN always align width to the right side)"""
     pass
-def calc_item_width() -> float:    # imgui.h:409
+def CalcItemWidth() -> float:    # imgui.h:409
     """ width of item given pushed settings and current cursor position. NOT necessarily the width of last item unlike most 'Item' functions."""
     pass
-def push_text_wrap_pos(wrap_local_pos_x: float = 0.0) -> None:    # imgui.h:410
+def PushTextWrapPos(wrap_local_pos_x: float = 0.0) -> None:    # imgui.h:410
     """ push word-wrapping position for Text*() commands. < 0.0: no wrapping; 0.0: wrap to end of window (or column); > 0.0: wrap at 'wrap_pos_x' position in window local space"""
     pass
-def pop_text_wrap_pos() -> None:    # imgui.h:411
+def PopTextWrapPos() -> None:    # imgui.h:411
     pass
 
 # Style read access
 # - Use the style editor (ShowStyleEditor() function) to interactively see what the colors are)
-def get_font() -> ImFont:    # imgui.h:415
+def GetFont() -> ImFont:    # imgui.h:415
     """ get current font"""
     pass
-def get_font_size() -> float:    # imgui.h:416
+def GetFontSize() -> float:    # imgui.h:416
     """ get current font size (= height in pixels) of current font with current scale applied"""
     pass
-def get_font_tex_uv_white_pixel() -> ImVec2:    # imgui.h:417
+def GetFontTexUvWhitePixel() -> ImVec2:    # imgui.h:417
     """ get UV coordinate for a while pixel, useful to draw custom shapes via the ImDrawList API"""
     pass
-def get_color_u32(idx: ImGuiCol, alpha_mul: float = 1.0) -> ImU32:    # imgui.h:418
+def GetColorU32(idx: ImGuiCol, alpha_mul: float = 1.0) -> ImU32:    # imgui.h:418
     """ retrieve given style color with style alpha applied and optional extra alpha multiplier, packed as a 32-bit value suitable for ImDrawList"""
     pass
-def get_color_u32(col: ImVec4) -> ImU32:    # imgui.h:419
+def GetColorU32(col: ImVec4) -> ImU32:    # imgui.h:419
     """ retrieve given color with style alpha applied, packed as a 32-bit value suitable for ImDrawList"""
     pass
-def get_color_u32(col: ImU32) -> ImU32:    # imgui.h:420
+def GetColorU32(col: ImU32) -> ImU32:    # imgui.h:420
     """ retrieve given color with style alpha applied, packed as a 32-bit value suitable for ImDrawList"""
     pass
-def get_style_color_vec4(idx: ImGuiCol) -> ImVec4:    # imgui.h:421
+def GetStyleColorVec4(idx: ImGuiCol) -> ImVec4:    # imgui.h:421
     """ retrieve style color as stored in ImGuiStyle structure. use to feed back into PushStyleColor(), otherwise use GetColorU32() to get style color with style alpha baked in."""
     pass
 
@@ -734,72 +734,72 @@ def get_style_color_vec4(idx: ImGuiCol) -> ImVec4:    # imgui.h:421
 # - Attention! We currently have inconsistencies between window-local and absolute positions we will aim to fix with future API:
 #    Window-local coordinates:   SameLine(), GetCursorPos(), SetCursorPos(), GetCursorStartPos(), GetContentRegionMax(), GetWindowContentRegion*(), PushTextWrapPos()
 #    Absolute coordinate:        GetCursorScreenPos(), SetCursorScreenPos(), all ImDrawList:: functions.
-def separator() -> None:    # imgui.h:430
+def Separator() -> None:    # imgui.h:430
     """ separator, generally horizontal. inside a menu bar or in horizontal layout mode, this becomes a vertical separator."""
     pass
-def same_line(offset_from_start_x: float = 0.0, spacing: float = -1.0) -> None:    # imgui.h:431
+def SameLine(offset_from_start_x: float = 0.0, spacing: float = -1.0) -> None:    # imgui.h:431
     """ call between widgets or groups to layout them horizontally. X position given in window coordinates."""
     pass
-def new_line() -> None:    # imgui.h:432
+def NewLine() -> None:    # imgui.h:432
     """ undo a SameLine() or force a new line when in an horizontal-layout context."""
     pass
-def spacing() -> None:    # imgui.h:433
+def Spacing() -> None:    # imgui.h:433
     """ add vertical spacing."""
     pass
-def dummy(size: ImVec2) -> None:    # imgui.h:434
+def Dummy(size: ImVec2) -> None:    # imgui.h:434
     """ add a dummy item of given size. unlike InvisibleButton(), Dummy() won't take the mouse click or be navigable into."""
     pass
-def indent(indent_w: float = 0.0) -> None:    # imgui.h:435
+def Indent(indent_w: float = 0.0) -> None:    # imgui.h:435
     """ move content position toward the right, by indent_w, or style.IndentSpacing if indent_w <= 0"""
     pass
-def unindent(indent_w: float = 0.0) -> None:    # imgui.h:436
+def Unindent(indent_w: float = 0.0) -> None:    # imgui.h:436
     """ move content position back to the left, by indent_w, or style.IndentSpacing if indent_w <= 0"""
     pass
-def begin_group() -> None:    # imgui.h:437
+def BeginGroup() -> None:    # imgui.h:437
     """ lock horizontal starting position"""
     pass
-def end_group() -> None:    # imgui.h:438
+def EndGroup() -> None:    # imgui.h:438
     """ unlock horizontal starting position + capture the whole group bounding box into one "item" (so you can use IsItemHovered() or layout primitives such as SameLine() on whole group, etc.)"""
     pass
-def get_cursor_pos() -> ImVec2:    # imgui.h:439
+def GetCursorPos() -> ImVec2:    # imgui.h:439
     """ cursor position in window coordinates (relative to window position)"""
     pass
-def get_cursor_pos_x() -> float:    # imgui.h:440
+def GetCursorPosX() -> float:    # imgui.h:440
     """   (some functions are using window-relative coordinates, such as: GetCursorPos, GetCursorStartPos, GetContentRegionMax, GetWindowContentRegion* etc."""
     pass
-def get_cursor_pos_y() -> float:    # imgui.h:441
+def GetCursorPosY() -> float:    # imgui.h:441
     """    other functions such as GetCursorScreenPos or everything in ImDrawList::"""
     pass
-def set_cursor_pos(local_pos: ImVec2) -> None:    # imgui.h:442
+def SetCursorPos(local_pos: ImVec2) -> None:    # imgui.h:442
     """    are using the main, absolute coordinate system."""
     pass
-def set_cursor_pos_x(local_x: float) -> None:    # imgui.h:443
+def SetCursorPosX(local_x: float) -> None:    # imgui.h:443
     """    GetWindowPos() + GetCursorPos() == GetCursorScreenPos() etc.)"""
     pass
-def set_cursor_pos_y(local_y: float) -> None:    # imgui.h:444
+def SetCursorPosY(local_y: float) -> None:    # imgui.h:444
     pass
-def get_cursor_start_pos() -> ImVec2:    # imgui.h:445
+def GetCursorStartPos() -> ImVec2:    # imgui.h:445
     """ initial cursor position in window coordinates"""
     pass
-def get_cursor_screen_pos() -> ImVec2:    # imgui.h:446
+def GetCursorScreenPos() -> ImVec2:    # imgui.h:446
     """ cursor position in absolute coordinates (useful to work with ImDrawList API). generally top-left == GetMainViewport()->Pos == (0,0) in single viewport mode, and bottom-right == GetMainViewport()->Pos+Size == io.DisplaySize in single-viewport mode."""
     pass
-def set_cursor_screen_pos(pos: ImVec2) -> None:    # imgui.h:447
+def SetCursorScreenPos(pos: ImVec2) -> None:    # imgui.h:447
     """ cursor position in absolute coordinates"""
     pass
-def align_text_to_frame_padding() -> None:    # imgui.h:448
+def AlignTextToFramePadding() -> None:    # imgui.h:448
     """ vertically align upcoming text baseline to FramePadding.y so that it will align properly to regularly framed items (call if you have text on a line before a framed item)"""
     pass
-def get_text_line_height() -> float:    # imgui.h:449
+def GetTextLineHeight() -> float:    # imgui.h:449
     """ ~ FontSize"""
     pass
-def get_text_line_height_with_spacing() -> float:    # imgui.h:450
+def GetTextLineHeightWithSpacing() -> float:    # imgui.h:450
     """ ~ FontSize + style.ItemSpacing.y (distance in pixels between 2 consecutive lines of text)"""
     pass
-def get_frame_height() -> float:    # imgui.h:451
+def GetFrameHeight() -> float:    # imgui.h:451
     """ ~ FontSize + style.FramePadding.y * 2"""
     pass
-def get_frame_height_with_spacing() -> float:    # imgui.h:452
+def GetFrameHeightWithSpacing() -> float:    # imgui.h:452
     """ ~ FontSize + style.FramePadding.y * 2 + style.ItemSpacing.y (distance in pixels between 2 consecutive lines of framed widgets)"""
     pass
 
@@ -814,101 +814,101 @@ def get_frame_height_with_spacing() -> float:    # imgui.h:452
 # - You can also use the "Label##foobar" syntax within widget label to distinguish them from each others.
 # - In this header file we use the "label"/"name" terminology to denote a string that will be displayed + used as an ID,
 #   whereas "str_id" denote a string that is only used as an ID and not normally displayed.
-def push_id(str_id: str) -> None:    # imgui.h:465
+def PushID(str_id: str) -> None:    # imgui.h:465
     """ push string into the ID stack (will hash string)."""
     pass
-def push_id(str_id_begin: str, str_id_end: str) -> None:    # imgui.h:466
+def PushID(str_id_begin: str, str_id_end: str) -> None:    # imgui.h:466
     """ push string into the ID stack (will hash string)."""
     pass
-def push_id(ptr_id: Any) -> None:    # imgui.h:467
+def PushID(ptr_id: Any) -> None:    # imgui.h:467
     """ push pointer into the ID stack (will hash pointer)."""
     pass
-def push_id(int_id: int) -> None:    # imgui.h:468
+def PushID(int_id: int) -> None:    # imgui.h:468
     """ push integer into the ID stack (will hash integer)."""
     pass
-def pop_id() -> None:    # imgui.h:469
+def PopID() -> None:    # imgui.h:469
     """ pop from the ID stack."""
     pass
-def get_id(str_id: str) -> ImGuiID:    # imgui.h:470
+def GetID(str_id: str) -> ImGuiID:    # imgui.h:470
     """ calculate unique ID (hash of whole ID stack + given parameter). e.g. if you want to query into ImGuiStorage yourself"""
     pass
-def get_id(str_id_begin: str, str_id_end: str) -> ImGuiID:    # imgui.h:471
+def GetID(str_id_begin: str, str_id_end: str) -> ImGuiID:    # imgui.h:471
     pass
-def get_id(ptr_id: Any) -> ImGuiID:    # imgui.h:472
+def GetID(ptr_id: Any) -> ImGuiID:    # imgui.h:472
     pass
 
 # Widgets: Text
-def text_unformatted(text: str, text_end: str = None) -> None:    # imgui.h:475
+def TextUnformatted(text: str, text_end: str = None) -> None:    # imgui.h:475
     """ raw text without formatting. Roughly equivalent to Text("%s", text) but: A) doesn't require null terminated string if 'text_end' is specified, B) it's faster, no memory copy is done, no buffer size limits, recommended for long chunks of text."""
     pass
-def text(fmt: str) -> None:    # imgui.h:476
+def Text(fmt: str) -> None:    # imgui.h:476
     """ formatted text"""
     pass
-def text_colored(col: ImVec4, fmt: str) -> None:    # imgui.h:478
+def TextColored(col: ImVec4, fmt: str) -> None:    # imgui.h:478
     """ shortcut for PushStyleColor(ImGuiCol_Text, col); Text(fmt, ...); PopStyleColor();"""
     pass
-def text_disabled(fmt: str) -> None:    # imgui.h:480
+def TextDisabled(fmt: str) -> None:    # imgui.h:480
     """ shortcut for PushStyleColor(ImGuiCol_Text, style.Colors[ImGuiCol_TextDisabled]); Text(fmt, ...); PopStyleColor();"""
     pass
-def text_wrapped(fmt: str) -> None:    # imgui.h:482
+def TextWrapped(fmt: str) -> None:    # imgui.h:482
     """ shortcut for PushTextWrapPos(0.0); Text(fmt, ...); PopTextWrapPos();. Note that this won't work on an auto-resizing window if there's no other widgets to extend the window width, yoy may need to set a size using SetNextWindowSize()."""
     pass
-def label_text(label: str, fmt: str) -> None:    # imgui.h:484
+def LabelText(label: str, fmt: str) -> None:    # imgui.h:484
     """ display text+label aligned the same way as value+label widgets"""
     pass
-def bullet_text(fmt: str) -> None:    # imgui.h:486
+def BulletText(fmt: str) -> None:    # imgui.h:486
     """ shortcut for Bullet()+Text()"""
     pass
 
 # Widgets: Main
 # - Most widgets return True when the value has been changed or when pressed/selected
 # - You may also use one of the many IsItemXXX functions (e.g. IsItemActive, IsItemHovered, etc.) to query widget state.
-def button(label: str, size: ImVec2 = ImVec2(0, 0)) -> bool:    # imgui.h:492
+def Button(label: str, size: ImVec2 = ImVec2(0, 0)) -> bool:    # imgui.h:492
     """ button"""
     pass
-def small_button(label: str) -> bool:    # imgui.h:493
+def SmallButton(label: str) -> bool:    # imgui.h:493
     """ button with FramePadding=(0,0) to easily embed within text"""
     pass
-def invisible_button(str_id: str, size: ImVec2, flags: ImGuiButtonFlags = 0) -> bool:    # imgui.h:494
+def InvisibleButton(str_id: str, size: ImVec2, flags: ImGuiButtonFlags = 0) -> bool:    # imgui.h:494
     """ flexible button behavior without the visuals, frequently useful to build custom behaviors using the public api (along with IsItemActive, IsItemHovered, etc.)"""
     pass
-def arrow_button(str_id: str, dir: ImGuiDir) -> bool:    # imgui.h:495
+def ArrowButton(str_id: str, dir: ImGuiDir) -> bool:    # imgui.h:495
     """ square button with an arrow shape"""
     pass
-def image(user_texture_id: ImTextureID, size: ImVec2, uv0: ImVec2 = ImVec2(0, 0), uv1: ImVec2 = ImVec2(1,1), tint_col: ImVec4 = ImVec4(1,1,1,1), border_col: ImVec4 = ImVec4(0,0,0,0)) -> None:    # imgui.h:496
+def Image(user_texture_id: ImTextureID, size: ImVec2, uv0: ImVec2 = ImVec2(0, 0), uv1: ImVec2 = ImVec2(1,1), tint_col: ImVec4 = ImVec4(1,1,1,1), border_col: ImVec4 = ImVec4(0,0,0,0)) -> None:    # imgui.h:496
     pass
-def image_button(user_texture_id: ImTextureID, size: ImVec2, uv0: ImVec2 = ImVec2(0, 0), uv1: ImVec2 = ImVec2(1,1), frame_padding: int = -1, bg_col: ImVec4 = ImVec4(0,0,0,0), tint_col: ImVec4 = ImVec4(1,1,1,1)) -> bool:    # imgui.h:497
+def ImageButton(user_texture_id: ImTextureID, size: ImVec2, uv0: ImVec2 = ImVec2(0, 0), uv1: ImVec2 = ImVec2(1,1), frame_padding: int = -1, bg_col: ImVec4 = ImVec4(0,0,0,0), tint_col: ImVec4 = ImVec4(1,1,1,1)) -> bool:    # imgui.h:497
     """ <0 frame_padding uses default frame padding settings. 0 for no padding"""
     pass
-def checkbox(label: str, v: BoxedBool) -> bool:    # imgui.h:498
+def Checkbox(label: str, v: BoxedBool) -> bool:    # imgui.h:498
     pass
-def checkbox_flags(label: str, flags: BoxedInt, flags_value: int) -> bool:    # imgui.h:499
+def CheckboxFlags(label: str, flags: BoxedInt, flags_value: int) -> bool:    # imgui.h:499
     pass
-def checkbox_flags(label: str, flags: BoxedUnsignedInt, flags_value: int) -> bool:    # imgui.h:500
+def CheckboxFlags(label: str, flags: BoxedUnsignedInt, flags_value: int) -> bool:    # imgui.h:500
     pass
-def radio_button(label: str, active: bool) -> bool:    # imgui.h:501
+def RadioButton(label: str, active: bool) -> bool:    # imgui.h:501
     """ use with e.g. if (RadioButton("one", my_value==1)) { my_value = 1; }"""
     pass
-def radio_button(label: str, v: BoxedInt, v_button: int) -> bool:    # imgui.h:502
+def RadioButton(label: str, v: BoxedInt, v_button: int) -> bool:    # imgui.h:502
     """ shortcut to handle the above pattern when value is an integer"""
     pass
-def progress_bar(fraction: float, size_arg: ImVec2 = ImVec2(-sys.float_info.min, 0), overlay: str = None) -> None:    # imgui.h:503
+def ProgressBar(fraction: float, size_arg: ImVec2 = ImVec2(-sys.float_info.min, 0), overlay: str = None) -> None:    # imgui.h:503
     pass
-def bullet() -> None:    # imgui.h:504
+def Bullet() -> None:    # imgui.h:504
     """ draw a small circle + keep the cursor on the same line. advance cursor x position by GetTreeNodeToLabelSpacing(), same distance that TreeNode() uses"""
     pass
 
 # Widgets: Combo Box
 # - The BeginCombo()/EndCombo() api allows you to manage your contents and selection state however you want it, by creating e.g. Selectable() items.
 # - The old Combo() api are helpers over BeginCombo()/EndCombo() which are kept available for convenience purpose. This is analogous to how ListBox are created.
-def begin_combo(label: str, preview_value: str, flags: ImGuiComboFlags = 0) -> bool:    # imgui.h:509
+def BeginCombo(label: str, preview_value: str, flags: ImGuiComboFlags = 0) -> bool:    # imgui.h:509
     pass
-def end_combo() -> None:    # imgui.h:510
+def EndCombo() -> None:    # imgui.h:510
     """ only call EndCombo() if BeginCombo() returns True!"""
     pass
-def combo(label: str, current_item: BoxedInt, items: List[str], popup_max_height_in_items: int = -1) -> bool:    # imgui.h:511
+def Combo(label: str, current_item: BoxedInt, items: List[str], popup_max_height_in_items: int = -1) -> bool:    # imgui.h:511
     pass
-def combo(label: str, current_item: BoxedInt, items_separated_by_zeros: str, popup_max_height_in_items: int = -1) -> bool:    # imgui.h:512
+def Combo(label: str, current_item: BoxedInt, items_separated_by_zeros: str, popup_max_height_in_items: int = -1) -> bool:    # imgui.h:512
     """ Separate items with \0 within a string, end item-list with \0\0. e.g. "One\0Two\0Three\0" """
     pass
 
@@ -924,31 +924,31 @@ def combo(label: str, current_item: BoxedInt, items_separated_by_zeros: str, pop
 # - We use the same sets of flags for DragXXX() and SliderXXX() functions as the features are the same and it makes it easier to swap them.
 # - Legacy: Pre-1.78 there are DragXXX() function signatures that takes a final `float power=1.0' argument instead of the `ImGuiSliderFlags flags=0' argument.
 #   If you get a warning converting a float to ImGuiSliderFlags, read https://github.com/ocornut/imgui/issues/3361
-def drag_float(label: str, v: BoxedFloat, v_speed: float = 1.0, v_min: float = 0.0, v_max: float = 0.0, format: str = "%.3", flags: ImGuiSliderFlags = 0) -> bool:    # imgui.h:527
+def DragFloat(label: str, v: BoxedFloat, v_speed: float = 1.0, v_min: float = 0.0, v_max: float = 0.0, format: str = "%.3", flags: ImGuiSliderFlags = 0) -> bool:    # imgui.h:527
     """ If v_min >= v_max we have no bound"""
     pass
-def drag_float2(label: str, v_0: BoxedFloat, v_1: BoxedFloat, v_speed: float = 1.0, v_min: float = 0.0, v_max: float = 0.0, format: str = "%.3", flags: ImGuiSliderFlags = 0) -> bool:    # imgui.h:528
+def DragFloat2(label: str, v_0: BoxedFloat, v_1: BoxedFloat, v_speed: float = 1.0, v_min: float = 0.0, v_max: float = 0.0, format: str = "%.3", flags: ImGuiSliderFlags = 0) -> bool:    # imgui.h:528
     pass
-def drag_float3(label: str, v_0: BoxedFloat, v_1: BoxedFloat, v_2: BoxedFloat, v_speed: float = 1.0, v_min: float = 0.0, v_max: float = 0.0, format: str = "%.3", flags: ImGuiSliderFlags = 0) -> bool:    # imgui.h:529
+def DragFloat3(label: str, v_0: BoxedFloat, v_1: BoxedFloat, v_2: BoxedFloat, v_speed: float = 1.0, v_min: float = 0.0, v_max: float = 0.0, format: str = "%.3", flags: ImGuiSliderFlags = 0) -> bool:    # imgui.h:529
     pass
-def drag_float4(label: str, v_0: BoxedFloat, v_1: BoxedFloat, v_2: BoxedFloat, v_3: BoxedFloat, v_speed: float = 1.0, v_min: float = 0.0, v_max: float = 0.0, format: str = "%.3", flags: ImGuiSliderFlags = 0) -> bool:    # imgui.h:530
+def DragFloat4(label: str, v_0: BoxedFloat, v_1: BoxedFloat, v_2: BoxedFloat, v_3: BoxedFloat, v_speed: float = 1.0, v_min: float = 0.0, v_max: float = 0.0, format: str = "%.3", flags: ImGuiSliderFlags = 0) -> bool:    # imgui.h:530
     pass
-def drag_float_range2(label: str, v_current_min: BoxedFloat, v_current_max: BoxedFloat, v_speed: float = 1.0, v_min: float = 0.0, v_max: float = 0.0, format: str = "%.3", format_max: str = None, flags: ImGuiSliderFlags = 0) -> bool:    # imgui.h:531
+def DragFloatRange2(label: str, v_current_min: BoxedFloat, v_current_max: BoxedFloat, v_speed: float = 1.0, v_min: float = 0.0, v_max: float = 0.0, format: str = "%.3", format_max: str = None, flags: ImGuiSliderFlags = 0) -> bool:    # imgui.h:531
     pass
-def drag_int(label: str, v: BoxedInt, v_speed: float = 1.0, v_min: int = 0, v_max: int = 0, format: str = "%d", flags: ImGuiSliderFlags = 0) -> bool:    # imgui.h:532
+def DragInt(label: str, v: BoxedInt, v_speed: float = 1.0, v_min: int = 0, v_max: int = 0, format: str = "%d", flags: ImGuiSliderFlags = 0) -> bool:    # imgui.h:532
     """ If v_min >= v_max we have no bound"""
     pass
-def drag_int2(label: str, v_0: BoxedInt, v_1: BoxedInt, v_speed: float = 1.0, v_min: int = 0, v_max: int = 0, format: str = "%d", flags: ImGuiSliderFlags = 0) -> bool:    # imgui.h:533
+def DragInt2(label: str, v_0: BoxedInt, v_1: BoxedInt, v_speed: float = 1.0, v_min: int = 0, v_max: int = 0, format: str = "%d", flags: ImGuiSliderFlags = 0) -> bool:    # imgui.h:533
     pass
-def drag_int3(label: str, v_0: BoxedInt, v_1: BoxedInt, v_2: BoxedInt, v_speed: float = 1.0, v_min: int = 0, v_max: int = 0, format: str = "%d", flags: ImGuiSliderFlags = 0) -> bool:    # imgui.h:534
+def DragInt3(label: str, v_0: BoxedInt, v_1: BoxedInt, v_2: BoxedInt, v_speed: float = 1.0, v_min: int = 0, v_max: int = 0, format: str = "%d", flags: ImGuiSliderFlags = 0) -> bool:    # imgui.h:534
     pass
-def drag_int4(label: str, v_0: BoxedInt, v_1: BoxedInt, v_2: BoxedInt, v_3: BoxedInt, v_speed: float = 1.0, v_min: int = 0, v_max: int = 0, format: str = "%d", flags: ImGuiSliderFlags = 0) -> bool:    # imgui.h:535
+def DragInt4(label: str, v_0: BoxedInt, v_1: BoxedInt, v_2: BoxedInt, v_3: BoxedInt, v_speed: float = 1.0, v_min: int = 0, v_max: int = 0, format: str = "%d", flags: ImGuiSliderFlags = 0) -> bool:    # imgui.h:535
     pass
-def drag_int_range2(label: str, v_current_min: BoxedInt, v_current_max: BoxedInt, v_speed: float = 1.0, v_min: int = 0, v_max: int = 0, format: str = "%d", format_max: str = None, flags: ImGuiSliderFlags = 0) -> bool:    # imgui.h:536
+def DragIntRange2(label: str, v_current_min: BoxedInt, v_current_max: BoxedInt, v_speed: float = 1.0, v_min: int = 0, v_max: int = 0, format: str = "%d", format_max: str = None, flags: ImGuiSliderFlags = 0) -> bool:    # imgui.h:536
     pass
-def drag_scalar(label: str, data_type: ImGuiDataType, p_data: Any, v_speed: float = 1.0, p_min: Any = None, p_max: Any = None, format: str = None, flags: ImGuiSliderFlags = 0) -> bool:    # imgui.h:537
+def DragScalar(label: str, data_type: ImGuiDataType, p_data: Any, v_speed: float = 1.0, p_min: Any = None, p_max: Any = None, format: str = None, flags: ImGuiSliderFlags = 0) -> bool:    # imgui.h:537
     pass
-def drag_scalar_n(label: str, data_type: ImGuiDataType, p_data: Any, components: int, v_speed: float = 1.0, p_min: Any = None, p_max: Any = None, format: str = None, flags: ImGuiSliderFlags = 0) -> bool:    # imgui.h:538
+def DragScalarN(label: str, data_type: ImGuiDataType, p_data: Any, components: int, v_speed: float = 1.0, p_min: Any = None, p_max: Any = None, format: str = None, flags: ImGuiSliderFlags = 0) -> bool:    # imgui.h:538
     pass
 
 # Widgets: Regular Sliders
@@ -957,131 +957,131 @@ def drag_scalar_n(label: str, data_type: ImGuiDataType, p_data: Any, components:
 # - Format string may also be set to None or use the default format ("%f" or "%d").
 # - Legacy: Pre-1.78 there are SliderXXX() function signatures that takes a final `float power=1.0' argument instead of the `ImGuiSliderFlags flags=0' argument.
 #   If you get a warning converting a float to ImGuiSliderFlags, read https://github.com/ocornut/imgui/issues/3361
-def slider_float(label: str, v: BoxedFloat, v_min: float, v_max: float, format: str = "%.3", flags: ImGuiSliderFlags = 0) -> bool:    # imgui.h:546
+def SliderFloat(label: str, v: BoxedFloat, v_min: float, v_max: float, format: str = "%.3", flags: ImGuiSliderFlags = 0) -> bool:    # imgui.h:546
     """ adjust format to decorate the value with a prefix or a suffix for in-slider labels or unit display."""
     pass
-def slider_float2(label: str, v_0: BoxedFloat, v_1: BoxedFloat, v_min: float, v_max: float, format: str = "%.3", flags: ImGuiSliderFlags = 0) -> bool:    # imgui.h:547
+def SliderFloat2(label: str, v_0: BoxedFloat, v_1: BoxedFloat, v_min: float, v_max: float, format: str = "%.3", flags: ImGuiSliderFlags = 0) -> bool:    # imgui.h:547
     pass
-def slider_float3(label: str, v_0: BoxedFloat, v_1: BoxedFloat, v_2: BoxedFloat, v_min: float, v_max: float, format: str = "%.3", flags: ImGuiSliderFlags = 0) -> bool:    # imgui.h:548
+def SliderFloat3(label: str, v_0: BoxedFloat, v_1: BoxedFloat, v_2: BoxedFloat, v_min: float, v_max: float, format: str = "%.3", flags: ImGuiSliderFlags = 0) -> bool:    # imgui.h:548
     pass
-def slider_float4(label: str, v_0: BoxedFloat, v_1: BoxedFloat, v_2: BoxedFloat, v_3: BoxedFloat, v_min: float, v_max: float, format: str = "%.3", flags: ImGuiSliderFlags = 0) -> bool:    # imgui.h:549
+def SliderFloat4(label: str, v_0: BoxedFloat, v_1: BoxedFloat, v_2: BoxedFloat, v_3: BoxedFloat, v_min: float, v_max: float, format: str = "%.3", flags: ImGuiSliderFlags = 0) -> bool:    # imgui.h:549
     pass
-def slider_angle(label: str, v_rad: BoxedFloat, v_degrees_min: float = -360.0, v_degrees_max: float = +360.0, format: str = "%.0 deg", flags: ImGuiSliderFlags = 0) -> bool:    # imgui.h:550
+def SliderAngle(label: str, v_rad: BoxedFloat, v_degrees_min: float = -360.0, v_degrees_max: float = +360.0, format: str = "%.0 deg", flags: ImGuiSliderFlags = 0) -> bool:    # imgui.h:550
     pass
-def slider_int(label: str, v: BoxedInt, v_min: int, v_max: int, format: str = "%d", flags: ImGuiSliderFlags = 0) -> bool:    # imgui.h:551
+def SliderInt(label: str, v: BoxedInt, v_min: int, v_max: int, format: str = "%d", flags: ImGuiSliderFlags = 0) -> bool:    # imgui.h:551
     pass
-def slider_int2(label: str, v_0: BoxedInt, v_1: BoxedInt, v_min: int, v_max: int, format: str = "%d", flags: ImGuiSliderFlags = 0) -> bool:    # imgui.h:552
+def SliderInt2(label: str, v_0: BoxedInt, v_1: BoxedInt, v_min: int, v_max: int, format: str = "%d", flags: ImGuiSliderFlags = 0) -> bool:    # imgui.h:552
     pass
-def slider_int3(label: str, v_0: BoxedInt, v_1: BoxedInt, v_2: BoxedInt, v_min: int, v_max: int, format: str = "%d", flags: ImGuiSliderFlags = 0) -> bool:    # imgui.h:553
+def SliderInt3(label: str, v_0: BoxedInt, v_1: BoxedInt, v_2: BoxedInt, v_min: int, v_max: int, format: str = "%d", flags: ImGuiSliderFlags = 0) -> bool:    # imgui.h:553
     pass
-def slider_int4(label: str, v_0: BoxedInt, v_1: BoxedInt, v_2: BoxedInt, v_3: BoxedInt, v_min: int, v_max: int, format: str = "%d", flags: ImGuiSliderFlags = 0) -> bool:    # imgui.h:554
+def SliderInt4(label: str, v_0: BoxedInt, v_1: BoxedInt, v_2: BoxedInt, v_3: BoxedInt, v_min: int, v_max: int, format: str = "%d", flags: ImGuiSliderFlags = 0) -> bool:    # imgui.h:554
     pass
-def slider_scalar(label: str, data_type: ImGuiDataType, p_data: Any, p_min: Any, p_max: Any, format: str = None, flags: ImGuiSliderFlags = 0) -> bool:    # imgui.h:555
+def SliderScalar(label: str, data_type: ImGuiDataType, p_data: Any, p_min: Any, p_max: Any, format: str = None, flags: ImGuiSliderFlags = 0) -> bool:    # imgui.h:555
     pass
-def slider_scalar_n(label: str, data_type: ImGuiDataType, p_data: Any, components: int, p_min: Any, p_max: Any, format: str = None, flags: ImGuiSliderFlags = 0) -> bool:    # imgui.h:556
+def SliderScalarN(label: str, data_type: ImGuiDataType, p_data: Any, components: int, p_min: Any, p_max: Any, format: str = None, flags: ImGuiSliderFlags = 0) -> bool:    # imgui.h:556
     pass
-def v_slider_float(label: str, size: ImVec2, v: BoxedFloat, v_min: float, v_max: float, format: str = "%.3", flags: ImGuiSliderFlags = 0) -> bool:    # imgui.h:557
+def VSliderFloat(label: str, size: ImVec2, v: BoxedFloat, v_min: float, v_max: float, format: str = "%.3", flags: ImGuiSliderFlags = 0) -> bool:    # imgui.h:557
     pass
-def v_slider_int(label: str, size: ImVec2, v: BoxedInt, v_min: int, v_max: int, format: str = "%d", flags: ImGuiSliderFlags = 0) -> bool:    # imgui.h:558
+def VSliderInt(label: str, size: ImVec2, v: BoxedInt, v_min: int, v_max: int, format: str = "%d", flags: ImGuiSliderFlags = 0) -> bool:    # imgui.h:558
     pass
-def v_slider_scalar(label: str, size: ImVec2, data_type: ImGuiDataType, p_data: Any, p_min: Any, p_max: Any, format: str = None, flags: ImGuiSliderFlags = 0) -> bool:    # imgui.h:559
+def VSliderScalar(label: str, size: ImVec2, data_type: ImGuiDataType, p_data: Any, p_min: Any, p_max: Any, format: str = None, flags: ImGuiSliderFlags = 0) -> bool:    # imgui.h:559
     pass
 
 # Widgets: Input with Keyboard
 # - If you want to use InputText() with std::string or any custom dynamic string type, see misc/cpp/imgui_stdlib.h and comments in imgui_demo.cpp.
 # - Most of the ImGuiInputTextFlags flags are only useful for InputText() and not for InputFloatX, InputIntX, InputDouble etc.
-def input_text(label: str, buf: char, buf_size: int, flags: ImGuiInputTextFlags = 0, callback: ImGuiInputTextCallback = None, user_data: Any = None) -> bool:    # imgui.h:564
+def InputText(label: str, buf: char, buf_size: int, flags: ImGuiInputTextFlags = 0, callback: ImGuiInputTextCallback = None, user_data: Any = None) -> bool:    # imgui.h:564
     pass
-def input_text_multiline(label: str, buf: char, buf_size: int, size: ImVec2 = ImVec2(0, 0), flags: ImGuiInputTextFlags = 0, callback: ImGuiInputTextCallback = None, user_data: Any = None) -> bool:    # imgui.h:565
+def InputTextMultiline(label: str, buf: char, buf_size: int, size: ImVec2 = ImVec2(0, 0), flags: ImGuiInputTextFlags = 0, callback: ImGuiInputTextCallback = None, user_data: Any = None) -> bool:    # imgui.h:565
     pass
-def input_text_with_hint(label: str, hint: str, buf: char, buf_size: int, flags: ImGuiInputTextFlags = 0, callback: ImGuiInputTextCallback = None, user_data: Any = None) -> bool:    # imgui.h:566
+def InputTextWithHint(label: str, hint: str, buf: char, buf_size: int, flags: ImGuiInputTextFlags = 0, callback: ImGuiInputTextCallback = None, user_data: Any = None) -> bool:    # imgui.h:566
     pass
-def input_float(label: str, v: BoxedFloat, step: float = 0.0, step_fast: float = 0.0, format: str = "%.3", flags: ImGuiInputTextFlags = 0) -> bool:    # imgui.h:567
+def InputFloat(label: str, v: BoxedFloat, step: float = 0.0, step_fast: float = 0.0, format: str = "%.3", flags: ImGuiInputTextFlags = 0) -> bool:    # imgui.h:567
     pass
-def input_float2(label: str, v_0: BoxedFloat, v_1: BoxedFloat, format: str = "%.3", flags: ImGuiInputTextFlags = 0) -> bool:    # imgui.h:568
+def InputFloat2(label: str, v_0: BoxedFloat, v_1: BoxedFloat, format: str = "%.3", flags: ImGuiInputTextFlags = 0) -> bool:    # imgui.h:568
     pass
-def input_float3(label: str, v_0: BoxedFloat, v_1: BoxedFloat, v_2: BoxedFloat, format: str = "%.3", flags: ImGuiInputTextFlags = 0) -> bool:    # imgui.h:569
+def InputFloat3(label: str, v_0: BoxedFloat, v_1: BoxedFloat, v_2: BoxedFloat, format: str = "%.3", flags: ImGuiInputTextFlags = 0) -> bool:    # imgui.h:569
     pass
-def input_float4(label: str, v_0: BoxedFloat, v_1: BoxedFloat, v_2: BoxedFloat, v_3: BoxedFloat, format: str = "%.3", flags: ImGuiInputTextFlags = 0) -> bool:    # imgui.h:570
+def InputFloat4(label: str, v_0: BoxedFloat, v_1: BoxedFloat, v_2: BoxedFloat, v_3: BoxedFloat, format: str = "%.3", flags: ImGuiInputTextFlags = 0) -> bool:    # imgui.h:570
     pass
-def input_int(label: str, v: BoxedInt, step: int = 1, step_fast: int = 100, flags: ImGuiInputTextFlags = 0) -> bool:    # imgui.h:571
+def InputInt(label: str, v: BoxedInt, step: int = 1, step_fast: int = 100, flags: ImGuiInputTextFlags = 0) -> bool:    # imgui.h:571
     pass
-def input_int2(label: str, v_0: BoxedInt, v_1: BoxedInt, flags: ImGuiInputTextFlags = 0) -> bool:    # imgui.h:572
+def InputInt2(label: str, v_0: BoxedInt, v_1: BoxedInt, flags: ImGuiInputTextFlags = 0) -> bool:    # imgui.h:572
     pass
-def input_int3(label: str, v_0: BoxedInt, v_1: BoxedInt, v_2: BoxedInt, flags: ImGuiInputTextFlags = 0) -> bool:    # imgui.h:573
+def InputInt3(label: str, v_0: BoxedInt, v_1: BoxedInt, v_2: BoxedInt, flags: ImGuiInputTextFlags = 0) -> bool:    # imgui.h:573
     pass
-def input_int4(label: str, v_0: BoxedInt, v_1: BoxedInt, v_2: BoxedInt, v_3: BoxedInt, flags: ImGuiInputTextFlags = 0) -> bool:    # imgui.h:574
+def InputInt4(label: str, v_0: BoxedInt, v_1: BoxedInt, v_2: BoxedInt, v_3: BoxedInt, flags: ImGuiInputTextFlags = 0) -> bool:    # imgui.h:574
     pass
-def input_double(label: str, v: BoxedDouble, step: float = 0.0, step_fast: float = 0.0, format: str = "%.6", flags: ImGuiInputTextFlags = 0) -> bool:    # imgui.h:575
+def InputDouble(label: str, v: BoxedDouble, step: float = 0.0, step_fast: float = 0.0, format: str = "%.6", flags: ImGuiInputTextFlags = 0) -> bool:    # imgui.h:575
     pass
-def input_scalar(label: str, data_type: ImGuiDataType, p_data: Any, p_step: Any = None, p_step_fast: Any = None, format: str = None, flags: ImGuiInputTextFlags = 0) -> bool:    # imgui.h:576
+def InputScalar(label: str, data_type: ImGuiDataType, p_data: Any, p_step: Any = None, p_step_fast: Any = None, format: str = None, flags: ImGuiInputTextFlags = 0) -> bool:    # imgui.h:576
     pass
-def input_scalar_n(label: str, data_type: ImGuiDataType, p_data: Any, components: int, p_step: Any = None, p_step_fast: Any = None, format: str = None, flags: ImGuiInputTextFlags = 0) -> bool:    # imgui.h:577
+def InputScalarN(label: str, data_type: ImGuiDataType, p_data: Any, components: int, p_step: Any = None, p_step_fast: Any = None, format: str = None, flags: ImGuiInputTextFlags = 0) -> bool:    # imgui.h:577
     pass
 
 # Widgets: Color Editor/Picker (tip: the ColorEdit* functions have a little color square that can be left-clicked to open a picker, and right-clicked to open an option menu.)
 # - Note that in C++ a 'float v[X]' function argument is the _same_ as 'float* v', the array syntax is just a way to document the number of elements that are expected to be accessible.
 # - You can pass the address of a first float element out of a contiguous structure, e.g. &myvector.x
-def color_edit3(label: str, col_0: BoxedFloat, col_1: BoxedFloat, col_2: BoxedFloat, flags: ImGuiColorEditFlags = 0) -> bool:    # imgui.h:582
+def ColorEdit3(label: str, col_0: BoxedFloat, col_1: BoxedFloat, col_2: BoxedFloat, flags: ImGuiColorEditFlags = 0) -> bool:    # imgui.h:582
     pass
-def color_edit4(label: str, col_0: BoxedFloat, col_1: BoxedFloat, col_2: BoxedFloat, col_3: BoxedFloat, flags: ImGuiColorEditFlags = 0) -> bool:    # imgui.h:583
+def ColorEdit4(label: str, col_0: BoxedFloat, col_1: BoxedFloat, col_2: BoxedFloat, col_3: BoxedFloat, flags: ImGuiColorEditFlags = 0) -> bool:    # imgui.h:583
     pass
-def color_picker3(label: str, col_0: BoxedFloat, col_1: BoxedFloat, col_2: BoxedFloat, flags: ImGuiColorEditFlags = 0) -> bool:    # imgui.h:584
+def ColorPicker3(label: str, col_0: BoxedFloat, col_1: BoxedFloat, col_2: BoxedFloat, flags: ImGuiColorEditFlags = 0) -> bool:    # imgui.h:584
     pass
-def color_picker4(label: str, col_0: BoxedFloat, col_1: BoxedFloat, col_2: BoxedFloat, col_3: BoxedFloat, flags: ImGuiColorEditFlags = 0, ref_col: float = None) -> bool:    # imgui.h:585
+def ColorPicker4(label: str, col_0: BoxedFloat, col_1: BoxedFloat, col_2: BoxedFloat, col_3: BoxedFloat, flags: ImGuiColorEditFlags = 0, ref_col: float = None) -> bool:    # imgui.h:585
     pass
-def color_button(desc_id: str, col: ImVec4, flags: ImGuiColorEditFlags = 0, size: ImVec2 = ImVec2(0, 0)) -> bool:    # imgui.h:586
+def ColorButton(desc_id: str, col: ImVec4, flags: ImGuiColorEditFlags = 0, size: ImVec2 = ImVec2(0, 0)) -> bool:    # imgui.h:586
     """ display a color square/button, hover for details, return True when pressed."""
     pass
-def set_color_edit_options(flags: ImGuiColorEditFlags) -> None:    # imgui.h:587
+def SetColorEditOptions(flags: ImGuiColorEditFlags) -> None:    # imgui.h:587
     """ initialize current options (generally on application startup) if you want to select a default format, picker type, etc. User will be able to change many settings, unless you pass the _NoOptions flag to your calls."""
     pass
 
 # Widgets: Trees
 # - TreeNode functions return True when the node is open, in which case you need to also call TreePop() when you are finished displaying the tree node contents.
-def tree_node(label: str) -> bool:    # imgui.h:591
+def TreeNode(label: str) -> bool:    # imgui.h:591
     pass
-def tree_node(str_id: str, fmt: str) -> bool:    # imgui.h:592
+def TreeNode(str_id: str, fmt: str) -> bool:    # imgui.h:592
     """ helper variation to easily decorelate the id from the displayed string. Read the FAQ about why and how to use ID. to align arbitrary text at the same level as a TreeNode() you can use Bullet()."""
     pass
-def tree_node(ptr_id: Any, fmt: str) -> bool:    # imgui.h:593
+def TreeNode(ptr_id: Any, fmt: str) -> bool:    # imgui.h:593
     """ " """
     pass
-def tree_node_ex(label: str, flags: ImGuiTreeNodeFlags = 0) -> bool:    # imgui.h:596
+def TreeNodeEx(label: str, flags: ImGuiTreeNodeFlags = 0) -> bool:    # imgui.h:596
     pass
-def tree_node_ex(str_id: str, flags: ImGuiTreeNodeFlags, fmt: str) -> bool:    # imgui.h:597
+def TreeNodeEx(str_id: str, flags: ImGuiTreeNodeFlags, fmt: str) -> bool:    # imgui.h:597
     pass
-def tree_node_ex(ptr_id: Any, flags: ImGuiTreeNodeFlags, fmt: str) -> bool:    # imgui.h:598
+def TreeNodeEx(ptr_id: Any, flags: ImGuiTreeNodeFlags, fmt: str) -> bool:    # imgui.h:598
     pass
-def tree_push(str_id: str) -> None:    # imgui.h:601
+def TreePush(str_id: str) -> None:    # imgui.h:601
     """ ~ Indent()+PushId(). Already called by TreeNode() when returning True, but you can call TreePush/TreePop yourself if desired."""
     pass
-def tree_push(ptr_id: Any = None) -> None:    # imgui.h:602
+def TreePush(ptr_id: Any = None) -> None:    # imgui.h:602
     """ " """
     pass
-def tree_pop() -> None:    # imgui.h:603
+def TreePop() -> None:    # imgui.h:603
     """ ~ Unindent()+PopId()"""
     pass
-def get_tree_node_to_label_spacing() -> float:    # imgui.h:604
+def GetTreeNodeToLabelSpacing() -> float:    # imgui.h:604
     """ horizontal distance preceding label when using TreeNode*() or Bullet() == (g.FontSize + style.FramePadding.x*2) for a regular unframed TreeNode"""
     pass
-def collapsing_header(label: str, flags: ImGuiTreeNodeFlags = 0) -> bool:    # imgui.h:605
+def CollapsingHeader(label: str, flags: ImGuiTreeNodeFlags = 0) -> bool:    # imgui.h:605
     """ if returning 'True' the header is open. doesn't indent nor push on ID stack. user doesn't have to call TreePop()."""
     pass
-def collapsing_header(label: str, p_visible: BoxedBool, flags: ImGuiTreeNodeFlags = 0) -> bool:    # imgui.h:606
+def CollapsingHeader(label: str, p_visible: BoxedBool, flags: ImGuiTreeNodeFlags = 0) -> bool:    # imgui.h:606
     """ when 'p_visible != None': if '*p_visible==True' display an additional small close button on upper right of the header which will set the bool to False when clicked, if '*p_visible==False' don't display the header."""
     pass
-def set_next_item_open(is_open: bool, cond: ImGuiCond = 0) -> None:    # imgui.h:607
+def SetNextItemOpen(is_open: bool, cond: ImGuiCond = 0) -> None:    # imgui.h:607
     """ set next TreeNode/CollapsingHeader open state."""
     pass
 
 # Widgets: Selectables
 # - A selectable highlights when hovered, and can display another color when selected.
 # - Neighbors selectable extend their highlight bounds in order to leave no gap between them. This is so a series of selected Selectable appear contiguous.
-def selectable(label: str, selected: bool = False, flags: ImGuiSelectableFlags = 0, size: ImVec2 = ImVec2(0, 0)) -> bool:    # imgui.h:612
+def Selectable(label: str, selected: bool = False, flags: ImGuiSelectableFlags = 0, size: ImVec2 = ImVec2(0, 0)) -> bool:    # imgui.h:612
     """ "bool selected" carry the selection state (read-only). Selectable() is clicked is returns True so you can modify your selection state. size.x==0.0: use remaining width, size.x>0.0: specify width. size.y==0.0: use label height, size.y>0.0: specify height"""
     pass
-def selectable(label: str, p_selected: BoxedBool, flags: ImGuiSelectableFlags = 0, size: ImVec2 = ImVec2(0, 0)) -> bool:    # imgui.h:613
+def Selectable(label: str, p_selected: BoxedBool, flags: ImGuiSelectableFlags = 0, size: ImVec2 = ImVec2(0, 0)) -> bool:    # imgui.h:613
     """ "bool* p_selected" point to the selection state (read-write), as a convenient helper."""
     pass
 
@@ -1091,31 +1091,31 @@ def selectable(label: str, p_selected: BoxedBool, flags: ImGuiSelectableFlags = 
 # - The simplified/old ListBox() api are helpers over BeginListBox()/EndListBox() which are kept available for convenience purpose. This is analoguous to how Combos are created.
 # - Choose frame width:   size.x > 0.0: custom  /  size.x < 0.0 or -FLT_MIN: right-align   /  size.x = 0.0 (default): use current ItemWidth
 # - Choose frame height:  size.y > 0.0: custom  /  size.y < 0.0 or -FLT_MIN: bottom-align  /  size.y = 0.0 (default): arbitrary default height which can fit ~7 items
-def begin_list_box(label: str, size: ImVec2 = ImVec2(0, 0)) -> bool:    # imgui.h:621
+def BeginListBox(label: str, size: ImVec2 = ImVec2(0, 0)) -> bool:    # imgui.h:621
     """ open a framed scrolling region"""
     pass
-def end_list_box() -> None:    # imgui.h:622
+def EndListBox() -> None:    # imgui.h:622
     """ only call EndListBox() if BeginListBox() returned True!"""
     pass
-def list_box(label: str, current_item: BoxedInt, items: List[str], height_in_items: int = -1) -> bool:    # imgui.h:623
+def ListBox(label: str, current_item: BoxedInt, items: List[str], height_in_items: int = -1) -> bool:    # imgui.h:623
     pass
 
 # Widgets: Data Plotting
 # - Consider using ImPlot (https://github.com/epezent/implot) which is much better!
-def plot_lines(label: str, values: np.ndarray, values_offset: int = 0, overlay_text: str = None, scale_min: float = sys.float_info.max, scale_max: float = sys.float_info.max, graph_size: ImVec2 = ImVec2(0, 0), stride: int = -1) -> None:    # imgui.h:628
+def PlotLines(label: str, values: np.ndarray, values_offset: int = 0, overlay_text: str = None, scale_min: float = sys.float_info.max, scale_max: float = sys.float_info.max, graph_size: ImVec2 = ImVec2(0, 0), stride: int = -1) -> None:    # imgui.h:628
     pass
-def plot_histogram(label: str, values: np.ndarray, values_offset: int = 0, overlay_text: str = None, scale_min: float = sys.float_info.max, scale_max: float = sys.float_info.max, graph_size: ImVec2 = ImVec2(0, 0), stride: int = -1) -> None:    # imgui.h:630
+def PlotHistogram(label: str, values: np.ndarray, values_offset: int = 0, overlay_text: str = None, scale_min: float = sys.float_info.max, scale_max: float = sys.float_info.max, graph_size: ImVec2 = ImVec2(0, 0), stride: int = -1) -> None:    # imgui.h:630
     pass
 
 # Widgets: Value() Helpers.
 # - Those are merely shortcut to calling Text() with a format string. Output single value in "name: value" format (tip: freely declare more in your code to handle your types. you can add functions to the ImGui namespace)
-def value(prefix: str, b: bool) -> None:    # imgui.h:635
+def Value(prefix: str, b: bool) -> None:    # imgui.h:635
     pass
-def value(prefix: str, v: int) -> None:    # imgui.h:636
+def Value(prefix: str, v: int) -> None:    # imgui.h:636
     pass
-def value(prefix: str, v: int) -> None:    # imgui.h:637
+def Value(prefix: str, v: int) -> None:    # imgui.h:637
     pass
-def value(prefix: str, v: float, float_format: str = None) -> None:    # imgui.h:638
+def Value(prefix: str, v: float, float_format: str = None) -> None:    # imgui.h:638
     pass
 
 # Widgets: Menus
@@ -1123,39 +1123,39 @@ def value(prefix: str, v: float, float_format: str = None) -> None:    # imgui.h
 # - Use BeginMainMenuBar() to create a menu bar at the top of the screen and append to it.
 # - Use BeginMenu() to create a menu. You can call BeginMenu() multiple time with the same identifier to append more items to it.
 # - Not that MenuItem() keyboardshortcuts are displayed as a convenience but _not processed_ by Dear ImGui at the moment.
-def begin_menu_bar() -> bool:    # imgui.h:645
+def BeginMenuBar() -> bool:    # imgui.h:645
     """ append to menu-bar of current window (requires ImGuiWindowFlags_MenuBar flag set on parent window)."""
     pass
-def end_menu_bar() -> None:    # imgui.h:646
+def EndMenuBar() -> None:    # imgui.h:646
     """ only call EndMenuBar() if BeginMenuBar() returns True!"""
     pass
-def begin_main_menu_bar() -> bool:    # imgui.h:647
+def BeginMainMenuBar() -> bool:    # imgui.h:647
     """ create and append to a full screen menu-bar."""
     pass
-def end_main_menu_bar() -> None:    # imgui.h:648
+def EndMainMenuBar() -> None:    # imgui.h:648
     """ only call EndMainMenuBar() if BeginMainMenuBar() returns True!"""
     pass
-def begin_menu(label: str, enabled: bool = True) -> bool:    # imgui.h:649
+def BeginMenu(label: str, enabled: bool = True) -> bool:    # imgui.h:649
     """ create a sub-menu entry. only call EndMenu() if this returns True!"""
     pass
-def end_menu() -> None:    # imgui.h:650
+def EndMenu() -> None:    # imgui.h:650
     """ only call EndMenu() if BeginMenu() returns True!"""
     pass
-def menu_item(label: str, shortcut: str = None, selected: bool = False, enabled: bool = True) -> bool:    # imgui.h:651
+def MenuItem(label: str, shortcut: str = None, selected: bool = False, enabled: bool = True) -> bool:    # imgui.h:651
     """ return True when activated."""
     pass
-def menu_item(label: str, shortcut: str, p_selected: BoxedBool, enabled: bool = True) -> bool:    # imgui.h:652
+def MenuItem(label: str, shortcut: str, p_selected: BoxedBool, enabled: bool = True) -> bool:    # imgui.h:652
     """ return True when activated + toggle (*p_selected) if p_selected != None"""
     pass
 
 # Tooltips
 # - Tooltip are windows following the mouse. They do not take focus away.
-def begin_tooltip() -> None:    # imgui.h:656
+def BeginTooltip() -> None:    # imgui.h:656
     """ begin/append a tooltip window. to create full-featured tooltip (with any kind of items)."""
     pass
-def end_tooltip() -> None:    # imgui.h:657
+def EndTooltip() -> None:    # imgui.h:657
     pass
-def set_tooltip(fmt: str) -> None:    # imgui.h:658
+def SetTooltip(fmt: str) -> None:    # imgui.h:658
     """ set a text-only tooltip, typically use with ImGui::IsItemHovered(). override any previous call to SetTooltip()."""
     pass
 
@@ -1171,13 +1171,13 @@ def set_tooltip(fmt: str) -> None:    # imgui.h:658
 # Popups: begin/end functions
 #  - BeginPopup(): query popup state, if open start appending into the window. Call EndPopup() afterwards. ImGuiWindowFlags are forwarded to the window.
 #  - BeginPopupModal(): block every interactions behind the window, cannot be closed by user, add a dimming background, has a title bar.
-def begin_popup(str_id: str, flags: ImGuiWindowFlags = 0) -> bool:    # imgui.h:673
+def BeginPopup(str_id: str, flags: ImGuiWindowFlags = 0) -> bool:    # imgui.h:673
     """ return True if the popup is open, and you can start outputting to it."""
     pass
-def begin_popup_modal(name: str, p_open: BoxedBool = None, flags: ImGuiWindowFlags = 0) -> bool:    # imgui.h:674
+def BeginPopupModal(name: str, p_open: BoxedBool = None, flags: ImGuiWindowFlags = 0) -> bool:    # imgui.h:674
     """ return True if the modal is open, and you can start outputting to it."""
     pass
-def end_popup() -> None:    # imgui.h:675
+def EndPopup() -> None:    # imgui.h:675
     """ only call EndPopup() if BeginPopupXXX() returns True!"""
     pass
 
@@ -1189,16 +1189,16 @@ def end_popup() -> None:    # imgui.h:675
 #  - Use ImGuiPopupFlags_NoOpenOverExistingPopup to avoid opening a popup if there's already one at the same level. This is equivalent to e.g. testing for !IsAnyPopupOpen() prior to OpenPopup().
 #  - Use IsWindowAppearing() after BeginPopup() to tell if a window just opened.
 #  - IMPORTANT: Notice that for OpenPopupOnItemClick() we exceptionally default flags to 1 (== ImGuiPopupFlags_MouseButtonRight) for backward compatibility with older API taking 'int mouse_button = 1' parameter
-def open_popup(str_id: str, popup_flags: ImGuiPopupFlags = 0) -> None:    # imgui.h:685
+def OpenPopup(str_id: str, popup_flags: ImGuiPopupFlags = 0) -> None:    # imgui.h:685
     """ call to mark popup as open (don't call every frame!)."""
     pass
-def open_popup(id: ImGuiID, popup_flags: ImGuiPopupFlags = 0) -> None:    # imgui.h:686
+def OpenPopup(id: ImGuiID, popup_flags: ImGuiPopupFlags = 0) -> None:    # imgui.h:686
     """ id overload to facilitate calling from nested stacks"""
     pass
-def open_popup_on_item_click(str_id: str = None, popup_flags: ImGuiPopupFlags = 1) -> None:    # imgui.h:687
+def OpenPopupOnItemClick(str_id: str = None, popup_flags: ImGuiPopupFlags = 1) -> None:    # imgui.h:687
     """ helper to open popup when clicked on last item. Default to ImGuiPopupFlags_MouseButtonRight == 1. (note: actually triggers on the mouse _released_ event to be consistent with popup behaviors)"""
     pass
-def close_current_popup() -> None:    # imgui.h:688
+def CloseCurrentPopup() -> None:    # imgui.h:688
     """ manually close the popup we have begin-ed into."""
     pass
 
@@ -1207,13 +1207,13 @@ def close_current_popup() -> None:    # imgui.h:688
 #  - They are convenient to easily create context menus, hence the name.
 #  - IMPORTANT: Notice that BeginPopupContextXXX takes ImGuiPopupFlags just like OpenPopup() and unlike BeginPopup(). For full consistency, we may add ImGuiWindowFlags to the BeginPopupContextXXX functions in the future.
 #  - IMPORTANT: Notice that we exceptionally default their flags to 1 (== ImGuiPopupFlags_MouseButtonRight) for backward compatibility with older API taking 'int mouse_button = 1' parameter, so if you add other flags remember to re-add the ImGuiPopupFlags_MouseButtonRight.
-def begin_popup_context_item(str_id: str = None, popup_flags: ImGuiPopupFlags = 1) -> bool:    # imgui.h:695
+def BeginPopupContextItem(str_id: str = None, popup_flags: ImGuiPopupFlags = 1) -> bool:    # imgui.h:695
     """ open+begin popup when clicked on last item. Use str_id==None to associate the popup to previous item. If you want to use that on a non-interactive item such as Text() you need to pass in an explicit ID here. read comments in .cpp!"""
     pass
-def begin_popup_context_window(str_id: str = None, popup_flags: ImGuiPopupFlags = 1) -> bool:    # imgui.h:696
+def BeginPopupContextWindow(str_id: str = None, popup_flags: ImGuiPopupFlags = 1) -> bool:    # imgui.h:696
     """ open+begin popup when clicked on current window."""
     pass
-def begin_popup_context_void(str_id: str = None, popup_flags: ImGuiPopupFlags = 1) -> bool:    # imgui.h:697
+def BeginPopupContextVoid(str_id: str = None, popup_flags: ImGuiPopupFlags = 1) -> bool:    # imgui.h:697
     """ open+begin popup when clicked in None (where there are no windows)."""
     pass
 
@@ -1221,7 +1221,7 @@ def begin_popup_context_void(str_id: str = None, popup_flags: ImGuiPopupFlags = 
 #  - IsPopupOpen(): return True if the popup is open at the current BeginPopup() level of the popup stack.
 #  - IsPopupOpen() with ImGuiPopupFlags_AnyPopupId: return True if any popup is open at the current BeginPopup() level of the popup stack.
 #  - IsPopupOpen() with ImGuiPopupFlags_AnyPopupId + ImGuiPopupFlags_AnyPopupLevel: return True if any popup is open.
-def is_popup_open(str_id: str, flags: ImGuiPopupFlags = 0) -> bool:    # imgui.h:703
+def IsPopupOpen(str_id: str, flags: ImGuiPopupFlags = 0) -> bool:    # imgui.h:703
     """ return True if the popup is open."""
     pass
 
@@ -1248,18 +1248,18 @@ def is_popup_open(str_id: str, flags: ImGuiPopupFlags = 0) -> bool:    # imgui.h
 #        TableNextRow()                           -> Text("Hello 0")                                               // Not OK! Missing TableSetColumnIndex() or TableNextColumn()! Text will not appear!
 #        --------------------------------------------------------------------------------------------------------
 # - 5. Call EndTable()
-def begin_table(str_id: str, column: int, flags: ImGuiTableFlags = 0, outer_size: ImVec2 = ImVec2(0.0, 0.0), inner_width: float = 0.0) -> bool:    # imgui.h:728
+def BeginTable(str_id: str, column: int, flags: ImGuiTableFlags = 0, outer_size: ImVec2 = ImVec2(0.0, 0.0), inner_width: float = 0.0) -> bool:    # imgui.h:728
     pass
-def end_table() -> None:    # imgui.h:729
+def EndTable() -> None:    # imgui.h:729
     """ only call EndTable() if BeginTable() returns True!"""
     pass
-def table_next_row(row_flags: ImGuiTableRowFlags = 0, min_row_height: float = 0.0) -> None:    # imgui.h:730
+def TableNextRow(row_flags: ImGuiTableRowFlags = 0, min_row_height: float = 0.0) -> None:    # imgui.h:730
     """ append into the first cell of a new row."""
     pass
-def table_next_column() -> bool:    # imgui.h:731
+def TableNextColumn() -> bool:    # imgui.h:731
     """ append into the next column (or first column of next row if currently in last column). Return True when column is visible."""
     pass
-def table_set_column_index(column_n: int) -> bool:    # imgui.h:732
+def TableSetColumnIndex(column_n: int) -> bool:    # imgui.h:732
     """ append into the specified column. Return True when column is visible."""
     pass
 
@@ -1271,15 +1271,15 @@ def table_set_column_index(column_n: int) -> bool:    # imgui.h:732
 # - You may manually submit headers using TableNextRow() + TableHeader() calls, but this is only useful in
 #   some advanced use cases (e.g. adding custom widgets in header row).
 # - Use TableSetupScrollFreeze() to lock columns/rows so they stay visible when scrolled.
-def table_setup_column(label: str, flags: ImGuiTableColumnFlags = 0, init_width_or_weight: float = 0.0, user_id: ImGuiID = 0) -> None:    # imgui.h:742
+def TableSetupColumn(label: str, flags: ImGuiTableColumnFlags = 0, init_width_or_weight: float = 0.0, user_id: ImGuiID = 0) -> None:    # imgui.h:742
     pass
-def table_setup_scroll_freeze(cols: int, rows: int) -> None:    # imgui.h:743
+def TableSetupScrollFreeze(cols: int, rows: int) -> None:    # imgui.h:743
     """ lock columns/rows so they stay visible when scrolled."""
     pass
-def table_headers_row() -> None:    # imgui.h:744
+def TableHeadersRow() -> None:    # imgui.h:744
     """ submit all headers cells based on data provided to TableSetupColumn() + submit context menu"""
     pass
-def table_header(label: str) -> None:    # imgui.h:745
+def TableHeader(label: str) -> None:    # imgui.h:745
     """ submit one header cell manually (rarely used)"""
     pass
 
@@ -1289,94 +1289,94 @@ def table_header(label: str) -> None:    # imgui.h:745
 #   changed since last call, or the first time. Make sure to set 'SpecsDirty = False' after sorting,
 #   else you may wastefully sort your data every frame!
 # - Functions args 'int column_n' treat the default value of -1 as the same as passing the current column index.
-def table_get_sort_specs() -> ImGuiTableSortSpecs:    # imgui.h:753
+def TableGetSortSpecs() -> ImGuiTableSortSpecs:    # imgui.h:753
     """ get latest sort specs for the table (None if not sorting).  Lifetime: don't hold on this pointer over multiple frames or past any subsequent call to BeginTable()."""
     pass
-def table_get_column_count() -> int:    # imgui.h:754
+def TableGetColumnCount() -> int:    # imgui.h:754
     """ return number of columns (value passed to BeginTable)"""
     pass
-def table_get_column_index() -> int:    # imgui.h:755
+def TableGetColumnIndex() -> int:    # imgui.h:755
     """ return current column index."""
     pass
-def table_get_row_index() -> int:    # imgui.h:756
+def TableGetRowIndex() -> int:    # imgui.h:756
     """ return current row index."""
     pass
-def table_get_column_name(column_n: int = -1) -> str:    # imgui.h:757
+def TableGetColumnName(column_n: int = -1) -> str:    # imgui.h:757
     """ return "" if column didn't have a name declared by TableSetupColumn(). Pass -1 to use current column."""
     pass
-def table_get_column_flags(column_n: int = -1) -> ImGuiTableColumnFlags:    # imgui.h:758
+def TableGetColumnFlags(column_n: int = -1) -> ImGuiTableColumnFlags:    # imgui.h:758
     """ return column flags so you can query their Enabled/Visible/Sorted/Hovered status flags. Pass -1 to use current column."""
     pass
-def table_set_column_enabled(column_n: int, v: bool) -> None:    # imgui.h:759
+def TableSetColumnEnabled(column_n: int, v: bool) -> None:    # imgui.h:759
     """ change user accessible enabled/disabled state of a column. Set to False to hide the column. User can use the context menu to change this themselves (right-click in headers, or right-click in columns body with ImGuiTableFlags_ContextMenuInBody)"""
     pass
-def table_set_bg_color(target: ImGuiTableBgTarget, color: ImU32, column_n: int = -1) -> None:    # imgui.h:760
+def TableSetBgColor(target: ImGuiTableBgTarget, color: ImU32, column_n: int = -1) -> None:    # imgui.h:760
     """ change the color of a cell, row, or column. See ImGuiTableBgTarget_ flags for details."""
     pass
 
 # Legacy Columns API (prefer using Tables!)
 # - You can also use SameLine(pos_x) to mimic simplified columns.
-def columns(count: int = 1, id: str = None, border: bool = True) -> None:    # imgui.h:764
+def Columns(count: int = 1, id: str = None, border: bool = True) -> None:    # imgui.h:764
     pass
-def next_column() -> None:    # imgui.h:765
+def NextColumn() -> None:    # imgui.h:765
     """ next column, defaults to current row or next row if the current row is finished"""
     pass
-def get_column_index() -> int:    # imgui.h:766
+def GetColumnIndex() -> int:    # imgui.h:766
     """ get current column index"""
     pass
-def get_column_width(column_index: int = -1) -> float:    # imgui.h:767
+def GetColumnWidth(column_index: int = -1) -> float:    # imgui.h:767
     """ get column width (in pixels). pass -1 to use current column"""
     pass
-def set_column_width(column_index: int, width: float) -> None:    # imgui.h:768
+def SetColumnWidth(column_index: int, width: float) -> None:    # imgui.h:768
     """ set column width (in pixels). pass -1 to use current column"""
     pass
-def get_column_offset(column_index: int = -1) -> float:    # imgui.h:769
+def GetColumnOffset(column_index: int = -1) -> float:    # imgui.h:769
     """ get position of column line (in pixels, from the left side of the contents region). pass -1 to use current column, otherwise 0..GetColumnsCount() inclusive. column 0 is typically 0.0"""
     pass
-def set_column_offset(column_index: int, offset_x: float) -> None:    # imgui.h:770
+def SetColumnOffset(column_index: int, offset_x: float) -> None:    # imgui.h:770
     """ set position of column line (in pixels, from the left side of the contents region). pass -1 to use current column"""
     pass
-def get_columns_count() -> int:    # imgui.h:771
+def GetColumnsCount() -> int:    # imgui.h:771
     pass
 
 # Tab Bars, Tabs
-def begin_tab_bar(str_id: str, flags: ImGuiTabBarFlags = 0) -> bool:    # imgui.h:774
+def BeginTabBar(str_id: str, flags: ImGuiTabBarFlags = 0) -> bool:    # imgui.h:774
     """ create and append into a TabBar"""
     pass
-def end_tab_bar() -> None:    # imgui.h:775
+def EndTabBar() -> None:    # imgui.h:775
     """ only call EndTabBar() if BeginTabBar() returns True!"""
     pass
-def begin_tab_item(label: str, p_open: BoxedBool = None, flags: ImGuiTabItemFlags = 0) -> bool:    # imgui.h:776
+def BeginTabItem(label: str, p_open: BoxedBool = None, flags: ImGuiTabItemFlags = 0) -> bool:    # imgui.h:776
     """ create a Tab. Returns True if the Tab is selected."""
     pass
-def end_tab_item() -> None:    # imgui.h:777
+def EndTabItem() -> None:    # imgui.h:777
     """ only call EndTabItem() if BeginTabItem() returns True!"""
     pass
-def tab_item_button(label: str, flags: ImGuiTabItemFlags = 0) -> bool:    # imgui.h:778
+def TabItemButton(label: str, flags: ImGuiTabItemFlags = 0) -> bool:    # imgui.h:778
     """ create a Tab behaving like a button. return True when clicked. cannot be selected in the tab bar."""
     pass
-def set_tab_item_closed(tab_or_docked_window_label: str) -> None:    # imgui.h:779
+def SetTabItemClosed(tab_or_docked_window_label: str) -> None:    # imgui.h:779
     """ notify TabBar or Docking system of a closed tab/window ahead (useful to reduce visual flicker on reorderable tab bars). For tab-bar: call after BeginTabBar() and before Tab submissions. Otherwise call with a window name."""
     pass
 
 # Logging/Capture
 # - All text output from the interface can be captured into tty/file/clipboard. By default, tree nodes are automatically opened during logging.
-def log_to_tty(auto_open_depth: int = -1) -> None:    # imgui.h:783
+def LogToTTY(auto_open_depth: int = -1) -> None:    # imgui.h:783
     """ start logging to tty (stdout)"""
     pass
-def log_to_file(auto_open_depth: int = -1, filename: str = None) -> None:    # imgui.h:784
+def LogToFile(auto_open_depth: int = -1, filename: str = None) -> None:    # imgui.h:784
     """ start logging to file"""
     pass
-def log_to_clipboard(auto_open_depth: int = -1) -> None:    # imgui.h:785
+def LogToClipboard(auto_open_depth: int = -1) -> None:    # imgui.h:785
     """ start logging to OS clipboard"""
     pass
-def log_finish() -> None:    # imgui.h:786
+def LogFinish() -> None:    # imgui.h:786
     """ stop logging (close file, etc.)"""
     pass
-def log_buttons() -> None:    # imgui.h:787
+def LogButtons() -> None:    # imgui.h:787
     """ helper to display buttons for logging to tty/file/clipboard"""
     pass
-def log_text(fmt: str) -> None:    # imgui.h:788
+def LogText(fmt: str) -> None:    # imgui.h:788
     """ pass text data straight to log (without being displayed)"""
     pass
 
@@ -1385,25 +1385,25 @@ def log_text(fmt: str) -> None:    # imgui.h:788
 # - On target candidates, call BeginDragDropTarget(), if it returns True also call AcceptDragDropPayload() + EndDragDropTarget().
 # - If you stop calling BeginDragDropSource() the payload is preserved however it won't have a preview tooltip (we currently display a fallback "..." tooltip, see #1725)
 # - An item can be both drag source and drop target.
-def begin_drag_drop_source(flags: ImGuiDragDropFlags = 0) -> bool:    # imgui.h:796
+def BeginDragDropSource(flags: ImGuiDragDropFlags = 0) -> bool:    # imgui.h:796
     """ call after submitting an item which may be dragged. when this return True, you can call SetDragDropPayload() + EndDragDropSource()"""
     pass
-def set_drag_drop_payload(type: str, data: Any, sz: int, cond: ImGuiCond = 0) -> bool:    # imgui.h:797
+def SetDragDropPayload(type: str, data: Any, sz: int, cond: ImGuiCond = 0) -> bool:    # imgui.h:797
     """ type is a user defined string of maximum 32 characters. Strings starting with '_' are reserved for dear imgui internal types. Data is copied and held by imgui. Return True when payload has been accepted."""
     pass
-def end_drag_drop_source() -> None:    # imgui.h:798
+def EndDragDropSource() -> None:    # imgui.h:798
     """ only call EndDragDropSource() if BeginDragDropSource() returns True!"""
     pass
-def begin_drag_drop_target() -> bool:    # imgui.h:799
+def BeginDragDropTarget() -> bool:    # imgui.h:799
     """ call after submitting an item that may receive a payload. If this returns True, you can call AcceptDragDropPayload() + EndDragDropTarget()"""
     pass
-def accept_drag_drop_payload(type: str, flags: ImGuiDragDropFlags = 0) -> ImGuiPayload:    # imgui.h:800
+def AcceptDragDropPayload(type: str, flags: ImGuiDragDropFlags = 0) -> ImGuiPayload:    # imgui.h:800
     """ accept contents of a given type. If ImGuiDragDropFlags_AcceptBeforeDelivery is set you can peek into the payload before the mouse button is released."""
     pass
-def end_drag_drop_target() -> None:    # imgui.h:801
+def EndDragDropTarget() -> None:    # imgui.h:801
     """ only call EndDragDropTarget() if BeginDragDropTarget() returns True!"""
     pass
-def get_drag_drop_payload() -> ImGuiPayload:    # imgui.h:802
+def GetDragDropPayload() -> ImGuiPayload:    # imgui.h:802
     """ peek directly into the current payload from anywhere. may return None. use ImGuiPayload::IsDataType() to test for the payload type."""
     pass
 
@@ -1411,79 +1411,79 @@ def get_drag_drop_payload() -> ImGuiPayload:    # imgui.h:802
 # - Disable all user interactions and dim items visuals (applying style.DisabledAlpha over current colors)
 # - Those can be nested but it cannot be used to enable an already disabled section (a single BeginDisabled(True) in the stack is enough to keep everything disabled)
 # - BeginDisabled(False) essentially does nothing useful but is provided to facilitate use of boolean expressions. If you can avoid calling BeginDisabled(False)/EndDisabled() best to avoid it.
-def begin_disabled(disabled: bool = True) -> None:    # imgui.h:808
+def BeginDisabled(disabled: bool = True) -> None:    # imgui.h:808
     pass
-def end_disabled() -> None:    # imgui.h:809
+def EndDisabled() -> None:    # imgui.h:809
     pass
 
 # Clipping
 # - Mouse hovering is affected by ImGui::PushClipRect() calls, unlike direct calls to ImDrawList::PushClipRect() which are render only.
-def push_clip_rect(clip_rect_min: ImVec2, clip_rect_max: ImVec2, intersect_with_current_clip_rect: bool) -> None:    # imgui.h:813
+def PushClipRect(clip_rect_min: ImVec2, clip_rect_max: ImVec2, intersect_with_current_clip_rect: bool) -> None:    # imgui.h:813
     pass
-def pop_clip_rect() -> None:    # imgui.h:814
+def PopClipRect() -> None:    # imgui.h:814
     pass
 
 # Focus, Activation
 # - Prefer using "SetItemDefaultFocus()" over "if (IsWindowAppearing()) SetScrollHereY()" when applicable to signify "this is the default item"
-def set_item_default_focus() -> None:    # imgui.h:818
+def SetItemDefaultFocus() -> None:    # imgui.h:818
     """ make last item the default focused item of a window."""
     pass
-def set_keyboard_focus_here(offset: int = 0) -> None:    # imgui.h:819
+def SetKeyboardFocusHere(offset: int = 0) -> None:    # imgui.h:819
     """ focus keyboard on the next widget. Use positive 'offset' to access sub components of a multiple component widget. Use -1 to access previous widget."""
     pass
 
 # Item/Widgets Utilities and Query Functions
 # - Most of the functions are referring to the previous Item that has been submitted.
 # - See Demo Window under "Widgets->Querying Status" for an interactive visualization of most of those functions.
-def is_item_hovered(flags: ImGuiHoveredFlags = 0) -> bool:    # imgui.h:824
+def IsItemHovered(flags: ImGuiHoveredFlags = 0) -> bool:    # imgui.h:824
     """ is the last item hovered? (and usable, aka not blocked by a popup, etc.). See ImGuiHoveredFlags for more options."""
     pass
-def is_item_active() -> bool:    # imgui.h:825
+def IsItemActive() -> bool:    # imgui.h:825
     """ is the last item active? (e.g. button being held, text field being edited. This will continuously return True while holding mouse button on an item. Items that don't interact will always return False)"""
     pass
-def is_item_focused() -> bool:    # imgui.h:826
+def IsItemFocused() -> bool:    # imgui.h:826
     """ is the last item focused for keyboard/gamepad navigation?"""
     pass
-def is_item_clicked(mouse_button: ImGuiMouseButton = 0) -> bool:    # imgui.h:827
+def IsItemClicked(mouse_button: ImGuiMouseButton = 0) -> bool:    # imgui.h:827
     """ is the last item hovered and mouse clicked on? (**)  == IsMouseClicked(mouse_button) && IsItemHovered()Important. (**) this it NOT equivalent to the behavior of e.g. Button(). Read comments in function definition."""
     pass
-def is_item_visible() -> bool:    # imgui.h:828
+def IsItemVisible() -> bool:    # imgui.h:828
     """ is the last item visible? (items may be out of sight because of clipping/scrolling)"""
     pass
-def is_item_edited() -> bool:    # imgui.h:829
+def IsItemEdited() -> bool:    # imgui.h:829
     """ did the last item modify its underlying value this frame? or was pressed? This is generally the same as the "bool" return value of many widgets."""
     pass
-def is_item_activated() -> bool:    # imgui.h:830
+def IsItemActivated() -> bool:    # imgui.h:830
     """ was the last item just made active (item was previously inactive)."""
     pass
-def is_item_deactivated() -> bool:    # imgui.h:831
+def IsItemDeactivated() -> bool:    # imgui.h:831
     """ was the last item just made inactive (item was previously active). Useful for Undo/Redo patterns with widgets that requires continuous editing."""
     pass
-def is_item_deactivated_after_edit() -> bool:    # imgui.h:832
+def IsItemDeactivatedAfterEdit() -> bool:    # imgui.h:832
     """ was the last item just made inactive and made a value change when it was active? (e.g. Slider/Drag moved). Useful for Undo/Redo patterns with widgets that requires continuous editing. Note that you may get False positives (some widgets such as Combo()/ListBox()/Selectable() will return True even when clicking an already selected item)."""
     pass
-def is_item_toggled_open() -> bool:    # imgui.h:833
+def IsItemToggledOpen() -> bool:    # imgui.h:833
     """ was the last item open state toggled? set by TreeNode()."""
     pass
-def is_any_item_hovered() -> bool:    # imgui.h:834
+def IsAnyItemHovered() -> bool:    # imgui.h:834
     """ is any item hovered?"""
     pass
-def is_any_item_active() -> bool:    # imgui.h:835
+def IsAnyItemActive() -> bool:    # imgui.h:835
     """ is any item active?"""
     pass
-def is_any_item_focused() -> bool:    # imgui.h:836
+def IsAnyItemFocused() -> bool:    # imgui.h:836
     """ is any item focused?"""
     pass
-def get_item_rect_min() -> ImVec2:    # imgui.h:837
+def GetItemRectMin() -> ImVec2:    # imgui.h:837
     """ get upper-left bounding rectangle of the last item (screen space)"""
     pass
-def get_item_rect_max() -> ImVec2:    # imgui.h:838
+def GetItemRectMax() -> ImVec2:    # imgui.h:838
     """ get lower-right bounding rectangle of the last item (screen space)"""
     pass
-def get_item_rect_size() -> ImVec2:    # imgui.h:839
+def GetItemRectSize() -> ImVec2:    # imgui.h:839
     """ get size of last item"""
     pass
-def set_item_allow_overlap() -> None:    # imgui.h:840
+def SetItemAllowOverlap() -> None:    # imgui.h:840
     """ allow last item to be overlapped by a subsequent item. sometimes useful with invisible buttons, selectables, etc. to catch unused area."""
     pass
 
@@ -1491,59 +1491,59 @@ def set_item_allow_overlap() -> None:    # imgui.h:840
 # - Currently represents the Platform Window created by the application which is hosting our Dear ImGui windows.
 # - In 'docking' branch with multi-viewport enabled, we extend this concept to have multiple active viewports.
 # - In the future we will extend this concept further to also represent Platform Monitor and support a "no main platform window" operation mode.
-def get_main_viewport() -> ImGuiViewport:    # imgui.h:846
+def GetMainViewport() -> ImGuiViewport:    # imgui.h:846
     """ return primary/default viewport. This can never be None."""
     pass
 
 # Background/Foreground Draw Lists
-def get_background_draw_list() -> ImDrawList:    # imgui.h:849
+def GetBackgroundDrawList() -> ImDrawList:    # imgui.h:849
     """ this draw list will be the first rendered one. Useful to quickly draw shapes/text behind dear imgui contents."""
     pass
-def get_foreground_draw_list() -> ImDrawList:    # imgui.h:850
+def GetForegroundDrawList() -> ImDrawList:    # imgui.h:850
     """ this draw list will be the last rendered one. Useful to quickly draw shapes/text over dear imgui contents."""
     pass
 
 # Miscellaneous Utilities
-def is_rect_visible(size: ImVec2) -> bool:    # imgui.h:853
+def IsRectVisible(size: ImVec2) -> bool:    # imgui.h:853
     """ test if rectangle (of given size, starting from cursor position) is visible / not clipped."""
     pass
-def is_rect_visible(rect_min: ImVec2, rect_max: ImVec2) -> bool:    # imgui.h:854
+def IsRectVisible(rect_min: ImVec2, rect_max: ImVec2) -> bool:    # imgui.h:854
     """ test if rectangle (in screen space) is visible / not clipped. to perform coarse clipping on user's side."""
     pass
-def get_time() -> float:    # imgui.h:855
+def GetTime() -> float:    # imgui.h:855
     """ get global imgui time. incremented by io.DeltaTime every frame."""
     pass
-def get_frame_count() -> int:    # imgui.h:856
+def GetFrameCount() -> int:    # imgui.h:856
     """ get global imgui frame count. incremented by 1 every frame."""
     pass
-def get_draw_list_shared_data() -> ImDrawListSharedData:    # imgui.h:857
+def GetDrawListSharedData() -> ImDrawListSharedData:    # imgui.h:857
     """ you may use this when creating your own ImDrawList instances."""
     pass
-def get_style_color_name(idx: ImGuiCol) -> str:    # imgui.h:858
+def GetStyleColorName(idx: ImGuiCol) -> str:    # imgui.h:858
     """ get a string corresponding to the enum value (for display, saving, etc.)."""
     pass
-def set_state_storage(storage: ImGuiStorage) -> None:    # imgui.h:859
+def SetStateStorage(storage: ImGuiStorage) -> None:    # imgui.h:859
     """ replace current window storage with our own (if you want to manipulate it yourself, typically clear subsection of it)"""
     pass
-def get_state_storage() -> ImGuiStorage:    # imgui.h:860
+def GetStateStorage() -> ImGuiStorage:    # imgui.h:860
     pass
-def begin_child_frame(id: ImGuiID, size: ImVec2, flags: ImGuiWindowFlags = 0) -> bool:    # imgui.h:861
+def BeginChildFrame(id: ImGuiID, size: ImVec2, flags: ImGuiWindowFlags = 0) -> bool:    # imgui.h:861
     """ helper to create a child window / scrolling region that looks like a normal widget frame"""
     pass
-def end_child_frame() -> None:    # imgui.h:862
+def EndChildFrame() -> None:    # imgui.h:862
     """ always call EndChildFrame() regardless of BeginChildFrame() return values (which indicates a collapsed/clipped window)"""
     pass
 
-def calc_text_size(text: str, text_end: str = None, hide_text_after_double_hash: bool = False, wrap_width: float = -1.0) -> ImVec2:    # imgui.h:865
+def CalcTextSize(text: str, text_end: str = None, hide_text_after_double_hash: bool = False, wrap_width: float = -1.0) -> ImVec2:    # imgui.h:865
     """ Text Utilities"""
     pass
 
 # Color Utilities
-def color_convert_u32_to_float4(in_: ImU32) -> ImVec4:    # imgui.h:868
+def ColorConvertU32ToFloat4(in_: ImU32) -> ImVec4:    # imgui.h:868
     pass
-def color_convert_float4_to_u32(in_: ImVec4) -> ImU32:    # imgui.h:869
+def ColorConvertFloat4ToU32(in_: ImVec4) -> ImU32:    # imgui.h:869
     pass
-def color_convert_hs_vto_rgb(h: float, s: float, v: float, out_r: BoxedFloat, out_g: BoxedFloat, out_b: BoxedFloat) -> None:    # imgui.h:871
+def ColorConvertHSVtoRGB(h: float, s: float, v: float, out_r: BoxedFloat, out_g: BoxedFloat, out_b: BoxedFloat) -> None:    # imgui.h:871
     pass
 
 # Inputs Utilities: Keyboard
@@ -1552,22 +1552,22 @@ def color_convert_hs_vto_rgb(h: float, s: float, v: float, out_r: BoxedFloat, ou
 # With IMGUI_DISABLE_OBSOLETE_KEYIO: (this is the way forward)
 #   - Any use of 'ImGuiKey' will assert when key < 512 will be passed, previously reserved as native/user keys indices
 #   - GetKeyIndex() is pass-through and therefore deprecated (gone if IMGUI_DISABLE_OBSOLETE_KEYIO is defined)
-def is_key_down(key: ImGuiKey) -> bool:    # imgui.h:879
+def IsKeyDown(key: ImGuiKey) -> bool:    # imgui.h:879
     """ is key being held."""
     pass
-def is_key_pressed(key: ImGuiKey, repeat: bool = True) -> bool:    # imgui.h:880
+def IsKeyPressed(key: ImGuiKey, repeat: bool = True) -> bool:    # imgui.h:880
     """ was key pressed (went from !Down to Down)? if repeat=True, uses io.KeyRepeatDelay / KeyRepeatRate"""
     pass
-def is_key_released(key: ImGuiKey) -> bool:    # imgui.h:881
+def IsKeyReleased(key: ImGuiKey) -> bool:    # imgui.h:881
     """ was key released (went from Down to !Down)?"""
     pass
-def get_key_pressed_amount(key: ImGuiKey, repeat_delay: float, rate: float) -> int:    # imgui.h:882
+def GetKeyPressedAmount(key: ImGuiKey, repeat_delay: float, rate: float) -> int:    # imgui.h:882
     """ uses provided repeat rate/delay. return a count, most often 0 or 1 but might be >1 if RepeatRate is small enough that DeltaTime > RepeatRate"""
     pass
-def get_key_name(key: ImGuiKey) -> str:    # imgui.h:883
+def GetKeyName(key: ImGuiKey) -> str:    # imgui.h:883
     """ [DEBUG] returns English name of the key. Those names a provided for debugging purpose and are not meant to be saved persistently not compared."""
     pass
-def set_next_frame_want_capture_keyboard(want_capture_keyboard: bool) -> None:    # imgui.h:884
+def SetNextFrameWantCaptureKeyboard(want_capture_keyboard: bool) -> None:    # imgui.h:884
     """ Override io.WantCaptureKeyboard flag next frame (said flag is left for your application to handle, typically when True it instructs your app to ignore inputs). e.g. force capture keyboard when your widget is being hovered. This is equivalent to setting "io.WantCaptureKeyboard = want_capture_keyboard"; after the next NewFrame() call."""
     pass
 
@@ -1575,82 +1575,82 @@ def set_next_frame_want_capture_keyboard(want_capture_keyboard: bool) -> None:  
 # - To refer to a mouse button, you may use named enums in your code e.g. ImGuiMouseButton_Left, ImGuiMouseButton_Right.
 # - You can also use regular integer: it is forever guaranteed that 0=Left, 1=Right, 2=Middle.
 # - Dragging operations are only reported after mouse has moved a certain distance away from the initial clicking position (see 'lock_threshold' and 'io.MouseDraggingThreshold')
-def is_mouse_down(button: ImGuiMouseButton) -> bool:    # imgui.h:890
+def IsMouseDown(button: ImGuiMouseButton) -> bool:    # imgui.h:890
     """ is mouse button held?"""
     pass
-def is_mouse_clicked(button: ImGuiMouseButton, repeat: bool = False) -> bool:    # imgui.h:891
+def IsMouseClicked(button: ImGuiMouseButton, repeat: bool = False) -> bool:    # imgui.h:891
     """ did mouse button clicked? (went from !Down to Down). Same as GetMouseClickedCount() == 1."""
     pass
-def is_mouse_released(button: ImGuiMouseButton) -> bool:    # imgui.h:892
+def IsMouseReleased(button: ImGuiMouseButton) -> bool:    # imgui.h:892
     """ did mouse button released? (went from Down to !Down)"""
     pass
-def is_mouse_double_clicked(button: ImGuiMouseButton) -> bool:    # imgui.h:893
+def IsMouseDoubleClicked(button: ImGuiMouseButton) -> bool:    # imgui.h:893
     """ did mouse button double-clicked? Same as GetMouseClickedCount() == 2. (note that a double-click will also report IsMouseClicked() == True)"""
     pass
-def get_mouse_clicked_count(button: ImGuiMouseButton) -> int:    # imgui.h:894
+def GetMouseClickedCount(button: ImGuiMouseButton) -> int:    # imgui.h:894
     """ return the number of successive mouse-clicks at the time where a click happen (otherwise 0)."""
     pass
-def is_mouse_hovering_rect(r_min: ImVec2, r_max: ImVec2, clip: bool = True) -> bool:    # imgui.h:895
+def IsMouseHoveringRect(r_min: ImVec2, r_max: ImVec2, clip: bool = True) -> bool:    # imgui.h:895
     """ is mouse hovering given bounding rect (in screen space). clipped by current clipping settings, but disregarding of other consideration of focus/window ordering/popup-block."""
     pass
-def is_mouse_pos_valid(mouse_pos: ImVec2 = None) -> bool:    # imgui.h:896
+def IsMousePosValid(mouse_pos: ImVec2 = None) -> bool:    # imgui.h:896
     """ by convention we use (-FLT_MAX,-FLT_MAX) to denote that there is no mouse available"""
     pass
-def is_any_mouse_down() -> bool:    # imgui.h:897
+def IsAnyMouseDown() -> bool:    # imgui.h:897
     """ [WILL OBSOLETE] is any mouse button held? This was designed for backends, but prefer having backend maintain a mask of held mouse buttons, because upcoming input queue system will make this invalid."""
     pass
-def get_mouse_pos() -> ImVec2:    # imgui.h:898
+def GetMousePos() -> ImVec2:    # imgui.h:898
     """ shortcut to ImGui::GetIO().MousePos provided by user, to be consistent with other calls"""
     pass
-def get_mouse_pos_on_opening_current_popup() -> ImVec2:    # imgui.h:899
+def GetMousePosOnOpeningCurrentPopup() -> ImVec2:    # imgui.h:899
     """ retrieve mouse position at the time of opening popup we have BeginPopup() into (helper to avoid user backing that value themselves)"""
     pass
-def is_mouse_dragging(button: ImGuiMouseButton, lock_threshold: float = -1.0) -> bool:    # imgui.h:900
+def IsMouseDragging(button: ImGuiMouseButton, lock_threshold: float = -1.0) -> bool:    # imgui.h:900
     """ is mouse dragging? (if lock_threshold < -1.0, uses io.MouseDraggingThreshold)"""
     pass
-def get_mouse_drag_delta(button: ImGuiMouseButton = 0, lock_threshold: float = -1.0) -> ImVec2:    # imgui.h:901
+def GetMouseDragDelta(button: ImGuiMouseButton = 0, lock_threshold: float = -1.0) -> ImVec2:    # imgui.h:901
     """ return the delta from the initial clicking position while the mouse button is pressed or was just released. This is locked and return 0.0 until the mouse moves past a distance threshold at least once (if lock_threshold < -1.0, uses io.MouseDraggingThreshold)"""
     pass
-def reset_mouse_drag_delta(button: ImGuiMouseButton = 0) -> None:    # imgui.h:902
+def ResetMouseDragDelta(button: ImGuiMouseButton = 0) -> None:    # imgui.h:902
     pass
-def get_mouse_cursor() -> ImGuiMouseCursor:    # imgui.h:903
+def GetMouseCursor() -> ImGuiMouseCursor:    # imgui.h:903
     """ get desired cursor type, reset in ImGui::NewFrame(), this is updated during the frame. valid before Render(). If you use software rendering by setting io.MouseDrawCursor ImGui will render those for you"""
     pass
-def set_mouse_cursor(cursor_type: ImGuiMouseCursor) -> None:    # imgui.h:904
+def SetMouseCursor(cursor_type: ImGuiMouseCursor) -> None:    # imgui.h:904
     """ set desired cursor type"""
     pass
-def set_next_frame_want_capture_mouse(want_capture_mouse: bool) -> None:    # imgui.h:905
+def SetNextFrameWantCaptureMouse(want_capture_mouse: bool) -> None:    # imgui.h:905
     """ Override io.WantCaptureMouse flag next frame (said flag is left for your application to handle, typical when True it instucts your app to ignore inputs). This is equivalent to setting "io.WantCaptureMouse = want_capture_mouse;" after the next NewFrame() call."""
     pass
 
 # Clipboard Utilities
 # - Also see the LogToClipboard() function to capture GUI into clipboard, or easily output text data to the clipboard.
-def get_clipboard_text() -> str:    # imgui.h:909
+def GetClipboardText() -> str:    # imgui.h:909
     pass
-def set_clipboard_text(text: str) -> None:    # imgui.h:910
+def SetClipboardText(text: str) -> None:    # imgui.h:910
     pass
 
 # Settings/.Ini Utilities
 # - The disk functions are automatically called if io.IniFilename != None (default is "imgui.ini").
 # - Set io.IniFilename to None to load/save manually. Read io.WantSaveIniSettings description about handling .ini saving manually.
 # - Important: default value "imgui.ini" is relative to current working dir! Most apps will want to lock this to an absolute path (e.g. same path as executables).
-def load_ini_settings_from_disk(ini_filename: str) -> None:    # imgui.h:916
+def LoadIniSettingsFromDisk(ini_filename: str) -> None:    # imgui.h:916
     """ call after CreateContext() and before the first call to NewFrame(). NewFrame() automatically calls LoadIniSettingsFromDisk(io.IniFilename)."""
     pass
-def load_ini_settings_from_memory(ini_data: str, ini_size: int = 0) -> None:    # imgui.h:917
+def LoadIniSettingsFromMemory(ini_data: str, ini_size: int = 0) -> None:    # imgui.h:917
     """ call after CreateContext() and before the first call to NewFrame() to provide .ini data from your own data source."""
     pass
-def save_ini_settings_to_disk(ini_filename: str) -> None:    # imgui.h:918
+def SaveIniSettingsToDisk(ini_filename: str) -> None:    # imgui.h:918
     """ this is automatically called (if io.IniFilename is not empty) a few seconds after any modification that should be reflected in the .ini file (and also by DestroyContext)."""
     pass
-def save_ini_settings_to_memory(out_ini_size: int = None) -> str:    # imgui.h:919
+def SaveIniSettingsToMemory(out_ini_size: int = None) -> str:    # imgui.h:919
     """ return a zero-terminated string with the .ini data which you can save by your own mean. call when io.WantSaveIniSettings is set, then save data by your own mean and clear io.WantSaveIniSettings."""
     pass
 
 # Debug Utilities
-def debug_text_encoding(text: str) -> None:    # imgui.h:922
+def DebugTextEncoding(text: str) -> None:    # imgui.h:922
     pass
-def debug_check_version_and_data_layout(version_str: str, sz_io: int, sz_style: int, sz_vec2: int, sz_vec4: int, sz_drawvert: int, sz_drawidx: int) -> bool:    # imgui.h:923
+def DebugCheckVersionAndDataLayout(version_str: str, sz_io: int, sz_style: int, sz_vec2: int, sz_vec4: int, sz_drawvert: int, sz_drawidx: int) -> bool:    # imgui.h:923
     """ This is called by IMGUI_CHECKVERSION() macro."""
     pass
 
@@ -1667,86 +1667,86 @@ def debug_check_version_and_data_layout(version_str: str, sz_io: int, sz_style: 
 
 class ImGuiWindowFlags_(Enum):    # imgui.h:941
     """ Flags for ImGui::Begin()"""
-    none = 0
-    no_title_bar = 1 << 0                 # Disable title-bar
-    no_resize = 1 << 1                    # Disable user resizing with the lower-right grip
-    no_move = 1 << 2                      # Disable user moving the window
-    no_scrollbar = 1 << 3                 # Disable scrollbars (window can still scroll with mouse or programmatically)
-    no_scroll_with_mouse = 1 << 4         # Disable user vertically scrolling with mouse wheel. On child window, mouse wheel will be forwarded to the parent unless NoScrollbar is also set.
-    no_collapse = 1 << 5                  # Disable user collapsing window by double-clicking on it. Also referred to as Window Menu Button (e.g. within a docking node).
-    always_auto_resize = 1 << 6           # Resize every window to its content every frame
-    no_background = 1 << 7                # Disable drawing background color (WindowBg, etc.) and outside border. Similar as using SetNextWindowBgAlpha(0.0).
-    no_saved_settings = 1 << 8            # Never load/save settings in .ini file
-    no_mouse_inputs = 1 << 9              # Disable catching mouse, hovering test with pass through.
-    menu_bar = 1 << 10                    # Has a menu-bar
-    horizontal_scrollbar = 1 << 11        # Allow horizontal scrollbar to appear (off by default). You may use SetNextWindowContentSize(ImVec2(width,0.0)); prior to calling Begin() to specify width. Read code in imgui_demo in the "Horizontal Scrolling" section.
-    no_focus_on_appearing = 1 << 12       # Disable taking focus when transitioning from hidden to visible state
-    no_bring_to_front_on_focus = 1 << 13  # Disable bringing window to front when taking focus (e.g. clicking on it or programmatically giving it focus)
-    always_vertical_scrollbar = 1 << 14   # Always show vertical scrollbar (even if ContentSize.y < Size.y)
-    always_horizontal_scrollbar = 1<< 15  # Always show horizontal scrollbar (even if ContentSize.x < Size.x)
-    always_use_window_padding = 1 << 16   # Ensure child windows without border uses style.WindowPadding (ignored by default for non-bordered child windows, because more convenient)
-    no_nav_inputs = 1 << 18               # No gamepad/keyboard navigation within the window
-    no_nav_focus = 1 << 19                # No focusing toward this window with gamepad/keyboard navigation (e.g. skipped by CTRL+TAB)
-    unsaved_document = 1 << 20            # Display a dot next to the title. When used in a tab/docking context, tab is selected when clicking the X + closure is not assumed (will wait for user to stop submitting the tab). Otherwise closure is assumed when pressing the X, so if you keep submitting the tab may reappear at end of tab bar.
-    no_nav = Literal[ImGuiWindowFlags_.no_nav_inputs] | Literal[ImGuiWindowFlags_.no_nav_focus]
-    no_decoration = Literal[ImGuiWindowFlags_.no_title_bar] | Literal[ImGuiWindowFlags_.no_resize] | Literal[ImGuiWindowFlags_.no_scrollbar] | Literal[ImGuiWindowFlags_.no_collapse]
-    no_inputs = Literal[ImGuiWindowFlags_.no_mouse_inputs] | Literal[ImGuiWindowFlags_.no_nav_inputs] | Literal[ImGuiWindowFlags_.no_nav_focus]
+    None_ = 0
+    NoTitleBar = 1 << 0                 # Disable title-bar
+    NoResize = 1 << 1                   # Disable user resizing with the lower-right grip
+    NoMove = 1 << 2                     # Disable user moving the window
+    NoScrollbar = 1 << 3                # Disable scrollbars (window can still scroll with mouse or programmatically)
+    NoScrollWithMouse = 1 << 4          # Disable user vertically scrolling with mouse wheel. On child window, mouse wheel will be forwarded to the parent unless NoScrollbar is also set.
+    NoCollapse = 1 << 5                 # Disable user collapsing window by double-clicking on it. Also referred to as Window Menu Button (e.g. within a docking node).
+    AlwaysAutoResize = 1 << 6           # Resize every window to its content every frame
+    NoBackground = 1 << 7               # Disable drawing background color (WindowBg, etc.) and outside border. Similar as using SetNextWindowBgAlpha(0.0).
+    NoSavedSettings = 1 << 8            # Never load/save settings in .ini file
+    NoMouseInputs = 1 << 9              # Disable catching mouse, hovering test with pass through.
+    MenuBar = 1 << 10                   # Has a menu-bar
+    HorizontalScrollbar = 1 << 11       # Allow horizontal scrollbar to appear (off by default). You may use SetNextWindowContentSize(ImVec2(width,0.0)); prior to calling Begin() to specify width. Read code in imgui_demo in the "Horizontal Scrolling" section.
+    NoFocusOnAppearing = 1 << 12        # Disable taking focus when transitioning from hidden to visible state
+    NoBringToFrontOnFocus = 1 << 13     # Disable bringing window to front when taking focus (e.g. clicking on it or programmatically giving it focus)
+    AlwaysVerticalScrollbar = 1 << 14   # Always show vertical scrollbar (even if ContentSize.y < Size.y)
+    AlwaysHorizontalScrollbar = 1<< 15  # Always show horizontal scrollbar (even if ContentSize.x < Size.x)
+    AlwaysUseWindowPadding = 1 << 16    # Ensure child windows without border uses style.WindowPadding (ignored by default for non-bordered child windows, because more convenient)
+    NoNavInputs = 1 << 18               # No gamepad/keyboard navigation within the window
+    NoNavFocus = 1 << 19                # No focusing toward this window with gamepad/keyboard navigation (e.g. skipped by CTRL+TAB)
+    UnsavedDocument = 1 << 20           # Display a dot next to the title. When used in a tab/docking context, tab is selected when clicking the X + closure is not assumed (will wait for user to stop submitting the tab). Otherwise closure is assumed when pressing the X, so if you keep submitting the tab may reappear at end of tab bar.
+    NoNav = Literal[ImGuiWindowFlags_.NoNavInputs] | Literal[ImGuiWindowFlags_.NoNavFocus]
+    NoDecoration = Literal[ImGuiWindowFlags_.NoTitleBar] | Literal[ImGuiWindowFlags_.NoResize] | Literal[ImGuiWindowFlags_.NoScrollbar] | Literal[ImGuiWindowFlags_.NoCollapse]
+    NoInputs = Literal[ImGuiWindowFlags_.NoMouseInputs] | Literal[ImGuiWindowFlags_.NoNavInputs] | Literal[ImGuiWindowFlags_.NoNavFocus]
 
     # [Internal]
-    nav_flattened = 1 << 23               # [BETA] On child window: allow gamepad/keyboard navigation to cross over parent border to this child or between sibling child windows.
-    child_window = 1 << 24                # Don't use! For internal use by BeginChild()
-    tooltip = 1 << 25                     # Don't use! For internal use by BeginTooltip()
-    popup = 1 << 26                       # Don't use! For internal use by BeginPopup()
-    modal = 1 << 27                       # Don't use! For internal use by BeginPopupModal()
-    child_menu = 1 << 28                  # Don't use! For internal use by BeginMenu()
+    NavFlattened = 1 << 23              # [BETA] On child window: allow gamepad/keyboard navigation to cross over parent border to this child or between sibling child windows.
+    ChildWindow = 1 << 24               # Don't use! For internal use by BeginChild()
+    Tooltip = 1 << 25                   # Don't use! For internal use by BeginTooltip()
+    Popup = 1 << 26                     # Don't use! For internal use by BeginPopup()
+    Modal = 1 << 27                     # Don't use! For internal use by BeginPopupModal()
+    ChildMenu = 1 << 28                 # Don't use! For internal use by BeginMenu()
     #ImGuiWindowFlags_ResizeFromAnySide    = 1 << 17,  // [Obsolete] --> Set io.ConfigWindowsResizeFromEdges=True and make sure mouse cursors are supported by backend (io.BackendFlags & ImGuiBackendFlags_HasMouseCursors)
 
 class ImGuiInputTextFlags_(Enum):    # imgui.h:979
     """ Flags for ImGui::InputText()"""
-    none = 0
-    chars_decimal = 1 << 0             # Allow 0123456789.+-*/
-    chars_hexadecimal = 1 << 1         # Allow 0123456789ABCDEFabcdef
-    chars_uppercase = 1 << 2           # Turn a..z into A..Z
-    chars_no_blank = 1 << 3            # Filter out spaces, tabs
-    auto_select_all = 1 << 4           # Select entire text when first taking mouse focus
-    enter_returns_true = 1 << 5        # Return 'True' when Enter is pressed (as opposed to every time the value was modified). Consider looking at the IsItemDeactivatedAfterEdit() function.
-    callback_completion = 1 << 6       # Callback on pressing TAB (for completion handling)
-    callback_history = 1 << 7          # Callback on pressing Up/Down arrows (for history handling)
-    callback_always = 1 << 8           # Callback on each iteration. User code may query cursor position, modify text buffer.
-    callback_char_filter = 1 << 9      # Callback on character inputs to replace or discard them. Modify 'EventChar' to replace or discard, or return 1 in callback to discard.
-    allow_tab_input = 1 << 10          # Pressing TAB input a '\t' character into the text field
-    ctrl_enter_for_new_line = 1 << 11  # In multi-line mode, unfocus with Enter, add new line with Ctrl+Enter (default is opposite: unfocus with Ctrl+Enter, add line with Enter).
-    no_horizontal_scroll = 1 << 12     # Disable following the cursor horizontally
-    always_overwrite = 1 << 13         # Overwrite mode
-    read_only = 1 << 14                # Read-only mode
-    password = 1 << 15                 # Password mode, display all characters as '*'
-    no_undo_redo = 1 << 16             # Disable undo/redo. Note that input text owns the text data while active, if you want to provide your own undo/redo stack you need e.g. to call ClearActiveID().
-    chars_scientific = 1 << 17         # Allow 0123456789.+-*/eE (Scientific notation input)
-    callback_resize = 1 << 18          # Callback on buffer capacity changes request (beyond 'buf_size' parameter value), allowing the string to grow. Notify when the string wants to be resized (for string types which hold a cache of their Size). You will be provided a new BufSize in the callback and NEED to honor it. (see misc/cpp/imgui_stdlib.h for an example of using this)
-    callback_edit = 1 << 19
+    None_ = 0
+    CharsDecimal = 1 << 0          # Allow 0123456789.+-*/
+    CharsHexadecimal = 1 << 1      # Allow 0123456789ABCDEFabcdef
+    CharsUppercase = 1 << 2        # Turn a..z into A..Z
+    CharsNoBlank = 1 << 3          # Filter out spaces, tabs
+    AutoSelectAll = 1 << 4         # Select entire text when first taking mouse focus
+    EnterReturnsTrue = 1 << 5      # Return 'True' when Enter is pressed (as opposed to every time the value was modified). Consider looking at the IsItemDeactivatedAfterEdit() function.
+    CallbackCompletion = 1 << 6    # Callback on pressing TAB (for completion handling)
+    CallbackHistory = 1 << 7       # Callback on pressing Up/Down arrows (for history handling)
+    CallbackAlways = 1 << 8        # Callback on each iteration. User code may query cursor position, modify text buffer.
+    CallbackCharFilter = 1 << 9    # Callback on character inputs to replace or discard them. Modify 'EventChar' to replace or discard, or return 1 in callback to discard.
+    AllowTabInput = 1 << 10        # Pressing TAB input a '\t' character into the text field
+    CtrlEnterForNewLine = 1 << 11  # In multi-line mode, unfocus with Enter, add new line with Ctrl+Enter (default is opposite: unfocus with Ctrl+Enter, add line with Enter).
+    NoHorizontalScroll = 1 << 12   # Disable following the cursor horizontally
+    AlwaysOverwrite = 1 << 13      # Overwrite mode
+    ReadOnly = 1 << 14             # Read-only mode
+    Password = 1 << 15             # Password mode, display all characters as '*'
+    NoUndoRedo = 1 << 16           # Disable undo/redo. Note that input text owns the text data while active, if you want to provide your own undo/redo stack you need e.g. to call ClearActiveID().
+    CharsScientific = 1 << 17      # Allow 0123456789.+-*/eE (Scientific notation input)
+    CallbackResize = 1 << 18       # Callback on buffer capacity changes request (beyond 'buf_size' parameter value), allowing the string to grow. Notify when the string wants to be resized (for string types which hold a cache of their Size). You will be provided a new BufSize in the callback and NEED to honor it. (see misc/cpp/imgui_stdlib.h for an example of using this)
+    CallbackEdit = 1 << 19
     # Callback on any edit (note that InputText() already returns True on edit, the callback is useful mainly to manipulate the underlying buffer while focus is active)
 
     # Obsolete names (will be removed soon)
 
 class ImGuiTreeNodeFlags_(Enum):    # imgui.h:1010
     """ Flags for ImGui::TreeNodeEx(), ImGui::CollapsingHeader*()"""
-    none = 0
-    selected = 1 << 0                   # Draw as selected
-    framed = 1 << 1                     # Draw frame with background (e.g. for CollapsingHeader)
-    allow_item_overlap = 1 << 2         # Hit testing to allow subsequent widgets to overlap this one
-    no_tree_push_on_open = 1 << 3       # Don't do a TreePush() when open (e.g. for CollapsingHeader) = no extra indent nor pushing on ID stack
-    no_auto_open_on_log = 1 << 4        # Don't automatically and temporarily open node when Logging is active (by default logging will automatically open tree nodes)
-    default_open = 1 << 5               # Default node to be open
-    open_on_double_click = 1 << 6       # Need double-click to open node
-    open_on_arrow = 1 << 7              # Only open when clicking on the arrow part. If ImGuiTreeNodeFlags_OpenOnDoubleClick is also set, single-click arrow or double-click all box to open.
-    leaf = 1 << 8                       # No collapsing, no arrow (use as a convenience for leaf nodes).
-    bullet = 1 << 9                     # Display a bullet instead of arrow
-    frame_padding = 1 << 10             # Use FramePadding (even for an unframed text node) to vertically align text baseline to regular widget height. Equivalent to calling AlignTextToFramePadding().
-    span_avail_width = 1 << 11          # Extend hit box to the right-most edge, even if not framed. This is not the default in order to allow adding other items on the same line. In the future we may refactor the hit system to be front-to-back, allowing natural overlaps and then this can become the default.
-    span_full_width = 1 << 12           # Extend hit box to the left-most and right-most edges (bypass the indented area).
-    nav_left_jumps_back_here = 1 << 13  # (WIP) Nav: left direction may move to this TreeNode() from any of its child (items submitted between TreeNode and TreePop)
+    None_ = 0
+    Selected = 1 << 0               # Draw as selected
+    Framed = 1 << 1                 # Draw frame with background (e.g. for CollapsingHeader)
+    AllowItemOverlap = 1 << 2       # Hit testing to allow subsequent widgets to overlap this one
+    NoTreePushOnOpen = 1 << 3       # Don't do a TreePush() when open (e.g. for CollapsingHeader) = no extra indent nor pushing on ID stack
+    NoAutoOpenOnLog = 1 << 4        # Don't automatically and temporarily open node when Logging is active (by default logging will automatically open tree nodes)
+    DefaultOpen = 1 << 5            # Default node to be open
+    OpenOnDoubleClick = 1 << 6      # Need double-click to open node
+    OpenOnArrow = 1 << 7            # Only open when clicking on the arrow part. If ImGuiTreeNodeFlags_OpenOnDoubleClick is also set, single-click arrow or double-click all box to open.
+    Leaf = 1 << 8                   # No collapsing, no arrow (use as a convenience for leaf nodes).
+    Bullet = 1 << 9                 # Display a bullet instead of arrow
+    FramePadding = 1 << 10          # Use FramePadding (even for an unframed text node) to vertically align text baseline to regular widget height. Equivalent to calling AlignTextToFramePadding().
+    SpanAvailWidth = 1 << 11        # Extend hit box to the right-most edge, even if not framed. This is not the default in order to allow adding other items on the same line. In the future we may refactor the hit system to be front-to-back, allowing natural overlaps and then this can become the default.
+    SpanFullWidth = 1 << 12         # Extend hit box to the left-most and right-most edges (bypass the indented area).
+    NavLeftJumpsBackHere = 1 << 13  # (WIP) Nav: left direction may move to this TreeNode() from any of its child (items submitted between TreeNode and TreePop)
     #ImGuiTreeNodeFlags_NoScrollOnOpen     = 1 << 14,  // FIXME: TODO: Disable automatic scroll on TreePop() if node got just open and contents is not visible
-    collapsing_header = Literal[ImGuiTreeNodeFlags_.framed] | Literal[ImGuiTreeNodeFlags_.no_tree_push_on_open] | Literal[ImGuiTreeNodeFlags_.no_auto_open_on_log]
+    CollapsingHeader = Literal[ImGuiTreeNodeFlags_.Framed] | Literal[ImGuiTreeNodeFlags_.NoTreePushOnOpen] | Literal[ImGuiTreeNodeFlags_.NoAutoOpenOnLog]
 
 class ImGuiPopupFlags_(Enum):    # imgui.h:1039
     """ Flags for OpenPopup*(), BeginPopupContext*(), IsPopupOpen() functions.
@@ -1758,64 +1758,64 @@ class ImGuiPopupFlags_(Enum):    # imgui.h:1039
        and want to another another flag, you need to pass in the ImGuiPopupFlags_MouseButtonRight flag.
      - Multiple buttons currently cannot be combined/or-ed in those functions (we could allow it later).
     """
-    none = 0
-    mouse_button_left = 0                 # For BeginPopupContext*(): open on Left Mouse release. Guaranteed to always be == 0 (same as ImGuiMouseButton_Left)
-    mouse_button_right = 1                # For BeginPopupContext*(): open on Right Mouse release. Guaranteed to always be == 1 (same as ImGuiMouseButton_Right)
-    mouse_button_middle = 2               # For BeginPopupContext*(): open on Middle Mouse release. Guaranteed to always be == 2 (same as ImGuiMouseButton_Middle)
-    mouse_button_mask_ = 0x1F
-    mouse_button_default_ = 1
-    no_open_over_existing_popup = 1 << 5  # For OpenPopup*(), BeginPopupContext*(): don't open if there's already a popup at the same level of the popup stack
-    no_open_over_items = 1 << 6           # For BeginPopupContextWindow(): don't return True when hovering items, only when hovering empty space
-    any_popup_id = 1 << 7                 # For IsPopupOpen(): ignore the ImGuiID parameter and test for any popup.
-    any_popup_level = 1 << 8              # For IsPopupOpen(): search/test at any level of the popup stack (default test in the current level)
-    any_popup = Literal[ImGuiPopupFlags_.any_popup_id] | Literal[ImGuiPopupFlags_.any_popup_level]
+    None_ = 0
+    MouseButtonLeft = 0               # For BeginPopupContext*(): open on Left Mouse release. Guaranteed to always be == 0 (same as ImGuiMouseButton_Left)
+    MouseButtonRight = 1              # For BeginPopupContext*(): open on Right Mouse release. Guaranteed to always be == 1 (same as ImGuiMouseButton_Right)
+    MouseButtonMiddle = 2             # For BeginPopupContext*(): open on Middle Mouse release. Guaranteed to always be == 2 (same as ImGuiMouseButton_Middle)
+    MouseButtonMask_ = 0x1F
+    MouseButtonDefault_ = 1
+    NoOpenOverExistingPopup = 1 << 5  # For OpenPopup*(), BeginPopupContext*(): don't open if there's already a popup at the same level of the popup stack
+    NoOpenOverItems = 1 << 6          # For BeginPopupContextWindow(): don't return True when hovering items, only when hovering empty space
+    AnyPopupId = 1 << 7               # For IsPopupOpen(): ignore the ImGuiID parameter and test for any popup.
+    AnyPopupLevel = 1 << 8            # For IsPopupOpen(): search/test at any level of the popup stack (default test in the current level)
+    AnyPopup = Literal[ImGuiPopupFlags_.AnyPopupId] | Literal[ImGuiPopupFlags_.AnyPopupLevel]
 
 class ImGuiSelectableFlags_(Enum):    # imgui.h:1055
     """ Flags for ImGui::Selectable()"""
-    none = 0
-    dont_close_popups = 1 << 0   # Clicking this don't close parent popup window
-    span_all_columns = 1 << 1    # Selectable frame can span all columns (text will still fit in current column)
-    allow_double_click = 1 << 2  # Generate press events on double clicks too
-    disabled = 1 << 3            # Cannot be selected, display grayed out text
-    allow_item_overlap = 1 << 4  # (WIP) Hit testing to allow subsequent widgets to overlap this one
+    None_ = 0
+    DontClosePopups = 1 << 0   # Clicking this don't close parent popup window
+    SpanAllColumns = 1 << 1    # Selectable frame can span all columns (text will still fit in current column)
+    AllowDoubleClick = 1 << 2  # Generate press events on double clicks too
+    Disabled = 1 << 3          # Cannot be selected, display grayed out text
+    AllowItemOverlap = 1 << 4  # (WIP) Hit testing to allow subsequent widgets to overlap this one
 
 class ImGuiComboFlags_(Enum):    # imgui.h:1066
     """ Flags for ImGui::BeginCombo()"""
-    none = 0
-    popup_align_left = 1 << 0  # Align the popup toward the left by default
-    height_small = 1 << 1      # Max ~4 items visible. Tip: If you want your combo popup to be a specific size you can use SetNextWindowSizeConstraints() prior to calling BeginCombo()
-    height_regular = 1 << 2    # Max ~8 items visible (default)
-    height_large = 1 << 3      # Max ~20 items visible
-    height_largest = 1 << 4    # As many fitting items as possible
-    no_arrow_button = 1 << 5   # Display on the preview box without the square arrow button
-    no_preview = 1 << 6        # Display only a square arrow button
-    height_mask_ = Literal[ImGuiComboFlags_.height_small] | Literal[ImGuiComboFlags_.height_regular] | Literal[ImGuiComboFlags_.height_large] | Literal[ImGuiComboFlags_.height_largest]
+    None_ = 0
+    PopupAlignLeft = 1 << 0  # Align the popup toward the left by default
+    HeightSmall = 1 << 1     # Max ~4 items visible. Tip: If you want your combo popup to be a specific size you can use SetNextWindowSizeConstraints() prior to calling BeginCombo()
+    HeightRegular = 1 << 2   # Max ~8 items visible (default)
+    HeightLarge = 1 << 3     # Max ~20 items visible
+    HeightLargest = 1 << 4   # As many fitting items as possible
+    NoArrowButton = 1 << 5   # Display on the preview box without the square arrow button
+    NoPreview = 1 << 6       # Display only a square arrow button
+    HeightMask_ = Literal[ImGuiComboFlags_.HeightSmall] | Literal[ImGuiComboFlags_.HeightRegular] | Literal[ImGuiComboFlags_.HeightLarge] | Literal[ImGuiComboFlags_.HeightLargest]
 
 class ImGuiTabBarFlags_(Enum):    # imgui.h:1080
     """ Flags for ImGui::BeginTabBar()"""
-    none = 0
-    reorderable = 1 << 0                        # Allow manually dragging tabs to re-order them + New tabs are appended at the end of list
-    auto_select_new_tabs = 1 << 1               # Automatically select new tabs when they appear
-    tab_list_popup_button = 1 << 2              # Disable buttons to open the tab list popup
-    no_close_with_middle_mouse_button = 1 << 3  # Disable behavior of closing tabs (that are submitted with p_open != None) with middle mouse button. You can still repro this behavior on user's side with if (IsItemHovered() && IsMouseClicked(2)) *p_open = False.
-    no_tab_list_scrolling_buttons = 1 << 4      # Disable scrolling buttons (apply when fitting policy is ImGuiTabBarFlags_FittingPolicyScroll)
-    no_tooltip = 1 << 5                         # Disable tooltips when hovering a tab
-    fitting_policy_resize_down = 1 << 6         # Resize tabs when they don't fit
-    fitting_policy_scroll = 1 << 7              # Add scroll buttons when tabs don't fit
-    fitting_policy_mask_ = Literal[ImGuiTabBarFlags_.fitting_policy_resize_down] | Literal[ImGuiTabBarFlags_.fitting_policy_scroll]
-    fitting_policy_default_ = Literal[ImGuiTabBarFlags_.fitting_policy_resize_down]
+    None_ = 0
+    Reorderable = 1 << 0                   # Allow manually dragging tabs to re-order them + New tabs are appended at the end of list
+    AutoSelectNewTabs = 1 << 1             # Automatically select new tabs when they appear
+    TabListPopupButton = 1 << 2            # Disable buttons to open the tab list popup
+    NoCloseWithMiddleMouseButton = 1 << 3  # Disable behavior of closing tabs (that are submitted with p_open != None) with middle mouse button. You can still repro this behavior on user's side with if (IsItemHovered() && IsMouseClicked(2)) *p_open = False.
+    NoTabListScrollingButtons = 1 << 4     # Disable scrolling buttons (apply when fitting policy is ImGuiTabBarFlags_FittingPolicyScroll)
+    NoTooltip = 1 << 5                     # Disable tooltips when hovering a tab
+    FittingPolicyResizeDown = 1 << 6       # Resize tabs when they don't fit
+    FittingPolicyScroll = 1 << 7           # Add scroll buttons when tabs don't fit
+    FittingPolicyMask_ = Literal[ImGuiTabBarFlags_.FittingPolicyResizeDown] | Literal[ImGuiTabBarFlags_.FittingPolicyScroll]
+    FittingPolicyDefault_ = Literal[ImGuiTabBarFlags_.FittingPolicyResizeDown]
 
 class ImGuiTabItemFlags_(Enum):    # imgui.h:1096
     """ Flags for ImGui::BeginTabItem()"""
-    none = 0
-    unsaved_document = 1 << 0                   # Display a dot next to the title + tab is selected when clicking the X + closure is not assumed (will wait for user to stop submitting the tab). Otherwise closure is assumed when pressing the X, so if you keep submitting the tab may reappear at end of tab bar.
-    set_selected = 1 << 1                       # Trigger flag to programmatically make the tab selected when calling BeginTabItem()
-    no_close_with_middle_mouse_button = 1 << 2  # Disable behavior of closing tabs (that are submitted with p_open != None) with middle mouse button. You can still repro this behavior on user's side with if (IsItemHovered() && IsMouseClicked(2)) *p_open = False.
-    no_push_id = 1 << 3                         # Don't call PushID(tab->ID)/PopID() on BeginTabItem()/EndTabItem()
-    no_tooltip = 1 << 4                         # Disable tooltip for the given tab
-    no_reorder = 1 << 5                         # Disable reordering this tab or having another tab cross over this tab
-    leading = 1 << 6                            # Enforce the tab position to the left of the tab bar (after the tab list popup button)
-    trailing = 1 << 7                           # Enforce the tab position to the right of the tab bar (before the scrolling buttons)
+    None_ = 0
+    UnsavedDocument = 1 << 0               # Display a dot next to the title + tab is selected when clicking the X + closure is not assumed (will wait for user to stop submitting the tab). Otherwise closure is assumed when pressing the X, so if you keep submitting the tab may reappear at end of tab bar.
+    SetSelected = 1 << 1                   # Trigger flag to programmatically make the tab selected when calling BeginTabItem()
+    NoCloseWithMiddleMouseButton = 1 << 2  # Disable behavior of closing tabs (that are submitted with p_open != None) with middle mouse button. You can still repro this behavior on user's side with if (IsItemHovered() && IsMouseClicked(2)) *p_open = False.
+    NoPushId = 1 << 3                      # Don't call PushID(tab->ID)/PopID() on BeginTabItem()/EndTabItem()
+    NoTooltip = 1 << 4                     # Disable tooltip for the given tab
+    NoReorder = 1 << 5                     # Disable reordering this tab or having another tab cross over this tab
+    Leading = 1 << 6                       # Enforce the tab position to the left of the tab bar (after the tab list popup button)
+    Trailing = 1 << 7                      # Enforce the tab position to the right of the tab bar (before the scrolling buttons)
 
 class ImGuiTableFlags_(Enum):    # imgui.h:1131
     """ Flags for ImGui::BeginTable()
@@ -1842,96 +1842,96 @@ class ImGuiTableFlags_(Enum):    # imgui.h:1131
      - Read on documentation at the top of imgui_tables.cpp for details.
     """
     # Features
-    none = 0
-    resizable = 1 << 0                                                                                     # Enable resizing columns.
-    reorderable = 1 << 1                                                                                   # Enable reordering columns in header row (need calling TableSetupColumn() + TableHeadersRow() to display headers)
-    hideable = 1 << 2                                                                                      # Enable hiding/disabling columns in context menu.
-    sortable = 1 << 3                                                                                      # Enable sorting. Call TableGetSortSpecs() to obtain sort specs. Also see ImGuiTableFlags_SortMulti and ImGuiTableFlags_SortTristate.
-    no_saved_settings = 1 << 4                                                                             # Disable persisting columns order, width and sort settings in the .ini file.
-    context_menu_in_body = 1 << 5                                                                          # Right-click on columns body/contents will display table context menu. By default it is available in TableHeadersRow().
+    None_ = 0
+    Resizable = 1 << 0                                                                                # Enable resizing columns.
+    Reorderable = 1 << 1                                                                              # Enable reordering columns in header row (need calling TableSetupColumn() + TableHeadersRow() to display headers)
+    Hideable = 1 << 2                                                                                 # Enable hiding/disabling columns in context menu.
+    Sortable = 1 << 3                                                                                 # Enable sorting. Call TableGetSortSpecs() to obtain sort specs. Also see ImGuiTableFlags_SortMulti and ImGuiTableFlags_SortTristate.
+    NoSavedSettings = 1 << 4                                                                          # Disable persisting columns order, width and sort settings in the .ini file.
+    ContextMenuInBody = 1 << 5                                                                        # Right-click on columns body/contents will display table context menu. By default it is available in TableHeadersRow().
     # Decorations
-    row_bg = 1 << 6                                                                                        # Set each RowBg color with ImGuiCol_TableRowBg or ImGuiCol_TableRowBgAlt (equivalent of calling TableSetBgColor with ImGuiTableBgFlags_RowBg0 on each row manually)
-    borders_inner_h = 1 << 7                                                                               # Draw horizontal borders between rows.
-    borders_outer_h = 1 << 8                                                                               # Draw horizontal borders at the top and bottom.
-    borders_inner_v = 1 << 9                                                                               # Draw vertical borders between columns.
-    borders_outer_v = 1 << 10                                                                              # Draw vertical borders on the left and right sides.
-    borders_h = Literal[ImGuiTableFlags_.borders_inner_h] | Literal[ImGuiTableFlags_.borders_outer_h]      # Draw horizontal borders.
-    borders_v = Literal[ImGuiTableFlags_.borders_inner_v] | Literal[ImGuiTableFlags_.borders_outer_v]      # Draw vertical borders.
-    borders_inner = Literal[ImGuiTableFlags_.borders_inner_v] | Literal[ImGuiTableFlags_.borders_inner_h]  # Draw inner borders.
-    borders_outer = Literal[ImGuiTableFlags_.borders_outer_v] | Literal[ImGuiTableFlags_.borders_outer_h]  # Draw outer borders.
-    borders = Literal[ImGuiTableFlags_.borders_inner] | Literal[ImGuiTableFlags_.borders_outer]            # Draw all borders.
-    no_borders_in_body = 1 << 11                                                                           # [ALPHA] Disable vertical borders in columns Body (borders will always appears in Headers). -> May move to style
-    no_borders_in_body_until_resize = 1 << 12                                                              # [ALPHA] Disable vertical borders in columns Body until hovered for resize (borders will always appears in Headers). -> May move to style
+    RowBg = 1 << 6                                                                                    # Set each RowBg color with ImGuiCol_TableRowBg or ImGuiCol_TableRowBgAlt (equivalent of calling TableSetBgColor with ImGuiTableBgFlags_RowBg0 on each row manually)
+    BordersInnerH = 1 << 7                                                                            # Draw horizontal borders between rows.
+    BordersOuterH = 1 << 8                                                                            # Draw horizontal borders at the top and bottom.
+    BordersInnerV = 1 << 9                                                                            # Draw vertical borders between columns.
+    BordersOuterV = 1 << 10                                                                           # Draw vertical borders on the left and right sides.
+    BordersH = Literal[ImGuiTableFlags_.BordersInnerH] | Literal[ImGuiTableFlags_.BordersOuterH]      # Draw horizontal borders.
+    BordersV = Literal[ImGuiTableFlags_.BordersInnerV] | Literal[ImGuiTableFlags_.BordersOuterV]      # Draw vertical borders.
+    BordersInner = Literal[ImGuiTableFlags_.BordersInnerV] | Literal[ImGuiTableFlags_.BordersInnerH]  # Draw inner borders.
+    BordersOuter = Literal[ImGuiTableFlags_.BordersOuterV] | Literal[ImGuiTableFlags_.BordersOuterH]  # Draw outer borders.
+    Borders = Literal[ImGuiTableFlags_.BordersInner] | Literal[ImGuiTableFlags_.BordersOuter]         # Draw all borders.
+    NoBordersInBody = 1 << 11                                                                         # [ALPHA] Disable vertical borders in columns Body (borders will always appears in Headers). -> May move to style
+    NoBordersInBodyUntilResize = 1 << 12                                                              # [ALPHA] Disable vertical borders in columns Body until hovered for resize (borders will always appears in Headers). -> May move to style
     # Sizing Policy (read above for defaults)
-    sizing_fixed_fit = 1 << 13                                                                             # Columns default to _WidthFixed or _WidthAuto (if resizable or not resizable), matching contents width.
-    sizing_fixed_same = 2 << 13                                                                            # Columns default to _WidthFixed or _WidthAuto (if resizable or not resizable), matching the maximum contents width of all columns. Implicitly enable ImGuiTableFlags_NoKeepColumnsVisible.
-    sizing_stretch_prop = 3 << 13                                                                          # Columns default to _WidthStretch with default weights proportional to each columns contents widths.
-    sizing_stretch_same = 4 << 13                                                                          # Columns default to _WidthStretch with default weights all equal, unless overridden by TableSetupColumn().
+    SizingFixedFit = 1 << 13                                                                          # Columns default to _WidthFixed or _WidthAuto (if resizable or not resizable), matching contents width.
+    SizingFixedSame = 2 << 13                                                                         # Columns default to _WidthFixed or _WidthAuto (if resizable or not resizable), matching the maximum contents width of all columns. Implicitly enable ImGuiTableFlags_NoKeepColumnsVisible.
+    SizingStretchProp = 3 << 13                                                                       # Columns default to _WidthStretch with default weights proportional to each columns contents widths.
+    SizingStretchSame = 4 << 13                                                                       # Columns default to _WidthStretch with default weights all equal, unless overridden by TableSetupColumn().
     # Sizing Extra Options
-    no_host_extend_x = 1 << 16                                                                             # Make outer width auto-fit to columns, overriding outer_size.x value. Only available when ScrollX/ScrollY are disabled and Stretch columns are not used.
-    no_host_extend_y = 1 << 17                                                                             # Make outer height stop exactly at outer_size.y (prevent auto-extending table past the limit). Only available when ScrollX/ScrollY are disabled. Data below the limit will be clipped and not visible.
-    no_keep_columns_visible = 1 << 18                                                                      # Disable keeping column always minimally visible when ScrollX is off and table gets too small. Not recommended if columns are resizable.
-    precise_widths = 1 << 19                                                                               # Disable distributing remainder width to stretched columns (width allocation on a 100-wide table with 3 columns: Without this flag: 33,33,34. With this flag: 33,33,33). With larger number of columns, resizing will appear to be less smooth.
+    NoHostExtendX = 1 << 16                                                                           # Make outer width auto-fit to columns, overriding outer_size.x value. Only available when ScrollX/ScrollY are disabled and Stretch columns are not used.
+    NoHostExtendY = 1 << 17                                                                           # Make outer height stop exactly at outer_size.y (prevent auto-extending table past the limit). Only available when ScrollX/ScrollY are disabled. Data below the limit will be clipped and not visible.
+    NoKeepColumnsVisible = 1 << 18                                                                    # Disable keeping column always minimally visible when ScrollX is off and table gets too small. Not recommended if columns are resizable.
+    PreciseWidths = 1 << 19                                                                           # Disable distributing remainder width to stretched columns (width allocation on a 100-wide table with 3 columns: Without this flag: 33,33,34. With this flag: 33,33,33). With larger number of columns, resizing will appear to be less smooth.
     # Clipping
-    no_clip = 1 << 20                                                                                      # Disable clipping rectangle for every individual columns (reduce draw command count, items will be able to overflow into other columns). Generally incompatible with TableSetupScrollFreeze().
+    NoClip = 1 << 20                                                                                  # Disable clipping rectangle for every individual columns (reduce draw command count, items will be able to overflow into other columns). Generally incompatible with TableSetupScrollFreeze().
     # Padding
-    pad_outer_x = 1 << 21                                                                                  # Default if BordersOuterV is on. Enable outer-most padding. Generally desirable if you have headers.
-    no_pad_outer_x = 1 << 22                                                                               # Default if BordersOuterV is off. Disable outer-most padding.
-    no_pad_inner_x = 1 << 23                                                                               # Disable inner padding between columns (double inner padding if BordersOuterV is on, single inner padding if BordersOuterV is off).
+    PadOuterX = 1 << 21                                                                               # Default if BordersOuterV is on. Enable outer-most padding. Generally desirable if you have headers.
+    NoPadOuterX = 1 << 22                                                                             # Default if BordersOuterV is off. Disable outer-most padding.
+    NoPadInnerX = 1 << 23                                                                             # Disable inner padding between columns (double inner padding if BordersOuterV is on, single inner padding if BordersOuterV is off).
     # Scrolling
-    scroll_x = 1 << 24                                                                                     # Enable horizontal scrolling. Require 'outer_size' parameter of BeginTable() to specify the container size. Changes default sizing policy. Because this create a child window, ScrollY is currently generally recommended when using ScrollX.
-    scroll_y = 1 << 25                                                                                     # Enable vertical scrolling. Require 'outer_size' parameter of BeginTable() to specify the container size.
+    ScrollX = 1 << 24                                                                                 # Enable horizontal scrolling. Require 'outer_size' parameter of BeginTable() to specify the container size. Changes default sizing policy. Because this create a child window, ScrollY is currently generally recommended when using ScrollX.
+    ScrollY = 1 << 25                                                                                 # Enable vertical scrolling. Require 'outer_size' parameter of BeginTable() to specify the container size.
     # Sorting
-    sort_multi = 1 << 26                                                                                   # Hold shift when clicking headers to sort on multiple column. TableGetSortSpecs() may return specs where (SpecsCount > 1).
-    sort_tristate = 1 << 27                                                                                # Allow no sorting, disable default sorting. TableGetSortSpecs() may return specs where (SpecsCount == 0).
+    SortMulti = 1 << 26                                                                               # Hold shift when clicking headers to sort on multiple column. TableGetSortSpecs() may return specs where (SpecsCount > 1).
+    SortTristate = 1 << 27                                                                            # Allow no sorting, disable default sorting. TableGetSortSpecs() may return specs where (SpecsCount == 0).
 
     # [Internal] Combinations and masks
-    sizing_mask_ = Literal[ImGuiTableFlags_.sizing_fixed_fit] | Literal[ImGuiTableFlags_.sizing_fixed_same] | Literal[ImGuiTableFlags_.sizing_stretch_prop] | Literal[ImGuiTableFlags_.sizing_stretch_same]
+    SizingMask_ = Literal[ImGuiTableFlags_.SizingFixedFit] | Literal[ImGuiTableFlags_.SizingFixedSame] | Literal[ImGuiTableFlags_.SizingStretchProp] | Literal[ImGuiTableFlags_.SizingStretchSame]
 
     # Obsolete names (will be removed soon)
 
 class ImGuiTableColumnFlags_(Enum):    # imgui.h:1188
     """ Flags for ImGui::TableSetupColumn()"""
     # Input configuration flags
-    none = 0
-    disabled = 1 << 0                 # Overriding/master disable flag: hide column, won't show in context menu (unlike calling TableSetColumnEnabled() which manipulates the user accessible state)
-    default_hide = 1 << 1             # Default as a hidden/disabled column.
-    default_sort = 1 << 2             # Default as a sorting column.
-    width_stretch = 1 << 3            # Column will stretch. Preferable with horizontal scrolling disabled (default if table sizing policy is _SizingStretchSame or _SizingStretchProp).
-    width_fixed = 1 << 4              # Column will not stretch. Preferable with horizontal scrolling enabled (default if table sizing policy is _SizingFixedFit and table is resizable).
-    no_resize = 1 << 5                # Disable manual resizing.
-    no_reorder = 1 << 6               # Disable manual reordering this column, this will also prevent other columns from crossing over this column.
-    no_hide = 1 << 7                  # Disable ability to hide/disable this column.
-    no_clip = 1 << 8                  # Disable clipping for this column (all NoClip columns will render in a same draw command).
-    no_sort = 1 << 9                  # Disable ability to sort on this field (even if ImGuiTableFlags_Sortable is set on the table).
-    no_sort_ascending = 1 << 10       # Disable ability to sort in the ascending direction.
-    no_sort_descending = 1 << 11      # Disable ability to sort in the descending direction.
-    no_header_label = 1 << 12         # TableHeadersRow() will not submit label for this column. Convenient for some small columns. Name will still appear in context menu.
-    no_header_width = 1 << 13         # Disable header text width contribution to automatic column width.
-    prefer_sort_ascending = 1 << 14   # Make the initial sort direction Ascending when first sorting on this column (default).
-    prefer_sort_descending = 1 << 15  # Make the initial sort direction Descending when first sorting on this column.
-    indent_enable = 1 << 16           # Use current Indent value when entering cell (default for column 0).
-    indent_disable = 1 << 17          # Ignore current Indent value when entering cell (default for columns > 0). Indentation changes _within_ the cell will still be honored.
+    None_ = 0
+    Disabled = 1 << 0               # Overriding/master disable flag: hide column, won't show in context menu (unlike calling TableSetColumnEnabled() which manipulates the user accessible state)
+    DefaultHide = 1 << 1            # Default as a hidden/disabled column.
+    DefaultSort = 1 << 2            # Default as a sorting column.
+    WidthStretch = 1 << 3           # Column will stretch. Preferable with horizontal scrolling disabled (default if table sizing policy is _SizingStretchSame or _SizingStretchProp).
+    WidthFixed = 1 << 4             # Column will not stretch. Preferable with horizontal scrolling enabled (default if table sizing policy is _SizingFixedFit and table is resizable).
+    NoResize = 1 << 5               # Disable manual resizing.
+    NoReorder = 1 << 6              # Disable manual reordering this column, this will also prevent other columns from crossing over this column.
+    NoHide = 1 << 7                 # Disable ability to hide/disable this column.
+    NoClip = 1 << 8                 # Disable clipping for this column (all NoClip columns will render in a same draw command).
+    NoSort = 1 << 9                 # Disable ability to sort on this field (even if ImGuiTableFlags_Sortable is set on the table).
+    NoSortAscending = 1 << 10       # Disable ability to sort in the ascending direction.
+    NoSortDescending = 1 << 11      # Disable ability to sort in the descending direction.
+    NoHeaderLabel = 1 << 12         # TableHeadersRow() will not submit label for this column. Convenient for some small columns. Name will still appear in context menu.
+    NoHeaderWidth = 1 << 13         # Disable header text width contribution to automatic column width.
+    PreferSortAscending = 1 << 14   # Make the initial sort direction Ascending when first sorting on this column (default).
+    PreferSortDescending = 1 << 15  # Make the initial sort direction Descending when first sorting on this column.
+    IndentEnable = 1 << 16          # Use current Indent value when entering cell (default for column 0).
+    IndentDisable = 1 << 17         # Ignore current Indent value when entering cell (default for columns > 0). Indentation changes _within_ the cell will still be honored.
 
     # Output status flags, read-only via TableGetColumnFlags()
-    is_enabled = 1 << 24              # Status: is enabled == not hidden by user/api (referred to as "Hide" in _DefaultHide and _NoHide) flags.
-    is_visible = 1 << 25              # Status: is visible == is enabled AND not clipped by scrolling.
-    is_sorted = 1 << 26               # Status: is currently part of the sort specs
-    is_hovered = 1 << 27              # Status: is hovered by mouse
+    IsEnabled = 1 << 24             # Status: is enabled == not hidden by user/api (referred to as "Hide" in _DefaultHide and _NoHide) flags.
+    IsVisible = 1 << 25             # Status: is visible == is enabled AND not clipped by scrolling.
+    IsSorted = 1 << 26              # Status: is currently part of the sort specs
+    IsHovered = 1 << 27             # Status: is hovered by mouse
 
     # [Internal] Combinations and masks
-    width_mask_ = Literal[ImGuiTableColumnFlags_.width_stretch] | Literal[ImGuiTableColumnFlags_.width_fixed]
-    indent_mask_ = Literal[ImGuiTableColumnFlags_.indent_enable] | Literal[ImGuiTableColumnFlags_.indent_disable]
-    status_mask_ = Literal[ImGuiTableColumnFlags_.is_enabled] | Literal[ImGuiTableColumnFlags_.is_visible] | Literal[ImGuiTableColumnFlags_.is_sorted] | Literal[ImGuiTableColumnFlags_.is_hovered]
-    no_direct_resize_ = 1 << 30
+    WidthMask_ = Literal[ImGuiTableColumnFlags_.WidthStretch] | Literal[ImGuiTableColumnFlags_.WidthFixed]
+    IndentMask_ = Literal[ImGuiTableColumnFlags_.IndentEnable] | Literal[ImGuiTableColumnFlags_.IndentDisable]
+    StatusMask_ = Literal[ImGuiTableColumnFlags_.IsEnabled] | Literal[ImGuiTableColumnFlags_.IsVisible] | Literal[ImGuiTableColumnFlags_.IsSorted] | Literal[ImGuiTableColumnFlags_.IsHovered]
+    NoDirectResize_ = 1 << 30
     # [Internal] Disable user resizing this column directly (it may however we resized indirectly from its left edge)
 
     # Obsolete names (will be removed soon)
 
 class ImGuiTableRowFlags_(Enum):    # imgui.h:1230
     """ Flags for ImGui::TableNextRow()"""
-    none = 0
-    headers = 1 << 0  # Identify header row (set default background color + width of its contents accounted differently for auto column width)
+    None_ = 0
+    Headers = 1 << 0  # Identify header row (set default background color + width of its contents accounted differently for auto column width)
 
 class ImGuiTableBgTarget_(Enum):    # imgui.h:1245
     """ Enum for ImGui::TableSetBgColor()
@@ -1944,118 +1944,118 @@ class ImGuiTableBgTarget_(Enum):    # imgui.h:1245
      If you set the color of RowBg0 target, your color will override the existing RowBg0 color.
      If you set the color of RowBg1 or ColumnBg1 target, your color will blend over the RowBg0 color.
     """
-    none = 0
-    row_bg0 = 1  # Set row background color 0 (generally used for background, automatically set when ImGuiTableFlags_RowBg is used)
-    row_bg1 = 2  # Set row background color 1 (generally used for selection marking)
-    cell_bg = 3  # Set cell background color (top-most color)
+    None_ = 0
+    RowBg0 = 1  # Set row background color 0 (generally used for background, automatically set when ImGuiTableFlags_RowBg is used)
+    RowBg1 = 2  # Set row background color 1 (generally used for selection marking)
+    CellBg = 3  # Set cell background color (top-most color)
 
 class ImGuiFocusedFlags_(Enum):    # imgui.h:1254
     """ Flags for ImGui::IsWindowFocused()"""
-    none = 0
-    child_windows = 1 << 0       # Return True if any children of the window is focused
-    root_window = 1 << 1         # Test from root window (top most parent of the current hierarchy)
-    any_window = 1 << 2          # Return True if any window is focused. Important: If you are trying to tell how to dispatch your low-level inputs, do NOT use this. Use 'io.WantCaptureMouse' instead! Please read the FAQ!
-    no_popup_hierarchy = 1 << 3  # Do not consider popup hierarchy (do not treat popup emitter as parent of popup) (when used with _ChildWindows or _RootWindow)
+    None_ = 0
+    ChildWindows = 1 << 0      # Return True if any children of the window is focused
+    RootWindow = 1 << 1        # Test from root window (top most parent of the current hierarchy)
+    AnyWindow = 1 << 2         # Return True if any window is focused. Important: If you are trying to tell how to dispatch your low-level inputs, do NOT use this. Use 'io.WantCaptureMouse' instead! Please read the FAQ!
+    NoPopupHierarchy = 1 << 3  # Do not consider popup hierarchy (do not treat popup emitter as parent of popup) (when used with _ChildWindows or _RootWindow)
     #ImGuiFocusedFlags_DockHierarchy               = 1 << 4,   // Consider docking hierarchy (treat dockspace host as parent of docked window) (when used with _ChildWindows or _RootWindow)
-    root_and_child_windows = Literal[ImGuiFocusedFlags_.root_window] | Literal[ImGuiFocusedFlags_.child_windows]
+    RootAndChildWindows = Literal[ImGuiFocusedFlags_.RootWindow] | Literal[ImGuiFocusedFlags_.ChildWindows]
 
 class ImGuiHoveredFlags_(Enum):    # imgui.h:1268
     """ Flags for ImGui::IsItemHovered(), ImGui::IsWindowHovered()
      Note: if you are trying to check whether your mouse should be dispatched to Dear ImGui or to your app, you should use 'io.WantCaptureMouse' instead! Please read the FAQ!
      Note: windows with the ImGuiWindowFlags_NoInputs flag are ignored by IsWindowHovered() calls.
     """
-    none = 0                                    # Return True if directly over the item/window, not obstructed by another window, not obstructed by an active popup or modal blocking inputs under them.
-    child_windows = 1 << 0                      # IsWindowHovered() only: Return True if any children of the window is hovered
-    root_window = 1 << 1                        # IsWindowHovered() only: Test from root window (top most parent of the current hierarchy)
-    any_window = 1 << 2                         # IsWindowHovered() only: Return True if any window is hovered
-    no_popup_hierarchy = 1 << 3                 # IsWindowHovered() only: Do not consider popup hierarchy (do not treat popup emitter as parent of popup) (when used with _ChildWindows or _RootWindow)
+    None_ = 0                              # Return True if directly over the item/window, not obstructed by another window, not obstructed by an active popup or modal blocking inputs under them.
+    ChildWindows = 1 << 0                  # IsWindowHovered() only: Return True if any children of the window is hovered
+    RootWindow = 1 << 1                    # IsWindowHovered() only: Test from root window (top most parent of the current hierarchy)
+    AnyWindow = 1 << 2                     # IsWindowHovered() only: Return True if any window is hovered
+    NoPopupHierarchy = 1 << 3              # IsWindowHovered() only: Do not consider popup hierarchy (do not treat popup emitter as parent of popup) (when used with _ChildWindows or _RootWindow)
     #ImGuiHoveredFlags_DockHierarchy               = 1 << 4,   // IsWindowHovered() only: Consider docking hierarchy (treat dockspace host as parent of docked window) (when used with _ChildWindows or _RootWindow)
-    allow_when_blocked_by_popup = 1 << 5        # Return True even if a popup window is normally blocking access to this item/window
+    AllowWhenBlockedByPopup = 1 << 5       # Return True even if a popup window is normally blocking access to this item/window
     #ImGuiHoveredFlags_AllowWhenBlockedByModal     = 1 << 6,   // Return True even if a modal popup window is normally blocking access to this item/window. FIXME-TODO: Unavailable yet.
-    allow_when_blocked_by_active_item = 1 << 7  # Return True even if an active item is blocking access to this item/window. Useful for Drag and Drop patterns.
-    allow_when_overlapped = 1 << 8              # IsItemHovered() only: Return True even if the position is obstructed or overlapped by another window
-    allow_when_disabled = 1 << 9                # IsItemHovered() only: Return True even if the item is disabled
-    no_nav_override = 1 << 10                   # Disable using gamepad/keyboard navigation state when active, always query mouse.
-    rect_only = Literal[ImGuiHoveredFlags_.allow_when_blocked_by_popup] | Literal[ImGuiHoveredFlags_.allow_when_blocked_by_active_item] | Literal[ImGuiHoveredFlags_.allow_when_overlapped]
-    root_and_child_windows = Literal[ImGuiHoveredFlags_.root_window] | Literal[ImGuiHoveredFlags_.child_windows]
+    AllowWhenBlockedByActiveItem = 1 << 7  # Return True even if an active item is blocking access to this item/window. Useful for Drag and Drop patterns.
+    AllowWhenOverlapped = 1 << 8           # IsItemHovered() only: Return True even if the position is obstructed or overlapped by another window
+    AllowWhenDisabled = 1 << 9             # IsItemHovered() only: Return True even if the item is disabled
+    NoNavOverride = 1 << 10                # Disable using gamepad/keyboard navigation state when active, always query mouse.
+    RectOnly = Literal[ImGuiHoveredFlags_.AllowWhenBlockedByPopup] | Literal[ImGuiHoveredFlags_.AllowWhenBlockedByActiveItem] | Literal[ImGuiHoveredFlags_.AllowWhenOverlapped]
+    RootAndChildWindows = Literal[ImGuiHoveredFlags_.RootWindow] | Literal[ImGuiHoveredFlags_.ChildWindows]
 
 class ImGuiDragDropFlags_(Enum):    # imgui.h:1287
     """ Flags for ImGui::BeginDragDropSource(), ImGui::AcceptDragDropPayload()"""
-    none = 0
+    None_ = 0
     # BeginDragDropSource() flags
-    source_no_preview_tooltip = 1 << 0                                                                                                 # By default, a successful call to BeginDragDropSource opens a tooltip so you can display a preview or description of the source contents. This flag disable this behavior.
-    source_no_disable_hover = 1 << 1                                                                                                   # By default, when dragging we clear data so that IsItemHovered() will return False, to avoid subsequent user code submitting tooltips. This flag disable this behavior so you can still call IsItemHovered() on the source item.
-    source_no_hold_to_open_others = 1 << 2                                                                                             # Disable the behavior that allows to open tree nodes and collapsing header by holding over them while dragging a source item.
-    source_allow_null_id = 1 << 3                                                                                                      # Allow items such as Text(), Image() that have no unique identifier to be used as drag source, by manufacturing a temporary identifier based on their window-relative position. This is extremely unusual within the dear imgui ecosystem and so we made it explicit.
-    source_extern = 1 << 4                                                                                                             # External source (from outside of dear imgui), won't attempt to read current item/window info. Will always return True. Only one Extern source can be active simultaneously.
-    source_auto_expire_payload = 1 << 5                                                                                                # Automatically expire the payload if the source cease to be submitted (otherwise payloads are persisting while being dragged)
+    SourceNoPreviewTooltip = 1 << 0                                                                                            # By default, a successful call to BeginDragDropSource opens a tooltip so you can display a preview or description of the source contents. This flag disable this behavior.
+    SourceNoDisableHover = 1 << 1                                                                                              # By default, when dragging we clear data so that IsItemHovered() will return False, to avoid subsequent user code submitting tooltips. This flag disable this behavior so you can still call IsItemHovered() on the source item.
+    SourceNoHoldToOpenOthers = 1 << 2                                                                                          # Disable the behavior that allows to open tree nodes and collapsing header by holding over them while dragging a source item.
+    SourceAllowNullID = 1 << 3                                                                                                 # Allow items such as Text(), Image() that have no unique identifier to be used as drag source, by manufacturing a temporary identifier based on their window-relative position. This is extremely unusual within the dear imgui ecosystem and so we made it explicit.
+    SourceExtern = 1 << 4                                                                                                      # External source (from outside of dear imgui), won't attempt to read current item/window info. Will always return True. Only one Extern source can be active simultaneously.
+    SourceAutoExpirePayload = 1 << 5                                                                                           # Automatically expire the payload if the source cease to be submitted (otherwise payloads are persisting while being dragged)
     # AcceptDragDropPayload() flags
-    accept_before_delivery = 1 << 10                                                                                                   # AcceptDragDropPayload() will returns True even before the mouse button is released. You can then call IsDelivery() to test if the payload needs to be delivered.
-    accept_no_draw_default_rect = 1 << 11                                                                                              # Do not draw the default highlight rectangle when hovering over target.
-    accept_no_preview_tooltip = 1 << 12                                                                                                # Request hiding the BeginDragDropSource tooltip from the BeginDragDropTarget site.
-    accept_peek_only = Literal[ImGuiDragDropFlags_.accept_before_delivery] | Literal[ImGuiDragDropFlags_.accept_no_draw_default_rect]  # For peeking ahead and inspecting the payload before delivery.
+    AcceptBeforeDelivery = 1 << 10                                                                                             # AcceptDragDropPayload() will returns True even before the mouse button is released. You can then call IsDelivery() to test if the payload needs to be delivered.
+    AcceptNoDrawDefaultRect = 1 << 11                                                                                          # Do not draw the default highlight rectangle when hovering over target.
+    AcceptNoPreviewTooltip = 1 << 12                                                                                           # Request hiding the BeginDragDropSource tooltip from the BeginDragDropTarget site.
+    AcceptPeekOnly = Literal[ImGuiDragDropFlags_.AcceptBeforeDelivery] | Literal[ImGuiDragDropFlags_.AcceptNoDrawDefaultRect]  # For peeking ahead and inspecting the payload before delivery.
 
 # Standard Drag and Drop payload types. You can define you own payload types using short strings. Types starting with '_' are defined by Dear ImGui.
 
 class ImGuiDataType_(Enum):    # imgui.h:1309
     """ A primary data type"""
-    s8 = 0      # signed char / char (with sensible compilers)
-    u8 = 1      # unsigned char
-    s16 = 2     # short
-    u16 = 3     # unsigned short
-    s32 = 4     # int
-    u32 = 5     # unsigned int
-    s64 = 6     # long long / __int64
-    u64 = 7     # unsigned long long / unsigned __int64
-    float = 8   # float
-    double = 9  # double
-    count = 10
+    S8 = 0      # signed char / char (with sensible compilers)
+    U8 = 1      # unsigned char
+    S16 = 2     # short
+    U16 = 3     # unsigned short
+    S32 = 4     # int
+    U32 = 5     # unsigned int
+    S64 = 6     # long long / __int64
+    U64 = 7     # unsigned long long / unsigned __int64
+    Float = 8   # float
+    Double = 9  # double
+    COUNT = 10
 
 class ImGuiDir_(Enum):    # imgui.h:1325
     """ A cardinal direction"""
-    none = -1
-    left = 0
-    right = 1
-    up = 2
-    down = 3
-    count = 4
+    None_ = -1
+    Left = 0
+    Right = 1
+    Up = 2
+    Down = 3
+    COUNT = 4
 
 class ImGuiSortDirection_(Enum):    # imgui.h:1336
     """ A sorting direction"""
-    none = 0
-    ascending = 1   # Ascending = 0->9, A->Z etc.
-    descending = 2  # Descending = 9->0, Z->A etc.
+    None_ = 0
+    Ascending = 1   # Ascending = 0->9, A->Z etc.
+    Descending = 2  # Descending = 9->0, Z->A etc.
 
 class ImGuiKey_(Enum):    # imgui.h:1345
     """ Keys value 0 to 511 are left unused as legacy native/opaque key values (< 1.87)
      Keys value >= 512 are named keys (>= 1.87)
     """
     # Keyboard
-    none = 0
-    tab = 512                    # == ImGuiKey_NamedKey_BEGIN
-    left_arrow = 513
-    right_arrow = 514
-    up_arrow = 515
-    down_arrow = 516
-    page_up = 517
-    page_down = 518
-    home = 519
-    end = 520
-    insert = 521
-    delete = 522
-    backspace = 523
-    space = 524
-    enter = 525
-    escape = 526
-    left_ctrl = 527
-    left_shift = 528
-    left_alt = 529
-    left_super = 530
-    right_ctrl = 531
-    right_shift = 532
-    right_alt = 533
-    right_super = 534
-    menu = 535
+    None_ = 0
+    Tab = 512                 # == ImGuiKey_NamedKey_BEGIN
+    LeftArrow = 513
+    RightArrow = 514
+    UpArrow = 515
+    DownArrow = 516
+    PageUp = 517
+    PageDown = 518
+    Home = 519
+    End = 520
+    Insert = 521
+    Delete = 522
+    Backspace = 523
+    Space = 524
+    Enter = 525
+    Escape = 526
+    LeftCtrl = 527
+    LeftShift = 528
+    LeftAlt = 529
+    LeftSuper = 530
+    RightCtrl = 531
+    RightShift = 532
+    RightAlt = 533
+    RightSuper = 534
+    Menu = 535
     _0 = 536
     _1 = 537
     _2 = 538
@@ -2066,103 +2066,103 @@ class ImGuiKey_(Enum):    # imgui.h:1345
     _7 = 543
     _8 = 544
     _9 = 545
-    a = 546
-    b = 547
-    c = 548
-    d = 549
-    e = 550
-    f = 551
-    g = 552
-    h = 553
-    i = 554
-    j = 555
-    k = 556
-    l = 557
-    m = 558
-    n = 559
-    o = 560
-    p = 561
-    q = 562
-    r = 563
-    s = 564
-    t = 565
-    u = 566
-    v = 567
-    w = 568
-    x = 569
-    y = 570
-    z = 571
-    f1 = 572
-    f2 = 573
-    f3 = 574
-    f4 = 575
-    f5 = 576
-    f6 = 577
-    f7 = 578
-    f8 = 579
-    f9 = 580
-    f10 = 581
-    f11 = 582
-    f12 = 583
-    apostrophe = 584             # '
-    comma = 585                  # ,
-    minus = 586                  # -
-    period = 587                 # .
-    slash = 588                  # /
-    semicolon = 589              # ;
-    equal = 590                  # =
-    left_bracket = 591           # [
-    backslash = 592              # \ (this text inhibit multiline comment caused by backslash)
-    right_bracket = 593          # ]
-    grave_accent = 594           # `
-    caps_lock = 595
-    scroll_lock = 596
-    num_lock = 597
-    print_screen = 598
-    pause = 599
-    keypad0 = 600
-    keypad1 = 601
-    keypad2 = 602
-    keypad3 = 603
-    keypad4 = 604
-    keypad5 = 605
-    keypad6 = 606
-    keypad7 = 607
-    keypad8 = 608
-    keypad9 = 609
-    keypad_decimal = 610
-    keypad_divide = 611
-    keypad_multiply = 612
-    keypad_subtract = 613
-    keypad_add = 614
-    keypad_enter = 615
-    keypad_equal = 616
+    A = 546
+    B = 547
+    C = 548
+    D = 549
+    E = 550
+    F = 551
+    G = 552
+    H = 553
+    I = 554
+    J = 555
+    K = 556
+    L = 557
+    M = 558
+    N = 559
+    O = 560
+    P = 561
+    Q = 562
+    R = 563
+    S = 564
+    T = 565
+    U = 566
+    V = 567
+    W = 568
+    X = 569
+    Y = 570
+    Z = 571
+    F1 = 572
+    F2 = 573
+    F3 = 574
+    F4 = 575
+    F5 = 576
+    F6 = 577
+    F7 = 578
+    F8 = 579
+    F9 = 580
+    F10 = 581
+    F11 = 582
+    F12 = 583
+    Apostrophe = 584          # '
+    Comma = 585               # ,
+    Minus = 586               # -
+    Period = 587              # .
+    Slash = 588               # /
+    Semicolon = 589           # ;
+    Equal = 590               # =
+    LeftBracket = 591         # [
+    Backslash = 592           # \ (this text inhibit multiline comment caused by backslash)
+    RightBracket = 593        # ]
+    GraveAccent = 594         # `
+    CapsLock = 595
+    ScrollLock = 596
+    NumLock = 597
+    PrintScreen = 598
+    Pause = 599
+    Keypad0 = 600
+    Keypad1 = 601
+    Keypad2 = 602
+    Keypad3 = 603
+    Keypad4 = 604
+    Keypad5 = 605
+    Keypad6 = 606
+    Keypad7 = 607
+    Keypad8 = 608
+    Keypad9 = 609
+    KeypadDecimal = 610
+    KeypadDivide = 611
+    KeypadMultiply = 612
+    KeypadSubtract = 613
+    KeypadAdd = 614
+    KeypadEnter = 615
+    KeypadEqual = 616
 
     # Gamepad (some of those are analog values, 0.0 to 1.0)                              // NAVIGATION action
-    gamepad_start = 617          # Menu (Xbox)          + (Switch)   Start/Options (PS) // --
-    gamepad_back = 618           # View (Xbox)          - (Switch)   Share (PS)         // --
-    gamepad_face_up = 619        # Y (Xbox)             X (Switch)   Triangle (PS)      // -> ImGuiNavInput_Input
-    gamepad_face_down = 620      # A (Xbox)             B (Switch)   Cross (PS)         // -> ImGuiNavInput_Activate
-    gamepad_face_left = 621      # X (Xbox)             Y (Switch)   Square (PS)        // -> ImGuiNavInput_Menu
-    gamepad_face_right = 622     # B (Xbox)             A (Switch)   Circle (PS)        // -> ImGuiNavInput_Cancel
-    gamepad_dpad_up = 623        # D-pad Up                                             // -> ImGuiNavInput_DpadUp
-    gamepad_dpad_down = 624      # D-pad Down                                           // -> ImGuiNavInput_DpadDown
-    gamepad_dpad_left = 625      # D-pad Left                                           // -> ImGuiNavInput_DpadLeft
-    gamepad_dpad_right = 626     # D-pad Right                                          // -> ImGuiNavInput_DpadRight
-    gamepad_l1 = 627             # L Bumper (Xbox)      L (Switch)   L1 (PS)            // -> ImGuiNavInput_FocusPrev + ImGuiNavInput_TweakSlow
-    gamepad_r1 = 628             # R Bumper (Xbox)      R (Switch)   R1 (PS)            // -> ImGuiNavInput_FocusNext + ImGuiNavInput_TweakFast
-    gamepad_l2 = 629             # L Trigger (Xbox)     ZL (Switch)  L2 (PS) [Analog]
-    gamepad_r2 = 630             # R Trigger (Xbox)     ZR (Switch)  R2 (PS) [Analog]
-    gamepad_l3 = 631             # L Thumbstick (Xbox)  L3 (Switch)  L3 (PS)
-    gamepad_r3 = 632             # R Thumbstick (Xbox)  R3 (Switch)  R3 (PS)
-    gamepad_l_stick_up = 633     # [Analog]                                             // -> ImGuiNavInput_LStickUp
-    gamepad_l_stick_down = 634   # [Analog]                                             // -> ImGuiNavInput_LStickDown
-    gamepad_l_stick_left = 635   # [Analog]                                             // -> ImGuiNavInput_LStickLeft
-    gamepad_l_stick_right = 636  # [Analog]                                             // -> ImGuiNavInput_LStickRight
-    gamepad_r_stick_up = 637     # [Analog]
-    gamepad_r_stick_down = 638   # [Analog]
-    gamepad_r_stick_left = 639   # [Analog]
-    gamepad_r_stick_right = 640  # [Analog]
+    GamepadStart = 617        # Menu (Xbox)          + (Switch)   Start/Options (PS) // --
+    GamepadBack = 618         # View (Xbox)          - (Switch)   Share (PS)         // --
+    GamepadFaceUp = 619       # Y (Xbox)             X (Switch)   Triangle (PS)      // -> ImGuiNavInput_Input
+    GamepadFaceDown = 620     # A (Xbox)             B (Switch)   Cross (PS)         // -> ImGuiNavInput_Activate
+    GamepadFaceLeft = 621     # X (Xbox)             Y (Switch)   Square (PS)        // -> ImGuiNavInput_Menu
+    GamepadFaceRight = 622    # B (Xbox)             A (Switch)   Circle (PS)        // -> ImGuiNavInput_Cancel
+    GamepadDpadUp = 623       # D-pad Up                                             // -> ImGuiNavInput_DpadUp
+    GamepadDpadDown = 624     # D-pad Down                                           // -> ImGuiNavInput_DpadDown
+    GamepadDpadLeft = 625     # D-pad Left                                           // -> ImGuiNavInput_DpadLeft
+    GamepadDpadRight = 626    # D-pad Right                                          // -> ImGuiNavInput_DpadRight
+    GamepadL1 = 627           # L Bumper (Xbox)      L (Switch)   L1 (PS)            // -> ImGuiNavInput_FocusPrev + ImGuiNavInput_TweakSlow
+    GamepadR1 = 628           # R Bumper (Xbox)      R (Switch)   R1 (PS)            // -> ImGuiNavInput_FocusNext + ImGuiNavInput_TweakFast
+    GamepadL2 = 629           # L Trigger (Xbox)     ZL (Switch)  L2 (PS) [Analog]
+    GamepadR2 = 630           # R Trigger (Xbox)     ZR (Switch)  R2 (PS) [Analog]
+    GamepadL3 = 631           # L Thumbstick (Xbox)  L3 (Switch)  L3 (PS)
+    GamepadR3 = 632           # R Thumbstick (Xbox)  R3 (Switch)  R3 (PS)
+    GamepadLStickUp = 633     # [Analog]                                             // -> ImGuiNavInput_LStickUp
+    GamepadLStickDown = 634   # [Analog]                                             // -> ImGuiNavInput_LStickDown
+    GamepadLStickLeft = 635   # [Analog]                                             // -> ImGuiNavInput_LStickLeft
+    GamepadLStickRight = 636  # [Analog]                                             // -> ImGuiNavInput_LStickRight
+    GamepadRStickUp = 637     # [Analog]
+    GamepadRStickDown = 638   # [Analog]
+    GamepadRStickLeft = 639   # [Analog]
+    GamepadRStickRight = 640  # [Analog]
 
     # Keyboard Modifiers (explicitly submitted by backend via AddKeyEvent() calls)
     # - This is mirroring the data also written to io.KeyCtrl, io.KeyShift, io.KeyAlt, io.KeySuper, in a format allowing
@@ -2172,28 +2172,28 @@ class ImGuiKey_(Enum):    # imgui.h:1345
     # - In theory the value of keyboard modifiers should be roughly equivalent to a logical or of the equivalent left/right keys.
     #   In practice: it's complicated; mods are often provided from different sources. Keyboard layout, IME, sticky keys and
     #   backends tend to interfere and break that equivalence. The safer decision is to relay that ambiguity down to the end-user...
-    mod_ctrl = 641
-    mod_shift = 642
-    mod_alt = 643
-    mod_super = 644
+    ModCtrl = 641
+    ModShift = 642
+    ModAlt = 643
+    ModSuper = 644
 
     # End of list
-    count = 645                  # No valid ImGuiKey is ever greater than this value
+    COUNT = 645               # No valid ImGuiKey is ever greater than this value
 
     # [Internal] Prior to 1.87 we required user to fill io.KeysDown[512] using their own native index + a io.KeyMap[] array.
     # We are ditching this method but keeping a legacy path for user code doing e.g. IsKeyPressed(MY_NATIVE_KEY_CODE)
-    named_key_begin = 512
-    named_key_end = Literal[ImGuiKey_.count]
-    named_key_count = Literal[ImGuiKey_.named_key_end] - Literal[ImGuiKey_.named_key_begin]
+    NamedKey_BEGIN = 512
+    NamedKey_END = Literal[ImGuiKey_.COUNT]
+    NamedKey_COUNT = Literal[ImGuiKey_.NamedKey_END] - Literal[ImGuiKey_.NamedKey_BEGIN]
 
 
 class ImGuiModFlags_(Enum):    # imgui.h:1457
     """ Helper "flags" version of key-mods to store and compare multiple key-mods easily. Sometimes used for storage (e.g. io.KeyMods) but otherwise not much used in public API."""
-    none = 0
-    ctrl = 1 << 0
-    shift = 1 << 1
-    alt = 1 << 2    # Menu
-    super = 1 << 3  # Cmd/Super/Windows key
+    None_ = 0
+    Ctrl = 1 << 0
+    Shift = 1 << 1
+    Alt = 1 << 2    # Menu
+    Super = 1 << 3  # Cmd/Super/Windows key
 
 class ImGuiNavInput_(Enum):    # imgui.h:1471
     """ Gamepad/Keyboard navigation
@@ -2203,109 +2203,109 @@ class ImGuiNavInput_(Enum):    # imgui.h:1471
      Read instructions in imgui.cpp for more details. Download PNG/PSD at http://dearimgui.org/controls_sheets.
     """
     # Gamepad Mapping
-    activate = 0      # Activate / Open / Toggle / Tweak value       // e.g. Cross  (PS4), A (Xbox), A (Switch), Space (Keyboard)
-    cancel = 1        # Cancel / Close / Exit                        // e.g. Circle (PS4), B (Xbox), B (Switch), Escape (Keyboard)
-    input = 2         # Text input / On-Screen keyboard              // e.g. Triang.(PS4), Y (Xbox), X (Switch), Return (Keyboard)
-    menu = 3          # Tap: Toggle menu / Hold: Focus, Move, Resize // e.g. Square (PS4), X (Xbox), Y (Switch), Alt (Keyboard)
-    dpad_left = 4     # Move / Tweak / Resize window (w/ PadMenu)    // e.g. D-pad Left/Right/Up/Down (Gamepads), Arrow keys (Keyboard)
-    dpad_right = 5
-    dpad_up = 6
-    dpad_down = 7
-    l_stick_left = 8  # Scroll / Move window (w/ PadMenu)            // e.g. Left Analog Stick Left/Right/Up/Down
-    l_stick_right = 9
-    l_stick_up = 10
-    l_stick_down = 11
-    focus_prev = 12   # Focus Next window (w/ PadMenu)               // e.g. L1 or L2 (PS4), LB or LT (Xbox), L or ZL (Switch)
-    focus_next = 13   # Focus Prev window (w/ PadMenu)               // e.g. R1 or R2 (PS4), RB or RT (Xbox), R or ZL (Switch)
-    tweak_slow = 14   # Slower tweaks                                // e.g. L1 or L2 (PS4), LB or LT (Xbox), L or ZL (Switch)
-    tweak_fast = 15   # Faster tweaks                                // e.g. R1 or R2 (PS4), RB or RT (Xbox), R or ZL (Switch)
+    Activate = 0    # Activate / Open / Toggle / Tweak value       // e.g. Cross  (PS4), A (Xbox), A (Switch), Space (Keyboard)
+    Cancel = 1      # Cancel / Close / Exit                        // e.g. Circle (PS4), B (Xbox), B (Switch), Escape (Keyboard)
+    Input = 2       # Text input / On-Screen keyboard              // e.g. Triang.(PS4), Y (Xbox), X (Switch), Return (Keyboard)
+    Menu = 3        # Tap: Toggle menu / Hold: Focus, Move, Resize // e.g. Square (PS4), X (Xbox), Y (Switch), Alt (Keyboard)
+    DpadLeft = 4    # Move / Tweak / Resize window (w/ PadMenu)    // e.g. D-pad Left/Right/Up/Down (Gamepads), Arrow keys (Keyboard)
+    DpadRight = 5
+    DpadUp = 6
+    DpadDown = 7
+    LStickLeft = 8  # Scroll / Move window (w/ PadMenu)            // e.g. Left Analog Stick Left/Right/Up/Down
+    LStickRight = 9
+    LStickUp = 10
+    LStickDown = 11
+    FocusPrev = 12  # Focus Next window (w/ PadMenu)               // e.g. L1 or L2 (PS4), LB or LT (Xbox), L or ZL (Switch)
+    FocusNext = 13  # Focus Prev window (w/ PadMenu)               // e.g. R1 or R2 (PS4), RB or RT (Xbox), R or ZL (Switch)
+    TweakSlow = 14  # Slower tweaks                                // e.g. L1 or L2 (PS4), LB or LT (Xbox), L or ZL (Switch)
+    TweakFast = 15  # Faster tweaks                                // e.g. R1 or R2 (PS4), RB or RT (Xbox), R or ZL (Switch)
 
     # [Internal] Don't use directly! This is used internally to differentiate keyboard from gamepad inputs for behaviors that require to differentiate them.
     # Keyboard behavior that have no corresponding gamepad mapping (e.g. CTRL+TAB) will be directly reading from keyboard keys instead of io.NavInputs[].
-    key_left_ = 16    # Move left                                    // = Arrow keys
-    key_right_ = 17   # Move right
-    key_up_ = 18      # Move up
-    key_down_ = 19    # Move down
-    count = 20
+    KeyLeft_ = 16   # Move left                                    // = Arrow keys
+    KeyRight_ = 17  # Move right
+    KeyUp_ = 18     # Move up
+    KeyDown_ = 19   # Move down
+    COUNT = 20
 
 class ImGuiConfigFlags_(Enum):    # imgui.h:1501
     """ Configuration flags stored in io.ConfigFlags. Set by user/application."""
-    none = 0
-    nav_enable_keyboard = 1 << 0       # Master keyboard navigation enable flag. NewFrame() will automatically fill io.NavInputs[] based on io.AddKeyEvent() calls
-    nav_enable_gamepad = 1 << 1        # Master gamepad navigation enable flag. This is mostly to instruct your imgui backend to fill io.NavInputs[]. Backend also needs to set ImGuiBackendFlags_HasGamepad.
-    nav_enable_set_mouse_pos = 1 << 2  # Instruct navigation to move the mouse cursor. May be useful on TV/console systems where moving a virtual mouse is awkward. Will update io.MousePos and set io.WantSetMousePos=True. If enabled you MUST honor io.WantSetMousePos requests in your backend, otherwise ImGui will react as if the mouse is jumping around back and forth.
-    nav_no_capture_keyboard = 1 << 3   # Instruct navigation to not set the io.WantCaptureKeyboard flag when io.NavActive is set.
-    no_mouse = 1 << 4                  # Instruct imgui to clear mouse position/buttons in NewFrame(). This allows ignoring the mouse information set by the backend.
-    no_mouse_cursor_change = 1 << 5    # Instruct backend to not alter mouse cursor shape and visibility. Use if the backend cursor changes are interfering with yours and you don't want to use SetMouseCursor() to change mouse cursor. You may want to honor requests from imgui by reading GetMouseCursor() yourself instead.
+    None_ = 0
+    NavEnableKeyboard = 1 << 0     # Master keyboard navigation enable flag. NewFrame() will automatically fill io.NavInputs[] based on io.AddKeyEvent() calls
+    NavEnableGamepad = 1 << 1      # Master gamepad navigation enable flag. This is mostly to instruct your imgui backend to fill io.NavInputs[]. Backend also needs to set ImGuiBackendFlags_HasGamepad.
+    NavEnableSetMousePos = 1 << 2  # Instruct navigation to move the mouse cursor. May be useful on TV/console systems where moving a virtual mouse is awkward. Will update io.MousePos and set io.WantSetMousePos=True. If enabled you MUST honor io.WantSetMousePos requests in your backend, otherwise ImGui will react as if the mouse is jumping around back and forth.
+    NavNoCaptureKeyboard = 1 << 3  # Instruct navigation to not set the io.WantCaptureKeyboard flag when io.NavActive is set.
+    NoMouse = 1 << 4               # Instruct imgui to clear mouse position/buttons in NewFrame(). This allows ignoring the mouse information set by the backend.
+    NoMouseCursorChange = 1 << 5   # Instruct backend to not alter mouse cursor shape and visibility. Use if the backend cursor changes are interfering with yours and you don't want to use SetMouseCursor() to change mouse cursor. You may want to honor requests from imgui by reading GetMouseCursor() yourself instead.
 
     # User storage (to allow your backend/engine to communicate to code that may be shared between multiple projects. Those flags are NOT used by core Dear ImGui)
-    is_srgb = 1 << 20                  # Application is SRGB-aware.
-    is_touch_screen = 1 << 21          # Application is using a touch screen instead of a mouse.
+    IsSRGB = 1 << 20               # Application is SRGB-aware.
+    IsTouchScreen = 1 << 21        # Application is using a touch screen instead of a mouse.
 
 class ImGuiBackendFlags_(Enum):    # imgui.h:1517
     """ Backend capabilities flags stored in io.BackendFlags. Set by imgui_impl_xxx or custom backend."""
-    none = 0
-    has_gamepad = 1 << 0              # Backend Platform supports gamepad and currently has one connected.
-    has_mouse_cursors = 1 << 1        # Backend Platform supports honoring GetMouseCursor() value to change the OS cursor shape.
-    has_set_mouse_pos = 1 << 2        # Backend Platform supports io.WantSetMousePos requests to reposition the OS mouse position (only used if ImGuiConfigFlags_NavEnableSetMousePos is set).
-    renderer_has_vtx_offset = 1 << 3  # Backend Renderer supports ImDrawCmd::VtxOffset. This enables output of large meshes (64K+ vertices) while still using 16-bit indices.
+    None_ = 0
+    HasGamepad = 1 << 0            # Backend Platform supports gamepad and currently has one connected.
+    HasMouseCursors = 1 << 1       # Backend Platform supports honoring GetMouseCursor() value to change the OS cursor shape.
+    HasSetMousePos = 1 << 2        # Backend Platform supports io.WantSetMousePos requests to reposition the OS mouse position (only used if ImGuiConfigFlags_NavEnableSetMousePos is set).
+    RendererHasVtxOffset = 1 << 3  # Backend Renderer supports ImDrawCmd::VtxOffset. This enables output of large meshes (64K+ vertices) while still using 16-bit indices.
 
 class ImGuiCol_(Enum):    # imgui.h:1527
     """ Enumeration for PushStyleColor() / PopStyleColor()"""
-    text = 0
-    text_disabled = 1
-    window_bg = 2                 # Background of normal windows
-    child_bg = 3                  # Background of child windows
-    popup_bg = 4                  # Background of popups, menus, tooltips windows
-    border = 5
-    border_shadow = 6
-    frame_bg = 7                  # Background of checkbox, radio button, plot, slider, text input
-    frame_bg_hovered = 8
-    frame_bg_active = 9
-    title_bg = 10
-    title_bg_active = 11
-    title_bg_collapsed = 12
-    menu_bar_bg = 13
-    scrollbar_bg = 14
-    scrollbar_grab = 15
-    scrollbar_grab_hovered = 16
-    scrollbar_grab_active = 17
-    check_mark = 18
-    slider_grab = 19
-    slider_grab_active = 20
-    button = 21
-    button_hovered = 22
-    button_active = 23
-    header = 24                   # Header* colors are used for CollapsingHeader, TreeNode, Selectable, MenuItem
-    header_hovered = 25
-    header_active = 26
-    separator = 27
-    separator_hovered = 28
-    separator_active = 29
-    resize_grip = 30              # Resize grip in lower-right and lower-left corners of windows.
-    resize_grip_hovered = 31
-    resize_grip_active = 32
-    tab = 33                      # TabItem in a TabBar
-    tab_hovered = 34
-    tab_active = 35
-    tab_unfocused = 36
-    tab_unfocused_active = 37
-    plot_lines = 38
-    plot_lines_hovered = 39
-    plot_histogram = 40
-    plot_histogram_hovered = 41
-    table_header_bg = 42          # Table header background
-    table_border_strong = 43      # Table outer and header borders (prefer using Alpha=1.0 here)
-    table_border_light = 44       # Table inner borders (prefer using Alpha=1.0 here)
-    table_row_bg = 45             # Table row background (even rows)
-    table_row_bg_alt = 46         # Table row background (odd rows)
-    text_selected_bg = 47
-    drag_drop_target = 48         # Rectangle highlighting a drop target
-    nav_highlight = 49            # Gamepad/keyboard: current highlighted item
-    nav_windowing_highlight = 50  # Highlight window when using CTRL+TAB
-    nav_windowing_dim_bg = 51     # Darken/colorize entire screen behind the CTRL+TAB window list, when active
-    modal_window_dim_bg = 52      # Darken/colorize entire screen behind a modal window, when one is active
-    count = 53
+    Text = 0
+    TextDisabled = 1
+    WindowBg = 2                # Background of normal windows
+    ChildBg = 3                 # Background of child windows
+    PopupBg = 4                 # Background of popups, menus, tooltips windows
+    Border = 5
+    BorderShadow = 6
+    FrameBg = 7                 # Background of checkbox, radio button, plot, slider, text input
+    FrameBgHovered = 8
+    FrameBgActive = 9
+    TitleBg = 10
+    TitleBgActive = 11
+    TitleBgCollapsed = 12
+    MenuBarBg = 13
+    ScrollbarBg = 14
+    ScrollbarGrab = 15
+    ScrollbarGrabHovered = 16
+    ScrollbarGrabActive = 17
+    CheckMark = 18
+    SliderGrab = 19
+    SliderGrabActive = 20
+    Button = 21
+    ButtonHovered = 22
+    ButtonActive = 23
+    Header = 24                 # Header* colors are used for CollapsingHeader, TreeNode, Selectable, MenuItem
+    HeaderHovered = 25
+    HeaderActive = 26
+    Separator = 27
+    SeparatorHovered = 28
+    SeparatorActive = 29
+    ResizeGrip = 30             # Resize grip in lower-right and lower-left corners of windows.
+    ResizeGripHovered = 31
+    ResizeGripActive = 32
+    Tab = 33                    # TabItem in a TabBar
+    TabHovered = 34
+    TabActive = 35
+    TabUnfocused = 36
+    TabUnfocusedActive = 37
+    PlotLines = 38
+    PlotLinesHovered = 39
+    PlotHistogram = 40
+    PlotHistogramHovered = 41
+    TableHeaderBg = 42          # Table header background
+    TableBorderStrong = 43      # Table outer and header borders (prefer using Alpha=1.0 here)
+    TableBorderLight = 44       # Table inner borders (prefer using Alpha=1.0 here)
+    TableRowBg = 45             # Table row background (even rows)
+    TableRowBgAlt = 46          # Table row background (odd rows)
+    TextSelectedBg = 47
+    DragDropTarget = 48         # Rectangle highlighting a drop target
+    NavHighlight = 49           # Gamepad/keyboard: current highlighted item
+    NavWindowingHighlight = 50  # Highlight window when using CTRL+TAB
+    NavWindowingDimBg = 51      # Darken/colorize entire screen behind the CTRL+TAB window list, when active
+    ModalWindowDimBg = 52       # Darken/colorize entire screen behind a modal window, when one is active
+    COUNT = 53
 
 class ImGuiStyleVar_(Enum):    # imgui.h:1592
     """ Enumeration for PushStyleVar() / PopStyleVar() to temporarily modify the ImGuiStyle structure.
@@ -2317,82 +2317,82 @@ class ImGuiStyleVar_(Enum):    # imgui.h:1592
      - When changing this enum, you need to update the associated internal table GStyleVarInfo[] accordingly. This is where we link enum values to members offset/type.
     """
     # Enum name --------------------- // Member in ImGuiStyle structure (see ImGuiStyle for descriptions)
-    alpha = 0                   # float     Alpha
-    disabled_alpha = 1          # float     DisabledAlpha
-    window_padding = 2          # ImVec2    WindowPadding
-    window_rounding = 3         # float     WindowRounding
-    window_border_size = 4      # float     WindowBorderSize
-    window_min_size = 5         # ImVec2    WindowMinSize
-    window_title_align = 6      # ImVec2    WindowTitleAlign
-    child_rounding = 7          # float     ChildRounding
-    child_border_size = 8       # float     ChildBorderSize
-    popup_rounding = 9          # float     PopupRounding
-    popup_border_size = 10      # float     PopupBorderSize
-    frame_padding = 11          # ImVec2    FramePadding
-    frame_rounding = 12         # float     FrameRounding
-    frame_border_size = 13      # float     FrameBorderSize
-    item_spacing = 14           # ImVec2    ItemSpacing
-    item_inner_spacing = 15     # ImVec2    ItemInnerSpacing
-    indent_spacing = 16         # float     IndentSpacing
-    cell_padding = 17           # ImVec2    CellPadding
-    scrollbar_size = 18         # float     ScrollbarSize
-    scrollbar_rounding = 19     # float     ScrollbarRounding
-    grab_min_size = 20          # float     GrabMinSize
-    grab_rounding = 21          # float     GrabRounding
-    tab_rounding = 22           # float     TabRounding
-    button_text_align = 23      # ImVec2    ButtonTextAlign
-    selectable_text_align = 24  # ImVec2    SelectableTextAlign
-    count = 25
+    Alpha = 0                 # float     Alpha
+    DisabledAlpha = 1         # float     DisabledAlpha
+    WindowPadding = 2         # ImVec2    WindowPadding
+    WindowRounding = 3        # float     WindowRounding
+    WindowBorderSize = 4      # float     WindowBorderSize
+    WindowMinSize = 5         # ImVec2    WindowMinSize
+    WindowTitleAlign = 6      # ImVec2    WindowTitleAlign
+    ChildRounding = 7         # float     ChildRounding
+    ChildBorderSize = 8       # float     ChildBorderSize
+    PopupRounding = 9         # float     PopupRounding
+    PopupBorderSize = 10      # float     PopupBorderSize
+    FramePadding = 11         # ImVec2    FramePadding
+    FrameRounding = 12        # float     FrameRounding
+    FrameBorderSize = 13      # float     FrameBorderSize
+    ItemSpacing = 14          # ImVec2    ItemSpacing
+    ItemInnerSpacing = 15     # ImVec2    ItemInnerSpacing
+    IndentSpacing = 16        # float     IndentSpacing
+    CellPadding = 17          # ImVec2    CellPadding
+    ScrollbarSize = 18        # float     ScrollbarSize
+    ScrollbarRounding = 19    # float     ScrollbarRounding
+    GrabMinSize = 20          # float     GrabMinSize
+    GrabRounding = 21         # float     GrabRounding
+    TabRounding = 22          # float     TabRounding
+    ButtonTextAlign = 23      # ImVec2    ButtonTextAlign
+    SelectableTextAlign = 24  # ImVec2    SelectableTextAlign
+    COUNT = 25
 
 class ImGuiButtonFlags_(Enum):    # imgui.h:1624
     """ Flags for InvisibleButton() [extended in imgui_internal.h]"""
-    none = 0
-    mouse_button_left = 1 << 0    # React on left mouse button (default)
-    mouse_button_right = 1 << 1   # React on right mouse button
-    mouse_button_middle = 1 << 2  # React on center mouse button
+    None_ = 0
+    MouseButtonLeft = 1 << 0    # React on left mouse button (default)
+    MouseButtonRight = 1 << 1   # React on right mouse button
+    MouseButtonMiddle = 1 << 2  # React on center mouse button
 
     # [Internal]
-    mouse_button_mask_ = Literal[ImGuiButtonFlags_.mouse_button_left] | Literal[ImGuiButtonFlags_.mouse_button_right] | Literal[ImGuiButtonFlags_.mouse_button_middle]
-    mouse_button_default_ = Literal[ImGuiButtonFlags_.mouse_button_left]
+    MouseButtonMask_ = Literal[ImGuiButtonFlags_.MouseButtonLeft] | Literal[ImGuiButtonFlags_.MouseButtonRight] | Literal[ImGuiButtonFlags_.MouseButtonMiddle]
+    MouseButtonDefault_ = Literal[ImGuiButtonFlags_.MouseButtonLeft]
 
 class ImGuiColorEditFlags_(Enum):    # imgui.h:1637
     """ Flags for ColorEdit3() / ColorEdit4() / ColorPicker3() / ColorPicker4() / ColorButton()"""
-    none = 0
-    no_alpha = 1 << 1             #              // ColorEdit, ColorPicker, ColorButton: ignore Alpha component (will only read 3 components from the input pointer).
-    no_picker = 1 << 2            #              // ColorEdit: disable picker when clicking on color square.
-    no_options = 1 << 3           #              // ColorEdit: disable toggling options menu when right-clicking on inputs/small preview.
-    no_small_preview = 1 << 4     #              // ColorEdit, ColorPicker: disable color square preview next to the inputs. (e.g. to show only the inputs)
-    no_inputs = 1 << 5            #              // ColorEdit, ColorPicker: disable inputs sliders/text widgets (e.g. to show only the small preview color square).
-    no_tooltip = 1 << 6           #              // ColorEdit, ColorPicker, ColorButton: disable tooltip when hovering the preview.
-    no_label = 1 << 7             #              // ColorEdit, ColorPicker: disable display of inline text label (the label is still forwarded to the tooltip and picker).
-    no_side_preview = 1 << 8      #              // ColorPicker: disable bigger color preview on right side of the picker, use small color square preview instead.
-    no_drag_drop = 1 << 9         #              // ColorEdit: disable drag and drop target. ColorButton: disable drag and drop source.
-    no_border = 1 << 10           #              // ColorButton: disable border (which is enforced by default)
+    None_ = 0
+    NoAlpha = 1 << 1            #              // ColorEdit, ColorPicker, ColorButton: ignore Alpha component (will only read 3 components from the input pointer).
+    NoPicker = 1 << 2           #              // ColorEdit: disable picker when clicking on color square.
+    NoOptions = 1 << 3          #              // ColorEdit: disable toggling options menu when right-clicking on inputs/small preview.
+    NoSmallPreview = 1 << 4     #              // ColorEdit, ColorPicker: disable color square preview next to the inputs. (e.g. to show only the inputs)
+    NoInputs = 1 << 5           #              // ColorEdit, ColorPicker: disable inputs sliders/text widgets (e.g. to show only the small preview color square).
+    NoTooltip = 1 << 6          #              // ColorEdit, ColorPicker, ColorButton: disable tooltip when hovering the preview.
+    NoLabel = 1 << 7            #              // ColorEdit, ColorPicker: disable display of inline text label (the label is still forwarded to the tooltip and picker).
+    NoSidePreview = 1 << 8      #              // ColorPicker: disable bigger color preview on right side of the picker, use small color square preview instead.
+    NoDragDrop = 1 << 9         #              // ColorEdit: disable drag and drop target. ColorButton: disable drag and drop source.
+    NoBorder = 1 << 10          #              // ColorButton: disable border (which is enforced by default)
 
     # User Options (right-click on widget to change some of them).
-    alpha_bar = 1 << 16           #              // ColorEdit, ColorPicker: show vertical alpha bar/gradient in picker.
-    alpha_preview = 1 << 17       #              // ColorEdit, ColorPicker, ColorButton: display preview as a transparent color over a checkerboard, instead of opaque.
-    alpha_preview_half = 1 << 18  #              // ColorEdit, ColorPicker, ColorButton: display half opaque / half checkerboard, instead of opaque.
-    hdr = 1 << 19                 #              // (WIP) ColorEdit: Currently only disable 0.0..1.0 limits in RGBA edition (note: you probably want to use ImGuiColorEditFlags_Float flag as well).
-    display_rgb = 1 << 20         # [Display]    // ColorEdit: override _display_ type among RGB/HSV/Hex. ColorPicker: select any combination using one or more of RGB/HSV/Hex.
-    display_hsv = 1 << 21         # [Display]    // "
-    display_hex = 1 << 22         # [Display]    // "
-    uint8 = 1 << 23               # [DataType]   // ColorEdit, ColorPicker, ColorButton: _display_ values formatted as 0..255.
-    float = 1 << 24               # [DataType]   // ColorEdit, ColorPicker, ColorButton: _display_ values formatted as 0.0..1.0 floats instead of 0..255 integers. No round-trip of value via integers.
-    picker_hue_bar = 1 << 25      # [Picker]     // ColorPicker: bar for Hue, rectangle for Sat/Value.
-    picker_hue_wheel = 1 << 26    # [Picker]     // ColorPicker: wheel for Hue, triangle for Sat/Value.
-    input_rgb = 1 << 27           # [Input]      // ColorEdit, ColorPicker: input and output data in RGB format.
-    input_hsv = 1 << 28           # [Input]      // ColorEdit, ColorPicker: input and output data in HSV format.
+    AlphaBar = 1 << 16          #              // ColorEdit, ColorPicker: show vertical alpha bar/gradient in picker.
+    AlphaPreview = 1 << 17      #              // ColorEdit, ColorPicker, ColorButton: display preview as a transparent color over a checkerboard, instead of opaque.
+    AlphaPreviewHalf = 1 << 18  #              // ColorEdit, ColorPicker, ColorButton: display half opaque / half checkerboard, instead of opaque.
+    HDR = 1 << 19               #              // (WIP) ColorEdit: Currently only disable 0.0..1.0 limits in RGBA edition (note: you probably want to use ImGuiColorEditFlags_Float flag as well).
+    DisplayRGB = 1 << 20        # [Display]    // ColorEdit: override _display_ type among RGB/HSV/Hex. ColorPicker: select any combination using one or more of RGB/HSV/Hex.
+    DisplayHSV = 1 << 21        # [Display]    // "
+    DisplayHex = 1 << 22        # [Display]    // "
+    Uint8 = 1 << 23             # [DataType]   // ColorEdit, ColorPicker, ColorButton: _display_ values formatted as 0..255.
+    Float = 1 << 24             # [DataType]   // ColorEdit, ColorPicker, ColorButton: _display_ values formatted as 0.0..1.0 floats instead of 0..255 integers. No round-trip of value via integers.
+    PickerHueBar = 1 << 25      # [Picker]     // ColorPicker: bar for Hue, rectangle for Sat/Value.
+    PickerHueWheel = 1 << 26    # [Picker]     // ColorPicker: wheel for Hue, triangle for Sat/Value.
+    InputRGB = 1 << 27          # [Input]      // ColorEdit, ColorPicker: input and output data in RGB format.
+    InputHSV = 1 << 28          # [Input]      // ColorEdit, ColorPicker: input and output data in HSV format.
 
     # Defaults Options. You can set application defaults using SetColorEditOptions(). The intent is that you probably don't want to
     # override them in most of your calls. Let the user choose via the option menu and/or call SetColorEditOptions() once during startup.
-    default_options_ = Literal[ImGuiColorEditFlags_.uint8] | Literal[ImGuiColorEditFlags_.display_rgb] | Literal[ImGuiColorEditFlags_.input_rgb] | Literal[ImGuiColorEditFlags_.picker_hue_bar]
+    DefaultOptions_ = Literal[ImGuiColorEditFlags_.Uint8] | Literal[ImGuiColorEditFlags_.DisplayRGB] | Literal[ImGuiColorEditFlags_.InputRGB] | Literal[ImGuiColorEditFlags_.PickerHueBar]
 
     # [Internal] Masks
-    display_mask_ = Literal[ImGuiColorEditFlags_.display_rgb] | Literal[ImGuiColorEditFlags_.display_hsv] | Literal[ImGuiColorEditFlags_.display_hex]
-    data_type_mask_ = Literal[ImGuiColorEditFlags_.uint8] | Literal[ImGuiColorEditFlags_.float]
-    picker_mask_ = Literal[ImGuiColorEditFlags_.picker_hue_wheel] | Literal[ImGuiColorEditFlags_.picker_hue_bar]
-    input_mask_ = Literal[ImGuiColorEditFlags_.input_rgb] | Literal[ImGuiColorEditFlags_.input_hsv]
+    DisplayMask_ = Literal[ImGuiColorEditFlags_.DisplayRGB] | Literal[ImGuiColorEditFlags_.DisplayHSV] | Literal[ImGuiColorEditFlags_.DisplayHex]
+    DataTypeMask_ = Literal[ImGuiColorEditFlags_.Uint8] | Literal[ImGuiColorEditFlags_.Float]
+    PickerMask_ = Literal[ImGuiColorEditFlags_.PickerHueWheel] | Literal[ImGuiColorEditFlags_.PickerHueBar]
+    InputMask_ = Literal[ImGuiColorEditFlags_.InputRGB] | Literal[ImGuiColorEditFlags_.InputHSV]
 
     # Obsolete names (will be removed)
     # ImGuiColorEditFlags_RGB = ImGuiColorEditFlags_DisplayRGB, ImGuiColorEditFlags_HSV = ImGuiColorEditFlags_DisplayHSV, ImGuiColorEditFlags_HEX = ImGuiColorEditFlags_DisplayHex  // [renamed in 1.69]
@@ -2401,12 +2401,12 @@ class ImGuiSliderFlags_(Enum):    # imgui.h:1682
     """ Flags for DragFloat(), DragInt(), SliderFloat(), SliderInt() etc.
      We use the same sets of flags for DragXXX() and SliderXXX() functions as the features are the same and it makes it easier to swap them.
     """
-    none = 0
-    always_clamp = 1 << 4        # Clamp value to min/max bounds when input manually with CTRL+Click. By default CTRL+Click allows going out of bounds.
-    logarithmic = 1 << 5         # Make the widget logarithmic (linear otherwise). Consider using ImGuiSliderFlags_NoRoundToFormat with this if using a format-string with small amount of digits.
-    no_round_to_format = 1 << 6  # Disable rounding underlying value to match precision of the display format string (e.g. %.3 values are rounded to those 3 digits)
-    no_input = 1 << 7            # Disable CTRL+Click or Enter key allowing to input text directly into the widget
-    invalid_mask_ = 0x7000000F
+    None_ = 0
+    AlwaysClamp = 1 << 4      # Clamp value to min/max bounds when input manually with CTRL+Click. By default CTRL+Click allows going out of bounds.
+    Logarithmic = 1 << 5      # Make the widget logarithmic (linear otherwise). Consider using ImGuiSliderFlags_NoRoundToFormat with this if using a format-string with small amount of digits.
+    NoRoundToFormat = 1 << 6  # Disable rounding underlying value to match precision of the display format string (e.g. %.3 values are rounded to those 3 digits)
+    NoInput = 1 << 7          # Disable CTRL+Click or Enter key allowing to input text directly into the widget
+    InvalidMask_ = 0x7000000F
     # [Internal] We treat using those bits as being potentially a 'float power' argument from the previous API that has got miscast to this enum, and will trigger an assert if needed.
 
     # Obsolete names (will be removed)
@@ -2415,37 +2415,37 @@ class ImGuiMouseButton_(Enum):    # imgui.h:1699
     """ Identify a mouse button.
      Those values are guaranteed to be stable and we frequently use 0/1 directly. Named enums provided for convenience.
     """
-    left = 0
-    right = 1
-    middle = 2
-    count = 5
+    Left = 0
+    Right = 1
+    Middle = 2
+    COUNT = 5
 
 class ImGuiMouseCursor_(Enum):    # imgui.h:1709
     """ Enumeration for GetMouseCursor()
      User code may request backend to display given cursor by calling SetMouseCursor(), which is why we have some cursors that are marked unused here
     """
-    none = -1
-    arrow = 0
-    text_input = 1   # When hovering over InputText, etc.
-    resize_all = 2   # (Unused by Dear ImGui functions)
-    resize_ns = 3    # When hovering over an horizontal border
-    resize_ew = 4    # When hovering over a vertical border or a column
-    resize_nesw = 5  # When hovering over the bottom-left corner of a window
-    resize_nwse = 6  # When hovering over the bottom-right corner of a window
-    hand = 7         # (Unused by Dear ImGui functions. Use for e.g. hyperlinks)
-    not_allowed = 8  # When hovering something with disallowed interaction. Usually a crossed circle.
-    count = 9
+    None_ = -1
+    Arrow = 0
+    TextInput = 1   # When hovering over InputText, etc.
+    ResizeAll = 2   # (Unused by Dear ImGui functions)
+    ResizeNS = 3    # When hovering over an horizontal border
+    ResizeEW = 4    # When hovering over a vertical border or a column
+    ResizeNESW = 5  # When hovering over the bottom-left corner of a window
+    ResizeNWSE = 6  # When hovering over the bottom-right corner of a window
+    Hand = 7        # (Unused by Dear ImGui functions. Use for e.g. hyperlinks)
+    NotAllowed = 8  # When hovering something with disallowed interaction. Usually a crossed circle.
+    COUNT = 9
 
 class ImGuiCond_(Enum):    # imgui.h:1727
     """ Enumeration for ImGui::SetWindow***(), SetNextWindow***(), SetNextItem***() functions
      Represent a condition.
      Important: Treat as a regular enum! Do NOT combine multiple values using binary operators! All the functions above treat 0 as a shortcut to ImGuiCond_Always.
     """
-    none = 0                 # No condition (always set the variable), same as _Always
-    always = 1 << 0          # No condition (always set the variable)
-    once = 1 << 1            # Set the variable once per runtime session (only the first call will succeed)
-    first_use_ever = 1 << 2  # Set the variable if the object/window has no persistently saved data (no entry in .ini file)
-    appearing = 1 << 3       # Set the variable if the object/window is appearing after being hidden/inactive (or the first time)
+    None_ = 0              # No condition (always set the variable), same as _Always
+    Always = 1 << 0        # No condition (always set the variable)
+    Once = 1 << 1          # Set the variable once per runtime session (only the first call will succeed)
+    FirstUseEver = 1 << 2  # Set the variable if the object/window has no persistently saved data (no entry in .ini file)
+    Appearing = 1 << 3     # Set the variable if the object/window is appearing after being hidden/inactive (or the first time)
 
 #-----------------------------------------------------------------------------
 # [SECTION] Helpers: Memory allocations macros, ImVector<>
@@ -2482,50 +2482,50 @@ class ImNewWrapper:    # imgui.h:1746
 #-----------------------------------------------------------------------------
 
 class ImGuiStyle:    # imgui.h:1838
-    alpha:float                                                # Global alpha applies to everything in Dear ImGui.    # imgui.h:1840
-    disabled_alpha:float                                       # Additional alpha multiplier applied by BeginDisabled(). Multiply over current value of Alpha.    # imgui.h:1841
-    window_padding:ImVec2                                      # Padding within a window.    # imgui.h:1842
-    window_rounding:float                                      # Radius of window corners rounding. Set to 0.0 to have rectangular windows. Large values tend to lead to variety of artifacts and are not recommended.    # imgui.h:1843
-    window_border_size:float                                   # Thickness of border around windows. Generally set to 0.0 or 1.0. (Other values are not well tested and more CPU/GPU costly).    # imgui.h:1844
-    window_min_size:ImVec2                                     # Minimum window size. This is a global setting. If you want to constraint individual windows, use SetNextWindowSizeConstraints().    # imgui.h:1845
-    window_title_align:ImVec2                                  # Alignment for title bar text. Defaults to (0.0,0.5) for left-aligned,vertically centered.    # imgui.h:1846
-    window_menu_button_position:ImGuiDir                       # Side of the collapsing/docking button in the title bar (None/Left/Right). Defaults to ImGuiDir_Left.    # imgui.h:1847
-    child_rounding:float                                       # Radius of child window corners rounding. Set to 0.0 to have rectangular windows.    # imgui.h:1848
-    child_border_size:float                                    # Thickness of border around child windows. Generally set to 0.0 or 1.0. (Other values are not well tested and more CPU/GPU costly).    # imgui.h:1849
-    popup_rounding:float                                       # Radius of popup window corners rounding. (Note that tooltip windows use WindowRounding)    # imgui.h:1850
-    popup_border_size:float                                    # Thickness of border around popup/tooltip windows. Generally set to 0.0 or 1.0. (Other values are not well tested and more CPU/GPU costly).    # imgui.h:1851
-    frame_padding:ImVec2                                       # Padding within a framed rectangle (used by most widgets).    # imgui.h:1852
-    frame_rounding:float                                       # Radius of frame corners rounding. Set to 0.0 to have rectangular frame (used by most widgets).    # imgui.h:1853
-    frame_border_size:float                                    # Thickness of border around frames. Generally set to 0.0 or 1.0. (Other values are not well tested and more CPU/GPU costly).    # imgui.h:1854
-    item_spacing:ImVec2                                        # Horizontal and vertical spacing between widgets/lines.    # imgui.h:1855
-    item_inner_spacing:ImVec2                                  # Horizontal and vertical spacing between within elements of a composed widget (e.g. a slider and its label).    # imgui.h:1856
-    cell_padding:ImVec2                                        # Padding within a table cell    # imgui.h:1857
-    touch_extra_padding:ImVec2                                 # Expand reactive bounding box for touch-based system where touch position is not accurate enough. Unfortunately we don't sort widgets so priority on overlap will always be given to the first widget. So don't grow this too much!    # imgui.h:1858
-    indent_spacing:float                                       # Horizontal indentation when e.g. entering a tree node. Generally == (FontSize + FramePadding.x*2).    # imgui.h:1859
-    columns_min_spacing:float                                  # Minimum horizontal spacing between two columns. Preferably > (FramePadding.x + 1).    # imgui.h:1860
-    scrollbar_size:float                                       # Width of the vertical scrollbar, Height of the horizontal scrollbar.    # imgui.h:1861
-    scrollbar_rounding:float                                   # Radius of grab corners for scrollbar.    # imgui.h:1862
-    grab_min_size:float                                        # Minimum width/height of a grab box for slider/scrollbar.    # imgui.h:1863
-    grab_rounding:float                                        # Radius of grabs corners rounding. Set to 0.0 to have rectangular slider grabs.    # imgui.h:1864
-    log_slider_deadzone:float                                  # The size in pixels of the dead-zone around zero on logarithmic sliders that cross zero.    # imgui.h:1865
-    tab_rounding:float                                         # Radius of upper corners of a tab. Set to 0.0 to have rectangular tabs.    # imgui.h:1866
-    tab_border_size:float                                      # Thickness of border around tabs.    # imgui.h:1867
-    tab_min_width_for_close_button:float                       # Minimum width for close button to appears on an unselected tab when hovered. Set to 0.0 to always show when hovering, set to FLT_MAX to never show close button unless selected.    # imgui.h:1868
-    color_button_position:ImGuiDir                             # Side of the color button in the ColorEdit4 widget (left/right). Defaults to ImGuiDir_Right.    # imgui.h:1869
-    button_text_align:ImVec2                                   # Alignment of button text when button is larger than text. Defaults to (0.5, 0.5) (centered).    # imgui.h:1870
-    selectable_text_align:ImVec2                               # Alignment of selectable text. Defaults to (0.0, 0.0) (top-left aligned). It's generally important to keep this left-aligned if you want to lay multiple items on a same line.    # imgui.h:1871
-    display_window_padding:ImVec2                              # Window position are clamped to be visible within the display area or monitors by at least this amount. Only applies to regular windows.    # imgui.h:1872
-    display_safe_area_padding:ImVec2                           # If you cannot see the edges of your screen (e.g. on a TV) increase the safe area padding. Apply to popups/tooltips as well regular windows. NB: Prefer configuring your TV sets correctly!    # imgui.h:1873
-    mouse_cursor_scale:float                                   # Scale software rendered mouse cursor (when io.MouseDrawCursor is enabled). May be removed later.    # imgui.h:1874
-    anti_aliased_lines:bool                                    # Enable anti-aliased lines/borders. Disable if you are really tight on CPU/GPU. Latched at the beginning of the frame (copied to ImDrawList).    # imgui.h:1875
-    anti_aliased_lines_use_tex:bool                            # Enable anti-aliased lines/borders using textures where possible. Require backend to render with bilinear filtering (NOT point/nearest filtering). Latched at the beginning of the frame (copied to ImDrawList).    # imgui.h:1876
-    anti_aliased_fill:bool                                     # Enable anti-aliased edges around filled shapes (rounded rectangles, circles, etc.). Disable if you are really tight on CPU/GPU. Latched at the beginning of the frame (copied to ImDrawList).    # imgui.h:1877
-    curve_tessellation_tol:float                               # Tessellation tolerance when using PathBezierCurveTo() without a specific number of segments. Decrease for highly tessellated curves (higher quality, more polygons), increase to reduce quality.    # imgui.h:1878
-    circle_tessellation_max_error:float                        # Maximum error (in pixels) allowed when using AddCircle()/AddCircleFilled() or drawing rounded corner rectangles with no explicit segment count specified. Decrease for higher quality but more geometry.    # imgui.h:1879
+    Alpha:float                                              # Global alpha applies to everything in Dear ImGui.    # imgui.h:1840
+    DisabledAlpha:float                                      # Additional alpha multiplier applied by BeginDisabled(). Multiply over current value of Alpha.    # imgui.h:1841
+    WindowPadding:ImVec2                                     # Padding within a window.    # imgui.h:1842
+    WindowRounding:float                                     # Radius of window corners rounding. Set to 0.0 to have rectangular windows. Large values tend to lead to variety of artifacts and are not recommended.    # imgui.h:1843
+    WindowBorderSize:float                                   # Thickness of border around windows. Generally set to 0.0 or 1.0. (Other values are not well tested and more CPU/GPU costly).    # imgui.h:1844
+    WindowMinSize:ImVec2                                     # Minimum window size. This is a global setting. If you want to constraint individual windows, use SetNextWindowSizeConstraints().    # imgui.h:1845
+    WindowTitleAlign:ImVec2                                  # Alignment for title bar text. Defaults to (0.0,0.5) for left-aligned,vertically centered.    # imgui.h:1846
+    WindowMenuButtonPosition:ImGuiDir                        # Side of the collapsing/docking button in the title bar (None/Left/Right). Defaults to ImGuiDir_Left.    # imgui.h:1847
+    ChildRounding:float                                      # Radius of child window corners rounding. Set to 0.0 to have rectangular windows.    # imgui.h:1848
+    ChildBorderSize:float                                    # Thickness of border around child windows. Generally set to 0.0 or 1.0. (Other values are not well tested and more CPU/GPU costly).    # imgui.h:1849
+    PopupRounding:float                                      # Radius of popup window corners rounding. (Note that tooltip windows use WindowRounding)    # imgui.h:1850
+    PopupBorderSize:float                                    # Thickness of border around popup/tooltip windows. Generally set to 0.0 or 1.0. (Other values are not well tested and more CPU/GPU costly).    # imgui.h:1851
+    FramePadding:ImVec2                                      # Padding within a framed rectangle (used by most widgets).    # imgui.h:1852
+    FrameRounding:float                                      # Radius of frame corners rounding. Set to 0.0 to have rectangular frame (used by most widgets).    # imgui.h:1853
+    FrameBorderSize:float                                    # Thickness of border around frames. Generally set to 0.0 or 1.0. (Other values are not well tested and more CPU/GPU costly).    # imgui.h:1854
+    ItemSpacing:ImVec2                                       # Horizontal and vertical spacing between widgets/lines.    # imgui.h:1855
+    ItemInnerSpacing:ImVec2                                  # Horizontal and vertical spacing between within elements of a composed widget (e.g. a slider and its label).    # imgui.h:1856
+    CellPadding:ImVec2                                       # Padding within a table cell    # imgui.h:1857
+    TouchExtraPadding:ImVec2                                 # Expand reactive bounding box for touch-based system where touch position is not accurate enough. Unfortunately we don't sort widgets so priority on overlap will always be given to the first widget. So don't grow this too much!    # imgui.h:1858
+    IndentSpacing:float                                      # Horizontal indentation when e.g. entering a tree node. Generally == (FontSize + FramePadding.x*2).    # imgui.h:1859
+    ColumnsMinSpacing:float                                  # Minimum horizontal spacing between two columns. Preferably > (FramePadding.x + 1).    # imgui.h:1860
+    ScrollbarSize:float                                      # Width of the vertical scrollbar, Height of the horizontal scrollbar.    # imgui.h:1861
+    ScrollbarRounding:float                                  # Radius of grab corners for scrollbar.    # imgui.h:1862
+    GrabMinSize:float                                        # Minimum width/height of a grab box for slider/scrollbar.    # imgui.h:1863
+    GrabRounding:float                                       # Radius of grabs corners rounding. Set to 0.0 to have rectangular slider grabs.    # imgui.h:1864
+    LogSliderDeadzone:float                                  # The size in pixels of the dead-zone around zero on logarithmic sliders that cross zero.    # imgui.h:1865
+    TabRounding:float                                        # Radius of upper corners of a tab. Set to 0.0 to have rectangular tabs.    # imgui.h:1866
+    TabBorderSize:float                                      # Thickness of border around tabs.    # imgui.h:1867
+    TabMinWidthForCloseButton:float                          # Minimum width for close button to appears on an unselected tab when hovered. Set to 0.0 to always show when hovering, set to FLT_MAX to never show close button unless selected.    # imgui.h:1868
+    ColorButtonPosition:ImGuiDir                             # Side of the color button in the ColorEdit4 widget (left/right). Defaults to ImGuiDir_Right.    # imgui.h:1869
+    ButtonTextAlign:ImVec2                                   # Alignment of button text when button is larger than text. Defaults to (0.5, 0.5) (centered).    # imgui.h:1870
+    SelectableTextAlign:ImVec2                               # Alignment of selectable text. Defaults to (0.0, 0.0) (top-left aligned). It's generally important to keep this left-aligned if you want to lay multiple items on a same line.    # imgui.h:1871
+    DisplayWindowPadding:ImVec2                              # Window position are clamped to be visible within the display area or monitors by at least this amount. Only applies to regular windows.    # imgui.h:1872
+    DisplaySafeAreaPadding:ImVec2                            # If you cannot see the edges of your screen (e.g. on a TV) increase the safe area padding. Apply to popups/tooltips as well regular windows. NB: Prefer configuring your TV sets correctly!    # imgui.h:1873
+    MouseCursorScale:float                                   # Scale software rendered mouse cursor (when io.MouseDrawCursor is enabled). May be removed later.    # imgui.h:1874
+    AntiAliasedLines:bool                                    # Enable anti-aliased lines/borders. Disable if you are really tight on CPU/GPU. Latched at the beginning of the frame (copied to ImDrawList).    # imgui.h:1875
+    AntiAliasedLinesUseTex:bool                              # Enable anti-aliased lines/borders using textures where possible. Require backend to render with bilinear filtering (NOT point/nearest filtering). Latched at the beginning of the frame (copied to ImDrawList).    # imgui.h:1876
+    AntiAliasedFill:bool                                     # Enable anti-aliased edges around filled shapes (rounded rectangles, circles, etc.). Disable if you are really tight on CPU/GPU. Latched at the beginning of the frame (copied to ImDrawList).    # imgui.h:1877
+    CurveTessellationTol:float                               # Tessellation tolerance when using PathBezierCurveTo() without a specific number of segments. Decrease for highly tessellated curves (higher quality, more polygons), increase to reduce quality.    # imgui.h:1878
+    CircleTessellationMaxError:float                         # Maximum error (in pixels) allowed when using AddCircle()/AddCircleFilled() or drawing rounded corner rectangles with no explicit segment count specified. Decrease for higher quality but more geometry.    # imgui.h:1879
 
-    def __init__(self) -> None:                                # imgui.h:1882
+    def __init__(self) -> None:                              # imgui.h:1882
         pass
-    def scale_all_sizes(self, scale_factor: float) -> None:    # imgui.h:1883
+    def ScaleAllSizes(self, scale_factor: float) -> None:    # imgui.h:1883
         pass
 
 #-----------------------------------------------------------------------------
@@ -2539,45 +2539,45 @@ class ImGuiKeyData:    # imgui.h:1895
     """ [Internal] Storage used by IsKeyDown(), IsKeyPressed() etc functions.
      If prior to 1.87 you used io.KeysDownDuration[] (which was marked as internal), you should use GetKeyData(key)->DownDuration and not io.KeysData[key]->DownDuration.
     """
-    down:bool                 # True for if key is down    # imgui.h:1897
-    down_duration:float       # Duration the key has been down (<0.0: not pressed, 0.0: just pressed, >0.0: time held)    # imgui.h:1898
-    down_duration_prev:float  # Last frame duration the key has been down    # imgui.h:1899
-    analog_value:float        # 0.0..1.0 for gamepad values    # imgui.h:1900
+    Down:bool               # True for if key is down    # imgui.h:1897
+    DownDuration:float      # Duration the key has been down (<0.0: not pressed, 0.0: just pressed, >0.0: time held)    # imgui.h:1898
+    DownDurationPrev:float  # Last frame duration the key has been down    # imgui.h:1899
+    AnalogValue:float       # 0.0..1.0 for gamepad values    # imgui.h:1900
 
 class ImGuiIO:    # imgui.h:1903
     #------------------------------------------------------------------
     # Configuration                            // Default value
     #------------------------------------------------------------------
 
-    config_flags:ImGuiConfigFlags                                                                                                            # = 0              // See ImGuiConfigFlags_ enum. Set by user/application. Gamepad/keyboard navigation options, etc.    # imgui.h:1909
-    backend_flags:ImGuiBackendFlags                                                                                                          # = 0              // See ImGuiBackendFlags_ enum. Set by backend (imgui_impl_xxx files or custom backend) to communicate features supported by the backend.    # imgui.h:1910
-    display_size:ImVec2                                                                                                                      # <unset>          // Main display size, in pixels (generally == GetMainViewport()->Size). May change every frame.    # imgui.h:1911
-    delta_time:float                                                                                                                         # = 1.0/60.0     // Time elapsed since last frame, in seconds. May change every frame.    # imgui.h:1912
-    ini_saving_rate:float                                                                                                                    # = 5.0           // Minimum time between saving positions/sizes to .ini file, in seconds.    # imgui.h:1913
-    ini_filename:str                                                                                                                         # = "imgui.ini"    // Path to .ini file (important: default "imgui.ini" is relative to current working dir!). Set None to disable automatic .ini loading/saving or if you want to manually call LoadIniSettingsXXX() / SaveIniSettingsXXX() functions.    # imgui.h:1914
-    log_filename:str                                                                                                                         # = "imgui_log.txt"// Path to .log file (default parameter to ImGui::LogToFile when no file is specified).    # imgui.h:1915
-    mouse_double_click_time:float                                                                                                            # = 0.30          // Time for a double-click, in seconds.    # imgui.h:1916
-    mouse_double_click_max_dist:float                                                                                                        # = 6.0           // Distance threshold to stay in to validate a double-click, in pixels.    # imgui.h:1917
-    mouse_drag_threshold:float                                                                                                               # = 6.0           // Distance threshold before considering we are dragging.    # imgui.h:1918
-    key_repeat_delay:float                                                                                                                   # = 0.250         // When holding a key/button, time before it starts repeating, in seconds (for buttons in Repeat mode, etc.).    # imgui.h:1919
-    key_repeat_rate:float                                                                                                                    # = 0.050         // When holding a key/button, rate at which it repeats, in seconds.    # imgui.h:1920
-    user_data:Any                                                                                                                            # = None           // Store your own data for retrieval by callbacks.    # imgui.h:1921
+    ConfigFlags:ImGuiConfigFlags                                                                                                         # = 0              // See ImGuiConfigFlags_ enum. Set by user/application. Gamepad/keyboard navigation options, etc.    # imgui.h:1909
+    BackendFlags:ImGuiBackendFlags                                                                                                       # = 0              // See ImGuiBackendFlags_ enum. Set by backend (imgui_impl_xxx files or custom backend) to communicate features supported by the backend.    # imgui.h:1910
+    DisplaySize:ImVec2                                                                                                                   # <unset>          // Main display size, in pixels (generally == GetMainViewport()->Size). May change every frame.    # imgui.h:1911
+    DeltaTime:float                                                                                                                      # = 1.0/60.0     // Time elapsed since last frame, in seconds. May change every frame.    # imgui.h:1912
+    IniSavingRate:float                                                                                                                  # = 5.0           // Minimum time between saving positions/sizes to .ini file, in seconds.    # imgui.h:1913
+    IniFilename:str                                                                                                                      # = "imgui.ini"    // Path to .ini file (important: default "imgui.ini" is relative to current working dir!). Set None to disable automatic .ini loading/saving or if you want to manually call LoadIniSettingsXXX() / SaveIniSettingsXXX() functions.    # imgui.h:1914
+    LogFilename:str                                                                                                                      # = "imgui_log.txt"// Path to .log file (default parameter to ImGui::LogToFile when no file is specified).    # imgui.h:1915
+    MouseDoubleClickTime:float                                                                                                           # = 0.30          // Time for a double-click, in seconds.    # imgui.h:1916
+    MouseDoubleClickMaxDist:float                                                                                                        # = 6.0           // Distance threshold to stay in to validate a double-click, in pixels.    # imgui.h:1917
+    MouseDragThreshold:float                                                                                                             # = 6.0           // Distance threshold before considering we are dragging.    # imgui.h:1918
+    KeyRepeatDelay:float                                                                                                                 # = 0.250         // When holding a key/button, time before it starts repeating, in seconds (for buttons in Repeat mode, etc.).    # imgui.h:1919
+    KeyRepeatRate:float                                                                                                                  # = 0.050         // When holding a key/button, rate at which it repeats, in seconds.    # imgui.h:1920
+    UserData:Any                                                                                                                         # = None           // Store your own data for retrieval by callbacks.    # imgui.h:1921
 
-    fonts:ImFontAtlas                                                                                                                        # <auto>           // Font atlas: load, rasterize and pack one or more fonts into a single texture.    # imgui.h:1923
-    font_global_scale:float                                                                                                                  # = 1.0           // Global scale all fonts    # imgui.h:1924
-    font_allow_user_scaling:bool                                                                                                             # = False          // Allow user scaling text of individual window with CTRL+Wheel.    # imgui.h:1925
-    font_default:ImFont                                                                                                                      # = None           // Font to use on NewFrame(). Use None to uses Fonts->Fonts[0].    # imgui.h:1926
-    display_framebuffer_scale:ImVec2                                                                                                         # = (1, 1)         // For retina display or other situations where window coordinates are different from framebuffer coordinates. This generally ends up in ImDrawData::FramebufferScale.    # imgui.h:1927
+    Fonts:ImFontAtlas                                                                                                                    # <auto>           // Font atlas: load, rasterize and pack one or more fonts into a single texture.    # imgui.h:1923
+    FontGlobalScale:float                                                                                                                # = 1.0           // Global scale all fonts    # imgui.h:1924
+    FontAllowUserScaling:bool                                                                                                            # = False          // Allow user scaling text of individual window with CTRL+Wheel.    # imgui.h:1925
+    FontDefault:ImFont                                                                                                                   # = None           // Font to use on NewFrame(). Use None to uses Fonts->Fonts[0].    # imgui.h:1926
+    DisplayFramebufferScale:ImVec2                                                                                                       # = (1, 1)         // For retina display or other situations where window coordinates are different from framebuffer coordinates. This generally ends up in ImDrawData::FramebufferScale.    # imgui.h:1927
 
     # Miscellaneous options
-    mouse_draw_cursor:bool                                                                                                                   # = False          // Request ImGui to draw a mouse cursor for you (if you are on a platform without a mouse cursor). Cannot be easily renamed to 'io.ConfigXXX' because this is frequently used by backend implementations.    # imgui.h:1930
-    config_mac_osx_behaviors:bool                                                                                                            # = defined(__APPLE__) // OS X style: Text editing cursor movement using Alt instead of Ctrl, Shortcuts using Cmd/Super instead of Ctrl, Line/Text Start and End using Cmd+Arrows instead of Home/End, Double click selects by word instead of selecting whole text, Multi-selection in lists uses Cmd/Super instead of Ctrl.    # imgui.h:1931
-    config_input_trickle_event_queue:bool                                                                                                    # = True           // Enable input queue trickling: some types of events submitted during the same frame (e.g. button down + up) will be spread over multiple frames, improving interactions with low framerates.    # imgui.h:1932
-    config_input_text_cursor_blink:bool                                                                                                      # = True           // Enable blinking cursor (optional as some users consider it to be distracting).    # imgui.h:1933
-    config_drag_click_to_input_text:bool                                                                                                     # = False          // [BETA] Enable turning DragXXX widgets into text input with a simple mouse click-release (without moving). Not desirable on devices without a keyboard.    # imgui.h:1934
-    config_windows_resize_from_edges:bool                                                                                                    # = True           // Enable resizing of windows from their edges and from the lower-left corner. This requires (io.BackendFlags & ImGuiBackendFlags_HasMouseCursors) because it needs mouse cursor feedback. (This used to be a per-window ImGuiWindowFlags_ResizeFromAnySide flag)    # imgui.h:1935
-    config_windows_move_from_title_bar_only:bool                                                                                             # = False       // Enable allowing to move windows only when clicking on their title bar. Does not apply to windows without a title bar.    # imgui.h:1936
-    config_memory_compact_timer:float                                                                                                        # = 60.0          // Timer (in seconds) to free transient windows/tables memory buffers when unused. Set to -1.0 to disable.    # imgui.h:1937
+    MouseDrawCursor:bool                                                                                                                 # = False          // Request ImGui to draw a mouse cursor for you (if you are on a platform without a mouse cursor). Cannot be easily renamed to 'io.ConfigXXX' because this is frequently used by backend implementations.    # imgui.h:1930
+    ConfigMacOSXBehaviors:bool                                                                                                           # = defined(__APPLE__) // OS X style: Text editing cursor movement using Alt instead of Ctrl, Shortcuts using Cmd/Super instead of Ctrl, Line/Text Start and End using Cmd+Arrows instead of Home/End, Double click selects by word instead of selecting whole text, Multi-selection in lists uses Cmd/Super instead of Ctrl.    # imgui.h:1931
+    ConfigInputTrickleEventQueue:bool                                                                                                    # = True           // Enable input queue trickling: some types of events submitted during the same frame (e.g. button down + up) will be spread over multiple frames, improving interactions with low framerates.    # imgui.h:1932
+    ConfigInputTextCursorBlink:bool                                                                                                      # = True           // Enable blinking cursor (optional as some users consider it to be distracting).    # imgui.h:1933
+    ConfigDragClickToInputText:bool                                                                                                      # = False          // [BETA] Enable turning DragXXX widgets into text input with a simple mouse click-release (without moving). Not desirable on devices without a keyboard.    # imgui.h:1934
+    ConfigWindowsResizeFromEdges:bool                                                                                                    # = True           // Enable resizing of windows from their edges and from the lower-left corner. This requires (io.BackendFlags & ImGuiBackendFlags_HasMouseCursors) because it needs mouse cursor feedback. (This used to be a per-window ImGuiWindowFlags_ResizeFromAnySide flag)    # imgui.h:1935
+    ConfigWindowsMoveFromTitleBarOnly:bool                                                                                               # = False       // Enable allowing to move windows only when clicking on their title bar. Does not apply to windows without a title bar.    # imgui.h:1936
+    ConfigMemoryCompactTimer:float                                                                                                       # = 60.0          // Timer (in seconds) to free transient windows/tables memory buffers when unused. Set to -1.0 to disable.    # imgui.h:1937
 
     #------------------------------------------------------------------
     # Platform Functions
@@ -2585,15 +2585,15 @@ class ImGuiIO:    # imgui.h:1903
     #------------------------------------------------------------------
 
     # Optional: Platform/Renderer backend name (informational only! will be displayed in About Window) + User data for backend/wrappers to store their own stuff.
-    backend_platform_name:str                                                                                                                # = None    # imgui.h:1945
-    backend_renderer_name:str                                                                                                                # = None    # imgui.h:1946
-    backend_platform_user_data:Any                                                                                                           # = None           // User data for platform backend    # imgui.h:1947
-    backend_renderer_user_data:Any                                                                                                           # = None           // User data for renderer backend    # imgui.h:1948
-    backend_language_user_data:Any                                                                                                           # = None           // User data for non C++ programming language backend    # imgui.h:1949
+    BackendPlatformName:str                                                                                                              # = None    # imgui.h:1945
+    BackendRendererName:str                                                                                                              # = None    # imgui.h:1946
+    BackendPlatformUserData:Any                                                                                                          # = None           // User data for platform backend    # imgui.h:1947
+    BackendRendererUserData:Any                                                                                                          # = None           // User data for renderer backend    # imgui.h:1948
+    BackendLanguageUserData:Any                                                                                                          # = None           // User data for non C++ programming language backend    # imgui.h:1949
 
     # Optional: Access OS clipboard
     # (default to use native Win32 clipboard on Windows, otherwise uses a private clipboard. Override to access OS clipboard on other architectures)
-    clipboard_user_data:Any                                                                                                                  # imgui.h:1955
+    ClipboardUserData:Any                                                                                                                # imgui.h:1955
 
 
     #------------------------------------------------------------------
@@ -2601,44 +2601,44 @@ class ImGuiIO:    # imgui.h:1903
     #------------------------------------------------------------------
 
     # Input Functions
-    def add_key_event(self, key: ImGuiKey, down: bool) -> None:                                                                              # imgui.h:1971
+    def AddKeyEvent(self, key: ImGuiKey, down: bool) -> None:                                                                            # imgui.h:1971
         """ Queue a new key down/up event. Key should be "translated" (as in, generally ImGuiKey_A matches the key end-user would use to emit an 'A' character)"""
         pass
-    def add_key_analog_event(self, key: ImGuiKey, down: bool, v: float) -> None:                                                             # imgui.h:1972
+    def AddKeyAnalogEvent(self, key: ImGuiKey, down: bool, v: float) -> None:                                                            # imgui.h:1972
         """ Queue a new key down/up event for analog values (e.g. ImGuiKey_Gamepad_ values). Dead-zones should be handled by the backend."""
         pass
-    def add_mouse_pos_event(self, x: float, y: float) -> None:                                                                               # imgui.h:1973
+    def AddMousePosEvent(self, x: float, y: float) -> None:                                                                              # imgui.h:1973
         """ Queue a mouse position update. Use -FLT_MAX,-FLT_MAX to signify no mouse (e.g. app not focused and not hovered)"""
         pass
-    def add_mouse_button_event(self, button: int, down: bool) -> None:                                                                       # imgui.h:1974
+    def AddMouseButtonEvent(self, button: int, down: bool) -> None:                                                                      # imgui.h:1974
         """ Queue a mouse button change"""
         pass
-    def add_mouse_wheel_event(self, wh_x: float, wh_y: float) -> None:                                                                       # imgui.h:1975
+    def AddMouseWheelEvent(self, wh_x: float, wh_y: float) -> None:                                                                      # imgui.h:1975
         """ Queue a mouse wheel update"""
         pass
-    def add_focus_event(self, focused: bool) -> None:                                                                                        # imgui.h:1976
+    def AddFocusEvent(self, focused: bool) -> None:                                                                                      # imgui.h:1976
         """ Queue a gain/loss of focus for the application (generally based on OS/platform focus of your window)"""
         pass
-    def add_input_character(self, c: int) -> None:                                                                                           # imgui.h:1977
+    def AddInputCharacter(self, c: int) -> None:                                                                                         # imgui.h:1977
         """ Queue a new character input"""
         pass
-    def add_input_character_utf16(self, c: ImWchar16) -> None:                                                                               # imgui.h:1978
+    def AddInputCharacterUTF16(self, c: ImWchar16) -> None:                                                                              # imgui.h:1978
         """ Queue a new character input from an UTF-16 character, it can be a surrogate"""
         pass
-    def add_input_characters_utf8(self, str: str) -> None:                                                                                   # imgui.h:1979
+    def AddInputCharactersUTF8(self, str: str) -> None:                                                                                  # imgui.h:1979
         """ Queue a new characters input from an UTF-8 string"""
         pass
 
-    def set_key_event_native_data(self, key: ImGuiKey, native_keycode: int, native_scancode: int, native_legacy_index: int = -1) -> None:    # imgui.h:1981
+    def SetKeyEventNativeData(self, key: ImGuiKey, native_keycode: int, native_scancode: int, native_legacy_index: int = -1) -> None:    # imgui.h:1981
         """ [Optional] Specify index for legacy <1.87 IsKeyXXX() functions with native indices + specify native keycode, scancode."""
         pass
-    def set_app_accepting_events(self, accepting_events: bool) -> None:                                                                      # imgui.h:1982
+    def SetAppAcceptingEvents(self, accepting_events: bool) -> None:                                                                     # imgui.h:1982
         """ Set master flag for accepting key/mouse/text events (default to True). Useful if you have native dialog boxes that are interrupting your application loop/refresh, and you want to disable events being queued while your app is frozen."""
         pass
-    def clear_input_characters(self) -> None:                                                                                                # imgui.h:1983
+    def ClearInputCharacters(self) -> None:                                                                                              # imgui.h:1983
         """ [Internal] Clear the text input buffer manually"""
         pass
-    def clear_input_keys(self) -> None:                                                                                                      # imgui.h:1984
+    def ClearInputKeys(self) -> None:                                                                                                    # imgui.h:1984
         """ [Internal] Release all keys"""
         pass
 
@@ -2648,20 +2648,20 @@ class ImGuiIO:    # imgui.h:1903
     #  generally easier and more correct to use their state BEFORE calling NewFrame(). See FAQ for details!)
     #------------------------------------------------------------------
 
-    want_capture_mouse:bool                                                                                                                  # Set when Dear ImGui will use mouse inputs, in this case do not dispatch them to your main game/application (either way, always pass on mouse inputs to imgui). (e.g. unclicked mouse is hovering over an imgui window, widget is active, mouse was clicked over an imgui window, etc.).    # imgui.h:1992
-    want_capture_keyboard:bool                                                                                                               # Set when Dear ImGui will use keyboard inputs, in this case do not dispatch them to your main game/application (either way, always pass keyboard inputs to imgui). (e.g. InputText active, or an imgui window is focused and navigation is enabled, etc.).    # imgui.h:1993
-    want_text_input:bool                                                                                                                     # Mobile/console: when set, you may display an on-screen keyboard. This is set by Dear ImGui when it wants textual keyboard input to happen (e.g. when a InputText widget is active).    # imgui.h:1994
-    want_set_mouse_pos:bool                                                                                                                  # MousePos has been altered, backend should reposition mouse on next frame. Rarely used! Set only when ImGuiConfigFlags_NavEnableSetMousePos flag is enabled.    # imgui.h:1995
-    want_save_ini_settings:bool                                                                                                              # When manual .ini load/save is active (io.IniFilename == None), this will be set to notify your application that you can call SaveIniSettingsToMemory() and save yourself. Important: clear io.WantSaveIniSettings yourself after saving!    # imgui.h:1996
-    nav_active:bool                                                                                                                          # Keyboard/Gamepad navigation is currently allowed (will handle ImGuiKey_NavXXX events) = a window is focused and it doesn't use the ImGuiWindowFlags_NoNavInputs flag.    # imgui.h:1997
-    nav_visible:bool                                                                                                                         # Keyboard/Gamepad navigation is visible and allowed (will handle ImGuiKey_NavXXX events).    # imgui.h:1998
-    framerate:float                                                                                                                          # Rough estimate of application framerate, in frame per second. Solely for convenience. Rolling average estimation based on io.DeltaTime over 120 frames.    # imgui.h:1999
-    metrics_render_vertices:int                                                                                                              # Vertices output during last call to Render()    # imgui.h:2000
-    metrics_render_indices:int                                                                                                               # Indices output during last call to Render() = number of triangles * 3    # imgui.h:2001
-    metrics_render_windows:int                                                                                                               # Number of visible windows    # imgui.h:2002
-    metrics_active_windows:int                                                                                                               # Number of active windows    # imgui.h:2003
-    metrics_active_allocations:int                                                                                                           # Number of active allocations, updated by MemAlloc/MemFree based on current context. May be off if you have multiple imgui contexts.    # imgui.h:2004
-    mouse_delta:ImVec2                                                                                                                       # imgui.h:2005
+    WantCaptureMouse:bool                                                                                                                # Set when Dear ImGui will use mouse inputs, in this case do not dispatch them to your main game/application (either way, always pass on mouse inputs to imgui). (e.g. unclicked mouse is hovering over an imgui window, widget is active, mouse was clicked over an imgui window, etc.).    # imgui.h:1992
+    WantCaptureKeyboard:bool                                                                                                             # Set when Dear ImGui will use keyboard inputs, in this case do not dispatch them to your main game/application (either way, always pass keyboard inputs to imgui). (e.g. InputText active, or an imgui window is focused and navigation is enabled, etc.).    # imgui.h:1993
+    WantTextInput:bool                                                                                                                   # Mobile/console: when set, you may display an on-screen keyboard. This is set by Dear ImGui when it wants textual keyboard input to happen (e.g. when a InputText widget is active).    # imgui.h:1994
+    WantSetMousePos:bool                                                                                                                 # MousePos has been altered, backend should reposition mouse on next frame. Rarely used! Set only when ImGuiConfigFlags_NavEnableSetMousePos flag is enabled.    # imgui.h:1995
+    WantSaveIniSettings:bool                                                                                                             # When manual .ini load/save is active (io.IniFilename == None), this will be set to notify your application that you can call SaveIniSettingsToMemory() and save yourself. Important: clear io.WantSaveIniSettings yourself after saving!    # imgui.h:1996
+    NavActive:bool                                                                                                                       # Keyboard/Gamepad navigation is currently allowed (will handle ImGuiKey_NavXXX events) = a window is focused and it doesn't use the ImGuiWindowFlags_NoNavInputs flag.    # imgui.h:1997
+    NavVisible:bool                                                                                                                      # Keyboard/Gamepad navigation is visible and allowed (will handle ImGuiKey_NavXXX events).    # imgui.h:1998
+    Framerate:float                                                                                                                      # Rough estimate of application framerate, in frame per second. Solely for convenience. Rolling average estimation based on io.DeltaTime over 120 frames.    # imgui.h:1999
+    MetricsRenderVertices:int                                                                                                            # Vertices output during last call to Render()    # imgui.h:2000
+    MetricsRenderIndices:int                                                                                                             # Indices output during last call to Render() = number of triangles * 3    # imgui.h:2001
+    MetricsRenderWindows:int                                                                                                             # Number of visible windows    # imgui.h:2002
+    MetricsActiveWindows:int                                                                                                             # Number of active windows    # imgui.h:2003
+    MetricsActiveAllocations:int                                                                                                         # Number of active allocations, updated by MemAlloc/MemFree based on current context. May be off if you have multiple imgui contexts.    # imgui.h:2004
+    MouseDelta:ImVec2                                                                                                                    # imgui.h:2005
     # Mouse delta. Note that this is zero if either current or previous position are invalid (-FLT_MAX,-FLT_MAX), so a disappearing/reappearing mouse won't have a huge delta.
 
     # Legacy: before 1.87, we required backend to fill io.KeyMap[] (imgui->native map) during initialization and io.KeysDown[] (native indices) every frame.
@@ -2674,39 +2674,39 @@ class ImGuiIO:    # imgui.h:1903
     # Main Input State
     # (this block used to be written by backend, since 1.87 it is best to NOT write to those directly, call the AddXXX functions above instead)
     # (reading from those variables is fair game, as they are extremely unlikely to be moving anywhere)
-    mouse_pos:ImVec2                                                                                                                         # Mouse position, in pixels. Set to ImVec2(-FLT_MAX, -FLT_MAX) if mouse is unavailable (on another screen, etc.)    # imgui.h:2021
-    mouse_down:np.ndarray                                                                                                                    # ndarray[type=bool, size=5]  # Mouse buttons: 0=left, 1=right, 2=middle + extras (ImGuiMouseButton_COUNT == 5). Dear ImGui mostly uses left and right buttons. Others buttons allows us to track if the mouse is being used by your application + available to user as a convenience via IsMouse** API.    # imgui.h:2022
-    mouse_wheel:float                                                                                                                        # Mouse wheel Vertical: 1 unit scrolls about 5 lines text.    # imgui.h:2023
-    mouse_wheel_h:float                                                                                                                      # Mouse wheel Horizontal. Most users don't have a mouse with an horizontal wheel, may not be filled by all backends.    # imgui.h:2024
-    key_ctrl:bool                                                                                                                            # Keyboard modifier down: Control    # imgui.h:2025
-    key_shift:bool                                                                                                                           # Keyboard modifier down: Shift    # imgui.h:2026
-    key_alt:bool                                                                                                                             # Keyboard modifier down: Alt    # imgui.h:2027
-    key_super:bool                                                                                                                           # Keyboard modifier down: Cmd/Super/Windows    # imgui.h:2028
+    MousePos:ImVec2                                                                                                                      # Mouse position, in pixels. Set to ImVec2(-FLT_MAX, -FLT_MAX) if mouse is unavailable (on another screen, etc.)    # imgui.h:2021
+    MouseDown:np.ndarray                                                                                                                 # ndarray[type=bool, size=5]  # Mouse buttons: 0=left, 1=right, 2=middle + extras (ImGuiMouseButton_COUNT == 5). Dear ImGui mostly uses left and right buttons. Others buttons allows us to track if the mouse is being used by your application + available to user as a convenience via IsMouse** API.    # imgui.h:2022
+    MouseWheel:float                                                                                                                     # Mouse wheel Vertical: 1 unit scrolls about 5 lines text.    # imgui.h:2023
+    MouseWheelH:float                                                                                                                    # Mouse wheel Horizontal. Most users don't have a mouse with an horizontal wheel, may not be filled by all backends.    # imgui.h:2024
+    KeyCtrl:bool                                                                                                                         # Keyboard modifier down: Control    # imgui.h:2025
+    KeyShift:bool                                                                                                                        # Keyboard modifier down: Shift    # imgui.h:2026
+    KeyAlt:bool                                                                                                                          # Keyboard modifier down: Alt    # imgui.h:2027
+    KeySuper:bool                                                                                                                        # Keyboard modifier down: Cmd/Super/Windows    # imgui.h:2028
 
     # Other state maintained from data above + IO function calls
-    key_mods:ImGuiModFlags                                                                                                                   # Key mods flags (same as io.KeyCtrl/KeyShift/KeyAlt/KeySuper but merged into flags), updated by NewFrame()    # imgui.h:2032
-    want_capture_mouse_unless_popup_close:bool                                                                                               # Alternative to WantCaptureMouse: (WantCaptureMouse == True && WantCaptureMouseUnlessPopupClose == False) when a click over None is expected to close a popup.    # imgui.h:2034
-    mouse_pos_prev:ImVec2                                                                                                                    # Previous mouse position (note that MouseDelta is not necessary == MousePos-MousePosPrev, in case either position is invalid)    # imgui.h:2035
-    mouse_clicked_time:np.ndarray                                                                                                            # ndarray[type=double, size=5]  # Time of last click (used to figure out double-click)    # imgui.h:2037
-    mouse_clicked:np.ndarray                                                                                                                 # ndarray[type=bool, size=5]  # Mouse button went from !Down to Down (same as MouseClickedCount[x] != 0)    # imgui.h:2038
-    mouse_double_clicked:np.ndarray                                                                                                          # ndarray[type=bool, size=5]  # Has mouse button been double-clicked? (same as MouseClickedCount[x] == 2)    # imgui.h:2039
-    mouse_clicked_count:np.ndarray                                                                                                           # ndarray[type=ImU16, size=5]  # == 0 (not clicked), == 1 (same as MouseClicked[]), == 2 (double-clicked), == 3 (triple-clicked) etc. when going from !Down to Down    # imgui.h:2040
-    mouse_clicked_last_count:np.ndarray                                                                                                      # ndarray[type=ImU16, size=5]  # Count successive number of clicks. Stays valid after mouse release. Reset after another click is done.    # imgui.h:2041
-    mouse_released:np.ndarray                                                                                                                # ndarray[type=bool, size=5]  # Mouse button went from Down to !Down    # imgui.h:2042
-    mouse_down_owned:np.ndarray                                                                                                              # ndarray[type=bool, size=5]  # Track if button was clicked inside a dear imgui window or over None blocked by a popup. We don't request mouse capture from the application if click started outside ImGui bounds.    # imgui.h:2043
-    mouse_down_owned_unless_popup_close:np.ndarray                                                                                           # ndarray[type=bool, size=5]  # Track if button was clicked inside a dear imgui window.    # imgui.h:2044
-    mouse_down_duration:np.ndarray                                                                                                           # ndarray[type=float, size=5]  # Duration the mouse button has been down (0.0 == just clicked)    # imgui.h:2045
-    mouse_down_duration_prev:np.ndarray                                                                                                      # ndarray[type=float, size=5]  # Previous time the mouse button has been down    # imgui.h:2046
-    mouse_drag_max_distance_sqr:np.ndarray                                                                                                   # ndarray[type=float, size=5]  # Squared maximum distance of how much mouse has traveled from the clicking point (used for moving thresholds)    # imgui.h:2047
-    pen_pressure:float                                                                                                                       # Touch/Pen pressure (0.0 to 1.0, should be >0.0 only when MouseDown[0] == True). Helper storage currently unused by Dear ImGui.    # imgui.h:2050
-    app_focus_lost:bool                                                                                                                      # Only modify via AddFocusEvent()    # imgui.h:2051
-    app_accepting_events:bool                                                                                                                # Only modify via SetAppAcceptingEvents()    # imgui.h:2052
-    backend_using_legacy_key_arrays:ImS8                                                                                                     # -1: unknown, 0: using AddKeyEvent(), 1: using legacy io.KeysDown[]    # imgui.h:2053
-    backend_using_legacy_nav_input_array:bool                                                                                                # 0: using AddKeyAnalogEvent(), 1: writing to legacy io.NavInputs[] directly    # imgui.h:2054
-    input_queue_surrogate:ImWchar16                                                                                                          # For AddInputCharacterUTF16()    # imgui.h:2055
-    input_queue_characters:List[ImWchar]                                                                                                     # Queue of _characters_ input (obtained by platform backend). Fill using AddInputCharacter() helper.    # imgui.h:2056
+    KeyMods:ImGuiModFlags                                                                                                                # Key mods flags (same as io.KeyCtrl/KeyShift/KeyAlt/KeySuper but merged into flags), updated by NewFrame()    # imgui.h:2032
+    WantCaptureMouseUnlessPopupClose:bool                                                                                                # Alternative to WantCaptureMouse: (WantCaptureMouse == True && WantCaptureMouseUnlessPopupClose == False) when a click over None is expected to close a popup.    # imgui.h:2034
+    MousePosPrev:ImVec2                                                                                                                  # Previous mouse position (note that MouseDelta is not necessary == MousePos-MousePosPrev, in case either position is invalid)    # imgui.h:2035
+    MouseClickedTime:np.ndarray                                                                                                          # ndarray[type=double, size=5]  # Time of last click (used to figure out double-click)    # imgui.h:2037
+    MouseClicked:np.ndarray                                                                                                              # ndarray[type=bool, size=5]  # Mouse button went from !Down to Down (same as MouseClickedCount[x] != 0)    # imgui.h:2038
+    MouseDoubleClicked:np.ndarray                                                                                                        # ndarray[type=bool, size=5]  # Has mouse button been double-clicked? (same as MouseClickedCount[x] == 2)    # imgui.h:2039
+    MouseClickedCount:np.ndarray                                                                                                         # ndarray[type=ImU16, size=5]  # == 0 (not clicked), == 1 (same as MouseClicked[]), == 2 (double-clicked), == 3 (triple-clicked) etc. when going from !Down to Down    # imgui.h:2040
+    MouseClickedLastCount:np.ndarray                                                                                                     # ndarray[type=ImU16, size=5]  # Count successive number of clicks. Stays valid after mouse release. Reset after another click is done.    # imgui.h:2041
+    MouseReleased:np.ndarray                                                                                                             # ndarray[type=bool, size=5]  # Mouse button went from Down to !Down    # imgui.h:2042
+    MouseDownOwned:np.ndarray                                                                                                            # ndarray[type=bool, size=5]  # Track if button was clicked inside a dear imgui window or over None blocked by a popup. We don't request mouse capture from the application if click started outside ImGui bounds.    # imgui.h:2043
+    MouseDownOwnedUnlessPopupClose:np.ndarray                                                                                            # ndarray[type=bool, size=5]  # Track if button was clicked inside a dear imgui window.    # imgui.h:2044
+    MouseDownDuration:np.ndarray                                                                                                         # ndarray[type=float, size=5]  # Duration the mouse button has been down (0.0 == just clicked)    # imgui.h:2045
+    MouseDownDurationPrev:np.ndarray                                                                                                     # ndarray[type=float, size=5]  # Previous time the mouse button has been down    # imgui.h:2046
+    MouseDragMaxDistanceSqr:np.ndarray                                                                                                   # ndarray[type=float, size=5]  # Squared maximum distance of how much mouse has traveled from the clicking point (used for moving thresholds)    # imgui.h:2047
+    PenPressure:float                                                                                                                    # Touch/Pen pressure (0.0 to 1.0, should be >0.0 only when MouseDown[0] == True). Helper storage currently unused by Dear ImGui.    # imgui.h:2050
+    AppFocusLost:bool                                                                                                                    # Only modify via AddFocusEvent()    # imgui.h:2051
+    AppAcceptingEvents:bool                                                                                                              # Only modify via SetAppAcceptingEvents()    # imgui.h:2052
+    BackendUsingLegacyKeyArrays:ImS8                                                                                                     # -1: unknown, 0: using AddKeyEvent(), 1: using legacy io.KeysDown[]    # imgui.h:2053
+    BackendUsingLegacyNavInputArray:bool                                                                                                 # 0: using AddKeyAnalogEvent(), 1: writing to legacy io.NavInputs[] directly    # imgui.h:2054
+    InputQueueSurrogate:ImWchar16                                                                                                        # For AddInputCharacterUTF16()    # imgui.h:2055
+    InputQueueCharacters:List[ImWchar]                                                                                                   # Queue of _characters_ input (obtained by platform backend). Fill using AddInputCharacter() helper.    # imgui.h:2056
 
-    def __init__(self) -> None:                                                                                                              # imgui.h:2058
+    def __init__(self) -> None:                                                                                                          # imgui.h:2058
         pass
 
 #-----------------------------------------------------------------------------
@@ -2724,61 +2724,61 @@ class ImGuiInputTextCallbackData:    # imgui.h:2074
      - ImGuiInputTextFlags_CallbackCharFilter:  Callback on character inputs to replace or discard them. Modify 'EventChar' to replace or discard, or return 1 in callback to discard.
      - ImGuiInputTextFlags_CallbackResize:      Callback on buffer capacity changes request (beyond 'buf_size' parameter value), allowing the string to grow.
     """
-    event_flag:ImGuiInputTextFlags                                                # One ImGuiInputTextFlags_Callback*    // Read-only    # imgui.h:2076
-    flags:ImGuiInputTextFlags                                                     # What user passed to InputText()      // Read-only    # imgui.h:2077
-    user_data:Any                                                                 # What user passed to InputText()      // Read-only    # imgui.h:2078
+    EventFlag:ImGuiInputTextFlags                                                # One ImGuiInputTextFlags_Callback*    // Read-only    # imgui.h:2076
+    Flags:ImGuiInputTextFlags                                                    # What user passed to InputText()      // Read-only    # imgui.h:2077
+    UserData:Any                                                                 # What user passed to InputText()      // Read-only    # imgui.h:2078
 
     # Arguments for the different callback events
     # - To modify the text buffer in a callback, prefer using the InsertChars() / DeleteChars() function. InsertChars() will take care of calling the resize callback if necessary.
     # - If you know your edits are not going to resize the underlying buffer allocation, you may modify the contents of 'Buf[]' directly. You need to update 'BufTextLen' accordingly (0 <= BufTextLen < BufSize) and set 'BufDirty'' to True so InputText can update its internal state.
-    event_char:ImWchar                                                            # Character input                      // Read-write   // [CharFilter] Replace character with another one, or set to zero to drop. return 1 is equivalent to setting EventChar=0;    # imgui.h:2083
-    event_key:ImGuiKey                                                            # Key pressed (Up/Down/TAB)            // Read-only    // [Completion,History]    # imgui.h:2084
-    buf_text_len:int                                                              # Text length (in bytes)               // Read-write   // [Resize,Completion,History,Always] Exclude zero-terminator storage. In C land: == strlen(some_text), in C++ land: string.length()    # imgui.h:2086
-    buf_size:int                                                                  # Buffer size (in bytes) = capacity+1  // Read-only    // [Resize,Completion,History,Always] Include zero-terminator storage. In C land == ARRAYSIZE(my_char_array), in C++ land: string.capacity()+1    # imgui.h:2087
-    buf_dirty:bool                                                                # Set if you modify Buf/BufTextLen!    // Write        // [Completion,History,Always]    # imgui.h:2088
-    cursor_pos:int                                                                #                                      // Read-write   // [Completion,History,Always]    # imgui.h:2089
-    selection_start:int                                                           #                                      // Read-write   // [Completion,History,Always] == to SelectionEnd when no selection)    # imgui.h:2090
-    selection_end:int                                                             #                                      // Read-write   // [Completion,History,Always]    # imgui.h:2091
+    EventChar:ImWchar                                                            # Character input                      // Read-write   // [CharFilter] Replace character with another one, or set to zero to drop. return 1 is equivalent to setting EventChar=0;    # imgui.h:2083
+    EventKey:ImGuiKey                                                            # Key pressed (Up/Down/TAB)            // Read-only    // [Completion,History]    # imgui.h:2084
+    BufTextLen:int                                                               # Text length (in bytes)               // Read-write   // [Resize,Completion,History,Always] Exclude zero-terminator storage. In C land: == strlen(some_text), in C++ land: string.length()    # imgui.h:2086
+    BufSize:int                                                                  # Buffer size (in bytes) = capacity+1  // Read-only    // [Resize,Completion,History,Always] Include zero-terminator storage. In C land == ARRAYSIZE(my_char_array), in C++ land: string.capacity()+1    # imgui.h:2087
+    BufDirty:bool                                                                # Set if you modify Buf/BufTextLen!    // Write        // [Completion,History,Always]    # imgui.h:2088
+    CursorPos:int                                                                #                                      // Read-write   // [Completion,History,Always]    # imgui.h:2089
+    SelectionStart:int                                                           #                                      // Read-write   // [Completion,History,Always] == to SelectionEnd when no selection)    # imgui.h:2090
+    SelectionEnd:int                                                             #                                      // Read-write   // [Completion,History,Always]    # imgui.h:2091
 
     # Helper functions for text manipulation.
     # Use those function to benefit from the CallbackResize behaviors. Calling those function reset the selection.
-    def __init__(self) -> None:                                                   # imgui.h:2095
+    def __init__(self) -> None:                                                  # imgui.h:2095
         pass
-    def delete_chars(self, pos: int, bytes_count: int) -> None:                   # imgui.h:2096
+    def DeleteChars(self, pos: int, bytes_count: int) -> None:                   # imgui.h:2096
         pass
-    def insert_chars(self, pos: int, text: str, text_end: str = None) -> None:    # imgui.h:2097
+    def InsertChars(self, pos: int, text: str, text_end: str = None) -> None:    # imgui.h:2097
         pass
 
 class ImGuiSizeCallbackData:    # imgui.h:2105
     """ Resizing callback data to apply custom constraint. As enabled by SetNextWindowSizeConstraints(). Callback is called during the next Begin().
      NB: For basic min/max size constraint on each axis you don't need to use the callback! The SetNextWindowSizeConstraints() parameters are enough.
     """
-    user_data:Any        # Read-only.   What user passed to SetNextWindowSizeConstraints()    # imgui.h:2107
-    pos:ImVec2           # Read-only.   Window position, for reference.    # imgui.h:2108
-    current_size:ImVec2  # Read-only.   Current window size.    # imgui.h:2109
-    desired_size:ImVec2  # Read-write.  Desired size, based on user's mouse position. Write to this field to restrain resizing.    # imgui.h:2110
+    UserData:Any        # Read-only.   What user passed to SetNextWindowSizeConstraints()    # imgui.h:2107
+    Pos:ImVec2          # Read-only.   Window position, for reference.    # imgui.h:2108
+    CurrentSize:ImVec2  # Read-only.   Current window size.    # imgui.h:2109
+    DesiredSize:ImVec2  # Read-write.  Desired size, based on user's mouse position. Write to this field to restrain resizing.    # imgui.h:2110
 
 class ImGuiPayload:    # imgui.h:2114
     """ Data payload for Drag and Drop operations: AcceptDragDropPayload(), GetDragDropPayload()"""
     # Members
-    data:Any                       # Data (copied and owned by dear imgui)    # imgui.h:2117
-    data_size:int                  # Data size    # imgui.h:2118
+    Data:Any                       # Data (copied and owned by dear imgui)    # imgui.h:2117
+    DataSize:int                   # Data size    # imgui.h:2118
 
     # [Internal]
-    source_id:ImGuiID              # Source item id    # imgui.h:2121
-    source_parent_id:ImGuiID       # Source parent id (if available)    # imgui.h:2122
-    data_frame_count:int           # Data timestamp    # imgui.h:2123
-    preview:bool                   # Set when AcceptDragDropPayload() was called and mouse has been hovering the target item (nb: handle overlapping drag targets)    # imgui.h:2125
-    delivery:bool                  # Set when AcceptDragDropPayload() was called and mouse button is released over the target item.    # imgui.h:2126
+    SourceId:ImGuiID               # Source item id    # imgui.h:2121
+    SourceParentId:ImGuiID         # Source parent id (if available)    # imgui.h:2122
+    DataFrameCount:int             # Data timestamp    # imgui.h:2123
+    Preview:bool                   # Set when AcceptDragDropPayload() was called and mouse has been hovering the target item (nb: handle overlapping drag targets)    # imgui.h:2125
+    Delivery:bool                  # Set when AcceptDragDropPayload() was called and mouse button is released over the target item.    # imgui.h:2126
 
     def __init__(self) -> None:    # imgui.h:2128
         pass
 
 class ImGuiTableColumnSortSpecs:    # imgui.h:2136
     """ Sorting specification for one column of a table (sizeof == 12 bytes)"""
-    column_user_id:ImGuiID         # User id of the column (if specified by a TableSetupColumn() call)    # imgui.h:2138
-    column_index:ImS16             # Index of the column    # imgui.h:2139
-    sort_order:ImS16               # Index within parent ImGuiTableSortSpecs (always stored in order starting from 0, tables sorted on a single criteria will always have a 0 here)    # imgui.h:2140
+    ColumnUserID:ImGuiID           # User id of the column (if specified by a TableSetupColumn() call)    # imgui.h:2138
+    ColumnIndex:ImS16              # Index of the column    # imgui.h:2139
+    SortOrder:ImS16                # Index within parent ImGuiTableSortSpecs (always stored in order starting from 0, tables sorted on a single criteria will always have a 0 here)    # imgui.h:2140
 
     def __init__(self) -> None:    # imgui.h:2143
         pass
@@ -2789,9 +2789,9 @@ class ImGuiTableSortSpecs:    # imgui.h:2150
      When 'SpecsDirty == True' you can sort your data. It will be True with sorting specs have changed since last call, or the first time.
      Make sure to set 'SpecsDirty = False' after sorting, else you may wastefully sort your data every frame!
     """
-    specs:ImGuiTableColumnSortSpecs  # Pointer to sort spec array.    # imgui.h:2152
-    specs_count:int                  # Sort spec count. Most often 1. May be > 1 when ImGuiTableFlags_SortMulti is enabled. May be == 0 when ImGuiTableFlags_SortTristate is enabled.    # imgui.h:2153
-    specs_dirty:bool                 # Set to True when specs have changed since last time! Use this to sort again, then clear the flag.    # imgui.h:2154
+    Specs:ImGuiTableColumnSortSpecs  # Pointer to sort spec array.    # imgui.h:2152
+    SpecsCount:int                   # Sort spec count. Most often 1. May be > 1 when ImGuiTableFlags_SortMulti is enabled. May be == 0 when ImGuiTableFlags_SortTristate is enabled.    # imgui.h:2153
+    SpecsDirty:bool                  # Set to True when specs have changed since last time! Use this to sort again, then clear the flag.    # imgui.h:2154
 
     def __init__(self) -> None:      # imgui.h:2156
         pass
@@ -2808,22 +2808,22 @@ class ImGuiOnceUponAFrame:    # imgui.h:2173
     """
     def __init__(self) -> None:    # imgui.h:2175
         pass
-    ref_frame:int                  # imgui.h:2176
+    RefFrame:int                   # imgui.h:2176
 
 class ImGuiTextFilter:    # imgui.h:2181
     """ Helper: Parse and apply text filters. In format "aaaaa[,bbbb][,ccccc]" """
     def __init__(self, default_filter: str = "") -> None:                            # imgui.h:2183
         pass
-    def draw(self, label: str = "Filter (inc,-exc)", width: float = 0.0) -> bool:    # imgui.h:2184
+    def Draw(self, label: str = "Filter (inc,-exc)", width: float = 0.0) -> bool:    # imgui.h:2184
         """ Helper calling InputText+Build"""
         pass
-    def pass_filter(self, text: str, text_end: str = None) -> bool:                  # imgui.h:2185
+    def PassFilter(self, text: str, text_end: str = None) -> bool:                   # imgui.h:2185
         pass
-    def build(self) -> None:                                                         # imgui.h:2186
+    def Build(self) -> None:                                                         # imgui.h:2186
         pass
 
-    filters:List[ImGuiTextRange]                                                     # imgui.h:2202
-    count_grep:int                                                                   # imgui.h:2203
+    Filters:List[ImGuiTextRange]                                                     # imgui.h:2202
+    CountGrep:int                                                                    # imgui.h:2203
 
 
 class ImGuiStorage:    # imgui.h:2235
@@ -2837,44 +2837,44 @@ class ImGuiStorage:    # imgui.h:2235
      Types are NOT stored, so it is up to you to make sure your Key don't collide with different types.
     """
 
-    data:List[ImGuiStoragePair]                                                  # imgui.h:2247
+    Data:List[ImGuiStoragePair]                                                # imgui.h:2247
 
-    def get_int(self, key: ImGuiID, default_val: int = 0) -> int:                # imgui.h:2253
+    def GetInt(self, key: ImGuiID, default_val: int = 0) -> int:               # imgui.h:2253
         pass
-    def set_int(self, key: ImGuiID, val: int) -> None:                           # imgui.h:2254
+    def SetInt(self, key: ImGuiID, val: int) -> None:                          # imgui.h:2254
         pass
-    def get_bool(self, key: ImGuiID, default_val: bool = False) -> bool:         # imgui.h:2255
+    def GetBool(self, key: ImGuiID, default_val: bool = False) -> bool:        # imgui.h:2255
         pass
-    def set_bool(self, key: ImGuiID, val: bool) -> None:                         # imgui.h:2256
+    def SetBool(self, key: ImGuiID, val: bool) -> None:                        # imgui.h:2256
         pass
-    def get_float(self, key: ImGuiID, default_val: float = 0.0) -> float:        # imgui.h:2257
+    def GetFloat(self, key: ImGuiID, default_val: float = 0.0) -> float:       # imgui.h:2257
         pass
-    def set_float(self, key: ImGuiID, val: float) -> None:                       # imgui.h:2258
+    def SetFloat(self, key: ImGuiID, val: float) -> None:                      # imgui.h:2258
         pass
-    def get_void_ptr(self, key: ImGuiID) -> Any:                                 # imgui.h:2259
+    def GetVoidPtr(self, key: ImGuiID) -> Any:                                 # imgui.h:2259
         """ default_val is None"""
         pass
-    def set_void_ptr(self, key: ImGuiID, val: Any) -> None:                      # imgui.h:2260
+    def SetVoidPtr(self, key: ImGuiID, val: Any) -> None:                      # imgui.h:2260
         pass
 
     # - Get***Ref() functions finds pair, insert on demand if missing, return pointer. Useful if you intend to do Get+Set.
     # - References are only valid until a new value is added to the storage. Calling a Set***() function or a Get***Ref() function invalidates the pointer.
     # - A typical use case where this is convenient for quick hacking (e.g. add storage during a live Edit&Continue session if you can't modify existing struct)
     #      float* pvar = ImGui::GetFloatRef(key); ImGui::SliderFloat("var", pvar, 0, 100.0); some_var += *pvar;
-    def get_int_ref(self, key: ImGuiID, default_val: int = 0) -> int:            # imgui.h:2266
+    def GetIntRef(self, key: ImGuiID, default_val: int = 0) -> int:            # imgui.h:2266
         pass
-    def get_bool_ref(self, key: ImGuiID, default_val: bool = False) -> bool:     # imgui.h:2267
+    def GetBoolRef(self, key: ImGuiID, default_val: bool = False) -> bool:     # imgui.h:2267
         pass
-    def get_float_ref(self, key: ImGuiID, default_val: float = 0.0) -> float:    # imgui.h:2268
+    def GetFloatRef(self, key: ImGuiID, default_val: float = 0.0) -> float:    # imgui.h:2268
         pass
-    def get_void_ptr_ref(self, key: ImGuiID, default_val: Any = None) -> Any:    # imgui.h:2269
+    def GetVoidPtrRef(self, key: ImGuiID, default_val: Any = None) -> Any:     # imgui.h:2269
         pass
 
-    def set_all_int(self, val: int) -> None:                                     # imgui.h:2272
+    def SetAllInt(self, val: int) -> None:                                     # imgui.h:2272
         """ Use on your own storage if you know only integer are being stored (open/close all tree nodes)"""
         pass
 
-    def build_sort_by_key(self) -> None:                                         # imgui.h:2275
+    def BuildSortByKey(self) -> None:                                          # imgui.h:2275
         """ For quicker full rebuild of a storage (instead of an incremental one), you may add all your contents and then sort once."""
         pass
 
@@ -2900,28 +2900,28 @@ class ImGuiListClipper:    # imgui.h:2298
      - User code submit visible elements.
      - The clipper also handles various subtleties related to keyboard/gamepad navigation, wrapping etc.
     """
-    display_start:int                                                                  # First item to display, updated by each call to Step()    # imgui.h:2300
-    display_end:int                                                                    # End of items to display (exclusive)    # imgui.h:2301
-    items_count:int                                                                    # [Internal] Number of items    # imgui.h:2302
-    items_height:float                                                                 # [Internal] Height of item after a first step and item submission can calculate it    # imgui.h:2303
-    start_pos_y:float                                                                  # [Internal] Cursor position at the time of Begin() or after table frozen rows are all processed    # imgui.h:2304
-    temp_data:Any                                                                      # [Internal] Internal data    # imgui.h:2305
+    DisplayStart:int                                                               # First item to display, updated by each call to Step()    # imgui.h:2300
+    DisplayEnd:int                                                                 # End of items to display (exclusive)    # imgui.h:2301
+    ItemsCount:int                                                                 # [Internal] Number of items    # imgui.h:2302
+    ItemsHeight:float                                                              # [Internal] Height of item after a first step and item submission can calculate it    # imgui.h:2303
+    StartPosY:float                                                                # [Internal] Cursor position at the time of Begin() or after table frozen rows are all processed    # imgui.h:2304
+    TempData:Any                                                                   # [Internal] Internal data    # imgui.h:2305
 
-    def __init__(self) -> None:                                                        # imgui.h:2309
+    def __init__(self) -> None:                                                    # imgui.h:2309
         """ items_count: Use INT_MAX if you don't know how many items you have (in which case the cursor won't be advanced in the final step)
          items_height: Use -1.0 to be calculated automatically on first step. Otherwise pass in the distance between your items, typically GetTextLineHeightWithSpacing() or GetFrameHeightWithSpacing().
         """
         pass
-    def begin(self, items_count: int, items_height: float = -1.0) -> None:             # imgui.h:2311
+    def Begin(self, items_count: int, items_height: float = -1.0) -> None:         # imgui.h:2311
         pass
-    def end(self) -> None:                                                             # imgui.h:2312
+    def End(self) -> None:                                                         # imgui.h:2312
         """ Automatically called on the last call of Step() that returns False."""
         pass
-    def step(self) -> bool:                                                            # imgui.h:2313
+    def Step(self) -> bool:                                                        # imgui.h:2313
         """ Call until it returns False. The DisplayStart/DisplayEnd fields will be set and you can process/draw those items."""
         pass
 
-    def force_display_range_by_indices(self, item_min: int, item_max: int) -> None:    # imgui.h:2316
+    def ForceDisplayRangeByIndices(self, item_min: int, item_max: int) -> None:    # imgui.h:2316
         """ Call ForceDisplayRangeByIndices() before first call to Step() if you need a range of items to be displayed regardless of visibility."""
         pass
     # item_max is exclusive e.g. use (42, 42+1) to make item 42 always visible BUT due to alignment/padding of certain items it is likely that an extra item may be included on either end of the display range.
@@ -2936,7 +2936,7 @@ class ImColor:    # imgui.h:2349
      **Avoid storing ImColor! Store either u32 of ImVec4. This is not a full-featured color class. MAY OBSOLETE.
      **None of the ImGui API are using ImColor directly but you can use it as a convenience to pass colors in either ImU32 or ImVec4 formats. Explicitly cast to ImU32 or ImVec4 if needed.
     """
-    value:ImVec4                                                                 # imgui.h:2351
+    Value:ImVec4                                                                 # imgui.h:2351
 
     def __init__(self) -> None:                                                  # imgui.h:2353
         pass
@@ -2974,12 +2974,12 @@ class ImDrawCmd:    # imgui.h:2398
        Backends made for <1.71. will typically ignore the VtxOffset fields.
      - The ClipRect/TextureId/VtxOffset fields must be contiguous as we memcmp() them together (this is asserted for).
     """
-    clip_rect:ImVec4               # 4*4  // Clipping rectangle (x1, y1, x2, y2). Subtract ImDrawData->DisplayPos to get clipping rectangle in "viewport" coordinates    # imgui.h:2400
-    texture_id:ImTextureID         # 4-8  // User-provided texture ID. Set by user in ImfontAtlas::SetTexID() for fonts or passed to Image*() functions. Ignore if never using images or multiple fonts atlas.    # imgui.h:2401
-    vtx_offset:int                 # 4    // Start offset in vertex buffer. ImGuiBackendFlags_RendererHasVtxOffset: always 0, otherwise may be >0 to support meshes larger than 64K vertices with 16-bit indices.    # imgui.h:2402
-    idx_offset:int                 # 4    // Start offset in index buffer.    # imgui.h:2403
-    elem_count:int                 # 4    // Number of indices (multiple of 3) to be rendered as triangles. Vertices are stored in the callee ImDrawList's vtx_buffer[] array, indices in idx_buffer[].    # imgui.h:2404
-    user_callback_data:Any         # 4-8  // The draw callback code can access this.    # imgui.h:2406
+    ClipRect:ImVec4                # 4*4  // Clipping rectangle (x1, y1, x2, y2). Subtract ImDrawData->DisplayPos to get clipping rectangle in "viewport" coordinates    # imgui.h:2400
+    TextureId:ImTextureID          # 4-8  // User-provided texture ID. Set by user in ImfontAtlas::SetTexID() for fonts or passed to Image*() functions. Ignore if never using images or multiple fonts atlas.    # imgui.h:2401
+    VtxOffset:int                  # 4    // Start offset in vertex buffer. ImGuiBackendFlags_RendererHasVtxOffset: always 0, otherwise may be >0 to support meshes larger than 64K vertices with 16-bit indices.    # imgui.h:2402
+    IdxOffset:int                  # 4    // Start offset in index buffer.    # imgui.h:2403
+    ElemCount:int                  # 4    // Number of indices (multiple of 3) to be rendered as triangles. Vertices are stored in the callee ImDrawList's vtx_buffer[] array, indices in idx_buffer[].    # imgui.h:2404
+    UserCallbackData:Any           # 4-8  // The draw callback code can access this.    # imgui.h:2406
 
     def __init__(self) -> None:    # imgui.h:2408
         """ Also ensure our padding fields are zeroed"""
@@ -2990,63 +2990,63 @@ class ImDrawCmd:    # imgui.h:2398
 
 class ImDrawCmdHeader:    # imgui.h:2431
     """ [Internal] For use by ImDrawList"""
-    clip_rect:ImVec4          # imgui.h:2433
-    texture_id:ImTextureID    # imgui.h:2434
-    vtx_offset:int            # imgui.h:2435
+    ClipRect:ImVec4          # imgui.h:2433
+    TextureId:ImTextureID    # imgui.h:2434
+    VtxOffset:int            # imgui.h:2435
 
 class ImDrawChannel:    # imgui.h:2439
     """ [Internal] For use by ImDrawListSplitter"""
-    _cmd_buffer:List[ImDrawCmd]    # imgui.h:2441
-    _idx_buffer:List[ImDrawIdx]    # imgui.h:2442
+    _CmdBuffer:List[ImDrawCmd]    # imgui.h:2441
+    _IdxBuffer:List[ImDrawIdx]    # imgui.h:2442
 
 
 class ImDrawListSplitter:    # imgui.h:2448
     """ Split/Merge functions are used to split the draw list into different layers which can be drawn into out of order.
      This is used by the Columns/Tables API, so items of each column can be batched together in a same draw call.
     """
-    _current:int                                                                       # Current channel number (0)    # imgui.h:2450
-    _count:int                                                                         # Number of active channels (1+)    # imgui.h:2451
-    _channels:List[ImDrawChannel]                                                      # Draw channels (not resized down so _Count might be < Channels.Size)    # imgui.h:2452
+    _Current:int                                                                     # Current channel number (0)    # imgui.h:2450
+    _Count:int                                                                       # Number of active channels (1+)    # imgui.h:2451
+    _Channels:List[ImDrawChannel]                                                    # Draw channels (not resized down so _Count might be < Channels.Size)    # imgui.h:2452
 
-    def __init__(self) -> None:                                                        # imgui.h:2454
+    def __init__(self) -> None:                                                      # imgui.h:2454
         pass
-    def clear_free_memory(self) -> None:                                               # imgui.h:2457
+    def ClearFreeMemory(self) -> None:                                               # imgui.h:2457
         pass
-    def split(self, draw_list: ImDrawList, count: int) -> None:                        # imgui.h:2458
+    def Split(self, draw_list: ImDrawList, count: int) -> None:                      # imgui.h:2458
         pass
-    def merge(self, draw_list: ImDrawList) -> None:                                    # imgui.h:2459
+    def Merge(self, draw_list: ImDrawList) -> None:                                  # imgui.h:2459
         pass
-    def set_current_channel(self, draw_list: ImDrawList, channel_idx: int) -> None:    # imgui.h:2460
+    def SetCurrentChannel(self, draw_list: ImDrawList, channel_idx: int) -> None:    # imgui.h:2460
         pass
 
 class ImDrawFlags_(Enum):    # imgui.h:2465
     """ Flags for ImDrawList functions
      (Legacy: bit 0 must always correspond to ImDrawFlags_Closed to be backward compatible with old API using a bool. Bits 1..3 must be unused)
     """
-    none = 0
-    closed = 1 << 0                                                   # PathStroke(), AddPolyline(): specify that shape should be closed (Important: this is always == 1 for legacy reason)
-    round_corners_top_left = 1 << 4                                   # AddRect(), AddRectFilled(), PathRect(): enable rounding top-left corner only (when rounding > 0.0, we default to all corners). Was 0x01.
-    round_corners_top_right = 1 << 5                                  # AddRect(), AddRectFilled(), PathRect(): enable rounding top-right corner only (when rounding > 0.0, we default to all corners). Was 0x02.
-    round_corners_bottom_left = 1 << 6                                # AddRect(), AddRectFilled(), PathRect(): enable rounding bottom-left corner only (when rounding > 0.0, we default to all corners). Was 0x04.
-    round_corners_bottom_right = 1 << 7                               # AddRect(), AddRectFilled(), PathRect(): enable rounding bottom-right corner only (when rounding > 0.0, we default to all corners). Wax 0x08.
-    round_corners_none = 1 << 8                                       # AddRect(), AddRectFilled(), PathRect(): disable rounding on all corners (when rounding > 0.0). This is NOT zero, NOT an implicit flag!
-    round_corners_top = Literal[ImDrawFlags_.round_corners_top_left] | Literal[ImDrawFlags_.round_corners_top_right]
-    round_corners_bottom = Literal[ImDrawFlags_.round_corners_bottom_left] | Literal[ImDrawFlags_.round_corners_bottom_right]
-    round_corners_left = Literal[ImDrawFlags_.round_corners_bottom_left] | Literal[ImDrawFlags_.round_corners_top_left]
-    round_corners_right = Literal[ImDrawFlags_.round_corners_bottom_right] | Literal[ImDrawFlags_.round_corners_top_right]
-    round_corners_all = Literal[ImDrawFlags_.round_corners_top_left] | Literal[ImDrawFlags_.round_corners_top_right] | Literal[ImDrawFlags_.round_corners_bottom_left] | Literal[ImDrawFlags_.round_corners_bottom_right]
-    round_corners_default_ = Literal[ImDrawFlags_.round_corners_all]  # Default to ALL corners if none of the _RoundCornersXX flags are specified.
-    round_corners_mask_ = Literal[ImDrawFlags_.round_corners_all] | Literal[ImDrawFlags_.round_corners_none]
+    None_ = 0
+    Closed = 1 << 0                                               # PathStroke(), AddPolyline(): specify that shape should be closed (Important: this is always == 1 for legacy reason)
+    RoundCornersTopLeft = 1 << 4                                  # AddRect(), AddRectFilled(), PathRect(): enable rounding top-left corner only (when rounding > 0.0, we default to all corners). Was 0x01.
+    RoundCornersTopRight = 1 << 5                                 # AddRect(), AddRectFilled(), PathRect(): enable rounding top-right corner only (when rounding > 0.0, we default to all corners). Was 0x02.
+    RoundCornersBottomLeft = 1 << 6                               # AddRect(), AddRectFilled(), PathRect(): enable rounding bottom-left corner only (when rounding > 0.0, we default to all corners). Was 0x04.
+    RoundCornersBottomRight = 1 << 7                              # AddRect(), AddRectFilled(), PathRect(): enable rounding bottom-right corner only (when rounding > 0.0, we default to all corners). Wax 0x08.
+    RoundCornersNone = 1 << 8                                     # AddRect(), AddRectFilled(), PathRect(): disable rounding on all corners (when rounding > 0.0). This is NOT zero, NOT an implicit flag!
+    RoundCornersTop = Literal[ImDrawFlags_.RoundCornersTopLeft] | Literal[ImDrawFlags_.RoundCornersTopRight]
+    RoundCornersBottom = Literal[ImDrawFlags_.RoundCornersBottomLeft] | Literal[ImDrawFlags_.RoundCornersBottomRight]
+    RoundCornersLeft = Literal[ImDrawFlags_.RoundCornersBottomLeft] | Literal[ImDrawFlags_.RoundCornersTopLeft]
+    RoundCornersRight = Literal[ImDrawFlags_.RoundCornersBottomRight] | Literal[ImDrawFlags_.RoundCornersTopRight]
+    RoundCornersAll = Literal[ImDrawFlags_.RoundCornersTopLeft] | Literal[ImDrawFlags_.RoundCornersTopRight] | Literal[ImDrawFlags_.RoundCornersBottomLeft] | Literal[ImDrawFlags_.RoundCornersBottomRight]
+    RoundCornersDefault_ = Literal[ImDrawFlags_.RoundCornersAll]  # Default to ALL corners if none of the _RoundCornersXX flags are specified.
+    RoundCornersMask_ = Literal[ImDrawFlags_.RoundCornersAll] | Literal[ImDrawFlags_.RoundCornersNone]
 
 class ImDrawListFlags_(Enum):    # imgui.h:2485
     """ Flags for ImDrawList instance. Those are set automatically by ImGui:: functions from ImGuiIO settings, and generally not manipulated directly.
      It is however possible to temporarily alter flags between calls to ImDrawList:: functions.
     """
-    none = 0
-    anti_aliased_lines = 1 << 0          # Enable anti-aliased lines/borders (*2 the number of triangles for 1.0 wide line or lines thin enough to be drawn using textures, otherwise *3 the number of triangles)
-    anti_aliased_lines_use_tex = 1 << 1  # Enable anti-aliased lines/borders using textures when possible. Require backend to render with bilinear filtering (NOT point/nearest filtering).
-    anti_aliased_fill = 1 << 2           # Enable anti-aliased edge around filled shapes (rounded rectangles, circles).
-    allow_vtx_offset = 1 << 3            # Can emit 'VtxOffset > 0' to allow large meshes. Set when 'ImGuiBackendFlags_RendererHasVtxOffset' is enabled.
+    None_ = 0
+    AntiAliasedLines = 1 << 0        # Enable anti-aliased lines/borders (*2 the number of triangles for 1.0 wide line or lines thin enough to be drawn using textures, otherwise *3 the number of triangles)
+    AntiAliasedLinesUseTex = 1 << 1  # Enable anti-aliased lines/borders using textures when possible. Require backend to render with bilinear filtering (NOT point/nearest filtering).
+    AntiAliasedFill = 1 << 2         # Enable anti-aliased edge around filled shapes (rounded rectangles, circles).
+    AllowVtxOffset = 1 << 3          # Can emit 'VtxOffset > 0' to allow large meshes. Set when 'ImGuiBackendFlags_RendererHasVtxOffset' is enabled.
 
 class ImDrawList:    # imgui.h:2503
     """ Draw command list
@@ -3060,38 +3060,38 @@ class ImDrawList:    # imgui.h:2503
      Important: Primitives are always added to the list and not culled (culling is done at higher-level by ImGui:: functions), if you use this API a lot consider coarse culling your drawn objects.
     """
     # This is what you have to render
-    cmd_buffer:List[ImDrawCmd]                                                                                                                                                                                                                                      # Draw commands. Typically 1 command = 1 GPU draw call, unless the command is a callback.    # imgui.h:2506
-    idx_buffer:List[ImDrawIdx]                                                                                                                                                                                                                                      # Index buffer. Each command consume ImDrawCmd::ElemCount of those    # imgui.h:2507
-    vtx_buffer:List[ImDrawVert]                                                                                                                                                                                                                                     # Vertex buffer.    # imgui.h:2508
-    flags:ImDrawListFlags                                                                                                                                                                                                                                           # Flags, you may poke into these to adjust anti-aliasing settings per-primitive.    # imgui.h:2509
+    CmdBuffer:List[ImDrawCmd]                                                                                                                                                                                                                                     # Draw commands. Typically 1 command = 1 GPU draw call, unless the command is a callback.    # imgui.h:2506
+    IdxBuffer:List[ImDrawIdx]                                                                                                                                                                                                                                     # Index buffer. Each command consume ImDrawCmd::ElemCount of those    # imgui.h:2507
+    VtxBuffer:List[ImDrawVert]                                                                                                                                                                                                                                    # Vertex buffer.    # imgui.h:2508
+    Flags:ImDrawListFlags                                                                                                                                                                                                                                         # Flags, you may poke into these to adjust anti-aliasing settings per-primitive.    # imgui.h:2509
 
     # [Internal, used while building lists]
-    _vtx_current_idx:int                                                                                                                                                                                                                                            # [Internal] generally == VtxBuffer.Size unless we are past 64K vertices, in which case this gets reset to 0.    # imgui.h:2512
-    _data:ImDrawListSharedData                                                                                                                                                                                                                                      # Pointer to shared draw data (you can use ImGui::GetDrawListSharedData() to get the one from current ImGui context)    # imgui.h:2513
-    _owner_name:str                                                                                                                                                                                                                                                 # Pointer to owner window's name for debugging    # imgui.h:2514
-    _vtx_write_ptr:ImDrawVert                                                                                                                                                                                                                                       # [Internal] point within VtxBuffer.Data after each add command (to avoid using the ImVector<> operators too much)    # imgui.h:2515
-    _idx_write_ptr:ImDrawIdx                                                                                                                                                                                                                                        # [Internal] point within IdxBuffer.Data after each add command (to avoid using the ImVector<> operators too much)    # imgui.h:2516
-    _clip_rect_stack:List[ImVec4]                                                                                                                                                                                                                                   # [Internal]    # imgui.h:2517
-    _texture_id_stack:List[ImTextureID]                                                                                                                                                                                                                             # [Internal]    # imgui.h:2518
-    _path:List[ImVec2]                                                                                                                                                                                                                                              # [Internal] current path building    # imgui.h:2519
-    _cmd_header:ImDrawCmdHeader                                                                                                                                                                                                                                     # [Internal] template of active commands. Fields should match those of CmdBuffer.back().    # imgui.h:2520
-    _splitter:ImDrawListSplitter                                                                                                                                                                                                                                    # [Internal] for channels api (note: prefer using your own persistent instance of ImDrawListSplitter!)    # imgui.h:2521
-    _fringe_scale:float                                                                                                                                                                                                                                             # [Internal] anti-alias fringe is scaled by this value, this helps to keep things sharp while zooming at vertex buffer content    # imgui.h:2522
+    _VtxCurrentIdx:int                                                                                                                                                                                                                                            # [Internal] generally == VtxBuffer.Size unless we are past 64K vertices, in which case this gets reset to 0.    # imgui.h:2512
+    _Data:ImDrawListSharedData                                                                                                                                                                                                                                    # Pointer to shared draw data (you can use ImGui::GetDrawListSharedData() to get the one from current ImGui context)    # imgui.h:2513
+    _OwnerName:str                                                                                                                                                                                                                                                # Pointer to owner window's name for debugging    # imgui.h:2514
+    _VtxWritePtr:ImDrawVert                                                                                                                                                                                                                                       # [Internal] point within VtxBuffer.Data after each add command (to avoid using the ImVector<> operators too much)    # imgui.h:2515
+    _IdxWritePtr:ImDrawIdx                                                                                                                                                                                                                                        # [Internal] point within IdxBuffer.Data after each add command (to avoid using the ImVector<> operators too much)    # imgui.h:2516
+    _ClipRectStack:List[ImVec4]                                                                                                                                                                                                                                   # [Internal]    # imgui.h:2517
+    _TextureIdStack:List[ImTextureID]                                                                                                                                                                                                                             # [Internal]    # imgui.h:2518
+    _Path:List[ImVec2]                                                                                                                                                                                                                                            # [Internal] current path building    # imgui.h:2519
+    _CmdHeader:ImDrawCmdHeader                                                                                                                                                                                                                                    # [Internal] template of active commands. Fields should match those of CmdBuffer.back().    # imgui.h:2520
+    _Splitter:ImDrawListSplitter                                                                                                                                                                                                                                  # [Internal] for channels api (note: prefer using your own persistent instance of ImDrawListSplitter!)    # imgui.h:2521
+    _FringeScale:float                                                                                                                                                                                                                                            # [Internal] anti-alias fringe is scaled by this value, this helps to keep things sharp while zooming at vertex buffer content    # imgui.h:2522
 
-    def __init__(self, shared_data: ImDrawListSharedData) -> None:                                                                                                                                                                                                  # imgui.h:2525
+    def __init__(self, shared_data: ImDrawListSharedData) -> None:                                                                                                                                                                                                # imgui.h:2525
         """ If you want to create ImDrawList instances, pass them ImGui::GetDrawListSharedData() or create and use your own ImDrawListSharedData (so you can use ImDrawList without ImGui)"""
         pass
 
-    def push_clip_rect(self, clip_rect_min: ImVec2, clip_rect_max: ImVec2, intersect_with_current_clip_rect: bool = False) -> None:                                                                                                                                 # imgui.h:2528
+    def PushClipRect(self, clip_rect_min: ImVec2, clip_rect_max: ImVec2, intersect_with_current_clip_rect: bool = False) -> None:                                                                                                                                 # imgui.h:2528
         """ Render-level scissoring. This is passed down to your render function but not used for CPU-side coarse clipping. Prefer using higher-level ImGui::PushClipRect() to affect logic (hit-testing and widget culling)"""
         pass
-    def push_clip_rect_full_screen(self) -> None:                                                                                                                                                                                                                   # imgui.h:2529
+    def PushClipRectFullScreen(self) -> None:                                                                                                                                                                                                                     # imgui.h:2529
         pass
-    def pop_clip_rect(self) -> None:                                                                                                                                                                                                                                # imgui.h:2530
+    def PopClipRect(self) -> None:                                                                                                                                                                                                                                # imgui.h:2530
         pass
-    def push_texture_id(self, texture_id: ImTextureID) -> None:                                                                                                                                                                                                     # imgui.h:2531
+    def PushTextureID(self, texture_id: ImTextureID) -> None:                                                                                                                                                                                                     # imgui.h:2531
         pass
-    def pop_texture_id(self) -> None:                                                                                                                                                                                                                               # imgui.h:2532
+    def PopTextureID(self) -> None:                                                                                                                                                                                                                               # imgui.h:2532
         pass
 
     # Primitives
@@ -3101,44 +3101,44 @@ class ImDrawList:    # imgui.h:2503
     #   In older versions (until Dear ImGui 1.77) the AddCircle functions defaulted to num_segments == 12.
     #   In future versions we will use textures to provide cheaper and higher-quality circles.
     #   Use AddNgon() and AddNgonFilled() functions if you need to guaranteed a specific number of sides.
-    def add_line(self, p1: ImVec2, p2: ImVec2, col: ImU32, thickness: float = 1.0) -> None:                                                                                                                                                                         # imgui.h:2543
+    def AddLine(self, p1: ImVec2, p2: ImVec2, col: ImU32, thickness: float = 1.0) -> None:                                                                                                                                                                        # imgui.h:2543
         pass
-    def add_rect(self, p_min: ImVec2, p_max: ImVec2, col: ImU32, rounding: float = 0.0, flags: ImDrawFlags = 0, thickness: float = 1.0) -> None:                                                                                                                    # imgui.h:2544
+    def AddRect(self, p_min: ImVec2, p_max: ImVec2, col: ImU32, rounding: float = 0.0, flags: ImDrawFlags = 0, thickness: float = 1.0) -> None:                                                                                                                   # imgui.h:2544
         """ a: upper-left, b: lower-right (== upper-left + size)"""
         pass
-    def add_rect_filled(self, p_min: ImVec2, p_max: ImVec2, col: ImU32, rounding: float = 0.0, flags: ImDrawFlags = 0) -> None:                                                                                                                                     # imgui.h:2545
+    def AddRectFilled(self, p_min: ImVec2, p_max: ImVec2, col: ImU32, rounding: float = 0.0, flags: ImDrawFlags = 0) -> None:                                                                                                                                     # imgui.h:2545
         """ a: upper-left, b: lower-right (== upper-left + size)"""
         pass
-    def add_rect_filled_multi_color(self, p_min: ImVec2, p_max: ImVec2, col_upr_left: ImU32, col_upr_right: ImU32, col_bot_right: ImU32, col_bot_left: ImU32) -> None:                                                                                              # imgui.h:2546
+    def AddRectFilledMultiColor(self, p_min: ImVec2, p_max: ImVec2, col_upr_left: ImU32, col_upr_right: ImU32, col_bot_right: ImU32, col_bot_left: ImU32) -> None:                                                                                                # imgui.h:2546
         pass
-    def add_quad(self, p1: ImVec2, p2: ImVec2, p3: ImVec2, p4: ImVec2, col: ImU32, thickness: float = 1.0) -> None:                                                                                                                                                 # imgui.h:2547
+    def AddQuad(self, p1: ImVec2, p2: ImVec2, p3: ImVec2, p4: ImVec2, col: ImU32, thickness: float = 1.0) -> None:                                                                                                                                                # imgui.h:2547
         pass
-    def add_quad_filled(self, p1: ImVec2, p2: ImVec2, p3: ImVec2, p4: ImVec2, col: ImU32) -> None:                                                                                                                                                                  # imgui.h:2548
+    def AddQuadFilled(self, p1: ImVec2, p2: ImVec2, p3: ImVec2, p4: ImVec2, col: ImU32) -> None:                                                                                                                                                                  # imgui.h:2548
         pass
-    def add_triangle(self, p1: ImVec2, p2: ImVec2, p3: ImVec2, col: ImU32, thickness: float = 1.0) -> None:                                                                                                                                                         # imgui.h:2549
+    def AddTriangle(self, p1: ImVec2, p2: ImVec2, p3: ImVec2, col: ImU32, thickness: float = 1.0) -> None:                                                                                                                                                        # imgui.h:2549
         pass
-    def add_triangle_filled(self, p1: ImVec2, p2: ImVec2, p3: ImVec2, col: ImU32) -> None:                                                                                                                                                                          # imgui.h:2550
+    def AddTriangleFilled(self, p1: ImVec2, p2: ImVec2, p3: ImVec2, col: ImU32) -> None:                                                                                                                                                                          # imgui.h:2550
         pass
-    def add_circle(self, center: ImVec2, radius: float, col: ImU32, num_segments: int = 0, thickness: float = 1.0) -> None:                                                                                                                                         # imgui.h:2551
+    def AddCircle(self, center: ImVec2, radius: float, col: ImU32, num_segments: int = 0, thickness: float = 1.0) -> None:                                                                                                                                        # imgui.h:2551
         pass
-    def add_circle_filled(self, center: ImVec2, radius: float, col: ImU32, num_segments: int = 0) -> None:                                                                                                                                                          # imgui.h:2552
+    def AddCircleFilled(self, center: ImVec2, radius: float, col: ImU32, num_segments: int = 0) -> None:                                                                                                                                                          # imgui.h:2552
         pass
-    def add_ngon(self, center: ImVec2, radius: float, col: ImU32, num_segments: int, thickness: float = 1.0) -> None:                                                                                                                                               # imgui.h:2553
+    def AddNgon(self, center: ImVec2, radius: float, col: ImU32, num_segments: int, thickness: float = 1.0) -> None:                                                                                                                                              # imgui.h:2553
         pass
-    def add_ngon_filled(self, center: ImVec2, radius: float, col: ImU32, num_segments: int) -> None:                                                                                                                                                                # imgui.h:2554
+    def AddNgonFilled(self, center: ImVec2, radius: float, col: ImU32, num_segments: int) -> None:                                                                                                                                                                # imgui.h:2554
         pass
-    def add_text(self, pos: ImVec2, col: ImU32, text_begin: str, text_end: str = None) -> None:                                                                                                                                                                     # imgui.h:2555
+    def AddText(self, pos: ImVec2, col: ImU32, text_begin: str, text_end: str = None) -> None:                                                                                                                                                                    # imgui.h:2555
         pass
-    def add_text(self, font: ImFont, font_size: float, pos: ImVec2, col: ImU32, text_begin: str, text_end: str = None, wrap_width: float = 0.0, cpu_fine_clip_rect: ImVec4 = None) -> None:                                                                         # imgui.h:2556
+    def AddText(self, font: ImFont, font_size: float, pos: ImVec2, col: ImU32, text_begin: str, text_end: str = None, wrap_width: float = 0.0, cpu_fine_clip_rect: ImVec4 = None) -> None:                                                                        # imgui.h:2556
         pass
-    def add_polyline(self, points: ImVec2, num_points: int, col: ImU32, flags: ImDrawFlags, thickness: float) -> None:                                                                                                                                              # imgui.h:2557
+    def AddPolyline(self, points: ImVec2, num_points: int, col: ImU32, flags: ImDrawFlags, thickness: float) -> None:                                                                                                                                             # imgui.h:2557
         pass
-    def add_convex_poly_filled(self, points: ImVec2, num_points: int, col: ImU32) -> None:                                                                                                                                                                          # imgui.h:2558
+    def AddConvexPolyFilled(self, points: ImVec2, num_points: int, col: ImU32) -> None:                                                                                                                                                                           # imgui.h:2558
         pass
-    def add_bezier_cubic(self, p1: ImVec2, p2: ImVec2, p3: ImVec2, p4: ImVec2, col: ImU32, thickness: float, num_segments: int = 0) -> None:                                                                                                                        # imgui.h:2559
+    def AddBezierCubic(self, p1: ImVec2, p2: ImVec2, p3: ImVec2, p4: ImVec2, col: ImU32, thickness: float, num_segments: int = 0) -> None:                                                                                                                        # imgui.h:2559
         """ Cubic Bezier (4 control points)"""
         pass
-    def add_bezier_quadratic(self, p1: ImVec2, p2: ImVec2, p3: ImVec2, col: ImU32, thickness: float, num_segments: int = 0) -> None:                                                                                                                                # imgui.h:2560
+    def AddBezierQuadratic(self, p1: ImVec2, p2: ImVec2, p3: ImVec2, col: ImU32, thickness: float, num_segments: int = 0) -> None:                                                                                                                                # imgui.h:2560
         """ Quadratic Bezier (3 control points)"""
         pass
 
@@ -3146,37 +3146,37 @@ class ImDrawList:    # imgui.h:2503
     # - Read FAQ to understand what ImTextureID is.
     # - "p_min" and "p_max" represent the upper-left and lower-right corners of the rectangle.
     # - "uv_min" and "uv_max" represent the normalized texture coordinates to use for those corners. Using (0,0)->(1,1) texture coordinates will generally display the entire texture.
-    def add_image(self, user_texture_id: ImTextureID, p_min: ImVec2, p_max: ImVec2, uv_min: ImVec2 = ImVec2(0, 0), uv_max: ImVec2 = ImVec2(1, 1), col: ImU32 = IM_COL32_WHITE) -> None:                                                                             # imgui.h:2566
+    def AddImage(self, user_texture_id: ImTextureID, p_min: ImVec2, p_max: ImVec2, uv_min: ImVec2 = ImVec2(0, 0), uv_max: ImVec2 = ImVec2(1, 1), col: ImU32 = IM_COL32_WHITE) -> None:                                                                            # imgui.h:2566
         pass
-    def add_image_quad(self, user_texture_id: ImTextureID, p1: ImVec2, p2: ImVec2, p3: ImVec2, p4: ImVec2, uv1: ImVec2 = ImVec2(0, 0), uv2: ImVec2 = ImVec2(1, 0), uv3: ImVec2 = ImVec2(1, 1), uv4: ImVec2 = ImVec2(0, 1), col: ImU32 = IM_COL32_WHITE) -> None:    # imgui.h:2567
+    def AddImageQuad(self, user_texture_id: ImTextureID, p1: ImVec2, p2: ImVec2, p3: ImVec2, p4: ImVec2, uv1: ImVec2 = ImVec2(0, 0), uv2: ImVec2 = ImVec2(1, 0), uv3: ImVec2 = ImVec2(1, 1), uv4: ImVec2 = ImVec2(0, 1), col: ImU32 = IM_COL32_WHITE) -> None:    # imgui.h:2567
         pass
-    def add_image_rounded(self, user_texture_id: ImTextureID, p_min: ImVec2, p_max: ImVec2, uv_min: ImVec2, uv_max: ImVec2, col: ImU32, rounding: float, flags: ImDrawFlags = 0) -> None:                                                                           # imgui.h:2568
+    def AddImageRounded(self, user_texture_id: ImTextureID, p_min: ImVec2, p_max: ImVec2, uv_min: ImVec2, uv_max: ImVec2, col: ImU32, rounding: float, flags: ImDrawFlags = 0) -> None:                                                                           # imgui.h:2568
         pass
 
     # Stateful path API, add points then finish with PathFillConvex() or PathStroke()
     # - Filled shapes must always use clockwise winding order. The anti-aliasing fringe depends on it. Counter-clockwise shapes will have "inward" anti-aliasing.
-    def path_arc_to(self, center: ImVec2, radius: float, a_min: float, a_max: float, num_segments: int = 0) -> None:                                                                                                                                                # imgui.h:2577
+    def PathArcTo(self, center: ImVec2, radius: float, a_min: float, a_max: float, num_segments: int = 0) -> None:                                                                                                                                                # imgui.h:2577
         pass
-    def path_arc_to_fast(self, center: ImVec2, radius: float, a_min_of_12: int, a_max_of_12: int) -> None:                                                                                                                                                          # imgui.h:2578
+    def PathArcToFast(self, center: ImVec2, radius: float, a_min_of_12: int, a_max_of_12: int) -> None:                                                                                                                                                           # imgui.h:2578
         """ Use precomputed angles for a 12 steps circle"""
         pass
-    def path_bezier_cubic_curve_to(self, p2: ImVec2, p3: ImVec2, p4: ImVec2, num_segments: int = 0) -> None:                                                                                                                                                        # imgui.h:2579
+    def PathBezierCubicCurveTo(self, p2: ImVec2, p3: ImVec2, p4: ImVec2, num_segments: int = 0) -> None:                                                                                                                                                          # imgui.h:2579
         """ Cubic Bezier (4 control points)"""
         pass
-    def path_bezier_quadratic_curve_to(self, p2: ImVec2, p3: ImVec2, num_segments: int = 0) -> None:                                                                                                                                                                # imgui.h:2580
+    def PathBezierQuadraticCurveTo(self, p2: ImVec2, p3: ImVec2, num_segments: int = 0) -> None:                                                                                                                                                                  # imgui.h:2580
         """ Quadratic Bezier (3 control points)"""
         pass
-    def path_rect(self, rect_min: ImVec2, rect_max: ImVec2, rounding: float = 0.0, flags: ImDrawFlags = 0) -> None:                                                                                                                                                 # imgui.h:2581
+    def PathRect(self, rect_min: ImVec2, rect_max: ImVec2, rounding: float = 0.0, flags: ImDrawFlags = 0) -> None:                                                                                                                                                # imgui.h:2581
         pass
 
     # Advanced
-    def add_callback(self, callback: ImDrawCallback, callback_data: Any) -> None:                                                                                                                                                                                   # imgui.h:2584
+    def AddCallback(self, callback: ImDrawCallback, callback_data: Any) -> None:                                                                                                                                                                                  # imgui.h:2584
         """ Your rendering function must check for 'UserCallback' in ImDrawCmd and call the function instead of rendering triangles."""
         pass
-    def add_draw_cmd(self) -> None:                                                                                                                                                                                                                                 # imgui.h:2585
+    def AddDrawCmd(self) -> None:                                                                                                                                                                                                                                 # imgui.h:2585
         """ This is useful if you need to forcefully create a new draw call (to allow for dependent rendering / blending). Otherwise primitives are merged into the same draw-call as much as possible"""
         pass
-    def clone_output(self) -> ImDrawList:                                                                                                                                                                                                                           # imgui.h:2586
+    def CloneOutput(self) -> ImDrawList:                                                                                                                                                                                                                          # imgui.h:2586
         """ Create a clone of the CmdBuffer/IdxBuffer/VtxBuffer."""
         pass
 
@@ -3190,36 +3190,36 @@ class ImDrawList:    # imgui.h:2503
     # Advanced: Primitives allocations
     # - We render triangles (three vertices)
     # - All primitives needs to be reserved via PrimReserve() beforehand.
-    def prim_reserve(self, idx_count: int, vtx_count: int) -> None:                                                                                                                                                                                                 # imgui.h:2601
+    def PrimReserve(self, idx_count: int, vtx_count: int) -> None:                                                                                                                                                                                                # imgui.h:2601
         pass
-    def prim_unreserve(self, idx_count: int, vtx_count: int) -> None:                                                                                                                                                                                               # imgui.h:2602
+    def PrimUnreserve(self, idx_count: int, vtx_count: int) -> None:                                                                                                                                                                                              # imgui.h:2602
         pass
-    def prim_rect(self, a: ImVec2, b: ImVec2, col: ImU32) -> None:                                                                                                                                                                                                  # imgui.h:2603
+    def PrimRect(self, a: ImVec2, b: ImVec2, col: ImU32) -> None:                                                                                                                                                                                                 # imgui.h:2603
         """ Axis aligned rectangle (composed of two triangles)"""
         pass
     # Write vertex with unique index
 
 
     # [Internal helpers]
-    def _reset_for_new_frame(self) -> None:                                                                                                                                                                                                                         # imgui.h:2616
+    def _ResetForNewFrame(self) -> None:                                                                                                                                                                                                                          # imgui.h:2616
         pass
-    def _clear_free_memory(self) -> None:                                                                                                                                                                                                                           # imgui.h:2617
+    def _ClearFreeMemory(self) -> None:                                                                                                                                                                                                                           # imgui.h:2617
         pass
-    def _pop_unused_draw_cmd(self) -> None:                                                                                                                                                                                                                         # imgui.h:2618
+    def _PopUnusedDrawCmd(self) -> None:                                                                                                                                                                                                                          # imgui.h:2618
         pass
-    def _try_merge_draw_cmds(self) -> None:                                                                                                                                                                                                                         # imgui.h:2619
+    def _TryMergeDrawCmds(self) -> None:                                                                                                                                                                                                                          # imgui.h:2619
         pass
-    def _on_changed_clip_rect(self) -> None:                                                                                                                                                                                                                        # imgui.h:2620
+    def _OnChangedClipRect(self) -> None:                                                                                                                                                                                                                         # imgui.h:2620
         pass
-    def _on_changed_texture_id(self) -> None:                                                                                                                                                                                                                       # imgui.h:2621
+    def _OnChangedTextureID(self) -> None:                                                                                                                                                                                                                        # imgui.h:2621
         pass
-    def _on_changed_vtx_offset(self) -> None:                                                                                                                                                                                                                       # imgui.h:2622
+    def _OnChangedVtxOffset(self) -> None:                                                                                                                                                                                                                        # imgui.h:2622
         pass
-    def _calc_circle_auto_segment_count(self, radius: float) -> int:                                                                                                                                                                                                # imgui.h:2623
+    def _CalcCircleAutoSegmentCount(self, radius: float) -> int:                                                                                                                                                                                                  # imgui.h:2623
         pass
-    def _path_arc_to_fast_ex(self, center: ImVec2, radius: float, a_min_sample: int, a_max_sample: int, a_step: int) -> None:                                                                                                                                       # imgui.h:2624
+    def _PathArcToFastEx(self, center: ImVec2, radius: float, a_min_sample: int, a_max_sample: int, a_step: int) -> None:                                                                                                                                         # imgui.h:2624
         pass
-    def _path_arc_to_n(self, center: ImVec2, radius: float, a_min: float, a_max: float, num_segments: int) -> None:                                                                                                                                                 # imgui.h:2625
+    def _PathArcToN(self, center: ImVec2, radius: float, a_min: float, a_max: float, num_segments: int) -> None:                                                                                                                                                  # imgui.h:2625
         pass
 
 class ImDrawData:    # imgui.h:2631
@@ -3227,21 +3227,21 @@ class ImDrawData:    # imgui.h:2631
      (NB: the style and the naming convention here is a little inconsistent, we currently preserve them for backward compatibility purpose,
      as this is one of the oldest structure exposed by the library! Basically, ImDrawList == CmdList)
     """
-    valid:bool                                               # Only valid after Render() is called and before the next NewFrame() is called.    # imgui.h:2633
-    cmd_lists_count:int                                      # Number of ImDrawList* to render    # imgui.h:2634
-    total_idx_count:int                                      # For convenience, sum of all ImDrawList's IdxBuffer.Size    # imgui.h:2635
-    total_vtx_count:int                                      # For convenience, sum of all ImDrawList's VtxBuffer.Size    # imgui.h:2636
-    display_pos:ImVec2                                       # Top-left position of the viewport to render (== top-left of the orthogonal projection matrix to use) (== GetMainViewport()->Pos for the main viewport, == (0.0) in most single-viewport applications)    # imgui.h:2638
-    display_size:ImVec2                                      # Size of the viewport to render (== GetMainViewport()->Size for the main viewport, == io.DisplaySize in most single-viewport applications)    # imgui.h:2639
-    framebuffer_scale:ImVec2                                 # Amount of pixels for each unit of DisplaySize. Based on io.DisplayFramebufferScale. Generally (1,1) on normal display, (2,2) on OSX with Retina display.    # imgui.h:2640
+    Valid:bool                                             # Only valid after Render() is called and before the next NewFrame() is called.    # imgui.h:2633
+    CmdListsCount:int                                      # Number of ImDrawList* to render    # imgui.h:2634
+    TotalIdxCount:int                                      # For convenience, sum of all ImDrawList's IdxBuffer.Size    # imgui.h:2635
+    TotalVtxCount:int                                      # For convenience, sum of all ImDrawList's VtxBuffer.Size    # imgui.h:2636
+    DisplayPos:ImVec2                                      # Top-left position of the viewport to render (== top-left of the orthogonal projection matrix to use) (== GetMainViewport()->Pos for the main viewport, == (0.0) in most single-viewport applications)    # imgui.h:2638
+    DisplaySize:ImVec2                                     # Size of the viewport to render (== GetMainViewport()->Size for the main viewport, == io.DisplaySize in most single-viewport applications)    # imgui.h:2639
+    FramebufferScale:ImVec2                                # Amount of pixels for each unit of DisplaySize. Based on io.DisplayFramebufferScale. Generally (1,1) on normal display, (2,2) on OSX with Retina display.    # imgui.h:2640
 
-    def __init__(self) -> None:                              # imgui.h:2643
+    def __init__(self) -> None:                            # imgui.h:2643
         """ Functions"""
         pass
-    def de_index_all_buffers(self) -> None:                  # imgui.h:2645
+    def DeIndexAllBuffers(self) -> None:                   # imgui.h:2645
         """ Helper to convert all buffers from indexed to non-indexed, in case you cannot render indexed. Note: this is slow and most likely a waste of resources. Always prefer indexed rendering!"""
         pass
-    def scale_clip_rects(self, fb_scale: ImVec2) -> None:    # imgui.h:2646
+    def ScaleClipRects(self, fb_scale: ImVec2) -> None:    # imgui.h:2646
         """ Helper to scale the ClipRect field of each ImDrawCmd. Use if your final output buffer is at a different scale than Dear ImGui expects, or if there is a difference between your window resolution and framebuffer resolution."""
         pass
 
@@ -3250,25 +3250,25 @@ class ImDrawData:    # imgui.h:2631
 #-----------------------------------------------------------------------------
 
 class ImFontConfig:    # imgui.h:2653
-    font_data:Any                  #          // TTF/OTF data    # imgui.h:2655
-    font_data_size:int             #          // TTF/OTF data size    # imgui.h:2656
-    font_data_owned_by_atlas:bool  # True     // TTF/OTF data ownership taken by the container ImFontAtlas (will delete memory itself).    # imgui.h:2657
-    font_no:int                    # 0        // Index of font within TTF/OTF file    # imgui.h:2658
-    size_pixels:float              #          // Size in pixels for rasterizer (more or less maps to the resulting font height).    # imgui.h:2659
-    oversample_h:int               # 3        // Rasterize at higher quality for sub-pixel positioning. Note the difference between 2 and 3 is minimal so you can reduce this to 2 to save memory. Read https://github.com/nothings/stb/blob/master/tests/oversample/README.md for details.    # imgui.h:2660
-    oversample_v:int               # 1        // Rasterize at higher quality for sub-pixel positioning. This is not really useful as we don't use sub-pixel positions on the Y axis.    # imgui.h:2661
-    pixel_snap_h:bool              # False    // Align every glyph to pixel boundary. Useful e.g. if you are merging a non-pixel aligned font with the default font. If enabled, you can set OversampleH/V to 1.    # imgui.h:2662
-    glyph_extra_spacing:ImVec2     # 0, 0     // Extra spacing (in pixels) between glyphs. Only X axis is supported for now.    # imgui.h:2663
-    glyph_offset:ImVec2            # 0, 0     // Offset all glyphs from this font input.    # imgui.h:2664
-    glyph_min_advance_x:float      # 0        // Minimum AdvanceX for glyphs, set Min to align font icons, set both Min/Max to enforce mono-space font    # imgui.h:2666
-    glyph_max_advance_x:float      # FLT_MAX  // Maximum AdvanceX for glyphs    # imgui.h:2667
-    merge_mode:bool                # False    // Merge into previous ImFont, so you can combine multiple inputs font into one ImFont (e.g. ASCII font + icons + Japanese glyphs). You may want to use GlyphOffset.y when merge font of different heights.    # imgui.h:2668
-    font_builder_flags:int         # 0        // Settings for custom font builder. THIS IS BUILDER IMPLEMENTATION DEPENDENT. Leave as zero if unsure.    # imgui.h:2669
-    rasterizer_multiply:float      # 1.0     // Brighten (>1.0) or darken (<1.0) font output. Brightening small fonts may be a good workaround to make them more readable.    # imgui.h:2670
-    ellipsis_char:ImWchar          # -1       // Explicitly specify unicode codepoint of ellipsis character. When fonts are being merged first specified ellipsis will be used.    # imgui.h:2671
+    FontData:Any                   #          // TTF/OTF data    # imgui.h:2655
+    FontDataSize:int               #          // TTF/OTF data size    # imgui.h:2656
+    FontDataOwnedByAtlas:bool      # True     // TTF/OTF data ownership taken by the container ImFontAtlas (will delete memory itself).    # imgui.h:2657
+    FontNo:int                     # 0        // Index of font within TTF/OTF file    # imgui.h:2658
+    SizePixels:float               #          // Size in pixels for rasterizer (more or less maps to the resulting font height).    # imgui.h:2659
+    OversampleH:int                # 3        // Rasterize at higher quality for sub-pixel positioning. Note the difference between 2 and 3 is minimal so you can reduce this to 2 to save memory. Read https://github.com/nothings/stb/blob/master/tests/oversample/README.md for details.    # imgui.h:2660
+    OversampleV:int                # 1        // Rasterize at higher quality for sub-pixel positioning. This is not really useful as we don't use sub-pixel positions on the Y axis.    # imgui.h:2661
+    PixelSnapH:bool                # False    // Align every glyph to pixel boundary. Useful e.g. if you are merging a non-pixel aligned font with the default font. If enabled, you can set OversampleH/V to 1.    # imgui.h:2662
+    GlyphExtraSpacing:ImVec2       # 0, 0     // Extra spacing (in pixels) between glyphs. Only X axis is supported for now.    # imgui.h:2663
+    GlyphOffset:ImVec2             # 0, 0     // Offset all glyphs from this font input.    # imgui.h:2664
+    GlyphMinAdvanceX:float         # 0        // Minimum AdvanceX for glyphs, set Min to align font icons, set both Min/Max to enforce mono-space font    # imgui.h:2666
+    GlyphMaxAdvanceX:float         # FLT_MAX  // Maximum AdvanceX for glyphs    # imgui.h:2667
+    MergeMode:bool                 # False    // Merge into previous ImFont, so you can combine multiple inputs font into one ImFont (e.g. ASCII font + icons + Japanese glyphs). You may want to use GlyphOffset.y when merge font of different heights.    # imgui.h:2668
+    FontBuilderFlags:int           # 0        // Settings for custom font builder. THIS IS BUILDER IMPLEMENTATION DEPENDENT. Leave as zero if unsure.    # imgui.h:2669
+    RasterizerMultiply:float       # 1.0     // Brighten (>1.0) or darken (<1.0) font output. Brightening small fonts may be a good workaround to make them more readable.    # imgui.h:2670
+    EllipsisChar:ImWchar           # -1       // Explicitly specify unicode codepoint of ellipsis character. When fonts are being merged first specified ellipsis will be used.    # imgui.h:2671
 
     # [Internal]
-    dst_font:ImFont                # imgui.h:2675
+    DstFont:ImFont                 # imgui.h:2675
 
     def __init__(self) -> None:    # imgui.h:2677
         pass
@@ -3277,53 +3277,53 @@ class ImFontGlyph:    # imgui.h:2682
     """ Hold rendering data for one glyph.
      (Note: some language parsers may fail to convert the 31+1 bitfield members, in this case maybe drop store a single u32 or we can rework this)
     """
-    advance_x:float  # Distance to next character (= data from font + ImFontConfig::GlyphExtraSpacing.x baked in)    # imgui.h:2687
-    x0:float         # Glyph corners    # imgui.h:2688
-    y0:float         # Glyph corners    # imgui.h:2688
-    x1:float         # Glyph corners    # imgui.h:2688
-    y1:float         # Glyph corners    # imgui.h:2688
-    u0:float         # Texture coordinates    # imgui.h:2689
-    v0:float         # Texture coordinates    # imgui.h:2689
-    u1:float         # Texture coordinates    # imgui.h:2689
-    v1:float         # Texture coordinates    # imgui.h:2689
+    AdvanceX:float  # Distance to next character (= data from font + ImFontConfig::GlyphExtraSpacing.x baked in)    # imgui.h:2687
+    X0:float        # Glyph corners    # imgui.h:2688
+    Y0:float        # Glyph corners    # imgui.h:2688
+    X1:float        # Glyph corners    # imgui.h:2688
+    Y1:float        # Glyph corners    # imgui.h:2688
+    U0:float        # Texture coordinates    # imgui.h:2689
+    V0:float        # Texture coordinates    # imgui.h:2689
+    U1:float        # Texture coordinates    # imgui.h:2689
+    V1:float        # Texture coordinates    # imgui.h:2689
 
 class ImFontGlyphRangesBuilder:    # imgui.h:2694
     """ Helper to build glyph ranges from text/string data. Feed your application strings/characters to it then call BuildRanges().
      This is essentially a tightly packed of vector of 64k booleans = 8KB storage.
     """
-    used_chars:List[ImU32]                                          # Store 1-bit per Unicode code point (0=unused, 1=used)    # imgui.h:2696
+    UsedChars:List[ImU32]                                          # Store 1-bit per Unicode code point (0=unused, 1=used)    # imgui.h:2696
 
-    def __init__(self) -> None:                                     # imgui.h:2698
+    def __init__(self) -> None:                                    # imgui.h:2698
         pass
-    def add_text(self, text: str, text_end: str = None) -> None:    # imgui.h:2703
+    def AddText(self, text: str, text_end: str = None) -> None:    # imgui.h:2703
         """ Add string (each character of the UTF-8 string are added)"""
         pass
-    def add_ranges(self, ranges: ImWchar) -> None:                  # imgui.h:2704
+    def AddRanges(self, ranges: ImWchar) -> None:                  # imgui.h:2704
         """ Add ranges, e.g. builder.AddRanges(ImFontAtlas::GetGlyphRangesDefault()) to force add all of ASCII/Latin+Ext"""
         pass
-    def build_ranges(self, out_ranges: List[ImWchar]) -> None:      # imgui.h:2705
+    def BuildRanges(self, out_ranges: List[ImWchar]) -> None:      # imgui.h:2705
         """ Output new ranges"""
         pass
 
 class ImFontAtlasCustomRect:    # imgui.h:2709
     """ See ImFontAtlas::AddCustomRectXXX functions."""
-    width:int                      # Input    // Desired rectangle dimension    # imgui.h:2711
-    height:int                     # Input    // Desired rectangle dimension    # imgui.h:2711
-    x:int                          # Output   // Packed position in Atlas    # imgui.h:2712
-    y:int                          # Output   // Packed position in Atlas    # imgui.h:2712
-    glyph_id:int                   # Input    // For custom font glyphs only (ID < 0x110000)    # imgui.h:2713
-    glyph_advance_x:float          # Input    // For custom font glyphs only: glyph xadvance    # imgui.h:2714
-    glyph_offset:ImVec2            # Input    // For custom font glyphs only: glyph display offset    # imgui.h:2715
-    font:ImFont                    # Input    // For custom font glyphs only: target font    # imgui.h:2716
+    Width:int                      # Input    // Desired rectangle dimension    # imgui.h:2711
+    Height:int                     # Input    // Desired rectangle dimension    # imgui.h:2711
+    X:int                          # Output   // Packed position in Atlas    # imgui.h:2712
+    Y:int                          # Output   // Packed position in Atlas    # imgui.h:2712
+    GlyphID:int                    # Input    // For custom font glyphs only (ID < 0x110000)    # imgui.h:2713
+    GlyphAdvanceX:float            # Input    // For custom font glyphs only: glyph xadvance    # imgui.h:2714
+    GlyphOffset:ImVec2             # Input    // For custom font glyphs only: glyph display offset    # imgui.h:2715
+    Font:ImFont                    # Input    // For custom font glyphs only: target font    # imgui.h:2716
     def __init__(self) -> None:    # imgui.h:2717
         pass
 
 class ImFontAtlasFlags_(Enum):    # imgui.h:2722
     """ Flags for ImFontAtlas build"""
-    none = 0
-    no_power_of_two_height = 1 << 0  # Don't round the height to next power of two
-    no_mouse_cursors = 1 << 1        # Don't build software mouse cursors into the atlas (save a little texture memory)
-    no_baked_lines = 1 << 2          # Don't build thick line textures into the atlas (save a little texture memory, allow support for point/nearest filtering). The AntiAliasedLinesUseTex features uses them, otherwise they will be rendered using polygons (more expensive for CPU/GPU).
+    None_ = 0
+    NoPowerOfTwoHeight = 1 << 0  # Don't round the height to next power of two
+    NoMouseCursors = 1 << 1      # Don't build software mouse cursors into the atlas (save a little texture memory)
+    NoBakedLines = 1 << 2        # Don't build thick line textures into the atlas (save a little texture memory, allow support for point/nearest filtering). The AntiAliasedLinesUseTex features uses them, otherwise they will be rendered using polygons (more expensive for CPU/GPU).
 
 class ImFontAtlas:    # imgui.h:2747
     """ Load and rasterize multiple TTF/OTF fonts into a same texture. The font atlas will build a single texture holding:
@@ -3344,33 +3344,33 @@ class ImFontAtlas:    # imgui.h:2747
      - Even though many functions are suffixed with "TTF", OTF data is supported just as well.
      - This is an old API and it is currently awkward for those and and various other reasons! We will address them in the future!
     """
-    def __init__(self) -> None:                                                                                                                                                                                     # imgui.h:2749
+    def __init__(self) -> None:                                                                                                                                                                                 # imgui.h:2749
         pass
-    def add_font(self, font_cfg: ImFontConfig) -> ImFont:                                                                                                                                                           # imgui.h:2751
+    def AddFont(self, font_cfg: ImFontConfig) -> ImFont:                                                                                                                                                        # imgui.h:2751
         pass
-    def add_font_default(self, font_cfg: ImFontConfig = None) -> ImFont:                                                                                                                                            # imgui.h:2752
+    def AddFontDefault(self, font_cfg: ImFontConfig = None) -> ImFont:                                                                                                                                          # imgui.h:2752
         pass
-    def add_font_from_file_ttf(self, filename: str, size_pixels: float, font_cfg: ImFontConfig = None, glyph_ranges: ImWchar = None) -> ImFont:                                                                     # imgui.h:2753
+    def AddFontFromFileTTF(self, filename: str, size_pixels: float, font_cfg: ImFontConfig = None, glyph_ranges: ImWchar = None) -> ImFont:                                                                     # imgui.h:2753
         pass
-    def add_font_from_memory_ttf(self, font_data: Any, font_size: int, size_pixels: float, font_cfg: ImFontConfig = None, glyph_ranges: ImWchar = None) -> ImFont:                                                  # imgui.h:2754
+    def AddFontFromMemoryTTF(self, font_data: Any, font_size: int, size_pixels: float, font_cfg: ImFontConfig = None, glyph_ranges: ImWchar = None) -> ImFont:                                                  # imgui.h:2754
         """ Note: Transfer ownership of 'ttf_data' to ImFontAtlas! Will be deleted after destruction of the atlas. Set font_cfg->FontDataOwnedByAtlas=False to keep ownership of your data and it won't be freed."""
         pass
-    def add_font_from_memory_compressed_ttf(self, compressed_font_data: Any, compressed_font_size: int, size_pixels: float, font_cfg: ImFontConfig = None, glyph_ranges: ImWchar = None) -> ImFont:                 # imgui.h:2755
+    def AddFontFromMemoryCompressedTTF(self, compressed_font_data: Any, compressed_font_size: int, size_pixels: float, font_cfg: ImFontConfig = None, glyph_ranges: ImWchar = None) -> ImFont:                  # imgui.h:2755
         """ 'compressed_font_data' still owned by caller. Compress with binary_to_compressed_c.cpp."""
         pass
-    def add_font_from_memory_compressed_base85_ttf(self, compressed_font_data_base85: str, size_pixels: float, font_cfg: ImFontConfig = None, glyph_ranges: ImWchar = None) -> ImFont:                              # imgui.h:2756
+    def AddFontFromMemoryCompressedBase85TTF(self, compressed_font_data_base85: str, size_pixels: float, font_cfg: ImFontConfig = None, glyph_ranges: ImWchar = None) -> ImFont:                                # imgui.h:2756
         """ 'compressed_font_data_base85' still owned by caller. Compress with binary_to_compressed_c.cpp with -base85 parameter."""
         pass
-    def clear_input_data(self) -> None:                                                                                                                                                                             # imgui.h:2757
+    def ClearInputData(self) -> None:                                                                                                                                                                           # imgui.h:2757
         """ Clear input data (all ImFontConfig structures including sizes, TTF data, glyph ranges, etc.) = all the data used to build the texture and fonts."""
         pass
-    def clear_tex_data(self) -> None:                                                                                                                                                                               # imgui.h:2758
+    def ClearTexData(self) -> None:                                                                                                                                                                             # imgui.h:2758
         """ Clear output texture data (CPU side). Saves RAM once the texture has been copied to graphics memory."""
         pass
-    def clear_fonts(self) -> None:                                                                                                                                                                                  # imgui.h:2759
+    def ClearFonts(self) -> None:                                                                                                                                                                               # imgui.h:2759
         """ Clear output font data (glyphs storage, UV coordinates)."""
         pass
-    def clear(self) -> None:                                                                                                                                                                                        # imgui.h:2760
+    def Clear(self) -> None:                                                                                                                                                                                    # imgui.h:2760
         """ Clear all input and output."""
         pass
 
@@ -3379,7 +3379,7 @@ class ImFontAtlas:    # imgui.h:2747
     # The pitch is always = Width * BytesPerPixels (1 or 4)
     # Building in RGBA32 format is provided for convenience and compatibility, but note that unless you manually manipulate or copy color data into
     # the texture (e.g. when using the AddCustomRect*** api), then the RGB pixels emitted will always be white (~75% of memory/bandwidth waste.
-    def build(self) -> bool:                                                                                                                                                                                        # imgui.h:2767
+    def Build(self) -> bool:                                                                                                                                                                                    # imgui.h:2767
         """ Build pixels data. This is called automatically for you by the GetTexData*** functions."""
         pass
 
@@ -3390,28 +3390,28 @@ class ImFontAtlas:    # imgui.h:2747
     # Helpers to retrieve list of common Unicode ranges (2 value per range, values are inclusive, zero-terminated list)
     # NB: Make sure that your string are UTF-8 and NOT in your local code page. In C++11, you can create UTF-8 string literal using the u8"Hello world" syntax. See FAQ for details.
     # NB: Consider using ImFontGlyphRangesBuilder to build glyph ranges from textual data.
-    def get_glyph_ranges_default(self) -> ImWchar:                                                                                                                                                                  # imgui.h:2780
+    def GetGlyphRangesDefault(self) -> ImWchar:                                                                                                                                                                 # imgui.h:2780
         """ Basic Latin, Extended Latin"""
         pass
-    def get_glyph_ranges_korean(self) -> ImWchar:                                                                                                                                                                   # imgui.h:2781
+    def GetGlyphRangesKorean(self) -> ImWchar:                                                                                                                                                                  # imgui.h:2781
         """ Default + Korean characters"""
         pass
-    def get_glyph_ranges_japanese(self) -> ImWchar:                                                                                                                                                                 # imgui.h:2782
+    def GetGlyphRangesJapanese(self) -> ImWchar:                                                                                                                                                                # imgui.h:2782
         """ Default + Hiragana, Katakana, Half-Width, Selection of 2999 Ideographs"""
         pass
-    def get_glyph_ranges_chinese_full(self) -> ImWchar:                                                                                                                                                             # imgui.h:2783
+    def GetGlyphRangesChineseFull(self) -> ImWchar:                                                                                                                                                             # imgui.h:2783
         """ Default + Half-Width + Japanese Hiragana/Katakana + full set of about 21000 CJK Unified Ideographs"""
         pass
-    def get_glyph_ranges_chinese_simplified_common(self) -> ImWchar:                                                                                                                                                # imgui.h:2784
+    def GetGlyphRangesChineseSimplifiedCommon(self) -> ImWchar:                                                                                                                                                 # imgui.h:2784
         """ Default + Half-Width + Japanese Hiragana/Katakana + set of 2500 CJK Unified Ideographs for common simplified Chinese"""
         pass
-    def get_glyph_ranges_cyrillic(self) -> ImWchar:                                                                                                                                                                 # imgui.h:2785
+    def GetGlyphRangesCyrillic(self) -> ImWchar:                                                                                                                                                                # imgui.h:2785
         """ Default + about 400 Cyrillic characters"""
         pass
-    def get_glyph_ranges_thai(self) -> ImWchar:                                                                                                                                                                     # imgui.h:2786
+    def GetGlyphRangesThai(self) -> ImWchar:                                                                                                                                                                    # imgui.h:2786
         """ Default + Thai characters"""
         pass
-    def get_glyph_ranges_vietnamese(self) -> ImWchar:                                                                                                                                                               # imgui.h:2787
+    def GetGlyphRangesVietnamese(self) -> ImWchar:                                                                                                                                                              # imgui.h:2787
         """ Default + Vietnamese characters"""
         pass
 
@@ -3426,44 +3426,44 @@ class ImFontAtlas:    # imgui.h:2747
     #   so you can render e.g. custom colorful icons and use them as regular glyphs.
     # - Read docs/FONTS.md for more details about using colorful icons.
     # - Note: this API may be redesigned later in order to support multi-monitor varying DPI settings.
-    def add_custom_rect_regular(self, width: int, height: int) -> int:                                                                                                                                              # imgui.h:2800
+    def AddCustomRectRegular(self, width: int, height: int) -> int:                                                                                                                                             # imgui.h:2800
         pass
-    def add_custom_rect_font_glyph(self, font: ImFont, id: ImWchar, width: int, height: int, advance_x: float, offset: ImVec2 = ImVec2(0, 0)) -> int:                                                               # imgui.h:2801
+    def AddCustomRectFontGlyph(self, font: ImFont, id: ImWchar, width: int, height: int, advance_x: float, offset: ImVec2 = ImVec2(0, 0)) -> int:                                                               # imgui.h:2801
         pass
 
     # [Internal]
-    def get_mouse_cursor_tex_data(self, cursor: ImGuiMouseCursor, out_offset: ImVec2, out_size: ImVec2, out_uv_border_0: ImVec2, out_uv_border_1: ImVec2, out_uv_fill_0: ImVec2, out_uv_fill_1: ImVec2) -> bool:    # imgui.h:2806
+    def GetMouseCursorTexData(self, cursor: ImGuiMouseCursor, out_offset: ImVec2, out_size: ImVec2, out_uv_border_0: ImVec2, out_uv_border_1: ImVec2, out_uv_fill_0: ImVec2, out_uv_fill_1: ImVec2) -> bool:    # imgui.h:2806
         pass
 
     #-------------------------------------------
     # Members
     #-------------------------------------------
 
-    flags:ImFontAtlasFlags                                                                                                                                                                                          # Build flags (see ImFontAtlasFlags_)    # imgui.h:2812
-    tex_id:ImTextureID                                                                                                                                                                                              # User data to refer to the texture once it has been uploaded to user's graphic systems. It is passed back to you during rendering via the ImDrawCmd structure.    # imgui.h:2813
-    tex_desired_width:int                                                                                                                                                                                           # Texture width desired by user before Build(). Must be a power-of-two. If have many glyphs your graphics API have texture size restrictions you may want to increase texture width to decrease height.    # imgui.h:2814
-    tex_glyph_padding:int                                                                                                                                                                                           # Padding between glyphs within texture in pixels. Defaults to 1. If your rendering method doesn't rely on bilinear filtering you may set this to 0 (will also need to set AntiAliasedLinesUseTex = False).    # imgui.h:2815
-    locked:bool                                                                                                                                                                                                     # Marked as Locked by ImGui::NewFrame() so attempt to modify the atlas will assert.    # imgui.h:2816
+    Flags:ImFontAtlasFlags                                                                                                                                                                                      # Build flags (see ImFontAtlasFlags_)    # imgui.h:2812
+    TexID:ImTextureID                                                                                                                                                                                           # User data to refer to the texture once it has been uploaded to user's graphic systems. It is passed back to you during rendering via the ImDrawCmd structure.    # imgui.h:2813
+    TexDesiredWidth:int                                                                                                                                                                                         # Texture width desired by user before Build(). Must be a power-of-two. If have many glyphs your graphics API have texture size restrictions you may want to increase texture width to decrease height.    # imgui.h:2814
+    TexGlyphPadding:int                                                                                                                                                                                         # Padding between glyphs within texture in pixels. Defaults to 1. If your rendering method doesn't rely on bilinear filtering you may set this to 0 (will also need to set AntiAliasedLinesUseTex = False).    # imgui.h:2815
+    Locked:bool                                                                                                                                                                                                 # Marked as Locked by ImGui::NewFrame() so attempt to modify the atlas will assert.    # imgui.h:2816
 
     # [Internal]
     # NB: Access texture data via GetTexData*() calls! Which will setup a default font for you.
-    tex_ready:bool                                                                                                                                                                                                  # Set when texture was built matching current font input    # imgui.h:2820
-    tex_pixels_use_colors:bool                                                                                                                                                                                      # Tell whether our texture data is known to use colors (rather than just alpha channel), in order to help backend select a format.    # imgui.h:2821
-    tex_width:int                                                                                                                                                                                                   # Texture width calculated during Build().    # imgui.h:2824
-    tex_height:int                                                                                                                                                                                                  # Texture height calculated during Build().    # imgui.h:2825
-    tex_uv_scale:ImVec2                                                                                                                                                                                             # = (1.0/TexWidth, 1.0/TexHeight)    # imgui.h:2826
-    tex_uv_white_pixel:ImVec2                                                                                                                                                                                       # Texture coordinates to a white pixel    # imgui.h:2827
-    fonts:List[ImFont]                                                                                                                                                                                              # Hold all the fonts returned by AddFont*. Fonts[0] is the default font upon calling ImGui::NewFrame(), use ImGui::PushFont()/PopFont() to change the current font.    # imgui.h:2828
-    custom_rects:List[ImFontAtlasCustomRect]                                                                                                                                                                        # Rectangles for packing custom texture data into the atlas.    # imgui.h:2829
-    config_data:List[ImFontConfig]                                                                                                                                                                                  # Configuration data    # imgui.h:2830
+    TexReady:bool                                                                                                                                                                                               # Set when texture was built matching current font input    # imgui.h:2820
+    TexPixelsUseColors:bool                                                                                                                                                                                     # Tell whether our texture data is known to use colors (rather than just alpha channel), in order to help backend select a format.    # imgui.h:2821
+    TexWidth:int                                                                                                                                                                                                # Texture width calculated during Build().    # imgui.h:2824
+    TexHeight:int                                                                                                                                                                                               # Texture height calculated during Build().    # imgui.h:2825
+    TexUvScale:ImVec2                                                                                                                                                                                           # = (1.0/TexWidth, 1.0/TexHeight)    # imgui.h:2826
+    TexUvWhitePixel:ImVec2                                                                                                                                                                                      # Texture coordinates to a white pixel    # imgui.h:2827
+    Fonts:List[ImFont]                                                                                                                                                                                          # Hold all the fonts returned by AddFont*. Fonts[0] is the default font upon calling ImGui::NewFrame(), use ImGui::PushFont()/PopFont() to change the current font.    # imgui.h:2828
+    CustomRects:List[ImFontAtlasCustomRect]                                                                                                                                                                     # Rectangles for packing custom texture data into the atlas.    # imgui.h:2829
+    ConfigData:List[ImFontConfig]                                                                                                                                                                               # Configuration data    # imgui.h:2830
 
     # [Internal] Font builder
-    font_builder_io:ImFontBuilderIO                                                                                                                                                                                 # Opaque interface to a font builder (default to stb_truetype, can be changed to use FreeType by defining IMGUI_ENABLE_FREETYPE).    # imgui.h:2834
-    font_builder_flags:int                                                                                                                                                                                          # Shared flags (for all fonts) for custom font builder. THIS IS BUILD IMPLEMENTATION DEPENDENT. Per-font override is also available in ImFontConfig.    # imgui.h:2835
+    FontBuilderIO:ImFontBuilderIO                                                                                                                                                                               # Opaque interface to a font builder (default to stb_truetype, can be changed to use FreeType by defining IMGUI_ENABLE_FREETYPE).    # imgui.h:2834
+    FontBuilderFlags:int                                                                                                                                                                                        # Shared flags (for all fonts) for custom font builder. THIS IS BUILD IMPLEMENTATION DEPENDENT. Per-font override is also available in ImFontConfig.    # imgui.h:2835
 
     # [Internal] Packing data
-    pack_id_mouse_cursors:int                                                                                                                                                                                       # Custom texture rectangle ID for white pixel and mouse cursors    # imgui.h:2838
-    pack_id_lines:int                                                                                                                                                                                               # Custom texture rectangle ID for baked anti-aliased lines    # imgui.h:2839
+    PackIdMouseCursors:int                                                                                                                                                                                      # Custom texture rectangle ID for white pixel and mouse cursors    # imgui.h:2838
+    PackIdLines:int                                                                                                                                                                                             # Custom texture rectangle ID for baked anti-aliased lines    # imgui.h:2839
 
     # [Obsolete]
     #typedef ImFontAtlasCustomRect    CustomRect;         // OBSOLETED in 1.72+
@@ -3474,60 +3474,60 @@ class ImFont:    # imgui.h:2848
      ImFontAtlas automatically loads a default embedded font for you when you call GetTexDataAsAlpha8() or GetTexDataAsRGBA32().
     """
     # Members: Hot ~20/24 bytes (for CalcTextSize)
-    index_advance_x:List[float]                                                                                                                                                                             # 12-16 // out //            // Sparse. Glyphs->AdvanceX in a directly indexable way (cache-friendly for CalcTextSize functions which only this this info, and are often bottleneck in large UI).    # imgui.h:2851
-    fallback_advance_x:float                                                                                                                                                                                # 4     // out // = FallbackGlyph->AdvanceX    # imgui.h:2852
-    font_size:float                                                                                                                                                                                         # 4     // in  //            // Height of characters/line, set during loading (don't change after loading)    # imgui.h:2853
+    IndexAdvanceX:List[float]                                                                                                                                                                              # 12-16 // out //            // Sparse. Glyphs->AdvanceX in a directly indexable way (cache-friendly for CalcTextSize functions which only this this info, and are often bottleneck in large UI).    # imgui.h:2851
+    FallbackAdvanceX:float                                                                                                                                                                                 # 4     // out // = FallbackGlyph->AdvanceX    # imgui.h:2852
+    FontSize:float                                                                                                                                                                                         # 4     // in  //            // Height of characters/line, set during loading (don't change after loading)    # imgui.h:2853
 
     # Members: Hot ~28/40 bytes (for CalcTextSize + render loop)
-    index_lookup:List[ImWchar]                                                                                                                                                                              # 12-16 // out //            // Sparse. Index glyphs by Unicode code-point.    # imgui.h:2856
-    glyphs:List[ImFontGlyph]                                                                                                                                                                                # 12-16 // out //            // All glyphs.    # imgui.h:2857
-    fallback_glyph:ImFontGlyph                                                                                                                                                                              # 4-8   // out // = FindGlyph(FontFallbackChar)    # imgui.h:2858
+    IndexLookup:List[ImWchar]                                                                                                                                                                              # 12-16 // out //            // Sparse. Index glyphs by Unicode code-point.    # imgui.h:2856
+    Glyphs:List[ImFontGlyph]                                                                                                                                                                               # 12-16 // out //            // All glyphs.    # imgui.h:2857
+    FallbackGlyph:ImFontGlyph                                                                                                                                                                              # 4-8   // out // = FindGlyph(FontFallbackChar)    # imgui.h:2858
 
     # Members: Cold ~32/40 bytes
-    container_atlas:ImFontAtlas                                                                                                                                                                             # 4-8   // out //            // What we has been loaded into    # imgui.h:2861
-    config_data:ImFontConfig                                                                                                                                                                                # 4-8   // in  //            // Pointer within ContainerAtlas->ConfigData    # imgui.h:2862
-    config_data_count:int                                                                                                                                                                                   # 2     // in  // ~ 1        // Number of ImFontConfig involved in creating this font. Bigger than 1 when merging multiple font sources into one ImFont.    # imgui.h:2863
-    fallback_char:ImWchar                                                                                                                                                                                   # 2     // out // = FFFD/'?' // Character used if a glyph isn't found.    # imgui.h:2864
-    ellipsis_char:ImWchar                                                                                                                                                                                   # 2     // out // = '...'    // Character used for ellipsis rendering.    # imgui.h:2865
-    dot_char:ImWchar                                                                                                                                                                                        # 2     // out // = '.'      // Character used for ellipsis rendering (if a single '...' character isn't found)    # imgui.h:2866
-    dirty_lookup_tables:bool                                                                                                                                                                                # 1     // out //    # imgui.h:2867
-    scale:float                                                                                                                                                                                             # 4     // in  // = 1.      // Base font scale, multiplied by the per-window font scale which you can adjust with SetWindowFontScale()    # imgui.h:2868
-    ascent:float                                                                                                                                                                                            # 4+4   // out //            // Ascent: distance from top to bottom of e.g. 'A' [0..FontSize]    # imgui.h:2869
-    descent:float                                                                                                                                                                                           # 4+4   // out //            // Ascent: distance from top to bottom of e.g. 'A' [0..FontSize]    # imgui.h:2869
-    metrics_total_surface:int                                                                                                                                                                               # 4     // out //            // Total surface in pixels to get an idea of the font rasterization/texture cost (not exact, we approximate the cost of padding between glyphs)    # imgui.h:2870
+    ContainerAtlas:ImFontAtlas                                                                                                                                                                             # 4-8   // out //            // What we has been loaded into    # imgui.h:2861
+    ConfigData:ImFontConfig                                                                                                                                                                                # 4-8   // in  //            // Pointer within ContainerAtlas->ConfigData    # imgui.h:2862
+    ConfigDataCount:int                                                                                                                                                                                    # 2     // in  // ~ 1        // Number of ImFontConfig involved in creating this font. Bigger than 1 when merging multiple font sources into one ImFont.    # imgui.h:2863
+    FallbackChar:ImWchar                                                                                                                                                                                   # 2     // out // = FFFD/'?' // Character used if a glyph isn't found.    # imgui.h:2864
+    EllipsisChar:ImWchar                                                                                                                                                                                   # 2     // out // = '...'    // Character used for ellipsis rendering.    # imgui.h:2865
+    DotChar:ImWchar                                                                                                                                                                                        # 2     // out // = '.'      // Character used for ellipsis rendering (if a single '...' character isn't found)    # imgui.h:2866
+    DirtyLookupTables:bool                                                                                                                                                                                 # 1     // out //    # imgui.h:2867
+    Scale:float                                                                                                                                                                                            # 4     // in  // = 1.      // Base font scale, multiplied by the per-window font scale which you can adjust with SetWindowFontScale()    # imgui.h:2868
+    Ascent:float                                                                                                                                                                                           # 4+4   // out //            // Ascent: distance from top to bottom of e.g. 'A' [0..FontSize]    # imgui.h:2869
+    Descent:float                                                                                                                                                                                          # 4+4   // out //            // Ascent: distance from top to bottom of e.g. 'A' [0..FontSize]    # imgui.h:2869
+    MetricsTotalSurface:int                                                                                                                                                                                # 4     // out //            // Total surface in pixels to get an idea of the font rasterization/texture cost (not exact, we approximate the cost of padding between glyphs)    # imgui.h:2870
 
-    def __init__(self) -> None:                                                                                                                                                                             # imgui.h:2874
+    def __init__(self) -> None:                                                                                                                                                                            # imgui.h:2874
         """ Methods"""
         pass
-    def find_glyph(self, c: ImWchar) -> ImFontGlyph:                                                                                                                                                        # imgui.h:2876
+    def FindGlyph(self, c: ImWchar) -> ImFontGlyph:                                                                                                                                                        # imgui.h:2876
         pass
-    def find_glyph_no_fallback(self, c: ImWchar) -> ImFontGlyph:                                                                                                                                            # imgui.h:2877
+    def FindGlyphNoFallback(self, c: ImWchar) -> ImFontGlyph:                                                                                                                                              # imgui.h:2877
         pass
 
     # 'max_width' stops rendering after a certain width (could be turned into a 2 size). FLT_MAX to disable.
     # 'wrap_width' enable automatic word-wrapping across multiple lines to fit into given width. 0.0 to disable.
-    def calc_word_wrap_position_a(self, scale: float, text: str, text_end: str, wrap_width: float) -> str:                                                                                                  # imgui.h:2885
+    def CalcWordWrapPositionA(self, scale: float, text: str, text_end: str, wrap_width: float) -> str:                                                                                                     # imgui.h:2885
         pass
-    def render_char(self, draw_list: ImDrawList, size: float, pos: ImVec2, col: ImU32, c: ImWchar) -> None:                                                                                                 # imgui.h:2886
+    def RenderChar(self, draw_list: ImDrawList, size: float, pos: ImVec2, col: ImU32, c: ImWchar) -> None:                                                                                                 # imgui.h:2886
         pass
-    def render_text(self, draw_list: ImDrawList, size: float, pos: ImVec2, col: ImU32, clip_rect: ImVec4, text_begin: str, text_end: str, wrap_width: float = 0.0, cpu_fine_clip: bool = False) -> None:    # imgui.h:2887
+    def RenderText(self, draw_list: ImDrawList, size: float, pos: ImVec2, col: ImU32, clip_rect: ImVec4, text_begin: str, text_end: str, wrap_width: float = 0.0, cpu_fine_clip: bool = False) -> None:    # imgui.h:2887
         pass
 
     # [Internal] Don't use!
-    def build_lookup_table(self) -> None:                                                                                                                                                                   # imgui.h:2890
+    def BuildLookupTable(self) -> None:                                                                                                                                                                    # imgui.h:2890
         pass
-    def clear_output_data(self) -> None:                                                                                                                                                                    # imgui.h:2891
+    def ClearOutputData(self) -> None:                                                                                                                                                                     # imgui.h:2891
         pass
-    def grow_index(self, new_size: int) -> None:                                                                                                                                                            # imgui.h:2892
+    def GrowIndex(self, new_size: int) -> None:                                                                                                                                                            # imgui.h:2892
         pass
-    def add_glyph(self, src_cfg: ImFontConfig, c: ImWchar, x0: float, y0: float, x1: float, y1: float, u0: float, v0: float, u1: float, v1: float, advance_x: float) -> None:                               # imgui.h:2893
+    def AddGlyph(self, src_cfg: ImFontConfig, c: ImWchar, x0: float, y0: float, x1: float, y1: float, u0: float, v0: float, u1: float, v1: float, advance_x: float) -> None:                               # imgui.h:2893
         pass
-    def add_remap_char(self, dst: ImWchar, src: ImWchar, overwrite_dst: bool = True) -> None:                                                                                                               # imgui.h:2894
+    def AddRemapChar(self, dst: ImWchar, src: ImWchar, overwrite_dst: bool = True) -> None:                                                                                                                # imgui.h:2894
         """ Makes 'dst' character/glyph points to 'src' character/glyph. Currently needs to be called AFTER fonts have been built."""
         pass
-    def set_glyph_visible(self, c: ImWchar, visible: bool) -> None:                                                                                                                                         # imgui.h:2895
+    def SetGlyphVisible(self, c: ImWchar, visible: bool) -> None:                                                                                                                                          # imgui.h:2895
         pass
-    def is_glyph_range_unused(self, c_begin: int, c_last: int) -> bool:                                                                                                                                     # imgui.h:2896
+    def IsGlyphRangeUnused(self, c_begin: int, c_last: int) -> bool:                                                                                                                                       # imgui.h:2896
         pass
 
 #-----------------------------------------------------------------------------
@@ -3536,10 +3536,10 @@ class ImFont:    # imgui.h:2848
 
 class ImGuiViewportFlags_(Enum):    # imgui.h:2904
     """ Flags stored in ImGuiViewport::Flags, giving indications to the platform backends."""
-    none = 0
-    is_platform_window = 1 << 0   # Represent a Platform Window
-    is_platform_monitor = 1 << 1  # Represent a Platform Monitor (unused yet)
-    owned_by_app = 1 << 2         # Platform Window: is created/managed by the application (rather than a dear imgui backend)
+    None_ = 0
+    IsPlatformWindow = 1 << 0   # Represent a Platform Window
+    IsPlatformMonitor = 1 << 1  # Represent a Platform Monitor (unused yet)
+    OwnedByApp = 1 << 2         # Platform Window: is created/managed by the application (rather than a dear imgui backend)
 
 class ImGuiViewport:    # imgui.h:2919
     """ - Currently represents the Platform Window created by the application which is hosting our Dear ImGui windows.
@@ -3550,14 +3550,14 @@ class ImGuiViewport:    # imgui.h:2919
        - Work Area = entire viewport minus sections used by main menu bars (for platform windows), or by task bar (for platform monitor).
        - Windows are generally trying to stay within the Work Area of their host viewport.
     """
-    flags:ImGuiViewportFlags       # See ImGuiViewportFlags_    # imgui.h:2921
-    pos:ImVec2                     # Main Area: Position of the viewport (Dear ImGui coordinates are the same as OS desktop/native coordinates)    # imgui.h:2922
-    size:ImVec2                    # Main Area: Size of the viewport.    # imgui.h:2923
-    work_pos:ImVec2                # Work Area: Position of the viewport minus task bars, menus bars, status bars (>= Pos)    # imgui.h:2924
-    work_size:ImVec2               # Work Area: Size of the viewport minus task bars, menu bars, status bars (<= Size)    # imgui.h:2925
+    Flags:ImGuiViewportFlags       # See ImGuiViewportFlags_    # imgui.h:2921
+    Pos:ImVec2                     # Main Area: Position of the viewport (Dear ImGui coordinates are the same as OS desktop/native coordinates)    # imgui.h:2922
+    Size:ImVec2                    # Main Area: Size of the viewport.    # imgui.h:2923
+    WorkPos:ImVec2                 # Work Area: Position of the viewport minus task bars, menus bars, status bars (>= Pos)    # imgui.h:2924
+    WorkSize:ImVec2                # Work Area: Size of the viewport minus task bars, menu bars, status bars (<= Size)    # imgui.h:2925
 
     # Platform/Backend Dependent Data
-    platform_handle_raw:Any        # None* to hold lower-level, platform-native window handle (under Win32 this is expected to be a HWND, unused for other platforms)    # imgui.h:2928
+    PlatformHandleRaw:Any          # None* to hold lower-level, platform-native window handle (under Win32 this is expected to be a HWND, unused for other platforms)    # imgui.h:2928
 
     def __init__(self) -> None:    # imgui.h:2930
         pass
@@ -3570,9 +3570,9 @@ class ImGuiViewport:    # imgui.h:2919
 
 class ImGuiPlatformImeData:    # imgui.h:2942
     """ (Optional) Support for IME (Input Method Editor) via the io.SetPlatformImeDataFn() function."""
-    want_visible:bool              # A widget wants the IME to be visible    # imgui.h:2944
-    input_pos:ImVec2               # Position of the input cursor    # imgui.h:2945
-    input_line_height:float        # Line height    # imgui.h:2946
+    WantVisible:bool               # A widget wants the IME to be visible    # imgui.h:2944
+    InputPos:ImVec2                # Position of the input cursor    # imgui.h:2945
+    InputLineHeight:float          # Line height    # imgui.h:2946
 
     def __init__(self) -> None:    # imgui.h:2948
         pass
