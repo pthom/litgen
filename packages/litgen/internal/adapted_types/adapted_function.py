@@ -180,7 +180,10 @@ class AdaptedFunction(AdaptedElement):
         super().__init__(options, function_infos)
         self._fill_return_value_policy()
         self._fill_is_type_ignore()
+
         self.is_overloaded = is_overloaded
+        if code_utils.does_match_regexes(self.options.fn_force_overload_regexes, self.cpp_element().function_name):
+            self.is_overloaded = True
 
         adapt_function_params.apply_all_adapters(self)
 

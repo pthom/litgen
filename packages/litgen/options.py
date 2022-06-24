@@ -162,6 +162,9 @@ class LitgenOptions:
     ################################################################################
     ################################################################################
 
+    # Force using py::overload for functions that matches these regexes
+    fn_force_overload_regexes: List[str] = []
+
     #
     # C style arrays structs and class members
     #
@@ -382,6 +385,16 @@ def code_style_imgui() -> LitgenOptions:
     ]
 
     options.srcml_options.class_name_exclude_regexes = [r"^ImVector\b", "ImGuiTextBuffer"]
+
+    options.fn_force_overload_regexes = [
+        r"^SetScroll",
+        r"^Drag",
+        r"^Slider",
+        r"^InputText",
+        r"Popup",
+        r"DrawList",
+        r"^Table",
+    ]
 
     return options
 
