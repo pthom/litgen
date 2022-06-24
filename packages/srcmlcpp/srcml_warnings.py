@@ -139,7 +139,12 @@ class SrcMlExceptionDetailed(SrcMlException):
         super().__init__(message)
 
 
-def emit_srcml_warning(options: SrcmlOptions, current_element: Optional[ET.Element], additional_message: str) -> None:
+def emit_srcml_warning(
+    options: SrcmlOptions,
+    current_element: Optional[ET.Element],
+    additional_message: str,
+    message_header: str = "Warning",
+) -> None:
     if options.flag_quiet:
         return
     message = _warning_detailed_info(options, current_element, additional_message)
@@ -148,7 +153,7 @@ def emit_srcml_warning(options: SrcmlOptions, current_element: Optional[ET.Eleme
     if in_pytest:
         logging.warning(message)
     else:
-        print("Warning: " + message, file=sys.stderr)
+        print(f"{message_header}: " + message, file=sys.stderr)
 
 
 def emit_warning(options: SrcmlOptions, message: str) -> None:

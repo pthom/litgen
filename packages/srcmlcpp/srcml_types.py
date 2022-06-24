@@ -881,6 +881,14 @@ class CppFunctionDecl(CppElementAndComment):
     def is_const(self) -> bool:
         return "const" in self.specifiers
 
+    def returns_pointer(self) -> bool:
+        r = hasattr(self, "return_type") and self.return_type.modifiers == ["*"]
+        return r
+
+    def returns_reference(self) -> bool:
+        r = hasattr(self, "return_type") and self.return_type.modifiers == ["&"]
+        return r
+
     def __str__(self) -> str:
         return self.str_commented()
 

@@ -164,6 +164,9 @@ class LitgenOptions:
 
     # Force using py::overload for functions that matches these regexes
     fn_force_overload_regexes: List[str] = []
+    # If true, all functions that returns pointers will have the policy `pybind11::return_value_policy::reference)`
+    fn_force_return_policy_reference_for_pointers: bool = False
+    fn_force_return_policy_reference_for_references: bool = False
 
     #
     # C style arrays structs and class members
@@ -395,6 +398,9 @@ def code_style_imgui() -> LitgenOptions:
         r"DrawList",
         r"^Table",
     ]
+
+    options.fn_force_return_policy_reference_for_pointers = True
+    options.fn_force_return_policy_reference_for_references = True
 
     return options
 

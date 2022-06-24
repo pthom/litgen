@@ -244,7 +244,6 @@ class AdaptedFunction(AdaptedElement):
     #
     # override
     def _str_stub_lines(self) -> List[str]:
-
         if self.is_type_ignore:
             type_ignore = "  # type: ignore"
         else:
@@ -341,6 +340,18 @@ class AdaptedFunction(AdaptedElement):
                 comment_on_previous_lines += "\n"
             comment_on_previous_lines += f"return_value_policy::{self.return_value_policy}"
             self.cpp_element().cpp_element_comments.comment_on_previous_lines = comment_on_previous_lines
+
+        # Take options.fn_force_return_policy_reference_for_pointers into account
+        if (self.options.fn_force_return_policy_reference_for_pointers and self.cpp_element().returns_pointer()) or (
+            self.options.fn_force_return_policy_reference_for_references and self.cpp_element().returns_reference()
+        ):
+            self.return_value_policy = "reference"
+            emit_srcml_warning(
+                self.options.srcml_options,
+                self.cpp_element().srcml_element,
+                "Forced function return_value_policy to reference",
+                message_header="Info",
+            )
 
     def _pydef_return_str(self) -> str:
         """Creates the return part of the pydef"""
