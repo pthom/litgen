@@ -6,7 +6,6 @@ import re
 import traceback
 from typing import Any, Dict, Iterable, Iterator, List, Optional, Tuple, TypeVar
 
-
 """Low level code utilities
 
 Note: This module shall work standalone, and not depend on anything inside litgen or srcmlcpp!
@@ -699,6 +698,21 @@ def replace_in_string(input_string: str, replacements: Dict[str, str]) -> str:
     for search, replace in replacements.items():
         full_search = "{" + search + "}"
         r = r.replace(full_search, replace)
+    return r
+
+
+def process_code_template(
+    input_string: str,
+    replacements: Dict[str, str],
+    replacements_with_line_removal_if_not_found: Dict[str, Optional[str]],
+    replace_maybe_comma_if_not_last_line: bool = True,
+    maybe_comma_nb_skipped_final_lines: int = 0,
+) -> str:
+    r = input_string
+    r = replace_in_string(r, replacements)
+    r = replace_in_string_remove_line_if_none(r, replacements_with_line_removal_if_not_found)
+    if replace_maybe_comma_if_not_last_line:
+        r = replace_maybe_comma(r, maybe_comma_nb_skipped_final_lines)
     return r
 
 
