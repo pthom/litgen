@@ -10,21 +10,21 @@ import logging
 this_dir = os.path.realpath(os.path.dirname(__file__))
 imgui_dir = f"{this_dir}/imgui"
 
-patch_file = f"{this_dir}/imgui_string_patch.patch"
+patch_file = f"{this_dir}/imgui_litgen_patch.patch"
 imgui_patch = patch.fromfile(patch_file)
 
 
-def apply_imgui_string_patch():
+def apply_imgui_patch():
     patch_success = imgui_patch.apply(root=imgui_dir)
     if not patch_success:
-        logging.warning("apply_imgui_string_patch failed")
+        logging.warning("apply_imgui_patch failed")
 
 
-def revert_imgui_string_patch():
+def revert_imgui_patch():
     patch_success = imgui_patch.revert(root=imgui_dir)
     if not patch_success:
-        logging.warning("revert_imgui_string_patch failed")
+        logging.warning("revert_imgui_patch failed")
 
 
 if __name__ == "__main__":
-    apply_imgui_string_patch()
+    apply_imgui_patch()

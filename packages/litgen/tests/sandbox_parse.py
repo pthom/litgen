@@ -51,7 +51,7 @@ def play_pydef(code, options) -> None:
 
 
 code = """
-void foo(bool * flag = nullptr);
+int foo(bool * flag = nullptr);
 
 //void foo(bool &flag);
 """

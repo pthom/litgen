@@ -1,13 +1,41 @@
 imgui / Todo:
-* Box Pointers
-    Se passe comme si array de taille 1
+* Test use imgui a base de create context / destroy context (c++ then python)
 
-* Test work with pointers
+Sujet / reference GetIO() & GetStyle()
+    return_value_policy::reference ne marche qu'avec pointeur
+      Donc: ImGuiIO&      GetIO();  déconne
+        See https://stackoverflow.com/questions/41814652/how-to-wrap-a-singleton-class-using-pybind11
+
+    -> pas le choix ? il faut faire un GetIO_As_Pointer et ajouter le concept de synonyme...
+        Idem pour ImGui::GetStyle
+
+    Si, on a le choix:
+        Soit donner le type de return a la lambda (->)
+        Soit ne pas utiliser de lambda quand on peut
+
+Sujet / input_text:
+    Il faut ajouter les signatures / string
+    Au moment de la generation du code de binding, il faudrait supprimer les versions avec char *
+    (mais on en a besoin ensuite pendant la compil...)
+
+Sujet / create_context default arg (idem destroy_context):
+    m.def("create_context",    // imgui.h:284
+    [](ImFontAtlas * shared_font_atlas = NULL)
+    {
+    return CreateContext(shared_font_atlas);
+    },
+    py::arg("shared_font_atlas") = NULL
+    );
+    Ne permet pas d'utiliser sans param...
+
+Sujet / opague pointers (create_context)
+    Réglé avec code manuel:
+        auto pyClassImGuiContext = py::class_<ImGuiContext>
+        (m, "ImGuiContext", "")
+        ;
 
 
-* Test use imgui a base de create context / destroy context
-* Handle opage pointers (create_context)
-* input Pointer to return output (tuple) ?
+Suejt input Pointer to return output (tuple) ..
 
 No:
 * profile generate imgui -> remove flag signature

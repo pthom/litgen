@@ -35,10 +35,10 @@ def autogenerate():
 if __name__ == "__main__":
     print("autogenerate_imgui")
 
-    import imgui_string_patch
+    import imgui_litgen_patch
 
-    imgui_string_patch.apply_imgui_string_patch()
+    imgui_litgen_patch.apply_imgui_patch()
 
     autogenerate()
 
-    imgui_string_patch.revert_imgui_string_patch()
+    # imgui_litgen_patch.revert_imgui_patch()
