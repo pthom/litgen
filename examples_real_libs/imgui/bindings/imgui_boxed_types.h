@@ -27,12 +27,6 @@ struct BoxedFloat
     BoxedFloat(float v = 0.) : value(v) {}
     std::string __repr__() const { return std::string("BoxedFloat(") + std::to_string(value) + ")"; }
 };
-struct BoxedString
-{
-    std::string value;
-    BoxedString(std::string v = "") : value(v) {}
-    std::string __repr__() const { return std::string("BoxedString(") + value + ")"; }
-};
 struct BoxedDouble
 {
     double value;

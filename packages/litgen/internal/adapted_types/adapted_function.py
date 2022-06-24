@@ -386,7 +386,7 @@ class AdaptedFunction(AdaptedElement):
         template_code = code_utils.unindent_code(
             """
             {module_or_class}.def("{function_name}",{location}
-            {_i_}[]({params_call_with_self_if_method})
+            {_i_}[]({params_call_with_self_if_method}){lambda_return_arrow}
             {_i_}{
             {_i_}{_i_}{lambda_adapter_code}
             {maybe_empty_line}
@@ -416,6 +416,13 @@ class AdaptedFunction(AdaptedElement):
                 _self_param = "const " + _self_param
             _params_list = [_self_param] + _params_list
         params_call_with_self_if_method = ", ".join(_params_list)
+
+        # Fill lambda_return_arrow
+        full_return_type = self.cpp_adapted_function.full_return_type(self.options.srcml_options)
+        if full_return_type == "void":
+            lambda_return_arrow = ""
+        else:
+            lambda_return_arrow = f" -> {full_return_type}"
 
         # fill return_code
         return_code = self._pydef_return_str()
@@ -468,6 +475,7 @@ class AdaptedFunction(AdaptedElement):
                 "location": location,
                 "return_code": return_code,
                 "params_call_with_self_if_method": params_call_with_self_if_method,
+                "lambda_return_arrow": lambda_return_arrow,
                 "semicolon_if_not_method": semicolon_if_not_method,
             },
         )

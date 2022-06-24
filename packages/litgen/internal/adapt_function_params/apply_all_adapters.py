@@ -87,7 +87,7 @@ def _make_adapted_lambda_code_end(adapted_function: AdaptedFunction, lambda_adap
 
 def _make_adapted_lambda_code(adapted_function: AdaptedFunction, lambda_adapter: LambdaAdapter) -> str:
     lambda_template_code = """
-        auto {lambda_name} = [{lambda_captures}]({adapted_python_parameters})
+        auto {lambda_name} = [{lambda_captures}]({adapted_python_parameters}){lambda_return_arrow}
         {
         {_i_}{maybe_lambda_input_code}
         {_i_}{lambda_template_end}
@@ -113,6 +113,13 @@ def _make_adapted_lambda_code(adapted_function: AdaptedFunction, lambda_adapter:
     # Fill adapted_python_parameters
     assert lambda_adapter.new_function_infos is not None
     adapted_python_parameters = lambda_adapter.new_function_infos.parameter_list.str_code()
+
+    # Fill lambda_return_arrow
+    full_return_type = adapted_function.cpp_adapted_function.full_return_type(options.srcml_options)
+    if full_return_type == "void":
+        lambda_return_arrow = ""
+    else:
+        lambda_return_arrow = f" -> {full_return_type}"
 
     # Fill maybe_lambda_input_code
     if len(lambda_adapter.lambda_input_code) > 0:
@@ -148,6 +155,7 @@ def _make_adapted_lambda_code(adapted_function: AdaptedFunction, lambda_adapter:
             "_i_": _i_,
             "lambda_name": lambda_name,
             "lambda_captures": lambda_captures,
+            "lambda_return_arrow": lambda_return_arrow,
             "adapted_python_parameters": adapted_python_parameters,
             "lambda_template_end": lambda_template_end,
         },
