@@ -15,7 +15,7 @@ def gen_pydef_code(code: str, options: Optional[LitgenOptions] = None) -> str:
 
     struct_name = ""
     cpp_function = srcml_main.code_first_function_decl(options.srcml_options, code)
-    adapted_function = AdaptedFunction(cpp_function, struct_name, options)
+    adapted_function = AdaptedFunction(options, cpp_function, struct_name, False)
     generated_code = adapted_function.str_pydef()
     return generated_code
 
@@ -26,7 +26,7 @@ def my_make_adapted_function(code) -> AdaptedFunction:
 
     function_decl = srcml_main.code_first_function_decl(options.srcml_options, code)
     parent_struct_name = ""
-    adapted_function = AdaptedFunction(function_decl, parent_struct_name, options)
+    adapted_function = AdaptedFunction(options, function_decl, parent_struct_name, False)
     return adapted_function
 
 
@@ -73,10 +73,8 @@ def test_use_function_params_adapter_const():
                 };
 
                 foo_const_adapt_fixed_size_c_arrays(input);
-            },
-            py::arg("input")
-        );
-    """,
+            },     py::arg("input"));
+        """,
     )
 
 
@@ -103,10 +101,8 @@ def test_use_function_params_adapter_non_const():
                 };
 
                 foo_non_const_adapt_fixed_size_c_arrays(output_0, output_1);
-            },
-            py::arg("output_0"), py::arg("output_1")
-        );
-    """,
+            },     py::arg("output_0"), py::arg("output_1"));
+        """,
     )
 
 
@@ -116,26 +112,24 @@ def test_mixture():
     code_utils.assert_are_codes_equal(
         generated_code,
         """
-            m.def("foo",
-                [](bool flag, const std::array<double, 2>& v, BoxedDouble & outputs_0, BoxedDouble & outputs_1)
+        m.def("foo",
+            [](bool flag, const std::array<double, 2>& v, BoxedDouble & outputs_0, BoxedDouble & outputs_1)
+            {
+                auto foo_adapt_fixed_size_c_arrays = [](bool flag, const std::array<double, 2>& v, BoxedDouble & outputs_0, BoxedDouble & outputs_1)
                 {
-                    auto foo_adapt_fixed_size_c_arrays = [](bool flag, const std::array<double, 2>& v, BoxedDouble & outputs_0, BoxedDouble & outputs_1)
-                    {
-                        double outputs_raw[2];
-                        outputs_raw[0] = outputs_0.value;
-                        outputs_raw[1] = outputs_1.value;
+                    double outputs_raw[2];
+                    outputs_raw[0] = outputs_0.value;
+                    outputs_raw[1] = outputs_1.value;
 
-                        foo(flag, v.data(), outputs_raw);
+                    foo(flag, v.data(), outputs_raw);
 
-                        outputs_0.value = outputs_raw[0];
-                        outputs_1.value = outputs_raw[1];
-                    };
+                    outputs_0.value = outputs_raw[0];
+                    outputs_1.value = outputs_raw[1];
+                };
 
-                    foo_adapt_fixed_size_c_arrays(flag, v, outputs_0, outputs_1);
-                },
-                py::arg("flag"), py::arg("v"), py::arg("outputs_0"), py::arg("outputs_1")
-            );
-    """,
+                foo_adapt_fixed_size_c_arrays(flag, v, outputs_0, outputs_1);
+            },     py::arg("flag"), py::arg("v"), py::arg("outputs_0"), py::arg("outputs_1"));
+        """,
     )
 
 
@@ -144,7 +138,7 @@ def test_mixture_no_replace():
     options.c_array_const_flag_replace = True
     options.c_array_modifiable_flag_replace = False
 
-    code = """MY_API void foo(bool flag, const double v[2], double outputs[2]);"""
+    code = """void foo(bool flag, const double v[2], double outputs[2]);"""
     generated_code = gen_pydef_code(code, options)
     # logging.warning("\n" + generated_code)
     code_utils.assert_are_codes_equal(
@@ -155,15 +149,12 @@ def test_mixture_no_replace():
             {
                 auto foo_adapt_fixed_size_c_arrays = [](bool flag, const std::array<double, 2>& v, double outputs[2])
                 {
-                    auto r = foo(flag, v.data(), outputs);
-                    return r;
+                    foo(flag, v.data(), outputs);
                 };
 
-                return foo_adapt_fixed_size_c_arrays(flag, v, outputs);
-            },
-            py::arg("flag"), py::arg("v"), py::arg("outputs")
-        );
-    """,
+                foo_adapt_fixed_size_c_arrays(flag, v, outputs);
+            },     py::arg("flag"), py::arg("v"), py::arg("outputs"));
+        """,
     )
 
 
@@ -175,18 +166,20 @@ def test_in_method():
         };
     """
     options = litgen.LitgenOptions()
+    options.srcml_options.functions_api_prefixes = ["IMGUI_API"]
+    options.original_location_flag_show = True
     generated_code = litgen.code_to_pydef(options, code)
     # logging.warning("\n" + generated_code)
     code_utils.assert_are_codes_equal(
         generated_code,
         """
-        auto pyClassFoo = py::class_<Foo>
+        auto pyClassFoo = py::class_<Foo>    // Line:2
             (m, "Foo", "")
             .def(py::init<>()) // implicit default constructor
-            .def("thing",
-                [](Foo & self, Point2 & out_0, Point2 & out_1)
+            .def("thing",    // Line:4
+                [](Foo & self, Point2 & out_0, Point2 & out_1) -> bool
                 {
-                    auto thing_adapt_fixed_size_c_arrays = [&self](Point2 & out_0, Point2 & out_1)
+                    auto thing_adapt_fixed_size_c_arrays = [&self](Point2 & out_0, Point2 & out_1) -> bool
                     {
                         Point2 out_raw[2];
                         out_raw[0] = out_0;
@@ -200,9 +193,7 @@ def test_in_method():
                     };
 
                     return thing_adapt_fixed_size_c_arrays(out_0, out_1);
-                },
-                py::arg("out_0"), py::arg("out_1")
-            )
+                },     py::arg("out_0"), py::arg("out_1"))
             ;
-    """,
+        """,
     )

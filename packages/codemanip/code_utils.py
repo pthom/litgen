@@ -705,14 +705,19 @@ def process_code_template(
     input_string: str,
     replacements: Dict[str, str],
     replacements_with_line_removal_if_not_found: Dict[str, Optional[str]],
-    replace_maybe_comma_if_not_last_line: bool = True,
-    maybe_comma_nb_skipped_final_lines: int = 0,
+    flag_replace_maybe_comma: bool = True,
 ) -> str:
     r = input_string
     r = replace_in_string(r, replacements)
     r = replace_in_string_remove_line_if_none(r, replacements_with_line_removal_if_not_found)
-    if replace_maybe_comma_if_not_last_line:
-        r = replace_maybe_comma(r, maybe_comma_nb_skipped_final_lines)
+    if flag_replace_maybe_comma:
+        r = r.replace("{maybe_comma}", ", ")
+        if r.endswith(", "):
+            r = r[:-2]
+        if r.endswith(", );"):
+            r = r[:-4] + ");"
+        if r.endswith(", )"):
+            r = r[:-3] + ")"
     return r
 
 
@@ -747,4 +752,22 @@ def replace_maybe_comma(code: str, nb_skipped_final_lines: int = 0) -> str:
                 line = line.replace("{maybe_comma}", ",")
         new_lines.append(line)
     r = "\n".join(new_lines)
+    return r
+
+
+def word_after(input_string: str, pos: int) -> str:
+    remaining = input_string[pos:]
+    r = ""
+    for c in remaining:
+        if c.isspace():
+            break
+        r += c
+    return r
+
+
+def find_word_after_token(input_string: str, token: str) -> Optional[str]:
+    pos = input_string.find(token)
+    if pos < 0:
+        return None
+    r = word_after(input_string, pos + len(token))
     return r

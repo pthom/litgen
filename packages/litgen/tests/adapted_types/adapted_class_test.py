@@ -103,13 +103,9 @@ def test_struct_pydef_simple():
             .def_readwrite("a", &Foo::a, "Doc about a")
             .def_readwrite("flag", &Foo::flag, "Doc about flag")
             .def("add",
-                [](Foo & self, int v)
-                {
-                    return self.add(v);
-                },
+                &Foo::add,
                 py::arg("v"),
-                "Simple addition"
-            )
+                "Simple addition")
             ;
         """,
     )
@@ -174,19 +170,9 @@ def test_struct_stub_complex():
             .def(py::init<const float>(),
                 py::arg("values"))
             .def("to_gray",
-                [](const Color4 & self)
-                {
-                    return self.ToGray();
-                },
-                "Return the color as a float gray value"
-            )
+                &Color4::ToGray, "Return the color as a float gray value")
             .def("is_black",
-                [](const Color4 & self)
-                {
-                    return self.IsBlack();
-                },
-                "Returns True if the color is pure black"
-            )
+                &Color4::IsBlack, "Returns True if the color is pure black")
             .def_readwrite("flag_bgra", &Color4::flag_BGRA, "True if color order is BGRA")
             .def_property("components",
                 [](Color4 &self) -> pybind11::array
@@ -197,5 +183,5 @@ def test_struct_stub_complex():
                 }, [](Color4& self) {},
                 "A numeric C array that will be published as a numpy array")
             ;
-    """,
+        """,
     )

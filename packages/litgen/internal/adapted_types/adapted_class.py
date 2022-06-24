@@ -253,7 +253,8 @@ class AdaptedClass(AdaptedElement):
                 self.adapted_public_children.append(AdaptedComment(self.options, child))
             elif isinstance(child, CppFunctionDecl):
                 class_name_cpp = self.cpp_element().class_name
-                self.adapted_public_children.append(AdaptedFunction(child, class_name_cpp, self.options))
+                is_overloaded = self.cpp_element().is_method_overloaded(child)
+                self.adapted_public_children.append(AdaptedFunction(self.options, child, class_name_cpp, is_overloaded))
             elif isinstance(child, CppDeclStatement):
                 self._add_adapted_class_member(child)
             elif isinstance(child, CppUnprocessed):

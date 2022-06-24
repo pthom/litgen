@@ -18,7 +18,7 @@ def gen_pydef_code(code) -> str:
 
     struct_name = ""
     cpp_function = srcml_main.code_first_function_decl(options.srcml_options, code)
-    adapted_function = AdaptedFunction(cpp_function, struct_name, options)
+    adapted_function = AdaptedFunction(options, cpp_function, struct_name, False)
     generated_code = adapted_function.str_pydef()
     return generated_code
 
@@ -33,9 +33,9 @@ def test_mutable_buffer_return_int():
         generated_code,
         """
         m.def("foo",
-            [](py::array & buf)
+            [](py::array & buf) -> int
             {
-                auto foo_adapt_c_buffers = [](py::array & buf)
+                auto foo_adapt_c_buffers = [](py::array & buf) -> int
                 {
                     // convert py::array to C standard buffer (mutable)
                     void * buf_from_pyarray = buf.mutable_data();
@@ -55,10 +55,8 @@ def test_mutable_buffer_return_int():
                 };
 
                 return foo_adapt_c_buffers(buf);
-            },
-            py::arg("buf")
-        );
-    """,
+            },     py::arg("buf"));
+        """,
     )
 
 
@@ -98,10 +96,8 @@ def test_const_buffer_return_void_stride():
                 };
 
                 foo_adapt_c_buffers(buf, stride);
-            },
-            py::arg("buf"), py::arg("stride") = -1
-        );
-    """,
+            },     py::arg("buf"), py::arg("stride") = -1);
+        """,
     )
 
 
@@ -115,9 +111,9 @@ def test_two_buffers():
         generated_code,
         """
         m.def("foo",
-            [](const py::array & buf1, const py::array & buf2)
+            [](const py::array & buf1, const py::array & buf2) -> int
             {
-                auto foo_adapt_c_buffers = [](const py::array & buf1, const py::array & buf2)
+                auto foo_adapt_c_buffers = [](const py::array & buf1, const py::array & buf2) -> int
                 {
                     // convert py::array to C standard buffer (const)
                     const void * buf1_from_pyarray = buf1.data();
@@ -150,10 +146,8 @@ def test_two_buffers():
                 };
 
                 return foo_adapt_c_buffers(buf1, buf2);
-            },
-            py::arg("buf1"), py::arg("buf2")
-        );
-    """,
+            },     py::arg("buf1"), py::arg("buf2"));
+        """,
     )
 
 
@@ -167,9 +161,9 @@ def test_template_buffer():
         generated_code,
         """
         m.def("foo",
-            [](const py::array & buf, bool flag)
+            [](const py::array & buf, bool flag) -> int
             {
-                auto foo_adapt_c_buffers = [](const py::array & buf, bool flag)
+                auto foo_adapt_c_buffers = [](const py::array & buf, bool flag) -> int
                 {
                     // convert py::array to C standard buffer (const)
                     const void * buf_from_pyarray = buf.data();
@@ -205,8 +199,6 @@ def test_template_buffer():
                 };
 
                 return foo_adapt_c_buffers(buf, flag);
-            },
-            py::arg("buf"), py::arg("flag")
-        );
-    """,
+            },     py::arg("buf"), py::arg("flag"));
+        """,
     )

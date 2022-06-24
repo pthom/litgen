@@ -174,8 +174,24 @@ class Foo:
 
 
 def foo_instance() -> Foo:
-    """ return_value_policy::reference"""
+    """return_value_policy::reference"""
     pass
+
+
+
+#
+# Test overload
+#
+def add_overload(a: int, b: int) -> int:  # type: ignore
+    pass
+def add_overload(a: int, b: int, c: int) -> int:  # type: ignore
+    pass
+
+class FooOverload:
+    def add_overload(self, a: int, b: int) -> int:          # type: ignore
+        pass
+    def add_overload(self, a: int, b: int, c: int) -> int:  # type: ignore
+        pass
 
 #
 # </Namespace LiterateGeneratorExample>

@@ -164,8 +164,13 @@ class AdaptedFunction(AdaptedElement):
     parent_struct_name: str
     cpp_adapter_code: Optional[str] = None
     lambda_to_call: Optional[str] = None
+    return_value_policy: str = ""
+    is_overloaded: bool = False
+    is_type_ignore: bool = False
 
-    def __init__(self, function_infos: CppFunctionDecl, parent_struct_name: str, options: LitgenOptions) -> None:
+    def __init__(
+        self, options: LitgenOptions, function_infos: CppFunctionDecl, parent_struct_name: str, is_overloaded: bool
+    ) -> None:
         from litgen.internal import adapt_function_params
 
         self.cpp_adapted_function = function_infos
@@ -173,6 +178,9 @@ class AdaptedFunction(AdaptedElement):
         self.cpp_adapter_code = None
         self.lambda_to_call = None
         super().__init__(options, function_infos)
+        self._fill_return_value_policy()
+        self._fill_is_type_ignore()
+        self.is_overloaded = is_overloaded
 
         adapt_function_params.apply_all_adapters(self)
 
@@ -233,6 +241,12 @@ class AdaptedFunction(AdaptedElement):
     #
     # override
     def _str_stub_lines(self) -> List[str]:
+
+        if self.is_type_ignore:
+            type_ignore = "  # type: ignore"
+        else:
+            type_ignore = ""
+
         function_def_code = f"def {self.function_name_python()}("
         return_code = f") -> {self.return_type_python()}:"
         params_strs = self._paramlist_call_python()
@@ -242,6 +256,7 @@ class AdaptedFunction(AdaptedElement):
             first_code_line_full = function_def_code
             first_code_line_full += ", ".join(params_strs)
             first_code_line_full += return_code
+            first_code_line_full += type_ignore
             if len(first_code_line_full) < self.options.python_max_line_length:
                 return first_code_line_full
             else:
@@ -255,7 +270,7 @@ class AdaptedFunction(AdaptedElement):
                     params_strs_comma.append(param_str + ", ")
                 else:
                     params_strs_comma.append(param_str)
-            lines = [function_def_code] + params_strs_comma + [return_code]
+            lines = [function_def_code + type_ignore] + params_strs_comma + [return_code]
             return lines
 
         all_on_one_line = function_name_and_params_on_one_line()
@@ -279,19 +294,50 @@ class AdaptedFunction(AdaptedElement):
             pyarg_strs.append(pyarg_str)
         return pyarg_strs
 
-    def _pydef_function_return_value_policy(self) -> str:
+    def _fill_is_type_ignore(self) -> None:
+        token = "type: ignore"
+
+        # Try to find it in eol comment (and clean eol comment if found)
+        eol_comment = self.cpp_element().cpp_element_comments.comment_end_of_line
+        if token in eol_comment:
+            self.is_type_ignore = True
+            eol_comment = eol_comment.replace(token, "").lstrip()
+            if eol_comment.lstrip().startswith("//"):
+                eol_comment = eol_comment.lstrip()[2:]
+            self.cpp_element().cpp_element_comments.comment_end_of_line = eol_comment
+
+    def _fill_return_value_policy(self) -> None:
         """Parses the return_value_policy from the function end of line comment
         For example:
             // A static instance (which python shall not delete, as enforced by the marker return_policy below)
             static Foo& Instance() { static Foo instance; return instance; }       // return_value_policy::reference
         """
         token = "return_value_policy::"
-        eol_comment = self.cpp_element().cpp_element_comments.eol_comment_code()
-        if "return_value_policy::" in eol_comment:
-            return_value_policy = eol_comment[eol_comment.index(token) + len(token) :]
-            return return_value_policy
+
+        # Try to find it in eol comment (and clean eol comment if found)
+        eol_comment = self.cpp_element().cpp_element_comments.comment_end_of_line
+        maybe_return_policy = code_utils.find_word_after_token(eol_comment, token)
+        if maybe_return_policy is not None:
+            self.return_value_policy = maybe_return_policy
+            eol_comment = eol_comment.replace(token + self.return_value_policy, "").rstrip()
+            if eol_comment.lstrip().startswith("//"):
+                eol_comment = eol_comment.lstrip()[2:]
+            self.cpp_element().cpp_element_comments.comment_end_of_line = eol_comment
         else:
-            return ""
+            comment_on_previous_lines = self.cpp_element().cpp_element_comments.comment_on_previous_lines
+            maybe_return_policy = code_utils.find_word_after_token(comment_on_previous_lines, token)
+            if maybe_return_policy is not None:
+                self.return_value_policy = maybe_return_policy
+                comment_on_previous_lines = comment_on_previous_lines.replace(token + self.return_value_policy, "")
+                self.cpp_element().cpp_element_comments.comment_on_previous_lines = comment_on_previous_lines
+
+        # Finally add a comment
+        if len(self.return_value_policy) > 0:
+            comment_on_previous_lines = self.cpp_element().cpp_element_comments.comment_on_previous_lines
+            if len(comment_on_previous_lines) > 0 and comment_on_previous_lines[-1] != "\n":
+                comment_on_previous_lines += "\n"
+            comment_on_previous_lines += f"return_value_policy::{self.return_value_policy}"
+            self.cpp_element().cpp_element_comments.comment_on_previous_lines = comment_on_previous_lines
 
     def _pydef_return_str(self) -> str:
         """Creates the return part of the pydef"""
@@ -387,8 +433,7 @@ class AdaptedFunction(AdaptedElement):
             """
             {_i_}{maybe_py_arg}{maybe_comma}
             {_i_}{maybe_docstring}{maybe_comma}
-            {_i_}{maybe_return_value_policy}{maybe_comma}
-            ){semicolon_if_not_method}"""
+            {_i_}{maybe_return_value_policy}{maybe_comma}"""
         )[1:]
 
         # Standard replacements dict (r) and replacement dict with possible line removal (l)
@@ -415,28 +460,84 @@ class AdaptedFunction(AdaptedElement):
             replace_lines.maybe_docstring = f'"{comment}"'
 
         # Fill maybe_return_value_policy
-        return_value_policy = self._pydef_function_return_value_policy()
+        return_value_policy = self.return_value_policy
         if len(return_value_policy) > 0:
             replace_lines.maybe_return_value_policy = f"pybind11::return_value_policy::{return_value_policy}"
         else:
             replace_lines.maybe_return_value_policy = None
-
-        # Fill semicolon_if_not_method
-        replace_tokens.semicolon_if_not_method = ";" if not self.is_method() else ""
 
         # Process template
         code = code_utils.process_code_template(
             input_string=template_code,
             replacements=replace_tokens,
             replacements_with_line_removal_if_not_found=replace_lines,
-            replace_maybe_comma_if_not_last_line=True,
-            maybe_comma_nb_skipped_final_lines=1,
+            flag_replace_maybe_comma=True,
+        )
+
+        code = code + ")"
+        if not self.is_method():
+            code = code + ";"
+
+        return code
+
+    def _pydef_without_lambda_str_impl(self) -> str:
+        """Create the full code of the pydef, with a direct call to the function or method"""
+        template_code = code_utils.unindent_code(
+            """
+            {module_or_class}.def("{function_name}",{location}
+            {_i_}{function_pointer}{maybe_comma}{pydef_end_arg_docstring_returnpolicy}"""
+        )[1:]
+
+        function_infos = self.cpp_adapted_function
+
+        # Standard replacements dict (r) and replacement dict with possible line removal (l)
+        replace_tokens = Munch()
+        replace_lines = Munch()
+
+        # fill _i_
+        replace_tokens._i_ = self.options.indent_cpp_spaces()
+
+        # fill module_or_class, function_name, location
+        replace_tokens.module_or_class = "" if self.is_method() else "m"
+        replace_tokens.function_name = self.function_name_python()
+        replace_tokens.location = self.info_original_location_cpp()
+
+        # fill function_pointer
+        is_method = self.is_method()
+        function_name = self.cpp_element().function_name
+        if is_method:
+            replace_tokens.function_pointer = f"&{self.parent_struct_name}::{function_name}"
+        else:
+            replace_tokens.function_pointer = f"{function_name}"
+        if self.is_overloaded:
+            overload_types = self.cpp_element().parameter_list.types_only_for_template()
+            replace_tokens.function_pointer = f"py::overload_cast<{overload_types}>({replace_tokens.function_pointer})"
+
+        # fill pydef_end_arg_docstring_returnpolicy
+        replace_tokens.pydef_end_arg_docstring_returnpolicy = self._pydef_end_arg_docstring_returnpolicy()
+
+        # If pydef_end_arg_docstring_returnpolicy is multiline, add \n
+        if "\n" in replace_tokens.pydef_end_arg_docstring_returnpolicy:
+            replace_tokens.pydef_end_arg_docstring_returnpolicy = (
+                "\n" + replace_tokens.pydef_end_arg_docstring_returnpolicy
+            )
+        else:
+            replace_tokens.pydef_end_arg_docstring_returnpolicy = (
+                replace_tokens.pydef_end_arg_docstring_returnpolicy.lstrip()
+            )
+
+        # Process template
+        code = code_utils.process_code_template(
+            input_string=template_code,
+            replacements=replace_tokens,
+            replacements_with_line_removal_if_not_found=replace_lines,
+            flag_replace_maybe_comma=True,
         )
 
         return code
 
     def _pydef_with_lambda_str_impl(self) -> str:
-        """Create the full code of the pydef"""
+        """Create the full code of the pydef, with an inner lambda"""
 
         template_code = code_utils.unindent_code(
             """
@@ -446,8 +547,7 @@ class AdaptedFunction(AdaptedElement):
             {_i_}{_i_}{lambda_adapter_code}
             {maybe_empty_line}
             {_i_}{_i_}{return_code};
-            {_i_}}{maybe_comma}
-            {pydef_end_arg_docstring_returnpolicy}"""
+            {_i_}}{maybe_comma}{pydef_end_arg_docstring_returnpolicy}"""
         )[1:]
 
         function_infos = self.cpp_adapted_function
@@ -500,20 +600,24 @@ class AdaptedFunction(AdaptedElement):
 
         # fill pydef_end_arg_docstring_returnpolicy
         replace_tokens.pydef_end_arg_docstring_returnpolicy = self._pydef_end_arg_docstring_returnpolicy()
+        # If pydef_end_arg_docstring_returnpolicy is multiline, add \n
+        if "\n" in replace_tokens.pydef_end_arg_docstring_returnpolicy:
+            replace_tokens.pydef_end_arg_docstring_returnpolicy = (
+                "\n" + replace_tokens.pydef_end_arg_docstring_returnpolicy
+            )
 
         # Process template
         code = code_utils.process_code_template(
             input_string=template_code,
             replacements=replace_tokens,
             replacements_with_line_removal_if_not_found=replace_lines,
-            replace_maybe_comma_if_not_last_line=True,
-            maybe_comma_nb_skipped_final_lines=1,
+            flag_replace_maybe_comma=True,
         )
 
         return code
 
     def _pydef_flag_needs_lambda(self) -> bool:
-        r = self.cpp_adapter_code is None and self.lambda_to_call is None
+        r = self.cpp_adapter_code is not None or self.lambda_to_call is not None
         return r
 
     # override
@@ -521,6 +625,9 @@ class AdaptedFunction(AdaptedElement):
         if self.is_constructor():
             code = self._pydef_constructor_str()
         else:
-            code = self._pydef_with_lambda_str_impl()
+            if self._pydef_flag_needs_lambda():
+                code = self._pydef_with_lambda_str_impl()
+            else:
+                code = self._pydef_without_lambda_str_impl()
         lines = code.split("\n")
         return lines

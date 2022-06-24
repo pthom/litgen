@@ -14,21 +14,19 @@ def test_modifiable_immutable_simple():
     code_utils.assert_are_codes_equal(
         generated_code.pydef_code,
         """
-            m.def("foo",
-                [](BoxedFloat & v)
+        m.def("foo",
+            [](BoxedFloat & v)
+            {
+                auto foo_adapt_modifiable_immutable = [](BoxedFloat & v)
                 {
-                    auto foo_adapt_modifiable_immutable = [](BoxedFloat & v)
-                    {
-                        float * v_boxed_value = & (v.value);
+                    float * v_boxed_value = & (v.value);
 
-                        foo(v_boxed_value);
-                    };
+                    foo(v_boxed_value);
+                };
 
-                    foo_adapt_modifiable_immutable(v);
-                },
-                py::arg("v")
-            );
-    """,
+                foo_adapt_modifiable_immutable(v);
+            },     py::arg("v"));
+        """,
     )
 
     # logging.warning("\n" + generated_code.stub_code)
@@ -59,10 +57,8 @@ def test_modifiable_immutable_simple():
                 };
 
                 foo_adapt_modifiable_immutable(v);
-            },
-            py::arg("v") = nullptr
-        );
-    """,
+            },     py::arg("v") = nullptr);
+        """,
     )
 
     code = "int foo(float & v);"
@@ -72,9 +68,9 @@ def test_modifiable_immutable_simple():
         generated_code.pydef_code,
         """
         m.def("foo",
-            [](BoxedFloat & v)
+            [](BoxedFloat & v) -> int
             {
-                auto foo_adapt_modifiable_immutable = [](BoxedFloat & v)
+                auto foo_adapt_modifiable_immutable = [](BoxedFloat & v) -> int
                 {
                     float & v_boxed_value = v.value;
 
@@ -83,9 +79,7 @@ def test_modifiable_immutable_simple():
                 };
 
                 return foo_adapt_modifiable_immutable(v);
-            },
-            py::arg("v")
-        );
+            },     py::arg("v"));
         """,
     )
 

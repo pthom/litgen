@@ -51,13 +51,17 @@ def play_pydef(code, options) -> None:
 
 
 code = """
-int foo(bool * flag = nullptr);
-
-//void foo(bool &flag);
+struct Foo
+{
+    std::string foo();
+    std::string foo(int a);
+    void blah();
+};
 """
 options = litgen.options.LitgenOptions()
 # options.srcml_options.functions_api_prefixes = ["MY_API"]
-# options.original_location_flag_show = True
+options.original_location_flag_show = True
+options.original_signature_flag_show = True
 # options = code_style_imgui()
 
 # play_stub(code, options)

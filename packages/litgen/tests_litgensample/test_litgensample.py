@@ -118,7 +118,36 @@ def test_modifiable_immutable():
     litgensample.toggle_bool_nullable(None)
 
 
-test_modifiable_immutable()
+def test_return_value_policy_reference():
+    i1 = litgensample.foo_instance()
+    i1.delta = 42
+    i2 = litgensample.foo_instance()
+    assert i2.delta == 42
+    i2.delta = 56
+    i3 = litgensample.foo_instance()
+    assert i3.delta == 56
+    print("zut")
+
+
+def test_overload():
+    assert litgensample.add_overload(3, 4) == 7
+    assert litgensample.add_overload(3, 4, 3) == 10
+    fo = litgensample.FooOverload()
+    assert fo.add_overload(3, 4) == 7
+    assert fo.add_overload(3, 4, 3) == 10
+
+
+def test_manual():
+    outer = litgensample.Outer()
+    inner1 = outer.GetInner()
+    inner2 = outer.GetInner()
+    inner1.x = 1
+    print(f"{inner1.x=} {inner2.x=}")
+
+
+test_manual()
+# test_return_value_policy_reference()
+# test_modifiable_immutable()
 # test_c_array()
 # test_c_buffers()
 # test_c_string_list()

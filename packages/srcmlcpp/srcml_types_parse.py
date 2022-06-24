@@ -473,6 +473,8 @@ def parse_struct_or_class(options: SrcmlOptions, element_c: CppElementAndComment
             result.template = parse_template(options, child)
         elif child_tag == "comment":
             _add_comment_child_before_block(result, child)
+        elif child_tag == "decl":
+            raise SrcMlExceptionDetailed(options, child, f"Skipped struct because it misses a ';' at the end")
         else:
             raise SrcMlExceptionDetailed(options, child, f"unhandled tag {child_tag}")
 

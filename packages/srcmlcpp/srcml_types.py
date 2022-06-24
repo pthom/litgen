@@ -350,6 +350,27 @@ class CppBlock(CppElementAndComment):
                 result += "\n"
         return result
 
+    def all_functions(self) -> List[CppFunctionDecl]:
+        r: List[CppFunctionDecl] = []
+        for child in self.block_children:
+            if isinstance(child, CppFunctionDecl):
+                r.append(child)
+        return r
+
+    def all_functions_with_name(self, name: str) -> List[CppFunctionDecl]:
+        all_functions = self.all_functions()
+        r: List[CppFunctionDecl] = []
+        for fn in all_functions:
+            if fn.function_name == name:
+                r.append(fn)
+        return r
+
+    def is_function_overloaded(self, function: CppFunctionDecl) -> bool:
+        functions_same_name = self.all_functions_with_name(function.function_name)
+        assert len(functions_same_name) >= 1
+        is_overloaded = len(functions_same_name) >= 2
+        return is_overloaded
+
     def __str__(self) -> str:
         return self.str_block()
 
@@ -1064,6 +1085,29 @@ class CppStruct(CppElementAndComment):
                     for child in access_zone.block_children:
                         r.append(child)
         return r
+
+    def all_methods(self) -> List[CppFunctionDecl]:
+        r: List[CppFunctionDecl] = []
+        for access_zone in self.block.block_children:
+            if isinstance(access_zone, CppPublicProtectedPrivate):
+                for child in access_zone.block_children:
+                    if isinstance(child, CppFunctionDecl):
+                        r.append(child)
+        return r
+
+    def all_methods_with_name(self, name: str) -> List[CppFunctionDecl]:
+        all_methods = self.all_methods()
+        r: List[CppFunctionDecl] = []
+        for fn in all_methods:
+            if fn.function_name == name:
+                r.append(fn)
+        return r
+
+    def is_method_overloaded(self, method: CppFunctionDecl) -> bool:
+        methods_same_name = self.all_methods_with_name(method.function_name)
+        assert len(methods_same_name) >= 1
+        is_overloaded = len(methods_same_name) >= 2
+        return is_overloaded
 
 
 @dataclass

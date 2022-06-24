@@ -203,3 +203,13 @@ def test_join_lines_with_token_before_comment():
         std::string s="// Tricky string"
     """,
     )
+
+
+def test_find_word_after_token():
+    code = "return_value_policy::reference"
+    r = code_utils.find_word_after_token(code, "return_value_policy::")
+    assert r == "reference"
+
+    code = "return_value_policy::reference // Yes"
+    r = code_utils.find_word_after_token(code, "return_value_policy::")
+    assert r == "reference"

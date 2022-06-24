@@ -37,10 +37,8 @@ def test_c_string_list_simple():
                 };
 
                 foo_adapt_c_string_list(items);
-            },
-            py::arg("items")
-        );
-    """,
+            },     py::arg("items"));
+        """,
     )
 
 
@@ -52,9 +50,9 @@ def test_mix_array_and_string_list():
         generated_code,
         """
         m.def("foo",
-            [](const std::vector<std::string> & items, BoxedInt & ouput_0, BoxedInt & ouput_1)
+            [](const std::vector<std::string> & items, BoxedInt & ouput_0, BoxedInt & ouput_1) -> int
             {
-                auto foo_adapt_fixed_size_c_arrays = [](const char * const items[], int items_count, BoxedInt & ouput_0, BoxedInt & ouput_1)
+                auto foo_adapt_fixed_size_c_arrays = [](const char * const items[], int items_count, BoxedInt & ouput_0, BoxedInt & ouput_1) -> int
                 {
                     int ouput_raw[2];
                     ouput_raw[0] = ouput_0.value;
@@ -66,7 +64,7 @@ def test_mix_array_and_string_list():
                     ouput_1.value = ouput_raw[1];
                     return r;
                 };
-                auto foo_adapt_c_string_list = [&foo_adapt_fixed_size_c_arrays](const std::vector<std::string> & items, BoxedInt & ouput_0, BoxedInt & ouput_1)
+                auto foo_adapt_c_string_list = [&foo_adapt_fixed_size_c_arrays](const std::vector<std::string> & items, BoxedInt & ouput_0, BoxedInt & ouput_1) -> int
                 {
                     std::vector<const char *> items_ptrs;
                     for (const auto& v: items)
@@ -78,8 +76,6 @@ def test_mix_array_and_string_list():
                 };
 
                 return foo_adapt_c_string_list(items, ouput_0, ouput_1);
-            },
-            py::arg("items"), py::arg("ouput_0"), py::arg("ouput_1")
-        );
-    """,
+            },     py::arg("items"), py::arg("ouput_0"), py::arg("ouput_1"));
+        """,
     )

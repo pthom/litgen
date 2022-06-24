@@ -1,3 +1,5 @@
+import logging
+
 from srcmlcpp import srcml_main
 from srcmlcpp.srcml_types import *
 
@@ -52,13 +54,8 @@ def test_adapted_function_pydef_simple():
         pydef_code,
         """
         m.def("add",
-            [](int a, int b)
-            {
-                return add(a, b);
-            },
-            py::arg("a"), py::arg("b")
-        );
-    """,
+            add, py::arg("a"), py::arg("b"));
+        """,
     )
 
 
@@ -72,14 +69,10 @@ def test_implot_easy() -> None:
     generated_code = litgen.code_to_pydef(options, code)
     expected_code = """
         m.def("setup_axis_format",    // Line:4
-            [](ImAxis axis, const char * fmt)
-            {
-                SetupAxisFormat(axis, fmt);
-            },
+            SetupAxisFormat,
             py::arg("axis"), py::arg("fmt"),
-            " Sets the format of numeric\\n axis labels"
-        );
-    """
+            " Sets the format of numeric\\n axis labels");
+        """
     # logging.warning("\n" + generated_code)
     code_utils.assert_are_codes_equal(generated_code, expected_code)
 
@@ -88,19 +81,16 @@ def test_return_value_policy() -> None:
     options = LitgenOptions()
     code = """
         // Returns a widget
-        IMPLOT_API Widget* Foo();  // return_value_policy::reference
+        Widget* Foo();  // return_value_policy::reference
     """
     generated_code = litgen.code_to_pydef(options, code)
+    # logging.warning("\n" + generated_code)
     expected_code = """
         m.def("foo",
-            []()
-            {
-                return Foo();
-            },
-            " Returns a widget\\n\\n return_value_policy::reference",
-            pybind11::return_value_policy::reference
-        );
-    """
+            Foo,
+            " Returns a widget\\nreturn_value_policy::reference",
+            pybind11::return_value_policy::reference);
+        """
     code_utils.assert_are_codes_equal(generated_code, expected_code)
 
 
@@ -153,8 +143,7 @@ def test_implot_one_buffer() -> None:
                 PlotScatter_adapt_c_buffers(values);
             },
             py::arg("values"),
-            "Plots a standard 2D scatter plot. Default marker is ImPlotMarker_Circle."
-        );
+            "Plots a standard 2D scatter plot. Default marker is ImPlotMarker_Circle.");
    """
     code_utils.assert_are_codes_equal(generated_code, expected_code)
 
@@ -168,12 +157,90 @@ def test_immvision() -> None:
     generated_code = litgen.code_to_pydef(options, code)
     expected_code = """
         m.def("image",
-            [](const std::string & label_id, const cv::Mat & mat, ImageParams * params)
-            {
-                return Image(label_id, mat, params);
-            },
+            Image,
             py::arg("label_id"), py::arg("mat"), py::arg("params"),
-            "Display an image (requires OpenGL initialized)"
-        );
-    """
+            "Display an image (requires OpenGL initialized)");
+        """
     code_utils.assert_are_codes_equal(generated_code, expected_code)
+
+
+def test_overloads() -> None:
+    options = LitgenOptions()
+    code = """
+    std::string foo();
+    std::string foo(int a);
+    void blah();
+    """
+    generated_code = litgen.code_to_pydef(options, code)
+    # logging.warning("\n" + generated_code)
+    code_utils.assert_are_codes_equal(
+        generated_code,
+        """
+        m.def("foo",
+            py::overload_cast<>(foo));
+
+        m.def("foo",
+            py::overload_cast<int>(foo), py::arg("a"));
+
+        m.def("blah",
+            blah);
+        """,
+    )
+
+    code = """
+    struct Foo
+    {
+        std::string foo();
+        std::string foo(int a);
+        void blah();
+    };
+    """
+    generated_code = litgen.code_to_pydef(options, code)
+    # logging.warning("\n" + generated_code)
+    code_utils.assert_are_codes_equal(
+        generated_code,
+        """
+        auto pyClassFoo = py::class_<Foo>
+            (m, "Foo", "")
+            .def(py::init<>()) // implicit default constructor
+            .def("foo",
+                py::overload_cast<>(&Foo::foo))
+            .def("foo",
+                py::overload_cast<int>(&Foo::foo), py::arg("a"))
+            .def("blah",
+                &Foo::blah)
+            ;
+        """,
+    )
+
+
+def test_type_ignore():
+    options = LitgenOptions()
+    code = """
+    // Foo doc
+    std::string foo(); // type: ignore
+    """
+    stub_code = litgen.code_to_stub(options, code)
+    # logging.warning("\n" + stub_code)
+    code_utils.assert_are_codes_equal(
+        stub_code,
+        """
+    # Foo doc
+    def foo() -> str:  # type: ignore
+        pass
+    """,
+    )
+
+    code = """
+    std::string foo(); // type: ignore // Some more doc
+    """
+    stub_code = litgen.code_to_stub(options, code)
+    # logging.warning("\n" + stub_code)
+    code_utils.assert_are_codes_equal(
+        stub_code,
+        '''
+    def foo() -> str:  # type: ignore
+        """ Some more doc"""
+        pass
+    ''',
+    )

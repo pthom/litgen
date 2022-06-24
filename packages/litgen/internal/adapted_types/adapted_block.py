@@ -48,7 +48,8 @@ class AdaptedBlock(AdaptedElement):
                 self.adapted_elements.append(AdaptedClass(self.options, child))
             elif isinstance(child, CppFunctionDecl):
                 no_class_name = ""
-                self.adapted_elements.append(AdaptedFunction(child, no_class_name, self.options))
+                is_overloaded = self.cpp_element().is_function_overloaded(child)
+                self.adapted_elements.append(AdaptedFunction(self.options, child, no_class_name, is_overloaded))
             elif isinstance(child, CppEnum):
                 self.adapted_elements.append(AdaptedEnum(self.options, child))
             elif isinstance(child, CppNamespace):
