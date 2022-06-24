@@ -306,9 +306,7 @@ def code_style_imgui() -> LitgenOptions:
 
     options.code_replacements = cpp_to_python.standard_code_replacements()
     options.code_replacements += code_replacements.parse_string_replacements(
-        r"""
-        \bImVector\s*<\s*([\w:]*)\s*> -> List[\1]
-        """
+        r"\bImVector\s*<\s*([\w:]*)\s*> -> List[\1]"
     )
 
     options.original_location_flag_show = True
@@ -377,10 +375,10 @@ def code_style_imgui() -> LitgenOptions:
     ]
 
     options.srcml_options.decl_types_exclude_regexes = [
-        "^char\s*\*",
-        "const ImWchar\s*\*",
-        "unsigned char\s*\*",
-        "unsigned int\s*\*",
+        r"^char\s*\*",
+        r"const ImWchar\s*\*",
+        r"unsigned char\s*\*",
+        r"unsigned int\s*\*",
     ]
 
     options.srcml_options.class_name_exclude_regexes = [r"^ImVector\b", "ImGuiTextBuffer"]
