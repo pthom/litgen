@@ -3,17 +3,30 @@ imgui / Todo:
         litgen doit pouvoir gerer une collection de fichier en input, chacun avec des options differentes
         -> collection avec imgui.h (sans inputText) + imgui_stdlib.h
 
+    Sujet input Pointer to return output (tuple) ..
+
+    Sujet: strings via text_begin / text_end ?
+        Pas forcement, car
+                d.add_text(imgui.ImVec2(50, 50), 42243, "hello")   # marche !!!
+        >>> d = imgui.get_window_draw_list()
+        >>> d.add_text()
+        (self: _lg_imgui.ImDrawList, pos: _lg_imgui.ImVec2, col: int, text_begin: str, text_end: str = None) -> None
 
 
 
-Sujet / opague pointers (create_context)
-    Réglé avec code manuel:
-        auto pyClassImGuiContext = py::class_<ImGuiContext>
-        (m, "ImGuiContext", "")
-        ;
-
-
-Suejt input Pointer to return output (tuple) ..
+    Tester methode avec return by ref (cf scratch.txt)
+        PtrFunc GetFont  (IMGUI_API ImFont*       GetFont();                                                      )
+        PtrFunc GetGlyphRangesDefault  (IMGUI_API const ImWchar*    GetGlyphRangesDefault();                )
+        PtrFunc GetKeyName  (IMGUI_API const char*   GetKeyName(ImGuiKey key);                                           )
+        PtrFunc GetClipboardText  (IMGUI_API const char*   GetClipboardText();)
+        PtrFunc GetBackgroundDrawList  (IMGUI_API ImDrawList*   GetBackgroundDrawList(); )
+        PtrFunc GetIOPtr  (IMGUI_API ImGuiIO*      GetIOPtr(); )
+        PtrRef GetStyle  (IMGUI_API ImGuiStyle&   GetStyle();                                 )
+        PtrFunc GetStylePtr  (IMGUI_API ImGuiStyle*   GetStylePtr(); )
+        PtrFunc GetDrawData  (IMGUI_API ImDrawData*   GetDrawData();                              )
+        PtrFunc GetVersion  (IMGUI_API const char*   GetVersion();                               )
+        PtrFunc GetWindowDrawList  (IMGUI_API ImDrawList*   GetWindowDrawList(); )
+        -> perfect !
 
 No:
 * profile generate imgui -> remove flag signature
