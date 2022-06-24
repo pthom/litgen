@@ -142,7 +142,7 @@ def test_manual():
     inner1 = outer.GetInner()
     inner2 = outer.GetInner()
     inner1.x = 1
-    print(f"{inner1.x=} {inner2.x=}")
+    assert inner2.x == 1
 
 
 test_manual()

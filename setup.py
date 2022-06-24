@@ -20,4 +20,7 @@ setup(
     packages=find_packages(where="packages"),
     package_dir={"": "packages"},
     zip_safe=False,
+    install_requires=[
+        "munch",
+    ],
 )
