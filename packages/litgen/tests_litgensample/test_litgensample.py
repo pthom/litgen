@@ -145,7 +145,14 @@ def test_manual():
     assert inner2.x == 1
 
 
-test_manual()
+def test_nullable_param():
+    b = litgensample.BoxedBool(True)
+    litgensample.toggle_bool_nullable(b)
+    assert b.value == False
+    litgensample.toggle_bool_nullable()
+
+
+# test_manual()
 # test_return_value_policy_reference()
 # test_modifiable_immutable()
 # test_c_array()

@@ -361,7 +361,7 @@ void py_init_module_litgensample(py::module& m)
 
             ToggleBoolNullable_adapt_modifiable_immutable(v);
         },
-        py::arg("v") = nullptr,
+        py::arg("v") = py::none(),
         "Test with nullable pointer");
 
     m.def("toggle_bool_reference",

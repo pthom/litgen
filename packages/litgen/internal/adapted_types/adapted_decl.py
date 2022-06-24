@@ -119,6 +119,8 @@ class AdaptedDecl(AdaptedElement):
         param_template = 'py::arg("{argname_python}"){maybe_equal}{maybe_defaultvalue_cpp}'
 
         maybe_defaultvalue_cpp = self.cpp_element().initial_value_code
+        if maybe_defaultvalue_cpp in ["NULL", "nullptr"]:
+            maybe_defaultvalue_cpp = "py::none()"
         if len(maybe_defaultvalue_cpp) > 0:
             maybe_equal = " = "
         else:

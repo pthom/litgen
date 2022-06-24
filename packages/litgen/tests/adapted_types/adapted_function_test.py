@@ -244,3 +244,46 @@ def test_type_ignore():
         pass
     ''',
     )
+
+
+def test_py_none_param():
+    options = LitgenOptions()
+
+    code = """
+    void foo(Widget *a = nullptr);
+    """
+    pydef_code = litgen.code_to_pydef(options, code)
+    # logging.warning("\n" + pydef_code)
+    code_utils.assert_are_codes_equal(
+        pydef_code,
+        """
+        m.def("foo",
+            foo, py::arg("a") = py::none());
+        """,
+    )
+
+    code = """
+    void foo(Widget *a = NULL);
+    """
+    pydef_code = litgen.code_to_pydef(options, code)
+    # logging.warning("\n" + pydef_code)
+    code_utils.assert_are_codes_equal(
+        pydef_code,
+        """
+        m.def("foo",
+            foo, py::arg("a") = py::none());
+        """,
+    )
+
+    code = """
+    void foo(Widget *a = Widget(NULL));
+    """
+    pydef_code = litgen.code_to_pydef(options, code)
+    # logging.warning("\n" + pydef_code)
+    code_utils.assert_are_codes_equal(
+        pydef_code,
+        """
+        m.def("foo",
+            foo, py::arg("a") = Widget(NULL));
+        """,
+    )
