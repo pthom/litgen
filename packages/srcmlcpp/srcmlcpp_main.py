@@ -9,31 +9,6 @@ from srcmlcpp.internal import srcml_caller
 from srcmlcpp.internal import srcml_types_parse
 from srcmlcpp.srcml_exception import SrcMlException
 
-#
-# @dataclass
-# class _SrcmlMainContext:
-#     _current_parsed_file: str = ""
-#     _current_parsed_file_unit_code: str = ""
-#
-#     # def __init__(self):
-#     #     logging.warning(f"Constructing _SrcmlMainContext id={id(self)}")
-#
-#     @property
-#     def current_parsed_file(self):
-#         return self._current_parsed_file
-#
-#     @current_parsed_file.setter
-#     def current_parsed_file(self, value):
-#         self._current_parsed_file = value
-#
-#     @property
-#     def current_parsed_file_unit_code(self):
-#         return self._current_parsed_file_unit_code
-#
-#     @current_parsed_file_unit_code.setter
-#     def current_parsed_file_unit_code(self, value):
-#         self._current_parsed_file_unit_code = value
-#
 
 _Filename = str
 _Code = str
