@@ -351,7 +351,7 @@ class AdaptedFunction(AdaptedElement):
             self.return_value_policy = "reference"
             emit_srcml_warning(
                 self.options.srcml_options,
-                self.cpp_element().srcml_element,
+                self.cpp_element().srcml_xml,
                 "Forced function return_value_policy to reference",
                 message_header="Info",
             )

@@ -71,9 +71,7 @@ def adapt_c_arrays(adapted_function: AdaptedFunction) -> Optional[LambdaAdapter]
                 # Create new calling param (const std::array &)
                 new_adapted_decl = old_adapted_param.adapted_decl().c_array_fixed_size_to_const_std_array()
 
-                new_param = CppParameter(
-                    old_adapted_param.cpp_element().srcml_element
-                )  # copy.deepcopy(old_adapted_decl)
+                new_param = CppParameter(old_adapted_param.cpp_element().srcml_xml)  # copy.deepcopy(old_adapted_decl)
                 new_param.decl = new_adapted_decl.cpp_element()
                 new_function_params.append(new_param)
                 # Fill adapted_cpp_parameter_list (those that will call the original C style function)
@@ -117,7 +115,7 @@ def adapt_c_arrays(adapted_function: AdaptedFunction) -> Optional[LambdaAdapter]
                         lambda_adapter.lambda_output_code += f"{new_adapted_decl.decl_name_cpp()}{value_access} = {old_adapted_param_renamed.adapted_decl().decl_name_cpp()}[{i}];\n"
 
                         new_param = CppParameter(
-                            old_adapted_param.cpp_element().srcml_element
+                            old_adapted_param.cpp_element().srcml_xml
                         )  # copy.deepcopy(old_adapted_decl)
                         new_param.decl = new_adapted_decl.cpp_element()
                         new_function_params.append(new_param)

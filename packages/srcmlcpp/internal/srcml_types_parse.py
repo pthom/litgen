@@ -4,8 +4,8 @@ from srcmlcpp.internal.srcml_warnings import SrcMlExceptionDetailed
 
 
 def parse_unprocessed(options: SrcmlOptions, element_c: CppElementAndComment) -> CppUnprocessed:  # noqa
-    result = CppUnprocessed(element_c.srcml_element, element_c.cpp_element_comments)
-    result.code = srcml_caller.srcml_to_code(element_c.srcml_element)
+    result = CppUnprocessed(element_c.srcml_xml, element_c.cpp_element_comments)
+    result.code = srcml_caller.srcml_to_code(element_c.srcml_xml)
     return result
 
 
@@ -55,12 +55,12 @@ def parse_type(options: SrcmlOptions, element: ET.Element, previous_decl: Option
 
     if len(result.typenames) == 0 and "..." not in result.modifiers:
         if previous_decl is None:
-            raise SrcMlExceptionDetailed(options, result.srcml_element, "Can't find type name")
+            raise SrcMlExceptionDetailed(options, result.srcml_xml, "Can't find type name")
         assert previous_decl is not None
         result.typenames = previous_decl.cpp_type.typenames
 
     if len(result.typenames) == 0 and "..." not in result.modifiers:
-        raise SrcMlExceptionDetailed(options, result.srcml_element, "len(result.names) == 0!")
+        raise SrcMlExceptionDetailed(options, result.srcml_xml, "len(result.names) == 0!")
 
     # process api names
     for name in result.typenames:
@@ -140,8 +140,8 @@ def parse_decl(
     https://www.srcml.org/doc/cpp_srcML.html#variable-declaration-statement
     """
     assert element_c.tag() == "decl"
-    result = CppDecl(element_c.srcml_element, element_c.cpp_element_comments)
-    for child in element_c.srcml_element:
+    result = CppDecl(element_c.srcml_xml, element_c.cpp_element_comments)
+    for child in element_c.srcml_xml:
         child_tag = srcml_utils.clean_tag_or_attrib(child.tag)
         if child_tag == "type":
             result.cpp_type = parse_type(options, child, previous_decl)
@@ -172,10 +172,10 @@ def parse_decl_stmt(options: SrcmlOptions, element_c: CppElementAndComment) -> C
     assert element_c.tag() == "decl_stmt"
 
     previous_decl: Optional[CppDecl] = None
-    result = CppDeclStatement(element_c.srcml_element, element_c.cpp_element_comments)
-    for child in element_c.srcml_element:
+    result = CppDeclStatement(element_c.srcml_xml, element_c.cpp_element_comments)
+    for child in element_c.srcml_xml:
         child_c = copy.deepcopy(element_c)
-        child_c.srcml_element = child
+        child_c.srcml_xml = child
         if child_c.tag() == "decl":
             child_name = child_c.name_code()
             assert child_name is not None
@@ -257,7 +257,7 @@ def fill_function_decl(
     element_c: CppElementAndComment,
     function_decl: CppFunctionDecl,
 ) -> None:
-    for child in element_c.srcml_element:
+    for child in element_c.srcml_xml:
         child_tag = srcml_utils.clean_tag_or_attrib(child.tag)
         if child_tag == "type":
             if not hasattr(function_decl, "return_type") or len(function_decl.return_type.typenames) == 0:
@@ -295,7 +295,7 @@ def parse_function_decl(options: SrcmlOptions, element_c: CppElementAndComment) 
     https://www.srcml.org/doc/cpp_srcML.html#function-declaration
     """
     assert element_c.tag() == "function_decl"
-    result = CppFunctionDecl(element_c.srcml_element, element_c.cpp_element_comments)
+    result = CppFunctionDecl(element_c.srcml_xml, element_c.cpp_element_comments)
     fill_function_decl(options, element_c, result)
     return result
 
@@ -305,10 +305,10 @@ def parse_function(options: SrcmlOptions, element_c: CppElementAndComment) -> Cp
     https://www.srcml.org/doc/cpp_srcML.html#function-definition
     """
     assert element_c.tag() == "function"
-    result = CppFunction(element_c.srcml_element, element_c.cpp_element_comments)
+    result = CppFunction(element_c.srcml_xml, element_c.cpp_element_comments)
     fill_function_decl(options, element_c, result)
 
-    for child in element_c.srcml_element:
+    for child in element_c.srcml_xml:
         child_tag = srcml_utils.clean_tag_or_attrib(child.tag)
         if child_tag == "block":
             child_c = CppElementAndComment(child, CppElementComments())
@@ -336,7 +336,7 @@ def fill_constructor_decl(
     element_c: CppElementAndComment,
     constructor_decl: CppConstructorDecl,
 ) -> None:
-    for child in element_c.srcml_element:
+    for child in element_c.srcml_xml:
         child_tag = srcml_utils.clean_tag_or_attrib(child.tag)
         if child_tag == "name":
             constructor_decl.function_name = _parse_name(child)
@@ -358,7 +358,7 @@ def parse_constructor_decl(options: SrcmlOptions, element_c: CppElementAndCommen
     https://www.srcml.org/doc/cpp_srcML.html#constructor-declaration
     """
     assert element_c.tag() == "constructor_decl"
-    result = CppConstructorDecl(element_c.srcml_element, element_c.cpp_element_comments)
+    result = CppConstructorDecl(element_c.srcml_xml, element_c.cpp_element_comments)
     fill_constructor_decl(options, element_c, result)
     return result
 
@@ -368,10 +368,10 @@ def parse_constructor(options: SrcmlOptions, element_c: CppElementAndComment) ->
     https://www.srcml.org/doc/cpp_srcML.html#function-definition
     """
     assert element_c.tag() == "constructor"
-    result = CppConstructor(element_c.srcml_element, element_c.cpp_element_comments)
+    result = CppConstructor(element_c.srcml_xml, element_c.cpp_element_comments)
     fill_constructor_decl(options, element_c, result)
 
-    for child in element_c.srcml_element:
+    for child in element_c.srcml_xml:
         child_c = CppElementAndComment(child, CppElementComments())
         child_tag = srcml_utils.clean_tag_or_attrib(child.tag)
         if child_tag == "block":
@@ -448,11 +448,11 @@ def parse_struct_or_class(options: SrcmlOptions, element_c: CppElementAndComment
     element_tag = element_c.tag()
     assert element_tag in ["struct", "class"]
     if element_tag == "struct":
-        result = CppStruct(element_c.srcml_element, element_c.cpp_element_comments)
+        result = CppStruct(element_c.srcml_xml, element_c.cpp_element_comments)
     else:
-        result = CppClass(element_c.srcml_element, element_c.cpp_element_comments)
+        result = CppClass(element_c.srcml_xml, element_c.cpp_element_comments)
 
-    for child in element_c.srcml_element:
+    for child in element_c.srcml_xml:
         child_tag = srcml_utils.clean_tag_or_attrib(child.tag)
         if child_tag == "name":
             result.class_name = _parse_name(child)
@@ -480,8 +480,8 @@ def parse_public_protected_private(options: SrcmlOptions, element_c: CppElementA
     access_type = element_c.tag()
     assert access_type in ["public", "protected", "private"]
     type = element_c.attribute_value("type")
-    block_content = CppPublicProtectedPrivate(element_c.srcml_element, access_type, type)
-    fill_block(options, element_c.srcml_element, block_content)
+    block_content = CppPublicProtectedPrivate(element_c.srcml_xml, access_type, type)
+    fill_block(options, element_c.srcml_xml, block_content)
     return block_content
 
 
@@ -508,7 +508,7 @@ def is_operator_function(element_c: CppElementAndComment) -> bool:
 def _shall_publish_function(function_c: CppElementAndComment, options: SrcmlOptions) -> bool:
     if len(options.functions_api_prefixes) == 0:
         return True
-    for child_fn in function_c.srcml_element:
+    for child_fn in function_c.srcml_xml:
         child_fn_tag = srcml_utils.clean_tag_or_attrib(child_fn.tag)
         if child_fn_tag == "type":
             for child_type in child_fn:
@@ -529,7 +529,7 @@ def _shall_publish(cpp_element: CppElementAndComment, options: SrcmlOptions) -> 
             return True
 
         comment = cpp_element.cpp_element_comments.comment_end_of_line + cpp_element.cpp_element_comments.comment()
-        for comment_child in srcml_utils.children_with_tag(cpp_element.srcml_element, "comment"):
+        for comment_child in srcml_utils.children_with_tag(cpp_element.srcml_xml, "comment"):
             if comment_child.text is not None:
                 comment += comment_child.text
 
@@ -590,7 +590,7 @@ def fill_block(options: SrcmlOptions, element: ET.Element, inout_block_content: 
                 inout_block_content.block_children.append(cpp_decl)
             elif child_tag == "function_decl":
                 if is_operator_function(child_c):
-                    srcml_warnings.emit_srcml_warning(options, child_c.srcml_element, "Operator functions are ignored")
+                    srcml_warnings.emit_srcml_warning(options, child_c.srcml_xml, "Operator functions are ignored")
                     inout_block_content.block_children.append(parse_unprocessed(options, child_c))
                 else:
                     assert child_name is not None
@@ -600,7 +600,7 @@ def fill_block(options: SrcmlOptions, element: ET.Element, inout_block_content: 
             elif child_tag == "function":
                 assert child_name is not None
                 if is_operator_function(child_c):
-                    srcml_warnings.emit_srcml_warning(options, child_c.srcml_element, "Operator functions are ignored")
+                    srcml_warnings.emit_srcml_warning(options, child_c.srcml_xml, "Operator functions are ignored")
                     inout_block_content.block_children.append(parse_unprocessed(options, child_c))
                     if code_utils.does_match_regexes(options.function_name_exclude_regexes, child_name):
                         continue
@@ -616,7 +616,7 @@ def fill_block(options: SrcmlOptions, element: ET.Element, inout_block_content: 
                 cpp_comment = parse_comment(options, child_c)
 
                 if srcml_comments.EMPTY_LINE_COMMENT_CONTENT in cpp_comment.comment:
-                    inout_block_content.block_children.append(CppEmptyLine(child_c.srcml_element))
+                    inout_block_content.block_children.append(CppEmptyLine(child_c.srcml_xml))
                 else:
                     if not shall_ignore_comment(cpp_comment, last_ignored_child):
                         inout_block_content.block_children.append(cpp_comment)
@@ -658,8 +658,8 @@ def parse_block_content(
     """
     assert element_c.tag() == "block_content"
 
-    block_content = CppBlockContent(element_c.srcml_element)
-    fill_block(options, element_c.srcml_element, block_content)
+    block_content = CppBlockContent(element_c.srcml_xml)
+    fill_block(options, element_c.srcml_xml, block_content)
     return block_content
 
 
@@ -668,9 +668,9 @@ def parse_comment(options: SrcmlOptions, element_c: CppElementAndComment) -> Cpp
     https://www.srcml.org/doc/cpp_srcML.html#comment
     """
     assert element_c.tag() == "comment"
-    assert len(element_c.srcml_element) == 0  # a comment has no child
+    assert len(element_c.srcml_xml) == 0  # a comment has no child
 
-    result = CppComment(element_c.srcml_element, element_c.cpp_element_comments)
+    result = CppComment(element_c.srcml_xml, element_c.cpp_element_comments)
 
     comment = element_c.text_or_empty()
     lines = comment.split("\n")
@@ -689,8 +689,8 @@ def parse_namespace(options: SrcmlOptions, element_c: CppElementAndComment) -> C
     https://www.srcml.org/doc/cpp_srcML.html#namespace
     """
     assert element_c.tag() == "namespace"
-    result = CppNamespace(element_c.srcml_element, element_c.cpp_element_comments)
-    for child in element_c.srcml_element:
+    result = CppNamespace(element_c.srcml_xml, element_c.cpp_element_comments)
+    for child in element_c.srcml_xml:
         child_tag = srcml_utils.clean_tag_or_attrib(child.tag)
         if child_tag == "name":
             result.ns_name = _parse_name(child)
@@ -710,14 +710,14 @@ def parse_enum(options: SrcmlOptions, element_c: CppElementAndComment) -> CppEnu
     https://www.srcml.org/doc/cpp_srcML.html#enum-class
     """
     assert element_c.tag() == "enum"
-    result = CppEnum(element_c.srcml_element, element_c.cpp_element_comments)
+    result = CppEnum(element_c.srcml_xml, element_c.cpp_element_comments)
 
-    if "type" in element_c.srcml_element.attrib.keys():
+    if "type" in element_c.srcml_xml.attrib.keys():
         enum_type = element_c.attribute_value("type")
         assert enum_type is not None
         result.enum_type = enum_type
 
-    for child in element_c.srcml_element:
+    for child in element_c.srcml_xml:
         child_tag = srcml_utils.clean_tag_or_attrib(child.tag)
         if child_tag == "name":
             result.enum_name = _parse_name(child)

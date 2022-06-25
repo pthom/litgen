@@ -125,37 +125,37 @@ class CppElement:
     # srcml_element is an XML node obtained from srcML.
     # It contains the code location, and can be used to restore the exact code from which it was constructed.
     # Its tag describe the type of element (decl, function, namespace, etc)
-    srcml_element: ET.Element
+    srcml_xml: ET.Element
 
     def __init__(self, srcml_element: ET.Element) -> None:
         assert isinstance(srcml_element, ET.Element)
-        self.srcml_element = srcml_element
+        self.srcml_xml = srcml_element
 
     def tag(self) -> str:
-        assert self.srcml_element.tag is not None
-        return srcml_utils.clean_tag_or_attrib(self.srcml_element.tag)
+        assert self.srcml_xml.tag is not None
+        return srcml_utils.clean_tag_or_attrib(self.srcml_xml.tag)
 
     def text_or_empty(self) -> str:
         """Text part of the xml element.
         Warning: Will return empty string if not found"""
-        return srcml_utils.str_or_empty(self.srcml_element.text)
+        return srcml_utils.str_or_empty(self.srcml_xml.text)
 
     def tail_or_empty(self):
         """Tail part of the xml element"""
-        return srcml_utils.str_or_empty(self.srcml_element.tail)
+        return srcml_utils.str_or_empty(self.srcml_xml.tail)
 
     def start(self) -> CodePosition:
         """Start position in the C++ code"""
-        start = srcml_utils.element_start_position(self.srcml_element)
+        start = srcml_utils.element_start_position(self.srcml_xml)
         return CodePosition(-1, -1) if start is None else start
 
     def end(self) -> CodePosition:
         """End position in the C++ code"""
-        end = srcml_utils.element_end_position(self.srcml_element)
+        end = srcml_utils.element_end_position(self.srcml_xml)
         return CodePosition(-1, -1) if end is None else end
 
     def has_name(self) -> bool:
-        name_children = srcml_utils.children_with_tag(self.srcml_element, "name")
+        name_children = srcml_utils.children_with_tag(self.srcml_xml, "name")
         return len(name_children) == 1
 
     def name_code(self) -> Optional[str]:
@@ -181,7 +181,7 @@ class CppElement:
         """
         if not self.has_name():
             return None
-        name_element = srcml_utils.child_with_tag(self.srcml_element, "name")
+        name_element = srcml_utils.child_with_tag(self.srcml_xml, "name")
         assert name_element is not None
         if name_element.text is not None:
             return name_element.text
@@ -189,14 +189,14 @@ class CppElement:
             return srcml_caller.srcml_to_code(name_element)
 
     def attribute_value(self, attr_name: str) -> Optional[str]:
-        if attr_name in self.srcml_element.attrib:
-            return self.srcml_element.attrib[attr_name]
+        if attr_name in self.srcml_xml.attrib:
+            return self.srcml_xml.attrib[attr_name]
         else:
             return None
 
     def str_code_verbatim(self) -> str:
         """Return the exact C++ code from which this xml node was constructed by calling the executable srcml"""
-        return srcml_caller.srcml_to_code(self.srcml_element)
+        return srcml_caller.srcml_to_code(self.srcml_xml)
 
     def annotate_with_cpp_element_class(self, msg):
         class_name = str(self.__class__)
@@ -213,11 +213,11 @@ class CppElement:
 
     def str_xml_readable(self) -> str:
         """Return the xml tree formatted in a yaml inspired format"""
-        return srcml_utils.srcml_to_str_readable(self.srcml_element)
+        return srcml_utils.srcml_to_str_readable(self.srcml_xml)
 
     def str_xml(self):
         """Returns the xml tree as a xml string representation"""
-        return srcml_utils.srcml_to_str(self.srcml_element)
+        return srcml_utils.srcml_to_str(self.srcml_xml)
 
     def as_dict(self) -> Dict[str, str]:
         as_dict = {
@@ -1232,7 +1232,7 @@ class CppEnum(CppElementAndComment):
                         except ValueError:
                             emit_srcml_warning(
                                 options,
-                                decl.srcml_element,
+                                decl.srcml_xml,
                                 """
                                 Cannot parse the value of this enum element.
                                 Hint: maybe add an entry to SrcmlOptions.named_number_macros""",

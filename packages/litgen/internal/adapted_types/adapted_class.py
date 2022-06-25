@@ -47,7 +47,7 @@ class AdaptedClassMember(AdaptedDecl):
         if array_typename not in options.c_array_numeric_member_types:
             emit_srcml_warning(
                 options.srcml_options,
-                cpp_decl.srcml_element,
+                cpp_decl.srcml_xml,
                 """
                 AdaptedClassMember: Only numeric C Style arrays are supported
                 Hint: use a vector, or extend `options.c_array_numeric_member_types`
@@ -58,7 +58,7 @@ class AdaptedClassMember(AdaptedDecl):
         if not options.c_array_numeric_member_flag_replace:
             emit_srcml_warning(
                 options.srcml_options,
-                cpp_decl.srcml_element,
+                cpp_decl.srcml_xml,
                 """
                 AdaptedClassMember: Detected a numeric C Style array, but will not export it.
                 Hint: set `options.c_array_numeric_member_flag_replace = True`
@@ -70,7 +70,7 @@ class AdaptedClassMember(AdaptedDecl):
             array_size_str = cpp_decl.c_array_size_as_str()
             emit_srcml_warning(
                 options.srcml_options,
-                cpp_decl.srcml_element,
+                cpp_decl.srcml_xml,
                 f"""
                 AdaptedClassMember: Detected a numeric C Style array, but its size is not parsable.
                 Hint: may be, add the value "{array_size_str}" to `options.c_array_numeric_member_size_dict`
@@ -87,14 +87,14 @@ class AdaptedClassMember(AdaptedDecl):
         if cpp_decl.is_bitfield():  # is_bitfield()
             emit_srcml_warning(
                 self.options.srcml_options,
-                cpp_decl.srcml_element,
+                cpp_decl.srcml_xml,
                 f"AdaptedClassMember: Skipped bitfield member {cpp_decl.decl_name}",
             )
             return False
         elif cpp_decl.is_c_array_fixed_size_unparsable(self.options.srcml_options):
             emit_srcml_warning(
                 self.options.srcml_options,
-                cpp_decl.srcml_element,
+                cpp_decl.srcml_xml,
                 """
                 AdaptedClassMember: Can't parse the size of this array.
                 Hint: use a vector, or extend `options.c_array_numeric_member_types`
@@ -262,7 +262,7 @@ class AdaptedClass(AdaptedElement):
             else:
                 emit_srcml_warning(
                     self.options.srcml_options,
-                    child.srcml_element,
+                    child.srcml_xml,
                     f"Public elements of type {child.tag()} are not supported in python conversion",
                 )
 
@@ -291,7 +291,7 @@ class AdaptedClass(AdaptedElement):
     def _str_pydef_lines(self) -> List[str]:
         if self.cpp_element().is_templated_class():
             emit_srcml_warning(
-                self.options.srcml_options, self.cpp_element().srcml_element, "Template classes are not yet supported"
+                self.options.srcml_options, self.cpp_element().srcml_xml, "Template classes are not yet supported"
             )
             return []
 
