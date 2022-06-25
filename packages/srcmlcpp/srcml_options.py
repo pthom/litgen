@@ -46,7 +46,7 @@ class SrcmlOptions:
     #           // code we want to exclude
     #       #endif
     #
-    # See srcmlcpp/srcml_filter_preprocessor_regions.py for more complete examples
+    # See srcmlcpp/filter_preprocessor_regions.py for more complete examples
     #
     # In this case, also fill header_guard_suffixes to exclude header_guards
     #

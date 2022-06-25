@@ -5,7 +5,7 @@ from xml.etree import ElementTree as ET
 from srcmlcpp import (
     srcml_caller,
     srcml_comments,
-    srcml_filter_preprocessor_regions,
+    filter_preprocessor_regions,
     srcml_types,
     srcml_types_parse,
     srcml_warnings,
@@ -47,9 +47,7 @@ def srcml_main_context() -> _SrcmlMainContext:
 
 def get_children_with_comments(options: SrcmlOptions, srcml_xml: ET.Element) -> List[srcml_types.CppElementAndComment]:
     if options.header_filter_preprocessor_regions:
-        srcml_xml = srcml_filter_preprocessor_regions.filter_preprocessor_regions(
-            srcml_xml, options.header_guard_suffixes
-        )
+        srcml_xml = filter_preprocessor_regions.filter_preprocessor_regions(srcml_xml, options.header_guard_suffixes)
 
     cpp_elements_commented = srcml_comments.get_children_with_comments(srcml_xml)
     return cpp_elements_commented
