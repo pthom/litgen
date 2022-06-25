@@ -1,7 +1,7 @@
 import os
 import sys
 
-from srcmlcpp import srcml_main
+from srcmlcpp.internal import srcml_main
 from srcmlcpp.srcml_types import *
 
 import litgen

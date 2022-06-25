@@ -1,14 +1,11 @@
-import copy
 import keyword
 import pathlib
 from dataclasses import dataclass  # noqa
-from typing import List
 
-import srcmlcpp
-from codemanip import code_replacements, code_utils
+from codemanip import code_replacements
 from codemanip.code_replacements import StringReplacement
 
-from srcmlcpp import srcml_main
+from srcmlcpp.internal import srcml_main
 from srcmlcpp.srcml_types import *
 
 from litgen.options import LitgenOptions

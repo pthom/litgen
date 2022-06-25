@@ -3,7 +3,8 @@ import sys
 
 from codemanip import code_utils
 
-from srcmlcpp import srcml_main, srcml_types, srcml_types_parse
+from srcmlcpp import srcml_types
+from srcmlcpp.internal import srcml_types_parse, srcml_main
 from srcmlcpp.srcml_options import SrcmlOptions
 
 
@@ -360,10 +361,10 @@ def disabled_test_parse_imgui():
     """
     Disabled because too slow (about 20 seconds). Handle this in a later profiling session
     """
-    source_filename = os.path.realpath(_THIS_DIR + "/../../../examples_real_libs/imgui/imgui/imgui.h")
+    source_filename = os.path.realpath(_THIS_DIR + "/../../../../examples_real_libs/imgui/imgui/imgui.h")
     do_parse_imgui_implot(source_filename)
 
 
 def test_parse_implot():
-    source_filename = os.path.realpath(_THIS_DIR + "/../../../examples_real_libs/implot/implot/implot.h")
+    source_filename = os.path.realpath(_THIS_DIR + "/../../../../examples_real_libs/implot/implot/implot.h")
     do_parse_imgui_implot(source_filename)

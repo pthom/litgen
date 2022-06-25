@@ -3,7 +3,7 @@ from typing import List, Optional
 
 from codemanip import code_utils
 
-from srcmlcpp import srcml_warnings
+from srcmlcpp.internal import srcml_warnings
 from srcmlcpp.srcml_types import CppFunctionDecl, CppParameter
 
 from litgen.options import LitgenOptions

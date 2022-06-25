@@ -1,12 +1,10 @@
 from typing import Type
 
 from srcmlcpp import (
-    filter_preprocessor_regions,
     srcml_types,
-    srcml_types_parse,
-    srcml_warnings,
+    filter_preprocessor_regions,
 )
-from srcmlcpp.internal import srcml_comments
+from srcmlcpp.internal import srcml_comments, srcml_types_parse, srcml_warnings
 from srcmlcpp.srcml_types import *
 
 

@@ -23,7 +23,7 @@ private:
 """
 
     code_xml = srcmlcpp.code_to_srcml(code)
-    code_info = srcmlcpp.srcml_utils.srcml_to_str_readable(code_xml)
+    code_info = srcmlcpp.internal.srcml_utils.srcml_to_str_readable(code_xml)
 
     expected_code_info = """unit
     comment text="// A superb struct"                       line  2

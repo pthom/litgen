@@ -29,9 +29,9 @@ from xml.etree import ElementTree as ET  # noqa
 from codemanip import code_utils
 from codemanip.code_position import CodePosition
 
-from srcmlcpp import srcml_caller, srcml_utils
+from srcmlcpp.internal import srcml_caller, srcml_utils
 from srcmlcpp.srcml_options import SrcmlOptions
-from srcmlcpp.srcml_warnings import emit_srcml_warning
+from srcmlcpp.internal.srcml_warnings import emit_srcml_warning
 
 
 """

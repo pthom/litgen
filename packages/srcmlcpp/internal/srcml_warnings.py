@@ -10,7 +10,8 @@ from codemanip import code_utils
 from codemanip.code_position import CodePosition
 
 import srcmlcpp
-from srcmlcpp import srcml_main, srcml_types, srcml_utils
+from srcmlcpp import srcml_types
+from srcmlcpp.internal import srcml_utils, srcml_main
 from srcmlcpp.srcml_exception import SrcMlException
 from srcmlcpp.srcml_options import SrcmlOptions
 

@@ -1,10 +1,6 @@
-import logging
-
-from srcmlcpp import srcml_main
 from srcmlcpp.srcml_types import *
 
 import litgen
-from litgen.internal.adapted_types import *
 from litgen.options import LitgenOptions
 
 

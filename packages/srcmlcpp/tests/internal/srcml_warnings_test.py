@@ -1,6 +1,6 @@
 import srcmlcpp
 from srcmlcpp.srcml_options import SrcmlOptions
-from srcmlcpp.srcml_warnings import SrcMlException, SrcMlExceptionDetailed
+from srcmlcpp.internal.srcml_warnings import SrcMlException, SrcMlExceptionDetailed
 
 
 def test_warnings():
