@@ -67,6 +67,11 @@ class SrcmlOptions:
     preserve_empty_lines: bool = True
 
     #
+    # srcml_dump_positions: if True, code positions will be outputted in the xml tree
+    #
+    srcml_dump_positions: bool = True
+
+    #
     # Verbose / Quiet mode
     #
 
@@ -80,3 +85,17 @@ class SrcmlOptions:
         self.functions_api_prefixes = []
         self.named_number_macros = {}
         self.code_preprocess_function = None
+
+
+def _int_from_str_or_named_number_macros(options: SrcmlOptions, int_str: Optional[str]) -> Optional[int]:
+    if int_str is None:
+        return None
+
+    try:
+        v = int(int_str)
+        return v
+    except ValueError:
+        if int_str in options.named_number_macros:
+            return options.named_number_macros[int_str]
+        else:
+            return None

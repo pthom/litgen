@@ -32,25 +32,11 @@ from codemanip.code_position import CodePosition
 from srcmlcpp.internal import srcml_caller, srcml_utils
 from srcmlcpp.srcml_options import SrcmlOptions
 from srcmlcpp.internal.srcml_warnings import emit_srcml_warning
-
+from srcmlcpp.srcml_options import _int_from_str_or_named_number_macros
 
 """
 """
 StringToIntDict = Dict[str, int]
-
-
-def _int_from_str_or_dict(options: SrcmlOptions, int_str: Optional[str]) -> Optional[int]:
-    if int_str is None:
-        return None
-
-    try:
-        v = int(int_str)
-        return v
-    except ValueError:
-        if int_str in options.named_number_macros:
-            return options.named_number_macros[int_str]
-        else:
-            return None
 
 
 @dataclass
@@ -652,7 +638,7 @@ class CppDecl(CppElementAndComment):
         Except if "COUNT" is a key of size_dict
         """
         size_as_str = self.c_array_size_as_str()
-        maybe_size = _int_from_str_or_dict(options, size_as_str)
+        maybe_size = _int_from_str_or_named_number_macros(options, size_as_str)
         return maybe_size
 
     def is_c_array_known_fixed_size(self, options: SrcmlOptions) -> bool:
