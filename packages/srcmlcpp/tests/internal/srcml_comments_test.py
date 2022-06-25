@@ -5,9 +5,37 @@ from codemanip import code_utils
 
 import srcmlcpp
 from srcmlcpp.internal import srcml_comments, srcml_utils
+from srcmlcpp.srcml_types import *
 
 _THIS_DIR = os.path.dirname(__file__)
 sys.path.append(_THIS_DIR + "/../..")
+
+
+def as_dict_cpp_element(cpp_element: CppElement) -> Dict[str, str]:
+    as_dict = {
+        "tag": cpp_element.tag(),
+        "name": code_utils.str_or_none_token(cpp_element.name_code()),
+        "text": code_utils.str_or_none_token(cpp_element.text()),
+        "start": str(cpp_element.start()),
+        "end": str(cpp_element.end()),
+    }
+    return as_dict
+
+
+def as_dict_cpp_element_comments(cpp_element_comments: CppElementComments) -> Dict[str, str]:
+    r = {
+        "comment_top": cpp_element_comments.comment_on_previous_lines,
+        "comment_eol": cpp_element_comments.comment_end_of_line,
+    }
+    return r
+
+
+def as_dict_cpp_element_and_comment(cpp_element_and_comment: CppElementAndComment):
+    as_dict = code_utils.merge_dicts(
+        as_dict_cpp_element(cpp_element_and_comment),
+        as_dict_cpp_element_comments(cpp_element_and_comment.cpp_element_comments),
+    )
+    return as_dict
 
 
 def test_mark_empty_lines():
@@ -38,7 +66,7 @@ def test_iterate_children_simple():
     code = srcml_comments.mark_empty_lines(code)
     srcml_code = srcmlcpp.internal.srcml_caller.code_to_srcml(code)
     children_and_comments = srcml_comments.get_children_with_comments(srcml_code)
-    msgs = [str(child.as_dict()) for child in children_and_comments]
+    msgs = [str(as_dict_cpp_element_and_comment(child)) for child in children_and_comments]
     msg = "\n".join(msgs)
     # logging.warning("\n" + msg)
     expected = """
@@ -58,7 +86,7 @@ def test_iterate_children_with_comments():
     code = srcml_comments.mark_empty_lines(srcml_comments._EXAMPLE_COMMENTS_TO_GROUPS)
     srcml_code = srcmlcpp.internal.srcml_caller.code_to_srcml(code)
     children_and_comments = srcml_comments.get_children_with_comments(srcml_code)
-    msgs = [str(child.as_dict()) for child in children_and_comments]
+    msgs = [str(as_dict_cpp_element_and_comment(child)) for child in children_and_comments]
     msg = "\n".join(msgs)
     # logging.warning("\n" + msg)
     code_utils.assert_are_codes_equal(msg, srcml_comments._EXPECTED_CHILDREN_WITH_COMMENTS)

@@ -1,7 +1,7 @@
 import logging
 
 from srcmlcpp.srcml_options import SrcmlOptions
-from srcmlcpp.srcml_xml_wrapper import SrcmlXmlWrapper
+from srcmlcpp.srcml_xml_wrapper import SrcmlXmlWrapper, factor_xml_wrapper_from_code
 from codemanip import code_utils
 from codemanip.code_position import CodePosition
 
@@ -24,8 +24,8 @@ def test_srcml_cpp():
     )
 
     # test code_verbatim
-    code_wrapper = SrcmlXmlWrapper.from_code(options, code)
-    assert code_wrapper.code_verbatim() == code
+    code_wrapper = factor_xml_wrapper_from_code(options, code)
+    assert code_wrapper.str_code_verbatim() == code
 
     # Test child_with_tag
     function_wrapper = code_wrapper.child_with_tag("function")
@@ -36,18 +36,18 @@ def test_srcml_cpp():
     assert len(decl_stmt_wrappers) == 2
 
     first_decl_stmt = decl_stmt_wrappers[0]
-    assert first_decl_stmt.code_verbatim() == "int a = 5;\n"
+    assert first_decl_stmt.str_code_verbatim() == "int a = 5;\n"
 
     # Test start/end position
-    assert first_decl_stmt.start_position() == CodePosition(2, 1)
-    assert first_decl_stmt.end_position() == CodePosition(2, 10)
+    assert first_decl_stmt.start() == CodePosition(2, 1)
+    assert first_decl_stmt.end() == CodePosition(2, 10)
 
     # test xml string
-    first_decl_xml_str = first_decl_stmt.as_xml_str(beautify=False)
+    first_decl_xml_str = first_decl_stmt.str_xml(beautify=False)
     # logging.warning("\n" + first_decl_xml_str)
     expected_xml_str = '<ns0:decl_stmt xmlns:ns0="http://www.srcML.org/srcML/src" xmlns:ns1="http://www.srcML.org/srcML/position" ns1:start="2:1" ns1:end="2:10"><ns0:decl ns1:start="2:1" ns1:end="2:9"><ns0:type ns1:start="2:1" ns1:end="2:3"><ns0:name ns1:start="2:1" ns1:end="2:3">int</ns0:name></ns0:type> <ns0:name ns1:start="2:5" ns1:end="2:5">a</ns0:name> <ns0:init ns1:start="2:7" ns1:end="2:9">= <ns0:expr ns1:start="2:9" ns1:end="2:9"><ns0:literal type="number" ns1:start="2:9" ns1:end="2:9">5</ns0:literal></ns0:expr></ns0:init></ns0:decl>;</ns0:decl_stmt>\n'
     assert first_decl_xml_str == expected_xml_str
-    first_decl_xml_str = first_decl_stmt.as_xml_str(beautify=True)
+    first_decl_xml_str = first_decl_stmt.str_xml(beautify=True)
     # logging.warning("\n" + first_decl_xml_str)
     expected_xml_str = """
         <?xml version="1.0" ?>
@@ -75,8 +75,8 @@ def test_srcml_cpp():
 def test_yaml():
     options = SrcmlOptions()
     code = "int a = 5;"
-    code_wrapper = SrcmlXmlWrapper.from_code(options, code)
-    yaml_str = code_wrapper.as_yaml()
+    code_wrapper = factor_xml_wrapper_from_code(options, code)
+    yaml_str = code_wrapper.str_yaml()
     expected_yaml = code_utils.unindent_code(
         """
         ns0:unit:

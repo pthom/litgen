@@ -86,13 +86,6 @@ class CppElementComments:
         else:
             return self.comment_on_previous_lines + self.comment_end_of_line
 
-    def as_dict(self) -> Dict[str, str]:
-        r = {
-            "comment_top": self.comment_on_previous_lines,
-            "comment_eol": self.comment_end_of_line,
-        }
-        return r
-
     def top_comment_code(self) -> str:
         top_comments = map(lambda comment: "//" + comment, self.comment_on_previous_lines.splitlines())
         top_comment = "\n".join(top_comments)
@@ -193,11 +186,13 @@ class CppElement:
         """Return the exact C++ code from which this xml node was constructed by calling the executable srcml"""
         return srcml_caller.srcml_to_code(self.srcml_xml)
 
-    def annotate_with_cpp_element_class(self, msg):
-        class_name = str(self.__class__)
-        items = class_name.split(".")
-        class_name = items[-1][:-2]
-        return f"[++{class_name}++]  {msg} [--{class_name}--]"
+    def _str_simplified_yaml(self) -> str:
+        """Return the xml tree formatted in a yaml inspired format"""
+        return srcml_utils.srcml_to_str_readable(self.srcml_xml)
+
+    def str_xml(self):
+        """Returns the xml tree as a xml string representation"""
+        return srcml_utils.srcml_to_str(self.srcml_xml)
 
     def str_code(self) -> str:
         """Returns a C++ textual representation of the contained code element.
@@ -206,26 +201,8 @@ class CppElement:
         """
         return self.str_code_verbatim()
 
-    def str_xml_readable(self) -> str:
-        """Return the xml tree formatted in a yaml inspired format"""
-        return srcml_utils.srcml_to_str_readable(self.srcml_xml)
-
-    def str_xml(self):
-        """Returns the xml tree as a xml string representation"""
-        return srcml_utils.srcml_to_str(self.srcml_xml)
-
-    def as_dict(self) -> Dict[str, str]:
-        as_dict = {
-            "tag": self.tag(),
-            "name": code_utils.str_or_none_token(self.name_code()),
-            "text": code_utils.str_or_none_token(self.text()),
-            "start": str(self.start()),
-            "end": str(self.end()),
-        }
-        return as_dict
-
     def __str__(self) -> str:
-        return self.str_xml_readable()
+        return self._str_simplified_yaml()
 
 
 @dataclass
@@ -238,10 +215,6 @@ class CppElementAndComment(CppElement):
         assert isinstance(element, ET.Element)
         super().__init__(element)
         self.cpp_element_comments = cpp_element_comments
-
-    def as_dict(self) -> Dict[str, str]:
-        as_dict = code_utils.merge_dicts(super().as_dict(), self.cpp_element_comments.as_dict())
-        return as_dict
 
     def str_commented(self, is_enum: bool = False, is_decl_stmt: bool = False) -> str:
         result = self.cpp_element_comments.top_comment_code()
