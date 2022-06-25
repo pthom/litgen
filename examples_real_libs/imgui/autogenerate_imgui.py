@@ -1,6 +1,7 @@
 import os
 
 import litgen
+from litgen.litgen_options_imgui import litgen_options_imgui
 
 THIS_DIR = os.path.dirname(__file__)
 CPP_HEADERS_DIR = THIS_DIR + "/imgui"
@@ -10,7 +11,7 @@ assert os.path.isdir(CPP_GENERATED_PYBIND_DIR)
 
 
 def my_code_style_options():
-    options = litgen.code_style_imgui()
+    options = litgen_options_imgui()
     return options
 
 
