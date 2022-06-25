@@ -1,4 +1,4 @@
-from srcmlcpp.internal import srcml_main
+from srcmlcpp.internal import srcml_main_deprecated
 from srcmlcpp.srcml_types import *
 
 import litgen
@@ -7,7 +7,7 @@ from litgen.options import LitgenOptions
 
 
 def to_adapted_decl(code, options: LitgenOptions) -> AdaptedDecl:
-    cpp_decl = srcml_main.code_first_decl(options.srcml_options, code)
+    cpp_decl = srcml_main_deprecated.code_first_decl(options.srcml_options, code)
     adapted_decl = AdaptedDecl(options, cpp_decl)
     return adapted_decl
 

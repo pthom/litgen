@@ -4,7 +4,7 @@ import sys
 from codemanip import code_utils
 
 from srcmlcpp import srcml_types
-from srcmlcpp.internal import srcml_types_parse, srcml_main
+from srcmlcpp.internal import srcml_types_parse, srcml_main_deprecated
 from srcmlcpp.srcml_options import SrcmlOptions
 
 
@@ -16,7 +16,7 @@ def test_parse_cpp_decl_statement():
     options = SrcmlOptions()
 
     def code_to_decl_statement(code) -> srcml_types.CppDeclStatement:
-        element_c = srcml_main._tests_only_get_only_child_with_tag(options, code, "decl_stmt")
+        element_c = srcml_main_deprecated._tests_only_get_only_child_with_tag(options, code, "decl_stmt")
         cpp_decl_statement = srcml_types_parse.parse_decl_stmt(options, element_c)
         cpp_decl_statement_str = str(cpp_decl_statement)
         return cpp_decl_statement
@@ -84,7 +84,7 @@ def test_parse_function_decl():
     options = SrcmlOptions()
 
     def code_to_fn_decl(code) -> srcml_types.CppFunctionDecl:
-        element = srcml_main._tests_only_get_only_child_with_tag(options, code, "function_decl")
+        element = srcml_main_deprecated._tests_only_get_only_child_with_tag(options, code, "function_decl")
         fn_decl = srcml_types_parse.parse_function_decl(options, element)
         fn_decl_str = str(fn_decl)
         return fn_decl
@@ -130,7 +130,7 @@ def test_parse_function():
     options = SrcmlOptions()
 
     def code_to_fn_decl(code) -> srcml_types.CppFunctionDecl:
-        element = srcml_main._tests_only_get_only_child_with_tag(options, code, "function")
+        element = srcml_main_deprecated._tests_only_get_only_child_with_tag(options, code, "function")
         fn = srcml_types_parse.parse_function(options, element)
         fn_str = str(fn)
         return fn
@@ -154,7 +154,7 @@ def test_parse_struct():
     options = SrcmlOptions()
 
     def code_to_struct_decl(code) -> str:
-        element_c = srcml_main._tests_only_get_only_child_with_tag(options, code, "struct")
+        element_c = srcml_main_deprecated._tests_only_get_only_child_with_tag(options, code, "struct")
         cpp_element = srcml_types_parse.parse_struct_or_class(options, element_c)
         cpp_element_str = str(cpp_element)
         # logging.warning("\n" + cpp_element_str)
@@ -240,7 +240,7 @@ def test_parse_unit():
     options = SrcmlOptions()
 
     def code_to_unit_str(code) -> str:
-        srcml_unit = srcml_main.code_to_srcml_unit(options, code)
+        srcml_unit = srcml_main_deprecated.code_to_srcml_unit__deprecated(options, code)
         cpp_element = srcml_types_parse.parse_unit(options, srcml_unit)
         cpp_element_str = str(cpp_element)
         # logging.warning("\n" + cpp_element_str)
@@ -349,7 +349,7 @@ def do_parse_imgui_implot(filename) -> None:
     options.code_preprocess_function = preprocess_imgui_code
     options.flag_quiet = True
     options.header_guard_suffixes.append("IMGUI_DISABLE")
-    srcml_unit = srcml_main.file_to_srcml_unit(options, filename)
+    srcml_unit = srcml_main_deprecated.file_to_srcml_unit(options, filename)
     unit_element = srcml_types_parse.parse_unit(options, srcml_unit)
     recomposed_code = str(unit_element)
     # logging.warning("\n" + recomposed_code)

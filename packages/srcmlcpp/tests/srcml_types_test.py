@@ -1,11 +1,11 @@
 import srcmlcpp
-from srcmlcpp.internal import srcml_main
+from srcmlcpp.internal import srcml_main_deprecated
 from srcmlcpp.srcml_types import *
 
 
 def to_decl(code) -> CppDecl:
     options = srcmlcpp.SrcmlOptions()
-    cpp_decl = srcml_main.code_first_decl(options, code)
+    cpp_decl = srcml_main_deprecated.code_first_decl(options, code)
     return cpp_decl
 
 

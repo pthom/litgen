@@ -47,7 +47,7 @@ def get_children_with_comments(options: SrcmlOptions, srcml_xml: ET.Element) -> 
     return cpp_elements_commented
 
 
-def code_to_srcml_unit(options: SrcmlOptions, code: str = "", filename: str = "") -> ET.Element:
+def code_to_srcml_unit__deprecated(options: SrcmlOptions, code: str = "", filename: str = "") -> ET.Element:
     """Parse the given code, and returns it under the form of a srcML unit element
     Note:
         * if `code` is not empty, the code will be taken from it.
@@ -79,17 +79,17 @@ def code_to_srcml_unit(options: SrcmlOptions, code: str = "", filename: str = ""
 
 def file_to_srcml_unit(options: SrcmlOptions, filename: str) -> ET.Element:
     """Parse the given file, and returns it under the form of a srcML unit element"""
-    return code_to_srcml_unit(options, filename=filename)
+    return code_to_srcml_unit__deprecated(options, filename=filename)
 
 
 def code_to_cpp_unit(options: SrcmlOptions, code: str = "", filename: str = "") -> srcml_types.CppUnit:
-    srcml_unit = code_to_srcml_unit(options, code, filename)
+    srcml_unit = code_to_srcml_unit__deprecated(options, code, filename)
     cpp_unit = srcml_types_parse.parse_unit(options, srcml_unit)
     return cpp_unit
 
 
 def file_to_cpp_unit(options: SrcmlOptions, filename: str = "") -> srcml_types.CppUnit:
-    srcml_unit = code_to_srcml_unit(options, filename=filename)
+    srcml_unit = code_to_srcml_unit__deprecated(options, filename=filename)
     cpp_unit = srcml_types_parse.parse_unit(options, srcml_unit)
     return cpp_unit
 
@@ -125,7 +125,7 @@ def code_first_class(options: SrcmlOptions, code: str) -> srcml_types.CppClass:
 
 
 def _tests_only_get_only_child_with_tag(options: SrcmlOptions, code: str, tag: str) -> srcml_types.CppElementAndComment:
-    srcml_unit = code_to_srcml_unit(options, code)
+    srcml_unit = code_to_srcml_unit__deprecated(options, code)
     children = get_children_with_comments(options, srcml_unit)
     children_with_tag = list(filter(lambda child: child.tag() == tag, children))
     assert len(children_with_tag) == 1

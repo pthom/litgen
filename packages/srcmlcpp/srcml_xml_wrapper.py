@@ -18,6 +18,8 @@ class SrcmlXmlWrapper:
     options: SrcmlOptions
     # the xml tree created by srcML
     srcml_xml: ET.Element
+    # the filename from which this tree was parsed
+    filename: Optional[str] = None
 
     def __init__(self) -> None:
         """Do not construct this class directly, use from_code and from_srcml_xml"""

@@ -1,4 +1,4 @@
-from srcmlcpp.internal import srcml_comments, srcml_warnings, srcml_main
+from srcmlcpp.internal import srcml_comments, srcml_warnings, srcml_main_deprecated
 from srcmlcpp.srcml_types import *
 from srcmlcpp.internal.srcml_warnings import SrcMlExceptionDetailed
 
@@ -570,7 +570,7 @@ def fill_block(options: SrcmlOptions, element: ET.Element, inout_block_content: 
 
     last_ignored_child: Optional[CppElementAndComment] = None
 
-    children: List[CppElementAndComment] = srcml_main.get_children_with_comments(options, element)
+    children: List[CppElementAndComment] = srcml_main_deprecated.get_children_with_comments(options, element)
     for i, child_c in enumerate(children):
         if not _shall_publish(child_c, options):
             continue

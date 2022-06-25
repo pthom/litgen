@@ -1,7 +1,7 @@
 import os
 import sys
 
-from srcmlcpp.internal import srcml_main
+from srcmlcpp.internal import srcml_main_deprecated
 from srcmlcpp.srcml_types import *
 
 import litgen
@@ -17,7 +17,7 @@ def gen_pydef_code(code) -> str:
     options.srcml_options.functions_api_prefixes = ["MY_API"]
 
     struct_name = ""
-    cpp_function = srcml_main.code_first_function_decl(options.srcml_options, code)
+    cpp_function = srcml_main_deprecated.code_first_function_decl(options.srcml_options, code)
     adapted_function = AdaptedFunction(options, cpp_function, struct_name, False)
     generated_code = adapted_function.str_pydef()
     return generated_code

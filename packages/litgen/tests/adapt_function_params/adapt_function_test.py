@@ -1,5 +1,5 @@
 import srcmlcpp
-from srcmlcpp.internal import srcml_main
+from srcmlcpp.internal import srcml_main_deprecated
 from srcmlcpp.srcml_types import *
 
 
@@ -24,6 +24,6 @@ class AdaptedFunction2(CppFunctionDecl):
 def test_inherit():
     options = srcmlcpp.SrcmlOptions()
     code = "void Foo();"
-    cpp_function = srcml_main.code_first_child_of_type(options, CppFunctionDecl, code)
+    cpp_function = srcml_main_deprecated.code_first_child_of_type(options, CppFunctionDecl, code)
     assert isinstance(cpp_function, CppFunctionDecl)
     a = AdaptedFunction2(cpp_function, "Foo")

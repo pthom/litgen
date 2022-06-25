@@ -5,7 +5,7 @@ from dataclasses import dataclass  # noqa
 from codemanip import code_replacements
 from codemanip.code_replacements import StringReplacement
 
-from srcmlcpp.internal import srcml_main
+from srcmlcpp.internal import srcml_main_deprecated
 from srcmlcpp.srcml_types import *
 
 from litgen.options import LitgenOptions
@@ -248,7 +248,7 @@ def info_original_location(options: LitgenOptions, cpp_element: CppElement, comm
         return ""
 
     nb_folders = options.original_location_nb_parent_folders
-    header_file = srcml_main.srcml_main_context().current_parsed_file
+    header_file = srcml_main_deprecated.srcml_main_context().current_parsed_file
     header_file = _filename_with_n_parent_folders(header_file, nb_folders)
     if len(header_file) == 0:
         header_file = "Line"

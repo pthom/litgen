@@ -11,7 +11,7 @@ from codemanip.code_position import CodePosition
 
 import srcmlcpp
 from srcmlcpp import srcml_types
-from srcmlcpp.internal import srcml_utils, srcml_main
+from srcmlcpp.internal import srcml_utils, srcml_main_deprecated
 from srcmlcpp.srcml_exception import SrcMlException
 from srcmlcpp.srcml_options import SrcmlOptions
 
@@ -46,7 +46,7 @@ class ErrorContext:
 def _extract_error_context(element: ET.Element) -> ErrorContext:
     cpp_element = srcml_types.CppElement(element)
 
-    full_code = srcml_main.srcml_main_context().current_parsed_file_unit_code
+    full_code = srcml_main_deprecated.srcml_main_context().current_parsed_file_unit_code
     if len(full_code) > 0:
         full_code_lines = [""] + full_code.split("\n")
 
@@ -74,7 +74,7 @@ def _highlight_responsible_code(element: ET.Element) -> str:
 
 def _show_element_info(element: ET.Element, encoding: str) -> str:
     def file_location(element: ET.Element):
-        header_filename = srcml_main.srcml_main_context().current_parsed_file
+        header_filename = srcml_main_deprecated.srcml_main_context().current_parsed_file
         if len(header_filename) == 0:
             header_filename = "Position"
         start = srcml_utils.element_start_position(element)
