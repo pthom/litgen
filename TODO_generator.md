@@ -1,13 +1,13 @@
 litgen:
-    Bouger options imgui et implot: trop tot
-
-    Faire un objet srcmlcpp
-        element
-        srcml_options
-            to_verbatim_code
-            to_xml
-            to_yaml
-            emit_warning
+    srcml:
+        renames & internal
+        Faire un objet srcmlcpp
+            element
+            srcml_options
+                to_verbatim_code
+                to_xml
+                to_yaml
+                emit_warning
 
     Sujet / multiples fichiers input
 
