@@ -8,7 +8,7 @@ from codemanip.code_position import CodePosition
 
 from srcmlcpp.internal import srcml_caller
 from srcmlcpp.srcml_options import SrcmlOptions
-from srcmlcpp.internal import srcml_caller, srcml_utils
+from srcmlcpp.internal import srcml_caller, srcml_utils, srcml_comments
 
 
 class SrcmlXmlWrapper:
@@ -26,21 +26,48 @@ class SrcmlXmlWrapper:
         pass
 
     @staticmethod
-    def from_code(options: SrcmlOptions, cpp_code: str) -> SrcmlXmlWrapper:
-        """Create a wrapper from c++ code"""
+    def from_code(
+        options: SrcmlOptions, cpp_code: Optional[str] = None, filename: Optional[str] = None
+    ) -> SrcmlXmlWrapper:
+        """Create a wrapper from c++ code
+
+        Note:
+            * if `cpp_code` is not empty, the code will be taken from it.
+              In this case, the `filename` param will still be used to display code source position in warning messages.
+              This can be used when you need to preprocess the code before parsing it.
+            * if `code`is empty, the code will be read from `filename`
+        """
         self = SrcmlXmlWrapper()
         self.options = options
+
+        self.filename = filename
+
+        if cpp_code is None:
+            if self.filename is None:
+                raise ValueError("Either cpp_code or filename needs to be specified!")
+            assert filename is not None  # make mypy happy
+            with open(filename, "r", encoding=options.encoding) as f:
+                cpp_code = f.read()
+
+        if options.code_preprocess_function is not None:
+            cpp_code = options.code_preprocess_function(cpp_code)
+
+        if options.preserve_empty_lines:
+            cpp_code = srcml_comments.mark_empty_lines(cpp_code)
+
         self.srcml_xml = srcml_caller.code_to_srcml(
             cpp_code, dump_positions=self.options.srcml_dump_positions, encoding=options.encoding
         )
+
         return self
 
     @staticmethod
-    def from_srcml_xml(options: SrcmlOptions, srcml_xml: ET.Element) -> SrcmlXmlWrapper:
+    def from_srcml_xml(options: SrcmlOptions, srcml_xml: ET.Element, filename: Optional[str] = None) -> SrcmlXmlWrapper:
         """Create a wrapper from an xml sub node"""
         self = SrcmlXmlWrapper()
         self.options = options
         self.srcml_xml = srcml_xml
+        self.filename = filename
         return self
 
     def tag(self) -> Optional[str]:

@@ -14,7 +14,7 @@ def test_srcml_cpp():
     int a = 5;
     int add(int a, int b) { return a + b; }
     double b = 3;
-
+    // _SRCML_EMPTY_LINE_
     struct Foo
     {
         double value;
