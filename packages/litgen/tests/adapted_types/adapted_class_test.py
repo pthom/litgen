@@ -5,7 +5,7 @@ from srcmlcpp.srcml_types import *
 
 import litgen
 from litgen.internal.adapted_types import *
-from litgen.options import code_style_immvision, LitgenOptions
+from litgen.options import LitgenOptions
 
 
 def log_code(code) -> None:

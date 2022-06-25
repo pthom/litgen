@@ -5,7 +5,7 @@ from srcmlcpp.srcml_types import *
 
 import litgen
 from litgen.internal.adapted_types import *
-from litgen.options import LitgenOptions, code_style_implot, code_style_immvision
+from litgen.options import LitgenOptions
 
 
 def test_adapted_function_stub():
@@ -60,7 +60,9 @@ def test_adapted_function_pydef_simple():
 
 
 def test_implot_easy() -> None:
-    options = code_style_implot()
+    options = LitgenOptions()
+    options.srcml_options.functions_api_prefixes = ["IMPLOT_API", "IMPLOT_TMP"]
+    options.original_location_flag_show = True
     code = """
         // Sets the format of numeric
         // axis labels
@@ -95,7 +97,9 @@ def test_return_value_policy() -> None:
 
 
 def test_implot_one_buffer() -> None:
-    options = code_style_implot()
+    options = LitgenOptions()
+    options.srcml_options.functions_api_prefixes = ["IMPLOT_API", "IMPLOT_TMP"]
+    options.original_location_flag_show = True
     code = """
         // Plots a standard 2D scatter plot. Default marker is ImPlotMarker_Circle.
         IMPLOT_TMP void PlotScatter(const T* values, int count);
@@ -149,7 +153,8 @@ def test_implot_one_buffer() -> None:
 
 
 def test_immvision() -> None:
-    options = code_style_immvision()
+    options = LitgenOptions()
+    options.srcml_options.functions_api_prefixes = ["IMMVISION_API"]
     code = """
         // Display an image (requires OpenGL initialized)
         IMMVISION_API bool Image(const std::string& label_id, const cv::Mat& mat, ImageParams* params);

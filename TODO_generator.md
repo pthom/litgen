@@ -1,63 +1,55 @@
-imgui / Todo:
-    InputText:
-        litgen doit pouvoir gerer une collection de fichier en input, chacun avec des options differentes
-        -> collection avec imgui.h (sans inputText) + imgui_stdlib.h
+litgen:
+    Bouger options imgui et implot: trop tot
+
+    Faire un objet srcmlcpp
+        element
+        srcml_options
+            to_verbatim_code
+            to_xml
+            to_yaml
+            emit_warning
+
+    Sujet / multiples fichiers input
+
 
     Sujet input Pointer to return output (tuple) ..
 
-    Sujet: strings via text_begin / text_end ?
-        Pas forcement, car
-                d.add_text(imgui.ImVec2(50, 50), 42243, "hello")   # marche !!!
-        >>> d = imgui.get_window_draw_list()
-        >>> d.add_text()
-        (self: _lg_imgui.ImDrawList, pos: _lg_imgui.ImVec2, col: int, text_begin: str, text_end: str = None) -> None
+    Sujet / Namespaces
 
 
+    Ajout / pybind
+        Namespace
+        Trampoline
+        Operators (https://pybind11.readthedocs.io/en/stable/advanced/classes.html#operator-overloading)
 
-    Tester methode avec return by ref (cf scratch.txt)
-        PtrFunc GetFont  (IMGUI_API ImFont*       GetFont();                                                      )
-        PtrFunc GetGlyphRangesDefault  (IMGUI_API const ImWchar*    GetGlyphRangesDefault();                )
-        PtrFunc GetKeyName  (IMGUI_API const char*   GetKeyName(ImGuiKey key);                                           )
-        PtrFunc GetClipboardText  (IMGUI_API const char*   GetClipboardText();)
-        PtrFunc GetBackgroundDrawList  (IMGUI_API ImDrawList*   GetBackgroundDrawList(); )
-        PtrFunc GetIOPtr  (IMGUI_API ImGuiIO*      GetIOPtr(); )
-        PtrRef GetStyle  (IMGUI_API ImGuiStyle&   GetStyle();                                 )
-        PtrFunc GetStylePtr  (IMGUI_API ImGuiStyle*   GetStylePtr(); )
-        PtrFunc GetDrawData  (IMGUI_API ImDrawData*   GetDrawData();                              )
-        PtrFunc GetVersion  (IMGUI_API const char*   GetVersion();                               )
-        PtrFunc GetWindowDrawList  (IMGUI_API ImDrawList*   GetWindowDrawList(); )
-        -> perfect !
+    imgui:
+        InputText (need multiple files & options)
+        Signature / ComboBox
+        Test app imgui
+        N profile generate imgui -> remove flag signature
+        N Pas urgent, voire nefaste : ImVector -> List, reprendre impl (template), ou pycast (exclu par regex pour l'instant)
 
-No:
-* profile generate imgui -> remove flag signature
-* ImVector -> List, reprendre impl (template), ou pycast (exclu par regex pour l'instant)
-* Boxer les pointeur (SliderInt, input_text, etc.)
+    implot
+        SetupAxisTicks uses a string list, parameters order reversed!
 
-
-imgui: Handle widget input / output parameters
-bool *, int *, float *, etc
-float[2, 3, 4]
---> make return
+    sujet toString
+        toString en hackant str:
+        l.Foo.__str__ = my_str
 
 
-Gerer overload multiples / methodes et functions dans stubs
+srcmlcpp:
+    Refactor: srcmlcpp = main repo, main project, etc
 
-
-change licence (ethical license for large NNs)
-    -> message to science4all: https://www.facebook.com/Science4Allorg/
-
-Ajout / pybind
-    Trampoline
-    Operators (https://pybind11.readthedocs.io/en/stable/advanced/classes.html#operator-overloading)
-
-
+    change licence (ethical license for large NNs)
+        -> message to science4all: https://www.facebook.com/Science4Allorg/
 
 PimpMyClass !
     srcmlcpp separated
     auto pImpl from cpp: pImpl class  => header decl + cpp imp non pImpl + Doc !
 
 
-implot SetupAxisTicks uses a string list, parameters order reversed!
+Cerealize / cerealize
+
 
 
 
@@ -72,8 +64,6 @@ Notes / Doc pybind11:
 
 - add namespace hierarchy in pydef ? With option ?
 
-- toString en hackant str:
-    l.Foo.__str__ = my_str
 
 
 Lire doc pybind / numpy and eigen...
