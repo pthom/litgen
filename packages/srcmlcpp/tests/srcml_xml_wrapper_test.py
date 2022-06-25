@@ -1,7 +1,8 @@
 import logging
 
 from srcmlcpp.srcml_options import SrcmlOptions
-from srcmlcpp.srcml_xml_wrapper import SrcmlXmlWrapper, factor_xml_wrapper_from_code
+from srcmlcpp.srcml_xml_wrapper import SrcmlXmlWrapper
+from srcmlcpp.srcmlcpp_main import code_to_srcml_xml_wrapper
 from codemanip import code_utils
 from codemanip.code_position import CodePosition
 
@@ -24,7 +25,7 @@ def test_srcml_cpp():
     )
 
     # test code_verbatim
-    code_wrapper = factor_xml_wrapper_from_code(options, code)
+    code_wrapper = code_to_srcml_xml_wrapper(options, code)
     assert code_wrapper.str_code_verbatim() == code
 
     # Test child_with_tag
@@ -75,7 +76,7 @@ def test_srcml_cpp():
 def test_yaml():
     options = SrcmlOptions()
     code = "int a = 5;"
-    code_wrapper = factor_xml_wrapper_from_code(options, code)
+    code_wrapper = code_to_srcml_xml_wrapper(options, code)
     yaml_str = code_wrapper.str_yaml()
     expected_yaml = code_utils.unindent_code(
         """

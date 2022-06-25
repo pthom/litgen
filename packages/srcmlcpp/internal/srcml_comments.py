@@ -10,6 +10,9 @@ from srcmlcpp.srcml_types import (
     CppElementAndComment,
     CppElementComments,
 )
+from srcmlcpp.srcml_xml_wrapper import SrcmlXmlWrapper
+from srcmlcpp.srcml_options import SrcmlOptions
+from srcmlcpp.filter_preprocessor_regions import filter_preprocessor_regions
 
 
 COMMENT_NEW_LINE_TOKEN = "_SRCML_LINEFEED_"
@@ -113,42 +116,43 @@ def mark_empty_lines(code: str) -> str:
     return result
 
 
-def _group_consecutive_comments(srcml_code: ET.Element) -> ET.Element:
-    srcml_grouped = ET.Element(srcml_code.tag)
+def _group_consecutive_comments(srcml_code: SrcmlXmlWrapper) -> SrcmlXmlWrapper:
+    # srcml_xml_grouped will contain an xml node in which we group the comments
+    # we will need to create a wrapper around it before returning
+    srcml_xml_grouped = ET.Element(srcml_code.srcml_xml.tag)
 
-    previous_previous_child: Optional[ET.Element] = None
-    previous_child: Optional[ET.Element] = None
+    previous_previous_child: Optional[SrcmlXmlWrapper] = None
+    previous_child: Optional[SrcmlXmlWrapper] = None
 
-    for child in srcml_code:
+    for child in srcml_code.children():
 
         def add_child() -> None:
             nonlocal previous_child, previous_previous_child
             child_copy = copy.deepcopy(child)
-            srcml_grouped.append(child_copy)
+            srcml_xml_grouped.append(child_copy.srcml_xml)
             previous_previous_child = previous_child
             previous_child = child_copy
 
         def concat_comment() -> None:
-            assert child.text is not None
+            child_text = child.text()
+            assert child_text is not None
             assert previous_child is not None and previous_child.text is not None
-            comment_raw = child.text
+            comment_raw = child_text
             if comment_raw.startswith("//"):
                 comment_raw = comment_raw[2:]
             current_comment = comment_raw
-            previous_child.text += COMMENT_NEW_LINE_TOKEN + current_comment
-            srcml_utils.copy_element_end_position(child, previous_child)
+            assert previous_child.srcml_xml.text is not None
+            previous_child.srcml_xml.text += COMMENT_NEW_LINE_TOKEN + current_comment
+            srcml_utils.copy_element_end_position(child.srcml_xml, previous_child.srcml_xml)
 
         shall_concat_comment = False
 
-        if child.text is not None:
-            t = child.text
-
         if previous_child is not None:
-            child_start = srcml_utils.element_start_position(child)
-            previous_child_end = srcml_utils.element_end_position(previous_child)
-            if child_start is not None and previous_child_end is not None:
-                child_tag = srcml_utils.clean_tag_or_attrib(child.tag)
-                previous_tag = srcml_utils.clean_tag_or_attrib(previous_child.tag)
+            child_start = child.start()
+            previous_child_end = previous_child.end()
+            if child_start.line >= 0 and previous_child_end.line >= 0:
+                child_tag = child.tag()
+                previous_tag = previous_child.tag()
                 line = child_start.line
                 previous_line = previous_child_end.line
 
@@ -159,10 +163,10 @@ def _group_consecutive_comments(srcml_code: ET.Element) -> ET.Element:
                     # However, if the previous comment was an end-of-line comment for another C++ statement on the same line
                     # we shall not concat
                     if previous_previous_child is not None:
-                        previous_previous_tag = srcml_utils.clean_tag_or_attrib(previous_previous_child.tag)
-                        previous_previous_position = srcml_utils.element_end_position(previous_previous_child)
+                        previous_previous_tag = previous_previous_child.tag()
+                        previous_previous_position = previous_previous_child.end()
                         if (
-                            previous_previous_position is not None
+                            previous_previous_position.line >= 0
                             and previous_previous_position.line == previous_line
                             and previous_previous_tag != "comment"
                         ):
@@ -170,8 +174,8 @@ def _group_consecutive_comments(srcml_code: ET.Element) -> ET.Element:
 
                     # Also, if the previous comment was an `EMPTY_LINE_COMMENT` i.e it indicates a voluntarily empty line
                     # we shall not concat
-                    current_comment = child.text
-                    previous_comment = previous_child.text
+                    current_comment = child.text()
+                    previous_comment = previous_child.text()
                     if current_comment is not None and previous_comment is not None:
                         if "_SRCML_EMPTY_LINE_" in previous_comment or "_SRCML_EMPTY_LINE_" in current_comment:
                             shall_concat_comment = False
@@ -181,13 +185,15 @@ def _group_consecutive_comments(srcml_code: ET.Element) -> ET.Element:
         else:
             add_child()
 
-    children_r = []
-    for child_r in srcml_grouped:
+    children_r: List[ET.Element] = []
+    for child_r in srcml_xml_grouped:
         children_r.append(child_r)
-    return srcml_grouped
+
+    r = SrcmlXmlWrapper(srcml_code.options, srcml_xml_grouped, srcml_code.filename)
+    return r
 
 
-def _is_comment_end_of_line(children: List[ET.Element], idx: int) -> bool:
+def _is_comment_end_of_line(children: List[SrcmlXmlWrapper], idx: int) -> bool:
     if not 0 <= idx < len(children):
         return False
     if idx == 0:
@@ -209,7 +215,7 @@ def _is_comment_end_of_line(children: List[ET.Element], idx: int) -> bool:
     return False
 
 
-def _is_comment_on_previous_line(children: List[ET.Element], idx: int) -> bool:
+def _is_comment_on_previous_line(children: List[SrcmlXmlWrapper], idx: int) -> bool:
     if not 0 <= idx < len(children):
         return False
     if idx == len(children) - 1:
@@ -305,21 +311,27 @@ def _remove_comment_tokens(comment: str) -> str:
         return "\n".join(lines_processed)
 
 
-def _group_comments_and_remove_comment_markers(srcml_code: ET.Element) -> List[ET.Element]:
-    srcml_code_grouped = _group_consecutive_comments(srcml_code)
-    children_comments_grouped: List[ET.Element] = []
-    for element in srcml_code_grouped:
+def _group_comments_and_remove_comment_markers(srcml_code: SrcmlXmlWrapper) -> List[SrcmlXmlWrapper]:
+    srcml_code_grouped: SrcmlXmlWrapper = _group_consecutive_comments(srcml_code)
+
+    children_comments_grouped: List[SrcmlXmlWrapper] = []
+
+    for element in srcml_code_grouped.children():
         children_comments_grouped.append(element)
+
     for element in children_comments_grouped:
-        if srcml_utils.clean_tag_or_attrib(element.tag) == "comment":
-            if element.text is not None:
-                element.text = _remove_comment_tokens(element.text)
+        if element.tag() == "comment":
+            element_text = element.text()
+            if element_text is not None:
+                element_text = _remove_comment_tokens(element_text)
+                element.srcml_xml.text = element_text
+
     return children_comments_grouped
 
 
-def get_children_with_comments(srcml_code: ET.Element) -> List[CppElementAndComment]:
+def get_children_with_comments(element: SrcmlXmlWrapper) -> List[CppElementAndComment]:
     result = []
-    children = _group_comments_and_remove_comment_markers(srcml_code)
+    children = _group_comments_and_remove_comment_markers(element)
 
     for i, element in enumerate(children):
         cpp_element_comments = CppElementComments()
@@ -328,7 +340,7 @@ def get_children_with_comments(srcml_code: ET.Element) -> List[CppElementAndComm
 
         # Add "comment_on_previous_lines" if applicable...
         if _is_comment_on_previous_line(children, i - 1):
-            comment_text = children[i - 1].text
+            comment_text = children[i - 1].text()
             if comment_text is not None:
                 cpp_element_comments.comment_on_previous_lines = comment_text
         # and symmetrically, skip if this is a "comment_on_previous_lines"
@@ -337,7 +349,7 @@ def get_children_with_comments(srcml_code: ET.Element) -> List[CppElementAndComm
 
         # Add "comment_end_of_line" if applicable
         if _is_comment_end_of_line(children, i + 1):
-            comment_text = children[i + 1].text
+            comment_text = children[i + 1].text()
             if comment_text is not None:
                 cpp_element_comments.comment_end_of_line = comment_text
         # and symmetrically, skip if this is a "comment_end_of_line"

@@ -33,6 +33,7 @@ from srcmlcpp.internal import srcml_caller, srcml_utils
 from srcmlcpp.srcml_options import SrcmlOptions
 from srcmlcpp.internal.srcml_warnings import emit_srcml_warning
 from srcmlcpp.srcml_options import _int_from_str_or_named_number_macros
+from srcmlcpp.srcml_xml_wrapper import SrcmlXmlWrapper
 
 """
 """
@@ -112,92 +113,18 @@ class CppElementComments:
             return self.comment_on_previous_lines + self.comment_end_of_line
 
 
-class CppElement:
-    """Wrapper around a srcLML xml node."""
+class CppElement(SrcmlXmlWrapper):
+    """Base class of all the cpp types"""
 
-    # srcml_xml is an XML node obtained from srcML.
-    # It contains the code location, and can be used to restore the exact code from which it was constructed.
-    # Its tag describe the type of element (decl, function, namespace, etc)
-    srcml_xml: ET.Element
-
-    def __init__(self, srcml_element: ET.Element) -> None:
-        assert isinstance(srcml_element, ET.Element)
-        self.srcml_xml = srcml_element
-
-    def tag(self) -> str:
-        assert self.srcml_xml.tag is not None
-        return srcml_utils.clean_tag_or_attrib(self.srcml_xml.tag)
-
-    def text(self) -> Optional[str]:
-        """Text part of the xml element"""
-        return self.srcml_xml.text
-
-    def start(self) -> CodePosition:
-        """Start position in the C++ code"""
-        start = srcml_utils.element_start_position(self.srcml_xml)
-        return CodePosition(-1, -1) if start is None else start
-
-    def end(self) -> CodePosition:
-        """End position in the C++ code"""
-        end = srcml_utils.element_end_position(self.srcml_xml)
-        return CodePosition(-1, -1) if end is None else end
-
-    def has_name(self) -> bool:
-        name_children = srcml_utils.children_with_tag(self.srcml_xml, "name")
-        return len(name_children) == 1
-
-    def name_code(self) -> Optional[str]:
-        """Returns the C++ code corresponding to the name extracted from the srcML xml tree.
-
-        * In simple cases, it will be a simple text extraction, for example with the code:
-            int a = 10;
-          The decl name node will look like
-            <name>a</name>
-
-        * Sometimes, we will need to call srcml to reconstruct the code.
-          For example, with the code:
-            int* a[10];
-          The decl name node will look like
-               <name>
-                    <name>a</name>
-                    <index>[
-                        <expr>
-                            <literal type="number">10</literal>
-                        </expr>]
-                    </index>
-                </name>
-        """
-        if not self.has_name():
-            return None
-        name_element = srcml_utils.child_with_tag(self.srcml_xml, "name")
-        assert name_element is not None
-        if name_element.text is not None:
-            return name_element.text
-        else:
-            return srcml_caller.srcml_to_code(name_element)
-
-    def attribute_value(self, attr_name: str) -> Optional[str]:
-        if attr_name in self.srcml_xml.attrib:
-            return self.srcml_xml.attrib[attr_name]
-        else:
-            return None
-
-    def str_code_verbatim(self) -> str:
-        """Return the exact C++ code from which this xml node was constructed by calling the executable srcml"""
-        return srcml_caller.srcml_to_code(self.srcml_xml)
-
-    def _str_simplified_yaml(self) -> str:
-        """Return the xml tree formatted in a yaml inspired format"""
-        return srcml_utils.srcml_to_str_readable(self.srcml_xml)
-
-    def str_xml(self):
-        """Returns the xml tree as a xml string representation"""
-        return srcml_utils.srcml_to_str(self.srcml_xml)
+    def __init__(self, element: SrcmlXmlWrapper) -> None:
+        super().__init__(element.options, element.srcml_xml, element.filename)
 
     def str_code(self) -> str:
         """Returns a C++ textual representation of the contained code element.
-        By default, it returns an exact copy of the original code. Derived classes override this implementation
-        with their own information and the generated code might differ a little from the original code.
+        By default, it returns an exact copy of the original code.
+
+        Derived classes override this implementation and str_code will return a string that differs
+         a little from the original code, because it is based on information stored in these derived classes.
         """
         return self.str_code_verbatim()
 
@@ -211,8 +138,7 @@ class CppElementAndComment(CppElement):
 
     cpp_element_comments: CppElementComments
 
-    def __init__(self, element: ET.Element, cpp_element_comments: CppElementComments) -> None:
-        assert isinstance(element, ET.Element)
+    def __init__(self, element: SrcmlXmlWrapper, cpp_element_comments: CppElementComments) -> None:
         super().__init__(element)
         self.cpp_element_comments = cpp_element_comments
 
@@ -232,7 +158,7 @@ class CppElementAndComment(CppElement):
 
 @dataclass
 class CppEmptyLine(CppElementAndComment):
-    def __init__(self, element: ET.Element) -> None:
+    def __init__(self, element: SrcmlXmlWrapper) -> None:
         dummy_comments = CppElementComments()
         super().__init__(element, dummy_comments)
 
@@ -253,7 +179,7 @@ class CppUnprocessed(CppElementAndComment):
 
     code: str
 
-    def __init__(self, element: ET.Element, cpp_element_comments: CppElementComments) -> None:
+    def __init__(self, element: SrcmlXmlWrapper, cpp_element_comments: CppElementComments) -> None:
         super().__init__(element, cpp_element_comments)
         self.code = ""
 
@@ -287,7 +213,7 @@ class CppBlock(CppElementAndComment):
 
     block_children: List[CppElementAndComment]
 
-    def __init__(self, element: ET.Element) -> None:
+    def __init__(self, element: SrcmlXmlWrapper) -> None:
         dummy_cpp_comments = CppElementComments()
         super().__init__(element, dummy_cpp_comments)
         self.block_children: List[CppElementAndComment] = []
@@ -333,7 +259,7 @@ class CppBlock(CppElementAndComment):
 class CppUnit(CppBlock):
     """A kind of block representing a full file."""
 
-    def __init__(self, element: ET.Element) -> None:
+    def __init__(self, element: SrcmlXmlWrapper) -> None:
         super().__init__(element)
 
     def __str__(self) -> str:
@@ -346,7 +272,7 @@ class CppBlockContent(CppBlock):
     This can be viewed as a sub-block with a different name
     """
 
-    def __init__(self, element: ET.Element):
+    def __init__(self, element: SrcmlXmlWrapper):
         super().__init__(element)
 
     def __str__(self) -> str:
@@ -364,7 +290,7 @@ class CppPublicProtectedPrivate(CppBlock):  # Also a CppElementAndComment
     access_type: str = ""  # "public", "private", or "protected"
     default_or_explicit: str = ""  # "default" or "" ("default" means it was added automatically)
 
-    def __init__(self, element: ET.Element, access_type: str, default_or_explicit: Optional[str]) -> None:
+    def __init__(self, element: SrcmlXmlWrapper, access_type: str, default_or_explicit: Optional[str]) -> None:
         super().__init__(element)
         assert default_or_explicit in [None, "", "default"]
         assert access_type in ["public", "protected", "private"]
@@ -422,7 +348,7 @@ class CppType(CppElement):
     # (this will not be filled: see note about composed types)
     # argument_list: List[str]
 
-    def __init__(self, element: ET.Element) -> None:
+    def __init__(self, element: SrcmlXmlWrapper) -> None:
         super().__init__(element)
         self.typenames: List[str] = []
         self.specifiers: List[str] = []
@@ -516,7 +442,7 @@ class CppDecl(CppElementAndComment):
 
     bitfield_range: str = ""  # Will be filled for bitfield members
 
-    def __init__(self, element: ET.Element, cpp_element_comments: CppElementComments) -> None:
+    def __init__(self, element: SrcmlXmlWrapper, cpp_element_comments: CppElementComments) -> None:
         super().__init__(element, cpp_element_comments)
 
     def str_code(self) -> str:
@@ -653,7 +579,7 @@ class CppDeclStatement(CppElementAndComment):
 
     cpp_decls: List[CppDecl]  # A CppDeclStatement can initialize several variables
 
-    def __init__(self, element: ET.Element, cpp_element_comments: CppElementComments) -> None:
+    def __init__(self, element: SrcmlXmlWrapper, cpp_element_comments: CppElementComments) -> None:
         super().__init__(element, cpp_element_comments)
         self.cpp_decls: List[CppDecl] = []
 
@@ -682,7 +608,7 @@ class CppParameter(CppElementAndComment):
     template_type: CppType  # This is only for template's CppParameterList
     template_name: str = ""
 
-    def __init__(self, element: ET.Element) -> None:
+    def __init__(self, element: SrcmlXmlWrapper) -> None:
         dummy_cpp_element_comments = CppElementComments()
         super().__init__(element, dummy_cpp_element_comments)
 
@@ -732,7 +658,7 @@ class CppParameterList(CppElement):
 
     parameters: List[CppParameter]
 
-    def __init__(self, element: ET.Element) -> None:
+    def __init__(self, element: SrcmlXmlWrapper) -> None:
         super().__init__(element)
         self.parameters = []
 
@@ -773,7 +699,7 @@ class CppTemplate(CppElement):
 
     parameter_list: CppParameterList
 
-    def __init__(self, element: ET.Element) -> None:
+    def __init__(self, element: SrcmlXmlWrapper) -> None:
         super().__init__(element)
         self.parameter_list = CppParameterList(element)
 
@@ -800,7 +726,7 @@ class CppFunctionDecl(CppElementAndComment):
     is_auto_decl: bool  # True if it is a decl of the form `auto square(double) -> double`
     function_name: str
 
-    def __init__(self, element: ET.Element, cpp_element_comments: CppElementComments) -> None:
+    def __init__(self, element: SrcmlXmlWrapper, cpp_element_comments: CppElementComments) -> None:
         super().__init__(element, cpp_element_comments)
         self.specifiers: List[str] = []
         self.is_auto_decl = False
@@ -855,7 +781,7 @@ class CppFunction(CppFunctionDecl):
 
     block: CppUnprocessed
 
-    def __init__(self, element: ET.Element, cpp_element_comments: CppElementComments) -> None:
+    def __init__(self, element: SrcmlXmlWrapper, cpp_element_comments: CppElementComments) -> None:
         super().__init__(element, cpp_element_comments)
 
     def str_code(self) -> str:
@@ -877,7 +803,7 @@ class CppConstructorDecl(CppFunctionDecl):
     https://www.srcml.org/doc/cpp_srcML.html#constructor-declaration
     """
 
-    def __init__(self, element: ET.Element, cpp_element_comments: CppElementComments) -> None:
+    def __init__(self, element: SrcmlXmlWrapper, cpp_element_comments: CppElementComments) -> None:
         super().__init__(element, cpp_element_comments)
         self.specifiers: List[str] = []
         self.function_name = ""
@@ -908,7 +834,7 @@ class CppConstructor(CppConstructorDecl):
     block: CppUnprocessed
     member_init_list: CppUnprocessed
 
-    def __init__(self, element: ET.Element, cpp_element_comments: CppElementComments) -> None:
+    def __init__(self, element: SrcmlXmlWrapper, cpp_element_comments: CppElementComments) -> None:
         super().__init__(element, cpp_element_comments)
 
     def str_code(self) -> str:
@@ -934,7 +860,7 @@ class CppSuper(CppElement):
     specifier: str = ""  # public, private or protected inheritance
     superclass_name: str = ""  # name of the super class
 
-    def __init__(self, element: ET.Element):
+    def __init__(self, element: SrcmlXmlWrapper):
         super().__init__(element)
 
     def str_code(self) -> str:
@@ -956,7 +882,7 @@ class CppSuperList(CppElement):
 
     super_list: List[CppSuper]
 
-    def __init__(self, element: ET.Element):
+    def __init__(self, element: SrcmlXmlWrapper):
         super().__init__(element)
         self.super_list: List[CppSuper] = []
 
@@ -979,7 +905,7 @@ class CppStruct(CppElementAndComment):
     block: CppBlock
     template: CppTemplate  # for template classes or structs
 
-    def __init__(self, element: ET.Element, cpp_element_comments: CppElementComments) -> None:
+    def __init__(self, element: SrcmlXmlWrapper, cpp_element_comments: CppElementComments) -> None:
         super().__init__(element, cpp_element_comments)
         self.class_name = ""
 
@@ -1078,7 +1004,7 @@ class CppClass(CppStruct):
     https://www.srcml.org/doc/cpp_srcML.html#class-definition
     """
 
-    def __init__(self, element: ET.Element, cpp_element_comments: CppElementComments):
+    def __init__(self, element: SrcmlXmlWrapper, cpp_element_comments: CppElementComments):
         super().__init__(element, cpp_element_comments)
 
     def __str__(self) -> str:
@@ -1094,7 +1020,7 @@ class CppComment(CppElementAndComment):
 
     comment: str
 
-    def __init__(self, element: ET.Element, cpp_element_comments: CppElementComments) -> None:
+    def __init__(self, element: SrcmlXmlWrapper, cpp_element_comments: CppElementComments) -> None:
         super().__init__(element, cpp_element_comments)
 
     def str_code(self) -> str:
@@ -1115,7 +1041,7 @@ class CppNamespace(CppElementAndComment):
     ns_name: str
     block: CppBlock
 
-    def __init__(self, element: ET.Element, cpp_element_comments: CppElementComments) -> None:
+    def __init__(self, element: SrcmlXmlWrapper, cpp_element_comments: CppElementComments) -> None:
         super().__init__(element, cpp_element_comments)
         self.ns_name = ""
 
@@ -1141,7 +1067,7 @@ class CppEnum(CppElementAndComment):
     enum_type: str = ""  # "class" or ""
     enum_name: str = ""
 
-    def __init__(self, element: ET.Element, cpp_element_comments: CppElementComments) -> None:
+    def __init__(self, element: SrcmlXmlWrapper, cpp_element_comments: CppElementComments) -> None:
         super().__init__(element, cpp_element_comments)
 
     def str_code(self) -> str:
@@ -1199,8 +1125,7 @@ class CppEnum(CppElementAndComment):
                             decl_with_value.initial_value_code = str(last_decl_value_int + 1)
                         except ValueError:
                             emit_srcml_warning(
-                                options,
-                                decl.srcml_xml,
+                                decl,
                                 """
                                 Cannot parse the value of this enum element.
                                 Hint: maybe add an entry to SrcmlOptions.named_number_macros""",

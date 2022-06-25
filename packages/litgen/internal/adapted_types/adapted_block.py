@@ -56,8 +56,7 @@ class AdaptedBlock(AdaptedElement):
                 self.adapted_elements.append(AdaptedNamespace(self.options, child))  # type: ignore
             elif isinstance(child, CppDeclStatement):
                 emit_srcml_warning(
-                    self.options.srcml_options,
-                    child.srcml_xml,
+                    child,
                     f"Block elements of type {child.tag()} are not supported in python conversion",
                 )
 

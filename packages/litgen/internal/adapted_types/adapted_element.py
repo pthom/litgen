@@ -31,7 +31,7 @@ class AdaptedElement:  # (abc.ABC):  # Cannot be abstract (mypy limitation:  htt
         if not self.options.original_signature_flag_show:
             return []
 
-        cpp_original_code = srcmlcpp.srcml_to_code(self._cpp_element.srcml_xml)
+        cpp_original_code = self._cpp_element.str_code_verbatim()
         cpp_original_code = code_utils.strip_empty_lines(cpp_original_code)
         if len(cpp_original_code) == 0:
             return []

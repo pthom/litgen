@@ -1,7 +1,7 @@
 from __future__ import annotations
 import yaml  # type: ignore
 from srcmlcpp.internal import xmlplain
-from typing import Optional, List
+from typing import Optional, List, Iterable
 from xml.etree import ElementTree as ET
 
 from codemanip.code_position import CodePosition
@@ -110,6 +110,12 @@ class SrcmlXmlWrapper:
     def to_file(self, filename: str) -> None:
         srcml_utils.srcml_to_file(self.options.encoding, self.srcml_xml, filename)
 
+    def children(self) -> Iterable[SrcmlXmlWrapper]:
+        """Extract the xml sub nodes and wraps them"""
+        for child_xml in self.srcml_xml:
+            child_wrapper = SrcmlXmlWrapper(self.options, child_xml, self.filename)
+            yield child_wrapper
+
     def children_with_tag(self, tag: str) -> List[SrcmlXmlWrapper]:
         """Extract the xml sub nodes and wraps them"""
         children_xml = srcml_utils.children_with_tag(self.srcml_xml, tag)
@@ -124,33 +130,3 @@ class SrcmlXmlWrapper:
             return None
         r = SrcmlXmlWrapper(self.options, child_xml, self.filename)
         return r
-
-
-def factor_xml_wrapper_from_code(
-    options: SrcmlOptions, cpp_code: Optional[str] = None, filename: Optional[str] = None
-) -> SrcmlXmlWrapper:
-    """Create a wrapper from c++ code
-
-    Note:
-        * if `cpp_code` is not empty, the code will be taken from it.
-          In this case, the `filename` param will still be used to display code source position in warning messages.
-          This can be used when you need to preprocess the code before parsing it.
-        * if `code`is empty, the code will be read from `filename`
-    """
-    if cpp_code is None:
-        if filename is None:
-            raise ValueError("Either cpp_code or filename needs to be specified!")
-        assert filename is not None  # make mypy happy
-        with open(filename, "r", encoding=options.encoding) as f:
-            cpp_code = f.read()
-
-    if options.code_preprocess_function is not None:
-        cpp_code = options.code_preprocess_function(cpp_code)
-
-    if options.preserve_empty_lines:
-        cpp_code = srcml_comments.mark_empty_lines(cpp_code)
-
-    xml = srcml_caller.code_to_srcml(cpp_code, dump_positions=options.srcml_dump_positions, encoding=options.encoding)
-
-    r = SrcmlXmlWrapper(options, xml, filename)
-    return r

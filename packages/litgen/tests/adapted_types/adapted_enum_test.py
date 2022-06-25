@@ -1,5 +1,5 @@
-from srcmlcpp.internal import srcml_main_deprecated
 from srcmlcpp.srcml_types import *
+from srcmlcpp import srcmlcpp_main
 
 import litgen
 from litgen.internal.adapted_types import *
@@ -27,7 +27,7 @@ enum Foo
     Foo_count, // And this is count
 };
     """
-    enum = srcml_main_deprecated.code_first_enum(options.srcml_options, code)
+    enum = srcmlcpp_main.code_first_enum(options.srcml_options, code)
     adapted_enum = AdaptedEnum(options, enum)
     decls = adapted_enum.get_adapted_decls()
 

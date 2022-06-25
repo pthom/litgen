@@ -4,6 +4,7 @@ import sys
 from codemanip import code_utils
 
 import srcmlcpp
+from srcmlcpp.internal import srcml_caller
 
 
 _THIS_DIR = os.path.dirname(__file__)
@@ -22,7 +23,7 @@ private:
 };
 """
 
-    code_xml = srcmlcpp.code_to_srcml(code)
+    code_xml = srcml_caller.code_to_srcml(code)
     code_info = srcmlcpp.internal.srcml_utils.srcml_to_str_readable(code_xml)
 
     expected_code_info = """unit
