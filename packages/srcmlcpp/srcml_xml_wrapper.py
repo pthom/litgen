@@ -8,7 +8,8 @@ from codemanip.code_position import CodePosition
 
 from srcmlcpp.internal import srcml_caller
 from srcmlcpp.srcml_options import SrcmlOptions
-from srcmlcpp.internal import srcml_caller, srcml_utils, srcml_comments
+from srcmlcpp.internal import srcml_caller, srcml_utils
+from srcmlcpp.srcml_exception import SrcMlException
 
 
 class SrcmlXmlWrapper:
@@ -26,6 +27,9 @@ class SrcmlXmlWrapper:
         self.options = options
         self.srcml_xml = srcml_xml
         self.filename = filename
+        if filename is not None:
+            if len(filename) == 0:
+                raise SrcMlException("filename params must either be `None` or non empty!")
 
     def tag(self) -> str:
         assert self.srcml_xml.tag is not None

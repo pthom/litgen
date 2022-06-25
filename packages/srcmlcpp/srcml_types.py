@@ -31,7 +31,6 @@ from codemanip.code_position import CodePosition
 
 from srcmlcpp.internal import srcml_caller, srcml_utils
 from srcmlcpp.srcml_options import SrcmlOptions
-from srcmlcpp.internal.srcml_warnings import emit_srcml_warning
 from srcmlcpp.srcml_options import _int_from_str_or_named_number_macros
 from srcmlcpp.srcml_xml_wrapper import SrcmlXmlWrapper
 
@@ -1093,6 +1092,8 @@ class CppEnum(CppElementAndComment):
         return r
 
     def get_children_with_filled_decl_values(self, options: SrcmlOptions) -> List[CppElementAndComment]:
+        from srcmlcpp.internal.srcml_warnings import emit_srcml_warning
+
         children: List[CppElementAndComment] = []
 
         last_decl: Optional[CppDecl] = None

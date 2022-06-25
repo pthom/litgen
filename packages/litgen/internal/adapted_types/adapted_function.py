@@ -4,6 +4,7 @@ from typing import cast
 from munch import Munch  # type: ignore
 
 from srcmlcpp.srcml_types import *
+from srcmlcpp import emit_srcml_warning
 
 from litgen.internal import cpp_to_python
 from litgen.internal.adapted_types.adapted_decl import AdaptedDecl

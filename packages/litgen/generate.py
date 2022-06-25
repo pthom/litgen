@@ -13,17 +13,26 @@ from litgen.code_to_adapted_unit import code_to_adapted_unit
 
 def generate_code(
     options: LitgenOptions,
-    code: str = "",
-    filename: str = "",
+    code: Optional[str] = None,
+    filename: Optional[str] = None,
     add_boxed_types_definitions: bool = False,
 ) -> GeneratedCode:
+
+    if code is None:
+        if filename is None:
+            raise ValueError("Either cpp_code or filename needs to be specified!")
+        assert filename is not None  # make mypy happy
+        with open(filename, "r", encoding=options.srcml_options.encoding) as f:
+            code_str = f.read()
+    else:
+        code_str = code
 
     boxed_immutable_python_type.clear_registry()
 
     adapted_unit = code_to_adapted_unit(options, code, filename)
 
     generated_code = GeneratedCode()
-    generated_code.cpp_header_code = code
+    generated_code.cpp_header_code = code_str
     generated_code.pydef_code = adapted_unit.str_pydef()
     generated_code.stub_code = adapted_unit.str_stub()
 
@@ -50,14 +59,20 @@ def generate_code(
 
 
 def code_to_pydef(
-    options: LitgenOptions, code: str, filename: str = "", add_boxed_types_definitions: bool = False
+    options: LitgenOptions,
+    code: Optional[str] = None,
+    filename: Optional[str] = None,
+    add_boxed_types_definitions: bool = False,
 ) -> str:
     generated_code = generate_code(options, code, filename, add_boxed_types_definitions)
     return generated_code.pydef_code
 
 
 def code_to_stub(
-    options: LitgenOptions, code: str, filename: str = "", add_boxed_types_definitions: bool = False
+    options: LitgenOptions,
+    code: Optional[str] = None,
+    filename: Optional[str] = None,
+    add_boxed_types_definitions: bool = False,
 ) -> str:
     generated_code = generate_code(options, code, filename, add_boxed_types_definitions)
     return generated_code.stub_code

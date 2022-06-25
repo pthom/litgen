@@ -2,6 +2,7 @@ from dataclasses import dataclass
 from typing import Union, cast
 
 from srcmlcpp.srcml_types import *
+from srcmlcpp import emit_srcml_warning
 
 from litgen.internal.adapted_types.adapted_class import AdaptedClass
 from litgen.internal.adapted_types.adapted_comment import (

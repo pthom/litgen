@@ -1,4 +1,4 @@
-from typing import Optional, List, Type, cast
+from typing import Optional, List, Type, Dict, cast
 
 from srcmlcpp.srcml_options import SrcmlOptions
 from srcmlcpp.srcml_xml_wrapper import SrcmlXmlWrapper
@@ -6,6 +6,7 @@ from srcmlcpp.internal import srcml_comments
 from srcmlcpp.srcml_types import *
 from srcmlcpp.filter_preprocessor_regions import filter_preprocessor_regions
 from srcmlcpp.internal import srcml_caller
+from srcmlcpp.internal import srcml_types_parse
 from srcmlcpp.srcml_exception import SrcMlException
 
 #
@@ -34,13 +35,19 @@ from srcmlcpp.srcml_exception import SrcMlException
 #         self._current_parsed_file_unit_code = value
 #
 
+_Filename = str
+_Code = str
+_CODE_CACHE: Dict[Optional[_Filename], _Code] = {}
+
 
 def _get_cached_file_code(filename: Optional[str]) -> str:
-    pass
+    if filename not in _CODE_CACHE.keys():
+        raise ValueError(f"filename {filename} not in code cache!")
+    return _CODE_CACHE[filename]
 
 
 def code_to_srcml_xml_wrapper(
-    options: SrcmlOptions, cpp_code: Optional[str] = None, filename: Optional[str] = None
+    options: SrcmlOptions, code: Optional[str] = None, filename: Optional[str] = None
 ) -> SrcmlXmlWrapper:
     """Create a srcML tree from c++ code, and wraps it into a SrcmlXmlWrapper
 
@@ -50,30 +57,32 @@ def code_to_srcml_xml_wrapper(
           This can be used when you need to preprocess the code before parsing it.
         * if `code`is empty, the code will be read from `filename`
     """
-    if cpp_code is None:
+    if code is None:
         if filename is None:
             raise ValueError("Either cpp_code or filename needs to be specified!")
         assert filename is not None  # make mypy happy
         with open(filename, "r", encoding=options.encoding) as f:
-            cpp_code = f.read()
+            code = f.read()
 
     if options.code_preprocess_function is not None:
-        cpp_code = options.code_preprocess_function(cpp_code)
+        code = options.code_preprocess_function(code)
+
+    global _CODE_CACHE
+    _CODE_CACHE[filename] = code
 
     if options.preserve_empty_lines:
-        cpp_code = srcml_comments.mark_empty_lines(cpp_code)
+        code = srcml_comments.mark_empty_lines(code)
 
-    xml = srcml_caller.code_to_srcml(cpp_code, dump_positions=options.srcml_dump_positions, encoding=options.encoding)
-
-    if options.header_filter_preprocessor_regions:
-        xml = filter_preprocessor_regions(xml, options.header_guard_suffixes)
+    xml = srcml_caller.code_to_srcml(code, dump_positions=options.srcml_dump_positions, encoding=options.encoding)
 
     r = SrcmlXmlWrapper(options, xml, filename)
     return r
 
 
-def code_to_cpp_unit(options: SrcmlOptions, cpp_code: Optional[str] = None, filename: Optional[str] = None) -> CppUnit:
-    pass
+def code_to_cpp_unit(options: SrcmlOptions, code: Optional[str] = None, filename: Optional[str] = None) -> CppUnit:
+    xml_wrapper = code_to_srcml_xml_wrapper(options, code, filename)
+    cpp_unit = srcml_types_parse.parse_unit(options, xml_wrapper)
+    return cpp_unit
 
 
 def code_first_child_of_type(options: SrcmlOptions, type_of_cpp_element: Type, code: str) -> CppElementAndComment:

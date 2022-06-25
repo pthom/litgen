@@ -4,6 +4,7 @@ import sys
 from codemanip import code_utils
 
 import srcmlcpp
+from srcmlcpp import srcmlcpp_main
 from srcmlcpp.internal import srcml_comments, srcml_utils
 from srcmlcpp.srcml_types import *
 
@@ -85,9 +86,9 @@ def test_iterate_children_simple():
 
 
 def test_iterate_children_with_comments():
-    code = srcml_comments.mark_empty_lines(srcml_comments._EXAMPLE_COMMENTS_TO_GROUPS)
-    srcml_code = srcmlcpp.internal.srcml_caller.code_to_srcml(code)
-    children_and_comments = srcml_comments.get_children_with_comments(srcml_code)  # type: ignore
+    options = SrcmlOptions()
+    xml_wrapper = srcmlcpp_main.code_to_srcml_xml_wrapper(options, srcml_comments._EXAMPLE_COMMENTS_TO_GROUPS)
+    children_and_comments = srcml_comments.get_children_with_comments(xml_wrapper)
     msgs = [str(as_dict_cpp_element_and_comment(child)) for child in children_and_comments]
     msg = "\n".join(msgs)
     # logging.warning("\n" + msg)
@@ -104,9 +105,9 @@ def test_group_comment():
     """[
         1:
     ]
-    code = srcml_comments.mark_empty_lines(code)
-    srcml_code = srcmlcpp.internal.srcml_caller.code_to_srcml(code)
-    children_and_comments = srcml_comments.get_children_with_comments(srcml_code)  # type: ignore
+    options = SrcmlOptions()
+    xml_wrapper = srcmlcpp_main.code_to_srcml_xml_wrapper(options, code)
+    children_and_comments = srcml_comments.get_children_with_comments(xml_wrapper)
     assert children_and_comments[0].tag() == "comment"
     assert children_and_comments[1].tag() == "function_decl"
     assert children_and_comments[2].tag() == "function_decl"
