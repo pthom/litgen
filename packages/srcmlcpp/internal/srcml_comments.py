@@ -2,6 +2,8 @@ import copy
 from typing import List, Optional
 from xml.etree import ElementTree as ET
 
+from codemanip import code_utils
+
 from srcmlcpp.internal import srcml_utils
 from srcmlcpp.srcml_types import (
     CppElement,
@@ -49,17 +51,17 @@ Void Foo4(); // Comment on end of line for Foo4()
 
 _EXPECTED_CHILDREN_WITH_COMMENTS = """
 {'tag': 'comment', 'name': '__NONE__', 'text': ' _SRCML_EMPTY_LINE_', 'start': '1:1', 'end': '1:21', 'comment_top': '', 'comment_eol': ''}
-{'tag': 'function_decl', 'name': 'Foo1', 'text': '', 'start': '6:1', 'end': '6:12', 'comment_top': '\\nA multiline C comment\\nabout Foo1\\n', 'comment_eol': ''}
+{'tag': 'function_decl', 'name': 'Foo1', 'text': '__NONE__', 'start': '6:1', 'end': '6:12', 'comment_top': '\\nA multiline C comment\\nabout Foo1\\n', 'comment_eol': ''}
 {'tag': 'comment', 'name': '__NONE__', 'text': ' _SRCML_EMPTY_LINE_', 'start': '7:1', 'end': '7:21', 'comment_top': '', 'comment_eol': ''}
-{'tag': 'function_decl', 'name': 'Foo2', 'text': '', 'start': '10:1', 'end': '10:12', 'comment_top': ' First line of comment on Foo2()\\n Second line of comment on Foo2()', 'comment_eol': ''}
+{'tag': 'function_decl', 'name': 'Foo2', 'text': '__NONE__', 'start': '10:1', 'end': '10:12', 'comment_top': ' First line of comment on Foo2()\\n Second line of comment on Foo2()', 'comment_eol': ''}
 {'tag': 'comment', 'name': '__NONE__', 'text': ' _SRCML_EMPTY_LINE_', 'start': '11:1', 'end': '11:21', 'comment_top': '', 'comment_eol': ''}
 {'tag': 'comment', 'name': '__NONE__', 'text': ' A lonely comment', 'start': '12:1', 'end': '12:19', 'comment_top': '', 'comment_eol': ''}
 {'tag': 'comment', 'name': '__NONE__', 'text': ' _SRCML_EMPTY_LINE_', 'start': '13:1', 'end': '13:21', 'comment_top': '', 'comment_eol': ''}
 {'tag': 'comment', 'name': '__NONE__', 'text': '\\n Another lonely comment, on two lines\\n which ends on this second line, but has surrounding empty lines\\n', 'start': '14:1', 'end': '17:2', 'comment_top': '', 'comment_eol': ''}
 {'tag': 'comment', 'name': '__NONE__', 'text': ' _SRCML_EMPTY_LINE_', 'start': '18:1', 'end': '18:21', 'comment_top': '', 'comment_eol': ''}
 {'tag': 'comment', 'name': '__NONE__', 'text': ' A comment on top of Foo3() & Foo4(), which should be kept as a standalone comment\\n since Foo3 and Foo4 have end of line comments', 'start': '19:1', 'end': '20:48', 'comment_top': '', 'comment_eol': ''}
-{'tag': 'function_decl', 'name': 'Foo3', 'text': '', 'start': '21:1', 'end': '21:12', 'comment_top': '', 'comment_eol': ' Comment on end of line for Foo3()'}
-{'tag': 'function_decl', 'name': 'Foo4', 'text': '', 'start': '22:1', 'end': '22:12', 'comment_top': '', 'comment_eol': ' Comment on end of line for Foo4()'}
+{'tag': 'function_decl', 'name': 'Foo3', 'text': '__NONE__', 'start': '21:1', 'end': '21:12', 'comment_top': '', 'comment_eol': ' Comment on end of line for Foo3()'}
+{'tag': 'function_decl', 'name': 'Foo4', 'text': '__NONE__', 'start': '22:1', 'end': '22:12', 'comment_top': '', 'comment_eol': ' Comment on end of line for Foo4()'}
 {'tag': 'comment', 'name': '__NONE__', 'text': ' A comment that shall not be grouped to the previous (which was an EOL comment for Foo4())', 'start': '23:1', 'end': '23:92', 'comment_top': '', 'comment_eol': ''}
 {'tag': 'comment', 'name': '__NONE__', 'text': ' _SRCML_EMPTY_LINE_', 'start': '24:1', 'end': '24:21', 'comment_top': '', 'comment_eol': ''}
 """
@@ -192,8 +194,9 @@ def _is_comment_end_of_line(children: List[ET.Element], idx: int) -> bool:
         return False
     element = CppElement(children[idx])
     previous_element = CppElement(children[idx - 1])
+    element_text = code_utils.str_none_empty(element.text())
     if element.tag() == "comment" and previous_element.tag() != "comment":
-        if EMPTY_LINE_COMMENT_CONTENT in element.text_or_empty():
+        if EMPTY_LINE_COMMENT_CONTENT in element_text:
             return False
         elm_start = element.start()
         elm_end = element.end()
@@ -247,7 +250,8 @@ def _is_comment_on_previous_line(children: List[ET.Element], idx: int) -> bool:
 
     # if this element is a comment, and the next is not
     if element.tag() == "comment" and next_element.tag() != "comment":
-        if EMPTY_LINE_COMMENT_CONTENT in element.text_or_empty():
+        element_text = code_utils.str_none_empty(element.text())
+        if EMPTY_LINE_COMMENT_CONTENT in element_text:
             # Empty lines are always preserved
             return False
 
@@ -272,12 +276,13 @@ def _is_comment_on_previous_line(children: List[ET.Element], idx: int) -> bool:
                 next_next_element = CppElement(children[idx + 2])
                 next_next_element_start = next_next_element.start()
                 next_element_end = next_element.end()
+                next_next_element_text = code_utils.str_none_empty(next_next_element.text())
                 if (
                     next_next_element_start is not None
                     and next_element_end is not None
                     and next_next_element.tag() == "comment"
                     and next_next_element_start.line == next_element_end.line
-                    and "return_value_policy::" not in next_next_element.text_or_empty()
+                    and "return_value_policy::" not in next_next_element_text
                 ):
                     return False
                 else:

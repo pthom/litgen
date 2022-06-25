@@ -44,9 +44,9 @@ def test_iterate_children_simple():
     expected = """
         {'tag': 'comment', 'name': '__NONE__', 'text': ' _SRCML_EMPTY_LINE_', 'start': '1:1', 'end': '1:21', 'comment_top': '', 'comment_eol': ''}
         {'tag': 'comment', 'name': '__NONE__', 'text': ' _SRCML_EMPTY_LINE_', 'start': '2:1', 'end': '2:21', 'comment_top': '', 'comment_eol': ''}
-        {'tag': 'function_decl', 'name': 'Boo1', 'text': '', 'start': '3:5', 'end': '3:16', 'comment_top': '', 'comment_eol': ''}
-        {'tag': 'function_decl', 'name': 'Boo2', 'text': '', 'start': '4:5', 'end': '4:16', 'comment_top': '', 'comment_eol': ' get y'}
-        {'tag': 'function_decl', 'name': 'Boo3', 'text': '', 'start': '5:5', 'end': '5:16', 'comment_top': '', 'comment_eol': ''}
+        {'tag': 'function_decl', 'name': 'Boo1', 'text': '__NONE__', 'start': '3:5', 'end': '3:16', 'comment_top': '', 'comment_eol': ''}
+        {'tag': 'function_decl', 'name': 'Boo2', 'text': '__NONE__', 'start': '4:5', 'end': '4:16', 'comment_top': '', 'comment_eol': ' get y'}
+        {'tag': 'function_decl', 'name': 'Boo3', 'text': '__NONE__', 'start': '5:5', 'end': '5:16', 'comment_top': '', 'comment_eol': ''}
         {'tag': 'comment', 'name': '__NONE__', 'text': ' _SRCML_EMPTY_LINE_', 'start': '6:1', 'end': '6:21', 'comment_top': '', 'comment_eol': ''}
         {'tag': 'comment', 'name': '__NONE__', 'text': ' _SRCML_EMPTY_LINE_', 'start': '7:1', 'end': '7:21', 'comment_top': '', 'comment_eol': ''}
     """

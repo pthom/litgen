@@ -49,6 +49,13 @@ def str_or_none_token(s: Optional[str]) -> str:
         return s
 
 
+def str_none_empty(s: Optional[str]) -> str:
+    if s is None:
+        return ""
+    else:
+        return s
+
+
 def strip_empty_lines_in_list(code_lines: List[str]) -> List[str]:
     code_lines = list(itertools.dropwhile(lambda s: len(s.strip()) == 0, code_lines))
     code_lines = list(reversed(code_lines))

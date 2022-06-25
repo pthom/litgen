@@ -122,7 +122,7 @@ class CppElementComments:
 class CppElement:
     """Wrapper around a srcLML xml node."""
 
-    # srcml_element is an XML node obtained from srcML.
+    # srcml_xml is an XML node obtained from srcML.
     # It contains the code location, and can be used to restore the exact code from which it was constructed.
     # Its tag describe the type of element (decl, function, namespace, etc)
     srcml_xml: ET.Element
@@ -135,14 +135,9 @@ class CppElement:
         assert self.srcml_xml.tag is not None
         return srcml_utils.clean_tag_or_attrib(self.srcml_xml.tag)
 
-    def text_or_empty(self) -> str:
-        """Text part of the xml element.
-        Warning: Will return empty string if not found"""
-        return srcml_utils.str_or_empty(self.srcml_xml.text)
-
-    def tail_or_empty(self):
-        """Tail part of the xml element"""
-        return srcml_utils.str_or_empty(self.srcml_xml.tail)
+    def text(self) -> Optional[str]:
+        """Text part of the xml element"""
+        return self.srcml_xml.text
 
     def start(self) -> CodePosition:
         """Start position in the C++ code"""
@@ -223,7 +218,7 @@ class CppElement:
         as_dict = {
             "tag": self.tag(),
             "name": code_utils.str_or_none_token(self.name_code()),
-            "text": self.text_or_empty(),
+            "text": code_utils.str_or_none_token(self.text()),
             "start": str(self.start()),
             "end": str(self.end()),
         }
