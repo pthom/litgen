@@ -1,13 +1,8 @@
-from typing import Optional
-
 from srcmlcpp import (
-    srcml_caller,
-    srcml_comments,
     srcml_main,
-    srcml_utils,
     srcml_warnings,
 )
-from srcmlcpp.srcml_options import SrcmlOptions
+from srcmlcpp.internal import srcml_comments
 from srcmlcpp.srcml_types import *
 from srcmlcpp.srcml_warnings import SrcMlExceptionDetailed
 

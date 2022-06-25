@@ -4,8 +4,8 @@ import sys
 from codemanip import code_utils
 
 import srcmlcpp
-from srcmlcpp import srcml_comments, srcml_utils
-
+from srcmlcpp import srcml_utils
+from srcmlcpp.internal import srcml_comments
 
 _THIS_DIR = os.path.dirname(__file__)
 sys.path.append(_THIS_DIR + "/../..")
