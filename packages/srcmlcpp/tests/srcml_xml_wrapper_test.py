@@ -189,3 +189,69 @@ def test_warnings_2():
             };
     """,
     )
+
+
+def test_visitor():
+    options = SrcmlOptions()
+    code = code_utils.unindent_code(
+        """
+    namespace ns
+    {
+        int a;
+        struct Foo;
+    }
+    """,
+        flag_strip_empty_lines=True,
+    )
+    xml_tree = srcmlcpp.code_to_srcml_xml_wrapper(options, code)
+
+    visit_recap = ""
+
+    def my_visitor(element: SrcmlXmlWrapper):
+        nonlocal visit_recap
+        if element.has_name():
+            name = element.name_code()
+        else:
+            name = "None"
+        spacing = "  " * element.depth()
+        info = f"{spacing}tag: {element.tag()} name:{name}"
+        visit_recap += info + "\n"
+
+    xml_tree.visit_breadth_first(my_visitor)
+    # logging.warning("\n" + visit_recap)
+    code_utils.assert_are_codes_equal(
+        visit_recap,
+        """
+tag: unit name:None
+  tag: namespace name:ns
+    tag: name name:None
+    tag: block name:None
+      tag: decl_stmt name:None
+        tag: decl name:a
+          tag: type name:int
+            tag: name name:None
+          tag: name name:None
+      tag: struct_decl name:Foo
+        tag: name name:None
+        """,
+    )
+
+    visit_recap = ""
+    xml_tree.visit_depth_first(my_visitor)
+    # logging.warning("\n" + visit_recap)
+    code_utils.assert_are_codes_equal(
+        visit_recap,
+        """
+tag: name name:None
+        tag: name name:None
+      tag: type name:int
+      tag: name name:None
+    tag: decl name:a
+  tag: decl_stmt name:None
+    tag: name name:None
+  tag: struct_decl name:Foo
+tag: block name:None
+  tag: namespace name:ns
+tag: unit name:None
+        """,
+    )
