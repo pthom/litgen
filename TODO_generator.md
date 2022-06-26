@@ -29,8 +29,8 @@ litgen:
 
 srcmlcpp:
     parent
-    visit
-    warning / member
+    visit tree
+    visit cpp element (merge comment)
     Refactor: srcmlcpp = main repo, main project, etc
 
     change licence (ethical license for large NNs)

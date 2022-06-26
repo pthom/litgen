@@ -3,7 +3,9 @@
 from __future__ import print_function
 
 """
-xmlplain: from https://github.com/guillon/xmlplain
+xmlplain: transform a xml tree into yaml
+
+from https://github.com/guillon/xmlplain
 Thanks to Christophe Guillon !
 """
 

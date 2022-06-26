@@ -1,3 +1,5 @@
+"""SrcmlXmlWrapper is a wrapper around the nodes in the xml tree produced by srcml"""
+
 from __future__ import annotations
 import inspect
 import logging
@@ -123,19 +125,12 @@ class SrcmlXmlWrapper:
         assert self.srcml_xml.tag is not None
         return srcml_utils.clean_tag_or_attrib(self.srcml_xml.tag)
 
+    def has_text(self):
+        return self.srcml_xml.text is not None
+
     def text(self) -> Optional[str]:
         """Text part of the xml element"""
         return self.srcml_xml.text
-
-    def start(self) -> CodePosition:
-        """Start position in the C++ code"""
-        start = srcml_utils.element_start_position(self.srcml_xml)
-        return CodePosition(-1, -1) if start is None else start
-
-    def end(self) -> CodePosition:
-        """End position in the C++ code"""
-        end = srcml_utils.element_end_position(self.srcml_xml)
-        return CodePosition(-1, -1) if end is None else end
 
     def has_name(self) -> bool:
         name_children = srcml_utils.children_with_tag(self.srcml_xml, "name")
@@ -177,6 +172,16 @@ class SrcmlXmlWrapper:
             return self.srcml_xml.attrib[attr_name]
         else:
             return None
+
+    def start(self) -> CodePosition:
+        """Start position in the C++ code"""
+        start = srcml_utils.element_start_position(self.srcml_xml)
+        return CodePosition(-1, -1) if start is None else start
+
+    def end(self) -> CodePosition:
+        """End position in the C++ code"""
+        end = srcml_utils.element_end_position(self.srcml_xml)
+        return CodePosition(-1, -1) if end is None else end
 
     def str_code_verbatim(self) -> str:
         """Return the exact C++ code from which this xml node was constructed by calling the executable srcml"""
@@ -240,14 +245,14 @@ class SrcmlXmlWrapper:
         """
         visitor_function(self)
         for child in self.children():
-            visitor_function(child)
+            child.visit_breadth_first(visitor_function)
 
     def visit_depth_first(self, visitor_function: SrcmlXmVisitorFunction) -> None:
         """Visits all the elements, and run the given function on them.
         Runs the visitor on the children first, then on their parent
         """
         for child in self.children():
-            visitor_function(child)
+            child.visit_depth_first(visitor_function)
         visitor_function(self)
 
     def raise_exception(self, message: str) -> None:

@@ -1,3 +1,10 @@
+"""
+This modules parses the C++ comments:
+
+- Adds comments to all the Cpp Types defined in srcml_types
+- Mark empty lines (transforms them into a comment that contains `COMMENT_NEW_LINE_TOKEN`
+- Group comments on consecutive lines
+"""
 import copy
 from typing import List, Optional
 from xml.etree import ElementTree as ET

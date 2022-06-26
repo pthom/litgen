@@ -1,3 +1,11 @@
+"""
+Main functions provided by this module
+
+* `code_to_cpp_unit` is the main entry. It will transform code into a tree of Cpp elements
+
+* `code_to_srcml_xml_wrapper` is a lower level utility, that returns a wrapped version of the srcML tree
+"""
+
 from typing import Optional, List, Type, Dict, cast
 
 from srcmlcpp.srcml_options import SrcmlOptions

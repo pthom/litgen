@@ -1,3 +1,9 @@
+"""
+Some utilities for srcml
+
+This module *must* not depend on srcml_types!
+"""
+
 import logging
 from typing import Any, List, Optional
 from xml.dom import minidom

@@ -1,3 +1,6 @@
+"""
+Options for srcmlcpp. Read the doc near all options elements.
+"""
 from typing import Callable, Dict, List, Optional
 
 

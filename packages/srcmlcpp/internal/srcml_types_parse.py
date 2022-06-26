@@ -1,3 +1,11 @@
+"""
+This is the heart of the parsing of a xml tree into a tree of Cpp Elements (defined in srcml_types).
+
+The main interface of this module is:
+    parse_unit(options: SrcmlOptions, element: SrcmlXmlWrapper) -> CppUnit
+
+All the other functions can be considered private to this module.
+"""
 from srcmlcpp.internal import srcml_comments
 from srcmlcpp.srcml_types import *
 from srcmlcpp.srcml_xml_wrapper import SrcMlExceptionDetailed, emit_warning_if_not_quiet

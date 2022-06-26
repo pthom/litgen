@@ -1,3 +1,7 @@
+"""
+Calls the external program srcml (https://www.srcml.org/)
+"""
+
 import logging
 import os
 import subprocess
@@ -5,12 +9,6 @@ import tempfile
 import time
 from xml.etree import ElementTree as ET
 
-
-###########################################
-#
-# Calls to program srcml
-#
-###########################################
 
 # Count the total time used by call to the exe srcml
 _FLAG_PROFILE_SRCML_CALLS: bool = True
