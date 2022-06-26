@@ -11,7 +11,7 @@ from litgen._generated_code import (
     GeneratedBoxedTypeCode,
     GeneratedCode,
     CppFileAndOptions,
-    CppFileAndOptionsList,
+    CppFilesAndOptionsList,
 )
 from litgen.internal.adapted_types.adapted_block import AdaptedUnit
 from litgen.code_to_adapted_unit import code_to_adapted_unit
@@ -32,7 +32,7 @@ def _generate_code_impl_one_file(cpp_file_and_options: CppFileAndOptions) -> Gen
 
 
 def generate_code_for_files(
-    files_and_options: CppFileAndOptionsList, add_boxed_types_definitions: bool = False
+    files_and_options: CppFilesAndOptionsList, add_boxed_types_definitions: bool = False
 ) -> GeneratedCode:
 
     assert len(files_and_options.files_and_options) > 0
@@ -67,7 +67,7 @@ def generate_code(
 ) -> GeneratedCode:
 
     cpp_file_and_options = CppFileAndOptions(options, filename, code)
-    cpp_files_and_options_list = CppFileAndOptionsList([cpp_file_and_options])
+    cpp_files_and_options_list = CppFilesAndOptionsList([cpp_file_and_options])
 
     generated_code = generate_code_for_files(cpp_files_and_options_list, add_boxed_types_definitions)
     return generated_code
@@ -80,7 +80,7 @@ def code_to_pydef(
     add_boxed_types_definitions: bool = False,
 ) -> str:
     file_and_options = CppFileAndOptions(options, filename, code)
-    file_and_options_list = CppFileAndOptionsList([file_and_options])
+    file_and_options_list = CppFilesAndOptionsList([file_and_options])
     generated_code = generate_code_for_files(file_and_options_list, add_boxed_types_definitions)
     return generated_code.pydef_code
 
@@ -92,7 +92,7 @@ def code_to_stub(
     add_boxed_types_definitions: bool = False,
 ) -> str:
     file_and_options = CppFileAndOptions(options, filename, code)
-    file_and_options_list = CppFileAndOptionsList([file_and_options])
+    file_and_options_list = CppFilesAndOptionsList([file_and_options])
     generated_code = generate_code_for_files(file_and_options_list, add_boxed_types_definitions)
     return generated_code.stub_code
 

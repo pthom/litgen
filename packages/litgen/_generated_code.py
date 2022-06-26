@@ -98,8 +98,8 @@ class CppFileAndOptions:
 
 
 @dataclass
-class CppFileAndOptionsList:
+class CppFilesAndOptionsList:
     files_and_options: List[CppFileAndOptions]
 
-    def __init__(self, files_and_options: List[CppFileAndOptions]) -> None:
+    def __init__(self, files_and_options: List[CppFileAndOptions] = []) -> None:
         self.files_and_options = files_and_options
