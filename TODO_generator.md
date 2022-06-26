@@ -28,8 +28,6 @@ litgen:
 
 
 srcmlcpp:
-    parent
-    visit tree
     visit cpp element (merge comment)
     Refactor: srcmlcpp = main repo, main project, etc
 

@@ -27,8 +27,3 @@ from srcmlcpp.srcmlcpp_main import code_to_cpp_unit
 
 # code_to_srcml_xml_wrapper is a lower level utility, that returns a wrapped version of the srcML tree
 from srcmlcpp.srcmlcpp_main import code_to_srcml_xml_wrapper
-
-#
-# 3. Utilites for tests only
-#
-from srcmlcpp.srcmlcpp_main import code_first_enum, code_first_struct, code_first_decl, code_first_function_decl

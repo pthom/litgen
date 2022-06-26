@@ -217,7 +217,7 @@ def test_visitor():
         info = f"{spacing}tag: {element.tag()} name:{name}"
         visit_recap += info + "\n"
 
-    xml_tree.visit_breadth_first(my_visitor)
+    xml_tree.visit_xml_breadth_first(my_visitor)
     # logging.warning("\n" + visit_recap)
     code_utils.assert_are_codes_equal(
         visit_recap,
@@ -237,7 +237,7 @@ tag: unit name:None
     )
 
     visit_recap = ""
-    xml_tree.visit_depth_first(my_visitor)
+    xml_tree.visit_xml_depth_first(my_visitor)
     # logging.warning("\n" + visit_recap)
     code_utils.assert_are_codes_equal(
         visit_recap,

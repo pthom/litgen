@@ -239,21 +239,21 @@ class SrcmlXmlWrapper:
 
         return depth
 
-    def visit_breadth_first(self, visitor_function: SrcmlXmVisitorFunction) -> None:
+    def visit_xml_breadth_first(self, xml_visitor_function: SrcmlXmVisitorFunction) -> None:
         """Visits all the elements, and run the given function on them.
         Runs the visitor on the parent first, then on its children
         """
-        visitor_function(self)
+        xml_visitor_function(self)
         for child in self.children():
-            child.visit_breadth_first(visitor_function)
+            child.visit_xml_breadth_first(xml_visitor_function)
 
-    def visit_depth_first(self, visitor_function: SrcmlXmVisitorFunction) -> None:
+    def visit_xml_depth_first(self, xml_visitor_function: SrcmlXmVisitorFunction) -> None:
         """Visits all the elements, and run the given function on them.
         Runs the visitor on the children first, then on their parent
         """
         for child in self.children():
-            child.visit_depth_first(visitor_function)
-        visitor_function(self)
+            child.visit_xml_depth_first(xml_visitor_function)
+        xml_visitor_function(self)
 
     def raise_exception(self, message: str) -> None:
         """raises a SrcmlException which will display the message with a context

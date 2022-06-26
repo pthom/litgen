@@ -23,7 +23,7 @@ from __future__ import annotations
 import copy
 import logging
 from dataclasses import dataclass
-from typing import Dict, List, Optional, cast
+from typing import Dict, List, Optional, Callable, cast
 from xml.etree import ElementTree as ET  # noqa
 
 from codemanip import code_utils
@@ -127,8 +127,30 @@ class CppElement(SrcmlXmlWrapper):
         """
         return self.str_code_verbatim()
 
+    def visit_cpp_breadth_first(self, cpp_visitor_function: CppElementsVisitorFunction) -> None:
+        """Visits all the cpp children, and run the given function on them.
+        Runs the visitor on this element first, then on its children
+
+        This method is overriden in classes that have children!
+        """
+        # For an element without children, simply run the visitor
+        cpp_visitor_function(self)
+
+    def visit_cpp_depth_first(self, cpp_visitor_function: CppElementsVisitorFunction) -> None:
+        """Visits all the cpp children, and run the given function on them.
+        Runs the visitor on the children, then on this element
+
+        This method is overriden in classes that have children!
+        """
+        # For an element without children, simply run the visitor
+        cpp_visitor_function(self)
+
     def __str__(self) -> str:
         return self._str_simplified_yaml()
+
+
+# This defines the type of a function that will visit all the Cpp Elements
+CppElementsVisitorFunction = Callable[[CppElement], None]
 
 
 @dataclass
@@ -250,6 +272,72 @@ class CppBlock(CppElementAndComment):
         is_overloaded = len(functions_same_name) >= 2
         return is_overloaded
 
+    def visit_cpp_breadth_first(self, cpp_visitor_function: CppElementsVisitorFunction) -> None:
+        """Visits all the cpp children, and run the given function on them.
+        Runs the visitor on this block first, then on its children
+
+        When in doubt between using visit_cpp_breadth_first and visit_cpp_depth_first,
+        prefer visit_cpp_breadth_first which is closer to the code layout.
+        """
+        cpp_visitor_function(self)
+        for child in self.block_children:
+            child.visit_cpp_breadth_first(cpp_visitor_function)
+
+    def visit_cpp_depth_first(self, cpp_visitor_function: CppElementsVisitorFunction) -> None:
+        """Visits all the cpp children, and run the given function on them.
+        Runs the visitor on this block children first, then on this block
+
+        When in doubt between using visit_cpp_breadth_first and visit_cpp_depth_first,
+        prefer visit_cpp_breadth_first which is closer to the code layout.
+        """
+        for child in self.block_children:
+            child.visit_cpp_depth_first(cpp_visitor_function)
+        cpp_visitor_function(self)
+
+    def str_cpp_tree_overview(self, indentation: str = "  "):
+        """
+        Returns an overview of the Cpp Element tree
+
+        For example this code:
+            namespace ns
+            {
+                int a = 1, b; // This will create a CppDeclStatement that will be reinterpreted as two CppDecl
+                struct Foo {
+                    Foo();
+                    void foo();
+                };
+            }
+
+        Will create this tree overview:
+            CppNamespace
+              CppBlock
+                CppDeclStatement
+                CppDecl
+                  CppType
+                CppDecl
+                  CppType
+                CppStruct
+                  CppBlock
+                    CppPublicProtectedPrivate
+                      CppConstructorDecl
+                        CppParameterList
+                      CppFunctionDecl
+                        CppType
+                        CppParameterList
+        """
+        tree_overview = ""
+
+        def overview_visitor(element: CppElement):
+            nonlocal tree_overview
+            type_name = type(element).__name__
+            spacing = indentation * element.depth()
+            info = spacing + type_name
+            tree_overview += info + "\n"
+
+        self.visit_cpp_breadth_first(overview_visitor)
+
+        return tree_overview
+
     def __str__(self) -> str:
         return self.str_block()
 
@@ -296,7 +384,7 @@ class CppPublicProtectedPrivate(CppBlock):  # Also a CppElementAndComment
         self.access_type = access_type
         self.default_or_explicit = default_or_explicit if default_or_explicit is not None else ""
 
-    def str_ppp(self) -> str:
+    def str_public_protected_private(self) -> str:
         r = ""
 
         r += f"{self.access_type}" + ":"
@@ -308,13 +396,13 @@ class CppPublicProtectedPrivate(CppBlock):  # Also a CppElementAndComment
         return r
 
     def str_code(self) -> str:
-        return self.str_ppp()
+        return self.str_public_protected_private()
 
     def str_commented(self, is_enum: bool = False, is_decl_stmt: bool = False) -> str:  # noqa
         return self.str_code()
 
     def __str__(self) -> str:
-        return self.str_ppp()
+        return self.str_public_protected_private()
 
 
 @dataclass
@@ -569,6 +657,16 @@ class CppDecl(CppElementAndComment):
         Returns true if this decl is const"""
         return "const" in self.cpp_type.specifiers  # or "const" in self.cpp_type.names
 
+    def visit_cpp_breadth_first(self, cpp_visitor_function: CppElementsVisitorFunction) -> None:
+        cpp_visitor_function(self)
+        if hasattr(self, "cpp_type"):
+            self.cpp_type.visit_cpp_breadth_first(cpp_visitor_function)
+
+    def visit_cpp_depth_first(self, cpp_visitor_function: CppElementsVisitorFunction) -> None:
+        if hasattr(self, "cpp_type"):
+            self.cpp_type.visit_cpp_depth_first(cpp_visitor_function)
+        cpp_visitor_function(self)
+
 
 @dataclass
 class CppDeclStatement(CppElementAndComment):
@@ -592,6 +690,16 @@ class CppDeclStatement(CppElementAndComment):
         str_decl = code_utils.join_remove_empty("\n", str_decls)
         return str_decl
 
+    def visit_cpp_breadth_first(self, cpp_visitor_function: CppElementsVisitorFunction) -> None:
+        cpp_visitor_function(self)
+        for child in self.cpp_decls:
+            child.visit_cpp_breadth_first(cpp_visitor_function)
+
+    def visit_cpp_depth_first(self, cpp_visitor_function: CppElementsVisitorFunction) -> None:
+        for child in self.cpp_decls:
+            child.visit_cpp_depth_first(cpp_visitor_function)
+        cpp_visitor_function(self)
+
     def __str__(self) -> str:
         return self.str_commented()
 
@@ -603,7 +711,6 @@ class CppParameter(CppElementAndComment):
     """
 
     decl: CppDecl
-
     template_type: CppType  # This is only for template's CppParameterList
     template_name: str = ""
 
@@ -647,6 +754,20 @@ class CppParameter(CppElementAndComment):
     def variable_name(self) -> str:
         return self.decl.decl_name
 
+    def visit_cpp_breadth_first(self, cpp_visitor_function: CppElementsVisitorFunction) -> None:
+        cpp_visitor_function(self)
+        if hasattr(self, "decl"):
+            self.decl.visit_cpp_breadth_first(cpp_visitor_function)
+        if hasattr(self, "template_type"):
+            self.template_type.visit_cpp_breadth_first(cpp_visitor_function)
+
+    def visit_cpp_depth_first(self, cpp_visitor_function: CppElementsVisitorFunction) -> None:
+        if hasattr(self, "decl"):
+            self.decl.visit_cpp_depth_first(cpp_visitor_function)
+        if hasattr(self, "template_type"):
+            self.template_type.visit_cpp_depth_first(cpp_visitor_function)
+        cpp_visitor_function(self)
+
 
 @dataclass
 class CppParameterList(CppElement):
@@ -685,6 +806,16 @@ class CppParameterList(CppElement):
         r = ", ".join(types)
         return r
 
+    def visit_cpp_breadth_first(self, cpp_visitor_function: CppElementsVisitorFunction) -> None:
+        cpp_visitor_function(self)
+        for child in self.parameters:
+            child.visit_cpp_breadth_first(cpp_visitor_function)
+
+    def visit_cpp_depth_first(self, cpp_visitor_function: CppElementsVisitorFunction) -> None:
+        for child in self.parameters:
+            child.visit_cpp_depth_first(cpp_visitor_function)
+        cpp_visitor_function(self)
+
     def __str__(self) -> str:
         return self.str_code()
 
@@ -707,6 +838,16 @@ class CppTemplate(CppElement):
         typelist_str = ", ".join(typelist)
         params_str = f"template<{typelist_str}>\n"
         return params_str
+
+    def visit_cpp_breadth_first(self, cpp_visitor_function: CppElementsVisitorFunction) -> None:
+        cpp_visitor_function(self)
+        if hasattr(self, "parameter_list"):
+            self.parameter_list.visit_cpp_breadth_first(cpp_visitor_function)
+
+    def visit_cpp_depth_first(self, cpp_visitor_function: CppElementsVisitorFunction) -> None:
+        if hasattr(self, "parameter_list"):
+            self.parameter_list.visit_cpp_depth_first(cpp_visitor_function)
+        cpp_visitor_function(self)
 
     def __str__(self) -> str:
         return self.str_code()
@@ -771,6 +912,24 @@ class CppFunctionDecl(CppElementAndComment):
     def __str__(self) -> str:
         return self.str_commented()
 
+    def visit_cpp_breadth_first(self, cpp_visitor_function: CppElementsVisitorFunction) -> None:
+        cpp_visitor_function(self)
+        if hasattr(self, "return_type"):
+            self.return_type.visit_cpp_breadth_first(cpp_visitor_function)
+        if hasattr(self, "parameter_list"):
+            self.parameter_list.visit_cpp_breadth_first(cpp_visitor_function)
+        if hasattr(self, "template"):
+            self.template.visit_cpp_breadth_first(cpp_visitor_function)
+
+    def visit_cpp_depth_first(self, cpp_visitor_function: CppElementsVisitorFunction) -> None:
+        if hasattr(self, "return_type"):
+            self.return_type.visit_cpp_depth_first(cpp_visitor_function)
+        if hasattr(self, "parameter_list"):
+            self.parameter_list.visit_cpp_depth_first(cpp_visitor_function)
+        if hasattr(self, "template"):
+            self.template.visit_cpp_depth_first(cpp_visitor_function)
+        cpp_visitor_function(self)
+
 
 @dataclass
 class CppFunction(CppFunctionDecl):
@@ -794,6 +953,14 @@ class CppFunction(CppFunctionDecl):
         r += self._str_signature() + self.cpp_element_comments.eol_comment_code()
         r += "\n" + str(self.block) + "\n"
         return r
+
+    def visit_cpp_breadth_first(self, cpp_visitor_function: CppElementsVisitorFunction) -> None:
+        if hasattr(self, "block"):
+            self.block.visit_cpp_breadth_first(cpp_visitor_function)
+
+    def visit_cpp_depth_first(self, cpp_visitor_function: CppElementsVisitorFunction) -> None:
+        if hasattr(self, "block"):
+            self.block.visit_cpp_depth_first(cpp_visitor_function)
 
 
 @dataclass
@@ -848,6 +1015,18 @@ class CppConstructor(CppConstructorDecl):
         r += "\n" + str(self.block) + "\n"
         return r
 
+    def visit_cpp_breadth_first(self, cpp_visitor_function: CppElementsVisitorFunction) -> None:
+        if hasattr(self, "block"):
+            self.block.visit_cpp_breadth_first(cpp_visitor_function)
+        if hasattr(self, "member_init_list"):
+            self.member_init_list.visit_cpp_breadth_first(cpp_visitor_function)
+
+    def visit_cpp_depth_first(self, cpp_visitor_function: CppElementsVisitorFunction) -> None:
+        if hasattr(self, "block"):
+            self.block.visit_cpp_depth_first(cpp_visitor_function)
+        if hasattr(self, "member_init_list"):
+            self.member_init_list.visit_cpp_depth_first(cpp_visitor_function)
+
 
 @dataclass
 class CppSuper(CppElement):
@@ -891,6 +1070,16 @@ class CppSuperList(CppElement):
 
     def __str__(self) -> str:
         return self.str_code()
+
+    def visit_cpp_breadth_first(self, cpp_visitor_function: CppElementsVisitorFunction) -> None:
+        cpp_visitor_function(self)
+        for super in self.super_list:
+            super.visit_cpp_breadth_first(cpp_visitor_function)
+
+    def visit_cpp_depth_first(self, cpp_visitor_function: CppElementsVisitorFunction) -> None:
+        for super in self.super_list:
+            super.visit_cpp_depth_first(cpp_visitor_function)
+        cpp_visitor_function(self)
 
 
 @dataclass
@@ -996,6 +1185,24 @@ class CppStruct(CppElementAndComment):
         is_overloaded = len(methods_same_name) >= 2
         return is_overloaded
 
+    def visit_cpp_breadth_first(self, cpp_visitor_function: CppElementsVisitorFunction) -> None:
+        cpp_visitor_function(self)
+        if hasattr(self, "super_list"):
+            self.super_list.visit_cpp_breadth_first(cpp_visitor_function)
+        if hasattr(self, "block"):
+            self.block.visit_cpp_breadth_first(cpp_visitor_function)
+        if hasattr(self, "template"):
+            self.template.visit_cpp_breadth_first(cpp_visitor_function)
+
+    def visit_cpp_depth_first(self, cpp_visitor_function: CppElementsVisitorFunction) -> None:
+        cpp_visitor_function(self)
+        if hasattr(self, "super_list"):
+            self.super_list.visit_cpp_depth_first(cpp_visitor_function)
+        if hasattr(self, "block"):
+            self.block.visit_cpp_depth_first(cpp_visitor_function)
+        if hasattr(self, "template"):
+            self.template.visit_cpp_depth_first(cpp_visitor_function)
+
 
 @dataclass
 class CppClass(CppStruct):
@@ -1053,6 +1260,16 @@ class CppNamespace(CppElementAndComment):
 
     def __str__(self) -> str:
         return self.str_code()
+
+    def visit_cpp_breadth_first(self, cpp_visitor_function: CppElementsVisitorFunction) -> None:
+        cpp_visitor_function(self)
+        if hasattr(self, "block"):
+            self.block.visit_cpp_breadth_first(cpp_visitor_function)
+
+    def visit_cpp_depth_first(self, cpp_visitor_function: CppElementsVisitorFunction) -> None:
+        if hasattr(self, "block"):
+            self.block.visit_cpp_depth_first(cpp_visitor_function)
+        cpp_visitor_function(self)
 
 
 @dataclass
@@ -1133,3 +1350,13 @@ class CppEnum(CppElementAndComment):
                 children.append(decl_with_value)
 
         return children
+
+    def visit_cpp_breadth_first(self, cpp_visitor_function: CppElementsVisitorFunction) -> None:
+        cpp_visitor_function(self)
+        if hasattr(self, "block"):
+            self.block.visit_cpp_breadth_first(cpp_visitor_function)
+
+    def visit_cpp_depth_first(self, cpp_visitor_function: CppElementsVisitorFunction) -> None:
+        if hasattr(self, "block"):
+            self.block.visit_cpp_depth_first(cpp_visitor_function)
+        cpp_visitor_function(self)
