@@ -135,7 +135,8 @@ def _group_consecutive_comments(srcml_code: SrcmlXmlWrapper) -> SrcmlXmlWrapper:
 
         def add_child() -> None:
             nonlocal previous_child, previous_previous_child
-            child_copy = copy.deepcopy(child)
+            child_copy = child
+            child_copy.srcml_xml = copy.deepcopy(child.srcml_xml)
             srcml_xml_grouped.append(child_copy.srcml_xml)
             previous_previous_child = previous_child
             previous_child = child_copy

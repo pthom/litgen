@@ -1,5 +1,5 @@
 litgen:
-
+rc
     Sujet / multiples fichiers input
 
     Sujet input Pointer to return output (tuple) ..
@@ -28,9 +28,7 @@ litgen:
 
 
 srcmlcpp:
-    visit cpp element (merge comment)
     Refactor: srcmlcpp = main repo, main project, etc
-
     change licence (ethical license for large NNs)
         -> message to science4all: https://www.facebook.com/Science4Allorg/
 
@@ -49,7 +47,7 @@ srcmlcpp demos:
         hunt_fake_classes
             "a class with a constructor and only one public function is not a class. Use a namespace!"
             Example / Mailer
-
+        prefix class members
 
 
 

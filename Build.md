@@ -23,5 +23,13 @@ importanize
 ````
 
 
+Profiling
+    http://jiffyclub.github.io/snakeviz/
 
-Use monkeytype to add annotations: https://github.com/Instagram/MonkeyType
+        pip install snakeviz
+        python -m cProfile -o profile.prof internal/srcml_types_parse_test.py
+        snakeviz profile.prof
+
+
+Add annotations
+    Use monkeytype: https://github.com/Instagram/MonkeyType
