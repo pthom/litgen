@@ -23,6 +23,7 @@ class LitgenOptions:
     #
     original_location_flag_show = False
     # if showing location, how many parent folders shall be shown
+    # (if -1, show the full path)
     original_location_nb_parent_folders = 0
     # If True, the complete C++ original signature will be show as a comment in the python stub (pyi)
     original_signature_flag_show = False

@@ -1,5 +1,5 @@
 litgen:
-rc
+
     Sujet / multiples fichiers input
 
     Sujet input Pointer to return output (tuple) ..

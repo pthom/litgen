@@ -29,16 +29,16 @@ def play_implot():
     options.original_location_flag_show = True
     source_filename = os.path.realpath(_THIS_DIR + "/../../examples_real_libs/implot/implot/implot.h")
 
-    generated_code = litgen.generate_code(options, filename=source_filename)
-    print(generated_code.pydef_code)
+    generated_code = litgen.code_to_pydef(options, filename=source_filename)
+    print(generated_code)
 
 
 def play_imgui():
     options = litgen_options_imgui()
     source_filename = os.path.realpath(_THIS_DIR + "/../../examples_real_libs/imgui/imgui/imgui.h")
 
-    generated_code = litgen.generate_code(options, filename=source_filename)
-    print(generated_code.pydef_code)
+    generated_code = litgen.code_to_pydef(options, filename=source_filename)
+    print(generated_code)
 
 
 def play_stub(code, options) -> None:

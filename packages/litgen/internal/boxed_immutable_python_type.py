@@ -6,7 +6,7 @@ from codemanip import code_utils
 from litgen.options import LitgenOptions
 from litgen.internal import cpp_to_python
 from litgen.code_to_adapted_unit import code_to_adapted_unit
-from litgen._generated_code import *
+from litgen._generated_code import GeneratedBoxedTypeCode
 
 
 class _BoxedImmutablePythonTypeRegistry:
@@ -33,25 +33,27 @@ class _BoxedImmutablePythonTypeRegistry:
         r = in_marker + code + out_marker
         return r
 
-    def generated_code(self, options: LitgenOptions) -> Optional[GeneratedCode]:
+    def generated_code(self, options: LitgenOptions) -> Optional[GeneratedBoxedTypeCode]:
         if not self.has_boxed_types():
             return None
 
         options_no_api = copy.deepcopy(options)
         options_no_api.srcml_options.api_suffixes = []
         options_no_api.srcml_options.functions_api_prefixes = []
+        options_no_api.original_location_flag_show = False
+        options_no_api.original_signature_flag_show = False
 
-        r = GeneratedCode()
+        r = GeneratedBoxedTypeCode()
 
         for cpp_type in self.cpp_boxed_types:
             boxed_type = _BoxedImmutablePythonType_No_Registry(cpp_type)
-            r.stub_code += boxed_type.stub_code(options_no_api)
-            r.pydef_code += boxed_type.pydef_code(options_no_api)
-            r.cpp_header_code += boxed_type.cpp_header_code(options_no_api)
+            r.generated_code.stub_code += boxed_type.stub_code(options_no_api)
+            r.generated_code.pydef_code += boxed_type.pydef_code(options_no_api)
+            r.boxed_types_cpp_declaration += boxed_type.cpp_header_code(options_no_api)
 
-        r.stub_code = self._surround_code_with_marker(r.stub_code, "#")
-        r.pydef_code = self._surround_code_with_marker(r.pydef_code, "//")
-        r.cpp_header_code = self._surround_code_with_marker(r.cpp_header_code, "//")
+        r.generated_code.stub_code = self._surround_code_with_marker(r.generated_code.stub_code, "#")
+        r.generated_code.pydef_code = self._surround_code_with_marker(r.generated_code.pydef_code, "//")
+        r.boxed_types_cpp_declaration = self._surround_code_with_marker(r.boxed_types_cpp_declaration, "//")
 
         return r
 
@@ -71,7 +73,7 @@ class _BoxedImmutablePythonType_No_Registry:
         boxed_name = "Boxed" + cpp_to_python.cpp_type_to_camel_case_no_space(cpp_type)
         return boxed_name
 
-    def cpp_header_code(self, options: LitgenOptions) -> CppHeaderCode:
+    def cpp_header_code(self, options: LitgenOptions) -> str:
         cpp_type_default_value = cpp_to_python.cpp_type_default_python_value(self.cpp_type)
         assert cpp_type_default_value is not None
 
@@ -93,7 +95,7 @@ class _BoxedImmutablePythonType_No_Registry:
         struct_code = code_utils.unindent_code(struct_code, flag_strip_empty_lines=True) + "\n"
         return struct_code
 
-    def pydef_code(self, options: LitgenOptions) -> CppPydefCode:
+    def pydef_code(self, options: LitgenOptions) -> str:
         cpp_header_code = self.cpp_header_code(options)
         adapted_unit = code_to_adapted_unit(options, cpp_header_code)
         pydef_code = adapted_unit.str_pydef()
@@ -113,7 +115,7 @@ def clear_registry() -> None:
     _REGISTRY.clear()
 
 
-def all_boxed_types_generated_code(options: LitgenOptions) -> Optional[GeneratedCode]:
+def all_boxed_types_generated_code(options: LitgenOptions) -> Optional[GeneratedBoxedTypeCode]:
     r = _REGISTRY.generated_code(options)
     return r
 

@@ -24,9 +24,9 @@ def autogenerate():
     # Configure options
     options = my_code_style_options()
 
+    generated_code = litgen.generate_code(options, filename=input_cpp_header, add_boxed_types_definitions=True)
     litgen.write_generated_code(
-        options=options,
-        input_cpp_header=input_cpp_header,
+        generated_code,
         output_cpp_pydef_file=output_cpp_pydef_file,
         output_stub_pyi_file=output_stub_pyi_file,
         output_boxed_types_header_file=output_boxed_types_header_file,

@@ -16,15 +16,6 @@ Code utilities for transcription from C++ to Python
 """
 
 
-def _filename_with_n_parent_folders(filename: str, n: int) -> str:
-    path = pathlib.Path(filename)
-    index_start = len(path.parts) - 1 - n
-    if index_start < 0:
-        index_start = 0
-    r = "/".join(path.parts[index_start:])
-    return r
-
-
 def _comment_apply_replacements(options: LitgenOptions, comment: str) -> str:
     """Make some replacements in a C++ comment in order to adapt it to python
     (strip empty lines, remove API markers, apply replacements)
@@ -250,7 +241,7 @@ def info_original_location(options: LitgenOptions, cpp_element: CppElement, comm
     nb_folders = options.original_location_nb_parent_folders
     header_file = cpp_element.filename
     if header_file is not None:
-        header_file = _filename_with_n_parent_folders(header_file, nb_folders)
+        header_file = code_utils.filename_with_n_parent_folders(header_file, nb_folders)
     else:
         header_file = "Line"
 

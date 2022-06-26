@@ -2,6 +2,7 @@ import difflib
 import itertools
 import logging
 import os.path
+import pathlib
 import re
 import traceback
 from typing import Any, Dict, Iterable, Iterator, List, Optional, Tuple, TypeVar
@@ -777,4 +778,15 @@ def find_word_after_token(input_string: str, token: str) -> Optional[str]:
     if pos < 0:
         return None
     r = word_after(input_string, pos + len(token))
+    return r
+
+
+def filename_with_n_parent_folders(filename: str, n: int) -> str:
+    if n < 0:
+        return filename
+    path = pathlib.Path(filename)
+    index_start = len(path.parts) - 1 - n
+    if index_start < 0:
+        index_start = 0
+    r = "/".join(path.parts[index_start:])
     return r

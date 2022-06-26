@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Optional, List
 from dataclasses import dataclass
 import logging
 
@@ -6,9 +6,57 @@ from codemanip import code_utils
 
 from litgen.options import LitgenOptions
 from litgen.internal import boxed_immutable_python_type, cpp_to_python
-from litgen._generated_code import GeneratedCode
+from litgen._generated_code import (
+    GeneratedCodeForOneFile,
+    GeneratedBoxedTypeCode,
+    GeneratedCode,
+    CppFileAndOptions,
+    CppFileAndOptionsList,
+)
 from litgen.internal.adapted_types.adapted_block import AdaptedUnit
 from litgen.code_to_adapted_unit import code_to_adapted_unit
+
+
+def _generate_code_impl_one_file(cpp_file_and_options: CppFileAndOptions) -> GeneratedCodeForOneFile:
+
+    adapted_unit = code_to_adapted_unit(
+        cpp_file_and_options.options, cpp_file_and_options.code, cpp_file_and_options.filename
+    )
+
+    generated_code = GeneratedCodeForOneFile()
+    generated_code.pydef_code = adapted_unit.str_pydef()
+    generated_code.stub_code = adapted_unit.str_stub()
+    generated_code.translated_cpp_filename = cpp_file_and_options.filename
+
+    return generated_code
+
+
+def generate_code_for_files(
+    files_and_options: CppFileAndOptionsList, add_boxed_types_definitions: bool = False
+) -> GeneratedCode:
+
+    assert len(files_and_options.files_and_options) > 0
+    boxed_immutable_python_type.clear_registry()
+
+    generated_codes: List[GeneratedCodeForOneFile] = []
+    for file in files_and_options.files_and_options:
+        file_generated_code = _generate_code_impl_one_file(file)
+        generated_codes.append(file_generated_code)
+
+    first_options = files_and_options.files_and_options[0].options
+    boxed_types_generated_code = boxed_immutable_python_type.all_boxed_types_generated_code(first_options)
+
+    generated_code = GeneratedCode(
+        generated_codes, boxed_types_generated_code, add_boxed_types_definitions, first_options
+    )
+
+    # Apply Python code layout options
+    generated_code.stub_code = code_utils.code_set_max_consecutive_empty_lines(
+        generated_code.stub_code, first_options.python_max_consecutive_empty_lines
+    )
+    generated_code.stub_code = cpp_to_python.apply_black_formatter_pyi(first_options, generated_code.stub_code)
+
+    return generated_code
 
 
 def generate_code(
@@ -18,43 +66,10 @@ def generate_code(
     add_boxed_types_definitions: bool = False,
 ) -> GeneratedCode:
 
-    if code is None:
-        if filename is None:
-            raise ValueError("Either cpp_code or filename needs to be specified!")
-        assert filename is not None  # make mypy happy
-        with open(filename, "r", encoding=options.srcml_options.encoding) as f:
-            code_str = f.read()
-    else:
-        code_str = code
+    cpp_file_and_options = CppFileAndOptions(options, filename, code)
+    cpp_files_and_options_list = CppFileAndOptionsList([cpp_file_and_options])
 
-    boxed_immutable_python_type.clear_registry()
-
-    adapted_unit = code_to_adapted_unit(options, code, filename)
-
-    generated_code = GeneratedCode()
-    generated_code.cpp_header_code = code_str
-    generated_code.pydef_code = adapted_unit.str_pydef()
-    generated_code.stub_code = adapted_unit.str_stub()
-
-    generated_code.boxed_types_generated_code = boxed_immutable_python_type.all_boxed_types_generated_code(options)
-
-    if add_boxed_types_definitions:
-        if generated_code.boxed_types_generated_code is None:
-            logging.warning(f"generate_code: no boxed types definition required.")
-        else:
-            generated_code.stub_code = (
-                generated_code.boxed_types_generated_code.stub_code + "\n\n" + generated_code.stub_code
-            )
-            generated_code.pydef_code = (
-                generated_code.boxed_types_generated_code.pydef_code + "\n\n" + generated_code.pydef_code
-            )
-
-    # Apply Python code layout options
-    generated_code.stub_code = code_utils.code_set_max_consecutive_empty_lines(
-        generated_code.stub_code, options.python_max_consecutive_empty_lines
-    )
-    generated_code.stub_code = cpp_to_python.apply_black_formatter_pyi(options, generated_code.stub_code)
-
+    generated_code = generate_code_for_files(cpp_files_and_options_list, add_boxed_types_definitions)
     return generated_code
 
 
@@ -64,7 +79,9 @@ def code_to_pydef(
     filename: Optional[str] = None,
     add_boxed_types_definitions: bool = False,
 ) -> str:
-    generated_code = generate_code(options, code, filename, add_boxed_types_definitions)
+    file_and_options = CppFileAndOptions(options, filename, code)
+    file_and_options_list = CppFileAndOptionsList([file_and_options])
+    generated_code = generate_code_for_files(file_and_options_list, add_boxed_types_definitions)
     return generated_code.pydef_code
 
 
@@ -74,36 +91,30 @@ def code_to_stub(
     filename: Optional[str] = None,
     add_boxed_types_definitions: bool = False,
 ) -> str:
-    generated_code = generate_code(options, code, filename, add_boxed_types_definitions)
+    file_and_options = CppFileAndOptions(options, filename, code)
+    file_and_options_list = CppFileAndOptionsList([file_and_options])
+    generated_code = generate_code_for_files(file_and_options_list, add_boxed_types_definitions)
     return generated_code.stub_code
 
 
 def write_generated_code(
-    options: LitgenOptions,
-    input_cpp_header: str,
+    generated_code: GeneratedCode,
     output_cpp_pydef_file: str = "",
     output_stub_pyi_file: str = "",
     output_boxed_types_header_file: str = "",
-    add_boxed_types_definitions: bool = True,
 ) -> None:
 
-    if add_boxed_types_definitions:
-        if len(output_boxed_types_header_file) == 0:
-            raise ValueError(
-                f"write_generated_code: specify output_boxed_types_header_file if add_boxed_types_definitions=True"
-            )
-
-    generated_code = generate_code(
-        options, filename=input_cpp_header, add_boxed_types_definitions=add_boxed_types_definitions
-    )
+    if generated_code.boxed_types_cpp_declaration is not None and len(output_boxed_types_header_file) == 0:
+        raise ValueError(f"write_generated_code: specify output_boxed_types_header_file")
 
     if len(output_cpp_pydef_file) > 0:
         code_utils.write_generated_code_between_markers(output_cpp_pydef_file, "pydef", generated_code.pydef_code)
     if len(output_stub_pyi_file) > 0:
         code_utils.write_generated_code_between_markers(output_stub_pyi_file, "stub", generated_code.stub_code)
-    if len(output_boxed_types_header_file) > 0 and generated_code.boxed_types_generated_code is not None:
+
+    if len(output_boxed_types_header_file) > 0 and generated_code.boxed_types_cpp_declaration is not None:
         code_utils.write_generated_code_between_markers(
             output_boxed_types_header_file,
             "boxed_types_header",
-            generated_code.boxed_types_generated_code.cpp_header_code,
+            generated_code.boxed_types_cpp_declaration,
         )
