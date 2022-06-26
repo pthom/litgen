@@ -26,6 +26,9 @@ litgen:
         toString en hackant str:
         l.Foo.__str__ = my_str
 
+    CI / profiling:
+        ajouter un test de rapidite sur gen imgui
+        remplacer instances de copy.deepcopy par un clone (or remove parent)
 
 srcmlcpp:
     Refactor: srcmlcpp = main repo, main project, etc

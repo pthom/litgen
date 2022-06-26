@@ -37,19 +37,19 @@ class _BoxedImmutablePythonTypeRegistry:
         if not self.has_boxed_types():
             return None
 
-        options_no_api = copy.deepcopy(options)
-        options_no_api.srcml_options.api_suffixes = []
-        options_no_api.srcml_options.functions_api_prefixes = []
-        options_no_api.original_location_flag_show = False
-        options_no_api.original_signature_flag_show = False
+        options_boxed = LitgenOptions()
+        options_boxed.python_indent_size = options.python_indent_size
+        options_boxed.cpp_indent_size = options.cpp_indent_size
+        options_boxed.python_ident_with_tabs = options.cpp_indent_with_tabs
+        options_boxed.cpp_indent_with_tabs = options.cpp_indent_with_tabs
 
         r = GeneratedBoxedTypeCode()
 
         for cpp_type in self.cpp_boxed_types:
             boxed_type = _BoxedImmutablePythonType_No_Registry(cpp_type)
-            r.generated_code.stub_code += boxed_type.stub_code(options_no_api)
-            r.generated_code.pydef_code += boxed_type.pydef_code(options_no_api)
-            r.boxed_types_cpp_declaration += boxed_type.cpp_header_code(options_no_api)
+            r.generated_code.stub_code += boxed_type.stub_code(options_boxed)
+            r.generated_code.pydef_code += boxed_type.pydef_code(options_boxed)
+            r.boxed_types_cpp_declaration += boxed_type.cpp_header_code(options_boxed)
 
         r.generated_code.stub_code = self._surround_code_with_marker(r.generated_code.stub_code, "#")
         r.generated_code.pydef_code = self._surround_code_with_marker(r.generated_code.pydef_code, "//")

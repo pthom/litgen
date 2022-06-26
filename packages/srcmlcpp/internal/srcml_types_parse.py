@@ -6,6 +6,8 @@ The main interface of this module is:
 
 All the other functions can be considered private to this module.
 """
+import copy
+
 from srcmlcpp.internal import srcml_comments
 from srcmlcpp.srcml_types import *
 from srcmlcpp.srcml_xml_wrapper import SrcMlExceptionDetailed, emit_warning_if_not_quiet
@@ -186,7 +188,7 @@ def parse_decl_stmt(options: SrcmlOptions, element_c: CppElementAndComment) -> C
     previous_decl: Optional[CppDecl] = None
     result = CppDeclStatement(element_c, element_c.cpp_element_comments)
     for child in element_c.children():
-        child_c = copy.deepcopy(element_c)
+        child_c = element_c
         child_c.srcml_xml = child.srcml_xml
         if child_c.tag() == "decl":
             child_name = child_c.name_code()
