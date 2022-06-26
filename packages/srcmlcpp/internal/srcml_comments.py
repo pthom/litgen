@@ -189,7 +189,7 @@ def _group_consecutive_comments(srcml_code: SrcmlXmlWrapper) -> SrcmlXmlWrapper:
     for child_r in srcml_xml_grouped:
         children_r.append(child_r)
 
-    r = SrcmlXmlWrapper(srcml_code.options, srcml_xml_grouped, srcml_code.filename)
+    r = SrcmlXmlWrapper(srcml_code.options, srcml_xml_grouped, srcml_code.parent, srcml_code.filename)
     return r
 
 

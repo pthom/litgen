@@ -67,3 +67,15 @@ options.original_signature_flag_show = True
 
 # play_stub(code, options)
 play_pydef(code, options)
+
+
+from typing import Mapping
+
+a = [1, 2, 3]
+
+
+def square(x: int) -> int:
+    return x * x
+
+
+b: map[int] = map(square, a)

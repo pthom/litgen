@@ -40,7 +40,7 @@ class CppHeadersCodeWithOptionsList:
         self.headers_and_options_list = headers_and_options_list
 
     @staticmethod
-    def from_options_and_header(options: LitgenOptions, filename: Optional[str] = None, code: Optional[str] = None):
+    def from_options_and_one_header(options: LitgenOptions, filename: Optional[str] = None, code: Optional[str] = None):
         """named constructor for cases where there is only one file or code string"""
         a = CppHeaderCodeWithOptions(options, filename, code)
         headers_and_options_list = [CppHeaderCodeWithOptions(options, filename, code)]

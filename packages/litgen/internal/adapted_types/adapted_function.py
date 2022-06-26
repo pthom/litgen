@@ -4,7 +4,6 @@ from typing import cast
 from munch import Munch  # type: ignore
 
 from srcmlcpp.srcml_types import *
-from srcmlcpp import emit_srcml_warning
 
 from litgen.internal import cpp_to_python
 from litgen.internal.adapted_types.adapted_decl import AdaptedDecl
@@ -350,8 +349,7 @@ class AdaptedFunction(AdaptedElement):
             self.options.fn_force_return_policy_reference_for_references and self.cpp_element().returns_reference()
         ):
             self.return_value_policy = "reference"
-            emit_srcml_warning(
-                self.cpp_element(),
+            self.cpp_element().emit_message(
                 "Forced function return_value_policy to reference",
                 message_header="Info",
             )

@@ -1,10 +1,14 @@
 import logging
 
-from srcmlcpp.srcml_options import SrcmlOptions
-from srcmlcpp.srcml_xml_wrapper import SrcmlXmlWrapper
-from srcmlcpp.srcmlcpp_main import code_to_srcml_xml_wrapper
 from codemanip import code_utils
 from codemanip.code_position import CodePosition
+
+import srcmlcpp.srcmlcpp_main
+from srcmlcpp.srcml_options import SrcmlOptions
+from srcmlcpp.srcml_xml_wrapper import SrcmlXmlWrapper
+from srcmlcpp import SrcMlException, SrcMlExceptionDetailed
+from srcmlcpp.srcmlcpp_main import code_to_srcml_xml_wrapper
+from srcmlcpp.srcml_types import *
 
 
 def test_srcml_cpp():
@@ -29,8 +33,8 @@ def test_srcml_cpp():
     assert code_wrapper.str_code_verbatim() == code
 
     # Test child_with_tag
-    function_wrapper = code_wrapper.child_with_tag("function")
-    assert function_wrapper is not None
+    function_wrapper = code_wrapper.children_with_tag("function")
+    assert len(list(function_wrapper)) == 1
 
     # Test children with tag
     decl_stmt_wrappers = code_wrapper.children_with_tag("decl_stmt")
@@ -132,3 +136,56 @@ def test_yaml():
         return r
 
     code_utils.assert_are_codes_equal(strip_second_line(yaml_str), strip_second_line(expected_yaml))
+
+
+def test_warnings():
+    options = SrcmlOptions()
+    options.flag_show_python_callstack = True
+    code = "void foo(int a);"
+
+    cpp_unit = srcmlcpp.code_to_cpp_unit(options, code, filename="main.h")
+    decl = cpp_unit.block_children[0]
+
+    got_exception = False
+    try:
+        raise SrcMlExceptionDetailed(decl, "Artificial exception")
+    except SrcMlException as e:
+        got_exception = True
+        msg = str(e)
+        for part in [
+            "test_warning",
+            "function_decl",
+            "main.h:1:1",
+            "void foo",
+            "Artificial exception",
+        ]:
+            assert part in msg
+    assert got_exception == True
+
+
+def test_warnings_2():
+    options = srcmlcpp.SrcmlOptions()
+    code = code_utils.unindent_code(
+        """
+        struct __Foo
+        {
+            int a = 1;
+        };
+    """,
+        flag_strip_empty_lines=True,
+    )
+    cpp_struct = srcmlcpp.srcmlcpp_main.code_first_struct(options, code)
+    msg = cpp_struct.message_detailed("names starting with __ are reserved")
+    code_utils.assert_are_codes_equal(
+        msg,
+        """
+        Warning: names starting with __ are reserved
+        While parsing a "struct", corresponding to this C++ code:
+        Position:1:1
+            struct __Foo
+            ^
+            {
+                int a = 1;
+            };
+    """,
+    )

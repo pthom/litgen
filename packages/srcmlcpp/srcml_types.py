@@ -116,7 +116,7 @@ class CppElement(SrcmlXmlWrapper):
     """Base class of all the cpp types"""
 
     def __init__(self, element: SrcmlXmlWrapper) -> None:
-        super().__init__(element.options, element.srcml_xml, element.filename)
+        super().__init__(element.options, element.srcml_xml, element.parent, element.filename)
 
     def str_code(self) -> str:
         """Returns a C++ textual representation of the contained code element.
@@ -1092,8 +1092,6 @@ class CppEnum(CppElementAndComment):
         return r
 
     def get_children_with_filled_decl_values(self, options: SrcmlOptions) -> List[CppElementAndComment]:
-        from srcmlcpp.internal.srcml_warnings import emit_srcml_warning
-
         children: List[CppElementAndComment] = []
 
         last_decl: Optional[CppDecl] = None
@@ -1125,8 +1123,7 @@ class CppEnum(CppElementAndComment):
                             last_decl_value_int = int(last_decl_value_str)
                             decl_with_value.initial_value_code = str(last_decl_value_int + 1)
                         except ValueError:
-                            emit_srcml_warning(
-                                decl,
+                            decl.emit_warning(
                                 """
                                 Cannot parse the value of this enum element.
                                 Hint: maybe add an entry to SrcmlOptions.named_number_macros""",

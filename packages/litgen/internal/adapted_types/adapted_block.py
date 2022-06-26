@@ -2,7 +2,6 @@ from dataclasses import dataclass
 from typing import Union, cast
 
 from srcmlcpp.srcml_types import *
-from srcmlcpp import emit_srcml_warning
 
 from litgen.internal.adapted_types.adapted_class import AdaptedClass
 from litgen.internal.adapted_types.adapted_comment import (
@@ -56,10 +55,7 @@ class AdaptedBlock(AdaptedElement):
             elif isinstance(child, CppNamespace):
                 self.adapted_elements.append(AdaptedNamespace(self.options, child))  # type: ignore
             elif isinstance(child, CppDeclStatement):
-                emit_srcml_warning(
-                    child,
-                    f"Block elements of type {child.tag()} are not supported in python conversion",
-                )
+                child.emit_warning(f"Block elements of type {child.tag()} are not supported in python conversion")
 
     # override
     def _str_stub_lines(self) -> List[str]:

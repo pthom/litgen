@@ -1,16 +1,6 @@
 litgen:
-    srcml:
-        renames & internal
-        Faire un objet srcmlcpp
-            element
-            srcml_options
-                to_verbatim_code
-                to_xml
-                to_yaml
-                emit_warning
 
     Sujet / multiples fichiers input
-
 
     Sujet input Pointer to return output (tuple) ..
 
@@ -38,17 +28,29 @@ litgen:
 
 
 srcmlcpp:
+    parent
+    visit
+    warning / member
     Refactor: srcmlcpp = main repo, main project, etc
 
     change licence (ethical license for large NNs)
         -> message to science4all: https://www.facebook.com/Science4Allorg/
 
-PimpMyClass !
-    srcmlcpp separated
-    auto pImpl from cpp: pImpl class  => header decl + cpp imp non pImpl + Doc !
 
+srcmlcpp demos:
 
-Cerealize / cerealize
+    PimpMyClass !
+        srcmlcpp separated
+        auto pImpl from cpp: pImpl class  => header decl + cpp imp non pImpl + Doc !
+
+    Cerealize / cerealize
+
+    pimp_my_ci:
+        check for doc
+        check for snake_case
+        hunt_fake_classes
+            "a class with a constructor and only one public function is not a class. Use a namespace!"
+            Example / Mailer
 
 
 

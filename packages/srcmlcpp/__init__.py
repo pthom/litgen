@@ -1,9 +1,34 @@
 """
 Interface to srcML (https://www.srcml.org/)
 """
-from srcmlcpp.srcml_options import SrcmlOptions
-from srcmlcpp.srcmlcpp_main import code_to_cpp_unit, code_to_srcml_xml_wrapper
-from srcmlcpp.internal.srcml_warnings import SrcMlExceptionDetailed, emit_srcml_warning, emit_warning
 
-# for tests
+#
+# 1. Types defined by this module
+#
+
+# Options
+from srcmlcpp.srcml_options import SrcmlOptions
+
+# A collection of Cpp Types (CppStruct, CppDecl, CppNamespace, etc.)
+from srcmlcpp.srcml_types import *
+
+# Exceptions produced by this module
+from srcmlcpp.srcml_xml_wrapper import SrcMlException, SrcMlExceptionDetailed
+
+# A wrapper around the nodes of the xml tree produced by srcml
+from srcmlcpp.srcml_xml_wrapper import SrcmlXmlWrapper
+
+#
+# 2. Main functions provided by this module
+#
+
+# code_to_cpp_unit is the main entry. It will transform code into a tree of Cpp elements
+from srcmlcpp.srcmlcpp_main import code_to_cpp_unit
+
+# code_to_srcml_xml_wrapper is a lower level utility, that returns a wrapped version of the srcML tree
+from srcmlcpp.srcmlcpp_main import code_to_srcml_xml_wrapper
+
+#
+# 3. Utilites for tests only
+#
 from srcmlcpp.srcmlcpp_main import code_first_enum, code_first_struct, code_first_decl, code_first_function_decl

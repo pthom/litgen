@@ -1,6 +1,6 @@
-from srcmlcpp.internal import srcml_comments, srcml_warnings
+from srcmlcpp.internal import srcml_comments
 from srcmlcpp.srcml_types import *
-from srcmlcpp.internal.srcml_warnings import SrcMlExceptionDetailed
+from srcmlcpp.srcml_xml_wrapper import SrcMlExceptionDetailed, emit_warning_if_not_quiet
 from srcmlcpp.internal import srcml_comments
 
 
@@ -599,7 +599,7 @@ def fill_block(options: SrcmlOptions, element: SrcmlXmlWrapper, inout_block_cont
                 inout_block_content.block_children.append(cpp_decl)
             elif child_tag == "function_decl":
                 if is_operator_function(child_c):
-                    srcml_warnings.emit_srcml_warning(child_c, "Operator functions are ignored")
+                    child_c.emit_warning("Operator functions are ignored")
                     inout_block_content.block_children.append(parse_unprocessed(options, child_c))
                 else:
                     assert child_name is not None
@@ -609,7 +609,7 @@ def fill_block(options: SrcmlOptions, element: SrcmlXmlWrapper, inout_block_cont
             elif child_tag == "function":
                 assert child_name is not None
                 if is_operator_function(child_c):
-                    srcml_warnings.emit_srcml_warning(child_c, "Operator functions are ignored")
+                    child_c.emit_warning("Operator functions are ignored")
                     inout_block_content.block_children.append(parse_unprocessed(options, child_c))
                     if code_utils.does_match_regexes(options.function_name_exclude_regexes, child_name):
                         continue
@@ -647,9 +647,7 @@ def fill_block(options: SrcmlOptions, element: SrcmlXmlWrapper, inout_block_cont
                 last_ignored_child = child_c
                 inout_block_content.block_children.append(parse_unprocessed(options, child_c))
         except SrcMlExceptionDetailed as e:
-            srcml_warnings.emit_warning(
-                options, f'A cpp element of type "{child_tag}" was ignored. Details follow\n{e}'
-            )
+            emit_warning_if_not_quiet(options, f'A cpp element of type "{child_tag}" was ignored. Details follow\n{e}')
 
 
 def parse_unit(options: SrcmlOptions, element: SrcmlXmlWrapper) -> CppUnit:
