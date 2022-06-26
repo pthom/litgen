@@ -194,5 +194,10 @@ namespace LiterateGeneratorExample // MY_API
         MY_API int add_overload(int a, int b, int c) { return a + b + c; } // type: ignore
     };
 
+    //
+    // Test Boxed String
+    //
+    MY_API void ModifyString(std::string* s) { (*s) += "hello"; }
+
 //
 } // namespace LiterateGeneratorExample

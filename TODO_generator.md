@@ -1,6 +1,12 @@
 litgen:
 
-    Sujet / multiples fichiers input
+    sujet callbacks C avec imgui
+        il a fallu supprimer les callback de InputText dans imgui_stdlib
+            -> voir si d'autres signatures avec callback trainent et s'il faut faire qq chose
+            -> oui il n'y en a que deux:
+                IMGUI_API void          SetNextWindowSizeConstraints(const ImVec2& size_min, const ImVec2& size_max, ImGuiSizeCallback custom_callback = NULL, void* custom_callback_data = NULL); // set next window size limits. use -1,-1 on either X/Y axis to preserve the current size. Sizes will be rounded down. Use callback to apply non-trivial programmatic constraints.
+                IMGUI_API void  AddCallback(ImDrawCallback callback, void* callback_data);  // Your rendering function must check for 'UserCallback' in ImDrawCmd and call the function instead of rendering triangles.
+
 
     Sujet input Pointer to return output (tuple) ..
 

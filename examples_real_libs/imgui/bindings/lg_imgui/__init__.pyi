@@ -4980,15 +4980,15 @@ class ImGuiPlatformImeData:    # imgui.h:2942
 # <Namespace ImGui>
 # ImGui::InputText() with std::string
 # Because text input needs dynamic resizing, we need to setup a callback to grow the capacity
-# IMGUI_API bool  InputText(const char* label, std::string* str, ImGuiInputTextFlags flags = 0, ImGuiInputTextCallback callback = NULL, void* user_data = NULL);    /* original C++ signature */
-def input_text(label: str, str: BoxedString, flags: ImGuiInputTextFlags = 0, callback: ImGuiInputTextCallback = None, user_data: Any = None) -> bool:    # imgui_stdlib.h:15
+# IMGUI_API bool  InputText(const char* label, std::string* str, ImGuiInputTextFlags flags = 0);    /* original C++ signature */
+def input_text(label: str, str: BoxedString, flags: ImGuiInputTextFlags = 0) -> bool:    # imgui_stdlib.h:15
     pass
-# IMGUI_API bool  InputTextMultiline(const char* label, std::string* str, const ImVec2& size = ImVec2(0, 0), ImGuiInputTextFlags flags = 0, ImGuiInputTextCallback callback = NULL, void* user_data = NULL);    /* original C++ signature */
-def input_text_multiline(label: str, str: BoxedString, size: ImVec2 = ImVec2(0, 0), flags: ImGuiInputTextFlags = 0, callback: ImGuiInputTextCallback = None, user_data: Any = None) -> bool:    # imgui_stdlib.h:16
+# IMGUI_API bool  InputTextMultiline(const char* label, std::string* str, const ImVec2& size = ImVec2(0, 0), ImGuiInputTextFlags flags = 0);    /* original C++ signature */
+def input_text_multiline(label: str, str: BoxedString, size: ImVec2 = ImVec2(0, 0), flags: ImGuiInputTextFlags = 0) -> bool:    # imgui_stdlib.h:16
     pass
-# IMGUI_API bool  InputTextWithHint(const char* label, const char* hint, std::string* str, ImGuiInputTextFlags flags = 0, ImGuiInputTextCallback callback = NULL, void* user_data = NULL);    /* original C++ signature */
+# IMGUI_API bool  InputTextWithHint(const char* label, const char* hint, std::string* str, ImGuiInputTextFlags flags = 0);    /* original C++ signature */
 # }
-def input_text_with_hint(label: str, hint: str, str: BoxedString, flags: ImGuiInputTextFlags = 0, callback: ImGuiInputTextCallback = None, user_data: Any = None) -> bool:    # imgui_stdlib.h:17
+def input_text_with_hint(label: str, hint: str, str: BoxedString, flags: ImGuiInputTextFlags = 0) -> bool:    # imgui_stdlib.h:17
     pass
 # </Namespace ImGui>
 ####################    </generated_from:imgui_stdlib.h>    ####################

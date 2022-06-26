@@ -152,6 +152,13 @@ def test_nullable_param():
     litgensample.toggle_bool_nullable()
 
 
+def test_modify_string():
+    s = litgensample.BoxedString("Say ")
+    litgensample.modify_string(s)
+    assert s.value == "Say hello"
+
+
+# test_modify_string()
 # test_manual()
 # test_return_value_policy_reference()
 # test_modifiable_immutable()
