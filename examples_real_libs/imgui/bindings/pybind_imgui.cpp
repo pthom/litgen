@@ -3321,7 +3321,6 @@ void py_init_module_imgui(py::module& m)
 
     auto pyClassImGuiInputTextCallbackData = py::class_<ImGuiInputTextCallbackData>    // imgui.h:2074
         (m, "ImGuiInputTextCallbackData", " Shared state of InputText(), passed as an argument to your callback when a ImGuiInputTextFlags_Callback* flag is used.\n The callback function should return 0 by default.\n Callbacks (follow a flag name and see comments in ImGuiInputTextFlags_ declarations for more details)\n - ImGuiInputTextFlags_CallbackEdit:        Callback on buffer edit (note that InputText() already returns True on edit, the callback is useful mainly to manipulate the underlying buffer while focus is active)\n - ImGuiInputTextFlags_CallbackAlways:      Callback on each iteration\n - ImGuiInputTextFlags_CallbackCompletion:  Callback on pressing TAB\n - ImGuiInputTextFlags_CallbackHistory:     Callback on pressing Up/Down arrows\n - ImGuiInputTextFlags_CallbackCharFilter:  Callback on character inputs to replace or discard them. Modify 'EventChar' to replace or discard, or return 1 in callback to discard.\n - ImGuiInputTextFlags_CallbackResize:      Callback on buffer capacity changes request (beyond 'buf_size' parameter value), allowing the string to grow.")
-        .def(py::init<>()) // implicit default constructor
         .def_readwrite("event_flag", &ImGuiInputTextCallbackData::EventFlag, "One ImGuiInputTextFlags_Callback*    // Read-only")    // imgui.h:2076
         .def_readwrite("flags", &ImGuiInputTextCallbackData::Flags, "What user passed to InputText()      // Read-only")    // imgui.h:2077
         .def_readwrite("user_data", &ImGuiInputTextCallbackData::UserData, "What user passed to InputText()      // Read-only")    // imgui.h:2078
@@ -3333,6 +3332,7 @@ void py_init_module_imgui(py::module& m)
         .def_readwrite("cursor_pos", &ImGuiInputTextCallbackData::CursorPos, "// Read-write   // [Completion,History,Always]")    // imgui.h:2089
         .def_readwrite("selection_start", &ImGuiInputTextCallbackData::SelectionStart, "// Read-write   // [Completion,History,Always] == to SelectionEnd when no selection)")    // imgui.h:2090
         .def_readwrite("selection_end", &ImGuiInputTextCallbackData::SelectionEnd, "// Read-write   // [Completion,History,Always]")    // imgui.h:2091
+        .def(py::init<>())    // imgui.h:2095
         .def("delete_chars",    // imgui.h:2096
             &ImGuiInputTextCallbackData::DeleteChars, py::arg("pos"), py::arg("bytes_count"))
         .def("insert_chars",    // imgui.h:2097

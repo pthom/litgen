@@ -1,7 +1,7 @@
 litgen:
 
-    sujet callbacks C avec imgui
-        il a fallu supprimer les callback de InputText dans imgui_stdlib
+    imgui
+        Callbacks: il a fallu supprimer les callback de InputText dans imgui_stdlib
             -> voir si d'autres signatures avec callback trainent et s'il faut faire qq chose
             -> oui il n'y en a que deux:
                 IMGUI_API void          SetNextWindowSizeConstraints(const ImVec2& size_min, const ImVec2& size_max, ImGuiSizeCallback custom_callback = NULL, void* custom_callback_data = NULL); // set next window size limits. use -1,-1 on either X/Y axis to preserve the current size. Sizes will be rounded down. Use callback to apply non-trivial programmatic constraints.

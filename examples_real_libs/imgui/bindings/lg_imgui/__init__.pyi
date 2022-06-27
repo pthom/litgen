@@ -3812,6 +3812,9 @@ class ImGuiInputTextCallbackData:    # imgui.h:2074
 
     # Helper functions for text manipulation.
     # Use those function to benefit from the CallbackResize behaviors. Calling those function reset the selection.
+    # IMGUI_API ImGuiInputTextCallbackData();    /* original C++ signature */
+    def __init__(self) -> None:                                                   # imgui.h:2095
+        pass
     # IMGUI_API void      DeleteChars(int pos, int bytes_count);    /* original C++ signature */
     def delete_chars(self, pos: int, bytes_count: int) -> None:                   # imgui.h:2096
         pass

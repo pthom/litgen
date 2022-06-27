@@ -4,7 +4,8 @@ import os
 import litgen
 from litgen.litgen_options_imgui import litgen_options_imgui
 
-THIS_DIR = os.path.dirname(__file__)
+THIS_DIR = "/Users/pascal/dvp/poub/litgen/examples_real_libs/imgui" #os.path.dirname(__file__)
+print(f"{THIS_DIR=}")
 CPP_HEADERS_DIR = THIS_DIR + "/imgui"
 CPP_GENERATED_PYBIND_DIR = THIS_DIR + "/bindings"
 assert os.path.isdir(CPP_HEADERS_DIR)
@@ -27,7 +28,7 @@ def autogenerate():
     options = my_code_style_options()
 
     options_imgui_h = copy.deepcopy(options)
-    options_imgui_h.srcml_options.function_name_exclude_regexes += ["InputText"]
+    options_imgui_h.srcml_options.function_name_exclude_regexes += ["^InputText"]
 
     # generated_code = litgen.generate_code(options_imgui_h, filename=input_cpp_header, add_boxed_types_definitions=True)
 
