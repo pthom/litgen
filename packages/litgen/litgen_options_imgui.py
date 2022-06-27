@@ -121,6 +121,11 @@ def litgen_options_imgui() -> LitgenOptions:
         r"^Table",
     ]
 
+    options.fn_params_exclude_types_regexes = [
+        "Callback$"  # Exclude callbacks from the params when they have a default value
+        # (since imgui use bare C function pointers, not easily portable)
+    ]
+
     options.fn_force_return_policy_reference_for_pointers = True
     options.fn_force_return_policy_reference_for_references = True
 

@@ -759,6 +759,9 @@ class CppParameter(CppElementAndComment):
         r = self.decl.cpp_type.str_code()
         return r
 
+    def has_default_value(self) -> bool:
+        return len(self.decl.initial_value_code) > 0
+
     def default_value(self) -> str:
         return self.decl.initial_value_code
 

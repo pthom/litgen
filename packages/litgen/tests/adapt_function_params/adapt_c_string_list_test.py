@@ -6,10 +6,6 @@ from srcmlcpp.srcml_types import *
 import litgen
 
 
-_THIS_DIR = os.path.dirname(__file__)
-sys.path.append(_THIS_DIR + "/../..")
-
-
 def to_pydef(code) -> str:
     options = litgen.LitgenOptions()
     pydef_code = litgen.code_to_pydef(options, code)

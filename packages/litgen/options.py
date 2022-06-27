@@ -159,6 +159,11 @@ class LitgenOptions:
     """
     fn_params_adapt_modifiable_immutable = True
 
+    # Remove some params from the python published interface. A param can only be removed if it has a default value
+    # in the C++ signature
+    fn_params_exclude_names_regexes: List[str] = []
+    fn_params_exclude_types_regexes: List[str] = []
+
     ################################################################################
     ################################################################################
     #    </adapt_function_params>

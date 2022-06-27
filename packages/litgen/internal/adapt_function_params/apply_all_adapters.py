@@ -5,6 +5,7 @@ from litgen.internal.adapted_types import AdaptedFunction
 
 
 def apply_all_adapters(inout_adapted_function: AdaptedFunction) -> None:
+    from litgen.internal.adapt_function_params._adapt_exclude_params import adapt_exclude_params
     from litgen.internal.adapt_function_params._adapt_c_arrays import adapt_c_arrays
     from litgen.internal.adapt_function_params._adapt_c_string_list import adapt_c_string_list
     from litgen.internal.adapt_function_params._adapt_c_buffers import adapt_c_buffers
@@ -12,6 +13,7 @@ def apply_all_adapters(inout_adapted_function: AdaptedFunction) -> None:
     from litgen.internal.adapt_function_params.adapt_modifiable_immutable import adapt_modifiable_immutable
 
     all_adapters_functions = [
+        adapt_exclude_params,
         adapt_c_buffers,
         adapt_c_arrays,
         adapt_modifiable_immutable,  # must be done *after* adapt_c_buffers

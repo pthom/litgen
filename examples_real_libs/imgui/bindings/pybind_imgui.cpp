@@ -311,8 +311,16 @@ void py_init_module_imgui(py::module& m)
         "set next window size. set axis to 0.0 to force an auto-fit on this axis. call before Begin()");
 
     m.def("set_next_window_size_constraints",    // imgui.h:356
-        SetNextWindowSizeConstraints,
-        py::arg("size_min"), py::arg("size_max"), py::arg("custom_callback") = py::none(), py::arg("custom_callback_data") = py::none(),
+        [](const ImVec2 & size_min, const ImVec2 & size_max, void * custom_callback_data = NULL)
+        {
+            auto SetNextWindowSizeConstraints_adapt_c_string_list = [](const ImVec2 & size_min, const ImVec2 & size_max, void * custom_callback_data = NULL)
+            {
+                SetNextWindowSizeConstraints(size_min, size_max, NULL, custom_callback_data);
+            };
+
+            SetNextWindowSizeConstraints_adapt_c_string_list(size_min, size_max, custom_callback_data);
+        },
+        py::arg("size_min"), py::arg("size_max"), py::arg("custom_callback_data") = py::none(),
         "set next window size limits. use -1,-1 on either X/Y axis to preserve the current size. Sizes will be rounded down. Use callback to apply non-trivial programmatic constraints.");
 
     m.def("set_next_window_content_size",    // imgui.h:357
@@ -4008,46 +4016,61 @@ void py_init_module_imgui(py::module& m)
     ////////////////////    <generated_from:imgui_stdlib.h>    ////////////////////
     // <namespace ImGui>    // imgui_stdlib.h:11
     m.def("input_text",    // imgui_stdlib.h:15
-        [](const char * label, BoxedString & str, ImGuiInputTextFlags flags = 0) -> bool
+        [](const char * label, BoxedString & str, ImGuiInputTextFlags flags = 0, void * user_data = NULL) -> bool
         {
-            auto InputText_adapt_modifiable_immutable = [](const char * label, BoxedString & str, ImGuiInputTextFlags flags = 0) -> bool
+            auto InputText_adapt_c_string_list = [](const char * label, std::string * str, ImGuiInputTextFlags flags = 0, void * user_data = NULL) -> bool
+            {
+                auto r = InputText(label, str, flags, NULL, user_data);
+                return r;
+            };
+            auto InputText_adapt_modifiable_immutable = [&InputText_adapt_c_string_list](const char * label, BoxedString & str, ImGuiInputTextFlags flags = 0, void * user_data = NULL) -> bool
             {
                 std::string * str_boxed_value = & (str.value);
 
-                auto r = InputText(label, str_boxed_value, flags);
+                auto r = InputText_adapt_c_string_list(label, str_boxed_value, flags, user_data);
                 return r;
             };
 
-            return InputText_adapt_modifiable_immutable(label, str, flags);
-        },     py::arg("label"), py::arg("str"), py::arg("flags") = 0);
+            return InputText_adapt_modifiable_immutable(label, str, flags, user_data);
+        },     py::arg("label"), py::arg("str"), py::arg("flags") = 0, py::arg("user_data") = py::none());
 
     m.def("input_text_multiline",    // imgui_stdlib.h:16
-        [](const char * label, BoxedString & str, const ImVec2 & size = ImVec2(0, 0), ImGuiInputTextFlags flags = 0) -> bool
+        [](const char * label, BoxedString & str, const ImVec2 & size = ImVec2(0, 0), ImGuiInputTextFlags flags = 0, void * user_data = NULL) -> bool
         {
-            auto InputTextMultiline_adapt_modifiable_immutable = [](const char * label, BoxedString & str, const ImVec2 & size = ImVec2(0, 0), ImGuiInputTextFlags flags = 0) -> bool
+            auto InputTextMultiline_adapt_c_string_list = [](const char * label, std::string * str, const ImVec2 & size = ImVec2(0, 0), ImGuiInputTextFlags flags = 0, void * user_data = NULL) -> bool
+            {
+                auto r = InputTextMultiline(label, str, size, flags, NULL, user_data);
+                return r;
+            };
+            auto InputTextMultiline_adapt_modifiable_immutable = [&InputTextMultiline_adapt_c_string_list](const char * label, BoxedString & str, const ImVec2 & size = ImVec2(0, 0), ImGuiInputTextFlags flags = 0, void * user_data = NULL) -> bool
             {
                 std::string * str_boxed_value = & (str.value);
 
-                auto r = InputTextMultiline(label, str_boxed_value, size, flags);
+                auto r = InputTextMultiline_adapt_c_string_list(label, str_boxed_value, size, flags, user_data);
                 return r;
             };
 
-            return InputTextMultiline_adapt_modifiable_immutable(label, str, size, flags);
-        },     py::arg("label"), py::arg("str"), py::arg("size") = ImVec2(0, 0), py::arg("flags") = 0);
+            return InputTextMultiline_adapt_modifiable_immutable(label, str, size, flags, user_data);
+        },     py::arg("label"), py::arg("str"), py::arg("size") = ImVec2(0, 0), py::arg("flags") = 0, py::arg("user_data") = py::none());
 
     m.def("input_text_with_hint",    // imgui_stdlib.h:17
-        [](const char * label, const char * hint, BoxedString & str, ImGuiInputTextFlags flags = 0) -> bool
+        [](const char * label, const char * hint, BoxedString & str, ImGuiInputTextFlags flags = 0, void * user_data = NULL) -> bool
         {
-            auto InputTextWithHint_adapt_modifiable_immutable = [](const char * label, const char * hint, BoxedString & str, ImGuiInputTextFlags flags = 0) -> bool
+            auto InputTextWithHint_adapt_c_string_list = [](const char * label, const char * hint, std::string * str, ImGuiInputTextFlags flags = 0, void * user_data = NULL) -> bool
+            {
+                auto r = InputTextWithHint(label, hint, str, flags, NULL, user_data);
+                return r;
+            };
+            auto InputTextWithHint_adapt_modifiable_immutable = [&InputTextWithHint_adapt_c_string_list](const char * label, const char * hint, BoxedString & str, ImGuiInputTextFlags flags = 0, void * user_data = NULL) -> bool
             {
                 std::string * str_boxed_value = & (str.value);
 
-                auto r = InputTextWithHint(label, hint, str_boxed_value, flags);
+                auto r = InputTextWithHint_adapt_c_string_list(label, hint, str_boxed_value, flags, user_data);
                 return r;
             };
 
-            return InputTextWithHint_adapt_modifiable_immutable(label, hint, str, flags);
-        },     py::arg("label"), py::arg("hint"), py::arg("str"), py::arg("flags") = 0);
+            return InputTextWithHint_adapt_modifiable_immutable(label, hint, str, flags, user_data);
+        },     py::arg("label"), py::arg("hint"), py::arg("str"), py::arg("flags") = 0, py::arg("user_data") = py::none());
     // </namespace ImGui>
     ////////////////////    </generated_from:imgui_stdlib.h>    ////////////////////
 

@@ -1,6 +1,6 @@
 """
-Applies a simple patch to imgui.h that will include the std::string signatures for InputText
-(taken from existing imgui/misc/cpp/imgui_stdlib.h)
+Applies a simple patch to imgui.h
+This is not used anymore, since imgui binding generation now works without any modification.
 """
 import os
 import patch
