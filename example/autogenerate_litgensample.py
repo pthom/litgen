@@ -25,7 +25,7 @@ def my_code_style_options() -> litgen.LitgenOptions:
 
     options.srcml_options.api_suffixes = ["MY_API"]
 
-    options.fn_params_replace_buffer_by_array_regexes = [r".*"]
+    options.fn_params_replace_buffer_by_array__regexes = [r".*"]
 
     options.srcml_options.function_name_exclude_regexes = []
 
@@ -36,8 +36,8 @@ def my_code_style_options() -> litgen.LitgenOptions:
 
     # options.python_max_consecutive_empty_lines = 2
 
-    options.fn_params_replace_modifiable_immutable_by_boxed_regexes = [r"^Toggle", r"^Modify"]
-    options.fn_params_output_modifiable_immutable_to_return_regexes = [r"^Slider"]
+    options.fn_params_replace_modifiable_immutable_by_boxed__regexes = [r"^Toggle", r"^Modify"]
+    options.fn_params_output_modifiable_immutable_to_return__regexes = [r"^Slider"]
 
     return options
 

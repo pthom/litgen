@@ -20,9 +20,9 @@ def adapt_exclude_params(adapted_function: AdaptedFunction) -> Optional[LambdaAd
 
     def shall_exclude(param: CppParameter):
         param_name = param.decl.decl_name
-        matches_regex_name = code_utils.does_match_regexes(options.fn_params_exclude_names_regexes, param_name)
+        matches_regex_name = code_utils.does_match_regexes(options.fn_params_exclude_names__regexes, param_name)
         param_cpp_type = param.decl.cpp_type.str_code()
-        matches_regex_type = code_utils.does_match_regexes(options.fn_params_exclude_types_regexes, param_cpp_type)
+        matches_regex_type = code_utils.does_match_regexes(options.fn_params_exclude_types__regexes, param_cpp_type)
         has_default_value = param.has_default_value()
         r = (matches_regex_name or matches_regex_type) and has_default_value
         return r

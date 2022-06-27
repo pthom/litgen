@@ -1,6 +1,8 @@
 import copy
 from typing import List, Optional
 
+from codemanip import code_utils
+
 from srcmlcpp.srcml_types import CppParameter
 
 from litgen.internal.adapt_function_params._lambda_adapter import LambdaAdapter
@@ -41,7 +43,16 @@ def adapt_c_arrays(adapted_function: AdaptedFunction) -> Optional[LambdaAdapter]
             }
     """
     options = adapted_function.options
-    if not options.c_array_const_flag_replace and not options.c_array_modifiable_flag_replace:
+
+    function_name = adapted_function.cpp_adapted_function.function_name
+    flag_replace_const_c_array_by_std_array = code_utils.does_match_regexes(
+        options.fn_params_replace_const_c_array_by_std_array__regexes, function_name
+    )
+    flag_replace_modifiable_c_array_by_boxed = code_utils.does_match_regexes(
+        options.fn_params_replace_modifiable_c_array_by_boxed__regexes, function_name
+    )
+
+    if not flag_replace_const_c_array_by_std_array and not flag_replace_modifiable_c_array_by_boxed:
         return None
 
     needs_adapt = False
@@ -66,7 +77,7 @@ def adapt_c_arrays(adapted_function: AdaptedFunction) -> Optional[LambdaAdapter]
         old_cpp_decl = old_adapted_param.adapted_decl().cpp_element()
         if old_cpp_decl.is_c_array_known_fixed_size(options.srcml_options):
 
-            if old_cpp_decl.is_const() and options.c_array_const_flag_replace:
+            if old_cpp_decl.is_const() and flag_replace_const_c_array_by_std_array:
                 was_replaced = True
                 # Create new calling param (const std::array &)
                 new_adapted_decl = old_adapted_param.adapted_decl().c_array_fixed_size_to_const_std_array()
@@ -77,11 +88,11 @@ def adapt_c_arrays(adapted_function: AdaptedFunction) -> Optional[LambdaAdapter]
                 # Fill adapted_cpp_parameter_list (those that will call the original C style function)
                 lambda_adapter.adapted_cpp_parameter_list.append(new_adapted_decl.decl_name_cpp() + ".data()")
 
-            elif not old_cpp_decl.is_const() and options.c_array_modifiable_flag_replace:
+            elif not old_cpp_decl.is_const() and flag_replace_modifiable_c_array_by_boxed:
                 array_size_int = old_cpp_decl.c_array_size_as_int(options.srcml_options)
                 assert array_size_int is not None
 
-                if array_size_int <= options.c_array_modifiable_max_size:
+                if array_size_int <= options.fn_params_replace_modifiable_c_array__max_size:
 
                     was_replaced = True
 

@@ -10,8 +10,8 @@ def test_exclude_params():
     options = litgen.LitgenOptions()
 
     code = "void foo(int a, bool flag1, MyCallback callback = nullptr, bool flag2 = true);"
-    options.fn_params_exclude_types_regexes = ["Callback$"]
-    options.fn_params_exclude_names_regexes = ["^flag"]
+    options.fn_params_exclude_types__regexes = ["Callback$"]
+    options.fn_params_exclude_names__regexes = ["^flag"]
 
     generated_code = litgen.generate_code(options, code)
     # logging. warning("\n" + generated_code.pydef_code)

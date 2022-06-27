@@ -7,7 +7,7 @@ import litgen
 
 def test_modifiable_immutable_simple():
     options = litgen.LitgenOptions()
-    options.fn_params_replace_modifiable_immutable_by_boxed_regexes = [r".*"]
+    options.fn_params_replace_modifiable_immutable_by_boxed__regexes = [r".*"]
     code = "void foo(float * v);"
     generated_code = litgen.generate_code(options, code)
 
@@ -87,7 +87,7 @@ def test_modifiable_immutable_simple():
 
 def test_modifiable_immutable_mixed_with_buffer():
     options = litgen.LitgenOptions()
-    options.fn_params_replace_modifiable_immutable_by_boxed_regexes = [r".*"]
+    options.fn_params_replace_modifiable_immutable_by_boxed__regexes = [r".*"]
     code = "void foo(float * buf, int buf_size);"
     generated_code = litgen.generate_code(options, code)
     # logging.warning("\n" + generated_code.stub_code)

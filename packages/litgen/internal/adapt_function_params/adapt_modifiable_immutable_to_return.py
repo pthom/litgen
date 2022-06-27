@@ -41,7 +41,7 @@ def adapt_modifiable_immutable_to_return(adapted_function: AdaptedFunction) -> O
 
     function_name = adapted_function.cpp_adapted_function.function_name
     if not code_utils.does_match_regexes(
-        options.fn_params_output_modifiable_immutable_to_return_regexes, function_name
+        options.fn_params_output_modifiable_immutable_to_return__regexes, function_name
     ):
         return None
 

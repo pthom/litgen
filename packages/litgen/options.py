@@ -106,7 +106,7 @@ class LitgenOptions:
     # fn_params_buffer_replace_by_array_regexes contains a list of regexes on functions names
     # for which this transformation will be applied.
     # Set it to [r".*"] to apply this to all functions (which is the default), set it to [] to disable it
-    fn_params_replace_buffer_by_array_regexes: List[str] = [r".*"]
+    fn_params_replace_buffer_by_array__regexes: List[str] = [r".*"]
     # buffer_types List[str]. Which means that `uint8_t*` are considered as possible buffers
     fn_params_buffer_types: List[str] = [
         "byte",
@@ -130,11 +130,15 @@ class LitgenOptions:
     #
     # C style arrays functions and methods parameters
     #
-    # If c_array_const_flag_replace is active, then signatures like
+    # If active, then signatures like
     #       void foo_const(const int input[2])
     # will be transformed to:
     #       void foo_const(const std::array<int, 2>& input)
-    c_array_const_flag_replace = True
+    #
+    # fn_params_buffer_replace_by_array_regexes contains a list of regexes on functions names
+    # for which this transformation will be applied.
+    # Set it to [r".*"] to apply this to all functions, set it to [] to disable it
+    fn_params_replace_const_c_array_by_std_array__regexes: List[str] = [".*"]
 
     # If c_array_modifiable_flag_replace is active, then signatures like
     #       void foo_non_const(int output[2])
@@ -142,8 +146,11 @@ class LitgenOptions:
     #       void foo_non_const(BoxedInt & output_0, BoxedInt & output_1)
     # (c_array_modifiable_max_size is the maximum number of params that can be boxed like this)
     #
-    c_array_modifiable_flag_replace = True
-    c_array_modifiable_max_size = 10
+    # fn_params_replace_modifiable_c_array_by_boxed__regexes contains a list of regexes on functions names
+    # for which this transformation will be applied.
+    # Set it to [r".*"] to apply this to all functions, set it to [] to disable it
+    fn_params_replace_modifiable_c_array_by_boxed__regexes: List[str] = [".*"]
+    fn_params_replace_modifiable_c_array__max_size = 10
 
     # If c_string_list_flag_replace is active, then C string lists `(const char **, size_t)`
     # will be replaced by `const std::vector<std::string>&`. For example:
@@ -153,46 +160,42 @@ class LitgenOptions:
     #
     # fn_params_replace_c_string_list_regexes contains a list of regexes on functions names
     # for which this transformation will be applied.
-    # Set it to [r".*"] to apply this to all functions (which is the default), set it to [] to disable it
-    fn_params_replace_c_string_list_regexes: List[str] = []
+    # Set it to [r".*"] to apply this to all functions, set it to [] to disable it
+    fn_params_replace_c_string_list__regexes: List[str] = []
 
-    """
-    fn_params_adapt_modifiable_immutable:
-    adapt functions params that use non cont pointers or reference to a type that is immutable in python.
+    # fn_params_adapt_modifiable_immutable:
+    # adapt functions params that use non cont pointers or reference to a type that is immutable in python.
+    #
+    # For example
+    #     int foo(int* value)
+    # From python, the adapted signature will be:
+    #     def foo(BoxedInt value) -> int
+    #
+    # So that any modification done on the C++ side can be seen from python.
+    #
+    # fn_params_adapt_modifiable_immutable_regexes contains a list of regexes on functions names
+    # Set it to [r".*"] to apply this to all functions. Set it to [] to disable it
+    fn_params_replace_modifiable_immutable_by_boxed__regexes: List[str] = []
 
-    For example
-        int foo(int* value)
-    From python, the adapted signature will be:
-        def foo(BoxedInt value) -> int
-
-    So that any modification done on the C++ side can be seen from python.
-
-    fn_params_adapt_modifiable_immutable_regexes contains a list of regexes on functions names
-    for which this transformation will be applied. Set it to [r".*"] to apply this to all functions.
-    """
-    fn_params_replace_modifiable_immutable_by_boxed_regexes: List[str] = []
-
-    """
-    fn_params_adapt_modifiable_immutable_to_return_regexes:
-    adapt functions params that use non const pointers or reference to a type that is immutable in python
-    by adding the modified value to the returned type of the function (which will now be a tuple)
-
-    For example
-        int foo(int* value)
-    From python, the adapted signature will be:
-        def foo(int value) -> Tuple[int, bool]
-
-    So that any modification done on the C++ side can be seen from python.
-
-    fn_params_adapt_modifiable_immutable_to_return_regexes contains a list of regexes on functions names
-    for which this transformation will be applied. Set it to [r".*"] to apply this to all functions.
-    """
-    fn_params_output_modifiable_immutable_to_return_regexes: List[str] = []
+    # fn_params_adapt_modifiable_immutable_to_return_regexes:
+    # adapt functions params that use non const pointers or reference to a type that is immutable in python
+    # by adding the modified value to the returned type of the function (which will now be a tuple)
+    #
+    # For example
+    #     int foo(int* value)
+    # From python, the adapted signature will be:
+    #     def foo(int value) -> Tuple[int, bool]
+    #
+    # So that any modification done on the C++ side can be seen from python.
+    #
+    # fn_params_output_modifiable_immutable_to_return__regexes contains a list of regexes on functions names
+    # Set it to [r".*"] to apply this to all functions. Set it to [] to disable it
+    fn_params_output_modifiable_immutable_to_return__regexes: List[str] = []
 
     # Remove some params from the python published interface. A param can only be removed if it has a default value
     # in the C++ signature
-    fn_params_exclude_names_regexes: List[str] = []
-    fn_params_exclude_types_regexes: List[str] = []
+    fn_params_exclude_names__regexes: List[str] = []
+    fn_params_exclude_types__regexes: List[str] = []
 
     ################################################################################
     ################################################################################
@@ -201,7 +204,7 @@ class LitgenOptions:
     ################################################################################
 
     # Force using py::overload for functions that matches these regexes
-    fn_force_overload_regexes: List[str] = []
+    fn_force_overload__regexes: List[str] = []
     # If true, all functions that returns pointers will have the policy `pybind11::return_value_policy::reference)`
     fn_force_return_policy_reference_for_pointers: bool = False
     fn_force_return_policy_reference_for_references: bool = False

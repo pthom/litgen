@@ -40,7 +40,7 @@ def litgen_options_imgui() -> LitgenOptions:
     options.original_location_flag_show = True
     options.original_signature_flag_show = True
 
-    options.fn_params_replace_buffer_by_array_regexes = [r".*"]
+    options.fn_params_replace_buffer_by_array__regexes = [r".*"]
 
     options.srcml_options.functions_api_prefixes = ["IMGUI_API"]
     options.srcml_options.header_guard_suffixes.append("IMGUI_DISABLE")
@@ -111,7 +111,7 @@ def litgen_options_imgui() -> LitgenOptions:
 
     options.srcml_options.class_name_exclude_regexes = [r"^ImVector\b", "ImGuiTextBuffer"]
 
-    options.fn_force_overload_regexes = [
+    options.fn_force_overload__regexes = [
         r"^SetScroll",
         r"^Drag",
         r"^Slider",
@@ -121,7 +121,7 @@ def litgen_options_imgui() -> LitgenOptions:
         r"^Table",
     ]
 
-    options.fn_params_exclude_types_regexes = [
+    options.fn_params_exclude_types__regexes = [
         "Callback$"  # Exclude callbacks from the params when they have a default value
         # (since imgui use bare C function pointers, not easily portable)
     ]
@@ -133,6 +133,6 @@ def litgen_options_imgui() -> LitgenOptions:
     # options.fn_params_adapt_modifiable_immutable_regexes = [r".*"]
 
     # Version where we return tuples
-    options.fn_params_output_modifiable_immutable_to_return_regexes = [r".*"]
+    options.fn_params_output_modifiable_immutable_to_return__regexes = [r".*"]
 
     return options

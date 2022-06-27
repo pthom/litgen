@@ -133,8 +133,8 @@ def test_mixture():
 
 def test_mixture_no_replace():
     options = litgen.LitgenOptions()
-    options.c_array_const_flag_replace = True
-    options.c_array_modifiable_flag_replace = False
+    options.fn_params_replace_const_c_array_by_std_array__regexes = [r".*"]
+    options.fn_params_replace_modifiable_c_array_by_boxed__regexes = []
 
     code = """void foo(bool flag, const double v[2], double outputs[2]);"""
     generated_code = gen_pydef_code(code, options)
