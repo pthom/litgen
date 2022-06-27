@@ -150,7 +150,11 @@ class LitgenOptions:
     #     void foo(const char * const items[], int items_count)
     # will be transformed to:
     #     void foo(const std::vector<std::string>& const items[])
-    c_string_list_flag_replace = True
+    #
+    # fn_params_replace_c_string_list_regexes contains a list of regexes on functions names
+    # for which this transformation will be applied.
+    # Set it to [r".*"] to apply this to all functions (which is the default), set it to [] to disable it
+    fn_params_replace_c_string_list_regexes: List[str] = []
 
     """
     fn_params_adapt_modifiable_immutable:

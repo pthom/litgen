@@ -32,7 +32,9 @@ def adapt_c_string_list(adapted_function: AdaptedFunction) -> Optional[LambdaAda
         },
     """
     options = adapted_function.options
-    if not options.c_string_list_flag_replace:
+    if not code_utils.does_match_regexes(
+        options.fn_params_replace_c_string_list_regexes, adapted_function.cpp_adapted_function.function_name
+    ):
         return None
 
     old_function_params: List[CppParameter] = adapted_function.cpp_adapted_function.parameter_list.parameters

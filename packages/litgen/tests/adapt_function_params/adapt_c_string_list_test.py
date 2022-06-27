@@ -8,6 +8,7 @@ import litgen
 
 def to_pydef(code) -> str:
     options = litgen.LitgenOptions()
+    options.fn_params_replace_c_string_list_regexes = [r".*"]
     pydef_code = litgen.code_to_pydef(options, code)
     return pydef_code
 
