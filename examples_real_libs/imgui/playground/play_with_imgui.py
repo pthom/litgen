@@ -1,6 +1,5 @@
 import lg_imgui as imgui
 
-my_str = imgui.BoxedString("Hello")
 
 ctx = imgui.create_context()
 io = imgui.get_io()
@@ -16,12 +15,33 @@ io.delta_time = 1.0 / 60.0
 
 imgui.new_frame()
 
-f = imgui.BoxedFloat(0.0)
-imgui.text("Hello, world")
-imgui.slider_float("float", f, 0.0, 1.0)
-imgui.show_demo_window(None)
+r = imgui.show_demo_window(None)
 
-imgui.input_text("Text", my_str, imgui.ImGuiInputTextFlags_.auto_select_all)
+imgui.text("Hello, world")
+
+
+def play_with_boxed_types():
+    f = imgui.BoxedFloat(0.0)
+    imgui.slider_float("float", f, 0.0, 1.0)
+
+    my_str = imgui.BoxedString("Hello")
+    imgui.input_text("Text", my_str, imgui.ImGuiInputTextFlags_.auto_select_all)
+
+
+def play_with_multiple_return():
+    f = 5.0
+    changed, f2 = imgui.slider_float("Enter value", f, 0.0, 1.0)
+    assert changed == False
+    assert f2 == 5.0
+
+    text = "A"
+    changed, new_text = imgui.input_text("Enter Text", text)
+    assert changed == False
+    assert new_text == "A"
+
+
+# play_with_boxed_types()
+play_with_multiple_return()
 
 imgui.render()
 
