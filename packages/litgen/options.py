@@ -151,14 +151,33 @@ class LitgenOptions:
     c_string_list_flag_replace = True
 
     """
-    We want to adapt functions params that use modifiable pointer or reference to a type that is immutable in python.
+    fn_params_adapt_modifiable_immutable:
+    adapt functions params that use non cont pointers or reference to a type that is immutable in python.
+
     For example
         int foo(int* value)
     From python, the adapted signature will be:
         def foo(BoxedInt value) -> int
-    So that modification done on the C++ side can be seen from python.
+
+    So that any modification done on the C++ side can be seen from python.
     """
     fn_params_adapt_modifiable_immutable = True
+
+    """
+    fn_params_adapt_modifiable_immutable_to_return:
+    adapt functions params that use non cont pointers or reference to a type that is immutable in python
+    by adding the modified value to the returned type of the function (which will now be a tuple)
+
+    For example
+        int foo(int* value)
+    From python, the adapted signature will be:
+        def foo(int value) -> Tuple[int, bool]
+
+    So that any modification done on the C++ side can be seen from python.
+
+    fn_params_adapt_modifiable_immutable and fn_params_adapt_modifiable_immutable_to_return cannot be set together!
+    """
+    fn_params_adapt_modifiable_immutable_to_return = False
 
     # Remove some params from the python published interface. A param can only be removed if it has a default value
     # in the C++ signature
@@ -218,7 +237,7 @@ class LitgenOptions:
     #
     # Sanity checks and utilities below
     #
-    def assert_buffer_types_are_ok(self) -> None:
+    def check_options_consistency(self) -> None:
         # the only authorized type are those for which the size is known with certainty
         # * int and long are not acceptable candidates: use int8_t, uint_8t, int32_t, etc.
         # * concerning float and doubles, there is no standard for fixed size floats, so we have to cope with
@@ -245,6 +264,11 @@ class LitgenOptions:
                     Authorized types are: { ", ".join(authorized_types) }
                     """
                 )
+
+        if self.fn_params_adapt_modifiable_immutable and self.fn_params_adapt_modifiable_immutable_to_return:
+            raise ValueError(
+                "`fn_params_adapt_modifiable_immutable` and `fn_params_adapt_modifiable_immutable_to_return` are mutually exclusive!"
+            )
 
     def indent_cpp_spaces(self) -> str:
         space = "\t" if self.cpp_indent_with_tabs else " "
