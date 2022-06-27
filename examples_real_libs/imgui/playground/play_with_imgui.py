@@ -39,6 +39,10 @@ def play_with_multiple_return():
     assert changed == False
     assert new_text == "A"
 
+    values = [1.0, 2.0, 3.0]
+    r = imgui.input_float3("Values", values)
+    assert r == (False, [1.0, 2.0, 3.0])
+
 
 # play_with_boxed_types()
 play_with_multiple_return()

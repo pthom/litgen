@@ -1,22 +1,5 @@
 litgen:
-    Sujet input Pointer to return output (tuple) ..
-
-    Sujet / Namespaces
-
-    Ajout / pybind
-        Namespace
-        Trampoline
-        Operators (https://pybind11.readthedocs.io/en/stable/advanced/classes.html#operator-overloading)
-
-    imgui:
-        InputText (need multiple files & options)
-        Signature / ComboBox
-        Test app imgui
-        N profile generate imgui -> remove flag signature
-        N Pas urgent, voire nefaste : ImVector -> List, reprendre impl (template), ou pycast (exclu par regex pour l'instant)
-
-    implot
-        SetupAxisTicks uses a string list, parameters order reversed!
+    function_name_exclude_regexes et compagnie devraient peut-etre sortir de srcml pour aller dans litgen
 
     sujet toString
         toString en hackant str:
@@ -26,10 +9,24 @@ litgen:
         ajouter un test de rapidite sur gen imgui
         remplacer instances de copy.deepcopy par un clone (or remove parent)
 
+    implot
+        SetupAxisTicks uses a string list, parameters order reversed!
+
+    Sujet / Namespaces
+
+    Ajout / pybind
+        Namespace
+        Trampoline
+        Operators (https://pybind11.readthedocs.io/en/stable/advanced/classes.html#operator-overloading)
+
+
 srcmlcpp:
     Refactor: srcmlcpp = main repo, main project, etc
+        separer srcml pur de srcmlcpp ?
     change licence (ethical license for large NNs)
         -> message to science4all: https://www.facebook.com/Science4Allorg/
+    Faire release avec numéro de version
+    Doc & Demo
 
 
 srcmlcpp demos:

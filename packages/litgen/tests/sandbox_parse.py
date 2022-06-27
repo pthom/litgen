@@ -63,9 +63,9 @@ def litgensample_options() -> litgen.LitgenOptions:
 
 
 code = """
-bool SliderVoidIntArray(const char* label, int value[3]);
+IMGUI_API bool ImGui::SliderInt2(const char* label, int v[2], int v_min, int v_max, const char* format, ImGuiSliderFlags flags);
 """
-options = litgensample_options()
+options = litgen_options_imgui()
 # options = litgen.options.LitgenOptions()
 # options.fn_params_replace_modifiable_c_array_by_boxed__regexes = []
 # # options.fn_params_replace_const_c_array_by_std_array__regexes = []
