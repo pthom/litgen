@@ -32,9 +32,12 @@ class AdaptedClassMember(AdaptedDecl):
         options = self.options
         cpp_decl = self.cpp_element()
         array_typename = cpp_decl.cpp_type.str_code()
-        if array_typename not in options.c_array_numeric_member_types:
+        if array_typename not in options.member_numeric_c_array_types:
             return False
-        if not options.c_array_numeric_member_flag_replace:
+        shall_replace = code_utils.does_match_regexes(
+            options.member_numeric_c_array_replace__regexes, cpp_decl.decl_name
+        )
+        if not shall_replace:
             return False
         if cpp_decl.c_array_size_as_int(options.srcml_options) is None:
             return False
@@ -44,7 +47,7 @@ class AdaptedClassMember(AdaptedDecl):
         options = self.options
         cpp_decl = self.cpp_element()
         array_typename = cpp_decl.cpp_type.str_code()
-        if array_typename not in options.c_array_numeric_member_types:
+        if array_typename not in options.member_numeric_c_array_types:
             cpp_decl.emit_warning(
                 """
                 AdaptedClassMember: Only numeric C Style arrays are supported
@@ -53,11 +56,14 @@ class AdaptedClassMember(AdaptedDecl):
             )
             return False
 
-        if not options.c_array_numeric_member_flag_replace:
+        shall_replace = code_utils.does_match_regexes(
+            options.member_numeric_c_array_replace__regexes, cpp_decl.decl_name
+        )
+        if not shall_replace:
             cpp_decl.emit_warning(
                 """
                 AdaptedClassMember: Detected a numeric C Style array, but will not export it.
-                Hint: set `options.c_array_numeric_member_flag_replace = True`
+                Hint: modify `options.member_numeric_c_array_replace__regexes`
                 """,
             )
             return False

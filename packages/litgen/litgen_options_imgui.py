@@ -46,7 +46,7 @@ def litgen_options_imgui() -> LitgenOptions:
     options.srcml_options.header_guard_suffixes.append("IMGUI_DISABLE")
 
     options.fn_params_buffer_types += ["float"]
-    options.c_array_numeric_member_types += [
+    options.member_numeric_c_array_types += [
         "ImGuiID",
         "ImS8",
         "ImU8",
@@ -126,12 +126,11 @@ def litgen_options_imgui() -> LitgenOptions:
         # (since imgui use bare C function pointers, not easily portable)
     ]
 
-    options.fn_force_return_policy_reference_for_pointers = True
-    options.fn_force_return_policy_reference_for_references = True
+    options.fn_return_force_policy_reference_for_pointers__regexes = [r".*"]
+    options.fn_return_force_policy_reference_for_references__regexes = [r".*"]
 
     # Version where we use Boxed types everywhere
     # options.fn_params_adapt_modifiable_immutable_regexes = [r".*"]
-
     # Version where we return tuples
     options.fn_params_output_modifiable_immutable_to_return__regexes = [r".*"]
 

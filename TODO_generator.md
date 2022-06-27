@@ -1,6 +1,4 @@
 litgen:
-    options: fn_params -> regex everywhere
-
     Sujet input Pointer to return output (tuple) ..
 
     Sujet / Namespaces

@@ -7,9 +7,14 @@ from srcmlcpp import SrcmlOptions
 
 
 class LitgenOptions:
-    """Configuration of the code generation (include / excludes, indentation, c++ to python translation settings, etc.)"""
+    """Numerous options to configure litgen code generation.
 
-    #
+    (include / excludes, indentation, c++ to python translation settings, function parameters
+    adaptations, etc.)"""
+
+    ################################################################################
+    #    <srcmlcpp options>
+    ################################################################################
     # There are interesting options to set in SrcmlOptions (see srcmlcpp/srcml_options.py)
     #
     # Notably:
@@ -18,9 +23,9 @@ class LitgenOptions:
     # * Also, fill the excludes if you encounter issues with some functions or declarations you want to ignore
     srcml_options: SrcmlOptions = SrcmlOptions()
 
-    #
-    # Shall the binding show the original location and or signature of elements as a comment
-    #
+    ################################################################################
+    #    <show the original location and or signature of elements as a comment>
+    ################################################################################
     original_location_flag_show = False
     # if showing location, how many parent folders shall be shown
     # (if -1, show the full path)
@@ -28,7 +33,9 @@ class LitgenOptions:
     # If True, the complete C++ original signature will be show as a comment in the python stub (pyi)
     original_signature_flag_show = False
 
-    #
+    ################################################################################
+    #    <Type names translation from C++ to python>
+    ################################################################################
     # List of code replacements when going from C++ to Python
     # These replacements are applied to type names (for example double -> float, vector-> List, etc)
     # as well as comment (which may contain type names)
@@ -40,10 +47,9 @@ class LitgenOptions:
     code_replacements: List[StringReplacement] = []
     comments_replacements: List[StringReplacement] = []
 
-    #
-    # Layout settings for the generated python stub code
-    #
-
+    ################################################################################
+    #    <Layout settings for the generated python stub code>
+    ################################################################################
     # Convert variables and functions names to snake_case (class, structs, and enums names are always preserved)
     python_convert_to_snake_case: bool = True
     # Size of an indentation in the python stubs
@@ -61,34 +67,28 @@ class LitgenOptions:
     python_run_black_formatter: bool = False
     python_black_formatter_line_length: int = 88
 
-    #
-    # Layout settings for the C++ generated pydef code
-    #
-
+    ################################################################################
+    #    <Layout settings for the C++ generated pydef code>
+    ################################################################################
     # Spacing option in C++ code
     cpp_indent_size: int = 4
     cpp_indent_with_tabs: bool = False
 
-    #
-    # enum options
-    #
-
+    ################################################################################
+    #    <enum adaptations>
+    ################################################################################
     # Remove the typical "EnumName_" prefix from enum values.
     # For example, with the C enum:
     #     enum MyEnum { MyEnum_A = 0, MyEnum_B };
     # Values would be named "a" and "b" in python
-    #
     enum_flag_remove_values_prefix: bool = True
     # Skip count value from enums, for example like in:
     #    enum MyEnum { MyEnum_A = 1, MyEnum_B = 1, MyEnum_COUNT };
     enum_flag_skip_count: bool = True
 
     ################################################################################
+    #    <functions and method adaptations>
     ################################################################################
-    #    <adapt_function_params>
-    ################################################################################
-    ################################################################################
-
     #
     # C Buffers to py::array
     #
@@ -161,7 +161,7 @@ class LitgenOptions:
     # fn_params_replace_c_string_list_regexes contains a list of regexes on functions names
     # for which this transformation will be applied.
     # Set it to [r".*"] to apply this to all functions, set it to [] to disable it
-    fn_params_replace_c_string_list__regexes: List[str] = []
+    fn_params_replace_c_string_list__regexes: List[str] = [r".*"]
 
     # fn_params_adapt_modifiable_immutable:
     # adapt functions params that use non cont pointers or reference to a type that is immutable in python.
@@ -197,18 +197,16 @@ class LitgenOptions:
     fn_params_exclude_names__regexes: List[str] = []
     fn_params_exclude_types__regexes: List[str] = []
 
-    ################################################################################
-    ################################################################################
-    #    </adapt_function_params>
-    ################################################################################
-    ################################################################################
-
     # Force using py::overload for functions that matches these regexes
     fn_force_overload__regexes: List[str] = []
-    # If true, all functions that returns pointers will have the policy `pybind11::return_value_policy::reference)`
-    fn_force_return_policy_reference_for_pointers: bool = False
-    fn_force_return_policy_reference_for_references: bool = False
 
+    # If true, all functions that returns pointers will have the policy `pybind11::return_value_policy::reference)`
+    fn_return_force_policy_reference_for_pointers__regexes: List[str] = []
+    fn_return_force_policy_reference_for_references__regexes: List[str] = []
+
+    ################################################################################
+    #    <class and struct member adaptations>
+    ################################################################################
     #
     # C style arrays structs and class members
     #
@@ -216,9 +214,9 @@ class LitgenOptions:
     #       struct Foo {  int values[10]; };
     # will be transformed to a property that points to a numpy array
     # which can be read/written from python (this requires numpy)
-    c_array_numeric_member_flag_replace = True
+    member_numeric_c_array_replace__regexes: List[str] = [r".*"]
     # list of numeric types that can be stored in a numpy array
-    c_array_numeric_member_types = [  # don't include char !
+    member_numeric_c_array_types = [  # don't include char, don't include byte, those are not numeric!
         "int",  # See https://numpy.org/doc/stable/reference/generated/numpy.chararray.html
         "unsigned int",
         "long",
@@ -239,17 +237,15 @@ class LitgenOptions:
         "bool",
     ]
 
-    #
-    # Options that need rework
-    #
-    # Shall we generate a __str__() method for structs
+    ################################################################################
+    #    <unclassified options>
+    ################################################################################
+    # Shall we generate a __str__() method for structs / Work in progress!
     generate_to_string: bool = False
-    # Function that may generate additional code in the function defined in the  __init__.py file of the package
-    # poub_init_function_python_additional_code: Optional[Callable[[FunctionsInfos], str]]
 
-    #
-    # Sanity checks and utilities below
-    #
+    ################################################################################
+    #    <Sanity checks and utilities below>
+    ################################################################################
     def check_options_consistency(self) -> None:
         # the only authorized type are those for which the size is known with certainty
         # * int and long are not acceptable candidates: use int8_t, uint_8t, int32_t, etc.

@@ -345,9 +345,18 @@ class AdaptedFunction(AdaptedElement):
             self.cpp_element().cpp_element_comments.comment_on_previous_lines = comment_on_previous_lines
 
         # Take options.fn_force_return_policy_reference_for_pointers into account
-        if (self.options.fn_force_return_policy_reference_for_pointers and self.cpp_element().returns_pointer()) or (
-            self.options.fn_force_return_policy_reference_for_references and self.cpp_element().returns_reference()
-        ):
+        function_name = self.cpp_adapted_function.function_name
+        options = self.options
+        returns_pointer = self.cpp_element().returns_pointer()
+        returns_reference = self.cpp_element().returns_reference()
+        matches_regex_pointer = code_utils.does_match_regexes(
+            options.fn_return_force_policy_reference_for_pointers__regexes, function_name
+        )
+        matches_regex_reference = code_utils.does_match_regexes(
+            options.fn_return_force_policy_reference_for_references__regexes, function_name
+        )
+
+        if (matches_regex_pointer and returns_pointer) or (matches_regex_reference and returns_reference):
             self.return_value_policy = "reference"
             self.cpp_element().emit_message(
                 "Forced function return_value_policy to reference",
