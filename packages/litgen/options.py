@@ -107,6 +107,7 @@ class LitgenOptions:
     buffer_flag_replace_by_array = True
     # buffer_types List[str]. Which means that `uint8_t*` are considered as possible buffers
     buffer_types: List[str] = [
+        "byte",
         "uint8_t",
         "int8_t",
         "uint16_t",
@@ -223,6 +224,7 @@ class LitgenOptions:
         # * concerning float and doubles, there is no standard for fixed size floats, so we have to cope with
         #   float, double and long double and their various platforms implementations...
         authorized_types = [
+            "byte",
             "uint8_t",
             "int8_t",
             "uint16_t",
