@@ -359,7 +359,7 @@ def enum_element_is_count(options: LitgenOptions, enum: CppEnum, enum_element: C
     is_class_enum = enum.enum_type == "class"
     value_name = enum_element.decl_name
 
-    if not code_utils.var_name_looks_like_size_name(value_name, options.buffer_size_names):
+    if not code_utils.var_name_looks_like_size_name(value_name, options.fn_params_buffer_size_names):
         return False
 
     if is_class_enum:
@@ -370,7 +370,7 @@ def enum_element_is_count(options: LitgenOptions, enum: CppEnum, enum_element: C
 
 
 def looks_like_size_param(options: LitgenOptions, param_c: CppParameter) -> bool:
-    r = code_utils.var_name_looks_like_size_name(param_c.decl.decl_name, options.buffer_size_names)
+    r = code_utils.var_name_looks_like_size_name(param_c.decl.decl_name, options.fn_params_buffer_size_names)
     return r
 
 

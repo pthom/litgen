@@ -13,18 +13,18 @@ from litgen.internal.adapted_types import AdaptedFunction
 
 
 def _possible_buffer_pointer_types(options: LitgenOptions) -> List[str]:
-    types = [t + "*" for t in options.buffer_types] + [t + " *" for t in options.buffer_types]
+    types = [t + "*" for t in options.fn_params_buffer_types] + [t + " *" for t in options.fn_params_buffer_types]
     return types
 
 
 def _possible_buffer_template_pointer_types(options: LitgenOptions) -> List[str]:
-    types = [t + "*" for t in options.buffer_template_types] + [t + " *" for t in options.buffer_template_types]
+    types = [t + "*" for t in options.fn_params_buffer_template_types] + [
+        t + " *" for t in options.fn_params_buffer_template_types
+    ]
     return types
 
 
 def _looks_like_param_buffer_standard(options: LitgenOptions, param: CppParameter) -> bool:
-    if not options.buffer_flag_replace_by_array:
-        return False
     for possible_buffer_type in _possible_buffer_pointer_types(options):
         param_type_code = param.full_type()
         if code_utils.contains_pointer_type(param_type_code, possible_buffer_type):
@@ -33,8 +33,6 @@ def _looks_like_param_buffer_standard(options: LitgenOptions, param: CppParamete
 
 
 def _looks_like_param_template_buffer(options: LitgenOptions, param: CppParameter) -> bool:
-    if not options.buffer_flag_replace_by_array:
-        return False
     for possible_buffer_type in _possible_buffer_template_pointer_types(options):
         param_type_code = param.full_type()
         if code_utils.contains_pointer_type(param_type_code, possible_buffer_type):
@@ -47,7 +45,7 @@ def _name_looks_like_buffer_standard_or_template(options: LitgenOptions, param: 
 
 
 def _name_looks_like_buffer_size(options: LitgenOptions, param: CppParameter) -> bool:
-    return code_utils.var_name_looks_like_size_name(param.variable_name(), options.buffer_size_names)
+    return code_utils.var_name_looks_like_size_name(param.variable_name(), options.fn_params_buffer_size_names)
 
 
 class _AdaptBuffersHelper:
@@ -113,7 +111,10 @@ class _AdaptBuffersHelper:
             return r
 
     def shall_adapt(self) -> bool:
-        if not self.options.buffer_flag_replace_by_array:
+        if not code_utils.does_match_regexes(
+            self.options.fn_params_buffer_replace_by_array_regexes,
+            self.adapted_function.cpp_adapted_function.function_name,
+        ):
             return False
         for idx in range(self._nb_params()):
             if self._is_buffer_template_or_not(idx):

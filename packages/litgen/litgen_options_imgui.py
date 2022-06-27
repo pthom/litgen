@@ -40,12 +40,12 @@ def litgen_options_imgui() -> LitgenOptions:
     options.original_location_flag_show = True
     options.original_signature_flag_show = True
 
-    options.buffer_flag_replace_by_array = True
+    options.fn_params_buffer_replace_by_array_regexes = [r".*"]
 
     options.srcml_options.functions_api_prefixes = ["IMGUI_API"]
     options.srcml_options.header_guard_suffixes.append("IMGUI_DISABLE")
 
-    options.buffer_types += ["float"]
+    options.fn_params_buffer_types += ["float"]
     options.c_array_numeric_member_types += [
         "ImGuiID",
         "ImS8",

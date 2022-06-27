@@ -103,9 +103,12 @@ class LitgenOptions:
     #       void mul_inside_array(py::array & array, double factor)
     # (and factor will be down-casted to the target type)
     #
-    buffer_flag_replace_by_array = True
+    # fn_params_buffer_replace_by_array_regexes contains a list of regexes on functions names
+    # for which this transformation will be applied.
+    # Set it to [r".*"] to apply this to all functions (which is the default), set it to [] to disable it
+    fn_params_buffer_replace_by_array_regexes: List[str] = [r".*"]
     # buffer_types List[str]. Which means that `uint8_t*` are considered as possible buffers
-    buffer_types: List[str] = [
+    fn_params_buffer_types: List[str] = [
         "byte",
         "uint8_t",
         "int8_t",
@@ -119,10 +122,10 @@ class LitgenOptions:
         "double",
         "long double",
     ]
-    buffer_template_types: List[str] = [
+    fn_params_buffer_template_types: List[str] = [
         "T"
     ]  # Which means that templated functions using a buffer use T as a templated name
-    buffer_size_names: List[str] = ["nb", "size", "count", "total", "n"]
+    fn_params_buffer_size_names: List[str] = ["nb", "size", "count", "total", "n"]
 
     #
     # C style arrays functions and methods parameters
@@ -259,7 +262,7 @@ class LitgenOptions:
             "double",
             "long double",
         ]
-        for buffer_type in self.buffer_types:
+        for buffer_type in self.fn_params_buffer_types:
             if buffer_type not in authorized_types:
                 raise ValueError(
                     f"""

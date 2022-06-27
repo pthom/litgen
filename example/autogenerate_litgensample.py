@@ -25,7 +25,7 @@ def my_code_style_options() -> litgen.LitgenOptions:
 
     options.srcml_options.api_suffixes = ["MY_API"]
 
-    options.buffer_flag_replace_by_array = True
+    options.fn_params_buffer_replace_by_array_regexes = [r".*"]
 
     options.srcml_options.function_name_exclude_regexes = []
 
