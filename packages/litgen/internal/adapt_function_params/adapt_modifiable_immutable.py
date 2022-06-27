@@ -41,7 +41,9 @@ def adapt_modifiable_immutable(adapted_function: AdaptedFunction) -> Optional[La
     options = adapted_function.options
 
     function_name = adapted_function.cpp_adapted_function.function_name
-    if not code_utils.does_match_regexes(options.fn_params_adapt_modifiable_immutable_regexes, function_name):
+    if not code_utils.does_match_regexes(
+        options.fn_params_replace_modifiable_immutable_by_boxed_regexes, function_name
+    ):
         return None
 
     needs_adapt = False

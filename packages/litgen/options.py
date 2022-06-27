@@ -106,7 +106,7 @@ class LitgenOptions:
     # fn_params_buffer_replace_by_array_regexes contains a list of regexes on functions names
     # for which this transformation will be applied.
     # Set it to [r".*"] to apply this to all functions (which is the default), set it to [] to disable it
-    fn_params_buffer_replace_by_array_regexes: List[str] = [r".*"]
+    fn_params_replace_buffer_by_array_regexes: List[str] = [r".*"]
     # buffer_types List[str]. Which means that `uint8_t*` are considered as possible buffers
     fn_params_buffer_types: List[str] = [
         "byte",
@@ -134,14 +134,14 @@ class LitgenOptions:
     #       void foo_const(const int input[2])
     # will be transformed to:
     #       void foo_const(const std::array<int, 2>& input)
-    #
+    c_array_const_flag_replace = True
+
     # If c_array_modifiable_flag_replace is active, then signatures like
     #       void foo_non_const(int output[2])
     # will be transformed to:
     #       void foo_non_const(BoxedInt & output_0, BoxedInt & output_1)
     # (c_array_modifiable_max_size is the maximum number of params that can be boxed like this)
     #
-    c_array_const_flag_replace = True
     c_array_modifiable_flag_replace = True
     c_array_modifiable_max_size = 10
 
@@ -170,7 +170,7 @@ class LitgenOptions:
     fn_params_adapt_modifiable_immutable_regexes contains a list of regexes on functions names
     for which this transformation will be applied. Set it to [r".*"] to apply this to all functions.
     """
-    fn_params_adapt_modifiable_immutable_regexes: List[str] = []
+    fn_params_replace_modifiable_immutable_by_boxed_regexes: List[str] = []
 
     """
     fn_params_adapt_modifiable_immutable_to_return_regexes:
@@ -187,7 +187,7 @@ class LitgenOptions:
     fn_params_adapt_modifiable_immutable_to_return_regexes contains a list of regexes on functions names
     for which this transformation will be applied. Set it to [r".*"] to apply this to all functions.
     """
-    fn_params_adapt_modifiable_immutable_to_return_regexes: List[str] = []
+    fn_params_output_modifiable_immutable_to_return_regexes: List[str] = []
 
     # Remove some params from the python published interface. A param can only be removed if it has a default value
     # in the C++ signature

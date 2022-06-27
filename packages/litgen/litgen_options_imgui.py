@@ -40,7 +40,7 @@ def litgen_options_imgui() -> LitgenOptions:
     options.original_location_flag_show = True
     options.original_signature_flag_show = True
 
-    options.fn_params_buffer_replace_by_array_regexes = [r".*"]
+    options.fn_params_replace_buffer_by_array_regexes = [r".*"]
 
     options.srcml_options.functions_api_prefixes = ["IMGUI_API"]
     options.srcml_options.header_guard_suffixes.append("IMGUI_DISABLE")
@@ -133,6 +133,6 @@ def litgen_options_imgui() -> LitgenOptions:
     # options.fn_params_adapt_modifiable_immutable_regexes = [r".*"]
 
     # Version where we return tuples
-    options.fn_params_adapt_modifiable_immutable_to_return_regexes = [r".*"]
+    options.fn_params_output_modifiable_immutable_to_return_regexes = [r".*"]
 
     return options
