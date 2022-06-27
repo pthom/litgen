@@ -177,6 +177,10 @@ def test_adapt_modifiable_immutable_to_return():
     r = litgensample.slider_void_int_default_null("Hello", 1)
     assert r == (True, 2)
 
+    ints = [1, 2, 3]
+    r = litgensample.slider_void_int_array("Hello", ints)
+    assert r == (True, [2, 4, 6])
+
 
 # test_adapt_modifiable_immutable_to_return()
 # test_modify_string()

@@ -49,7 +49,7 @@ def adapt_modifiable_immutable(adapted_function: AdaptedFunction) -> Optional[La
     needs_adapt = False
 
     for old_adapted_param in adapted_function.adapted_parameters():
-        if old_adapted_param.is_modifiable_python_immutable():
+        if old_adapted_param.is_modifiable_python_immutable_ref_or_pointer():
             needs_adapt = True
 
     if not needs_adapt:
@@ -66,7 +66,7 @@ def adapt_modifiable_immutable(adapted_function: AdaptedFunction) -> Optional[La
     for old_adapted_param in old_function_params:
         was_replaced = False
 
-        if old_adapted_param.is_modifiable_python_immutable():
+        if old_adapted_param.is_modifiable_python_immutable_ref_or_pointer():
             was_replaced = True
 
             is_pointer = old_adapted_param.cpp_element().decl.cpp_type.modifiers == ["*"]

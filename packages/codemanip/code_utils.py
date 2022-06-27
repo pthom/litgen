@@ -696,6 +696,11 @@ def make_regex_any_variable_starting_with(what_to_find: str) -> str:
     return regex
 
 
+def make_regex_exclude_word(which_word: str) -> str:
+    regex = rf"^((?!{which_word}).)*$"
+    return regex
+
+
 def merge_dicts(dict1: Dict[str, Any], dict2: Dict[str, Any]) -> Dict[str, Any]:
     res = {**dict1, **dict2}
     return res

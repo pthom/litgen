@@ -150,6 +150,13 @@ namespace LiterateGeneratorExample // MY_API
             *value += 1;
         return true;
     }
+    MY_API bool SliderVoidIntArray(const char* label, int value[3])
+    {
+        value[0] += 1;
+        value[1] += 2;
+        value[2] += 3;
+        return true;
+    }
 
 
 
@@ -220,5 +227,5 @@ namespace LiterateGeneratorExample // MY_API
     //
     MY_API void ModifyString(std::string* s) { (*s) += "hello"; }
 
-//
+
 } // namespace LiterateGeneratorExample

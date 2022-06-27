@@ -1,6 +1,8 @@
 import os
 import sys
 
+from codemanip import code_utils
+
 import srcmlcpp
 
 import litgen
@@ -25,10 +27,6 @@ def my_code_style_options() -> litgen.LitgenOptions:
 
     options.srcml_options.api_suffixes = ["MY_API"]
 
-    options.fn_params_replace_buffer_by_array__regexes = [r".*"]
-
-    options.srcml_options.function_name_exclude_regexes = []
-
     # options.original_location_flag_show = True
     # options.original_location_nb_parent_folders = 0
     # options.original_signature_flag_show = True
@@ -36,7 +34,13 @@ def my_code_style_options() -> litgen.LitgenOptions:
 
     # options.python_max_consecutive_empty_lines = 2
 
-    options.fn_params_replace_modifiable_immutable_by_boxed__regexes = [r"^Toggle", r"^Modify"]
+    # options.fn_params_replace_c_string_list__regexes = [
+    options.fn_params_replace_buffer_by_array__regexes = [code_utils.make_regex_exclude_word("Slider")]
+    options.fn_params_replace_modifiable_c_array_by_boxed__regexes = ["array", "GetPoints", r"c_string_list_total_size"]
+    options.fn_params_replace_modifiable_immutable_by_boxed__regexes = [
+        r"^Toggle",
+        r"^Modify",
+    ]
     options.fn_params_output_modifiable_immutable_to_return__regexes = [r"^Slider"]
 
     return options

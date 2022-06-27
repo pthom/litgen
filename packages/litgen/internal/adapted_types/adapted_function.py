@@ -28,7 +28,20 @@ class AdaptedParameter(AdaptedElement):
     def _str_pydef_lines(self) -> List[str]:
         raise NotImplementedError()
 
-    def is_modifiable_python_immutable(self) -> bool:
+    def is_modifiable_python_immutable_fixed_size_array(self) -> bool:
+        is_python_immutable = self.adapted_decl().is_immutable_for_python()
+
+        type_modifiers = self.cpp_element().decl.cpp_type.modifiers
+        type_specifiers = self.cpp_element().decl.cpp_type.specifiers
+
+        has_no_modifiers = type_modifiers == []
+        is_fixed_size_array = self.cpp_element().decl.is_c_array_known_fixed_size()
+        is_const = "const" in type_specifiers
+
+        r = has_no_modifiers and is_fixed_size_array and is_python_immutable and not is_const
+        return r
+
+    def is_modifiable_python_immutable_ref_or_pointer(self) -> bool:
         is_python_immutable = self.adapted_decl().is_immutable_for_python()
 
         type_modifiers = self.cpp_element().decl.cpp_type.modifiers

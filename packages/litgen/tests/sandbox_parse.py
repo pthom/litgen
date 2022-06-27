@@ -51,11 +51,24 @@ def play_pydef(code, options) -> None:
     print(f">>>\n{pyi_code}<<<")
 
 
+def litgensample_options() -> litgen.LitgenOptions:
+    options = litgen.LitgenOptions()
+    # options.fn_params_replace_buffer_by_array__regexes = [r".*"]
+    # options.fn_params_replace_modifiable_immutable_by_boxed__regexes = [r"^Toggle", r"^Modify"]
+    # options.fn_params_output_modifiable_immutable_to_return__regexes = [r"^Slider"]
+
+    options.fn_params_replace_modifiable_c_array_by_boxed__regexes = ["array"]
+    options.fn_params_output_modifiable_immutable_to_return__regexes = [r".*"]
+    return options
+
+
 code = """
-bool SliderFloat4(const char* text, float values[4]);
+bool SliderVoidIntArray(const char* label, int value[3]);
 """
-options = litgen.options.LitgenOptions()
-options.fn_params_replace_modifiable_c_array_by_boxed__regexes = []
-# options.fn_params_replace_const_c_array_by_std_array__regexes = []
+options = litgensample_options()
+# options = litgen.options.LitgenOptions()
+# options.fn_params_replace_modifiable_c_array_by_boxed__regexes = []
+# # options.fn_params_replace_const_c_array_by_std_array__regexes = []
+# options.fn_params_output_modifiable_immutable_to_return__regexes = [r".*"]
 # play_stub(code, options)
 play_pydef(code, options)

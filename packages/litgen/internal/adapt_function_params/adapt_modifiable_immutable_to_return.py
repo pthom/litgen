@@ -2,6 +2,7 @@ import copy
 from typing import List, Optional, Tuple
 from munch import Munch  # type: ignore
 
+import srcmlcpp.srcmlcpp_main
 from codemanip import code_utils
 from srcmlcpp.srcml_types import *
 
@@ -48,7 +49,10 @@ def adapt_modifiable_immutable_to_return(adapted_function: AdaptedFunction) -> O
     needs_adapt = False
 
     for old_adapted_param in adapted_function.adapted_parameters():
-        if old_adapted_param.is_modifiable_python_immutable():
+        if (
+            old_adapted_param.is_modifiable_python_immutable_ref_or_pointer()
+            or old_adapted_param.is_modifiable_python_immutable_fixed_size_array()
+        ):
             needs_adapt = True
 
     if not needs_adapt:
@@ -65,7 +69,7 @@ def adapt_modifiable_immutable_to_return(adapted_function: AdaptedFunction) -> O
     for old_adapted_param in old_function_params:
         was_replaced = False
 
-        if old_adapted_param.is_modifiable_python_immutable():
+        if old_adapted_param.is_modifiable_python_immutable_ref_or_pointer():
             was_replaced = True
 
             is_pointer = old_adapted_param.cpp_element().decl.cpp_type.modifiers == ["*"]
@@ -136,7 +140,48 @@ def adapt_modifiable_immutable_to_return(adapted_function: AdaptedFunction) -> O
             #
             new_output_function_params.append(new_param)
 
-        if not was_replaced:
+        elif old_adapted_param.is_modifiable_python_immutable_fixed_size_array():
+            #
+            # Create new calling param same type, without pointer or reference
+            #
+            new_param = copy.deepcopy(old_adapted_param.cpp_element())
+            array_type = new_param.decl.cpp_type.name_without_modifier_specifier()
+            array_size = new_param.decl.c_array_size_as_int()
+            decl_name = new_param.decl.decl_name
+            from srcmlcpp import srcmlcpp_main
+
+            new_decl_str = f"std::array<{array_type}, {array_size}> {decl_name}"
+            new_decl = srcmlcpp_main.code_first_decl(options.srcml_options, new_decl_str)
+            new_param.decl = new_decl
+
+            new_function_params.append(new_param)
+
+            #
+            # Fill lambda_input_code
+            #
+            param_original_type = old_adapted_param.cpp_element().full_type()
+            param_name_value = old_adapted_param.cpp_element().decl.decl_name + "_adapt_modifiable"
+            param_name = old_adapted_param.cpp_element().decl.decl_name
+            _i_ = options.indent_cpp_spaces()
+            lambda_input_code = f"""
+                {param_original_type} * {param_name_value} = {param_name}.data();
+                """
+
+            lambda_adapter.lambda_input_code += (
+                code_utils.unindent_code(lambda_input_code, flag_strip_empty_lines=True) + "\n"
+            )
+
+            #
+            # Fill adapted_cpp_parameter_list (those that will call the original C style function)
+            #
+            lambda_adapter.adapted_cpp_parameter_list.append(f"{param_name_value}")
+
+            #
+            # Fill new_output_function_params
+            #
+            new_output_function_params.append(new_param)
+
+        else:
             new_function_params.append(old_adapted_param.cpp_element())
             lambda_adapter.adapted_cpp_parameter_list.append(old_adapted_param.cpp_element().decl.decl_name)
 

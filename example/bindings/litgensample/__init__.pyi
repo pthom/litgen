@@ -147,6 +147,11 @@ def slider_void_int_default_null(
     value: Optional[int] = None
     ) -> Tuple[bool, Optional[int]]:
     pass
+def slider_void_int_array(
+    label: str,
+    value: List[int]
+    ) -> Tuple[bool, List[int]]:
+    pass
 
 
 
@@ -222,7 +227,6 @@ def modify_string(s: BoxedString) -> None:
     """
     pass
 
-#
 # </Namespace LiterateGeneratorExample>
 ####################    </generated_from:litgensample.h>    ####################
 

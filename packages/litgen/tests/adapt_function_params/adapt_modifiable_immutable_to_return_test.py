@@ -105,3 +105,42 @@ def test_adapt_modifiable_immutable_to_return_test():
             },     py::arg("label"), py::arg("value") = py::none());
     """,
     )
+
+
+def test_adapt_modifiable_immutable_to_return_array():
+    options = litgen.options.LitgenOptions()
+    options.fn_params_replace_modifiable_c_array_by_boxed__regexes = []
+    options.fn_params_output_modifiable_immutable_to_return__regexes = [r".*"]
+    options.srcml_options.functions_api_prefixes = ["MY_API"]
+    code = "MY_API bool SliderVoidIntArray(const char* label, int value[3]);"
+    generated_code = litgen.generate_code(options, code)
+    # logging.warning("\n" + generated_code.pydef_code)
+    code_utils.assert_are_codes_equal(
+        generated_code.pydef_code,
+        """
+        m.def("slider_void_int_array",
+            [](const char * label, std::array<int, 3> value) -> std::tuple<bool, std::array<int, 3>>
+            {
+                auto SliderVoidIntArray_adapt_modifiable_immutable_to_return = [](const char * label, std::array<int, 3> value) -> std::tuple<bool, std::array<int, 3>>
+                {
+                    int * value_adapt_modifiable = value.data();
+
+                    MY_API bool r = SliderVoidIntArray(label, value_adapt_modifiable);
+                    return std::make_tuple(r, value);
+                };
+
+                return SliderVoidIntArray_adapt_modifiable_immutable_to_return(label, value);
+            },     py::arg("label"), py::arg("value"));
+    """,
+    )
+    # logging.warning("\n" + generated_code.stub_code)
+    code_utils.assert_are_codes_equal(
+        generated_code.stub_code,
+        """
+        def slider_void_int_array(
+            label: str,
+            value: List[int]
+            ) -> Tuple[bool, List[int]]:
+            pass
+    """,
+    )

@@ -447,6 +447,20 @@ void py_init_module_litgensample(py::module& m)
             return SliderVoidIntDefaultNull_adapt_modifiable_immutable_to_return(label, value);
         },     py::arg("label"), py::arg("value") = py::none());
 
+    m.def("slider_void_int_array",
+        [](const char * label, std::array<int, 3> value) -> std::tuple<bool, std::array<int, 3>>
+        {
+            auto SliderVoidIntArray_adapt_modifiable_immutable_to_return = [](const char * label, std::array<int, 3> value) -> std::tuple<bool, std::array<int, 3>>
+            {
+                int * value_adapt_modifiable = value.data();
+
+                MY_API bool r = SliderVoidIntArray(label, value_adapt_modifiable);
+                return std::make_tuple(r, value);
+            };
+
+            return SliderVoidIntArray_adapt_modifiable_immutable_to_return(label, value);
+        },     py::arg("label"), py::arg("value"));
+
     m.def("add",
         add,
         py::arg("a"), py::arg("b"),
