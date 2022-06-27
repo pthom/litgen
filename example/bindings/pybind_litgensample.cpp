@@ -431,6 +431,22 @@ void py_init_module_litgensample(py::module& m)
             return SliderBoolInt2_adapt_modifiable_immutable_to_return(label, value1, value2);
         },     py::arg("label"), py::arg("value1"), py::arg("value2"));
 
+    m.def("slider_void_int_default_null",
+        [](const char * label, std::optional<int> value = std::nullopt) -> std::tuple<bool, std::optional<int>>
+        {
+            auto SliderVoidIntDefaultNull_adapt_modifiable_immutable_to_return = [](const char * label, std::optional<int> value = std::nullopt) -> std::tuple<bool, std::optional<int>>
+            {
+                int * value_adapt_modifiable = nullptr;
+                if (value.has_value())
+                    value_adapt_modifiable = & value.value();
+
+                MY_API bool r = SliderVoidIntDefaultNull(label, value_adapt_modifiable);
+                return std::make_tuple(r, value);
+            };
+
+            return SliderVoidIntDefaultNull_adapt_modifiable_immutable_to_return(label, value);
+        },     py::arg("label"), py::arg("value") = py::none());
+
     m.def("add",
         add,
         py::arg("a"), py::arg("b"),

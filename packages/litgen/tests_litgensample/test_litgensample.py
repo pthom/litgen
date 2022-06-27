@@ -168,6 +168,15 @@ def test_adapt_modifiable_immutable_to_return():
     r = litgensample.slider_bool_int2("Hello", 1, 2)
     assert r == (False, 2, 4)
 
+    r = litgensample.slider_void_int_default_null("Hello", None)
+    assert r == (True, None)
+
+    r = litgensample.slider_void_int_default_null("Hello")
+    assert r == (True, None)
+
+    r = litgensample.slider_void_int_default_null("Hello", 1)
+    assert r == (True, 2)
+
 
 # test_adapt_modifiable_immutable_to_return()
 # test_modify_string()

@@ -1,4 +1,4 @@
-from typing import List, Tuple
+from typing import List, Tuple, Optional
 from typing import (
     Literal,  # for enums annotations, when some enum values depend on other values of the same enum
 )
@@ -141,6 +141,11 @@ def slider_bool_int2(
     value1: int,
     value2: int
     ) -> Tuple[bool, int, int]:
+    pass
+def slider_void_int_default_null(
+    label: str,
+    value: Optional[int] = None
+    ) -> Tuple[bool, Optional[int]]:
     pass
 
 

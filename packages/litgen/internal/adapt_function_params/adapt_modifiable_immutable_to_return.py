@@ -46,8 +46,7 @@ def adapt_modifiable_immutable_to_return(adapted_function: AdaptedFunction) -> O
     needs_adapt = False
 
     for old_adapted_param in adapted_function.adapted_parameters():
-        has_initial_value = len(old_adapted_param.cpp_element().decl.initial_value_code) > 0
-        if old_adapted_param.is_modifiable_python_immutable() and not has_initial_value:
+        if old_adapted_param.is_modifiable_python_immutable():
             needs_adapt = True
 
     if not needs_adapt:
@@ -69,6 +68,16 @@ def adapt_modifiable_immutable_to_return(adapted_function: AdaptedFunction) -> O
 
             is_pointer = old_adapted_param.cpp_element().decl.cpp_type.modifiers == ["*"]
 
+            # For signatures like
+            #       void foo(bool * flag = NULL);
+            # the python param type will be type Optional[BoxedBool]
+            def compute_is_optional_boxed_type() -> bool:
+                initial_value_cpp = old_adapted_param.cpp_element().decl.initial_value_code
+                is_initial_value_null = initial_value_cpp in ["NULL", "nullptr"]
+                return is_pointer and is_initial_value_null
+
+            is_optional_type = compute_is_optional_boxed_type()
+
             #
             # Create new calling param same type, without pointer or reference
             #
@@ -78,6 +87,10 @@ def adapt_modifiable_immutable_to_return(adapted_function: AdaptedFunction) -> O
             new_decl.cpp_type.typenames = old_decl.cpp_type.typenames
             new_decl.cpp_type.modifiers = []
             new_decl.cpp_type.specifiers = []
+            if is_optional_type:
+                new_decl.cpp_type.typenames = [f"std::optional<{new_decl.cpp_type.str_code()}>"]
+                new_decl.initial_value_code = "std::nullopt"
+
             new_function_params.append(new_param)
 
             #
@@ -90,15 +103,22 @@ def adapt_modifiable_immutable_to_return(adapted_function: AdaptedFunction) -> O
             param_original_type = old_adapted_param.cpp_element().full_type()
             param_name_value = old_adapted_param.cpp_element().decl.decl_name + "_adapt_modifiable"
             param_name = old_adapted_param.cpp_element().decl.decl_name
-
-            if is_pointer:
+            _i_ = options.indent_cpp_spaces()
+            if is_optional_type:
                 lambda_input_code = f"""
-                    {param_original_type} {param_name_value} = & {param_name};
-                    """
+                    {param_original_type} {param_name_value} = nullptr;
+                    if ({param_name}.has_value())
+                    {_i_}{param_name_value} = & {param_name}.value();
+                """
             else:
-                lambda_input_code = f"""
-                    {param_original_type} {param_name_value} = {param_name};
-                    """
+                if is_pointer:
+                    lambda_input_code = f"""
+                        {param_original_type} {param_name_value} = & {param_name};
+                        """
+                else:
+                    lambda_input_code = f"""
+                        {param_original_type} {param_name_value} = {param_name};
+                        """
 
             lambda_adapter.lambda_input_code += (
                 code_utils.unindent_code(lambda_input_code, flag_strip_empty_lines=True) + "\n"
@@ -178,7 +198,7 @@ def adapt_modifiable_immutable_to_return(adapted_function: AdaptedFunction) -> O
         """
         template_code = code_utils.unindent_code(
             """
-        {maybe_store_function_output}{function_name}({params});
+        {maybe_store_function_output}{lambda_to_call}({params});
         return {output_tuple};
         """,
             flag_strip_empty_lines=True,
@@ -194,7 +214,11 @@ def adapt_modifiable_immutable_to_return(adapted_function: AdaptedFunction) -> O
             replacements.maybe_store_function_output = f"{old_return_type} r = "
 
         # fill function_name
-        replacements.function_name = old_function.function_name
+        replacements.lambda_to_call = (
+            adapted_function.lambda_to_call
+            if adapted_function.lambda_to_call is not None
+            else old_function.function_name
+        )
 
         # fill params
         replacements.params = ", ".join(lambda_adapter.adapted_cpp_parameter_list)

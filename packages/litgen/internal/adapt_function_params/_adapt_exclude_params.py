@@ -63,6 +63,6 @@ def adapt_exclude_params(adapted_function: AdaptedFunction) -> Optional[LambdaAd
 
     lambda_adapter.new_function_infos.parameter_list.parameters = new_function_params
 
-    lambda_adapter.lambda_name = adapted_function.cpp_adapted_function.function_name + "_adapt_c_string_list"
+    lambda_adapter.lambda_name = adapted_function.cpp_adapted_function.function_name + "_adapt_exclude_params"
 
     return lambda_adapter

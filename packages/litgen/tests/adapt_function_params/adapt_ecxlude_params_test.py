@@ -21,12 +21,12 @@ def test_exclude_params():
         m.def("foo",
             [](int a, bool flag1)
             {
-                auto foo_adapt_c_string_list = [](int a, bool flag1)
+                auto foo_adapt_exclude_params = [](int a, bool flag1)
                 {
                     foo(a, flag1, nullptr, true);
                 };
 
-                foo_adapt_c_string_list(a, flag1);
+                foo_adapt_exclude_params(a, flag1);
             },     py::arg("a"), py::arg("flag1"));
     """,
     )

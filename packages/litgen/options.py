@@ -103,7 +103,6 @@ class LitgenOptions:
     #       void mul_inside_array(py::array & array, double factor)
     # (and factor will be down-casted to the target type)
     #
-
     buffer_flag_replace_by_array = True
     # buffer_types List[str]. Which means that `uint8_t*` are considered as possible buffers
     buffer_types: List[str] = [

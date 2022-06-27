@@ -144,6 +144,12 @@ namespace LiterateGeneratorExample // MY_API
         *value2 += 2;
         return false;
     }
+    MY_API bool SliderVoidIntDefaultNull(const char* label, int * value = nullptr)
+    {
+        if (value != nullptr)
+            *value += 1;
+        return true;
+    }
 
 
 

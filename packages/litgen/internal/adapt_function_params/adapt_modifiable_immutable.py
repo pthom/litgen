@@ -77,7 +77,7 @@ def adapt_modifiable_immutable(adapted_function: AdaptedFunction) -> Optional[La
                 is_initial_value_null = initial_value_cpp in ["NULL", "nullptr"]
                 return is_pointer and is_initial_value_null
 
-            is_optional_boxed_type = compute_is_optional_boxed_type()
+            is_optional_type = compute_is_optional_boxed_type()
 
             #
             # Create new calling param (BoxedType<T>)
@@ -87,7 +87,7 @@ def adapt_modifiable_immutable(adapted_function: AdaptedFunction) -> Optional[La
                 old_adapted_param.cpp_element().decl.cpp_type.name_without_modifier_specifier()
             )
             new_decl = new_param.decl
-            if is_optional_boxed_type:
+            if is_optional_type:
                 new_decl.cpp_type.typenames = [boxed_type.boxed_type_name()]
                 new_decl.cpp_type.modifiers = ["*"]
                 new_decl.initial_value_code = "nullptr"
@@ -105,7 +105,7 @@ def adapt_modifiable_immutable(adapted_function: AdaptedFunction) -> Optional[La
             param_name = old_adapted_param.cpp_element().decl.decl_name
             _i_ = adapted_function.options.indent_cpp_spaces()
 
-            if is_optional_boxed_type:
+            if is_optional_type:
                 lambda_input_code = f"""
                     {param_original_type} {param_name_value} = nullptr;
                     if ({param_name} != nullptr)
