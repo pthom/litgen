@@ -52,15 +52,10 @@ def play_pydef(code, options) -> None:
 
 
 code = """
-   IMGUI_API bool  InputText(const char* label, std::string* str, ImGuiInputTextFlags flags = 0, ImGuiInputTextCallback callback = NULL, void* user_data = NULL);
+bool SliderFloat4(const char* text, float values[4]);
 """
-from litgen.litgen_options_imgui import litgen_options_imgui
-
-options = litgen_options_imgui()
-
-# options = litgen.options.LitgenOptions()
-# options.fn_params_adapt_modifiable_immutable_to_return_regexes = [r".*"]
-# options.fn_params_adapt_modifiable_immutable_to_return_regexes = [r".*"]
-
+options = litgen.options.LitgenOptions()
+options.fn_params_replace_modifiable_c_array_by_boxed__regexes = []
+# options.fn_params_replace_const_c_array_by_std_array__regexes = []
 # play_stub(code, options)
 play_pydef(code, options)

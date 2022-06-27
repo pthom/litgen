@@ -118,7 +118,7 @@ class AdaptedEnum(AdaptedElement):
         return r
 
     def _fill_children(self) -> None:
-        children_with_values = self.cpp_element().get_children_with_filled_decl_values(self.options.srcml_options)
+        children_with_values = self.cpp_element().get_children_with_filled_decl_values()
         for c_child in children_with_values:
             if isinstance(c_child, CppEmptyLine):
                 self.adapted_children.append(AdaptedEmptyLine(self.options, c_child))

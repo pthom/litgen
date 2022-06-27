@@ -611,7 +611,7 @@ class CppDecl(CppElementAndComment):
         size_str = self.c_array_code[pos + 1 : -1]
         return size_str
 
-    def c_array_size_as_int(self, options: SrcmlOptions) -> Optional[int]:
+    def c_array_size_as_int(self) -> Optional[int]:
         """
         If this decl is a c array, return its size, e.g. for
             int v[4]
@@ -621,14 +621,14 @@ class CppDecl(CppElementAndComment):
         Except if "COUNT" is a key of size_dict
         """
         size_as_str = self.c_array_size_as_str()
-        maybe_size = _int_from_str_or_named_number_macros(options, size_as_str)
+        maybe_size = _int_from_str_or_named_number_macros(self.options, size_as_str)
         return maybe_size
 
-    def is_c_array_known_fixed_size(self, options: SrcmlOptions) -> bool:
+    def is_c_array_known_fixed_size(self) -> bool:
         """Returns true if this decl is a c array, and has a fixed size which we can interpret
         either via the code, or through size_dict
         """
-        return self.c_array_size_as_int(options) is not None
+        return self.c_array_size_as_int() is not None
 
     def is_c_array_no_size(self, options: SrcmlOptions):
         """Returns true if this decl is a c array, and has a no fixed size, e.g.
@@ -642,7 +642,7 @@ class CppDecl(CppElementAndComment):
         has_size = len(size_str.strip()) > 0
         return is_array and not has_size
 
-    def is_c_array_fixed_size_unparsable(self, options: SrcmlOptions) -> bool:
+    def is_c_array_fixed_size_unparsable(self) -> bool:
         is_array = self.is_c_array()
         if not is_array:
             return False
@@ -650,7 +650,7 @@ class CppDecl(CppElementAndComment):
         size_str = self.c_array_size_as_str()
         assert size_str is not None
         has_size = len(size_str.strip()) > 0
-        array_size_as_int = self.c_array_size_as_int(options)
+        array_size_as_int = self.c_array_size_as_int()
         r = is_array and has_size and (array_size_as_int is None)
         return r
 
@@ -1335,7 +1335,7 @@ class CppEnum(CppElementAndComment):
                 r.append(child)
         return r
 
-    def get_children_with_filled_decl_values(self, options: SrcmlOptions) -> List[CppElementAndComment]:
+    def get_children_with_filled_decl_values(self) -> List[CppElementAndComment]:
         children: List[CppElementAndComment] = []
 
         last_decl: Optional[CppDecl] = None
@@ -1353,9 +1353,9 @@ class CppEnum(CppElementAndComment):
                     is a composition of other values.
                     For example: `enum Foo { A = 0, B = A << 1, C = A | B };`
                     """
-                    if decl_with_value.initial_value_code in options.named_number_macros:
+                    if decl_with_value.initial_value_code in self.options.named_number_macros:
                         decl_with_value.initial_value_code = str(
-                            options.named_number_macros[decl_with_value.initial_value_code]
+                            self.options.named_number_macros[decl_with_value.initial_value_code]
                         )
 
                 else:

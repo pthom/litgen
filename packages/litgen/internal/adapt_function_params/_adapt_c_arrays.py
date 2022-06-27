@@ -58,8 +58,14 @@ def adapt_c_arrays(adapted_function: AdaptedFunction) -> Optional[LambdaAdapter]
     needs_adapt = False
 
     for old_adapted_param in adapted_function.adapted_parameters():
-        if old_adapted_param.cpp_element().decl.is_c_array_known_fixed_size(options.srcml_options):
-            needs_adapt = True
+        old_cpp_decl = old_adapted_param.adapted_decl().cpp_element()
+        is_c_array_known_fixed_size = old_cpp_decl.is_c_array_known_fixed_size()
+        is_const = old_cpp_decl.is_const()
+        if is_c_array_known_fixed_size:
+            if is_const and flag_replace_const_c_array_by_std_array:
+                needs_adapt = True
+            if not is_const and flag_replace_modifiable_c_array_by_boxed:
+                needs_adapt = True
 
     if not needs_adapt:
         return None
@@ -75,7 +81,7 @@ def adapt_c_arrays(adapted_function: AdaptedFunction) -> Optional[LambdaAdapter]
     for old_adapted_param in old_function_params:
         was_replaced = False
         old_cpp_decl = old_adapted_param.adapted_decl().cpp_element()
-        if old_cpp_decl.is_c_array_known_fixed_size(options.srcml_options):
+        if old_cpp_decl.is_c_array_known_fixed_size():
 
             if old_cpp_decl.is_const() and flag_replace_const_c_array_by_std_array:
                 was_replaced = True
@@ -89,7 +95,7 @@ def adapt_c_arrays(adapted_function: AdaptedFunction) -> Optional[LambdaAdapter]
                 lambda_adapter.adapted_cpp_parameter_list.append(new_adapted_decl.decl_name_cpp() + ".data()")
 
             elif not old_cpp_decl.is_const() and flag_replace_modifiable_c_array_by_boxed:
-                array_size_int = old_cpp_decl.c_array_size_as_int(options.srcml_options)
+                array_size_int = old_cpp_decl.c_array_size_as_int()
                 assert array_size_int is not None
 
                 if array_size_int <= options.fn_params_replace_modifiable_c_array__max_size:

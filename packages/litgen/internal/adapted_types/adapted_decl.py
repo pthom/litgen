@@ -54,9 +54,9 @@ class AdaptedDecl(AdaptedElement):
                 `const int v[2]` --> `const std::array<int, 2> v`
         """
         cpp_element = self.cpp_element()
-        assert cpp_element.is_c_array_known_fixed_size(self.options.srcml_options)
+        assert cpp_element.is_c_array_known_fixed_size()
         assert cpp_element.is_const()
-        array_size = cpp_element.c_array_size_as_int(self.options.srcml_options)
+        array_size = cpp_element.c_array_size_as_int()
 
         # If the array is `const`, then we simply wrap it into a std::array, like this:
         # `const int v[2]` --> `[ const std::array<int, 2> v ]`
@@ -91,10 +91,10 @@ class AdaptedDecl(AdaptedElement):
 
         cpp_element = self.cpp_element()
         srcml_options = self.options.srcml_options
-        array_size = cpp_element.c_array_size_as_int(srcml_options)
+        array_size = cpp_element.c_array_size_as_int()
 
         assert array_size is not None
-        assert cpp_element.is_c_array_known_fixed_size(srcml_options)
+        assert cpp_element.is_c_array_known_fixed_size()
         assert not cpp_element.is_const()
 
         cpp_type_name = cpp_element.cpp_type.str_code()

@@ -39,7 +39,7 @@ class AdaptedClassMember(AdaptedDecl):
         )
         if not shall_replace:
             return False
-        if cpp_decl.c_array_size_as_int(options.srcml_options) is None:
+        if cpp_decl.c_array_size_as_int() is None:
             return False
         return True
 
@@ -68,7 +68,7 @@ class AdaptedClassMember(AdaptedDecl):
             )
             return False
 
-        if cpp_decl.c_array_size_as_int(options.srcml_options) is None:
+        if cpp_decl.c_array_size_as_int() is None:
             array_size_str = cpp_decl.c_array_size_as_str()
             cpp_decl.emit_warning(
                 f"""
@@ -89,7 +89,7 @@ class AdaptedClassMember(AdaptedDecl):
                 f"AdaptedClassMember: Skipped bitfield member {cpp_decl.decl_name}",
             )
             return False
-        elif cpp_decl.is_c_array_fixed_size_unparsable(self.options.srcml_options):
+        elif cpp_decl.is_c_array_fixed_size_unparsable():
             cpp_decl.emit_warning(
                 """
                 AdaptedClassMember: Can't parse the size of this array.
@@ -97,7 +97,7 @@ class AdaptedClassMember(AdaptedDecl):
                 """,
             )
             return False
-        elif cpp_decl.is_c_array_known_fixed_size(self.options.srcml_options):
+        elif cpp_decl.is_c_array_known_fixed_size():
             return self._check_can_add_c_array_known_fixed_size()
         else:
             return True
@@ -117,7 +117,7 @@ class AdaptedClassMember(AdaptedDecl):
     def comment_array(self) -> str:
         if self._is_numeric_c_array():
             array_typename = self.cpp_element().cpp_type.str_code()
-            array_size = self.cpp_element().c_array_size_as_int(self.options.srcml_options)
+            array_size = self.cpp_element().c_array_size_as_int()
             msg = f"  # ndarray[type={array_typename}, size={array_size}]"
 
             decl_value_python_original = super().decl_value_python()
@@ -138,7 +138,7 @@ class AdaptedClassMember(AdaptedDecl):
         comment = self.comment_pydef_one_line()
 
         array_typename = self.cpp_element().cpp_type.str_code()
-        array_size = self.cpp_element().c_array_size_as_int(self.options.srcml_options)
+        array_size = self.cpp_element().c_array_size_as_int()
         assert array_size is not None
 
         template_code = f"""
