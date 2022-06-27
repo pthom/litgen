@@ -68,7 +68,7 @@ def test_c_buffers():
     litgensample.mul_inside_buffer(x, 3)
     assert (x == np.array((3, 6, 9))).all()
     # With range of types
-    data_types = [np.float32, np.float128, np.uint8, np.uint32, np.int64]
+    data_types = [np.float32, np.uint8, np.uint32, np.int64]  # np.float128 is not supported by all versions of numpy
     for data_type in data_types:
         x = np.array((1, 2, 3), data_type)
         litgensample.mul_inside_buffer(x, 3)
