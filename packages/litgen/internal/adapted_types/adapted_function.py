@@ -209,7 +209,7 @@ class AdaptedFunction(AdaptedElement):
         if self.is_constructor():
             return "None"
         else:
-            return_type_cpp = self.cpp_adapted_function.full_return_type(self.options.srcml_options)
+            return_type_cpp = self.cpp_adapted_function.full_return_type()
             return_type_python = cpp_to_python.type_to_python(self.options, return_type_cpp)
             return return_type_python
 
@@ -359,9 +359,7 @@ class AdaptedFunction(AdaptedElement):
 
         template_code = "{return_or_nothing}{self_prefix}{function_to_call}({params_call_inner})"
 
-        return_or_nothing = (
-            "return " if self.cpp_adapted_function.full_return_type(self.options.srcml_options) != "void" else ""
-        )
+        return_or_nothing = "" if self.cpp_adapted_function.returns_void() else "return "
         self_prefix = "self." if (self.is_method() and self.lambda_to_call is None) else ""
         # fill function_to_call
         function_to_call = (
@@ -589,10 +587,10 @@ class AdaptedFunction(AdaptedElement):
         replace_tokens.params_call_with_self_if_method = ", ".join(_params_list)
 
         # Fill lambda_return_arrow
-        full_return_type = self.cpp_adapted_function.full_return_type(self.options.srcml_options)
-        if full_return_type == "void":
+        if self.cpp_adapted_function.returns_void():
             replace_tokens.lambda_return_arrow = ""
         else:
+            full_return_type = self.cpp_adapted_function.full_return_type()
             replace_tokens.lambda_return_arrow = f" -> {full_return_type}"
 
         # fill return_code

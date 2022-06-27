@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Tuple
 from typing import (
     Literal,  # for enums annotations, when some enum values depend on other values of the same enum
 )
@@ -132,6 +132,16 @@ def toggle_bool_reference(v: BoxedBool) -> None:
     """ Test with reference"""
     pass
 
+def slider_bool_int(label: str, value: int) -> Tuple[bool, int]:
+    pass
+def slider_void_int(label: str, value: int) -> int:
+    pass
+def slider_bool_int2(
+    label: str,
+    value1: int,
+    value2: int
+    ) -> Tuple[bool, int, int]:
+    pass
 
 
 

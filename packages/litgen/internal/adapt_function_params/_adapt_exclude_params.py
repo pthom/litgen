@@ -38,8 +38,6 @@ def adapt_exclude_params(adapted_function: AdaptedFunction) -> Optional[LambdaAd
 
     lambda_adapter = LambdaAdapter()
 
-    _i_ = options.indent_cpp_spaces()
-
     lambda_adapter.new_function_infos = copy.deepcopy(adapted_function.cpp_adapted_function)
     new_function_params = []
 

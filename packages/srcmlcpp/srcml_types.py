@@ -423,6 +423,8 @@ class CppType(CppElement):
         In order to simplify the process, we recompose this kind of type names into a simple string
     """
 
+    # A type name can be composed of several names, for example:
+    # "unsigned int" -> ["unsigned", "int"]
     typenames: List[str]
 
     # specifiers: could be ["const"], ["static", "const"], ["extern"], ["constexpr"], etc.
@@ -874,7 +876,14 @@ class CppFunctionDecl(CppElementAndComment):
     """
 
     specifiers: List[str]  # "const" or ""
+
+    # warning: return_type may include API and inline markers i.e for
+    #       MY_API inline int foo()
+    # then return_type = "MY_API inline int"
+    #
+    # Use full_return_type() to get a return type without those.
     return_type: CppType
+
     parameter_list: CppParameterList
     template: CppTemplate
     is_auto_decl: bool  # True if it is a decl of the form `auto square(double) -> double`
@@ -904,9 +913,10 @@ class CppFunctionDecl(CppElementAndComment):
         r = self._str_signature() + ";"
         return r
 
-    def full_return_type(self, options: SrcmlOptions) -> str:
+    def full_return_type(self) -> str:
+        """The C++ return type of the function, without API or inline markers"""
         r = self.return_type.str_code()
-        for prefix in options.functions_api_prefixes:
+        for prefix in self.options.functions_api_prefixes:
             r = r.replace(prefix + " ", "")
         if r.startswith("inline "):
             r = r.replace("inline ", "")
@@ -922,6 +932,9 @@ class CppFunctionDecl(CppElementAndComment):
     def returns_reference(self) -> bool:
         r = hasattr(self, "return_type") and self.return_type.modifiers == ["&"]
         return r
+
+    def returns_void(self) -> bool:
+        return self.full_return_type() == "void"
 
     def __str__(self) -> str:
         return self.str_commented()
@@ -995,7 +1008,7 @@ class CppConstructorDecl(CppFunctionDecl):
             r = r + " " + " ".join(specifiers_strs)
         return r
 
-    def full_return_type(self, options: SrcmlOptions) -> str:
+    def full_return_type(self) -> str:
         return ""
 
     def str_code(self) -> str:

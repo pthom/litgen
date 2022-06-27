@@ -11,11 +11,15 @@ def apply_all_adapters(inout_adapted_function: AdaptedFunction) -> None:
     from litgen.internal.adapt_function_params._adapt_c_buffers import adapt_c_buffers
     from litgen.internal.adapt_function_params._adapt_variadic_format import adapt_variadic_format
     from litgen.internal.adapt_function_params.adapt_modifiable_immutable import adapt_modifiable_immutable
+    from litgen.internal.adapt_function_params.adapt_modifiable_immutable_to_return import (
+        adapt_modifiable_immutable_to_return,
+    )
 
     all_adapters_functions = [
         adapt_exclude_params,
         adapt_c_buffers,
         adapt_c_arrays,
+        adapt_modifiable_immutable_to_return,
         adapt_modifiable_immutable,  # must be done *after* adapt_c_buffers
         adapt_c_string_list,
         adapt_variadic_format,
@@ -42,7 +46,7 @@ def _make_adapted_lambda_code_end(adapted_function: AdaptedFunction, lambda_adap
     adapted_cpp_parameters = ", ".join(lambda_adapter.adapted_cpp_parameter_list)
 
     # Fill auto_r_equal_or_void
-    _fn_return_type = adapted_function.cpp_adapted_function.full_return_type(options.srcml_options)
+    _fn_return_type = adapted_function.cpp_adapted_function.full_return_type()
     auto_r_equal_or_void = "auto r = " if _fn_return_type != "void" else ""
 
     # Fill function_or_lambda_to_call
@@ -117,7 +121,8 @@ def _make_adapted_lambda_code(adapted_function: AdaptedFunction, lambda_adapter:
     adapted_python_parameters = lambda_adapter.new_function_infos.parameter_list.str_code()
 
     # Fill lambda_return_arrow
-    full_return_type = adapted_function.cpp_adapted_function.full_return_type(options.srcml_options)
+    # full_return_type = adapted_function.cpp_adapted_function.full_return_type(options.srcml_options)
+    full_return_type = lambda_adapter.new_function_infos.full_return_type()
     if full_return_type == "void":
         lambda_return_arrow = ""
     else:

@@ -36,6 +36,9 @@ def my_code_style_options() -> litgen.LitgenOptions:
 
     # options.python_max_consecutive_empty_lines = 2
 
+    options.fn_params_adapt_modifiable_immutable_regexes = [r"^Toggle", r"^Modify"]
+    options.fn_params_adapt_modifiable_immutable_to_return_regexes = [r"^Slider"]
+
     return options
 
 

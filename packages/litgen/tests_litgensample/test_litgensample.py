@@ -158,6 +158,18 @@ def test_modify_string():
     assert s.value == "Say hello"
 
 
+def test_adapt_modifiable_immutable_to_return():
+    r = litgensample.slider_bool_int("Hello", 2)
+    assert r == (True, 3)
+
+    r = litgensample.slider_void_int("Hello", 2)
+    assert r == 3
+
+    r = litgensample.slider_bool_int2("Hello", 1, 2)
+    assert r == (False, 2, 4)
+
+
+# test_adapt_modifiable_immutable_to_return()
 # test_modify_string()
 # test_manual()
 # test_return_value_policy_reference()

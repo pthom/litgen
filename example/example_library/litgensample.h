@@ -129,6 +129,21 @@ namespace LiterateGeneratorExample // MY_API
         v = !(v);
     }
 
+    MY_API bool SliderBoolInt(const char* label, int * value)
+    {
+        *value += 1;
+        return true;
+    }
+    MY_API void SliderVoidInt(const char* label, int * value)
+    {
+        *value += 1;
+    }
+    MY_API bool SliderBoolInt2(const char* label, int * value1, int * value2)
+    {
+        *value1 += 1;
+        *value2 += 2;
+        return false;
+    }
 
 
 

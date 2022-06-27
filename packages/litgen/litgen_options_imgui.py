@@ -129,4 +129,6 @@ def litgen_options_imgui() -> LitgenOptions:
     options.fn_force_return_policy_reference_for_pointers = True
     options.fn_force_return_policy_reference_for_references = True
 
+    options.fn_params_adapt_modifiable_immutable_regexes = [r".*"]
+
     return options

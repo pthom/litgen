@@ -39,7 +39,9 @@ def adapt_modifiable_immutable(adapted_function: AdaptedFunction) -> Optional[La
         }
     """
     options = adapted_function.options
-    if not options.fn_params_adapt_modifiable_immutable:
+
+    function_name = adapted_function.cpp_adapted_function.function_name
+    if not code_utils.does_match_regexes(options.fn_params_adapt_modifiable_immutable_regexes, function_name):
         return None
 
     needs_adapt = False
@@ -126,11 +128,7 @@ def adapt_modifiable_immutable(adapted_function: AdaptedFunction) -> Optional[La
             #
             # Fill adapted_cpp_parameter_list (those that will call the original C style function)
             #
-            param_name = new_param.decl.decl_name
-            if is_pointer:
-                lambda_adapter.adapted_cpp_parameter_list.append(f"{param_name_value}")
-            else:
-                lambda_adapter.adapted_cpp_parameter_list.append(f"{param_name_value}")
+            lambda_adapter.adapted_cpp_parameter_list.append(f"{param_name_value}")
 
         if not was_replaced:
             new_function_params.append(old_adapted_param.cpp_element())

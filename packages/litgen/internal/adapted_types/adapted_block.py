@@ -132,6 +132,7 @@ class AdaptedNamespace(AdaptedElement):
 
 class AdaptedUnit(AdaptedBlock):
     def __init__(self, options: LitgenOptions, unit: CppUnit):
+        options.check_options_consistency()
         super().__init__(options, unit)
 
     # override

@@ -388,6 +388,49 @@ void py_init_module_litgensample(py::module& m)
         py::arg("v"),
         "Test with reference");
 
+    m.def("slider_bool_int",
+        [](const char * label, int value) -> std::tuple<bool, int>
+        {
+            auto SliderBoolInt_adapt_modifiable_immutable_to_return = [](const char * label, int value) -> std::tuple<bool, int>
+            {
+                int * value_adapt_modifiable = & value;
+
+                MY_API bool r = SliderBoolInt(label, value_adapt_modifiable);
+                return std::make_tuple(r, value);
+            };
+
+            return SliderBoolInt_adapt_modifiable_immutable_to_return(label, value);
+        },     py::arg("label"), py::arg("value"));
+
+    m.def("slider_void_int",
+        [](const char * label, int value) -> int
+        {
+            auto SliderVoidInt_adapt_modifiable_immutable_to_return = [](const char * label, int value) -> int
+            {
+                int * value_adapt_modifiable = & value;
+
+                SliderVoidInt(label, value_adapt_modifiable);
+                return value;
+            };
+
+            return SliderVoidInt_adapt_modifiable_immutable_to_return(label, value);
+        },     py::arg("label"), py::arg("value"));
+
+    m.def("slider_bool_int2",
+        [](const char * label, int value1, int value2) -> std::tuple<bool, int, int>
+        {
+            auto SliderBoolInt2_adapt_modifiable_immutable_to_return = [](const char * label, int value1, int value2) -> std::tuple<bool, int, int>
+            {
+                int * value1_adapt_modifiable = & value1;
+                int * value2_adapt_modifiable = & value2;
+
+                MY_API bool r = SliderBoolInt2(label, value1_adapt_modifiable, value2_adapt_modifiable);
+                return std::make_tuple(r, value1, value2);
+            };
+
+            return SliderBoolInt2_adapt_modifiable_immutable_to_return(label, value1, value2);
+        },     py::arg("label"), py::arg("value1"), py::arg("value2"));
+
     m.def("add",
         add,
         py::arg("a"), py::arg("b"),

@@ -52,30 +52,14 @@ def play_pydef(code, options) -> None:
 
 
 code = """
-struct Foo
-{
-    std::string foo();
-    std::string foo(int a);
-    void blah();
-};
+    void SliderVoidInt(const char* label, int * value)
+    {
+        *value += 1;
+    }
 """
 options = litgen.options.LitgenOptions()
-# options.srcml_options.functions_api_prefixes = ["MY_API"]
-options.original_location_flag_show = True
-options.original_signature_flag_show = True
-# options = code_style_imgui()
+options.fn_params_adapt_modifiable_immutable_to_return_regexes = [r".*"]
+# options.fn_params_adapt_modifiable_immutable_to_return_regexes = [r".*"]
 
 # play_stub(code, options)
 play_pydef(code, options)
-
-
-from typing import Mapping
-
-a = [1, 2, 3]
-
-
-def square(x: int) -> int:
-    return x * x
-
-
-b: map[int] = map(square, a)

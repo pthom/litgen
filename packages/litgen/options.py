@@ -160,12 +160,15 @@ class LitgenOptions:
         def foo(BoxedInt value) -> int
 
     So that any modification done on the C++ side can be seen from python.
+
+    fn_params_adapt_modifiable_immutable_regexes contains a list of regexes on functions names
+    for which this transformation will be applied. Set it to [r".*"] to apply this to all functions.
     """
-    fn_params_adapt_modifiable_immutable = True
+    fn_params_adapt_modifiable_immutable_regexes: List[str] = []
 
     """
-    fn_params_adapt_modifiable_immutable_to_return:
-    adapt functions params that use non cont pointers or reference to a type that is immutable in python
+    fn_params_adapt_modifiable_immutable_to_return_regexes:
+    adapt functions params that use non const pointers or reference to a type that is immutable in python
     by adding the modified value to the returned type of the function (which will now be a tuple)
 
     For example
@@ -175,9 +178,10 @@ class LitgenOptions:
 
     So that any modification done on the C++ side can be seen from python.
 
-    fn_params_adapt_modifiable_immutable and fn_params_adapt_modifiable_immutable_to_return cannot be set together!
+    fn_params_adapt_modifiable_immutable_to_return_regexes contains a list of regexes on functions names
+    for which this transformation will be applied. Set it to [r".*"] to apply this to all functions.
     """
-    fn_params_adapt_modifiable_immutable_to_return = False
+    fn_params_adapt_modifiable_immutable_to_return_regexes: List[str] = []
 
     # Remove some params from the python published interface. A param can only be removed if it has a default value
     # in the C++ signature
@@ -264,11 +268,6 @@ class LitgenOptions:
                     Authorized types are: { ", ".join(authorized_types) }
                     """
                 )
-
-        if self.fn_params_adapt_modifiable_immutable and self.fn_params_adapt_modifiable_immutable_to_return:
-            raise ValueError(
-                "`fn_params_adapt_modifiable_immutable` and `fn_params_adapt_modifiable_immutable_to_return` are mutually exclusive!"
-            )
 
     def indent_cpp_spaces(self) -> str:
         space = "\t" if self.cpp_indent_with_tabs else " "
