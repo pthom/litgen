@@ -13,3 +13,6 @@
 [submodule "ci_scripts/importanize"]
 	path = ci_scripts/importanize
 	url = https://github.com/miki725/importanize.git
+[submodule "examples_real_libs/hello_imgui/hello_imgui"]
+	path = examples_real_libs/hello_imgui/hello_imgui
+	url = https://github.com/pthom/hello_imgui.git
