@@ -16,3 +16,6 @@
 [submodule "examples_real_libs/hello_imgui/hello_imgui"]
 	path = examples_real_libs/hello_imgui/hello_imgui
 	url = https://github.com/pthom/hello_imgui.git
+[submodule "examples_real_libs/hello_imgui/pybind11"]
+	path = examples_real_libs/hello_imgui/pybind11
+	url = https://github.com/pybind/pybind11.git
