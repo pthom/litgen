@@ -1,6 +1,11 @@
 cmake_minimum_required(VERSION 3.2)
 project(lg_imgui)
 
+# Options: do we run the generation of the binding code, or do we use it as it is?
+# It is off, because we run autogenerate_imgui.py manually (since it take about 30 seconds)
+set(imgui_run_generate OFF)
+
+
 # Add pybind11
 add_subdirectory(pybind11)
 
@@ -30,22 +35,23 @@ endif()
 target_include_directories(${cpp_lib_name} PUBLIC ${CMAKE_CURRENT_LIST_DIR}/imgui)
 
 
-#
-# Auto-generate the C++ binding code before building the python module
-#
-add_custom_target(
-    ${autgenerate_name}
-    COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_LIST_DIR}/autogenerate_imgui.py
-    DEPENDS ${CMAKE_CURRENT_LIST_DIR}/imgui/imgui.h
-    COMMENT "autogenerate imgui python bindings"
+if (imgui_run_generate)
+    #
+    # Auto-generate the C++ binding code before building the python module
+    #
+    add_custom_target(
+        ${autgenerate_name}
+        COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_LIST_DIR}/autogenerate_imgui.py
+        DEPENDS ${CMAKE_CURRENT_LIST_DIR}/imgui/imgui.h
+        COMMENT "autogenerate imgui python bindings"
 
-    # We can't use BYPRODUCTS, since
-    # "The Makefile Generators will remove BYPRODUCTS and other GENERATED files during make clean."
-    # (cf. https://cmake.org/cmake/help/latest/command/add_custom_target.html)
-)
-# ${autgenerate_name} is run before building the C++ library ${cpp_lib_name}
-add_dependencies(${cpp_lib_name} ${autgenerate_name})
-
+        # We can't use BYPRODUCTS, since
+        # "The Makefile Generators will remove BYPRODUCTS and other GENERATED files during make clean."
+        # (cf. https://cmake.org/cmake/help/latest/command/add_custom_target.html)
+    )
+    # ${autgenerate_name} is run before building the C++ library ${cpp_lib_name}
+    add_dependencies(${cpp_lib_name} ${autgenerate_name})
+endif()
 
 #
 # Build python module that uses the library
