@@ -17,5 +17,8 @@
 	path = examples_real_libs/hello_imgui/hello_imgui
 	url = https://github.com/pthom/hello_imgui.git
 [submodule "examples_real_libs/hello_imgui/pybind11"]
-	path = examples_real_libs/hello_imgui/pybind11
+	path = examples_real_libs/hello_imgui/third_party/pybind11
 	url = https://github.com/pybind/pybind11.git
+[submodule "examples_real_libs/hello_imgui/third_party/glfw"]
+	path = examples_real_libs/hello_imgui/third_party/glfw
+	url = https://github.com/glfw/glfw.git

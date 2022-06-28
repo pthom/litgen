@@ -1,6 +1,4 @@
 litgen:
-    function_name_exclude_regexes et compagnie devraient peut-etre sortir de srcml pour aller dans litgen
-
     sujet toString
         toString en hackant str:
         l.Foo.__str__ = my_str
