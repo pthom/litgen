@@ -23,6 +23,8 @@ add_subdirectory(third_party/pybind11)
 #
 add_subdirectory(third_party/glfw)
 set(HELLOIMGUI_USE_GLFW_OPENGL3 ON CACHE BOOL "" FORCE)
+set(HELLOIMGUI_BUILD_IMGUI OFF CACHE BOOL "" FORCE)
+set(HELLOIMGUI_IMGUI_SOURCE_DIR ${CMAKE_CURRENT_LIST_DIR}/../imgui/imgui CACHE STRING "" FORCE)
 add_subdirectory(hello_imgui)
 
 
