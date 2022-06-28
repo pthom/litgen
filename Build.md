@@ -1,3 +1,4 @@
+# Install requirement and create venv
 
 ````bash
 python3 -m venv venv
@@ -5,8 +6,29 @@ source venv/bin/activate
 pip install -r requirements.txt
 pip install -r requirements-dev.txt
 pre-commit install
+python -m pip install --upgrade pip
 ````
 
+# Build the pip modules
+
+````
+pip install -v -e .
+cd example
+pip install -v -e .
+cd -
+cd examples_real_libs/imgui
+pip install -v -e .
+cd -
+````
+
+# Tests & Sanity check
+````
+mypy .
+black .
+pytest
+````
+
+# Utilities
 Regularly run [importanize](https://github.com/miki725/importanize), to reorder the imports:
 
 Install importanize (from master branch, in submodule)
@@ -21,7 +43,6 @@ Run importanize
 # From repository root
 importanize
 ````
-
 
 Profiling
     http://jiffyclub.github.io/snakeviz/
