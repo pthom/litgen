@@ -25,7 +25,7 @@ file(GLOB cpp_lib_sources imgui/*.h imgui/*.cpp  imgui/misc/cpp/*.cpp imgui/misc
 if(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
     add_library(${cpp_lib_name} SHARED ${cpp_lib_sources})         # This needs to change, probably!
 else()
-    add_library(${cpp_lib_name} ${cpp_lib_sources})
+    add_library(${cpp_lib_name} ${cpp_lib_sources} bindings/imgui_docking_internal_types.h)
 endif()
 target_include_directories(${cpp_lib_name} PUBLIC ${CMAKE_CURRENT_LIST_DIR}/imgui)
 
@@ -50,7 +50,12 @@ add_dependencies(${cpp_lib_name} ${autgenerate_name})
 #
 # Build python module that uses the library
 #
-set(python_module_sources bindings/module.cpp bindings/pybind_imgui.cpp bindings/imgui_boxed_types.h)
+set(python_module_sources
+    bindings/module.cpp
+    bindings/pybind_imgui.cpp
+    bindings/imgui_boxed_types.h
+    bindings/imgui_docking_internal_types.h
+    )
 pybind11_add_module(${python_native_module_name} ${python_module_sources})
 target_link_libraries(${python_native_module_name} PRIVATE ${cpp_lib_name})
 

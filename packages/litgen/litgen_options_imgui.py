@@ -85,7 +85,6 @@ def litgen_options_imgui() -> LitgenOptions:
         #               ^
         # }
         r"\bCmdLists\b",
-        # r"$NodesSettings^"
     ]
 
     options.member_exclude_by_type__regexes = [

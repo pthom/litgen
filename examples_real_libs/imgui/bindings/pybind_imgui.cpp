@@ -5,11 +5,10 @@
 #include "imgui.h"
 #include "imgui_internal.h"
 #include "misc/cpp/imgui_stdlib.h"
-#include "imgui_internal.h"
+#include "imgui_docking_internal_types.h"
 #include "imgui_boxed_types.h"
 
 namespace py = pybind11;
-
 
 using namespace ImGui;
 
