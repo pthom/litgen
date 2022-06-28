@@ -236,9 +236,16 @@ class AdaptedClass(AdaptedElement):
 
     def _add_adapted_class_member(self, cpp_decl_statement: CppDeclStatement):
         for cpp_decl in cpp_decl_statement.cpp_decls:
-            adapted_class_member = AdaptedClassMember(self.options, cpp_decl, self)
-            if adapted_class_member.check_can_publish():
-                self.adapted_public_children.append(adapted_class_member)
+            is_excluded_by_name = code_utils.does_match_regexes(
+                self.options.member_exclude_by_name__regexes, cpp_decl.decl_name
+            )
+            is_excluded_by_type = code_utils.does_match_regexes(
+                self.options.member_exclude_by_type__regexes, cpp_decl.cpp_type.str_code()
+            )
+            if not is_excluded_by_name and not is_excluded_by_type:
+                adapted_class_member = AdaptedClassMember(self.options, cpp_decl, self)
+                if adapted_class_member.check_can_publish():
+                    self.adapted_public_children.append(adapted_class_member)
 
     def _fill_public_children(self) -> None:
         public_elements = self.cpp_element().get_public_elements()
@@ -248,9 +255,12 @@ class AdaptedClass(AdaptedElement):
             elif isinstance(child, CppComment):
                 self.adapted_public_children.append(AdaptedComment(self.options, child))
             elif isinstance(child, CppFunctionDecl):
-                class_name_cpp = self.cpp_element().class_name
-                is_overloaded = self.cpp_element().is_method_overloaded(child)
-                self.adapted_public_children.append(AdaptedFunction(self.options, child, class_name_cpp, is_overloaded))
+                if not code_utils.does_match_regexes(self.options.fn_exclude_by_name__regexes, child.function_name):
+                    class_name_cpp = self.cpp_element().class_name
+                    is_overloaded = self.cpp_element().is_method_overloaded(child)
+                    self.adapted_public_children.append(
+                        AdaptedFunction(self.options, child, class_name_cpp, is_overloaded)
+                    )
             elif isinstance(child, CppDeclStatement):
                 self._add_adapted_class_member(child)
             elif isinstance(child, CppUnprocessed):

@@ -193,14 +193,8 @@ def parse_decl_stmt(options: SrcmlOptions, element_c: CppElementAndComment) -> C
         if child_c.tag() == "decl":
             child_name = child_c.name_code()
             assert child_name is not None
-            if code_utils.does_match_regexes(options.decl_name_exclude_regexes, child_name):
-                continue
-
             cpp_decl = parse_decl(options, child_c, previous_decl)
-
-            cpp_decl_type = cpp_decl.cpp_type.str_code()
-            if not code_utils.does_match_regexes(options.decl_types_exclude_regexes, cpp_decl_type):
-                result.cpp_decls.append(cpp_decl)
+            result.cpp_decls.append(cpp_decl)
             previous_decl = cpp_decl
         else:
             raise SrcMlExceptionDetailed(child, f"unhandled tag {child_c.tag()}")
@@ -601,10 +595,6 @@ def fill_block(options: SrcmlOptions, element: SrcmlXmlWrapper, inout_block_cont
             if child_tag == "decl_stmt":
                 inout_block_content.block_children.append(parse_decl_stmt(options, child_c))
             elif child_tag == "decl":
-                if child_name is not None and code_utils.does_match_regexes(
-                    options.decl_name_exclude_regexes, child_name
-                ):
-                    continue
                 cpp_decl = parse_decl(options, child_c, None)
                 inout_block_content.block_children.append(cpp_decl)
             elif child_tag == "function_decl":
@@ -613,16 +603,12 @@ def fill_block(options: SrcmlOptions, element: SrcmlXmlWrapper, inout_block_cont
                     inout_block_content.block_children.append(parse_unprocessed(options, child_c))
                 else:
                     assert child_name is not None
-                    if code_utils.does_match_regexes(options.function_name_exclude_regexes, child_name):
-                        continue
                     inout_block_content.block_children.append(parse_function_decl(options, child_c))
             elif child_tag == "function":
                 assert child_name is not None
                 if is_operator_function(child_c):
                     child_c.emit_warning("Operator functions are ignored")
                     inout_block_content.block_children.append(parse_unprocessed(options, child_c))
-                    if code_utils.does_match_regexes(options.function_name_exclude_regexes, child_name):
-                        continue
                 else:
                     inout_block_content.block_children.append(parse_function(options, child_c))
 
@@ -642,8 +628,6 @@ def fill_block(options: SrcmlOptions, element: SrcmlXmlWrapper, inout_block_cont
 
             elif child_tag == "struct" or child_tag == "class":
                 assert child_name is not None
-                if code_utils.does_match_regexes(options.class_name_exclude_regexes, child_name):
-                    continue
                 inout_block_content.block_children.append(parse_struct_or_class(options, child_c))
             elif child_tag == "namespace":
                 inout_block_content.block_children.append(parse_namespace(options, child_c))

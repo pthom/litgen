@@ -45,11 +45,19 @@ class AdaptedBlock(AdaptedElement):
             elif isinstance(child, CppComment):
                 self.adapted_elements.append(AdaptedComment(self.options, child))
             elif isinstance(child, CppStruct):
-                self.adapted_elements.append(AdaptedClass(self.options, child))
+                is_excluded_by_name = code_utils.does_match_regexes(
+                    self.options.class_exclude_by_name__regexes, child.class_name
+                )
+                if not is_excluded_by_name:
+                    self.adapted_elements.append(AdaptedClass(self.options, child))
             elif isinstance(child, CppFunctionDecl):
-                no_class_name = ""
-                is_overloaded = self.cpp_element().is_function_overloaded(child)
-                self.adapted_elements.append(AdaptedFunction(self.options, child, no_class_name, is_overloaded))
+                is_excluded_by_name = code_utils.does_match_regexes(
+                    self.options.fn_exclude_by_name__regexes, child.function_name
+                )
+                if not is_excluded_by_name:
+                    no_class_name = ""
+                    is_overloaded = self.cpp_element().is_function_overloaded(child)
+                    self.adapted_elements.append(AdaptedFunction(self.options, child, no_class_name, is_overloaded))
             elif isinstance(child, CppEnum):
                 self.adapted_elements.append(AdaptedEnum(self.options, child))
             elif isinstance(child, CppNamespace):

@@ -6,7 +6,7 @@ def litgen_options_implot() -> LitgenOptions:
     options = litgen_options_imgui()
     options.srcml_options.functions_api_prefixes = ["IMPLOT_API", "IMPLOT_TMP"]
 
-    options.srcml_options.function_name_exclude_regexes = [
+    options.fn_exclude_by_name__regexes = [
         #  Legitimate Excludes
         # Exclude functions whose name end with G, like for example
         #       IMPLOT_API void PlotLineG(const char* label_id, ImPlotGetter getter, void* data, int count);

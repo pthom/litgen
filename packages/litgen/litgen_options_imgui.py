@@ -45,7 +45,7 @@ def litgen_options_imgui() -> LitgenOptions:
 
     options.srcml_options.code_preprocess_function = _preprocess_imgui_code
 
-    options.srcml_options.function_name_exclude_regexes = [
+    options.fn_exclude_by_name__regexes = [
         # IMGUI_API void          SetAllocatorFunctions(ImGuiMemAllocFunc alloc_func, ImGuiMemFreeFunc free_func, void* user_data = NULL);
         #                                               ^
         # IMGUI_API void          GetAllocatorFunctions(ImGuiMemAllocFunc* p_alloc_func, ImGuiMemFreeFunc* p_free_func, void** p_user_data);
@@ -74,7 +74,7 @@ def litgen_options_imgui() -> LitgenOptions:
         r"\w*V\Z",
     ]
 
-    options.srcml_options.decl_name_exclude_regexes = [
+    options.member_exclude_by_name__regexes = [
         #     typedef void (*ImDrawCallback)(const ImDrawList* parent_list, const ImDrawCmd* cmd);
         #     ImDrawCallback  UserCallback;       // 4-8  // If != NULL, call the function instead of rendering the vertices. clip_rect and texture_id will be set normally.
         #     ^
@@ -87,14 +87,14 @@ def litgen_options_imgui() -> LitgenOptions:
         r"\bCmdLists\b",
     ]
 
-    options.srcml_options.decl_types_exclude_regexes = [
+    options.member_exclude_by_type__regexes = [
         r"^char\s*\*",
         r"const ImWchar\s*\*",
         r"unsigned char\s*\*",
         r"unsigned int\s*\*",
     ]
 
-    options.srcml_options.class_name_exclude_regexes = [r"^ImVector\b", "ImGuiTextBuffer"]
+    options.class_exclude_by_name__regexes = [r"^ImVector\b", "ImGuiTextBuffer"]
 
     options.member_numeric_c_array_types += [
         "ImGuiID",

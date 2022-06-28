@@ -89,10 +89,15 @@ class LitgenOptions:
     ################################################################################
     #    <functions and method adaptations>
     ################################################################################
-    #
+
+    # Exclude certain functions and methods by a regex on their name
+    # These are regexes. If you want to exclude an exact function name, use a regex like this:
+    #         r"^YourFunctionName$",
+    fn_exclude_by_name__regexes: List[str] = []
+
     # C Buffers to py::array
     #
-    # If active, signatures with a C buffer like this:
+    # If fn_params_replace_buffer_by_array__regexes matches, then signatures with a C buffer like this:
     #       MY_API inline void add_inside_array(uint8_t* array, size_t array_size, uint8_t number_to_add)
     # will be transformed to:
     #       void add_inside_array(py::array & array, uint8_t number_to_add)
@@ -106,6 +111,7 @@ class LitgenOptions:
     # fn_params_buffer_replace_by_array_regexes contains a list of regexes on functions names
     # for which this transformation will be applied.
     # Set it to [r".*"] to apply this to all functions (which is the default), set it to [] to disable it
+    #
     fn_params_replace_buffer_by_array__regexes: List[str] = [r".*"]
     # buffer_types List[str]. Which means that `uint8_t*` are considered as possible buffers
     fn_params_buffer_types: List[str] = [
@@ -207,14 +213,22 @@ class LitgenOptions:
     ################################################################################
     #    <class and struct member adaptations>
     ################################################################################
-    #
-    # C style arrays structs and class members
-    #
-    # If c_array_numeric_member_flag_replace is active, then members like
+
+    # Exclude certain classes and structs by a regex on their name
+    class_exclude_by_name__regexes: List[str] = []
+
+    # Exclude certain members by a regex on their name
+    member_exclude_by_name__regexes: List[str] = []
+
+    # Exclude members based on their type
+    member_exclude_by_type__regexes: List[str] = []
+
+    # If member_numeric_c_array_replace__regexes matchs, then members like
     #       struct Foo {  int values[10]; };
     # will be transformed to a property that points to a numpy array
     # which can be read/written from python (this requires numpy)
     member_numeric_c_array_replace__regexes: List[str] = [r".*"]
+
     # list of numeric types that can be stored in a numpy array
     member_numeric_c_array_types = [  # don't include char, don't include byte, those are not numeric!
         "int",  # See https://numpy.org/doc/stable/reference/generated/numpy.chararray.html

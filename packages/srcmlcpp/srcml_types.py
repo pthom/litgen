@@ -1177,6 +1177,17 @@ class CppStruct(CppElementAndComment):
     def is_templated_class(self) -> bool:
         return hasattr(self, "template")
 
+    def get_public_blocks(self) -> List[CppPublicProtectedPrivate]:
+        """
+        Returns the public blocks of the class
+        """
+        r: List[CppPublicProtectedPrivate] = []
+        for access_zone in self.block.block_children:
+            if isinstance(access_zone, CppPublicProtectedPrivate):
+                if access_zone.access_type == "public":
+                    r.append(access_zone)
+        return r
+
     def get_public_elements(self) -> List[CppElementAndComment]:
         """
         Returns the public members, constructors, and methods
