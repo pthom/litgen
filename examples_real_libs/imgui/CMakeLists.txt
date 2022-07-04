@@ -27,7 +27,7 @@ set(autgenerate_name lg_imgui_autogen)       # This is a custom target that runs
 file(GLOB imgui_sources imgui/*.h imgui/*.cpp  imgui/misc/cpp/*.cpp imgui/misc/cpp/*.h)
 add_library(imgui SHARED ${imgui_sources} bindings/imgui_docking_internal_types.h)
 target_include_directories(imgui PUBLIC ${CMAKE_CURRENT_LIST_DIR}/imgui)
-install(TARGETS imgui DESTINATION .)
+install(TARGETS imgui DESTINATION ./lib/)
 
 if (imgui_run_generate)
     #
@@ -60,7 +60,6 @@ pybind11_add_module(${python_native_module_name} ${python_module_sources})
 target_link_libraries(${python_native_module_name} PRIVATE imgui)
 
 install(TARGETS ${python_native_module_name} DESTINATION .)
-# install(TARGETS imgui DESTINATION .)
 
 #
 # Copy the python module to the project dir post build (for editable mode)
@@ -72,3 +71,14 @@ add_custom_command(
     $<TARGET_FILE:${python_native_module_name}>
     ${CMAKE_CURRENT_LIST_DIR}/bindings/lg_imgui/$<TARGET_FILE_NAME:${python_native_module_name}>
 )
+
+#
+# Set the rpath (see https://github.com/pybind/cmake_example/issues/11)
+#
+set_target_properties(${python_native_module_name} PROPERTIES BUILD_WITH_INSTALL_RPATH TRUE)
+if(UNIX AND NOT APPLE)
+    set_target_properties(${python_native_module_name} PROPERTIES INSTALL_RPATH "$ORIGIN/lib/")
+elseif(APPLE)
+    set_target_properties(${python_native_module_name} PROPERTIES INSTALL_RPATH "@loader_path/lib/")
+endif()
+set_target_properties(${python_native_module_name} PROPERTIES INSTALL_RPATH_USE_LINK_PATH TRUE)
