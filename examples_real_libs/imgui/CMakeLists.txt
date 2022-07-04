@@ -27,11 +27,7 @@ set(autgenerate_name lg_imgui_autogen)       # This is a custom target that runs
 # Build imgui Bound C++ library
 #
 file(GLOB cpp_lib_sources imgui/*.h imgui/*.cpp  imgui/misc/cpp/*.cpp imgui/misc/cpp/*.h)
-if(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
-    add_library(${cpp_lib_name} SHARED ${cpp_lib_sources})         # This needs to change, probably!
-else()
-    add_library(${cpp_lib_name} ${cpp_lib_sources} bindings/imgui_docking_internal_types.h)
-endif()
+add_library(${cpp_lib_name} SHARED ${cpp_lib_sources} bindings/imgui_docking_internal_types.h) # Hack lgimgui: shared
 target_include_directories(${cpp_lib_name} PUBLIC ${CMAKE_CURRENT_LIST_DIR}/imgui)
 
 
