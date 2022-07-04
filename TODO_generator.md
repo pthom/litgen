@@ -1,11 +1,3 @@
-check himgui DLL on linux
-    Besoin de faire temporairement export LD_LIBRARY_PATH=/dvp/sources/poub_ld/
-    install libimgui.so and libhello_imgui.so
-    undefined symbol: XOpenDisplay
-        -> link -lX11
-
-test branche devel de srcML
-
 litgen:
     gen library
     gen_library_collection
@@ -15,11 +7,9 @@ himgui:
         functions params ImVec2 => split in two, example = add_rect
         return Imvec2 => investiguer, example = get_window_position() : ca retourne un "Vec2" !
 
-
-
     Nettoyage:
         Don't use {} in function default params
-        Ajout overrideAssetsFolder dans HelloImGui
+
         himgui.__init__.pyi, hacké:
             ````
             from lg_imgui import ImVec2, ImVec4, ImTextureID, ImFontConfig, ImFont, ImGuiWindowFlags

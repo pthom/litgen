@@ -10,6 +10,7 @@ cmake-build-*/
 .dmypy.json
 scratch.txt
 
+.vscode/
 voiladoc/
 venv_ci
 .ipynb_checkpoints/
