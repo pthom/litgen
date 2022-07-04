@@ -4,6 +4,8 @@ project(lg_imgui)
 
 set(CMAKE_CXX_STANDARD 20)
 
+set(BUILD_SHARED_LIBS ON)
+
 #
 # Set targets names
 #
@@ -21,10 +23,18 @@ add_subdirectory(third_party/pybind11)
 #
 # Build hello_imgui Bound C++ library
 #
+set(imgui_bindings_dir ${CMAKE_CURRENT_LIST_DIR}/../imgui)
+set(imgui_dir ${imgui_bindings_dir}/imgui)
+
+
 add_subdirectory(third_party/glfw)
+
+if(NOT TARGET imgui)
+    add_subdirectory(${imgui_bindings_dir} imgui_bindings_build)
+endif()
 set(HELLOIMGUI_USE_GLFW_OPENGL3 ON CACHE BOOL "" FORCE)
 set(HELLOIMGUI_BUILD_IMGUI OFF CACHE BOOL "" FORCE)
-set(HELLOIMGUI_IMGUI_SOURCE_DIR ${CMAKE_CURRENT_LIST_DIR}/../imgui/imgui CACHE STRING "" FORCE)
+set(HELLOIMGUI_IMGUI_SOURCE_DIR ${imgui_dir} CACHE STRING "" FORCE)
 set(HELLO_IMGUI_IMGUI_SHARED ON CACHE BOOL "" FORCE)
 add_subdirectory(hello_imgui)
 

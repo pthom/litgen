@@ -14,7 +14,6 @@ set(CMAKE_CXX_STANDARD 20)
 #
 # Set targets names
 #
-set(cpp_lib_name imgui)                # This is the library for which we want to build bindings
 
 set(python_native_module_name _lg_imgui) # This is the native python module (`_lg_imgui`),
 #    it will be wrapped in a standard python module `lg_imgui,
@@ -22,14 +21,13 @@ set(python_native_module_name _lg_imgui) # This is the native python module (`_l
 
 set(autgenerate_name lg_imgui_autogen)       # This is a custom target that runs the autogeneration of the bindings
 
-
 #
 # Build imgui Bound C++ library
 #
-file(GLOB cpp_lib_sources imgui/*.h imgui/*.cpp  imgui/misc/cpp/*.cpp imgui/misc/cpp/*.h)
-add_library(${cpp_lib_name} SHARED ${cpp_lib_sources} bindings/imgui_docking_internal_types.h) # Hack lgimgui: shared
-target_include_directories(${cpp_lib_name} PUBLIC ${CMAKE_CURRENT_LIST_DIR}/imgui)
-
+file(GLOB imgui_sources imgui/*.h imgui/*.cpp  imgui/misc/cpp/*.cpp imgui/misc/cpp/*.h)
+add_library(imgui SHARED ${imgui_sources} bindings/imgui_docking_internal_types.h)
+target_include_directories(imgui PUBLIC ${CMAKE_CURRENT_LIST_DIR}/imgui)
+install(TARGETS imgui DESTINATION .)
 
 if (imgui_run_generate)
     #
@@ -45,8 +43,8 @@ if (imgui_run_generate)
         # "The Makefile Generators will remove BYPRODUCTS and other GENERATED files during make clean."
         # (cf. https://cmake.org/cmake/help/latest/command/add_custom_target.html)
     )
-    # ${autgenerate_name} is run before building the C++ library ${cpp_lib_name}
-    add_dependencies(${cpp_lib_name} ${autgenerate_name})
+    # ${autgenerate_name} is run before building the C++ library imgui
+    add_dependencies(imgui ${autgenerate_name})
 endif()
 
 #
@@ -59,9 +57,10 @@ set(python_module_sources
     bindings/imgui_docking_internal_types.h
     )
 pybind11_add_module(${python_native_module_name} ${python_module_sources})
-target_link_libraries(${python_native_module_name} PRIVATE ${cpp_lib_name})
+target_link_libraries(${python_native_module_name} PRIVATE imgui)
 
 install(TARGETS ${python_native_module_name} DESTINATION .)
+# install(TARGETS imgui DESTINATION .)
 
 #
 # Copy the python module to the project dir post build (for editable mode)
