@@ -45,6 +45,10 @@ title "Run pytest (will test codemanip, srcmlcpp, litgen, and litgensample)"
 cd "$REPO_DIR"
 pytest
 
-title "Build lg-imgui"
+title "Build lg-imgui python module"
 cd "$REPO_DIR"/examples_real_libs/imgui
+pip install .
+
+title "Build hello-imgui python modules"
+cd "$REPO_DIR"/examples_real_libs/hello_imgui
 pip install .
