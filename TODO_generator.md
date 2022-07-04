@@ -1,6 +1,14 @@
 check himgui DLL on linux
+    Besoin de faire temporairement export LD_LIBRARY_PATH=/dvp/sources/poub_ld/
+    install libimgui.so and libhello_imgui.so
+    undefined symbol: XOpenDisplay
+        -> link -lX11
 
 test branche devel de srcML
+
+litgen:
+    gen library
+    gen_library_collection
 
 himgui:
     Compat pyimgui:
