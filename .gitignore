@@ -16,3 +16,4 @@ venv_ci
 .mypy_cache
 
 imgui.ini
+.DS_Store
