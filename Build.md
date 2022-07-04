@@ -28,6 +28,10 @@ black .
 pytest
 ````
 
+# Advices
+
+Don't use {} in function default params !!! It is wrongly parsed by srcML.
+
 # Utilities
 Regularly run [importanize](https://github.com/miki725/importanize), to reorder the imports:
 
