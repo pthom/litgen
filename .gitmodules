@@ -22,3 +22,6 @@
 [submodule "examples_real_libs/hello_imgui/third_party/glfw"]
 	path = examples_real_libs/hello_imgui/external/glfw
 	url = https://github.com/glfw/glfw.git
+[submodule "examples_real_libs/hello_imgui/external/imgui"]
+	path = examples_real_libs/hello_imgui/external/imgui
+	url = https://github.com/ocornut/imgui.git
