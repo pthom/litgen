@@ -25,7 +25,7 @@ repos:
     hooks:
       - id: mypy-static-checking
         name: "Static type checking with mypy"
-        entry: bash -c 'echo "Running mypy hook" && ./venv/bin/mypy .'
+        entry: bash -c 'echo "Running mypy hook" && python -m mypy .'
         language: system
         types: [python]
         pass_filenames: false
@@ -35,7 +35,7 @@ repos:
     hooks:
       - id: black-repo-wide
         name: "Repo wide formatting checking with black"
-        entry: bash -c 'echo "Running black hook" && ./venv/bin/black .'
+        entry: bash -c 'echo "Running black hook" && python -m black .'
         language: system
         types: [python]
         pass_filenames: false

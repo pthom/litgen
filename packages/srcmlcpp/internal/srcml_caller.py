@@ -4,6 +4,8 @@ Calls the external program srcml (https://www.srcml.org/)
 
 import logging
 import os
+import platform
+import random
 import subprocess
 import tempfile
 import time
@@ -56,24 +58,37 @@ class _SrcmlCaller:
             logging.error(f"_SrcmlCaller.call, error {e}")
             raise
 
+    def _random_filename(self) -> str:
+        characters = "abcdefghijklmnopqrstuvwxyz0123456789_"
+        r = "".join(random.choices(characters, k=14))
+        r = tempfile.gettempdir() + "/" + r
+        return r
+
     def code_to_srcml(self, encoding: str, input_str: str, dump_positions: bool = False) -> ET.Element:
         """
         Calls srcml with the given code and return the srcml as xml Element
         """
         self._stats_code_to_srcml.start()
-        with tempfile.NamedTemporaryFile(suffix=".h", delete=False) as input_header_file:
+        input_header_filename = self._random_filename() + ".h"
+        output_xml_filename = self._random_filename() + ".xml"
+
+        with open(input_header_filename, "wb") as input_header_file:
             input_header_file.write(input_str.encode(encoding))
             input_header_file.close()
-            with tempfile.NamedTemporaryFile(suffix=".xml", delete=False) as output_xml_file:
-                self._call_subprocess(
-                    encoding,
-                    input_header_file.name,
-                    output_xml_file.name,
-                    dump_positions,
-                )
-                output_bytes = output_xml_file.read()
-                os.remove(output_xml_file.name)
-            os.remove(input_header_file.name)
+
+        self._call_subprocess(
+            encoding,
+            input_header_filename,
+            output_xml_filename,
+            dump_positions,
+        )
+
+        with open(output_xml_filename, "rb") as output_xml_file:
+            output_bytes = output_xml_file.read()
+            output_xml_file.close()
+
+        os.remove(input_header_file.name)
+        os.remove(output_xml_file.name)
 
         output_str = output_bytes.decode(encoding)
         element = ET.fromstring(output_str)
@@ -87,17 +102,25 @@ class _SrcmlCaller:
         if element is None:
             return "<srcml_to_code(None)>"
 
+        input_xml_filename = self._random_filename() + ".xml"
+        output_header_filename = self._random_filename() + ".h"
+
         self._stats_srcml_to_code.start()
         unit_element = _embed_element_into_unit(element)
-        with tempfile.NamedTemporaryFile(delete=False, suffix=".xml") as input_xml_file:
+
+        with open(input_xml_filename, "wb") as input_xml_file:
             element_tree = ET.ElementTree(unit_element)
             element_tree.write(input_xml_file.name)
+            input_xml_file.close()
 
-            with tempfile.NamedTemporaryFile(delete=False, suffix=".h") as output_header_file:
-                self._call_subprocess(encoding, input_xml_file.name, output_header_file.name, False)
-                output_bytes = output_header_file.read()
-                os.remove(output_header_file.name)
-        os.remove(input_xml_file.name)
+        self._call_subprocess(encoding, input_xml_filename, output_header_filename, False)
+
+        with open(output_header_filename, "rb") as output_header_file:
+            output_bytes = output_header_file.read()
+            output_header_file.close()
+
+        os.remove(input_xml_filename)
+        os.remove(output_header_filename)
 
         code_str = output_bytes.decode(encoding)
         self._stats_srcml_to_code.stop()
