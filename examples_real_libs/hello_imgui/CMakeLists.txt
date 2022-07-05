@@ -104,3 +104,8 @@ set_target_properties(hello_imgui PROPERTIES INSTALL_RPATH_USE_LINK_PATH TRUE)
 if (WIN32)
 set_target_properties(hello_imgui PROPERTIES WINDOWS_EXPORT_ALL_SYMBOLS ON)
 endif()
+
+# On Windows, install DLLs in install folder root
+if (WIN32)
+    install(FILES $<TARGET_RUNTIME_DLLS:${python_native_module_name}> DESTINATION .)
+endif()

@@ -83,3 +83,8 @@ elseif(APPLE)
     set_target_properties(${python_native_module_name} PROPERTIES INSTALL_RPATH "@loader_path/lib/")
 endif()
 set_target_properties(${python_native_module_name} PROPERTIES INSTALL_RPATH_USE_LINK_PATH TRUE)
+
+# On Windows, install DLLs in install folder root
+if (WIN32)
+    install(FILES $<TARGET_RUNTIME_DLLS:${python_native_module_name}> DESTINATION .)
+endif()
