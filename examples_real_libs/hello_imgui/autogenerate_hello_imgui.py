@@ -32,26 +32,15 @@ def autogenerate():
     input_cpp_header = THIS_DIR + "/hello_imgui_amalgamation.h"
     output_cpp_pydef_file = CPP_GENERATED_PYBIND_DIR + "/pybind_hello_imgui.cpp"
     output_stub_pyi_file = CPP_GENERATED_PYBIND_DIR + "/hello_imgui/__init__.pyi"
-    # output_boxed_types_header_file = CPP_GENERATED_PYBIND_DIR + "/imgui_boxed_types.h"
 
     # Configure options
     options = litgen.LitgenOptions()
-
-    # generated_code = litgen.generate_code(options_imgui_h, filename=input_cpp_header, add_boxed_types_definitions=True)
-
-    # files_and_options_list = litgen.CppFilesAndOptionsList()
-    # files_and_options_list.files_and_options = [
-    #     litgen.CppFileAndOptions(options_imgui_h, input_cpp_header),
-    #     litgen.CppFileAndOptions(options, input_cpp_header_stdlib),
-    # ]
-    # generated_code = litgen.generate_code_for_files(files_and_options_list, add_boxed_types_definitions=True)
     generated_code = litgen.generate_code(options, filename=input_cpp_header)
 
     litgen.write_generated_code(
         generated_code,
         output_cpp_pydef_file=output_cpp_pydef_file,
         output_stub_pyi_file=output_stub_pyi_file,
-        # output_boxed_types_header_file=output_boxed_types_header_file,
     )
 
 

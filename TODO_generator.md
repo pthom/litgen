@@ -3,6 +3,10 @@ litgen:
     gen_library_collection
 
 himgui:
+    pb avec CI & ref imgui externe
+        add_subdirectory given source "/tmp/pip-req-build-oa2nbnuv/../imgui" which
+        is not an existing directory.
+
     Compat pyimgui:
         functions params ImVec2 => split in two, example = add_rect
         return Imvec2 => investiguer, example = get_window_position() : ca retourne un "Vec2" !
@@ -38,52 +42,7 @@ himgui:
 
                 //ImGui::SetAllocatorFunctions(MyMallocWrapper, MyFreeWrapper);
 
-            Faire test sous linux !!!
-
-    Solutions:
-        - Soit gérer le passage de GImGui (semble pas simple, une allocation de GImGui échoue...)
-            En fait, il au moment ou on inclue imgui_internal depuis une autre dll (ici HelloImGui::AbstractRunner) , il faut
-                #define GImGui
-                definir une variable globale GImGui, la récupérer depuis CreateContext et la stocker, puis la donner
-                a ImGui
-
-        - Soit lier les deux modules (genre imgui = submodule de himgui, avec defsubmodule)
-
-        Probleme en cours: le module imgui compilé pour l'instant est fait pour une version statique
-        Il faudrait compiler ImGui avec options
-
-        Status / GImGui:
-            imgui_internal.h:
-                #ifndef GImGui
-                extern IMGUI_API ImGuiContext* GImGui;  // Current implicit context pointer
-                #endif
-            imgui.cpp
-                #ifndef GImGui
-                ImGuiContext*   GImGui = NULL;
-                #endif
-            GImGui utilisé dans imgui.cpp, imgui_internal.h mais pas dans imgui.h
-
-        Status / Compil imgui dans le projet
-            HelloImGui ne compile pas sa propre version de ImGui
-            examples_real_libs/imgui compile en statique
-
-        L'erreur se produit dans
-                imgui_internal.h
-                    inline ImFont*          GetDefaultFont() {
-                    ImGuiContext& g = *GImGui;       // NULL !!!!!!!!
-            appelé par
-                imgui.cpp: void ImGui::NewFrame()
-                    Dans NewFrame, GImGui est bon, jusqu'a l'appel de GetDefaultFont, ou il devient NULL
-                    (car on est alors dans le inline de HelloImGui ?)
-
-
-
-        -> C'est trop horrible a debugger dans context complet
-            Faire un programme minimal
-
-            static void*   MyMallocWrapper(size_t size, void* user_data)    { IM_UNUSED(user_data); return malloc(size); }
-            static void    MyFreeWrapper(void* ptr, void* user_data)        { IM_UNUSED(user_data); free(ptr); }
-
+            Faire test sous windows !!!
 
 
 litgen:
