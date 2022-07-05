@@ -137,6 +137,8 @@ def test_implot_one_buffer() -> None:
                         PlotScatter(static_cast<const double *>(values_from_pyarray), static_cast<int>(values_count));
                     else if (values_type == 'g')
                         PlotScatter(static_cast<const long double *>(values_from_pyarray), static_cast<int>(values_count));
+                    else if (values_type == 'q')
+                        PlotScatter(static_cast<const long long *>(values_from_pyarray), static_cast<int>(values_count));
                     // If we reach this point, the array type is not supported!
                     else
                         throw std::runtime_error(std::string("Bad array type ('") + values_type + "') for param values");

@@ -193,6 +193,8 @@ def test_template_buffer():
                         return foo(static_cast<const double *>(buf_from_pyarray), static_cast<size_t>(buf_count), flag);
                     else if (buf_type == 'g')
                         return foo(static_cast<const long double *>(buf_from_pyarray), static_cast<size_t>(buf_count), flag);
+                    else if (buf_type == 'q')
+                        return foo(static_cast<const long long *>(buf_from_pyarray), static_cast<size_t>(buf_count), flag);
                     // If we reach this point, the array type is not supported!
                     else
                         throw std::runtime_error(std::string("Bad array type ('") + buf_type + "') for param buf");

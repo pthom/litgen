@@ -177,6 +177,7 @@ _PY_ARRAY_TYPE_TO_CPP_TYPE = {
     "f": "float",
     "d": "double",
     "g": "long double",
+    "q": "long long",
 }
 
 
