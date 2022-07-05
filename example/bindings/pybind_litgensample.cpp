@@ -302,6 +302,8 @@ void py_init_module_litgensample(py::module& m)
                     mul_inside_buffer(static_cast<double *>(buffer_from_pyarray), static_cast<size_t>(buffer_count), factor);
                 else if (buffer_type == 'g')
                     mul_inside_buffer(static_cast<long double *>(buffer_from_pyarray), static_cast<size_t>(buffer_count), factor);
+                else if (buffer_type == 'q')
+                    mul_inside_buffer(static_cast<long long *>(buffer_from_pyarray), static_cast<size_t>(buffer_count), factor);
                 // If we reach this point, the array type is not supported!
                 else
                     throw std::runtime_error(std::string("Bad array type ('") + buffer_type + "') for param buffer");
