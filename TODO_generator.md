@@ -13,10 +13,13 @@ himgui:
 
         M3: Des repos imgui_bindings et hello_imgui qui ne dependent pas de litgen ?
             Pas mal... Mais ne resout pas le probleme de trouver les includes imgui pour himgui
-            --> fonctionner en cmake independant
-            --> ajout sudmodule imgui à hello_imgui / Script check versions identiques
+            X --> fonctionner en cmake independant
+            X --> ajout sudmodule imgui à hello_imgui
+            --> Script check versions identiques
             peut-etre renommer target imgui dans himgui
             --> faire des submodules, et donc refaire des repos
+            --> lg_hello_imgui depend de lg_imgui (setuptools)
+
 
     Compat pyimgui:
         functions params ImVec2 => split in two, example = add_rect
