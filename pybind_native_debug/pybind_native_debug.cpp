@@ -45,7 +45,7 @@ int main()
     std::string cmd = R"(
 import sys
 sys.path.append("THIS_DIR")
-sys.path.append("THIS_DIR/../examples_real_libs/hello_imgui/playground/")
+sys.path.append("THIS_DIR/../lg_projects/hello_imgui/playground/")
 import play_himgui
     )";
     cmd = string_replace(cmd, "THIS_DIR", THIS_DIR);

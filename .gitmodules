@@ -1,27 +1,6 @@
 [submodule "external/pybind11"]
 	path = example/external/pybind11
 	url = https://github.com/pybind/pybind11.git
-[submodule "examples_real_libs/imgui/imgui"]
-	path = examples_real_libs/imgui/external/imgui
-	url = https://github.com/ocornut/imgui.git
-[submodule "examples_real_libs/implot/implot"]
-	path = examples_real_libs/implot/implot
-	url = https://github.com/epezent/implot.git
-[submodule "examples_real_libs/imgui/pybind11"]
-	path = examples_real_libs/imgui/external/pybind11
-	url = https://github.com/pybind/pybind11.git
 [submodule "ci_scripts/importanize"]
 	path = ci_scripts/importanize
 	url = https://github.com/miki725/importanize.git
-[submodule "examples_real_libs/hello_imgui/hello_imgui"]
-	path = examples_real_libs/hello_imgui/external/hello_imgui
-	url = https://github.com/pthom/hello_imgui.git
-[submodule "examples_real_libs/hello_imgui/pybind11"]
-	path = examples_real_libs/hello_imgui/external/pybind11
-	url = https://github.com/pybind/pybind11.git
-[submodule "examples_real_libs/hello_imgui/third_party/glfw"]
-	path = examples_real_libs/hello_imgui/external/glfw
-	url = https://github.com/glfw/glfw.git
-[submodule "examples_real_libs/hello_imgui/external/imgui"]
-	path = examples_real_libs/hello_imgui/external/imgui
-	url = https://github.com/ocornut/imgui.git

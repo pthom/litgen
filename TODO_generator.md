@@ -12,11 +12,10 @@ himgui:
         is not an existing directory.
 
         M3: Des repos imgui_bindings et hello_imgui qui ne dependent pas de litgen ?
-            Pas mal... Mais ne resout pas le probleme de trouver les includes imgui pour himgui
+            Pas mal... Mais ne resoud pas le probleme de trouver les includes imgui pour himgui
             X --> fonctionner en cmake independant
             X --> ajout sudmodule imgui à hello_imgui
-            --> Script check versions identiques
-            peut-etre renommer target imgui dans himgui
+            X --> Script check versions identiques
             --> faire des submodules, et donc refaire des repos
             --> lg_hello_imgui depend de lg_imgui (setuptools)
 
