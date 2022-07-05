@@ -27,8 +27,8 @@ lg_project=lg_hello_imgui
 cd "$lg_projects_dir"/$lg_project/external/imgui && git --no-pager log --format="%H" -n 1 > "$lg_projects_dir"/"$lg_project".githead && cd "$lg_projects_dir"
 diff lg_imgui.githead lg_hello_imgui.githead # this will fail if they differ
 
-
 title "Create virtual env"
+cd $REPO_DIR
 rm -rf venv_ci/
 python3 -m venv venv_ci
 . venv_ci/bin/activate
@@ -36,6 +36,7 @@ which python
 
 
 title "Install requirements"
+cd $REPO_DIR
 pip install -r requirements-dev.txt
 pip install -r requirements.txt
 
@@ -61,10 +62,10 @@ pytest
 
 
 title "Build lg-imgui python module"
-cd "$REPO_DIR"/examples_real_libs/imgui
+cd "$REPO_DIR"/lg_projects/lg_imgui
 pip install .
 
 
 title "Build hello-imgui python modules"
-cd "$REPO_DIR"/examples_real_libs/hello_imgui
+cd "$REPO_DIR"/lg_projects/lg_hello_imgui
 pip install .
