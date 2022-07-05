@@ -19,14 +19,15 @@ set(python_native_module_name _lg_imgui) # This is the native python module (`_l
 #    it will be wrapped in a standard python module `lg_imgui,
 #    which is located in bindings/lg_imgui
 
-set(autgenerate_name lg_imgui_autogen)       # This is a custom target that runs the autogeneration of the bindings
+set(autogenerate_name lg_imgui_autogen)       # This is a custom target that runs the autogeneration of the bindings
 
 #
 # Build imgui Bound C++ library
 #
 file(GLOB imgui_sources imgui/*.h imgui/*.cpp  imgui/misc/cpp/*.cpp imgui/misc/cpp/*.h)
 add_library(imgui SHARED ${imgui_sources} bindings/imgui_docking_internal_types.h)
-target_include_directories(imgui PUBLIC ${CMAKE_CURRENT_LIST_DIR}/imgui)
+target_include_directories(imgui PUBLIC ${CMAKE_CURRENT_LIST_DIR}/imgui ${CMAKE_CURRENT_LIST_DIR})
+target_compile_definitions(imgui PRIVATE IMGUI_USER_CONFIG="litgen_imconfig.h")
 install(TARGETS imgui DESTINATION ./lib/)
 
 if (imgui_run_generate)
@@ -34,7 +35,7 @@ if (imgui_run_generate)
     # Auto-generate the C++ binding code before building the python module
     #
     add_custom_target(
-        ${autgenerate_name}
+        ${autogenerate_name}
         COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_LIST_DIR}/autogenerate_imgui.py
         DEPENDS ${CMAKE_CURRENT_LIST_DIR}/imgui/imgui.h
         COMMENT "autogenerate imgui python bindings"
@@ -43,8 +44,8 @@ if (imgui_run_generate)
         # "The Makefile Generators will remove BYPRODUCTS and other GENERATED files during make clean."
         # (cf. https://cmake.org/cmake/help/latest/command/add_custom_target.html)
     )
-    # ${autgenerate_name} is run before building the C++ library imgui
-    add_dependencies(imgui ${autgenerate_name})
+    # ${autogenerate_name} is run before building the C++ library imgui
+    add_dependencies(imgui ${autogenerate_name})
 endif()
 
 #
