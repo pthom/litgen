@@ -3,9 +3,20 @@ litgen:
     gen_library_collection
 
 himgui:
+    pip install -e plante sous mac M1
+        https://stackoverflow.com/questions/66860350/python-pip-process-are-killed-in-virtualenv-apple-m1-chip
+        Essayer Poetry ?
+
     pb avec CI & ref imgui externe
         add_subdirectory given source "/tmp/pip-req-build-oa2nbnuv/../imgui" which
         is not an existing directory.
+
+        M3: Des repos imgui_bindings et hello_imgui qui ne dependent pas de litgen ?
+            Pas mal... Mais ne resout pas le probleme de trouver les includes imgui pour himgui
+            --> fonctionner en cmake independant
+            --> ajout sudmodule imgui à hello_imgui / Script check versions identiques
+            peut-etre renommer target imgui dans himgui
+            --> faire des submodules, et donc refaire des repos
 
     Compat pyimgui:
         functions params ImVec2 => split in two, example = add_rect
