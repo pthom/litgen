@@ -7,19 +7,6 @@ himgui:
         https://stackoverflow.com/questions/66860350/python-pip-process-are-killed-in-virtualenv-apple-m1-chip
         Essayer Poetry ?
 
-    pb avec CI & ref imgui externe
-        add_subdirectory given source "/tmp/pip-req-build-oa2nbnuv/../imgui" which
-        is not an existing directory.
-
-        M3: Des repos imgui_bindings et hello_imgui qui ne dependent pas de litgen ?
-            Pas mal... Mais ne resoud pas le probleme de trouver les includes imgui pour himgui
-            X --> fonctionner en cmake independant
-            X --> ajout sudmodule imgui à hello_imgui
-            X --> Script check versions identiques
-            --> faire des submodules, et donc refaire des repos
-            --> lg_hello_imgui depend de lg_imgui (setuptools)
-
-
     Compat pyimgui:
         functions params ImVec2 => split in two, example = add_rect
         return Imvec2 => investiguer, example = get_window_position() : ca retourne un "Vec2" !
@@ -45,17 +32,6 @@ himgui:
         Trucs à régler dans __init__.pyi:
             default_im_gui_window_type:DefaultImGuiWindowType = DefaultImGuiWindowType::ProvideFullScreenWindow
 
-
-
-    Pb avec GImGui si HelloImGui et ImGui sont dans des modules (dll) séparés
-        Fin / Solution via shared:
-            Ajout SetAllocFunctionTrucMuche
-                static void*   MyMallocWrapper(size_t size, void* user_data)    { IM_UNUSED(user_data); return malloc(size); }
-                static void    MyFreeWrapper(void* ptr, void* user_data)        { IM_UNUSED(user_data); free(ptr); }
-
-                //ImGui::SetAllocatorFunctions(MyMallocWrapper, MyFreeWrapper);
-
-            Faire test sous windows !!!
 
 
 litgen:
