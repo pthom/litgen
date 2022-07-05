@@ -20,12 +20,12 @@ $decoration
 
 
 title "Check that lg_imgui and lg_hello_imgui use the same imgui version"
-lg_projects_dir=$REPO_DIR/examples_real_libs
-lg_project=imgui
+lg_projects_dir=$REPO_DIR/lg_projects
+lg_project=lg_imgui
 cd "$lg_projects_dir"/$lg_project/external/imgui && git --no-pager log --format="%H" -n 1 > "$lg_projects_dir"/"$lg_project".githead && cd "$lg_projects_dir"
-lg_project=hello_imgui
+lg_project=lg_hello_imgui
 cd "$lg_projects_dir"/$lg_project/external/imgui && git --no-pager log --format="%H" -n 1 > "$lg_projects_dir"/"$lg_project".githead && cd "$lg_projects_dir"
-diff imgui.githead hello_imgui.githead # this will fail if they differ
+diff lg_imgui.githead lg_hello_imgui.githead # this will fail if they differ
 
 
 title "Create virtual env"
