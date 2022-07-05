@@ -6,7 +6,6 @@ requires = [
     "cmake",
     "patch",
     "ninja; platform_system!='Windows'",
-    "litgen @ git+https://github.com/pthom/litgen",
 ]
 build-backend = "setuptools.build_meta"
 
