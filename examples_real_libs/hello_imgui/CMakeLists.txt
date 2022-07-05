@@ -36,7 +36,7 @@ set(HELLOIMGUI_USE_GLFW_OPENGL3 ON CACHE BOOL "" FORCE)
 set(HELLOIMGUI_BUILD_IMGUI OFF CACHE BOOL "" FORCE)
 set(HELLOIMGUI_IMGUI_SOURCE_DIR ${imgui_dir} CACHE STRING "" FORCE)
 set(HELLO_IMGUI_IMGUI_SHARED ON CACHE BOOL "" FORCE)
-add_subdirectory(hello_imgui)
+add_subdirectory(third_party/hello_imgui)
 
 
 ##
