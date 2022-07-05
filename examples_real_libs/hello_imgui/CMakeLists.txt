@@ -97,3 +97,10 @@ elseif(APPLE)
     set_target_properties(hello_imgui PROPERTIES INSTALL_RPATH "@loader_path/")
 endif()
 set_target_properties(hello_imgui PROPERTIES INSTALL_RPATH_USE_LINK_PATH TRUE)
+
+#
+# Export hello-imgui symbols on Windows
+#
+if (WIN32)
+set_target_properties(hello_imgui PROPERTIES WINDOWS_EXPORT_ALL_SYMBOLS ON)
+endif()
