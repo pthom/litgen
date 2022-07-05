@@ -103,8 +103,8 @@ namespace LiterateGeneratorExample // MY_API
         size_t total = 0;
         for (size_t i = 0; i < items_count; ++i)
             total += strlen(items[i]);
-        output[0] = total;
-        output[1] = total + 1;
+        output[0] = (int)total;
+        output[1] = (int)(total + 1);
         return total;
     }
 
