@@ -15,19 +15,17 @@ set(python_native_module_name _hello_imgui) # This is the native python module (
 #    it will be wrapped in a standard python module `lg_imgui,
 #    which is located in bindings/lg_imgui
 
-set(autgenerate_name hello_imgui_autogen)       # This is a custom target that runs the autogeneration of the bindings
-
 # Add pybind11
-add_subdirectory(third_party/pybind11)
+add_subdirectory(external/pybind11)
 
 #
 # Build hello_imgui Bound C++ library
 #
 set(imgui_bindings_dir ${CMAKE_CURRENT_LIST_DIR}/../imgui)
-set(imgui_dir ${imgui_bindings_dir}/imgui)
+set(imgui_dir ${CMAKE_CURRENT_LIST_DIR}/../imgui/external/imgui)
 
 
-add_subdirectory(third_party/glfw)
+add_subdirectory(external/glfw)
 
 if(NOT TARGET imgui)
     add_subdirectory(${imgui_bindings_dir} imgui_bindings_build)
@@ -36,24 +34,7 @@ set(HELLOIMGUI_USE_GLFW_OPENGL3 ON CACHE BOOL "" FORCE)
 set(HELLOIMGUI_BUILD_IMGUI OFF CACHE BOOL "" FORCE)
 set(HELLOIMGUI_IMGUI_SOURCE_DIR ${imgui_dir} CACHE STRING "" FORCE)
 set(HELLO_IMGUI_IMGUI_SHARED ON CACHE BOOL "" FORCE)
-add_subdirectory(third_party/hello_imgui)
-
-
-##
-## Auto-generate the C++ binding code before building the python module
-##
-#add_custom_target(
-#    ${autgenerate_name}
-#    COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_LIST_DIR}/autogenerate_hello_imgui.py
-#    DEPENDS ${CMAKE_CURRENT_LIST_DIR}/imgui/imgui.h
-#    COMMENT "autogenerate imgui python bindings"
-#
-#    # We can't use BYPRODUCTS, since
-#    # "The Makefile Generators will remove BYPRODUCTS and other GENERATED files during make clean."
-#    # (cf. https://cmake.org/cmake/help/latest/command/add_custom_target.html)
-#)
-## ${autgenerate_name} is run before building the C++ library ${cpp_lib_name}
-#add_dependencies(${cpp_lib_name} ${autgenerate_name})
+add_subdirectory(external/hello_imgui)
 
 
 #

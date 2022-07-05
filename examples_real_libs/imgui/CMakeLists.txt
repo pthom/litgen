@@ -7,7 +7,7 @@ set(imgui_run_generate OFF)
 
 
 # Add pybind11
-add_subdirectory(pybind11)
+add_subdirectory(external/pybind11)
 
 set(CMAKE_CXX_STANDARD 20)
 
@@ -24,9 +24,10 @@ set(autogenerate_name lg_imgui_autogen)       # This is a custom target that run
 #
 # Build imgui Bound C++ library
 #
-file(GLOB imgui_sources imgui/*.h imgui/*.cpp  imgui/misc/cpp/*.cpp imgui/misc/cpp/*.h)
+set(imgui_dir ${CMAKE_CURRENT_LIST_DIR}/external/imgui)
+file(GLOB imgui_sources ${imgui_dir}/*.h ${imgui_dir}/*.cpp  ${imgui_dir}/misc/cpp/*.cpp ${imgui_dir}/misc/cpp/*.h)
 add_library(imgui SHARED ${imgui_sources} bindings/imgui_docking_internal_types.h)
-target_include_directories(imgui PUBLIC ${CMAKE_CURRENT_LIST_DIR}/imgui ${CMAKE_CURRENT_LIST_DIR})
+target_include_directories(imgui PUBLIC ${imgui_dir} ${CMAKE_CURRENT_LIST_DIR})
 target_compile_definitions(imgui PRIVATE IMGUI_USER_CONFIG="litgen_imconfig.h")
 install(TARGETS imgui DESTINATION ./lib/)
 
