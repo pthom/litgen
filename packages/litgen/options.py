@@ -1,7 +1,7 @@
 from typing import List
 
 from codemanip import code_replacements
-from codemanip.code_replacements import StringReplacement
+from codemanip.code_replacements import RegexReplacementList
 
 from srcmlcpp import SrcmlOptions
 
@@ -44,8 +44,8 @@ class LitgenOptions:
     # - by default, code_replacements is prefilled with standard_code_replacements(),
     # - by default, comments_replacements is prefilled with standard_comments_replacements(),
     #
-    code_replacements: List[StringReplacement] = []
-    comments_replacements: List[StringReplacement] = []
+    code_replacements: RegexReplacementList = RegexReplacementList()
+    comments_replacements: RegexReplacementList = RegexReplacementList()
 
     ################################################################################
     #    <Layout settings for the generated python stub code>

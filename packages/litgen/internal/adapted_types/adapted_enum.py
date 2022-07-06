@@ -3,7 +3,7 @@ from dataclasses import dataclass
 from typing import Union, cast
 
 from codemanip import code_replacements
-from codemanip.code_replacements import StringReplacement
+from codemanip.code_replacements import RegexReplacementList, RegexReplacement
 
 from srcmlcpp.srcml_types import *
 
@@ -73,31 +73,30 @@ class AdaptedEnumDecl(AdaptedDecl):
         #     enum MyEnum { /*....*/ MyEnum_foo = MyEnum_a | MyEnum_b };
         # So, we search and replace enum strings in the default value
         replacements = self.enum_parent.cpp_to_python_replacements(from_inside_block=True)
-        for replacement in replacements:
-            decl_value_python = code_replacements.apply_one_replacement(decl_value_python, replacement)
+        decl_value_python = replacements.apply(decl_value_python)
 
         return decl_value_python
 
-    def cpp_to_python_replacements(self, from_inside_block: bool = False) -> List[StringReplacement]:
-        r: List[StringReplacement] = []
-
-        replacement = StringReplacement()
+    def cpp_to_python_replacements(self, from_inside_block: bool = False) -> RegexReplacementList:
+        replacement_list = RegexReplacementList()
 
         enum_name_cpp = self.enum_parent.cpp_element().enum_name
         enum_member_name_cpp = self.cpp_element().decl_name
         enum_name_python = enum_name_cpp
         enum_member_name_python = self.decl_name_python()
 
-        replacement.replace_what = rf"\b{enum_name_cpp}::{enum_member_name_cpp}\b"
-        replacement.by_what = f"Literal[{enum_name_python}.{enum_member_name_python}]"
-        r.append(replacement)
+        replace_what = rf"\b{enum_name_cpp}::{enum_member_name_cpp}\b"
+        by_what = f"Literal[{enum_name_python}.{enum_member_name_python}]"
+
+        replacement = RegexReplacement(replace_what, by_what)
+        replacement_list.add_replacement(replacement)
 
         if from_inside_block:
-            replacement_inside_block = copy.deepcopy(replacement)
-            replacement_inside_block.replace_what = rf"\b{enum_member_name_cpp}\b"
-            r.append(replacement_inside_block)
+            replace_what_inside = rf"\b{enum_member_name_cpp}\b"
+            replacement_inside_block = RegexReplacement(replace_what_inside, by_what)
+            replacement_list.add_replacement(replacement_inside_block)
 
-        return r
+        return replacement_list
 
     # override
     def _str_stub_lines(self) -> List[str]:
@@ -162,10 +161,10 @@ class AdaptedEnum(AdaptedElement):
                     self.adapted_children.append(new_adapted_decl)
                     self.adapted_enum_decls.append(new_adapted_decl)
 
-    def cpp_to_python_replacements(self, from_inside_block: bool = False) -> List[StringReplacement]:
-        r: List[StringReplacement] = []
+    def cpp_to_python_replacements(self, from_inside_block: bool = False) -> RegexReplacementList:
+        r = RegexReplacementList()
         for decl in self.adapted_enum_decls:
-            r += decl.cpp_to_python_replacements(from_inside_block)
+            r.merge_replacements(decl.cpp_to_python_replacements(from_inside_block))
         return r
 
     # override

@@ -3,7 +3,7 @@ import pathlib
 from dataclasses import dataclass  # noqa
 
 from codemanip import code_replacements
-from codemanip.code_replacements import StringReplacement
+from codemanip.code_replacements import RegexReplacement, RegexReplacementList
 
 from srcmlcpp import srcmlcpp_main
 from srcmlcpp.srcml_types import *
@@ -37,7 +37,7 @@ def _comment_apply_replacements(options: LitgenOptions, comment: str) -> str:
     lines = code_utils.strip_lines_right_space(lines)
 
     comment = "\n".join(lines)
-    comment = code_replacements.apply_code_replacements(comment, options.comments_replacements)
+    comment = options.comments_replacements.apply(comment)
 
     return comment
 
@@ -50,7 +50,7 @@ def comment_pydef_one_line(options: LitgenOptions, title_cpp: str) -> str:
 def type_to_python(options: LitgenOptions, type_cpp: str) -> str:
     r = type_cpp
     r = r.replace("static ", "")
-    r = code_replacements.apply_code_replacements(r, options.code_replacements).strip()
+    r = options.code_replacements.apply(r).strip()
     return r
 
 
@@ -80,20 +80,20 @@ def var_name_to_python(options: LitgenOptions, name: str) -> str:
 
 # Store global replacements gathered from the code base
 # (for example, enum member names, static class members, etc)
-_STATIC_MEMBERS_VALUE_REPLACEMENTS: List[StringReplacement] = []
+_STATIC_MEMBERS_VALUE_REPLACEMENTS: RegexReplacementList = RegexReplacementList()
 
 
-def store_static_member_value_replacements(replacements: List[StringReplacement]):
+def store_static_member_value_replacements(replacements: RegexReplacementList):
     global _STATIC_MEMBERS_VALUE_REPLACEMENTS
-    _STATIC_MEMBERS_VALUE_REPLACEMENTS += replacements
+    _STATIC_MEMBERS_VALUE_REPLACEMENTS.merge_replacements(replacements)
 
 
 def var_value_to_python(options: LitgenOptions, default_value_cpp: str) -> str:
     global _STATIC_MEMBERS_VALUE_REPLACEMENTS
-    r = code_replacements.apply_code_replacements(default_value_cpp, options.code_replacements)
+    r = options.code_replacements.apply(default_value_cpp)
     for number_macro, value in options.srcml_options.named_number_macros.items():
         r = r.replace(number_macro, str(value))
-    r = code_replacements.apply_code_replacements(r, _STATIC_MEMBERS_VALUE_REPLACEMENTS)
+    r = _STATIC_MEMBERS_VALUE_REPLACEMENTS.apply(r)
     return r
 
 
@@ -378,7 +378,7 @@ def apply_black_formatter_pyi(options: LitgenOptions, code: str) -> str:
     return formatted_code
 
 
-def standard_code_replacements() -> List[StringReplacement]:
+def standard_code_replacements() -> RegexReplacementList:
     """Replacements for C++ code when translating to python.
 
     Consists mostly of
@@ -386,7 +386,7 @@ def standard_code_replacements() -> List[StringReplacement]:
     * NULL, nullptr, void translation
     * number translation (e.g. `1.5f` -> `1.5`)
     """
-    replacements = r"""
+    replacements_str = r"""
     \buint8_t\b -> int
     \bint8_t\b -> int
     \buint16_t\b -> int
@@ -447,11 +447,11 @@ def standard_code_replacements() -> List[StringReplacement]:
     """
     # Note: the two last regexes replace C numbers like 1.5f or 1.5d by 1.5
 
-    replaces = code_replacements.parse_string_replacements(replacements)
+    replaces = RegexReplacementList.from_string(replacements_str)
     return replaces
 
 
-def standard_comment_replacements() -> List[StringReplacement]:
+def standard_comment_replacements() -> RegexReplacementList:
     """Replacements for C++ code when translating to python.
 
     Consists mostly of
@@ -459,7 +459,7 @@ def standard_comment_replacements() -> List[StringReplacement]:
     * NULL, nullptr, void translation
     * number translation (e.g. `1.5f` -> `1.5`)
     """
-    replacements = r"""
+    replacements_str = r"""
 
     \btrue\b -> True
     \bfalse\b -> False
@@ -473,11 +473,11 @@ def standard_comment_replacements() -> List[StringReplacement]:
     """
 
     # Note: the two last regexes replace C numbers like 1.5f or 1.5d by 1.5
-    return code_replacements.parse_string_replacements(replacements)
+    return RegexReplacementList.from_string(replacements_str)
 
 
-def opencv_replacements() -> List[StringReplacement]:
-    replacements = r"""
+def opencv_replacements() -> RegexReplacementList:
+    replacements_str = r"""
     \bcv::Size\(\) -> (0, 0)
     \bcv::Point\(-1, -1\) -> (-1, -1)
     \bcv::Point2d\(-1., -1.\) -> (-1., -1.)
@@ -488,7 +488,7 @@ def opencv_replacements() -> List[StringReplacement]:
     \bcv::Point\b -> Point
     \bcv::Point2d\b -> Point2d
     """
-    return code_replacements.parse_string_replacements(replacements)
+    return RegexReplacementList.from_string(replacements_str)
 
 
 def cpp_type_default_python_value(cpp_type: str) -> Optional[str]:

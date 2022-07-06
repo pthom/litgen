@@ -1,4 +1,5 @@
 from codemanip import code_replacements
+from codemanip.code_replacements import RegexReplacementList
 
 from litgen.options import LitgenOptions
 
@@ -31,8 +32,8 @@ def litgen_options_imgui() -> LitgenOptions:
     options.cpp_indent_size = 4
 
     options.code_replacements = cpp_to_python.standard_code_replacements()
-    options.code_replacements += code_replacements.parse_string_replacements(
-        r"\bImVector\s*<\s*([\w:]*)\s*> -> List[\1]"
+    options.code_replacements.merge_replacements(
+        RegexReplacementList.from_string(r"\bImVector\s*<\s*([\w:]*)\s*> -> List[\1]")
     )
 
     options.python_max_line_length = -1  # in ImGui, the function decls are on *one* line
