@@ -37,7 +37,6 @@ which python
 
 title "Install requirements"
 cd $REPO_DIR
-pip install -r requirements-dev.txt
 pip install -r requirements.txt
 
 

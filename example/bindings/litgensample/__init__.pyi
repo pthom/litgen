@@ -2,7 +2,7 @@ from typing import List, Tuple, Optional
 from typing import (
     Literal,  # for enums annotations, when some enum values depend on other values of the same enum
 )
-import numpy as np
+import numpy as np  # type: ignore
 from enum import Enum
 
 # Disable black formatter

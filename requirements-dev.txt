@@ -1,7 +1,0 @@
-pytest
-pytest-cov
-black
-jupyter-black
-mypy
-pre-commit
-importanize

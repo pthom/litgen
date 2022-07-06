@@ -1,13 +1,17 @@
 # Install requirement and create venv
 
 ````bash
-python3 -m venv venv
-source venv/bin/activate
-pip install -r requirements.txt
-pip install -r requirements-dev.txt
+poetry shell
+poetry install
 pre-commit install
-python -m pip install --upgrade pip
 ````
+
+### Update requirements.txt
+
+````
+poetry export --without-hashes --dev > requirements.txt
+````
+
 
 # Build the pip modules
 
