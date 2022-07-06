@@ -1,10 +1,7 @@
 pytest
 pytest-cov
-numpy
-matplotlib
-scikit-build
 black
+jupyter-black
 mypy
 pre-commit
-jupyter-black
 importanize

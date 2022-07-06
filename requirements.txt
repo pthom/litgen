@@ -1,4 +1,3 @@
-opencv-python
 pygments
 patch
 munch
