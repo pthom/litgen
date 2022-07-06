@@ -68,15 +68,10 @@ class AdaptedEnumDecl(AdaptedDecl):
     def decl_value_python(self) -> str:
         decl_value_cpp = self.cpp_element().initial_value_code
         decl_value_python = cpp_to_python.var_value_to_python(self.options, decl_value_cpp)
-        #
+
         # Sometimes, enum decls have interdependent values like this:
-        #     enum MyEnum {
-        #         MyEnum_a = 1, MyEnum_b,
-        #         MyEnum_foo = MyEnum_a | MyEnum_b    //
-        #     };
-        #
-        # So, we search and replace enum strings in the default value (.init)
-        #
+        #     enum MyEnum { /*....*/ MyEnum_foo = MyEnum_a | MyEnum_b };
+        # So, we search and replace enum strings in the default value
         replacements = self.enum_parent.cpp_to_python_replacements(from_inside_block=True)
         for replacement in replacements:
             decl_value_python = code_replacements.apply_one_replacement(decl_value_python, replacement)
@@ -141,6 +136,9 @@ class AdaptedEnum(AdaptedElement):
         self.adapted_children = []
         self.adapted_enum_decls = []
         self._fill_children()
+
+        replacements = self.cpp_to_python_replacements()
+        cpp_to_python.store_static_member_value_replacements(replacements)
 
     # override
     def cpp_element(self) -> CppEnum:

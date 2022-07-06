@@ -78,10 +78,22 @@ def var_name_to_python(options: LitgenOptions, name: str) -> str:
     return _function_or_var_name_to_python(options, name)
 
 
+# Store global replacements gathered from the code base
+# (for example, enum member names, static class members, etc)
+_STATIC_MEMBERS_VALUE_REPLACEMENTS: List[StringReplacement] = []
+
+
+def store_static_member_value_replacements(replacements: List[StringReplacement]):
+    global _STATIC_MEMBERS_VALUE_REPLACEMENTS
+    _STATIC_MEMBERS_VALUE_REPLACEMENTS += replacements
+
+
 def var_value_to_python(options: LitgenOptions, default_value_cpp: str) -> str:
+    global _STATIC_MEMBERS_VALUE_REPLACEMENTS
     r = code_replacements.apply_code_replacements(default_value_cpp, options.code_replacements)
     for number_macro, value in options.srcml_options.named_number_macros.items():
         r = r.replace(number_macro, str(value))
+    r = code_replacements.apply_code_replacements(r, _STATIC_MEMBERS_VALUE_REPLACEMENTS)
     return r
 
 
