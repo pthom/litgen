@@ -86,13 +86,17 @@ class AdaptedEnumDecl(AdaptedDecl):
         enum_name_python = enum_name_cpp
         enum_member_name_python = self.decl_name_python()
 
-        replace_what = rf"\b{enum_name_cpp}::{enum_member_name_cpp}\b"
+        is_enum_class = self.enum_parent.cpp_element().is_enum_class()
+        if is_enum_class:
+            replace_what = rf"\b{enum_name_cpp}::{enum_member_name_cpp}\b"
+        else:
+            replace_what = rf"\b{enum_member_name_cpp}\b"
         by_what = f"Literal[{enum_name_python}.{enum_member_name_python}]"
 
         replacement = RegexReplacement(replace_what, by_what)
         replacement_list.add_replacement(replacement)
 
-        if from_inside_block:
+        if from_inside_block and not is_enum_class:
             replace_what_inside = rf"\b{enum_member_name_cpp}\b"
             replacement_inside_block = RegexReplacement(replace_what_inside, by_what)
             replacement_list.add_replacement(replacement_inside_block)

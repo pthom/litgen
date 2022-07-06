@@ -1324,6 +1324,9 @@ class CppEnum(CppElementAndComment):
     def __init__(self, element: SrcmlXmlWrapper, cpp_element_comments: CppElementComments) -> None:
         super().__init__(element, cpp_element_comments)
 
+    def is_enum_class(self) -> bool:
+        return self.enum_type == "class"
+
     def str_code(self) -> str:
         r = ""
         if self.enum_type == "class":

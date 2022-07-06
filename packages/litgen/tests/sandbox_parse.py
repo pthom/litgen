@@ -63,12 +63,19 @@ def litgensample_options() -> litgen.LitgenOptions:
 
 
 code = """
-IMGUI_API bool ImGui::SliderInt2(const char* label, int v[2], int v_min, int v_max, const char* format, ImGuiSliderFlags flags);
+enum Foo
+{
+    Foo_A,
+    Foo_B,
+    Foo_Count
+};
+
+void PlayFoo(Foo f = Foo_A);
 """
-options = litgen_options_imgui()
-# options = litgen.options.LitgenOptions()
+# options = litgen_options_imgui()
+options = litgen.options.LitgenOptions()
 # options.fn_params_replace_modifiable_c_array_by_boxed__regexes = []
 # # options.fn_params_replace_const_c_array_by_std_array__regexes = []
 # options.fn_params_output_modifiable_immutable_to_return__regexes = [r".*"]
 # play_stub(code, options)
-play_pydef(code, options)
+play_stub(code, options)
