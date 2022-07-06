@@ -1,4 +1,6 @@
 litgen:
+    refac CMake lg_implot: add cmake module with utilities
+
     gen library
     gen_library_collection
 

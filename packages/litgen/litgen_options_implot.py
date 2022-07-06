@@ -6,6 +6,9 @@ def litgen_options_implot() -> LitgenOptions:
     options = litgen_options_imgui()
     options.srcml_options.functions_api_prefixes = ["IMPLOT_API", "IMPLOT_TMP"]
 
+    options.fn_force_overload__regexes = ["BeginPlot"]
+    options.fn_params_exclude_types__regexes = ["ImPlotFormatter"]
+
     options.fn_exclude_by_name__regexes = [
         #  Legitimate Excludes
         # Exclude functions whose name end with G, like for example

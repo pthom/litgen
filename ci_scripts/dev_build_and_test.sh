@@ -51,3 +51,8 @@ pip install -v -e .
 title "Build hello-imgui python modules"
 cd "$REPO_DIR"/lg_projects/lg_hello_imgui
 pip install -v -e .
+
+
+title "Build lg-implot python modules"
+cd "$REPO_DIR"/lg_projects/lg_implot
+pip install -v -e .
