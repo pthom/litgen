@@ -206,15 +206,6 @@ def cpp_type_to_py_array_type(cpp_type: str) -> str:
     raise ValueError(f"cpp_type_to_py_array_type: unhandled type {cpp_type}")
 
 
-def _enum_remove_values_prefix(enum_name: str, value_name: str) -> str:
-    if value_name.upper().startswith(enum_name.upper() + "_"):
-        return value_name[len(enum_name) + 1 :]
-    elif value_name.upper().startswith(enum_name.upper()):
-        return value_name[len(enum_name) :]
-    else:
-        return value_name
-
-
 ##################################################################################################################
 #
 # CppElements related below (migrate to adapted_types sub package later ?)
@@ -336,21 +327,6 @@ def comment_python_previous_lines(options: LitgenOptions, cpp_element_c: CppElem
     lines = code_utils.strip_lines_right_space(lines)
 
     return lines
-
-
-def enum_value_name_to_python(options: LitgenOptions, enum: CppEnum, enum_element: CppDecl) -> str:
-    value_name = enum_element.decl_name
-
-    if options.enum_flag_remove_values_prefix and enum.enum_type != "class":
-        value_name_no_prefix = _enum_remove_values_prefix(enum.enum_name, value_name)
-        if len(value_name_no_prefix) == 0:
-            value_name_no_prefix = value_name
-        if value_name_no_prefix[0].isdigit():
-            value_name_no_prefix = "_" + value_name_no_prefix
-        value_name = value_name_no_prefix
-
-    r = var_name_to_python(options, value_name)
-    return r
 
 
 def enum_element_is_count(options: LitgenOptions, enum: CppEnum, enum_element: CppDecl) -> bool:

@@ -3,9 +3,6 @@ litgen:
     gen_library_collection
 
 himgui:
-    pip install -e plante sous mac M1
-        https://stackoverflow.com/questions/66860350/python-pip-process-are-killed-in-virtualenv-apple-m1-chip
-        Essayer Poetry ?
 
     Compat pyimgui:
         functions params ImVec2 => split in two, example = add_rect

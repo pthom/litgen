@@ -29,7 +29,7 @@ enum Foo
     """
     enum = srcmlcpp_main.code_first_enum(options.srcml_options, code)
     adapted_enum = AdaptedEnum(options, enum)
-    decls = adapted_enum.get_adapted_decls()
+    decls = adapted_enum.adapted_enum_decls
 
     # Test parsing and adapt: count should be removed, members should be renamed, comment should be processed
     assert len(decls) == 5  # Foo_count should have been removed (becua

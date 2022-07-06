@@ -37,12 +37,32 @@ class AdaptedEnumDecl(AdaptedDecl):
             r = self.enum_parent.cpp_element().enum_name + "::" + decl_name_cpp
             return r
 
+    def _decl_name_cpp_without_enum_prefix(self) -> str:
+        enum_cpp = self.enum_parent.cpp_element()
+        enum_element_cpp = self.cpp_element()
+        value_name_cpp = enum_element_cpp.decl_name
+
+        if not self.options.enum_flag_remove_values_prefix or enum_cpp.enum_type == "class":
+            return value_name_cpp
+
+        enum_name_cpp = enum_cpp.enum_name
+        decl_name_cpp_no_prefix = value_name_cpp
+        if value_name_cpp.upper().startswith(enum_name_cpp.upper() + "_"):
+            decl_name_cpp_no_prefix = value_name_cpp[len(enum_name_cpp) + 1 :]
+        elif value_name_cpp.upper().startswith(enum_name_cpp.upper()):
+            decl_name_cpp_no_prefix = value_name_cpp[len(enum_name_cpp) :]
+
+        if len(decl_name_cpp_no_prefix) == 0:
+            decl_name_cpp_no_prefix = value_name_cpp
+        if decl_name_cpp_no_prefix[0].isdigit():
+            decl_name_cpp_no_prefix = "_" + decl_name_cpp_no_prefix
+
+        return decl_name_cpp_no_prefix
+
     def decl_name_python(self) -> str:
-        decl_name_cpp = self.cpp_element().decl_name
-        decl_name_python = cpp_to_python.enum_value_name_to_python(
-            self.options, self.enum_parent.cpp_element(), self.cpp_element()
-        )
-        return decl_name_python
+        decl_name_cpp_without_enum_prefix = self._decl_name_cpp_without_enum_prefix()
+        r = cpp_to_python.var_name_to_python(self.options, decl_name_cpp_without_enum_prefix)
+        return r
 
     def decl_value_python(self) -> str:
         decl_value_cpp = self.cpp_element().initial_value_code
@@ -59,9 +79,7 @@ class AdaptedEnumDecl(AdaptedDecl):
         for other_enum_member in self.enum_parent.adapted_enum_decls:
             other_enum_value_cpp_name = other_enum_member.cpp_element().name_code()
             assert other_enum_value_cpp_name is not None
-            other_enum_value_python_name = cpp_to_python.enum_value_name_to_python(
-                self.options, self.enum_parent.cpp_element(), other_enum_member.cpp_element()
-            )
+            other_enum_value_python_name = other_enum_member.decl_name_python()
             enum_name = self.enum_parent.enum_name_python()
 
             replacement = code_replacements.StringReplacement()
