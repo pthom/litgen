@@ -1,7 +1,31 @@
 [build-system]
 requires = ["setuptools", "munch"]
+
 [tool.black]
 line-length = 120
 # A regex preceded with ^/ will apply only to files and directories
 # in the root of the project.
 extend-exclude = '''venv|pybind11|importanize|lg_imgui|lg_hello_imgui'''
+
+[tool.poetry]
+name = "srcmlcpp-litgen"
+version = "0.1.0"
+description = ""
+authors = ["Pascal Thomet <pthomet@gmail.com>"]
+
+[tool.poetry.dependencies]
+python = "^3.9"
+munch = "^2.5.0"
+PyYAML = "^6.0"
+patch = "^1.16"
+Pygments = "^2.12.0"
+
+[tool.poetry.dev-dependencies]
+pytest = "^6.0"
+pytest-cov = "^3.0.0"
+black = "^22.6.0"
+jupyter-black = "^0.3.1"
+mypy = "^0.961"
+pre-commit = "^2.19.0"
+importanize = "^0.7.0"
+numpy = "^1.23.0"

@@ -3,6 +3,21 @@ litgen:
     gen_library_collection
 
 himgui:
+    cpp_to_python_translation_table:
+        by namespace
+        StringReplacement -> RegexReplacement + compile
+    adapted_namespace:
+        extract to file
+        add cpp_to_python_replacements (functions & decls)
+    namespace:
+        options / generate submodule ?
+        comment generer stub:
+            soit https://www.reddit.com/r/learnpython/comments/dek8fy/how_to_create_a_stub_file_for_a_submodule_in_a_c/
+            soit fake class with staticmethods
+    adapted_class:
+        add cpp_to_python_replacements (functions & decls)
+    may be option replacement no regex
+    run mypy on init.pyi de himgui
 
     Compat pyimgui:
         functions params ImVec2 => split in two, example = add_rect
@@ -18,6 +33,7 @@ himgui:
 
             ImGuiCond_FirstUseEver = ImGuiCond_.first_use_ever   => pourrait être trouvé automatiquement,
                                                                 mais demande intercommunication entre generation libs
+                                                                (SAVE REPLACEMENTS?)
 
             DockSpaceName = str
             from lg_imgui import ImGuiDir, ImGuiDir_
@@ -55,6 +71,7 @@ srcmlcpp:
     Refactor: srcmlcpp = main repo, main project, etc
         separer srcml pur de srcmlcpp ?
     change licence (ethical license for large NNs)
+        -> regarder liste ici: https://spdx.org/licenses/
         -> message to science4all: https://www.facebook.com/Science4Allorg/
     Faire release avec numéro de version
     Doc & Demo

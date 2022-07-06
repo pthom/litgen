@@ -5,12 +5,12 @@ project(litgen)
 #
 # Check that we have a virtual env at the repository root
 #
-if (IS_DIRECTORY ${CMAKE_SOURCE_DIR}/venv/bin)
-    set(PYTHON_EXECUTABLE ${CMAKE_SOURCE_DIR}/venv/bin/python)
-elseif (IS_DIRECTORY ${CMAKE_SOURCE_DIR}/venv/Scripts)
-    set(PYTHON_EXECUTABLE ${CMAKE_SOURCE_DIR}/venv/Scripts/python)
+if (IS_DIRECTORY ${CMAKE_SOURCE_DIR}/.venv/bin)
+    set(PYTHON_EXECUTABLE ${CMAKE_SOURCE_DIR}/.venv/bin/python)
+elseif (IS_DIRECTORY ${CMAKE_SOURCE_DIR}/.venv/Scripts)
+    set(PYTHON_EXECUTABLE ${CMAKE_SOURCE_DIR}/.venv/Scripts/python)
 else()
-    message(WARNING "A virtual env named venv at the repository root is recommended
+    message(WARNING "A virtual env named .venv at the repository root is recommended
         ${CMAKE_SOURCE_DIR}/venv")
 endif()
 
