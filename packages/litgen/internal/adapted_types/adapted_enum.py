@@ -3,6 +3,7 @@ from dataclasses import dataclass
 from typing import Union, cast
 
 from codemanip import code_replacements
+from codemanip.code_replacements import StringReplacement
 
 from srcmlcpp.srcml_types import *
 
@@ -76,18 +77,32 @@ class AdaptedEnumDecl(AdaptedDecl):
         #
         # So, we search and replace enum strings in the default value (.init)
         #
-        for other_enum_member in self.enum_parent.adapted_enum_decls:
-            other_enum_value_cpp_name = other_enum_member.cpp_element().name_code()
-            assert other_enum_value_cpp_name is not None
-            other_enum_value_python_name = other_enum_member.decl_name_python()
-            enum_name = self.enum_parent.enum_name_python()
-
-            replacement = code_replacements.StringReplacement()
-            replacement.replace_what = r"\b" + other_enum_value_cpp_name + r"\b"
-            replacement.by_what = f"Literal[{enum_name}.{other_enum_value_python_name}]"
+        replacements = self.enum_parent.cpp_to_python_replacements(from_inside_block=True)
+        for replacement in replacements:
             decl_value_python = code_replacements.apply_one_replacement(decl_value_python, replacement)
 
         return decl_value_python
+
+    def cpp_to_python_replacements(self, from_inside_block: bool = False) -> List[StringReplacement]:
+        r: List[StringReplacement] = []
+
+        replacement = StringReplacement()
+
+        enum_name_cpp = self.enum_parent.cpp_element().enum_name
+        enum_member_name_cpp = self.cpp_element().decl_name
+        enum_name_python = enum_name_cpp
+        enum_member_name_python = self.decl_name_python()
+
+        replacement.replace_what = rf"\b{enum_name_cpp}::{enum_member_name_cpp}\b"
+        replacement.by_what = f"Literal[{enum_name_python}.{enum_member_name_python}]"
+        r.append(replacement)
+
+        if from_inside_block:
+            replacement_inside_block = copy.deepcopy(replacement)
+            replacement_inside_block.replace_what = rf"\b{enum_member_name_cpp}\b"
+            r.append(replacement_inside_block)
+
+        return r
 
     # override
     def _str_stub_lines(self) -> List[str]:
@@ -149,9 +164,11 @@ class AdaptedEnum(AdaptedElement):
                     self.adapted_children.append(new_adapted_decl)
                     self.adapted_enum_decls.append(new_adapted_decl)
 
-    def get_adapted_decls(self) -> List[AdaptedDecl]:
-        decls = list(filter(lambda c: isinstance(c, AdaptedDecl), self.adapted_children))
-        return cast(List[AdaptedDecl], decls)
+    def cpp_to_python_replacements(self, from_inside_block: bool = False) -> List[StringReplacement]:
+        r: List[StringReplacement] = []
+        for decl in self.adapted_enum_decls:
+            r += decl.cpp_to_python_replacements(from_inside_block)
+        return r
 
     # override
     def _str_stub_lines(self) -> List[str]:
