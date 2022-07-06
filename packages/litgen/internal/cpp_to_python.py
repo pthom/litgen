@@ -9,6 +9,7 @@ from srcmlcpp import srcmlcpp_main
 from srcmlcpp.srcml_types import *
 
 from litgen.options import LitgenOptions
+from litgen.internal import replacements_cache
 
 
 """
@@ -78,22 +79,11 @@ def var_name_to_python(options: LitgenOptions, name: str) -> str:
     return _function_or_var_name_to_python(options, name)
 
 
-# Store global replacements gathered from the code base
-# (for example, enum member names, static class members, etc)
-_STATIC_MEMBERS_VALUE_REPLACEMENTS: RegexReplacementList = RegexReplacementList()
-
-
-def store_static_member_value_replacements(replacements: RegexReplacementList):
-    global _STATIC_MEMBERS_VALUE_REPLACEMENTS
-    _STATIC_MEMBERS_VALUE_REPLACEMENTS.merge_replacements(replacements)
-
-
 def var_value_to_python(options: LitgenOptions, default_value_cpp: str) -> str:
-    global _STATIC_MEMBERS_VALUE_REPLACEMENTS
     r = options.code_replacements.apply(default_value_cpp)
     for number_macro, value in options.srcml_options.named_number_macros.items():
         r = r.replace(number_macro, str(value))
-    r = _STATIC_MEMBERS_VALUE_REPLACEMENTS.apply(r)
+    r = replacements_cache.apply_cached_replacement(r)
     return r
 
 

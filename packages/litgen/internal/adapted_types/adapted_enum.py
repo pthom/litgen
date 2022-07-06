@@ -8,6 +8,7 @@ from codemanip.code_replacements import RegexReplacementList, RegexReplacement
 from srcmlcpp.srcml_types import *
 
 from litgen.internal import cpp_to_python
+from litgen.internal import replacements_cache
 from litgen.internal.adapted_types.adapted_comment import (
     AdaptedComment,
     AdaptedEmptyLine,
@@ -137,7 +138,7 @@ class AdaptedEnum(AdaptedElement):
         self._fill_children()
 
         replacements = self.cpp_to_python_replacements()
-        cpp_to_python.store_static_member_value_replacements(replacements)
+        replacements_cache.store_replacement(replacements)
 
     # override
     def cpp_element(self) -> CppEnum:

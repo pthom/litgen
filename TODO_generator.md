@@ -5,7 +5,7 @@ litgen:
 himgui:
     cpp_to_python_translation_table:
         by namespace
-        StringReplacement -> RegexReplacement + compile
+            -> dans replacements_cache
     adapted_namespace:
         extract to file
         add cpp_to_python_replacements (functions & decls)
