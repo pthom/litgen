@@ -24,7 +24,6 @@ nodeenv==1.7.0; python_version >= "3.7" and python_full_version < "3.0.0" or pyt
 numpy==1.23.0; python_version >= "3.8"
 packaging==21.3; python_version >= "3.6"
 parso==0.8.3; python_version >= "3.7"
-patch==1.16
 pathlib2==2.3.7.post1
 pathspec==0.9.0; python_full_version >= "3.6.2"
 pexpect==4.8.0; sys_platform != "win32" and python_version >= "3.7"
