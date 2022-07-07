@@ -13,3 +13,6 @@
 [submodule "lg_projects/lg_implot"]
 	path = lg_projects/lg_implot
 	url = https://github.com/pthom/lg_implot.git
+[submodule "lg_projects/lg_template"]
+	path = lg_projects/lg_template
+	url = https://github.com/pthom/lg_template.git
