@@ -10,14 +10,24 @@ def litgen_options_implot() -> LitgenOptions:
     options.fn_params_exclude_types__regexes = ["ImPlotFormatter"]
 
     options.fn_params_buffer_types = [
+        # // Scalar data types defined by imgui.h
+        # // typedef unsigned int        ImGuiID;// A unique ID used by widgets (typically the result of hashing a stack of string)
+        # // typedef signed char         ImS8;   // 8-bit signed integer
+        # // typedef unsigned char       ImU8;   // 8-bit unsigned integer
+        # // typedef signed short        ImS16;  // 16-bit signed integer
+        # // typedef unsigned short      ImU16;  // 16-bit unsigned integer
+        # // typedef signed int          ImS32;  // 32-bit signed integer == int
+        # // typedef unsigned int        ImU32;  // 32-bit unsigned integer (often used to store packed colors)
+        # // typedef signed   long long  ImS64;  // 64-bit signed integer
+        # // typedef unsigned long long  ImU64;  // 64-bit unsigned integer
         "uint8_t",
         "int8_t",
         "uint16_t",
         "int16_t",
         "uint32_t",
         "int32_t",
-        "uint64_t",
-        "int64_t",
+        # "uint64_t",    # those correspond to `unsigned long` and `long` on linux 64 bits
+        # "int64_t",     # and they are not available within imgui.h (i.e the ImUXX types need to be reviewed in imgui)
         "float",
         "double",
         # "long double",  # Note: long double not supported in implot (yet?)
