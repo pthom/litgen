@@ -45,8 +45,7 @@ int main()
     std::string cmd = R"(
 import sys
 sys.path.append("THIS_DIR")
-sys.path.append("THIS_DIR/../lg_projects/lg_imgui/playground/")
-import play_with_imgui
+import pybind_native_debug
     )";
     cmd = string_replace(cmd, "THIS_DIR", THIS_DIR);
     py::exec(cmd);
