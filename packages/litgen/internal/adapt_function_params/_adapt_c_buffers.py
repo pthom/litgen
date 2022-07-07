@@ -274,7 +274,9 @@ class _AdaptBuffersHelper:
             full_code += intro + "\n"
 
             # Add loop code
-            for i, pyarray_type_char in enumerate(cpp_to_python.py_array_types()):
+            for i, cpp_numeric_type in enumerate(self.options.fn_params_buffer_types):
+
+                pyarray_type_char = cpp_to_python.cpp_type_to_py_array_type(cpp_numeric_type)
 
                 # fill maybe_else
                 maybe_else = "" if i == 0 else "else "

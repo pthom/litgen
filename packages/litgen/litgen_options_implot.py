@@ -9,6 +9,21 @@ def litgen_options_implot() -> LitgenOptions:
     options.fn_force_overload__regexes = ["BeginPlot"]
     options.fn_params_exclude_types__regexes = ["ImPlotFormatter"]
 
+    options.fn_params_buffer_types = [
+        "uint8_t",
+        "int8_t",
+        "uint16_t",
+        "int16_t",
+        "uint32_t",
+        "int32_t",
+        "uint64_t",
+        "int64_t",
+        "float",
+        "double",
+        # "long double",  # Note: long double not supported in implot (yet?)
+        "long long",
+    ]
+
     options.fn_exclude_by_name__regexes = [
         #  Legitimate Excludes
         # Exclude functions whose name end with G, like for example

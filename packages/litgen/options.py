@@ -113,9 +113,12 @@ class LitgenOptions:
     # Set it to [r".*"] to apply this to all functions (which is the default), set it to [] to disable it
     #
     fn_params_replace_buffer_by_array__regexes: List[str] = [r".*"]
+
     # buffer_types List[str]. Which means that `uint8_t*` are considered as possible buffers
+    # You can customize this list in your own options by removing items from it,
+    # but you *cannot* add new types or new synonyms (typedef for examples); since the conversion between
+    # py::array and native relies on these exact names!
     fn_params_buffer_types: List[str] = [
-        "byte",
         "uint8_t",
         "int8_t",
         "uint16_t",
@@ -127,6 +130,7 @@ class LitgenOptions:
         "float",
         "double",
         "long double",
+        "long long",
     ]
     fn_params_buffer_template_types: List[str] = [
         "T"
@@ -278,6 +282,7 @@ class LitgenOptions:
             "float",
             "double",
             "long double",
+            "long long",
         ]
         for buffer_type in self.fn_params_buffer_types:
             if buffer_type not in authorized_types:
