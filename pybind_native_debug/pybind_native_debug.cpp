@@ -29,7 +29,7 @@ std::string string_replace(const std::string& src, const std::string& target, co
 
 void use_venv_python()
 {
-    std::string venv_dir = THIS_DIR + "/../venv";
+    std::string venv_dir = THIS_DIR + "/../.venv";
     std::string python_program = venv_dir + "/bin/python";
     std::wstring python_program_wstring(python_program.begin(), python_program.end());
     Py_SetProgramName(python_program_wstring.c_str());
@@ -45,8 +45,8 @@ int main()
     std::string cmd = R"(
 import sys
 sys.path.append("THIS_DIR")
-sys.path.append("THIS_DIR/../lg_projects/hello_imgui/playground/")
-import play_himgui
+sys.path.append("THIS_DIR/../lg_projects/lg_imgui/playground/")
+import play_with_imgui
     )";
     cmd = string_replace(cmd, "THIS_DIR", THIS_DIR);
     py::exec(cmd);
