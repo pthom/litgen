@@ -1,7 +1,4 @@
 litgen:
-    IM_ASSERT -> exception
-    Debug dans implot!!!
-
     gen library
     gen_library_collection
 
