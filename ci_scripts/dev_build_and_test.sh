@@ -43,16 +43,21 @@ cd "$REPO_DIR"
 pytest
 
 
-title "Build lg-imgui python module"
+title "Build lg_imgui python module"
 cd "$REPO_DIR"/lg_projects/lg_imgui
 pip install -v -e .
 
 
-title "Build hello-imgui python modules"
+title "Build lg_hello_imgui python modules"
 cd "$REPO_DIR"/lg_projects/lg_hello_imgui
 pip install -v -e .
 
 
-title "Build lg-implot python modules"
+title "Build lg_implot python modules"
 cd "$REPO_DIR"/lg_projects/lg_implot
+pip install -v -e .
+
+
+title "Build lg_template python modules"
+cd "$REPO_DIR"/lg_projects/lg_template
 pip install -v -e .
