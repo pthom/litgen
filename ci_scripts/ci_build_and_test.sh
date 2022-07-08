@@ -75,10 +75,6 @@ cd "$REPO_DIR"/lg_projects/lg_hello_imgui
 pip install .
 
 
-title "Build lg_implot python modules"
-cd "$REPO_DIR"/lg_projects/lg_implot
-pip install .
-
 title "Build lg_template python modules"
 cd "$REPO_DIR"/lg_projects/lg_template
 pip install .
