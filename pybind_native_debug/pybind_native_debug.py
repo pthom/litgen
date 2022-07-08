@@ -16,7 +16,8 @@ sys.path.append(path_lg_hello_imgui_playground)
 # print(path_lg_imgui_playground)
 
 
-import play_implot  # type: ignore
+# import play_implot  # type: ignore
+import play_himgui  # type: ignore
 
 # import play_with_imgui  # type: ignore
 # import play_himgui

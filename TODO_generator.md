@@ -1,3 +1,10 @@
+Notes / Static Link libs imgui
+    Soit on copie les bindings par un script
+        lg_imgui/bindings/lg_imgui/*.py pyi
+        lg_imgui/binding/*.h  + pybind_imgui.cpp
+
+
+
 litgen:
     gen library
     gen_library_collection
