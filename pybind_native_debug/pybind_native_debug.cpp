@@ -30,7 +30,11 @@ std::string string_replace(const std::string& src, const std::string& target, co
 void use_venv_python()
 {
     std::string venv_dir = THIS_DIR + "/../.venv";
+    #ifndef _WIN32
     std::string python_program = venv_dir + "/bin/python";
+    #else
+    std::string python_program = venv_dir + "/Scripts/python.exe";
+    #endif
     std::wstring python_program_wstring(python_program.begin(), python_program.end());
     Py_SetProgramName(python_program_wstring.c_str());
 }
