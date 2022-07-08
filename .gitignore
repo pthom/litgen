@@ -12,6 +12,7 @@ cmake-build-*/
 scratch.txt
 
 .vscode/
+.vs/
 voiladoc/
 venv_ci
 .ipynb_checkpoints/
