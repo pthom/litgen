@@ -13,3 +13,9 @@
 [submodule "lg_projects/lg_template"]
 	path = lg_projects/lg_template
 	url = https://github.com/pthom/lg_template.git
+[submodule "lg_projects/lg_testrunner/external/pybind11"]
+	path = lg_projects/lg_testrunner/external/pybind11
+	url = https://github.com/pybind/pybind11.git
+[submodule "lg_projects/lg_testrunner/lg_cmake_utils"]
+	path = lg_projects/lg_testrunner/lg_cmake_utils
+	url = https://github.com/pthom/lg_cmake_utils.git

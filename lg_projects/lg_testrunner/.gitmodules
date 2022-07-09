@@ -1,0 +1,6 @@
+[submodule "external/pybind11"]
+	path = external/pybind11
+	url = https://github.com/pybind/pybind11.git
+[submodule "lg_cmake_utils"]
+	path = lg_cmake_utils
+	url = https://github.com/pthom/lg_cmake_utils.git

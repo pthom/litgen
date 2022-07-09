@@ -52,14 +52,16 @@ cd "$REPO_DIR"
 pip install .
 
 
-title "Build litgensample"
-cd "$REPO_DIR"/example
-pip install .
-
-
 title "Run pytest (will test codemanip, srcmlcpp, litgen, and litgensample)"
 cd "$REPO_DIR"
 pytest
+
+
+title "Build lg_testrunner and run bindings tests"
+cd "$REPO_DIR"/lg_projects/lg_testrunner
+python autogenerate_testrunner.py
+pip install .
+pytest bindings_test.py
 
 
 title "Build lg_imgui python module"
