@@ -15,6 +15,5 @@ else()
 endif()
 
 
-add_subdirectory(example)
 add_subdirectory(lg_projects)
 add_subdirectory(pybind_native_debug)
