@@ -8,10 +8,7 @@ import srcmlcpp
 import litgen
 
 
-THIS_DIR = os.path.dirname(__file__)
-sys.path = [THIS_DIR + "/.."] + sys.path
-
-THIS_DIR = os.path.dirname(__file__)
+THIS_DIR = os.path.dirname(os.path.realpath(__file__))
 CPP_HEADERS_DIR = THIS_DIR + "/external/testrunner"
 CPP_GENERATED_PYBIND_DIR = THIS_DIR + "/bindings"
 assert os.path.isdir(CPP_HEADERS_DIR)
