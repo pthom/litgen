@@ -50,8 +50,8 @@ cd "$REPO_DIR"/lg_projects/lg_imgui
 pip install -v -e .
 
 
-title "Build lg_hello_imgui python modules"
-cd "$REPO_DIR"/lg_projects/lg_hello_imgui
+title "Build lg_imgui_bundle python modules"
+cd "$REPO_DIR"/lg_projects/lg_imgui_bundle
 pip install -v -e .
 
 
