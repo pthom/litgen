@@ -1,4 +1,4 @@
-name: "pip_python"
+name: "pip_srcmlcpp_litgen"
 
 on:
   workflow_dispatch:
@@ -14,7 +14,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        platform: [ubuntu-latest]
+        platform: [windows-latest, macos-latest, ubuntu-latest, ubuntu-latest]
         python-version: ["3.6", "3.10", "pypy-3.8"]
 
     steps:
@@ -27,7 +27,7 @@ jobs:
       - name: Build and install
         run: pip install --verbose .[test]
 
-      - name: Test
-        run: |
-          pip install pytest
-          pytest
+#      - name: Test
+#        run: |
+#          pip install pytest
+#          pytest
