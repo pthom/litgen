@@ -13,6 +13,6 @@ setup(
     include_package_data=True,
     extras_require={"test": ["pytest"]},
     python_requires=">=3.6",
-    package_data={"mylib": ["*.pyi"]},
+    package_data={"testrunner": ["*.pyi"]},
     install_requires=[],
 )

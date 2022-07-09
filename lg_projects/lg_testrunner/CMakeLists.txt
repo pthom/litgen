@@ -9,7 +9,7 @@ set(CMAKE_CXX_STANDARD 20)
 add_subdirectory(external/pybind11)
 
 ####################################################
-# Build mylib Bound C++ library
+# Build testrunner Bound C++ library
 ####################################################
 set(testrunner_dir external/testrunner)
 add_library(testrunner ${testrunner_dir}/testrunner.cpp ${testrunner_dir}/testrunner.h)
