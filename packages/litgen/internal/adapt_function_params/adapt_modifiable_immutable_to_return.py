@@ -114,7 +114,7 @@ def adapt_modifiable_immutable_to_return(adapted_function: AdaptedFunction) -> O
                 lambda_input_code = f"""
                     {param_original_type} {param_name_value} = nullptr;
                     if ({param_name}.has_value())
-                    {_i_}{param_name_value} = & {param_name}.value();
+                    {_i_}{param_name_value} = & (*{param_name});
                 """
             else:
                 if is_pointer:
