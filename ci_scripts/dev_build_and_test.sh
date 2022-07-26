@@ -55,6 +55,6 @@ cd "$REPO_DIR"/lg_projects/lg_imgui_bundle
 pip install -v -e .
 
 
-title "Build lg_template python modules"
-cd "$REPO_DIR"/lg_projects/lg_template
+title "Build lg_skbuild_template python modules"
+cd "$REPO_DIR"/lg_projects/lg_skbuild_template
 pip install -v -e .

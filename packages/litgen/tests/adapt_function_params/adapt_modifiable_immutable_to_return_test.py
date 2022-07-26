@@ -95,7 +95,7 @@ def test_adapt_modifiable_immutable_to_return_test():
                 {
                     int * value_adapt_modifiable = nullptr;
                     if (value.has_value())
-                        value_adapt_modifiable = & value.value();
+                        value_adapt_modifiable = & (*value);
 
                     MY_API bool r = SliderVoidIntDefaultNull(label, value_adapt_modifiable);
                     return std::make_tuple(r, value);
