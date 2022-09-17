@@ -153,7 +153,11 @@ def _amalgamate_one_file(
     lines = _fread_lines(included_filename_full_path)
     was_file_interrupted_by_include = False
     for code_line in lines:
-        if was_file_interrupted_by_include and len(code_line.strip()) > 0:
+        if (
+            was_file_interrupted_by_include
+            and len(code_line.strip()) > 0
+            and not _is_local_include_line(options, code_line)
+        ):
             parsed_result = parsed_result + _decorate_code_info(included_filename_relative + " continued")
             was_file_interrupted_by_include = False
         if _is_external_include_line(options, code_line):
