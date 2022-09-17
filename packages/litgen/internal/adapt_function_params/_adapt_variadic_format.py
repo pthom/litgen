@@ -29,7 +29,7 @@ def adapt_variadic_format(adapted_function: AdaptedFunction) -> Optional[LambdaA
     if not is_variadic_format(last_param):
         return None
     param_before_last = old_function_params[-2]
-    if not param_before_last.decl.cpp_type.str_code() == "const char *":
+    if not param_before_last.decl.cpp_type.str_code() in ["const char *", "const char * const"]:
         return None
 
     lambda_adapter = LambdaAdapter()
