@@ -62,12 +62,13 @@ def add_underscore_if_python_reserved_word(name: str) -> str:
 
 
 def _function_or_var_name_to_python(options: LitgenOptions, name: str) -> str:  # noqa
+    name_with_replacements = options.names_replacements.apply(name)
     if options.python_convert_to_snake_case:
-        name_snake_case = code_utils.to_snake_case(name)
+        name_snake_case = code_utils.to_snake_case(name_with_replacements)
         r = add_underscore_if_python_reserved_word(name_snake_case)
         return r
     else:
-        r = add_underscore_if_python_reserved_word(name)
+        r = add_underscore_if_python_reserved_word(name_with_replacements)
         return r
 
 

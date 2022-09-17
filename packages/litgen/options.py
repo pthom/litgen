@@ -38,14 +38,15 @@ class LitgenOptions:
     ################################################################################
     # List of code replacements when going from C++ to Python
     # These replacements are applied to type names (for example double -> float, vector-> List, etc)
-    # as well as comment (which may contain type names)
+    # as well as comment (which may contain type names), and function/member names
     #
     # Note:
-    # - by default, code_replacements is prefilled with standard_code_replacements(),
-    # - by default, comments_replacements is prefilled with standard_comments_replacements(),
-    #
+    # - by default, code_replacements is prefilled with standard_code_replacements()
+    # - by default, comments_replacements is prefilled with standard_comments_replacements()
+    # - by default, names_replacements is empty
     code_replacements: RegexReplacementList = RegexReplacementList()
     comments_replacements: RegexReplacementList = RegexReplacementList()
+    names_replacements: RegexReplacementList = RegexReplacementList()
 
     ################################################################################
     #    <Layout settings for the generated python stub code>
