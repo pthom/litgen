@@ -7,8 +7,7 @@ _THIS_DIR = os.path.dirname(__file__)
 _TEST_EXAMPLES_DIR = os.path.realpath(_THIS_DIR + "/../test_examples")
 
 
-def test_basic():
-    test_name = "basic"
+def _run_test_impl(test_name: str) -> None:
     folder = f"{_TEST_EXAMPLES_DIR}/{test_name}"
     assert os.path.isdir(folder)
     out_folder = folder + "/computed"
@@ -27,3 +26,11 @@ def test_basic():
     )
 
     print(generated_code.pydef_code)
+
+
+def test_basic():
+    _run_test_impl("basic")
+
+
+def test_submodule():
+    _run_test_impl("submodules")
