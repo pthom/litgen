@@ -28,6 +28,14 @@ class AdaptedClassMember(AdaptedDecl):
         self.class_parent = class_parent
         super().__init__(options, decl)
 
+    def __str__(self) -> str:
+        name_cpp = self.decl_name_cpp()
+        name_python = self.decl_name_python()
+        if name_python != name_cpp:
+            return f"AdaptedClassMember({self.decl_name_cpp()} -> {self.decl_name_python()})"
+        else:
+            return f"AdaptedClassMember({self.decl_name_cpp()})"
+
     def _is_numeric_c_array(self) -> bool:
         """Returns true if this member is a numeric C array, for example:
         int values[10];
@@ -206,7 +214,7 @@ class AdaptedClassMember(AdaptedDecl):
 
         location = self.info_original_location_python()
 
-        decl_template = f"{decl_name_python}:{decl_type_python}{maybe_equal}{maybe_defaultvalue_python}{maybe_comment_array}{maybe_comment}{location}"
+        decl_template = f"{decl_name_python}: {decl_type_python}{maybe_equal}{maybe_defaultvalue_python}{maybe_comment_array}{maybe_comment}{location}"
         code_lines += [decl_template]
 
         code_lines = self._cpp_original_code_lines() + code_lines
