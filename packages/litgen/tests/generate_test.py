@@ -32,8 +32,8 @@ def _run_test_impl(test_name: str) -> None:
 #     _run_test_impl("basic")
 
 
-# def test_submodule():
-#     _run_test_impl("submodules")
+def test_inner_classes():
+    _run_test_impl("inner_classes")
 
 
 def test_subclass():

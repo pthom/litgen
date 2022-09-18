@@ -41,8 +41,10 @@ class Scope:
             return r
 
     def scope_cpp(self) -> str:
+        if len(self.scopes) == 0:
+            return ""
         scope_names = map(lambda s: s.scope_name, self.scopes)
-        r = "::".join(scope_names)
+        r = "::".join(scope_names) + "::"
         return r
 
     def __str__(self):

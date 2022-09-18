@@ -1,8 +1,9 @@
-struct A
+struct Parent
 {
     int a;
-    struct B
+    struct Child
     {
         int b;
     };
+    Child child;
 };

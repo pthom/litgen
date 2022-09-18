@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import copy
 import logging
 from dataclasses import dataclass
 from typing import Union, cast
@@ -142,7 +143,7 @@ class AdaptedClassMember(AdaptedDecl):
     def _str_pydef_lines_numeric_array(self) -> List[str]:
         # Cf. https://stackoverflow.com/questions/58718884/binding-an-array-using-pybind11
 
-        struct_name = self.class_parent.cpp_element().class_name
+        qualified_struct_name = self.class_parent.qualified_struct_name()
         location = self.info_original_location_cpp()
         name_python = self.decl_name_python()
         name_cpp = self.decl_name_cpp()
@@ -154,12 +155,12 @@ class AdaptedClassMember(AdaptedDecl):
 
         template_code = f"""
             .def_property("{name_python}",{location}
-                []({struct_name} &self) -> pybind11::array
+                []({qualified_struct_name} &self) -> pybind11::array
                 {{
                     auto dtype = pybind11::dtype(pybind11::format_descriptor<{array_typename}>::format());
                     auto base = pybind11::array(dtype, {{{array_size}}}, {{sizeof({array_typename})}});
                     return pybind11::array(dtype, {{{array_size}}}, {{sizeof({array_typename})}}, self.{name_cpp}, base);
-                }}, []({struct_name}& self) {{}},
+                }}, []({qualified_struct_name}& self) {{}},
                 "{comment}")
             """
         r = code_utils.unindent_code(template_code, flag_strip_empty_lines=True)  # + "\n"
@@ -167,7 +168,7 @@ class AdaptedClassMember(AdaptedDecl):
         return lines
 
     def _str_pydef_lines_field(self) -> List[str]:
-        struct_name = self.class_parent.cpp_element().class_name
+        qualified_struct_name = self.class_parent.qualified_struct_name()
         location = self.info_original_location_cpp()
         name_python = self.decl_name_python()
         name_cpp = self.decl_name_cpp()
@@ -180,7 +181,7 @@ class AdaptedClassMember(AdaptedDecl):
         if cpp_type.is_static():
             pybind_definition_mode += "_static"
 
-        r = f'.{pybind_definition_mode}("{name_python}", &{struct_name}::{name_cpp}, "{comment}"){location}'
+        r = f'.{pybind_definition_mode}("{name_python}", &{qualified_struct_name}::{name_cpp}, "{comment}"){location}'
         return [r]
 
     # override
@@ -243,12 +244,21 @@ class AdaptedClass(AdaptedElement):
         r = f"AdaptedClass({self.cpp_element().class_name})"
         return r
 
+    def inner_scope(self) -> Scope:
+        inner_scope = copy.deepcopy(self.scope)
+        inner_scope.scopes.append(ScopePart(ScopeType.SUBCLASS, self.cpp_element().class_name))
+        return inner_scope
+
     # override
     def cpp_element(self) -> CppStruct:
         return cast(CppStruct, self._cpp_element)
 
     def class_name_python(self) -> str:
         r = cpp_to_python.add_underscore_if_python_reserved_word(self.cpp_element().class_name)
+        return r
+
+    def qualified_struct_name(self) -> str:
+        r = self.scope.scope_cpp() + self.cpp_element().class_name
         return r
 
     def _add_adapted_class_member(self, cpp_decl_statement: CppDeclStatement):
@@ -322,17 +332,20 @@ class AdaptedClass(AdaptedElement):
         options = self.options
         _i_ = options.indent_cpp_spaces()
 
-        struct_name = self.cpp_element().class_name
+        bare_struct_name = self.cpp_element().class_name
+        pydef_class_name = "py" + self.inner_scope().concatenated_scope_names()
         location = self.info_original_location_cpp()
         comment = self.comment_pydef_one_line()
 
         code_intro = ""
-        code_intro += f"auto pyClass{struct_name} = py::class_<{struct_name}>{location}\n"
+        code_intro += f"auto {pydef_class_name} = py::class_<{self.qualified_struct_name()}>{location}\n"
         pydef_scope_name = self.scope.pydef_scope_name()
-        code_intro += f'{_i_}({pydef_scope_name}, "{struct_name}", "{comment}")\n'
+        code_intro += f'{_i_}({pydef_scope_name}, "{bare_struct_name}", "{comment}")\n'
 
         if options.generate_to_string:
-            code_outro = f'{_i_}.def("__repr__", [](const {struct_name}& v) {{ return ToString(v); }});'
+            code_outro = (
+                f'{_i_}.def("__repr__", [](const {self.qualified_struct_name()}& v) {{ return ToString(v); }});'
+            )
         else:
             code_outro = f"{_i_};"
 
