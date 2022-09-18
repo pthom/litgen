@@ -65,9 +65,80 @@ CLOSED: [2022-09-18 Sun 10:54]
 
 * litgen task list
 
+** Global
+
+*** [ ] Add pylint or flake8 to precommit (cf  https://stackoverflow.com/questions/73765587/how-to-get-a-warning-about-a-list-being-global-when-used-as-a-default-argument))
+
 ** Handle namespaces
 
-*** Sample code
+*** First handle subclasses
+
+***** Example code
+****** Header
+
+#+begin_src c++
+    struct A
+    {
+        int a;
+        struct B
+        {
+            int b;
+        };
+    };
+#+end_src
+
+****** Pydef
+#+begin_src c++
+    auto pyClassA = py::class_<A>
+        (m, "A", "")
+        .def(py::init<>()) // implicit default constructor
+        .def_readwrite("a", &A::a, "")
+        ;
+
+    // To add
+    auto pyClassB_inner_pyClassA = py::class_<A::B>
+        (pyClassA, "B", "")
+        .def(py::init<>()) // implicit default constructor
+        .def_readwrite("b", &A::B::b, "")
+        ;
+
+#+end_src
+
+****** Stub
+#+begin_src python
+class A:
+    a:int
+
+    class B:
+        b: int
+#+end_src
+
+****** [ ] Remember current scope (namespace /class)
+
+See AdaptedFunction => replace parent_struct_name by scope
+    def __init__(
+        self, options: LitgenOptions, function_infos: CppFunctionDecl,
+        parent_struct_name: str, is_overloaded: bool
+    ) -> None:
+
+scope can be root, list of sub-scopes (with type=class or submodule)
+
+AdaptedElement
+  added scope:
+    need to be empty for class, and filled only if subclass or namespace (later)
+  should we add parent?
+
+  scope needed for:
+    functions or methods (in lambda)
+    class and inner class (in pydef creation)
+
+
+
+
+***** [ ] Define name of class / take into account scope
+
+
+**** Sample code / namespace
 #+NAME code to test
 #+begin_src cpp
 namespace A

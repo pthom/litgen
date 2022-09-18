@@ -1,9 +1,8 @@
-namespace Main
+struct A
 {
-    int add(int a, int b);
-
-    namespace Inner
+    int a;
+    struct B
     {
-        int sub(int a, int b);
-    }
-}
+        int b;
+    };
+};

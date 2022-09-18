@@ -12,3 +12,4 @@ function(add_litgen_test_example_folder folder_name)
 endfunction()
 
 add_litgen_test_example_folder("basic")
+add_litgen_test_example_folder("submodules")
