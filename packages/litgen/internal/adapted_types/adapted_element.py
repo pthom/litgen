@@ -6,16 +6,19 @@ from srcmlcpp.srcml_types import *
 
 from litgen.internal import cpp_to_python
 from litgen.options import LitgenOptions
+from litgen.internal.adapted_types.scope import Scope
 
 
 @dataclass
 class AdaptedElement:  # (abc.ABC):  # Cannot be abstract (mypy limitation:  https://github.com/python/mypy/issues/5374)
     _cpp_element: CppElementAndComment
     options: LitgenOptions
+    scope: Scope
 
     def __init__(self, options: LitgenOptions, cpp_element: CppElementAndComment) -> None:
         self._cpp_element = cpp_element
         self.options = options
+        self.scope = Scope()
 
     def _info_original_location(self, comment_token: str) -> str:
         r = cpp_to_python.info_original_location(self.options, self._cpp_element, comment_token)

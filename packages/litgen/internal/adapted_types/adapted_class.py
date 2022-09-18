@@ -1,4 +1,6 @@
 from __future__ import annotations
+
+import logging
 from dataclasses import dataclass
 from typing import Union, cast
 
@@ -11,6 +13,7 @@ from litgen.internal.adapted_types.adapted_comment import (
 )
 from litgen.internal.adapted_types.adapted_decl import AdaptedDecl
 from litgen.internal.adapted_types.adapted_element import AdaptedElement
+from litgen.internal.adapted_types.scope import Scope, ScopeType, ScopePart
 from litgen.internal.adapted_types.adapted_function import AdaptedFunction
 from litgen.options import LitgenOptions
 
@@ -219,12 +222,18 @@ class AdaptedClassMember(AdaptedDecl):
 
 @dataclass
 class AdaptedClass(AdaptedElement):
-    adapted_public_children: List[Union[AdaptedEmptyLine, AdaptedComment, AdaptedClassMember, AdaptedFunction]]
+    adapted_public_children: List[
+        Union[AdaptedEmptyLine, AdaptedComment, AdaptedClassMember, AdaptedFunction, AdaptedClass]
+    ]
 
     def __init__(self, options: LitgenOptions, class_: CppStruct):
         super().__init__(options, class_)
         self.adapted_public_children = []
         self._fill_public_children()
+
+    def __str__(self):
+        r = f"AdaptedClass({self.cpp_element().class_name})"
+        return r
 
     # override
     def cpp_element(self) -> CppStruct:
@@ -265,6 +274,11 @@ class AdaptedClass(AdaptedElement):
                 self._add_adapted_class_member(child)
             elif isinstance(child, CppUnprocessed):
                 continue
+            elif isinstance(child, CppStruct):
+                adapted_subclass = AdaptedClass(self.options, child)
+                adapted_subclass.scope.scopes.append(ScopePart(ScopeType.SUBCLASS, self.cpp_element().class_name))
+                self.adapted_public_children.append(adapted_subclass)
+
             else:
                 child.emit_warning(
                     f"Public elements of type {child.tag()} are not supported in python conversion",
@@ -306,7 +320,8 @@ class AdaptedClass(AdaptedElement):
 
         code_intro = ""
         code_intro += f"auto pyClass{struct_name} = py::class_<{struct_name}>{location}\n"
-        code_intro += f'{_i_}(m, "{struct_name}", "{comment}")\n'
+        pydef_scope_name = self.scope.pydef_scope_name()
+        code_intro += f'{_i_}({pydef_scope_name}, "{struct_name}", "{comment}")\n'
 
         if options.generate_to_string:
             code_outro = f'{_i_}.def("__repr__", [](const {struct_name}& v) {{ return ToString(v); }});'
@@ -320,11 +335,25 @@ class AdaptedClass(AdaptedElement):
         if self.cpp_element().has_deleted_default_ctor():
             code += f"{_i_}// (default constructor explicitly deleted)\n"
 
-        for child in self.adapted_public_children:
+        children_except_inner_classes = list(
+            filter(lambda _child: not isinstance(_child, AdaptedClass), self.adapted_public_children)
+        )
+        children_inner_classes = list(
+            filter(lambda _child: isinstance(_child, AdaptedClass), self.adapted_public_children)
+        )
+
+        for child in children_except_inner_classes:
             decl_code = child.str_pydef()
             code += code_utils.indent_code(decl_code, indent_str=options.indent_cpp_spaces())
 
         code = code + code_outro
+
+        if len(children_inner_classes) > 0:
+            code += "\n{" + f" // inner classes of {self.class_name_python()}\n"
+            for child in children_inner_classes:
+                decl_code = child.str_pydef()
+                code += code_utils.indent_code(decl_code, indent_str=options.indent_cpp_spaces())
+            code += "}" + f" // end of inner classes of {self.class_name_python()}"
 
         lines = code.split("\n")
         return lines

@@ -28,9 +28,32 @@ def _run_test_impl(test_name: str) -> None:
     print(generated_code.pydef_code)
 
 
-def test_basic():
-    _run_test_impl("basic")
+# def test_basic():
+#     _run_test_impl("basic")
 
 
-def test_submodule():
-    _run_test_impl("submodules")
+# def test_submodule():
+#     _run_test_impl("submodules")
+
+
+def test_subclass():
+    code = """
+    struct Parent
+    {
+        int a;
+        struct Child
+        {
+            int b;
+        };
+        Child child;
+    };
+    """
+    from litgen import code_to_adapted_unit
+
+    # Configure options
+    options = litgen.LitgenOptions()
+    pydef_code = litgen.code_to_pydef(options, code)
+    print("\n" + pydef_code)
+
+    stub_code = litgen.code_to_stub(options, code)
+    print("\n" + stub_code)
