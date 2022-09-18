@@ -62,3 +62,5 @@ RUN git clone https://github.com/srcML/srcML.git
 # Need to patch and add `include <algorithm>`, see https://github.com/srcML/srcML/pull/1829
 RUN sed -i '1s/^/#include <algorithm>\n/' /srcML/src/parser/UTF8CharBuffer.cpp
 RUN cd srcML && mkdir build && cd build && cmake .. && make -j 4 && cp bin/srcml /usr/local/bin/
+
+# RUN wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-aarch64.sh # Warning, ARM version
