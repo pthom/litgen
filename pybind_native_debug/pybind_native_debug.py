@@ -17,7 +17,10 @@ sys.path.append(path_lg_imgui_bundle_playground)
 
 
 # import play_implot  # type: ignore
-import play_himgui  # type: ignore
+# import play_himgui  # type: ignore
+import demodocking  # type:ignore
+
+demodocking.main()
 
 # import play_with_imgui  # type: ignore
 # import play_himgui

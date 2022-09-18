@@ -1,10 +1,37 @@
+litgen:
+    Handle namespace
+        soit https://www.reddit.com/r/learnpython/comments/dek8fy/how_to_create_a_stub_file_for_a_submodule_in_a_c/
+        soit fake class with staticmethods
+
+code:
+namespace A
+{
+    namespace B
+    {
+        enum class ItemType{ One, Two, Three};
+        void FooB(ItemType itemType);
+    }
+
+    void FooA(B::ItemType v);
+}
+
+        Définir un  ou des root Namespace
+            pour lequel on ne cree pas de submodule
+            que faire des fonctions hors namespace: les ignorer?
+
+        côté pybind:
+            module_ newsubmodule = m.def_submodule(const char *name, const char *doc = nullptr)
+
+
+lg_imgui_bundle:
+    Review description (imgui first)
+    Re-try add mahi-gui
+
 Finir lg_testrunner
 
-litgen:
-    gen library
-    gen_library_collection
 
 himgui:
+    run mypy on init.pyi de himgui
     cpp_to_python_translation_table:
         by namespace
             -> dans replacements_cache
@@ -12,14 +39,6 @@ himgui:
         extract to file
         add cpp_to_python_replacements (functions & decls)
     namespace:
-        options / generate submodule ?
-        comment generer stub:
-            soit https://www.reddit.com/r/learnpython/comments/dek8fy/how_to_create_a_stub_file_for_a_submodule_in_a_c/
-            soit fake class with staticmethods
-    adapted_class:
-        add cpp_to_python_replacements (functions & decls)
-    may be option replacement no regex
-    run mypy on init.pyi de himgui
 
     Compat pyimgui:
         functions params ImVec2 => split in two, example = add_rect
