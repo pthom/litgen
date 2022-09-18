@@ -1,0 +1,94 @@
+* Emacs tips
+
+M = Alt
+C = Ctrl
+
+C-g : quit current command
+
+* Org mode tips
+** Basics
+[[https://orgmode.org/orgguide.html#Introduction][Org mode quick guide]]
+Link to org [[https://orgmode.org/][mode homepage]] (M-x org-insert-link)
+
+
+Tab or Shift-Tab on * to collapse locally or globally
+Ctrl-Enter to enter a new title of same level below sub-hierarchy
+Alt-Enter to enter a new title directly under
+Alt-Up/Down to move sections
+
+Format text: Here is *some* content, and some //italic//
+
+
+
+Tables: start adding | then use Tab key for magic
+| Name  | Age | Sex |
+|-------+-----+-----|
+| David |  37 | M   |
+|       |     |     |
+
+** Lists: use Alt-Enter / use Alt-Shift-Enter (i.e M-S-RET) to  add checkboxes
+
+- [ ] First item
+- [ ]
+- Second Item
+- Third
+
+Example:
+
+
+
+** Code blocks : #+begin_src lang / #+end_src (C-C ' to edit the code block in separate buffer)
+
+#+NAME example (optional name)
+#+begin_src cpp
+  int main()
+  {
+    return 0;
+
+  }
+#+end_src
+
+
+** TODOs List (C-c C-t )
+
+*** Item 1
+*** DONE Item
+
+CLOSED: [2022-09-18 Sun 10:54]
+
+
+
+**** Sub Heading
+**** A
+   int a = 0
+
+
+* litgen task list
+
+** Handle namespaces
+
+*** Sample code
+#+NAME code to test
+#+begin_src cpp
+namespace A
+{
+    namespace B
+    {
+        enum class ItemType{ One, Two, Three};
+        void FooB(ItemType itemType);
+    }
+
+    void FooA(B::ItemType v);
+}
+#+end_src
+
+*** Strategy
+soit https://www.reddit.com/r/learnpython/comments/dek8fy/how_to_create_a_stub_file_for_a_submodule_in_a_c/
+soit fake class with staticmethods
+
+**** Définir un  ou des root Namespace
+            pour lequel on ne cree pas de submodule
+            que faire des fonctions hors namespace: les ignorer?
+
+     côté pybind:
+          module_ newsubmodule = m.def_submodule(const char *name, const char *doc = nullptr)
