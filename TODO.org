@@ -2,6 +2,7 @@
 
 M = Alt
 C = Ctrl
+M-x = select / search command
 
 C-g : quit current command
 
@@ -18,13 +19,49 @@ Alt-Up/Down to move sections
 
 Format text: Here is *some* content, and some //italic//
 
+** diagrams and drawings
+
+*** With mermaid
+
+Installed https://github.com/arnm/ob-mermaid
+
+See doc of mermaid, run mermaid via C-c C-c
+Display images via `org-display-inline-images` (M-x to select action)
+Also toggle display via C-c C-x C-v (wtf is that shortcut!)
 
 
-Tables: start adding | then use Tab key for magic
+#+begin_src mermaid :file doc/diagrams/test.png
+sequenceDiagram
+ A-->B: Works!
+ B-->C: Again!q
+#+end_src
+
+#+RESULTS:
+[[file:doc/diagrams/test.png]]
+
+*** With Plantuml
+
+
+#+begin_src plantuml :file doc/diagrams/test_puml.png
+title Authentication Sequence
+
+Alice->Bob: Authentication Request
+note right of Bob: Bob thinks about it
+Bob->Alice: Authentication Response
+#+end_src
+
+#+RESULTS:
+[[file:doc/diagrams/test_puml.png]]
+
+
+
+** Tables: start adding | then use Tab key for magic
 | Name  | Age | Sex |
 |-------+-----+-----|
 | David |  37 | M   |
 |       |     |     |
+
+
 
 ** Lists: use Alt-Enter / use Alt-Shift-Enter (i.e M-S-RET) to  add checkboxes
 
@@ -63,7 +100,275 @@ CLOSED: [2022-09-18 Sun 10:54]
    int a = 0
 
 
+* srcml_cpp ideas
+
+** pimpl_my_class
+** add named parameters to functions
+
+
+* Litgen doc
+
+** Diagram srcmlcpp and litgen adapted classes
+
+Failed attempt to remove confirmation for C-c C-c
+(setq org-confirm-babel-evaluate f)
+
+#+begin_src plantuml :file packages/srcmlcpp/doc/srcml_cpp_diagram.png
+  class ET.Element
+  package srcmlcpp {
+          class SrcmlOptions {
+                  + encoding
+                  +preserve_empty_lines
+                  ...
+          }
+
+          class SrcmlXmlWrapper {
+                  + options: SrcmlOptions
+                  + srcml_xml: ET.Element
+                  + parent: opt[SrcmlXmlWrapper]
+
+                  + str_code_verbatim()
+                  + str_xml()
+                  ...
+          }
+
+          SrcmlXmlWrapper <|... SrcmlXmlWrapper: opt(parent)
+          SrcmlXmlWrapper *-- ET.Element
+          SrcmlXmlWrapper o-- SrcmlOptions
+
+          class CppElement {
+                  + str_code()
+                  + visit...()
+          }
+
+          class CppElementComments {
+                  comment_on_previous_lines: str
+                  comment_end_of_line: str
+          }
+
+          CppElement --|> SrcmlXmlWrapper
+
+          class CppElementAndComment {
+                  cpp_element_comments
+          }
+          CppElementAndComment --|> CppElement
+          CppElementAndComment *-- CppElementComments
+
+
+          /'
+          CppEmptyLine --|> CppElementAndComment
+          CppUnprocessed--|> CppElementAndComment
+          '/
+
+          class CppBlock {
+                  block_children: List[CppElementAndComment]
+          }
+
+          CppBlock *-- CppElementAndComment : List
+
+          class CppUnit {
+                  "Represent a full file"
+          }
+          CppUnit --|> CppBlock
+
+          class CppBlockContent {
+                  "used by function and anonymous blocks"
+          }
+
+          CppBlockContent --|> CppBlock
+
+
+          class CppPublicProtectedPrivate {
+                  + access_type
+                  + default_or_explicit
+          }
+          CppPublicProtectedPrivate --|> CppBlock
+
+          class CppType {
+                  typenames: List[str]
+                  specifiers: List[str]
+                  modifiers: List[str]
+          }
+
+          CppType --|> CppElement
+
+          class  CppDecl {
+                  cpp_type: CppType
+                  decl_name: str
+                  c_array_code: str
+                  initial_value_code: str
+          }
+
+          CppDecl *-- CppType
+          CppDecl --|> CppElementAndComment
+
+          class CppDeclStatement {
+                  cpp_decls: List[CppDecl]
+          }
+
+          CppDeclStatement --|> CppElementAndComment
+          CppDeclStatement *-- CppDecl : List
+
+          class CppParameter {
+                  decl: CppDecl
+                  template_type: CppType
+                  template_name: str = ""
+          }
+          CppParameter --|> CppElementAndComment
+          CppParameter *-- CppDecl
+
+
+          class CppParameterList {
+                  List of parameters of a function
+                  parameters: List[CppParameter]
+          }
+
+          CppParameterList *-- "many" CppParameter
+
+          class CppTemplate {
+                  "Template parameters"
+                  + parameter_list: CppParameterList
+          }
+          CppTemplate *-- CppParameterList
+          CppTemplate --|> CppElement
+
+
+          class CppFunctionDecl {
+                  "function or method"
+                  specifiers: List[str]
+                  return_type: CppType
+                  parameter_list: CppParameterList
+                  template: CppTemplate
+                  is_auto_decl: bool
+                  function_name: str
+          }
+
+          CppFunctionDecl --|> CppElementAndComment
+          /' CppFunctionDecl *-- CppType: return_type '/
+          CppFunctionDecl *-- CppParameterList
+          CppFunctionDecl *-- CppTemplate : optional
+
+
+          class CppFunction {
+                  block
+          }
+          CppFunction --|> CppFunctionDecl
+          CppFunction *-- CppBlockContent
+
+          CppConstructorDecl --|> CppFunctionDecl
+          CppContructor --|> CppFunction
+
+          /'
+          class CppSuper {
+                  specifier
+                  superclass_name
+          }
+          '/
+
+          class CppSuperList {
+                  super_list: List[CppSuper]
+          }
+          /'CppSuperList *-- "many" CppSuper'/
+          CppSuperList --|> CppElement
+
+
+          class CppStruct {
+                  class_name: str
+                  super_list: CppSuperList
+                  block: CppBlock
+                  template: CppTemplate
+
+                  +get_public_blocks()
+                  +get_public_elements()
+                  ...
+          }
+          CppStruct *-- CppBlock
+          CppStruct *-- CppTemplate
+          CppStruct *-- CppSuperList
+
+          CppClass --|> CppStruct
+
+
+          /'CppComment --|> CppElementAndComment'/
+
+          class CppNamespace {
+                  ns_name: str
+                  block: CppBlock
+          }
+          CppNamespace --|> CppElementAndComment
+          CppNamespace *-- CppBlock
+
+          class CppEnum {
+                  block: CppBlock
+                  enum_type
+                  enum_name
+          }
+
+          CppEnum --|> CppElementAndComment
+          CppEnum *-- CppBlock
+  }
+
+
+  package litgen {
+
+          class LitgenOptions {
+          }
+
+          class AdaptedElement {
+                  _cpp_element: CppElementAndComment
+                  options: LitgenOptions
+                  +str_stub()
+                  +str_pydef()
+          }
+          AdaptedElement *-- CppElementAndComment
+          AdaptedElement o-- LitgenOptions
+
+          class AdaptedBlock
+          AdaptedBlock --|> AdaptedElement
+          AdaptedBlock ... CppBlock
+
+          class AdaptedNamespace
+          AdaptedNamespace --|> AdaptedElement
+          AdaptedNamespace ... CppNamespace
+
+          class AdaptedDecl
+          AdaptedDecl --|> AdaptedElement
+          AdaptedDecl ... CppDecl
+
+          AdaptedClassMember --|> AdaptedDecl
+
+          class AdaptedClass {
+                  adapted_public_children
+          }
+          AdaptedClass ... CppClass
+          AdaptedClass --|> AdaptedElement
+          AdaptedClass *-- AdaptedClassMember: members
+          AdaptedClass *-- AdaptedFunction: methods
+
+          AdaptedParameter --|> AdaptedElement
+          AdaptedParameter ... CppParameter
+
+          class AdaptedFunction {
+                  return_value_policy
+                  ...
+          }
+          AdaptedFunction --|> AdaptedElement
+          AdaptedFunction o... CppFunctionDecl
+
+  }
+
+#+end_src
+
+#+RESULTS:
+[[file:packages/srcmlcpp/doc/srcml_cpp_diagram.png]]
+
+
+insert diagram via mermaid (see integration with emacs)
+
+
 * litgen task list
+
+Do we support constructors? (_str_stub_lines(self) -> List[str]: raise ValueError("To be completed"))
 
 ** Global
 
@@ -71,47 +376,12 @@ CLOSED: [2022-09-18 Sun 10:54]
 
 ** Handle namespaces
 
-*** First handle subclasses
+*** First handle subclasses & sub enums
 
-***** Example code
-****** Header
+Scope is already accessible via parent?
 
-#+begin_src c++
-    struct A
-    {
-        int a;
-        struct B
-        {
-            int b;
-        };
-    };
-#+end_src
-
-****** Pydef
-#+begin_src c++
-    auto pyClassA = py::class_<A>
-        (m, "A", "")
-        .def(py::init<>()) // implicit default constructor
-        .def_readwrite("a", &A::a, "")
-        ;
-
-    // To add
-    auto pyClassB_inner_pyClassA = py::class_<A::B>
-        (pyClassA, "B", "")
-        .def(py::init<>()) // implicit default constructor
-        .def_readwrite("b", &A::B::b, "")
-        ;
-
-#+end_src
-
-****** Stub
-#+begin_src python
-class A:
-    a:int
-
-    class B:
-        b: int
-#+end_src
+**** Add Context?
+to AdaptedElement, or maybe better to srcmlcmm.CppElemnt
 
 ****** [ ] Remember current scope (namespace /class)
 
@@ -121,18 +391,18 @@ See AdaptedFunction => replace parent_struct_name by scope
         parent_struct_name: str, is_overloaded: bool
     ) -> None:
 
-scope can be root, list of sub-scopes (with type=class or submodule)
 
 AdaptedElement
   added scope:
-    need to be empty for class, and filled only if subclass or namespace (later)
-  should we add parent?
 
   scope needed for:
     functions or methods (in lambda)
     class and inner class (in pydef creation)
+    enums
 
 
+
+Notes: finish imgui test
 
 
 ***** [ ] Define name of class / take into account scope
