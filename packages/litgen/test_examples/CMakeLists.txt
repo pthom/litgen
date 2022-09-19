@@ -1,6 +1,8 @@
 cmake_minimum_required(VERSION 3.1)
 project(litgen_test_examples)
 
+set(CMAKE_CXX_STANDARD 14)
+
 find_package(pybind11 CONFIG REQUIRED)
 
 function(add_litgen_test_example_folder folder_name)
