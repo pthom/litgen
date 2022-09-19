@@ -206,8 +206,8 @@ def _is_comment_end_of_line(children: List[SrcmlXmlWrapper], idx: int) -> bool:
         return False
     if idx == 0:
         return False
-    element = CppElement(children[idx])
-    previous_element = CppElement(children[idx - 1])
+    element = children[idx]
+    previous_element = children[idx - 1]
     element_text = code_utils.str_none_empty(element.text())
     if element.tag() == "comment" and previous_element.tag() != "comment":
         if EMPTY_LINE_COMMENT_CONTENT in element_text:
@@ -231,8 +231,8 @@ def _is_comment_on_previous_line(children: List[SrcmlXmlWrapper], idx: int) -> b
     if _is_comment_end_of_line(children, idx):
         return False
 
-    element = CppElement(children[idx])
-    next_element = CppElement(children[idx + 1])
+    element = children[idx]
+    next_element = children[idx + 1]
 
     def is_group_comment() -> bool:
         """
@@ -246,9 +246,9 @@ def _is_comment_on_previous_line(children: List[SrcmlXmlWrapper], idx: int) -> b
         """
         if idx + 2 > len(children) - 1:
             return False
-        element_n0 = CppElement(children[idx])
-        element_n1 = CppElement(children[idx + 1])
-        element_n2 = CppElement(children[idx + 2])
+        element_n0 = children[idx]
+        element_n1 = children[idx + 1]
+        element_n2 = children[idx + 2]
 
         is_comment = element_n0.tag() == "comment"
         are_next_same_types = element_n1.tag() == element_n2.tag()
@@ -287,7 +287,7 @@ def _is_comment_on_previous_line(children: List[SrcmlXmlWrapper], idx: int) -> b
                 # However, if the element "idx + 2" is on the same line as element "idx + 1" and is a comment,
                 # then the element "idx + 2" is an end of line comment for the element "idx + 1",
                 # and we will consider this comment ("idx") as a standalone comment
-                next_next_element = CppElement(children[idx + 2])
+                next_next_element = children[idx + 2]
                 next_next_element_start = next_next_element.start()
                 next_element_end = next_element.end()
                 next_next_element_text = code_utils.str_none_empty(next_next_element.text())
