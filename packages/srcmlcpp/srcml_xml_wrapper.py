@@ -92,12 +92,8 @@ class SrcmlXmlWrapper:
     srcml_xml: ET.Element
     # the filename from which this tree was parsed
     filename: Optional[str] = None
-    # the parent of this of node (will be None for the root, which has a tag "unit")
-    parent: Optional[SrcmlXmlWrapper]
 
-    def __init__(
-        self, options: SrcmlOptions, srcml_xml: ET.Element, parent: Optional[SrcmlXmlWrapper], filename: Optional[str]
-    ) -> None:
+    def __init__(self, options: SrcmlOptions, srcml_xml: ET.Element, filename: Optional[str]) -> None:
         """Create a wrapper from an xml sub node
         :param options:  the options
         :param srcml_xml: the xml node which will be wrapped
@@ -113,10 +109,6 @@ class SrcmlXmlWrapper:
             if len(filename) == 0:
                 self.raise_exception("filename params must either be `None` or non empty!")
 
-        if filename is None and parent is not None:
-            filename = parent.filename
-
-        self.parent = parent
         self.filename = filename
 
     def tag(self) -> str:
@@ -209,51 +201,27 @@ class SrcmlXmlWrapper:
         """Save to file as xml"""
         srcml_utils.srcml_to_file(self.options.encoding, self.srcml_xml, filename)
 
-    def children_iterable(self) -> Iterable[SrcmlXmlWrapper]:
-        """Extract the xml sub nodes and wraps them. Returns an iterable"""
-        for child_xml in self.srcml_xml:
-            child_wrapper = SrcmlXmlWrapper(self.options, child_xml, self, None)
-            yield child_wrapper
-
-    def children(self) -> List[SrcmlXmlWrapper]:
+    def make_wrapped_children(self) -> List[SrcmlXmlWrapper]:
         """Extract the xml sub nodes and wraps them"""
         r = []
         for child_xml in self.srcml_xml:
-            r.append(SrcmlXmlWrapper(self.options, child_xml, self, None))
+            r.append(SrcmlXmlWrapper(self.options, child_xml, self.filename))
         return r
 
-    def children_with_tag(self, tag: str) -> List[SrcmlXmlWrapper]:
+    def wrapped_children_with_tag(self, tag: str) -> List[SrcmlXmlWrapper]:
         """Extract the xml sub nodes and wraps them"""
-        children = self.children()
+        children = self.make_wrapped_children()
 
         r = list(filter(lambda child: child.tag() == tag, children))
         return r
 
-    def depth(self) -> int:
-        """The depth of this node, i.e how many parents it has"""
-        depth = 0
-        current = self
-        while current.parent is not None:
-            depth += 1
-            current = current.parent
-
-        return depth
-
-    def visit_xml_breadth_first(self, xml_visitor_function: SrcmlXmVisitorFunction) -> None:
+    def visit_xml_breadth_first(self, xml_visitor_function: SrcmlXmVisitorFunction, depth: int = 0) -> None:
         """Visits all the elements, and run the given function on them.
         Runs the visitor on the parent first, then on its children
         """
-        xml_visitor_function(self)
-        for child in self.children():
-            child.visit_xml_breadth_first(xml_visitor_function)
-
-    def visit_xml_depth_first(self, xml_visitor_function: SrcmlXmVisitorFunction) -> None:
-        """Visits all the elements, and run the given function on them.
-        Runs the visitor on the children first, then on their parent
-        """
-        for child in self.children():
-            child.visit_xml_depth_first(xml_visitor_function)
-        xml_visitor_function(self)
+        xml_visitor_function(self, depth)
+        for child in self.make_wrapped_children():
+            child.visit_xml_breadth_first(xml_visitor_function, depth + 1)
 
     def raise_exception(self, message: str) -> None:
         """raises a SrcmlException which will display the message with a context
@@ -276,6 +244,12 @@ class SrcmlXmlWrapper:
 
     def message_detailed(self, message: str, message_header: str = "Warning") -> str:
         r = self._format_message(message, message_header=message_header)
+        return r
+
+    def short_info(self) -> str:
+        r = f"tag={self.tag()}"
+        if self.has_name():
+            r += f" name={self.name_code()}"
         return r
 
     def _show_element_info(self) -> str:
@@ -312,16 +286,15 @@ class SrcmlXmlWrapper:
     def str_code_context_with_caret(self) -> str:
         from srcmlcpp import srcmlcpp_main
 
-        full_code = srcmlcpp_main._get_cached_file_code(self.filename)
-
         context: _CodeContextWithCaret
-
+        r = ""
+        full_code = srcmlcpp_main._get_cached_file_code(self.filename)
         if len(full_code) > 0:
             full_code_lines = [""] + full_code.split("\n")
 
             start = self.start()
             end = self.end()
-            if start.line >= 0 and end.line >= 0 and len(full_code) > 0:
+            if start.line >= 0 and end.line >= 0:
                 concerned_lines = full_code_lines[start.line : end.line + 1]
                 new_start = CodePosition(0, start.column)
                 new_end = CodePosition(
@@ -329,13 +302,12 @@ class SrcmlXmlWrapper:
                     end.column,
                 )
                 context = _CodeContextWithCaret(concerned_lines, new_start, new_end)
+                r = str(context)
             else:
-                context = _CodeContextWithCaret([], CodePosition(), CodePosition())
+                r = self.str_code_verbatim()
         else:
-            original_code = self.str_code_verbatim()
-            context = _CodeContextWithCaret(original_code.split("\n"), start, end)
+            r = self.str_code_verbatim()
 
-        r = str(context)
         return r
 
     def str_code_location(self) -> str:
@@ -351,5 +323,7 @@ class SrcmlXmlWrapper:
             return f"{header_filename}"
 
 
-# This defines the type of a function that will visit all the children
-SrcmlXmVisitorFunction = Callable[[SrcmlXmlWrapper], None]
+# This defines the type of function that will visit all the children
+# * first parameter: current child
+# * second parameter: depth
+SrcmlXmVisitorFunction = Callable[[SrcmlXmlWrapper, int], None]

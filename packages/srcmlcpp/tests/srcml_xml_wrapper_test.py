@@ -29,15 +29,15 @@ def test_srcml_cpp():
     )
 
     # test code_verbatim
-    code_wrapper = code_to_srcml_xml_wrapper(options, code)
+    code_wrapper = code_to_srcml_xml_wrapper(options, code, "main.h")
     assert code_wrapper.str_code_verbatim() == code
 
     # Test child_with_tag
-    function_wrapper = code_wrapper.children_with_tag("function")
+    function_wrapper = code_wrapper.wrapped_children_with_tag("function")
     assert len(list(function_wrapper)) == 1
 
     # Test children with tag
-    decl_stmt_wrappers = code_wrapper.children_with_tag("decl_stmt")
+    decl_stmt_wrappers = code_wrapper.wrapped_children_with_tag("decl_stmt")
     assert len(decl_stmt_wrappers) == 2
 
     first_decl_stmt = decl_stmt_wrappers[0]
@@ -207,13 +207,13 @@ def test_visitor():
 
     visit_recap = ""
 
-    def my_visitor(element: SrcmlXmlWrapper):
+    def my_visitor(element: SrcmlXmlWrapper, depth: int):
         nonlocal visit_recap
         if element.has_name():
             name = element.name_code()
         else:
             name = "None"
-        spacing = "  " * element.depth()
+        spacing = "  " * depth
         info = f"{spacing}tag: {element.tag()} name:{name}"
         visit_recap += info + "\n"
 

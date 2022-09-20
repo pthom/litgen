@@ -127,6 +127,17 @@ class CppElement(SrcmlXmlWrapper):
         """
         return self.str_code_verbatim()
 
+    def depth(self) -> int:
+        """The depth of this node, i.e how many parents it has"""
+        depth = 0
+        current = self
+        if not hasattr(current, "parent"):
+            return 0
+        while current.parent is not None:
+            depth += 1
+            current = current.parent
+        return depth
+
     def visit_cpp_breadth_first(self, cpp_visitor_function: CppElementsVisitorFunction) -> None:
         """Visits all the cpp children, and run the given function on them.
         Runs the visitor on this element first, then on its children
@@ -271,60 +282,18 @@ class CppBlock(CppElementAndComment):
         for child in self.block_children:
             child.visit_cpp_breadth_first(cpp_visitor_function)
 
-    def visit_cpp_depth_first(self, cpp_visitor_function: CppElementsVisitorFunction) -> None:
-        """Visits all the cpp children, and run the given function on them.
-        Runs the visitor on this block children first, then on this block
+    def all_cpp_elements_recursive(self) -> List[CppElement]:
+        _all_cpp_elements = []
 
-        When in doubt between using visit_cpp_breadth_first and visit_cpp_depth_first,
-        prefer visit_cpp_breadth_first which is closer to the code layout.
-        """
-        for child in self.block_children:
-            child.visit_cpp_depth_first(cpp_visitor_function)
-        cpp_visitor_function(self)
+        def visitor_add_cpp_element(cpp_element: CppElement):
+            _all_cpp_elements.append(cpp_element)
 
-    def str_cpp_tree_overview(self, indentation: str = "  "):
-        """
-        Returns an overview of the Cpp Element tree
+        self.visit_cpp_breadth_first(visitor_add_cpp_element)
 
-        For example this code:
-            namespace ns
-            {
-                int a = 1, b; // This will create a CppDeclStatement that will be reinterpreted as two CppDecl
-                struct Foo {
-                    Foo();
-                    void foo();
-                };
-            }
+        return _all_cpp_elements
 
-        Will create this tree overview:
-            CppNamespace
-              CppBlock
-                CppDeclStatement
-                CppDecl
-                  CppType
-                CppDecl
-                  CppType
-                CppStruct
-                  CppBlock
-                    CppPublicProtectedPrivate
-                      CppConstructorDecl
-                        CppParameterList
-                      CppFunctionDecl
-                        CppType
-                        CppParameterList
-        """
-        tree_overview = ""
-
-        def overview_visitor(element: CppElement):
-            nonlocal tree_overview
-            type_name = type(element).__name__
-            spacing = indentation * element.depth()
-            info = spacing + type_name
-            tree_overview += info + "\n"
-
-        self.visit_cpp_breadth_first(overview_visitor)
-
-        return tree_overview
+    def fill_children_parents(self) -> None:
+        all_cpp_elements = self.all_cpp_elements_recursive()
 
     def __str__(self) -> str:
         return self.str_block()

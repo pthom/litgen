@@ -131,7 +131,7 @@ def _group_consecutive_comments(srcml_code: SrcmlXmlWrapper) -> SrcmlXmlWrapper:
     previous_previous_child: Optional[SrcmlXmlWrapper] = None
     previous_child: Optional[SrcmlXmlWrapper] = None
 
-    for child in srcml_code.children():
+    for child in srcml_code.make_wrapped_children():
 
         def add_child() -> None:
             nonlocal previous_child, previous_previous_child
@@ -197,7 +197,7 @@ def _group_consecutive_comments(srcml_code: SrcmlXmlWrapper) -> SrcmlXmlWrapper:
     for child_r in srcml_xml_grouped:
         children_r.append(child_r)
 
-    r = SrcmlXmlWrapper(srcml_code.options, srcml_xml_grouped, srcml_code.parent, srcml_code.filename)
+    r = SrcmlXmlWrapper(srcml_code.options, srcml_xml_grouped, srcml_code.filename)
     return r
 
 
@@ -324,7 +324,7 @@ def _group_comments_and_remove_comment_markers(srcml_code: SrcmlXmlWrapper) -> L
 
     children_comments_grouped: List[SrcmlXmlWrapper] = []
 
-    for element in srcml_code_grouped.children():
+    for element in srcml_code_grouped.make_wrapped_children():
         children_comments_grouped.append(element)
 
     for element in children_comments_grouped:

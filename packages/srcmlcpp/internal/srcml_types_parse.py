@@ -46,7 +46,7 @@ def parse_type(options: SrcmlOptions, element: SrcmlXmlWrapper, previous_decl: O
 
     assert element.tag() == "type"
     result = CppType(element)
-    for child in element.children():
+    for child in element.make_wrapped_children():
         child_tag = child.tag()
         if child_tag == "name":
             typename = recompose_type_name(child)
@@ -155,7 +155,7 @@ def parse_decl(
     """
     assert element_c.tag() == "decl"
     result = CppDecl(element_c, element_c.cpp_element_comments)
-    for child in element_c.children():
+    for child in element_c.make_wrapped_children():
         child_tag = child.tag()
         if child_tag == "type":
             result.cpp_type = parse_type(options, child, previous_decl)
@@ -187,7 +187,7 @@ def parse_decl_stmt(options: SrcmlOptions, element_c: CppElementAndComment) -> C
 
     previous_decl: Optional[CppDecl] = None
     result = CppDeclStatement(element_c, element_c.cpp_element_comments)
-    for child in element_c.children():
+    for child in element_c.make_wrapped_children():
         child_c = element_c
         child_c.srcml_xml = child.srcml_xml
         if child_c.tag() == "decl":
@@ -211,7 +211,7 @@ def parse_parameter(options: SrcmlOptions, element: SrcmlXmlWrapper) -> CppParam
     """
     assert element.tag() == "parameter"
     result = CppParameter(element)
-    for child in element.children():
+    for child in element.make_wrapped_children():
         child_tag = child.tag()
         if child_tag == "decl":
             child_c = CppElementAndComment(child, CppElementComments())
@@ -236,7 +236,7 @@ def parse_parameter_list(options: SrcmlOptions, element: SrcmlXmlWrapper) -> Cpp
     """
     assert element.tag() == "parameter_list"
     result = CppParameterList(element)
-    for child in element.children():
+    for child in element.make_wrapped_children():
         child_tag = child.tag()
         if child_tag == "parameter":
             result.parameters.append(parse_parameter(options, child))
@@ -252,7 +252,7 @@ def parse_template(options: SrcmlOptions, element: SrcmlXmlWrapper) -> CppTempla
     """
     assert element.tag() == "template"
     result = CppTemplate(element)
-    for child in element.children():
+    for child in element.make_wrapped_children():
         child_tag = child.tag()
         if child_tag == "parameter_list":
             result.parameter_list = parse_parameter_list(options, child)
@@ -266,7 +266,7 @@ def fill_function_decl(
     element_c: CppElementAndComment,
     function_decl: CppFunctionDecl,
 ) -> None:
-    for child in element_c.children():
+    for child in element_c.make_wrapped_children():
         child_tag = child.tag()
         if child_tag == "type":
             if not hasattr(function_decl, "return_type") or len(function_decl.return_type.typenames) == 0:
@@ -318,7 +318,7 @@ def parse_function(options: SrcmlOptions, element_c: CppElementAndComment) -> Cp
     result = CppFunction(element_c, element_c.cpp_element_comments)
     fill_function_decl(options, element_c, result)
 
-    for child in element_c.children():
+    for child in element_c.make_wrapped_children():
         child_tag = child.tag()
         if child_tag == "block":
             child_c = CppElementAndComment(child, CppElementComments())
@@ -346,7 +346,7 @@ def fill_constructor_decl(
     element_c: CppElementAndComment,
     constructor_decl: CppConstructorDecl,
 ) -> None:
-    for child in element_c.children():
+    for child in element_c.make_wrapped_children():
         child_tag = child.tag()
         if child_tag == "name":
             constructor_decl.function_name = _parse_name(child)
@@ -382,7 +382,7 @@ def parse_constructor(options: SrcmlOptions, element_c: CppElementAndComment) ->
     result = CppConstructor(element_c, element_c.cpp_element_comments)
     fill_constructor_decl(options, element_c, result)
 
-    for child in element_c.children():
+    for child in element_c.make_wrapped_children():
         child_c = CppElementAndComment(child, CppElementComments())
         child_tag = child.tag()
         if child_tag == "block":
@@ -404,7 +404,7 @@ def parse_super(options: SrcmlOptions, element: SrcmlXmlWrapper) -> CppSuper:
     """
     assert element.tag() == "super"
     result = CppSuper(element)
-    for child in element.children():
+    for child in element.make_wrapped_children():
         child_tag = child.tag()
         if child_tag == "specifier":
             child_text = child.text()
@@ -425,7 +425,7 @@ def parse_super_list(options: SrcmlOptions, element: SrcmlXmlWrapper) -> CppSupe
     """
     assert element.tag() == "super_list"
     result = CppSuperList(element)
-    for child in element.children():
+    for child in element.make_wrapped_children():
         child_tag = child.tag()
         if child_tag == "super":
             result.super_list.append(parse_super(options, child))
@@ -465,7 +465,7 @@ def parse_struct_or_class(options: SrcmlOptions, element_c: CppElementAndComment
     else:
         result = CppClass(element_c, element_c.cpp_element_comments)
 
-    for child in element_c.children():
+    for child in element_c.make_wrapped_children():
         child_tag = child.tag()
         if child_tag == "name":
             result.class_name = _parse_name(child)
@@ -648,6 +648,7 @@ def parse_unit(options: SrcmlOptions, element: SrcmlXmlWrapper) -> CppUnit:
     assert element.tag() == "unit"
     cpp_unit = CppUnit(element)
     fill_block(options, element, cpp_unit)
+    # cpp_unit.fill_children_parents()
     return cpp_unit
 
 
@@ -691,7 +692,7 @@ def parse_namespace(options: SrcmlOptions, element_c: CppElementAndComment) -> C
     """
     assert element_c.tag() == "namespace"
     result = CppNamespace(element_c, element_c.cpp_element_comments)
-    for child in element_c.children():
+    for child in element_c.make_wrapped_children():
         child_tag = child.tag()
         if child_tag == "name":
             result.ns_name = _parse_name(child)
@@ -701,7 +702,6 @@ def parse_namespace(options: SrcmlOptions, element_c: CppElementAndComment) -> C
             _add_comment_child_before_block(result, child)
         else:
             raise SrcMlExceptionDetailed(child, f"unhandled tag {child_tag}")
-
     return result
 
 
@@ -718,7 +718,7 @@ def parse_enum(options: SrcmlOptions, element_c: CppElementAndComment) -> CppEnu
         assert enum_type is not None
         result.enum_type = enum_type
 
-    for child in element_c.children():
+    for child in element_c.make_wrapped_children():
         child_tag = child.tag()
         if child_tag == "name":
             result.enum_name = _parse_name(child)

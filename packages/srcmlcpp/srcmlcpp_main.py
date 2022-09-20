@@ -58,8 +58,7 @@ def code_to_srcml_xml_wrapper(
 
     xml = srcml_caller.code_to_srcml(code, dump_positions=options.srcml_dump_positions, encoding=options.encoding)
 
-    root_has_no_parent = None
-    r = SrcmlXmlWrapper(options, xml, root_has_no_parent, filename)
+    r = SrcmlXmlWrapper(options, xml, filename)
     return r
 
 
