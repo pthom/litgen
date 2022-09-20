@@ -29,19 +29,7 @@ def test_is_c_string_list_ptr():
 
 def test_visitor():
     options = SrcmlOptions()
-    code = code_utils.unindent_code(
-        """
-    namespace ns
-    {
-        int a = 1, b; // This will create a CppDeclStatement that will be reinterpreted as two CppDecl
-        struct Foo {
-            Foo();
-            void foo();
-        };
-    }
-    """,
-        flag_strip_empty_lines=True,
-    )
+    code = "int a = 1;"
     cpp_unit = srcmlcpp.code_to_cpp_unit(options, code)
 
     visit_recap = ""
@@ -63,21 +51,9 @@ def test_visitor():
     code_utils.assert_are_codes_equal(
         visit_recap,
         """
-        CppUnit (namespace ns)
-        CppNamespace (namespace ns)
-        CppBlock ({)
-        CppDeclStatement (int a = 1, b;)
-        CppDecl (int a = 1,)
-        CppType (int)
-        CppDecl (b;)
-        CppType ()
-        CppStruct (struct Foo {)
-        CppBlock ({)
-        CppPublicProtectedPrivate (Foo();)
-        CppConstructorDecl (Foo();)
-        CppParameterList (();)
-        CppFunctionDecl (void foo();)
-        CppType (void)
-        CppParameterList (();)
-    """,
+        CppUnit (int a = 1;)
+          CppDeclStatement (int a = 1;)
+            CppDecl (int a = 1;)
+              CppType (int)
+          """,
     )
