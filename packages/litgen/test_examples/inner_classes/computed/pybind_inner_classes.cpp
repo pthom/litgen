@@ -18,7 +18,6 @@ void py_init_module_hello_imgui(py::module& m)
         .def(py::init<>()) // implicit default constructor
         .def_readwrite("a", &Parent::a, "")
         .def_readwrite("child", &Parent::child, "")
-        .def_readwrite("item", &Parent::item, "")
         ;
     { // inner classes of Parent
         auto pyClassParent_ClassChild = py::class_<Parent::Child>

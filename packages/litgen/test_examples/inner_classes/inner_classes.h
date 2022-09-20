@@ -8,11 +8,11 @@ struct Parent
     };
     Child child;
 
-    enum class Item
-    {
-        Zero = 0,
-        One,
-        Two
-    };
-    Item item;
+//    enum class Item
+//    {
+//        Zero = 0,
+//        One,
+//        Two
+//    };
+//    Item item;
 };

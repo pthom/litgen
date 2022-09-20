@@ -8,6 +8,14 @@ class Parent:
         # int getB() { return b; }
     child: Child
 
+    #    enum class Item
+    #    {
+    #        Zero = 0,
+    #        One,
+    #        Two
+    #    };
+    #    Item item;
+
 ####################    </generated_from:inner_classes.h>    ####################
 
 # </litgen_stub>
