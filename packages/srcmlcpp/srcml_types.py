@@ -160,6 +160,51 @@ class CppElement(SrcmlXmlWrapper):
             r += f" name={self.name_code()}"
         return r
 
+    def cpp_scope_str(self) -> str:
+        cpp_scope_list = self.cpp_scope_list()
+        r = "::".join(cpp_scope_list)
+        return r
+
+    def cpp_scope_list(self) -> List[str]:
+        """Return this element cpp scope as a list of scope elements
+
+        For example
+        namespace Foo {
+            struct S {
+                void dummy();  // Will have a scope equal to ["Foo", "S"]
+            }
+        }
+        """
+        ancestors = self.ancestors_list()
+        ancestors.reverse()
+
+        scope_list = []
+        for ancestor in ancestors:
+            if isinstance(ancestor, CppStruct):  # this also tests for CppClass
+                scope_list.append(ancestor.class_name)
+            elif isinstance(ancestor, CppNamespace):
+                scope_list.append(ancestor.ns_name)
+            elif isinstance(ancestor, CppEnum):
+                scope_list.append(ancestor.enum_name)
+
+        return scope_list
+
+    def ancestors_list(self) -> List[CppElement]:
+        """
+        Returns the list of ancestors, up to the root unit
+
+        This list does not include this element, and is in the order parent, grand-parent, grand-grand-parent, ...
+        :return:
+        """
+        assert hasattr(self, "parent")  # parent should have been filled by parse_unit & CppBlock
+        ancestors = []
+
+        current_parent = self.parent
+        while current_parent is not None:
+            ancestors.append(current_parent)
+            current_parent = current_parent.parent
+        return ancestors
+
     def __str__(self) -> str:
         return self._str_simplified_yaml()
 

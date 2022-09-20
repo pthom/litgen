@@ -47,7 +47,7 @@ def test_visitor():
             visit_recap += "  " * depth + info + "\n"
 
     cpp_unit.visit_cpp_breadth_first(my_visitor)
-    logging.warning("\n" + visit_recap)
+    # logging.warning("\n" + visit_recap)
     code_utils.assert_are_codes_equal(
         visit_recap,
         """
@@ -55,5 +55,65 @@ def test_visitor():
           CppDeclStatement (int a = 1;)
             CppDecl (int a = 1;)
               CppType (int)
+          """,
+    )
+
+
+def test_parents_and_scope():
+    code = """
+    namespace Blah
+    {
+        struct Foo
+        {
+            enum A {
+                a = 0;
+            };
+            void dummy();
+        };
+    }
+    """
+    options = SrcmlOptions()
+    cpp_unit = srcmlcpp.code_to_cpp_unit(options, code)
+
+    log_parents = ""
+
+    def visitor_log_parents(cpp_element: CppElement, event: CppElementsVisitorEvent, depth: int):
+        nonlocal log_parents
+        if event == CppElementsVisitorEvent.OnElement:
+            assert hasattr(cpp_element, "parent")
+            if cpp_element.parent is None:
+                msg_parent = "None"
+            else:
+                msg_parent = cpp_element.parent.short_cpp_element_info()
+
+            msg_parent = f" (parent: {msg_parent})"
+
+            msg_scope = f" (scope: {cpp_element.cpp_scope_str()})"
+            if len(cpp_element.cpp_scope_str()) == 0:
+                msg_scope = " (empty scope)"
+
+            msg = cpp_element.short_cpp_element_info() + msg_parent + msg_scope
+            log_parents += "  " * depth + msg + "\n"
+
+    cpp_unit.visit_cpp_breadth_first(visitor_log_parents)
+    # print("\n" + log_parents)
+    code_utils.assert_are_codes_equal(
+        log_parents,
+        """
+        CppUnit (parent: None) (empty scope)
+          CppEmptyLine (parent: CppUnit) (empty scope)
+          CppNamespace name=Blah (parent: CppUnit) (empty scope)
+            CppBlock (parent: CppNamespace name=Blah) (scope: Blah)
+              CppStruct name=Foo (parent: CppBlock) (scope: Blah)
+                CppBlock (parent: CppStruct name=Foo) (scope: Blah::Foo)
+                  CppPublicProtectedPrivate (parent: CppBlock) (scope: Blah::Foo)
+                    CppEnum name=A (parent: CppPublicProtectedPrivate) (scope: Blah::Foo)
+                      CppBlock (parent: CppEnum name=A) (scope: Blah::Foo::A)
+                        CppDecl name=a (parent: CppBlock) (scope: Blah::Foo::A)
+                        CppUnprocessed (parent: CppBlock) (scope: Blah::Foo::A)
+                    CppFunctionDecl name=dummy (parent: CppPublicProtectedPrivate) (scope: Blah::Foo)
+                      CppType name=void (parent: CppFunctionDecl name=dummy) (scope: Blah::Foo)
+                      CppParameterList (parent: CppFunctionDecl name=dummy) (scope: Blah::Foo)
+          CppEmptyLine (parent: CppUnit) (empty scope)
           """,
     )
