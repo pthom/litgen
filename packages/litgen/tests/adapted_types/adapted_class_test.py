@@ -35,8 +35,8 @@ struct Foo
         class Foo:
             """ Doc about Foo"""
             # Doc about members
-            a:int      # Doc about a
-            flag:bool  # Doc about flag
+            a: int      # Doc about a
+            flag: bool  # Doc about flag
 
 
             # Doc about Methods
@@ -58,9 +58,9 @@ struct Foo
             # Doc about members
 
             # Doc about a
-            a:int
+            a: int
             # Doc about flag
-            flag:bool
+            flag: bool
 
             # Doc about Methods
 
@@ -151,8 +151,8 @@ def test_struct_stub_complex():
                 pass
 
             # Members
-            flag_bgra:bool = False  # True if color order is BGRA
-            components:np.ndarray   # ndarray[type=float, size=4]  # A numeric C array that will be published as a numpy array
+            flag_bgra: bool = False  # True if color order is BGRA
+            components: np.ndarray   # ndarray[type=float, size=4]  # A numeric C array that will be published as a numpy array
     ''',
     )
 
