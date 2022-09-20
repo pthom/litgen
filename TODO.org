@@ -1,12 +1,13 @@
 * Emacs tips
 
+** General
 M = Alt
 C = Ctrl
 M-x = select / search command
 
 C-g : quit current command
 
-* Org mode tips
+** Org mode tips
 ** Basics
 [[https://orgmode.org/orgguide.html#Introduction][Org mode quick guide]]
 Link to org [[https://orgmode.org/][mode homepage]] (M-x org-insert-link)
@@ -367,29 +368,22 @@ Failed attempt to remove confirmation for C-c C-c
 insert diagram via mermaid (see integration with emacs)
 
 
-* simple task list
-
-** Do we support constructors? (_str_stub_lines(self) -> List[str]: raise ValueError("To be completed"))
-** Rename SrcmlWrapper. _show_element_info => warning info
-
-
-* Global
-
-*** [ ] Add pylint or flake8 to precommit (cf  https://stackoverflow.com/questions/73765587/how-to-get-a-warning-about-a-list-being-global-when-used-as-a-default-argument))
-
 
 * Litgen TODO
 
-** Handle namespaces
+** simple task list
+
+Do we support constructors? (_str_stub_lines(self) -> List[str]: raise ValueError("To be completed"))
+Rename SrcmlWrapper. _show_element_info => warning info
+Add pylint or flake8 to precommit (cf  https://stackoverflow.com/questions/73765587/how-to-get-a-warning-about-a-list-being-global-when-used-as-a-default-argument))
+finish imgui test
+
+** Handle scope
 
 *** First handle subclasses & sub enums
 
-Scope is already accessible via parent?
-
-**** Add Context?
-to AdaptedElement, or maybe better to srcmlcmm.CppElemnt
-
-****** [ ] Remember current scope (namespace /class)
+[ ] Move scopy.py to srcmlcpp
+[ ] Use newly available scope / remove Adaptedelement.scope
 
 
 See AdaptedFunction => replace parent_struct_name by scope
@@ -399,22 +393,8 @@ See AdaptedFunction => replace parent_struct_name by scope
     ) -> None:
 
 
-AdaptedElement
-  added scope:
 
-  scope needed for:
-    functions or methods (in lambda)
-    class and inner class (in pydef creation)
-    enums
-
-
-
-Notes: finish imgui test
-
-
-***** [ ] Define name of class / take into account scope
-
-
+*** Handle Namespace
 **** Sample code / namespace
 #+NAME code to test
 #+begin_src cpp
@@ -430,7 +410,7 @@ namespace A
 }
 #+end_src
 
-*** Strategy
+**** Strategy
 soit https://www.reddit.com/r/learnpython/comments/dek8fy/how_to_create_a_stub_file_for_a_submodule_in_a_c/
 soit fake class with staticmethods
 

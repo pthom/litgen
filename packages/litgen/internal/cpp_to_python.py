@@ -6,6 +6,7 @@ from codemanip import code_replacements
 from codemanip.code_replacements import RegexReplacement, RegexReplacementList
 
 from srcmlcpp import srcmlcpp_main
+from srcmlcpp.cpp_scope import CppScope
 from srcmlcpp.srcml_types import *
 
 from litgen.options import LitgenOptions
@@ -367,6 +368,35 @@ def apply_black_formatter_pyi(options: LitgenOptions, code: str) -> str:
 
     formatted_code = black.format_str(code, mode=black_mode)
     return formatted_code
+
+
+def _scope_part_name(scope_part: CppScopePart) -> str:
+    r = ""
+    if scope_part.scope_type == CppScopeType.ClassOrStruct:
+        r += "Class"
+    elif scope_part.scope_type == CppScopeType.Namespace:
+        r += "Namespace"
+    elif scope_part.scope_type == CppScopeType.Namespace:
+        r += "Enum"
+    r += scope_part.scope_name
+    return r
+
+
+def cpp_scope_to_pybind_var_name(cpp_element: CppElement):
+    cpp_scope = cpp_element.cpp_scope(True)
+    scope_parts_strs = map(_scope_part_name, cpp_scope.scope_parts)
+    r = "py" + "_".join(scope_parts_strs)
+    return r
+
+
+def cpp_scope_to_pybind_parent_var_name(cpp_element: CppElement):
+    cpp_scope = cpp_element.cpp_scope(False)
+    if len(cpp_scope.scope_parts) == 0:
+        return "m"
+    else:
+        scope_parts_strs = map(_scope_part_name, cpp_scope.scope_parts)
+        r = "py" + "_".join(scope_parts_strs)
+        return r
 
 
 def standard_code_replacements() -> RegexReplacementList:

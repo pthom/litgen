@@ -30,6 +30,7 @@ from xml.etree import ElementTree as ET  # noqa
 from codemanip import code_utils
 from codemanip.code_position import CodePosition
 
+from srcmlcpp.cpp_scope import CppScope, CppScopePart, CppScopeType
 from srcmlcpp.internal import srcml_caller, srcml_utils
 from srcmlcpp.srcml_options import SrcmlOptions
 from srcmlcpp.srcml_options import _int_from_str_or_named_number_macros
@@ -159,18 +160,13 @@ class CppElement(SrcmlXmlWrapper):
         if self.has_name():
             r += f" name={self.name_code()}"
         if include_scope:
-            scope_str = self.cpp_scope_str()
+            scope_str = self.cpp_scope().str_cpp()
             if len(scope_str) > 0:
                 r += f" scope={scope_str}"
         return r
 
-    def cpp_scope_str(self) -> str:
-        cpp_scope_list = self.cpp_scope_list()
-        r = "::".join(cpp_scope_list)
-        return r
-
-    def cpp_scope_list(self) -> List[str]:
-        """Return this element cpp scope as a list of scope elements
+    def cpp_scope(self, include_self: bool = False) -> CppScope:
+        """Return this element cpp scope
 
         For example
         namespace Foo {
@@ -179,21 +175,21 @@ class CppElement(SrcmlXmlWrapper):
             }
         }
         """
-        ancestors = self.ancestors_list()
+        ancestors = self.ancestors_list(include_self)
         ancestors.reverse()
 
-        scope_list = []
+        scope = CppScope()
         for ancestor in ancestors:
             if isinstance(ancestor, CppStruct):  # this also tests for CppClass
-                scope_list.append(ancestor.class_name)
+                scope.scope_parts.append(CppScopePart(CppScopeType.ClassOrStruct, ancestor.class_name))
             elif isinstance(ancestor, CppNamespace):
-                scope_list.append(ancestor.ns_name)
+                scope.scope_parts.append(CppScopePart(CppScopeType.Namespace, ancestor.ns_name))
             elif isinstance(ancestor, CppEnum):
-                scope_list.append(ancestor.enum_name)
+                scope.scope_parts.append(CppScopePart(CppScopeType.Enum, ancestor.enum_name))
 
-        return scope_list
+        return scope
 
-    def ancestors_list(self) -> List[CppElement]:
+    def ancestors_list(self, include_self: bool = False) -> List[CppElement]:
         """
         Returns the list of ancestors, up to the root unit
 
@@ -203,7 +199,7 @@ class CppElement(SrcmlXmlWrapper):
         assert hasattr(self, "parent")  # parent should have been filled by parse_unit & CppBlock
         ancestors = []
 
-        current_parent = self.parent
+        current_parent = self if include_self else self.parent
         while current_parent is not None:
             ancestors.append(current_parent)
             current_parent = current_parent.parent
@@ -1262,6 +1258,14 @@ class CppStruct(CppElementAndComment):
         if hasattr(self, "template"):
             self.template.visit_cpp_breadth_first(cpp_visitor_function, depth + 1)
         cpp_visitor_function(self, CppElementsVisitorEvent.OnAfterChildren, depth)
+
+    def qualified_struct_name(self) -> str:
+        parent_cpp_scope_str = self.cpp_scope().str_cpp()
+        if len(parent_cpp_scope_str) > 0:
+            r = parent_cpp_scope_str + "::" + self.class_name
+        else:
+            r = self.class_name
+        return r
 
 
 @dataclass

@@ -14,7 +14,6 @@ from litgen.internal.adapted_types.adapted_comment import (
 )
 from litgen.internal.adapted_types.adapted_decl import AdaptedDecl
 from litgen.internal.adapted_types.adapted_element import AdaptedElement
-from litgen.internal.adapted_types.scope import Scope, ScopeType, ScopePart
 from litgen.internal.adapted_types.adapted_function import AdaptedFunction
 from litgen.options import LitgenOptions
 
@@ -143,7 +142,7 @@ class AdaptedClassMember(AdaptedDecl):
     def _str_pydef_lines_numeric_array(self) -> List[str]:
         # Cf. https://stackoverflow.com/questions/58718884/binding-an-array-using-pybind11
 
-        qualified_struct_name = self.class_parent.qualified_struct_name()
+        qualified_struct_name = self.class_parent.cpp_element().qualified_struct_name()
         location = self.info_original_location_cpp()
         name_python = self.decl_name_python()
         name_cpp = self.decl_name_cpp()
@@ -168,7 +167,7 @@ class AdaptedClassMember(AdaptedDecl):
         return lines
 
     def _str_pydef_lines_field(self) -> List[str]:
-        qualified_struct_name = self.class_parent.qualified_struct_name()
+        qualified_struct_name = self.class_parent.cpp_element().qualified_struct_name()
         location = self.info_original_location_cpp()
         name_python = self.decl_name_python()
         name_cpp = self.decl_name_cpp()
@@ -244,21 +243,12 @@ class AdaptedClass(AdaptedElement):
         r = f"AdaptedClass({self.cpp_element().class_name})"
         return r
 
-    def inner_scope(self) -> Scope:
-        inner_scope = copy.deepcopy(self.scope)
-        inner_scope.scopes.append(ScopePart(ScopeType.SUBCLASS, self.cpp_element().class_name))
-        return inner_scope
-
     # override
     def cpp_element(self) -> CppStruct:
         return cast(CppStruct, self._cpp_element)
 
     def class_name_python(self) -> str:
         r = cpp_to_python.add_underscore_if_python_reserved_word(self.cpp_element().class_name)
-        return r
-
-    def qualified_struct_name(self) -> str:
-        r = self.scope.scope_cpp() + self.cpp_element().class_name
         return r
 
     def _add_adapted_class_member(self, cpp_decl_statement: CppDeclStatement):
@@ -294,7 +284,6 @@ class AdaptedClass(AdaptedElement):
                 continue
             elif isinstance(child, CppStruct):
                 adapted_subclass = AdaptedClass(self.options, child)
-                adapted_subclass.scope.scopes.append(ScopePart(ScopeType.SUBCLASS, self.cpp_element().class_name))
                 self.adapted_public_children.append(adapted_subclass)
 
             else:
@@ -333,19 +322,19 @@ class AdaptedClass(AdaptedElement):
         _i_ = options.indent_cpp_spaces()
 
         bare_struct_name = self.cpp_element().class_name
-        pydef_class_name = "py" + self.inner_scope().concatenated_scope_names()
         location = self.info_original_location_cpp()
         comment = self.comment_pydef_one_line()
 
         code_intro = ""
-        code_intro += f"auto {pydef_class_name} = py::class_<{self.qualified_struct_name()}>{location}\n"
-        pydef_scope_name = self.scope.pydef_scope_name()
-        code_intro += f'{_i_}({pydef_scope_name}, "{bare_struct_name}", "{comment}")\n'
+        pydef_class_var = cpp_to_python.cpp_scope_to_pybind_var_name(self.cpp_element())
+        pydef_class_var_parent = cpp_to_python.cpp_scope_to_pybind_parent_var_name(self.cpp_element())
+        qualified_struct_name = self.cpp_element().qualified_struct_name()
+
+        code_intro += f"auto {pydef_class_var} = py::class_<{qualified_struct_name}>{location}\n"
+        code_intro += f'{_i_}({pydef_class_var_parent}, "{bare_struct_name}", "{comment}")\n'
 
         if options.generate_to_string:
-            code_outro = (
-                f'{_i_}.def("__repr__", [](const {self.qualified_struct_name()}& v) {{ return ToString(v); }});'
-            )
+            code_outro = f'{_i_}.def("__repr__", [](const {qualified_struct_name}& v) {{ return ToString(v); }});'
         else:
             code_outro = f"{_i_};"
 
