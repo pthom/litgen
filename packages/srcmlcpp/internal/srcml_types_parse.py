@@ -648,7 +648,7 @@ def parse_unit(options: SrcmlOptions, element: SrcmlXmlWrapper) -> CppUnit:
     assert element.tag() == "unit"
     cpp_unit = CppUnit(element)
     fill_block(options, element, cpp_unit)
-    # cpp_unit.fill_children_parents()
+    cpp_unit.fill_children_parents()
     return cpp_unit
 
 

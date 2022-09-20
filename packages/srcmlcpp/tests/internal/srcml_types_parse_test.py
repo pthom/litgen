@@ -1,6 +1,7 @@
 import os
 import sys
 
+import srcmlcpp
 from codemanip import code_utils
 
 from srcmlcpp import srcml_types
@@ -332,6 +333,44 @@ def test_parse_unit():
     """
 
     code_utils.assert_are_codes_equal(cpp_element_str, expected_code)
+
+
+def test_fill_parents():
+    code = """
+    int b = 1;
+    """
+    options = SrcmlOptions()
+    cpp_unit = srcmlcpp.code_to_cpp_unit(options, code)
+
+    log_parents = ""
+
+    def visitor_log_parents(
+        cpp_element: srcml_types.CppElement, event: srcml_types.CppElementsVisitorEvent, depth: int
+    ):
+        nonlocal log_parents
+        if event == srcml_types.CppElementsVisitorEvent.OnElement:
+            assert hasattr(cpp_element, "parent")
+            if cpp_element.parent is None:
+                msg_parent = "None"
+            else:
+                msg_parent = cpp_element.parent.short_cpp_element_info()
+
+            msg = cpp_element.short_cpp_element_info() + " ( parent: " + msg_parent + " )"
+            log_parents += "  " * depth + msg + "\n"
+
+    cpp_unit.visit_cpp_breadth_first(visitor_log_parents)
+    # print("\n" + log_parents)
+    code_utils.assert_are_codes_equal(
+        log_parents,
+        """
+        CppUnit ( parent: None )
+          CppEmptyLine ( parent: CppUnit )
+          CppDeclStatement ( parent: CppUnit )
+            CppDecl name=b ( parent: CppDeclStatement )
+              CppType name=int ( parent: CppDecl name=b )
+          CppEmptyLine ( parent: CppUnit )
+    """,
+    )
 
 
 def do_parse_imgui_implot(filename) -> None:

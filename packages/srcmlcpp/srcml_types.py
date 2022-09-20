@@ -23,6 +23,7 @@ from __future__ import annotations
 import copy
 import logging
 from dataclasses import dataclass
+from enum import Enum
 from typing import Dict, List, Optional, Callable, cast
 from xml.etree import ElementTree as ET  # noqa
 
@@ -115,8 +116,14 @@ class CppElementComments:
 class CppElement(SrcmlXmlWrapper):
     """Base class of all the cpp types"""
 
+    # the parent of this element (will be None for the root, which is a CppUnit)
+    # at construction time, this field is absent (hasattr return False)!
+    # It will be filled later by CppBlock.fill_parents() (with a tree traversal)
+    parent: Optional[CppElement]
+
     def __init__(self, element: SrcmlXmlWrapper) -> None:
-        super().__init__(element.options, element.srcml_xml, element.parent, element.filename)
+        super().__init__(element.options, element.srcml_xml, element.filename)
+        # self.parent is intentionally not filled!
 
     def str_code(self) -> str:
         """Returns a C++ textual representation of the contained code element.
@@ -138,21 +145,36 @@ class CppElement(SrcmlXmlWrapper):
             current = current.parent
         return depth
 
-    def visit_cpp_breadth_first(self, cpp_visitor_function: CppElementsVisitorFunction) -> None:
+    def visit_cpp_breadth_first(self, cpp_visitor_function: CppElementsVisitorFunction, depth: int = 0) -> None:
         """Visits all the cpp children, and run the given function on them.
         Runs the visitor on this element first, then on its children
 
         This method is overriden in classes that have children!
         """
         # For an element without children, simply run the visitor
-        cpp_visitor_function(self)
+        cpp_visitor_function(self, CppElementsVisitorEvent.OnElement, depth)
+
+    def short_cpp_element_info(self) -> str:
+        r = type(self).__name__
+        if self.has_name():
+            r += f" name={self.name_code()}"
+        return r
 
     def __str__(self) -> str:
         return self._str_simplified_yaml()
 
 
-# This defines the type of a function that will visit all the Cpp Elements
-CppElementsVisitorFunction = Callable[[CppElement], None]
+class CppElementsVisitorEvent(Enum):
+    OnElement = 1  # We are visiting this element (will be raised for all elements, incl Blocks)
+    OnBeforeChildren = 2  # We are about to visit a block's children
+    OnAfterChildren = 3  # We finished visiting a block's children
+
+
+# This defines the type of function that will visit all the Cpp Elements
+# - First param: element being visited. A same element can be visited up to three times with different events
+# - Second param: event (see CppElementsVisitorEvent doc)
+# - Third param: depth in the source tree
+CppElementsVisitorFunction = Callable[[CppElement, CppElementsVisitorEvent, int], None]
 
 
 @dataclass
@@ -274,26 +296,46 @@ class CppBlock(CppElementAndComment):
         is_overloaded = len(functions_same_name) >= 2
         return is_overloaded
 
-    def visit_cpp_breadth_first(self, cpp_visitor_function: CppElementsVisitorFunction) -> None:
+    def visit_cpp_breadth_first(self, cpp_visitor_function: CppElementsVisitorFunction, depth: int = 0) -> None:
         """Visits all the cpp children, and run the given function on them.
         Runs the visitor on this block first, then on its children
         """
-        cpp_visitor_function(self)
+        cpp_visitor_function(self, CppElementsVisitorEvent.OnElement, depth)
+        cpp_visitor_function(self, CppElementsVisitorEvent.OnBeforeChildren, depth)
         for child in self.block_children:
-            child.visit_cpp_breadth_first(cpp_visitor_function)
+            child.visit_cpp_breadth_first(cpp_visitor_function, depth + 1)
+        cpp_visitor_function(self, CppElementsVisitorEvent.OnAfterChildren, depth)
 
     def all_cpp_elements_recursive(self) -> List[CppElement]:
         _all_cpp_elements = []
 
-        def visitor_add_cpp_element(cpp_element: CppElement):
-            _all_cpp_elements.append(cpp_element)
+        def visitor_add_cpp_element(cpp_element: CppElement, event: CppElementsVisitorEvent, depth: int):
+            if event == CppElementsVisitorEvent.OnElement:
+                _all_cpp_elements.append(cpp_element)
 
         self.visit_cpp_breadth_first(visitor_add_cpp_element)
 
         return _all_cpp_elements
 
     def fill_children_parents(self) -> None:
-        all_cpp_elements = self.all_cpp_elements_recursive()
+        parents_stack: List[Optional[CppElement]] = [None]
+
+        def visitor_fill_parent(cpp_element: CppElement, event: CppElementsVisitorEvent, depth: int):
+            nonlocal parents_stack
+            if event == CppElementsVisitorEvent.OnElement:
+                assert len(parents_stack) > 0
+
+                last_parent = parents_stack[-1]
+                if len(parents_stack) > 1:
+                    assert last_parent is not None
+
+                cpp_element.parent = last_parent
+            elif event == CppElementsVisitorEvent.OnBeforeChildren:
+                parents_stack.append(cpp_element)
+            elif event == CppElementsVisitorEvent.OnAfterChildren:
+                parents_stack.pop()
+
+        self.visit_cpp_breadth_first(visitor_fill_parent)
 
     def __str__(self) -> str:
         return self.str_block()
@@ -616,10 +658,12 @@ class CppDecl(CppElementAndComment):
         Returns true if this decl is const"""
         return "const" in self.cpp_type.specifiers  # or "const" in self.cpp_type.names
 
-    def visit_cpp_breadth_first(self, cpp_visitor_function: CppElementsVisitorFunction) -> None:
-        cpp_visitor_function(self)
+    def visit_cpp_breadth_first(self, cpp_visitor_function: CppElementsVisitorFunction, depth: int = 0) -> None:
+        cpp_visitor_function(self, CppElementsVisitorEvent.OnElement, depth)
+        cpp_visitor_function(self, CppElementsVisitorEvent.OnBeforeChildren, depth)
         if hasattr(self, "cpp_type"):
-            self.cpp_type.visit_cpp_breadth_first(cpp_visitor_function)
+            self.cpp_type.visit_cpp_breadth_first(cpp_visitor_function, depth + 1)
+        cpp_visitor_function(self, CppElementsVisitorEvent.OnAfterChildren, depth)
 
     def _clone_only_changing_parts(self) -> CppDecl:
         """Advanced
@@ -655,10 +699,12 @@ class CppDeclStatement(CppElementAndComment):
         str_decl = code_utils.join_remove_empty("\n", str_decls)
         return str_decl
 
-    def visit_cpp_breadth_first(self, cpp_visitor_function: CppElementsVisitorFunction) -> None:
-        cpp_visitor_function(self)
+    def visit_cpp_breadth_first(self, cpp_visitor_function: CppElementsVisitorFunction, depth: int = 0) -> None:
+        cpp_visitor_function(self, CppElementsVisitorEvent.OnElement, depth)
+        cpp_visitor_function(self, CppElementsVisitorEvent.OnBeforeChildren, depth)
         for child in self.cpp_decls:
-            child.visit_cpp_breadth_first(cpp_visitor_function)
+            child.visit_cpp_breadth_first(cpp_visitor_function, depth + 1)
+        cpp_visitor_function(self, CppElementsVisitorEvent.OnAfterChildren, depth)
 
     def __str__(self) -> str:
         return self.str_commented()
@@ -717,12 +763,15 @@ class CppParameter(CppElementAndComment):
     def variable_name(self) -> str:
         return self.decl.decl_name
 
-    def visit_cpp_breadth_first(self, cpp_visitor_function: CppElementsVisitorFunction) -> None:
-        cpp_visitor_function(self)
+    def visit_cpp_breadth_first(self, cpp_visitor_function: CppElementsVisitorFunction, depth: int = 0) -> None:
+        cpp_visitor_function(self, CppElementsVisitorEvent.OnElement, depth)
+
+        cpp_visitor_function(self, CppElementsVisitorEvent.OnBeforeChildren, depth)
         if hasattr(self, "decl"):
-            self.decl.visit_cpp_breadth_first(cpp_visitor_function)
+            self.decl.visit_cpp_breadth_first(cpp_visitor_function, depth + 1)
         if hasattr(self, "template_type"):
-            self.template_type.visit_cpp_breadth_first(cpp_visitor_function)
+            self.template_type.visit_cpp_breadth_first(cpp_visitor_function, depth + 1)
+        cpp_visitor_function(self, CppElementsVisitorEvent.OnAfterChildren, depth)
 
 
 @dataclass
@@ -762,10 +811,12 @@ class CppParameterList(CppElement):
         r = ", ".join(types)
         return r
 
-    def visit_cpp_breadth_first(self, cpp_visitor_function: CppElementsVisitorFunction) -> None:
-        cpp_visitor_function(self)
+    def visit_cpp_breadth_first(self, cpp_visitor_function: CppElementsVisitorFunction, depth: int = 0) -> None:
+        cpp_visitor_function(self, CppElementsVisitorEvent.OnElement, depth)
+        cpp_visitor_function(self, CppElementsVisitorEvent.OnBeforeChildren, depth)
         for child in self.parameters:
-            child.visit_cpp_breadth_first(cpp_visitor_function)
+            child.visit_cpp_breadth_first(cpp_visitor_function, depth + 1)
+        cpp_visitor_function(self, CppElementsVisitorEvent.OnAfterChildren, depth)
 
     def __str__(self) -> str:
         return self.str_code()
@@ -790,10 +841,12 @@ class CppTemplate(CppElement):
         params_str = f"template<{typelist_str}>\n"
         return params_str
 
-    def visit_cpp_breadth_first(self, cpp_visitor_function: CppElementsVisitorFunction) -> None:
-        cpp_visitor_function(self)
+    def visit_cpp_breadth_first(self, cpp_visitor_function: CppElementsVisitorFunction, depth: int = 0) -> None:
+        cpp_visitor_function(self, CppElementsVisitorEvent.OnElement, depth)
+        cpp_visitor_function(self, CppElementsVisitorEvent.OnBeforeChildren, depth)
         if hasattr(self, "parameter_list"):
-            self.parameter_list.visit_cpp_breadth_first(cpp_visitor_function)
+            self.parameter_list.visit_cpp_breadth_first(cpp_visitor_function, depth + 1)
+        cpp_visitor_function(self, CppElementsVisitorEvent.OnAfterChildren, depth)
 
     def __str__(self) -> str:
         return self.str_code()
@@ -869,14 +922,16 @@ class CppFunctionDecl(CppElementAndComment):
     def __str__(self) -> str:
         return self.str_commented()
 
-    def visit_cpp_breadth_first(self, cpp_visitor_function: CppElementsVisitorFunction) -> None:
-        cpp_visitor_function(self)
+    def visit_cpp_breadth_first(self, cpp_visitor_function: CppElementsVisitorFunction, depth: int = 0) -> None:
+        cpp_visitor_function(self, CppElementsVisitorEvent.OnElement, depth)
+        cpp_visitor_function(self, CppElementsVisitorEvent.OnBeforeChildren, depth)
         if hasattr(self, "return_type"):
-            self.return_type.visit_cpp_breadth_first(cpp_visitor_function)
+            self.return_type.visit_cpp_breadth_first(cpp_visitor_function, depth + 1)
         if hasattr(self, "parameter_list"):
-            self.parameter_list.visit_cpp_breadth_first(cpp_visitor_function)
+            self.parameter_list.visit_cpp_breadth_first(cpp_visitor_function, depth + 1)
         if hasattr(self, "template"):
-            self.template.visit_cpp_breadth_first(cpp_visitor_function)
+            self.template.visit_cpp_breadth_first(cpp_visitor_function, depth + 1)
+        cpp_visitor_function(self, CppElementsVisitorEvent.OnAfterChildren, depth)
 
 
 @dataclass
@@ -902,9 +957,12 @@ class CppFunction(CppFunctionDecl):
         r += "\n" + str(self.block) + "\n"
         return r
 
-    def visit_cpp_breadth_first(self, cpp_visitor_function: CppElementsVisitorFunction) -> None:
+    def visit_cpp_breadth_first(self, cpp_visitor_function: CppElementsVisitorFunction, depth: int = 0) -> None:
+        cpp_visitor_function(self, CppElementsVisitorEvent.OnElement, depth)
         if hasattr(self, "block"):
-            self.block.visit_cpp_breadth_first(cpp_visitor_function)
+            cpp_visitor_function(self, CppElementsVisitorEvent.OnBeforeChildren, depth)
+            self.block.visit_cpp_breadth_first(cpp_visitor_function, depth + 1)
+            cpp_visitor_function(self, CppElementsVisitorEvent.OnAfterChildren, depth)
 
 
 @dataclass
@@ -959,11 +1017,14 @@ class CppConstructor(CppConstructorDecl):
         r += "\n" + str(self.block) + "\n"
         return r
 
-    def visit_cpp_breadth_first(self, cpp_visitor_function: CppElementsVisitorFunction) -> None:
+    def visit_cpp_breadth_first(self, cpp_visitor_function: CppElementsVisitorFunction, depth: int = 0) -> None:
+        cpp_visitor_function(self, CppElementsVisitorEvent.OnElement, depth)
+        cpp_visitor_function(self, CppElementsVisitorEvent.OnBeforeChildren, depth)
         if hasattr(self, "block"):
-            self.block.visit_cpp_breadth_first(cpp_visitor_function)
+            self.block.visit_cpp_breadth_first(cpp_visitor_function, depth + 1)
         if hasattr(self, "member_init_list"):
-            self.member_init_list.visit_cpp_breadth_first(cpp_visitor_function)
+            self.member_init_list.visit_cpp_breadth_first(cpp_visitor_function, depth + 1)
+        cpp_visitor_function(self, CppElementsVisitorEvent.OnAfterChildren, depth)
 
 
 @dataclass
@@ -1009,10 +1070,12 @@ class CppSuperList(CppElement):
     def __str__(self) -> str:
         return self.str_code()
 
-    def visit_cpp_breadth_first(self, cpp_visitor_function: CppElementsVisitorFunction) -> None:
-        cpp_visitor_function(self)
-        for super in self.super_list:
-            super.visit_cpp_breadth_first(cpp_visitor_function)
+    def visit_cpp_breadth_first(self, cpp_visitor_function: CppElementsVisitorFunction, depth: int = 0) -> None:
+        cpp_visitor_function(self, CppElementsVisitorEvent.OnElement, depth)
+        cpp_visitor_function(self, CppElementsVisitorEvent.OnBeforeChildren, depth)
+        for super_class in self.super_list:
+            super_class.visit_cpp_breadth_first(cpp_visitor_function, depth + 1)
+        cpp_visitor_function(self, CppElementsVisitorEvent.OnAfterChildren, depth)
 
 
 @dataclass
@@ -1129,14 +1192,16 @@ class CppStruct(CppElementAndComment):
         is_overloaded = len(methods_same_name) >= 2
         return is_overloaded
 
-    def visit_cpp_breadth_first(self, cpp_visitor_function: CppElementsVisitorFunction) -> None:
-        cpp_visitor_function(self)
+    def visit_cpp_breadth_first(self, cpp_visitor_function: CppElementsVisitorFunction, depth: int = 0) -> None:
+        cpp_visitor_function(self, CppElementsVisitorEvent.OnElement, depth)
+        cpp_visitor_function(self, CppElementsVisitorEvent.OnBeforeChildren, depth)
         if hasattr(self, "super_list"):
-            self.super_list.visit_cpp_breadth_first(cpp_visitor_function)
+            self.super_list.visit_cpp_breadth_first(cpp_visitor_function, depth + 1)
         if hasattr(self, "block"):
-            self.block.visit_cpp_breadth_first(cpp_visitor_function)
+            self.block.visit_cpp_breadth_first(cpp_visitor_function, depth + 1)
         if hasattr(self, "template"):
-            self.template.visit_cpp_breadth_first(cpp_visitor_function)
+            self.template.visit_cpp_breadth_first(cpp_visitor_function, depth + 1)
+        cpp_visitor_function(self, CppElementsVisitorEvent.OnAfterChildren, depth)
 
 
 @dataclass
@@ -1196,10 +1261,12 @@ class CppNamespace(CppElementAndComment):
     def __str__(self) -> str:
         return self.str_code()
 
-    def visit_cpp_breadth_first(self, cpp_visitor_function: CppElementsVisitorFunction) -> None:
-        cpp_visitor_function(self)
+    def visit_cpp_breadth_first(self, cpp_visitor_function: CppElementsVisitorFunction, depth: int = 0) -> None:
+        cpp_visitor_function(self, CppElementsVisitorEvent.OnElement, depth)
+        cpp_visitor_function(self, CppElementsVisitorEvent.OnBeforeChildren, depth)
         if hasattr(self, "block"):
-            self.block.visit_cpp_breadth_first(cpp_visitor_function)
+            self.block.visit_cpp_breadth_first(cpp_visitor_function, depth + 1)
+        cpp_visitor_function(self, CppElementsVisitorEvent.OnAfterChildren, depth)
 
 
 @dataclass
@@ -1284,7 +1351,9 @@ class CppEnum(CppElementAndComment):
 
         return children
 
-    def visit_cpp_breadth_first(self, cpp_visitor_function: CppElementsVisitorFunction) -> None:
-        cpp_visitor_function(self)
+    def visit_cpp_breadth_first(self, cpp_visitor_function: CppElementsVisitorFunction, depth: int = 0) -> None:
+        cpp_visitor_function(self, CppElementsVisitorEvent.OnElement, depth)
+        cpp_visitor_function(self, CppElementsVisitorEvent.OnBeforeChildren, depth)
         if hasattr(self, "block"):
-            self.block.visit_cpp_breadth_first(cpp_visitor_function)
+            self.block.visit_cpp_breadth_first(cpp_visitor_function, depth + 1)
+        cpp_visitor_function(self, CppElementsVisitorEvent.OnAfterChildren, depth)

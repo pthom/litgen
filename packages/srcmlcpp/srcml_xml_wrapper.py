@@ -246,7 +246,7 @@ class SrcmlXmlWrapper:
         r = self._format_message(message, message_header=message_header)
         return r
 
-    def short_info(self) -> str:
+    def short_xml_info(self) -> str:
         r = f"tag={self.tag()}"
         if self.has_name():
             r += f" name={self.name_code()}"

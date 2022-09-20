@@ -46,15 +46,17 @@ def test_visitor():
 
     visit_recap = ""
 
-    def my_visitor(element: CppElement):
+    def my_visitor(element: CppElement, event: CppElementsVisitorEvent, depth: int):
         nonlocal visit_recap
-        type_name = type(element).__name__
 
-        code = element.str_code_verbatim().strip()
-        code_first_line = code.split("\n")[0].strip()
+        if event == CppElementsVisitorEvent.OnElement:
+            type_name = type(element).__name__
 
-        info = f"{type_name} ({code_first_line})"
-        visit_recap += info + "\n"
+            code = element.str_code_verbatim().strip()
+            code_first_line = code.split("\n")[0].strip()
+
+            info = f"{type_name} ({code_first_line})"
+            visit_recap += "  " * depth + info + "\n"
 
     cpp_unit.visit_cpp_breadth_first(my_visitor)
     logging.warning("\n" + visit_recap)
