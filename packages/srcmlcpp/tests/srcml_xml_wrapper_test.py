@@ -235,23 +235,3 @@ tag: unit name:None
         tag: name name:None
         """,
     )
-
-    visit_recap = ""
-    xml_tree.visit_xml_depth_first(my_visitor)
-    # logging.warning("\n" + visit_recap)
-    code_utils.assert_are_codes_equal(
-        visit_recap,
-        """
-tag: name name:None
-        tag: name name:None
-      tag: type name:int
-      tag: name name:None
-    tag: decl name:a
-  tag: decl_stmt name:None
-    tag: name name:None
-  tag: struct_decl name:Foo
-tag: block name:None
-  tag: namespace name:ns
-tag: unit name:None
-        """,
-    )
