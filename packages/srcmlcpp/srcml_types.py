@@ -154,10 +154,14 @@ class CppElement(SrcmlXmlWrapper):
         # For an element without children, simply run the visitor
         cpp_visitor_function(self, CppElementsVisitorEvent.OnElement, depth)
 
-    def short_cpp_element_info(self) -> str:
+    def short_cpp_element_info(self, include_scope: bool = True) -> str:
         r = type(self).__name__
         if self.has_name():
             r += f" name={self.name_code()}"
+        if include_scope:
+            scope_str = self.cpp_scope_str()
+            if len(scope_str) > 0:
+                r += f" scope={scope_str}"
         return r
 
     def cpp_scope_str(self) -> str:
@@ -319,6 +323,17 @@ class CppBlock(CppElementAndComment):
             if not child_str.endswith("\n"):
                 result += "\n"
         return result
+
+    def hierarchy_overview(self) -> str:
+        log = ""
+
+        def visitor_log_info(cpp_element: CppElement, event: CppElementsVisitorEvent, depth: int):
+            nonlocal log
+            if event == CppElementsVisitorEvent.OnElement:
+                log += "  " * depth + cpp_element.short_cpp_element_info() + "\n"
+
+        self.visit_cpp_breadth_first(visitor_log_info)
+        return log
 
     def all_functions(self) -> List[CppFunctionDecl]:
         r: List[CppFunctionDecl] = []

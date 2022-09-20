@@ -1,3 +1,5 @@
+import logging
+
 import srcmlcpp
 from srcmlcpp.srcmlcpp_main import code_to_srcml_xml_wrapper, code_to_cpp_unit
 from srcmlcpp.srcml_types import *
@@ -84,15 +86,11 @@ def test_parents_and_scope():
             if cpp_element.parent is None:
                 msg_parent = "None"
             else:
-                msg_parent = cpp_element.parent.short_cpp_element_info()
+                msg_parent = cpp_element.parent.short_cpp_element_info(False)
 
             msg_parent = f" (parent: {msg_parent})"
 
-            msg_scope = f" (scope: {cpp_element.cpp_scope_str()})"
-            if len(cpp_element.cpp_scope_str()) == 0:
-                msg_scope = " (empty scope)"
-
-            msg = cpp_element.short_cpp_element_info() + msg_parent + msg_scope
+            msg = cpp_element.short_cpp_element_info() + msg_parent
             log_parents += "  " * depth + msg + "\n"
 
     cpp_unit.visit_cpp_breadth_first(visitor_log_parents)
@@ -100,20 +98,59 @@ def test_parents_and_scope():
     code_utils.assert_are_codes_equal(
         log_parents,
         """
-        CppUnit (parent: None) (empty scope)
-          CppEmptyLine (parent: CppUnit) (empty scope)
-          CppNamespace name=Blah (parent: CppUnit) (empty scope)
-            CppBlock (parent: CppNamespace name=Blah) (scope: Blah)
-              CppStruct name=Foo (parent: CppBlock) (scope: Blah)
-                CppBlock (parent: CppStruct name=Foo) (scope: Blah::Foo)
-                  CppPublicProtectedPrivate (parent: CppBlock) (scope: Blah::Foo)
-                    CppEnum name=A (parent: CppPublicProtectedPrivate) (scope: Blah::Foo)
-                      CppBlock (parent: CppEnum name=A) (scope: Blah::Foo::A)
-                        CppDecl name=a (parent: CppBlock) (scope: Blah::Foo::A)
-                        CppUnprocessed (parent: CppBlock) (scope: Blah::Foo::A)
-                    CppFunctionDecl name=dummy (parent: CppPublicProtectedPrivate) (scope: Blah::Foo)
-                      CppType name=void (parent: CppFunctionDecl name=dummy) (scope: Blah::Foo)
-                      CppParameterList (parent: CppFunctionDecl name=dummy) (scope: Blah::Foo)
-          CppEmptyLine (parent: CppUnit) (empty scope)
-          """,
+        CppUnit (parent: None)
+          CppEmptyLine (parent: CppUnit)
+          CppNamespace name=Blah (parent: CppUnit)
+            CppBlock scope=Blah (parent: CppNamespace name=Blah)
+              CppStruct name=Foo scope=Blah (parent: CppBlock)
+                CppBlock scope=Blah::Foo (parent: CppStruct name=Foo)
+                  CppPublicProtectedPrivate scope=Blah::Foo (parent: CppBlock)
+                    CppEnum name=A scope=Blah::Foo (parent: CppPublicProtectedPrivate)
+                      CppBlock scope=Blah::Foo::A (parent: CppEnum name=A)
+                        CppDecl name=a scope=Blah::Foo::A (parent: CppBlock)
+                        CppUnprocessed scope=Blah::Foo::A (parent: CppBlock)
+                    CppFunctionDecl name=dummy scope=Blah::Foo (parent: CppPublicProtectedPrivate)
+                      CppType name=void scope=Blah::Foo (parent: CppFunctionDecl name=dummy)
+                      CppParameterList scope=Blah::Foo (parent: CppFunctionDecl name=dummy)
+          CppEmptyLine (parent: CppUnit)
+        """,
+    )
+
+
+def test_hierarchy_overview():
+    code = """
+    namespace Blah
+    {
+        struct Foo
+        {
+            enum A {
+                a = 0;
+            };
+            void dummy();
+        };
+    }
+    """
+    options = SrcmlOptions()
+    cpp_unit = srcmlcpp.code_to_cpp_unit(options, code)
+    overview = cpp_unit.hierarchy_overview()
+    logging.warning("\n" + overview)
+    code_utils.assert_are_codes_equal(
+        overview,
+        """
+        CppUnit
+          CppEmptyLine
+          CppNamespace name=Blah
+            CppBlock scope=Blah
+              CppStruct name=Foo scope=Blah
+                CppBlock scope=Blah::Foo
+                  CppPublicProtectedPrivate scope=Blah::Foo
+                    CppEnum name=A scope=Blah::Foo
+                      CppBlock scope=Blah::Foo::A
+                        CppDecl name=a scope=Blah::Foo::A
+                        CppUnprocessed scope=Blah::Foo::A
+                    CppFunctionDecl name=dummy scope=Blah::Foo
+                      CppType name=void scope=Blah::Foo
+                      CppParameterList scope=Blah::Foo
+          CppEmptyLine
+    """,
     )
