@@ -8,8 +8,6 @@ class Parent:
         # int getB() { return b; }
     child: Child
 
-    item: Item
-
 ####################    </generated_from:inner_classes.h>    ####################
 
 # </litgen_stub>
