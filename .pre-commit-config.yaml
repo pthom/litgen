@@ -21,15 +21,15 @@ repos:
     hooks:
       - id: python-use-type-annotations # Enforce that python3.6+ type annotations are used instead of type comments
 
-  - repo: local
-    hooks:
-      - id: mypy-static-checking
-        name: "Static type checking with mypy"
-        entry: bash -c 'echo "Running mypy hook" && ./.venv/bin/mypy .'
-        language: system
-        types: [python]
-        pass_filenames: false
-        always_run: true
+#  - repo: local
+#    hooks:
+#      - id: mypy-static-checking
+#        name: "Static type checking with mypy"
+#        entry: bash -c 'echo "Running mypy hook" && ./.venv/bin/mypy .'
+#        language: system
+#        types: [python]
+#        pass_filenames: false
+#        always_run: true
 
   - repo: local
     hooks:
