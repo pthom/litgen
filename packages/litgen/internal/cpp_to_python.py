@@ -408,6 +408,10 @@ def standard_code_replacements() -> RegexReplacementList:
     * number translation (e.g. `1.5f` -> `1.5`)
     """
     replacements_str = r"""
+    \bunsigned \s*int\b -> int
+    \bunsigned \s*short\b -> int
+    \bunsigned \s*long long\b -> int
+    \bunsigned \s*long\b -> int
     \buint8_t\b -> int
     \bint8_t\b -> int
     \buint16_t\b -> int
@@ -418,11 +422,8 @@ def standard_code_replacements() -> RegexReplacementList:
     \bint64_t\b -> int
     \blong\b -> int
     \bshort\b -> int
+    \\blong \s*long\b -> int
     \blong \s*long\b -> int
-    \bunsigned \s*int\b -> int
-    \bunsigned \s*short\b -> int
-    \bunsigned \s*long\b -> int
-    \bunsigned \s*long long\b -> int
 
     \blong \s*double\b -> float
     \bdouble\b -> float
