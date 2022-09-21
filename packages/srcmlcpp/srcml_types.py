@@ -964,6 +964,48 @@ class CppFunctionDecl(CppElementAndComment):
     def is_const(self) -> bool:
         return "const" in self.specifiers
 
+    def is_method(self) -> bool:
+        assert hasattr(self, "parent")
+        is_method = isinstance(self.parent, CppPublicProtectedPrivate)
+        return is_method
+
+    def parent_struct_if_method(self) -> Optional[CppStruct]:
+        assert hasattr(self, "parent")
+        if not self.is_method():
+            return None
+        """
+        The inner hierarchy of a struct resembles this:
+              CppStruct name=MyStruct
+                CppBlock scope=MyStruct
+                  CppPublicProtectedPrivate scope=MyStruct
+                    CppFunctionDecl name=foo scope=MyStruct
+                      CppType name=void scope=MyStruct
+                      CppParameterList scope=MyStruct
+                        ...
+        """
+        assert self.parent is not None
+        assert self.parent.parent is not None
+        parent_block = self.parent.parent
+        assert isinstance(parent_block, CppBlock)
+        parent_struct_ = parent_block.parent
+        assert isinstance(parent_struct_, CppStruct)
+        parent_struct = cast(CppStruct, parent_struct_)
+        return parent_struct
+
+    def parent_struct_name_if_method(self) -> Optional[str]:
+        parent_struct = self.parent_struct_if_method()
+        if parent_struct is None:
+            return None
+        else:
+            return parent_struct.class_name
+
+    def is_constructor(self) -> bool:
+        parent_struct_name = self.parent_struct_name_if_method()
+        if parent_struct_name is None:
+            return False
+        r = self.function_name == parent_struct_name
+        return r
+
     def returns_pointer(self) -> bool:
         r = hasattr(self, "return_type") and self.return_type.modifiers == ["*"]
         return r

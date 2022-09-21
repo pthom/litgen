@@ -373,25 +373,25 @@ insert diagram via mermaid (see integration with emacs)
 
 ** simple task list
 
-Do we support constructors? (_str_stub_lines(self) -> List[str]: raise ValueError("To be completed"))
 Rename SrcmlWrapper. _show_element_info => warning info
 Add pylint or flake8 to precommit (cf  https://stackoverflow.com/questions/73765587/how-to-get-a-warning-about-a-list-being-global-when-used-as-a-default-argument))
 finish imgui test
+Pourcentage d'avancement & Profiling
 
 ** Handle scope
 
 *** First handle subclasses & sub enums
 
-[ ] Move scopy.py to srcmlcpp
-[ ] Use newly available scope / remove Adaptedelement.scope
+Remaining todo:
+
+Fix Case with lambdas:
+  qualified name
+  put BoxedTypes in Litgen namespace & store file in litgen (remove generation code)
+
+(remove using namespace ImGui in pybind_imgui.cpp)
 
 
-See AdaptedFunction => replace parent_struct_name by scope
-    def __init__(
-        self, options: LitgenOptions, function_infos: CppFunctionDecl,
-        parent_struct_name: str, is_overloaded: bool
-    ) -> None:
-
+Add enums
 
 
 *** Handle Namespace
@@ -411,8 +411,12 @@ namespace A
 #+end_src
 
 **** Strategy
+
 soit https://www.reddit.com/r/learnpython/comments/dek8fy/how_to_create_a_stub_file_for_a_submodule_in_a_c/
+
 soit fake class with staticmethods
+  dans ce cas, pas forcement besoin de decorer avec @staticmethod: https://stackoverflow.com/questions/43587044/do-we-really-need-staticmethod-decorator-in-python-to-declare-static-method
+  attention, dans le code client python, il faudra faire un import quand même!
 
 **** Définir un  ou des root Namespace
             pour lequel on ne cree pas de submodule

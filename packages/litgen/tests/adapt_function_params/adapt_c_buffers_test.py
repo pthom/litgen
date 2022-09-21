@@ -16,9 +16,8 @@ def gen_pydef_code(code) -> str:
     options = litgen.options.LitgenOptions()
     options.srcml_options.functions_api_prefixes = ["MY_API"]
 
-    struct_name = ""
     cpp_function = srcmlcpp_main.code_first_function_decl(options.srcml_options, code)
-    adapted_function = AdaptedFunction(options, cpp_function, struct_name, False)
+    adapted_function = AdaptedFunction(options, cpp_function, False)
     generated_code = adapted_function.str_pydef()
     return generated_code
 

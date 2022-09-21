@@ -9,8 +9,7 @@ from litgen.internal.adapted_types import AdaptedFunction
 def make_pydef_code(code) -> str:
     options = litgen.options.LitgenOptions()
     function_decl = srcmlcpp_main.code_first_function_decl(options.srcml_options, code)
-    parent_struct_name = ""
-    adapted_function = AdaptedFunction(options, function_decl, parent_struct_name, False)
+    adapted_function = AdaptedFunction(options, function_decl, False)
     return adapted_function.str_pydef()
 
 

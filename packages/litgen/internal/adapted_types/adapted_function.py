@@ -59,27 +59,11 @@ class AdaptedParameter(AdaptedElement):
 
 
 @dataclass
-class AdaptedConstructor(AdaptedElement):
-    def __init__(self, ctor: CppConstructorDecl, options: LitgenOptions):
-        super().__init__(options, ctor)
-
-    # override
-    def cpp_element(self) -> CppConstructorDecl:
-        return cast(CppConstructorDecl, self._cpp_element)
-
-    # override
-    def _str_stub_lines(self) -> List[str]:
-        raise ValueError("To be completed")
-
-    # override
-    def _str_pydef_lines(self) -> List[str]:
-        raise ValueError("Not implemented")
-
-
-@dataclass
 class AdaptedFunction(AdaptedElement):
     """
     AdaptedFunction is at the heart of litgen's function and parameters transformations.
+
+    Note: AdaptedFunction will handle function, methods and constructors
 
     Litgen may apply some adaptations to function  parameters:
         * c buffers are transformed to py::arrays
@@ -174,20 +158,17 @@ class AdaptedFunction(AdaptedElement):
     """
 
     cpp_adapted_function: CppFunctionDecl
-    parent_struct_name: str
     cpp_adapter_code: Optional[str] = None
     lambda_to_call: Optional[str] = None
     return_value_policy: str = ""
     is_overloaded: bool = False
     is_type_ignore: bool = False
 
-    def __init__(
-        self, options: LitgenOptions, function_infos: CppFunctionDecl, parent_struct_name: str, is_overloaded: bool
-    ) -> None:
+    def __init__(self, options: LitgenOptions, function_infos: CppFunctionDecl, is_overloaded: bool) -> None:
         from litgen.internal import adapt_function_params
 
         self.cpp_adapted_function = function_infos
-        self.parent_struct_name = parent_struct_name
+        # self.parent_struct_name = parent_struct_name
         self.cpp_adapter_code = None
         self.lambda_to_call = None
         super().__init__(options, function_infos)
@@ -205,14 +186,14 @@ class AdaptedFunction(AdaptedElement):
         return cast(CppFunctionDecl, self._cpp_element)
 
     def is_method(self) -> bool:
-        return len(self.parent_struct_name) > 0
+        return self.cpp_element().is_method()
 
     def is_constructor(self) -> bool:
-        r = self.is_method() and self.cpp_adapted_function.function_name == self.parent_struct_name
+        r = self.cpp_element().is_constructor()
         return r
 
     def function_name_python(self) -> str:
-        if self.cpp_adapted_function.function_name == self.parent_struct_name:
+        if self.is_constructor():
             return "__init__"
         else:
             r = cpp_to_python.function_name_to_python(self.options, self.cpp_adapted_function.function_name)
@@ -540,10 +521,12 @@ class AdaptedFunction(AdaptedElement):
         # fill function_pointer
         is_method = self.is_method()
         function_name = self.cpp_element().function_name
-        if is_method:
-            replace_tokens.function_pointer = f"&{self.parent_struct_name}::{function_name}"
-        else:
-            replace_tokens.function_pointer = f"{function_name}"
+        function_parent_scope = self.cpp_element().cpp_scope(False).str_cpp_prefix()
+
+        replace_tokens.function_pointer = f"{function_parent_scope}{function_name}"
+        if self.is_method():
+            replace_tokens.function_pointer = "&" + replace_tokens.function_pointer
+
         if self.is_overloaded:
             overload_types = self.cpp_element().parameter_list.types_only_for_template()
             replace_tokens.function_pointer = f"py::overload_cast<{overload_types}>({replace_tokens.function_pointer})"
@@ -602,7 +585,7 @@ class AdaptedFunction(AdaptedElement):
         # fill params_call_with_self_if_method
         _params_list = function_infos.parameter_list.types_names_default_for_signature_list()
         if self.is_method():
-            _self_param = f"{self.parent_struct_name} & self"
+            _self_param = f"{self.cpp_element().cpp_scope(True).str_cpp()} & self"
             if function_infos.is_const():
                 _self_param = "const " + _self_param
             _params_list = [_self_param] + _params_list

@@ -1,5 +1,6 @@
 import logging
 
+import litgen
 import srcmlcpp
 from srcmlcpp.srcmlcpp_main import code_to_srcml_xml_wrapper, code_to_cpp_unit
 from srcmlcpp.srcml_types import *
@@ -133,7 +134,7 @@ def test_hierarchy_overview():
     options = SrcmlOptions()
     cpp_unit = srcmlcpp.code_to_cpp_unit(options, code)
     overview = cpp_unit.hierarchy_overview()
-    logging.warning("\n" + overview)
+    # logging.warning("\n" + overview)
     code_utils.assert_are_codes_equal(
         overview,
         """
@@ -154,3 +155,39 @@ def test_hierarchy_overview():
           CppEmptyLine
     """,
     )
+
+
+def test_methods():
+    code = """
+        struct Foo
+        {
+            Foo() {};
+            void dummy();
+        };
+        void fn();
+    """
+    options = srcmlcpp.SrcmlOptions()
+    cpp_unit = srcmlcpp.code_to_cpp_unit(options, code)
+
+    nb_found = 0
+
+    def visitor_check_methods(cpp_element: CppElement, event: CppElementsVisitorEvent, depth: int):
+        nonlocal nb_found
+        if event == CppElementsVisitorEvent.OnElement and isinstance(cpp_element, CppFunctionDecl):
+            nb_found += 1
+            if cpp_element.function_name == "Foo":
+                assert cpp_element.is_method()
+                assert cpp_element.is_constructor()
+                assert cpp_element.parent_struct_name_if_method() == "Foo"
+            if cpp_element.function_name == "dummy":
+                assert cpp_element.is_method()
+                assert not cpp_element.is_constructor()
+                assert cpp_element.parent_struct_name_if_method() == "Foo"
+            if cpp_element.function_name == "fn":
+                assert not cpp_element.is_method()
+                assert not cpp_element.is_constructor()
+                assert cpp_element.parent_struct_name_if_method() is None
+
+    cpp_unit.visit_cpp_breadth_first(visitor_check_methods)
+
+    assert nb_found == 3
