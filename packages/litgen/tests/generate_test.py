@@ -24,8 +24,7 @@ def _run_test_impl(test_name: str) -> None:
         output_cpp_pydef_file=output_cpp_pydef_file,
         output_stub_pyi_file=output_stub_pyi_file,
     )
-
-    print(generated_code.pydef_code)
+    print(generated_code.boxed_types_cpp_declaration)
 
 
 # def test_basic():
@@ -36,24 +35,33 @@ def test_inner_classes():
     _run_test_impl("inner_classes")
 
 
-def test_subclass():
-    code = """
-    struct Parent
-    {
-        int a;
-        struct Child
-        {
-            int b;
-        };
-        Child child;
-    };
-    """
-    from litgen import code_to_adapted_unit
-
-    # Configure options
-    options = litgen.LitgenOptions()
-    pydef_code = litgen.code_to_pydef(options, code)
-    print("\n" + pydef_code)
-
-    stub_code = litgen.code_to_stub(options, code)
-    print("\n" + stub_code)
+# def test_subclass():
+#     code = """
+#     struct Parent
+#     {
+#         int a;
+#         struct Child
+#         {
+#             int b;
+#         };
+#         Child child;
+#
+#         /*
+#         enum class ChildEnum
+#         {
+#             one = 1, two, three;
+#         };
+#
+#         ChildEnum child_enum = ChildEnum::three;
+#         */
+#     };
+#     """
+#     from litgen import code_to_adapted_unit
+#
+#     # Configure options
+#     options = litgen.LitgenOptions()
+#     pydef_code = litgen.code_to_pydef(options, code)
+#     print("\n" + pydef_code)
+#
+#     stub_code = litgen.code_to_stub(options, code)
+#     print("\n" + stub_code)

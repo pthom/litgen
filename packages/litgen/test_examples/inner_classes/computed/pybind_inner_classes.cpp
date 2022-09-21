@@ -1,7 +1,9 @@
 #include "inner_classes.h"
+#include "litgen_boxed_types.h"
 
 #include <pybind11/pybind11.h>
 #include <pybind11/stl.h>
+#include <pybind11/numpy.h>
 #include <pybind11/functional.h>
 
 namespace py = pybind11;
@@ -22,8 +24,29 @@ void py_init_module_hello_imgui(py::module& m)
     { // inner classes of Parent
         auto pyClassParent_ClassChild = py::class_<Parent::Child>
             (pyClassParent, "Child", "")
-            .def(py::init<>()) // implicit default constructor
+            .def(py::init<int>(),
+                py::arg("_b") = 0)
             .def_readwrite("b", &Parent::Child::b, "")
+            .def("add",
+                [](Parent::Child & self, BoxedFloat & values_0, BoxedFloat & values_1, BoxedFloat & values_2) -> float
+                {
+                    auto add_adapt_fixed_size_c_arrays = [&self](BoxedFloat & values_0, BoxedFloat & values_1, BoxedFloat & values_2) -> float
+                    {
+                        float values_raw[3];
+                        values_raw[0] = values_0.value;
+                        values_raw[1] = values_1.value;
+                        values_raw[2] = values_2.value;
+
+                        auto r = self.add(values_raw);
+
+                        values_0.value = values_raw[0];
+                        values_1.value = values_raw[1];
+                        values_2.value = values_raw[2];
+                        return r;
+                    };
+
+                    return add_adapt_fixed_size_c_arrays(values_0, values_1, values_2);
+                },     py::arg("values_0"), py::arg("values_1"), py::arg("values_2"))
             ;
     } // end of inner classes of Parent
     ////////////////////    </generated_from:inner_classes.h>    ////////////////////
