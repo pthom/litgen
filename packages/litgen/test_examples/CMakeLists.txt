@@ -11,7 +11,7 @@ function(add_litgen_test_example_folder folder_name)
     pybind11_add_module(pybind_${folder_name} ${folder_name}/computed/pybind_${folder_name}.cpp)
     target_link_libraries(pybind_${folder_name} PRIVATE ${folder_name})
     target_include_directories(pybind_${folder_name} PRIVATE ${folder_name})
-    target_include_directories(pybind_${folder_name} PRIVATE ${CMAKE_CURRENT_LIST_DIR})
+    target_include_directories(pybind_${folder_name} PRIVATE ${folder_name}/computed)
 endfunction()
 
 add_litgen_test_example_folder("basic")

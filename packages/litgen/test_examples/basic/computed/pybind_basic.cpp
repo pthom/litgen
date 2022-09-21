@@ -14,7 +14,7 @@ void py_init_module_hello_imgui(py::module& m)
     ////////////////////    <generated_from:basic.h>    ////////////////////
     // <namespace Basic>
     m.def("add",
-        add, py::arg("a"), py::arg("b"));
+        Basic::add, py::arg("a"), py::arg("b"));
     // </namespace Basic>
     ////////////////////    </generated_from:basic.h>    ////////////////////
 

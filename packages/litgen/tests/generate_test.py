@@ -15,14 +15,16 @@ def _run_test_impl(test_name: str) -> None:
     input_cpp_header = f"{folder}/{test_name}.h"
     output_cpp_pydef_file = f"{out_folder}/pybind_{test_name}.cpp"
     output_stub_pyi_file = f"{out_folder}/stubs/{test_name}.pyi"
+    output_boxed_types_header_file = f"{out_folder}/{test_name}_boxed_types.h"
 
     # Configure options
     options = litgen.LitgenOptions()
-    generated_code = litgen.generate_code(options, filename=input_cpp_header)
+    generated_code = litgen.generate_code(options, filename=input_cpp_header, add_boxed_types_definitions=True)
     litgen.write_generated_code(
         generated_code,
         output_cpp_pydef_file=output_cpp_pydef_file,
         output_stub_pyi_file=output_stub_pyi_file,
+        output_boxed_types_header_file=output_boxed_types_header_file,
     )
     print(generated_code.boxed_types_cpp_declaration)
 
