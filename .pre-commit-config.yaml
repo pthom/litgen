@@ -60,9 +60,9 @@ repos:
   #
   # Flake8 + bugbear
   #
-#  -   repo: https://github.com/pycqa/flake8
-#      rev: ''  # pick a git hash / tag to point to
-#      hooks:
-#        -   id: flake8
-#            exclude: ^testing/(data|examples)/
-#            additional_dependencies: [flake8-bugbear]
+  -   repo: https://github.com/pycqa/flake8
+      rev: ''  # pick a git hash / tag to point to
+      hooks:
+        -   id: flake8
+            exclude: ^testing/(data|examples)/
+            additional_dependencies: [flake8-bugbear]
