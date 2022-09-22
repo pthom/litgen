@@ -26,6 +26,18 @@ def _get_cached_file_code(filename: Optional[str]) -> str:
     return _CODE_CACHE[filename]
 
 
+def _code_or_file_content(options: SrcmlOptions, code: Optional[str] = None, filename: Optional[str] = None) -> str:
+    if code is None:
+        if filename is None:
+            raise ValueError("Either cpp_code or filename needs to be specified!")
+        assert filename is not None  # make mypy happy
+        with open(filename, "r", encoding=options.encoding) as f:
+            code_str = f.read()
+    else:
+        code_str = code
+    return code_str
+
+
 def code_to_srcml_xml_wrapper(
     options: SrcmlOptions, code: Optional[str] = None, filename: Optional[str] = None
 ) -> SrcmlXmlWrapper:
@@ -37,12 +49,7 @@ def code_to_srcml_xml_wrapper(
           This can be used when you need to preprocess the code before parsing it.
         * if `code`is empty, the code will be read from `filename`
     """
-    if code is None:
-        if filename is None:
-            raise ValueError("Either cpp_code or filename needs to be specified!")
-        assert filename is not None  # make mypy happy
-        with open(filename, "r", encoding=options.encoding) as f:
-            code = f.read()
+    code = _code_or_file_content(options, code, filename)
 
     if options.code_preprocess_function is not None:
         code = options.code_preprocess_function(code)

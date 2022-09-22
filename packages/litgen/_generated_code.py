@@ -23,7 +23,7 @@ class GeneratedBoxedTypeCode:
     generated_code: GeneratedCodeForOneFile
     boxed_types_cpp_declaration: CppHeaderCode
 
-    def __init__(self):
+    def __init__(self) -> None:
         self.generated_code = GeneratedCodeForOneFile()
         self.boxed_types_cpp_declaration = ""
 

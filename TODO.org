@@ -373,8 +373,6 @@ insert diagram via mermaid (see integration with emacs)
 
 ** simple task list
 
-bug pytest / boxedtypes
-finish imgui test
 Pourcentage d'avancement & Profiling
   code_to_adapted_unit / code_to_cpp_unit etc
 
