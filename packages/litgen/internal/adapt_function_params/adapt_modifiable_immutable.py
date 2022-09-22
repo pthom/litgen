@@ -74,7 +74,7 @@ def adapt_modifiable_immutable(adapted_function: AdaptedFunction) -> Optional[La
             # For signatures like
             #       void foo(bool * flag = NULL);
             # the python param type will be type Optional[BoxedBool]
-            def compute_is_optional_boxed_type() -> bool:
+            def compute_is_optional_boxed_type(old_adapted_param=old_adapted_param, is_pointer=is_pointer) -> bool:
                 initial_value_cpp = old_adapted_param.cpp_element().decl.initial_value_code
                 is_initial_value_null = initial_value_cpp in ["NULL", "nullptr"]
                 return is_pointer and is_initial_value_null

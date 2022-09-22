@@ -131,7 +131,7 @@ def _group_consecutive_comments(srcml_code: SrcmlXmlWrapper) -> SrcmlXmlWrapper:
 
     for child in srcml_code.make_wrapped_children():
 
-        def add_child() -> None:
+        def add_child(child=child) -> None:
             nonlocal previous_child, previous_previous_child
             child_copy = child
             child_copy.srcml_xml = copy.deepcopy(child.srcml_xml)
@@ -139,16 +139,16 @@ def _group_consecutive_comments(srcml_code: SrcmlXmlWrapper) -> SrcmlXmlWrapper:
             previous_previous_child = previous_child
             previous_child = child_copy
 
-        def concat_comment() -> None:
+        def concat_comment(child=child) -> None:
             child_text = child.text()
             assert child_text is not None
             assert previous_child is not None and previous_child.text is not None
             comment_raw = child_text
             if comment_raw.startswith("//"):
                 comment_raw = comment_raw[2:]
-            current_comment = comment_raw
+            current_comment_ = comment_raw
             assert previous_child.srcml_xml.text is not None
-            previous_child.srcml_xml.text += COMMENT_NEW_LINE_TOKEN + current_comment
+            previous_child.srcml_xml.text += COMMENT_NEW_LINE_TOKEN + current_comment_
             srcml_utils.copy_element_end_position(child.srcml_xml, previous_child.srcml_xml)
 
         shall_concat_comment = False
