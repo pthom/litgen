@@ -382,15 +382,25 @@ def _scope_part_name(scope_part: CppScopePart) -> str:
     return r
 
 
-def cpp_scope_to_pybind_var_name(cpp_element: CppElement):
-    cpp_scope = cpp_element.cpp_scope(True)
+def cpp_scope_to_pybind_scope(options: LitgenOptions, cpp_element: CppElement, include_self: bool) -> CppScope:
+    cpp_scope = cpp_element.cpp_scope(include_self)
+    scope_parts = cpp_scope.scope_parts
+    scope_parts_excluding_namespaces = list(
+        filter(lambda scope: scope.scope_type != CppScopeType.Namespace, scope_parts)
+    )
+    cpp_scope.scope_parts = scope_parts_excluding_namespaces
+    return cpp_scope
+
+
+def cpp_scope_to_pybind_var_name(options: LitgenOptions, cpp_element: CppElement):
+    cpp_scope = cpp_scope_to_pybind_scope(options, cpp_element, True)
     scope_parts_strs = map(_scope_part_name, cpp_scope.scope_parts)
     r = "py" + "_".join(scope_parts_strs)
     return r
 
 
-def cpp_scope_to_pybind_parent_var_name(cpp_element: CppElement):
-    cpp_scope = cpp_element.cpp_scope(False)
+def cpp_scope_to_pybind_parent_var_name(options: LitgenOptions, cpp_element: CppElement):
+    cpp_scope = cpp_scope_to_pybind_scope(options, cpp_element, False)
     if len(cpp_scope.scope_parts) == 0:
         return "m"
     else:

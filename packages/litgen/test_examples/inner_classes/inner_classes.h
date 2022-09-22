@@ -1,13 +1,15 @@
-struct Parent
+namespace N
 {
-    int a = 1;
-    struct Child
+    struct Parent
     {
-        Child(int _b = 0): b(_b) {}
-        int b = 2;
-        float add(float values[3]);
-    };
-    Child child;
+        int a = 1;
+        struct Child
+        {
+            Child(int _b = 0): b(_b) {}
+            int b = 2;
+            float add(float values[3]);
+        };
+        Child child;
 
 //    enum class Item
 //    {
@@ -16,4 +18,6 @@ struct Parent
 //        Two
 //    };
 //    Item item;
-};
+    };
+
+}

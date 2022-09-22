@@ -102,11 +102,11 @@ void py_init_module_testrunner(py::module& m)
         },     py::arg("values_0"), py::arg("values_1"));
 
 
-    auto pyClassPoint2 = py::class_<Point2>
+    auto pyClassPoint2 = py::class_<LiterateGeneratorExample::Point2>
         (m, "Point2", "Test with C array containing user defined struct (which will not be boxed)")
         .def(py::init<>()) // implicit default constructor
-        .def_readwrite("x", &Point2::x, "")
-        .def_readwrite("y", &Point2::y, "")
+        .def_readwrite("x", &LiterateGeneratorExample::Point2::x, "")
+        .def_readwrite("y", &LiterateGeneratorExample::Point2::y, "")
         ;
 
 
@@ -396,7 +396,7 @@ void py_init_module_testrunner(py::module& m)
             {
                 int * value_adapt_modifiable = nullptr;
                 if (value.has_value())
-                    value_adapt_modifiable = & value.value();
+                    value_adapt_modifiable = & (*value);
 
                 MY_API bool r = SliderVoidIntDefaultNull(label, value_adapt_modifiable);
                 return std::make_tuple(r, value);
@@ -420,64 +420,64 @@ void py_init_module_testrunner(py::module& m)
         },     py::arg("label"), py::arg("value"));
 
     m.def("add",
-        add,
+        LiterateGeneratorExample::add,
         py::arg("a"), py::arg("b"),
         "Adds two numbers");
 
     m.def("sub",
-        sub, py::arg("a"), py::arg("b"));
+        LiterateGeneratorExample::sub, py::arg("a"), py::arg("b"));
 
     m.def("mul",
-        mul, py::arg("a"), py::arg("b"));
+        LiterateGeneratorExample::mul, py::arg("a"), py::arg("b"));
 
 
-    auto pyClassFoo = py::class_<Foo>
+    auto pyClassFoo = py::class_<LiterateGeneratorExample::Foo>
         (m, "Foo", "A superb struct")
         .def(py::init<>())
         .def_property("values",
-            [](Foo &self) -> pybind11::array
+            [](LiterateGeneratorExample::Foo &self) -> pybind11::array
             {
                 auto dtype = pybind11::dtype(pybind11::format_descriptor<int>::format());
                 auto base = pybind11::array(dtype, {2}, {sizeof(int)});
                 return pybind11::array(dtype, {2}, {sizeof(int)}, self.values, base);
-            }, [](Foo& self) {},
+            }, [](LiterateGeneratorExample::Foo& self) {},
             "")
         .def_property("flags",
-            [](Foo &self) -> pybind11::array
+            [](LiterateGeneratorExample::Foo &self) -> pybind11::array
             {
                 auto dtype = pybind11::dtype(pybind11::format_descriptor<bool>::format());
                 auto base = pybind11::array(dtype, {3}, {sizeof(bool)});
                 return pybind11::array(dtype, {3}, {sizeof(bool)}, self.flags, base);
-            }, [](Foo& self) {},
+            }, [](LiterateGeneratorExample::Foo& self) {},
             "")
-        .def_readwrite("factor", &Foo::factor, "Multiplication factor")
-        .def_readwrite("delta", &Foo::delta, "addition factor")
+        .def_readwrite("factor", &LiterateGeneratorExample::Foo::factor, "Multiplication factor")
+        .def_readwrite("delta", &LiterateGeneratorExample::Foo::delta, "addition factor")
         .def("calc",
-            &Foo::calc,
+            &LiterateGeneratorExample::Foo::calc,
             py::arg("x"),
             "Do some math")
         ;
 
 
     m.def("foo_instance",
-        FooInstance,
+        LiterateGeneratorExample::FooInstance,
         "return_value_policy::reference",
         pybind11::return_value_policy::reference);
 
     m.def("add_overload",
-        py::overload_cast<int, int>(add_overload), py::arg("a"), py::arg("b"));
+        py::overload_cast<int, int>(LiterateGeneratorExample::add_overload), py::arg("a"), py::arg("b"));
 
     m.def("add_overload",
-        py::overload_cast<int, int, int>(add_overload), py::arg("a"), py::arg("b"), py::arg("c"));
+        py::overload_cast<int, int, int>(LiterateGeneratorExample::add_overload), py::arg("a"), py::arg("b"), py::arg("c"));
 
 
-    auto pyClassFooOverload = py::class_<FooOverload>
+    auto pyClassFooOverload = py::class_<LiterateGeneratorExample::FooOverload>
         (m, "FooOverload", "")
         .def(py::init<>()) // implicit default constructor
         .def("add_overload",
-            py::overload_cast<int, int>(&FooOverload::add_overload), py::arg("a"), py::arg("b"))
+            py::overload_cast<int, int>(&LiterateGeneratorExample::FooOverload::add_overload), py::arg("a"), py::arg("b"))
         .def("add_overload",
-            py::overload_cast<int, int, int>(&FooOverload::add_overload), py::arg("a"), py::arg("b"), py::arg("c"))
+            py::overload_cast<int, int, int>(&LiterateGeneratorExample::FooOverload::add_overload), py::arg("a"), py::arg("b"), py::arg("c"))
         ;
 
 

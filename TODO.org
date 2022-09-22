@@ -375,6 +375,7 @@ insert diagram via mermaid (see integration with emacs)
 
 Rename SrcmlWrapper. _show_element_info => warning info
 Add pylint or flake8 to precommit (cf  https://stackoverflow.com/questions/73765587/how-to-get-a-warning-about-a-list-being-global-when-used-as-a-default-argument))
+    => permettra peut-etre de trouver issue / BoxedType registry lors de pytest
 finish imgui test
 Pourcentage d'avancement & Profiling
 

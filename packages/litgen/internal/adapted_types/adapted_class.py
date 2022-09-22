@@ -323,8 +323,8 @@ class AdaptedClass(AdaptedElement):
         comment = self.comment_pydef_one_line()
 
         code_intro = ""
-        pydef_class_var = cpp_to_python.cpp_scope_to_pybind_var_name(self.cpp_element())
-        pydef_class_var_parent = cpp_to_python.cpp_scope_to_pybind_parent_var_name(self.cpp_element())
+        pydef_class_var = cpp_to_python.cpp_scope_to_pybind_var_name(options, self.cpp_element())
+        pydef_class_var_parent = cpp_to_python.cpp_scope_to_pybind_parent_var_name(options, self.cpp_element())
         qualified_struct_name = self.cpp_element().qualified_struct_name()
 
         code_intro += f"auto {pydef_class_var} = py::class_<{qualified_struct_name}>{location}\n"
