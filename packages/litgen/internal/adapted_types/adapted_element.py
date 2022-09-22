@@ -39,7 +39,7 @@ class AdaptedElement:  # (abc.ABC):  # Cannot be abstract (mypy limitation:  htt
             cpp_original_code_lines[0] += "    /* original C++ signature */"
             return cpp_original_code_lines
 
-    def _str_stub_layout_lines(self, title_lines: List[str], body_lines: List[str] = []) -> List[str]:
+    def _str_stub_layout_lines(self, title_lines: List[str], body_lines: Optional[List[str]] = None) -> List[str]:
         """Common layout for class, enum, and functions stubs
         :param title_lines: class, enum or function decl + function params. Will be followed by docstring
         :param body_lines: body lines for enums and classes, [] for functions
@@ -52,7 +52,7 @@ class AdaptedElement:  # (abc.ABC):  # Cannot be abstract (mypy limitation:  htt
         title_lines = [first_line] + title_lines[1:]
 
         # Preprocess: align comments in body
-        if len(body_lines) == 0:
+        if body_lines is None or (isinstance(body_lines, list) and len(body_lines) == 0):
             body_lines = ["pass"]
         body_lines = code_utils.align_python_comments_in_block_lines(body_lines)
 
