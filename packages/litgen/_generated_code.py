@@ -19,10 +19,13 @@ class GeneratedCodeForOneFile:
     stub_code: PythonStubCode = ""
 
 
-@dataclass
 class GeneratedBoxedTypeCode:
-    generated_code: GeneratedCodeForOneFile = GeneratedCodeForOneFile()
-    boxed_types_cpp_declaration: CppHeaderCode = ""
+    generated_code: GeneratedCodeForOneFile
+    boxed_types_cpp_declaration: CppHeaderCode
+
+    def __init__(self):
+        self.generated_code = GeneratedCodeForOneFile()
+        self.boxed_types_cpp_declaration = ""
 
 
 @dataclass
