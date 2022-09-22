@@ -101,5 +101,8 @@ class CppFileAndOptions:
 class CppFilesAndOptionsList:
     files_and_options: List[CppFileAndOptions]
 
-    def __init__(self, files_and_options: List[CppFileAndOptions] = []) -> None:
-        self.files_and_options = files_and_options
+    def __init__(self, files_and_options: List[CppFileAndOptions] = None) -> None:
+        if files_and_options is None:
+            self.files_and_options = []
+        else:
+            self.files_and_options = files_and_options
