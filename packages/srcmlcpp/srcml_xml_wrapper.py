@@ -254,7 +254,8 @@ class SrcmlXmlWrapper:
     def _show_element_info(self) -> str:
         element_tag = self.tag()
         concerned_code = self.str_code_context_with_caret()
-        message = f"""{element_tag}", corresponding to this C++ code:
+        message = f"""
+        While parsing a "{element_tag}", corresponding to this C++ code:
         {self.str_code_location()}
 {code_utils.indent_code(concerned_code, 12)}
         """
@@ -264,7 +265,7 @@ class SrcmlXmlWrapper:
 
         message = ""
 
-        message += """\nWhile parsing a """ + self._show_element_info()
+        message += self._show_element_info()
 
         if self.options.flag_show_python_callstack:
             python_caller_function_name, python_error_line = _get_python_call_info()
