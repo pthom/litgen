@@ -33,6 +33,9 @@ def _run_test_impl(test_name: str) -> None:
 
 
 def test_inner_classes():
+    from litgen.tests import boxed_immutable_python_type_test
+
+    boxed_immutable_python_type_test.test_make_boxed_type()
     _run_test_impl("inner_classes")
 
 

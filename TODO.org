@@ -373,10 +373,10 @@ insert diagram via mermaid (see integration with emacs)
 
 ** simple task list
 
-Add pylint or flake8 to precommit (cf  https://stackoverflow.com/questions/73765587/how-to-get-a-warning-about-a-list-being-global-when-used-as-a-default-argument))
-    => permettra peut-etre de trouver issue / BoxedType registry lors de pytest
+bug pytest / boxedtypes
 finish imgui test
 Pourcentage d'avancement & Profiling
+  code_to_adapted_unit / code_to_cpp_unit etc
 
 ** Handle scope
 
@@ -396,6 +396,18 @@ Add enums
 
 
 *** Handle Namespace
+Add options:
+
+    ################################################################################
+    #    <main namespace>
+    ################################################################################
+
+    # Namespace that match those regexes are concerned as root, and will not
+    # be outputted as submodules
+    # class_exclude_by_name__regexes: List[str] = []
+    main_namespace_regexes: List[str] = []
+
+
 **** Sample code / namespace
 #+NAME code to test
 #+begin_src cpp
