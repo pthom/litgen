@@ -1,5 +1,4 @@
 from typing import List, Optional
-import copy
 
 from codemanip import code_utils
 

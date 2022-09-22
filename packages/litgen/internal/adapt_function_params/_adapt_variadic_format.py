@@ -19,7 +19,6 @@ def adapt_variadic_format(adapted_function: AdaptedFunction) -> Optional[LambdaA
     and call
         Text("%s", s.c_str());
     """
-    options = adapted_function.options
     old_function_params: List[CppParameter] = adapted_function.cpp_adapted_function.parameter_list.parameters
 
     # Variadic params are always last

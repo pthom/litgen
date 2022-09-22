@@ -5,7 +5,6 @@ from codemanip import code_utils
 
 from srcmlcpp.srcml_types import CppParameter
 
-from litgen.internal import cpp_to_python
 from litgen.internal.adapt_function_params._lambda_adapter import LambdaAdapter
 from litgen.internal.adapted_types import AdaptedFunction
 

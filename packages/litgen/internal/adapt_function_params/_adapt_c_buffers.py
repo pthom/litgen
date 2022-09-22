@@ -3,7 +3,7 @@ from typing import List, Optional
 
 from codemanip import code_utils
 
-from srcmlcpp import SrcMlExceptionDetailed, SrcMlException
+from srcmlcpp import SrcMlException
 from srcmlcpp.srcml_types import CppFunctionDecl, CppParameter
 
 from litgen.options import LitgenOptions
@@ -490,7 +490,7 @@ def adapt_c_buffers(adapted_function: AdaptedFunction) -> Optional[LambdaAdapter
 
     new_function_params: List[CppParameter] = []
 
-    for idx_param, old_param in enumerate(adapted_function.cpp_adapted_function.parameter_list.parameters):
+    for idx_param, _old_param in enumerate(adapted_function.cpp_adapted_function.parameter_list.parameters):
         # Create new calling param
         new_param = helper.new_visible_interface_param(idx_param)
         if new_param is not None:

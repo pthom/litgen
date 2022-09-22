@@ -3,7 +3,6 @@ from dataclasses import dataclass
 import os
 from sys import version_info
 from typing import List
-import time
 
 
 @dataclass
@@ -178,7 +177,7 @@ def _amalgamate_one_file(
                 parsed_result = parsed_result + include_addition
                 was_file_interrupted_by_include = True
         else:
-            if not "#pragma once" in code_line:
+            if "#pragma once" not in code_line:
                 parsed_result = parsed_result + code_line
 
     is_code_composed_of_only_blank_lines = True
@@ -193,7 +192,7 @@ def _amalgamate_one_file(
 
 def _find_all_files_of_extension(folder: str, extension: str) -> List[str]:
     found_files = []
-    for root, dirs, files in os.walk(folder, topdown=False):
+    for root, _dirs, files in os.walk(folder, topdown=False):
         for name in files:
             if name.endswith(extension):
                 found_file = root + "/" + name

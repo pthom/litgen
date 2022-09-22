@@ -26,4 +26,4 @@ def test_inherit():
     code = "void Foo();"
     cpp_function = srcmlcpp_main.code_first_child_of_type(options, CppFunctionDecl, code)
     assert isinstance(cpp_function, CppFunctionDecl)
-    a = AdaptedFunction2(cpp_function, "Foo")
+    _ = AdaptedFunction2(cpp_function, "Foo")

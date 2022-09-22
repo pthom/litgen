@@ -1,6 +1,5 @@
 import litgen
 import os
-from dataclasses import dataclass
 
 
 _THIS_DIR = os.path.dirname(__file__)

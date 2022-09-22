@@ -3,7 +3,6 @@ import pytest
 from codemanip import code_utils
 
 import litgen
-from litgen.internal import cpp_to_python
 from litgen.internal.boxed_immutable_python_type import BoxedImmutablePythonType, all_boxed_types_generated_code
 
 
@@ -43,7 +42,7 @@ def test_make_boxed_type():
 
     # Test that we refuse to box a mutable type
     with pytest.raises(TypeError):
-        a = BoxedImmutablePythonType("SomeClass")
+        _ = BoxedImmutablePythonType("SomeClass")
 
     # Test generation of boxed structs code and bindings
     # (We instantiated boxing for "unsigned long long" and "int")

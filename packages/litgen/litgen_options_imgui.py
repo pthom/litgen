@@ -1,4 +1,3 @@
-from codemanip import code_replacements
 from codemanip.code_replacements import RegexReplacementList
 
 from litgen.options import LitgenOptions

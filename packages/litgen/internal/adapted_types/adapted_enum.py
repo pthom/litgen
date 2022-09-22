@@ -1,8 +1,6 @@
 from __future__ import annotations
-from dataclasses import dataclass
 from typing import Union, cast
 
-from codemanip import code_replacements
 from codemanip.code_replacements import RegexReplacementList, RegexReplacement
 
 from srcmlcpp.srcml_types import *

@@ -90,7 +90,6 @@ class AdaptedDecl(AdaptedElement):
         from litgen.internal.boxed_immutable_python_type import BoxedImmutablePythonType
 
         cpp_element = self.cpp_element()
-        srcml_options = self.options.srcml_options
         array_size = cpp_element.c_array_size_as_int()
 
         assert array_size is not None

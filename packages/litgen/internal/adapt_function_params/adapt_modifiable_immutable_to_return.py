@@ -2,13 +2,10 @@ import copy
 from typing import List, Optional, Tuple
 from munch import Munch  # type: ignore
 
-import srcmlcpp.srcmlcpp_main
-from codemanip import code_utils
 from srcmlcpp.srcml_types import *
 
 from litgen.internal.adapt_function_params._lambda_adapter import LambdaAdapter
 from litgen.internal.adapted_types import AdaptedFunction, AdaptedParameter
-from litgen.internal.boxed_immutable_python_type import BoxedImmutablePythonType
 
 
 def adapt_modifiable_immutable_to_return(adapted_function: AdaptedFunction) -> Optional[LambdaAdapter]:
@@ -67,10 +64,7 @@ def adapt_modifiable_immutable_to_return(adapted_function: AdaptedFunction) -> O
     new_function_params: List[CppParameter] = []
     new_output_function_params: List[CppParameter] = []
     for old_adapted_param in old_function_params:
-        was_replaced = False
-
         if old_adapted_param.is_modifiable_python_immutable_ref_or_pointer():
-            was_replaced = True
 
             is_pointer = old_adapted_param.cpp_element().decl.cpp_type.modifiers == ["*"]
 

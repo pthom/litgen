@@ -1,6 +1,4 @@
 from typing import Optional, List
-from dataclasses import dataclass
-import logging
 
 from codemanip import code_utils
 
@@ -8,12 +6,10 @@ from litgen.options import LitgenOptions
 from litgen.internal import boxed_immutable_python_type, cpp_to_python
 from litgen._generated_code import (
     GeneratedCodeForOneFile,
-    GeneratedBoxedTypeCode,
     GeneratedCode,
     CppFileAndOptions,
     CppFilesAndOptionsList,
 )
-from litgen.internal.adapted_types.adapted_block import AdaptedUnit
 from litgen.code_to_adapted_unit import code_to_adapted_unit
 
 
@@ -105,7 +101,7 @@ def write_generated_code(
 ) -> None:
 
     if generated_code.boxed_types_cpp_declaration is not None and len(output_boxed_types_header_file) == 0:
-        raise ValueError(f"write_generated_code: specify output_boxed_types_header_file")
+        raise ValueError("write_generated_code: specify output_boxed_types_header_file")
 
     if len(output_cpp_pydef_file) > 0:
         code_utils.write_generated_code_between_markers(output_cpp_pydef_file, "pydef", generated_code.pydef_code)

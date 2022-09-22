@@ -456,8 +456,6 @@ class AdaptedFunction(AdaptedElement):
         replace_tokens = Munch()
         replace_lines = Munch()
 
-        function_infos = self.cpp_adapted_function
-
         # fill _i_
         replace_tokens._i_ = self.options.indent_cpp_spaces()
 
@@ -504,8 +502,6 @@ class AdaptedFunction(AdaptedElement):
             {_i_}{function_pointer}{maybe_comma}{pydef_end_arg_docstring_returnpolicy}"""
         )[1:]
 
-        function_infos = self.cpp_adapted_function
-
         # Standard replacements dict (r) and replacement dict with possible line removal (l)
         replace_tokens = Munch()
         replace_lines = Munch()
@@ -519,7 +515,6 @@ class AdaptedFunction(AdaptedElement):
         replace_tokens.location = self.info_original_location_cpp()
 
         # fill function_pointer
-        is_method = self.is_method()
         function_name = self.cpp_element().function_name
         function_parent_scope = self.cpp_element().cpp_scope(False).str_cpp_prefix()
 

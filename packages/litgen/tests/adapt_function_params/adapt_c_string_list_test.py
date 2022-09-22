@@ -1,6 +1,3 @@
-import os
-import sys
-
 from srcmlcpp.srcml_types import *
 
 import litgen

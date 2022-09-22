@@ -172,8 +172,6 @@ def _make_adapted_lambda_code(adapted_function: AdaptedFunction, lambda_adapter:
 
 
 def _apply_lambda_adapter(adapted_function: AdaptedFunction, lambda_adapter: LambdaAdapter) -> None:
-    options = adapted_function.options
-
     # Get the full lambda code
     lambda_code = _make_adapted_lambda_code(adapted_function, lambda_adapter)
 

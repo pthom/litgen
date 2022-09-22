@@ -1,12 +1,8 @@
 import keyword
-import pathlib
 from dataclasses import dataclass  # noqa
 
-from codemanip import code_replacements
-from codemanip.code_replacements import RegexReplacement, RegexReplacementList
+from codemanip.code_replacements import RegexReplacementList
 
-from srcmlcpp import srcmlcpp_main
-from srcmlcpp.cpp_scope import CppScope
 from srcmlcpp.srcml_types import *
 
 from litgen.options import LitgenOptions
@@ -275,7 +271,7 @@ def docstring_lines(options: LitgenOptions, cpp_element_c: CppElementAndComment)
     lines = docstring.split("\n")
 
     r = []  # noqa
-    r.append(f'''"""''' + lines[0])
+    r.append('''"""''' + lines[0])
     r += lines[1:]
 
     if len(r) == 1:

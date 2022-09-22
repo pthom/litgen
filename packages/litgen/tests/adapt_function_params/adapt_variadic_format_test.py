@@ -2,7 +2,6 @@ from srcmlcpp.srcml_types import *
 from srcmlcpp import srcmlcpp_main
 
 import litgen
-from litgen import LitgenOptions
 from litgen.internal.adapted_types import AdaptedFunction
 
 

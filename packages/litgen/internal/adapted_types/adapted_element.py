@@ -1,7 +1,5 @@
-from dataclasses import dataclass
 from typing import Any
 
-import srcmlcpp
 from srcmlcpp.srcml_types import *
 
 from litgen.internal import cpp_to_python
