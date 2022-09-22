@@ -4,7 +4,6 @@ Calls the external program srcml (https://www.srcml.org/)
 
 import logging
 import os
-import platform
 import random
 import subprocess
 import tempfile

@@ -6,11 +6,9 @@ The main interface of this module is:
 
 All the other functions can be considered private to this module.
 """
-import copy
-
-from srcmlcpp.internal import srcml_comments
 from srcmlcpp.srcml_types import *
 from srcmlcpp.srcml_xml_wrapper import SrcMlExceptionDetailed, emit_warning_if_not_quiet
+from srcmlcpp.internal import srcml_caller, srcml_utils
 from srcmlcpp.internal import srcml_comments
 
 
@@ -223,7 +221,7 @@ def parse_parameter(options: SrcmlOptions, element: SrcmlXmlWrapper) -> CppParam
             assert child_text is not None
             result.template_name = child_text  # This is only for template parameters
         elif child_tag == "function_decl":
-            raise SrcMlExceptionDetailed(child, f"Can't use a function_decl as a param.")
+            raise SrcMlExceptionDetailed(child, "Can't use a function_decl as a param.")
         else:
             raise SrcMlExceptionDetailed(child, f"unhandled tag {child_tag}")
 
@@ -478,9 +476,9 @@ def parse_struct_or_class(options: SrcmlOptions, element_c: CppElementAndComment
         elif child_tag == "comment":
             _add_comment_child_before_block(result, child)
         elif child_tag == "decl":
-            raise SrcMlExceptionDetailed(child, f"Skipped struct because it misses a ';' at the end")
+            raise SrcMlExceptionDetailed(child, "Skipped struct because it misses a ';' at the end")
         else:
-            raise SrcMlExceptionDetailed(child, f"unhandled tag {child_tag}")
+            raise SrcMlExceptionDetailed(child, "unhandled tag {child_tag}")
 
     return result
 
@@ -584,7 +582,7 @@ def fill_block(options: SrcmlOptions, element: SrcmlXmlWrapper, inout_block_cont
     last_ignored_child: Optional[CppElementAndComment] = None
 
     children: List[CppElementAndComment] = srcml_comments.get_children_with_comments(element)
-    for i, child_c in enumerate(children):
+    for _i, child_c in enumerate(children):
         if not _shall_publish(child_c, options):
             continue
 

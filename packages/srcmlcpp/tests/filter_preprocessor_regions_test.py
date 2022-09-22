@@ -3,7 +3,6 @@ import sys
 
 from codemanip import code_utils
 
-import srcmlcpp
 from srcmlcpp import filter_preprocessor_regions
 from srcmlcpp.internal import srcml_caller
 

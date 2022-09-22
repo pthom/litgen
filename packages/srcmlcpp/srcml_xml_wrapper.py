@@ -8,13 +8,12 @@ import traceback
 import yaml  # type: ignore
 from srcmlcpp.internal import xmlplain
 from dataclasses import dataclass
-from typing import Optional, List, Iterable, Callable, Tuple
+from typing import Optional, List, Callable, Tuple
 from xml.etree import ElementTree as ET
 
 from codemanip.code_position import CodePosition
 from codemanip import code_utils
 
-from srcmlcpp.internal import srcml_caller
 from srcmlcpp.srcml_options import SrcmlOptions
 from srcmlcpp.internal import srcml_caller, srcml_utils
 from srcmlcpp.srcml_exception import SrcMlException

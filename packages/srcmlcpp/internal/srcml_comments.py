@@ -13,12 +13,10 @@ from codemanip import code_utils
 
 from srcmlcpp.internal import srcml_utils
 from srcmlcpp.srcml_types import (
-    CppElement,
     CppElementAndComment,
     CppElementComments,
 )
 from srcmlcpp.srcml_xml_wrapper import SrcmlXmlWrapper
-from srcmlcpp.srcml_options import SrcmlOptions
 from srcmlcpp.filter_preprocessor_regions import filter_preprocessor_regions
 
 
@@ -213,7 +211,7 @@ def _is_comment_end_of_line(children: List[SrcmlXmlWrapper], idx: int) -> bool:
         if EMPTY_LINE_COMMENT_CONTENT in element_text:
             return False
         elm_start = element.start()
-        elm_end = element.end()
+        # elm_end = element.end()
         prev_start = previous_element.start()
         prev_end = previous_element.end()
         if elm_start is not None and prev_start is not None and prev_end is not None:

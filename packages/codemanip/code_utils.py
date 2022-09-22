@@ -77,7 +77,7 @@ def code_set_max_consecutive_empty_lines(code: str, nb_max_empty: int) -> str:
     for line, nb in rle:
         if len(line.strip()) == 0 and nb >= nb_max_empty:  # noqa
             nb = nb_max_empty
-        for i in range(nb):
+        for _ in range(nb):
             new_lines.append(line)
     return "\n".join(new_lines)
 
@@ -428,7 +428,7 @@ def cpp_comment_remove_comment_markers(comment: str) -> str:
 
 def spaces_or_tabs_at_line_start(line: str) -> str:
     r = ""
-    for i, c in enumerate(line):
+    for c in line:
         if c == " " or c == "\t":
             r += c
         else:

@@ -1,11 +1,6 @@
-import logging
-
-from codemanip import code_utils
 from codemanip.code_position import CodePosition
 
 import srcmlcpp.srcmlcpp_main
-from srcmlcpp.srcml_options import SrcmlOptions
-from srcmlcpp.srcml_xml_wrapper import SrcmlXmlWrapper
 from srcmlcpp import SrcMlException, SrcMlExceptionDetailed
 from srcmlcpp.srcmlcpp_main import code_to_srcml_xml_wrapper
 from srcmlcpp.srcml_types import *
@@ -160,7 +155,7 @@ def test_warnings():
             "Artificial exception",
         ]:
             assert part in msg
-    assert got_exception == True
+    assert got_exception
 
 
 def test_warnings_2():

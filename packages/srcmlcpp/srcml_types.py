@@ -28,10 +28,8 @@ from typing import Dict, List, Optional, Callable, cast
 from xml.etree import ElementTree as ET  # noqa
 
 from codemanip import code_utils
-from codemanip.code_position import CodePosition
 
 from srcmlcpp.cpp_scope import CppScope, CppScopePart, CppScopeType
-from srcmlcpp.internal import srcml_caller, srcml_utils
 from srcmlcpp.srcml_options import SrcmlOptions
 from srcmlcpp.srcml_options import _int_from_str_or_named_number_macros
 from srcmlcpp.srcml_xml_wrapper import SrcmlXmlWrapper

@@ -1,8 +1,4 @@
-import logging
-
-import litgen
 import srcmlcpp
-from srcmlcpp.srcmlcpp_main import code_to_srcml_xml_wrapper, code_to_cpp_unit
 from srcmlcpp.srcml_types import *
 from srcmlcpp.srcml_options import SrcmlOptions
 from srcmlcpp import srcmlcpp_main

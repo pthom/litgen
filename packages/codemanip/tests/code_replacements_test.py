@@ -1,5 +1,4 @@
 import os
-import re
 import sys
 
 from codemanip import code_replacements

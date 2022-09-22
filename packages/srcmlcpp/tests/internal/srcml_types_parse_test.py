@@ -1,7 +1,4 @@
 import os
-import sys
-
-import srcmlcpp
 from codemanip import code_utils
 
 from srcmlcpp import srcml_types
@@ -18,7 +15,6 @@ def test_parse_cpp_decl_statement():
     def code_to_decl_statement(code) -> srcml_types.CppDeclStatement:
         element_c = srcmlcpp_main._tests_only_get_only_child_with_tag(options, code, "decl_stmt")
         cpp_decl_statement = srcml_types_parse.parse_decl_stmt(options, element_c)
-        cpp_decl_statement_str = str(cpp_decl_statement)
         return cpp_decl_statement
 
     # Basic test
@@ -86,7 +82,6 @@ def test_parse_function_decl():
     def code_to_fn_decl(code) -> srcml_types.CppFunctionDecl:
         element = srcmlcpp_main._tests_only_get_only_child_with_tag(options, code, "function_decl")
         fn_decl = srcml_types_parse.parse_function_decl(options, element)
-        fn_decl_str = str(fn_decl)
         return fn_decl
 
     # # Basic test with str
@@ -132,7 +127,6 @@ def test_parse_function():
     def code_to_fn_decl(code) -> srcml_types.CppFunctionDecl:
         element = srcmlcpp_main._tests_only_get_only_child_with_tag(options, code, "function")
         fn = srcml_types_parse.parse_function(options, element)
-        fn_str = str(fn)
         return fn
 
     # # Basic test

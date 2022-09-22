@@ -6,13 +6,10 @@ Main functions provided by this module
 * `code_to_srcml_xml_wrapper` is a lower level utility, that returns a wrapped version of the srcML tree
 """
 
-from typing import Optional, List, Type, Dict, cast
+from typing import Type
 
-from srcmlcpp.srcml_options import SrcmlOptions
-from srcmlcpp.srcml_xml_wrapper import SrcmlXmlWrapper
 from srcmlcpp.internal import srcml_comments
 from srcmlcpp.srcml_types import *
-from srcmlcpp.filter_preprocessor_regions import filter_preprocessor_regions
 from srcmlcpp.internal import srcml_caller
 from srcmlcpp.internal import srcml_types_parse
 from srcmlcpp.srcml_exception import SrcMlException
