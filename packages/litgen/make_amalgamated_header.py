@@ -14,7 +14,7 @@ class AmalgamationOptions:
     main_header_file: str
     dst_amalgamated_header_file: str
 
-    def __init__(self):
+    def __init__(self) -> None:
         self.base_dir = ""
         self.local_includes_startwith = ""
         self.include_subdirs = []

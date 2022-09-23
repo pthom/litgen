@@ -11,19 +11,13 @@ add_subdirectory(external/pybind11)
 ####################################################
 # Build testrunner Bound C++ library
 ####################################################
-set(testrunner_dir testrunner_cpp_bound_lib)
-add_library(testrunner ${testrunner_dir}/testrunner.cpp ${testrunner_dir}/testrunner.h)
-target_include_directories(testrunner PUBLIC ${testrunner_dir})
-# Under windows, auto __declspec(dllexport)
-if (WIN32)
-    set_target_properties(testrunner_lib PROPERTIES WINDOWS_EXPORT_ALL_SYMBOLS ON)
-endif()
+add_subdirectory(testrunner_cpp_bound_lib)    # Will build the library testrunner
+set(bound_library testrunner)                 # The library for which we are building bindings
 
 
 #########################################################################
 # Build python module that provides bindings to the library implot
 #########################################################################
-set(bound_library testrunner)                 # The library for which we are building bindings
 set(python_native_module_name _testrunner) # This is the native python module name
 set(python_wrapper_module_name testrunner) # This is the python wrapper around the native module
 set(python_module_sources bindings/module.cpp bindings/pybind_${bound_library}.cpp) # native python module sources

@@ -1,4 +1,4 @@
-#include "testrunner.h"
+#include "testrunner/testrunner.h"
 
 namespace LiterateGeneratorExample
 {
