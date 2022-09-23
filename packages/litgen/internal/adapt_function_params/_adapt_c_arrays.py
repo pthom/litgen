@@ -88,7 +88,7 @@ def adapt_c_arrays(adapted_function: AdaptedFunction) -> Optional[LambdaAdapter]
                 # Create new calling param (const std::array &)
                 new_adapted_decl = old_adapted_param.adapted_decl().c_array_fixed_size_to_const_std_array()
 
-                new_param = CppParameter(old_adapted_param.cpp_element())  # copy.deepcopy(old_adapted_decl)
+                new_param = CppParameter(old_adapted_param.cpp_element())
                 new_param.decl = new_adapted_decl.cpp_element()
                 new_function_params.append(new_param)
                 # Fill adapted_cpp_parameter_list (those that will call the original C style function)

@@ -1,6 +1,7 @@
 """SrcmlXmlWrapper is a wrapper around the nodes in the xml tree produced by srcml"""
 
 from __future__ import annotations
+import copy
 import inspect
 import logging
 import sys
@@ -92,8 +93,11 @@ class SrcmlXmlWrapper:
     # the filename from which this tree was parsed
     filename: Optional[str] = None
 
+    # members that are always copied as shallow members (this is intentionally a static list)
+    SrcmlXmlWrapper__deep_copy_force_shallow_ = ["options", "srcml_xml"]
+
     def __init__(self, options: SrcmlOptions, srcml_xml: ET.Element, filename: Optional[str]) -> None:
-        """Create a wrapper from an xml sub node
+        """Create a wrapper from a xml sub node
         :param options:  the options
         :param srcml_xml: the xml node which will be wrapped
         :param parent: the parent
@@ -109,6 +113,29 @@ class SrcmlXmlWrapper:
                 self.raise_exception("filename params must either be `None` or non empty!")
 
         self.filename = filename
+
+    def __deepcopy__(self, memo=None):
+        """SrcmlXmlWrapper.__deepcopy__: force shallow copy of SrcmlOptions and srcml_xml (ET.Element)
+        This improves the performance a lot.
+        Reason:
+        - options are global during parsing
+        - srcml_xml is a heavy object that is created once for all during invocation of srcml exe
+          When we deepcopy, we intent to modify only moving parts inside this package (srcmlcpp).
+        """
+
+        # __deepcopy___ "manual":
+        #   See https://stackoverflow.com/questions/1500718/how-to-override-the-copy-deepcopy-operations-for-a-python-object
+        #   (Antony Hatchkins's answer here)
+
+        cls = self.__class__
+        result = cls.__new__(cls)
+        memo[id(self)] = result
+        for k, v in self.__dict__.items():
+            if k not in SrcmlXmlWrapper.SrcmlXmlWrapper__deep_copy_force_shallow_:
+                setattr(result, k, copy.deepcopy(v, memo))
+            else:
+                setattr(result, k, v)
+        return result
 
     def tag(self) -> str:
         """The xml tag

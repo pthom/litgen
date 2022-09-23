@@ -120,9 +120,32 @@ class CppElement(SrcmlXmlWrapper):
     # It will be filled later by CppBlock.fill_parents() (with a tree traversal)
     parent: Optional[CppElement]
 
+    # members that are always copied as shallow members (this is intentionally a static list)
+    CppElement__deep_copy_force_shallow_ = ["parent"]
+
     def __init__(self, element: SrcmlXmlWrapper) -> None:
         super().__init__(element.options, element.srcml_xml, element.filename)
         # self.parent is intentionally not filled!
+
+    def __deepcopy__(self, memo=None):
+        """CppElement.__deepcopy__: force shallow copy of the parent
+        This improves the performance a lot.
+        Reason: when we deepcopy, we only intend to modify children.
+        """
+
+        # __deepcopy___ "manual":
+        #   See https://stackoverflow.com/questions/1500718/how-to-override-the-copy-deepcopy-operations-for-a-python-object
+        #   (Antony Hatchkins's answer here)
+
+        cls = self.__class__
+        result = cls.__new__(cls)
+        memo[id(self)] = result
+        for k, v in self.__dict__.items():
+            if k not in CppElement.CppElement__deep_copy_force_shallow_:
+                setattr(result, k, copy.deepcopy(v, memo))
+            else:
+                setattr(result, k, v)
+        return result
 
     def str_code(self) -> str:
         """Returns a C++ textual representation of the contained code element.
