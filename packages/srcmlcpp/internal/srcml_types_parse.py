@@ -190,7 +190,8 @@ def parse_decl_stmt(options: SrcmlOptions, element_c: CppElementAndComment) -> C
         child_c.srcml_xml = child.srcml_xml
         if child_c.tag() == "decl":
             child_name = child_c.name_code()
-            assert child_name is not None
+            if child_name is None:
+                raise SrcMlExceptionDetailed(child, "Encountered decl without name!")
             cpp_decl = parse_decl(options, child_c, previous_decl)
             result.cpp_decls.append(cpp_decl)
             previous_decl = cpp_decl
