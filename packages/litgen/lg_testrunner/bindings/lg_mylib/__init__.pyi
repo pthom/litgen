@@ -43,26 +43,25 @@ class BoxedString:
 #//////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
+#////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+#                       mylib/api_marker.h included by mylib/mylib.h                                           //
+#//////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
-# <Namespace LiterateGeneratorExample>
-class MyEnum(Enum):
-    """ A super nice enum
-     for demo purposes ( bool val = False )
-    """
-    a = 1    # This is value a
-    aa = 2   # this is value aa
-    aaa = 3  # this is value aaa
+#////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+#                       mylib/header_filter_test.h included by mylib/mylib.h                                   //
+#//////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    # Lonely comment
+# Here, we test that functions placed under unknown preprocessor defines are not exported by default
+# You could choose to add them anyway with:
+# ````
+#    options.srcml_options.header_guard_suffixes.append("OBSCURE_OPTION")
+# ````
 
-    # This is value b
-    b = 4
 
-    # This is c
-    # with doc on several lines
-    c = Literal[MyEnum.a] | Literal[MyEnum.b]
-
+#////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+#                       mylib/c_style_array_test.h included by mylib/mylib.h                                   //
+#//////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 #
 # C Style array tests
@@ -85,6 +84,10 @@ class Point2:
 def get_points(out_0: Point2, out_1: Point2) -> None:
     pass
 
+#////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+#                       mylib/c_style_buffer_to_pyarray_test.h included by mylib/mylib.h                       //
+#//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 #
 # C Style buffer to py::array tests
 #
@@ -92,9 +95,11 @@ def get_points(out_0: Point2, out_1: Point2) -> None:
 def add_inside_buffer(buffer: np.ndarray, number_to_add: int) -> None:
     """ Modifies a buffer by adding a value to its elements"""
     pass
+
 def buffer_sum(buffer: np.ndarray, stride: int = -1) -> int:
     """ Returns the sum of a const buffer"""
     pass
+
 def add_inside_two_buffers(
     buffer_1: np.ndarray,
     buffer_2: np.ndarray,
@@ -103,10 +108,13 @@ def add_inside_two_buffers(
     """ Modifies two buffers"""
     pass
 
-
 def mul_inside_buffer(buffer: np.ndarray, factor: float) -> None:
     """ Modify an array by multiplying its elements (template function!)"""
     pass
+
+#////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+#                       mylib/c_string_list_test.h included by mylib/mylib.h                                   //
+#//////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 #
 # C String lists tests
@@ -119,36 +127,70 @@ def c_string_list_total_size(
     ) -> int:
     pass
 
+#////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+#                       mylib/modifiable_immutable_test.h included by mylib/mylib.h                            //
+#//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+#
+# Modifiable immutable python types test
+#
+
+
+#
+# Test Part 1: in those functions the value parameters will be "Boxed"
+#
+# This is caused by the following options during generation:
+#     options.fn_params_replace_modifiable_immutable_by_boxed__regexes = [
+#         r"^Toggle",
+#         r"^Modify",
+#      ]
 
 def toggle_bool_pointer(v: BoxedBool) -> None:
-    """
-     Modifiable immutable python types test
-
-     Test with pointer
-    """
+    """ Test with pointer"""
     pass
+
 def toggle_bool_nullable(v: BoxedBool = None) -> None:
     """ Test with nullable pointer"""
     pass
+
 def toggle_bool_reference(v: BoxedBool) -> None:
     """ Test with reference"""
     pass
 
 def slider_bool_int(label: str, value: int) -> Tuple[bool, int]:
     pass
+
+def modify_string(s: BoxedString) -> None:
+    """ Test modifiable String"""
+    pass
+
+
+#
+# Test Part 2: in the functions below return type is modified:
+# the following functions will return a tuple inside python :
+#     (original_return_value, modified_paramer)
+#
+# This is caused by the following options during generation:
+#
+#     options.fn_params_output_modifiable_immutable_to_return__regexes = [r"^Slider"]
+
+
 def slider_void_int(label: str, value: int) -> int:
     pass
+
 def slider_bool_int2(
     label: str,
     value1: int,
     value2: int
     ) -> Tuple[bool, int, int]:
     pass
+
 def slider_void_int_default_null(
     label: str,
     value: Optional[int] = None
     ) -> Tuple[bool, Optional[int]]:
     pass
+
 def slider_void_int_array(
     label: str,
     value: List[int]
@@ -157,13 +199,53 @@ def slider_void_int_array(
 
 
 
+#////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+#                       mylib/overload_test.h included by mylib/mylib.h                                        //
+#//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+#
+# Test overload
+#
+def add_overload(a: int, b: int) -> int:  # type: ignore
+    pass
+def add_overload(a: int, b: int, c: int) -> int:  # type: ignore
+    pass
+
+class FooOverload:
+    def add_overload(self, a: int, b: int) -> int:          # type: ignore
+        pass
+    def add_overload(self, a: int, b: int, c: int) -> int:  # type: ignore
+        pass
+
+
+
+#////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+#                       mylib/mylib.h continued                                                                //
+#//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+# <Namespace LiterateGeneratorExample>
+class MyEnum(Enum):
+    """ A super nice enum
+     for demo purposes ( bool val = False )
+    """
+    a = 1    # This is value a
+    aa = 2   # this is value aa
+    aaa = 3  # this is value aaa
+
+    # Lonely comment
+
+    # This is value b
+    b = 4
+
+    # This is c
+    # with doc on several lines
+    c = Literal[MyEnum.a] | Literal[MyEnum.b]
+
+
+
+
 def add(a: int, b: int) -> int:
     """ Adds two numbers"""
     pass
-
-# Adds three numbers, with a surprise
-# MY_API inline int add(int a, int b, int c) { return a + b + c + 4; }
-
 
 def sub(a: int, b: int) -> int:
     pass
@@ -208,26 +290,6 @@ def foo_instance() -> Foo:
 
 
 
-#
-# Test overload
-#
-def add_overload(a: int, b: int) -> int:  # type: ignore
-    pass
-def add_overload(a: int, b: int, c: int) -> int:  # type: ignore
-    pass
-
-class FooOverload:
-    def add_overload(self, a: int, b: int) -> int:          # type: ignore
-        pass
-    def add_overload(self, a: int, b: int, c: int) -> int:  # type: ignore
-        pass
-
-def modify_string(s: BoxedString) -> None:
-    """
-     Test Boxed String
-
-    """
-    pass
 
 
 # </Namespace LiterateGeneratorExample>

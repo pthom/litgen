@@ -8,6 +8,17 @@ set(CMAKE_CXX_STANDARD 20)
 
 add_subdirectory(external/pybind11)
 
+
+####################################################
+# Regenerate bindings before building
+####################################################
+add_custom_target(
+    autogenerate_mylib ALL
+    COMMAND
+    ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_LIST_DIR}/autogenerate_mylib.py
+    )
+
+
 ####################################################
 # Build testrunner Bound C++ library
 ####################################################
