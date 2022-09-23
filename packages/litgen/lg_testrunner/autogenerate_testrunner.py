@@ -7,7 +7,7 @@ import litgen
 
 
 THIS_DIR = os.path.dirname(os.path.realpath(__file__))
-CPP_HEADERS_DIR = THIS_DIR + "/external/testrunner"
+CPP_HEADERS_DIR = THIS_DIR + "/testrunner_cpp_bound_lib"
 CPP_GENERATED_PYBIND_DIR = THIS_DIR + "/bindings"
 assert os.path.isdir(CPP_HEADERS_DIR)
 assert os.path.isdir(CPP_GENERATED_PYBIND_DIR)

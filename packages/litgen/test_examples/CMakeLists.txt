@@ -14,5 +14,4 @@ function(add_litgen_test_example_folder folder_name)
     target_include_directories(pybind_${folder_name} PRIVATE ${folder_name}/computed)
 endfunction()
 
-add_litgen_test_example_folder("basic")
 add_litgen_test_example_folder("inner_classes")

@@ -11,7 +11,7 @@ add_subdirectory(external/pybind11)
 ####################################################
 # Build testrunner Bound C++ library
 ####################################################
-set(testrunner_dir external/testrunner)
+set(testrunner_dir testrunner_cpp_bound_lib)
 add_library(testrunner ${testrunner_dir}/testrunner.cpp ${testrunner_dir}/testrunner.h)
 target_include_directories(testrunner PUBLIC ${testrunner_dir})
 # Under windows, auto __declspec(dllexport)
