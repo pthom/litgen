@@ -140,8 +140,9 @@ def test_overload():
 def test_nullable_param():
     b = testrunner.BoxedBool(True)
     testrunner.toggle_bool_nullable(b)
-    assert b.value
+    assert not b.value
     testrunner.toggle_bool_nullable()
+    assert b.value
 
 
 def test_modify_string():
