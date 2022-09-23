@@ -74,11 +74,14 @@ class SrcmlOptions:
     #    <Verbose / Quiet mode>
     ################################################################################
 
-    # if quiet, all warning messages are discarded
+    # if quiet, all warning messages are discarded (warning messages go to stderr)
     flag_quiet: bool = False
 
     # Show python callstack when warnings are raised
     flag_show_python_callstack: bool = False
+
+    # if true, display parsing progress during execution (on stdout)
+    flag_show_progress: bool = False
 
     ################################################################################
     #    <End>

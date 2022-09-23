@@ -1,9 +1,16 @@
 from typing import Any
 
+from codemanip.parse_progress_bar import global_progress_bars
+
 from srcmlcpp.srcml_types import *
 
 from litgen.internal import cpp_to_python
 from litgen.options import LitgenOptions
+
+
+_PROGRESS_BAR_TITLE_ADAPTED_ELEMENTS = "litgen:   Create AdaptedElements............. "
+_PROGRESS_BAR_TITLE_PYDEF = "litgen:   Generate pydef cpp file............ "
+_PROGRESS_BAR_TITLE_STUB = "litgen:   Generate stubs..................... "
 
 
 @dataclass
@@ -14,6 +21,8 @@ class AdaptedElement:  # (abc.ABC):  # Cannot be abstract (mypy limitation:  htt
     def __init__(self, options: LitgenOptions, cpp_element: CppElementAndComment) -> None:
         self._cpp_element = cpp_element
         self.options = options
+        element_line = cpp_element.start().line
+        global_progress_bars().set_current_line(_PROGRESS_BAR_TITLE_ADAPTED_ELEMENTS, element_line)
 
     def _info_original_location(self, comment_token: str) -> str:
         r = cpp_to_python.info_original_location(self.options, self._cpp_element, comment_token)

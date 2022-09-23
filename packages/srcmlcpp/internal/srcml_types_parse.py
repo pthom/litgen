@@ -6,10 +6,15 @@ The main interface of this module is:
 
 All the other functions can be considered private to this module.
 """
+from codemanip.parse_progress_bar import global_progress_bars
+
 from srcmlcpp.srcml_types import *
 from srcmlcpp.srcml_xml_wrapper import SrcMlExceptionDetailed, emit_warning_if_not_quiet
 from srcmlcpp.internal import srcml_caller, srcml_utils
 from srcmlcpp.internal import srcml_comments
+
+
+_PROGRESS_BAR_TITLE_SRCML_PARSE = "srcmlcpp: Create CppElements................. "
 
 
 def parse_unprocessed(options: SrcmlOptions, element_c: CppElementAndComment) -> CppUnprocessed:  # noqa
@@ -584,6 +589,8 @@ def fill_block(options: SrcmlOptions, element: SrcmlXmlWrapper, inout_block_cont
 
     children: List[CppElementAndComment] = srcml_comments.get_children_with_comments(element)
     for _i, child_c in enumerate(children):
+        global_progress_bars().set_current_line(_PROGRESS_BAR_TITLE_SRCML_PARSE, child_c.start().line)
+
         if not _shall_publish(child_c, options):
             continue
 

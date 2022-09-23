@@ -371,10 +371,11 @@ insert diagram via mermaid (see integration with emacs)
 
 * Litgen TODO
 
-** simple task list
+** Wish List
 
-Pourcentage d'avancement & Profiling
-  code_to_adapted_unit / code_to_cpp_unit etc
+Test STL
+Group tests / separate headers & py tests
+
 
 ** Handle scope
 

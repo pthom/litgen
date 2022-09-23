@@ -135,4 +135,6 @@ def litgen_options_imgui() -> LitgenOptions:
     options.fn_params_replace_modifiable_c_array_by_boxed__regexes = []
     options.fn_params_output_modifiable_immutable_to_return__regexes = [r".*"]
 
+    options.srcml_options.flag_show_progress = True
+
     return options

@@ -8,6 +8,8 @@ Main functions provided by this module
 
 from typing import Type
 
+from codemanip.parse_progress_bar import global_progress_bars
+
 from srcmlcpp.internal import srcml_comments
 from srcmlcpp.srcml_types import *
 from srcmlcpp.internal import srcml_caller
@@ -66,14 +68,38 @@ def code_to_srcml_xml_wrapper(
     return r
 
 
-def code_to_cpp_unit(options: SrcmlOptions, code: Optional[str] = None, filename: Optional[str] = None) -> CppUnit:
+def nb_lines_in_code_or_file(options: SrcmlOptions, code: Optional[str] = None, filename: Optional[str] = None) -> int:
+    code_str = _code_or_file_content(options, code, filename)
+    nb_lines = code_str.count("\n")
+    return nb_lines
+
+
+def _code_to_cpp_unit_impl(
+    options: SrcmlOptions, code: Optional[str] = None, filename: Optional[str] = None
+) -> CppUnit:
     xml_wrapper = code_to_srcml_xml_wrapper(options, code, filename)
     cpp_unit = srcml_types_parse.parse_unit(options, xml_wrapper)
     return cpp_unit
 
 
+def code_to_cpp_unit(options: SrcmlOptions, code: Optional[str] = None, filename: Optional[str] = None) -> CppUnit:
+    if options.flag_show_progress:
+        nb_lines = nb_lines_in_code_or_file(options, code, filename)
+        global_progress_bars().set_nb_total_lines(nb_lines)
+        global_progress_bars().set_enabled(True)
+    else:
+        global_progress_bars().set_enabled(False)
+
+    from srcmlcpp.internal.srcml_types_parse import _PROGRESS_BAR_TITLE_SRCML_PARSE
+
+    global_progress_bars().start_progress_bar(_PROGRESS_BAR_TITLE_SRCML_PARSE)
+    cpp_unit = _code_to_cpp_unit_impl(options, code, filename)
+    global_progress_bars().stop_progress_bar(_PROGRESS_BAR_TITLE_SRCML_PARSE)
+    return cpp_unit
+
+
 def code_first_child_of_type(options: SrcmlOptions, type_of_cpp_element: Type, code: str) -> CppElementAndComment:
-    cpp_unit = code_to_cpp_unit(options, code)
+    cpp_unit = _code_to_cpp_unit_impl(options, code)
     for child in cpp_unit.block_children:
         if isinstance(child, type_of_cpp_element):
             return child  # type: ignore

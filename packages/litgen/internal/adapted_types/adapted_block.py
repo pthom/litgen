@@ -1,6 +1,8 @@
 from dataclasses import dataclass
 from typing import Union, cast
 
+from codemanip.parse_progress_bar import global_progress_bars
+
 from srcmlcpp.srcml_types import *
 
 from litgen.internal.adapted_types.adapted_class import AdaptedClass
@@ -8,7 +10,12 @@ from litgen.internal.adapted_types.adapted_comment import (
     AdaptedComment,
     AdaptedEmptyLine,
 )
-from litgen.internal.adapted_types.adapted_element import AdaptedElement
+from litgen.internal.adapted_types.adapted_element import (
+    AdaptedElement,
+    _PROGRESS_BAR_TITLE_ADAPTED_ELEMENTS,
+    _PROGRESS_BAR_TITLE_STUB,
+    _PROGRESS_BAR_TITLE_PYDEF,
+)
 from litgen.internal.adapted_types.adapted_enum import AdaptedEnum
 from litgen.internal.adapted_types.adapted_function import AdaptedFunction
 from litgen.options import LitgenOptions
@@ -74,6 +81,9 @@ class AdaptedBlock(AdaptedElement):
         for adapted_element in self.adapted_elements:
             element_lines = adapted_element._str_stub_lines()
 
+            current_line = adapted_element.cpp_element().start().line
+            global_progress_bars().set_current_line(_PROGRESS_BAR_TITLE_STUB, current_line)
+
             if not self.options.python_reproduce_cpp_layout:
                 spacing_lines = line_spacer.spacing_lines(adapted_element, element_lines)
                 lines += spacing_lines
@@ -89,6 +99,10 @@ class AdaptedBlock(AdaptedElement):
 
         lines = []
         for adapted_element in self.adapted_elements:
+
+            current_line = adapted_element.cpp_element().start().line
+            global_progress_bars().set_current_line(_PROGRESS_BAR_TITLE_PYDEF, current_line)
+
             element_lines = adapted_element._str_pydef_lines()
 
             spacing_lines = line_spacer.spacing_lines(adapted_element, element_lines)
@@ -140,11 +154,25 @@ class AdaptedNamespace(AdaptedElement):
 class AdaptedUnit(AdaptedBlock):
     def __init__(self, options: LitgenOptions, unit: CppUnit):
         options.check_options_consistency()
+        global_progress_bars().start_progress_bar(_PROGRESS_BAR_TITLE_ADAPTED_ELEMENTS)
         super().__init__(options, unit)
+        global_progress_bars().stop_progress_bar(_PROGRESS_BAR_TITLE_ADAPTED_ELEMENTS)
 
     # override
     def cpp_element(self) -> CppUnit:
         return cast(CppUnit, self._cpp_element)
+
+    def str_stub(self) -> str:
+        global_progress_bars().start_progress_bar(_PROGRESS_BAR_TITLE_STUB)
+        r = AdaptedElement.str_stub(self)
+        global_progress_bars().stop_progress_bar(_PROGRESS_BAR_TITLE_STUB)
+        return r
+
+    def str_pydef(self) -> str:
+        global_progress_bars().start_progress_bar(_PROGRESS_BAR_TITLE_PYDEF)
+        r = AdaptedElement.str_pydef(self)
+        global_progress_bars().stop_progress_bar(_PROGRESS_BAR_TITLE_PYDEF)
+        return r
 
     # override : not needed, use AdaptedBlock version
     # def _str_stub_lines(self) -> List[str]:
