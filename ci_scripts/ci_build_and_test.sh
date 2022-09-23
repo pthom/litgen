@@ -39,7 +39,7 @@ which python
 
 title "Install requirements"
 cd $REPO_DIR
-pip install -r requirements.txt
+pip install -r requirements-dev.txt
 
 
 title "Run mypy static checker"

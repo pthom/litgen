@@ -17,7 +17,6 @@ authors = ["Pascal Thomet <pthomet@gmail.com>"]
 python = "^3.9"
 munch = "^2.5.0"
 PyYAML = "^6.0"
-Pygments = "^2.12.0"
 
 [tool.poetry.dev-dependencies]
 pytest = "^6.0"
@@ -30,3 +29,4 @@ importanize = "^0.7.0"
 numpy = "^1.23.0"
 flake8 = "^5.0.0"
 flake8-bugbear = "^22.0.0"
+Pygments = "^2.12.0"

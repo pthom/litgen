@@ -474,7 +474,7 @@ python-versions = ">=3.6"
 name = "pygments"
 version = "2.13.0"
 description = "Pygments is a syntax highlighting package written in Python."
-category = "main"
+category = "dev"
 optional = false
 python-versions = ">=3.6"
 
@@ -615,7 +615,7 @@ python-versions = "*"
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.9"
-content-hash = "4b7c7f10c5f70d4934de6629d0c901b8cf42f41d50ae07623b55a2a1d3109e48"
+content-hash = "a66901e392eaef6127973369b066ad37084500ac26785542cfd5a6e525d0f31e"
 
 [metadata.files]
 appnope = [
