@@ -11,16 +11,16 @@ add_subdirectory(external/pybind11)
 ####################################################
 # Build testrunner Bound C++ library
 ####################################################
-add_subdirectory(testrunner_cpp_bound_lib)    # Will build the library testrunner
-set(bound_library testrunner)                 # The library for which we are building bindings
+add_subdirectory(mylib)                       # Will build the library testrunner
+set(bound_library mylib)                 # The library for which we are building bindings
 
 
 #########################################################################
 # Build python module that provides bindings to the library implot
 #########################################################################
-set(python_native_module_name _testrunner) # This is the native python module name
-set(python_wrapper_module_name testrunner) # This is the python wrapper around the native module
-set(python_module_sources bindings/module.cpp bindings/pybind_${bound_library}.cpp) # native python module sources
+set(python_native_module_name _lg_mylib) # This is the native python module name
+set(python_wrapper_module_name lg_mylib) # This is the python wrapper around the native module
+set(python_module_sources bindings/module.cpp bindings/pybind_mylib.cpp) # native python module sources
 
 pybind11_add_module(${python_native_module_name} ${python_module_sources})
 lg_setup_module(

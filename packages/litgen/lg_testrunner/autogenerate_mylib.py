@@ -8,18 +8,17 @@ from litgen.make_amalgamated_header import AmalgamationOptions, write_amalgamate
 
 
 THIS_DIR = os.path.dirname(os.path.realpath(__file__))
-CPP_LIB_DIR = THIS_DIR + "/testrunner_cpp_bound_lib"
+CPP_LIB_DIR = THIS_DIR + "/mylib"
 CPP_GENERATED_PYBIND_DIR = THIS_DIR + "/bindings"
-CPP_AMALGAMATED_HEADER = THIS_DIR + "/testrunner_cpp_bound_lib_amalgamation/testrunner_amalgamation.h"
+CPP_AMALGAMATED_HEADER = THIS_DIR + "/mylib_amalgamation/mylib_amalgamation.h"
 
 
 def make_testrunner_amalgamated_header() -> None:
     options = AmalgamationOptions()
-
     options.base_dir = CPP_LIB_DIR
-    options.local_includes_startwith = "testrunner/"
+    options.local_includes_startwith = "mylib/"
     options.include_subdirs = ["include"]
-    options.main_header_file = "testrunner/testrunner.h"
+    options.main_header_file = "mylib/mylib.h"
     options.dst_amalgamated_header_file = CPP_AMALGAMATED_HEADER
 
     write_amalgamate_header_file(options)
@@ -55,9 +54,9 @@ def my_code_style_options() -> litgen.LitgenOptions:
 
 def autogenerate_testrunner() -> None:
     input_cpp_header = CPP_AMALGAMATED_HEADER
-    output_cpp_module = CPP_GENERATED_PYBIND_DIR + "/pybind_testrunner.cpp"
-    output_stub_pyi_file = CPP_GENERATED_PYBIND_DIR + "/testrunner/__init__.pyi"
-    output_boxed_types_header_file = CPP_GENERATED_PYBIND_DIR + "/testrunner_boxed_types.h"
+    output_cpp_module = CPP_GENERATED_PYBIND_DIR + "/pybind_mylib.cpp"
+    output_stub_pyi_file = CPP_GENERATED_PYBIND_DIR + "/lg_mylib/__init__.pyi"
+    output_boxed_types_header_file = CPP_GENERATED_PYBIND_DIR + "/mylib_boxed_types.h"
 
     # Configure options
     options = my_code_style_options()
