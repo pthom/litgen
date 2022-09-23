@@ -108,13 +108,13 @@ def test_c_array_numeric_member_types():
 
 def test_modifiable_immutable():
     a = testrunner.BoxedBool(True)
-    assert a.value == True
+    assert a.value
     testrunner.toggle_bool_pointer(a)
-    assert a.value == False
+    assert not a.value
     testrunner.toggle_bool_reference(a)
-    assert a.value == True
+    assert a.value
     testrunner.toggle_bool_nullable(a)
-    assert a.value == False
+    assert not a.value
     testrunner.toggle_bool_nullable(None)
 
 
@@ -140,7 +140,7 @@ def test_overload():
 def test_nullable_param():
     b = testrunner.BoxedBool(True)
     testrunner.toggle_bool_nullable(b)
-    assert b.value == False
+    assert b.value
     testrunner.toggle_bool_nullable()
 
 

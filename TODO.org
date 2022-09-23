@@ -103,6 +103,8 @@ CLOSED: [2022-09-18 Sun 10:54]
 
 * srcml_cpp
 
+** srcml_cpp as main project
+...
 ** ideas / further development
 *** pimpl_my_class
 *** add named parameters to functions
@@ -385,10 +387,7 @@ Remaining todo:
 
 Fix Case with lambdas:
   qualified name
-  put BoxedTypes in Litgen namespace & store file in litgen (remove generation code)
-  ==> Non !!! Besoin de pydef et de stub!!!
-
-(remove using namespace ImGui in pybind_imgui.cpp)
+  then remove using namespace ImGui in pybind_imgui.cpp
 
 
 Add enums

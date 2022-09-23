@@ -19,3 +19,4 @@ add_subdirectory(lg_projects)
 add_subdirectory(pybind_native_debug)
 
 add_subdirectory(packages/litgen/test_examples)
+add_subdirectory(packages/litgen/lg_testrunner)

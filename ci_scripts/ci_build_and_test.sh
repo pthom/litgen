@@ -58,7 +58,7 @@ pytest
 
 
 title "Build lg_testrunner and run bindings tests"
-cd "$REPO_DIR"/lg_projects/lg_testrunner
+cd "$REPO_DIR"/packages/litgen/lg_testrunner
 python autogenerate_testrunner.py
 pip install .
 pytest bindings_test.py

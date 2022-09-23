@@ -1,6 +1,4 @@
 import os
-import sys
-
 from codemanip import code_utils
 
 import srcmlcpp
