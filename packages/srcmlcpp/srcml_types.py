@@ -719,17 +719,6 @@ class CppDecl(CppElementAndComment):
             self.cpp_type.visit_cpp_breadth_first(cpp_visitor_function, depth + 1)
         cpp_visitor_function(self, CppElementsVisitorEvent.OnAfterChildren, depth)
 
-    def _clone_only_changing_parts(self) -> CppDecl:
-        """Advanced
-        used when splitting a decl_stmt into multiple decl
-        """
-        clone = self
-        clone.srcml_xml = copy.deepcopy(self.srcml_xml)
-        if hasattr(self, "cpp_type"):
-            clone.cpp_type = copy.deepcopy(self.cpp_type)
-        clone.cpp_element_comments = copy.deepcopy(self.cpp_element_comments)
-        return clone
-
 
 @dataclass
 class CppDeclStatement(CppElementAndComment):
@@ -1422,7 +1411,7 @@ class CppEnum(CppElementAndComment):
                 children.append(child)
             else:
                 decl = cast(CppDecl, child)
-                decl_with_value = decl._clone_only_changing_parts()
+                decl_with_value = copy.copy(decl)
 
                 if len(decl_with_value.initial_value_code) > 0:
                     """
