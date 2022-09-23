@@ -142,7 +142,6 @@ def test_nullable_param():
     testrunner.toggle_bool_nullable(b)
     assert not b.value
     testrunner.toggle_bool_nullable()
-    assert b.value
 
 
 def test_modify_string():
