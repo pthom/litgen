@@ -365,20 +365,24 @@ For info, below is the generated C++ code that will publish these functions:
 // BasicEnum: a simple C-style enum
 enum BasicEnum     // MY_API
 {
-    MyEnum_a = 1, // This is value a
-    MyEnum_aa,    // this is value aa
-    MyEnum_aaa,   // this is value aaa
+    // C-style enums often contain a prefix that is the enum name in itself, in order
+    // not to pollute the parent namespace.
+    // Since enum members do not leak to the parent namespace in python, litgen will remove the prefix by default.
+
+    BasicEnum_a = 1, // This will be exported as BasicEnum.a
+    BasicEnum_aa,    // This will be exported as BasicEnum.aa
+    BasicEnum_aaa,   // This will be exported as BasicEnum.aaa
 
     // Lonely comment
 
     // This is value b
-    MyEnum_b,
+    BasicEnum_b,
 
     // This is c
     // with doc on several lines
-    MyEnum_c = MyEnum_a | MyEnum_b,
+    BasicEnum_c = BasicEnum_a | BasicEnum_b,
 
-    // MyEnum_count
+    BasicEnum_count // By default this "count" item is not exported: see options.enum_flag_skip_count
 };
 
 
@@ -412,30 +416,19 @@ For info, below is the python pyi stub that is published for this file:
 
 class BasicEnum(Enum):
     """ BasicEnum: a simple C-style enum"""
-    my_enum_a   # (= 1)  # This is value a
-    my_enum_aa  # (= 2)  # this is value aa
-    my_enum_aaa # (= 3)  # this is value aaa
+
+    a   # (= 1)  # This will be exported as BasicEnum.a
+    aa  # (= 2)  # This will be exported as BasicEnum.aa
+    aaa # (= 3)  # This will be exported as BasicEnum.aaa
 
     # Lonely comment
 
     # This is value b
-    my_enum_b   # (= 4)
+    b   # (= 4)
 
     # This is c
     # with doc on several lines
-    my_enum_c   # (= BasicEnum.my_enum_a | BasicEnum.my_enum_b)
-
-    # MyEnum_count
-
-
-# ClassEnumNotRegistered should not be published, as it misses the marker "// MY_API"
-# By default, all enums, namespaces and classes are published,
-# but you can decide to include only "marked" ones, via this litgen option:
-#       options.srcml_options.api_suffixes = ["MY_API"]
-#
-# Note: Do not remove the empty line below, otherwise this comment would become part of
-#       the enum's doc, and cause it to be registered (since it contains "MY_API")
-
+    c   # (= BasicEnum.a | BasicEnum.b)
 
 
 class ClassEnum(Enum):

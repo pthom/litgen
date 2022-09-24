@@ -461,11 +461,11 @@ void py_init_module_lg_mylib(py::module& m)
 
 
     py::enum_<BasicEnum>(m, "BasicEnum", py::arithmetic(), "BasicEnum: a simple C-style enum")
-        .value("my_enum_a", MyEnum_a, "This is value a")
-        .value("my_enum_aa", MyEnum_aa, "this is value aa")
-        .value("my_enum_aaa", MyEnum_aaa, "this is value aaa")
-        .value("my_enum_b", MyEnum_b, "This is value b")
-        .value("my_enum_c", MyEnum_c, " This is c\n with doc on several lines");
+        .value("a", BasicEnum_a, "This will be exported as BasicEnum.a")
+        .value("aa", BasicEnum_aa, "This will be exported as BasicEnum.aa")
+        .value("aaa", BasicEnum_aaa, "This will be exported as BasicEnum.aaa")
+        .value("b", BasicEnum_b, "This is value b")
+        .value("c", BasicEnum_c, " This is c\n with doc on several lines");
 
 
     py::enum_<ClassEnum>(m, "ClassEnum", py::arithmetic(), "ClassEnum: a class enum that should be published")
