@@ -404,13 +404,19 @@ Problem 1: syntax issues dans hello_imgui (py with :: :    load_additional_fonts
 Problem 2: dans lg_skbuild_template, tout est accpté dans example_lib...
 Problem 3: dans lg_test_runner (integration tests), tout est refusé (trouve pas les définitions)
 
-***
+*** faire un generator / lg_skbuild_template
+Argh...
 
 ** Wish List / Easy
 
 Test STL
 Group tests / separate headers & py tests
-rename lg_testrunner to integration tests
+*** integration test
+  rename lg_testrunner to integration tests
+  finish separation
+  add test / struct, enum, etc
+  add doc
+
 
 ** Handle scope
 

@@ -52,13 +52,13 @@ cd "$REPO_DIR"
 pip install .
 
 
-title "Build lg_testrunner
+title "Build lg_testrunner"
 cd "$REPO_DIR"/packages/litgen/lg_testrunner
-python autogenerate_testrunner.py
+python autogenerate_mylib.py
 pip install .
 
 
-title "Run pytest - will test codemanip, srcmlcpp, litgen, and litgensample"
+title "Run pytest (will test codemanip srcmlcpp litgen, and litgensample)"
 cd "$REPO_DIR"
 pytest
 

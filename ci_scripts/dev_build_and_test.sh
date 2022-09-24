@@ -35,7 +35,7 @@ pip install -v -e .
 
 title "Build lg_testrunner and run bindings tests"
 cd "$REPO_DIR"/packages/litgen/lg_testrunner
-python autogenerate_testrunner.py
+python autogenerate_mylib.py
 pip install -v -e .
 
 
