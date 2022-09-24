@@ -2,6 +2,6 @@
 
     ./docker_run.py exec  dvp/sources/ci_scripts/ci_build_and_test.sh
 
-# Build lg_testrunner
+# Build litgen integration_tests pip package (lg_mylib)
 
-    ./docker_run.py exec  pip install -v dvp/sources/packages/litgen/lg_testrunner
+    ./docker_run.py exec  pip install -v dvp/sources/packages/litgen/integration_tests

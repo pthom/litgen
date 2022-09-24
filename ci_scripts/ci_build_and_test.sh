@@ -52,8 +52,8 @@ cd "$REPO_DIR"
 pip install .
 
 
-title "Build lg_testrunner"
-cd "$REPO_DIR"/packages/litgen/lg_testrunner
+title "Build litgen/integration_tests pip package (lg_mylib)"
+cd "$REPO_DIR"/packages/litgen/integration_tests
 python autogenerate_mylib.py
 pip install .
 
