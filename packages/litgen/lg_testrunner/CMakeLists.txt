@@ -10,20 +10,26 @@ add_subdirectory(external/pybind11)
 
 
 ####################################################
-# Regenerate bindings before building
-####################################################
-add_custom_target(
-    autogenerate_mylib ALL
-    COMMAND
-    ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_LIST_DIR}/autogenerate_mylib.py
-    )
-
-
-####################################################
 # Build testrunner Bound C++ library
 ####################################################
-add_subdirectory(mylib)                       # Will build the library testrunner
-set(bound_library mylib)                 # The library for which we are building bindings
+add_subdirectory(mylib)                       # Will build the library mylib
+set(bound_library mylib)                      # The library for which we are building bindings
+
+
+####################################################
+# Regenerate bindings before building
+####################################################
+if (NOT SKBUILD) # Do not run autogenerate when running pip install
+    set(run_autogenerate ON)
+endif()
+if (run_autogenerate)
+    add_custom_target(
+        autogenerate_mylib ALL
+        COMMAND
+        ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_LIST_DIR}/autogenerate_mylib.py
+    )
+    add_dependencies(mylib autogenerate_mylib)    # Make sure autogenerate is run before building the lib
+endif()
 
 
 #########################################################################

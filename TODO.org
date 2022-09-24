@@ -101,6 +101,29 @@ CLOSED: [2022-09-18 Sun 10:54]
    int a = 0
 
 
+
+* immvision
+
+** demo mandelbrot emscripten multithread:
+
+Test multithread qui semble marcher:
+    voir /Users/pascal/dvp/OpenSource/ImGuiWork/hello_imgui/build_emscripten
+    et /Users/pascal/dvp/OpenSource/ImGuiWork/hello_imgui/src/hello_imgui_demos/thread_ems/thread_ems.main.cpp
+
+    En gros, ca marche avec Firefox et Chrome.
+    plein de modifs:
+       1. Server web qui Envoie des headers necessaires pour rendre multithread accepté
+          /Users/pascal/dvp/OpenSource/ImGuiWork/hello_imgui/src/hello_imgui_demos/thread_ems/simple-cors-http-server.py
+       2. Pas de sleep ni de join sur thread principal!
+       3. options de compil : faire choix dans
+          - supprimer -s ALLOW_MEMORY_GROWTH=1 ?
+          - add_compile_options("-pthread")
+            add_link_options("-pthread")
+          + add_compile_options("-sPTHREAD_POOL_SIZE=100")
+          + add_compile_options("-sINITIAL_MEMORY=167772160")
+
+
+
 * srcml_cpp
 
 ** srcml_cpp as main project

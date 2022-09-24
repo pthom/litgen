@@ -15,31 +15,11 @@
 #include "mylib/c_string_list_test.h"
 #include "mylib/modifiable_immutable_test.h"
 #include "mylib/overload_test.h"
+#include "mylib/enum_test.h"
 
 
 namespace LiterateGeneratorExample // MY_API
 {
-    // A super nice enum
-    // for demo purposes ( bool val = false )
-    enum MyEnum     // MY_API
-    {
-        MyEnum_a = 1, // This is value a
-        MyEnum_aa,    // this is value aa
-        MyEnum_aaa,   // this is value aaa
-
-        // Lonely comment
-
-        // This is value b
-        MyEnum_b,
-
-        // This is c
-        // with doc on several lines
-        MyEnum_c = MyEnum_a | MyEnum_b,
-
-        MyEnum_count
-    };
-
-
 
     // Adds two numbers
     MY_API inline int add(int a, int b) { return a + b; }

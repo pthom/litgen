@@ -1,13 +1,8 @@
 import lg_mylib
 
-#
-# Test Part 1: in those functions the value parameters will be "Boxed"
-#
-# This is caused by the following options during generation:
-#     options.fn_params_replace_modifiable_immutable_by_boxed__regexes = [
-#         r"^Toggle",
-#         r"^Modify",
-#      ]
+"""
+See doc in modifiable_immutable_test.h
+"""
 
 
 def test_modifiable_immutable():

@@ -303,7 +303,7 @@ void py_init_module_lg_mylib(py::module& m)
             ToggleBoolPointer_adapt_modifiable_immutable(v);
         },
         py::arg("v"),
-        "Test with pointer");
+        " Test with pointer\n -->    def toggle_bool_pointer(v: BoxedBool) -> None:");
 
     m.def("toggle_bool_nullable",
         [](BoxedBool * v = nullptr)
@@ -320,7 +320,7 @@ void py_init_module_lg_mylib(py::module& m)
             ToggleBoolNullable_adapt_modifiable_immutable(v);
         },
         py::arg("v") = py::none(),
-        "Test with nullable pointer");
+        " Test with nullable pointer\n -->    def toggle_bool_nullable(v: BoxedBool = None) -> None:");
 
     m.def("toggle_bool_reference",
         [](BoxedBool & v)
@@ -335,21 +335,7 @@ void py_init_module_lg_mylib(py::module& m)
             ToggleBoolReference_adapt_modifiable_immutable(v);
         },
         py::arg("v"),
-        "Test with reference");
-
-    m.def("slider_bool_int",
-        [](const char * label, int value) -> std::tuple<bool, int>
-        {
-            auto SliderBoolInt_adapt_modifiable_immutable_to_return = [](const char * label, int value) -> std::tuple<bool, int>
-            {
-                int * value_adapt_modifiable = & value;
-
-                MY_API bool r = SliderBoolInt(label, value_adapt_modifiable);
-                return std::make_tuple(r, value);
-            };
-
-            return SliderBoolInt_adapt_modifiable_immutable_to_return(label, value);
-        },     py::arg("label"), py::arg("value"));
+        " Test with reference\n -->    def toggle_bool_reference(v: BoxedBool) -> None:");
 
     m.def("modify_string",
         [](BoxedString & s)
@@ -364,7 +350,23 @@ void py_init_module_lg_mylib(py::module& m)
             ModifyString_adapt_modifiable_immutable(s);
         },
         py::arg("s"),
-        "Test modifiable String");
+        " Test modifiable String\n -->    def modify_string(s: BoxedString) -> None:");
+
+    m.def("slider_bool_int",
+        [](const char * label, int value) -> std::tuple<bool, int>
+        {
+            auto SliderBoolInt_adapt_modifiable_immutable_to_return = [](const char * label, int value) -> std::tuple<bool, int>
+            {
+                int * value_adapt_modifiable = & value;
+
+                MY_API bool r = SliderBoolInt(label, value_adapt_modifiable);
+                return std::make_tuple(r, value);
+            };
+
+            return SliderBoolInt_adapt_modifiable_immutable_to_return(label, value);
+        },
+        py::arg("label"), py::arg("value"),
+        " Test with int param + int return type\n --> def slider_bool_int(label: str, value: int) -> Tuple[bool, int]:");
 
     m.def("slider_void_int",
         [](const char * label, int value) -> int
@@ -378,7 +380,9 @@ void py_init_module_lg_mylib(py::module& m)
             };
 
             return SliderVoidInt_adapt_modifiable_immutable_to_return(label, value);
-        },     py::arg("label"), py::arg("value"));
+        },
+        py::arg("label"), py::arg("value"),
+        "-->    def slider_void_int(label: str, value: int) -> int:");
 
     m.def("slider_bool_int2",
         [](const char * label, int value1, int value2) -> std::tuple<bool, int, int>
@@ -393,7 +397,9 @@ void py_init_module_lg_mylib(py::module& m)
             };
 
             return SliderBoolInt2_adapt_modifiable_immutable_to_return(label, value1, value2);
-        },     py::arg("label"), py::arg("value1"), py::arg("value2"));
+        },
+        py::arg("label"), py::arg("value1"), py::arg("value2"),
+        "-->    def slider_bool_int2(label: str, value1: int, value2: int) -> Tuple[bool, int, int]:");
 
     m.def("slider_void_int_default_null",
         [](const char * label, std::optional<int> value = std::nullopt) -> std::tuple<bool, std::optional<int>>
@@ -409,7 +415,9 @@ void py_init_module_lg_mylib(py::module& m)
             };
 
             return SliderVoidIntDefaultNull_adapt_modifiable_immutable_to_return(label, value);
-        },     py::arg("label"), py::arg("value") = py::none());
+        },
+        py::arg("label"), py::arg("value") = py::none(),
+        "-->    def slider_void_int_default_null(label: str, value: Optional[int] = None) -> Tuple[bool, Optional[int]]:");
 
     m.def("slider_void_int_array",
         [](const char * label, std::array<int, 3> value) -> std::tuple<bool, std::array<int, 3>>
@@ -423,7 +431,9 @@ void py_init_module_lg_mylib(py::module& m)
             };
 
             return SliderVoidIntArray_adapt_modifiable_immutable_to_return(label, value);
-        },     py::arg("label"), py::arg("value"));
+        },
+        py::arg("label"), py::arg("value"),
+        "-->    def slider_void_int_array(label: str, value: List[int]) -> Tuple[bool, List[int]]:");
 
     m.def("add_overload",
         py::overload_cast<int, int>(add_overload), py::arg("a"), py::arg("b"));
@@ -442,15 +452,15 @@ void py_init_module_lg_mylib(py::module& m)
         ;
 
 
+    py::enum_<BasicEnum>(m, "BasicEnum", py::arithmetic(), "////////////////////////////////////////////////////////////////////////////////////////////////////////////////\n                       mylib/enum_test.h included by mylib/mylib.h                                            //\n//////////////////////////////////////////////////////////////////////////////////////////////////////////////\n A super nice enum for demo purposes")
+        .value("my_enum_a", MyEnum_a, "This is value a")
+        .value("my_enum_aa", MyEnum_aa, "this is value aa")
+        .value("my_enum_aaa", MyEnum_aaa, "this is value aaa")
+        .value("my_enum_b", MyEnum_b, "This is value b")
+        .value("my_enum_c", MyEnum_c, " This is c\n with doc on several lines");
+
+
     // <namespace LiterateGeneratorExample>
-    py::enum_<MyEnum>(m, "MyEnum", py::arithmetic(), " A super nice enum\n for demo purposes ( bool val = False )")
-        .value("a", MyEnum_a, "This is value a")
-        .value("aa", MyEnum_aa, "this is value aa")
-        .value("aaa", MyEnum_aaa, "this is value aaa")
-        .value("b", MyEnum_b, "This is value b")
-        .value("c", MyEnum_c, " This is c\n with doc on several lines");
-
-
     m.def("add",
         LiterateGeneratorExample::add,
         py::arg("a"), py::arg("b"),

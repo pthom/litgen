@@ -135,47 +135,62 @@ def c_string_list_total_size(
 # Modifiable immutable python types test
 #
 
-
-#
-# Test Part 1: in those functions the value parameters will be "Boxed"
+#///////////////////////////////////////////////////////////////////////////////////////////
+# Test Part 1: in the functions below, the value parameters will be "Boxed"
 #
 # This is caused by the following options during generation:
 #     options.fn_params_replace_modifiable_immutable_by_boxed__regexes = [
 #         r"^Toggle",
 #         r"^Modify",
 #      ]
+#/////////////////////////////////////////////////////////////////////////////////////////
+
 
 def toggle_bool_pointer(v: BoxedBool) -> None:
-    """ Test with pointer"""
+    """ Test with pointer
+     -->    def toggle_bool_pointer(v: BoxedBool) -> None:
+    """
     pass
 
 def toggle_bool_nullable(v: BoxedBool = None) -> None:
-    """ Test with nullable pointer"""
+    """ Test with nullable pointer
+     -->    def toggle_bool_nullable(v: BoxedBool = None) -> None:
+    """
     pass
 
 def toggle_bool_reference(v: BoxedBool) -> None:
-    """ Test with reference"""
-    pass
-
-def slider_bool_int(label: str, value: int) -> Tuple[bool, int]:
+    """ Test with reference
+     -->    def toggle_bool_reference(v: BoxedBool) -> None:
+    """
     pass
 
 def modify_string(s: BoxedString) -> None:
-    """ Test modifiable String"""
+    """ Test modifiable String
+     -->    def modify_string(s: BoxedString) -> None:
+    """
     pass
 
 
+#///////////////////////////////////////////////////////////////////////////////////////////
 #
-# Test Part 2: in the functions below return type is modified:
-# the following functions will return a tuple inside python :
-#     (original_return_value, modified_paramer)
+# Test Part 2: in the functions below, the python return type is modified:
+# the python functions will return a tuple:
+#     (original_return_value, modified_parameter)
 #
 # This is caused by the following options during generation:
 #
 #     options.fn_params_output_modifiable_immutable_to_return__regexes = [r"^Slider"]
+#/////////////////////////////////////////////////////////////////////////////////////////
 
+
+def slider_bool_int(label: str, value: int) -> Tuple[bool, int]:
+    """ Test with int param + int return type
+     --> def slider_bool_int(label: str, value: int) -> Tuple[bool, int]:
+    """
+    pass
 
 def slider_void_int(label: str, value: int) -> int:
+    """ -->    def slider_void_int(label: str, value: int) -> int:"""
     pass
 
 def slider_bool_int2(
@@ -183,21 +198,22 @@ def slider_bool_int2(
     value1: int,
     value2: int
     ) -> Tuple[bool, int, int]:
+    """ -->    def slider_bool_int2(label: str, value1: int, value2: int) -> Tuple[bool, int, int]:"""
     pass
 
 def slider_void_int_default_null(
     label: str,
     value: Optional[int] = None
     ) -> Tuple[bool, Optional[int]]:
+    """ -->    def slider_void_int_default_null(label: str, value: Optional[int] = None) -> Tuple[bool, Optional[int]]:"""
     pass
 
 def slider_void_int_array(
     label: str,
     value: List[int]
     ) -> Tuple[bool, List[int]]:
+    """ -->    def slider_void_int_array(label: str, value: List[int]) -> Tuple[bool, List[int]]:"""
     pass
-
-
 
 #////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 #                       mylib/overload_test.h included by mylib/mylib.h                                        //
@@ -217,31 +233,35 @@ class FooOverload:
     def add_overload(self, a: int, b: int, c: int) -> int:  # type: ignore
         pass
 
+class BasicEnum(Enum):
+    """////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                           mylib/enum_test.h included by mylib/mylib.h                                            //
+    //////////////////////////////////////////////////////////////////////////////////////////////////////////////
+     A super nice enum for demo purposes
+    """
+    my_enum_a = 1    # This is value a
+    my_enum_aa = 2   # this is value aa
+    my_enum_aaa = 3  # this is value aaa
+
+    # Lonely comment
+
+    # This is value b
+    my_enum_b = 4
+
+    # This is c
+    # with doc on several lines
+    my_enum_c = Literal[BasicEnum.my_enum_a] | Literal[BasicEnum.my_enum_b]
+
+    # MyEnum_count
+
+
+
 
 
 #////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 #                       mylib/mylib.h continued                                                                //
 #//////////////////////////////////////////////////////////////////////////////////////////////////////////////
 # <Namespace LiterateGeneratorExample>
-class MyEnum(Enum):
-    """ A super nice enum
-     for demo purposes ( bool val = False )
-    """
-    a = 1    # This is value a
-    aa = 2   # this is value aa
-    aaa = 3  # this is value aaa
-
-    # Lonely comment
-
-    # This is value b
-    b = 4
-
-    # This is c
-    # with doc on several lines
-    c = Literal[MyEnum.a] | Literal[MyEnum.b]
-
-
-
 
 def add(a: int, b: int) -> int:
     """ Adds two numbers"""

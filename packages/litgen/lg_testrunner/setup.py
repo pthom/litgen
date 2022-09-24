@@ -5,7 +5,7 @@ setup(
     version="0.1.0",
     author="Pascal Thomet",
     author_email="pthomet@gmail.com",
-    description="testrunner, integration tests python module for litgen tests",
+    description="lg-mylib, integration tests python module for litgen tests",
     url="https://github.com/pthom/litgen",
     packages=(["lg_mylib"]),
     package_dir={"": "bindings"},
