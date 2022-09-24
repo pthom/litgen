@@ -13,6 +13,6 @@ setup(
     include_package_data=True,
     extras_require={"test": ["pytest"]},
     python_requires=">=3.6",
-    package_data={"lg_mylib": ["*.pyi"]},
+    package_data={"lg_mylib": ["py.typed", "*.pyi"]},
     install_requires=[],
 )
