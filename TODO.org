@@ -128,12 +128,33 @@ Test multithread qui semble marcher:
 
 ** srcml_cpp as main project
 ...
-** ideas / further development
-*** pimpl_my_class
-*** add named parameters to functions
+** ideas / other utilities
+PimpMyClass
+        auto pImpl from cpp: pImpl class  => header decl + cpp imp non pImpl + Doc !
+Add named parameters to functions
+Cerealize / cerealize
+PimpMyCi:
+    check for doc
+    check for snake_case
+    hunt_fake_classes
+       "a class with a constructor and only one public function is not a class. Use a namespace!"
+       Example / Mailer
+       prefix class members
 
+* Dyndoc
+Voir note sur telephone
 
 * Litgen doc
+
+** Sources de stubs connues: $
+Voir https://github.com/python/typeshed and https://github.com/microsoft/python-type-stubs
+
+
+** Alternatives a litgen:
+        https://pybind11.readthedocs.io/en/stable/compiling.html#generating-binding-code-automatically
+        AutoWIG:
+            https://www.youtube.com/watch?v=N4q_Vud77Hw
+
 
 ** Diagram srcmlcpp and litgen adapted classes
 
@@ -412,6 +433,11 @@ Problem 3: dans lg_test_runner (integration tests), tout est refusé (trouve pas
 Argh...
 
 ** Wish List / Easy
+Call stack warning pas bonne (dans autogen_mylib), mais bonne dans unit test!
+Renommer package de lg_skbuild_template (example-lib => lg-example-lib) ?
+enum / py::arithmetic() : add an option?
+Bug still ? Static methods: cf https://pybind11-jagerman.readthedocs.io/en/stable/classes.html?highlight=static%20method#instance-and-static-fields
+        use def_static
 
 
 ** Handle scope

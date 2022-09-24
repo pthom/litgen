@@ -1,28 +1,3 @@
-litgen:
-    Handle namespace
-        soit https://www.reddit.com/r/learnpython/comments/dek8fy/how_to_create_a_stub_file_for_a_submodule_in_a_c/
-        soit fake class with staticmethods
-
-code:
-namespace A
-{
-    namespace B
-    {
-        enum class ItemType{ One, Two, Three};
-        void FooB(ItemType itemType);
-    }
-
-    void FooA(B::ItemType v);
-}
-
-        Définir un  ou des root Namespace
-            pour lequel on ne cree pas de submodule
-            que faire des fonctions hors namespace: les ignorer?
-
-        côté pybind:
-            module_ newsubmodule = m.def_submodule(const char *name, const char *doc = nullptr)
-
-
 lg_imgui_bundle:
     Review description (imgui first)
     Re-try add mahi-gui
@@ -32,12 +7,6 @@ Finir lg_testrunner
 
 himgui:
     run mypy on init.pyi de himgui
-    cpp_to_python_translation_table:
-        by namespace
-            -> dans replacements_cache
-    adapted_namespace:
-        extract to file
-        add cpp_to_python_replacements (functions & decls)
     namespace:
 
     Compat pyimgui:
@@ -45,8 +14,6 @@ himgui:
         return Imvec2 => investiguer, example = get_window_position() : ca retourne un "Vec2" !
 
     Nettoyage:
-        Don't use {} in function default params
-
         himgui.__init__.pyi, hacké:
             ````
             from lg_imgui import ImVec2, ImVec4, ImTextureID, ImFontConfig, ImFont, ImGuiWindowFlags
@@ -73,10 +40,6 @@ litgen:
         toString en hackant str:
         l.Foo.__str__ = my_str
 
-    CI / profiling:
-        ajouter un test de rapidite sur gen imgui
-        remplacer instances de copy.deepcopy par un clone (or remove parent)
-
     implot
         SetupAxisTicks uses a string list, parameters order reversed!
 
@@ -98,51 +61,11 @@ srcmlcpp:
     Doc & Demo
 
 
-srcmlcpp demos:
-
-    PimpMyClass !
-        srcmlcpp separated
-        auto pImpl from cpp: pImpl class  => header decl + cpp imp non pImpl + Doc !
-
-    Cerealize / cerealize
-
-    pimp_my_ci:
-        check for doc
-        check for snake_case
-        hunt_fake_classes
-            "a class with a constructor and only one public function is not a class. Use a namespace!"
-            Example / Mailer
-        prefix class members
-
-
-
 Notes / Doc pybind11:
-    Alternatives litgen:
-        https://pybind11.readthedocs.io/en/stable/compiling.html#generating-binding-code-automatically
-        AutoWIG:
-            https://www.youtube.com/watch?v=N4q_Vud77Hw
-
-    Nested structs and enums (inside struct or class): see https://pybind11.readthedocs.io/en/stable/classes.html#enumerations-and-internal-types
-        enum / py::arithmetic() : add an option?
-
-- add namespace hierarchy in pydef ? With option ?
 
 
 
-Lire doc pybind / numpy and eigen...
-Voir https://github.com/python/typeshed and https://github.com/microsoft/python-type-stubs
-
-
-Dyndoc !!!!
-    Export Text, HTML, Image, Take Screenshots, etc
 
 
 
 Bugs:
-    - Static methods: cf https://pybind11-jagerman.readthedocs.io/en/stable/classes.html?highlight=static%20method#instance-and-static-fields
-        use def_static
-
-- Later: folder in site-packages
-- code_replacement sur comments deconne:
-    // Doubles the input number
-    // i.e return "2 * x"    <== le * est supprimé
