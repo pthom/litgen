@@ -58,7 +58,7 @@ python autogenerate_testrunner.py
 pip install .
 
 
-title "Run pytest (will test codemanip, srcmlcpp, litgen, and litgensample)"
+title "Run pytest - will test codemanip, srcmlcpp, litgen, and litgensample"
 cd "$REPO_DIR"
 pytest
 
