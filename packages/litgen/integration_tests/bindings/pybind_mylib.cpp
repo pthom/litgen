@@ -533,19 +533,24 @@ void py_init_module_lg_mylib(py::module& m)
     auto pyClassParentStruct = py::class_<SomeNamespace::ParentStruct>
         (m, "ParentStruct", "")
         .def(py::init<>()) // implicit default constructor
-        .def_readwrite("a", &SomeNamespace::ParentStruct::a, "")
         .def_readwrite("inner_struct", &SomeNamespace::ParentStruct::inner_struct, "")
+        .def_readwrite("inner_enum", &SomeNamespace::ParentStruct::inner_enum, "")
         ;
-    { // inner classes of ParentStruct
+    { // inner classes & enums of ParentStruct
         auto pyClassParentStruct_ClassInnerStruct = py::class_<SomeNamespace::ParentStruct::InnerStruct>
             (pyClassParentStruct, "InnerStruct", "")
             .def_readwrite("value", &SomeNamespace::ParentStruct::InnerStruct::value, "")
             .def(py::init<int>(),
-                py::arg("value") = 0)
+                py::arg("value") = 10)
             .def("add",
                 &SomeNamespace::ParentStruct::InnerStruct::add, py::arg("a"), py::arg("b"))
             ;
-    } // end of inner classes of ParentStruct
+        py::enum_<SomeNamespace::ParentStruct::InnerEnum>(pyClassParentStruct, "InnerEnum", py::arithmetic(), "")
+            .value("zero", SomeNamespace::ParentStruct::InnerEnum::Zero, "")
+            .value("one", SomeNamespace::ParentStruct::InnerEnum::One, "")
+            .value("two", SomeNamespace::ParentStruct::InnerEnum::Two, "")
+            .value("three", SomeNamespace::ParentStruct::InnerEnum::Three, "");
+    } // end of inner classes & enums of ParentStruct
     // </namespace SomeNamespace>
 
 

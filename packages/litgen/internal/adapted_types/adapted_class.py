@@ -12,6 +12,7 @@ from litgen.internal.adapted_types.adapted_comment import (
 from litgen.internal.adapted_types.adapted_decl import AdaptedDecl
 from litgen.internal.adapted_types.adapted_element import AdaptedElement
 from litgen.internal.adapted_types.adapted_function import AdaptedFunction
+from litgen.internal.adapted_types.adapted_enum import AdaptedEnum
 from litgen.options import LitgenOptions
 
 
@@ -279,6 +280,9 @@ class AdaptedClass(AdaptedElement):
             elif isinstance(child, CppStruct):
                 adapted_subclass = AdaptedClass(self.options, child)
                 self.adapted_public_children.append(adapted_subclass)
+            elif isinstance(child, CppEnum):
+                adapted_enum = AdaptedEnum(self.options, child)
+                self.adapted_public_children.append(adapted_enum)
 
             else:
                 child.emit_warning(
@@ -339,12 +343,14 @@ class AdaptedClass(AdaptedElement):
         if self.cpp_element().has_deleted_default_ctor():
             code += f"{_i_}// (default constructor explicitly deleted)\n"
 
-        children_except_inner_classes = list(
-            filter(lambda _child: not isinstance(_child, AdaptedClass), self.adapted_public_children)
-        )
-        children_inner_classes = list(
-            filter(lambda _child: isinstance(_child, AdaptedClass), self.adapted_public_children)
-        )
+        def is_class_or_enum(e: AdaptedElement) -> bool:
+            return isinstance(e, AdaptedClass) or isinstance(e, AdaptedEnum)
+
+        def not_is_class_or_enum(e: AdaptedElement) -> bool:
+            return not (isinstance(e, AdaptedClass) or isinstance(e, AdaptedEnum))
+
+        children_except_inner_classes = list(filter(not_is_class_or_enum, self.adapted_public_children))
+        children_inner_classes = list(filter(is_class_or_enum, self.adapted_public_children))
 
         for child in children_except_inner_classes:
             decl_code = child.str_pydef()
@@ -353,11 +359,11 @@ class AdaptedClass(AdaptedElement):
         code = code + code_outro
 
         if len(children_inner_classes) > 0:
-            code += "\n{" + f" // inner classes of {self.class_name_python()}\n"
+            code += "\n{" + f" // inner classes & enums of {self.class_name_python()}\n"
             for child in children_inner_classes:
                 decl_code = child.str_pydef()
                 code += code_utils.indent_code(decl_code, indent_str=options.indent_cpp_spaces())
-            code += "}" + f" // end of inner classes of {self.class_name_python()}"
+            code += "}" + f" // end of inner classes & enums of {self.class_name_python()}"
 
         lines = code.split("\n")
         return lines

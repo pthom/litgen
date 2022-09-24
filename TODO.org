@@ -394,6 +394,10 @@ insert diagram via mermaid (see integration with emacs)
 
 
 
+* Hello ImGui TODO
+later! publish srcmlcpp before!
+auto-resize and other goodies from immvision
+
 * Litgen TODO
 
 ** Wish list / hard
@@ -409,8 +413,10 @@ Argh...
 
 ** Wish List / Easy
 
-Supprimer IMGUI_API & MY_API dans pybind
-
+arg, faut-il remettre les "=" dans les stub / enum ?
+  Il semble que l'autocompletion en a besoin
+  Sinon, mettre = auto() + from enum import Enum, auto
+  https://docs.python.org/3/library/enum.html#using-automatic-values
 
 *** integration test
   replace amalgamation by several files processed?
@@ -419,13 +425,6 @@ Supprimer IMGUI_API & MY_API dans pybind
 ** Handle scope
 
 *** First handle subclasses & sub enums
-
-Remaining todo:
-
-Fix Case with lambdas:
-  qualified name
-  then remove using namespace ImGui in pybind_imgui.cpp
-
 
 Add enums
 

@@ -47,6 +47,7 @@ class BoxedString:
 #//////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
+
 #////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 #                       mylib/basic_test.h included by mylib/mylib.h                                           //
 #//////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -565,26 +566,25 @@ def my_config_instance() -> MyConfig:
 #                       mylib/inner_class_test.h included by mylib/mylib.h                                     //
 #//////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+
 # <Namespace SomeNamespace>
 class ParentStruct:
     class InnerStruct:
         value: int
 
-        def __init__(self, value: int = 0) -> None:
+        def __init__(self, value: int = 10) -> None:
             pass
         def add(self, a: int, b: int) -> int:
             pass
 
-    #        enum class InnerEnum                                   // MY_API
-    #        {
-    #            Zero = 0,
-    #            One,
-    #            Two
-    #        };
+    class InnerEnum(Enum):
+        zero  # (= 0)
+        one   # (= 1)
+        two   # (= 2)
+        three # (= 3)
 
-    a: int = 1
     inner_struct: InnerStruct
-    #        InnerEnum inner_enum;
+    inner_enum: InnerEnum = InnerEnum.three
 # </Namespace SomeNamespace>
 # namespace SomeNamespace
 
@@ -694,6 +694,12 @@ def c_string_list_total_size(
 #                       mylib/sandbox.h included by mylib/mylib.h                                              //
 #//////////////////////////////////////////////////////////////////////////////////////////////////////////////
 # Sandbox to play with litgen. Add some code here (with MY_API), and it will be exported
+
+
+#////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+#                       mylib/mylib.h continued                                                                //
+#//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+# #include "mylib/inner_class_test.h"
 ####################    </generated_from:mylib_amalgamation.h>    ####################
 
 # </litgen_stub>

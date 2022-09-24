@@ -30,12 +30,15 @@ class AdaptedEnumDecl(AdaptedDecl):
 
     def decl_name_cpp_decorated(self) -> str:
         is_class_enum = self.enum_parent.cpp_element().enum_type == "class"
+
+        scope_str = self.enum_parent.cpp_element().cpp_scope(is_class_enum).str_cpp()
         decl_name_cpp = self.cpp_element().decl_name
-        if not is_class_enum:
-            return decl_name_cpp
+
+        if len(scope_str) > 0:
+            r = scope_str + "::" + decl_name_cpp
         else:
-            r = self.enum_parent.cpp_element().enum_name + "::" + decl_name_cpp
-            return r
+            r = decl_name_cpp
+        return r
 
     def _decl_name_cpp_without_enum_prefix(self) -> str:
         enum_cpp = self.enum_parent.cpp_element()
@@ -190,7 +193,8 @@ class AdaptedEnum(AdaptedElement):
 
     # override
     def _str_pydef_lines(self) -> List[str]:
-        enum_name_cpp = self.cpp_element().enum_name
+        enum_name_cpp = self.cpp_element().cpp_scope(True).str_cpp()
+        # enum_name_cpp = self.cpp_element().enum_name
         enum_name_python = self.enum_name_python()
         comment = self.comment_pydef_one_line()
         location = self.info_original_location_cpp()
@@ -198,7 +202,8 @@ class AdaptedEnum(AdaptedElement):
         lines: List[str] = []
 
         # Enum decl first line
-        enum_decl_line = f'py::enum_<{enum_name_cpp}>(m, "{enum_name_python}", py::arithmetic(), "{comment}"){location}'
+        pydef_class_var_parent = cpp_to_python.cpp_scope_to_pybind_parent_var_name(self.options, self.cpp_element())
+        enum_decl_line = f'py::enum_<{enum_name_cpp}>({pydef_class_var_parent}, "{enum_name_python}", py::arithmetic(), "{comment}"){location}'
         lines += [enum_decl_line]
 
         # Enum values

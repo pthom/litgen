@@ -12,6 +12,7 @@
 #define MY_API  // MY_API could typically be __declspec(dllexport | dllimport)
 #endif
 
+
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //                       mylib/basic_test.h included by mylib/mylib.h                                           //
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -566,6 +567,7 @@ For info, below is the C++ generated binding code:
 //                       mylib/inner_class_test.h included by mylib/mylib.h                                     //
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+
 namespace SomeNamespace                                        // MY_API
 {
     struct ParentStruct                                        // MY_API
@@ -574,20 +576,20 @@ namespace SomeNamespace                                        // MY_API
         {
             int value;
 
-            InnerStruct(int value = 0) : value(value) {}
+            InnerStruct(int value = 10) : value(value) {}
             MY_API int add(int a, int b) { return a + b; }
         };
 
-//        enum class InnerEnum                                   // MY_API
-//        {
-//            Zero = 0,
-//            One,
-//            Two
-//        };
+        enum class InnerEnum                                   // MY_API
+        {
+            Zero = 0,
+            One,
+            Two,
+            Three
+        };
 
-        int a = 1;
         InnerStruct inner_struct;
-//        InnerEnum inner_enum;
+        InnerEnum inner_enum = InnerEnum::Three;
     };
 } // namespace SomeNamespace
 
@@ -713,3 +715,9 @@ namespace SomeNamespace // MY_API
 //                       mylib/sandbox.h included by mylib/mylib.h                                              //
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Sandbox to play with litgen. Add some code here (with MY_API), and it will be exported
+
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//                       mylib/mylib.h continued                                                                //
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// #include "mylib/inner_class_test.h"
