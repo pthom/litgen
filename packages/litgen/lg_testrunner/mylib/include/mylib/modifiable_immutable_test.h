@@ -4,6 +4,18 @@
 // Modifiable immutable python types test
 //
 
+// litgen adapts functions params that use modifiable pointer or reference to a type
+// that is immutable in python.
+// On the C++ side, these params are modifiable by the function.
+// We need to box them into a Boxed type to ensure that any modification made by C++
+// is visible when going back to Python.
+//
+// Note: immutable data types in python are
+//   - Int, Float, String (correctly handled by litgen)
+//   - Complex, Bytes (not handled)
+//   - Tuple (not handled)
+
+
 /////////////////////////////////////////////////////////////////////////////////////////////
 // Test Part 1: in the functions below, the value parameters will be "Boxed"
 //
@@ -15,7 +27,8 @@
 /////////////////////////////////////////////////////////////////////////////////////////////
 
 
-// Test with pointer
+// Test with pointer: a pointer
+// Will be published in python as:
 // -->    def toggle_bool_pointer(v: BoxedBool) -> None:
 MY_API void ToggleBoolPointer(bool *v)
 {
@@ -23,6 +36,7 @@ MY_API void ToggleBoolPointer(bool *v)
 }
 
 // Test with nullable pointer
+// Will be published in python as:
 // -->    def toggle_bool_nullable(v: BoxedBool = None) -> None:
 MY_API void ToggleBoolNullable(bool *v = NULL)
 {
@@ -31,6 +45,7 @@ MY_API void ToggleBoolNullable(bool *v = NULL)
 }
 
 // Test with reference
+// Will be published in python as:
 // -->    def toggle_bool_reference(v: BoxedBool) -> None:
 MY_API void ToggleBoolReference(bool &v)
 {
@@ -38,6 +53,7 @@ MY_API void ToggleBoolReference(bool &v)
 }
 
 // Test modifiable String
+// Will be published in python as:
 // -->    def modify_string(s: BoxedString) -> None:
 MY_API void ModifyString(std::string* s) { (*s) += "hello"; }
 
@@ -55,6 +71,7 @@ MY_API void ModifyString(std::string* s) { (*s) += "hello"; }
 
 
 // Test with int param + int return type
+// Will be published in python as:
 // --> def slider_bool_int(label: str, value: int) -> Tuple[bool, int]:
 MY_API bool SliderBoolInt(const char* label, int * value)
 {
@@ -62,12 +79,14 @@ MY_API bool SliderBoolInt(const char* label, int * value)
     return true;
 }
 
+// Will be published in python as:
 // -->    def slider_void_int(label: str, value: int) -> int:
 MY_API void SliderVoidInt(const char* label, int * value)
 {
     *value += 1;
 }
 
+// Will be published in python as:
 // -->    def slider_bool_int2(label: str, value1: int, value2: int) -> Tuple[bool, int, int]:
 MY_API bool SliderBoolInt2(const char* label, int * value1, int * value2)
 {
@@ -76,6 +95,7 @@ MY_API bool SliderBoolInt2(const char* label, int * value1, int * value2)
     return false;
 }
 
+// Will be published in python as:
 // -->    def slider_void_int_default_null(label: str, value: Optional[int] = None) -> Tuple[bool, Optional[int]]:
 MY_API bool SliderVoidIntDefaultNull(const char* label, int * value = nullptr)
 {
@@ -84,6 +104,7 @@ MY_API bool SliderVoidIntDefaultNull(const char* label, int * value = nullptr)
     return true;
 }
 
+// Will be published in python as:
 // -->    def slider_void_int_array(label: str, value: List[int]) -> Tuple[bool, List[int]]:
 MY_API bool SliderVoidIntArray(const char* label, int value[3])
 {

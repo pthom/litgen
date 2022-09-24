@@ -30,7 +30,7 @@ MY_API int my_sub(int a, int b) { return a - b; }
 
 
 // Title that should be published as a top comment in python stub (pyi) and thus not part of __doc__
-// (the end-of-line comment will supersede the top comment)
+// (the end-of-line comment will supersede this top comment)
 MY_API inline int my_add(int a, int b) { return a + b; } // Adds two numbers
 
 
@@ -44,11 +44,7 @@ int my_div(int a, int b) { return a / b;}
 
 
 /*
-For info, here is the python pyi stub that is published for this file:
-
-#////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-#                       mylib/basic_test.h included by mylib/mylib.h                                           //
-#//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+For info, below is the python pyi stub that is published for this file:
 
 def my_sub(a: int, b: int) -> int:
     """ Subtracts two numbers: this will be the __doc__ since my_sub does not have an end-of-line comment"""
@@ -67,17 +63,15 @@ def my_add(a: int, b: int) -> int:
 
 def my_mul(a: int, b: int) -> int:
     pass
+*/
 
- */
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //                       mylib/header_filter_test.h included by mylib/mylib.h                                   //
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-// Here, we test that functions placed under unknown preprocessor defines are not exported by default
+// Here, we test that functions placed under unknown preprocessor conditions are not exported by default
 // You could choose to add them anyway with:
-// ````
 //    options.srcml_options.header_guard_suffixes.append("OBSCURE_OPTION")
-// ````
 
 #ifdef OBSCURE_OPTION
 MY_API int ObscureFunction() { return 42; }
@@ -91,20 +85,33 @@ MY_API int ObscureFunction() { return 42; }
 // C Style array tests
 //
 
-// Tests with Boxed Numbers
-MY_API inline int add_c_array2(const int values[2]) { return values[0] + values[1];}
-MY_API inline void log_c_array2(const int values[2]) { printf("%i, %i\n", values[0], values[1]); }
-MY_API inline void change_c_array2(unsigned long values[2])
+
+// Tests with const array: since the input numbers are const, their params are published as List[int],
+// and the python signature will be:
+// -->    def add_c_array2(values: List[int]) -> int:
+// (and the runtime will check that the list size is exactly 2)
+MY_API inline int const_array2_add(const int values[2]) { return values[0] + values[1];}
+
+
+// Test with a modifiable array: since the input array is not const, it could be modified.
+// Thus, it will be published as a function accepting Boxed values:
+// -->    def array2_modify(values_0: BoxedUnsignedLong, values_1: BoxedUnsignedLong) -> None:
+MY_API inline void array2_modify(unsigned long values[2])
 {
     values[0] = values[1] + values[0];
     values[1] = values[0] * values[1];
 }
-// Test with C array containing user defined struct (which will not be boxed)
+
 struct Point2 // MY_API
 {
     int x, y;
 };
-MY_API inline void GetPoints(Point2 out[2]) { out[0] = {0, 1}; out[1] = {2, 3}; }
+
+// Test with a modifiable array that uses a user defined struct.
+// Since the user defined struct is mutable in python, it will not be Boxed,
+// and the python signature will be:
+//-->    def get_points(out_0: Point2, out_1: Point2) -> None:
+MY_API inline void array2_modify_mutable(Point2 out[2]) { out[0] = {0, 1}; out[1] = {2, 3}; }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //                       mylib/c_style_buffer_to_pyarray_test.h included by mylib/mylib.h                       //
@@ -113,15 +120,27 @@ MY_API inline void GetPoints(Point2 out[2]) { out[0] = {0, 1}; out[1] = {2, 3}; 
 //
 // C Style buffer to py::array tests
 //
+// litgen is able to recognize and transform pairs of params whose C++ signature resemble
+//     (T* data, size_t|int count)
+// Where
+//   * `T` is a *known* numeric type, or a templated type
+//   * `count` name resemble a size
+//        (see LitgenOptions.fn_params_buffer_size_names: List[str] = ["nb", "size", "count", "total", "n"])
+//
 
-// Modifies a buffer by adding a value to its elements
+// add_inside_buffer: modifies a buffer by adding a value to its elements
+// Will be published in python as:
+// -->    def add_inside_buffer(buffer: np.ndarray, number_to_add: int) -> None:
+// Warning, the python function will accept only uint8 numpy arrays, and check it at runtime!
 MY_API inline void add_inside_buffer(uint8_t* buffer, size_t buffer_size, uint8_t number_to_add)
 {
     for (size_t i  = 0; i < buffer_size; ++i)
         buffer[i] += number_to_add;
 }
 
-// Returns the sum of a const buffer
+// buffer_sum: returns the sum of a *const* buffer
+// Will be published in python as:
+// -->    def buffer_sum(buffer: np.ndarray, stride: int = -1) -> int:
 MY_API inline int buffer_sum(const uint8_t* buffer, size_t buffer_size, size_t stride= sizeof(uint8_t))
 {
     int sum = 0;
@@ -130,7 +149,10 @@ MY_API inline int buffer_sum(const uint8_t* buffer, size_t buffer_size, size_t s
     return sum;
 }
 
-// Modifies two buffers
+// add_inside_two_buffers: modifies two mutable buffers
+// litgen will detect that this function uses two buffers of same size.
+// Will be published in python as:
+// -->    def add_inside_two_buffers(buffer_1: np.ndarray, buffer_2: np.ndarray, number_to_add: int) -> None:
 MY_API inline void add_inside_two_buffers(uint8_t* buffer_1, uint8_t* buffer_2, size_t buffer_size, uint8_t number_to_add)
 {
     for (size_t i  = 0; i < buffer_size; ++i)
@@ -140,8 +162,14 @@ MY_API inline void add_inside_two_buffers(uint8_t* buffer_1, uint8_t* buffer_2, 
     }
 }
 
-// Modify an array by multiplying its elements (template function!)
-template<typename T> MY_API void mul_inside_buffer(T* buffer, size_t buffer_size, double factor)
+// templated_mul_inside_buffer: template function that modifies an array by multiplying its elements by a given factor
+// litgen will detect that this function can be published as using a numpy array.
+// It will be published in python as:
+// -->    def mul_inside_buffer(buffer: np.ndarray, factor: float) -> None:
+//
+// The type will be detected at runtime and the correct template version will be called accordingly!
+// An error will be thrown if the numpy array numeric type is not supported.
+template<typename T> MY_API void templated_mul_inside_buffer(T* buffer, size_t buffer_size, double factor)
 {
     for (size_t i  = 0; i < buffer_size; ++i)
         buffer[i] *= (T)factor;
@@ -152,9 +180,12 @@ template<typename T> MY_API void mul_inside_buffer(T* buffer, size_t buffer_size
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 //
-// C String lists tests
+// C String lists tests:
+//   Two consecutive params (const char *, int | size_t) are exported as List[str]
 //
-
+// The following function will be exported with the following python signature:
+// -->    def c_string_list_total_size(items: List[str], output_0: BoxedInt, output_1: BoxedInt) -> int:
+//
 MY_API inline size_t c_string_list_total_size(const char * const items[], int items_count, int output[2])
 {
     size_t total = 0;
@@ -173,6 +204,18 @@ MY_API inline size_t c_string_list_total_size(const char * const items[], int it
 // Modifiable immutable python types test
 //
 
+// litgen adapts functions params that use modifiable pointer or reference to a type
+// that is immutable in python.
+// On the C++ side, these params are modifiable by the function.
+// We need to box them into a Boxed type to ensure that any modification made by C++
+// is visible when going back to Python.
+//
+// Note: immutable data types in python are
+//   - Int, Float, String (correctly handled by litgen)
+//   - Complex, Bytes (not handled)
+//   - Tuple (not handled)
+
+
 /////////////////////////////////////////////////////////////////////////////////////////////
 // Test Part 1: in the functions below, the value parameters will be "Boxed"
 //
@@ -184,7 +227,8 @@ MY_API inline size_t c_string_list_total_size(const char * const items[], int it
 /////////////////////////////////////////////////////////////////////////////////////////////
 
 
-// Test with pointer
+// Test with pointer: a pointer
+// Will be published in python as:
 // -->    def toggle_bool_pointer(v: BoxedBool) -> None:
 MY_API void ToggleBoolPointer(bool *v)
 {
@@ -192,6 +236,7 @@ MY_API void ToggleBoolPointer(bool *v)
 }
 
 // Test with nullable pointer
+// Will be published in python as:
 // -->    def toggle_bool_nullable(v: BoxedBool = None) -> None:
 MY_API void ToggleBoolNullable(bool *v = NULL)
 {
@@ -200,6 +245,7 @@ MY_API void ToggleBoolNullable(bool *v = NULL)
 }
 
 // Test with reference
+// Will be published in python as:
 // -->    def toggle_bool_reference(v: BoxedBool) -> None:
 MY_API void ToggleBoolReference(bool &v)
 {
@@ -207,6 +253,7 @@ MY_API void ToggleBoolReference(bool &v)
 }
 
 // Test modifiable String
+// Will be published in python as:
 // -->    def modify_string(s: BoxedString) -> None:
 MY_API void ModifyString(std::string* s) { (*s) += "hello"; }
 
@@ -224,6 +271,7 @@ MY_API void ModifyString(std::string* s) { (*s) += "hello"; }
 
 
 // Test with int param + int return type
+// Will be published in python as:
 // --> def slider_bool_int(label: str, value: int) -> Tuple[bool, int]:
 MY_API bool SliderBoolInt(const char* label, int * value)
 {
@@ -231,12 +279,14 @@ MY_API bool SliderBoolInt(const char* label, int * value)
     return true;
 }
 
+// Will be published in python as:
 // -->    def slider_void_int(label: str, value: int) -> int:
 MY_API void SliderVoidInt(const char* label, int * value)
 {
     *value += 1;
 }
 
+// Will be published in python as:
 // -->    def slider_bool_int2(label: str, value1: int, value2: int) -> Tuple[bool, int, int]:
 MY_API bool SliderBoolInt2(const char* label, int * value1, int * value2)
 {
@@ -245,6 +295,7 @@ MY_API bool SliderBoolInt2(const char* label, int * value1, int * value2)
     return false;
 }
 
+// Will be published in python as:
 // -->    def slider_void_int_default_null(label: str, value: Optional[int] = None) -> Tuple[bool, Optional[int]]:
 MY_API bool SliderVoidIntDefaultNull(const char* label, int * value = nullptr)
 {
@@ -253,6 +304,7 @@ MY_API bool SliderVoidIntDefaultNull(const char* label, int * value = nullptr)
     return true;
 }
 
+// Will be published in python as:
 // -->    def slider_void_int_array(label: str, value: List[int]) -> Tuple[bool, List[int]]:
 MY_API bool SliderVoidIntArray(const char* label, int value[3])
 {
@@ -281,7 +333,8 @@ struct FooOverload // MY_API
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //                       mylib/enum_test.h included by mylib/mylib.h                                            //
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// A super nice enum for demo purposes
+
+// BasicEnum: a simple C-style enum
 enum BasicEnum     // MY_API
 {
     MyEnum_a = 1, // This is value a
@@ -307,7 +360,7 @@ enum BasicEnum     // MY_API
 //       options.srcml_options.api_suffixes = ["MY_API"]
 //
 // Note: Do not remove the empty line below, otherwise this comment would become part of
-//       ClassEnumNotRegistered's doc, and cause it to be registered (since it contains "MY_API")
+//       the enum's doc, and cause it to be registered (since it contains "MY_API")
 
 enum class ClassEnumNotRegistered
 {
@@ -317,13 +370,52 @@ enum class ClassEnumNotRegistered
 };
 
 
-// This enum should be published
+// ClassEnum: a class enum that should be published
 enum class ClassEnum // MY_API
 {
     On = 0,
     Off,
     Unknown
 };
+
+
+/*
+For info, below is the python pyi stub that is published for this file:
+
+class BasicEnum(Enum):
+    """ BasicEnum: a simple C-style enum"""
+    my_enum_a   # (= 1)  # This is value a
+    my_enum_aa  # (= 2)  # this is value aa
+    my_enum_aaa # (= 3)  # this is value aaa
+
+    # Lonely comment
+
+    # This is value b
+    my_enum_b   # (= 4)
+
+    # This is c
+    # with doc on several lines
+    my_enum_c   # (= BasicEnum.my_enum_a | BasicEnum.my_enum_b)
+
+    # MyEnum_count
+
+
+# ClassEnumNotRegistered should not be published, as it misses the marker "// MY_API"
+# By default, all enums, namespaces and classes are published,
+# but you can decide to include only "marked" ones, via this litgen option:
+#       options.srcml_options.api_suffixes = ["MY_API"]
+#
+# Note: Do not remove the empty line below, otherwise this comment would become part of
+#       the enum's doc, and cause it to be registered (since it contains "MY_API")
+
+
+
+class ClassEnum(Enum):
+    """ ClassEnum: a class enum that should be published"""
+    on      # (= 0)
+    off     # (= 1)
+    unknown # (= 2)
+*/
 
 
 

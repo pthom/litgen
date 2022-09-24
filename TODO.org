@@ -416,6 +416,7 @@ Group tests / separate headers & py tests
   finish separation
   add test / struct, enum, etc
   add doc
+  replace amalgamation by several files processed?
 
 
 ** Handle scope

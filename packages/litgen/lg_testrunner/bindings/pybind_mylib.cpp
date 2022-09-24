@@ -64,73 +64,68 @@ void py_init_module_lg_mylib(py::module& m)
     m.def("my_mul",
         my_mul, py::arg("a"), py::arg("b"));
 
-    m.def("add_c_array2",
+    m.def("const_array2_add",
         [](const std::array<int, 2>& values) -> int
         {
-            auto add_c_array2_adapt_fixed_size_c_arrays = [](const std::array<int, 2>& values) -> int
+            auto const_array2_add_adapt_fixed_size_c_arrays = [](const std::array<int, 2>& values) -> int
             {
-                auto r = add_c_array2(values.data());
+                auto r = const_array2_add(values.data());
                 return r;
             };
 
-            return add_c_array2_adapt_fixed_size_c_arrays(values);
-        },     py::arg("values"));
+            return const_array2_add_adapt_fixed_size_c_arrays(values);
+        },
+        py::arg("values"),
+        " Tests with const array: since the input numbers are const, their params are published as List[int],\n and the python signature will be:\n -->    def add_c_array2(values: List[int]) -> int:\n (and the runtime will check that the list size is exactly 2)");
 
-    m.def("log_c_array2",
-        [](const std::array<int, 2>& values)
-        {
-            auto log_c_array2_adapt_fixed_size_c_arrays = [](const std::array<int, 2>& values)
-            {
-                log_c_array2(values.data());
-            };
-
-            log_c_array2_adapt_fixed_size_c_arrays(values);
-        },     py::arg("values"));
-
-    m.def("change_c_array2",
+    m.def("array2_modify",
         [](BoxedUnsignedLong & values_0, BoxedUnsignedLong & values_1)
         {
-            auto change_c_array2_adapt_fixed_size_c_arrays = [](BoxedUnsignedLong & values_0, BoxedUnsignedLong & values_1)
+            auto array2_modify_adapt_fixed_size_c_arrays = [](BoxedUnsignedLong & values_0, BoxedUnsignedLong & values_1)
             {
                 unsigned long values_raw[2];
                 values_raw[0] = values_0.value;
                 values_raw[1] = values_1.value;
 
-                change_c_array2(values_raw);
+                array2_modify(values_raw);
 
                 values_0.value = values_raw[0];
                 values_1.value = values_raw[1];
             };
 
-            change_c_array2_adapt_fixed_size_c_arrays(values_0, values_1);
-        },     py::arg("values_0"), py::arg("values_1"));
+            array2_modify_adapt_fixed_size_c_arrays(values_0, values_1);
+        },
+        py::arg("values_0"), py::arg("values_1"),
+        " Test with a modifiable array: since the input array is not const, it could be modified.\n Thus, it will be published as a function accepting Boxed values:\n -->    def array2_modify(values_0: BoxedUnsignedLong, values_1: BoxedUnsignedLong) -> None:");
 
 
     auto pyClassPoint2 = py::class_<Point2>
-        (m, "Point2", "Test with C array containing user defined struct (which will not be boxed)")
+        (m, "Point2", "")
         .def(py::init<>()) // implicit default constructor
         .def_readwrite("x", &Point2::x, "")
         .def_readwrite("y", &Point2::y, "")
         ;
 
 
-    m.def("get_points",
+    m.def("array2_modify_mutable",
         [](Point2 & out_0, Point2 & out_1)
         {
-            auto GetPoints_adapt_fixed_size_c_arrays = [](Point2 & out_0, Point2 & out_1)
+            auto array2_modify_mutable_adapt_fixed_size_c_arrays = [](Point2 & out_0, Point2 & out_1)
             {
                 Point2 out_raw[2];
                 out_raw[0] = out_0;
                 out_raw[1] = out_1;
 
-                GetPoints(out_raw);
+                array2_modify_mutable(out_raw);
 
                 out_0 = out_raw[0];
                 out_1 = out_raw[1];
             };
 
-            GetPoints_adapt_fixed_size_c_arrays(out_0, out_1);
-        },     py::arg("out_0"), py::arg("out_1"));
+            array2_modify_mutable_adapt_fixed_size_c_arrays(out_0, out_1);
+        },
+        py::arg("out_0"), py::arg("out_1"),
+        " Test with a modifiable array that uses a user defined struct.\n Since the user defined struct is mutable in python, it will not be Boxed,\n and the python signature will be:\n-->    def get_points(out_0: Point2, out_1: Point2) -> None:");
 
     m.def("add_inside_buffer",
         [](py::array & buffer, uint8_t number_to_add)
@@ -156,7 +151,7 @@ void py_init_module_lg_mylib(py::module& m)
             add_inside_buffer_adapt_c_buffers(buffer, number_to_add);
         },
         py::arg("buffer"), py::arg("number_to_add"),
-        "Modifies a buffer by adding a value to its elements");
+        " add_inside_buffer: modifies a buffer by adding a value to its elements\n Will be published in python as:\n -->    def add_inside_buffer(buffer: np.ndarray, number_to_add: int) -> None:\n Warning, the python function will accept only uint8 numpy arrays, and check it at runtime!");
 
     m.def("buffer_sum",
         [](const py::array & buffer, int stride = -1) -> int
@@ -188,7 +183,7 @@ void py_init_module_lg_mylib(py::module& m)
             return buffer_sum_adapt_c_buffers(buffer, stride);
         },
         py::arg("buffer"), py::arg("stride") = -1,
-        "Returns the sum of a const buffer");
+        " buffer_sum: returns the sum of a *const* buffer\n Will be published in python as:\n -->    def buffer_sum(buffer: np.ndarray, stride: int = -1) -> int:");
 
     m.def("add_inside_two_buffers",
         [](py::array & buffer_1, py::array & buffer_2, uint8_t number_to_add)
@@ -227,12 +222,12 @@ void py_init_module_lg_mylib(py::module& m)
             add_inside_two_buffers_adapt_c_buffers(buffer_1, buffer_2, number_to_add);
         },
         py::arg("buffer_1"), py::arg("buffer_2"), py::arg("number_to_add"),
-        "Modifies two buffers");
+        " add_inside_two_buffers: modifies two mutable buffers\n litgen will detect that this function uses two buffers of same size.\n Will be published in python as:\n -->    def add_inside_two_buffers(buffer_1: np.ndarray, buffer_2: np.ndarray, number_to_add: int) -> None:");
 
-    m.def("mul_inside_buffer",
+    m.def("templated_mul_inside_buffer",
         [](py::array & buffer, double factor)
         {
-            auto mul_inside_buffer_adapt_c_buffers = [](py::array & buffer, double factor)
+            auto templated_mul_inside_buffer_adapt_c_buffers = [](py::array & buffer, double factor)
             {
                 // convert py::array to C standard buffer (mutable)
                 void * buffer_from_pyarray = buffer.mutable_data();
@@ -241,38 +236,38 @@ void py_init_module_lg_mylib(py::module& m)
                 // call the correct template version by casting
                 char buffer_type = buffer.dtype().char_();
                 if (buffer_type == 'B')
-                    mul_inside_buffer(static_cast<uint8_t *>(buffer_from_pyarray), static_cast<size_t>(buffer_count), factor);
+                    templated_mul_inside_buffer(static_cast<uint8_t *>(buffer_from_pyarray), static_cast<size_t>(buffer_count), factor);
                 else if (buffer_type == 'b')
-                    mul_inside_buffer(static_cast<int8_t *>(buffer_from_pyarray), static_cast<size_t>(buffer_count), factor);
+                    templated_mul_inside_buffer(static_cast<int8_t *>(buffer_from_pyarray), static_cast<size_t>(buffer_count), factor);
                 else if (buffer_type == 'H')
-                    mul_inside_buffer(static_cast<uint16_t *>(buffer_from_pyarray), static_cast<size_t>(buffer_count), factor);
+                    templated_mul_inside_buffer(static_cast<uint16_t *>(buffer_from_pyarray), static_cast<size_t>(buffer_count), factor);
                 else if (buffer_type == 'h')
-                    mul_inside_buffer(static_cast<int16_t *>(buffer_from_pyarray), static_cast<size_t>(buffer_count), factor);
+                    templated_mul_inside_buffer(static_cast<int16_t *>(buffer_from_pyarray), static_cast<size_t>(buffer_count), factor);
                 else if (buffer_type == 'I')
-                    mul_inside_buffer(static_cast<uint32_t *>(buffer_from_pyarray), static_cast<size_t>(buffer_count), factor);
+                    templated_mul_inside_buffer(static_cast<uint32_t *>(buffer_from_pyarray), static_cast<size_t>(buffer_count), factor);
                 else if (buffer_type == 'i')
-                    mul_inside_buffer(static_cast<int32_t *>(buffer_from_pyarray), static_cast<size_t>(buffer_count), factor);
+                    templated_mul_inside_buffer(static_cast<int32_t *>(buffer_from_pyarray), static_cast<size_t>(buffer_count), factor);
                 else if (buffer_type == 'L')
-                    mul_inside_buffer(static_cast<uint64_t *>(buffer_from_pyarray), static_cast<size_t>(buffer_count), factor);
+                    templated_mul_inside_buffer(static_cast<uint64_t *>(buffer_from_pyarray), static_cast<size_t>(buffer_count), factor);
                 else if (buffer_type == 'l')
-                    mul_inside_buffer(static_cast<int64_t *>(buffer_from_pyarray), static_cast<size_t>(buffer_count), factor);
+                    templated_mul_inside_buffer(static_cast<int64_t *>(buffer_from_pyarray), static_cast<size_t>(buffer_count), factor);
                 else if (buffer_type == 'f')
-                    mul_inside_buffer(static_cast<float *>(buffer_from_pyarray), static_cast<size_t>(buffer_count), factor);
+                    templated_mul_inside_buffer(static_cast<float *>(buffer_from_pyarray), static_cast<size_t>(buffer_count), factor);
                 else if (buffer_type == 'd')
-                    mul_inside_buffer(static_cast<double *>(buffer_from_pyarray), static_cast<size_t>(buffer_count), factor);
+                    templated_mul_inside_buffer(static_cast<double *>(buffer_from_pyarray), static_cast<size_t>(buffer_count), factor);
                 else if (buffer_type == 'g')
-                    mul_inside_buffer(static_cast<long double *>(buffer_from_pyarray), static_cast<size_t>(buffer_count), factor);
+                    templated_mul_inside_buffer(static_cast<long double *>(buffer_from_pyarray), static_cast<size_t>(buffer_count), factor);
                 else if (buffer_type == 'q')
-                    mul_inside_buffer(static_cast<long long *>(buffer_from_pyarray), static_cast<size_t>(buffer_count), factor);
+                    templated_mul_inside_buffer(static_cast<long long *>(buffer_from_pyarray), static_cast<size_t>(buffer_count), factor);
                 // If we reach this point, the array type is not supported!
                 else
                     throw std::runtime_error(std::string("Bad array type ('") + buffer_type + "') for param buffer");
             };
 
-            mul_inside_buffer_adapt_c_buffers(buffer, factor);
+            templated_mul_inside_buffer_adapt_c_buffers(buffer, factor);
         },
         py::arg("buffer"), py::arg("factor"),
-        "Modify an array by multiplying its elements (template function!)");
+        " templated_mul_inside_buffer: template function that modifies an array by multiplying its elements by a given factor\n litgen will detect that this function can be published as using a numpy array.\n It will be published in python as:\n -->    def mul_inside_buffer(buffer: np.ndarray, factor: float) -> None:\n\n The type will be detected at runtime and the correct template version will be called accordingly!\n An error will be thrown if the numpy array numeric type is not supported.");
 
     m.def("c_string_list_total_size",
         [](const std::vector<std::string> & items, BoxedInt & output_0, BoxedInt & output_1) -> size_t
@@ -301,7 +296,9 @@ void py_init_module_lg_mylib(py::module& m)
             };
 
             return c_string_list_total_size_adapt_c_string_list(items, output_0, output_1);
-        },     py::arg("items"), py::arg("output_0"), py::arg("output_1"));
+        },
+        py::arg("items"), py::arg("output_0"), py::arg("output_1"),
+        "\n C String lists tests:\n   Two consecutive params (const char *, int | size_t) are exported as List[str]\n\n The following function will be exported with the following python signature:\n -->    def c_string_list_total_size(items: List[str], output_0: BoxedInt, output_1: BoxedInt) -> int:\n");
 
     m.def("toggle_bool_pointer",
         [](BoxedBool & v)
@@ -316,7 +313,7 @@ void py_init_module_lg_mylib(py::module& m)
             ToggleBoolPointer_adapt_modifiable_immutable(v);
         },
         py::arg("v"),
-        " Test with pointer\n -->    def toggle_bool_pointer(v: BoxedBool) -> None:");
+        " Test with pointer: a pointer\n Will be published in python as:\n -->    def toggle_bool_pointer(v: BoxedBool) -> None:");
 
     m.def("toggle_bool_nullable",
         [](BoxedBool * v = nullptr)
@@ -333,7 +330,7 @@ void py_init_module_lg_mylib(py::module& m)
             ToggleBoolNullable_adapt_modifiable_immutable(v);
         },
         py::arg("v") = py::none(),
-        " Test with nullable pointer\n -->    def toggle_bool_nullable(v: BoxedBool = None) -> None:");
+        " Test with nullable pointer\n Will be published in python as:\n -->    def toggle_bool_nullable(v: BoxedBool = None) -> None:");
 
     m.def("toggle_bool_reference",
         [](BoxedBool & v)
@@ -348,7 +345,7 @@ void py_init_module_lg_mylib(py::module& m)
             ToggleBoolReference_adapt_modifiable_immutable(v);
         },
         py::arg("v"),
-        " Test with reference\n -->    def toggle_bool_reference(v: BoxedBool) -> None:");
+        " Test with reference\n Will be published in python as:\n -->    def toggle_bool_reference(v: BoxedBool) -> None:");
 
     m.def("modify_string",
         [](BoxedString & s)
@@ -363,7 +360,7 @@ void py_init_module_lg_mylib(py::module& m)
             ModifyString_adapt_modifiable_immutable(s);
         },
         py::arg("s"),
-        " Test modifiable String\n -->    def modify_string(s: BoxedString) -> None:");
+        " Test modifiable String\n Will be published in python as:\n -->    def modify_string(s: BoxedString) -> None:");
 
     m.def("slider_bool_int",
         [](const char * label, int value) -> std::tuple<bool, int>
@@ -379,7 +376,7 @@ void py_init_module_lg_mylib(py::module& m)
             return SliderBoolInt_adapt_modifiable_immutable_to_return(label, value);
         },
         py::arg("label"), py::arg("value"),
-        " Test with int param + int return type\n --> def slider_bool_int(label: str, value: int) -> Tuple[bool, int]:");
+        " Test with int param + int return type\n Will be published in python as:\n --> def slider_bool_int(label: str, value: int) -> Tuple[bool, int]:");
 
     m.def("slider_void_int",
         [](const char * label, int value) -> int
@@ -395,7 +392,7 @@ void py_init_module_lg_mylib(py::module& m)
             return SliderVoidInt_adapt_modifiable_immutable_to_return(label, value);
         },
         py::arg("label"), py::arg("value"),
-        "-->    def slider_void_int(label: str, value: int) -> int:");
+        " Will be published in python as:\n -->    def slider_void_int(label: str, value: int) -> int:");
 
     m.def("slider_bool_int2",
         [](const char * label, int value1, int value2) -> std::tuple<bool, int, int>
@@ -412,7 +409,7 @@ void py_init_module_lg_mylib(py::module& m)
             return SliderBoolInt2_adapt_modifiable_immutable_to_return(label, value1, value2);
         },
         py::arg("label"), py::arg("value1"), py::arg("value2"),
-        "-->    def slider_bool_int2(label: str, value1: int, value2: int) -> Tuple[bool, int, int]:");
+        " Will be published in python as:\n -->    def slider_bool_int2(label: str, value1: int, value2: int) -> Tuple[bool, int, int]:");
 
     m.def("slider_void_int_default_null",
         [](const char * label, std::optional<int> value = std::nullopt) -> std::tuple<bool, std::optional<int>>
@@ -430,7 +427,7 @@ void py_init_module_lg_mylib(py::module& m)
             return SliderVoidIntDefaultNull_adapt_modifiable_immutable_to_return(label, value);
         },
         py::arg("label"), py::arg("value") = py::none(),
-        "-->    def slider_void_int_default_null(label: str, value: Optional[int] = None) -> Tuple[bool, Optional[int]]:");
+        " Will be published in python as:\n -->    def slider_void_int_default_null(label: str, value: Optional[int] = None) -> Tuple[bool, Optional[int]]:");
 
     m.def("slider_void_int_array",
         [](const char * label, std::array<int, 3> value) -> std::tuple<bool, std::array<int, 3>>
@@ -446,7 +443,7 @@ void py_init_module_lg_mylib(py::module& m)
             return SliderVoidIntArray_adapt_modifiable_immutable_to_return(label, value);
         },
         py::arg("label"), py::arg("value"),
-        "-->    def slider_void_int_array(label: str, value: List[int]) -> Tuple[bool, List[int]]:");
+        " Will be published in python as:\n -->    def slider_void_int_array(label: str, value: List[int]) -> Tuple[bool, List[int]]:");
 
     m.def("add_overload",
         py::overload_cast<int, int>(add_overload), py::arg("a"), py::arg("b"));
@@ -465,7 +462,7 @@ void py_init_module_lg_mylib(py::module& m)
         ;
 
 
-    py::enum_<BasicEnum>(m, "BasicEnum", py::arithmetic(), "////////////////////////////////////////////////////////////////////////////////////////////////////////////////\n                       mylib/enum_test.h included by mylib/mylib.h                                            //\n//////////////////////////////////////////////////////////////////////////////////////////////////////////////\n A super nice enum for demo purposes")
+    py::enum_<BasicEnum>(m, "BasicEnum", py::arithmetic(), "BasicEnum: a simple C-style enum")
         .value("my_enum_a", MyEnum_a, "This is value a")
         .value("my_enum_aa", MyEnum_aa, "this is value aa")
         .value("my_enum_aaa", MyEnum_aaa, "this is value aaa")
@@ -473,7 +470,7 @@ void py_init_module_lg_mylib(py::module& m)
         .value("my_enum_c", MyEnum_c, " This is c\n with doc on several lines");
 
 
-    py::enum_<ClassEnum>(m, "ClassEnum", py::arithmetic(), "This enum should be published")
+    py::enum_<ClassEnum>(m, "ClassEnum", py::arithmetic(), "ClassEnum: a class enum that should be published")
         .value("on", ClassEnum::On, "")
         .value("off", ClassEnum::Off, "")
         .value("unknown", ClassEnum::Unknown, "");
