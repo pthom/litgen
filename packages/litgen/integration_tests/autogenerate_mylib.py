@@ -1,3 +1,4 @@
+from typing import List
 import os
 from codemanip import code_utils
 
@@ -20,6 +21,14 @@ def make_testrunner_amalgamated_header() -> None:
     options.dst_amalgamated_header_file = CPP_AMALGAMATED_HEADER
 
     write_amalgamate_header_file(options)
+
+
+def all_header_files() -> List[str]:
+    cpp_headers_dir = THIS_DIR + "/mylib/include/mylib/"
+    files = os.listdir(cpp_headers_dir)
+    headers = list(filter(lambda f: f.endswith(".h"), files))
+    headers_full_path = list(map(lambda f: cpp_headers_dir + f, headers))
+    return headers_full_path
 
 
 def my_code_style_options() -> litgen.LitgenOptions:
@@ -70,7 +79,20 @@ def autogenerate_testrunner() -> None:
     # Configure options
     options = my_code_style_options()
 
-    generated_code = litgen.generate_code(options, filename=input_cpp_header, add_boxed_types_definitions=True)
+    # We demonstrate here two methods for generating bindings (both of them work correctly):
+    # - either using an amalgamated header
+    # - or by providing a list of files to litgen
+    use_amalgamated_header = False
+    if use_amalgamated_header:
+        make_testrunner_amalgamated_header()
+        generated_code = litgen.generate_code(options, filename=input_cpp_header, add_boxed_types_definitions=True)
+    else:
+        all_headers = all_header_files()
+        files = litgen.CppFilesAndOptionsList()
+        for header in all_headers:
+            files.files_and_options.append(litgen.CppFileAndOptions(options, filename=header))
+        generated_code = litgen.generate_code_for_files(files, add_boxed_types_definitions=True)
+
     litgen.write_generated_code(
         generated_code,
         output_cpp_pydef_file=output_cpp_module,
@@ -81,5 +103,4 @@ def autogenerate_testrunner() -> None:
 
 if __name__ == "__main__":
     print("autogenerate_testrunner")
-    make_testrunner_amalgamated_header()
     autogenerate_testrunner()
