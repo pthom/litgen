@@ -460,6 +460,12 @@ void py_init_module_lg_mylib(py::module& m)
         .value("my_enum_c", MyEnum_c, " This is c\n with doc on several lines");
 
 
+    py::enum_<ClassEnum>(m, "ClassEnum", py::arithmetic(), "This enum should be published")
+        .value("on", ClassEnum::On, "")
+        .value("off", ClassEnum::Off, "")
+        .value("unknown", ClassEnum::Unknown, "");
+
+
     // <namespace LiterateGeneratorExample>
     m.def("add",
         LiterateGeneratorExample::add,

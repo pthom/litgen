@@ -253,7 +253,24 @@ enum BasicEnum     // MY_API
 };
 
 
-enum class ClassEnum
+// ClassEnumNotRegistered should not be published, as it misses the marker "// MY_API"
+// By default, all enums, namespaces and classes are published,
+// but you can decide to include only "marked" ones, via this litgen option:
+//       options.srcml_options.api_suffixes = ["MY_API"]
+//
+// Note: Do not remove the empty line below, otherwise this comment would become part of
+//       ClassEnumNotRegistered's doc, and cause it to be registered (since it contains "MY_API")
+
+enum class ClassEnumNotRegistered
+{
+    On,
+    Off,
+    Unknown
+};
+
+
+// This enum should be published
+enum class ClassEnum // MY_API
 {
     On,
     Off,
