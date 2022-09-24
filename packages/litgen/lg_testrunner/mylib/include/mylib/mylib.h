@@ -10,3 +10,4 @@
 #include "mylib/enum_test.h"
 #include "mylib/struct_test.h"
 #include "mylib/return_value_policy_test.h"
+#include "mylib/inner_class_test.h"

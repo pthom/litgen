@@ -1,3 +1,6 @@
+#include "mylib/api_marker.h"
+
+
 namespace N
 {
     struct Parent

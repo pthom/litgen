@@ -50,15 +50,15 @@ enum Foo
             """ Doc about Foo
              On several lines
             """
-            a = 0                                                 # This is a
+            a # (= 0)  # This is a
 
             # And this is b and c's comment
-            b = 1
-            c = 256                                               # c has a special comment
+            b # (= 1)
+            c # (= 256)  # c has a special comment
 
-            d = Literal[Foo.a] | Literal[Foo.b] + Literal[Foo.c]  # And a computed value
+            d # (= Foo.a | Foo.b + Foo.c)  # And a computed value
 
-            e = 4
+            e # (= 4)
     ''',
     )
 
@@ -75,16 +75,16 @@ enum Foo
             """
 
             # This is a
-            a = 0
+            a # (= 0)
 
             # And this is b and c's comment
 
-            b = 1
+            b # (= 1)
             # c has a special comment
-            c = 256
+            c # (= 256)
             # And a computed value
-            d = Literal[Foo.a] | Literal[Foo.b] + Literal[Foo.c]
-            e = 4
+            d # (= Foo.a | Foo.b + Foo.c)
+            e # (= 4)
         ''',
     )
 
