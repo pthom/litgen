@@ -367,7 +367,7 @@ void py_init_module_lg_mylib(py::module& m)
             {
                 int * value_adapt_modifiable = & value;
 
-                MY_API bool r = ChangeBoolInt(label, value_adapt_modifiable);
+                bool r = ChangeBoolInt(label, value_adapt_modifiable);
                 return std::make_tuple(r, value);
             };
 
@@ -400,7 +400,7 @@ void py_init_module_lg_mylib(py::module& m)
                 int * value1_adapt_modifiable = & value1;
                 int * value2_adapt_modifiable = & value2;
 
-                MY_API bool r = ChangeBoolInt2(label, value1_adapt_modifiable, value2_adapt_modifiable);
+                bool r = ChangeBoolInt2(label, value1_adapt_modifiable, value2_adapt_modifiable);
                 return std::make_tuple(r, value1, value2);
             };
 
@@ -418,7 +418,7 @@ void py_init_module_lg_mylib(py::module& m)
                 if (value.has_value())
                     value_adapt_modifiable = & (*value);
 
-                MY_API bool r = ChangeVoidIntDefaultNull(label, value_adapt_modifiable);
+                bool r = ChangeVoidIntDefaultNull(label, value_adapt_modifiable);
                 return std::make_tuple(r, value);
             };
 
@@ -434,7 +434,7 @@ void py_init_module_lg_mylib(py::module& m)
             {
                 int * value_adapt_modifiable = value.data();
 
-                MY_API bool r = ChangeVoidIntArray(label, value_adapt_modifiable);
+                bool r = ChangeVoidIntArray(label, value_adapt_modifiable);
                 return std::make_tuple(r, value);
             };
 
@@ -609,7 +609,7 @@ void py_init_module_lg_mylib(py::module& m)
                 {
                     int * value_adapt_modifiable = & value;
 
-                    MY_API bool r = self.ChangeBoolInt(label, value_adapt_modifiable);
+                    bool r = self.ChangeBoolInt(label, value_adapt_modifiable);
                     return std::make_tuple(r, value);
                 };
 
@@ -782,7 +782,7 @@ void py_init_module_lg_mylib(py::module& m)
             {
                 int * value_adapt_modifiable = & value;
 
-                MY_API bool r = SomeNamespace::SomeInnerNamespace::ChangeBoolInt(label, value_adapt_modifiable);
+                bool r = SomeNamespace::SomeInnerNamespace::ChangeBoolInt(label, value_adapt_modifiable);
                 return std::make_tuple(r, value);
             };
 

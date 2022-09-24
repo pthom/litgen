@@ -50,7 +50,7 @@ def test_adapt_modifiable_immutable_to_return_test():
                 {
                     int * value_adapt_modifiable = & value;
 
-                    MY_API bool r = SliderBoolInt(label, value_adapt_modifiable);
+                    bool r = SliderBoolInt(label, value_adapt_modifiable);
                     return std::make_tuple(r, value);
                 };
 
@@ -79,7 +79,7 @@ def test_adapt_modifiable_immutable_to_return_test():
                     int * value1_adapt_modifiable = & value1;
                     int * value2_adapt_modifiable = & value2;
 
-                    MY_API bool r = SliderBoolInt2(label, value1_adapt_modifiable, value2_adapt_modifiable);
+                    bool r = SliderBoolInt2(label, value1_adapt_modifiable, value2_adapt_modifiable);
                     return std::make_tuple(r, value1, value2);
                 };
 
@@ -95,7 +95,7 @@ def test_adapt_modifiable_immutable_to_return_test():
                     if (value.has_value())
                         value_adapt_modifiable = & (*value);
 
-                    MY_API bool r = SliderVoidIntDefaultNull(label, value_adapt_modifiable);
+                    bool r = SliderVoidIntDefaultNull(label, value_adapt_modifiable);
                     return std::make_tuple(r, value);
                 };
 
@@ -123,7 +123,7 @@ def test_adapt_modifiable_immutable_to_return_array():
                 {
                     int * value_adapt_modifiable = value.data();
 
-                    MY_API bool r = SliderVoidIntArray(label, value_adapt_modifiable);
+                    bool r = SliderVoidIntArray(label, value_adapt_modifiable);
                     return std::make_tuple(r, value);
                 };
 
