@@ -1,6 +1,10 @@
 import lg_mylib
 
 
+def test_struct_doc():
+    assert "A superb struct" in lg_mylib.MyStruct.__doc__
+
+
 def test_struct_construction():
     my_struct = lg_mylib.MyStruct(factor=42, message="World")
     assert my_struct.factor == 42
@@ -47,20 +51,3 @@ def test_struct_simple_methods():
 
 def test_struct_not_registered():
     assert "StructNotRegistered" not in dir(lg_mylib)
-
-
-# def test_c_array_numeric_member_types():
-#
-#
-# def test_return_value_policy_reference():
-#     i1 = lg_mylib.foo_instance()
-#     i1.delta = 42
-#     i2 = lg_mylib.foo_instance()
-#     assert i2.delta == 42
-#     i2.delta = 56
-#     i3 = lg_mylib.foo_instance()
-#     assert i3.delta == 56
-#     print("zut")
-#
-#
-#

@@ -513,12 +513,6 @@ void py_init_module_lg_mylib(py::module& m)
         ;
 
 
-    m.def("foo_instance",
-        FooInstance,
-        "return_value_policy::reference",
-        pybind11::return_value_policy::reference);
-
-
     auto pyClassMyConfig = py::class_<MyConfig>
         (m, "MyConfig", "")
         .def(py::init<>()) // implicit default constructor

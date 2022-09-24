@@ -495,16 +495,7 @@ struct MyStruct            // MY_API
 
     // unpublished_calc: this function should not be published (no MY_API marker)
     int unpublished_calc(int x) { return x * factor + delta + 3;}
-
-    ///////////////////////////////////////////////////////////////////////////
-
-    ///////////////////////////////////////////////////////////////////////////
-
-    // Instance() is a method that returns a pointer that should use `return_value_policy::reference`
-    static MyStruct& Instance() { static MyStruct instance; return instance; }  // return_value_policy::reference
 };
-
-MY_API MyStruct* FooInstance() { return & MyStruct::Instance(); } // return_value_policy::reference
 
 
 // StructNotRegistered should not be published, as it misses the marker "// MY_API"

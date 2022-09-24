@@ -502,15 +502,6 @@ class MyStruct:
         pass
 
 
-    #/////////////////////////////////////////////////////////////////////////
-
-    #/////////////////////////////////////////////////////////////////////////
-
-
-def foo_instance() -> MyStruct:
-    """return_value_policy::reference"""
-    pass
-
 
 # StructNotRegistered should not be published, as it misses the marker "// MY_API"
 # By default, all enums, namespaces and classes are published,
