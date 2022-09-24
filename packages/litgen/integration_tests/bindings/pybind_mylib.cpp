@@ -311,7 +311,7 @@ void py_init_module_lg_mylib(py::module& m)
             ToggleBoolPointer_adapt_modifiable_immutable(v);
         },
         py::arg("v"),
-        " Test with pointer: a pointer\n Will be published in python as:\n -->    def toggle_bool_pointer(v: BoxedBool) -> None:");
+        " Test with pointer:\n Will be published in python as:\n -->    def toggle_bool_pointer(v: BoxedBool) -> None:");
 
     m.def("toggle_bool_nullable",
         [](BoxedBool * v = nullptr)

@@ -409,8 +409,9 @@ Argh...
 
 ** Wish List / Easy
 
-Test STL
-Group tests / separate headers & py tests
+Supprimer IMGUI_API & MY_API dans pybind
+
+
 *** integration test
   replace amalgamation by several files processed?
 

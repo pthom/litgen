@@ -249,7 +249,7 @@ def c_string_list_total_size(
 
 
 def toggle_bool_pointer(v: BoxedBool) -> None:
-    """ Test with pointer: a pointer
+    """ Test with pointer:
      Will be published in python as:
      -->    def toggle_bool_pointer(v: BoxedBool) -> None:
     """
@@ -587,8 +587,9 @@ class ParentStruct:
     #        InnerEnum inner_enum;
 # </Namespace SomeNamespace>
 # namespace SomeNamespace
-#//////////////////////////////////////////////////////////////////////////////////////////////////////////////
-#                       mylib/mix_adapters_class.h included by mylib/mylib.h                                   //
+
+#////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+#                       mylib/mix_adapters_class_test.h included by mylib/mylib.h                              //
 #//////////////////////////////////////////////////////////////////////////////////////////////////////////////
 # More complex tests, where we combine litgen function adapters with classes and namespace
 #
@@ -688,6 +689,7 @@ def c_string_list_total_size(
 # </Namespace SomeInnerNamespace>
 
 # </Namespace SomeNamespace>
+
 #////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 #                       mylib/sandbox.h included by mylib/mylib.h                                              //
 #//////////////////////////////////////////////////////////////////////////////////////////////////////////////

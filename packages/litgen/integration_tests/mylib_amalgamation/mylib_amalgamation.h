@@ -225,7 +225,7 @@ MY_API inline size_t c_string_list_total_size(const char * const items[], int it
 /////////////////////////////////////////////////////////////////////////////////////////////
 
 
-// Test with pointer: a pointer
+// Test with pointer:
 // Will be published in python as:
 // -->    def toggle_bool_pointer(v: BoxedBool) -> None:
 MY_API void ToggleBoolPointer(bool *v)
@@ -590,8 +590,9 @@ namespace SomeNamespace                                        // MY_API
 //        InnerEnum inner_enum;
     };
 } // namespace SomeNamespace
+
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//                       mylib/mix_adapters_class.h included by mylib/mylib.h                                   //
+//                       mylib/mix_adapters_class_test.h included by mylib/mylib.h                              //
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // More complex tests, where we combine litgen function adapters with classes and namespace
 //
@@ -707,6 +708,7 @@ namespace SomeNamespace // MY_API
     } // namespace SomeInnerNamespace
 
 }
+
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //                       mylib/sandbox.h included by mylib/mylib.h                                              //
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////

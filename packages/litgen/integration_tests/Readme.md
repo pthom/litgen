@@ -14,14 +14,16 @@ It is advised to read the different header files inside [mylib/include/mylib/](m
 are thouroughly commmented and can help understand litgen.
 
 
-## pip package structure
+## pip package
 
 This folder is actually capable of producing a pip package named `lg-mylib`:
 ````bash
 pip install [-e] .
 ````
 
-It structure is based on [lg_skbuild_template](https://github.com/pthom/lg_skbuild_template)
+## Folder structure
+
+This folder structure is based on [lg_skbuild_template](https://github.com/pthom/lg_skbuild_template)
 
 Below is a summary of the structure:
 
@@ -34,7 +36,7 @@ Below is a summary of the structure:
 ├── Readme.md                                 # this file
 ├── _skbuild/                                 # temp build directory when building via pip
 ├── autogenerate_mylib.py                     # This script will read headers in mylib/include and
-│                                             # generate bindings inside:
+│                                             # generate bindings using litgen inside:
 │                                             #    - bindings/pybind_mylib.cpp (C++ publishing code)
 │                                             #    - bindings/lg_mylib/__init__.pyi (stubs)
 ├── bindings/
@@ -65,5 +67,6 @@ Below is a summary of the structure:
 └── tests/
     ├── basic_test.py                         # This is a list of python tests that will check
     ├── c_string_list_test.py                 # that the generated python module works as intended.
-    ├── c_style_array_test.pys
+    ├── c_style_array_test.py
+    ├── ...
 ````
