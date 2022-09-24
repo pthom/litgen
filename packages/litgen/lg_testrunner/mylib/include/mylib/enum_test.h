@@ -37,7 +37,7 @@ enum class ClassEnumNotRegistered
 // This enum should be published
 enum class ClassEnum // MY_API
 {
-    On,
+    On = 0,
     Off,
     Unknown
 };

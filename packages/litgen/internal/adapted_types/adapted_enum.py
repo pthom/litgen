@@ -89,7 +89,7 @@ class AdaptedEnumDecl(AdaptedDecl):
             replace_what = rf"\b{enum_name_cpp}::{enum_member_name_cpp}\b"
         else:
             replace_what = rf"\b{enum_member_name_cpp}\b"
-        by_what = f"Literal[{enum_name_python}.{enum_member_name_python}]"
+        by_what = f"{enum_name_python}.{enum_member_name_python}"
 
         replacement = RegexReplacement(replace_what, by_what)
         replacement_list.add_replacement(replacement)
@@ -106,7 +106,7 @@ class AdaptedEnumDecl(AdaptedDecl):
         lines = []
         decl_name = self.decl_name_python()
         decl_value = self.decl_value_python()
-        decl_part = f"{decl_name} = {decl_value}"
+        decl_part = f"{decl_name} # (= {decl_value})"
 
         cpp_decl = self.cpp_element()
         if self.comment_python_shall_place_at_end_of_line():

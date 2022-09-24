@@ -239,18 +239,18 @@ class BasicEnum(Enum):
     //////////////////////////////////////////////////////////////////////////////////////////////////////////////
      A super nice enum for demo purposes
     """
-    my_enum_a = 1    # This is value a
-    my_enum_aa = 2   # this is value aa
-    my_enum_aaa = 3  # this is value aaa
+    my_enum_a   # (= 1)  # This is value a
+    my_enum_aa  # (= 2)  # this is value aa
+    my_enum_aaa # (= 3)  # this is value aaa
 
     # Lonely comment
 
     # This is value b
-    my_enum_b = 4
+    my_enum_b   # (= 4)
 
     # This is c
     # with doc on several lines
-    my_enum_c = Literal[BasicEnum.my_enum_a] | Literal[BasicEnum.my_enum_b]
+    my_enum_c   # (= BasicEnum.my_enum_a | BasicEnum.my_enum_b)
 
     # MyEnum_count
 
@@ -267,9 +267,9 @@ class BasicEnum(Enum):
 
 class ClassEnum(Enum):
     """ This enum should be published"""
-    on = 0
-    off = 1
-    unknown = 2
+    on      # (= 0)
+    off     # (= 1)
+    unknown # (= 2)
 
 
 

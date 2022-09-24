@@ -1,7 +1,5 @@
 import lg_mylib
 
-# import logging
-
 
 def test_basic_enum():
     assert " A super nice enum for demo purposes" in lg_mylib.BasicEnum.__doc__
@@ -14,6 +12,7 @@ def test_class_enum_not_registered():
     assert "ClassEnumNotRegistered" not in dir(lg_mylib)
 
 
-# def test_class_enum():
-#     logging.warning(f"{lg_mylib.ClassEnum.on=}")
-#     # assert lg_mylib.ClassEnum.off == 1
+def test_class_enum():
+    assert lg_mylib.ClassEnum.on.value == 0
+    assert lg_mylib.ClassEnum.off.value == 1
+    assert lg_mylib.ClassEnum.unknown.value == 2
