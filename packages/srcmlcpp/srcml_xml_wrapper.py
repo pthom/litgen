@@ -28,7 +28,7 @@ class SrcMlExceptionDetailed(SrcMlException):
 
 def _get_python_call_info() -> Tuple[str, str]:
     stack_lines = traceback.format_stack()
-    error_line = stack_lines[-4]
+    error_line = stack_lines[-5]
     frame = inspect.currentframe()  # type: ignore
     if frame is not None:
         caller_function_name = inspect.getframeinfo(frame.f_back.f_back.f_back).function  # type: ignore
