@@ -296,7 +296,7 @@ def fill_function_decl(
         elif child_tag == "modifier":
             raise SrcMlExceptionDetailed(child, "C style function pointers are poorly supported")
         elif child_tag == "comment":
-            function_decl.cpp_element_comments.add_eol_comment(child.text)
+            function_decl.cpp_element_comments.add_eol_comment(child.text())
         else:
             raise SrcMlExceptionDetailed(child, f"unhandled tag {child_tag}")
 

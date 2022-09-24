@@ -52,7 +52,7 @@ class BoxedString:
 #//////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 def my_sub(a: int, b: int) -> int:
-    """ Subtracts two numbers: this will be the __doc__ since my_sub does not have an end-of-line comment"""
+    """ Subtracts two numbers: this will be the function's __doc__ since my_sub does not have an end-of-line comment"""
     pass
 
 
@@ -466,37 +466,41 @@ class MyStruct:
     def __init__(self, factor: int = 10, message: str = "hello") -> None:
         pass
 
-    #
+
+    #/////////////////////////////////////////////////////////////////////////
     # Simple struct members
-    #
+    #///////////////////////////////////////////////////////////////////////
     factor: int = 10
     delta: int = 0
     message: str
 
-    #
-    # Stl container members
-    #
 
-    # By default, modifications are not propagated between C++ and python for stl containers
+    #/////////////////////////////////////////////////////////////////////////
+    # Stl container members
+    #///////////////////////////////////////////////////////////////////////
+
+    # By default, modifications from python are not propagated to C++ for stl containers
     # (see https://pybind11.readthedocs.io/en/stable/advanced/cast/stl.html)
     numbers: List[int]
     def append_number_from_cpp(self, v: int) -> None:
         """ However you can call dedicated modifying methods"""
         pass
 
-    #
-    # Fixed size array struct members
-    #
 
-    # values is a fixed size array member which should be converted to py::array
+    #/////////////////////////////////////////////////////////////////////////
+    # Fixed size *numeric* array members
+    #
+    # They will be published as a py::array, and modifications will be propagated
+    # on both sides transparently.
+    #///////////////////////////////////////////////////////////////////////
+
     values: np.ndarray  # ndarray[type=int, size=2] default:{0, 1}
-    # flags is a fixed size array member which should be converted to py::array
     flags: np.ndarray   # ndarray[type=bool, size=3] default:{False, True, False}
 
 
-    #
+    #/////////////////////////////////////////////////////////////////////////
     # Simple methods
-    #
+    #///////////////////////////////////////////////////////////////////////
 
     def calc(self, x: int) -> int:
         """ calc: example of simple method"""
@@ -505,6 +509,10 @@ class MyStruct:
         """ set_message: another example of simple method"""
         pass
 
+
+    #/////////////////////////////////////////////////////////////////////////
+
+    #/////////////////////////////////////////////////////////////////////////
 
 
 def foo_instance() -> MyStruct:
@@ -520,6 +528,59 @@ def foo_instance() -> MyStruct:
 # Note: Do not remove the empty line below, otherwise this comment would become part of
 #       the enum's doc, and cause it to be registered (since it contains "MY_API")
 
+
+#////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+#                       mylib/return_value_policy_test.h included by mylib/mylib.h                             //
+#//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+#
+# return_value_policy:
+#
+# If a function has an end-of-line comment which contains `return_value_policy::reference`,
+# and if this function returns a pointer or a reference, litgen will automatically add
+# `pybind11::return_value_policy::reference` when publishing it.
+#
+# Note: `reference` could be replaced by `take_ownership`, or any other member of `pybind11::return_value_policy`
+
+
+class MyConfig:
+    #
+    # For example, singletons (such as the method below) should be returned as a reference,
+    # otherwise python might destroy the singleton instance as soon as it goes out of scope.
+    #
+
+    def instance(self) -> MyConfig:
+        """return_value_policy::reference"""
+        pass
+
+    value: int = 0
+
+def my_config_instance() -> MyConfig:
+    """return_value_policy::reference"""
+    pass
+
+
+#
+#For info, below is the C++ generated binding code:
+#
+#     auto pyClassMyConfig = py::class_<MyConfig>
+#        (m, "MyConfig", "")
+#        .def(py::init<>()) // implicit default constructor
+#        .def_readwrite("value", &MyConfig::value, "")
+#        .def("instance",
+#            &MyConfig::Instance,
+#            " Instance() is a method that returns a pointer that should use `return_value_policy::reference`\nreturn_value_policy::reference",
+#            pybind11::return_value_policy::reference)
+#        ;
+#
+#
+#    m.def("my_config_instance",
+#        MyConfigInstance,
+#        "return_value_policy::reference",
+#        pybind11::return_value_policy::reference);
+#
+#
+#
 ####################    </generated_from:mylib_amalgamation.h>    ####################
 
 # </litgen_stub>

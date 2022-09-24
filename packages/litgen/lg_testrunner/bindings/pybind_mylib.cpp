@@ -52,7 +52,7 @@ void py_init_module_lg_mylib(py::module& m)
     m.def("my_sub",
         my_sub,
         py::arg("a"), py::arg("b"),
-        "Subtracts two numbers: this will be the __doc__ since my_sub does not have an end-of-line comment");
+        "Subtracts two numbers: this will be the function's __doc__ since my_sub does not have an end-of-line comment");
 
     m.def("my_add",
         my_add,
@@ -481,7 +481,7 @@ void py_init_module_lg_mylib(py::module& m)
         .def_readwrite("factor", &MyStruct::factor, "")
         .def_readwrite("delta", &MyStruct::delta, "")
         .def_readwrite("message", &MyStruct::message, "")
-        .def_readwrite("numbers", &MyStruct::numbers, " By default, modifications are not propagated between C++ and python for stl containers\n (see https://pybind11.readthedocs.io/en/stable/advanced/cast/stl.html)")
+        .def_readwrite("numbers", &MyStruct::numbers, " By default, modifications from python are not propagated to C++ for stl containers\n (see https://pybind11.readthedocs.io/en/stable/advanced/cast/stl.html)")
         .def("append_number_from_cpp",
             &MyStruct::append_number_from_cpp,
             py::arg("v"),
@@ -493,7 +493,7 @@ void py_init_module_lg_mylib(py::module& m)
                 auto base = pybind11::array(dtype, {2}, {sizeof(int)});
                 return pybind11::array(dtype, {2}, {sizeof(int)}, self.values, base);
             }, [](MyStruct& self) {},
-            "values is a fixed size array member which should be converted to py::array")
+            "")
         .def_property("flags",
             [](MyStruct &self) -> pybind11::array
             {
@@ -501,7 +501,7 @@ void py_init_module_lg_mylib(py::module& m)
                 auto base = pybind11::array(dtype, {3}, {sizeof(bool)});
                 return pybind11::array(dtype, {3}, {sizeof(bool)}, self.flags, base);
             }, [](MyStruct& self) {},
-            "flags is a fixed size array member which should be converted to py::array")
+            "")
         .def("calc",
             &MyStruct::calc,
             py::arg("x"),
@@ -515,6 +515,23 @@ void py_init_module_lg_mylib(py::module& m)
 
     m.def("foo_instance",
         FooInstance,
+        "return_value_policy::reference",
+        pybind11::return_value_policy::reference);
+
+
+    auto pyClassMyConfig = py::class_<MyConfig>
+        (m, "MyConfig", "")
+        .def(py::init<>()) // implicit default constructor
+        .def("instance",
+            &MyConfig::Instance,
+            "return_value_policy::reference",
+            pybind11::return_value_policy::reference)
+        .def_readwrite("value", &MyConfig::value, "")
+        ;
+
+
+    m.def("my_config_instance",
+        MyConfigInstance,
         "return_value_policy::reference",
         pybind11::return_value_policy::reference);
     ////////////////////    </generated_from:mylib_amalgamation.h>    ////////////////////
