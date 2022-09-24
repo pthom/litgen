@@ -1,26 +1,26 @@
 #include "mylib/api_marker.h"
 
-
-namespace N
+namespace SomeNamespace                                        // MY_API
 {
-    struct Parent
+    struct ParentStruct                                        // MY_API
     {
-        int a = 1;
-        struct Child
+        struct InnerStruct                                     // MY_API
         {
-            Child(int _b = 0): b(_b) {}
-            int b = 2;
-            float add(float values[3]);
+            int value;
+
+            InnerStruct(int value = 0) : value(value) {}
+            MY_API int add(int a, int b) { return a + b; }
         };
-        Child child;
 
-//    enum class Item
-//    {
-//        Zero = 0,
-//        One,
-//        Two
-//    };
-//    Item item;
+//        enum class InnerEnum                                   // MY_API
+//        {
+//            Zero = 0,
+//            One,
+//            Two
+//        };
+
+        int a = 1;
+        InnerStruct inner_struct;
+//        InnerEnum inner_enum;
     };
-
-}
+} // namespace SomeNamespace

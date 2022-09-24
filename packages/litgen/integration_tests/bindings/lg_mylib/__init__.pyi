@@ -285,48 +285,48 @@ def modify_string(s: BoxedString) -> None:
 #
 # This is caused by the following options during generation:
 #
-#     options.fn_params_output_modifiable_immutable_to_return__regexes = [r"^Slider"]
+#     options.fn_params_output_modifiable_immutable_to_return__regexes = [r"^Change"]
 #/////////////////////////////////////////////////////////////////////////////////////////
 
 
-def slider_bool_int(label: str, value: int) -> Tuple[bool, int]:
+def change_bool_int(label: str, value: int) -> Tuple[bool, int]:
     """ Test with int param + int return type
      Will be published in python as:
-     --> def slider_bool_int(label: str, value: int) -> Tuple[bool, int]:
+     --> def change_bool_int(label: str, value: int) -> Tuple[bool, int]:
     """
     pass
 
-def slider_void_int(label: str, value: int) -> int:
+def change_void_int(label: str, value: int) -> int:
     """ Will be published in python as:
-     -->    def slider_void_int(label: str, value: int) -> int:
+     -->    def change_void_int(label: str, value: int) -> int:
     """
     pass
 
-def slider_bool_int2(
+def change_bool_int2(
     label: str,
     value1: int,
     value2: int
     ) -> Tuple[bool, int, int]:
     """ Will be published in python as:
-     -->    def slider_bool_int2(label: str, value1: int, value2: int) -> Tuple[bool, int, int]:
+     -->    def change_bool_int2(label: str, value1: int, value2: int) -> Tuple[bool, int, int]:
     """
     pass
 
-def slider_void_int_default_null(
+def change_void_int_default_null(
     label: str,
     value: Optional[int] = None
     ) -> Tuple[bool, Optional[int]]:
     """ Will be published in python as:
-     -->    def slider_void_int_default_null(label: str, value: Optional[int] = None) -> Tuple[bool, Optional[int]]:
+     -->    def change_void_int_default_null(label: str, value: Optional[int] = None) -> Tuple[bool, Optional[int]]:
     """
     pass
 
-def slider_void_int_array(
+def change_void_int_array(
     label: str,
     value: List[int]
     ) -> Tuple[bool, List[int]]:
     """ Will be published in python as:
-     -->    def slider_void_int_array(label: str, value: List[int]) -> Tuple[bool, List[int]]:
+     -->    def change_void_int_array(label: str, value: List[int]) -> Tuple[bool, List[int]]:
     """
     pass
 
@@ -396,10 +396,6 @@ class BasicEnum(Enum):
 
     # This is value b
     b   # (= 4)
-
-    # This is c
-    # with doc on several lines
-    c   # (= BasicEnum.a | BasicEnum.b)
 
 
 
@@ -569,7 +565,133 @@ def my_config_instance() -> MyConfig:
 #                       mylib/inner_class_test.h included by mylib/mylib.h                                     //
 #//////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+# <Namespace SomeNamespace>
+class ParentStruct:
+    class InnerStruct:
+        value: int
 
+        def __init__(self, value: int = 0) -> None:
+            pass
+        def add(self, a: int, b: int) -> int:
+            pass
+
+    #        enum class InnerEnum                                   // MY_API
+    #        {
+    #            Zero = 0,
+    #            One,
+    #            Two
+    #        };
+
+    a: int = 1
+    inner_struct: InnerStruct
+    #        InnerEnum inner_enum;
+# </Namespace SomeNamespace>
+# namespace SomeNamespace
+#//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+#                       mylib/mix_adapters_class.h included by mylib/mylib.h                                   //
+#//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+# More complex tests, where we combine litgen function adapters with classes and namespace
+#
+# The main intent of these tests is to verify that the generated code compiles.
+# The corresponding python test file will not test all these functions
+# (as they are in fact copy/pasted/adapted from other tests)
+#
+
+
+
+# <Namespace SomeNamespace>
+class Blah:
+    """ struct Blah - MY_API"""
+    def toggle_bool_pointer(self, v: BoxedBool) -> None:
+        """//, int vv[2])"""
+        pass
+
+    def toggle_bool_pointer_get_points(
+        self,
+        v: BoxedBool,
+        vv_0: BoxedInt,
+        vv_1: BoxedInt
+        ) -> None:
+        pass
+
+
+    def modify_string(self, s: BoxedString) -> None:
+        pass
+
+
+
+    def change_bool_int(self, label: str, value: int) -> Tuple[bool, int]:
+        pass
+
+
+    def add_inside_buffer(self, buffer: np.ndarray, number_to_add: int) -> None:
+        pass
+
+    def templated_mul_inside_buffer(
+        self,
+        buffer: np.ndarray,
+        factor: float
+        ) -> None:
+        pass
+
+    def const_array2_add(self, values: List[int]) -> int:
+        pass
+
+    def c_string_list_total_size(
+        self,
+        items: List[str],
+        output_0: BoxedInt,
+        output_1: BoxedInt
+        ) -> int:
+        pass
+
+
+
+# <Namespace SomeInnerNamespace>
+def toggle_bool_pointer(v: BoxedBool) -> None:
+    """//, int vv[2])"""
+    pass
+
+def toggle_bool_pointer_get_points(
+    v: BoxedBool,
+    vv_0: BoxedInt,
+    vv_1: BoxedInt
+    ) -> None:
+    pass
+
+
+def modify_string(s: BoxedString) -> None:
+    pass
+
+
+
+def change_bool_int(label: str, value: int) -> Tuple[bool, int]:
+    pass
+
+
+def add_inside_buffer(buffer: np.ndarray, number_to_add: int) -> None:
+    pass
+
+def templated_mul_inside_buffer(buffer: np.ndarray, factor: float) -> None:
+    pass
+
+def const_array2_add(values: List[int]) -> int:
+    pass
+
+def c_string_list_total_size(
+    items: List[str],
+    output_0: BoxedInt,
+    output_1: BoxedInt
+    ) -> int:
+    pass
+
+# </Namespace SomeInnerNamespace>
+
+# </Namespace SomeNamespace>
+#////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+#                       mylib/sandbox.h included by mylib/mylib.h                                              //
+#//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+# Sandbox to play with litgen. Add some code here (with MY_API), and it will be exported
 ####################    </generated_from:mylib_amalgamation.h>    ####################
 
 # </litgen_stub>

@@ -41,24 +41,24 @@ def test_nullable_param():
 
 
 def test_adapt_modifiable_immutable_to_return():
-    r = lg_mylib.slider_bool_int("Hello", 2)
+    r = lg_mylib.change_bool_int("Hello", 2)
     assert r == (True, 3)
 
-    r = lg_mylib.slider_void_int("Hello", 2)
+    r = lg_mylib.change_void_int("Hello", 2)
     assert r == 3
 
-    r = lg_mylib.slider_bool_int2("Hello", 1, 2)
+    r = lg_mylib.change_bool_int2("Hello", 1, 2)
     assert r == (False, 2, 4)
 
-    r = lg_mylib.slider_void_int_default_null("Hello", None)
+    r = lg_mylib.change_void_int_default_null("Hello", None)
     assert r == (True, None)
 
-    r = lg_mylib.slider_void_int_default_null("Hello")
+    r = lg_mylib.change_void_int_default_null("Hello")
     assert r == (True, None)
 
-    r = lg_mylib.slider_void_int_default_null("Hello", 1)
+    r = lg_mylib.change_void_int_default_null("Hello", 1)
     assert r == (True, 2)
 
     ints = [1, 2, 3]
-    r = lg_mylib.slider_void_int_array("Hello", ints)
+    r = lg_mylib.change_void_int_array("Hello", ints)
     assert r == (True, [2, 4, 6])

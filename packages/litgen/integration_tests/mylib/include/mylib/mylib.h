@@ -11,3 +11,5 @@
 #include "mylib/struct_test.h"
 #include "mylib/return_value_policy_test.h"
 #include "mylib/inner_class_test.h"
+#include "mylib/mix_adapters_class_test.h"
+#include "mylib/sandbox.h"

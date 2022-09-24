@@ -29,7 +29,7 @@
 /////////////////////////////////////////////////////////////////////////////////////////////
 
 
-// Test with pointer: a pointer
+// Test with pointer:
 // Will be published in python as:
 // -->    def toggle_bool_pointer(v: BoxedBool) -> None:
 MY_API void ToggleBoolPointer(bool *v)
@@ -68,29 +68,29 @@ MY_API void ModifyString(std::string* s) { (*s) += "hello"; }
 //
 // This is caused by the following options during generation:
 //
-//     options.fn_params_output_modifiable_immutable_to_return__regexes = [r"^Slider"]
+//     options.fn_params_output_modifiable_immutable_to_return__regexes = [r"^Change"]
 /////////////////////////////////////////////////////////////////////////////////////////////
 
 
 // Test with int param + int return type
 // Will be published in python as:
-// --> def slider_bool_int(label: str, value: int) -> Tuple[bool, int]:
-MY_API bool SliderBoolInt(const char* label, int * value)
+// --> def change_bool_int(label: str, value: int) -> Tuple[bool, int]:
+MY_API bool ChangeBoolInt(const char* label, int * value)
 {
     *value += 1;
     return true;
 }
 
 // Will be published in python as:
-// -->    def slider_void_int(label: str, value: int) -> int:
-MY_API void SliderVoidInt(const char* label, int * value)
+// -->    def change_void_int(label: str, value: int) -> int:
+MY_API void ChangeVoidInt(const char* label, int * value)
 {
     *value += 1;
 }
 
 // Will be published in python as:
-// -->    def slider_bool_int2(label: str, value1: int, value2: int) -> Tuple[bool, int, int]:
-MY_API bool SliderBoolInt2(const char* label, int * value1, int * value2)
+// -->    def change_bool_int2(label: str, value1: int, value2: int) -> Tuple[bool, int, int]:
+MY_API bool ChangeBoolInt2(const char* label, int * value1, int * value2)
 {
     *value1 += 1;
     *value2 += 2;
@@ -98,8 +98,8 @@ MY_API bool SliderBoolInt2(const char* label, int * value1, int * value2)
 }
 
 // Will be published in python as:
-// -->    def slider_void_int_default_null(label: str, value: Optional[int] = None) -> Tuple[bool, Optional[int]]:
-MY_API bool SliderVoidIntDefaultNull(const char* label, int * value = nullptr)
+// -->    def change_void_int_default_null(label: str, value: Optional[int] = None) -> Tuple[bool, Optional[int]]:
+MY_API bool ChangeVoidIntDefaultNull(const char* label, int * value = nullptr)
 {
     if (value != nullptr)
         *value += 1;
@@ -107,8 +107,8 @@ MY_API bool SliderVoidIntDefaultNull(const char* label, int * value = nullptr)
 }
 
 // Will be published in python as:
-// -->    def slider_void_int_array(label: str, value: List[int]) -> Tuple[bool, List[int]]:
-MY_API bool SliderVoidIntArray(const char* label, int value[3])
+// -->    def change_void_int_array(label: str, value: List[int]) -> Tuple[bool, List[int]]:
+MY_API bool ChangeVoidIntArray(const char* label, int value[3])
 {
     value[0] += 1;
     value[1] += 2;

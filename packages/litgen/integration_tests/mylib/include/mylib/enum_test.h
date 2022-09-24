@@ -16,10 +16,6 @@ enum BasicEnum     // MY_API
     // This is value b
     BasicEnum_b,
 
-    // This is c
-    // with doc on several lines
-    BasicEnum_c = BasicEnum_a | BasicEnum_b,
-
     BasicEnum_count // By default this "count" item is not exported: see options.enum_flag_skip_count
 };
 

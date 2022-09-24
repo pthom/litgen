@@ -1,8 +1,6 @@
 import os
 from codemanip import code_utils
 
-import srcmlcpp
-
 import litgen
 from litgen.make_amalgamated_header import AmalgamationOptions, write_amalgamate_header_file
 
@@ -26,28 +24,38 @@ def make_testrunner_amalgamated_header() -> None:
 
 def my_code_style_options() -> litgen.LitgenOptions:
     options = litgen.LitgenOptions()
+
+    # Generated C++ code style
     options.cpp_indent_size = 4
 
-    options.srcml_options = srcmlcpp.SrcmlOptions()
+    # require MY_API for all exported functions
     options.srcml_options.functions_api_prefixes = ["MY_API"]
-
+    # require MY_API for all exported classes, enums, structs and namespaces (add // MY_API as eol comment)
     options.srcml_options.api_suffixes = ["MY_API"]
+
+    # Python modifiable immutables options
+    options.fn_params_replace_modifiable_immutable_by_boxed__regexes = [
+        r"^Toggle",
+        r"^Modify",
+    ]
+    options.fn_params_output_modifiable_immutable_to_return__regexes = [r"^Change"]
+
+    # c style fixed size array options
+    options.fn_params_replace_modifiable_c_array_by_boxed__regexes = ["array", "GetPoints", r"c_string_list_total_size"]
+
+    # c style buffer options (will apply to all functions names, except if containing "Change")
+    options.fn_params_replace_buffer_by_array__regexes = [code_utils.make_regex_exclude_word("Change")]
+
+    #
+    # Sandbox for other options
+    #
 
     # options.original_location_flag_show = True
     # options.original_location_nb_parent_folders = 0
     # options.original_signature_flag_show = True
     # options.python_run_black_formatter = True
-
     # options.python_max_consecutive_empty_lines = 2
-
     # options.fn_params_replace_c_string_list__regexes = [
-    options.fn_params_replace_buffer_by_array__regexes = [code_utils.make_regex_exclude_word("Slider")]
-    options.fn_params_replace_modifiable_c_array_by_boxed__regexes = ["array", "GetPoints", r"c_string_list_total_size"]
-    options.fn_params_replace_modifiable_immutable_by_boxed__regexes = [
-        r"^Toggle",
-        r"^Modify",
-    ]
-    options.fn_params_output_modifiable_immutable_to_return__regexes = [r"^Slider"]
 
     return options
 

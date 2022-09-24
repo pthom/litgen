@@ -5,7 +5,6 @@ def test_basic_enum():
     assert "BasicEnum: a simple C-style enum" in lg_mylib.BasicEnum.__doc__
     assert lg_mylib.BasicEnum.a == 1
     assert lg_mylib.BasicEnum.aa == 2
-    assert lg_mylib.BasicEnum.c == lg_mylib.BasicEnum.a | lg_mylib.BasicEnum.c
 
 
 def test_class_enum_not_registered():

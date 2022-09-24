@@ -264,29 +264,29 @@ MY_API void ModifyString(std::string* s) { (*s) += "hello"; }
 //
 // This is caused by the following options during generation:
 //
-//     options.fn_params_output_modifiable_immutable_to_return__regexes = [r"^Slider"]
+//     options.fn_params_output_modifiable_immutable_to_return__regexes = [r"^Change"]
 /////////////////////////////////////////////////////////////////////////////////////////////
 
 
 // Test with int param + int return type
 // Will be published in python as:
-// --> def slider_bool_int(label: str, value: int) -> Tuple[bool, int]:
-MY_API bool SliderBoolInt(const char* label, int * value)
+// --> def change_bool_int(label: str, value: int) -> Tuple[bool, int]:
+MY_API bool ChangeBoolInt(const char* label, int * value)
 {
     *value += 1;
     return true;
 }
 
 // Will be published in python as:
-// -->    def slider_void_int(label: str, value: int) -> int:
-MY_API void SliderVoidInt(const char* label, int * value)
+// -->    def change_void_int(label: str, value: int) -> int:
+MY_API void ChangeVoidInt(const char* label, int * value)
 {
     *value += 1;
 }
 
 // Will be published in python as:
-// -->    def slider_bool_int2(label: str, value1: int, value2: int) -> Tuple[bool, int, int]:
-MY_API bool SliderBoolInt2(const char* label, int * value1, int * value2)
+// -->    def change_bool_int2(label: str, value1: int, value2: int) -> Tuple[bool, int, int]:
+MY_API bool ChangeBoolInt2(const char* label, int * value1, int * value2)
 {
     *value1 += 1;
     *value2 += 2;
@@ -294,8 +294,8 @@ MY_API bool SliderBoolInt2(const char* label, int * value1, int * value2)
 }
 
 // Will be published in python as:
-// -->    def slider_void_int_default_null(label: str, value: Optional[int] = None) -> Tuple[bool, Optional[int]]:
-MY_API bool SliderVoidIntDefaultNull(const char* label, int * value = nullptr)
+// -->    def change_void_int_default_null(label: str, value: Optional[int] = None) -> Tuple[bool, Optional[int]]:
+MY_API bool ChangeVoidIntDefaultNull(const char* label, int * value = nullptr)
 {
     if (value != nullptr)
         *value += 1;
@@ -303,8 +303,8 @@ MY_API bool SliderVoidIntDefaultNull(const char* label, int * value = nullptr)
 }
 
 // Will be published in python as:
-// -->    def slider_void_int_array(label: str, value: List[int]) -> Tuple[bool, List[int]]:
-MY_API bool SliderVoidIntArray(const char* label, int value[3])
+// -->    def change_void_int_array(label: str, value: List[int]) -> Tuple[bool, List[int]]:
+MY_API bool ChangeVoidIntArray(const char* label, int value[3])
 {
     value[0] += 1;
     value[1] += 2;
@@ -377,10 +377,6 @@ enum BasicEnum     // MY_API
 
     // This is value b
     BasicEnum_b,
-
-    // This is c
-    // with doc on several lines
-    BasicEnum_c = BasicEnum_a | BasicEnum_b,
 
     BasicEnum_count // By default this "count" item is not exported: see options.enum_flag_skip_count
 };
@@ -570,27 +566,148 @@ For info, below is the C++ generated binding code:
 //                       mylib/inner_class_test.h included by mylib/mylib.h                                     //
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-
-namespace N
+namespace SomeNamespace                                        // MY_API
 {
-    struct Parent
+    struct ParentStruct                                        // MY_API
     {
-        int a = 1;
-        struct Child
+        struct InnerStruct                                     // MY_API
         {
-            Child(int _b = 0): b(_b) {}
-            int b = 2;
-            float add(float values[3]);
-        };
-        Child child;
+            int value;
 
-//    enum class Item
-//    {
-//        Zero = 0,
-//        One,
-//        Two
-//    };
-//    Item item;
+            InnerStruct(int value = 0) : value(value) {}
+            MY_API int add(int a, int b) { return a + b; }
+        };
+
+//        enum class InnerEnum                                   // MY_API
+//        {
+//            Zero = 0,
+//            One,
+//            Two
+//        };
+
+        int a = 1;
+        InnerStruct inner_struct;
+//        InnerEnum inner_enum;
     };
+} // namespace SomeNamespace
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//                       mylib/mix_adapters_class.h included by mylib/mylib.h                                   //
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// More complex tests, where we combine litgen function adapters with classes and namespace
+//
+// The main intent of these tests is to verify that the generated code compiles.
+// The corresponding python test file will not test all these functions
+// (as they are in fact copy/pasted/adapted from other tests)
+//
+
+
+#include <cstddef>
+
+namespace SomeNamespace // MY_API
+{
+    struct Blah // MY_API
+    {
+        MY_API void ToggleBoolPointer(bool *v)//, int vv[2])
+        {
+            *v = !(*v);
+        }
+
+        MY_API void ToggleBoolPointerGetPoints(bool *v, int vv[2])
+        {
+            *v = !(*v);
+        }
+
+
+        MY_API void ModifyString(std::string* s) { (*s) += "hello"; }
+
+
+
+        MY_API bool ChangeBoolInt(const char* label, int * value)
+        {
+            *value += 1;
+            return true;
+        }
+
+
+        MY_API inline void add_inside_buffer(uint8_t* buffer, size_t buffer_size, uint8_t number_to_add)
+        {
+            for (size_t i  = 0; i < buffer_size; ++i)
+                buffer[i] += number_to_add;
+        }
+
+        template<typename T> MY_API void templated_mul_inside_buffer(T* buffer, size_t buffer_size, double factor)
+        {
+            for (size_t i  = 0; i < buffer_size; ++i)
+                buffer[i] *= (T)factor;
+        }
+
+        MY_API inline int const_array2_add(const int values[2]) { return values[0] + values[1];}
+
+        MY_API inline size_t c_string_list_total_size(const char * const items[], int items_count, int output[2])
+        {
+            size_t total = 0;
+            for (size_t i = 0; i < items_count; ++i)
+                total += strlen(items[i]);
+            output[0] = (int)total;
+            output[1] = (int)(total + 1);
+            return total;
+        }
+
+    }; // struct Blah
+
+
+    namespace SomeInnerNamespace       // MY_API
+    {
+        MY_API void ToggleBoolPointer(bool *v)//, int vv[2])
+        {
+            *v = !(*v);
+        }
+
+        MY_API void ToggleBoolPointerGetPoints(bool *v, int vv[2])
+        {
+            *v = !(*v);
+        }
+
+
+        MY_API void ModifyString(std::string* s) { (*s) += "hello"; }
+
+
+
+        MY_API bool ChangeBoolInt(const char* label, int * value)
+        {
+            *value += 1;
+            return true;
+        }
+
+
+        MY_API inline void add_inside_buffer(uint8_t* buffer, size_t buffer_size, uint8_t number_to_add)
+        {
+            for (size_t i  = 0; i < buffer_size; ++i)
+                buffer[i] += number_to_add;
+        }
+
+        template<typename T> MY_API void templated_mul_inside_buffer(T* buffer, size_t buffer_size, double factor)
+        {
+            for (size_t i  = 0; i < buffer_size; ++i)
+                buffer[i] *= (T)factor;
+        }
+
+        MY_API inline int const_array2_add(const int values[2]) { return values[0] + values[1];}
+
+        MY_API inline size_t c_string_list_total_size(const char * const items[], int items_count, int output[2])
+        {
+            size_t total = 0;
+            for (size_t i = 0; i < items_count; ++i)
+                total += strlen(items[i]);
+            output[0] = (int)total;
+            output[1] = (int)(total + 1);
+            return total;
+        }
+
+    } // namespace SomeInnerNamespace
 
 }
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//                       mylib/sandbox.h included by mylib/mylib.h                                              //
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// Sandbox to play with litgen. Add some code here (with MY_API), and it will be exported
