@@ -229,7 +229,7 @@ class AdaptedClassMember(AdaptedDecl):
 @dataclass
 class AdaptedClass(AdaptedElement):
     adapted_public_children: List[
-        Union[AdaptedEmptyLine, AdaptedComment, AdaptedClassMember, AdaptedFunction, AdaptedClass]
+        Union[AdaptedEmptyLine, AdaptedComment, AdaptedClassMember, AdaptedFunction, AdaptedClass, AdaptedEnum]
     ]
 
     def __init__(self, options: LitgenOptions, class_: CppStruct):

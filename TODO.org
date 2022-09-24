@@ -414,16 +414,7 @@ Argh...
 ** Wish List / Easy
 
 
-*** integration test
-  replace amalgamation by several files processed?
-
-
 ** Handle scope
-
-*** First handle subclasses & sub enums
-
-
-
 
 *** Handle Namespace
 Add options:

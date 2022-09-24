@@ -50,15 +50,15 @@ enum Foo
             """ Doc about Foo
              On several lines
             """
-            a # (= 0)  # This is a
+            a = auto() # (= 0)  # This is a
 
             # And this is b and c's comment
-            b # (= 1)
-            c # (= 256)  # c has a special comment
+            b = auto() # (= 1)
+            c = auto() # (= 256)  # c has a special comment
 
-            d # (= Foo.a | Foo.b + Foo.c)  # And a computed value
+            d = auto() # (= Foo.a | Foo.b + Foo.c)  # And a computed value
 
-            e # (= 4)
+            e = auto() # (= 4)
     ''',
     )
 
@@ -75,16 +75,16 @@ enum Foo
             """
 
             # This is a
-            a # (= 0)
+            a = auto() # (= 0)
 
             # And this is b and c's comment
 
-            b # (= 1)
+            b = auto() # (= 1)
             # c has a special comment
-            c # (= 256)
+            c = auto() # (= 256)
             # And a computed value
-            d # (= Foo.a | Foo.b + Foo.c)
-            e # (= 4)
+            d = auto() # (= Foo.a | Foo.b + Foo.c)
+            e = auto() # (= 4)
         ''',
     )
 
