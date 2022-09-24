@@ -412,10 +412,6 @@ Argh...
 Test STL
 Group tests / separate headers & py tests
 *** integration test
-  rename lg_testrunner to integration tests
-  finish separation
-  add test / struct, enum, etc
-  add doc
   replace amalgamation by several files processed?
 
 

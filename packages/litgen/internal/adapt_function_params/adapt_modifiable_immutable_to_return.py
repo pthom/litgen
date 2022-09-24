@@ -255,11 +255,13 @@ def adapt_modifiable_immutable_to_return(adapted_function: AdaptedFunction) -> O
             replacements.maybe_store_function_output = f"{old_return_type} r = "
 
         # fill function_name
-        replacements.lambda_to_call = (
-            adapted_function.lambda_to_call
-            if adapted_function.lambda_to_call is not None
-            else old_function.function_name
-        )
+        if adapted_function.lambda_to_call is not None:
+            replacements.lambda_to_call = adapted_function.lambda_to_call
+        else:
+            if old_function.is_method():
+                replacements.lambda_to_call = "self." + old_function.function_name
+            else:
+                replacements.lambda_to_call = old_function.qualified_function_name()
 
         # fill params
         replacements.params = ", ".join(lambda_adapter.adapted_cpp_parameter_list)

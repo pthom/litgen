@@ -255,7 +255,7 @@ class _AdaptBuffersHelper:
                 if self.adapted_function.is_method():
                     function_or_lambda_to_call = "self." + self.adapted_function.cpp_adapted_function.function_name
                 else:
-                    function_or_lambda_to_call = self.adapted_function.cpp_adapted_function.function_name
+                    function_or_lambda_to_call = self.adapted_function.cpp_adapted_function.qualified_function_name()
 
             # Fill maybe_return
             _fn_return_type = self.function_infos.full_return_type()

@@ -944,6 +944,13 @@ class CppFunctionDecl(CppElementAndComment):
         self.is_auto_decl = False
         self.function_name = ""
 
+    def qualified_function_name(self) -> str:
+        parent_scope = self.cpp_scope(False).str_cpp()
+        if len(parent_scope) == 0:
+            return self.function_name
+        else:
+            return parent_scope + "::" + self.function_name
+
     def _str_signature(self) -> str:
         r = ""
 
