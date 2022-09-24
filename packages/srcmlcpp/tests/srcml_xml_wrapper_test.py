@@ -148,7 +148,7 @@ def test_warnings():
         got_exception = True
         msg = str(e)
         for part in [
-            "test_warning",
+            "test_warnings",
             "function_decl",
             "main.h:1:1",
             "void foo",
@@ -170,7 +170,8 @@ def test_warnings_2():
         flag_strip_empty_lines=True,
     )
     cpp_struct = srcmlcpp.srcmlcpp_main.code_first_struct(options, code)
-    msg = cpp_struct.message_detailed("names starting with __ are reserved")
+
+    msg = cpp_struct._warning_message_str("names starting with __ are reserved")
     code_utils.assert_are_codes_equal(
         msg,
         """

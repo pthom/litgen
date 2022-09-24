@@ -257,18 +257,11 @@ class SrcmlXmlWrapper:
     def emit_warning(self, message) -> None:
         """emits a warning which will display the message with a context
         that gives the location of this element in the code"""
-        self.emit_message(message, "Warning")
-
-    def emit_info(self, message) -> None:
-        """emit an info"""
-        self.emit_message(message, "Info")
-
-    def emit_message(self, message, message_header: str) -> None:
         """emit a message"""
-        message = self._format_message(message, message_header)
+        message = self._format_message(message, "Warning")
         emit_warning_if_not_quiet(self.options, message)
 
-    def message_detailed(self, message: str, message_header: str = "Warning") -> str:
+    def _warning_message_str(self, message: str, message_header: str = "Warning") -> str:
         r = self._format_message(message, message_header=message_header)
         return r
 
