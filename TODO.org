@@ -413,10 +413,6 @@ Argh...
 
 ** Wish List / Easy
 
-arg, faut-il remettre les "=" dans les stub / enum ?
-  Il semble que l'autocompletion en a besoin
-  Sinon, mettre = auto() + from enum import Enum, auto
-  https://docs.python.org/3/library/enum.html#using-automatic-values
 
 *** integration test
   replace amalgamation by several files processed?
@@ -426,7 +422,7 @@ arg, faut-il remettre les "=" dans les stub / enum ?
 
 *** First handle subclasses & sub enums
 
-Add enums
+
 
 
 *** Handle Namespace

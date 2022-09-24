@@ -47,7 +47,6 @@ class BoxedString:
 #//////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
-
 #////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 #                       mylib/basic_test.h included by mylib/mylib.h                                           //
 #//////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -389,14 +388,14 @@ class BasicEnum(Enum):
     # not to pollute the parent namespace.
     # Since enum members do not leak to the parent namespace in python, litgen will remove the prefix by default.
 
-    a   # (= 1)  # This will be exported as BasicEnum.a
-    aa  # (= 2)  # This will be exported as BasicEnum.aa
-    aaa # (= 3)  # This will be exported as BasicEnum.aaa
+    a = auto()   # (= 1)  # This will be exported as BasicEnum.a
+    aa = auto()  # (= 2)  # This will be exported as BasicEnum.aa
+    aaa = auto() # (= 3)  # This will be exported as BasicEnum.aaa
 
     # Lonely comment
 
     # This is value b
-    b   # (= 4)
+    b = auto()   # (= 4)
 
 
 
@@ -412,9 +411,9 @@ class BasicEnum(Enum):
 
 class ClassEnum(Enum):
     """ ClassEnum: a class enum that should be published"""
-    on      # (= 0)
-    off     # (= 1)
-    unknown # (= 2)
+    on = auto()      # (= 0)
+    off = auto()     # (= 1)
+    unknown = auto() # (= 2)
 
 
 #
@@ -578,10 +577,10 @@ class ParentStruct:
             pass
 
     class InnerEnum(Enum):
-        zero  # (= 0)
-        one   # (= 1)
-        two   # (= 2)
-        three # (= 3)
+        zero = auto()  # (= 0)
+        one = auto()   # (= 1)
+        two = auto()   # (= 2)
+        three = auto() # (= 3)
 
     inner_struct: InnerStruct
     inner_enum: InnerEnum = InnerEnum.three
@@ -694,12 +693,6 @@ def c_string_list_total_size(
 #                       mylib/sandbox.h included by mylib/mylib.h                                              //
 #//////////////////////////////////////////////////////////////////////////////////////////////////////////////
 # Sandbox to play with litgen. Add some code here (with MY_API), and it will be exported
-
-
-#////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-#                       mylib/mylib.h continued                                                                //
-#//////////////////////////////////////////////////////////////////////////////////////////////////////////////
-# #include "mylib/inner_class_test.h"
 ####################    </generated_from:mylib_amalgamation.h>    ####################
 
 # </litgen_stub>
