@@ -42,7 +42,6 @@ class BoxedString:
 #                       mylib/mylib.h                                                                          //
 #//////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-
 #////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 #                       mylib/api_marker.h included by mylib/mylib.h                                           //
 #//////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -147,6 +146,7 @@ def array2_modify_mutable(out_0: Point2, out_1: Point2) -> None:
 #                       mylib/c_style_buffer_to_pyarray_test.h included by mylib/mylib.h                       //
 #//////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+
 #
 # C Style buffer to py::array tests
 #
@@ -200,6 +200,7 @@ def templated_mul_inside_buffer(buffer: np.ndarray, factor: float) -> None:
 #                       mylib/c_string_list_test.h included by mylib/mylib.h                                   //
 #//////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+
 def c_string_list_total_size(
     items: List[str],
     output_0: BoxedInt,
@@ -218,6 +219,7 @@ def c_string_list_total_size(
 #////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 #                       mylib/modifiable_immutable_test.h included by mylib/mylib.h                            //
 #//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 
 #
 # Modifiable immutable python types test
@@ -333,18 +335,48 @@ def slider_void_int_array(
 #//////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 #
-# Test overload
+# litgen is able to detect automatically the presence of overloads that require
+# to use `py::overload_cast<...>` when publishing
 #
+
+#
+# overload on free functions
+#
+
 def add_overload(a: int, b: int) -> int:  # type: ignore
     pass
 def add_overload(a: int, b: int, c: int) -> int:  # type: ignore
     pass
+
+#
+# overload on methods
+#
 
 class FooOverload:
     def add_overload(self, a: int, b: int) -> int:          # type: ignore
         pass
     def add_overload(self, a: int, b: int, c: int) -> int:  # type: ignore
         pass
+
+
+#
+#For info, below is the generated C++ code that will publish these functions:
+#
+#     m.def("add_overload",
+#        py::overload_cast<int, int>(add_overload), py::arg("a"), py::arg("b"));
+#    m.def("add_overload",
+#        py::overload_cast<int, int, int>(add_overload), py::arg("a"), py::arg("b"), py::arg("c"));
+#
+#
+#    auto pyClassFooOverload = py::class_<FooOverload>
+#        (m, "FooOverload", "")
+#        .def(py::init<>()) // implicit default constructor
+#        .def("add_overload",
+#            py::overload_cast<int, int>(&FooOverload::add_overload), py::arg("a"), py::arg("b"))
+#        .def("add_overload",
+#            py::overload_cast<int, int, int>(&FooOverload::add_overload), py::arg("a"), py::arg("b"), py::arg("c"))
+#        ;
+#
 
 #////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 #                       mylib/enum_test.h included by mylib/mylib.h                                            //
@@ -423,54 +455,71 @@ class ClassEnum(Enum):
 #    unknown # (= 2)
 #
 
-
-
 #////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-#                       mylib/mylib.h continued                                                                //
+#                       mylib/struct_test.h included by mylib/mylib.h                                          //
 #//////////////////////////////////////////////////////////////////////////////////////////////////////////////
-# <Namespace LiterateGeneratorExample>
 
 
-class Foo:
+
+class MyStruct:
     """ A superb struct"""
-    def __init__(self) -> None:
+    def __init__(self, factor: int = 10, message: str = "hello") -> None:
         pass
 
     #
-    # These are our parameters
+    # Simple struct members
     #
+    factor: int = 10
+    delta: int = 0
+    message: str
 
     #
-    # Test with numeric arrays which should be converted to py::array
+    # Stl container members
     #
+
+    # By default, modifications are not propagated between C++ and python for stl containers
+    # (see https://pybind11.readthedocs.io/en/stable/advanced/cast/stl.html)
+    numbers: List[int]
+    def append_number_from_cpp(self, v: int) -> None:
+        """ However you can call dedicated modifying methods"""
+        pass
+
+    #
+    # Fixed size array struct members
+    #
+
+    # values is a fixed size array member which should be converted to py::array
     values: np.ndarray  # ndarray[type=int, size=2] default:{0, 1}
+    # flags is a fixed size array member which should be converted to py::array
     flags: np.ndarray   # ndarray[type=bool, size=3] default:{False, True, False}
 
 
-    # Multiplication factor
-    factor: int = 10
-
-    # addition factor
-    delta: int
-
     #
-    # And these are our calculations
+    # Simple methods
     #
 
     def calc(self, x: int) -> int:
-        """ Do some math"""
+        """ calc: example of simple method"""
+        pass
+    def set_message(self, m: str) -> None:
+        """ set_message: another example of simple method"""
         pass
 
 
-def foo_instance() -> Foo:
+
+def foo_instance() -> MyStruct:
     """return_value_policy::reference"""
     pass
 
 
+# StructNotRegistered should not be published, as it misses the marker "// MY_API"
+# By default, all enums, namespaces and classes are published,
+# but you can decide to include only "marked" ones, via this litgen option:
+#       options.srcml_options.api_suffixes = ["MY_API"]
+#
+# Note: Do not remove the empty line below, otherwise this comment would become part of
+#       the enum's doc, and cause it to be registered (since it contains "MY_API")
 
-
-
-# </Namespace LiterateGeneratorExample>
 ####################    </generated_from:mylib_amalgamation.h>    ####################
 
 # </litgen_stub>

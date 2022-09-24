@@ -1,5 +1,7 @@
 #include "mylib/api_marker.h"
 
+#include <string>
+
 //
 // Modifiable immutable python types test
 //

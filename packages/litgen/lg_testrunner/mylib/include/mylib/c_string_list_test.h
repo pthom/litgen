@@ -1,5 +1,7 @@
 #include "mylib/api_marker.h"
 
+#include "string.h"
+
 //
 // C String lists tests:
 //   Two consecutive params (const char *, int | size_t) are exported as List[str]

@@ -1,5 +1,8 @@
 #include "mylib/api_marker.h"
 
+#include <stdint.h>
+#include <stddef.h>
+
 //
 // C Style buffer to py::array tests
 //

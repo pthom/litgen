@@ -3,15 +3,6 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //                       mylib/mylib.h                                                                          //
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-#include <cstddef>
-#include <cstring>
-#include <stdint.h>
-#include <stdio.h>
-#include <string>
-#include <memory>
-#include <vector>
-#include <array>
-
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //                       mylib/api_marker.h included by mylib/mylib.h                                           //
@@ -25,7 +16,7 @@
 //                       mylib/basic_test.h included by mylib/mylib.h                                           //
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-// Subtracts two numbers: this will be the __doc__ since my_sub does not have an end-of-line comment
+// Subtracts two numbers: this will be the function's __doc__ since my_sub does not have an end-of-line comment
 MY_API int my_sub(int a, int b) { return a - b; }
 
 
@@ -117,6 +108,9 @@ MY_API inline void array2_modify_mutable(Point2 out[2]) { out[0] = {0, 1}; out[1
 //                       mylib/c_style_buffer_to_pyarray_test.h included by mylib/mylib.h                       //
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+#include <stdint.h>
+#include <stddef.h>
+
 //
 // C Style buffer to py::array tests
 //
@@ -179,6 +173,8 @@ template<typename T> MY_API void templated_mul_inside_buffer(T* buffer, size_t b
 //                       mylib/c_string_list_test.h included by mylib/mylib.h                                   //
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+#include "string.h"
+
 //
 // C String lists tests:
 //   Two consecutive params (const char *, int | size_t) are exported as List[str]
@@ -199,6 +195,8 @@ MY_API inline size_t c_string_list_total_size(const char * const items[], int it
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //                       mylib/modifiable_immutable_test.h included by mylib/mylib.h                            //
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+#include <string>
 
 //
 // Modifiable immutable python types test
@@ -319,16 +317,46 @@ MY_API bool SliderVoidIntArray(const char* label, int value[3])
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 //
-// Test overload
+// litgen is able to detect automatically the presence of overloads that require
+// to use `py::overload_cast<...>` when publishing
 //
+
+//
+// overload on free functions
+//
+
 MY_API int add_overload(int a, int b) { return a + b; } // type: ignore
 MY_API int add_overload(int a, int b, int c) { return a + b + c; } // type: ignore
+
+//
+// overload on methods
+//
 
 struct FooOverload // MY_API
 {
     MY_API int add_overload(int a, int b) { return a + b; } // type: ignore
     MY_API int add_overload(int a, int b, int c) { return a + b + c; } // type: ignore
 };
+
+
+/*
+For info, below is the generated C++ code that will publish these functions:
+
+     m.def("add_overload",
+        py::overload_cast<int, int>(add_overload), py::arg("a"), py::arg("b"));
+    m.def("add_overload",
+        py::overload_cast<int, int, int>(add_overload), py::arg("a"), py::arg("b"), py::arg("c"));
+
+
+    auto pyClassFooOverload = py::class_<FooOverload>
+        (m, "FooOverload", "")
+        .def(py::init<>()) // implicit default constructor
+        .def("add_overload",
+            py::overload_cast<int, int>(&FooOverload::add_overload), py::arg("a"), py::arg("b"))
+        .def("add_overload",
+            py::overload_cast<int, int, int>(&FooOverload::add_overload), py::arg("a"), py::arg("b"), py::arg("c"))
+        ;
+*/
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //                       mylib/enum_test.h included by mylib/mylib.h                                            //
@@ -417,54 +445,103 @@ class ClassEnum(Enum):
     unknown # (= 2)
 */
 
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//                       mylib/struct_test.h included by mylib/mylib.h                                          //
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+#include <stdio.h>
+#include <vector>
 
 
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//                       mylib/mylib.h continued                                                                //
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-namespace LiterateGeneratorExample // MY_API
+// A superb struct
+struct MyStruct            // MY_API
 {
+    MyStruct(int factor = 10, const std::string& message = "hello"): factor(factor), message(message) {}
+    ~MyStruct() {}
 
 
-    // A superb struct
-    struct Foo            // MY_API
+    ///////////////////////////////////////////////////////////////////////////
+    // Simple struct members
+    ///////////////////////////////////////////////////////////////////////////
+    int factor = 10, delta = 0;
+    std::string message;
+
+
+    ///////////////////////////////////////////////////////////////////////////
+    // Stl container members
+    ///////////////////////////////////////////////////////////////////////////
+
+    // By default, modifications from python are not propagated to C++ for stl containers
+    // (see https://pybind11.readthedocs.io/en/stable/advanced/cast/stl.html)
+    std::vector<int> numbers;
+    // However you can call dedicated modifying methods
+    MY_API void append_number_from_cpp(int v) { numbers.push_back(v); }
+
+
+    ///////////////////////////////////////////////////////////////////////////
+    // Fixed size *numeric* array members
+    //
+    // They will be published as a py::array, and modifications will be propagated
+    // on both sides transparently.
+    ///////////////////////////////////////////////////////////////////////////
+
+    int values[2] = {0, 1};
+    bool flags[3] = {false, true, false};
+    // points is a fixed size array, but not of a numeric type. It will *not* be published!
+    Point2 points[2];
+
+
+    ///////////////////////////////////////////////////////////////////////////
+    // Simple methods
+    ///////////////////////////////////////////////////////////////////////////
+
+    // calc: example of simple method
+    MY_API int calc(int x) { return x * factor + delta; }
+    // set_message: another example of simple method
+    MY_API void set_message(const std::string & m) { message = m;}
+
+    // unpublished_calc: this function should not be published (no MY_API marker)
+    int unpublished_calc(int x) { return x * factor + delta + 3;}
+
+    ///////////////////////////////////////////////////////////////////////////
+
+    ///////////////////////////////////////////////////////////////////////////
+
+    // Instance() is a method that returns a pointer that should use `return_value_policy::reference`
+    static MyStruct& Instance() { static MyStruct instance; return instance; }  // return_value_policy::reference
+};
+
+MY_API MyStruct* FooInstance() { return & MyStruct::Instance(); } // return_value_policy::reference
+
+
+// StructNotRegistered should not be published, as it misses the marker "// MY_API"
+// By default, all enums, namespaces and classes are published,
+// but you can decide to include only "marked" ones, via this litgen option:
+//       options.srcml_options.api_suffixes = ["MY_API"]
+//
+// Note: Do not remove the empty line below, otherwise this comment would become part of
+//       the enum's doc, and cause it to be registered (since it contains "MY_API")
+
+struct StructNotRegistered
+{
+    int a = 0;
+};
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//                       mylib/return_value_policy_test.h included by mylib/mylib.h                             //
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+struct MyConfig            // MY_API
+{
+    int sum = 0;
+
+    // Instance() is a method that returns a pointer that should use `return_value_policy::reference`
+    MY_API static MyConfig& Instance() // return_value_policy::reference
     {
-        Foo() { printf("Construct Foo\n");}
-        ~Foo() { printf("Destruct Foo\n"); }
+        static MyConfig instance;
+        return instance;
+    }
+};
 
-        //
-        // These are our parameters
-        //
-
-        //
-        // Test with numeric arrays which should be converted to py::array
-        //
-        int values[2] = {0, 1};
-        bool flags[3] = {false, true, false};
-
-        // These should not be exported (cannot fit in a py::array)
-        Point2 points[2];
-
-        // Multiplication factor
-        int factor = 10;
-
-        // addition factor
-        int delta;
-
-        //
-        // And these are our calculations
-        //
-
-        // Do some math
-        MY_API int calc(int x) { return x * factor + delta; }
-
-        static Foo& Instance() { static Foo instance; return instance; }  // return_value_policy::reference
-    };
-
-    MY_API Foo* FooInstance() { return & Foo::Instance(); } // return_value_policy::reference
-
-
-
-
-
-} // namespace LiterateGeneratorExample
+MY_API MyConfig* MyConfigInstance() { return & MyConfig::Instance(); } // return_value_policy::reference

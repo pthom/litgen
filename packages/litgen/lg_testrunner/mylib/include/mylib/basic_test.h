@@ -1,7 +1,7 @@
 #pragma once
 #include "mylib/api_marker.h"
 
-// Subtracts two numbers: this will be the __doc__ since my_sub does not have an end-of-line comment
+// Subtracts two numbers: this will be the function's __doc__ since my_sub does not have an end-of-line comment
 MY_API int my_sub(int a, int b) { return a - b; }
 
 
