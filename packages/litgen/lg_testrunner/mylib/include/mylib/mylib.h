@@ -9,6 +9,7 @@
 #include <array>
 
 #include "mylib/api_marker.h"
+#include "mylib/basic_test.h"
 #include "mylib/header_filter_test.h"
 #include "mylib/c_style_array_test.h"
 #include "mylib/c_style_buffer_to_pyarray_test.h"
@@ -21,12 +22,6 @@
 namespace LiterateGeneratorExample // MY_API
 {
 
-    // Adds two numbers
-    MY_API inline int add(int a, int b) { return a + b; }
-
-    MY_API int sub(int a, int b) { return a - b; }
-
-    MY_API int mul(int a, int b) { return a * b; }
 
     // A superb struct
     struct Foo            // MY_API
