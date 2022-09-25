@@ -6,7 +6,7 @@ from srcmlcpp.srcml_types import CppParameter
 
 from litgen.internal.adapt_function_params._lambda_adapter import LambdaAdapter
 from litgen.internal.adapted_types import AdaptedFunction, AdaptedParameter
-from litgen.internal.boxed_immutable_python_type import BoxedImmutablePythonType
+from litgen.internal.boxed_python_type import BoxedPythonType
 
 
 def adapt_modifiable_immutable(adapted_function: AdaptedFunction) -> Optional[LambdaAdapter]:
@@ -83,8 +83,9 @@ def adapt_modifiable_immutable(adapted_function: AdaptedFunction) -> Optional[La
             # Create new calling param (BoxedType<T>)
             #
             new_param = copy.deepcopy(old_adapted_param.cpp_element())
-            boxed_type = BoxedImmutablePythonType(
-                old_adapted_param.cpp_element().decl.cpp_type.name_without_modifier_specifier()
+            boxed_type = BoxedPythonType(
+                adapted_function.litgen_writer_context.boxed_types_registry,
+                old_adapted_param.cpp_element().decl.cpp_type.name_without_modifier_specifier(),
             )
             new_decl = new_param.decl
             if is_optional_type:

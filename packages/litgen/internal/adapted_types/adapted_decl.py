@@ -87,7 +87,7 @@ class AdaptedDecl(AdaptedElement):
 
         :return: a list of CppDecls as described before
         """
-        from litgen.internal.boxed_immutable_python_type import BoxedImmutablePythonType
+        from litgen.internal.boxed_python_type import BoxedPythonType
 
         cpp_element = self.cpp_element()
         array_size = cpp_element.c_array_size_as_int()
@@ -99,7 +99,7 @@ class AdaptedDecl(AdaptedElement):
         cpp_type_name = cpp_element.cpp_type.str_code()
 
         if cpp_to_python.is_cpp_type_immutable_for_python(cpp_type_name):
-            boxed_type = BoxedImmutablePythonType(cpp_type_name)
+            boxed_type = BoxedPythonType(self.litgen_writer_context.boxed_types_registry, cpp_type_name)
             cpp_type_name = boxed_type.boxed_type_name()
 
         new_decls: List[AdaptedDecl] = []

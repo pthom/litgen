@@ -3,58 +3,50 @@ from typing import Optional, List
 from codemanip import code_utils
 
 from litgen.options import LitgenOptions
-from litgen.internal import boxed_immutable_python_type, cpp_to_python
-from litgen._generated_code import (
-    GeneratedCodeForOneFile,
-    GeneratedCode,
-    CppFile,
-    CppFilesList,
-)
+from litgen.internal import boxed_python_type, cpp_to_python
+from litgen._generated_code import GeneratedCodeForOneFile, GeneratedCode, CppFile
 from litgen.code_to_adapted_unit import code_to_adapted_unit
 from litgen.internal.adapted_types.litgen_writer_context import LitgenWriterContext
 
 
-def _generate_code_impl_one_file(
-    cpp_file_and_options: CppFile, lg_writer_context: LitgenWriterContext
-) -> GeneratedCodeForOneFile:
+def _generate_code_impl_one_file(cpp_file: CppFile, lg_writer_context: LitgenWriterContext) -> GeneratedCodeForOneFile:
 
     adapted_unit = code_to_adapted_unit(
         lg_writer_context,
-        cpp_file_and_options.code,
-        cpp_file_and_options.filename,
+        cpp_file.code,
+        cpp_file.filename,
     )
 
     generated_code = GeneratedCodeForOneFile()
     generated_code.pydef_code = adapted_unit.str_pydef()
     generated_code.stub_code = adapted_unit.str_stub()
-    generated_code.translated_cpp_filename = cpp_file_and_options.filename
+    generated_code.translated_cpp_filename = cpp_file.filename
+
+    # Apply Python code layout options
+    options = lg_writer_context.options
+    generated_code.stub_code = code_utils.code_set_max_consecutive_empty_lines(
+        generated_code.stub_code, options.python_max_consecutive_empty_lines
+    )
+    generated_code.stub_code = cpp_to_python.apply_black_formatter_pyi(options, generated_code.stub_code)
 
     return generated_code
 
 
 def generate_code_for_files(
-    options: LitgenOptions, file_list: CppFilesList, add_boxed_types_definitions: bool = False
+    options: LitgenOptions, file_list: List[CppFile], add_boxed_types_definitions: bool = False
 ) -> GeneratedCode:
 
-    assert len(file_list.files) > 0
-    boxed_immutable_python_type.clear_registry()
+    assert len(file_list) > 0
 
     lg_writer_context = LitgenWriterContext(options)
 
     generated_codes: List[GeneratedCodeForOneFile] = []
-    for file in file_list.files:
+    for file in file_list:
         file_generated_code = _generate_code_impl_one_file(file, lg_writer_context)
         generated_codes.append(file_generated_code)
 
-    boxed_types_generated_code = boxed_immutable_python_type.all_boxed_types_generated_code(lg_writer_context)
-
+    boxed_types_generated_code = boxed_python_type.generated_code_for_registered_boxed_types(lg_writer_context)
     generated_code = GeneratedCode(generated_codes, boxed_types_generated_code, add_boxed_types_definitions, options)
-
-    # Apply Python code layout options
-    generated_code.stub_code = code_utils.code_set_max_consecutive_empty_lines(
-        generated_code.stub_code, options.python_max_consecutive_empty_lines
-    )
-    generated_code.stub_code = cpp_to_python.apply_black_formatter_pyi(options, generated_code.stub_code)
 
     return generated_code
 
@@ -66,8 +58,7 @@ def generate_code(
     add_boxed_types_definitions: bool = False,
 ) -> GeneratedCode:
 
-    cpp_file = CppFile(options, filename, code)
-    cpp_files_list = CppFilesList([cpp_file])
+    cpp_files_list = [CppFile(options, filename, code)]
 
     generated_code = generate_code_for_files(options, cpp_files_list, add_boxed_types_definitions)
     return generated_code
@@ -79,8 +70,7 @@ def code_to_pydef(
     filename: Optional[str] = None,
     add_boxed_types_definitions: bool = False,
 ) -> str:
-    file_and_options = CppFile(options, filename, code)
-    file_and_options_list = CppFilesList([file_and_options])
+    file_and_options_list = [CppFile(options, filename, code)]
     generated_code = generate_code_for_files(options, file_and_options_list, add_boxed_types_definitions)
     return generated_code.pydef_code
 
@@ -91,8 +81,7 @@ def code_to_stub(
     filename: Optional[str] = None,
     add_boxed_types_definitions: bool = False,
 ) -> str:
-    file = CppFile(options, filename, code)
-    files_list = CppFilesList([file])
+    files_list = [CppFile(options, filename, code)]
     generated_code = generate_code_for_files(options, files_list, add_boxed_types_definitions)
     return generated_code.stub_code
 

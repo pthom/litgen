@@ -2,6 +2,7 @@ from typing import List, Any
 from dataclasses import dataclass
 
 from litgen.options import LitgenOptions
+from litgen.internal.boxed_python_types_registry import BoxedPythonTypesRegistry
 
 from srcmlcpp.cpp_scope import CppScope
 
@@ -11,10 +12,12 @@ class LitgenWriterContext:
 
     options: LitgenOptions
     _encountered_namespace_scopes: List[CppScope]
+    boxed_types_registry: BoxedPythonTypesRegistry
 
     def __init__(self, options: LitgenOptions):
         self.options = options
         self._encountered_namespace_scopes = []
+        self.boxed_types_registry = BoxedPythonTypesRegistry()
 
     def register_namespace_scope(self, adapted_namespace: Any) -> None:
         pass

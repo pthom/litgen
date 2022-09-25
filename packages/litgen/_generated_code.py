@@ -96,14 +96,3 @@ class CppFile:
                 self.code = f.read()
         else:
             self.code = code
-
-
-@dataclass
-class CppFilesList:
-    files: List[CppFile]
-
-    def __init__(self, files: List[CppFile] = None) -> None:
-        if files is None:
-            self.files = []
-        else:
-            self.files = files

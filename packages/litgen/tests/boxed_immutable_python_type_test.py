@@ -3,14 +3,15 @@ import pytest
 from codemanip import code_utils
 
 import litgen
-from litgen.internal.boxed_immutable_python_type import BoxedImmutablePythonType, all_boxed_types_generated_code
+from litgen.internal.boxed_python_type import BoxedPythonType, generated_code_for_registered_boxed_types
 from litgen.internal.adapted_types.litgen_writer_context import LitgenWriterContext
 
 
 def test_make_boxed_type():
     options = litgen.LitgenOptions()
+    lg_writer_context = LitgenWriterContext(options)
     cpp_numeric_type = "unsigned long long"
-    boxed_type = BoxedImmutablePythonType(cpp_numeric_type)
+    boxed_type = BoxedPythonType(lg_writer_context.boxed_types_registry, cpp_numeric_type)
 
     struct_code = boxed_type.cpp_header_code(LitgenWriterContext(options))
     # logging.warning("\n" + struct_code)
@@ -43,12 +44,12 @@ def test_make_boxed_type():
 
     # Test that we refuse to box a mutable type
     with pytest.raises(TypeError):
-        _ = BoxedImmutablePythonType("SomeClass")
+        _ = BoxedPythonType(lg_writer_context.boxed_types_registry, "SomeClass")
 
     # Test generation of boxed structs code and bindings
     # (We instantiated boxing for "unsigned long long" and "int")
-    _ = BoxedImmutablePythonType("int")
-    generated_code = all_boxed_types_generated_code(LitgenWriterContext(options))
+    _ = BoxedPythonType(lg_writer_context.boxed_types_registry, "int")
+    generated_code = generated_code_for_registered_boxed_types(lg_writer_context)
     assert generated_code is not None
     # logging.warning("\n" + boxed_structs_code)
     code_utils.assert_are_codes_equal(

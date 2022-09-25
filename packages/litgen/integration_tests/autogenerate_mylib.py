@@ -93,7 +93,7 @@ def autogenerate_mylib() -> None:
         generated_code = litgen.generate_code(options, filename=input_cpp_header, add_boxed_types_definitions=True)
     else:
         all_headers = all_header_files()
-        files = litgen.CppFilesList()
+        files = List[litgen.CppFile]
         for header in all_headers:
             files.files.append(litgen.CppFile(options, filename=header))
         generated_code = litgen.generate_code_for_files(files, add_boxed_types_definitions=True)
