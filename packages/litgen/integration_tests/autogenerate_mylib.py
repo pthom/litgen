@@ -67,7 +67,6 @@ def mylib_litgen_options() -> litgen.LitgenOptions:
     # options.original_signature_flag_show = True
     # options.python_run_black_formatter = True
     # options.python_max_consecutive_empty_lines = 2
-    # options.fn_params_replace_c_string_list__regexes = [
     # options.srcml_options.flag_show_python_callstack = True
 
     return options
