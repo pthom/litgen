@@ -4,16 +4,16 @@ from codemanip import code_utils
 
 import litgen
 from litgen.internal.boxed_python_type import BoxedPythonType, generated_code_for_registered_boxed_types
-from litgen.internal.adapted_types.litgen_writer_context import LitgenWriterContext
+from litgen.litgen_context import LitgenContext
 
 
 def test_make_boxed_type():
     options = litgen.LitgenOptions()
-    lg_writer_context = LitgenWriterContext(options)
+    lg_context = LitgenContext(options)
     cpp_numeric_type = "unsigned long long"
-    boxed_type = BoxedPythonType(lg_writer_context.boxed_types_registry, cpp_numeric_type)
+    boxed_type = BoxedPythonType(lg_context.boxed_types_registry, cpp_numeric_type)
 
-    struct_code = boxed_type.cpp_header_code(LitgenWriterContext(options))
+    struct_code = boxed_type.cpp_header_code(LitgenContext(options))
     # logging.warning("\n" + struct_code)
     code_utils.assert_are_codes_equal(
         struct_code,
@@ -28,7 +28,7 @@ def test_make_boxed_type():
     )
 
     options = litgen.LitgenOptions()
-    pydef_code = boxed_type.pydef_code(LitgenWriterContext(options))
+    pydef_code = boxed_type.pydef_code(LitgenContext(options))
     # logging.warning("\n" + pydef_code)
     expected_code = """
         auto pyClassBoxedUnsignedLongLong = py::class_<BoxedUnsignedLongLong>
@@ -44,12 +44,12 @@ def test_make_boxed_type():
 
     # Test that we refuse to box a mutable type
     with pytest.raises(TypeError):
-        _ = BoxedPythonType(lg_writer_context.boxed_types_registry, "SomeClass")
+        _ = BoxedPythonType(lg_context.boxed_types_registry, "SomeClass")
 
     # Test generation of boxed structs code and bindings
     # (We instantiated boxing for "unsigned long long" and "int")
-    _ = BoxedPythonType(lg_writer_context.boxed_types_registry, "int")
-    generated_code = generated_code_for_registered_boxed_types(lg_writer_context)
+    _ = BoxedPythonType(lg_context.boxed_types_registry, "int")
+    generated_code = generated_code_for_registered_boxed_types(lg_context)
     assert generated_code is not None
     # logging.warning("\n" + boxed_structs_code)
     code_utils.assert_are_codes_equal(

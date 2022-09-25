@@ -5,13 +5,13 @@ from typing import cast
 from srcmlcpp.srcml_types import *
 
 from litgen.internal import cpp_to_python
-from litgen.internal.adapted_types.litgen_writer_context import LitgenWriterContext
+from litgen.litgen_context import LitgenContext
 from litgen.internal.adapted_types.adapted_element import AdaptedElement
 
 
 @dataclass
 class AdaptedDecl(AdaptedElement):
-    def __init__(self, litgen_writer_context: LitgenWriterContext, decl: CppDecl) -> None:
+    def __init__(self, litgen_writer_context: LitgenContext, decl: CppDecl) -> None:
         super().__init__(litgen_writer_context, decl)
 
     # override

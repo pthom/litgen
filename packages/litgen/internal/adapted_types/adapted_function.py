@@ -6,14 +6,14 @@ from munch import Munch  # type: ignore
 from srcmlcpp.srcml_types import *
 
 from litgen.internal import cpp_to_python
-from litgen.internal.adapted_types.litgen_writer_context import LitgenWriterContext
+from litgen.litgen_context import LitgenContext
 from litgen.internal.adapted_types.adapted_decl import AdaptedDecl
 from litgen.internal.adapted_types.adapted_element import AdaptedElement
 
 
 @dataclass
 class AdaptedParameter(AdaptedElement):
-    def __init__(self, litgen_writer_context: LitgenWriterContext, param: CppParameter) -> None:
+    def __init__(self, litgen_writer_context: LitgenContext, param: CppParameter) -> None:
         super().__init__(litgen_writer_context, param)
 
     # override
@@ -165,7 +165,7 @@ class AdaptedFunction(AdaptedElement):
     is_type_ignore: bool = False
 
     def __init__(
-        self, litgen_writer_context: LitgenWriterContext, function_infos: CppFunctionDecl, is_overloaded: bool
+        self, litgen_writer_context: LitgenContext, function_infos: CppFunctionDecl, is_overloaded: bool
     ) -> None:
         from litgen.internal import adapt_function_params
 

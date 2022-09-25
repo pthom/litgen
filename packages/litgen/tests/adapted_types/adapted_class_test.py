@@ -27,7 +27,7 @@ struct Foo
     """
 
     options.python_reproduce_cpp_layout = True
-    stub_code = litgen.code_to_stub(options, code)
+    stub_code = litgen.code_to_stub(litgen.LitgenContext(options), code)
     # log_code(stub_code)
     code_utils.assert_are_codes_equal(
         stub_code,
@@ -47,7 +47,7 @@ struct Foo
     )
 
     options.python_reproduce_cpp_layout = False
-    stub_code = litgen.code_to_stub(options, code)
+    stub_code = litgen.code_to_stub(litgen.LitgenContext(options), code)
     # log_code(stub_code)
     code_utils.assert_are_codes_equal(
         stub_code,
@@ -88,7 +88,7 @@ def test_struct_pydef_simple():
         };
     """
 
-    pydef_code = litgen.code_to_pydef(options, code)
+    pydef_code = litgen.code_to_pydef(litgen.LitgenContext(options), code)
     # log_code(pydef_code)
     code_utils.assert_are_codes_equal(
         pydef_code,
@@ -133,7 +133,7 @@ def test_struct_stub_complex():
     """
 
     options.python_reproduce_cpp_layout = True
-    stub_code = litgen.code_to_stub(options, code)
+    stub_code = litgen.code_to_stub(litgen.LitgenContext(options), code)
     # log_code(stub_code)
     code_utils.assert_are_codes_equal(
         stub_code,
@@ -156,7 +156,7 @@ def test_struct_stub_complex():
     ''',
     )
 
-    pydef_code = litgen.code_to_pydef(options, code)
+    pydef_code = litgen.code_to_pydef(litgen.LitgenContext(options), code)
     # log_code(pydef_code)
     code_utils.assert_are_codes_equal(
         pydef_code,

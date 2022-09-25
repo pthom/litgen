@@ -8,7 +8,11 @@ from srcmlcpp.cpp_scope import CppScope
 
 
 @dataclass
-class LitgenWriterContext:
+class LitgenContext:
+    """
+    This context store the options, as well as some infos on the encountered types and namespace
+    for post-process generation.
+    """
 
     options: LitgenOptions
     _encountered_namespace_scopes: List[CppScope]

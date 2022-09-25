@@ -5,7 +5,7 @@ from codemanip import code_utils
 from litgen.options import LitgenOptions
 from litgen.internal import cpp_to_python
 from litgen.code_to_adapted_unit import code_to_adapted_unit
-from litgen.internal.adapted_types.litgen_writer_context import LitgenWriterContext
+from litgen.litgen_context import LitgenContext
 from litgen._generated_code import GeneratedBoxedTypeCode
 from litgen.internal.boxed_python_types_registry import BoxedPythonTypesRegistry
 
@@ -25,11 +25,11 @@ class _BoxedPythonTypeImpl:
         boxed_name = "Boxed" + cpp_to_python.cpp_type_to_camel_case_no_space(cpp_type)
         return boxed_name
 
-    def cpp_header_code(self, lg_writer_context: LitgenWriterContext) -> str:
+    def cpp_header_code(self, lg_context: LitgenContext) -> str:
         cpp_type_default_value = cpp_to_python.cpp_type_default_python_value(self.cpp_type)
         assert cpp_type_default_value is not None
 
-        options = lg_writer_context.options
+        options = lg_context.options
         struct_name = self.boxed_type_name()
         _i_ = options.indent_cpp_spaces()
 
@@ -48,15 +48,15 @@ class _BoxedPythonTypeImpl:
         struct_code = code_utils.unindent_code(struct_code, flag_strip_empty_lines=True) + "\n"
         return struct_code
 
-    def pydef_code(self, lg_writer_context: LitgenWriterContext) -> str:
-        cpp_header_code = self.cpp_header_code(lg_writer_context)
-        adapted_unit = code_to_adapted_unit(lg_writer_context, cpp_header_code)
+    def pydef_code(self, lg_context: LitgenContext) -> str:
+        cpp_header_code = self.cpp_header_code(lg_context)
+        adapted_unit = code_to_adapted_unit(lg_context, cpp_header_code)
         pydef_code = adapted_unit.str_pydef()
         return pydef_code
 
-    def stub_code(self, lg_writer_context: LitgenWriterContext):
-        cpp_header_code = self.cpp_header_code(lg_writer_context)
-        adapted_unit = code_to_adapted_unit(lg_writer_context, cpp_header_code)
+    def stub_code(self, lg_context: LitgenContext):
+        cpp_header_code = self.cpp_header_code(lg_context)
+        adapted_unit = code_to_adapted_unit(lg_context, cpp_header_code)
         stub_code = adapted_unit.str_stub()
         return stub_code
 
@@ -68,10 +68,10 @@ class BoxedPythonType(_BoxedPythonTypeImpl):
 
 
 def generated_code_for_registered_boxed_types(
-    lg_writer_context: LitgenWriterContext,
+    lg_context: LitgenContext,
 ) -> Optional[GeneratedBoxedTypeCode]:
 
-    cpp_boxed_types = lg_writer_context.boxed_types_registry.cpp_boxed_types
+    cpp_boxed_types = lg_context.boxed_types_registry.cpp_boxed_types
 
     if len(cpp_boxed_types) == 0:
         return None
@@ -83,14 +83,14 @@ def generated_code_for_registered_boxed_types(
         r = in_marker + code + out_marker
         return r
 
-    def make_standalone_writer_context() -> LitgenWriterContext:
+    def make_standalone_writer_context() -> LitgenContext:
         options_boxed = LitgenOptions()
-        options = lg_writer_context.options
+        options = lg_context.options
         options_boxed.python_indent_size = options.python_indent_size
         options_boxed.cpp_indent_size = options.cpp_indent_size
         options_boxed.python_ident_with_tabs = options.cpp_indent_with_tabs
         options_boxed.cpp_indent_with_tabs = options.cpp_indent_with_tabs
-        _lg_writer_context_boxed = LitgenWriterContext(options_boxed)
+        _lg_writer_context_boxed = LitgenContext(options_boxed)
         return _lg_writer_context_boxed
 
     lg_writer_context_boxed = make_standalone_writer_context()

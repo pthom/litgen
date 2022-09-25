@@ -5,7 +5,7 @@ from srcmlcpp.srcml_types import *
 from srcmlcpp import srcmlcpp_main
 
 import litgen
-from litgen.internal.adapted_types import AdaptedFunction, LitgenWriterContext
+from litgen.internal.adapted_types import AdaptedFunction, LitgenContext
 
 
 _THIS_DIR = os.path.dirname(__file__)
@@ -15,10 +15,10 @@ sys.path.append(_THIS_DIR + "/../..")
 def gen_pydef_code(code) -> str:
     options = litgen.options.LitgenOptions()
     options.srcml_options.functions_api_prefixes = "MY_API"
-    lg_writer_context = LitgenWriterContext(options)
+    lg_context = LitgenContext(options)
 
     cpp_function = srcmlcpp_main.code_first_function_decl(options.srcml_options, code)
-    adapted_function = AdaptedFunction(lg_writer_context, cpp_function, False)
+    adapted_function = AdaptedFunction(lg_context, cpp_function, False)
     generated_code = adapted_function.str_pydef()
     return generated_code
 

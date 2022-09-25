@@ -5,7 +5,7 @@ from codemanip.parse_progress_bar import global_progress_bars
 
 from srcmlcpp.srcml_types import *
 
-from litgen.internal.adapted_types.litgen_writer_context import LitgenWriterContext
+from litgen.litgen_context import LitgenContext
 from litgen.internal.adapted_types.adapted_class import AdaptedClass
 from litgen.internal.adapted_types.adapted_comment import (
     AdaptedComment,
@@ -35,7 +35,7 @@ class AdaptedBlock(AdaptedElement):
         ]
     ]
 
-    def __init__(self, litgen_writer_context: LitgenWriterContext, block: CppBlock) -> None:
+    def __init__(self, litgen_writer_context: LitgenContext, block: CppBlock) -> None:
         super().__init__(litgen_writer_context, block)
         self.adapted_elements = []
         self._fill_adapted_elements()

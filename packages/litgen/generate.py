@@ -2,17 +2,15 @@ from typing import Optional, List
 
 from codemanip import code_utils
 
-from litgen.options import LitgenOptions
 from litgen.internal import boxed_python_type, cpp_to_python
 from litgen._generated_code import GeneratedCodeForOneFile, GeneratedCode, CppFile
 from litgen.code_to_adapted_unit import code_to_adapted_unit
-from litgen.internal.adapted_types.litgen_writer_context import LitgenWriterContext
+from litgen.litgen_context import LitgenContext
 
 
-def _generate_code_impl_one_file(cpp_file: CppFile, lg_writer_context: LitgenWriterContext) -> GeneratedCodeForOneFile:
-
+def _generate_code_impl_one_file(cpp_file: CppFile, lg_context: LitgenContext) -> GeneratedCodeForOneFile:
     adapted_unit = code_to_adapted_unit(
-        lg_writer_context,
+        lg_context,
         cpp_file.code,
         cpp_file.filename,
     )
@@ -23,7 +21,7 @@ def _generate_code_impl_one_file(cpp_file: CppFile, lg_writer_context: LitgenWri
     generated_code.translated_cpp_filename = cpp_file.filename
 
     # Apply Python code layout options
-    options = lg_writer_context.options
+    options = lg_context.options
     generated_code.stub_code = code_utils.code_set_max_consecutive_empty_lines(
         generated_code.stub_code, options.python_max_consecutive_empty_lines
     )
@@ -32,57 +30,66 @@ def _generate_code_impl_one_file(cpp_file: CppFile, lg_writer_context: LitgenWri
     return generated_code
 
 
+def merge_generated_codes(
+    generated_codes: List[GeneratedCodeForOneFile],
+    lg_context: LitgenContext,
+    add_boxed_types_definitions: bool = False,
+) -> GeneratedCode:
+
+    boxed_types_generated_code = boxed_python_type.generated_code_for_registered_boxed_types(lg_context)
+    generated_code = GeneratedCode(
+        generated_codes, boxed_types_generated_code, add_boxed_types_definitions, lg_context.options
+    )
+    return generated_code
+
+
 def generate_code_for_files(
-    options: LitgenOptions, file_list: List[CppFile], add_boxed_types_definitions: bool = False
+    lg_context: LitgenContext, file_list: List[CppFile], add_boxed_types_definitions: bool = False
 ) -> GeneratedCode:
 
     assert len(file_list) > 0
 
-    lg_writer_context = LitgenWriterContext(options)
-
     generated_codes: List[GeneratedCodeForOneFile] = []
     for file in file_list:
-        file_generated_code = _generate_code_impl_one_file(file, lg_writer_context)
+        file_generated_code = _generate_code_impl_one_file(file, lg_context)
         generated_codes.append(file_generated_code)
 
-    boxed_types_generated_code = boxed_python_type.generated_code_for_registered_boxed_types(lg_writer_context)
-    generated_code = GeneratedCode(generated_codes, boxed_types_generated_code, add_boxed_types_definitions, options)
+    generated_code = merge_generated_codes(generated_codes, lg_context, add_boxed_types_definitions)
 
     return generated_code
 
 
 def generate_code(
-    options: LitgenOptions,
+    lg_context: LitgenContext,
     code: Optional[str] = None,
     filename: Optional[str] = None,
     add_boxed_types_definitions: bool = False,
 ) -> GeneratedCode:
 
-    cpp_files_list = [CppFile(options, filename, code)]
-
-    generated_code = generate_code_for_files(options, cpp_files_list, add_boxed_types_definitions)
+    cpp_files_list = [CppFile(lg_context.options, filename, code)]
+    generated_code = generate_code_for_files(lg_context, cpp_files_list, add_boxed_types_definitions)
     return generated_code
 
 
 def code_to_pydef(
-    options: LitgenOptions,
+    lg_context: LitgenContext,
     code: Optional[str] = None,
     filename: Optional[str] = None,
     add_boxed_types_definitions: bool = False,
 ) -> str:
-    file_and_options_list = [CppFile(options, filename, code)]
-    generated_code = generate_code_for_files(options, file_and_options_list, add_boxed_types_definitions)
+    file_and_options_list = [CppFile(lg_context.options, filename, code)]
+    generated_code = generate_code_for_files(lg_context, file_and_options_list, add_boxed_types_definitions)
     return generated_code.pydef_code
 
 
 def code_to_stub(
-    options: LitgenOptions,
+    lg_context: LitgenContext,
     code: Optional[str] = None,
     filename: Optional[str] = None,
     add_boxed_types_definitions: bool = False,
 ) -> str:
-    files_list = [CppFile(options, filename, code)]
-    generated_code = generate_code_for_files(options, files_list, add_boxed_types_definitions)
+    files_list = [CppFile(lg_context.options, filename, code)]
+    generated_code = generate_code_for_files(lg_context, files_list, add_boxed_types_definitions)
     return generated_code.stub_code
 
 

@@ -5,7 +5,7 @@ from typing import Union
 from srcmlcpp.srcml_types import *
 
 from litgen.internal import cpp_to_python
-from litgen.internal.adapted_types.litgen_writer_context import LitgenWriterContext
+from litgen.litgen_context import LitgenContext
 from litgen.internal.adapted_types.adapted_comment import (
     AdaptedComment,
     AdaptedEmptyLine,
@@ -22,7 +22,7 @@ class AdaptedClassMember(AdaptedDecl):
 
     class_parent: AdaptedClass
 
-    def __init__(self, litgen_writer_context: LitgenWriterContext, decl: CppDecl, class_parent: AdaptedClass) -> None:
+    def __init__(self, litgen_writer_context: LitgenContext, decl: CppDecl, class_parent: AdaptedClass) -> None:
         self.class_parent = class_parent
         super().__init__(litgen_writer_context, decl)
 
@@ -228,7 +228,7 @@ class AdaptedClass(AdaptedElement):
         Union[AdaptedEmptyLine, AdaptedComment, AdaptedClassMember, AdaptedFunction, AdaptedClass, AdaptedEnum]
     ]
 
-    def __init__(self, litgen_writer_context: LitgenWriterContext, class_: CppStruct):
+    def __init__(self, litgen_writer_context: LitgenContext, class_: CppStruct):
         super().__init__(litgen_writer_context, class_)
         self.adapted_public_children = []
         self._fill_public_children()

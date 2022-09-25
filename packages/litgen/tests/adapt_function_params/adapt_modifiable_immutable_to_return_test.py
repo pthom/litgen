@@ -15,7 +15,7 @@ def test_adapt_modifiable_immutable_to_return_test():
     MY_API bool SliderVoidIntDefaultNull(const char* label, int * value = nullptr);
     """
 
-    generated_code = litgen.generate_code(options, code)
+    generated_code = litgen.generate_code(litgen.LitgenContext(options), code)
 
     # logging.warning("\n" + generated_code.stub_code)
     code_utils.assert_are_codes_equal(
@@ -111,7 +111,7 @@ def test_adapt_modifiable_immutable_to_return_array():
     options.fn_params_output_modifiable_immutable_to_return__regex = r".*"
     options.srcml_options.functions_api_prefixes = "MY_API"
     code = "MY_API bool SliderVoidIntArray(const char* label, int value[3]);"
-    generated_code = litgen.generate_code(options, code)
+    generated_code = litgen.generate_code(litgen.LitgenContext(options), code)
     # logging.warning("\n" + generated_code.pydef_code)
     code_utils.assert_are_codes_equal(
         generated_code.pydef_code,

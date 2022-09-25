@@ -7,7 +7,7 @@ from srcmlcpp.srcml_types import *
 
 from litgen.internal import cpp_to_python
 from litgen.internal import replacements_cache
-from litgen.internal.adapted_types.litgen_writer_context import LitgenWriterContext
+from litgen.litgen_context import LitgenContext
 from litgen.internal.adapted_types.adapted_comment import (
     AdaptedComment,
     AdaptedEmptyLine,
@@ -20,7 +20,7 @@ from litgen.internal.adapted_types.adapted_element import AdaptedElement
 class AdaptedEnumDecl(AdaptedDecl):
     enum_parent: AdaptedEnum
 
-    def __init__(self, litgen_writer_context: LitgenWriterContext, decl: CppDecl, enum_parent: AdaptedEnum) -> None:
+    def __init__(self, litgen_writer_context: LitgenContext, decl: CppDecl, enum_parent: AdaptedEnum) -> None:
         self.enum_parent = enum_parent
         super().__init__(litgen_writer_context, decl)
 
@@ -136,7 +136,7 @@ class AdaptedEnum(AdaptedElement):
     adapted_children: List[Union[AdaptedDecl, AdaptedEmptyLine, AdaptedComment]]
     adapted_enum_decls: List[AdaptedEnumDecl]
 
-    def __init__(self, litgen_writer_context: LitgenWriterContext, enum_: CppEnum) -> None:
+    def __init__(self, litgen_writer_context: LitgenContext, enum_: CppEnum) -> None:
         super().__init__(litgen_writer_context, enum_)
         self.adapted_children = []
         self.adapted_enum_decls = []

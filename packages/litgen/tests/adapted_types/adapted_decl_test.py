@@ -8,8 +8,8 @@ from litgen.options import LitgenOptions
 
 def to_adapted_decl(code, options: LitgenOptions) -> AdaptedDecl:
     cpp_decl = srcmlcpp_main.code_first_decl(options.srcml_options, code)
-    lg_writer_context = LitgenWriterContext(options)
-    adapted_decl = AdaptedDecl(lg_writer_context, cpp_decl)
+    lg_context = LitgenContext(options)
+    adapted_decl = AdaptedDecl(lg_context, cpp_decl)
     return adapted_decl
 
 

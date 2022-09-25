@@ -7,4 +7,4 @@ from litgen.internal.adapted_types.adapted_decl import AdaptedDecl
 from litgen.internal.adapted_types.adapted_element import AdaptedElement
 from litgen.internal.adapted_types.adapted_enum import AdaptedEnum
 from litgen.internal.adapted_types.adapted_function import AdaptedFunction, AdaptedParameter
-from litgen.internal.adapted_types.litgen_writer_context import LitgenWriterContext
+from litgen.litgen_context import LitgenContext
