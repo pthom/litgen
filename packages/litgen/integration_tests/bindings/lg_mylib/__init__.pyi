@@ -444,13 +444,17 @@ class ClassEnum(Enum):
 #
 
 #////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-#                       mylib/struct_test.h included by mylib/mylib.h                                          //
+#                       mylib/class_test.h included by mylib/mylib.h                                           //
 #//////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
 
-class MyStruct:
-    """ A superb struct"""
+class MyClass:
+    """ This is the class doc. It will be published as MyClass.__doc__
+     The "// MY_API" comment after the class decl indicates that this class will be published.
+     it is necessary, since `options.srcml_options.api_suffixes = ["MY_API"]`
+     was set inside autogenerate_mylib.py
+    """
     def __init__(self, factor: int = 10, message: str = "hello") -> None:
         pass
 

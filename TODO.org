@@ -434,6 +434,7 @@ Argh...
 
 ** Wish List / Easy
 rename struct_test to class_test
+Suppress [] as initial values in SrcmlOptions!
 Renommer package de lg_skbuild_template (example-lib => lg-example-lib) ?
 enum / py::arithmetic() : add an option?
 

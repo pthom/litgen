@@ -473,44 +473,44 @@ void py_init_module_lg_mylib(py::module& m)
         .value("unknown", ClassEnum::Unknown, "");
 
 
-    auto pyClassMyStruct = py::class_<MyStruct>
-        (m, "MyStruct", "A superb struct")
+    auto pyClassMyClass = py::class_<MyClass>
+        (m, "MyClass", " This is the class doc. It will be published as MyClass.__doc__\n The \"// MY_API\" comment after the class decl indicates that this class will be published.\n it is necessary, since `options.srcml_options.api_suffixes = [\"MY_API\"]`\n was set inside autogenerate_mylib.py")
         .def(py::init<int, const std::string &>(),
             py::arg("factor") = 10, py::arg("message") = "hello")
-        .def_readwrite("factor", &MyStruct::factor, "")
-        .def_readwrite("delta", &MyStruct::delta, "")
-        .def_readwrite("message", &MyStruct::message, "")
-        .def_readwrite("numbers", &MyStruct::numbers, " By default, modifications from python are not propagated to C++ for stl containers\n (see https://pybind11.readthedocs.io/en/stable/advanced/cast/stl.html)")
+        .def_readwrite("factor", &MyClass::factor, "")
+        .def_readwrite("delta", &MyClass::delta, "")
+        .def_readwrite("message", &MyClass::message, "")
+        .def_readwrite("numbers", &MyClass::numbers, " By default, modifications from python are not propagated to C++ for stl containers\n (see https://pybind11.readthedocs.io/en/stable/advanced/cast/stl.html)")
         .def("append_number_from_cpp",
-            &MyStruct::append_number_from_cpp,
+            &MyClass::append_number_from_cpp,
             py::arg("v"),
             "However you can call dedicated modifying methods")
         .def_property("values",
-            [](MyStruct &self) -> pybind11::array
+            [](MyClass &self) -> pybind11::array
             {
                 auto dtype = pybind11::dtype(pybind11::format_descriptor<int>::format());
                 auto base = pybind11::array(dtype, {2}, {sizeof(int)});
                 return pybind11::array(dtype, {2}, {sizeof(int)}, self.values, base);
-            }, [](MyStruct& self) {},
+            }, [](MyClass& self) {},
             "")
         .def_property("flags",
-            [](MyStruct &self) -> pybind11::array
+            [](MyClass &self) -> pybind11::array
             {
                 auto dtype = pybind11::dtype(pybind11::format_descriptor<bool>::format());
                 auto base = pybind11::array(dtype, {3}, {sizeof(bool)});
                 return pybind11::array(dtype, {3}, {sizeof(bool)}, self.flags, base);
-            }, [](MyStruct& self) {},
+            }, [](MyClass& self) {},
             "")
         .def("calc",
-            &MyStruct::calc,
+            &MyClass::calc,
             py::arg("x"),
             "calc: example of simple method")
         .def("set_message",
-            &MyStruct::set_message,
+            &MyClass::set_message,
             py::arg("m"),
             "set_message: another example of simple method")
         .def("static_message",
-            &MyStruct::static_message, "Returns a static message")
+            &MyClass::static_message, "Returns a static message")
         ;
 
 

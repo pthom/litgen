@@ -31,7 +31,7 @@ def all_header_files() -> List[str]:
     return headers_full_path
 
 
-def my_code_style_options() -> litgen.LitgenOptions:
+def mylib_litgen_options() -> litgen.LitgenOptions:
     options = litgen.LitgenOptions()
 
     # Generated C++ code style
@@ -39,7 +39,8 @@ def my_code_style_options() -> litgen.LitgenOptions:
 
     # require MY_API for all exported functions
     options.srcml_options.functions_api_prefixes = ["MY_API"]
-    # require MY_API for all exported classes, enums, structs and namespaces (add // MY_API as eol comment)
+    # require MY_API as a suffix for all exported classes, enums, structs and namespaces
+    # (i.e. add "// MY_API" as end of line comment)
     options.srcml_options.api_suffixes = ["MY_API"]
 
     # Python modifiable immutables options
@@ -78,7 +79,7 @@ def autogenerate_mylib() -> None:
     output_boxed_types_header_file = CPP_GENERATED_PYBIND_DIR + "/mylib_boxed_types.h"
 
     # Configure options
-    options = my_code_style_options()
+    options = mylib_litgen_options()
 
     # We demonstrate here two methods for generating bindings (both of them work correctly):
     # - either using an amalgamated header

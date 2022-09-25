@@ -8,7 +8,7 @@
 #include "mylib/modifiable_immutable_test.h"
 #include "mylib/overload_test.h"
 #include "mylib/enum_test.h"
-#include "mylib/struct_test.h"
+#include "mylib/class_test.h"
 #include "mylib/return_value_policy_test.h"
 #include "mylib/inner_class_test.h"
 #include "mylib/mix_adapters_class_test.h"
