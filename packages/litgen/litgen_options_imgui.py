@@ -124,7 +124,7 @@ def litgen_options_imgui() -> LitgenOptions:
     options.fn_return_force_policy_reference_for_pointers__regexes = [r".*"]
     options.fn_return_force_policy_reference_for_references__regexes = [r".*"]
 
-    options.fn_params_replace_buffer_by_array__regexes = [r".*"]
+    options.fn_params_replace_buffer_by_array__regex = r".*"
     options.fn_params_buffer_types += ["float"]
 
     options.fn_params_exclude_types__regexes = [

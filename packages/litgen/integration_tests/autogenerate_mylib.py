@@ -54,7 +54,7 @@ def mylib_litgen_options() -> litgen.LitgenOptions:
     options.fn_params_replace_modifiable_c_array_by_boxed__regexes = ["array", "GetPoints", r"c_string_list_total_size"]
 
     # c style buffer options (will apply to all functions names, except if containing "Change")
-    options.fn_params_replace_buffer_by_array__regexes = [code_utils.make_regex_exclude_word("Change")]
+    options.fn_params_replace_buffer_by_array__regex = code_utils.make_regex_exclude_word("Change")
 
     #
     # Sandbox for other options

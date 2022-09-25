@@ -111,7 +111,7 @@ class LitgenOptions:
     # C style buffers to py::array
     # ------------------------------------------------------------------------------
     #
-    # If fn_params_replace_buffer_by_array__regexes matches, then signatures with a C buffer like this:
+    # If fn_params_replace_buffer_by_array__regex matches, then signatures with a C buffer like this:
     #       MY_API inline void add_inside_array(uint8_t* array, size_t array_size, uint8_t number_to_add)
     # will be transformed to:
     #       void add_inside_array(py::array & array, uint8_t number_to_add)
@@ -124,9 +124,9 @@ class LitgenOptions:
     #
     # fn_params_buffer_replace_by_array_regexes contains a list of regexes on functions names
     # for which this transformation will be applied.
-    # Set it to [r".*"] to apply this to all functions (which is the default), set it to [] to disable it
+    # Set it to r".*" to apply this to all functions (which is the default), set it to "" to disable it
     #
-    fn_params_replace_buffer_by_array__regexes: List[str]  # = [r".*"] by default
+    fn_params_replace_buffer_by_array__regex: str = r".*"
 
     # fn_params_buffer_types: list of numeric types that are considered as possible buffers.
     # You can customize this list in your own options by removing items from it,
@@ -351,7 +351,7 @@ class LitgenOptions:
         self.code_replacements = cpp_to_python.standard_code_replacements()
         self.comments_replacements = cpp_to_python.standard_comment_replacements()
         self.names_replacements = RegexReplacementList()
-        self.fn_params_replace_buffer_by_array__regexes = [r".*"]
+        self.fn_params_replace_buffer_by_array__regex = r".*"
         # See doc for all the params at their declaration site (scroll up to the top of this file!)
         self.fn_params_buffer_types = [
             "uint8_t",

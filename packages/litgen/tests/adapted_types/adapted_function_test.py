@@ -7,7 +7,7 @@ from litgen.options import LitgenOptions
 def test_adapted_function_stub():
     options = LitgenOptions()
     options.original_location_flag_show = True
-    options.fn_params_replace_buffer_by_array__regexes = [r".*"]
+    options.fn_params_replace_buffer_by_array__regex = r".*"
 
     code = """
     // This is foo's doc:
@@ -95,7 +95,7 @@ def test_return_value_policy() -> None:
 
 def test_implot_one_buffer() -> None:
     options = LitgenOptions()
-    options.fn_params_replace_buffer_by_array__regexes = [r".*"]
+    options.fn_params_replace_buffer_by_array__regex = r".*"
     options.srcml_options.functions_api_prefixes = "IMPLOT_API|IMPLOT_TMP"
     options.original_location_flag_show = True
     code = """

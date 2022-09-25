@@ -53,7 +53,7 @@ def play_pydef(code, options) -> None:
 
 def litgensample_options() -> litgen.LitgenOptions:
     options = litgen.LitgenOptions()
-    # options.fn_params_replace_buffer_by_array__regexes = [r".*"]
+    # options.fn_params_replace_buffer_by_array__regex = r".*"
     # options.fn_params_replace_modifiable_immutable_by_boxed__regexes = [r"^Toggle", r"^Modify"]
     # options.fn_params_output_modifiable_immutable_to_return__regexes = [r"^Slider"]
 

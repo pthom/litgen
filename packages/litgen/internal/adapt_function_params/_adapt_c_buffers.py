@@ -111,8 +111,8 @@ class _AdaptBuffersHelper:
             return r
 
     def shall_adapt(self) -> bool:
-        if not code_utils.does_match_regexes(
-            self.options.fn_params_replace_buffer_by_array__regexes,
+        if not code_utils.does_match_regex(
+            self.options.fn_params_replace_buffer_by_array__regex,
             self.adapted_function.cpp_adapted_function.function_name,
         ):
             return False
