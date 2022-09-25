@@ -348,11 +348,11 @@ class AdaptedFunction(AdaptedElement):
         options = self.options
         returns_pointer = self.cpp_element().returns_pointer()
         returns_reference = self.cpp_element().returns_reference()
-        matches_regex_pointer = code_utils.does_match_regexes(
-            options.fn_return_force_policy_reference_for_pointers__regexes, function_name
+        matches_regex_pointer = code_utils.does_match_regex(
+            options.fn_return_force_policy_reference_for_pointers__regex, function_name
         )
-        matches_regex_reference = code_utils.does_match_regexes(
-            options.fn_return_force_policy_reference_for_references__regexes, function_name
+        matches_regex_reference = code_utils.does_match_regex(
+            options.fn_return_force_policy_reference_for_references__regex, function_name
         )
 
         if (matches_regex_pointer and returns_pointer) or (matches_regex_reference and returns_reference):

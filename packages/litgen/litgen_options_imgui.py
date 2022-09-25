@@ -77,27 +77,31 @@ def litgen_options_imgui() -> LitgenOptions:
         ]
     )
 
-    options.member_exclude_by_name__regexes = [
-        #     typedef void (*ImDrawCallback)(const ImDrawList* parent_list, const ImDrawCmd* cmd);
-        #     ImDrawCallback  UserCallback;       // 4-8  // If != NULL, call the function instead of rendering the vertices. clip_rect and texture_id will be set normally.
-        #     ^
-        r"\bUserCallback\b",
-        # struct ImDrawData
-        # { ...
-        #     ImDrawList**    CmdLists;               // Array of ImDrawList* to render. The ImDrawList are owned by ImGuiContext and only pointed to from here.
-        #               ^
-        # }
-        r"\bCmdLists\b",
-    ]
+    options.member_exclude_by_name__regex = join_string_by_pipe_char(
+        [
+            #     typedef void (*ImDrawCallback)(const ImDrawList* parent_list, const ImDrawCmd* cmd);
+            #     ImDrawCallback  UserCallback;       // 4-8  // If != NULL, call the function instead of rendering the vertices. clip_rect and texture_id will be set normally.
+            #     ^
+            r"\bUserCallback\b",
+            # struct ImDrawData
+            # { ...
+            #     ImDrawList**    CmdLists;               // Array of ImDrawList* to render. The ImDrawList are owned by ImGuiContext and only pointed to from here.
+            #               ^
+            # }
+            r"\bCmdLists\b",
+        ]
+    )
 
-    options.member_exclude_by_type__regexes = [
-        r"^char\s*\*",
-        r"const ImWchar\s*\*",
-        r"unsigned char\s*\*",
-        r"unsigned int\s*\*",
-    ]
+    options.member_exclude_by_type__regex = join_string_by_pipe_char(
+        [
+            r"^char\s*\*",
+            r"const ImWchar\s*\*",
+            r"unsigned char\s*\*",
+            r"unsigned int\s*\*",
+        ]
+    )
 
-    options.class_exclude_by_name__regexes = [r"^ImVector\b", "ImGuiTextBuffer"]
+    options.class_exclude_by_name__regex = join_string_by_pipe_char([r"^ImVector\b", "ImGuiTextBuffer"])
 
     options.member_numeric_c_array_types += [
         "ImGuiID",
@@ -123,8 +127,8 @@ def litgen_options_imgui() -> LitgenOptions:
         ]
     )
 
-    options.fn_return_force_policy_reference_for_pointers__regexes = [r".*"]
-    options.fn_return_force_policy_reference_for_references__regexes = [r".*"]
+    options.fn_return_force_policy_reference_for_pointers__regex = r".*"
+    options.fn_return_force_policy_reference_for_references__regex = r".*"
 
     options.fn_params_replace_buffer_by_array__regex = r".*"
     options.fn_params_buffer_types += ["float"]

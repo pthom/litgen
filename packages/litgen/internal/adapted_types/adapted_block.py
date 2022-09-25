@@ -52,8 +52,8 @@ class AdaptedBlock(AdaptedElement):
             elif isinstance(child, CppComment):
                 self.adapted_elements.append(AdaptedComment(self.options, child))
             elif isinstance(child, CppStruct):
-                is_excluded_by_name = code_utils.does_match_regexes(
-                    self.options.class_exclude_by_name__regexes, child.class_name
+                is_excluded_by_name = code_utils.does_match_regex(
+                    self.options.class_exclude_by_name__regex, child.class_name
                 )
                 if not is_excluded_by_name:
                     self.adapted_elements.append(AdaptedClass(self.options, child))

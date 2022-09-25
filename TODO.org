@@ -457,7 +457,7 @@ Add options:
 
     # Namespace that match those regexes are concerned as root, and will not
     # be outputted as submodules
-    # class_exclude_by_name__regexes: List[str] = []
+    # class_exclude_by_name__regex: List[str] = []
     main_namespace_regexes: List[str] = []
 
 

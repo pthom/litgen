@@ -43,9 +43,7 @@ class AdaptedClassMember(AdaptedDecl):
         array_typename = cpp_decl.cpp_type.str_code()
         if array_typename not in options.member_numeric_c_array_types:
             return False
-        shall_replace = code_utils.does_match_regexes(
-            options.member_numeric_c_array_replace__regexes, cpp_decl.decl_name
-        )
+        shall_replace = code_utils.does_match_regex(options.member_numeric_c_array_replace__regex, cpp_decl.decl_name)
         if not shall_replace:
             return False
         if cpp_decl.c_array_size_as_int() is None:
@@ -65,14 +63,12 @@ class AdaptedClassMember(AdaptedDecl):
             )
             return False
 
-        shall_replace = code_utils.does_match_regexes(
-            options.member_numeric_c_array_replace__regexes, cpp_decl.decl_name
-        )
+        shall_replace = code_utils.does_match_regex(options.member_numeric_c_array_replace__regex, cpp_decl.decl_name)
         if not shall_replace:
             cpp_decl.emit_warning(
                 """
                 AdaptedClassMember: Detected a numeric C Style array, but will not export it.
-                Hint: modify `options.member_numeric_c_array_replace__regexes`
+                Hint: modify `options.member_numeric_c_array_replace__regex`
                 """,
             )
             return False
@@ -251,11 +247,11 @@ class AdaptedClass(AdaptedElement):
 
     def _add_adapted_class_member(self, cpp_decl_statement: CppDeclStatement):
         for cpp_decl in cpp_decl_statement.cpp_decls:
-            is_excluded_by_name = code_utils.does_match_regexes(
-                self.options.member_exclude_by_name__regexes, cpp_decl.decl_name
+            is_excluded_by_name = code_utils.does_match_regex(
+                self.options.member_exclude_by_name__regex, cpp_decl.decl_name
             )
-            is_excluded_by_type = code_utils.does_match_regexes(
-                self.options.member_exclude_by_type__regexes, cpp_decl.cpp_type.str_code()
+            is_excluded_by_type = code_utils.does_match_regex(
+                self.options.member_exclude_by_type__regex, cpp_decl.cpp_type.str_code()
             )
             if not is_excluded_by_name and not is_excluded_by_type:
                 adapted_class_member = AdaptedClassMember(self.options, cpp_decl, self)
