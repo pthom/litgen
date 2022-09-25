@@ -491,6 +491,13 @@ struct MyStruct            // MY_API
 
     // unpublished_calc: this function should not be published (no MY_API marker)
     int unpublished_calc(int x) { return x * factor + delta + 3;}
+
+    ///////////////////////////////////////////////////////////////////////////
+    // Static method
+    ///////////////////////////////////////////////////////////////////////////
+
+    // Returns a static message
+    MY_API static std::string static_message() { return std::string("Hi!"); }
 };
 
 

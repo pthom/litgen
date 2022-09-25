@@ -49,5 +49,9 @@ def test_struct_simple_methods():
     assert my_struct.message == "aaa"
 
 
+def test_struct_static_methods():
+    assert lg_mylib.MyStruct.static_message() == "Hi!"
+
+
 def test_struct_not_registered():
     assert "StructNotRegistered" not in dir(lg_mylib)

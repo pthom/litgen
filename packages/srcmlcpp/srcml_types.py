@@ -1034,6 +1034,14 @@ class CppFunctionDecl(CppElementAndComment):
     def returns_void(self) -> bool:
         return self.full_return_type() == "void"
 
+    def is_static(self) -> bool:
+        if not hasattr(self, "return_type"):
+            return False
+        return "static" in self.return_type.specifiers
+
+    def is_static_method(self) -> bool:
+        return self.is_method() and self.is_static()
+
     def __str__(self) -> str:
         return self.str_commented()
 

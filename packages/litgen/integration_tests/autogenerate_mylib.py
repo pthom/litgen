@@ -70,7 +70,8 @@ def my_code_style_options() -> litgen.LitgenOptions:
     return options
 
 
-def autogenerate_testrunner() -> None:
+def autogenerate_mylib() -> None:
+    print("autogenerate_mylib")
     input_cpp_header = CPP_AMALGAMATED_HEADER
     output_cpp_module = CPP_GENERATED_PYBIND_DIR + "/pybind_mylib.cpp"
     output_stub_pyi_file = CPP_GENERATED_PYBIND_DIR + "/lg_mylib/__init__.pyi"
@@ -82,7 +83,7 @@ def autogenerate_testrunner() -> None:
     # We demonstrate here two methods for generating bindings (both of them work correctly):
     # - either using an amalgamated header
     # - or by providing a list of files to litgen
-    use_amalgamated_header = False
+    use_amalgamated_header = True
     if use_amalgamated_header:
         make_testrunner_amalgamated_header()
         generated_code = litgen.generate_code(options, filename=input_cpp_header, add_boxed_types_definitions=True)
@@ -102,5 +103,4 @@ def autogenerate_testrunner() -> None:
 
 
 if __name__ == "__main__":
-    print("autogenerate_testrunner")
-    autogenerate_testrunner()
+    autogenerate_mylib()

@@ -433,10 +433,9 @@ Problem 3: dans lg_test_runner (integration tests), tout est refusé (trouve pas
 Argh...
 
 ** Wish List / Easy
+rename struct_test to class_test
 Renommer package de lg_skbuild_template (example-lib => lg-example-lib) ?
 enum / py::arithmetic() : add an option?
-Bug still ? Static methods: cf https://pybind11-jagerman.readthedocs.io/en/stable/classes.html?highlight=static%20method#instance-and-static-fields
-        use def_static
 
 
 ** Handle scope

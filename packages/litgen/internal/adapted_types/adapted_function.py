@@ -229,7 +229,7 @@ class AdaptedFunction(AdaptedElement):
 
             r.append(param_code)
 
-        if self.is_method():
+        if self.is_method() and not self.cpp_adapted_function.is_static_method():
             r = ["self"] + r
         return r
 
@@ -244,6 +244,7 @@ class AdaptedFunction(AdaptedElement):
             type_ignore = ""
 
         function_def_code = f"def {self.function_name_python()}("
+
         return_code = f") -> {self.return_type_python()}:"
         params_strs = self._paramlist_call_python()
 
@@ -279,6 +280,10 @@ class AdaptedFunction(AdaptedElement):
 
         r = self._str_stub_layout_lines(title_lines, body_lines)
         r = self._cpp_original_code_lines() + r
+
+        if self.cpp_adapted_function.is_static_method():
+            r = ["# (static method)"] + r
+
         return r
 
     #
