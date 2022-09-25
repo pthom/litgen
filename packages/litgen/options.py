@@ -164,7 +164,7 @@ class LitgenOptions:
     #       void foo_const(const int input[2])
     # may be transformed to:
     #       void foo_const(const std::array<int, 2>& input)    (pydef)
-    #
+    #       def foo_const(input: List[int]) -> None:           (stub)
     # fn_params_buffer_replace_by_array_regexes contains a list of regexes on functions names
     # for which this transformation will be applied.
     # Set it to r".*" to apply this to all functions, set it to "" to disable it
@@ -173,8 +173,8 @@ class LitgenOptions:
     # Signatures like
     #       void foo_non_const(int output[2])
     # may be transformed to:
-    #       void foo_non_const(BoxedInt & output_0, BoxedInt & output_1)
-    #
+    #       void foo_non_const(BoxedInt & output_0, BoxedInt & output_1)         (pydef)
+    #       def foo_non_const(output_0: BoxedInt, output_0: BoxedInt) -> None    (stub)
     # fn_params_replace_modifiable_c_array_by_boxed__regex contains a list of regexes on functions names
     # for which this transformation will be applied.
     # Set it to r".*" to apply this to all functions, set it to "" to disable it
@@ -185,12 +185,11 @@ class LitgenOptions:
     # ------------------------------------------------------------------------------
     # C style string list functions and methods parameters
     # ------------------------------------------------------------------------------
-    # If c_string_list_flag_replace is active, then C string lists `(const char **, size_t)`
-    # will be replaced by `const std::vector<std::string>&`. For example:
+    # Signatures like
     #     void foo(const char * const items[], int items_count)
-    # will be transformed to:
-    #     void foo(const std::vector<std::string>& const items[])
-    #
+    # may be transformed to:
+    #     void foo(const std::vector<std::string>& const items[])        (pydef)
+    #     def foo(items: List[str]) -> None                              (stub)
     # fn_params_replace_c_string_list_regexes contains a list of regexes on functions names
     # for which this transformation will be applied.
     # Set it to [r".*"] to apply this to all functions, set it to [] to disable it
@@ -199,33 +198,30 @@ class LitgenOptions:
     # ------------------------------------------------------------------------------
     # Make "immutable python types" modifiable, when passed by pointer or reference
     # ------------------------------------------------------------------------------
-    # fn_params_adapt_modifiable_immutable:
-    # adapt functions params that use non cont pointers or reference to a type that is immutable in python.
     #
-    # For example
+    # adapt functions params that use non const pointers or reference to a type that is immutable in python.
+
+    # Signatures like
     #     int foo(int* value)
-    # From python, the adapted signature will be:
-    #     def foo(BoxedInt value) -> int
-    #
+    # May be transformed to;:
+    #     def foo(BoxedInt value) -> int                                  (stub)
     # So that any modification done on the C++ side can be seen from python.
     #
     # fn_params_adapt_modifiable_immutable_regexes contains a list of regexes on functions names
-    # Set it to [r".*"] to apply this to all functions. Set it to [] to disable it
-    fn_params_replace_modifiable_immutable_by_boxed__regexes: List[str]  # = [] by default
+    # Set it to r".*" to apply this to all functions. Set it to "" to disable it
+    fn_params_replace_modifiable_immutable_by_boxed__regexes: str = ""
 
-    # fn_params_adapt_modifiable_immutable_to_return_regexes:
-    # adapt functions params that use non const pointers or reference to a type that is immutable in python
-    # by adding the modified value to the returned type of the function (which will now be a tuple)
+    # As an alternative, we can also add the modified value to the returned type
+    # of the function (which will now be a tuple)
     #
     # For example
     #     int foo(int* value)
     # From python, the adapted signature will be:
     #     def foo(int value) -> Tuple[int, bool]
-    #
     # So that any modification done on the C++ side can be seen from python.
     #
     # fn_params_output_modifiable_immutable_to_return__regexes contains a list of regexes on functions names
-    # Set it to [r".*"] to apply this to all functions. Set it to [] to disable it
+    # Set it to r".*" to apply this to all functions. Set it to "" to disable it
     fn_params_output_modifiable_immutable_to_return__regexes: List[str]  # = [] by default
 
     # ------------------------------------------------------------------------------
