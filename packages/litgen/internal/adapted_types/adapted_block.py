@@ -58,8 +58,8 @@ class AdaptedBlock(AdaptedElement):
                 if not is_excluded_by_name:
                     self.adapted_elements.append(AdaptedClass(self.options, child))
             elif isinstance(child, CppFunctionDecl):
-                is_excluded_by_name = code_utils.does_match_regexes(
-                    self.options.fn_exclude_by_name__regexes, child.function_name
+                is_excluded_by_name = code_utils.does_match_regex(
+                    self.options.fn_exclude_by_name__regex, child.function_name
                 )
                 if not is_excluded_by_name:
                     is_overloaded = self.cpp_element().is_function_overloaded(child)

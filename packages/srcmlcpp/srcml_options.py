@@ -2,6 +2,7 @@
 Options for srcmlcpp. Read the doc near all options elements.
 """
 from typing import Callable, Dict, List, Optional
+from codemanip.code_utils import split_string_by_pipe_char
 
 
 class SrcmlOptions:
@@ -96,13 +97,13 @@ class SrcmlOptions:
         self.named_number_macros = {}
 
     def functions_api_prefixes_list(self) -> List[str]:
-        return _split_string_by_pipe_char(self.functions_api_prefixes)
+        return split_string_by_pipe_char(self.functions_api_prefixes)
 
     def api_suffixes_list(self) -> List[str]:
-        return _split_string_by_pipe_char(self.api_suffixes)
+        return split_string_by_pipe_char(self.api_suffixes)
 
     def header_filter_acceptable_suffixes_list(self) -> List[str]:
-        return _split_string_by_pipe_char(self.header_filter_acceptable_suffixes)
+        return split_string_by_pipe_char(self.header_filter_acceptable_suffixes)
 
 
 def _int_from_str_or_named_number_macros(options: SrcmlOptions, int_str: Optional[str]) -> Optional[int]:
@@ -117,9 +118,3 @@ def _int_from_str_or_named_number_macros(options: SrcmlOptions, int_str: Optiona
             return options.named_number_macros[int_str]
         else:
             return None
-
-
-def _split_string_by_pipe_char(s: str) -> List[str]:
-    items = s.split("|")
-    items = list(filter(lambda s: len(s) > 0, items))  # remove empty items
-    return items

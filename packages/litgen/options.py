@@ -20,7 +20,7 @@ class LitgenOptions:
     # * fill srcml_options.functions_api_prefixes
     #   (the prefixes that denotes the functions that shall be published)
     # * Also, fill the excludes if you encounter issues with some functions or declarations you want to ignore
-    srcml_options: SrcmlOptions  # = SrcmlOptions() by default
+    srcml_options: SrcmlOptions
 
     ################################################################################
     #    <show the original location and or signature of elements as a comment>
@@ -90,10 +90,22 @@ class LitgenOptions:
     #    <functions and method adaptations>
     ################################################################################
 
+    #
+    # ------------------------------------------------------------------------------
+    # Note about regexes below:
+    # =========================
+    # - regexes can support several alternatives: separate them by "|"
+    # For example, in order to match an exact function name, as well as functions ending with "_private",
+    # use a regex like this:
+    #         r"^YourFunctionName$|_private$",
+    # - If a regex string is empty, it will not match anything
+    # - To match everything, use r".*"
+    # - It is advised to prefix your regex expressions with "r" (in order to use raw strings)
+    # ------------------------------------------------------------------------------
+    #
+
     # Exclude certain functions and methods by a regex on their name
-    # These are regexes. If you want to exclude an exact function name, use a regex like this:
-    #         r"^YourFunctionName$",
-    fn_exclude_by_name__regexes: List[str]  # = [] by default
+    fn_exclude_by_name__regex: str = ""
 
     # ------------------------------------------------------------------------------
     # C style buffers to py::array
@@ -339,7 +351,6 @@ class LitgenOptions:
         self.code_replacements = cpp_to_python.standard_code_replacements()
         self.comments_replacements = cpp_to_python.standard_comment_replacements()
         self.names_replacements = RegexReplacementList()
-        self.fn_exclude_by_name__regexes = []
         self.fn_params_replace_buffer_by_array__regexes = [r".*"]
         # See doc for all the params at their declaration site (scroll up to the top of this file!)
         self.fn_params_buffer_types = [

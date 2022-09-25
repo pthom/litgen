@@ -665,6 +665,10 @@ def contains_pointer_type(full_type_str: str, type_to_search: str) -> bool:
 
 
 def does_match_regex(regex_str: str, word: str) -> bool:
+    if len(regex_str) == 0:
+        return False
+    if word is None:
+        return False
     matches = list(re.finditer(regex_str, word, re.MULTILINE))
     return len(matches) > 0
 
@@ -699,6 +703,16 @@ def make_regex_any_variable_starting_with(what_to_find: str) -> str:
 def make_regex_exclude_word(which_word: str) -> str:
     regex = rf"^((?!{which_word}).)*$"
     return regex
+
+
+def split_string_by_pipe_char(s: str) -> List[str]:
+    items = s.split("|")
+    items = list(filter(lambda s: len(s) > 0, items))  # remove empty items
+    return items
+
+
+def join_string_by_pipe_char(strs: List[str]) -> str:
+    return "|".join(strs)
 
 
 def merge_dicts(dict1: Dict[str, Any], dict2: Dict[str, Any]) -> Dict[str, Any]:

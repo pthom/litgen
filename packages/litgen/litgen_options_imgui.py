@@ -1,4 +1,5 @@
 from codemanip.code_replacements import RegexReplacementList
+from codemanip.code_utils import join_string_by_pipe_char
 
 from litgen.options import LitgenOptions
 
@@ -45,34 +46,36 @@ def litgen_options_imgui() -> LitgenOptions:
 
     options.srcml_options.code_preprocess_function = _preprocess_imgui_code
 
-    options.fn_exclude_by_name__regexes = [
-        # IMGUI_API void          SetAllocatorFunctions(ImGuiMemAllocFunc alloc_func, ImGuiMemFreeFunc free_func, void* user_data = NULL);
-        #                                               ^
-        # IMGUI_API void          GetAllocatorFunctions(ImGuiMemAllocFunc* p_alloc_func, ImGuiMemFreeFunc* p_free_func, void** p_user_data);
-        #                                               ^
-        # IMGUI_API void*         MemAlloc(size_t size);
-        #           ^
-        # IMGUI_API void          MemFree(void* ptr);
-        #                                 ^
-        r"\bGetAllocatorFunctions\b",
-        r"\bSetAllocatorFunctions\b",
-        r"\bMemAlloc\b",
-        r"\bMemFree\b",
-        # IMGUI_API void              GetTexDataAsAlpha8(unsigned char** out_pixels, int* out_width, int* out_height, int* out_bytes_per_pixel = NULL);  // 1 byte per-pixel
-        #                                                             ^
-        # IMGUI_API void              GetTexDataAsRGBA32(unsigned char** out_pixels, int* out_width, int* out_height, int* out_bytes_per_pixel = NULL);  // 4 bytes-per-pixel
-        #                                                             ^
-        r"\bGetTexDataAsAlpha8\b",
-        r"\bGetTexDataAsRGBA32\b",
-        # IMGUI_API ImVec2            CalcTextSizeA(float size, float max_width, float wrap_width, const char* text_begin, const char* text_end = NULL, const char** remaining = NULL) const; // utf8
-        #                                                                                                                                                         ^
-        r"\bCalcTextSizeA\b",
-        "appendfv",
-        # Exclude function whose name ends with V, like for example
-        #       IMGUI_API void          TextV(const char* fmt, va_list args)                            IM_FMTLIST(1);
-        # which are utilities for variadic print format
-        r"\w*V\Z",
-    ]
+    options.fn_exclude_by_name__regex = join_string_by_pipe_char(
+        [
+            # IMGUI_API void          SetAllocatorFunctions(ImGuiMemAllocFunc alloc_func, ImGuiMemFreeFunc free_func, void* user_data = NULL);
+            #                                               ^
+            # IMGUI_API void          GetAllocatorFunctions(ImGuiMemAllocFunc* p_alloc_func, ImGuiMemFreeFunc* p_free_func, void** p_user_data);
+            #                                               ^
+            # IMGUI_API void*         MemAlloc(size_t size);
+            #           ^
+            # IMGUI_API void          MemFree(void* ptr);
+            #                                 ^
+            r"\bGetAllocatorFunctions\b",
+            r"\bSetAllocatorFunctions\b",
+            r"\bMemAlloc\b",
+            r"\bMemFree\b",
+            # IMGUI_API void              GetTexDataAsAlpha8(unsigned char** out_pixels, int* out_width, int* out_height, int* out_bytes_per_pixel = NULL);  // 1 byte per-pixel
+            #                                                             ^
+            # IMGUI_API void              GetTexDataAsRGBA32(unsigned char** out_pixels, int* out_width, int* out_height, int* out_bytes_per_pixel = NULL);  // 4 bytes-per-pixel
+            #                                                             ^
+            r"\bGetTexDataAsAlpha8\b",
+            r"\bGetTexDataAsRGBA32\b",
+            # IMGUI_API ImVec2            CalcTextSizeA(float size, float max_width, float wrap_width, const char* text_begin, const char* text_end = NULL, const char** remaining = NULL) const; // utf8
+            #                                                                                                                                                         ^
+            r"\bCalcTextSizeA\b",
+            "appendfv",
+            # Exclude function whose name ends with V, like for example
+            #       IMGUI_API void          TextV(const char* fmt, va_list args)                            IM_FMTLIST(1);
+            # which are utilities for variadic print format
+            r"\w*V\Z",
+        ]
+    )
 
     options.member_exclude_by_name__regexes = [
         #     typedef void (*ImDrawCallback)(const ImDrawList* parent_list, const ImDrawCmd* cmd);

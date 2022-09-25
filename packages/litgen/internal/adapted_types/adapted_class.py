@@ -270,7 +270,7 @@ class AdaptedClass(AdaptedElement):
             elif isinstance(child, CppComment):
                 self.adapted_public_children.append(AdaptedComment(self.options, child))
             elif isinstance(child, CppFunctionDecl):
-                if not code_utils.does_match_regexes(self.options.fn_exclude_by_name__regexes, child.function_name):
+                if not code_utils.does_match_regex(self.options.fn_exclude_by_name__regex, child.function_name):
                     is_overloaded = self.cpp_element().is_method_overloaded(child)
                     self.adapted_public_children.append(AdaptedFunction(self.options, child, is_overloaded))
             elif isinstance(child, CppDeclStatement):
