@@ -13,7 +13,7 @@ class SrcmlOptions:
     # Prefixes that denote functions that should be published (for example ["IMPLOT_API"])
     # if empty, all function are published!
     #
-    functions_api_prefixes: List[str] = []
+    functions_api_prefixes: List[str]  # = [] by default
 
     # Suffixes that denote structs, classes, enums and namespaces that should be published, for example:
     #       struct MyStruct        // IMMVISION_API_STRUCT     <== this is a suffix
@@ -21,7 +21,7 @@ class SrcmlOptions:
     # if empty, all structs/enums/classes/namespaces are published
     #
     # you may decide to fill api_suffixes and functions_api_prefixes with the same value(s)
-    api_suffixes: List[str] = []
+    api_suffixes: List[str]  # = [] by default
 
     ################################################################################
     #    <Numbers parsing: resolve macros values>
@@ -29,7 +29,7 @@ class SrcmlOptions:
 
     # List of named possible numbers or sizes (fill it if some number/sizes are defined by macros or constexpr values)
     # For example it could store `{ "SPACE_DIMENSIONS" : 3 }` if the C++ code uses a macro `SPACE_DIMENSIONS`
-    named_number_macros: Dict[str, int] = {}
+    named_number_macros: Dict[str, int]
 
     ################################################################################
     #    <Exclude certain regions based on preprocessor macros>
@@ -45,7 +45,7 @@ class SrcmlOptions:
     # In this case, also fill header_guard_suffixes to exclude header_guards
     #
     header_filter_preprocessor_regions: bool = True
-    header_guard_suffixes = ["_H", "HPP", "HXX"]
+    header_guard_suffixes: List[str]  # = ["_H", "HPP", "HXX"] by default
 
     ################################################################################
     #    <Custom preprocess of the code>
@@ -88,10 +88,11 @@ class SrcmlOptions:
     ################################################################################
 
     def __init__(self) -> None:
-        self.api_suffixes = []
+        # See doc for all the params at their declaration site (scroll up!)
         self.functions_api_prefixes = []
+        self.api_suffixes = []
         self.named_number_macros = {}
-        self.code_preprocess_function = None
+        self.header_guard_suffixes = ["_H", "HPP", "HXX"]
 
 
 def _int_from_str_or_named_number_macros(options: SrcmlOptions, int_str: Optional[str]) -> Optional[int]:

@@ -1,6 +1,5 @@
 from typing import List
 
-from codemanip import code_replacements
 from codemanip.code_replacements import RegexReplacementList
 
 from srcmlcpp import SrcmlOptions
@@ -21,7 +20,7 @@ class LitgenOptions:
     # * fill srcml_options.functions_api_prefixes
     #   (the prefixes that denotes the functions that shall be published)
     # * Also, fill the excludes if you encounter issues with some functions or declarations you want to ignore
-    srcml_options: SrcmlOptions = SrcmlOptions()
+    srcml_options: SrcmlOptions  # = SrcmlOptions() by default
 
     ################################################################################
     #    <show the original location and or signature of elements as a comment>
@@ -44,9 +43,9 @@ class LitgenOptions:
     # - by default, code_replacements is prefilled with standard_code_replacements()
     # - by default, comments_replacements is prefilled with standard_comments_replacements()
     # - by default, names_replacements is empty
-    code_replacements: RegexReplacementList = RegexReplacementList()
-    comments_replacements: RegexReplacementList = RegexReplacementList()
-    names_replacements: RegexReplacementList = RegexReplacementList()
+    code_replacements: RegexReplacementList  # = cpp_to_python.standard_code_replacements() by default
+    comments_replacements: RegexReplacementList  # = cpp_to_python.standard_comment_replacements() by default
+    names_replacements: RegexReplacementList  # = RegexReplacementList() by default (i.e. empty)
 
     ################################################################################
     #    <Layout settings for the generated python stub code>
@@ -94,9 +93,11 @@ class LitgenOptions:
     # Exclude certain functions and methods by a regex on their name
     # These are regexes. If you want to exclude an exact function name, use a regex like this:
     #         r"^YourFunctionName$",
-    fn_exclude_by_name__regexes: List[str] = []
+    fn_exclude_by_name__regexes: List[str]  # = [] by default
 
-    # C Buffers to py::array
+    # ------------------------------------------------------------------------------
+    # C style buffers to py::array
+    # ------------------------------------------------------------------------------
     #
     # If fn_params_replace_buffer_by_array__regexes matches, then signatures with a C buffer like this:
     #       MY_API inline void add_inside_array(uint8_t* array, size_t array_size, uint8_t number_to_add)
@@ -113,43 +114,49 @@ class LitgenOptions:
     # for which this transformation will be applied.
     # Set it to [r".*"] to apply this to all functions (which is the default), set it to [] to disable it
     #
-    fn_params_replace_buffer_by_array__regexes: List[str] = [r".*"]
+    fn_params_replace_buffer_by_array__regexes: List[str]  # = [r".*"] by default
 
-    # buffer_types List[str]. Which means that `uint8_t*` are considered as possible buffers
+    # fn_params_buffer_types: list of numeric types that are considered as possible buffers.
     # You can customize this list in your own options by removing items from it,
     # but you *cannot* add new types or new synonyms (typedef for examples); since the conversion between
-    # py::array and native relies on these exact names!
-    fn_params_buffer_types: List[str] = [
-        "uint8_t",
-        "int8_t",
-        "uint16_t",
-        "int16_t",
-        "uint32_t",
-        "int32_t",
-        "uint64_t",
-        "int64_t",
-        "float",
-        "double",
-        "long double",
-        "long long",
-    ]
-    fn_params_buffer_template_types: List[str] = [
-        "T"
-    ]  # Which means that templated functions using a buffer use T as a templated name
-    fn_params_buffer_size_names: List[str] = ["nb", "size", "count", "total", "n"]
-
+    # py::array and native relies on these *exact* names!
     #
+    # By default, fn_params_buffer_types will contain:
+    #      [
+    #         "uint8_t",
+    #         "int8_t",
+    #         "uint16_t",
+    #         "int16_t",
+    #         "uint32_t",
+    #         "int32_t",
+    #         "uint64_t",
+    #         "int64_t",
+    #         "float",
+    #         "double",
+    #         "long double",
+    #         "long long",
+    #     ]
+    fn_params_buffer_types: List[str]
+
+    # fn_params_buffer_template_types: list of templated names that are considered as possible templated buffers.
+    fn_params_buffer_template_types: List[str]  # = ["T", "NumericType"] by default
+
+    # fn_params_buffer_size_names: possible names for the size of the buffer
+    fn_params_buffer_size_names: List[str]  # = ["nb", "size", "count", "total", "n"] by default
+
+    # ------------------------------------------------------------------------------
     # C style arrays functions and methods parameters
+    # ------------------------------------------------------------------------------
     #
     # If active, then signatures like
     #       void foo_const(const int input[2])
     # will be transformed to:
-    #       void foo_const(const std::array<int, 2>& input)
+    #       void foo_const(const std::array<int, 2>& input)    (pydef)
     #
     # fn_params_buffer_replace_by_array_regexes contains a list of regexes on functions names
     # for which this transformation will be applied.
     # Set it to [r".*"] to apply this to all functions, set it to [] to disable it
-    fn_params_replace_const_c_array_by_std_array__regexes: List[str] = [".*"]
+    fn_params_replace_const_c_array_by_std_array__regexes: List[str]  # = [r".*"] by default
 
     # If c_array_modifiable_flag_replace is active, then signatures like
     #       void foo_non_const(int output[2])
@@ -160,9 +167,12 @@ class LitgenOptions:
     # fn_params_replace_modifiable_c_array_by_boxed__regexes contains a list of regexes on functions names
     # for which this transformation will be applied.
     # Set it to [r".*"] to apply this to all functions, set it to [] to disable it
-    fn_params_replace_modifiable_c_array_by_boxed__regexes: List[str] = [".*"]
+    fn_params_replace_modifiable_c_array_by_boxed__regexes: List[str]  # = [r".*"]  by default
     fn_params_replace_modifiable_c_array__max_size = 10
 
+    # ------------------------------------------------------------------------------
+    # C style string list functions and methods parameters
+    # ------------------------------------------------------------------------------
     # If c_string_list_flag_replace is active, then C string lists `(const char **, size_t)`
     # will be replaced by `const std::vector<std::string>&`. For example:
     #     void foo(const char * const items[], int items_count)
@@ -172,8 +182,11 @@ class LitgenOptions:
     # fn_params_replace_c_string_list_regexes contains a list of regexes on functions names
     # for which this transformation will be applied.
     # Set it to [r".*"] to apply this to all functions, set it to [] to disable it
-    fn_params_replace_c_string_list__regexes: List[str] = [r".*"]
+    fn_params_replace_c_string_list__regexes: List[str]  # = [r".*"] by default
 
+    # ------------------------------------------------------------------------------
+    # Make "immutable python types" modifiable, when passed by pointer or reference
+    # ------------------------------------------------------------------------------
     # fn_params_adapt_modifiable_immutable:
     # adapt functions params that use non cont pointers or reference to a type that is immutable in python.
     #
@@ -186,7 +199,7 @@ class LitgenOptions:
     #
     # fn_params_adapt_modifiable_immutable_regexes contains a list of regexes on functions names
     # Set it to [r".*"] to apply this to all functions. Set it to [] to disable it
-    fn_params_replace_modifiable_immutable_by_boxed__regexes: List[str] = []
+    fn_params_replace_modifiable_immutable_by_boxed__regexes: List[str]  # = [] by default
 
     # fn_params_adapt_modifiable_immutable_to_return_regexes:
     # adapt functions params that use non const pointers or reference to a type that is immutable in python
@@ -201,60 +214,74 @@ class LitgenOptions:
     #
     # fn_params_output_modifiable_immutable_to_return__regexes contains a list of regexes on functions names
     # Set it to [r".*"] to apply this to all functions. Set it to [] to disable it
-    fn_params_output_modifiable_immutable_to_return__regexes: List[str] = []
+    fn_params_output_modifiable_immutable_to_return__regexes: List[str]  # = [] by default
 
+    # ------------------------------------------------------------------------------
+    # Exclude some params by name
+    # ------------------------------------------------------------------------------
+    #
     # Remove some params from the python published interface. A param can only be removed if it has a default value
     # in the C++ signature
-    fn_params_exclude_names__regexes: List[str] = []
-    fn_params_exclude_types__regexes: List[str] = []
+    fn_params_exclude_names__regexes: List[str]  # = [] by default
+    fn_params_exclude_types__regexes: List[str]  # = [] by default
 
+    # ------------------------------------------------------------------------------
+    # Force overload
+    # ------------------------------------------------------------------------------
     # Force using py::overload for functions that matches these regexes
-    fn_force_overload__regexes: List[str] = []
+    fn_force_overload__regexes: List[str]  # = [] by default
 
-    # If true, all functions that returns pointers will have the policy `pybind11::return_value_policy::reference)`
-    fn_return_force_policy_reference_for_pointers__regexes: List[str] = []
-    fn_return_force_policy_reference_for_references__regexes: List[str] = []
+    # ------------------------------------------------------------------------------
+    # Return policy
+    # ------------------------------------------------------------------------------
+    # Force the function that match those regexes to use `pybind11::return_value_policy::reference)`
+    # (Note: you can also write "// return_value_policy::reference" as an end of line comment after the function:
+    #  see packages/litgen/integration_tests/mylib/include/mylib/return_value_policy_test.h as an example)
+    fn_return_force_policy_reference_for_pointers__regexes: List[str]  # = [] by default
+    fn_return_force_policy_reference_for_references__regexes: List[str]  # = [] by default
 
     ################################################################################
     #    <class and struct member adaptations>
     ################################################################################
 
     # Exclude certain classes and structs by a regex on their name
-    class_exclude_by_name__regexes: List[str] = []
+    class_exclude_by_name__regexes: List[str]  # = [] by default
 
     # Exclude certain members by a regex on their name
-    member_exclude_by_name__regexes: List[str] = []
+    member_exclude_by_name__regexes: List[str]  # = [] by default
 
     # Exclude members based on their type
-    member_exclude_by_type__regexes: List[str] = []
+    member_exclude_by_type__regexes: List[str]  # = []
 
     # If member_numeric_c_array_replace__regexes matchs, then members like
     #       struct Foo {  int values[10]; };
     # will be transformed to a property that points to a numpy array
     # which can be read/written from python (this requires numpy)
-    member_numeric_c_array_replace__regexes: List[str] = [r".*"]
+    member_numeric_c_array_replace__regexes: List[str]  # = [r".*"] by default
 
-    # list of numeric types that can be stored in a numpy array
-    member_numeric_c_array_types = [  # don't include char, don't include byte, those are not numeric!
-        "int",  # See https://numpy.org/doc/stable/reference/generated/numpy.chararray.html
-        "unsigned int",
-        "long",
-        "unsigned long",
-        "long long",
-        "unsigned long long",
-        "float",
-        "double",
-        "long double",
-        "uint8_t",
-        "int8_t",
-        "uint16_t",
-        "int16_t",
-        "uint32_t",
-        "int32_t",
-        "uint64_t",
-        "int64_t",
-        "bool",
-    ]
+    # member_numeric_c_array_types: list of numeric types that can be stored in a numpy array
+    # by default:
+    # member_numeric_c_array_types = [  # don't include char, don't include byte, those are not numeric!
+    #     "int",  # See https://numpy.org/doc/stable/reference/generated/numpy.chararray.html
+    #     "unsigned int",
+    #     "long",
+    #     "unsigned long",
+    #     "long long",
+    #     "unsigned long long",
+    #     "float",
+    #     "double",
+    #     "long double",
+    #     "uint8_t",
+    #     "int8_t",
+    #     "uint16_t",
+    #     "int16_t",
+    #     "uint32_t",
+    #     "int32_t",
+    #     "uint64_t",
+    #     "int64_t",
+    #     "bool",
+    # ]
+    member_numeric_c_array_types: List[str]
 
     ################################################################################
     #    <unclassified options>
@@ -303,8 +330,65 @@ class LitgenOptions:
         return space * self.python_indent_size
 
     def __init__(self) -> None:
+        # See doc for all the params at their declaration site (scroll up to the top of this file!)
         from litgen.internal import cpp_to_python
 
         self.srcml_options = SrcmlOptions()
         self.code_replacements = cpp_to_python.standard_code_replacements()
         self.comments_replacements = cpp_to_python.standard_comment_replacements()
+        self.names_replacements = RegexReplacementList()
+        self.fn_exclude_by_name__regexes = []
+        self.fn_params_replace_buffer_by_array__regexes = [r".*"]
+        # See doc for all the params at their declaration site (scroll up to the top of this file!)
+        self.fn_params_buffer_types = [
+            "uint8_t",
+            "int8_t",
+            "uint16_t",
+            "int16_t",
+            "uint32_t",
+            "int32_t",
+            "uint64_t",
+            "int64_t",
+            "float",
+            "double",
+            "long double",
+            "long long",
+        ]
+        # See doc for all the params at their declaration site (scroll up!)
+        self.fn_params_buffer_template_types = ["T", "NumericType"]
+        self.fn_params_buffer_size_names = ["nb", "size", "count", "total", "n"]
+        self.fn_params_replace_const_c_array_by_std_array__regexes = [r".*"]
+        self.fn_params_replace_modifiable_c_array_by_boxed__regexes = [r".*"]
+        self.fn_params_replace_c_string_list__regexes = [r".*"]
+        self.fn_params_replace_modifiable_immutable_by_boxed__regexes = []
+        self.fn_params_output_modifiable_immutable_to_return__regexes = []
+        self.fn_params_exclude_names__regexes = []
+        self.fn_params_exclude_types__regexes = []
+        self.fn_force_overload__regexes = []
+        self.fn_return_force_policy_reference_for_pointers__regexes = []
+        self.fn_return_force_policy_reference_for_references__regexes = []
+        self.class_exclude_by_name__regexes = []
+        self.member_exclude_by_name__regexes = []
+        self.member_exclude_by_type__regexes = []
+        self.member_numeric_c_array_replace__regexes = [r".*"]
+        # See doc for all the params at their declaration site (scroll up to the top of this file!)
+        self.member_numeric_c_array_types = [  # don't include char, don't include byte, those are not numeric!
+            "int",  # See https://numpy.org/doc/stable/reference/generated/numpy.chararray.html
+            "unsigned int",
+            "long",
+            "unsigned long",
+            "long long",
+            "unsigned long long",
+            "float",
+            "double",
+            "long double",
+            "uint8_t",
+            "int8_t",
+            "uint16_t",
+            "int16_t",
+            "uint32_t",
+            "int32_t",
+            "uint64_t",
+            "int64_t",
+            "bool",
+        ]
