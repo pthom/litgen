@@ -1,7 +1,7 @@
 from typing import List, Optional
 
 from litgen.options import LitgenOptions
-from litgen.internal.adapted_types.adapted_block import AdaptedNamespace
+from litgen.internal.adapted_types.adapted_namespace import AdaptedNamespace
 from litgen.internal.adapted_types.adapted_class import AdaptedClass, AdaptedClassMember
 from litgen.internal.adapted_types.adapted_decl import AdaptedDecl
 from litgen.internal.adapted_types.adapted_element import AdaptedElement

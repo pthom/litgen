@@ -12,7 +12,6 @@ from litgen.internal.adapted_types.adapted_comment import (
 )
 from litgen.internal.adapted_types.adapted_element import (
     AdaptedElement,
-    _PROGRESS_BAR_TITLE_ADAPTED_ELEMENTS,
     _PROGRESS_BAR_TITLE_STUB,
     _PROGRESS_BAR_TITLE_PYDEF,
 )
@@ -46,6 +45,8 @@ class AdaptedBlock(AdaptedElement):
         return cast(CppBlock, self._cpp_element)
 
     def _fill_adapted_elements(self) -> None:
+        from litgen.internal.adapted_types.adapted_namespace import AdaptedNamespace
+
         for child in self.cpp_element().block_children:
             if isinstance(child, CppEmptyLine):
                 self.adapted_elements.append(AdaptedEmptyLine(self.options, child))
@@ -110,74 +111,3 @@ class AdaptedBlock(AdaptedElement):
 
             lines += element_lines
         return lines
-
-
-@dataclass
-class AdaptedNamespace(AdaptedElement):
-    adapted_block: AdaptedBlock
-
-    def __init__(self, options: LitgenOptions, namespace_: CppNamespace) -> None:
-        super().__init__(options, namespace_)
-        self.adapted_block = AdaptedBlock(self.options, self.cpp_element().block)
-
-    def namespace_name(self) -> str:
-        return self.cpp_element().ns_name
-
-    # override
-    def cpp_element(self) -> CppNamespace:
-        return cast(CppNamespace, self._cpp_element)
-
-    # override
-    def _str_stub_lines(self) -> List[str]:
-        # raise ValueError("To be completed")
-        lines: List[str] = []
-
-        lines.append(f"# <Namespace {self.namespace_name()}>")
-        lines += self.adapted_block._str_stub_lines()
-        lines.append(f"# </Namespace {self.namespace_name()}>")
-
-        return lines
-
-    # override
-    def _str_pydef_lines(self) -> List[str]:
-        location = self.info_original_location_cpp()
-        namespace_name = self.namespace_name()
-        block_code_lines = self.adapted_block._str_pydef_lines()
-
-        lines: List[str] = []
-        lines.append(f"// <namespace {namespace_name}>{location}")
-        lines += block_code_lines
-        lines.append(f"// </namespace {namespace_name}>")
-        return lines
-
-
-class AdaptedUnit(AdaptedBlock):
-    def __init__(self, options: LitgenOptions, unit: CppUnit):
-        options.check_options_consistency()
-        global_progress_bars().start_progress_bar(_PROGRESS_BAR_TITLE_ADAPTED_ELEMENTS)
-        super().__init__(options, unit)
-        global_progress_bars().stop_progress_bar(_PROGRESS_BAR_TITLE_ADAPTED_ELEMENTS)
-
-    # override
-    def cpp_element(self) -> CppUnit:
-        return cast(CppUnit, self._cpp_element)
-
-    def str_stub(self) -> str:
-        global_progress_bars().start_progress_bar(_PROGRESS_BAR_TITLE_STUB)
-        r = AdaptedElement.str_stub(self)
-        global_progress_bars().stop_progress_bar(_PROGRESS_BAR_TITLE_STUB)
-        return r
-
-    def str_pydef(self) -> str:
-        global_progress_bars().start_progress_bar(_PROGRESS_BAR_TITLE_PYDEF)
-        r = AdaptedElement.str_pydef(self)
-        global_progress_bars().stop_progress_bar(_PROGRESS_BAR_TITLE_PYDEF)
-        return r
-
-    # override : not needed, use AdaptedBlock version
-    # def _str_stub_lines(self) -> List[str]:
-    #     raise ValueError("To be completed")
-
-    # override : not needed, use AdaptedBlock version
-    # def _str_pydef_lines(self) -> List[str]:
-    #     raise ValueError("To be completed")

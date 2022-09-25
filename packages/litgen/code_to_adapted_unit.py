@@ -3,7 +3,7 @@ from typing import Optional
 import srcmlcpp
 
 from litgen.options import LitgenOptions
-from litgen.internal.adapted_types.adapted_block import AdaptedUnit
+from litgen.internal.adapted_types.adapted_unit import AdaptedUnit
 
 
 def code_to_adapted_unit(
