@@ -7,7 +7,7 @@ def litgen_options_implot() -> LitgenOptions:
     options = litgen_options_imgui()
     options.srcml_options.functions_api_prefixes = "IMPLOT_API|IMPLOT_TMP"
 
-    options.fn_force_overload__regexes = ["BeginPlot"]
+    options.fn_force_overload__regex = "BeginPlot"
     options.fn_params_exclude_types__regex = "ImPlotFormatter"
 
     options.fn_params_buffer_types = [

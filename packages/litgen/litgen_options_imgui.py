@@ -111,15 +111,17 @@ def litgen_options_imgui() -> LitgenOptions:
         "ImU64",
     ]
 
-    options.fn_force_overload__regexes = [
-        r"^SetScroll",
-        r"^Drag",
-        r"^Slider",
-        r"^InputText",
-        r"Popup",
-        r"DrawList",
-        r"^Table",
-    ]
+    options.fn_force_overload__regex = join_string_by_pipe_char(
+        [
+            r"^SetScroll",
+            r"^Drag",
+            r"^Slider",
+            r"^InputText",
+            r"Popup",
+            r"DrawList",
+            r"^Table",
+        ]
+    )
 
     options.fn_return_force_policy_reference_for_pointers__regexes = [r".*"]
     options.fn_return_force_policy_reference_for_references__regexes = [r".*"]

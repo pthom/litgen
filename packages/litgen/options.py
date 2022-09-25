@@ -237,7 +237,7 @@ class LitgenOptions:
     # Force overload
     # ------------------------------------------------------------------------------
     # Force using py::overload for functions that matches these regexes
-    fn_force_overload__regexes: List[str]  # = [] by default
+    fn_force_overload__regex: str = ""
 
     # ------------------------------------------------------------------------------
     # Return policy
@@ -366,7 +366,6 @@ class LitgenOptions:
         # See doc for all the params at their declaration site (scroll up!)
         self.fn_params_buffer_template_types = ["T", "NumericType"]
         self.fn_params_buffer_size_names = ["nb", "size", "count", "total", "n"]
-        self.fn_force_overload__regexes = []
         self.fn_return_force_policy_reference_for_pointers__regexes = []
         self.fn_return_force_policy_reference_for_references__regexes = []
         self.class_exclude_by_name__regexes = []
