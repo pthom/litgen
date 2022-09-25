@@ -109,7 +109,7 @@ def test_struct_pydef_simple():
 
 def test_struct_stub_complex():
     options = LitgenOptions()
-    options.srcml_options.functions_api_prefixes = ["MY_API"]
+    options.srcml_options.functions_api_prefixes = "MY_API"
     options.srcml_options.api_suffixes = ["MY_API"]
     code = """
         // A dummy class that handles 4 channel float colors

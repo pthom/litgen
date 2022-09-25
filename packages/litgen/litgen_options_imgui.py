@@ -40,7 +40,7 @@ def litgen_options_imgui() -> LitgenOptions:
     options.original_location_flag_show = True
     options.original_signature_flag_show = True
 
-    options.srcml_options.functions_api_prefixes = ["IMGUI_API"]
+    options.srcml_options.functions_api_prefixes = "IMGUI_API"
     options.srcml_options.header_guard_suffixes.append("IMGUI_DISABLE")
 
     options.srcml_options.code_preprocess_function = _preprocess_imgui_code

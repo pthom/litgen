@@ -9,7 +9,7 @@ from litgen.internal.adapted_types import AdaptedFunction
 def gen_pydef_code(code: str, options: Optional[LitgenOptions] = None) -> str:
     if options is None:
         options = litgen.options.LitgenOptions()
-        options.srcml_options.functions_api_prefixes = ["MY_API"]
+        options.srcml_options.functions_api_prefixes = "MY_API"
 
     cpp_function = srcmlcpp_main.code_first_function_decl(options.srcml_options, code)
     adapted_function = AdaptedFunction(options, cpp_function, False)
@@ -19,7 +19,7 @@ def gen_pydef_code(code: str, options: Optional[LitgenOptions] = None) -> str:
 
 def my_make_adapted_function(code) -> AdaptedFunction:
     options = litgen.options.LitgenOptions()
-    options.srcml_options.functions_api_prefixes = ["MY_API"]
+    options.srcml_options.functions_api_prefixes = "MY_API"
 
     function_decl = srcmlcpp_main.code_first_function_decl(options.srcml_options, code)
     adapted_function = AdaptedFunction(options, function_decl, False)
@@ -162,7 +162,7 @@ def test_in_method():
         };
     """
     options = litgen.LitgenOptions()
-    options.srcml_options.functions_api_prefixes = ["IMGUI_API"]
+    options.srcml_options.functions_api_prefixes = "IMGUI_API"
     options.original_location_flag_show = True
     generated_code = litgen.code_to_pydef(options, code)
     # logging.warning("\n" + generated_code)

@@ -58,7 +58,7 @@ def test_adapted_function_pydef_simple():
 
 def test_implot_easy() -> None:
     options = LitgenOptions()
-    options.srcml_options.functions_api_prefixes = ["IMPLOT_API", "IMPLOT_TMP"]
+    options.srcml_options.functions_api_prefixes = "IMPLOT_API|IMPLOT_TMP"
     options.original_location_flag_show = True
     code = """
         // Sets the format of numeric
@@ -96,7 +96,7 @@ def test_return_value_policy() -> None:
 def test_implot_one_buffer() -> None:
     options = LitgenOptions()
     options.fn_params_replace_buffer_by_array__regexes = [r".*"]
-    options.srcml_options.functions_api_prefixes = ["IMPLOT_API", "IMPLOT_TMP"]
+    options.srcml_options.functions_api_prefixes = "IMPLOT_API|IMPLOT_TMP"
     options.original_location_flag_show = True
     code = """
         // Plots a standard 2D scatter plot. Default marker is ImPlotMarker_Circle.
@@ -154,7 +154,7 @@ def test_implot_one_buffer() -> None:
 
 def test_immvision() -> None:
     options = LitgenOptions()
-    options.srcml_options.functions_api_prefixes = ["IMMVISION_API"]
+    options.srcml_options.functions_api_prefixes = "IMMVISION_API"
     code = """
         // Display an image (requires OpenGL initialized)
         IMMVISION_API bool Image(const std::string& label_id, const cv::Mat& mat, ImageParams* params);

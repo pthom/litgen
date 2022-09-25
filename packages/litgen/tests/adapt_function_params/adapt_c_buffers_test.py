@@ -14,7 +14,7 @@ sys.path.append(_THIS_DIR + "/../..")
 
 def gen_pydef_code(code) -> str:
     options = litgen.options.LitgenOptions()
-    options.srcml_options.functions_api_prefixes = ["MY_API"]
+    options.srcml_options.functions_api_prefixes = "MY_API"
 
     cpp_function = srcmlcpp_main.code_first_function_decl(options.srcml_options, code)
     adapted_function = AdaptedFunction(options, cpp_function, False)

@@ -972,7 +972,7 @@ class CppFunctionDecl(CppElementAndComment):
     def full_return_type(self) -> str:
         """The C++ return type of the function, without API or inline markers"""
         r = self.return_type.str_code()
-        for prefix in self.options.functions_api_prefixes:
+        for prefix in self.options.functions_api_prefixes_list():
             r = r.replace(prefix + " ", "")
         if r.startswith("inline "):
             r = r.replace("inline ", "")

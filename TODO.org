@@ -8,19 +8,21 @@ M-x = select / search command
 C-g : quit current command
 
 ** Org mode tips
-** Basics
+*** Basics
+
 [[https://orgmode.org/orgguide.html#Introduction][Org mode quick guide]]
 Link to org [[https://orgmode.org/][mode homepage]] (M-x org-insert-link)
+[[https://orgmode.org/worg/org-tutorials/org4beginners.html][org4beginners]]
 
 
-Tab or Shift-Tab on * to collapse locally or globally
+*** Tab or Shift-Tab on * to collapse locally or globally
 Ctrl-Enter to enter a new title of same level below sub-hierarchy
 Alt-Enter to enter a new title directly under
 Alt-Up/Down to move sections
 
 Format text: Here is *some* content, and some //italic//
 
-** diagrams and drawings
+*** diagrams and drawings
 
 *** With mermaid
 
@@ -56,7 +58,7 @@ Bob->Alice: Authentication Response
 
 
 
-** Tables: start adding | then use Tab key for magic
+*** Tables: start adding | then use Tab key for magic
 | Name  | Age | Sex |
 |-------+-----+-----|
 | David |  37 | M   |
@@ -64,7 +66,7 @@ Bob->Alice: Authentication Response
 
 
 
-** Lists: use Alt-Enter / use Alt-Shift-Enter (i.e M-S-RET) to  add checkboxes
+*** Lists: use Alt-Enter / use Alt-Shift-Enter (i.e M-S-RET) to  add checkboxes
 
 - [ ] First item
 - [ ]
@@ -75,7 +77,7 @@ Example:
 
 
 
-** Code blocks : #+begin_src lang / #+end_src (C-C ' to edit the code block in separate buffer)
+*** Code blocks : #+begin_src lang / #+end_src (C-C ' to edit the code block in separate buffer)
 
 #+NAME example (optional name)
 #+begin_src cpp
@@ -87,7 +89,7 @@ Example:
 #+end_src
 
 
-** TODOs List (C-c C-t )
+*** TODOs List (C-c C-t )
 
 *** Item 1
 *** DONE Item
@@ -415,26 +417,32 @@ insert diagram via mermaid (see integration with emacs)
 
 
 
-* Hello ImGui TODO
+* Hello ImGui Bundle TOOO
 later! publish srcmlcpp before!
-auto-resize and other goodies from immvision
+** auto-resize and other goodies from immvision
+** Add imgui-node-editor ?
+  Much later, add it to suggestions ?
+  Needs to add its application class (which provides zooming: see when running example)
+
+
 
 * Litgen TODO
 
 ** Wish list / hard
-
 *** issue with mypy compatibility with generated modules
 
 Problem 1: syntax issues dans hello_imgui (py with :: :    load_additional_fonts:VoidFunction = ImGuiDefaultSettings::LoadDefaultFont_WithFontAwesomeIcons)
 Problem 2: dans lg_skbuild_template, tout est accpté dans example_lib...
 Problem 3: dans lg_test_runner (integration tests), tout est refusé (trouve pas les définitions)
 
-*** faire un generator / lg_skbuild_template
-Argh...
-
 ** Wish List / Easy
-Suppress [] as initial values in SrcmlOptions!
-Renommer package de lg_skbuild_template (example-lib => lg-example-lib) ?
+
+options litgen and srcml:
+  replace regex lists by composed unique regex?
+  make options names and doc consistent
+  review srcmlcpp options: pas de filtre / header par default, etc (le faire dans litgen)
+
+
 enum / py::arithmetic() : add an option?
 
 

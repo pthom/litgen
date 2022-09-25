@@ -38,10 +38,10 @@ def mylib_litgen_options() -> litgen.LitgenOptions:
     options.cpp_indent_size = 4
 
     # require MY_API for all exported functions
-    options.srcml_options.functions_api_prefixes = ["MY_API"]
+    options.srcml_options.functions_api_prefixes = "MY_API"
     # require MY_API as a suffix for all exported classes, enums, structs and namespaces
     # (i.e. add "// MY_API" as end of line comment)
-    options.srcml_options.api_suffixes = ["MY_API"]
+    options.srcml_options.api_suffixes = "MY_API"
 
     # Python modifiable immutables options
     options.fn_params_replace_modifiable_immutable_by_boxed__regexes = [

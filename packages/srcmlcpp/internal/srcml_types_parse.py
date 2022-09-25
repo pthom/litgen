@@ -81,7 +81,7 @@ def parse_type(options: SrcmlOptions, element: SrcmlXmlWrapper, previous_decl: O
     # process api names
     for name in result.typenames:
         is_api_name = False
-        for api_prefix in options.functions_api_prefixes:
+        for api_prefix in options.functions_api_prefixes_list():
             if name.startswith(api_prefix):
                 is_api_name = True
         if is_api_name:
@@ -532,7 +532,7 @@ def _shall_publish_function(function_c: CppElementAndComment, options: SrcmlOpti
                 child_type_tag = srcml_utils.clean_tag_or_attrib(child_type.tag)
                 if child_type_tag == "name":
                     typename = child_type.text
-                    if typename in options.functions_api_prefixes:
+                    if typename in options.functions_api_prefixes_list():
                         return True
     return False
 

@@ -10,10 +10,11 @@ class SrcmlOptions:
     #    <API prefixes for functions / API comment suffixes for classes>
     ################################################################################
 
-    # Prefixes that denote functions that should be published (for example ["IMPLOT_API"])
-    # if empty, all function are published!
-    #
-    functions_api_prefixes: List[str]  # = [] by default
+    # Prefixes that denote functions that should be parsed (
+    # For example you could use "MY_API" which would be defined as `__declspec(dllexport|dllimport)` on windows
+    # if empty, all function are parsed.
+    # You can have several prefixes: separate them with a "|", for example: "MY_API|OTHER_API"
+    functions_api_prefixes: str = ""
 
     # Suffixes that denote structs, classes, enums and namespaces that should be published, for example:
     #       struct MyStruct        // IMMVISION_API_STRUCT     <== this is a suffix
@@ -89,10 +90,15 @@ class SrcmlOptions:
 
     def __init__(self) -> None:
         # See doc for all the params at their declaration site (scroll up!)
-        self.functions_api_prefixes = []
         self.api_suffixes = []
         self.named_number_macros = {}
         self.header_guard_suffixes = ["_H", "HPP", "HXX"]
+
+    def functions_api_prefixes_list(self) -> List[str]:
+        if len(self.functions_api_prefixes) == 0:
+            return []
+        else:
+            return self.functions_api_prefixes.split("|")
 
 
 def _int_from_str_or_named_number_macros(options: SrcmlOptions, int_str: Optional[str]) -> Optional[int]:
