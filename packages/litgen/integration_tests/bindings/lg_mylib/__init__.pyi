@@ -71,7 +71,6 @@ def my_mul(a: int, b: int) -> int:
 
 
 
-#
 #For info, below is the python pyi stub that is published for this file:
 #
 #def my_sub(a: int, b: int) -> int:
@@ -91,7 +90,6 @@ def my_mul(a: int, b: int) -> int:
 #
 #def my_mul(a: int, b: int) -> int:
 #    pass
-#
 
 #////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 #                       mylib/header_filter_test.h included by mylib/mylib.h                                   //
@@ -106,9 +104,7 @@ def my_mul(a: int, b: int) -> int:
 #                       mylib/c_style_array_test.h included by mylib/mylib.h                                   //
 #//////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-#
 # C Style array tests
-#
 
 
 def const_array2_add(values: List[int]) -> int:
@@ -147,7 +143,6 @@ def array2_modify_mutable(out_0: Point2, out_1: Point2) -> None:
 #//////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
-#
 # C Style buffer to py::array tests
 #
 # litgen is able to recognize and transform pairs of params whose C++ signature resemble
@@ -156,7 +151,6 @@ def array2_modify_mutable(out_0: Point2, out_1: Point2) -> None:
 #   * `T` is a *known* numeric type, or a templated type
 #   * `count` name resemble a size
 #        (see LitgenOptions.fn_params_buffer_size_names: List[str] = ["nb", "size", "count", "total", "n"])
-#
 
 def add_inside_buffer(buffer: np.ndarray, number_to_add: int) -> None:
     """ add_inside_buffer: modifies a buffer by adding a value to its elements
@@ -206,13 +200,11 @@ def c_string_list_total_size(
     output_0: BoxedInt,
     output_1: BoxedInt
     ) -> int:
-    """
-     C String lists tests:
+    """ C String lists tests:
        Two consecutive params (const char *, int | size_t) are exported as List[str]
 
      The following function will be exported with the following python signature:
      -->    def c_string_list_total_size(items: List[str], output_0: BoxedInt, output_1: BoxedInt) -> int:
-
     """
     pass
 
@@ -221,9 +213,7 @@ def c_string_list_total_size(
 #//////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
-#
 # Modifiable immutable python types test
-#
 
 # litgen adapts functions params that use modifiable pointer or reference to a type
 # that is immutable in python.
@@ -334,23 +324,17 @@ def change_void_int_array(
 #                       mylib/overload_test.h included by mylib/mylib.h                                        //
 #//////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-#
 # litgen is able to detect automatically the presence of overloads that require
 # to use `py::overload_cast<...>` when publishing
-#
 
-#
 # overload on free functions
-#
 
 def add_overload(a: int, b: int) -> int:  # type: ignore
     pass
 def add_overload(a: int, b: int, c: int) -> int:  # type: ignore
     pass
 
-#
 # overload on methods
-#
 
 class FooOverload:
     def add_overload(self, a: int, b: int) -> int:          # type: ignore
@@ -359,7 +343,6 @@ class FooOverload:
         pass
 
 
-#
 #For info, below is the generated C++ code that will publish these functions:
 #
 #     m.def("add_overload",
@@ -376,7 +359,6 @@ class FooOverload:
 #        .def("add_overload",
 #            py::overload_cast<int, int, int>(&FooOverload::add_overload), py::arg("a"), py::arg("b"), py::arg("c"))
 #        ;
-#
 
 #////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 #                       mylib/enum_test.h included by mylib/mylib.h                                            //
@@ -402,7 +384,7 @@ class BasicEnum(Enum):
 # ClassEnumNotRegistered should not be published, as it misses the marker "// MY_API"
 # By default, all enums, namespaces and classes are published,
 # but you can decide to include only "marked" ones, via this litgen option:
-#       options.srcml_options.api_suffixes = ["MY_API"]
+#       options.srcml_options.api_suffixes = "MY_API"
 #
 # Note: Do not remove the empty line below, otherwise this comment would become part of
 #       the enum's doc, and cause it to be registered (since it contains "MY_API")
@@ -416,7 +398,6 @@ class ClassEnum(Enum):
     unknown = auto() # (= 2)
 
 
-#
 #For info, below is the python pyi stub that is published for this file:
 #
 #class BasicEnum(Enum):
@@ -441,7 +422,6 @@ class ClassEnum(Enum):
 #    on      # (= 0)
 #    off     # (= 1)
 #    unknown # (= 2)
-#
 
 #////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 #                       mylib/class_test.h included by mylib/mylib.h                                           //
@@ -452,7 +432,7 @@ class ClassEnum(Enum):
 class MyClass:
     """ This is the class doc. It will be published as MyClass.__doc__
      The "// MY_API" comment after the class decl indicates that this class will be published.
-     it is necessary, since `options.srcml_options.api_suffixes = ["MY_API"]`
+     it is necessary, since `options.srcml_options.api_suffixes = "MY_API"`
      was set inside autogenerate_mylib.py
     """
     def __init__(self, factor: int = 10, message: str = "hello") -> None:
@@ -515,7 +495,7 @@ class MyClass:
 # StructNotRegistered should not be published, as it misses the marker "// MY_API"
 # By default, all enums, namespaces and classes are published,
 # but you can decide to include only "marked" ones, via this litgen option:
-#       options.srcml_options.api_suffixes = ["MY_API"]
+#       options.srcml_options.api_suffixes = "MY_API"
 #
 # Note: Do not remove the empty line below, otherwise this comment would become part of
 #       the enum's doc, and cause it to be registered (since it contains "MY_API")
@@ -536,10 +516,8 @@ class MyClass:
 
 
 class MyConfig:
-    #
     # For example, singletons (such as the method below) should be returned as a reference,
     # otherwise python might destroy the singleton instance as soon as it goes out of scope.
-    #
 
     # (static method)
     def instance() -> MyConfig:
@@ -553,7 +531,6 @@ def my_config_instance() -> MyConfig:
     pass
 
 
-#
 #For info, below is the C++ generated binding code:
 #
 #     auto pyClassMyConfig = py::class_<MyConfig>
@@ -571,9 +548,6 @@ def my_config_instance() -> MyConfig:
 #        MyConfigInstance,
 #        "return_value_policy::reference",
 #        pybind11::return_value_policy::reference);
-#
-#
-#
 
 #////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 #                       mylib/inner_class_test.h included by mylib/mylib.h                                     //
@@ -609,7 +583,6 @@ class ParentStruct:
 # The main intent of these tests is to verify that the generated code compiles.
 # The corresponding python test file will not test all these functions
 # (as they are in fact copy/pasted/adapted from other tests)
-#
 
 
 

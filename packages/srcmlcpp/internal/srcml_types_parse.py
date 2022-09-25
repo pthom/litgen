@@ -542,7 +542,7 @@ def _shall_publish(cpp_element: CppElementAndComment, options: SrcmlOptions) -> 
     if tag in ["function", "function_decl"]:
         return _shall_publish_function(cpp_element, options)
     elif tag in ["namespace", "enum", "struct", "class"]:
-        if len(options.api_suffixes) == 0:
+        if len(options.api_suffixes_list()) == 0:
             return True
 
         comment = cpp_element.cpp_element_comments.comment_end_of_line + cpp_element.cpp_element_comments.comment()
@@ -550,7 +550,7 @@ def _shall_publish(cpp_element: CppElementAndComment, options: SrcmlOptions) -> 
             if comment_child.text is not None:
                 comment += comment_child.text
 
-        for api_suffix in options.api_suffixes:
+        for api_suffix in options.api_suffixes_list():
             if api_suffix in comment:
                 return True
         return False

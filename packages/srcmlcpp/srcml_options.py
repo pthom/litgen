@@ -20,9 +20,9 @@ class SrcmlOptions:
     #       struct MyStruct        // IMMVISION_API_STRUCT     <== this is a suffix
     #       { };
     # if empty, all structs/enums/classes/namespaces are published
-    #
     # you may decide to fill api_suffixes and functions_api_prefixes with the same value(s)
-    api_suffixes: List[str]  # = [] by default
+    # You can have several suffixes: separate them with a "|", for example: "MY_API|OTHER_API"
+    api_suffixes: str = ""
 
     ################################################################################
     #    <Numbers parsing: resolve macros values>
@@ -90,15 +90,14 @@ class SrcmlOptions:
 
     def __init__(self) -> None:
         # See doc for all the params at their declaration site (scroll up!)
-        self.api_suffixes = []
         self.named_number_macros = {}
         self.header_guard_suffixes = ["_H", "HPP", "HXX"]
 
     def functions_api_prefixes_list(self) -> List[str]:
-        if len(self.functions_api_prefixes) == 0:
-            return []
-        else:
-            return self.functions_api_prefixes.split("|")
+        return _split_string_by_pipe_char(self.functions_api_prefixes)
+
+    def api_suffixes_list(self) -> List[str]:
+        return _split_string_by_pipe_char(self.api_suffixes)
 
 
 def _int_from_str_or_named_number_macros(options: SrcmlOptions, int_str: Optional[str]) -> Optional[int]:
@@ -113,3 +112,10 @@ def _int_from_str_or_named_number_macros(options: SrcmlOptions, int_str: Optiona
             return options.named_number_macros[int_str]
         else:
             return None
+
+
+def _split_string_by_pipe_char(s: str) -> List[str]:
+    if len(s) == 0:
+        return []
+    else:
+        return s.split("|")

@@ -296,7 +296,7 @@ void py_init_module_lg_mylib(py::module& m)
             return c_string_list_total_size_adapt_c_string_list(items, output_0, output_1);
         },
         py::arg("items"), py::arg("output_0"), py::arg("output_1"),
-        "\n C String lists tests:\n   Two consecutive params (const char *, int | size_t) are exported as List[str]\n\n The following function will be exported with the following python signature:\n -->    def c_string_list_total_size(items: List[str], output_0: BoxedInt, output_1: BoxedInt) -> int:\n");
+        " C String lists tests:\n   Two consecutive params (const char *, int | size_t) are exported as List[str]\n\n The following function will be exported with the following python signature:\n -->    def c_string_list_total_size(items: List[str], output_0: BoxedInt, output_1: BoxedInt) -> int:");
 
     m.def("toggle_bool_pointer",
         [](BoxedBool & v)
@@ -474,7 +474,7 @@ void py_init_module_lg_mylib(py::module& m)
 
 
     auto pyClassMyClass = py::class_<MyClass>
-        (m, "MyClass", " This is the class doc. It will be published as MyClass.__doc__\n The \"// MY_API\" comment after the class decl indicates that this class will be published.\n it is necessary, since `options.srcml_options.api_suffixes = [\"MY_API\"]`\n was set inside autogenerate_mylib.py")
+        (m, "MyClass", " This is the class doc. It will be published as MyClass.__doc__\n The \"// MY_API\" comment after the class decl indicates that this class will be published.\n it is necessary, since `options.srcml_options.api_suffixes = \"MY_API\"`\n was set inside autogenerate_mylib.py")
         .def(py::init<int, const std::string &>(),
             py::arg("factor") = 10, py::arg("message") = "hello")
         .def_readwrite("factor", &MyClass::factor, "")
