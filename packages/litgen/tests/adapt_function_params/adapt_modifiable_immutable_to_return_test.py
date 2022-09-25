@@ -107,7 +107,7 @@ def test_adapt_modifiable_immutable_to_return_test():
 
 def test_adapt_modifiable_immutable_to_return_array():
     options = litgen.options.LitgenOptions()
-    options.fn_params_replace_modifiable_c_array_by_boxed__regexes = []
+    options.fn_params_replace_modifiable_c_array_by_boxed__regex = ""
     options.fn_params_output_modifiable_immutable_to_return__regexes = [r".*"]
     options.srcml_options.functions_api_prefixes = "MY_API"
     code = "MY_API bool SliderVoidIntArray(const char* label, int value[3]);"

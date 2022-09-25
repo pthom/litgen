@@ -48,8 +48,8 @@ def adapt_c_arrays(adapted_function: AdaptedFunction) -> Optional[LambdaAdapter]
     flag_replace_const_c_array_by_std_array = code_utils.does_match_regex(
         options.fn_params_replace_const_c_array_by_std_array__regex, function_name
     )
-    flag_replace_modifiable_c_array_by_boxed = code_utils.does_match_regexes(
-        options.fn_params_replace_modifiable_c_array_by_boxed__regexes, function_name
+    flag_replace_modifiable_c_array_by_boxed = code_utils.does_match_regex(
+        options.fn_params_replace_modifiable_c_array_by_boxed__regex, function_name
     )
 
     if not flag_replace_const_c_array_by_std_array and not flag_replace_modifiable_c_array_by_boxed:

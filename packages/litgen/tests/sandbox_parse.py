@@ -57,7 +57,7 @@ def litgensample_options() -> litgen.LitgenOptions:
     # options.fn_params_replace_modifiable_immutable_by_boxed__regexes = [r"^Toggle", r"^Modify"]
     # options.fn_params_output_modifiable_immutable_to_return__regexes = [r"^Slider"]
 
-    options.fn_params_replace_modifiable_c_array_by_boxed__regexes = ["array"]
+    options.fn_params_replace_modifiable_c_array_by_boxed__regex = "array"
     options.fn_params_output_modifiable_immutable_to_return__regexes = [r".*"]
     return options
 
@@ -74,7 +74,7 @@ void PlayFoo(Foo f = Foo_A);
 """
 # options = litgen_options_imgui()
 options = litgen.options.LitgenOptions()
-# options.fn_params_replace_modifiable_c_array_by_boxed__regexes = []
+# options.fn_params_replace_modifiable_c_array_by_boxed__regex = ""
 # # options.fn_params_replace_const_c_array_by_std_array__regex = ""
 # options.fn_params_output_modifiable_immutable_to_return__regexes = [r".*"]
 # play_stub(code, options)
