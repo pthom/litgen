@@ -334,6 +334,8 @@ class LitgenOptions:
         from litgen.internal import cpp_to_python
 
         self.srcml_options = SrcmlOptions()
+        self.srcml_options.header_filter_preprocessor_regions = True
+
         self.code_replacements = cpp_to_python.standard_code_replacements()
         self.comments_replacements = cpp_to_python.standard_comment_replacements()
         self.names_replacements = RegexReplacementList()

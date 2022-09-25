@@ -232,6 +232,7 @@ def test_parse_struct():
 
 def test_parse_unit():
     options = SrcmlOptions()
+    options.header_filter_preprocessor_regions = True
 
     def code_to_unit_str(code) -> str:
         cpp_unit = srcmlcpp_main.code_to_cpp_unit(options, code)

@@ -36,15 +36,14 @@ class SrcmlOptions:
     #    <Exclude certain regions based on preprocessor macros>
     ################################################################################
 
-    # Set header_filter_preprocessor_regions to True if the header has regions like this
-    # that you want to exclude from the parsing.
+    # Set header_filter_preprocessor_regions to True if the header has regions
+    # that you want to exclude from the parsing, like this:
     #       #ifdef SOME_RARE_OPTION
     #           // code we want to exclude
     #       #endif
     #
     # See srcmlcpp/filter_preprocessor_regions.py for more complete examples
-    #
-    header_filter_preprocessor_regions: bool = True
+    header_filter_preprocessor_regions: bool = False
     # If header_filter_preprocessor_regions is True,
     # you need to also fill header_filter_acceptable_suffixes in order to accept code contained inside header_guards
     # and other acceptable preprocessor defines.
@@ -102,7 +101,7 @@ class SrcmlOptions:
     def api_suffixes_list(self) -> List[str]:
         return _split_string_by_pipe_char(self.api_suffixes)
 
-    def header_guard_suffixes_list(self) -> List[str]:
+    def header_filter_acceptable_suffixes_list(self) -> List[str]:
         return _split_string_by_pipe_char(self.header_filter_acceptable_suffixes)
 
 

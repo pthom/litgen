@@ -341,7 +341,9 @@ def _group_comments_and_remove_comment_markers(srcml_code: SrcmlXmlWrapper) -> L
 
 def get_children_with_comments(element: SrcmlXmlWrapper) -> List[CppElementAndComment]:
     if element.options.header_filter_preprocessor_regions:
-        element.srcml_xml = filter_preprocessor_regions(element.srcml_xml, element.options.header_guard_suffixes_list())
+        element.srcml_xml = filter_preprocessor_regions(
+            element.srcml_xml, element.options.header_filter_acceptable_suffixes_list()
+        )
 
     result = []
     children = _group_comments_and_remove_comment_markers(element)
