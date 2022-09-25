@@ -437,6 +437,7 @@ Problem 3: dans lg_test_runner (integration tests), tout est refusé (trouve pas
 
 ** Wish List / Easy
 
+Faire un tour dans cpp_to_python pour mettre en privé les function d'acces au comment qui ne font pas de replace
 
 ** Handle scope
 
@@ -444,8 +445,11 @@ Problem 3: dans lg_test_runner (integration tests), tout est refusé (trouve pas
 
 Idée: LitgenWriterContext avec dedans Options + status (liste des modules, de leur stubs, etc.)
   En cours:
-    creation pluggee a l'arrche dans code_to_adapted_unit :
-      a revoir en faisant attention au points d'entree de l'API. On peut avoir plusieurs fichiers!
+    creation pluggee a l'arrache dans code_to_adapted_unit :
+    a revoir en faisant attention au points d'entree de l'API. On peut avoir plusieurs fichiers!
+
+    Argh: _generate_code_impl_one_file bypasse les options de CppFileAndOptions
+    ==> faire avec et virer les multiples options
 
 
 L'idee d'utiliser une fake class risque d'echouer, car un meme namespace peut apparaitre plusieurs fois!

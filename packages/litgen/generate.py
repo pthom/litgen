@@ -11,12 +11,18 @@ from litgen._generated_code import (
     CppFilesAndOptionsList,
 )
 from litgen.code_to_adapted_unit import code_to_adapted_unit
+from litgen.internal.adapted_types.litgen_writer_context import LitgenWriterContext
 
 
-def _generate_code_impl_one_file(cpp_file_and_options: CppFileAndOptions) -> GeneratedCodeForOneFile:
+def _generate_code_impl_one_file(
+    cpp_file_and_options: CppFileAndOptions, lg_writer_context: LitgenWriterContext
+) -> GeneratedCodeForOneFile:
 
     adapted_unit = code_to_adapted_unit(
-        cpp_file_and_options.options, cpp_file_and_options.code, cpp_file_and_options.filename
+        cpp_file_and_options.options,
+        cpp_file_and_options.code,
+        cpp_file_and_options.filename,
+        lg_writer_context=lg_writer_context,
     )
 
     generated_code = GeneratedCodeForOneFile()
@@ -34,12 +40,15 @@ def generate_code_for_files(
     assert len(files_and_options.files_and_options) > 0
     boxed_immutable_python_type.clear_registry()
 
+    first_options = files_and_options.files_and_options[0].options
+
+    lg_writer_context = LitgenWriterContext(first_options)
+
     generated_codes: List[GeneratedCodeForOneFile] = []
     for file in files_and_options.files_and_options:
-        file_generated_code = _generate_code_impl_one_file(file)
+        file_generated_code = _generate_code_impl_one_file(file, lg_writer_context)
         generated_codes.append(file_generated_code)
 
-    first_options = files_and_options.files_and_options[0].options
     boxed_types_generated_code = boxed_immutable_python_type.all_boxed_types_generated_code(first_options)
 
     generated_code = GeneratedCode(
