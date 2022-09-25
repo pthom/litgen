@@ -36,17 +36,21 @@ class SrcmlOptions:
     #    <Exclude certain regions based on preprocessor macros>
     ################################################################################
 
-    # Set header_filter_preprocessor_regions to True if the header has regions like
+    # Set header_filter_preprocessor_regions to True if the header has regions like this
+    # that you want to exclude from the parsing.
     #       #ifdef SOME_RARE_OPTION
     #           // code we want to exclude
     #       #endif
     #
     # See srcmlcpp/filter_preprocessor_regions.py for more complete examples
     #
-    # In this case, also fill header_guard_suffixes to exclude header_guards
-    #
     header_filter_preprocessor_regions: bool = True
-    header_guard_suffixes: List[str]  # = ["_H", "HPP", "HXX"] by default
+    # If header_filter_preprocessor_regions is True,
+    # you need to also fill header_guard_suffixes in order to accept code contained inside header_guards
+    # and other acceptable preprocessor defines.
+    # You can have several suffixes: separate them with a "|", for example: "_H|_HPP|MY_ACCEPTABLE_MACRO"
+    # By default, all macros names ending with "_H", "HPP", "HXX" are considered as header guards.
+    header_guard_suffixes: str = "_H|HPP|HXX"
 
     ################################################################################
     #    <Custom preprocess of the code>
@@ -91,13 +95,15 @@ class SrcmlOptions:
     def __init__(self) -> None:
         # See doc for all the params at their declaration site (scroll up!)
         self.named_number_macros = {}
-        self.header_guard_suffixes = ["_H", "HPP", "HXX"]
 
     def functions_api_prefixes_list(self) -> List[str]:
         return _split_string_by_pipe_char(self.functions_api_prefixes)
 
     def api_suffixes_list(self) -> List[str]:
         return _split_string_by_pipe_char(self.api_suffixes)
+
+    def header_guard_suffixes_list(self) -> List[str]:
+        return _split_string_by_pipe_char(self.header_guard_suffixes)
 
 
 def _int_from_str_or_named_number_macros(options: SrcmlOptions, int_str: Optional[str]) -> Optional[int]:
@@ -115,7 +121,6 @@ def _int_from_str_or_named_number_macros(options: SrcmlOptions, int_str: Optiona
 
 
 def _split_string_by_pipe_char(s: str) -> List[str]:
-    if len(s) == 0:
-        return []
-    else:
-        return s.split("|")
+    items = s.split("|")
+    items = list(filter(lambda s: len(s) > 0, items))  # remove empty items
+    return items
