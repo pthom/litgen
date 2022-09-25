@@ -12,6 +12,18 @@ class LitgenOptions:
     (include / excludes, indentation, c++ to python translation settings, function parameters
     adaptations, etc.)"""
 
+    # ------------------------------------------------------------------------------
+    # Note about regexes below:
+    # =========================
+    # - regexes can support several alternatives: separate them by "|"
+    # For example, in order to match an exact function name, as well as functions ending with "_private",
+    # use a regex like this:
+    #         r"^YourFunctionName$|_private$",
+    # - If a regex string is empty, it will not match anything
+    # - To match everything, use r".*"
+    # - It is advised to prefix your regex strings with "r" (in order to use raw strings)
+    # ------------------------------------------------------------------------------
+
     ################################################################################
     #    <srcmlcpp options>
     ################################################################################
@@ -86,24 +98,12 @@ class LitgenOptions:
     # Skip count value from enums, for example like in:
     #    enum MyEnum { MyEnum_A = 1, MyEnum_B = 1, MyEnum_COUNT };
     enum_flag_skip_count: bool = True
+    # By default, all enums export rudimentary arithmetic and bit-level operations ( r".*" matches any enum name)
+    enum_make_arithmetic__regex = r".*"
 
     ################################################################################
     #    <functions and method adaptations>
     ################################################################################
-
-    #
-    # ------------------------------------------------------------------------------
-    # Note about regexes below:
-    # =========================
-    # - regexes can support several alternatives: separate them by "|"
-    # For example, in order to match an exact function name, as well as functions ending with "_private",
-    # use a regex like this:
-    #         r"^YourFunctionName$|_private$",
-    # - If a regex string is empty, it will not match anything
-    # - To match everything, use r".*"
-    # - It is advised to prefix your regex expressions with "r" (in order to use raw strings)
-    # ------------------------------------------------------------------------------
-    #
 
     # Exclude certain functions and methods by a regex on their name
     fn_exclude_by_name__regex: str = ""

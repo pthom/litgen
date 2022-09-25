@@ -437,14 +437,6 @@ Problem 3: dans lg_test_runner (integration tests), tout est refusé (trouve pas
 
 ** Wish List / Easy
 
-options litgen and srcml:
-  replace regex lists by composed unique regex?
-  make options names and doc consistent
-  review srcmlcpp options: pas de filtre / header par default, etc (le faire dans litgen)
-
-
-enum / py::arithmetic() : add an option?
-
 
 ** Handle scope
 

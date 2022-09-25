@@ -202,8 +202,10 @@ class AdaptedEnum(AdaptedElement):
         lines: List[str] = []
 
         # Enum decl first line
+        is_arithmetic = code_utils.does_match_regex(self.options.enum_make_arithmetic__regex, enum_name_cpp)
+        arithmetic_str = ", py::arithmetic()" if is_arithmetic else ""
         pydef_class_var_parent = cpp_to_python.cpp_scope_to_pybind_parent_var_name(self.options, self.cpp_element())
-        enum_decl_line = f'py::enum_<{enum_name_cpp}>({pydef_class_var_parent}, "{enum_name_python}", py::arithmetic(), "{comment}"){location}'
+        enum_decl_line = f'py::enum_<{enum_name_cpp}>({pydef_class_var_parent}, "{enum_name_python}"{arithmetic_str}, "{comment}"){location}'
         lines += [enum_decl_line]
 
         # Enum values
