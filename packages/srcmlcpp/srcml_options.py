@@ -46,11 +46,11 @@ class SrcmlOptions:
     #
     header_filter_preprocessor_regions: bool = True
     # If header_filter_preprocessor_regions is True,
-    # you need to also fill header_guard_suffixes in order to accept code contained inside header_guards
+    # you need to also fill header_filter_acceptable_suffixes in order to accept code contained inside header_guards
     # and other acceptable preprocessor defines.
     # You can have several suffixes: separate them with a "|", for example: "_H|_HPP|MY_ACCEPTABLE_MACRO"
     # By default, all macros names ending with "_H", "HPP", "HXX" are considered as header guards.
-    header_guard_suffixes: str = "_H|HPP|HXX"
+    header_filter_acceptable_suffixes: str = "_H|HPP|HXX"
 
     ################################################################################
     #    <Custom preprocess of the code>
@@ -103,7 +103,7 @@ class SrcmlOptions:
         return _split_string_by_pipe_char(self.api_suffixes)
 
     def header_guard_suffixes_list(self) -> List[str]:
-        return _split_string_by_pipe_char(self.header_guard_suffixes)
+        return _split_string_by_pipe_char(self.header_filter_acceptable_suffixes)
 
 
 def _int_from_str_or_named_number_macros(options: SrcmlOptions, int_str: Optional[str]) -> Optional[int]:

@@ -48,7 +48,7 @@ class _SrcmlPreprocessorState:
     We will test that a ifndef is an inclusion guard by checking comparing its suffix with HEADER_GUARD_SUFFIXES
     """
 
-    header_guard_suffixes: List[str]
+    header_acceptable_suffixes: List[str]
 
     was_last_element_a_preprocessor_stmt: bool = False
     last_preprocessor_stmt_line: int = -1
@@ -56,8 +56,8 @@ class _SrcmlPreprocessorState:
 
     count_preprocessor_tests = 0
 
-    def __init__(self, header_guard_suffixes: List[str]) -> None:
-        self.header_guard_suffixes = header_guard_suffixes
+    def __init__(self, header_acceptable_suffixes: List[str]) -> None:
+        self.header_acceptable_suffixes = header_acceptable_suffixes
 
     def process_tag(self, element: ET.Element) -> None:
         self.last_element = element
@@ -77,7 +77,7 @@ class _SrcmlPreprocessorState:
 
         def is_inclusion_guard_ifndef() -> bool:
             ifndef_name = extract_ifndef_name()
-            for suffix in self.header_guard_suffixes:
+            for suffix in self.header_acceptable_suffixes:
                 if ifndef_name.upper().endswith(suffix.upper()):
                     return True
             return False
@@ -119,9 +119,9 @@ class _SrcmlPreprocessorState:
             return False
 
 
-def filter_preprocessor_regions(unit: ET.Element, header_guard_suffixes: List[str]) -> ET.Element:
+def filter_preprocessor_regions(unit: ET.Element, header_acceptable_suffixes: List[str]) -> ET.Element:
     filtered_unit = copy.deepcopy(unit)
-    processor = _SrcmlPreprocessorState(header_guard_suffixes)
+    processor = _SrcmlPreprocessorState(header_acceptable_suffixes)
     children_to_remove = []
 
     for child in filtered_unit:
