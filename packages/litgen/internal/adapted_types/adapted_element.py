@@ -6,6 +6,7 @@ from srcmlcpp.srcml_types import *
 
 from litgen.internal import cpp_to_python
 from litgen.options import LitgenOptions
+from litgen.internal.adapted_types.litgen_writer_context import LitgenWriterContext
 
 
 _PROGRESS_BAR_TITLE_ADAPTED_ELEMENTS = "litgen:   Create AdaptedElements............. "
@@ -17,10 +18,12 @@ _PROGRESS_BAR_TITLE_STUB = "litgen:   Generate stubs..................... "
 class AdaptedElement:  # (abc.ABC):  # Cannot be abstract (mypy limitation:  https://github.com/python/mypy/issues/5374)
     _cpp_element: CppElementAndComment
     options: LitgenOptions
+    litgen_writer_context: LitgenWriterContext
 
-    def __init__(self, options: LitgenOptions, cpp_element: CppElementAndComment) -> None:
+    def __init__(self, litgen_writer_context: LitgenWriterContext, cpp_element: CppElementAndComment) -> None:
         self._cpp_element = cpp_element
-        self.options = options
+        self.litgen_writer_context = litgen_writer_context
+        self.options = litgen_writer_context.options
         element_line = cpp_element.start().line
         global_progress_bars().set_current_line(_PROGRESS_BAR_TITLE_ADAPTED_ELEMENTS, element_line)
 

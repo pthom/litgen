@@ -8,6 +8,7 @@ from litgen.internal.adapted_types import *
 def test_adapted_enum():
     options = litgen.LitgenOptions()
     options.srcml_options.named_number_macros = {"MY_VALUE": 256}
+    litgen_writer_context = LitgenWriterContext(options)
 
     code = """
 // Doc about Foo
@@ -28,7 +29,7 @@ enum Foo
 };
     """
     enum = srcmlcpp_main.code_first_enum(options.srcml_options, code)
-    adapted_enum = AdaptedEnum(options, enum)
+    adapted_enum = AdaptedEnum(litgen_writer_context, enum)
     decls = adapted_enum.adapted_enum_decls
 
     # Test parsing and adapt: count should be removed, members should be renamed, comment should be processed

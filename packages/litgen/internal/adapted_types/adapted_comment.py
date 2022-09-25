@@ -4,14 +4,14 @@ from typing import List, cast
 from srcmlcpp.srcml_types import CppComment, CppEmptyLine
 
 from litgen.internal import cpp_to_python
+from litgen.internal.adapted_types.litgen_writer_context import LitgenWriterContext
 from litgen.internal.adapted_types.adapted_element import AdaptedElement
-from litgen.options import LitgenOptions
 
 
 @dataclass
 class AdaptedEmptyLine(AdaptedElement):
-    def __init__(self, options: LitgenOptions, cpp_empty_line: CppEmptyLine) -> None:
-        super().__init__(options, cpp_empty_line)
+    def __init__(self, litgen_writer_context: LitgenWriterContext, cpp_empty_line: CppEmptyLine) -> None:
+        super().__init__(litgen_writer_context, cpp_empty_line)
 
     # override
     def cpp_element(self) -> CppEmptyLine:
@@ -31,8 +31,8 @@ class AdaptedEmptyLine(AdaptedElement):
 
 @dataclass
 class AdaptedComment(AdaptedElement):
-    def __init__(self, options: LitgenOptions, cpp_comment: CppComment):
-        super().__init__(options, cpp_comment)
+    def __init__(self, litgen_writer_context: LitgenWriterContext, cpp_comment: CppComment):
+        super().__init__(litgen_writer_context, cpp_comment)
 
     # override
     def cpp_element(self) -> CppComment:

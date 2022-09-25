@@ -7,22 +7,22 @@ from srcmlcpp.srcml_types import *
 
 from litgen.internal import cpp_to_python
 from litgen.internal import replacements_cache
+from litgen.internal.adapted_types.litgen_writer_context import LitgenWriterContext
 from litgen.internal.adapted_types.adapted_comment import (
     AdaptedComment,
     AdaptedEmptyLine,
 )
 from litgen.internal.adapted_types.adapted_decl import AdaptedDecl
 from litgen.internal.adapted_types.adapted_element import AdaptedElement
-from litgen.options import LitgenOptions
 
 
 @dataclass
 class AdaptedEnumDecl(AdaptedDecl):
     enum_parent: AdaptedEnum
 
-    def __init__(self, options: LitgenOptions, decl: CppDecl, enum_parent: AdaptedEnum) -> None:
+    def __init__(self, litgen_writer_context: LitgenWriterContext, decl: CppDecl, enum_parent: AdaptedEnum) -> None:
         self.enum_parent = enum_parent
-        super().__init__(options, decl)
+        super().__init__(litgen_writer_context, decl)
 
     # override
     def cpp_element(self) -> CppDecl:
@@ -136,8 +136,8 @@ class AdaptedEnum(AdaptedElement):
     adapted_children: List[Union[AdaptedDecl, AdaptedEmptyLine, AdaptedComment]]
     adapted_enum_decls: List[AdaptedEnumDecl]
 
-    def __init__(self, options: LitgenOptions, enum_: CppEnum) -> None:
-        super().__init__(options, enum_)
+    def __init__(self, litgen_writer_context: LitgenWriterContext, enum_: CppEnum) -> None:
+        super().__init__(litgen_writer_context, enum_)
         self.adapted_children = []
         self.adapted_enum_decls = []
         self._fill_children()
@@ -157,13 +157,13 @@ class AdaptedEnum(AdaptedElement):
         children_with_values = self.cpp_element().get_children_with_filled_decl_values()
         for c_child in children_with_values:
             if isinstance(c_child, CppEmptyLine):
-                self.adapted_children.append(AdaptedEmptyLine(self.options, c_child))
+                self.adapted_children.append(AdaptedEmptyLine(self.litgen_writer_context, c_child))
             elif isinstance(c_child, CppComment):
-                self.adapted_children.append(AdaptedComment(self.options, c_child))
+                self.adapted_children.append(AdaptedComment(self.litgen_writer_context, c_child))
             elif isinstance(c_child, CppDecl):
                 is_count = cpp_to_python.enum_element_is_count(self.options, self.cpp_element(), c_child)
                 if not is_count:
-                    new_adapted_decl = AdaptedEnumDecl(self.options, c_child, self)
+                    new_adapted_decl = AdaptedEnumDecl(self.litgen_writer_context, c_child, self)
                     self.adapted_children.append(new_adapted_decl)
                     self.adapted_enum_decls.append(new_adapted_decl)
 

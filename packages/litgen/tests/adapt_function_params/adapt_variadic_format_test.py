@@ -2,13 +2,14 @@ from srcmlcpp.srcml_types import *
 from srcmlcpp import srcmlcpp_main
 
 import litgen
-from litgen.internal.adapted_types import AdaptedFunction
+from litgen.internal.adapted_types import AdaptedFunction, LitgenWriterContext
 
 
 def make_pydef_code(code) -> str:
     options = litgen.options.LitgenOptions()
+    lg_writer_context = LitgenWriterContext(options)
     function_decl = srcmlcpp_main.code_first_function_decl(options.srcml_options, code)
-    adapted_function = AdaptedFunction(options, function_decl, False)
+    adapted_function = AdaptedFunction(lg_writer_context, function_decl, False)
     return adapted_function.str_pydef()
 
 

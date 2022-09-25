@@ -6,7 +6,7 @@ from codemanip import code_utils
 
 from srcmlcpp.srcml_types import CppNamespace
 
-from litgen import LitgenOptions
+from litgen.internal.adapted_types.litgen_writer_context import LitgenWriterContext
 from litgen.internal.adapted_types.adapted_element import AdaptedElement
 from litgen.internal.adapted_types.adapted_block import AdaptedBlock
 from litgen.internal import cpp_to_python
@@ -16,9 +16,9 @@ from litgen.internal import cpp_to_python
 class AdaptedNamespace(AdaptedElement):
     adapted_block: AdaptedBlock
 
-    def __init__(self, options: LitgenOptions, namespace_: CppNamespace) -> None:
-        super().__init__(options, namespace_)
-        self.adapted_block = AdaptedBlock(self.options, self.cpp_element().block)
+    def __init__(self, litgen_writer_context: LitgenWriterContext, namespace_: CppNamespace) -> None:
+        super().__init__(litgen_writer_context, namespace_)
+        self.adapted_block = AdaptedBlock(self.litgen_writer_context, self.cpp_element().block)
 
     def namespace_name(self) -> str:
         return self.cpp_element().ns_name

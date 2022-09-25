@@ -5,6 +5,7 @@ from typing import Union
 from srcmlcpp.srcml_types import *
 
 from litgen.internal import cpp_to_python
+from litgen.internal.adapted_types.litgen_writer_context import LitgenWriterContext
 from litgen.internal.adapted_types.adapted_comment import (
     AdaptedComment,
     AdaptedEmptyLine,
@@ -13,7 +14,6 @@ from litgen.internal.adapted_types.adapted_decl import AdaptedDecl
 from litgen.internal.adapted_types.adapted_element import AdaptedElement
 from litgen.internal.adapted_types.adapted_function import AdaptedFunction
 from litgen.internal.adapted_types.adapted_enum import AdaptedEnum
-from litgen.options import LitgenOptions
 
 
 @dataclass
@@ -22,9 +22,9 @@ class AdaptedClassMember(AdaptedDecl):
 
     class_parent: AdaptedClass
 
-    def __init__(self, options: LitgenOptions, decl: CppDecl, class_parent: AdaptedClass) -> None:
+    def __init__(self, litgen_writer_context: LitgenWriterContext, decl: CppDecl, class_parent: AdaptedClass) -> None:
         self.class_parent = class_parent
-        super().__init__(options, decl)
+        super().__init__(litgen_writer_context, decl)
 
     def __str__(self) -> str:
         name_cpp = self.decl_name_cpp()
@@ -228,8 +228,8 @@ class AdaptedClass(AdaptedElement):
         Union[AdaptedEmptyLine, AdaptedComment, AdaptedClassMember, AdaptedFunction, AdaptedClass, AdaptedEnum]
     ]
 
-    def __init__(self, options: LitgenOptions, class_: CppStruct):
-        super().__init__(options, class_)
+    def __init__(self, litgen_writer_context: LitgenWriterContext, class_: CppStruct):
+        super().__init__(litgen_writer_context, class_)
         self.adapted_public_children = []
         self._fill_public_children()
 
@@ -254,7 +254,7 @@ class AdaptedClass(AdaptedElement):
                 self.options.member_exclude_by_type__regex, cpp_decl.cpp_type.str_code()
             )
             if not is_excluded_by_name and not is_excluded_by_type:
-                adapted_class_member = AdaptedClassMember(self.options, cpp_decl, self)
+                adapted_class_member = AdaptedClassMember(self.litgen_writer_context, cpp_decl, self)
                 if adapted_class_member.check_can_publish():
                     self.adapted_public_children.append(adapted_class_member)
 
@@ -262,22 +262,24 @@ class AdaptedClass(AdaptedElement):
         public_elements = self.cpp_element().get_public_elements()
         for child in public_elements:
             if isinstance(child, CppEmptyLine):
-                self.adapted_public_children.append(AdaptedEmptyLine(self.options, child))
+                self.adapted_public_children.append(AdaptedEmptyLine(self.litgen_writer_context, child))
             elif isinstance(child, CppComment):
-                self.adapted_public_children.append(AdaptedComment(self.options, child))
+                self.adapted_public_children.append(AdaptedComment(self.litgen_writer_context, child))
             elif isinstance(child, CppFunctionDecl):
                 if not code_utils.does_match_regex(self.options.fn_exclude_by_name__regex, child.function_name):
                     is_overloaded = self.cpp_element().is_method_overloaded(child)
-                    self.adapted_public_children.append(AdaptedFunction(self.options, child, is_overloaded))
+                    self.adapted_public_children.append(
+                        AdaptedFunction(self.litgen_writer_context, child, is_overloaded)
+                    )
             elif isinstance(child, CppDeclStatement):
                 self._add_adapted_class_member(child)
             elif isinstance(child, CppUnprocessed):
                 continue
             elif isinstance(child, CppStruct):
-                adapted_subclass = AdaptedClass(self.options, child)
+                adapted_subclass = AdaptedClass(self.litgen_writer_context, child)
                 self.adapted_public_children.append(adapted_subclass)
             elif isinstance(child, CppEnum):
-                adapted_enum = AdaptedEnum(self.options, child)
+                adapted_enum = AdaptedEnum(self.litgen_writer_context, child)
                 self.adapted_public_children.append(adapted_enum)
 
             else:

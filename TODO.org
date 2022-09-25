@@ -442,36 +442,15 @@ Problem 3: dans lg_test_runner (integration tests), tout est refusé (trouve pas
 
 *** Handle Namespace
 
+Idée: LitgenWriterContext avec dedans Options + status (liste des modules, de leur stubs, etc.)
+  En cours:
+    creation pluggee a l'arrche dans code_to_adapted_unit :
+      a revoir en faisant attention au points d'entree de l'API. On peut avoir plusieurs fichiers!
+
+
 L'idee d'utiliser une fake class risque d'echouer, car un meme namespace peut apparaitre plusieurs fois!
    Contournement possible: stocker tout, puis dump a la fin dans le meme fichier?
 Idem dans pydef!
-
-Add options:
-
-    ################################################################################
-    #    <main namespace>
-    ################################################################################
-
-    # Namespace that match those regexes are concerned as root, and will not
-    # be outputted as submodules
-    # class_exclude_by_name__regex: List[str] = []
-    main_namespace_regexes: List[str] = []
-
-
-**** Sample code / namespace
-#+NAME code to test
-#+begin_src cpp
-namespace A
-{
-    namespace B
-    {
-        enum class ItemType{ One, Two, Three};
-        void FooB(ItemType itemType);
-    }
-
-    void FooA(B::ItemType v);
-}
-#+end_src
 
 **** Strategy
 
@@ -481,15 +460,7 @@ soit fake class with staticmethods
   dans ce cas, pas forcement besoin de decorer avec @staticmethod: https://stackoverflow.com/questions/43587044/do-we-really-need-staticmethod-decorator-in-python-to-declare-static-method
   attention, dans le code client python, il faudra faire un import quand même!
 
-**** Définir un  ou des root Namespace
-            pour lequel on ne cree pas de submodule
-            que faire des fonctions hors namespace: les ignorer?
-
-     côté pybind:
-          module_ newsubmodule = m.def_submodule(const char *name, const char *doc = nullptr)
-
 
 ** Handle operators()
-
 ** Handle trampoline
 See example in py-mahi-gui

@@ -5,14 +5,14 @@ from typing import cast
 from srcmlcpp.srcml_types import *
 
 from litgen.internal import cpp_to_python
+from litgen.internal.adapted_types.litgen_writer_context import LitgenWriterContext
 from litgen.internal.adapted_types.adapted_element import AdaptedElement
-from litgen.options import LitgenOptions
 
 
 @dataclass
 class AdaptedDecl(AdaptedElement):
-    def __init__(self, options: LitgenOptions, decl: CppDecl) -> None:
-        super().__init__(options, decl)
+    def __init__(self, litgen_writer_context: LitgenWriterContext, decl: CppDecl) -> None:
+        super().__init__(litgen_writer_context, decl)
 
     # override
     def cpp_element(self) -> CppDecl:
@@ -72,7 +72,7 @@ class AdaptedDecl(AdaptedElement):
         new_cpp_decl.cpp_type.specifiers.append("const")
         new_cpp_decl.decl_name = new_cpp_decl.decl_name
 
-        new_adapted_decl = AdaptedDecl(self.options, new_cpp_decl)
+        new_adapted_decl = AdaptedDecl(self.litgen_writer_context, new_cpp_decl)
         return new_adapted_decl
 
     def c_array_fixed_size_to_mutable_new_boxed_decls(self) -> List[AdaptedDecl]:

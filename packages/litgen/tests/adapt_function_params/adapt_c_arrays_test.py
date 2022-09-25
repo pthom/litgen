@@ -3,7 +3,7 @@ from srcmlcpp import srcmlcpp_main
 
 import litgen
 from litgen import LitgenOptions
-from litgen.internal.adapted_types import AdaptedFunction
+from litgen.internal.adapted_types import AdaptedFunction, LitgenWriterContext
 
 
 def gen_pydef_code(code: str, options: Optional[LitgenOptions] = None) -> str:
@@ -12,7 +12,7 @@ def gen_pydef_code(code: str, options: Optional[LitgenOptions] = None) -> str:
         options.srcml_options.functions_api_prefixes = "MY_API"
 
     cpp_function = srcmlcpp_main.code_first_function_decl(options.srcml_options, code)
-    adapted_function = AdaptedFunction(options, cpp_function, False)
+    adapted_function = AdaptedFunction(LitgenWriterContext(options), cpp_function, False)
     generated_code = adapted_function.str_pydef()
     return generated_code
 
@@ -22,7 +22,7 @@ def my_make_adapted_function(code) -> AdaptedFunction:
     options.srcml_options.functions_api_prefixes = "MY_API"
 
     function_decl = srcmlcpp_main.code_first_function_decl(options.srcml_options, code)
-    adapted_function = AdaptedFunction(options, function_decl, False)
+    adapted_function = AdaptedFunction(LitgenWriterContext(options), function_decl, False)
     return adapted_function
 
 

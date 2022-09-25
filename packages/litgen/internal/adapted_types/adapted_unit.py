@@ -4,7 +4,7 @@ from codemanip.parse_progress_bar import global_progress_bars
 
 from srcmlcpp.srcml_types import CppUnit
 
-from litgen import LitgenOptions
+from litgen.internal.adapted_types.litgen_writer_context import LitgenWriterContext
 from litgen.internal.adapted_types.adapted_block import AdaptedBlock
 from litgen.internal.adapted_types.adapted_element import (
     AdaptedElement,
@@ -15,10 +15,10 @@ from litgen.internal.adapted_types.adapted_element import (
 
 
 class AdaptedUnit(AdaptedBlock):
-    def __init__(self, options: LitgenOptions, unit: CppUnit):
-        options.check_options_consistency()
+    def __init__(self, litgen_writer_context: LitgenWriterContext, unit: CppUnit):
+        super().__init__(litgen_writer_context, unit)
+        self.options.check_options_consistency()
         global_progress_bars().start_progress_bar(_PROGRESS_BAR_TITLE_ADAPTED_ELEMENTS)
-        super().__init__(options, unit)
         global_progress_bars().stop_progress_bar(_PROGRESS_BAR_TITLE_ADAPTED_ELEMENTS)
 
     # override

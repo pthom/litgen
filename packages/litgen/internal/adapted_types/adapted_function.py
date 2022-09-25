@@ -6,15 +6,15 @@ from munch import Munch  # type: ignore
 from srcmlcpp.srcml_types import *
 
 from litgen.internal import cpp_to_python
+from litgen.internal.adapted_types.litgen_writer_context import LitgenWriterContext
 from litgen.internal.adapted_types.adapted_decl import AdaptedDecl
 from litgen.internal.adapted_types.adapted_element import AdaptedElement
-from litgen.options import LitgenOptions
 
 
 @dataclass
 class AdaptedParameter(AdaptedElement):
-    def __init__(self, options: LitgenOptions, param: CppParameter) -> None:
-        super().__init__(options, param)
+    def __init__(self, litgen_writer_context: LitgenWriterContext, param: CppParameter) -> None:
+        super().__init__(litgen_writer_context, param)
 
     # override
     def cpp_element(self) -> CppParameter:
@@ -54,7 +54,7 @@ class AdaptedParameter(AdaptedElement):
         return r
 
     def adapted_decl(self) -> AdaptedDecl:
-        adapted_decl = AdaptedDecl(self.options, self.cpp_element().decl)
+        adapted_decl = AdaptedDecl(self.litgen_writer_context, self.cpp_element().decl)
         return adapted_decl
 
 
@@ -164,14 +164,16 @@ class AdaptedFunction(AdaptedElement):
     is_overloaded: bool = False
     is_type_ignore: bool = False
 
-    def __init__(self, options: LitgenOptions, function_infos: CppFunctionDecl, is_overloaded: bool) -> None:
+    def __init__(
+        self, litgen_writer_context: LitgenWriterContext, function_infos: CppFunctionDecl, is_overloaded: bool
+    ) -> None:
         from litgen.internal import adapt_function_params
 
         self.cpp_adapted_function = function_infos
         # self.parent_struct_name = parent_struct_name
         self.cpp_adapter_code = None
         self.lambda_to_call = None
-        super().__init__(options, function_infos)
+        super().__init__(litgen_writer_context, function_infos)
         self._fill_return_value_policy()
         self._fill_is_type_ignore()
 
@@ -210,7 +212,7 @@ class AdaptedFunction(AdaptedElement):
     def adapted_parameters(self) -> List[AdaptedParameter]:
         r: List[AdaptedParameter] = []
         for param in self.cpp_adapted_function.parameter_list.parameters:
-            adapted_param = AdaptedParameter(self.options, param)
+            adapted_param = AdaptedParameter(self.litgen_writer_context, param)
             r.append(adapted_param)
         return r
 
@@ -293,7 +295,7 @@ class AdaptedFunction(AdaptedElement):
     def _pydef_pyarg_list(self) -> List[str]:
         pyarg_strs: List[str] = []
         for param in self.cpp_adapted_function.parameter_list.parameters:
-            adapted_decl = AdaptedDecl(self.options, param.decl)
+            adapted_decl = AdaptedDecl(self.litgen_writer_context, param.decl)
             pyarg_str = adapted_decl._str_pydef_as_pyarg()
             pyarg_strs.append(pyarg_str)
         return pyarg_strs
