@@ -37,7 +37,7 @@ def test_nullable_param():
 #
 # This is caused by the following options during generation:
 #
-#     options.fn_params_output_modifiable_immutable_to_return__regexes = [r"^Slider"]
+#     options.fn_params_output_modifiable_immutable_to_return__regex = r"^Slider"
 
 
 def test_adapt_modifiable_immutable_to_return():

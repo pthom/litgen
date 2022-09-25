@@ -209,7 +209,7 @@ class LitgenOptions:
     #
     # fn_params_adapt_modifiable_immutable_regexes contains a list of regexes on functions names
     # Set it to r".*" to apply this to all functions. Set it to "" to disable it
-    fn_params_replace_modifiable_immutable_by_boxed__regexes: str = ""
+    fn_params_replace_modifiable_immutable_by_boxed__regex: str = ""
 
     # As an alternative, we can also add the modified value to the returned type
     # of the function (which will now be a tuple)
@@ -220,9 +220,9 @@ class LitgenOptions:
     #     def foo(int value) -> Tuple[int, bool]
     # So that any modification done on the C++ side can be seen from python.
     #
-    # fn_params_output_modifiable_immutable_to_return__regexes contains a list of regexes on functions names
+    # fn_params_output_modifiable_immutable_to_return__regex contains a list of regexes on functions names
     # Set it to r".*" to apply this to all functions. Set it to "" to disable it
-    fn_params_output_modifiable_immutable_to_return__regexes: List[str]  # = [] by default
+    fn_params_output_modifiable_immutable_to_return__regex: str = ""
 
     # ------------------------------------------------------------------------------
     # Exclude some params by name
@@ -366,8 +366,6 @@ class LitgenOptions:
         # See doc for all the params at their declaration site (scroll up!)
         self.fn_params_buffer_template_types = ["T", "NumericType"]
         self.fn_params_buffer_size_names = ["nb", "size", "count", "total", "n"]
-        self.fn_params_replace_modifiable_immutable_by_boxed__regexes = []
-        self.fn_params_output_modifiable_immutable_to_return__regexes = []
         self.fn_params_exclude_names__regexes = []
         self.fn_params_exclude_types__regexes = []
         self.fn_force_overload__regexes = []

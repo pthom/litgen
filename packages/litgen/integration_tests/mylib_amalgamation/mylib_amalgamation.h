@@ -218,10 +218,10 @@ MY_API inline size_t c_string_list_total_size(const char * const items[], int it
 // Test Part 1: in the functions below, the value parameters will be "Boxed"
 //
 // This is caused by the following options during generation:
-//     options.fn_params_replace_modifiable_immutable_by_boxed__regexes = [
+//     options.fn_params_replace_modifiable_immutable_by_boxed__regex = code_utils.join_string_by_pipe_char([
 //         r"^Toggle",
 //         r"^Modify",
-//      ]
+//      ])
 /////////////////////////////////////////////////////////////////////////////////////////////
 
 
@@ -264,7 +264,7 @@ MY_API void ModifyString(std::string* s) { (*s) += "hello"; }
 //
 // This is caused by the following options during generation:
 //
-//     options.fn_params_output_modifiable_immutable_to_return__regexes = [r"^Change"]
+//     options.fn_params_output_modifiable_immutable_to_return__regex = r"^Change"
 /////////////////////////////////////////////////////////////////////////////////////////////
 
 

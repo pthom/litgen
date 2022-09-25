@@ -136,7 +136,7 @@ def litgen_options_imgui() -> LitgenOptions:
     # options.fn_params_adapt_modifiable_immutable_regexes = [r".*"]
     # Version where we return tuples
     options.fn_params_replace_modifiable_c_array_by_boxed__regex = ""
-    options.fn_params_output_modifiable_immutable_to_return__regexes = [r".*"]
+    options.fn_params_output_modifiable_immutable_to_return__regex = r".*"
 
     options.srcml_options.flag_show_progress = True
 
