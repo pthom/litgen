@@ -230,8 +230,8 @@ class LitgenOptions:
     #
     # Remove some params from the python published interface. A param can only be removed if it has a default value
     # in the C++ signature
-    fn_params_exclude_names__regexes: List[str]  # = [] by default
-    fn_params_exclude_types__regexes: List[str]  # = [] by default
+    fn_params_exclude_names__regex: str = ""
+    fn_params_exclude_types__regex: str = ""
 
     # ------------------------------------------------------------------------------
     # Force overload
@@ -366,8 +366,6 @@ class LitgenOptions:
         # See doc for all the params at their declaration site (scroll up!)
         self.fn_params_buffer_template_types = ["T", "NumericType"]
         self.fn_params_buffer_size_names = ["nb", "size", "count", "total", "n"]
-        self.fn_params_exclude_names__regexes = []
-        self.fn_params_exclude_types__regexes = []
         self.fn_force_overload__regexes = []
         self.fn_return_force_policy_reference_for_pointers__regexes = []
         self.fn_return_force_policy_reference_for_references__regexes = []

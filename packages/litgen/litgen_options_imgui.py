@@ -127,10 +127,9 @@ def litgen_options_imgui() -> LitgenOptions:
     options.fn_params_replace_buffer_by_array__regex = r".*"
     options.fn_params_buffer_types += ["float"]
 
-    options.fn_params_exclude_types__regexes = [
-        "Callback$"  # Exclude callbacks from the params when they have a default value
-        # (since imgui use bare C function pointers, not easily portable)
-    ]
+    # Exclude callbacks from the params when they have a default value
+    # (since imgui use bare C function pointers, not easily portable)
+    options.fn_params_exclude_types__regex = r"Callback$"
 
     # Version where we use Boxed types everywhere
     # options.fn_params_adapt_modifiable_immutable_regexes = [r".*"]

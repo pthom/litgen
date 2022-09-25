@@ -8,7 +8,7 @@ def litgen_options_implot() -> LitgenOptions:
     options.srcml_options.functions_api_prefixes = "IMPLOT_API|IMPLOT_TMP"
 
     options.fn_force_overload__regexes = ["BeginPlot"]
-    options.fn_params_exclude_types__regexes = ["ImPlotFormatter"]
+    options.fn_params_exclude_types__regex = "ImPlotFormatter"
 
     options.fn_params_buffer_types = [
         # // Scalar data types defined by imgui.h
