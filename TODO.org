@@ -451,6 +451,8 @@ Idée: LitgenWriterContext avec dedans Options + status (liste des modules, de l
     Argh: _generate_code_impl_one_file bypasse les options de CppFileAndOptions
     ==> faire avec et virer les multiples options
 
+    Argh2 : maintenant, probleme sur generation ImGui
+
 
 L'idee d'utiliser une fake class risque d'echouer, car un meme namespace peut apparaitre plusieurs fois!
    Contournement possible: stocker tout, puis dump a la fin dans le meme fichier?

@@ -81,15 +81,13 @@ class GeneratedCode:
 
 
 @dataclass
-class CppFileAndOptions:
-    options: LitgenOptions
+class CppFile:
     filename: Optional[str]
     code: str
 
     def __init__(self, options: LitgenOptions, filename: Optional[str] = None, code: Optional[str] = None):
         if filename is None and code is None:
             raise ValueError("filename and code cannot be None together")
-        self.options = options
         self.filename = filename
 
         if code is None:
@@ -101,11 +99,11 @@ class CppFileAndOptions:
 
 
 @dataclass
-class CppFilesAndOptionsList:
-    files_and_options: List[CppFileAndOptions]
+class CppFilesList:
+    files: List[CppFile]
 
-    def __init__(self, files_and_options: List[CppFileAndOptions] = None) -> None:
-        if files_and_options is None:
-            self.files_and_options = []
+    def __init__(self, files: List[CppFile] = None) -> None:
+        if files is None:
+            self.files = []
         else:
-            self.files_and_options = files_and_options
+            self.files = files

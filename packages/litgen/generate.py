@@ -7,22 +7,21 @@ from litgen.internal import boxed_immutable_python_type, cpp_to_python
 from litgen._generated_code import (
     GeneratedCodeForOneFile,
     GeneratedCode,
-    CppFileAndOptions,
-    CppFilesAndOptionsList,
+    CppFile,
+    CppFilesList,
 )
 from litgen.code_to_adapted_unit import code_to_adapted_unit
 from litgen.internal.adapted_types.litgen_writer_context import LitgenWriterContext
 
 
 def _generate_code_impl_one_file(
-    cpp_file_and_options: CppFileAndOptions, lg_writer_context: LitgenWriterContext
+    cpp_file_and_options: CppFile, lg_writer_context: LitgenWriterContext
 ) -> GeneratedCodeForOneFile:
 
     adapted_unit = code_to_adapted_unit(
-        cpp_file_and_options.options,
+        lg_writer_context,
         cpp_file_and_options.code,
         cpp_file_and_options.filename,
-        lg_writer_context=lg_writer_context,
     )
 
     generated_code = GeneratedCodeForOneFile()
@@ -34,32 +33,28 @@ def _generate_code_impl_one_file(
 
 
 def generate_code_for_files(
-    files_and_options: CppFilesAndOptionsList, add_boxed_types_definitions: bool = False
+    options: LitgenOptions, file_list: CppFilesList, add_boxed_types_definitions: bool = False
 ) -> GeneratedCode:
 
-    assert len(files_and_options.files_and_options) > 0
+    assert len(file_list.files) > 0
     boxed_immutable_python_type.clear_registry()
 
-    first_options = files_and_options.files_and_options[0].options
-
-    lg_writer_context = LitgenWriterContext(first_options)
+    lg_writer_context = LitgenWriterContext(options)
 
     generated_codes: List[GeneratedCodeForOneFile] = []
-    for file in files_and_options.files_and_options:
+    for file in file_list.files:
         file_generated_code = _generate_code_impl_one_file(file, lg_writer_context)
         generated_codes.append(file_generated_code)
 
-    boxed_types_generated_code = boxed_immutable_python_type.all_boxed_types_generated_code(first_options)
+    boxed_types_generated_code = boxed_immutable_python_type.all_boxed_types_generated_code(lg_writer_context)
 
-    generated_code = GeneratedCode(
-        generated_codes, boxed_types_generated_code, add_boxed_types_definitions, first_options
-    )
+    generated_code = GeneratedCode(generated_codes, boxed_types_generated_code, add_boxed_types_definitions, options)
 
     # Apply Python code layout options
     generated_code.stub_code = code_utils.code_set_max_consecutive_empty_lines(
-        generated_code.stub_code, first_options.python_max_consecutive_empty_lines
+        generated_code.stub_code, options.python_max_consecutive_empty_lines
     )
-    generated_code.stub_code = cpp_to_python.apply_black_formatter_pyi(first_options, generated_code.stub_code)
+    generated_code.stub_code = cpp_to_python.apply_black_formatter_pyi(options, generated_code.stub_code)
 
     return generated_code
 
@@ -71,10 +66,10 @@ def generate_code(
     add_boxed_types_definitions: bool = False,
 ) -> GeneratedCode:
 
-    cpp_file_and_options = CppFileAndOptions(options, filename, code)
-    cpp_files_and_options_list = CppFilesAndOptionsList([cpp_file_and_options])
+    cpp_file = CppFile(options, filename, code)
+    cpp_files_list = CppFilesList([cpp_file])
 
-    generated_code = generate_code_for_files(cpp_files_and_options_list, add_boxed_types_definitions)
+    generated_code = generate_code_for_files(options, cpp_files_list, add_boxed_types_definitions)
     return generated_code
 
 
@@ -84,9 +79,9 @@ def code_to_pydef(
     filename: Optional[str] = None,
     add_boxed_types_definitions: bool = False,
 ) -> str:
-    file_and_options = CppFileAndOptions(options, filename, code)
-    file_and_options_list = CppFilesAndOptionsList([file_and_options])
-    generated_code = generate_code_for_files(file_and_options_list, add_boxed_types_definitions)
+    file_and_options = CppFile(options, filename, code)
+    file_and_options_list = CppFilesList([file_and_options])
+    generated_code = generate_code_for_files(options, file_and_options_list, add_boxed_types_definitions)
     return generated_code.pydef_code
 
 
@@ -96,9 +91,9 @@ def code_to_stub(
     filename: Optional[str] = None,
     add_boxed_types_definitions: bool = False,
 ) -> str:
-    file_and_options = CppFileAndOptions(options, filename, code)
-    file_and_options_list = CppFilesAndOptionsList([file_and_options])
-    generated_code = generate_code_for_files(file_and_options_list, add_boxed_types_definitions)
+    file = CppFile(options, filename, code)
+    files_list = CppFilesList([file])
+    generated_code = generate_code_for_files(options, files_list, add_boxed_types_definitions)
     return generated_code.stub_code
 
 

@@ -4,6 +4,7 @@ from codemanip import code_utils
 
 import litgen
 from litgen.internal.boxed_immutable_python_type import BoxedImmutablePythonType, all_boxed_types_generated_code
+from litgen.internal.adapted_types.litgen_writer_context import LitgenWriterContext
 
 
 def test_make_boxed_type():
@@ -11,7 +12,7 @@ def test_make_boxed_type():
     cpp_numeric_type = "unsigned long long"
     boxed_type = BoxedImmutablePythonType(cpp_numeric_type)
 
-    struct_code = boxed_type.cpp_header_code(options)
+    struct_code = boxed_type.cpp_header_code(LitgenWriterContext(options))
     # logging.warning("\n" + struct_code)
     code_utils.assert_are_codes_equal(
         struct_code,
@@ -26,7 +27,7 @@ def test_make_boxed_type():
     )
 
     options = litgen.LitgenOptions()
-    pydef_code = boxed_type.pydef_code(options)
+    pydef_code = boxed_type.pydef_code(LitgenWriterContext(options))
     # logging.warning("\n" + pydef_code)
     expected_code = """
         auto pyClassBoxedUnsignedLongLong = py::class_<BoxedUnsignedLongLong>
@@ -47,7 +48,7 @@ def test_make_boxed_type():
     # Test generation of boxed structs code and bindings
     # (We instantiated boxing for "unsigned long long" and "int")
     _ = BoxedImmutablePythonType("int")
-    generated_code = all_boxed_types_generated_code(options)
+    generated_code = all_boxed_types_generated_code(LitgenWriterContext(options))
     assert generated_code is not None
     # logging.warning("\n" + boxed_structs_code)
     code_utils.assert_are_codes_equal(
