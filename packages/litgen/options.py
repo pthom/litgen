@@ -289,32 +289,32 @@ class LitgenOptions:
     member_numeric_c_array_replace__regex: str = r".*"
 
     # member_numeric_c_array_types: list of numeric types that can be stored in a numpy array
-    #
-    #     See https://numpy.org/doc/stable/reference/generated/numpy.chararray.html
-    #     *don't* include char, *don't* include byte, those are not numeric!
-    #
-    # by default:
-    # member_numeric_c_array_types = [
-    #     "int",
-    #     "unsigned int",
-    #     "long",
-    #     "unsigned long",
-    #     "long long",
-    #     "unsigned long long",
-    #     "float",
-    #     "double",
-    #     "long double",
-    #     "uint8_t",
-    #     "int8_t",
-    #     "uint16_t",
-    #     "int16_t",
-    #     "uint32_t",
-    #     "int32_t",
-    #     "uint64_t",
-    #     "int64_t",
-    #     "bool",
-    # ]
-    member_numeric_c_array_types: List[str]
+    # for a class member which is a fixed size array of a numeric type
+    # - Synonyms (defined via. `typedef` or `using`) are allowed here
+    # - *don't* include char, *don't* include byte, those are not numeric!
+    #   See https://numpy.org/doc/stable/reference/generated/numpy.chararray.html
+    member_numeric_c_array_types: str = code_utils.join_string_by_pipe_char(
+        [
+            "int",
+            "unsigned int",
+            "long",
+            "unsigned long",
+            "long long",
+            "unsigned long long",
+            "float",
+            "double",
+            "long double",
+            "uint8_t",
+            "int8_t",
+            "uint16_t",
+            "int16_t",
+            "uint32_t",
+            "int32_t",
+            "uint64_t",
+            "int64_t",
+            "bool",
+        ]
+    )
 
     ################################################################################
     #    <unclassified options>
@@ -368,6 +368,9 @@ class LitgenOptions:
     def fn_params_buffer_template_types_list(self) -> List[str]:
         return code_utils.split_string_by_pipe_char(self.fn_params_buffer_template_types)
 
+    def member_numeric_c_array_types_list(self) -> List[str]:
+        return code_utils.split_string_by_pipe_char(self.member_numeric_c_array_types)
+
     def __init__(self) -> None:
         # See doc for all the params at their declaration site (scroll up to the top of this file!)
         from litgen.internal import cpp_to_python
@@ -378,24 +381,3 @@ class LitgenOptions:
         self.code_replacements = cpp_to_python.standard_code_replacements()
         self.comments_replacements = cpp_to_python.standard_comment_replacements()
         self.names_replacements = RegexReplacementList()
-        # See doc for all the params at their declaration site (scroll up to the top of this file!)
-        self.member_numeric_c_array_types = [  # don't include char, don't include byte, those are not numeric!
-            "int",  # See https://numpy.org/doc/stable/reference/generated/numpy.chararray.html
-            "unsigned int",
-            "long",
-            "unsigned long",
-            "long long",
-            "unsigned long long",
-            "float",
-            "double",
-            "long double",
-            "uint8_t",
-            "int8_t",
-            "uint16_t",
-            "int16_t",
-            "uint32_t",
-            "int32_t",
-            "uint64_t",
-            "int64_t",
-            "bool",
-        ]

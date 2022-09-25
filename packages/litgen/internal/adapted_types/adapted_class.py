@@ -41,7 +41,7 @@ class AdaptedClassMember(AdaptedDecl):
         options = self.options
         cpp_decl = self.cpp_element()
         array_typename = cpp_decl.cpp_type.str_code()
-        if array_typename not in options.member_numeric_c_array_types:
+        if array_typename not in options.member_numeric_c_array_types_list():
             return False
         shall_replace = code_utils.does_match_regex(options.member_numeric_c_array_replace__regex, cpp_decl.decl_name)
         if not shall_replace:
@@ -54,7 +54,7 @@ class AdaptedClassMember(AdaptedDecl):
         options = self.options
         cpp_decl = self.cpp_element()
         array_typename = cpp_decl.cpp_type.str_code()
-        if array_typename not in options.member_numeric_c_array_types:
+        if array_typename not in options.member_numeric_c_array_types_list():
             cpp_decl.emit_warning(
                 """
                 AdaptedClassMember: Only numeric C Style arrays are supported

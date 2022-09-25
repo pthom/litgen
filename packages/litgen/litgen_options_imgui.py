@@ -103,17 +103,19 @@ def litgen_options_imgui() -> LitgenOptions:
 
     options.class_exclude_by_name__regex = join_string_by_pipe_char([r"^ImVector\b", "ImGuiTextBuffer"])
 
-    options.member_numeric_c_array_types += [
-        "ImGuiID",
-        "ImS8",
-        "ImU8",
-        "ImS16",
-        "ImU16",
-        "ImS32",
-        "ImU32",
-        "ImS64",
-        "ImU64",
-    ]
+    options.member_numeric_c_array_types += "|" + join_string_by_pipe_char(
+        [
+            "ImGuiID",
+            "ImS8",
+            "ImU8",
+            "ImS16",
+            "ImU16",
+            "ImS32",
+            "ImU32",
+            "ImS64",
+            "ImU64",
+        ]
+    )
 
     options.fn_force_overload__regex = join_string_by_pipe_char(
         [
