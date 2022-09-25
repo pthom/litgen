@@ -160,15 +160,15 @@ class LitgenOptions:
     # C style arrays functions and methods parameters
     # ------------------------------------------------------------------------------
     #
-    # If active, then signatures like
+    # Signatures like
     #       void foo_const(const int input[2])
-    # will be transformed to:
+    # may be transformed to:
     #       void foo_const(const std::array<int, 2>& input)    (pydef)
     #
     # fn_params_buffer_replace_by_array_regexes contains a list of regexes on functions names
     # for which this transformation will be applied.
-    # Set it to [r".*"] to apply this to all functions, set it to [] to disable it
-    fn_params_replace_const_c_array_by_std_array__regexes: List[str]  # = [r".*"] by default
+    # Set it to r".*" to apply this to all functions, set it to "" to disable it
+    fn_params_replace_const_c_array_by_std_array__regex: str = r".*"
 
     # If c_array_modifiable_flag_replace is active, then signatures like
     #       void foo_non_const(int output[2])
@@ -370,7 +370,6 @@ class LitgenOptions:
         # See doc for all the params at their declaration site (scroll up!)
         self.fn_params_buffer_template_types = ["T", "NumericType"]
         self.fn_params_buffer_size_names = ["nb", "size", "count", "total", "n"]
-        self.fn_params_replace_const_c_array_by_std_array__regexes = [r".*"]
         self.fn_params_replace_modifiable_c_array_by_boxed__regexes = [r".*"]
         self.fn_params_replace_c_string_list__regexes = [r".*"]
         self.fn_params_replace_modifiable_immutable_by_boxed__regexes = []
