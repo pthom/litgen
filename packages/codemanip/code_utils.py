@@ -626,19 +626,6 @@ def contains_word_boundary_left_only(where_to_search: str, word: str) -> bool:
     return does_match_regex(regex_str, where_to_search)
 
 
-def var_name_looks_like_size_name(var_name: str, possible_tokens: List[str]) -> bool:
-    for possible_token in possible_tokens:
-        if var_name_contains_word(var_name, possible_token):
-            return True
-
-    for number_suffix in range(4):
-        for possible_token in possible_tokens:
-            token_with_suffix = possible_token + str(number_suffix)
-            if var_name_contains_word(var_name, token_with_suffix):
-                return True
-    return False
-
-
 def var_name_contains_word(var_name: str, word: str) -> bool:
     var_name = to_snake_case(var_name).strip()
     word = word.lower()
@@ -703,6 +690,18 @@ def make_regex_any_variable_starting_with(what_to_find: str) -> str:
 def make_regex_exclude_word(which_word: str) -> str:
     regex = rf"^((?!{which_word}).)*$"
     return regex
+
+
+def make_regex_var_name_contains_word(word: str) -> str:
+    parts = [
+        rf"^{word}$",  # Exactly word, or xxx_word or word_xxx, or wordXxx
+        rf"^{word}_",  # nb_....
+        rf"_{word}$",  # _which
+        rf"{word}[A-Z][a-z_]",
+        rf"{word}[0-9]",
+    ]
+    r = join_string_by_pipe_char(parts)
+    return r
 
 
 def split_string_by_pipe_char(s: str) -> List[str]:

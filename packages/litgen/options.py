@@ -1,6 +1,7 @@
 from typing import List
 
 from codemanip.code_replacements import RegexReplacementList
+from codemanip import code_utils
 
 from srcmlcpp import SrcmlOptions
 
@@ -135,28 +136,39 @@ class LitgenOptions:
     # but you *cannot* add new types or new synonyms (typedef for examples); since the conversion between
     # py::array and native relies on these *exact* names!
     #
-    # By default, fn_params_buffer_types will contain:
-    #      [
-    #         "uint8_t",
-    #         "int8_t",
-    #         "uint16_t",
-    #         "int16_t",
-    #         "uint32_t",
-    #         "int32_t",
-    #         "uint64_t",
-    #         "int64_t",
-    #         "float",
-    #         "double",
-    #         "long double",
-    #         "long long",
-    #     ]
-    fn_params_buffer_types: List[str]
+    # By default, fn_params_buffer_types will contain those types:
+    fn_params_buffer_types: str = code_utils.join_string_by_pipe_char(
+        [
+            "uint8_t",
+            "int8_t",
+            "uint16_t",
+            "int16_t",
+            "uint32_t",
+            "int32_t",
+            "uint64_t",
+            "int64_t",
+            "float",
+            "double",
+            "long double",
+            "long long",
+        ]
+    )
 
     # fn_params_buffer_template_types: list of templated names that are considered as possible templated buffers
-    fn_params_buffer_template_types: List[str]  # = ["T", "NumericType"] by default
+    # By default, only template<typename T> or template<typename NumericType> are accepted
+    fn_params_buffer_template_types: str = code_utils.join_string_by_pipe_char(["T", "NumericType"])
 
-    # fn_params_buffer_size_names: possible names for the size of the buffer
-    fn_params_buffer_size_names: List[str]  # = ["nb", "size", "count", "total", "n"] by default
+    # fn_params_buffer_size_names__regex: possible names for the size of the buffer
+    # = ["nb", "size", "count", "total", "n"] by default
+    fn_params_buffer_size_names__regex: str = code_utils.join_string_by_pipe_char(
+        [
+            code_utils.make_regex_var_name_contains_word("nb"),
+            code_utils.make_regex_var_name_contains_word("size"),
+            code_utils.make_regex_var_name_contains_word("count"),
+            code_utils.make_regex_var_name_contains_word("total"),
+            code_utils.make_regex_var_name_contains_word("n"),
+        ]
+    )
 
     # ------------------------------------------------------------------------------
     # C style arrays functions and methods parameters
@@ -333,7 +345,7 @@ class LitgenOptions:
             "long double",
             "long long",
         ]
-        for buffer_type in self.fn_params_buffer_types:
+        for buffer_type in self.fn_params_buffer_types_list():
             if buffer_type not in authorized_types:
                 raise ValueError(
                     f"""
@@ -350,6 +362,12 @@ class LitgenOptions:
         space = "\t" if self.python_ident_with_tabs else " "
         return space * self.python_indent_size
 
+    def fn_params_buffer_types_list(self) -> List[str]:
+        return code_utils.split_string_by_pipe_char(self.fn_params_buffer_types)
+
+    def fn_params_buffer_template_types_list(self) -> List[str]:
+        return code_utils.split_string_by_pipe_char(self.fn_params_buffer_template_types)
+
     def __init__(self) -> None:
         # See doc for all the params at their declaration site (scroll up to the top of this file!)
         from litgen.internal import cpp_to_python
@@ -360,24 +378,6 @@ class LitgenOptions:
         self.code_replacements = cpp_to_python.standard_code_replacements()
         self.comments_replacements = cpp_to_python.standard_comment_replacements()
         self.names_replacements = RegexReplacementList()
-        # See doc for all the params at their declaration site (scroll up to the top of this file!)
-        self.fn_params_buffer_types = [
-            "uint8_t",
-            "int8_t",
-            "uint16_t",
-            "int16_t",
-            "uint32_t",
-            "int32_t",
-            "uint64_t",
-            "int64_t",
-            "float",
-            "double",
-            "long double",
-            "long long",
-        ]
-        # See doc for all the params at their declaration site (scroll up!)
-        self.fn_params_buffer_template_types = ["T", "NumericType"]
-        self.fn_params_buffer_size_names = ["nb", "size", "count", "total", "n"]
         # See doc for all the params at their declaration site (scroll up to the top of this file!)
         self.member_numeric_c_array_types = [  # don't include char, don't include byte, those are not numeric!
             "int",  # See https://numpy.org/doc/stable/reference/generated/numpy.chararray.html

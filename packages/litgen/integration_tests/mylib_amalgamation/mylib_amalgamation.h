@@ -119,7 +119,7 @@ MY_API inline void array2_modify_mutable(Point2 out[2]) { out[0] = {0, 1}; out[1
 // Where
 //   * `T` is a *known* numeric type, or a templated type
 //   * `count` name resemble a size
-//        (see LitgenOptions.fn_params_buffer_size_names: List[str] = ["nb", "size", "count", "total", "n"])
+//        (see LitgenOptions.fn_params_buffer_size_names__regex)
 //
 
 // add_inside_buffer: modifies a buffer by adding a value to its elements

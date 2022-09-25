@@ -150,7 +150,7 @@ def array2_modify_mutable(out_0: Point2, out_1: Point2) -> None:
 # Where
 #   * `T` is a *known* numeric type, or a templated type
 #   * `count` name resemble a size
-#        (see LitgenOptions.fn_params_buffer_size_names: List[str] = ["nb", "size", "count", "total", "n"])
+#        (see LitgenOptions.fn_params_buffer_size_names__regex)
 
 def add_inside_buffer(buffer: np.ndarray, number_to_add: int) -> None:
     """ add_inside_buffer: modifies a buffer by adding a value to its elements

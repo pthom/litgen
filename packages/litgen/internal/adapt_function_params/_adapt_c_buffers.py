@@ -13,13 +13,15 @@ from litgen.internal.adapted_types import AdaptedFunction
 
 
 def _possible_buffer_pointer_types(options: LitgenOptions) -> List[str]:
-    types = [t + "*" for t in options.fn_params_buffer_types] + [t + " *" for t in options.fn_params_buffer_types]
+    types = [t + "*" for t in options.fn_params_buffer_types_list()] + [
+        t + " *" for t in options.fn_params_buffer_types_list()
+    ]
     return types
 
 
 def _possible_buffer_template_pointer_types(options: LitgenOptions) -> List[str]:
-    types = [t + "*" for t in options.fn_params_buffer_template_types] + [
-        t + " *" for t in options.fn_params_buffer_template_types
+    types = [t + "*" for t in options.fn_params_buffer_template_types_list()] + [
+        t + " *" for t in options.fn_params_buffer_template_types_list()
     ]
     return types
 
@@ -45,7 +47,8 @@ def _name_looks_like_buffer_standard_or_template(options: LitgenOptions, param: 
 
 
 def _name_looks_like_buffer_size(options: LitgenOptions, param: CppParameter) -> bool:
-    return code_utils.var_name_looks_like_size_name(param.variable_name(), options.fn_params_buffer_size_names)
+    r = code_utils.does_match_regex(options.fn_params_buffer_size_names__regex, param.variable_name())
+    return r
 
 
 class _AdaptBuffersHelper:
@@ -274,7 +277,7 @@ class _AdaptBuffersHelper:
             full_code += intro + "\n"
 
             # Add loop code
-            for i, cpp_numeric_type in enumerate(self.options.fn_params_buffer_types):
+            for i, cpp_numeric_type in enumerate(self.options.fn_params_buffer_types_list()):
 
                 pyarray_type_char = cpp_to_python.cpp_type_to_py_array_type(cpp_numeric_type)
 
