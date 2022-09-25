@@ -515,7 +515,8 @@ class AdaptedFunction(AdaptedElement):
         replace_tokens._i_ = self.options.indent_cpp_spaces()
 
         # fill module_or_class, function_name, location
-        replace_tokens.module_or_class = "" if self.is_method() else "m"
+        parent_cpp_module_var_name = cpp_to_python.cpp_scope_to_pybind_var_name(self.options, self.cpp_element())
+        replace_tokens.module_or_class = "" if self.is_method() else parent_cpp_module_var_name
         replace_tokens.function_name = self.function_name_python()
         replace_tokens.location = self.info_original_location_cpp()
 
@@ -578,7 +579,8 @@ class AdaptedFunction(AdaptedElement):
         replace_tokens._i_ = self.options.indent_cpp_spaces()
 
         # fill module_or_class, function_name, location
-        replace_tokens.module_or_class = "" if self.is_method() else "m"
+        parent_cpp_module_var_name = cpp_to_python.cpp_scope_to_pybind_var_name(self.options, self.cpp_element())
+        replace_tokens.module_or_class = "" if self.is_method() else parent_cpp_module_var_name
         replace_tokens.function_name = self.function_name_python()
         replace_tokens.location = self.info_original_location_cpp()
 

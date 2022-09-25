@@ -1,4 +1,6 @@
-from litgen.internal.adapted_types.adapted_block import AdaptedBlock, AdaptedNamespace, AdaptedUnit
+from litgen.internal.adapted_types.adapted_block import AdaptedBlock
+from litgen.internal.adapted_types.adapted_unit import AdaptedUnit
+from litgen.internal.adapted_types.adapted_namespace import AdaptedNamespace
 from litgen.internal.adapted_types.adapted_class import AdaptedClass
 from litgen.internal.adapted_types.adapted_comment import AdaptedComment, AdaptedEmptyLine
 from litgen.internal.adapted_types.adapted_decl import AdaptedDecl

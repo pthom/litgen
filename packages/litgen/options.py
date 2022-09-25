@@ -317,6 +317,15 @@ class LitgenOptions:
     )
 
     ################################################################################
+    #    <namespace adaptations>
+    ################################################################################
+
+    # All C++ namespaces that match this regex will not be emitted as a submodule
+    # (i.e their inner code will be placed in the root python module, or in the parent
+    # module)
+    namespace_root__regex = r".*"
+
+    ################################################################################
     #    <unclassified options>
     ################################################################################
     # Shall we generate a __str__() method for structs / Work in progress!

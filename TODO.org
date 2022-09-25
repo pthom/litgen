@@ -441,6 +441,11 @@ Problem 3: dans lg_test_runner (integration tests), tout est refusé (trouve pas
 ** Handle scope
 
 *** Handle Namespace
+
+L'idee d'utiliser une fake class risque d'echouer, car un meme namespace peut apparaitre plusieurs fois!
+   Contournement possible: stocker tout, puis dump a la fin dans le meme fichier?
+Idem dans pydef!
+
 Add options:
 
     ################################################################################

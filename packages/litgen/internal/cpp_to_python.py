@@ -381,17 +381,27 @@ def _scope_part_name(scope_part: CppScopePart) -> str:
 def cpp_scope_to_pybind_scope(options: LitgenOptions, cpp_element: CppElement, include_self: bool) -> CppScope:
     cpp_scope = cpp_element.cpp_scope(include_self)
     scope_parts = cpp_scope.scope_parts
-    scope_parts_excluding_namespaces = list(
-        filter(lambda scope: scope.scope_type != CppScopeType.Namespace, scope_parts)
-    )
+
+    scope_parts_excluding_namespaces: List[CppScopePart] = []
+    for scope_part in scope_parts:
+        if scope_part.scope_type != CppScopeType.Namespace:
+            scope_parts_excluding_namespaces.append(scope_part)
+        else:
+            is_root = code_utils.does_match_regex(options.namespace_root__regex, scope_part.scope_name)
+            if not is_root:
+                scope_parts_excluding_namespaces.append(scope_part)
+
     cpp_scope.scope_parts = scope_parts_excluding_namespaces
     return cpp_scope
 
 
 def cpp_scope_to_pybind_var_name(options: LitgenOptions, cpp_element: CppElement):
     cpp_scope = cpp_scope_to_pybind_scope(options, cpp_element, True)
-    scope_parts_strs = map(_scope_part_name, cpp_scope.scope_parts)
-    r = "py" + "_".join(scope_parts_strs)
+    scope_parts_strs = list(map(_scope_part_name, cpp_scope.scope_parts))
+    if len(scope_parts_strs) > 0:
+        r = "py" + "_".join(scope_parts_strs)
+    else:
+        r = "m"
     return r
 
 

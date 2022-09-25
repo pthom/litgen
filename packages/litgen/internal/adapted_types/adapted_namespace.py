@@ -1,5 +1,6 @@
 from dataclasses import dataclass
 from typing import List, cast
+from munch import Munch  # type: ignore
 
 from codemanip import code_utils
 
@@ -8,6 +9,7 @@ from srcmlcpp.srcml_types import CppNamespace
 from litgen import LitgenOptions
 from litgen.internal.adapted_types.adapted_element import AdaptedElement
 from litgen.internal.adapted_types.adapted_block import AdaptedBlock
+from litgen.internal import cpp_to_python
 
 
 @dataclass
@@ -21,8 +23,9 @@ class AdaptedNamespace(AdaptedElement):
     def namespace_name(self) -> str:
         return self.cpp_element().ns_name
 
-    def flag_create_python_namespace(self):
-        return False
+    def flag_create_python_namespace(self) -> bool:
+        is_root = code_utils.does_match_regex(self.options.namespace_root__regex, self.namespace_name())
+        return not is_root
 
     # override
     def cpp_element(self) -> CppNamespace:
@@ -37,35 +40,69 @@ class AdaptedNamespace(AdaptedElement):
         ns_name = self.namespace_name()
 
         proxy_class_code = code_utils.unindent_code(
-            f'''
+            f"""
             class {ns_name}:
-            {_i_}"""Proxy class that introduces the C++ namespace {ns_name}
-            {_i_}This class actually represents a namespace: all its method are static!"""
-            {_i_}def __init__(self):
-            {_i_}{_i_}raise RuntimeError("This class corresponds to a namespace!")
-        ''',
+            {_i_}# Proxy class that introduces the C++ namespace {ns_name}
+            {_i_}# This class actually represents a namespace: all its method are static!
+            """,
             flag_strip_empty_lines=True,
         )
 
+        docstring_lines = cpp_to_python.docstring_lines(self.options, self.cpp_element())
         lines.append(f"# <namespace {self.namespace_name()}>")
+        self.cpp_element().cpp_element_comments.full_comment()
         if self.flag_create_python_namespace():
             lines += proxy_class_code.split("\n")
-            lines += code_utils.indent_code_lines(self.adapted_block._str_stub_lines(), indent_str=_i_)
+            lines += code_utils.indent_code_lines(
+                docstring_lines + self.adapted_block._str_stub_lines(), indent_str=_i_
+            )
         else:
+            lines += docstring_lines
             lines += self.adapted_block._str_stub_lines()
         lines.append(f"# </namespace {self.namespace_name()}>")
         lines.append("")
 
         return lines
 
+    def _pydef_make_submodule_code(self) -> str:
+        submodule_code_template = (
+            'py::module_ {submodule_cpp_var} = {parent_module_cpp_var}.def_submodule("{module_name}", "{module_doc}");'
+        )
+
+        replace_tokens = Munch()
+
+        replace_tokens.parent_module_cpp_var = cpp_to_python.cpp_scope_to_pybind_parent_var_name(
+            self.options, self.cpp_element()
+        )
+        replace_tokens.submodule_cpp_var = cpp_to_python.cpp_scope_to_pybind_var_name(self.options, self.cpp_element())
+
+        replace_tokens.module_doc = cpp_to_python.comment_pydef_one_line(
+            self.options, self.cpp_element().cpp_element_comments.full_comment()
+        )
+
+        replace_tokens.module_name = self.namespace_name()
+
+        submodule_code_ = code_utils.process_code_template(
+            input_string=submodule_code_template,
+            replacements=replace_tokens,
+            replacements_with_line_removal_if_not_found={},
+        )
+        return submodule_code_
+
     # override
     def _str_pydef_lines(self) -> List[str]:
         location = self.info_original_location_cpp()
         namespace_name = self.namespace_name()
         block_code_lines = self.adapted_block._str_pydef_lines()
+        submodule_code = self._pydef_make_submodule_code()
 
         lines: List[str] = []
+
         lines.append(f"// <namespace {namespace_name}>{location}")
-        lines += block_code_lines
+        if self.flag_create_python_namespace():
+            lines += [submodule_code]
+            lines += block_code_lines
+        else:
+            lines += block_code_lines
         lines.append(f"// </namespace {namespace_name}>")
         return lines
