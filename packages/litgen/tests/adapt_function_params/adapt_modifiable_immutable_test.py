@@ -1,13 +1,14 @@
 from codemanip import code_utils
 
 import litgen
+from litgen import litgen_generator
 
 
 def test_modifiable_immutable_simple():
     options = litgen.LitgenOptions()
     options.fn_params_replace_modifiable_immutable_by_boxed__regex = r".*"
     code = "void foo(float * v);"
-    generated_code = litgen.generate_code(litgen.LitgenContext(options), code)
+    generated_code = litgen_generator.generate_code(options, code, omit_boxed_types_code=True)
 
     # logging.warning("\n" + generated_code.pydef_code)
     code_utils.assert_are_codes_equal(
@@ -38,7 +39,7 @@ def test_modifiable_immutable_simple():
     )
 
     code = "void foo(float * v = nullptr);"
-    generated_code = litgen.generate_code(litgen.LitgenContext(options), code)
+    generated_code = litgen_generator.generate_code(options, code, omit_boxed_types_code=True)
     # logging.warning("\n" + generated_code.pydef_code)
     code_utils.assert_are_codes_equal(
         generated_code.pydef_code,
@@ -61,7 +62,7 @@ def test_modifiable_immutable_simple():
     )
 
     code = "int foo(float & v);"
-    generated_code = litgen.generate_code(litgen.LitgenContext(options), code)
+    generated_code = litgen_generator.generate_code(options, code, omit_boxed_types_code=True)
     # logging.warning("\n" + generated_code.pydef_code)
     code_utils.assert_are_codes_equal(
         generated_code.pydef_code,
@@ -87,7 +88,7 @@ def test_modifiable_immutable_mixed_with_buffer():
     options = litgen.LitgenOptions()
     options.fn_params_replace_modifiable_immutable_by_boxed__regex = r".*"
     code = "void foo(float * buf, int buf_size);"
-    generated_code = litgen.generate_code(litgen.LitgenContext(options), code)
+    generated_code = litgen_generator.generate_code(options, code, omit_boxed_types_code=True)
     # logging.warning("\n" + generated_code.stub_code)
     code_utils.assert_are_codes_equal(
         generated_code.stub_code,
@@ -98,7 +99,7 @@ def test_modifiable_immutable_mixed_with_buffer():
     )
 
     code = "void foo(float * buf, int buf_size, float *value, bool &flag);"
-    generated_code = litgen.generate_code(litgen.LitgenContext(options), code)
+    generated_code = litgen_generator.generate_code(options, code, omit_boxed_types_code=True)
     # logging.warning("\n" + generated_code.stub_code)
     code_utils.assert_are_codes_equal(
         generated_code.stub_code,

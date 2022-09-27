@@ -16,7 +16,7 @@ PythonCode = str
 
 
 @dataclass
-class GeneratedCode:
+class _GeneratedCode:
     source_filename: CppFilename
     pydef_code: CppCode
     stub_code: PythonCode
@@ -24,10 +24,12 @@ class GeneratedCode:
 
 class LitgenGenerator:
     lg_context: LitgenContext
-    _generated_codes: List[GeneratedCode]
+    _generated_codes: List[_GeneratedCode]
+    _omit_boxed_types_code: bool = False
 
-    def __init__(self, options: LitgenOptions) -> None:
+    def __init__(self, options: LitgenOptions, omit_boxed_types_code: bool = False) -> None:
         self.lg_context = LitgenContext(options)
+        self._omit_boxed_types_code = omit_boxed_types_code
         self._generated_codes = []
 
     def process_cpp_file(self, filename: str) -> None:
@@ -84,10 +86,12 @@ class LitgenGenerator:
         adapted_unit = code_to_adapted_unit(self.lg_context, code)
         stub_code = adapted_unit.str_stub()
         pydef_code = adapted_unit.str_pydef()
-        generated_code = GeneratedCode(source_filename=filename, stub_code=stub_code, pydef_code=pydef_code)
+        generated_code = _GeneratedCode(source_filename=filename, stub_code=stub_code, pydef_code=pydef_code)
         self._generated_codes.append(generated_code)
 
-    def _boxed_types_generated_code(self) -> Optional[GeneratedCode]:
+    def _boxed_types_generated_code(self) -> Optional[_GeneratedCode]:
+        if not self.has_boxed_types():
+            return None
         boxed_types_cpp_code = self.boxed_types_cpp_code()
 
         standalone_options = LitgenOptions()
@@ -98,16 +102,19 @@ class LitgenGenerator:
 
         stub_code = adapted_unit.str_stub()
         pydef_code = adapted_unit.str_pydef()
-        generated_code = GeneratedCode("BoxedTypes", stub_code=stub_code, pydef_code=pydef_code)
+        generated_code = _GeneratedCode("BoxedTypes", stub_code=stub_code, pydef_code=pydef_code)
         return generated_code
 
-    def _generated_codes_with_boxed_types(self) -> List[GeneratedCode]:
-        boxed_types_generated_code = self._boxed_types_generated_code()
-        if boxed_types_generated_code is None:
+    def _generated_codes_with_boxed_types(self) -> List[_GeneratedCode]:
+        if self._omit_boxed_types_code:
             return self._generated_codes
         else:
-            r = [boxed_types_generated_code] + self._generated_codes
-            return r
+            boxed_types_generated_code = self._boxed_types_generated_code()
+            if boxed_types_generated_code is None:
+                return self._generated_codes
+            else:
+                r = [boxed_types_generated_code] + self._generated_codes
+                return r
 
 
 def write_generated_code_for_files(
@@ -129,7 +136,32 @@ def write_generated_code_for_file(
     return write_generated_code_for_files(options, [input_cpp_header_file], output_cpp_pydef_file, output_stub_pyi_file)
 
 
-class LitgenGeneratorTestUtils:
+@dataclass
+class GeneratedCodes:
+    pydef_code: CppCode
+    stub_code: PythonCode
+    boxed_types_cpp_code: CppCode
+
+
+def generate_code(options: LitgenOptions, code: CppCode, omit_boxed_types_code: bool = False):
+    generator = LitgenGenerator(options, omit_boxed_types_code=omit_boxed_types_code)
+    generator._process_cpp_code(code, "")
+    r = GeneratedCodes(
+        pydef_code=generator.pydef_code(),
+        stub_code=generator.stub_code(),
+        boxed_types_cpp_code=generator.boxed_types_cpp_code(),
+    )
+    return r
+
+
+def _read_code(options: LitgenOptions, filename: str) -> str:
+    assert os.path.isfile(filename)
+    with open(filename, "r", encoding=options.srcml_options.encoding) as f:
+        code_str = f.read()
+    return code_str
+
+
+class LitgenGeneratorTestsHelper:
     @staticmethod
     def code_to_pydef(options: LitgenOptions, code: str) -> str:
         generator = LitgenGenerator(options)
@@ -143,10 +175,3 @@ class LitgenGeneratorTestUtils:
         generator._process_cpp_code(code, "")
         r = generator.stub_code()
         return r
-
-
-def _read_code(options: LitgenOptions, filename: str) -> str:
-    assert os.path.isfile(filename)
-    with open(filename, "r", encoding=options.srcml_options.encoding) as f:
-        code_str = f.read()
-    return code_str

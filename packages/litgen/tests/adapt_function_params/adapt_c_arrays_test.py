@@ -2,6 +2,7 @@ from srcmlcpp.srcml_types import *
 from srcmlcpp import srcmlcpp_main
 
 import litgen
+from litgen.litgen_generator import LitgenGeneratorTestsHelper
 from litgen import LitgenOptions
 from litgen.internal.adapted_types import AdaptedFunction, LitgenContext
 
@@ -164,7 +165,7 @@ def test_in_method():
     options = litgen.LitgenOptions()
     options.srcml_options.functions_api_prefixes = "IMGUI_API"
     options.original_location_flag_show = True
-    generated_code = litgen.code_to_pydef(litgen.LitgenContext(options), code)
+    generated_code = LitgenGeneratorTestsHelper.code_to_pydef(options, code)
     # logging.warning("\n" + generated_code)
     code_utils.assert_are_codes_equal(
         generated_code,

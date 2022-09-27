@@ -1,12 +1,13 @@
 from srcmlcpp.srcml_types import *
 
 import litgen
+from litgen.litgen_generator import LitgenGeneratorTestsHelper
 
 
 def to_pydef(code) -> str:
     options = litgen.LitgenOptions()
     options.fn_params_replace_c_string_list__regex = r".*"
-    pydef_code = litgen.code_to_pydef(litgen.LitgenContext(options), code)
+    pydef_code = LitgenGeneratorTestsHelper.code_to_pydef(options, code)
     return pydef_code
 
 
@@ -43,6 +44,18 @@ def test_mix_array_and_string_list():
     code_utils.assert_are_codes_equal(
         generated_code,
         """
+        ////////////////////    <generated_from:BoxedTypes>    ////////////////////
+        auto pyClassBoxedInt = py::class_<BoxedInt>
+            (m, "BoxedInt", "")
+            .def_readwrite("value", &BoxedInt::value, "")
+            .def(py::init<int>(),
+                py::arg("v") = 0)
+            .def("__repr__",
+                &BoxedInt::__repr__)
+            ;
+        ////////////////////    </generated_from:BoxedTypes>    ////////////////////
+
+
         m.def("foo",
             [](const std::vector<std::string> & items, BoxedInt & ouput_0, BoxedInt & ouput_1) -> int
             {

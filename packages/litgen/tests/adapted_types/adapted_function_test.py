@@ -1,7 +1,7 @@
 from srcmlcpp.srcml_types import *
 
-import litgen
 from litgen.options import LitgenOptions
+from litgen.litgen_generator import LitgenGeneratorTestsHelper
 
 
 def test_adapted_function_stub():
@@ -17,11 +17,22 @@ def test_adapted_function_stub():
     //     :param text and ... : formatted text
     void Foo(uint8_t * buffer, size_t count, double out_values[2], const bool in_flags[2], const char* text, ...);
     """
-    stub_code = litgen.code_to_stub(litgen.LitgenContext(options), code)
+    stub_code = LitgenGeneratorTestsHelper.code_to_stub(options, code)
     # logging.warning("\n>>>" + stub_code + "<<<")
     code_utils.assert_are_codes_equal(
         stub_code,
         '''
+        ####################    <generated_from:BoxedTypes>    ####################
+        class BoxedDouble:
+            value: float
+            def __init__(self, v: float = 0.) -> None:
+                pass
+            def __repr__(self) -> str:
+                pass
+        ####################    </generated_from:BoxedTypes>    ####################
+
+
+
         def foo(    # Line:7
             buffer: np.ndarray,
             out_values_0: BoxedDouble,
@@ -36,7 +47,7 @@ def test_adapted_function_stub():
                  :param text and ... : formatted text
             """
             pass
-        ''',
+            ''',
     )
 
 
@@ -45,7 +56,7 @@ def test_adapted_function_pydef_simple():
     code = """
     int add(int a, int b) { return a + b; }
     """
-    pydef_code = litgen.code_to_pydef(litgen.LitgenContext(options), code)
+    pydef_code = LitgenGeneratorTestsHelper.code_to_pydef(options, code)
     # logging.warning("\n>>>" + pydef_code + "<<<")
     code_utils.assert_are_codes_equal(
         pydef_code,
@@ -65,7 +76,7 @@ def test_implot_easy() -> None:
         // axis labels
         IMPLOT_API void SetupAxisFormat(ImAxis axis, const char* fmt);
     """
-    generated_code = litgen.code_to_pydef(litgen.LitgenContext(options), code)
+    generated_code = LitgenGeneratorTestsHelper.code_to_pydef(options, code)
     expected_code = """
         m.def("setup_axis_format",    // Line:4
             SetupAxisFormat,
@@ -82,7 +93,7 @@ def test_return_value_policy() -> None:
         // Returns a widget
         Widget* Foo();  // return_value_policy::reference
     """
-    generated_code = litgen.code_to_pydef(litgen.LitgenContext(options), code)
+    generated_code = LitgenGeneratorTestsHelper.code_to_pydef(options, code)
     # logging.warning("\n" + generated_code)
     expected_code = """
         m.def("foo",
@@ -102,7 +113,7 @@ def test_implot_one_buffer() -> None:
         // Plots a standard 2D scatter plot. Default marker is ImPlotMarker_Circle.
         IMPLOT_TMP void PlotScatter(const T* values, int count);
     """
-    generated_code = litgen.code_to_pydef(litgen.LitgenContext(options), code)
+    generated_code = LitgenGeneratorTestsHelper.code_to_pydef(options, code)
     expected_code = """
         m.def("plot_scatter",    // Line:3
             [](const py::array & values)
@@ -159,7 +170,7 @@ def test_immvision() -> None:
         // Display an image (requires OpenGL initialized)
         IMMVISION_API bool Image(const std::string& label_id, const cv::Mat& mat, ImageParams* params);
     """
-    generated_code = litgen.code_to_pydef(litgen.LitgenContext(options), code)
+    generated_code = LitgenGeneratorTestsHelper.code_to_pydef(options, code)
     expected_code = """
         m.def("image",
             Image,
@@ -176,7 +187,7 @@ def test_overloads() -> None:
     std::string foo(int a);
     void blah();
     """
-    generated_code = litgen.code_to_pydef(litgen.LitgenContext(options), code)
+    generated_code = LitgenGeneratorTestsHelper.code_to_pydef(options, code)
     # logging.warning("\n" + generated_code)
     code_utils.assert_are_codes_equal(
         generated_code,
@@ -200,7 +211,7 @@ def test_overloads() -> None:
         void blah();
     };
     """
-    generated_code = litgen.code_to_pydef(litgen.LitgenContext(options), code)
+    generated_code = LitgenGeneratorTestsHelper.code_to_pydef(options, code)
     # logging.warning("\n" + generated_code)
     code_utils.assert_are_codes_equal(
         generated_code,
@@ -225,7 +236,7 @@ def test_type_ignore():
     // Foo doc
     std::string foo(); // type: ignore
     """
-    stub_code = litgen.code_to_stub(litgen.LitgenContext(options), code)
+    stub_code = LitgenGeneratorTestsHelper.code_to_stub(options, code)
     # logging.warning("\n" + stub_code)
     code_utils.assert_are_codes_equal(
         stub_code,
@@ -239,7 +250,7 @@ def test_type_ignore():
     code = """
     std::string foo(); // type: ignore // Some more doc
     """
-    stub_code = litgen.code_to_stub(litgen.LitgenContext(options), code)
+    stub_code = LitgenGeneratorTestsHelper.code_to_stub(options, code)
     # logging.warning("\n" + stub_code)
     code_utils.assert_are_codes_equal(
         stub_code,
@@ -257,7 +268,7 @@ def test_py_none_param():
     code = """
     void foo(Widget *a = nullptr);
     """
-    pydef_code = litgen.code_to_pydef(litgen.LitgenContext(options), code)
+    pydef_code = LitgenGeneratorTestsHelper.code_to_pydef(options, code)
     # logging.warning("\n" + pydef_code)
     code_utils.assert_are_codes_equal(
         pydef_code,
@@ -270,7 +281,7 @@ def test_py_none_param():
     code = """
     void foo(Widget *a = NULL);
     """
-    pydef_code = litgen.code_to_pydef(litgen.LitgenContext(options), code)
+    pydef_code = LitgenGeneratorTestsHelper.code_to_pydef(options, code)
     # logging.warning("\n" + pydef_code)
     code_utils.assert_are_codes_equal(
         pydef_code,
@@ -283,7 +294,7 @@ def test_py_none_param():
     code = """
     void foo(Widget *a = Widget(NULL));
     """
-    pydef_code = litgen.code_to_pydef(litgen.LitgenContext(options), code)
+    pydef_code = LitgenGeneratorTestsHelper.code_to_pydef(options, code)
     # logging.warning("\n" + pydef_code)
     code_utils.assert_are_codes_equal(
         pydef_code,

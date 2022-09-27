@@ -10,7 +10,7 @@ def test_exclude_params():
     options.fn_params_exclude_types__regex = "Callback$"
     options.fn_params_exclude_names__regex = "^flag"
 
-    generated_code = litgen.generate_code(litgen.LitgenContext(options), code)
+    generated_code = litgen.generate_code(options, code)
     # logging. warning("\n" + generated_code.pydef_code)
     code_utils.assert_are_codes_equal(
         generated_code.pydef_code,

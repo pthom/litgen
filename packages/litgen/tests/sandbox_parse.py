@@ -4,8 +4,8 @@ import sys
 import srcmlcpp
 
 import litgen
+from litgen.litgen_generator import LitgenGeneratorTestsHelper
 from litgen.litgen_options_imgui import litgen_options_imgui
-from litgen.litgen_options_implot import litgen_options_implot
 
 
 _THIS_DIR = os.path.dirname(__file__)
@@ -24,39 +24,18 @@ def play_parse(code):
     print(cpp_unit)
 
 
-def play_implot():
-    options = litgen_options_implot()
-    options.original_location_flag_show = True
-    source_filename = os.path.realpath(_THIS_DIR + "/../../examples_real_libs/implot/implot/implot.h")
-
-    generated_code = litgen.code_to_pydef(litgen.LitgenContext(options), filename=source_filename)
-    print(generated_code)
-
-
-def play_imgui():
-    options = litgen_options_imgui()
-    source_filename = os.path.realpath(_THIS_DIR + "/../../examples_real_libs/imgui/imgui/imgui.h")
-
-    generated_code = litgen.code_to_pydef(litgen.LitgenContext(options), filename=source_filename)
-    print(generated_code)
-
-
 def play_stub(code, options) -> None:
-    pyi_code = litgen.code_to_stub(options, code)
+    pyi_code = LitgenGeneratorTestsHelper.code_to_stub(options, code)
     print(f">>>\n{pyi_code}<<<")
 
 
 def play_pydef(code, options) -> None:
-    pyi_code = litgen.code_to_pydef(options, code)
+    pyi_code = LitgenGeneratorTestsHelper.code_to_pydef(options, code)
     print(f">>>\n{pyi_code}<<<")
 
 
 def litgensample_options() -> litgen.LitgenOptions:
     options = litgen.LitgenOptions()
-    # options.fn_params_replace_buffer_by_array__regex = r".*"
-    # options.fn_params_replace_modifiable_immutable_by_boxed__regex = [r"^Toggle", r"^Modify"]
-    # options.fn_params_output_modifiable_immutable_to_return__regex = r"^Slider"
-
     options.fn_params_replace_modifiable_c_array_by_boxed__regex = "array"
     options.fn_params_output_modifiable_immutable_to_return__regex = r".*"
     return options
@@ -74,8 +53,4 @@ void PlayFoo(Foo f = Foo_A);
 """
 # options = litgen_options_imgui()
 options = litgen.options.LitgenOptions()
-# options.fn_params_replace_modifiable_c_array_by_boxed__regex = ""
-# # options.fn_params_replace_const_c_array_by_std_array__regex = ""
-# options.fn_params_output_modifiable_immutable_to_return__regex = r".*"
-# play_stub(code, options)
 play_stub(code, options)
