@@ -88,7 +88,10 @@ class LitgenGenerator:
         return r
 
     def _process_cpp_code(self, code: str, filename: str) -> None:
-        adapted_unit = code_to_adapted_unit(self.lg_context, code, filename)
+        if len(filename) > 0:
+            adapted_unit = code_to_adapted_unit(self.lg_context, code, filename)
+        else:
+            adapted_unit = code_to_adapted_unit(self.lg_context, code)
         stub_code = adapted_unit.str_stub()
         pydef_code = adapted_unit.str_pydef()
         generated_code = _GeneratedCode(source_filename=filename, stub_code=stub_code, pydef_code=pydef_code)
