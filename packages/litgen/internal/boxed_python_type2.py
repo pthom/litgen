@@ -22,7 +22,7 @@ def registered_boxed_type_name(registry: BoxedPythonTypesRegistry, cpp_type: str
     return boxed_type_name(cpp_type)
 
 
-def boxed_type_header_code(cpp_type: str, indent_str: str) -> str:
+def boxed_type_cpp_struct_code(cpp_type: str, indent_str: str) -> str:
     assert _can_box_cpp_type(cpp_type)
     cpp_type_default_value = cpp_to_python.cpp_type_default_python_value(cpp_type)
     assert cpp_type_default_value is not None

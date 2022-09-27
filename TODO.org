@@ -440,6 +440,16 @@ Faire un tour dans cpp_to_python pour mettre en privé les function d'acces au c
 
 ** Litgen Generator
 
+BoxedTypes:
+  ajout mode / amalgamation dans mylib
+  recup unit test utiles
+  delete BoxedTypes orig
+
+  delete generate orig
+
+  correct autogenerate imgui / bundle / template
+
+
 #+begin_src python
   driver = LitgenDriver(options)
 
@@ -472,12 +482,18 @@ Faire un tour dans cpp_to_python pour mettre en privé les function d'acces au c
 
   LitgenContext *-- LitgenOptions
 
-  class LitgenDriver {
-
+  class LitgenGenerator {
           + __init__(options)
-          + parse_header(filename)
-          + parse_code(code, filename: Opt[str])
+          + process_cpp_header(filename)
+          + process_cpp_headers([filenames])
+          + process_cpp_code(code, filename: Opt[str])
           + write_generated_code(pydef_file, stub_file)
+  }
+
+  class LitgenGenerator_test_utils {
+          pydef_code()
+          stub_code()
+
   }
 
   LitgenDriver *-- LitgenContext

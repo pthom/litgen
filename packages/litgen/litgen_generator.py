@@ -51,8 +51,8 @@ class LitgenGenerator:
         cpp_codes = []
         for cpp_boxed_type in self.lg_context.boxed_types_registry.cpp_boxed_types:
             indent_str = self.lg_context.options.indent_cpp_spaces()
-            cpp_codes.append(boxed_python_type2.boxed_type_header_code(cpp_boxed_type, indent_str))
-        r = "\n\n".join(cpp_codes)
+            cpp_codes.append(boxed_python_type2.boxed_type_cpp_struct_code(cpp_boxed_type, indent_str))
+        r = "".join(cpp_codes)
         return r
 
     def _boxed_types_generated_code(self) -> Optional[GeneratedCode]:
