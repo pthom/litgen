@@ -22,9 +22,9 @@ class AdaptedClassMember(AdaptedDecl):
 
     class_parent: AdaptedClass
 
-    def __init__(self, litgen_writer_context: LitgenContext, decl: CppDecl, class_parent: AdaptedClass) -> None:
+    def __init__(self, lg_context: LitgenContext, decl: CppDecl, class_parent: AdaptedClass) -> None:
         self.class_parent = class_parent
-        super().__init__(litgen_writer_context, decl)
+        super().__init__(lg_context, decl)
 
     def __str__(self) -> str:
         name_cpp = self.decl_name_cpp()
@@ -228,8 +228,8 @@ class AdaptedClass(AdaptedElement):
         Union[AdaptedEmptyLine, AdaptedComment, AdaptedClassMember, AdaptedFunction, AdaptedClass, AdaptedEnum]
     ]
 
-    def __init__(self, litgen_writer_context: LitgenContext, class_: CppStruct):
-        super().__init__(litgen_writer_context, class_)
+    def __init__(self, lg_context: LitgenContext, class_: CppStruct):
+        super().__init__(lg_context, class_)
         self.adapted_public_children = []
         self._fill_public_children()
 
@@ -254,7 +254,7 @@ class AdaptedClass(AdaptedElement):
                 self.options.member_exclude_by_type__regex, cpp_decl.cpp_type.str_code()
             )
             if not is_excluded_by_name and not is_excluded_by_type:
-                adapted_class_member = AdaptedClassMember(self.litgen_writer_context, cpp_decl, self)
+                adapted_class_member = AdaptedClassMember(self.lg_context, cpp_decl, self)
                 if adapted_class_member.check_can_publish():
                     self.adapted_public_children.append(adapted_class_member)
 
@@ -262,24 +262,22 @@ class AdaptedClass(AdaptedElement):
         public_elements = self.cpp_element().get_public_elements()
         for child in public_elements:
             if isinstance(child, CppEmptyLine):
-                self.adapted_public_children.append(AdaptedEmptyLine(self.litgen_writer_context, child))
+                self.adapted_public_children.append(AdaptedEmptyLine(self.lg_context, child))
             elif isinstance(child, CppComment):
-                self.adapted_public_children.append(AdaptedComment(self.litgen_writer_context, child))
+                self.adapted_public_children.append(AdaptedComment(self.lg_context, child))
             elif isinstance(child, CppFunctionDecl):
                 if not code_utils.does_match_regex(self.options.fn_exclude_by_name__regex, child.function_name):
                     is_overloaded = self.cpp_element().is_method_overloaded(child)
-                    self.adapted_public_children.append(
-                        AdaptedFunction(self.litgen_writer_context, child, is_overloaded)
-                    )
+                    self.adapted_public_children.append(AdaptedFunction(self.lg_context, child, is_overloaded))
             elif isinstance(child, CppDeclStatement):
                 self._add_adapted_class_member(child)
             elif isinstance(child, CppUnprocessed):
                 continue
             elif isinstance(child, CppStruct):
-                adapted_subclass = AdaptedClass(self.litgen_writer_context, child)
+                adapted_subclass = AdaptedClass(self.lg_context, child)
                 self.adapted_public_children.append(adapted_subclass)
             elif isinstance(child, CppEnum):
-                adapted_enum = AdaptedEnum(self.litgen_writer_context, child)
+                adapted_enum = AdaptedEnum(self.lg_context, child)
                 self.adapted_public_children.append(adapted_enum)
 
             else:

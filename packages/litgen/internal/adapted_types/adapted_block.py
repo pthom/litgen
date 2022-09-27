@@ -35,8 +35,8 @@ class AdaptedBlock(AdaptedElement):
         ]
     ]
 
-    def __init__(self, litgen_writer_context: LitgenContext, block: CppBlock) -> None:
-        super().__init__(litgen_writer_context, block)
+    def __init__(self, lg_context: LitgenContext, block: CppBlock) -> None:
+        super().__init__(lg_context, block)
         self.adapted_elements = []
         self._fill_adapted_elements()
 
@@ -49,26 +49,26 @@ class AdaptedBlock(AdaptedElement):
 
         for child in self.cpp_element().block_children:
             if isinstance(child, CppEmptyLine):
-                self.adapted_elements.append(AdaptedEmptyLine(self.litgen_writer_context, child))
+                self.adapted_elements.append(AdaptedEmptyLine(self.lg_context, child))
             elif isinstance(child, CppComment):
-                self.adapted_elements.append(AdaptedComment(self.litgen_writer_context, child))
+                self.adapted_elements.append(AdaptedComment(self.lg_context, child))
             elif isinstance(child, CppStruct):
                 is_excluded_by_name = code_utils.does_match_regex(
                     self.options.class_exclude_by_name__regex, child.class_name
                 )
                 if not is_excluded_by_name:
-                    self.adapted_elements.append(AdaptedClass(self.litgen_writer_context, child))
+                    self.adapted_elements.append(AdaptedClass(self.lg_context, child))
             elif isinstance(child, CppFunctionDecl):
                 is_excluded_by_name = code_utils.does_match_regex(
                     self.options.fn_exclude_by_name__regex, child.function_name
                 )
                 if not is_excluded_by_name:
                     is_overloaded = self.cpp_element().is_function_overloaded(child)
-                    self.adapted_elements.append(AdaptedFunction(self.litgen_writer_context, child, is_overloaded))
+                    self.adapted_elements.append(AdaptedFunction(self.lg_context, child, is_overloaded))
             elif isinstance(child, CppEnum):
-                self.adapted_elements.append(AdaptedEnum(self.litgen_writer_context, child))
+                self.adapted_elements.append(AdaptedEnum(self.lg_context, child))
             elif isinstance(child, CppNamespace):
-                self.adapted_elements.append(AdaptedNamespace(self.litgen_writer_context, child))  # type: ignore
+                self.adapted_elements.append(AdaptedNamespace(self.lg_context, child))  # type: ignore
             elif isinstance(child, CppDeclStatement):
                 child.emit_warning(f"Block elements of type {child.tag()} are not supported in python conversion")
 

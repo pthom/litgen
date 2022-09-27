@@ -20,9 +20,9 @@ from litgen.internal.adapted_types.adapted_element import AdaptedElement
 class AdaptedEnumDecl(AdaptedDecl):
     enum_parent: AdaptedEnum
 
-    def __init__(self, litgen_writer_context: LitgenContext, decl: CppDecl, enum_parent: AdaptedEnum) -> None:
+    def __init__(self, lg_context: LitgenContext, decl: CppDecl, enum_parent: AdaptedEnum) -> None:
         self.enum_parent = enum_parent
-        super().__init__(litgen_writer_context, decl)
+        super().__init__(lg_context, decl)
 
     # override
     def cpp_element(self) -> CppDecl:
@@ -136,8 +136,8 @@ class AdaptedEnum(AdaptedElement):
     adapted_children: List[Union[AdaptedDecl, AdaptedEmptyLine, AdaptedComment]]
     adapted_enum_decls: List[AdaptedEnumDecl]
 
-    def __init__(self, litgen_writer_context: LitgenContext, enum_: CppEnum) -> None:
-        super().__init__(litgen_writer_context, enum_)
+    def __init__(self, lg_context: LitgenContext, enum_: CppEnum) -> None:
+        super().__init__(lg_context, enum_)
         self.adapted_children = []
         self.adapted_enum_decls = []
         self._fill_children()
@@ -157,13 +157,13 @@ class AdaptedEnum(AdaptedElement):
         children_with_values = self.cpp_element().get_children_with_filled_decl_values()
         for c_child in children_with_values:
             if isinstance(c_child, CppEmptyLine):
-                self.adapted_children.append(AdaptedEmptyLine(self.litgen_writer_context, c_child))
+                self.adapted_children.append(AdaptedEmptyLine(self.lg_context, c_child))
             elif isinstance(c_child, CppComment):
-                self.adapted_children.append(AdaptedComment(self.litgen_writer_context, c_child))
+                self.adapted_children.append(AdaptedComment(self.lg_context, c_child))
             elif isinstance(c_child, CppDecl):
                 is_count = cpp_to_python.enum_element_is_count(self.options, self.cpp_element(), c_child)
                 if not is_count:
-                    new_adapted_decl = AdaptedEnumDecl(self.litgen_writer_context, c_child, self)
+                    new_adapted_decl = AdaptedEnumDecl(self.lg_context, c_child, self)
                     self.adapted_children.append(new_adapted_decl)
                     self.adapted_enum_decls.append(new_adapted_decl)
 

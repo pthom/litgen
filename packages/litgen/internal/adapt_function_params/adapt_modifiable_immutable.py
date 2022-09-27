@@ -84,7 +84,7 @@ def adapt_modifiable_immutable(adapted_function: AdaptedFunction) -> Optional[La
             #
             new_param = copy.deepcopy(old_adapted_param.cpp_element())
             boxed_type = BoxedPythonType(
-                adapted_function.litgen_writer_context.boxed_types_registry,
+                adapted_function.lg_context.boxed_types_registry,
                 old_adapted_param.cpp_element().decl.cpp_type.name_without_modifier_specifier(),
             )
             new_decl = new_param.decl

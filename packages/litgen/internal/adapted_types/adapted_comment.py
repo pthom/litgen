@@ -10,8 +10,8 @@ from litgen.internal.adapted_types.adapted_element import AdaptedElement
 
 @dataclass
 class AdaptedEmptyLine(AdaptedElement):
-    def __init__(self, litgen_writer_context: LitgenContext, cpp_empty_line: CppEmptyLine) -> None:
-        super().__init__(litgen_writer_context, cpp_empty_line)
+    def __init__(self, lg_context: LitgenContext, cpp_empty_line: CppEmptyLine) -> None:
+        super().__init__(lg_context, cpp_empty_line)
 
     # override
     def cpp_element(self) -> CppEmptyLine:
@@ -31,8 +31,8 @@ class AdaptedEmptyLine(AdaptedElement):
 
 @dataclass
 class AdaptedComment(AdaptedElement):
-    def __init__(self, litgen_writer_context: LitgenContext, cpp_comment: CppComment):
-        super().__init__(litgen_writer_context, cpp_comment)
+    def __init__(self, lg_context: LitgenContext, cpp_comment: CppComment):
+        super().__init__(lg_context, cpp_comment)
 
     # override
     def cpp_element(self) -> CppComment:

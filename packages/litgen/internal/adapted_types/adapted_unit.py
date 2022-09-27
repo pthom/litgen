@@ -15,8 +15,8 @@ from litgen.internal.adapted_types.adapted_element import (
 
 
 class AdaptedUnit(AdaptedBlock):
-    def __init__(self, litgen_writer_context: LitgenContext, unit: CppUnit):
-        super().__init__(litgen_writer_context, unit)
+    def __init__(self, lg_context: LitgenContext, unit: CppUnit):
+        super().__init__(lg_context, unit)
         self.options.check_options_consistency()
         global_progress_bars().start_progress_bar(_PROGRESS_BAR_TITLE_ADAPTED_ELEMENTS)
         global_progress_bars().stop_progress_bar(_PROGRESS_BAR_TITLE_ADAPTED_ELEMENTS)

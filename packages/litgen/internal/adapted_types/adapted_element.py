@@ -18,12 +18,12 @@ _PROGRESS_BAR_TITLE_STUB = "litgen:   Generate stubs..................... "
 class AdaptedElement:  # (abc.ABC):  # Cannot be abstract (mypy limitation:  https://github.com/python/mypy/issues/5374)
     _cpp_element: CppElementAndComment
     options: LitgenOptions
-    litgen_writer_context: LitgenContext
+    lg_context: LitgenContext
 
-    def __init__(self, litgen_writer_context: LitgenContext, cpp_element: CppElementAndComment) -> None:
+    def __init__(self, lg_context: LitgenContext, cpp_element: CppElementAndComment) -> None:
         self._cpp_element = cpp_element
-        self.litgen_writer_context = litgen_writer_context
-        self.options = litgen_writer_context.options
+        self.lg_context = lg_context
+        self.options = lg_context.options
         element_line = cpp_element.start().line
         global_progress_bars().set_current_line(_PROGRESS_BAR_TITLE_ADAPTED_ELEMENTS, element_line)
 

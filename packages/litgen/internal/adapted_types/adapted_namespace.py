@@ -16,9 +16,9 @@ from litgen.internal import cpp_to_python
 class AdaptedNamespace(AdaptedElement):
     adapted_block: AdaptedBlock
 
-    def __init__(self, litgen_writer_context: LitgenContext, namespace_: CppNamespace) -> None:
-        super().__init__(litgen_writer_context, namespace_)
-        self.adapted_block = AdaptedBlock(self.litgen_writer_context, self.cpp_element().block)
+    def __init__(self, lg_context: LitgenContext, namespace_: CppNamespace) -> None:
+        super().__init__(lg_context, namespace_)
+        self.adapted_block = AdaptedBlock(self.lg_context, self.cpp_element().block)
 
     def namespace_name(self) -> str:
         return self.cpp_element().ns_name

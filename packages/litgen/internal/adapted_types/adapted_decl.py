@@ -11,8 +11,8 @@ from litgen.internal.adapted_types.adapted_element import AdaptedElement
 
 @dataclass
 class AdaptedDecl(AdaptedElement):
-    def __init__(self, litgen_writer_context: LitgenContext, decl: CppDecl) -> None:
-        super().__init__(litgen_writer_context, decl)
+    def __init__(self, lg_context: LitgenContext, decl: CppDecl) -> None:
+        super().__init__(lg_context, decl)
 
     # override
     def cpp_element(self) -> CppDecl:
@@ -72,7 +72,7 @@ class AdaptedDecl(AdaptedElement):
         new_cpp_decl.cpp_type.specifiers.append("const")
         new_cpp_decl.decl_name = new_cpp_decl.decl_name
 
-        new_adapted_decl = AdaptedDecl(self.litgen_writer_context, new_cpp_decl)
+        new_adapted_decl = AdaptedDecl(self.lg_context, new_cpp_decl)
         return new_adapted_decl
 
     def c_array_fixed_size_to_mutable_new_boxed_decls(self) -> List[AdaptedDecl]:
@@ -99,7 +99,7 @@ class AdaptedDecl(AdaptedElement):
         cpp_type_name = cpp_element.cpp_type.str_code()
 
         if cpp_to_python.is_cpp_type_immutable_for_python(cpp_type_name):
-            boxed_type = BoxedPythonType(self.litgen_writer_context.boxed_types_registry, cpp_type_name)
+            boxed_type = BoxedPythonType(self.lg_context.boxed_types_registry, cpp_type_name)
             cpp_type_name = boxed_type.boxed_type_name()
 
         new_decls: List[AdaptedDecl] = []
