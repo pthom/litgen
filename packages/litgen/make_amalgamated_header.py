@@ -157,7 +157,7 @@ def _amalgamate_one_file(
             and len(code_line.strip()) > 0
             and not _is_local_include_line(options, code_line)
         ):
-            parsed_result = parsed_result + _decorate_code_info(included_filename_relative + " continued")
+            parsed_result = parsed_result + _decorate_code_info(included_filename_relative + " continued") + "\n"
             was_file_interrupted_by_include = False
         if _is_external_include_line(options, code_line):
             external_file = _extract_external_include_file(code_line)
