@@ -1,7 +1,7 @@
 from codemanip import code_utils
 
 from litgen.internal import cpp_to_python
-from litgen.internal.boxed_python_types_registry import BoxedPythonTypesRegistry
+from litgen.internal.litgen_context import LitgenContext
 
 
 def _can_box_cpp_type(cpp_type: str) -> bool:
@@ -17,8 +17,8 @@ def boxed_type_name(cpp_type: str) -> str:
     return boxed_name
 
 
-def registered_boxed_type_name(registry: BoxedPythonTypesRegistry, cpp_type: str) -> str:
-    registry.register_cpp_type(cpp_type)
+def registered_boxed_type_name(context: LitgenContext, cpp_type: str) -> str:
+    context.encountered_cpp_boxed_types.add(cpp_type)
     return boxed_type_name(cpp_type)
 
 

@@ -98,9 +98,7 @@ class AdaptedDecl(AdaptedElement):
         cpp_type_name = cpp_element.cpp_type.str_code()
 
         if cpp_to_python.is_cpp_type_immutable_for_python(cpp_type_name):
-            boxed_type_name = boxed_python_type.registered_boxed_type_name(
-                self.lg_context.boxed_types_registry, cpp_type_name
-            )
+            boxed_type_name = boxed_python_type.registered_boxed_type_name(self.lg_context, cpp_type_name)
             cpp_type_name = boxed_type_name
 
         new_decls: List[AdaptedDecl] = []

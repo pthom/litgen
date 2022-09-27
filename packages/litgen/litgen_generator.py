@@ -56,7 +56,7 @@ class LitgenGenerator:
         return self.lg_context.options
 
     def has_boxed_types(self) -> bool:
-        return len(self.lg_context.boxed_types_registry.cpp_boxed_types) > 0
+        return len(self.lg_context.encountered_cpp_boxed_types) > 0
 
     def pydef_code(self) -> CppCode:
         pydef_codes = []
@@ -82,7 +82,7 @@ class LitgenGenerator:
         if self._omit_boxed_types_code:
             return ""
         cpp_codes = []
-        for cpp_boxed_type in self.lg_context.boxed_types_registry.cpp_boxed_types:
+        for cpp_boxed_type in self.lg_context.encountered_cpp_boxed_types:
             indent_str = self.lg_context.options.indent_cpp_spaces()
             cpp_codes.append(boxed_python_type.boxed_type_cpp_struct_code(cpp_boxed_type, indent_str))
         r = "".join(cpp_codes)

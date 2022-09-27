@@ -85,9 +85,7 @@ def adapt_modifiable_immutable(adapted_function: AdaptedFunction) -> Optional[La
             new_param = copy.deepcopy(old_adapted_param.cpp_element())
             cpp_type_str = old_adapted_param.cpp_element().decl.cpp_type.name_without_modifier_specifier()
 
-            boxed_type_name = boxed_python_type.registered_boxed_type_name(
-                adapted_function.lg_context.boxed_types_registry, cpp_type_str
-            )
+            boxed_type_name = boxed_python_type.registered_boxed_type_name(adapted_function.lg_context, cpp_type_str)
 
             new_decl = new_param.decl
             if is_optional_type:

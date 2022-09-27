@@ -450,13 +450,21 @@ Faire un tour dans cpp_to_python pour mettre en privé les function d'acces au c
 
 *** Handle Namespace
 
-Idée: LitgenWriterContext avec dedans Options + status (liste des modules, de leur stubs, etc.)
-  En cours:
+
+Savoir gerer plusieurs occurences du meme namespace
+=> LitgenContext: store namespaces
+
 
 
 L'idee d'utiliser une fake class risque d'echouer, car un meme namespace peut apparaitre plusieurs fois!
    Contournement possible: stocker tout, puis dump a la fin dans le meme fichier?
 Idem dans pydef!
+
+
+Argh Argh les namespaces sont recursifs, c'est un arbre
+
+
+
 
 **** Strategy
 

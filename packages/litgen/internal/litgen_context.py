@@ -1,10 +1,26 @@
-from typing import List, Any
+from typing import Dict, Set
 from dataclasses import dataclass
 
 from litgen.options import LitgenOptions
-from litgen.internal.boxed_python_types_registry import BoxedPythonTypesRegistry
-
 from srcmlcpp.cpp_scope import CppScope
+
+
+CppQualifiedNamespaceName = str
+StubCode = str
+CppTypeName = str
+
+
+class NamespacesStubCode:
+    _namespaces_stub_code: Dict[CppQualifiedNamespaceName, StubCode]
+
+    def __init__(self) -> None:
+        self._namespaces_stub_code = {}
+
+    def store_namespace_stub_code(self, namespace_scope: CppScope, code: str) -> None:
+        ns_name = namespace_scope.str_cpp()
+        if ns_name not in self._namespaces_stub_code.keys():
+            self._namespaces_stub_code[ns_name] = ""
+        self._namespaces_stub_code[ns_name] += code
 
 
 @dataclass
@@ -15,22 +31,12 @@ class LitgenContext:
     """
 
     options: LitgenOptions
-    _encountered_namespace_scopes: List[CppScope]
-    boxed_types_registry: BoxedPythonTypesRegistry
+    encountered_cpp_boxed_types: Set[CppTypeName]
+    created_cpp_namespaces: Set[CppQualifiedNamespaceName]
+    namespaces_stub_code: NamespacesStubCode
 
     def __init__(self, options: LitgenOptions):
         self.options = options
-        self._encountered_namespace_scopes = []
-        self.boxed_types_registry = BoxedPythonTypesRegistry()
-
-    def register_namespace_scope(self, adapted_namespace: Any) -> None:
-        pass
-
-    def has_encountered_namespace(self, adapted_namespace: Any) -> bool:
-        pass
-
-    def store_namespace_stub_code(self, adapted_namespace: Any, code: str) -> None:
-        pass
-
-    def str_stub_namespaces(self) -> str:
-        pass
+        self.encountered_cpp_boxed_types = set()
+        self.created_cpp_namespaces = set()
+        self.namespaces_stub_code = NamespacesStubCode()

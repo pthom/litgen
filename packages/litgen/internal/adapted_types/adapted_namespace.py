@@ -41,8 +41,7 @@ class AdaptedNamespace(AdaptedElement):
 
         proxy_class_code = code_utils.unindent_code(
             f"""
-            class {ns_name}:
-            {_i_}# Proxy class that introduces the C++ namespace {ns_name}
+            class {ns_name}: # Proxy class that introduces the C++ namespace {ns_name}
             {_i_}# This class actually represents a namespace: all its method are static!
             """,
             flag_strip_empty_lines=True,
@@ -62,9 +61,21 @@ class AdaptedNamespace(AdaptedElement):
         lines.append(f"# </namespace {self.namespace_name()}>")
         lines.append("")
 
-        return lines
+        if self.flag_create_python_namespace():
+            namespace_scope = self.cpp_element().cpp_scope(include_self=True)
+            code = "\n".join(lines)
+            self.lg_context.namespaces_stub_code.store_namespace_stub_code(namespace_scope, code)
+            return []
+        else:
+            return lines
 
     def _pydef_make_submodule_code(self) -> str:
+        namespace_qualified_name = self.cpp_element().cpp_scope(include_self=True).str_cpp()
+        if namespace_qualified_name in self.lg_context.created_cpp_namespaces:
+            return ""
+
+        self.lg_context.created_cpp_namespaces.add(namespace_qualified_name)
+
         submodule_code_template = (
             'py::module_ {submodule_cpp_var} = {parent_module_cpp_var}.def_submodule("{module_name}", "{module_doc}");'
         )
@@ -94,12 +105,12 @@ class AdaptedNamespace(AdaptedElement):
         location = self.info_original_location_cpp()
         namespace_name = self.namespace_name()
         block_code_lines = self.adapted_block._str_pydef_lines()
-        submodule_code = self._pydef_make_submodule_code()
 
         lines: List[str] = []
 
         lines.append(f"// <namespace {namespace_name}>{location}")
         if self.flag_create_python_namespace():
+            submodule_code = self._pydef_make_submodule_code()
             lines += [submodule_code]
             lines += block_code_lines
         else:
