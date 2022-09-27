@@ -95,7 +95,7 @@ def generated_code_for_registered_boxed_types(
 
     lg_writer_context_boxed = make_standalone_writer_context()
 
-    r = GeneratedBoxedTypeCode()
+    r = GeneratedBoxedTypeCode("BoxedTypes")
 
     for cpp_type in cpp_boxed_types:
         boxed_type = _BoxedPythonTypeImpl(cpp_type)

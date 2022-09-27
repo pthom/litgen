@@ -7,6 +7,7 @@ from srcmlcpp.srcml_types import *
 from litgen.internal import cpp_to_python
 from litgen.litgen_context import LitgenContext
 from litgen.internal.adapted_types.adapted_element import AdaptedElement
+from litgen.internal import boxed_python_type2
 
 
 @dataclass
@@ -87,8 +88,6 @@ class AdaptedDecl(AdaptedElement):
 
         :return: a list of CppDecls as described before
         """
-        from litgen.internal.boxed_python_type import BoxedPythonType
-
         cpp_element = self.cpp_element()
         array_size = cpp_element.c_array_size_as_int()
 
@@ -99,8 +98,10 @@ class AdaptedDecl(AdaptedElement):
         cpp_type_name = cpp_element.cpp_type.str_code()
 
         if cpp_to_python.is_cpp_type_immutable_for_python(cpp_type_name):
-            boxed_type = BoxedPythonType(self.lg_context.boxed_types_registry, cpp_type_name)
-            cpp_type_name = boxed_type.boxed_type_name()
+            boxed_type_name = boxed_python_type2.registered_boxed_type_name(
+                self.lg_context.boxed_types_registry, cpp_type_name
+            )
+            cpp_type_name = boxed_type_name
 
         new_decls: List[AdaptedDecl] = []
         for i in range(array_size):

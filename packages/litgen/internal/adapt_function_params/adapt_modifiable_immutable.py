@@ -6,7 +6,7 @@ from srcmlcpp.srcml_types import CppParameter
 
 from litgen.internal.adapt_function_params._lambda_adapter import LambdaAdapter
 from litgen.internal.adapted_types import AdaptedFunction, AdaptedParameter
-from litgen.internal.boxed_python_type import BoxedPythonType
+from litgen.internal import boxed_python_type2
 
 
 def adapt_modifiable_immutable(adapted_function: AdaptedFunction) -> Optional[LambdaAdapter]:
@@ -83,17 +83,19 @@ def adapt_modifiable_immutable(adapted_function: AdaptedFunction) -> Optional[La
             # Create new calling param (BoxedType<T>)
             #
             new_param = copy.deepcopy(old_adapted_param.cpp_element())
-            boxed_type = BoxedPythonType(
-                adapted_function.lg_context.boxed_types_registry,
-                old_adapted_param.cpp_element().decl.cpp_type.name_without_modifier_specifier(),
+            cpp_type_str = old_adapted_param.cpp_element().decl.cpp_type.name_without_modifier_specifier()
+
+            boxed_type_name = boxed_python_type2.registered_boxed_type_name(
+                adapted_function.lg_context.boxed_types_registry, cpp_type_str
             )
+
             new_decl = new_param.decl
             if is_optional_type:
-                new_decl.cpp_type.typenames = [boxed_type.boxed_type_name()]
+                new_decl.cpp_type.typenames = [boxed_type_name]
                 new_decl.cpp_type.modifiers = ["*"]
                 new_decl.initial_value_code = "nullptr"
             else:
-                new_decl.cpp_type.typenames = [boxed_type.boxed_type_name()]
+                new_decl.cpp_type.typenames = [boxed_type_name]
                 new_decl.cpp_type.modifiers = ["&"]
             new_decl.cpp_type.specifiers = []
             new_function_params.append(new_param)

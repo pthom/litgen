@@ -4,7 +4,7 @@ from codemanip import code_utils
 
 import litgen
 from litgen.make_amalgamated_header import AmalgamationOptions, write_amalgamate_header_file
-
+from litgen import litgen_generator
 
 THIS_DIR = os.path.dirname(os.path.realpath(__file__))
 CPP_LIB_DIR = THIS_DIR + "/mylib"
@@ -76,10 +76,9 @@ def mylib_litgen_options() -> litgen.LitgenOptions:
 
 def autogenerate_mylib() -> None:
     print("autogenerate_mylib")
-    input_cpp_header = CPP_AMALGAMATED_HEADER
+
     output_cpp_module = CPP_GENERATED_PYBIND_DIR + "/pybind_mylib.cpp"
     output_stub_pyi_file = CPP_GENERATED_PYBIND_DIR + "/lg_mylib/__init__.pyi"
-    output_boxed_types_header_file = CPP_GENERATED_PYBIND_DIR + "/mylib_boxed_types.h"
 
     # Configure options
     options = mylib_litgen_options()
@@ -90,20 +89,13 @@ def autogenerate_mylib() -> None:
     use_amalgamated_header = True
     if use_amalgamated_header:
         make_testrunner_amalgamated_header()
-        generated_code = litgen.generate_code(options, filename=input_cpp_header, add_boxed_types_definitions=True)
+        litgen_generator.write_generated_code_for_file(
+            options, CPP_AMALGAMATED_HEADER, output_cpp_module, output_stub_pyi_file
+        )
     else:
-        all_headers = all_header_files()
-        files = List[litgen.CppFile]
-        for header in all_headers:
-            files.files.append(litgen.CppFile(options, filename=header))
-        generated_code = litgen.generate_code_for_files(files, add_boxed_types_definitions=True)
-
-    litgen.write_generated_code(
-        generated_code,
-        output_cpp_pydef_file=output_cpp_module,
-        output_stub_pyi_file=output_stub_pyi_file,
-        output_boxed_types_header_file=output_boxed_types_header_file,
-    )
+        litgen_generator.write_generated_code_for_files(
+            options, all_header_files(), output_cpp_module, output_stub_pyi_file
+        )
 
 
 if __name__ == "__main__":
