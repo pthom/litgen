@@ -146,9 +146,7 @@ PimpMyCi:
 * Dyndoc
 Voir note sur telephone
 
-* Litgen doc
-
-** Sources de stubs connues: $
+* Litgen doc** Sources de stubs connues: $
 Voir https://github.com/python/typeshed and https://github.com/microsoft/python-type-stubs
 
 
@@ -439,19 +437,132 @@ Problem 3: dans lg_test_runner (integration tests), tout est refusé (trouve pas
 
 Faire un tour dans cpp_to_python pour mettre en privé les function d'acces au comment qui ne font pas de replace
 
+
+** Litgen Generator
+
+#+begin_src python
+  driver = LitgenDriver(options)
+
+  driver.parse_header(filename)
+  # or
+  driver.parse_code(code, opt_filename)
+
+  driver.write_generated_code()
+
+#+end_src
+
+**** Diagramme / Litgen driver
+
+(local-unset-key "M-a")
+(define-prefix-command 'pascal-map)
+(define-key pascal-map (kbd "s") 'org-babel-execute-src-block)
+(local-set-key (kbd "M-a") 'pascal-map)
+(setq org-confirm-babel-evaluate nil)
+
+#+begin_src plantuml :file packages/litgen/doc/litgen_driver.png :eval yes
+
+  class LitgenOptions {
+  }
+
+  class LitgenContext {
+          ---
+          store boxed types
+          and namespaces
+  }
+
+  LitgenContext *-- LitgenOptions
+
+  class LitgenDriver {
+
+          + __init__(options)
+          + parse_header(filename)
+          + parse_code(code, filename: Opt[str])
+          + write_generated_code(pydef_file, stub_file)
+  }
+
+  LitgenDriver *-- LitgenContext
+
+#+end_src
+
+#+RESULTS:
+[[file:packages/litgen/doc/litgen_driver.png]]
+
+
+**** Diagramme / generation old
+
+
+
+
+#+begin_src plantuml :file packages/litgen/doc/litgen_generate_diagram.png
+
+  Class CppFile {
+          filename: Optional[str]
+          code: str
+          +__init__(options)
+
+  }
+
+  class GeneratedCodeForOneFile {
+          filename: str
+          pydef_code: CppPydefCode = ""
+          stub_code: PythonStubCode = ""
+  }
+
+
+  Class GeneratedBoxedTypeCode {
+          generated_code: GeneratedCodeForOneFile
+          boxed_types_cpp_declaration: CppHeaderCode
+  }
+
+  class GeneratedCode {
+          pydef_code: CppPydefCode
+          stub_code: PythonStubCode
+          boxed_types_cpp_declaration: Opt[CppHeaderCode]
+          ---
+
+          + __init__(
+          self,
+          generated_one_files: [GeneratedCodeForOneFile],
+          generated_boxed_type_code: Opt[GeneratedBoxedTypeCode],
+          add_boxed_types_definitions: bool,
+          options: LitgenOptions)
+    ):
+  }
+
+  class _BoxedPythonTypeImpl {
+          cpp_type: str
+  }
+
+  class BoxedPythonType {
+
+  }
+
+  class BoxedPythonTypesRegistry {
+  }
+
+  class LitgenOptions {
+  }
+
+  class Litgen
+
+#+end_src
+
+#+RESULTS:
+[[file:packages/litgen/doc/litgen_generate_diagram.png]]
+
+
+
 ** Handle scope
 
 *** Handle Namespace
 
 Idée: LitgenWriterContext avec dedans Options + status (liste des modules, de leur stubs, etc.)
   En cours:
-    creation pluggee a l'arrache dans code_to_adapted_unit :
-    a revoir en faisant attention au points d'entree de l'API. On peut avoir plusieurs fichiers!
 
-    Argh: _generate_code_impl_one_file bypasse les options de CppFileAndOptions
-    ==> faire avec et virer les multiples options
 
-    Argh2 : maintenant, probleme sur generation ImGui
+    Argh3 : maintenant, probleme sur generation ImGui
+        Il faut virer generate_code_for_files, ajouter un merge
+        simplifier a fond generate.py, ca fait mal a la tete...
 
 
 L'idee d'utiliser une fake class risque d'echouer, car un meme namespace peut apparaitre plusieurs fois!

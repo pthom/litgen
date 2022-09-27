@@ -542,3 +542,31 @@ def cpp_type_default_python_value(cpp_type: str) -> Optional[str]:
         return "false"
 
     return None
+
+
+def _surround_code_with_filename_impl(
+    options: LitgenOptions, filename: Optional[str], code: str, decoration_token: str
+) -> str:
+    if filename is None or len(filename) == 0:
+        return code
+
+    filename_short = code_utils.filename_with_n_parent_folders(filename, options.original_location_nb_parent_folders)
+
+    def decorate_impl(is_end: bool) -> str:
+        end_marker = "/" if is_end else ""
+        decoration = decoration_token * 20
+        r = f"{decoration}    <{end_marker}generated_from:{filename_short}>    {decoration}\n"
+        return r
+
+    intro = decorate_impl(False)
+    outro = decorate_impl(True)
+    r = intro + code + outro
+    return r
+
+
+def surround_cpp_code_with_filename(options: LitgenOptions, filename: Optional[str], code: str):
+    return _surround_code_with_filename_impl(options, filename, code, "/")
+
+
+def surround_python_code_with_filename(options: LitgenOptions, filename: Optional[str], code: str):
+    return _surround_code_with_filename_impl(options, filename, code, "#")
