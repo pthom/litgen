@@ -153,9 +153,9 @@ PimpMyCi:
 * Dyndoc
 Voir note sur telephone
 
-* Litgen doc** Sources de stubs connues: $
+* Litgen doc
+** Sources de stubs connues: $
 Voir https://github.com/python/typeshed and https://github.com/microsoft/python-type-stubs
-
 
 ** Alternatives a litgen:
         https://pybind11.readthedocs.io/en/stable/compiling.html#generating-binding-code-automatically
@@ -445,30 +445,6 @@ Problem 3: dans lg_test_runner (integration tests), tout est refusé (trouve pas
 Faire un tour dans cpp_to_python pour mettre en privé les function d'acces au comment qui ne font pas de replace
 
 
-** Litgen Generator
-
-BoxedTypes:
-  correct autogenerate imgui / bundle / template
-
-
-
-#+begin_src python
-  driver = LitgenDriver(options)
-
-  driver.parse_header(filename)
-  # or
-  driver.parse_code(code, opt_filename)
-
-  driver.write_generated_code()
-
-#+end_src
-
-
-
-
-#+RESULTS:
-[[file:packages/litgen/doc/litgen_driver.png]]
-
 
 ** Handle scope
 
@@ -476,11 +452,6 @@ BoxedTypes:
 
 Idée: LitgenWriterContext avec dedans Options + status (liste des modules, de leur stubs, etc.)
   En cours:
-
-
-    Argh3 : maintenant, probleme sur generation ImGui
-        Il faut virer generate_code_for_files, ajouter un merge
-        simplifier a fond generate.py, ca fait mal a la tete...
 
 
 L'idee d'utiliser une fake class risque d'echouer, car un meme namespace peut apparaitre plusieurs fois!

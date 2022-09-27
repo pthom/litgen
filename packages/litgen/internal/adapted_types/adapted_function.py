@@ -6,7 +6,7 @@ from munch import Munch  # type: ignore
 from srcmlcpp.srcml_types import *
 
 from litgen.internal import cpp_to_python
-from litgen.litgen_context import LitgenContext
+from litgen.internal.litgen_context import LitgenContext
 from litgen.internal.adapted_types.adapted_decl import AdaptedDecl
 from litgen.internal.adapted_types.adapted_element import AdaptedElement
 

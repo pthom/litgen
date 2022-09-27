@@ -4,7 +4,7 @@ from codemanip.parse_progress_bar import global_progress_bars
 
 from srcmlcpp.srcml_types import CppUnit
 
-from litgen.litgen_context import LitgenContext
+from litgen.internal.litgen_context import LitgenContext
 from litgen.internal.adapted_types.adapted_block import AdaptedBlock
 from litgen.internal.adapted_types.adapted_element import (
     AdaptedElement,

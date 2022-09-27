@@ -6,7 +6,7 @@ from codemanip import code_utils
 
 from srcmlcpp.srcml_types import CppNamespace
 
-from litgen.litgen_context import LitgenContext
+from litgen.internal.litgen_context import LitgenContext
 from litgen.internal.adapted_types.adapted_element import AdaptedElement
 from litgen.internal.adapted_types.adapted_block import AdaptedBlock
 from litgen.internal import cpp_to_python

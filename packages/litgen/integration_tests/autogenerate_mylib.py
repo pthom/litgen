@@ -3,7 +3,7 @@ import os
 from codemanip import code_utils
 
 import litgen
-from litgen.make_amalgamated_header import AmalgamationOptions, write_amalgamate_header_file
+from codemanip.make_amalgamated_header import AmalgamationOptions, write_amalgamate_header_file
 from litgen import litgen_generator
 
 THIS_DIR = os.path.dirname(os.path.realpath(__file__))
