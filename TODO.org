@@ -24,6 +24,13 @@ Format text: Here is *some* content, and some //italic//
 
 *** diagrams and drawings
 
+
+(local-unset-key "M-a")
+(define-prefix-command 'pascal-map)
+(define-key pascal-map (kbd "s") 'org-babel-execute-src-block)
+(local-set-key (kbd "M-a") 'pascal-map)
+(setq org-confirm-babel-evaluate nil)
+
 *** With mermaid
 
 Installed https://github.com/arnm/ob-mermaid
@@ -441,13 +448,8 @@ Faire un tour dans cpp_to_python pour mettre en privé les function d'acces au c
 ** Litgen Generator
 
 BoxedTypes:
-  ajout mode / amalgamation dans mylib
-  recup unit test utiles
-  delete BoxedTypes orig
-
-  delete generate orig
-
   correct autogenerate imgui / bundle / template
+
 
 
 #+begin_src python
@@ -461,111 +463,11 @@ BoxedTypes:
 
 #+end_src
 
-**** Diagramme / Litgen driver
 
-(local-unset-key "M-a")
-(define-prefix-command 'pascal-map)
-(define-key pascal-map (kbd "s") 'org-babel-execute-src-block)
-(local-set-key (kbd "M-a") 'pascal-map)
-(setq org-confirm-babel-evaluate nil)
 
-#+begin_src plantuml :file packages/litgen/doc/litgen_driver.png :eval yes
-
-  class LitgenOptions {
-  }
-
-  class LitgenContext {
-          ---
-          store boxed types
-          and namespaces
-  }
-
-  LitgenContext *-- LitgenOptions
-
-  class LitgenGenerator {
-          + __init__(options)
-          + process_cpp_header(filename)
-          + process_cpp_headers([filenames])
-          + process_cpp_code(code, filename: Opt[str])
-          + write_generated_code(pydef_file, stub_file)
-  }
-
-  class LitgenGenerator_test_utils {
-          pydef_code()
-          stub_code()
-
-  }
-
-  LitgenDriver *-- LitgenContext
-
-#+end_src
 
 #+RESULTS:
 [[file:packages/litgen/doc/litgen_driver.png]]
-
-
-**** Diagramme / generation old
-
-
-
-
-#+begin_src plantuml :file packages/litgen/doc/litgen_generate_diagram.png
-
-  Class CppFile {
-          filename: Optional[str]
-          code: str
-          +__init__(options)
-
-  }
-
-  class GeneratedCodeForOneFile {
-          filename: str
-          pydef_code: CppPydefCode = ""
-          stub_code: PythonStubCode = ""
-  }
-
-
-  Class GeneratedBoxedTypeCode {
-          generated_code: GeneratedCodeForOneFile
-          boxed_types_cpp_declaration: CppHeaderCode
-  }
-
-  class GeneratedCode {
-          pydef_code: CppPydefCode
-          stub_code: PythonStubCode
-          boxed_types_cpp_declaration: Opt[CppHeaderCode]
-          ---
-
-          + __init__(
-          self,
-          generated_one_files: [GeneratedCodeForOneFile],
-          generated_boxed_type_code: Opt[GeneratedBoxedTypeCode],
-          add_boxed_types_definitions: bool,
-          options: LitgenOptions)
-    ):
-  }
-
-  class _BoxedPythonTypeImpl {
-          cpp_type: str
-  }
-
-  class BoxedPythonType {
-
-  }
-
-  class BoxedPythonTypesRegistry {
-  }
-
-  class LitgenOptions {
-  }
-
-  class Litgen
-
-#+end_src
-
-#+RESULTS:
-[[file:packages/litgen/doc/litgen_generate_diagram.png]]
-
 
 
 ** Handle scope
