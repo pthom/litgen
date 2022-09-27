@@ -7,7 +7,7 @@ from srcmlcpp.srcml_types import *
 from litgen.internal import cpp_to_python
 from litgen.litgen_context import LitgenContext
 from litgen.internal.adapted_types.adapted_element import AdaptedElement
-from litgen.internal import boxed_python_type2
+from litgen.internal import boxed_python_type
 
 
 @dataclass
@@ -98,7 +98,7 @@ class AdaptedDecl(AdaptedElement):
         cpp_type_name = cpp_element.cpp_type.str_code()
 
         if cpp_to_python.is_cpp_type_immutable_for_python(cpp_type_name):
-            boxed_type_name = boxed_python_type2.registered_boxed_type_name(
+            boxed_type_name = boxed_python_type.registered_boxed_type_name(
                 self.lg_context.boxed_types_registry, cpp_type_name
             )
             cpp_type_name = boxed_type_name

@@ -8,7 +8,7 @@ from codemanip import code_utils
 from litgen import LitgenContext, LitgenOptions
 from litgen.code_to_adapted_unit import code_to_adapted_unit
 from litgen.internal import cpp_to_python
-from litgen.internal import boxed_python_type2
+from litgen.internal import boxed_python_type
 
 CppFilename = str
 CppCode = str
@@ -83,7 +83,7 @@ class LitgenGenerator:
         cpp_codes = []
         for cpp_boxed_type in self.lg_context.boxed_types_registry.cpp_boxed_types:
             indent_str = self.lg_context.options.indent_cpp_spaces()
-            cpp_codes.append(boxed_python_type2.boxed_type_cpp_struct_code(cpp_boxed_type, indent_str))
+            cpp_codes.append(boxed_python_type.boxed_type_cpp_struct_code(cpp_boxed_type, indent_str))
         r = "".join(cpp_codes)
         return r
 
