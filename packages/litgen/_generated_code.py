@@ -13,18 +13,38 @@ Filename = str
 
 
 @dataclass
+class CppFile:
+    filename: Optional[str]
+    code: str
+
+    def __init__(self, options: LitgenOptions, filename: Optional[str] = None, code: Optional[str] = None):
+        if filename is None and code is None:
+            raise ValueError("filename and code cannot be None together")
+        self.filename = filename
+
+        if code is None:
+            assert filename is not None  # make mypy happy
+            with open(filename, "r", encoding=options.srcml_options.encoding) as f:
+                self.code = f.read()
+        else:
+            self.code = code
+
+
 class GeneratedCodeForOneFile:
-    translated_cpp_filename: Optional[str] = None
+    filename: str
     pydef_code: CppPydefCode = ""
     stub_code: PythonStubCode = ""
+
+    def __init__(self, filename: str):
+        self.filename = filename
 
 
 class GeneratedBoxedTypeCode:
     generated_code: GeneratedCodeForOneFile
     boxed_types_cpp_declaration: CppHeaderCode
 
-    def __init__(self) -> None:
-        self.generated_code = GeneratedCodeForOneFile()
+    def __init__(self, filename: str) -> None:
+        self.generated_code = GeneratedCodeForOneFile(filename)
         self.boxed_types_cpp_declaration = ""
 
 
@@ -49,7 +69,7 @@ class GeneratedCode:
 
         def decorate_code(filename: Optional[str], code: str, decoration_token: str) -> str:
             r = ""
-            if filename is not None:
+            if filename is not None and len(filename) > 0:
                 filename_short = code_utils.filename_with_n_parent_folders(
                     filename, options.original_location_nb_parent_folders
                 )
@@ -70,7 +90,7 @@ class GeneratedCode:
             self.stub_code += decorate_code("BoxedTypes", generated_boxed_type_code.generated_code.stub_code, "#")
 
         for generated_one_file in generated_one_files:
-            filename = generated_one_file.translated_cpp_filename
+            filename = generated_one_file.filename
             self.pydef_code += decorate_code(filename, generated_one_file.pydef_code, "/")
             self.stub_code += decorate_code(filename, generated_one_file.stub_code, "#")
 
@@ -78,21 +98,3 @@ class GeneratedCode:
             self.boxed_types_cpp_declaration = generated_boxed_type_code.boxed_types_cpp_declaration
         else:
             self.boxed_types_cpp_declaration = None
-
-
-@dataclass
-class CppFile:
-    filename: Optional[str]
-    code: str
-
-    def __init__(self, options: LitgenOptions, filename: Optional[str] = None, code: Optional[str] = None):
-        if filename is None and code is None:
-            raise ValueError("filename and code cannot be None together")
-        self.filename = filename
-
-        if code is None:
-            assert filename is not None  # make mypy happy
-            with open(filename, "r", encoding=options.srcml_options.encoding) as f:
-                self.code = f.read()
-        else:
-            self.code = code

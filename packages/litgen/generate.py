@@ -14,11 +14,10 @@ def _generate_code_impl_one_file(cpp_file: CppFile, lg_context: LitgenContext) -
         cpp_file.code,
         cpp_file.filename,
     )
-
-    generated_code = GeneratedCodeForOneFile()
+    filename = cpp_file.filename if cpp_file.filename is not None else ""
+    generated_code = GeneratedCodeForOneFile(filename)
     generated_code.pydef_code = adapted_unit.str_pydef()
     generated_code.stub_code = adapted_unit.str_stub()
-    generated_code.translated_cpp_filename = cpp_file.filename
 
     # Apply Python code layout options
     options = lg_context.options
