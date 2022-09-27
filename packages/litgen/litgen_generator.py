@@ -36,16 +36,19 @@ class LitgenGenerator:
         code = _read_code(self.lg_context.options, filename)
         self._process_cpp_code(code, filename)
 
-    def write_generated_code(self, output_cpp_pydef_file: str, output_stub_pyi_file: str) -> None:
+    def write_generated_code(
+        self, output_cpp_pydef_file: str, output_stub_pyi_file: str, output_cpp_boxed_types_header: str = ""
+    ) -> None:
         pydef_code = self.pydef_code()
         stub_code = self.stub_code()
         code_utils.write_generated_code_between_markers(output_cpp_pydef_file, "pydef", pydef_code)
         code_utils.write_generated_code_between_markers(output_stub_pyi_file, "stub", stub_code)
 
-        if self.has_boxed_types():
+        if self.has_boxed_types() and not self._omit_boxed_types_code:
+            assert len(output_cpp_boxed_types_header) > 0
             boxed_types_cpp_code = self.boxed_types_cpp_code()
             code_utils.write_generated_code_between_markers(
-                output_cpp_pydef_file, "boxed_types_header", boxed_types_cpp_code
+                output_cpp_boxed_types_header, "boxed_types_header", boxed_types_cpp_code
             )
 
     def options(self) -> LitgenOptions:
@@ -75,6 +78,8 @@ class LitgenGenerator:
         return stub_code
 
     def boxed_types_cpp_code(self) -> CppCode:
+        if self._omit_boxed_types_code:
+            return ""
         cpp_codes = []
         for cpp_boxed_type in self.lg_context.boxed_types_registry.cpp_boxed_types:
             indent_str = self.lg_context.options.indent_cpp_spaces()
@@ -122,18 +127,25 @@ def write_generated_code_for_files(
     input_cpp_header_files: List[str],
     output_cpp_pydef_file: str = "",
     output_stub_pyi_file: str = "",
+    output_cpp_boxed_types_header: str = "",
 ) -> None:
 
     generator = LitgenGenerator(options)
     for cpp_header in input_cpp_header_files:
         generator.process_cpp_file(cpp_header)
-    generator.write_generated_code(output_cpp_pydef_file, output_stub_pyi_file)
+    generator.write_generated_code(output_cpp_pydef_file, output_stub_pyi_file, output_cpp_boxed_types_header)
 
 
 def write_generated_code_for_file(
-    options: LitgenOptions, input_cpp_header_file: str, output_cpp_pydef_file: str = "", output_stub_pyi_file: str = ""
+    options: LitgenOptions,
+    input_cpp_header_file: str,
+    output_cpp_pydef_file: str = "",
+    output_stub_pyi_file: str = "",
+    output_cpp_boxed_types_header: str = "",
 ) -> None:
-    return write_generated_code_for_files(options, [input_cpp_header_file], output_cpp_pydef_file, output_stub_pyi_file)
+    return write_generated_code_for_files(
+        options, [input_cpp_header_file], output_cpp_pydef_file, output_stub_pyi_file, output_cpp_boxed_types_header
+    )
 
 
 @dataclass

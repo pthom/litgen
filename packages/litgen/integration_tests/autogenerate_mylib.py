@@ -79,6 +79,7 @@ def autogenerate_mylib() -> None:
 
     output_cpp_module = CPP_GENERATED_PYBIND_DIR + "/pybind_mylib.cpp"
     output_stub_pyi_file = CPP_GENERATED_PYBIND_DIR + "/lg_mylib/__init__.pyi"
+    output_cpp_boxed_types_header = CPP_GENERATED_PYBIND_DIR + "/boxed_types.h"
 
     # Configure options
     options = mylib_litgen_options()
@@ -90,11 +91,11 @@ def autogenerate_mylib() -> None:
     if use_amalgamated_header:
         make_testrunner_amalgamated_header()
         litgen_generator.write_generated_code_for_file(
-            options, CPP_AMALGAMATED_HEADER, output_cpp_module, output_stub_pyi_file
+            options, CPP_AMALGAMATED_HEADER, output_cpp_module, output_stub_pyi_file, output_cpp_boxed_types_header
         )
     else:
         litgen_generator.write_generated_code_for_files(
-            options, all_header_files(), output_cpp_module, output_stub_pyi_file
+            options, all_header_files(), output_cpp_module, output_stub_pyi_file, output_cpp_boxed_types_header
         )
 
 
