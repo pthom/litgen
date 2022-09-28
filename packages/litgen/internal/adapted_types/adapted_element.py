@@ -6,7 +6,7 @@ from srcmlcpp.srcml_types import *
 
 from litgen.internal import cpp_to_python
 from litgen.options import LitgenOptions
-from litgen.internal.litgen_context import LitgenContext
+from litgen.internal.context.litgen_context import LitgenContext
 
 
 _PROGRESS_BAR_TITLE_ADAPTED_ELEMENTS = "litgen:   Create AdaptedElements............. "

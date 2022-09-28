@@ -5,6 +5,8 @@ class ReplacementsCache:
     """
     Store global replacements gathered from the code base
     (for example, enum member names, static class members, etc)
+
+    This is work in progress, and should become a member of LitgenContext
     """
 
     replacement_list: RegexReplacementList = RegexReplacementList()

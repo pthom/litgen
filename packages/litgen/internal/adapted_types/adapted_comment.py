@@ -4,7 +4,7 @@ from typing import List, cast
 from srcmlcpp.srcml_types import CppComment, CppEmptyLine
 
 from litgen.internal import cpp_to_python
-from litgen.internal.litgen_context import LitgenContext
+from litgen.internal.context.litgen_context import LitgenContext
 from litgen.internal.adapted_types.adapted_element import AdaptedElement
 
 

@@ -6,7 +6,7 @@ from codemanip import code_utils
 
 from srcmlcpp.srcml_types import CppNamespace
 
-from litgen.internal.litgen_context import LitgenContext
+from litgen.internal.context.litgen_context import LitgenContext
 from litgen.internal.adapted_types.adapted_element import AdaptedElement
 from litgen.internal.adapted_types.adapted_block import AdaptedBlock
 from litgen.internal import cpp_to_python
@@ -62,9 +62,9 @@ class AdaptedNamespace(AdaptedElement):
         lines.append("")
 
         if self.flag_create_python_namespace():
-            namespace_scope = self.cpp_element().cpp_scope(include_self=True)
+            namespace_qualified_name = self.cpp_element().cpp_scope(include_self=True).str_cpp()
             code = "\n".join(lines)
-            self.lg_context.namespaces_stub_code.store_namespace_stub_code(namespace_scope, code)
+            self.lg_context.namespaces_stub_code_tree.store_namespace_stub_code(namespace_qualified_name, code)
             return []
         else:
             return lines

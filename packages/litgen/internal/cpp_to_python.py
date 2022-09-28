@@ -6,7 +6,7 @@ from codemanip.code_replacements import RegexReplacementList
 from srcmlcpp.srcml_types import *
 
 from litgen.options import LitgenOptions
-from litgen.internal import replacements_cache
+from litgen.internal.context import replacements_cache_draft
 
 
 """
@@ -81,7 +81,7 @@ def var_value_to_python(options: LitgenOptions, default_value_cpp: str) -> str:
     r = options.code_replacements.apply(default_value_cpp)
     for number_macro, value in options.srcml_options.named_number_macros.items():
         r = r.replace(number_macro, str(value))
-    r = replacements_cache.apply_cached_replacement(r)
+    r = replacements_cache_draft.apply_cached_replacement(r)
     return r
 
 

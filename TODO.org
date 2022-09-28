@@ -444,6 +444,10 @@ Problem 3: dans lg_test_runner (integration tests), tout est refusé (trouve pas
 
 Faire un tour dans cpp_to_python pour mettre en privé les function d'acces au comment qui ne font pas de replace
 
+stackoverflow: review question ("type annotation: warn about mutable members becoming instance when initialized at decl site")
+    https://docs.python.org/3/library/typing.html#typing.ClassVar
+mypy: enable strict
+   see https://emplocity.com/en/about-us/blog/mypy_not_enough/
 
 
 ** Handle scope
@@ -451,19 +455,15 @@ Faire un tour dans cpp_to_python pour mettre en privé les function d'acces au c
 *** Handle Namespace
 
 
-Savoir gerer plusieurs occurences du meme namespace
-=> LitgenContext: store namespaces
+X Savoir gerer plusieurs occurences du meme namespace
 
+ignore anonymous namespaces
+do not duplicate stub creation code
+add options_customized/
 
+add internal/context/ (lg_context, namespaces_code_tree, replacement_cache_draft)
 
-L'idee d'utiliser une fake class risque d'echouer, car un meme namespace peut apparaitre plusieurs fois!
-   Contournement possible: stocker tout, puis dump a la fin dans le meme fichier?
-Idem dans pydef!
-
-
-Argh Argh les namespaces sont recursifs, c'est un arbre
-
-
+add doc
 
 
 **** Strategy

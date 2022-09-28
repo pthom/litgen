@@ -6,7 +6,7 @@ from typing import List, Optional
 from codemanip import code_utils
 
 from litgen import LitgenOptions
-from litgen.internal.litgen_context import LitgenContext
+from litgen.internal.context.litgen_context import LitgenContext
 from litgen.code_to_adapted_unit import code_to_adapted_unit
 from litgen.internal import cpp_to_python
 from litgen.internal import boxed_python_type

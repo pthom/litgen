@@ -1,7 +1,7 @@
 from codemanip import code_utils
 
 from litgen.internal import cpp_to_python
-from litgen.internal.litgen_context import LitgenContext
+from litgen.internal.context.litgen_context import LitgenContext
 
 
 def _can_box_cpp_type(cpp_type: str) -> bool:
