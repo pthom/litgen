@@ -5,6 +5,7 @@ from codemanip.code_utils import join_string_by_pipe_char
 
 def litgen_options_implot() -> LitgenOptions:
     options = litgen_options_imgui()
+    options.namespace_root__regex = "^ImPlot$"
     options.srcml_options.functions_api_prefixes = "IMPLOT_API|IMPLOT_TMP"
 
     options.fn_force_overload__regex = "BeginPlot"

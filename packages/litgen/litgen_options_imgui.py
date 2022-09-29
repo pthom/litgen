@@ -31,6 +31,8 @@ def litgen_options_imgui() -> LitgenOptions:
     options.generate_to_string = False
     options.cpp_indent_size = 4
 
+    options.namespace_root__regex = "^ImGui$"
+
     options.code_replacements = cpp_to_python.standard_code_replacements()
     options.code_replacements.merge_replacements(
         RegexReplacementList.from_string(r"\bImVector\s*<\s*([\w:]*)\s*> -> List[\1]")
