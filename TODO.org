@@ -441,7 +441,8 @@ Problem 3: dans lg_test_runner (integration tests), tout est refusé (trouve pas
 
 ** Wish List / Easy
 
-Faire un tour dans cpp_to_python pour mettre en privé les function d'acces au comment qui ne font pas de replace
+dans les replacements / comments, peut etre supprimer ceci: * -> None,  double -> float
+  (voir dans implot, par exemple, double-click -> float click !)
 
 stackoverflow: review question ("type annotation: warn about mutable members becoming instance when initialized at decl site")
     https://docs.python.org/3/library/typing.html#typing.ClassVar
@@ -450,7 +451,6 @@ mypy: enable strict
 
 une derniere erreur dans implot.pyi relevee par CLion
 
-add options_customized/
 
 ** Handle Namespaces
 

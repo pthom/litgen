@@ -42,7 +42,9 @@ def _comment_apply_replacements(options: LitgenOptions, comment: str) -> str:
 
 def comment_pydef_one_line(options: LitgenOptions, title_cpp: str) -> str:
     """Formats a docstring on one cpp line. Used only in cpp pydef bindings code"""
-    return code_utils.format_cpp_comment_on_one_line(_comment_apply_replacements(options, title_cpp))
+    r = code_utils.format_cpp_comment_on_one_line(_comment_apply_replacements(options, title_cpp))
+    r = options.code_replacements.apply(r).strip()
+    return r
 
 
 def type_to_python(options: LitgenOptions, type_cpp: str) -> str:
