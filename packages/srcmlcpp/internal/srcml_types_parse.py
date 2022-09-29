@@ -296,7 +296,9 @@ def fill_function_decl(
         elif child_tag == "modifier":
             raise SrcMlExceptionDetailed(child, "C style function pointers are poorly supported")
         elif child_tag == "comment":
-            function_decl.cpp_element_comments.add_eol_comment(child.text())
+            child_text = child.text()
+            if child_text is not None:
+                function_decl.cpp_element_comments.add_eol_comment(child_text)
         else:
             raise SrcMlExceptionDetailed(child, f"unhandled tag {child_tag}")
 
@@ -439,7 +441,7 @@ def parse_super_list(options: SrcmlOptions, element: SrcmlXmlWrapper) -> CppSupe
     return result
 
 
-def _add_comment_child_before_block(element_c: CppElementAndComment, child: SrcmlXmlWrapper):
+def _add_comment_child_before_block(element_c: CppElementAndComment, child: SrcmlXmlWrapper) -> None:
     """
     For struct, enum and namespace, we might add a comment like this:
         struct Foo   // MY_API
@@ -660,7 +662,7 @@ def parse_unit(options: SrcmlOptions, element: SrcmlXmlWrapper) -> CppUnit:
 
 def parse_block_content(
     options: SrcmlOptions, element_c: CppElementAndComment
-):  # element: SrcmlXmlWrapper) -> CppBlockContent:
+) -> CppBlockContent:  # element: SrcmlXmlWrapper) -> CppBlockContent:
     """
     https://www.srcml.org/doc/cpp_srcML.html#block_content
     """

@@ -4,7 +4,7 @@ import litgen
 from litgen.litgen_generator import LitgenGeneratorTestsHelper
 
 
-def to_pydef(code) -> str:
+def to_pydef(code: str) -> str:
     options = litgen.LitgenOptions()
     options.fn_params_replace_c_string_list__regex = r".*"
     pydef_code = LitgenGeneratorTestsHelper.code_to_pydef(options, code)

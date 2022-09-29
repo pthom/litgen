@@ -625,8 +625,8 @@ class AdaptedFunction(AdaptedElement):
                 indent_str=self.options.indent_cpp_spaces() * 2,
                 skip_first_line=True,
             )
-            if replace_lines.lambda_adapter_code[-1] == "\n":  # type: ignore
-                replace_lines.lambda_adapter_code = replace_lines.lambda_adapter_code[:-1]  # type: ignore
+            if replace_lines.lambda_adapter_code[-1] == "\n":
+                replace_lines.lambda_adapter_code = replace_lines.lambda_adapter_code[:-1]
 
         # fill maybe_empty_line
         replace_lines.maybe_empty_line = "" if replace_lines.lambda_adapter_code is not None else None

@@ -4,7 +4,7 @@ from typing import List, Pattern
 
 
 class RegexReplacement:
-    replace_what_re: Pattern
+    replace_what_re: Pattern  # type: ignore
     by_what: str
 
     def __init__(self, replace_what: str, by_what: str) -> None:

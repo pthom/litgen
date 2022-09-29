@@ -235,10 +235,10 @@ def to_snake_case(name: str) -> str:
     # name = re.sub('(.)([A-Z][a-z]+)', r'\1_\2', name)
     # name = re.sub('__([A-Z])', r'_\1', name)
     # name = re.sub('([a-z0-9])([A-Z])', r'\1_\2', name)
-    return name.lower()  # type: ignore
+    return name.lower()
 
 
-def to_camel_case(name) -> str:
+def to_camel_case(name: str) -> str:
     r = "".join(word.title() for word in name.split("_"))
     return r
 
@@ -283,7 +283,7 @@ def unindent_code(code: str, flag_strip_empty_lines: bool = False) -> str:
     return r
 
 
-def reindent_code(code: str, indent_size: int = 4, skip_first_line=False, indent_str="") -> str:
+def reindent_code(code: str, indent_size: int = 4, skip_first_line: bool = False, indent_str: str = "") -> str:
     """change the global code indentation, but keep its inner indentation"""
     code = unindent_code(code)
     code = indent_code(
@@ -345,13 +345,13 @@ def indent_code(
     return "\n".join(lines)
 
 
-def indent_code_force(code: str, indent_size: int = 1, indent_str="") -> str:
+def indent_code_force(code: str, indent_size: int = 1, indent_str: str = "") -> str:
     """violently remove all space at the left, thus removing the inner indentation"""
     lines = code.split("\n")
     if len(indent_str) == 0:
         indent_str = " " * indent_size
 
-    def do_indent(s: str):
+    def do_indent(s: str) -> str:
         return indent_str + s.strip()
 
     lines = list(map(do_indent, lines))
@@ -559,7 +559,7 @@ def make_nice_code_diff(generated: str, expected: str) -> str:
     return "".join(diffs)
 
 
-def assert_are_equal_ignore_spaces(generated_code: Any, expected_code: str):
+def assert_are_equal_ignore_spaces(generated_code: Any, expected_code: str) -> None:
     generated_processed = remove_redundant_spaces(str(generated_code))
     expected_processed = remove_redundant_spaces(expected_code)
     if not generated_processed == expected_processed:
@@ -582,7 +582,7 @@ def assert_are_equal_ignore_spaces(generated_code: Any, expected_code: str):
     assert generated_processed == expected_processed
 
 
-def assert_are_codes_equal(generated_code: Any, expected_code: str):
+def assert_are_codes_equal(generated_code: Any, expected_code: str) -> None:
     generated_code_str = str(generated_code)
     generated_processed = strip_empty_lines(unindent_code(generated_code_str))
     expected_processed = strip_empty_lines(unindent_code(expected_code))
@@ -609,7 +609,7 @@ def assert_are_codes_equal(generated_code: Any, expected_code: str):
 def remove_end_of_line_cpp_comments(code: str) -> str:
     lines = code.split("\n")
 
-    def remove_comment(line: str):
+    def remove_comment(line: str) -> str:
         if "//" in line:
             line = line[: line.index("//")]
         return line

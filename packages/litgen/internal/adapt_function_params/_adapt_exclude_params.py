@@ -17,7 +17,7 @@ def adapt_exclude_params(adapted_function: AdaptedFunction) -> Optional[LambdaAd
 
     old_function_params: List[CppParameter] = adapted_function.cpp_adapted_function.parameter_list.parameters
 
-    def shall_exclude(param: CppParameter):
+    def shall_exclude(param: CppParameter) -> bool:
         param_name = param.decl.decl_name
         matches_regex_name = code_utils.does_match_regex(options.fn_params_exclude_names__regex, param_name)
         param_cpp_type = param.decl.cpp_type.str_code()

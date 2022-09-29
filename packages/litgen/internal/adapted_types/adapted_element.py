@@ -47,7 +47,7 @@ class AdaptedElement:  # (abc.ABC):  # Cannot be abstract (mypy limitation:  htt
             return []
         else:
             cpp_original_code_lines = cpp_original_code.split("\n")
-            cpp_original_code_lines = list(map(lambda s: "# " + s, cpp_original_code_lines))  # type: ignore
+            cpp_original_code_lines = list(map(lambda s: "# " + s, cpp_original_code_lines))
             cpp_original_code_lines[0] += "    /* original C++ signature */"
             return cpp_original_code_lines
 

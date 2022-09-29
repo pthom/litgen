@@ -9,7 +9,7 @@ _THIS_DIR = os.path.dirname(__file__)
 sys.path.append(_THIS_DIR + "/../..")
 
 
-def assert_code_unmodified_by_srcml(code: str):
+def assert_code_unmodified_by_srcml(code: str) -> None:
     """
     We transform the code to xml (srcML), and assert that it can safely be translated back to the same code
     """
@@ -41,7 +41,7 @@ def test_srcml_xml():
         </ns0:unit>
     """
 
-    def remove_first_two_lines(s: str):
+    def remove_first_two_lines(s: str) -> str:
         # We remove the first lines because of the unwanted file name
         lines = s.splitlines()
         r = "\n".join(lines[2:])

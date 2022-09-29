@@ -98,7 +98,7 @@ def is_float_str(s: str) -> bool:
 def cpp_type_to_camel_case_no_space(cpp_type: str) -> str:
     items = cpp_type.split(" ")
 
-    def capitalize_first_letter(s: str):
+    def capitalize_first_letter(s: str) -> str:
         return s[0].upper() + s[1:]
 
     items = list(map(capitalize_first_letter, items))
@@ -319,13 +319,13 @@ def comment_python_previous_lines(options: LitgenOptions, cpp_element_c: CppElem
 
     lines = comment.split("\n")
 
-    def add_hash(s: str):
+    def add_sharp(s: str) -> str:
         if options.python_reproduce_cpp_layout:
             return "#" + s
         else:
             return "# " + s.lstrip()
 
-    lines = list(map(add_hash, lines))
+    lines = list(map(add_sharp, lines))
     lines = code_utils.strip_lines_right_space(lines)
 
     return lines
@@ -397,7 +397,7 @@ def cpp_scope_to_pybind_scope(options: LitgenOptions, cpp_element: CppElement, i
     return cpp_scope
 
 
-def cpp_scope_to_pybind_var_name(options: LitgenOptions, cpp_element: CppElement):
+def cpp_scope_to_pybind_var_name(options: LitgenOptions, cpp_element: CppElement) -> str:
     cpp_scope = cpp_scope_to_pybind_scope(options, cpp_element, True)
     scope_parts_strs = list(map(_scope_part_name, cpp_scope.scope_parts))
     if len(scope_parts_strs) > 0:
@@ -407,7 +407,7 @@ def cpp_scope_to_pybind_var_name(options: LitgenOptions, cpp_element: CppElement
     return r
 
 
-def cpp_scope_to_pybind_parent_var_name(options: LitgenOptions, cpp_element: CppElement):
+def cpp_scope_to_pybind_parent_var_name(options: LitgenOptions, cpp_element: CppElement) -> str:
     cpp_scope = cpp_scope_to_pybind_scope(options, cpp_element, False)
     if len(cpp_scope.scope_parts) == 0:
         return "m"
@@ -568,9 +568,9 @@ def _surround_code_with_filename_impl(
     return r
 
 
-def surround_cpp_code_with_filename(options: LitgenOptions, filename: Optional[str], code: str):
+def surround_cpp_code_with_filename(options: LitgenOptions, filename: Optional[str], code: str) -> str:
     return _surround_code_with_filename_impl(options, filename, code, "/")
 
 
-def surround_python_code_with_filename(options: LitgenOptions, filename: Optional[str], code: str):
+def surround_python_code_with_filename(options: LitgenOptions, filename: Optional[str], code: str) -> str:
     return _surround_code_with_filename_impl(options, filename, code, "#")

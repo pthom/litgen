@@ -203,7 +203,7 @@ def test_visitor():
 
     visit_recap = ""
 
-    def my_visitor(element: SrcmlXmlWrapper, depth: int):
+    def my_visitor(element: SrcmlXmlWrapper, depth: int) -> None:
         nonlocal visit_recap
         if element.has_name():
             name = element.name_code()

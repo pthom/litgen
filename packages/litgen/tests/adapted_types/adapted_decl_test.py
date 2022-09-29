@@ -6,7 +6,7 @@ from litgen.internal.adapted_types import *
 from litgen.options import LitgenOptions
 
 
-def to_adapted_decl(code, options: LitgenOptions) -> AdaptedDecl:
+def to_adapted_decl(code: str, options: LitgenOptions) -> AdaptedDecl:
     cpp_decl = srcmlcpp_main.code_first_decl(options.srcml_options, code)
     lg_context = LitgenContext(options)
     adapted_decl = AdaptedDecl(lg_context, cpp_decl)

@@ -218,7 +218,7 @@ class AdaptedEnum(AdaptedElement):
         # Enum values
         for child in self.adapted_children:
             if isinstance(child, AdaptedEnumDecl):
-                adapted_decl = cast(AdaptedEnumDecl, child)
+                adapted_decl = child
                 value_decl_lines = adapted_decl._str_pydef_lines()
                 lines += value_decl_lines
 

@@ -12,7 +12,7 @@ _THIS_DIR = os.path.dirname(__file__)
 def test_parse_cpp_decl_statement():
     options = SrcmlOptions()
 
-    def code_to_decl_statement(code) -> srcml_types.CppDeclStatement:
+    def code_to_decl_statement(code: str) -> srcml_types.CppDeclStatement:
         element_c = srcmlcpp_main._tests_only_get_only_child_with_tag(options, code, "decl_stmt")
         cpp_decl_statement = srcml_types_parse.parse_decl_stmt(options, element_c)
         return cpp_decl_statement
@@ -79,7 +79,7 @@ def test_parse_cpp_decl_statement():
 def test_parse_function_decl():
     options = SrcmlOptions()
 
-    def code_to_fn_decl(code) -> srcml_types.CppFunctionDecl:
+    def code_to_fn_decl(code: str) -> srcml_types.CppFunctionDecl:
         element = srcmlcpp_main._tests_only_get_only_child_with_tag(options, code, "function_decl")
         fn_decl = srcml_types_parse.parse_function_decl(options, element)
         return fn_decl
@@ -124,7 +124,7 @@ def test_parse_function_decl():
 def test_parse_function():
     options = SrcmlOptions()
 
-    def code_to_fn_decl(code) -> srcml_types.CppFunctionDecl:
+    def code_to_fn_decl(code: str) -> srcml_types.CppFunctionDecl:
         element = srcmlcpp_main._tests_only_get_only_child_with_tag(options, code, "function")
         fn = srcml_types_parse.parse_function(options, element)
         return fn
@@ -147,7 +147,7 @@ def test_parse_function():
 def test_parse_struct():
     options = SrcmlOptions()
 
-    def code_to_struct_decl(code) -> str:
+    def code_to_struct_decl(code: str) -> str:
         element_c = srcmlcpp_main._tests_only_get_only_child_with_tag(options, code, "struct")
         cpp_element = srcml_types_parse.parse_struct_or_class(options, element_c)
         cpp_element_str = str(cpp_element)
@@ -234,7 +234,7 @@ def test_parse_unit():
     options = SrcmlOptions()
     options.header_filter_preprocessor_regions = True
 
-    def code_to_unit_str(code) -> str:
+    def code_to_unit_str(code: str) -> str:
         cpp_unit = srcmlcpp_main.code_to_cpp_unit(options, code)
         cpp_element_str = str(cpp_unit)
         # logging.warning("\n" + cpp_element_str)
@@ -330,7 +330,7 @@ def test_parse_unit():
     code_utils.assert_are_codes_equal(cpp_element_str, expected_code)
 
 
-def do_parse_imgui_implot(filename) -> None:
+def do_parse_imgui_implot(filename: str) -> None:
     def preprocess_imgui_code(code):
         import re
 

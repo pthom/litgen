@@ -12,7 +12,7 @@ _THIS_DIR = os.path.dirname(__file__)
 sys.path.append(_THIS_DIR + "/../..")
 
 
-def gen_pydef_code(code) -> str:
+def gen_pydef_code(code: str) -> str:
     options = litgen.options.LitgenOptions()
     options.srcml_options.functions_api_prefixes = "MY_API"
     lg_context = LitgenContext(options)

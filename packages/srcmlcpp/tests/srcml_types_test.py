@@ -4,7 +4,7 @@ from srcmlcpp.srcml_options import SrcmlOptions
 from srcmlcpp import srcmlcpp_main
 
 
-def to_decl(code) -> CppDecl:
+def to_decl(code: str) -> CppDecl:
     options = SrcmlOptions()
     cpp_decl = srcmlcpp_main.code_first_decl(options, code)
     return cpp_decl
@@ -33,7 +33,7 @@ def test_visitor():
 
     visit_recap = ""
 
-    def my_visitor(element: CppElement, event: CppElementsVisitorEvent, depth: int):
+    def my_visitor(element: CppElement, event: CppElementsVisitorEvent, depth: int) -> None:
         nonlocal visit_recap
 
         if event == CppElementsVisitorEvent.OnElement:
@@ -76,7 +76,7 @@ def test_parents_and_scope():
 
     log_parents = ""
 
-    def visitor_log_parents(cpp_element: CppElement, event: CppElementsVisitorEvent, depth: int):
+    def visitor_log_parents(cpp_element: CppElement, event: CppElementsVisitorEvent, depth: int) -> None:
         nonlocal log_parents
         if event == CppElementsVisitorEvent.OnElement:
             assert hasattr(cpp_element, "parent")
@@ -167,7 +167,7 @@ def test_methods():
 
     nb_found = 0
 
-    def visitor_check_methods(cpp_element: CppElement, event: CppElementsVisitorEvent, depth: int):
+    def visitor_check_methods(cpp_element: CppElement, event: CppElementsVisitorEvent, depth: int) -> None:
         nonlocal nb_found
         if event == CppElementsVisitorEvent.OnElement and isinstance(cpp_element, CppFunctionDecl):
             nb_found += 1

@@ -6,7 +6,7 @@ Main functions provided by this module
 * `code_to_srcml_xml_wrapper` is a lower level utility, that returns a wrapped version of the srcML tree
 """
 
-from typing import Type
+from typing import Type, cast
 
 from codemanip.parse_progress_bar import global_progress_bars
 
@@ -98,11 +98,13 @@ def code_to_cpp_unit(options: SrcmlOptions, code: Optional[str] = None, filename
     return cpp_unit
 
 
-def code_first_child_of_type(options: SrcmlOptions, type_of_cpp_element: Type, code: str) -> CppElementAndComment:
+def code_first_child_of_type(
+    options: SrcmlOptions, type_of_cpp_element: Type[CppElement], code: str
+) -> CppElementAndComment:
     cpp_unit = _code_to_cpp_unit_impl(options, code)
     for child in cpp_unit.block_children:
         if isinstance(child, type_of_cpp_element):
-            return child  # type: ignore
+            return child
     raise SrcMlException(f"Could not find a child of type {type_of_cpp_element}")
 
 

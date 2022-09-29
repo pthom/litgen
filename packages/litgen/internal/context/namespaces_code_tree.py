@@ -67,7 +67,7 @@ class NamespacesCodeTree:
 
         return r
 
-    def _store_code_in_tree(self, namespace_names: List[CppNamespaceName], code: str):
+    def _store_code_in_tree(self, namespace_names: List[CppNamespaceName], code: str) -> None:
         ns_name = namespace_names[0]
         if ns_name not in self._sub_namespaces_code.keys():
             self._sub_namespaces_code[ns_name] = NamespacesCodeTree(self._options, self._code_type)

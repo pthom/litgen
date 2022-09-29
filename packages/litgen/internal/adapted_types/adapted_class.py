@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Union
+from typing import Union, cast
 
 from srcmlcpp.srcml_types import *
 
@@ -245,7 +245,7 @@ class AdaptedClass(AdaptedElement):
         r = cpp_to_python.add_underscore_if_python_reserved_word(self.cpp_element().class_name)
         return r
 
-    def _add_adapted_class_member(self, cpp_decl_statement: CppDeclStatement):
+    def _add_adapted_class_member(self, cpp_decl_statement: CppDeclStatement) -> None:
         for cpp_decl in cpp_decl_statement.cpp_decls:
             is_excluded_by_name = code_utils.does_match_regex(
                 self.options.member_exclude_by_name__regex, cpp_decl.decl_name

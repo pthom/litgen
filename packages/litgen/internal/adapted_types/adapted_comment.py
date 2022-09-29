@@ -43,7 +43,7 @@ class AdaptedComment(AdaptedElement):
         comment_cpp = self.cpp_element().comment
         comment_python = cpp_to_python._comment_apply_replacements(self.options, comment_cpp)
 
-        def add_hash(s: str):
+        def add_hash(s: str) -> str:
             if self.options.python_reproduce_cpp_layout:
                 return "#" + s
             else:

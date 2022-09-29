@@ -207,7 +207,7 @@ class _AdaptBuffersHelper:
         r = not _looks_like_param_template_buffer(self.options, self._param(idx_param))
         return r
 
-    def _adapted_cpp_parameters_template_static_cast(self, pyarray_type_char) -> str:
+    def _adapted_cpp_parameters_template_static_cast(self, pyarray_type_char: str) -> str:
         adapted_cpp_params = []
         for idx_param, param in enumerate(self.function_infos.parameter_list.parameters):
             if _looks_like_param_template_buffer(self.options, param):

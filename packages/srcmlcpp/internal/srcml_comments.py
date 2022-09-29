@@ -131,7 +131,7 @@ def _group_consecutive_comments(srcml_code: SrcmlXmlWrapper) -> SrcmlXmlWrapper:
 
     for child in srcml_code.make_wrapped_children():
 
-        def add_child(child=child) -> None:
+        def add_child(child=child) -> None:  # type: ignore
             nonlocal previous_child, previous_previous_child
 
             # In this low level case, we need to manually clone child.srcml_xml,
@@ -143,7 +143,7 @@ def _group_consecutive_comments(srcml_code: SrcmlXmlWrapper) -> SrcmlXmlWrapper:
             previous_previous_child = previous_child
             previous_child = child_copy
 
-        def concat_comment(child=child) -> None:
+        def concat_comment(child=child) -> None:  # type: ignore
             child_text = child.text()
             assert child_text is not None
             assert previous_child is not None and previous_child.text is not None

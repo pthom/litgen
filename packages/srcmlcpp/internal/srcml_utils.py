@@ -56,7 +56,7 @@ def child_with_tag(element: ET.Element, tag: str) -> Optional[ET.Element]:
         return children[0]
 
 
-def srcml_to_str(element: ET.Element, bare=False) -> str:
+def srcml_to_str(element: ET.Element, bare: bool = False) -> str:
     xmlstr_raw = ET.tostring(element, encoding="unicode")
     if bare:
         return xmlstr_raw
@@ -69,7 +69,7 @@ def srcml_to_str(element: ET.Element, bare=False) -> str:
     return xmlstr
 
 
-def srcml_to_file(encoding: str, root: ET.Element, filename: str):
+def srcml_write_to_file(encoding: str, root: ET.Element, filename: str) -> None:
     element_tree = ET.ElementTree(root)
     element_tree.write(filename, encoding=encoding)
 

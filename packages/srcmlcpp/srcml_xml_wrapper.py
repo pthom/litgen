@@ -29,7 +29,7 @@ class SrcMlExceptionDetailed(SrcMlException):
 def _get_python_call_info() -> Tuple[str, str]:
     stack_lines = traceback.format_stack()
     error_line = stack_lines[-4]
-    frame = inspect.currentframe()  # type: ignore
+    frame = inspect.currentframe()
     if frame is not None:
         caller_function_name = inspect.getframeinfo(frame.f_back.f_back.f_back).function  # type: ignore
     else:
@@ -218,14 +218,14 @@ class SrcmlXmlWrapper:
     def str_yaml(self) -> str:
         """A yaml representation of the xml tree.
         No guaranty is made that it a roundtrip xml->yaml->xml is possible"""
-        xml_str = self.str_xml(beautify=False)  # type: ignore
+        xml_str = self.str_xml(beautify=False)
         root = xmlplain.xml_to_obj(xml_str, self.options.encoding)  # type: ignore
-        yaml_str: str = yaml.safe_dump(root, default_flow_style=False, allow_unicode=True)  # type: ignore
+        yaml_str: str = yaml.safe_dump(root, default_flow_style=False, allow_unicode=True)
         return yaml_str
 
     def to_file(self, filename: str) -> None:
         """Save to file as xml"""
-        srcml_utils.srcml_to_file(self.options.encoding, self.srcml_xml, filename)
+        srcml_utils.srcml_write_to_file(self.options.encoding, self.srcml_xml, filename)
 
     def make_wrapped_children(self) -> List[SrcmlXmlWrapper]:
         """Extract the xml sub nodes and wraps them"""
@@ -254,7 +254,7 @@ class SrcmlXmlWrapper:
         that gives the location of this element in the code"""
         raise SrcMlExceptionDetailed(self, message)
 
-    def emit_warning(self, message) -> None:
+    def emit_warning(self, message: str) -> None:
         """emits a warning which will display the message with a context
         that gives the location of this element in the code"""
         """emit a message"""

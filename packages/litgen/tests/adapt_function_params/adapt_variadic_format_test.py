@@ -5,7 +5,7 @@ import litgen
 from litgen.internal.adapted_types import AdaptedFunction, LitgenContext
 
 
-def make_pydef_code(code) -> str:
+def make_pydef_code(code: str) -> str:
     options = litgen.options.LitgenOptions()
     lg_context = LitgenContext(options)
     function_decl = srcmlcpp_main.code_first_function_decl(options.srcml_options, code)

@@ -5,7 +5,7 @@ from litgen.options import LitgenOptions
 from litgen.litgen_generator import LitgenGeneratorTestsHelper
 
 
-def log_code(code) -> None:
+def log_code(code: str) -> None:
     logging.warning(f"\n>>>{code}<<<")
 
 

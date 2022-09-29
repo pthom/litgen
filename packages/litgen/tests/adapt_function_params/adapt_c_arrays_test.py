@@ -18,7 +18,7 @@ def gen_pydef_code(code: str, options: Optional[LitgenOptions] = None) -> str:
     return generated_code
 
 
-def my_make_adapted_function(code) -> AdaptedFunction:
+def my_make_adapted_function(code: str) -> AdaptedFunction:
     options = litgen.options.LitgenOptions()
     options.srcml_options.functions_api_prefixes = "MY_API"
 

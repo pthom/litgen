@@ -159,7 +159,7 @@ class GeneratedCodes:
     boxed_types_cpp_code: CppCode
 
 
-def generate_code(options: LitgenOptions, code: CppCode, omit_boxed_types_code: bool = False):
+def generate_code(options: LitgenOptions, code: CppCode, omit_boxed_types_code: bool = False) -> GeneratedCodes:
     generator = LitgenGenerator(options, omit_boxed_types_code=omit_boxed_types_code)
     generator._process_cpp_code(code, "")
     r = GeneratedCodes(

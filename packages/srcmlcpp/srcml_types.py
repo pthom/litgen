@@ -24,7 +24,7 @@ import copy
 import logging
 from dataclasses import dataclass
 from enum import Enum
-from typing import Dict, List, Optional, Callable, cast
+from typing import Dict, List, Optional, Callable
 from xml.etree import ElementTree as ET  # noqa
 
 from codemanip import code_utils
@@ -99,7 +99,7 @@ class CppElementComments:
         else:
             return " //" + self.comment_end_of_line
 
-    def add_eol_comment(self, comment) -> None:
+    def add_eol_comment(self, comment: str) -> None:
         if len(self.comment_end_of_line) == 0:
             self.comment_end_of_line = comment
         else:
@@ -276,7 +276,7 @@ class CppEmptyLine(CppElementAndComment):
     def str_code(self) -> str:
         return ""
 
-    def str_commented(self, is_enum: bool = False, is_decl_stmt: bool = False):  # noqa
+    def str_commented(self, is_enum: bool = False, is_decl_stmt: bool = False) -> str:
         return ""
 
     def __str__(self) -> str:
@@ -344,7 +344,7 @@ class CppBlock(CppElementAndComment):
     def hierarchy_overview(self) -> str:
         log = ""
 
-        def visitor_log_info(cpp_element: CppElement, event: CppElementsVisitorEvent, depth: int):
+        def visitor_log_info(cpp_element: CppElement, event: CppElementsVisitorEvent, depth: int) -> None:
             nonlocal log
             if event == CppElementsVisitorEvent.OnElement:
                 log += "  " * depth + cpp_element.short_cpp_element_info() + "\n"
@@ -386,7 +386,7 @@ class CppBlock(CppElementAndComment):
     def all_cpp_elements_recursive(self) -> List[CppElement]:
         _all_cpp_elements = []
 
-        def visitor_add_cpp_element(cpp_element: CppElement, event: CppElementsVisitorEvent, depth: int):
+        def visitor_add_cpp_element(cpp_element: CppElement, event: CppElementsVisitorEvent, depth: int) -> None:
             if event == CppElementsVisitorEvent.OnElement:
                 _all_cpp_elements.append(cpp_element)
 
@@ -397,7 +397,7 @@ class CppBlock(CppElementAndComment):
     def fill_children_parents(self) -> None:
         parents_stack: List[Optional[CppElement]] = [None]
 
-        def visitor_fill_parent(cpp_element: CppElement, event: CppElementsVisitorEvent, depth: int):
+        def visitor_fill_parent(cpp_element: CppElement, event: CppElementsVisitorEvent, depth: int) -> None:
             nonlocal parents_stack
             if event == CppElementsVisitorEvent.OnElement:
                 assert len(parents_stack) > 0
@@ -706,7 +706,7 @@ class CppDecl(CppElementAndComment):
         """
         return self.c_array_size_as_int() is not None
 
-    def is_c_array_no_size(self, options: SrcmlOptions):
+    def is_c_array_no_size(self, options: SrcmlOptions) -> bool:
         """Returns true if this decl is a c array, and has a no fixed size, e.g.
         int a[];
         """
@@ -855,7 +855,7 @@ class CppParameterList(CppElement):
 
     def types_names_default_for_signature_list(self) -> List[str]:
         """Returns a list like ["int a", "bool flag = true"]"""
-        params_strs = list(map(lambda param: param.type_name_default_for_signature(), self.parameters))  # type: ignore
+        params_strs = list(map(lambda param: param.type_name_default_for_signature(), self.parameters))
         return params_strs
 
     def types_names_default_for_signature_str(self) -> str:
@@ -1006,8 +1006,7 @@ class CppFunctionDecl(CppElementAndComment):
         assert isinstance(parent_block, CppBlock)
         parent_struct_ = parent_block.parent
         assert isinstance(parent_struct_, CppStruct)
-        parent_struct = cast(CppStruct, parent_struct_)
-        return parent_struct
+        return parent_struct_
 
     def parent_struct_name_if_method(self) -> Optional[str]:
         parent_struct = self.parent_struct_if_method()
@@ -1448,7 +1447,7 @@ class CppEnum(CppElementAndComment):
             if not isinstance(child, CppDecl):
                 children.append(child)
             else:
-                decl = cast(CppDecl, child)
+                decl = child
                 decl_with_value = copy.copy(decl)
 
                 if len(decl_with_value.initial_value_code) > 0:

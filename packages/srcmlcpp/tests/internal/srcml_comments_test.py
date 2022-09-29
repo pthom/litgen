@@ -31,7 +31,7 @@ def as_dict_cpp_element_comments(cpp_element_comments: CppElementComments) -> Di
     return r
 
 
-def as_dict_cpp_element_and_comment(cpp_element_and_comment: CppElementAndComment):
+def as_dict_cpp_element_and_comment(cpp_element_and_comment: CppElementAndComment):  # type: ignore
     as_dict = code_utils.merge_dicts(
         as_dict_cpp_element(cpp_element_and_comment),
         as_dict_cpp_element_comments(cpp_element_and_comment.cpp_element_comments),

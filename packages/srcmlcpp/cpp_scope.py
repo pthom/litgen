@@ -1,6 +1,6 @@
 from enum import Enum
 from dataclasses import dataclass
-from typing import List
+from typing import List, Optional
 
 
 class CppScopeType(Enum):
@@ -18,7 +18,7 @@ class CppScopePart:
 class CppScope:
     scope_parts: List[CppScopePart]
 
-    def __init__(self, scopes: List[CppScopePart] = None) -> None:
+    def __init__(self, scopes: Optional[List[CppScopePart]] = None) -> None:
         if scopes is None:
             self.scope_parts = []
         else:

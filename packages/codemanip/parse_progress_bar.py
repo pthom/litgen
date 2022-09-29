@@ -8,7 +8,7 @@ class _ParseStepProgressBar:
     _current_line: int = 0
     _step_name: str = ""
 
-    def __init__(self, nb_total_lines, step_name) -> None:
+    def __init__(self, nb_total_lines: int, step_name: str) -> None:
         self._nb_total_lines = nb_total_lines
         self._step_name = step_name
         self._current_line = 0
@@ -51,10 +51,10 @@ class ParseProgressBars:
     def __init__(self) -> None:
         self._progress_bars = {}
 
-    def set_nb_total_lines(self, nb_total_lines: int):
+    def set_nb_total_lines(self, nb_total_lines: int) -> None:
         self._nb_total_lines = nb_total_lines
 
-    def set_enabled(self, enabled: bool):
+    def set_enabled(self, enabled: bool) -> None:
         self._enabled = enabled
 
     def start_progress_bar(self, step_name: str) -> None:
@@ -70,7 +70,7 @@ class ParseProgressBars:
         self._progress_bars[step_name].stop()
         self._progress_bars.pop(step_name)
 
-    def set_current_line(self, step_name: str, current_line: int):
+    def set_current_line(self, step_name: str, current_line: int) -> None:
         if not self._enabled:
             return
         if step_name not in self._progress_bars:

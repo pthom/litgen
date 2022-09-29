@@ -57,7 +57,7 @@ def adapt_c_string_list(adapted_function: AdaptedFunction) -> Optional[LambdaAda
     lambda_adapter.new_function_infos = copy.deepcopy(adapted_function.cpp_adapted_function)
     new_function_params = []
 
-    def is_c_string_list(i: int):
+    def is_c_string_list(i: int) -> bool:
         if i >= len(old_function_params) - 1:
             return False
         param = old_function_params[i]
@@ -65,7 +65,7 @@ def adapt_c_string_list(adapted_function: AdaptedFunction) -> Optional[LambdaAda
         r = param.decl.is_c_string_list_ptr() and cpp_to_python.looks_like_size_param(options, param_next)
         return r
 
-    def is_c_string_list_size(i: int):
+    def is_c_string_list_size(i: int) -> bool:
         if i < 1:
             return False
         param = old_function_params[i]
