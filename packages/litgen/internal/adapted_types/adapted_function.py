@@ -3,6 +3,8 @@ from typing import cast
 
 from munch import Munch  # type: ignore
 
+from codemanip.code_replacements import RegexReplacement
+
 from srcmlcpp.srcml_types import *
 
 from litgen.internal import cpp_to_python
@@ -180,10 +182,17 @@ class AdaptedFunction(AdaptedElement):
             self.is_overloaded = True
 
         adapt_function_params.apply_all_adapters(self)
+        self._store_replacement_in_context()
 
     # override
     def cpp_element(self) -> CppFunctionDecl:
         return cast(CppFunctionDecl, self._cpp_element)
+
+    def _store_replacement_in_context(self) -> None:
+        regex_replacement = RegexReplacement(
+            rf"\b{self.cpp_adapted_function.function_name}\b", self.function_name_python()
+        )
+        self.lg_context.replacements_cache.store_replacement(regex_replacement)
 
     def is_method(self) -> bool:
         return self.cpp_element().is_method()
@@ -221,7 +230,7 @@ class AdaptedFunction(AdaptedElement):
             param_name_python = cpp_to_python.var_name_to_python(self.options, param.decl.decl_name)
             param_type_cpp = param.decl.cpp_type.str_code()
             param_type_python = cpp_to_python.type_to_python(self.options, param_type_cpp)
-            param_default_value = cpp_to_python.var_value_to_python(self.options, param.default_value())
+            param_default_value = cpp_to_python.var_value_to_python(self.lg_context, param.default_value())
 
             param_code = f"{param_name_python}: {param_type_python}"
             if len(param_default_value) > 0:

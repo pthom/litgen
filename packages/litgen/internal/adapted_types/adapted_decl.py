@@ -34,7 +34,7 @@ class AdaptedDecl(AdaptedElement):
 
     def decl_value_python(self) -> str:
         decl_value_cpp = self.cpp_element().initial_value_code
-        decl_value_python = cpp_to_python.var_value_to_python(self.options, decl_value_cpp)
+        decl_value_python = cpp_to_python.var_value_to_python(self.lg_context, decl_value_cpp)
         return decl_value_python
 
     def decl_type_python(self) -> str:

@@ -6,7 +6,6 @@ from codemanip.code_replacements import RegexReplacementList, RegexReplacement
 from srcmlcpp.srcml_types import *
 
 from litgen.internal import cpp_to_python
-from litgen.internal.context import replacements_cache_draft
 from litgen.internal.context.litgen_context import LitgenContext
 from litgen.internal.adapted_types.adapted_comment import (
     AdaptedComment,
@@ -69,7 +68,7 @@ class AdaptedEnumDecl(AdaptedDecl):
 
     def decl_value_python(self) -> str:
         decl_value_cpp = self.cpp_element().initial_value_code
-        decl_value_python = cpp_to_python.var_value_to_python(self.options, decl_value_cpp)
+        decl_value_python = cpp_to_python.var_value_to_python(self.lg_context, decl_value_cpp)
 
         # Sometimes, enum decls have interdependent values like this:
         #     enum MyEnum { /*....*/ MyEnum_foo = MyEnum_a | MyEnum_b };
@@ -88,19 +87,24 @@ class AdaptedEnumDecl(AdaptedDecl):
         enum_member_name_python = self.decl_name_python()
 
         is_enum_class = self.enum_parent.cpp_element().is_enum_class()
-        if is_enum_class:
-            replace_what = rf"\b{enum_name_cpp}::{enum_member_name_cpp}\b"
-        else:
-            replace_what = rf"\b{enum_member_name_cpp}\b"
+
         by_what = f"{enum_name_python}.{enum_member_name_python}"
-
-        replacement = RegexReplacement(replace_what, by_what)
-        replacement_list.add_replacement(replacement)
-
-        if from_inside_block and not is_enum_class:
-            replace_what_inside = rf"\b{enum_member_name_cpp}\b"
-            replacement_inside_block = RegexReplacement(replace_what_inside, by_what)
-            replacement_list.add_replacement(replacement_inside_block)
+        if is_enum_class:
+            replace_what = rf"\b{enum_name_cpp}.{enum_member_name_cpp}\b|{enum_name_cpp}.{enum_member_name_cpp}\b"
+            replacement = RegexReplacement(replace_what, by_what)
+            replacement_list.add_replacement(replacement)
+        else:
+            if enum_member_name_python.lower().startswith(enum_name_cpp.lower()):
+                replace_what = rf"\b{enum_member_name_cpp}\b"
+                replacement = RegexReplacement(replace_what, by_what)
+                replacement_list.add_replacement(replacement)
+            else:
+                # No replacement, this could lead to many unwanted replacements!
+                # Only accept this if we are inside the enum generation
+                if from_inside_block:
+                    replace_what_inside = rf"\b{enum_member_name_cpp}\b"
+                    replacement_inside_block = RegexReplacement(replace_what_inside, by_what)
+                    replacement_list.add_replacement(replacement_inside_block)
 
         return replacement_list
 
@@ -130,6 +134,9 @@ class AdaptedEnumDecl(AdaptedDecl):
         line = f'.value("{decl_name_python}", {decl_name_cpp}, "{value_comment}")'
         return [line]
 
+    def __str__(self):
+        return str(self.cpp_element())
+
 
 @dataclass
 class AdaptedEnum(AdaptedElement):
@@ -143,7 +150,7 @@ class AdaptedEnum(AdaptedElement):
         self._fill_children()
 
         replacements = self.cpp_to_python_replacements()
-        replacements_cache_draft.store_replacement(replacements)
+        self.lg_context.replacements_cache.store_replacements(replacements)
 
     # override
     def cpp_element(self) -> CppEnum:

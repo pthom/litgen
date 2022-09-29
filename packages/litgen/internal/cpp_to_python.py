@@ -5,8 +5,8 @@ from codemanip.code_replacements import RegexReplacementList
 
 from srcmlcpp.srcml_types import *
 
-from litgen.options import LitgenOptions
-from litgen.internal.context import replacements_cache_draft
+from litgen import LitgenOptions
+from litgen.internal import LitgenContext
 
 
 """
@@ -77,11 +77,11 @@ def var_name_to_python(options: LitgenOptions, name: str) -> str:
     return _function_or_var_name_to_python(options, name)
 
 
-def var_value_to_python(options: LitgenOptions, default_value_cpp: str) -> str:
-    r = options.code_replacements.apply(default_value_cpp)
-    for number_macro, value in options.srcml_options.named_number_macros.items():
+def var_value_to_python(context: LitgenContext, default_value_cpp: str) -> str:
+    r = context.options.code_replacements.apply(default_value_cpp)
+    for number_macro, value in context.options.srcml_options.named_number_macros.items():
         r = r.replace(number_macro, str(value))
-    r = replacements_cache_draft.apply_cached_replacement(r)
+    r = context.replacements_cache.apply(r)
     return r
 
 
@@ -219,9 +219,9 @@ def decl_python_var_name(options: LitgenOptions, cpp_decl: CppDecl) -> str:
     return var_python_name
 
 
-def decl_python_value(options: LitgenOptions, cpp_decl: CppDecl) -> str:
+def decl_python_value(context: LitgenContext, cpp_decl: CppDecl) -> str:
     value_cpp = cpp_decl.initial_value_code
-    value_python = var_value_to_python(options, value_cpp)
+    value_python = var_value_to_python(context, value_cpp)
     return value_python
 
 
@@ -387,7 +387,7 @@ def cpp_scope_to_pybind_scope(options: LitgenOptions, cpp_element: CppElement, i
         if scope_part.scope_type != CppScopeType.Namespace:
             scope_parts_excluding_namespaces.append(scope_part)
         else:
-            is_root = code_utils.does_match_regex(options.namespace_root__regex, scope_part.scope_name)
+            is_root = code_utils.does_match_regex(options.namespace_ignored__regex, scope_part.scope_name)
             if not is_root:
                 scope_parts_excluding_namespaces.append(scope_part)
 
@@ -482,6 +482,8 @@ def standard_code_replacements() -> RegexReplacementList:
 
     ([+-]?[0-9]+([.][0-9]*)?|[.][0-9]+)(d?) -> \1
     ([+-]?[0-9]+([.][0-9]*)?|[.][0-9]+)(f?) -> \1
+
+    :: -> .
     """
     # Note: the two last regexes replace C numbers like 1.5f or 1.5d by 1.5
 

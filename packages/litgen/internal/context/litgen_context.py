@@ -5,6 +5,7 @@ from dataclasses import dataclass
 from litgen.options import LitgenOptions
 from litgen.internal.context.type_synonyms import *
 from litgen.internal.context.namespaces_code_tree import NamespacesCodeTree, PydefOrStub
+from litgen.internal.context.replacements_cache import ReplacementsCache
 
 
 @dataclass
@@ -18,9 +19,11 @@ class LitgenContext:
     encountered_cpp_boxed_types: Set[CppTypeName]
     namespaces_stub: NamespacesCodeTree
     namespaces_pydef: NamespacesCodeTree
+    replacements_cache: ReplacementsCache
 
     def __init__(self, options: LitgenOptions):
         self.options = options
         self.encountered_cpp_boxed_types = set()
-        self.namespaces_stub = NamespacesCodeTree(PydefOrStub.Stub)
-        self.namespaces_pydef = NamespacesCodeTree(PydefOrStub.Pydef)
+        self.namespaces_stub = NamespacesCodeTree(self.options, PydefOrStub.Stub)
+        self.namespaces_pydef = NamespacesCodeTree(self.options, PydefOrStub.Pydef)
+        self.replacements_cache = ReplacementsCache()
