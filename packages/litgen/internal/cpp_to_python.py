@@ -387,7 +387,7 @@ def cpp_scope_to_pybind_scope(options: LitgenOptions, cpp_element: CppElement, i
         if scope_part.scope_type != CppScopeType.Namespace:
             scope_parts_excluding_namespaces.append(scope_part)
         else:
-            is_root = code_utils.does_match_regex(options.namespace_ignored__regex, scope_part.scope_name)
+            is_root = code_utils.does_match_regex(options.namespace_root__regex, scope_part.scope_name)
             if not is_root:
                 scope_parts_excluding_namespaces.append(scope_part)
 

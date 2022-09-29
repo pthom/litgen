@@ -323,7 +323,10 @@ class LitgenOptions:
     # All C++ namespaces that match this regex will not be emitted as a submodule
     # (i.e. their inner code will be placed in the root python module, or in the parent
     # module)
-    namespace_ignored__regex = r""
+    namespace_root__regex = r""
+
+    # All C++ namespaces that match this regex will be excluded
+    namespace_exclude__regex = r"[Ii]nternal|[Dd]etail[sS]"
 
     ################################################################################
     #    <unclassified options>

@@ -24,7 +24,7 @@ class AdaptedNamespace(AdaptedElement):
         return self.cpp_element().ns_name
 
     def flag_create_python_namespace(self) -> bool:
-        is_root = code_utils.does_match_regex(self.options.namespace_ignored__regex, self.namespace_name())
+        is_root = code_utils.does_match_regex(self.options.namespace_root__regex, self.namespace_name())
         return not is_root
 
     # override
@@ -56,7 +56,8 @@ class AdaptedNamespace(AdaptedElement):
     def _str_stub_lines(self) -> List[str]:
 
         lines: List[str] = []
-        lines += cpp_to_python.docstring_lines(self.options, self.cpp_element())
+        if not self.lg_context.namespaces_stub.was_namespace_created(self._qualified_namespace_name()):
+            lines += cpp_to_python.docstring_lines(self.options, self.cpp_element())
         lines += self.adapted_block._str_stub_lines()
         lines.append("")
 

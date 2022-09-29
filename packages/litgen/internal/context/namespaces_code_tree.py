@@ -48,7 +48,7 @@ class NamespacesCodeTree:
             is_namespace_ignored = True
         else:
             is_namespace_ignored = code_utils.does_match_regex(
-                self._options.namespace_ignored__regex, current_namespace_name
+                self._options.namespace_root__regex, current_namespace_name
             )
 
         if not is_namespace_ignored:
