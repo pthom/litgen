@@ -5,7 +5,7 @@ import srcmlcpp
 
 import litgen
 from litgen.litgen_generator import LitgenGeneratorTestsHelper
-from litgen.litgen_options_imgui import litgen_options_imgui
+from litgen.options_customized.litgen_options_imgui import litgen_options_imgui
 
 
 _THIS_DIR = os.path.dirname(__file__)

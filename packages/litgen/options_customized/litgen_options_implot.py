@@ -1,5 +1,5 @@
 from litgen.options import LitgenOptions
-from litgen.litgen_options_imgui import litgen_options_imgui
+from litgen.options_customized.litgen_options_imgui import litgen_options_imgui
 from codemanip.code_utils import join_string_by_pipe_char
 
 
