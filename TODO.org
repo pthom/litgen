@@ -449,8 +449,6 @@ stackoverflow: review question ("type annotation: warn about mutable members bec
 mypy: enable strict
    see https://emplocity.com/en/about-us/blog/mypy_not_enough/
 
-une derniere erreur dans implot.pyi relevee par CLion
-
 
 ** Handle Namespaces
 

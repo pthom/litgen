@@ -6,6 +6,7 @@ import srcmlcpp
 import litgen
 from litgen.litgen_generator import LitgenGeneratorTestsHelper
 from litgen.options_customized.litgen_options_imgui import litgen_options_imgui
+from litgen.options_customized.litgen_options_implot import litgen_options_implot
 
 
 _THIS_DIR = os.path.dirname(__file__)
@@ -43,18 +44,12 @@ def litgensample_options() -> litgen.LitgenOptions:
 
 def my_play() -> None:
     code = """
-    enum Foo
-    {
-        Foo_A,
-        Foo_B,
-        Foo_Count
-    };
-
-    void PlayFoo(Foo f = Foo_A);
+//IMPLOT_API void truc(float* a = NULL, float* b = NULL);
+IMPLOT_API std::tuple<std::vector<int>, std::vector<float>> foo();
     """
-    # options = litgen_options_imgui()
-    options = litgen.options.LitgenOptions()
-    play_stub(code, options)
+    options = litgen_options_implot()
+    generated_code = litgen.generate_code(options, code)
+    print(generated_code.stub_code)
 
 
 if __name__ == "__main__":

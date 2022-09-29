@@ -458,7 +458,7 @@ def standard_code_replacements() -> RegexReplacementList:
     \bstd::vector\s*<\s*([\w:]*)\s*> -> List[\1]
     \bstd::array\s*<\s*([\w:]*)\s*,\s*([\w:])\s*> -> List[\1]
     \bstd::tuple<(.*)> -> Tuple[\1]
-    \bstd::optional<(.*)> -> Optional[\1]
+    \bstd::optional<(.*?)> -> Optional[\1]
 
     \bvoid\s*\* -> Any
     \bvoid\b -> None
