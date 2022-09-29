@@ -43,7 +43,12 @@ def test_templated_mul_inside_buffer():
     assert (x == np.array((3, 6, 9))).all()
 
     # With range of types
-    data_types = [np.float32, np.uint8, np.uint32, np.int64]  # np.float128 is not supported by all versions of numpy
+    data_types = [
+        np.float32,
+        np.uint8,
+        np.uint32,
+        np.int64,
+    ]  # np.float128 is not supported by all versions of numpy
     for data_type in data_types:
         x = np.array((1, 2, 3), data_type)
         lg_mylib.templated_mul_inside_buffer(x, 3)

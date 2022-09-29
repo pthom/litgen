@@ -3,7 +3,10 @@ import os
 from codemanip import code_utils
 
 import litgen
-from codemanip.make_amalgamated_header import AmalgamationOptions, write_amalgamate_header_file
+from codemanip.make_amalgamated_header import (
+    AmalgamationOptions,
+    write_amalgamate_header_file,
+)
 from litgen import litgen_generator
 
 THIS_DIR = os.path.dirname(os.path.realpath(__file__))
@@ -61,7 +64,7 @@ def mylib_litgen_options() -> litgen.LitgenOptions:
     options.fn_params_replace_buffer_by_array__regex = code_utils.make_regex_exclude_word("Change")
 
     # namespace
-    options.namespace_ignored__regex = "Mylib"
+    options.namespace_root__regex = "Mylib"
 
     #
     # Sandbox for other options
@@ -94,11 +97,19 @@ def autogenerate_mylib() -> None:
     if use_amalgamated_header:
         make_testrunner_amalgamated_header()
         litgen_generator.write_generated_code_for_file(
-            options, CPP_AMALGAMATED_HEADER, output_cpp_module, output_stub_pyi_file, output_cpp_boxed_types_header
+            options,
+            CPP_AMALGAMATED_HEADER,
+            output_cpp_module,
+            output_stub_pyi_file,
+            output_cpp_boxed_types_header,
         )
     else:
         litgen_generator.write_generated_code_for_files(
-            options, all_header_files(), output_cpp_module, output_stub_pyi_file, output_cpp_boxed_types_header
+            options,
+            all_header_files(),
+            output_cpp_module,
+            output_stub_pyi_file,
+            output_cpp_boxed_types_header,
         )
 
 

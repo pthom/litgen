@@ -450,29 +450,14 @@ mypy: enable strict
    see https://emplocity.com/en/about-us/blog/mypy_not_enough/
 
 
+add options_customized/
+
 ** Handle scope
 
 *** Handle Namespace
 
 
-X Savoir gerer plusieurs occurences du meme namespace
 
-ignore anonymous namespaces
-do not duplicate stub creation code
-add options_customized/
-
-add internal/context/ (lg_context, namespaces_code_tree, replacement_cache_draft)
-
-add doc
-
-
-**** Strategy
-
-soit https://www.reddit.com/r/learnpython/comments/dek8fy/how_to_create_a_stub_file_for_a_submodule_in_a_c/
-
-soit fake class with staticmethods
-  dans ce cas, pas forcement besoin de decorer avec @staticmethod: https://stackoverflow.com/questions/43587044/do-we-really-need-staticmethod-decorator-in-python-to-declare-static-method
-  attention, dans le code client python, il faudra faire un import quand même!
 
 
 ** Handle operators()
