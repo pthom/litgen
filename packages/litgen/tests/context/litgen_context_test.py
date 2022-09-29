@@ -105,7 +105,6 @@ def test_context_replacements():
     # in the generated python stub code:
     #   - usages of MyEnumClass::ValueA should be replaced by MyEnumClass.value_a
     #   - usages of MyEnumNonClass_ValueA should be replaced by MyEnumNonClass.value_a
-    #   - usages of Inner::FooValue should be replaced by Inner.foo_value
 
     generated_code = litgen.generate_code(options, code)
 

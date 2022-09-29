@@ -3,8 +3,6 @@ from typing import cast
 
 from munch import Munch  # type: ignore
 
-from codemanip.code_replacements import RegexReplacement
-
 from srcmlcpp.srcml_types import *
 
 from litgen.internal import cpp_to_python
@@ -189,10 +187,16 @@ class AdaptedFunction(AdaptedElement):
         return cast(CppFunctionDecl, self._cpp_element)
 
     def _store_replacement_in_context(self) -> None:
-        regex_replacement = RegexReplacement(
-            rf"\b{self.cpp_adapted_function.function_name}\b", self.function_name_python()
-        )
-        self.lg_context.replacements_cache.store_replacement(regex_replacement)
+        return
+        # the replacement below is too broad: should take the scope into account!
+        # can_replace = True
+        # if self.cpp_adapted_function.is_constructor() or self.cpp_adapted_function.is_method():
+        #     can_replace = False
+        # if can_replace:
+        #     regex_replacement = RegexReplacement(
+        #         rf"\b{self.cpp_adapted_function.function_name}\b", self.function_name_python()
+        #     )
+        #     self.lg_context.replacements_cache.store_replacement(regex_replacement)
 
     def is_method(self) -> bool:
         return self.cpp_element().is_method()
