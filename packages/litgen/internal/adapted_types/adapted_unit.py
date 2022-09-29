@@ -29,7 +29,8 @@ class AdaptedUnit(AdaptedBlock):
         global_progress_bars().start_progress_bar(_PROGRESS_BAR_TITLE_STUB)
         r = AdaptedElement.str_stub(self)
 
-        r += self.lg_context.namespaces_stub_code_tree.stub_code(self.options.indent_python_spaces())
+        context_namespaces_code = self.lg_context.namespaces_stub.full_tree_code(self.options.indent_python_spaces())
+        r += context_namespaces_code
 
         global_progress_bars().stop_progress_bar(_PROGRESS_BAR_TITLE_STUB)
         return r
@@ -37,6 +38,10 @@ class AdaptedUnit(AdaptedBlock):
     def str_pydef(self) -> str:
         global_progress_bars().start_progress_bar(_PROGRESS_BAR_TITLE_PYDEF)
         r = AdaptedElement.str_pydef(self)
+
+        context_namespaces_code = self.lg_context.namespaces_pydef.full_tree_code(self.options.indent_cpp_spaces())
+        r += context_namespaces_code
+
         global_progress_bars().stop_progress_bar(_PROGRESS_BAR_TITLE_PYDEF)
         return r
 

@@ -31,50 +31,49 @@ class AdaptedNamespace(AdaptedElement):
     def cpp_element(self) -> CppNamespace:
         return cast(CppNamespace, self._cpp_element)
 
-    # override
-    def _str_stub_lines(self) -> List[str]:
-        # raise ValueError("To be completed")
-        lines: List[str] = []
+    def _qualified_namespace_name(self) -> str:
+        ns_qualified_name = self.cpp_element().cpp_scope(include_self=True).str_cpp()
+        return ns_qualified_name
 
-        _i_ = self.options.indent_python_spaces()
+    def _stub_class_as_ns_creation_code(self) -> List[str]:
+        if self.lg_context.namespaces_stub.was_namespace_created(self._qualified_namespace_name()):
+            return []
+        self.lg_context.namespaces_stub.register_namespace_creation(self._qualified_namespace_name())
+
         ns_name = self.namespace_name()
-
+        _i_ = self.options.indent_python_spaces()
         proxy_class_code = code_utils.unindent_code(
             f"""
-            class {ns_name}: # Proxy class that introduces the C++ namespace {ns_name}
-            {_i_}# This class actually represents a namespace: all its method are static!
+            class {ns_name}: # Proxy class that introduces typings for the *submodule* {ns_name}
+            {_i_}# (This corresponds to a C++ namespace. All method are static!)
             """,
             flag_strip_empty_lines=True,
         )
+        r = proxy_class_code.split("\n")
+        return r
 
-        docstring_lines = cpp_to_python.docstring_lines(self.options, self.cpp_element())
-        lines.append(f"# <namespace {self.namespace_name()}>")
-        self.cpp_element().cpp_element_comments.full_comment()
-        if self.flag_create_python_namespace():
-            lines += proxy_class_code.split("\n")
-            lines += code_utils.indent_code_lines(
-                docstring_lines + self.adapted_block._str_stub_lines(), indent_str=_i_
-            )
-        else:
-            lines += docstring_lines
-            lines += self.adapted_block._str_stub_lines()
-        lines.append(f"# </namespace {self.namespace_name()}>")
+    # override
+    def _str_stub_lines(self) -> List[str]:
+
+        lines: List[str] = []
+        lines += cpp_to_python.docstring_lines(self.options, self.cpp_element())
+        lines += self.adapted_block._str_stub_lines()
         lines.append("")
 
         if self.flag_create_python_namespace():
-            namespace_qualified_name = self.cpp_element().cpp_scope(include_self=True).str_cpp()
-            code = "\n".join(lines)
-            self.lg_context.namespaces_stub_code_tree.store_namespace_stub_code(namespace_qualified_name, code)
+            context_stored_lines = self._stub_class_as_ns_creation_code()
+            context_stored_lines += code_utils.indent_code_lines(lines, indent_str=self.options.indent_python_spaces())
+            self.lg_context.namespaces_stub.store_code(
+                self._qualified_namespace_name(), "\n".join(context_stored_lines)
+            )
             return []
         else:
             return lines
 
-    def _pydef_make_submodule_code(self) -> str:
-        namespace_qualified_name = self.cpp_element().cpp_scope(include_self=True).str_cpp()
-        if namespace_qualified_name in self.lg_context.created_cpp_namespaces:
-            return ""
-
-        self.lg_context.created_cpp_namespaces.add(namespace_qualified_name)
+    def _pydef_def_submodule_code(self) -> List[str]:
+        if self.lg_context.namespaces_pydef.was_namespace_created(self._qualified_namespace_name()):
+            return []
+        self.lg_context.namespaces_pydef.register_namespace_creation(self._qualified_namespace_name())
 
         submodule_code_template = (
             'py::module_ {submodule_cpp_var} = {parent_module_cpp_var}.def_submodule("{module_name}", "{module_doc}");'
@@ -98,22 +97,20 @@ class AdaptedNamespace(AdaptedElement):
             replacements=replace_tokens,
             replacements_with_line_removal_if_not_found={},
         )
-        return submodule_code_
+        return submodule_code_.split("\n")
 
     # override
     def _str_pydef_lines(self) -> List[str]:
-        location = self.info_original_location_cpp()
-        namespace_name = self.namespace_name()
-        block_code_lines = self.adapted_block._str_pydef_lines()
+        lines = self.adapted_block._str_pydef_lines()
 
-        lines: List[str] = []
-
-        lines.append(f"// <namespace {namespace_name}>{location}")
         if self.flag_create_python_namespace():
-            submodule_code = self._pydef_make_submodule_code()
-            lines += [submodule_code]
-            lines += block_code_lines
+            context_stored_lines = self._pydef_def_submodule_code() + lines
+            context_stored_lines = code_utils.indent_code_lines(
+                context_stored_lines, indent_str=self.options.indent_cpp_spaces()
+            )
+            self.lg_context.namespaces_pydef.store_code(
+                self._qualified_namespace_name(), "\n".join(context_stored_lines)
+            )
+            return []
         else:
-            lines += block_code_lines
-        lines.append(f"// </namespace {namespace_name}>")
-        return lines
+            return lines
