@@ -12,13 +12,13 @@ _THIS_DIR = os.path.dirname(__file__)
 sys.path.append(_THIS_DIR + "/../..")
 
 
-def read_file_content(filename):
+def read_file_content(filename) -> str:
     with open(filename, "r") as f:
         content = f.read()
     return content
 
 
-def play_parse(code):
+def play_parse(code) -> None:
     options = litgen_options_imgui()
     cpp_unit = srcmlcpp.code_to_cpp_unit(options.srcml_options, code)
     print(cpp_unit)
@@ -41,16 +41,21 @@ def litgensample_options() -> litgen.LitgenOptions:
     return options
 
 
-code = """
-enum Foo
-{
-    Foo_A,
-    Foo_B,
-    Foo_Count
-};
+def my_play() -> None:
+    code = """
+    enum Foo
+    {
+        Foo_A,
+        Foo_B,
+        Foo_Count
+    };
 
-void PlayFoo(Foo f = Foo_A);
-"""
-# options = litgen_options_imgui()
-options = litgen.options.LitgenOptions()
-play_stub(code, options)
+    void PlayFoo(Foo f = Foo_A);
+    """
+    # options = litgen_options_imgui()
+    options = litgen.options.LitgenOptions()
+    play_stub(code, options)
+
+
+if __name__ == "__main__":
+    my_play()
