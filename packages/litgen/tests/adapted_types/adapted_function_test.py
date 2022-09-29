@@ -81,7 +81,7 @@ def test_implot_easy() -> None:
         m.def("setup_axis_format",    // Line:4
             SetupAxisFormat,
             py::arg("axis"), py::arg("fmt"),
-            "Sets the format of numeric\\n axis labels");
+            " Sets the format of numeric\\n axis labels");
         """
     # logging.warning("\n" + generated_code)
     code_utils.assert_are_codes_equal(generated_code, expected_code)
@@ -98,7 +98,7 @@ def test_return_value_policy() -> None:
     expected_code = """
         m.def("foo",
             Foo,
-            "Returns a widget\\nreturn_value_policy.reference",
+            " Returns a widget\\nreturn_value_policy::reference",
             pybind11::return_value_policy::reference);
         """
     code_utils.assert_are_codes_equal(generated_code, expected_code)

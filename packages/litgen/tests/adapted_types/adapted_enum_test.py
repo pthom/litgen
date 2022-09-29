@@ -96,7 +96,7 @@ enum Foo
     code_utils.assert_are_codes_equal(
         pydef_code,
         """
-        py::enum_<Foo>(m, "Foo", py::arithmetic(), "Doc about Foo\\n On several lines")    // Line:4
+        py::enum_<Foo>(m, "Foo", py::arithmetic(), " Doc about Foo\\n On several lines")    // Line:4
             .value("a", Foo_a, "This is a")
             .value("b", Foo_b, "")
             .value("c", Foo_c, "c has a special comment")

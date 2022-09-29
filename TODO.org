@@ -434,6 +434,7 @@ later! publish srcmlcpp before!
 * Litgen TODO
 
 ** Wish list / hard
+*** mypy: no_implicit_reexport
 *** issue with mypy compatibility with generated modules
 
 Problem 2: dans lg_skbuild_template, tout est accpté dans example_lib...
@@ -441,16 +442,9 @@ Problem 3: dans lg_test_runner (integration tests), tout est refusé (trouve pas
 
 ** Wish List / Easy
 
-dans les replacements / comments, peut etre supprimer ceci: * -> None,  double -> float
-  (voir dans implot, par exemple, double-click -> float click !)
-
-stackoverflow: review question ("type annotation: warn about mutable members becoming instance when initialized at decl site")
+  stackoverflow: review question ("type annotation: warn about mutable members becoming instance when initialized at decl site")
     https://docs.python.org/3/library/typing.html#typing.ClassVar
-mypy: enable strict
-   see https://emplocity.com/en/about-us/blog/mypy_not_enough/
 
-
-** Handle Namespaces
 
 ** Handle operators()
 ** Handle trampoline
