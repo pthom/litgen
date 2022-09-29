@@ -94,7 +94,7 @@ class AdaptedEnumDecl(AdaptedDecl):
             replacement = RegexReplacement(replace_what, by_what)
             replacement_list.add_replacement(replacement)
         else:
-            if enum_member_name_python.lower().startswith(enum_name_cpp.lower()):
+            if enum_member_name_cpp.lower().startswith(enum_name_cpp.lower()):
                 replace_what = rf"\b{enum_member_name_cpp}\b"
                 replacement = RegexReplacement(replace_what, by_what)
                 replacement_list.add_replacement(replacement)

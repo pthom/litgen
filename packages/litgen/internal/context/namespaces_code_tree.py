@@ -72,10 +72,14 @@ class NamespacesCodeTree:
         if ns_name not in self._sub_namespaces_code.keys():
             self._sub_namespaces_code[ns_name] = NamespacesCodeTree(self._options, self._code_type)
 
+        sub_code_tree = self._sub_namespaces_code[ns_name]
         if len(namespace_names) == 1:
-            self._sub_namespaces_code[ns_name]._namespace_code += code
+            # Add new-line between parts if missing
+            if len(sub_code_tree._namespace_code) > 0 and (not sub_code_tree._namespace_code.endswith("\n")):
+                sub_code_tree._namespace_code += "\n"
+            sub_code_tree._namespace_code += code
         else:
-            self._sub_namespaces_code[ns_name]._store_code_in_tree(namespace_names[1:], code)
+            sub_code_tree._store_code_in_tree(namespace_names[1:], code)
 
     def store_code(self, qualified_namespace_name: CppQualifiedNamespaceName, code: str) -> None:
         namespaces_names = qualified_namespace_name.split("::")
