@@ -698,6 +698,11 @@ def make_regex_any_variable_starting_with(what_to_find: str) -> str:
     return regex
 
 
+def make_regex_exact_word(which_word: str) -> str:
+    regex = rf"^{which_word}$"
+    return regex
+
+
 def make_regex_exclude_word(which_word: str) -> str:
     regex = rf"^((?!{which_word}).)*$"
     return regex
@@ -708,8 +713,8 @@ def make_regex_var_name_contains_word(word: str) -> str:
         rf"^{word}$",  # Exactly word, or xxx_word or word_xxx, or wordXxx
         rf"^{word}_",  # nb_....
         rf"_{word}$",  # _which
-        rf"{word}[A-Z][a-z_]",
-        rf"{word}[0-9]",
+        rf"^{word}[A-Z][a-z_]",
+        rf"{word}[0-9]$",
     ]
     r = join_string_by_pipe_char(parts)
     return r
