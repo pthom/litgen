@@ -4,6 +4,7 @@ from typing import Dict, List, Set
 from codemanip import code_utils
 
 from litgen.internal.context.type_synonyms import *
+from litgen.options import LitgenOptions
 
 
 class NamespacesCodeTree:
@@ -24,35 +25,44 @@ class NamespacesCodeTree:
     _namespace_code_intro: str
     _namespace_code_outro: str
     _code_type: PydefOrStub
+    _options: LitgenOptions
 
-    def __init__(self, code_type: PydefOrStub) -> None:
+    def __init__(self, options: LitgenOptions, code_type: PydefOrStub) -> None:
         self._namespace_code = ""
         self._sub_namespaces_code = {}
         self._created_namespaces = set()
         self._code_type = code_type
+        self._options = options
 
         if code_type == PydefOrStub.Stub:
-            self._namespace_code_intro = "\n\n# <submodule NS_NAME>\n\n"
-            self._namespace_code_outro = "\n\n# </submodule NS_NAME>\n"
+            self._namespace_code_intro = "\n# <submodule NS_NAME>\n"
+            self._namespace_code_outro = "\n# </submodule NS_NAME>\n"
         elif code_type == PydefOrStub.Pydef:
-            self._namespace_code_intro = "\n\n{ // <namespace NS_NAME>\n\n"
-            self._namespace_code_outro = "\n\n} // </namespace NS_NAME>\n"
+            self._namespace_code_intro = "\n{ // <namespace NS_NAME>\n"
+            self._namespace_code_outro = "\n} // </namespace NS_NAME>\n"
 
     def full_tree_code(self, indent_str: str, current_namespace_name: str = "") -> str:
         r = ""
 
-        if len(current_namespace_name) > 0:
+        if len(current_namespace_name) == 0:
+            is_namespace_ignored = True
+        else:
+            is_namespace_ignored = code_utils.does_match_regex(
+                self._options.namespace_ignored__regex, current_namespace_name
+            )
+
+        if not is_namespace_ignored:
             r += self._namespace_code_intro.replace("NS_NAME", current_namespace_name)
 
         r += self._namespace_code
 
         for ns_name, sub_namespace_stub_code in self._sub_namespaces_code.items():
             sub_code = sub_namespace_stub_code.full_tree_code(indent_str, ns_name)
-            if len(current_namespace_name) > 0:
+            if not is_namespace_ignored:
                 sub_code = code_utils.indent_code(sub_code, indent_str=indent_str)
             r += sub_code
 
-        if len(current_namespace_name) > 0:
+        if not is_namespace_ignored:
             r += self._namespace_code_outro.replace("NS_NAME", current_namespace_name)
 
         return r
@@ -60,7 +70,7 @@ class NamespacesCodeTree:
     def _store_code_in_tree(self, namespace_names: List[CppNamespaceName], code: str):
         ns_name = namespace_names[0]
         if ns_name not in self._sub_namespaces_code.keys():
-            self._sub_namespaces_code[ns_name] = NamespacesCodeTree(self._code_type)
+            self._sub_namespaces_code[ns_name] = NamespacesCodeTree(self._options, self._code_type)
 
         if len(namespace_names) == 1:
             self._sub_namespaces_code[ns_name]._namespace_code += code

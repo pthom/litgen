@@ -24,7 +24,7 @@ class AdaptedNamespace(AdaptedElement):
         return self.cpp_element().ns_name
 
     def flag_create_python_namespace(self) -> bool:
-        is_root = code_utils.does_match_regex(self.options.namespace_root__regex, self.namespace_name())
+        is_root = code_utils.does_match_regex(self.options.namespace_ignored__regex, self.namespace_name())
         return not is_root
 
     # override

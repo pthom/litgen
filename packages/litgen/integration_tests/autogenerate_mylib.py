@@ -60,6 +60,9 @@ def mylib_litgen_options() -> litgen.LitgenOptions:
     # c style buffer options (will apply to all functions names, except if containing "Change")
     options.fn_params_replace_buffer_by_array__regex = code_utils.make_regex_exclude_word("Change")
 
+    # namespace
+    options.namespace_ignored__regex = "Mylib"
+
     #
     # Sandbox for other options
     #
