@@ -19,7 +19,17 @@ def test_namespaces():
     code = code_utils.unindent_code(
         """
 void FooRoot();
-namespace details { void FooDetails(); }
+
+namespace details // This namespace should be excluded (see options.namespace_exclude__regex)
+{
+    void FooDetails();
+}
+
+namespace // This anonymous namespace should be excluded
+{
+    void LocalFunction();
+}
+
 namespace Main  // This namespace should not be outputted as a submodule
 {
     // this is an inner namespace (this comment should become the namespace doc)
@@ -47,6 +57,9 @@ namespace Main  // This namespace should not be outputted as a submodule
         '''
         def foo_root() -> None:
             pass
+
+
+
         """This namespace should not be outputted as a submodule"""
 
 

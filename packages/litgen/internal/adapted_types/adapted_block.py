@@ -68,8 +68,9 @@ class AdaptedBlock(AdaptedElement):
             elif isinstance(child, CppEnum):
                 self.adapted_elements.append(AdaptedEnum(self.lg_context, child))
             elif isinstance(child, CppNamespace):
+                is_anonymous_namespace = child.ns_name == ""
                 is_excluded_by_name = code_utils.does_match_regex(self.options.namespace_exclude__regex, child.ns_name)
-                if not is_excluded_by_name:
+                if not is_excluded_by_name and not is_anonymous_namespace:
                     self.adapted_elements.append(AdaptedNamespace(self.lg_context, child))  # type: ignore
             elif isinstance(child, CppDeclStatement):
                 child.emit_warning(f"Block elements of type {child.tag()} are not supported in python conversion")
