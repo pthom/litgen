@@ -86,18 +86,26 @@ class CppElementComments:
         else:
             return self.comment_on_previous_lines + self.comment_end_of_line
 
-    def top_comment_code(self) -> str:
+    def top_comment_code(self, add_eol: bool = True) -> str:
         top_comments = map(lambda comment: "//" + comment, self.comment_on_previous_lines.splitlines())
         top_comment = "\n".join(top_comments)
-        if len(top_comment) > 0:
-            top_comment += "\n"
+        if add_eol:
+            if len(top_comment) > 0:
+                if not top_comment.endswith("\n"):
+                    top_comment += "\n"
+        else:
+            while top_comment.endswith("\n"):
+                top_comment = top_comment[:-1]
         return top_comment
 
     def eol_comment_code(self) -> str:
         if len(self.comment_end_of_line) == 0:
             return ""
         else:
-            return " //" + self.comment_end_of_line
+            if self.comment_end_of_line.startswith("//"):
+                return self.comment_end_of_line
+            else:
+                return " //" + self.comment_end_of_line
 
     def add_eol_comment(self, comment: str) -> None:
         if len(self.comment_end_of_line) == 0:
@@ -226,6 +234,17 @@ class CppElement(SrcmlXmlWrapper):
             current_parent = current_parent.parent
         return ancestors
 
+    def hierarchy_overview(self) -> str:
+        log = ""
+
+        def visitor_log_info(cpp_element: CppElement, event: CppElementsVisitorEvent, depth: int) -> None:
+            nonlocal log
+            if event == CppElementsVisitorEvent.OnElement:
+                log += "  " * depth + cpp_element.short_cpp_element_info() + "\n"
+
+        self.visit_cpp_breadth_first(visitor_log_info)
+        return log
+
     def __str__(self) -> str:
         return self._str_simplified_yaml()
 
@@ -341,17 +360,6 @@ class CppBlock(CppElementAndComment):
                 result += "\n"
         return result
 
-    def hierarchy_overview(self) -> str:
-        log = ""
-
-        def visitor_log_info(cpp_element: CppElement, event: CppElementsVisitorEvent, depth: int) -> None:
-            nonlocal log
-            if event == CppElementsVisitorEvent.OnElement:
-                log += "  " * depth + cpp_element.short_cpp_element_info() + "\n"
-
-        self.visit_cpp_breadth_first(visitor_log_info)
-        return log
-
     def all_functions(self) -> List[CppFunctionDecl]:
         r: List[CppFunctionDecl] = []
         for child in self.block_children:
@@ -383,16 +391,23 @@ class CppBlock(CppElementAndComment):
             child.visit_cpp_breadth_first(cpp_visitor_function, depth + 1)
         cpp_visitor_function(self, CppElementsVisitorEvent.OnAfterChildren, depth)
 
-    def all_cpp_elements_recursive(self) -> List[CppElement]:
+    def all_cpp_elements_recursive(self, wanted_type: Optional[type] = None) -> List[CppElement]:
         _all_cpp_elements = []
 
         def visitor_add_cpp_element(cpp_element: CppElement, event: CppElementsVisitorEvent, depth: int) -> None:
             if event == CppElementsVisitorEvent.OnElement:
-                _all_cpp_elements.append(cpp_element)
+                if wanted_type is None or isinstance(cpp_element, wanted_type):
+                    _all_cpp_elements.append(cpp_element)
 
         self.visit_cpp_breadth_first(visitor_add_cpp_element)
-
         return _all_cpp_elements
+
+    def first_element_of_type(self, wanted_type: type) -> Optional[CppElement]:
+        elements = self.all_cpp_elements_recursive(wanted_type)
+        if len(elements) == 0:
+            return None
+        else:
+            return elements[0]
 
     def fill_children_parents(self) -> None:
         parents_stack: List[Optional[CppElement]] = [None]
@@ -562,6 +577,9 @@ class CppType(CppElement):
 
     def is_raw_pointer(self) -> bool:
         return "*" in self.modifiers
+
+    def is_void(self) -> bool:
+        return self.typenames == ["void"] and len(self.specifiers) == 0
 
     def __str__(self) -> str:
         return self.str_code()
@@ -1076,7 +1094,9 @@ class CppFunction(CppFunctionDecl):
         super().__init__(element, cpp_element_comments)
 
     def str_code(self) -> str:
-        r = self._str_signature() + str(self.block)
+        r = self._str_signature()
+        if hasattr(self, "block"):
+            r += str(self.block)
         return r
 
     def __str__(self) -> str:
@@ -1136,7 +1156,9 @@ class CppConstructor(CppConstructorDecl):
         super().__init__(element, cpp_element_comments)
 
     def str_code(self) -> str:
-        r = self._str_signature() + str(self.block)
+        r = self._str_signature()
+        if hasattr(self, "block"):
+            r += str(self.block)
         return r
 
     def __str__(self) -> str:
