@@ -138,17 +138,22 @@ Test multithread qui semble marcher:
 ** srcml_cpp as main project
 ...
 ** ideas / other utilities
+
 PimpMyClass
+        mettre un decorateur @pimplmyclass
+
         auto pImpl from cpp: pImpl class  => header decl + cpp imp non pImpl + Doc !
 
         todo:
-        const and other methods specifiers
+        constexpr & static specifiers
         command line
         online service?
 
 Add named parameters to functions
+
 Cerealize / cerealize
-PimpMyCi:
+
+PimpMyCI:
     check for doc
     check for snake_case
     hunt_fake_classes

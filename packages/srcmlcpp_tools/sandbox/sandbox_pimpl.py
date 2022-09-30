@@ -1,7 +1,7 @@
 from typing import cast
 
 import srcmlcpp
-from srcmlcpp_tools import pimpl_my_class
+from srcmlcpp_tools.pimpl_my_class import pimpl_my_class
 from srcmlcpp.srcml_types import *
 
 code = """

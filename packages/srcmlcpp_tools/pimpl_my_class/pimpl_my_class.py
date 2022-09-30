@@ -6,17 +6,13 @@ from codemanip import code_utils
 from srcmlcpp.srcml_types import *
 
 
-CppImplCode = str
-CppHeaderCode = str
-CppGlueCode = str
-
 # Todo: const, constexpr, and other methods specifiers
 
 
 @dataclass
 class PimplResult:
-    header_code: CppHeaderCode = ""
-    glue_code: CppGlueCode = ""
+    header_code: str = ""
+    glue_code: str = ""
 
 
 @dataclass

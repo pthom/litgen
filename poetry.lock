@@ -264,6 +264,25 @@ flake8 = ">=3.0.0"
 dev = ["coverage", "hypothesis", "hypothesmith (>=0.2)", "pre-commit"]
 
 [[package]]
+name = "flask"
+version = "2.2.2"
+description = "A simple framework for building complex web applications."
+category = "dev"
+optional = false
+python-versions = ">=3.7"
+
+[package.dependencies]
+click = ">=8.0"
+importlib-metadata = {version = ">=3.6.0", markers = "python_version < \"3.10\""}
+itsdangerous = ">=2.0"
+Jinja2 = ">=3.0"
+Werkzeug = ">=2.2.2"
+
+[package.extras]
+async = ["asgiref (>=3.2)"]
+dotenv = ["python-dotenv"]
+
+[[package]]
 name = "identify"
 version = "2.5.5"
 description = "File identification library for Python"
@@ -391,6 +410,14 @@ widgetsnbextension = ">=4.0,<5.0"
 
 [package.extras]
 test = ["jsonschema", "pytest (>=3.6.0)", "pytest-cov", "pytz"]
+
+[[package]]
+name = "itsdangerous"
+version = "2.1.2"
+description = "Safely pass data to untrusted environments and back."
+category = "dev"
+optional = false
+python-versions = ">=3.7"
 
 [[package]]
 name = "jedi"
@@ -1259,6 +1286,20 @@ optional = false
 python-versions = "*"
 
 [[package]]
+name = "werkzeug"
+version = "2.2.2"
+description = "The comprehensive WSGI web application library."
+category = "dev"
+optional = false
+python-versions = ">=3.7"
+
+[package.dependencies]
+MarkupSafe = ">=2.1.1"
+
+[package.extras]
+watchdog = ["watchdog"]
+
+[[package]]
 name = "widgetsnbextension"
 version = "4.0.3"
 description = "Jupyter interactive widgets for Jupyter Notebook"
@@ -1281,7 +1322,7 @@ testing = ["pytest (>=6)", "pytest-checkdocs (>=2.4)", "pytest-flake8", "pytest-
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.9"
-content-hash = "f35ecdb4c99cafff59e4ff9b96a28039dc135bec027430b75322816e53c10f07"
+content-hash = "1b687e2e2ac8084d6fffffb9fe0d1e986cb46ffb227846a41d4e34707ec878c5"
 
 [metadata.files]
 appnope = [
@@ -1325,6 +1366,7 @@ fastjsonschema = []
 filelock = []
 flake8 = []
 flake8-bugbear = []
+flask = []
 identify = []
 importanize = [
     {file = "importanize-0.7.0-py2.py3-none-any.whl", hash = "sha256:0ba1cc16f80b7e9cc9dadf29d4f858016263db4cb17ca0c13fcbdda10029ac1e"},
@@ -1342,6 +1384,7 @@ ipython = [
 ]
 ipython-genutils = []
 ipywidgets = []
+itsdangerous = []
 jedi = [
     {file = "jedi-0.18.1-py2.py3-none-any.whl", hash = "sha256:637c9635fcf47945ceb91cd7f320234a7be540ded6f3e99a50cb6febdfd1ba8d"},
     {file = "jedi-0.18.1.tar.gz", hash = "sha256:74137626a64a99c8eb6ae5832d99b3bdd7d29a3850fe2aa80a4126b2a7d949ab"},
@@ -1544,5 +1587,6 @@ wcwidth = [
     {file = "wcwidth-0.2.5.tar.gz", hash = "sha256:c4d647b99872929fdb7bdcaa4fbe7f01413ed3d98077df798530e5b04f116c83"},
 ]
 webencodings = []
+werkzeug = []
 widgetsnbextension = []
 zipp = []
