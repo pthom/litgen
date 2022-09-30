@@ -9,7 +9,6 @@ from litgen.internal import cpp_to_python
 from litgen.internal.context.litgen_context import LitgenContext
 from litgen.internal.adapted_types.adapted_decl import AdaptedDecl
 from litgen.internal.adapted_types.adapted_element import AdaptedElement
-from litgen.internal.adapted_types import operators
 
 
 @dataclass
@@ -167,6 +166,7 @@ class AdaptedFunction(AdaptedElement):
 
     def __init__(self, lg_context: LitgenContext, function_infos: CppFunctionDecl, is_overloaded: bool) -> None:
         from litgen.internal import adapt_function_params
+        from litgen.internal.adapted_types import operators
 
         self.cpp_adapted_function = function_infos
         operators.raise_if_unsupported_operator(self.cpp_adapted_function)
@@ -208,6 +208,8 @@ class AdaptedFunction(AdaptedElement):
         return r
 
     def function_name_python(self) -> str:
+        from litgen.internal.adapted_types import operators
+
         if self.is_constructor():
             return "__init__"
         elif self.cpp_adapted_function.is_operator():
@@ -256,6 +258,17 @@ class AdaptedFunction(AdaptedElement):
     #
     # override
     def _str_stub_lines(self) -> List[str]:
+
+        # Handle <=> (aka spaceship) operator, which is split in 5 operators!
+        from litgen.internal.adapted_types import operators
+
+        if operators.is_spaceship_operator(self):
+            new_functions = operators.cpp_split_spaceship_operator(self)
+            r = []
+            for new_function in new_functions:
+                r += new_function._str_stub_lines()
+            return r
+
         if self.is_type_ignore:
             type_ignore = "  # type: ignore"
         else:
@@ -660,6 +673,17 @@ class AdaptedFunction(AdaptedElement):
 
     # override
     def _str_pydef_lines(self) -> List[str]:
+
+        # Handle <=> (aka spaceship) operator, which is split in 5 operators!
+        from litgen.internal.adapted_types import operators
+
+        if operators.is_spaceship_operator(self):
+            new_functions = operators.cpp_split_spaceship_operator(self)
+            r = []
+            for new_function in new_functions:
+                r += new_function._str_pydef_lines()
+            return r
+
         if self.is_constructor():
             code = self._pydef_constructor_str()
         else:

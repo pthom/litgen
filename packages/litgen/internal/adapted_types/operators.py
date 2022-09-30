@@ -1,7 +1,7 @@
-from typing import Dict, Optional
+from typing import Dict, Optional, List
 
 from srcmlcpp.srcml_types import *
-
+from litgen.internal.adapted_types import AdaptedFunction
 
 CppOperatorName = str
 PythonOperatorName = str
@@ -11,7 +11,6 @@ PythonOperatorName = str
 
 def _cpp_operator_unsupported_message(cpp_operator_name: CppOperatorName) -> Optional[str]:
     known_unsupported: Dict[CppOperatorName, str] = {
-        "<=>": "three way comparison not available in python",
         "++": 'increment operator not available in python (use "+=1" ?)',
         "--": 'decrement operator not available in python (use "-=1" ?)',
         "=": "operator= not supported in python. Consider using copy.copy or copy.deepcopy",
@@ -41,6 +40,7 @@ def _cpp_to_python_operator_one_param(cpp_operator_name: CppOperatorName) -> Opt
         "*=": "__imul__",
         "/=": "__itruediv__",
         "%=": "__imod__",
+        "<=>": "<=>",  # Specific case handled separately
     }
     if cpp_operator_name in known_conversions.keys():
         return known_conversions[cpp_operator_name]
@@ -105,3 +105,41 @@ def cpp_to_python_operator_name(cpp_function_decl: CppFunctionDecl) -> str:
         return r
     else:
         raise AssertionError("Logic Error in cpp_to_python_operator_name")
+
+
+def is_spaceship_operator(adapted_function: AdaptedFunction) -> bool:
+    if not adapted_function.cpp_adapted_function.is_operator():
+        return False
+    if not adapted_function.is_method():
+        return False
+    r = adapted_function.cpp_adapted_function.operator_name() == "<=>"
+    return r
+
+
+def cpp_split_spaceship_operator(adapted_spaceship_operator: AdaptedFunction) -> List[AdaptedFunction]:
+    assert is_spaceship_operator(adapted_spaceship_operator)
+
+    r: List[AdaptedFunction] = []
+
+    def make_cmp(cpp_operator_name: str, test_to_run: str) -> AdaptedFunction:
+        f = copy.deepcopy(adapted_spaceship_operator)
+        f.cpp_adapted_function.return_type.typenames = ["bool"]
+        f.cpp_adapted_function.function_name = f"operator{cpp_operator_name}"
+        f.cpp_adapter_code = code_utils.unindent_code(
+            f"""
+        auto cmp = [&self](auto&& other) -> bool {{
+            return self.operator<=>(other) {test_to_run};
+        }};
+        """,
+            flag_strip_empty_lines=True,
+        )
+        f.lambda_to_call = "cmp"
+        return f
+
+    r.append(make_cmp("<", " < 0"))
+    r.append(make_cmp("<=", " <= 0"))
+    r.append(make_cmp("==", " == 0"))
+    r.append(make_cmp(">=", " >= 0"))
+    r.append(make_cmp(">", " > 0"))
+
+    return r

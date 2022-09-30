@@ -21,3 +21,23 @@ def test_operators():
     # Test two versions of the call operator (with IntWrapper and int)
     assert a(lg_mylib.IntWrapper(4)) == 42
     assert a(4) == 43
+
+
+def test_spaceship_operator():
+    a = lg_mylib.IntWrapperSpaceship(0)
+    b = lg_mylib.IntWrapperSpaceship(1)
+
+    assert a < b
+    assert a < 1
+
+    assert a <= b
+    assert a <= 1
+
+    assert a == 0
+    assert a == lg_mylib.IntWrapperSpaceship(0)
+
+    assert b >= a
+    assert b >= 0
+
+    assert b > a
+    assert b > 0

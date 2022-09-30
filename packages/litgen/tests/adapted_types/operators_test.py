@@ -70,3 +70,97 @@ def test_operators():
                 pass
     ''',
     )
+
+
+def test_spaceship_operator():
+    options = litgen.LitgenOptions()
+    code = """
+        struct IntWrapperSpaceship
+        {
+            int value;
+
+            IntWrapperSpaceship(int v): value(v) {}
+
+            int operator<=>(IntWrapperSpaceship& o) { return value - o.value; }
+        };
+    """
+
+    generated_code = litgen.generate_code(options, code)
+    code_utils.assert_are_codes_equal(
+        generated_code.stub_code,
+        """
+        class IntWrapperSpaceship:
+            value: int
+
+            def __init__(self, v: int) -> None:
+                pass
+
+            def __lt__(self, o: IntWrapperSpaceship) -> bool:
+                pass
+            def __le__(self, o: IntWrapperSpaceship) -> bool:
+                pass
+            def __eq__(self, o: IntWrapperSpaceship) -> bool:
+                pass
+            def __ge__(self, o: IntWrapperSpaceship) -> bool:
+                pass
+            def __gt__(self, o: IntWrapperSpaceship) -> bool:
+                pass
+    """,
+    )
+
+    code_utils.assert_are_codes_equal(
+        generated_code.pydef_code,
+        """
+        auto pyClassIntWrapperSpaceship = py::class_<IntWrapperSpaceship>
+            (m, "IntWrapperSpaceship", "")
+            .def_readwrite("value", &IntWrapperSpaceship::value, "")
+            .def(py::init<int>(),
+                py::arg("v"))
+            .def("__lt__",
+                [](IntWrapperSpaceship & self, IntWrapperSpaceship & o) -> bool
+                {
+                    auto cmp = [&self](auto&& other) -> bool {
+                        return self.operator<=>(other)  < 0;
+                    };
+
+                    return cmp(o);
+                },     py::arg("o"))
+            .def("__le__",
+                [](IntWrapperSpaceship & self, IntWrapperSpaceship & o) -> bool
+                {
+                    auto cmp = [&self](auto&& other) -> bool {
+                        return self.operator<=>(other)  <= 0;
+                    };
+
+                    return cmp(o);
+                },     py::arg("o"))
+            .def("__eq__",
+                [](IntWrapperSpaceship & self, IntWrapperSpaceship & o) -> bool
+                {
+                    auto cmp = [&self](auto&& other) -> bool {
+                        return self.operator<=>(other)  == 0;
+                    };
+
+                    return cmp(o);
+                },     py::arg("o"))
+            .def("__ge__",
+                [](IntWrapperSpaceship & self, IntWrapperSpaceship & o) -> bool
+                {
+                    auto cmp = [&self](auto&& other) -> bool {
+                        return self.operator<=>(other)  >= 0;
+                    };
+
+                    return cmp(o);
+                },     py::arg("o"))
+            .def("__gt__",
+                [](IntWrapperSpaceship & self, IntWrapperSpaceship & o) -> bool
+                {
+                    auto cmp = [&self](auto&& other) -> bool {
+                        return self.operator<=>(other)  > 0;
+                    };
+
+                    return cmp(o);
+                },     py::arg("o"))
+            ;
+    """,
+    )

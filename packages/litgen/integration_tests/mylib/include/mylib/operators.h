@@ -23,3 +23,17 @@ struct IntWrapper // MY_API
     MY_API int operator()(IntWrapper b) { return value * b.value + 2; }
     MY_API int operator()(int b) { return value * b + 3; }
 };
+
+
+struct IntWrapperSpaceship // MY_API
+{
+    int value;
+
+    IntWrapperSpaceship(int v): value(v) {}
+
+    // Test spaceship operator, which will be split into 5 operators in Python!
+    // ( <, <=, ==, >=, >)
+    // Since we have two overloads, 10 python methods will be built
+    MY_API int operator<=>(IntWrapperSpaceship& o) { return value - o.value; }
+    MY_API int operator<=>(int& o) { return value - o; }
+};

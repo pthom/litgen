@@ -566,6 +566,104 @@ void py_init_module_lg_mylib(py::module& m)
             py::overload_cast<int>(&IntWrapper::operator()), py::arg("b"))
         ;
 
+
+    auto pyClassIntWrapperSpaceship = py::class_<IntWrapperSpaceship>
+        (m, "IntWrapperSpaceship", "")
+        .def_readwrite("value", &IntWrapperSpaceship::value, "")
+        .def(py::init<int>(),
+            py::arg("v"))
+        .def("__lt__",
+            [](IntWrapperSpaceship & self, IntWrapperSpaceship & o) -> bool
+            {
+                auto cmp = [&self](auto&& other) -> bool {
+                    return self.operator<=>(other)  < 0;
+                };
+
+                return cmp(o);
+            },     py::arg("o"))
+        .def("__le__",
+            [](IntWrapperSpaceship & self, IntWrapperSpaceship & o) -> bool
+            {
+                auto cmp = [&self](auto&& other) -> bool {
+                    return self.operator<=>(other)  <= 0;
+                };
+
+                return cmp(o);
+            },     py::arg("o"))
+        .def("__eq__",
+            [](IntWrapperSpaceship & self, IntWrapperSpaceship & o) -> bool
+            {
+                auto cmp = [&self](auto&& other) -> bool {
+                    return self.operator<=>(other)  == 0;
+                };
+
+                return cmp(o);
+            },     py::arg("o"))
+        .def("__ge__",
+            [](IntWrapperSpaceship & self, IntWrapperSpaceship & o) -> bool
+            {
+                auto cmp = [&self](auto&& other) -> bool {
+                    return self.operator<=>(other)  >= 0;
+                };
+
+                return cmp(o);
+            },     py::arg("o"))
+        .def("__gt__",
+            [](IntWrapperSpaceship & self, IntWrapperSpaceship & o) -> bool
+            {
+                auto cmp = [&self](auto&& other) -> bool {
+                    return self.operator<=>(other)  > 0;
+                };
+
+                return cmp(o);
+            },     py::arg("o"))
+        .def("__lt__",
+            [](IntWrapperSpaceship & self, int & o) -> bool
+            {
+                auto cmp = [&self](auto&& other) -> bool {
+                    return self.operator<=>(other)  < 0;
+                };
+
+                return cmp(o);
+            },     py::arg("o"))
+        .def("__le__",
+            [](IntWrapperSpaceship & self, int & o) -> bool
+            {
+                auto cmp = [&self](auto&& other) -> bool {
+                    return self.operator<=>(other)  <= 0;
+                };
+
+                return cmp(o);
+            },     py::arg("o"))
+        .def("__eq__",
+            [](IntWrapperSpaceship & self, int & o) -> bool
+            {
+                auto cmp = [&self](auto&& other) -> bool {
+                    return self.operator<=>(other)  == 0;
+                };
+
+                return cmp(o);
+            },     py::arg("o"))
+        .def("__ge__",
+            [](IntWrapperSpaceship & self, int & o) -> bool
+            {
+                auto cmp = [&self](auto&& other) -> bool {
+                    return self.operator<=>(other)  >= 0;
+                };
+
+                return cmp(o);
+            },     py::arg("o"))
+        .def("__gt__",
+            [](IntWrapperSpaceship & self, int & o) -> bool
+            {
+                auto cmp = [&self](auto&& other) -> bool {
+                    return self.operator<=>(other)  > 0;
+                };
+
+                return cmp(o);
+            },     py::arg("o"))
+        ;
+
     { // <namespace SomeNamespace>
         py::module_ pyNamespaceSomeNamespace = m.def_submodule("SomeNamespace", "");
         auto pyNamespaceSomeNamespace_ClassParentStruct = py::class_<SomeNamespace::ParentStruct>

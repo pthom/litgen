@@ -618,6 +618,37 @@ class IntWrapper:
         pass
 
 
+class IntWrapperSpaceship:
+    value: int
+
+    def __init__(self, v: int) -> None:
+        pass
+
+    # Test spaceship operator, which will be split into 5 operators in Python!
+    # ( <, <=, ==, >=, >)
+    # Since we have two overloads, 10 python methods will be built
+    def __lt__(self, o: IntWrapperSpaceship) -> bool:
+        pass
+    def __le__(self, o: IntWrapperSpaceship) -> bool:
+        pass
+    def __eq__(self, o: IntWrapperSpaceship) -> bool:
+        pass
+    def __ge__(self, o: IntWrapperSpaceship) -> bool:
+        pass
+    def __gt__(self, o: IntWrapperSpaceship) -> bool:
+        pass
+    def __lt__(self, o: int) -> bool:
+        pass
+    def __le__(self, o: int) -> bool:
+        pass
+    def __eq__(self, o: int) -> bool:
+        pass
+    def __ge__(self, o: int) -> bool:
+        pass
+    def __gt__(self, o: int) -> bool:
+        pass
+
+
 #////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 #                       mylib/mylib.h continued                                                                //
 #//////////////////////////////////////////////////////////////////////////////////////////////////////////////

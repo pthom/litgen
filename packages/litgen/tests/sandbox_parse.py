@@ -59,19 +59,14 @@ struct IntWrapper
 {
     int value;
 
-    IntWrapper operator+(IntWrapper b) { return IntWrapper{ value + b.value}; }
-    IntWrapper operator+=(IntWrapper b) { return IntWrapper{ value + b.value}; }
-    IntWrapper operator-(IntWrapper b) { return IntWrapper{ value - b.vale }; }
-    IntWrapper operator-() { return IntWrapper{ -value }; }
-    IntWrapper operator+=(IntWrapper b) { value += b.value; return *this; }
-    IntWrapper operator()(IntWrapper b) { return value * b.value + 2; }
+    IntWrapper operator<=>(IntWrapper b) { return IntWrapper{ value - b.value}; }
 };
     """
     options = LitgenOptions()
     generated_code = litgen.generate_code(options, code)
     print(generated_code.stub_code)
 
-    print(generated_code.pydef_code)
+    # print(generated_code.pydef_code)
 
 
 if __name__ == "__main__":
