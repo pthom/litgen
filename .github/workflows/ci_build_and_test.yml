@@ -12,6 +12,12 @@ jobs:
     - name: Checkout submodules
       run: git submodule update --init --recursive
 
+    - name: Set up GCC (update gcc)
+      uses: egor-tensin/setup-gcc@v1
+      with:
+        version: 11
+        platform: x64
+
     - name: Install srcML
       run : sudo ./ci_scripts/install_srcml_ubuntu.sh
 
