@@ -140,6 +140,12 @@ Test multithread qui semble marcher:
 ** ideas / other utilities
 PimpMyClass
         auto pImpl from cpp: pImpl class  => header decl + cpp imp non pImpl + Doc !
+
+        todo:
+        const and other methods specifiers
+        command line
+        online service?
+
 Add named parameters to functions
 Cerealize / cerealize
 PimpMyCi:
@@ -456,9 +462,17 @@ https://docs.python.org/3/reference/datamodel.html#emulating-numeric-types
 
 ** Template classes and functions
 (by asking for a specialization name)
+templated functions can reuse the same name
+
+
+** Namespace:
+Non : voir si possible retrouver same namespace par recherche dans CppUnit ou AdaptedCppUnit
+
 
 ** Handle trampoline
+
 See example in py-mahi-gui
+On ne fait qu'un niveau de derivation, c'est tout!
 
 ** Interactive demo
 https://www.w3schools.com/howto/tryit.asp?filename=tryhow_js_collapsible_symbol
