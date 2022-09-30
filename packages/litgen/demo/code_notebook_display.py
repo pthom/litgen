@@ -1,5 +1,6 @@
 from dataclasses import dataclass
 from typing import List
+from enum import Enum
 
 from pygments import highlight
 from pygments.lexers import Python3Lexer, CppLexer
@@ -18,7 +19,7 @@ def display_wrapper(html_code: HtmlCode) -> None:
     display(HTML(html_code))  # type: ignore
 
 
-def html_display_code(code: str, lexer: Lexer, style: str) -> HtmlCode:
+def _html_code_viewer(code: str, lexer: Lexer, style: str) -> HtmlCode:
     pygments_css = HtmlFormatter(style=style).get_style_defs(".highlight")
     html_style = f"""<style>{pygments_css}</style>"""
 
@@ -27,60 +28,92 @@ def html_display_code(code: str, lexer: Lexer, style: str) -> HtmlCode:
     return html
 
 
-def html_cpp_code(code: str) -> HtmlCode:
+def html_cpp_code_viewer(code: str) -> HtmlCode:
     lexer = CppLexer()
     # See https://pygments.org/styles/
     style = "gruvbox-light"  # 'solarized-light' #'paraiso-light' #'zenburn' #'solarized-light' # zenburn
     # style = 'solarized-light'
-    html = html_display_code(code, lexer, style)
+    html = _html_code_viewer(code, lexer, style)
     return html
 
 
-def html_python_code(code: str) -> HtmlCode:
+def html_python_code_viewer(code: str) -> HtmlCode:
     lexer = Python3Lexer()
     style = "gruvbox-light"
-    html = html_display_code(code, lexer, style)
+    html = _html_code_viewer(code, lexer, style)
     return html
 
 
 def display_cpp_code(code: str) -> None:
-    display_wrapper(html_cpp_code(code))
+    display_wrapper(html_cpp_code_viewer(code))
 
 
 def display_python_code(code: str) -> None:
-    display_wrapper(html_python_code(code))
+    display_wrapper(html_python_code_viewer(code))
+
+
+class CodeLanguage(Enum):
+    Python = 0
+    Cpp = 1
 
 
 @dataclass
 class CodeAndTitle:
+    code_language: CodeLanguage
     code: str
     title: str
 
 
-def display_cpp_python_code(cpp_code: str, python_code: str) -> None:
-    html_cpp = html_cpp_code(cpp_code)
-    html_python = html_python_code(python_code)
-    c1 = CodeAndTitle(html_python, "Python stub (declarations)")
-    c2 = CodeAndTitle(html_cpp, "C++ Pydef code")
-    display_several_codes([c1, c2])
-
-
 def display_several_codes(codes: List[CodeAndTitle]) -> None:
-    assert len(codes) == 2
+
     c1 = codes[0]
     c2 = codes[1]
-    html_table = f"""
-    <table>
-        <tr>
-            <td align="left" bgcolor="#eeee55"><div align="left">{c1.title}</div></td>
-            <td width="10px"></td>
-            <td align="left" bgcolor="#99ee99"><div align="left">{c2.title}</div></td>
-        </tr>
-        <tr>
-            <td align="left"><div align="left">{c1.code}</div></td>
-            <td width="10px"></td>
-            <td align="left"><div align="left">{c2.code}</div></td>
-        </tr>
-    </table>
+    c3 = codes[2]
+
+    # lines1 = c1.code.count("\n")
+    # lines2 = c2.code.count("\n")
+    # nb_lines = max(lines1, lines2) # Marche pas!!!
+    nb_lines = 12
+
+    html = f"""
+    <style>
+      div.several_codes {{
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-evenly;
+      }}
+      div.scroll_title_half {{
+        height: {nb_lines + 1}em;
+        flex-basis: 47%;
+      }}
+      div.scroll_title_full {{
+        width: 95%;
+        height: {nb_lines + 1}em;
+      }}
+      div.scrollable_code_viewer {{
+        width: 100%;
+        height: {nb_lines}em;
+        overflow: auto;
+        background-color: #f9f1cb
+      }}
+    </style>
     """
-    display_wrapper(html_table)
+
+    html += f"""
+    <div class ="several_codes">
+        <div class="scroll_title_half">
+            {c1.title}
+            <div class="scrollable_code_viewer">{c1.code}</div>
+        </div>
+        <div class="scroll_title_half">
+            {c2.title}
+            <div class="scrollable_code_viewer">{c2.code}</div>
+        </div>
+        <div class="scroll_title_full">
+            <br/>
+            {c3.title}
+            <div class="scrollable_code_viewer">{c3.code}</div>
+        </div>
+    </div>
+    """
+    display_wrapper(html)
