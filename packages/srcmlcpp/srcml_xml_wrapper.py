@@ -285,11 +285,12 @@ class SrcmlXmlWrapper:
 
         message = ""
 
-        message += self._show_element_info()
+        if "while parsing" not in additional_message.lower():
+            message += self._show_element_info()
 
-        if self.options.flag_show_python_callstack:
-            python_caller_function_name, python_error_line = _get_python_call_info()
-            message += show_python_callstack(python_error_line)
+            if self.options.flag_show_python_callstack:
+                python_caller_function_name, python_error_line = _get_python_call_info()
+                message += show_python_callstack(python_error_line)
 
         if len(additional_message) > 0:
             message = (
