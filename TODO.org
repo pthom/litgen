@@ -449,3 +449,5 @@ Problem 3: dans lg_test_runner (integration tests), tout est refusé (trouve pas
 ** Handle operators()
 ** Handle trampoline
 See example in py-mahi-gui
+
+** Interactive demo
