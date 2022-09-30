@@ -13,5 +13,6 @@
 #include "mylib/inner_class_test.h"
 #include "mylib/mix_adapters_class_test.h"
 #include "mylib/namespace_test.h"
+#include "mylib/operators.h"
 
-#include "mylib/sandbox.h"
+// #include "mylib/sandbox.h"

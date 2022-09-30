@@ -4,44 +4,12 @@ from typing import cast
 from munch import Munch  # type: ignore
 
 from srcmlcpp.srcml_types import *
-from srcmlcpp.srcml_exception import SrcMlException
 
 from litgen.internal import cpp_to_python
 from litgen.internal.context.litgen_context import LitgenContext
 from litgen.internal.adapted_types.adapted_decl import AdaptedDecl
 from litgen.internal.adapted_types.adapted_element import AdaptedElement
-
-
-# Move to cpp_to_python
-CppOperatorName = str
-PythonOperatorName = str
-
-
-# def cpp_to_python_arithmetic_one_param_operator(cpp_operator_name: CppOperatorName) -> Optional[PythonOperatorName]:
-#     known_conversions_: Dict[CppOperatorName, PythonOperatorName] = {
-#         "+": "__add__",
-#         "-": "__sub__",
-#         "*": "__mul__",
-#         "/": "__truediv__",
-#         "%": "__mod__",
-#         "[]": "__getitem__",
-#         "<": "__lt__",
-#         "<=": "__le__",
-#         "==": "__eq__",
-#         "!=": "__ne__",
-#         ">": "__gt__",
-#         ">=": "__ge__",
-#         "+=": "__iadd__",
-#         "-=": "__isub__",
-#         "*=": "__imul__",
-#         "/=": "__itruediv__",
-#         "%=": "__imod__"
-#         # C++ space operator<=>()
-#         # C++ operator= (copy or deepcopy)
-#         # R K::operator-(); / negation, Unary minus ==> __neg__  (et __pos__ pour operator+())
-#         # -- and ++ => warning
-#         # call operator()(...)  => "__call__"
-#     }
+from litgen.internal.adapted_types import operators
 
 
 @dataclass
@@ -201,7 +169,7 @@ class AdaptedFunction(AdaptedElement):
         from litgen.internal import adapt_function_params
 
         self.cpp_adapted_function = function_infos
-        self._raise_if_unsupported_operator()
+        operators.raise_if_unsupported_operator(self.cpp_adapted_function)
         # self.parent_struct_name = parent_struct_name
         self.cpp_adapter_code = None
         self.lambda_to_call = None
@@ -215,10 +183,6 @@ class AdaptedFunction(AdaptedElement):
 
         adapt_function_params.apply_all_adapters(self)
         self._store_replacement_in_context()
-
-    def _raise_if_unsupported_operator(self) -> None:
-        if self.cpp_adapted_function.is_operator() and not self.cpp_adapted_function.is_method():
-            raise SrcMlException("operators are supported only when implemented as a member functions")
 
     # override
     def cpp_element(self) -> CppFunctionDecl:
@@ -247,7 +211,8 @@ class AdaptedFunction(AdaptedElement):
         if self.is_constructor():
             return "__init__"
         elif self.cpp_adapted_function.is_operator():
-            return "some_operator"
+            r = operators.cpp_to_python_operator_name(self.cpp_adapted_function)
+            return r
         else:
             r = cpp_to_python.function_name_to_python(self.options, self.cpp_adapted_function.function_name)
             return r

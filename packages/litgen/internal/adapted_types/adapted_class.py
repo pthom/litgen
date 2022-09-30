@@ -3,6 +3,7 @@ from __future__ import annotations
 from typing import Union, cast
 
 from srcmlcpp.srcml_types import *
+from srcmlcpp.srcml_exception import SrcMlException
 
 from litgen.internal import cpp_to_python
 from litgen.internal.context.litgen_context import LitgenContext
@@ -261,29 +262,31 @@ class AdaptedClass(AdaptedElement):
     def _fill_public_children(self) -> None:
         public_elements = self.cpp_element().get_public_elements()
         for child in public_elements:
-            if isinstance(child, CppEmptyLine):
-                self.adapted_public_children.append(AdaptedEmptyLine(self.lg_context, child))
-            elif isinstance(child, CppComment):
-                self.adapted_public_children.append(AdaptedComment(self.lg_context, child))
-            elif isinstance(child, CppFunctionDecl):
-                if not code_utils.does_match_regex(self.options.fn_exclude_by_name__regex, child.function_name):
-                    is_overloaded = self.cpp_element().is_method_overloaded(child)
-                    self.adapted_public_children.append(AdaptedFunction(self.lg_context, child, is_overloaded))
-            elif isinstance(child, CppDeclStatement):
-                self._add_adapted_class_member(child)
-            elif isinstance(child, CppUnprocessed):
-                continue
-            elif isinstance(child, CppStruct):
-                adapted_subclass = AdaptedClass(self.lg_context, child)
-                self.adapted_public_children.append(adapted_subclass)
-            elif isinstance(child, CppEnum):
-                adapted_enum = AdaptedEnum(self.lg_context, child)
-                self.adapted_public_children.append(adapted_enum)
-
-            else:
-                child.emit_warning(
-                    f"Public elements of type {child.tag()} are not supported in python conversion",
-                )
+            try:
+                if isinstance(child, CppEmptyLine):
+                    self.adapted_public_children.append(AdaptedEmptyLine(self.lg_context, child))
+                elif isinstance(child, CppComment):
+                    self.adapted_public_children.append(AdaptedComment(self.lg_context, child))
+                elif isinstance(child, CppFunctionDecl):
+                    if not code_utils.does_match_regex(self.options.fn_exclude_by_name__regex, child.function_name):
+                        is_overloaded = self.cpp_element().is_method_overloaded(child)
+                        self.adapted_public_children.append(AdaptedFunction(self.lg_context, child, is_overloaded))
+                elif isinstance(child, CppDeclStatement):
+                    self._add_adapted_class_member(child)
+                elif isinstance(child, CppUnprocessed):
+                    continue
+                elif isinstance(child, CppStruct):
+                    adapted_subclass = AdaptedClass(self.lg_context, child)
+                    self.adapted_public_children.append(adapted_subclass)
+                elif isinstance(child, CppEnum):
+                    adapted_enum = AdaptedEnum(self.lg_context, child)
+                    self.adapted_public_children.append(adapted_enum)
+                else:
+                    child.emit_warning(
+                        f"Public elements of type {child.tag()} are not supported in python conversion",
+                    )
+            except SrcMlException as e:
+                child.emit_warning(str(e))
 
     # override
     def _str_stub_lines(self) -> List[str]:

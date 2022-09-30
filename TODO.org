@@ -446,10 +446,13 @@ Problem 3: dans lg_test_runner (integration tests), tout est refusé (trouve pas
     https://docs.python.org/3/library/typing.html#typing.ClassVar
 
 
-** Handle operators()
-
+** Handle operators() (almost done)
+References:
 https://en.wikipedia.org/wiki/Operators_in_C_and_C%2B%2B
 https://docs.python.org/3/reference/datamodel.html#emulating-numeric-types
+
+TODO: "<=>": "three way comparison" (need to split adapted_function in three!)
+
 
 ** Template classes and functions
 (by asking for a specialization name)

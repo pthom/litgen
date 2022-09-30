@@ -540,6 +540,32 @@ void py_init_module_lg_mylib(py::module& m)
     m.def("foo_root",
         FooRoot);
 
+
+    auto pyClassIntWrapper = py::class_<IntWrapper>
+        (m, "IntWrapper", "")
+        .def_readwrite("value", &IntWrapper::value, "")
+        .def(py::init<int>(),
+            py::arg("v"))
+        .def("__add__",
+            &IntWrapper::operator+, py::arg("b"))
+        .def("__sub__",
+            py::overload_cast<IntWrapper>(&IntWrapper::operator-), py::arg("b"))
+        .def("__neg__",
+            py::overload_cast<>(&IntWrapper::operator-), "Unary minus operator")
+        .def("__lt__",
+            &IntWrapper::operator<,
+            py::arg("b"),
+            "Comparison operator")
+        .def("__iadd__",
+            py::overload_cast<IntWrapper>(&IntWrapper::operator+=), py::arg("b"))
+        .def("__iadd__",
+            py::overload_cast<int>(&IntWrapper::operator+=), py::arg("b"))
+        .def("__call__",
+            py::overload_cast<IntWrapper>(&IntWrapper::operator()), py::arg("b"))
+        .def("__call__",
+            py::overload_cast<int>(&IntWrapper::operator()), py::arg("b"))
+        ;
+
     { // <namespace SomeNamespace>
         py::module_ pyNamespaceSomeNamespace = m.def_submodule("SomeNamespace", "");
         auto pyNamespaceSomeNamespace_ClassParentStruct = py::class_<SomeNamespace::ParentStruct>

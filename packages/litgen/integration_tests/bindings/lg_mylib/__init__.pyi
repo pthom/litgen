@@ -582,11 +582,47 @@ def foo_root() -> int:
 
 
 
+#////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+#                       mylib/operators.h included by mylib/mylib.h                                            //
+#//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+class IntWrapper:
+    value: int
+    def __init__(self, v: int) -> None:
+        pass
+
+    # arithmetic operators
+    def __add__(self, b: IntWrapper) -> IntWrapper:
+        pass
+    def __sub__(self, b: IntWrapper) -> IntWrapper:
+        pass
+
+    def __neg__(self) -> IntWrapper:
+        """ Unary minus operator"""
+        pass
+
+    def __lt__(self, b: IntWrapper) -> bool:
+        """ Comparison operator"""
+        pass
+
+    # Two overload of the += operator
+    def __iadd__(self, b: IntWrapper) -> IntWrapper:
+        pass
+    def __iadd__(self, b: int) -> IntWrapper:
+        pass
+
+    # Two overload of the call operator, with different results
+    def __call__(self, b: IntWrapper) -> int:
+        pass
+    def __call__(self, b: int) -> int:
+        pass
+
 
 #////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-#                       mylib/sandbox.h included by mylib/mylib.h                                              //
+#                       mylib/mylib.h continued                                                                //
 #//////////////////////////////////////////////////////////////////////////////////////////////////////////////
-# Sandbox to play with litgen. Add some code here (with MY_API), and it will be exported
+
+# #include "mylib/sandbox.h"
 
 # <submodule SomeNamespace>
 class SomeNamespace: # Proxy class that introduces typings for the *submodule* SomeNamespace

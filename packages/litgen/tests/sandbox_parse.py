@@ -60,17 +60,18 @@ struct IntWrapper
     int value;
 
     IntWrapper operator+(IntWrapper b) { return IntWrapper{ value + b.value}; }
+    IntWrapper operator+=(IntWrapper b) { return IntWrapper{ value + b.value}; }
+    IntWrapper operator-(IntWrapper b) { return IntWrapper{ value - b.vale }; }
+    IntWrapper operator-() { return IntWrapper{ -value }; }
+    IntWrapper operator+=(IntWrapper b) { value += b.value; return *this; }
+    IntWrapper operator()(IntWrapper b) { return value * b.value + 2; }
 };
-IntWrapper operator*(IntWrapper a, IntWrapper b) { return IntWrapper{ a.value * b.value}; }
     """
     options = LitgenOptions()
     generated_code = litgen.generate_code(options, code)
     print(generated_code.stub_code)
 
-    # import srcmlcpp
-    # srcml_options = srcmlcpp.SrcmlOptions()
-    # cpp_unit = srcmlcpp.code_to_cpp_unit(srcml_options, code)
-    # print(cpp_unit)
+    print(generated_code.pydef_code)
 
 
 if __name__ == "__main__":
