@@ -281,6 +281,18 @@ def fill_function_decl(
                 function_decl.return_type.typenames += additional_type.typenames
         elif child_tag == "name":
             function_decl.function_name = _parse_name(child)
+            if function_decl.function_name == "operator":
+                # For operator functions, the name is given in two parts:
+                #
+                # <ns0:name ns1:start="6:16" ns1:end="6:24">
+                #     operator
+                #     <ns0:name ns1:start="6:24" ns1:end="6:24">+</ns0:name>
+                # </ns0:name>
+                #
+                sub_names = child.wrapped_children_with_tag("name")
+                assert len(sub_names) == 1
+                operator_name = _parse_name(sub_names[0])
+                function_decl.function_name += operator_name
         elif child_tag == "parameter_list":
             function_decl.parameter_list = parse_parameter_list(options, child)
         elif child_tag == "specifier":
@@ -606,20 +618,11 @@ def fill_block(options: SrcmlOptions, element: SrcmlXmlWrapper, inout_block_cont
                 cpp_decl = parse_decl(options, child_c, None)
                 inout_block_content.block_children.append(cpp_decl)
             elif child_tag == "function_decl":
-                if is_operator_function(child_c):
-                    child_c.emit_warning("Operator functions are ignored")
-                    inout_block_content.block_children.append(parse_unprocessed(options, child_c))
-                else:
-                    assert child_name is not None
-                    inout_block_content.block_children.append(parse_function_decl(options, child_c))
+                assert child_name is not None
+                inout_block_content.block_children.append(parse_function_decl(options, child_c))
             elif child_tag == "function":
                 assert child_name is not None
-                if is_operator_function(child_c):
-                    child_c.emit_warning("Operator functions are ignored")
-                    inout_block_content.block_children.append(parse_unprocessed(options, child_c))
-                else:
-                    inout_block_content.block_children.append(parse_function(options, child_c))
-
+                inout_block_content.block_children.append(parse_function(options, child_c))
             elif child_tag == "constructor_decl":
                 inout_block_content.block_children.append(parse_constructor_decl(options, child_c))
             elif child_tag == "constructor":

@@ -1022,6 +1022,14 @@ class CppFunctionDecl(CppElementAndComment):
         r = self.function_name == parent_struct_name
         return r
 
+    def is_operator(self) -> bool:
+        return self.function_name.startswith("operator")
+
+    def operator_name(self) -> str:
+        assert self.is_operator()
+        r = self.function_name[len("operator") :]
+        return r
+
     def returns_pointer(self) -> bool:
         r = hasattr(self, "return_type") and self.return_type.modifiers == ["*"]
         return r
