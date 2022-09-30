@@ -53,5 +53,25 @@ IMPLOT_API std::tuple<std::vector<int>, std::vector<float>> foo();
     print(generated_code.stub_code)
 
 
+def play_operator() -> None:
+    code = """
+struct IntWrapper
+{
+    int value;
+
+    IntWrapper operator+(IntWrapper b) { return IntWrapper{ value + b.value}; }
+};
+IntWrapper operator*(IntWrapper a, IntWrapper b) { return IntWrapper{ a.value * b.value}; }
+    """
+    options = LitgenOptions()
+    generated_code = litgen.generate_code(options, code)
+    print(generated_code.stub_code)
+
+    # import srcmlcpp
+    # srcml_options = srcmlcpp.SrcmlOptions()
+    # cpp_unit = srcmlcpp.code_to_cpp_unit(srcml_options, code)
+    # print(cpp_unit)
+
+
 if __name__ == "__main__":
-    my_play()
+    play_operator()

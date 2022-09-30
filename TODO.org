@@ -447,7 +447,17 @@ Problem 3: dans lg_test_runner (integration tests), tout est refusé (trouve pas
 
 
 ** Handle operators()
+
+https://en.wikipedia.org/wiki/Operators_in_C_and_C%2B%2B
+https://docs.python.org/3/reference/datamodel.html#emulating-numeric-types
+
+** Template classes and functions
+(by asking for a specialization name)
+
 ** Handle trampoline
 See example in py-mahi-gui
 
 ** Interactive demo
+https://www.w3schools.com/howto/tryit.asp?filename=tryhow_js_collapsible_symbol
+EXport notebook:
+https://mljar.com/blog/jupyter-notebook-html/
