@@ -525,7 +525,7 @@ class CppType(CppElement):
     # "unsigned int" -> ["unsigned", "int"]
     typenames: List[str]
 
-    # specifiers: could be ["const"], ["static", "const"], ["extern"], ["constexpr"], etc.
+    # specifiers: could be ["const"], ["inline", "static", "const"], ["extern"], ["constexpr"], etc.
     specifiers: List[str]
 
     # modifiers: could be ["*"], ["&&"], ["&"], ["*", "*"], ["..."]

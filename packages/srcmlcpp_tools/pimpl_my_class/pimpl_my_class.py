@@ -47,15 +47,33 @@ class PimplMyClass:
         raise Exception(f"pImpl class name needs to end with a suffix among {self.options.pimpl_suffixes}")
 
     def _published_method_impl(self, cpp_function: CppFunctionDecl) -> str:
-        template = code_utils.unindent_code(
-            """
-        {return_type} {class_published}::{method_name}({params_list}) {maybe_const}{ {maybe_return}{impl_name}->{method_name}({param_names}); }
-        """,
-            flag_strip_empty_lines=True,
-        )
+        if "static" in cpp_function.return_type.specifiers:
+            cpp_function = copy.deepcopy(cpp_function)
+            # C++ peculiarity: static is not allowed for the implementation, only for decl
+            cpp_function.return_type.specifiers.remove("static")
+            is_static = True
+        else:
+            is_static = False
+
+        cpp_function = self._remove_published_incompatible_specifiers(cpp_function)
+        if is_static:
+            template = code_utils.unindent_code(
+                """
+            {return_type} {class_published}::{method_name}({params_list}) {maybe_const}{ {maybe_return}{class_impl}::{method_name}({param_names}); }
+            """,
+                flag_strip_empty_lines=True,
+            )
+        else:
+            template = code_utils.unindent_code(
+                """
+            {return_type} {class_published}::{method_name}({params_list}) {maybe_const}{ {maybe_return}{impl_name}->{method_name}({param_names}); }
+            """,
+                flag_strip_empty_lines=True,
+            )
 
         replacements = Munch()
         replacements.class_published = self._published_class_name()
+        replacements.class_impl = self._impl_class_name()
         replacements.impl_name = self.options.impl_member_name
         replacements.return_type = cpp_function.return_type.str_code()
         replacements.method_name = cpp_function.function_name
@@ -69,7 +87,23 @@ class PimplMyClass:
         r = code_utils.process_code_template(template, replacements, replacements_by_line)
         return r
 
+    @staticmethod
+    def _remove_published_incompatible_specifiers(cpp_function: CppFunctionDecl) -> CppFunctionDecl:
+        unwanted_specifiers = ["inline", "constexpr"]
+        for unwanted_specifier in unwanted_specifiers:
+            if unwanted_specifier in cpp_function.return_type.specifiers:
+                cpp_function = copy.deepcopy(cpp_function)  # clone in order not to modify caller value?
+                cpp_function.return_type.specifiers.remove(unwanted_specifier)
+        return cpp_function
+
     def _published_method_decl(self, cpp_function: CppFunctionDecl) -> str:
+        cpp_function = self._remove_published_incompatible_specifiers(cpp_function)
+        unwanted_specifiers = ["inline", "constexpr"]
+        for unwanted_specifier in unwanted_specifiers:
+            if unwanted_specifier in cpp_function.return_type.specifiers:
+                # cpp_function = copy.deepcopy(cpp_function) # clone in order not to modify caller value?
+                cpp_function.return_type.specifiers.remove(unwanted_specifiers)
+
         template = code_utils.unindent_code(
             """
         {top_comment}

@@ -155,12 +155,12 @@ PimpMyCI:
 
 * PimplMyClass
 
-comment /**/
-
 command line
   check that generated code compiles
-    integration tests
-constexpr, static, inline specifiers
+  integration tests
+
+constexpr, static, specifiers
+
 
 online service
   layout on one page:

@@ -5,14 +5,6 @@ from srcmlcpp_tools.pimpl_my_class import pimpl_my_class
 from srcmlcpp.srcml_types import *
 
 code = """
-#include "single_instance_app.h"
-
-#include <string>
-#include <future>
-#include <iostream>
-#include <fstream>
-#include <filesystem>
-
 /**
  SingleInstanceApp: Helper to create a single instance application
  =================================================================
@@ -51,6 +43,14 @@ public:
     //
     // SingleInstanceApp enables to make sure that only one instance of an app runs on a given system
     //
+
+    static bool HasOtherInstance(const std::string& lockName)
+    {
+        auto s = SingleInstanceAppPImpl(lockName);
+        bool result = s.HasOtherInstance();
+        return result;
+    }
+
 
     // Construct a Single Instance
     SingleInstanceAppPImpl(const std::string& lockName) : mLockName(lockName){}
@@ -146,37 +146,7 @@ private:
     std::future<void> mFutureResult;
 };
 
-
-SingleInstanceApp::SingleInstanceApp(const std::string & lockName) : mPImpl(std::make_unique<SingleInstanceAppPImpl>(lockName)) { }
-bool SingleInstanceApp::RunSingleInstanceListener() { return mPImpl->RunSingleInstanceListener(); }
-bool SingleInstanceApp::WasPinged() const { return mPImpl->WasPinged(); }
-SingleInstanceApp::~SingleInstanceApp() = default;
-
-
-
-int main()
-{
-    using namespace std::literals;
-
-    SingleInstanceApp singleInstanceApp("MyLock");
-    if (! singleInstanceApp.RunSingleInstanceListener())
-    {
-        std::cout << "Other instance found!\n";
-        return 0;
-    }
-
-    while(true)
-    {
-        std::this_thread::sleep_for(100ms);
-        if (singleInstanceApp.WasPinged())
-            std::cout << "Ping received!\n";
-
-        // For example, scan keyboard key 'q' to quit
-        // if (scan_key() == 'q')
-        //     break;
-    }
-
-}"""
+"""
 
 
 options = srcmlcpp.SrcmlOptions()

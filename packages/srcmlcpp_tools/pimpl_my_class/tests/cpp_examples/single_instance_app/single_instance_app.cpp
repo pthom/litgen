@@ -45,6 +45,14 @@ public:
     // SingleInstanceApp enables to make sure that only one instance of an app runs on a given system
     //
 
+    static bool HasOtherInstance(const std::string& lockName)
+    {
+        auto s = SingleInstanceAppPImpl(lockName);
+        bool result = s.HasOtherInstance();
+        return result;
+    }
+
+
     // Construct a Single Instance
     SingleInstanceAppPImpl(const std::string& lockName) : mLockName(lockName){}
 
@@ -139,10 +147,13 @@ private:
     std::future<void> mFutureResult;
 };
 
-
-SingleInstanceApp::SingleInstanceApp(const std::string & lockName) : mPImpl(std::make_unique<SingleInstanceAppPImpl>(lockName)) { }
-bool SingleInstanceApp::RunSingleInstanceListener() { return mPImpl->RunSingleInstanceListener(); }
-bool SingleInstanceApp::WasPinged() const { return mPImpl->WasPinged(); }
+// TODO:
+//  static should be removed on glue code, but not on decl!
+//  static should call with ::
+bool SingleInstanceApp::HasOtherInstance(const std::string & lockName) { return SingleInstanceAppPImpl::HasOtherInstance(lockName); }
+SingleInstanceApp::SingleInstanceApp(const std::string & lockName) : impl(std::make_unique<SingleInstanceAppPImpl>(lockName)) { }
+bool SingleInstanceApp::RunSingleInstanceListener() { return impl->RunSingleInstanceListener(); }
+bool SingleInstanceApp::WasPinged() const { return impl->WasPinged(); }
 SingleInstanceApp::~SingleInstanceApp() = default;
 
 
