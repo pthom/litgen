@@ -9,7 +9,7 @@ from srcmlcpp_tools.pimpl_my_class.pimpl_my_class import PimplMyClass, PimplOpti
 
 PIMPL_OPTIONS = PimplOptions()
 LITGEN_OPTIONS = srcmlcpp.SrcmlOptions()
-PIMPL_OPTIONS.max_consecutive_empty_lines = 0
+PIMPL_OPTIONS.max_consecutive_empty_lines = 2
 
 # flask --app pimpl_server.py --debug  run
 

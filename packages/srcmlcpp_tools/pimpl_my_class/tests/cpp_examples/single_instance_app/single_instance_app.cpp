@@ -146,7 +146,6 @@ bool SingleInstanceApp::WasPinged() const { return mPImpl->WasPinged(); }
 SingleInstanceApp::~SingleInstanceApp() = default;
 
 
-
 int main()
 {
     using namespace std::literals;
