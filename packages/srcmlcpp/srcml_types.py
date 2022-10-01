@@ -1,5 +1,5 @@
 """
-Types that will represent the AST parsed by srcML in an actionnable way under python.
+Types that will represent the AST parsed by srcML in an actionable way under python.
 
 * `CppElement` is a wrapper around a srcLML xml node (it contains an exact copy of the original code)
 * `CppElementAndComment` is a documented C++ element (with its comments on previous lines and at the end of line)
@@ -88,7 +88,12 @@ class CppElementComments:
         else:
             return self.comment_on_previous_lines + self.comment_end_of_line
 
-    def top_comment_code(self, add_eol: bool = True) -> str:
+    def top_comment_code(self, add_eol: bool = True, preserve_c_style_comment: bool = True) -> str:
+
+        if preserve_c_style_comment and self.is_c_style_comment:
+            r = "/*" + self.comment_on_previous_lines + "*/"
+            return r
+
         top_comments = map(lambda comment: "//" + comment, self.comment_on_previous_lines.splitlines())
         top_comment = "\n".join(top_comments)
         if add_eol:
