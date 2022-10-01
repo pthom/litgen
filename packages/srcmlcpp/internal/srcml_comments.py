@@ -267,7 +267,6 @@ def _is_comment_on_previous_line(children: List[SrcmlXmlWrapper], idx: int) -> b
     # if this element is a comment, and the next is not
     if element.tag() == "comment" and next_element.tag() != "comment":
         element_text = code_utils.str_none_empty(element.text())
-        # if EMPTY_LINE_COMMENT_CONTENT in element_text:
         if element_text == " " + EMPTY_LINE_COMMENT_CONTENT:
             # Empty lines are always preserved
             return False
@@ -373,6 +372,11 @@ def get_children_with_comments(element: SrcmlXmlWrapper) -> List[CppElementAndCo
             shall_append = False
 
         if shall_append:
+            if "\n" in cpp_element_comments.comment_on_previous_lines:
+                # Suppress empty line markers in C Style (/* */) multiline comments
+                cpp_element_comments.comment_on_previous_lines = cpp_element_comments.comment_on_previous_lines.replace(
+                    "// _SRCML_EMPTY_LINE_", ""
+                )
             element_with_comment = CppElementAndComment(element, cpp_element_comments)
             result.append(element_with_comment)
 

@@ -132,3 +132,7 @@ def test_multiline_c_style_comment():
     xml_wrapper = srcmlcpp_main.code_to_srcml_xml_wrapper(options, code)
     children_and_comments = srcml_comments.get_children_with_comments(xml_wrapper)
     assert len(children_and_comments) == 1
+    assert (
+        children_and_comments[0].cpp_element_comments.comment_on_previous_lines
+        == "*\nMultiline comment about Foo1\n\nWith empty lines inside.\n*"
+    )
