@@ -139,15 +139,6 @@ Test multithread qui semble marcher:
 ...
 ** ideas / other utilities
 
-PimpMyClass
-        mettre un decorateur @pimplmyclass
-
-        auto pImpl from cpp: pImpl class  => header decl + cpp imp non pImpl + Doc !
-
-        todo:
-        constexpr & static specifiers
-        command line
-        online service?
 
 Add named parameters to functions
 
@@ -160,6 +151,36 @@ PimpMyCI:
        "a class with a constructor and only one public function is not a class. Use a namespace!"
        Example / Mailer
        prefix class members
+
+
+* PimplMyClass
+
+comment /**/
+
+command line
+  check that generated code compiles
+    integration tests
+constexpr, static, inline specifiers
+
+online service
+  layout on one page:
+     Big Form / Implementation Code
+     Render[ImplCode]       Render[GlueCode]
+                            Render[PublishedApi]
+
+
+render code block api (-> codemanip)
+  render as collapsible
+  copy button
+
+
+** Triage
+Online:
+  store ran codes
+  short link service?
+  example page
+
+mettre un decorateur @pimplmyclass
 
 * Dyndoc
 Voir note sur telephone

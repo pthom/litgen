@@ -95,7 +95,7 @@ class PimplMyClass:
     def _published_constructor_impl(self, cpp_constructor: CppConstructorDecl) -> str:
         template = code_utils.unindent_code(
             """
-    {class_published}::{class_published}({param_list}) : {impl_name}(std::make_unique<{class_impl}>({param_names}) { }
+    {class_published}::{class_published}({param_list}) : {impl_name}(std::make_unique<{class_impl}>({param_names})) { }
         """,
             flag_strip_empty_lines=True,
         )
