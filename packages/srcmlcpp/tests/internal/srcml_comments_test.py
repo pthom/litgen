@@ -136,3 +136,4 @@ def test_multiline_c_style_comment():
         children_and_comments[0].cpp_element_comments.comment_on_previous_lines
         == "*\nMultiline comment about Foo1\n\nWith empty lines inside.\n*"
     )
+    assert children_and_comments[0].cpp_element_comments.is_c_style_comment

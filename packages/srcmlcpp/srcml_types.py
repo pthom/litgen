@@ -75,10 +75,12 @@ class CppElementComments:
 
     comment_on_previous_lines: str
     comment_end_of_line: str
+    is_c_style_comment: bool  # Will be True if comment_on_previous_lines was a /* */ comment
 
     def __init__(self) -> None:
         self.comment_on_previous_lines = ""
         self.comment_end_of_line = ""
+        self.is_c_style_comment = False
 
     def comment(self) -> str:
         if len(self.comment_on_previous_lines) > 0 and len(self.comment_end_of_line) > 0:

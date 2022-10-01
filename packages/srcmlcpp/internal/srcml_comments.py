@@ -6,7 +6,7 @@ This modules parses the C++ comments:
 - Group comments on consecutive lines
 """
 import copy
-from typing import List, Optional
+from typing import List, Optional, Set
 from xml.etree import ElementTree as ET
 
 from codemanip import code_utils
@@ -321,20 +321,18 @@ def _remove_comment_tokens(comment: str) -> str:
         return "\n".join(lines_processed)
 
 
-def _group_comments_and_remove_comment_markers(srcml_code: SrcmlXmlWrapper) -> List[SrcmlXmlWrapper]:
+IsCStyleComment = bool
+
+
+def _group_comments(
+    srcml_code: SrcmlXmlWrapper,
+) -> List[SrcmlXmlWrapper]:
     srcml_code_grouped: SrcmlXmlWrapper = _group_consecutive_comments(srcml_code)
 
     children_comments_grouped: List[SrcmlXmlWrapper] = []
 
     for element in srcml_code_grouped.make_wrapped_children():
         children_comments_grouped.append(element)
-
-    for element in children_comments_grouped:
-        if element.tag() == "comment":
-            element_text = element.text()
-            if element_text is not None:
-                element_text = _remove_comment_tokens(element_text)
-                element.srcml_xml.text = element_text
 
     return children_comments_grouped
 
@@ -346,7 +344,21 @@ def get_children_with_comments(element: SrcmlXmlWrapper) -> List[CppElementAndCo
         )
 
     result = []
-    children = _group_comments_and_remove_comment_markers(element)
+    children = _group_comments(element)
+
+    c_style_comments_idx: Set[int] = set()
+
+    def remove_comment_tokens():
+        for i, element in enumerate(children):
+            if element.tag() == "comment":
+                element_text = element.text()
+                if element_text is not None:
+                    if element_text.startswith("/*"):
+                        c_style_comments_idx.add(i)
+                    element_text = _remove_comment_tokens(element_text)
+                    element.srcml_xml.text = element_text
+
+    remove_comment_tokens()
 
     for i, element in enumerate(children):
         cpp_element_comments = CppElementComments()
@@ -358,6 +370,8 @@ def get_children_with_comments(element: SrcmlXmlWrapper) -> List[CppElementAndCo
             comment_text = children[i - 1].text()
             if comment_text is not None:
                 cpp_element_comments.comment_on_previous_lines = comment_text
+                if (i - 1) in c_style_comments_idx:
+                    cpp_element_comments.is_c_style_comment = True
         # and symmetrically, skip if this is a "comment_on_previous_lines"
         if _is_comment_on_previous_line(children, i):
             shall_append = False
