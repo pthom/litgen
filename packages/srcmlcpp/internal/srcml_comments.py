@@ -182,8 +182,8 @@ def _group_consecutive_comments(srcml_code: SrcmlXmlWrapper) -> SrcmlXmlWrapper:
                         ):
                             shall_concat_comment = False
 
-                    # Also, if the previous comment was an `EMPTY_LINE_COMMENT` i.e it indicates a voluntarily empty line
-                    # we shall not concat
+                    # Also, if the previous comment was an `EMPTY_LINE_COMMENT`
+                    # i.e. it indicates a voluntarily empty line,  we shall not concat
                     current_comment = child.text()
                     previous_comment = previous_child.text()
                     if current_comment is not None and previous_comment is not None:
@@ -267,7 +267,8 @@ def _is_comment_on_previous_line(children: List[SrcmlXmlWrapper], idx: int) -> b
     # if this element is a comment, and the next is not
     if element.tag() == "comment" and next_element.tag() != "comment":
         element_text = code_utils.str_none_empty(element.text())
-        if EMPTY_LINE_COMMENT_CONTENT in element_text:
+        # if EMPTY_LINE_COMMENT_CONTENT in element_text:
+        if element_text == " " + EMPTY_LINE_COMMENT_CONTENT:
             # Empty lines are always preserved
             return False
 

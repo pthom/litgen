@@ -112,3 +112,23 @@ def test_group_comment():
     assert children_and_comments[1].tag() == "function_decl"
     assert children_and_comments[2].tag() == "function_decl"
     assert children_and_comments[3].tag() == "function_decl"
+
+
+def test_multiline_c_style_comment():
+    code = code_utils.unindent_code(
+        """
+    /**
+    Multiline comment about Foo1
+
+    With empty lines inside.
+    **/
+    class Foo1
+    {
+    };
+    """,
+        flag_strip_empty_lines=True,
+    )
+    options = SrcmlOptions()
+    xml_wrapper = srcmlcpp_main.code_to_srcml_xml_wrapper(options, code)
+    children_and_comments = srcml_comments.get_children_with_comments(xml_wrapper)
+    assert len(children_and_comments) == 1

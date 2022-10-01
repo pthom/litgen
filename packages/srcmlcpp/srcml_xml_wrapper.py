@@ -271,6 +271,9 @@ class SrcmlXmlWrapper:
             r += f" name={self.name_code()}"
         return r
 
+    def __str__(self):
+        return self.short_xml_info()
+
     def _show_element_info(self) -> str:
         element_tag = self.tag()
         concerned_code = self.str_code_context_with_caret()
