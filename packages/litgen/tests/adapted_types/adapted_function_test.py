@@ -216,8 +216,9 @@ def test_overloads() -> None:
     code_utils.assert_are_codes_equal(
         generated_code,
         """
-        auto pyClassFoo = py::class_<Foo>
-            (m, "Foo", "")
+        auto pyClassFoo =
+            py::class_<Foo>
+                (m, "Foo", "")
             .def(py::init<>()) // implicit default constructor
             .def("foo",
                 py::overload_cast<>(&Foo::foo))

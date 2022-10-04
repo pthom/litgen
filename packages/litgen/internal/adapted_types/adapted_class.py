@@ -490,17 +490,15 @@ class AdaptedClass(AdaptedElement):
         qualified_struct_name = self.cpp_element().qualified_struct_name()
 
         if self.cpp_element().has_private_dtor():
-            code_intro += f"auto {pydef_class_var} = py::class_<{qualified_struct_name}, std::unique_ptr<{qualified_struct_name}, py::nodelete>>{location}\n"
+            code_intro += f"auto {pydef_class_var} =\n{_i_}py::class_<{qualified_struct_name}, std::unique_ptr<{qualified_struct_name}, py::nodelete>>{location}\n"
         elif self._shall_override_virtual_methods_in_python():
             scope = self.cpp_element().cpp_scope(False).str_cpp()
             scope_prefix = scope + "::" if len(scope) > 0 else ""
             qualified_trampoline_name = scope_prefix + self.cpp_element().class_name + "_trampoline"
-            code_intro += (
-                f"auto {pydef_class_var} = py::class_<{qualified_struct_name}, {qualified_trampoline_name}>{location}\n"
-            )
+            code_intro += f"auto {pydef_class_var} =\n{_i_}py::class_<{qualified_struct_name}, {qualified_trampoline_name}>{location}\n"
         else:
-            code_intro += f"auto {pydef_class_var} = py::class_<{qualified_struct_name}>{location}\n"
-        code_intro += f'{_i_}({pydef_class_var_parent}, "{bare_struct_name}", "{comment}")\n'
+            code_intro += f"auto {pydef_class_var} =\n{_i_}py::class_<{qualified_struct_name}>{location}\n"
+        code_intro += f'{_i_}{_i_}({pydef_class_var_parent}, "{bare_struct_name}", "{comment}")\n'
 
         if options.generate_to_string:
             code_outro = f'{_i_}.def("__repr__", [](const {qualified_struct_name}& v) {{ return ToString(v); }});'

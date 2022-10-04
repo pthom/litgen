@@ -73,8 +73,9 @@ def test_truc():
         generator.pydef_code(),
         """
         ////////////////////    <generated_from:BoxedTypes>    ////////////////////
-        auto pyClassBoxedString = py::class_<BoxedString>
-            (m, "BoxedString", "")
+        auto pyClassBoxedString =
+            py::class_<BoxedString>
+                (m, "BoxedString", "")
             .def_readwrite("value", &BoxedString::value, "")
             .def(py::init<std::string>(),
                 py::arg("v") = "")

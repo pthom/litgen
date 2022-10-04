@@ -170,8 +170,9 @@ def test_in_method():
     code_utils.assert_are_codes_equal(
         generated_code,
         """
-        auto pyClassFoo = py::class_<Foo>    // Line:2
-            (m, "Foo", "")
+        auto pyClassFoo =
+            py::class_<Foo>    // Line:2
+                (m, "Foo", "")
             .def(py::init<>()) // implicit default constructor
             .def("thing",    // Line:4
                 [](Foo & self, Point2 & out_0, Point2 & out_1) -> bool

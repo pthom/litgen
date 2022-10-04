@@ -94,8 +94,9 @@ def test_struct_pydef_simple():
     code_utils.assert_are_codes_equal(
         pydef_code,
         """
-        auto pyClassFoo = py::class_<Foo>
-            (m, "Foo", "Doc about Foo")
+        auto pyClassFoo =
+            py::class_<Foo>
+                (m, "Foo", "Doc about Foo")
             .def(py::init<>()) // implicit default constructor
             .def_readwrite("a", &Foo::a, "Doc about a")
             .def_readwrite("flag", &Foo::flag, "Doc about flag")
@@ -162,8 +163,9 @@ def test_struct_stub_complex():
     code_utils.assert_are_codes_equal(
         pydef_code,
         """
-        auto pyClassColor4 = py::class_<Color4>
-            (m, "Color4", "A dummy class that handles 4 channel float colors")
+        auto pyClassColor4 =
+            py::class_<Color4>
+                (m, "Color4", "A dummy class that handles 4 channel float colors")
             .def(py::init<const float>(),
                 py::arg("values"))
             .def("to_gray",

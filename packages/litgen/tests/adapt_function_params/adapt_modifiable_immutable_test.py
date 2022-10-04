@@ -15,8 +15,9 @@ def test_modifiable_immutable_simple():
         generated_code.pydef_code,
         """
         ////////////////////    <generated_from:BoxedTypes>    ////////////////////
-        auto pyClassBoxedFloat = py::class_<BoxedFloat>
-            (m, "BoxedFloat", "")
+        auto pyClassBoxedFloat =
+            py::class_<BoxedFloat>
+                (m, "BoxedFloat", "")
             .def_readwrite("value", &BoxedFloat::value, "")
             .def(py::init<float>(),
                 py::arg("v") = 0.)
@@ -67,8 +68,9 @@ def test_modifiable_immutable_simple():
         generated_code.pydef_code,
         """
         ////////////////////    <generated_from:BoxedTypes>    ////////////////////
-        auto pyClassBoxedFloat = py::class_<BoxedFloat>
-            (m, "BoxedFloat", "")
+        auto pyClassBoxedFloat =
+            py::class_<BoxedFloat>
+                (m, "BoxedFloat", "")
             .def_readwrite("value", &BoxedFloat::value, "")
             .def(py::init<float>(),
                 py::arg("v") = 0.)
@@ -102,8 +104,9 @@ def test_modifiable_immutable_simple():
         generated_code.pydef_code,
         """
         ////////////////////    <generated_from:BoxedTypes>    ////////////////////
-        auto pyClassBoxedFloat = py::class_<BoxedFloat>
-            (m, "BoxedFloat", "")
+        auto pyClassBoxedFloat =
+            py::class_<BoxedFloat>
+                (m, "BoxedFloat", "")
             .def_readwrite("value", &BoxedFloat::value, "")
             .def(py::init<float>(),
                 py::arg("v") = 0.)

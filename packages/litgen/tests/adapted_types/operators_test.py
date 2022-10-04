@@ -111,8 +111,9 @@ def test_spaceship_operator():
     code_utils.assert_are_codes_equal(
         generated_code.pydef_code,
         """
-        auto pyClassIntWrapperSpaceship = py::class_<IntWrapperSpaceship>
-            (m, "IntWrapperSpaceship", "")
+        auto pyClassIntWrapperSpaceship =
+            py::class_<IntWrapperSpaceship>
+                (m, "IntWrapperSpaceship", "")
             .def_readwrite("value", &IntWrapperSpaceship::value, "")
             .def(py::init<int>(),
                 py::arg("v"))

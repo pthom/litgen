@@ -45,8 +45,9 @@ def test_mix_array_and_string_list():
         generated_code,
         """
         ////////////////////    <generated_from:BoxedTypes>    ////////////////////
-        auto pyClassBoxedInt = py::class_<BoxedInt>
-            (m, "BoxedInt", "")
+        auto pyClassBoxedInt =
+            py::class_<BoxedInt>
+                (m, "BoxedInt", "")
             .def_readwrite("value", &BoxedInt::value, "")
             .def(py::init<int>(),
                 py::arg("v") = 0)
