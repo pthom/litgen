@@ -552,21 +552,39 @@ class CppType(CppElement):
     def authorized_modifiers() -> List[str]:
         return ["*", "&", "&&", "..."]
 
-    def str_code(self, ignore_virtual: bool = False) -> str:
+    def str_return_type(self):
+        # Possible specifiers : "const" "inline" "static" "virtual" "extern" "constexpr"
+        # "inline", "virtual", "extern" and "static" do not change the return type
+        specifiers = copy.copy(self.specifiers)
+        unwanted_specifiers = ["inline", "virtual", "extern", "static"]
+        for unwanted_specifier in unwanted_specifiers:
+            if unwanted_specifier in self.specifiers:
+                specifiers.remove(unwanted_specifier)
+
+        nb_const = self.specifiers.count("const")
+        assert nb_const <= 1
+
+        specifiers_str = code_utils.join_remove_empty(" ", specifiers)
+        modifiers_str = code_utils.join_remove_empty(" ", self.modifiers)
+        name = " ".join(self.typenames)
+
+        strs = [specifiers_str, name, modifiers_str]
+        r = code_utils.join_remove_empty(" ", strs)
+
+        return r
+
+    def str_code(self) -> str:
         nb_const = self.specifiers.count("const")
 
         if nb_const > 2:
             raise ValueError("I cannot handle more than two `const` occurrences in a type!")
 
-        specifiers = self.specifiers
+        specifiers = copy.copy(self.specifiers)
         if nb_const == 2:
             # remove the last const and handle it later
             specifier_r: List[str] = list(reversed(specifiers))
             specifier_r.remove("const")
             specifiers = list(reversed(specifier_r))
-
-        if ignore_virtual and "virtual" in specifiers:
-            specifiers.remove("virtual")
 
         specifiers_str = code_utils.join_remove_empty(" ", specifiers)
         modifiers_str = code_utils.join_remove_empty(" ", self.modifiers)
@@ -1006,11 +1024,9 @@ class CppFunctionDecl(CppElementAndComment):
 
     def full_return_type(self) -> str:
         """The C++ return type of the function, without API, virtual or inline specifiers"""
-        r = self.return_type.str_code(ignore_virtual=True)
+        r = self.return_type.str_return_type()
         for prefix in self.options.functions_api_prefixes_list():
             r = r.replace(prefix + " ", "")
-        if r.startswith("inline "):
-            r = r.replace("inline ", "")
         return r
 
     def is_const(self) -> bool:
