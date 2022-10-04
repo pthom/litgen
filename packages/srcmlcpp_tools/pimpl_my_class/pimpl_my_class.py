@@ -106,7 +106,7 @@ class PimplMyClass:
         for unwanted_specifier in unwanted_specifiers:
             if unwanted_specifier in cpp_function.return_type.specifiers:
                 # cpp_function = copy.deepcopy(cpp_function) # clone in order not to modify caller value?
-                cpp_function.return_type.specifiers.remove(unwanted_specifiers)
+                cpp_function.return_type.specifiers.remove(unwanted_specifier)
 
         template = code_utils.unindent_code(
             """
@@ -255,12 +255,12 @@ def pimpl_my_class(impl_class: CppStruct, options: Optional[PimplOptions] = None
 
 
 def pimpl_my_code(
-    code: str, pimpl_options: Optional[PimplOptions], srcml_options: Optional[SrcmlOptions] = None
+    code: str, pimpl_options: Optional[PimplOptions] = None, srcml_options: Optional[SrcmlOptions] = None
 ) -> Optional[PimplResult]:
     if pimpl_options is None:
         pimpl_options = PimplOptions()
     if srcml_options is None:
         srcml_options = SrcmlOptions()
     cpp_unit = srcmlcpp.code_to_cpp_unit(srcml_options, code)
-    first_struct = cpp_unit.first_struct()
-    return None if first_struct is None else pimpl_my_class(first_struct, pimpl_options)
+    all_structs = cpp_unit.all_structs_recursive()
+    return None if len(all_structs) == 0 else pimpl_my_class(all_structs[0], pimpl_options)

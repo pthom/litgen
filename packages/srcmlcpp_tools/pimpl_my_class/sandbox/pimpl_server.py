@@ -42,6 +42,8 @@ def pimpl_result():
         return "no code provided"
 
     pimpl_result = pimpl_my_code(code)
+    if pimpl_result is None:
+        return "No impl struct found!"
 
     # out = render_template("pimpl_result.html", header_code=r.header_code, glue_code=r.glue_code)
     # return out

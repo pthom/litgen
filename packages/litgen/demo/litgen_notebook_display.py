@@ -47,8 +47,8 @@ def generate_and_display_impl(options: LitgenOptions, cpp_code: str) -> str:
     return html
 
 
-def generate_and_display(options: LitgenOptions, cpp_code: str):
-    from IPython.display import display
+def generate_and_display(options: LitgenOptions, cpp_code: str) -> None:
+    from IPython.display import display  # type: ignore
 
     html = generate_and_display_impl(options, cpp_code)
-    display(HTML(html))  # type: ignore
+    display(HTML(html))

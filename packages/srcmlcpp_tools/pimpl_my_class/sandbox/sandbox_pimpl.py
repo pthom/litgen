@@ -1,8 +1,5 @@
-from typing import cast
-
 import srcmlcpp
 from srcmlcpp_tools.pimpl_my_class import pimpl_my_class
-from srcmlcpp.srcml_types import *
 
 code = """
 /**
@@ -151,7 +148,7 @@ private:
 
 options = srcmlcpp.SrcmlOptions()
 cpp_unit = srcmlcpp.code_to_cpp_unit(options, code)
-first_struct = cast(CppStruct, cpp_unit.first_element_of_type(CppStruct))
+first_struct = cpp_unit.all_structs_recursive()[0]
 
 pimpl_options = pimpl_my_class.PimplOptions()
 pimpl_options.line_feed_before_block = False

@@ -1,3 +1,5 @@
+from typing import Optional
+
 from dataclasses import dataclass
 from enum import Enum
 import time
@@ -112,7 +114,7 @@ HALF_WIDTH_DIVS_CSS = """
 
 
 def collapsible_code_and_title(
-    code_and_title: CodeAndTitle, max_visible_lines: int = None, initially_opened: bool = False
+    code_and_title: CodeAndTitle, max_visible_lines: Optional[int] = None, initially_opened: bool = False
 ) -> HtmlCode:
     # r = COLLAPSIBLE_CSS
 
