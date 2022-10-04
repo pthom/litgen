@@ -149,7 +149,7 @@ def write_generated_code_for_file(
 class GeneratedCodes:
     pydef_code: CppCode
     stub_code: PythonCode
-    boxed_types_cpp_code: CppCode
+    glue_code: CppCode
 
 
 def generate_code(options: LitgenOptions, code: CppCode) -> GeneratedCodes:
@@ -158,7 +158,7 @@ def generate_code(options: LitgenOptions, code: CppCode) -> GeneratedCodes:
     r = GeneratedCodes(
         pydef_code=generator.pydef_code(),
         stub_code=generator.stub_code(),
-        boxed_types_cpp_code=generator.boxed_types_cpp_code(),
+        glue_code=generator.boxed_types_cpp_code(),
     )
     return r
 

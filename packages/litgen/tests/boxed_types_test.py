@@ -32,7 +32,7 @@ def test_truc():
     generator = LitgenGenerator(options)
     generator._process_cpp_code(cpp_code, "file.h")
 
-    # logging.warning(f"\nboxed_types_cpp_code=\n{generator.boxed_types_cpp_code()}")
+    # logging.warning(f"\nglue_code=\n{generator.glue_code()}")
     code_utils.assert_are_codes_equal(
         generator.boxed_types_cpp_code(),
         """

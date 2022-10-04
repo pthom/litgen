@@ -86,7 +86,7 @@ def autogenerate_mylib() -> None:
 
     output_cpp_module = CPP_GENERATED_PYBIND_DIR + "/pybind_mylib.cpp"
     output_stub_pyi_file = CPP_GENERATED_PYBIND_DIR + "/lg_mylib/__init__.pyi"
-    output_cpp_glue_code_file = CPP_GENERATED_PYBIND_DIR + "/boxed_types.h"
+    output_cpp_glue_code_file = CPP_GENERATED_PYBIND_DIR + "/litgen_glue_code.h"
 
     # Configure options
     options = mylib_litgen_options()

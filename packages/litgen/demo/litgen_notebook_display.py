@@ -18,17 +18,17 @@ def generate_and_display_impl(options: LitgenOptions, cpp_code: str) -> str:
     original_content = CodeAndTitle(CodeLanguage.Cpp, cpp_code, "Original C++ decls")
     stubs_content = CodeAndTitle(CodeLanguage.Python, generated_codes.stub_code, "Corresponding python decls (stub)")
     pydef_content = CodeAndTitle(CodeLanguage.Cpp, generated_codes.pydef_code, "pybind11 C++ binding code")
-    boxed_types_content = CodeAndTitle(CodeLanguage.Cpp, generated_codes.boxed_types_cpp_code, "C++ boxed types")
+    glue_code = CodeAndTitle(CodeLanguage.Cpp, generated_codes.glue_code, "C++ glue code")
 
     collapsible_pydef = collapsible_code_and_title(pydef_content, max_visible_lines=20)
-    collapsible_boxed_types = collapsible_code_and_title(boxed_types_content)
+    collapsible_glue_code = collapsible_code_and_title(glue_code)
 
     html = collapsible_code_and_title_two_columns(original_content, stubs_content, initially_opened=True)
 
     html += f"<br/>{collapsible_pydef}"
 
-    if len(generated_codes.boxed_types_cpp_code) > 0:
-        html += f"<br/>{collapsible_boxed_types}"
+    if len(generated_codes.glue_code) > 0:
+        html += f"<br/>{collapsible_glue_code}"
 
     return html
 

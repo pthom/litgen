@@ -4,7 +4,7 @@
 #include <pybind11/numpy.h>
 
 #include "mylib/mylib.h"
-#include "boxed_types.h"
+#include "litgen_glue_code.h"
 
 namespace py = pybind11;
 
