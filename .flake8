@@ -2,6 +2,7 @@
 extend-ignore = E501, E203, F405, F403
 exclude = .git,venv,.venv,xmplain.py
 #max-complexity = 10
+
+# F401: Module imported but unused
 per-file-ignores =
     */__init__.py: F401
-    packages/litgen/demo/code_notebook_display.py: F821

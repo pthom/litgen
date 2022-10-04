@@ -1,15 +1,18 @@
+from typing import Optional
+
 from flask import Flask
 from flask import request, render_template
 from markupsafe import escape
-from typing import cast
 
-import srcmlcpp
-from srcmlcpp.srcml_types import *
-from srcmlcpp_tools.pimpl_my_class.pimpl_my_class import PimplMyClass, PimplOptions
+from srcmlcpp_tools.pimpl_my_class.pimpl_my_class import pimpl_my_code
 
-PIMPL_OPTIONS = PimplOptions()
-LITGEN_OPTIONS = srcmlcpp.SrcmlOptions()
-PIMPL_OPTIONS.max_consecutive_empty_lines = 2
+from codemanip.html_code_viewer.html_code_viewer import (
+    collapsible_code_and_title,
+    CodeAndTitle,
+    CodeLanguage,
+    COLLAPSIBLE_CSS,
+    HALF_WIDTH_DIVS_CSS,
+)
 
 # flask --app pimpl_server.py --debug  run
 
@@ -38,11 +41,32 @@ def pimpl_result():
     if code is None:
         return "no code provided"
 
-    cpp_unit = srcmlcpp.code_to_cpp_unit(LITGEN_OPTIONS, code)
-    first_struct = cast(CppStruct, cpp_unit.first_element_of_type(CppStruct))
-    p = PimplMyClass(PIMPL_OPTIONS, first_struct)
-    r = p.result()
-    out = render_template("pimpl_result.html", header_code=r.header_code, glue_code=r.glue_code)
+    pimpl_result = pimpl_my_code(code)
+
+    # out = render_template("pimpl_result.html", header_code=r.header_code, glue_code=r.glue_code)
+    # return out
+
+    original = collapsible_code_and_title(CodeAndTitle(CodeLanguage.Cpp, code, "Original Impl"), max_visible_lines=20)
+    published = collapsible_code_and_title(
+        CodeAndTitle(CodeLanguage.Cpp, pimpl_result.header_code, "Published Header"), initially_opened=True
+    )
+    glue = collapsible_code_and_title(CodeAndTitle(CodeLanguage.Cpp, pimpl_result.glue_code, "Cpp Glue"))
+
+    out = COLLAPSIBLE_CSS
+    out += HALF_WIDTH_DIVS_CSS
+    out += f"""
+        <div class ="several_columns">
+            <div class="half_width">
+                {original}
+            </div>
+            <div class="half_width">
+            {published}
+            <br/>
+            {glue}
+            </div>
+        </div>
+    """
+
     return out
 
 

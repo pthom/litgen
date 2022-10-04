@@ -155,11 +155,10 @@ PimpMyCI:
 
 * PimplMyClass
 
-command line
-  check that generated code compiles
-  integration tests
+review code => simplify and review srcmlcpp
 
-constexpr, static, specifiers
+command line
+  integration tests
 
 
 online service
@@ -474,8 +473,12 @@ Problem 3: dans lg_test_runner (integration tests), tout est refusé (trouve pas
 
 ** Wish List / Easy
 
+  options / put boxed type with pydef
+
   stackoverflow: review question ("type annotation: warn about mutable members becoming instance when initialized at decl site")
     https://docs.python.org/3/library/typing.html#typing.ClassVar
+
+
 
 
 ** DONE: Handle operators()
@@ -499,8 +502,15 @@ Non : voir si possible retrouver same namespace par recherche dans CppUnit ou Ad
 
 See example in py-mahi-gui
 On ne fait qu'un niveau de derivation, c'est tout!
+*** Hande Binding protected member functions
+
+** https://pybind11.readthedocs.io/en/stable/advanced/pycpp/numpy.html#vectorizing-functions
+
+** Handle (deep)copy
 
 ** Interactive demo
 https://www.w3schools.com/howto/tryit.asp?filename=tryhow_js_collapsible_symbol
 EXport notebook:
 https://mljar.com/blog/jupyter-notebook-html/
+
+https://jupyter-contrib-nbextensions.readthedocs.io/en/latest/nbextensions/toc2/README.html
