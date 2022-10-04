@@ -327,7 +327,10 @@ class AdaptedClass(AdaptedElement):
         pydef_class_var_parent = cpp_to_python.cpp_scope_to_pybind_parent_var_name(options, self.cpp_element())
         qualified_struct_name = self.cpp_element().qualified_struct_name()
 
-        code_intro += f"auto {pydef_class_var} = py::class_<{qualified_struct_name}>{location}\n"
+        if self.cpp_element().has_private_dtor():
+            code_intro += f"auto {pydef_class_var} = py::class_<{qualified_struct_name}, std::unique_ptr<{qualified_struct_name}, py::nodelete>>{location}\n"
+        else:
+            code_intro += f"auto {pydef_class_var} = py::class_<{qualified_struct_name}>{location}\n"
         code_intro += f'{_i_}({pydef_class_var_parent}, "{bare_struct_name}", "{comment}")\n'
 
         if options.generate_to_string:

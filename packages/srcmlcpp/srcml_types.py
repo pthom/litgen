@@ -1309,6 +1309,17 @@ class CppStruct(CppElementAndComment):
                             break
         return found_deleted_default_ctor
 
+    def has_private_dtor(self) -> bool:
+        found_private_dtor = False
+        for access_zone in self.block.block_children:
+            if isinstance(access_zone, CppPublicProtectedPrivate):
+                if access_zone.access_type == "private":
+                    for child in access_zone.block_children:
+                        if child.tag() == "destructor_decl" or child.tag() == "destructor":
+                            found_private_dtor = True
+                            break
+        return found_private_dtor
+
     def is_templated_class(self) -> bool:
         return hasattr(self, "template")
 

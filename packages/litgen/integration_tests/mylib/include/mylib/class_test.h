@@ -80,3 +80,24 @@ struct StructNotRegistered
 {
     int a = 0;
 };
+
+
+// MySingletonClass: demonstrate how to instantiate a singleton
+// - The instance method shall return with return_value_policy::reference
+// - The destructor may be private
+class MySingletonClass     // MY_API
+{
+public:
+    int value = 0;
+
+    MY_API static MySingletonClass& instance() // return_value_policy::reference
+    {
+        static MySingletonClass instance;
+        return instance;
+    }
+private:
+    // For a singleton class, the destructor is typically private
+    // This will be mentioned in the pydef code:
+    // see https://pybind11.readthedocs.io/en/stable/advanced/classes.html#non-public-destructors
+    ~MySingletonClass() {}
+};

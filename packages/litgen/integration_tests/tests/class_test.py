@@ -55,3 +55,11 @@ def test_class_static_methods():
 
 def test_struct_not_registered():
     assert "StructNotRegistered" not in dir(lg_mylib)
+
+
+def test_singleton():
+    i = lg_mylib.MySingletonClass.instance()
+    assert i.value == 0
+    i.value = 3
+    i2 = lg_mylib.MySingletonClass.instance()
+    assert i2.value == 3

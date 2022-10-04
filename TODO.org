@@ -479,8 +479,6 @@ Problem 3: dans lg_test_runner (integration tests), tout est refusé (trouve pas
     https://docs.python.org/3/library/typing.html#typing.ClassVar
 
 
-
-
 ** DONE: Handle operators()
 References:
 https://en.wikipedia.org/wiki/Operators_in_C_and_C%2B%2B
@@ -502,7 +500,9 @@ Non : voir si possible retrouver same namespace par recherche dans CppUnit ou Ad
 
 See example in py-mahi-gui
 On ne fait qu'un niveau de derivation, c'est tout!
-*** Hande Binding protected member functions
+
+** Hande Binding protected member functions
+
 
 ** https://pybind11.readthedocs.io/en/stable/advanced/pycpp/numpy.html#vectorizing-functions
 

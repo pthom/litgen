@@ -521,6 +521,17 @@ void py_init_module_lg_mylib(py::module& m)
         ;
 
 
+    auto pyClassMySingletonClass = py::class_<MySingletonClass, std::unique_ptr<MySingletonClass, py::nodelete>>
+        (m, "MySingletonClass", " MySingletonClass: demonstrate how to instantiate a singleton\n - The instance method shall return with return_value_policy::reference\n - The destructor may be private")
+        .def(py::init<>()) // implicit default constructor
+        .def_readwrite("value", &MySingletonClass::value, "")
+        .def("instance",
+            &MySingletonClass::instance,
+            "return_value_policy::reference",
+            pybind11::return_value_policy::reference)
+        ;
+
+
     auto pyClassMyConfig = py::class_<MyConfig>
         (m, "MyConfig", "")
         .def(py::init<>()) // implicit default constructor

@@ -66,8 +66,26 @@ struct IntWrapper
     generated_code = litgen.generate_code(options, code)
     print(generated_code.stub_code)
 
-    # print(generated_code.pydef_code)
+
+def play_private_destructor() -> None:
+    code = """
+class Foo
+{
+    ~Foo();
+};
+    """
+    options = LitgenOptions()
+    generated_code = litgen.generate_code(options, code)
+    print(generated_code.pydef_code)
+
+    # from srcmlcpp import SrcmlOptions
+    # srcml_options = SrcmlOptions()
+    # cpp_unit = srcmlcpp.code_to_cpp_unit(srcml_options, code)
+    # print(cpp_unit.str_xml())
+    # struct = cpp_unit.all_structs_recursive()[0]
+    # f = struct.has_private_dtor()
+    # print("a")
 
 
 if __name__ == "__main__":
-    play_operator()
+    play_private_destructor()

@@ -501,6 +501,19 @@ class MyClass:
 #       the enum's doc, and cause it to be registered (since it contains "MY_API")
 
 
+
+class MySingletonClass:
+    """ MySingletonClass: demonstrate how to instantiate a singleton
+     - The instance method shall return with return_value_policy::reference
+     - The destructor may be private
+    """
+    value: int = 0
+
+    # (static method)
+    def instance() -> MySingletonClass:
+        """return_value_policy::reference"""
+        pass
+
 #////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 #                       mylib/return_value_policy_test.h included by mylib/mylib.h                             //
 #//////////////////////////////////////////////////////////////////////////////////////////////////////////////
