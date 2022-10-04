@@ -171,7 +171,7 @@ def generate_code(options: LitgenOptions, code: CppCode) -> GeneratedCodes:
     r = GeneratedCodes(
         pydef_code=generator.pydef_code(),
         stub_code=generator.stub_code(),
-        glue_code=generator._boxed_types_cpp_code(),
+        glue_code=generator.glue_code(),
     )
     return r
 
