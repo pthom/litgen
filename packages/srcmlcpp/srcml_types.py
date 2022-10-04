@@ -532,7 +532,7 @@ class CppType(CppElement):
     # "unsigned int" -> ["unsigned", "int"]
     typenames: List[str]
 
-    # specifiers: could be ["const"], ["inline", "static", "const"], ["extern"], ["constexpr"], etc.
+    # specifiers: could be ["const"], ["inline", "static", "const", "virtual"], ["extern"], ["constexpr"], etc.
     specifiers: List[str]
 
     # modifiers: could be ["*"], ["&&"], ["&"], ["*", "*"], ["..."]
@@ -552,7 +552,7 @@ class CppType(CppElement):
     def authorized_modifiers() -> List[str]:
         return ["*", "&", "&&", "..."]
 
-    def str_code(self) -> str:
+    def str_code(self, ignore_virtual: bool = False) -> str:
         nb_const = self.specifiers.count("const")
 
         if nb_const > 2:
@@ -564,6 +564,9 @@ class CppType(CppElement):
             specifier_r: List[str] = list(reversed(specifiers))
             specifier_r.remove("const")
             specifiers = list(reversed(specifier_r))
+
+        if ignore_virtual and "virtual" in specifiers:
+            specifiers.remove("virtual")
 
         specifiers_str = code_utils.join_remove_empty(" ", specifiers)
         modifiers_str = code_utils.join_remove_empty(" ", self.modifiers)
@@ -1002,8 +1005,8 @@ class CppFunctionDecl(CppElementAndComment):
         return r
 
     def full_return_type(self) -> str:
-        """The C++ return type of the function, without API or inline markers"""
-        r = self.return_type.str_code()
+        """The C++ return type of the function, without API, virtual or inline specifiers"""
+        r = self.return_type.str_code(ignore_virtual=True)
         for prefix in self.options.functions_api_prefixes_list():
             r = r.replace(prefix + " ", "")
         if r.startswith("inline "):
