@@ -258,6 +258,12 @@ class AdaptedClass(AdaptedElement):
         )
         return r
 
+    def _shall_override_virtual_methods_in_python(self) -> bool:
+        r = code_utils.does_match_regex(
+            self.options.class_override_virtual_methods_in_python__regex, self.cpp_element().class_name
+        )
+        return r
+
     def _add_adapted_class_member(self, cpp_decl_statement: CppDeclStatement) -> None:
         for cpp_decl in cpp_decl_statement.cpp_decls:
             is_excluded_by_name = code_utils.does_match_regex(
@@ -340,23 +346,81 @@ class AdaptedClass(AdaptedElement):
         r = self._str_stub_layout_lines(title_lines, body_lines)
         return r
 
-    def _store_protected_methods_glue_code(self) -> None:
+    def _scope_intro_outro(self) -> Tuple[List[str], List[str]]:
+        intro = []
+        outro = []
+        scope = self.cpp_element().cpp_scope(False)
+        for scope_part in scope.scope_parts:
+            if scope_part.scope_type == CppScopeType.Namespace:
+                intro += [f"namespace {scope_part.scope_name}", "{"]
+                outro += ["}" + f" // namespace {scope_part.scope_name}"]
+            else:
+                raise SrcMlException("Bad scope for protected member")
+        outro = list(reversed(outro))
+        return intro, outro
+
+    def _virtual_method_list(self) -> List[AdaptedFunction]:
+        r = []
+        for child in self.adapted_public_children:
+            if isinstance(child, AdaptedFunction):
+                if child.cpp_element().is_virtual_method():
+                    r.append(child)
+        for child in self.adapted_protected_methods:
+            if child.cpp_element().is_virtual_method():
+                r.append(child)
+        return r
+
+    def _store_glue_override_virtual_methods_in_python(self) -> None:
+        # See https://pybind11.readthedocs.io/en/stable/advanced/classes.html#overriding-virtual-functions-in-python
+        if not self._shall_override_virtual_methods_in_python():
+            return
+        virtual_methods = self._virtual_method_list()
+        if len(virtual_methods) == 0:
+            return
+
+        trampoline_class_template = code_utils.unindent_code(
+            """
+            // helper type to enable overriding virtual methods in python
+            class {trampoline_class_name} : public {class_name}
+            {
+            public:
+                using {class_name}::{class_name};
+
+            {trampoline_list}
+            };
+            """,
+            flag_strip_empty_lines=True,
+        )
+
+        trampoline_lines = []
+        for virtual_method in virtual_methods:
+            trampoline_lines += virtual_method.glue_override_virtual_methods_in_python()
+
+        replacements = munch.Munch()
+        replacements.trampoline_class_name = self.cpp_element().class_name + "_trampoline"
+        replacements.class_name = self.cpp_element().class_name
+        replacements.trampoline_list = code_utils.indent_code(
+            "\n".join(trampoline_lines), indent_str=self.options.indent_cpp_spaces()
+        )
+
+        publicist_class_code = code_utils.process_code_template(trampoline_class_template, replacements, {})
+
+        ns_intro, ns_outro = self._scope_intro_outro()
+
+        glue_code = []
+        glue_code += ns_intro
+        glue_code += publicist_class_code.split("\n")
+        glue_code += ns_outro
+
+        glue_code_str = "\n" + "\n".join(glue_code) + "\n"
+        self.lg_context.virtual_methods_glue_code += glue_code_str
+
+    def _store_glue_protected_methods(self) -> None:
         # See https://pybind11.readthedocs.io/en/stable/advanced/classes.html#binding-protected-member-functions
         if not self._shall_publish_protected_methods():
             return
-
-        def scope_intro_outro() -> Tuple[List[str], List[str]]:
-            intro = []
-            outro = []
-            scope = self.cpp_element().cpp_scope(False)
-            for scope_part in scope.scope_parts:
-                if scope_part.scope_type == CppScopeType.Namespace:
-                    intro += [f"namespace {scope_part.scope_name}", "{"]
-                    outro += ["}" + f" // namespace {scope_part.scope_name}"]
-                else:
-                    raise SrcMlException("Bad scope for protected member")
-            outro = list(reversed(outro))
-            return intro, outro
+        if len(self.adapted_protected_methods) == 0:
+            return
 
         def using_list() -> List[str]:
             r = []
@@ -368,11 +432,14 @@ class AdaptedClass(AdaptedElement):
 
         publicist_class_template = code_utils.unindent_code(
             """
-            class {publicist_class_name} : public {class_name} { // helper type for exposing protected functions
+            // helper type for exposing protected functions
+            class {publicist_class_name} : public {class_name}
+            {
             public:
             {using_list}
             };
-        """
+        """,
+            flag_strip_empty_lines=True,
         )
 
         replacements = munch.Munch()
@@ -384,7 +451,7 @@ class AdaptedClass(AdaptedElement):
 
         publicist_class_code = code_utils.process_code_template(publicist_class_template, replacements, {})
 
-        ns_intro, ns_outro = scope_intro_outro()
+        ns_intro, ns_outro = self._scope_intro_outro()
 
         glue_code = []
         glue_code += ns_intro
@@ -400,7 +467,8 @@ class AdaptedClass(AdaptedElement):
             self.cpp_element().emit_warning("Template classes are not yet supported")
             return []
 
-        self._store_protected_methods_glue_code()
+        self._store_glue_protected_methods()
+        self._store_glue_override_virtual_methods_in_python()
 
         options = self.options
         _i_ = options.indent_cpp_spaces()

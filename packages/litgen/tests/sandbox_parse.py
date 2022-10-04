@@ -79,7 +79,7 @@ class Foo
     print(generated_code.pydef_code)
 
 
-def play_protected_method() -> None:
+def play_virtual_method() -> None:
     # See https://pybind11.readthedocs.io/en/stable/advanced/classes.html#binding-protected-member-functions
     code = """
     namespace Root
@@ -88,19 +88,35 @@ def play_protected_method() -> None:
         {
             class A
             {
-            protected:
-                int foo() const { return 42; }
-                int foo2() const { return 44; }
-                int foo3() const { return 46; }
+            public:
+                virtual int foo(int a, bool f=true) const { return 42; }
+                virtual inline static const Widget& foo2() const;
             };
         }
     }
     """
     options = LitgenOptions()
-    options.class_expose_protected_methods__regex = "A"
+    # options.fn_params_replace_modifiable_immutable_by_boxed__regex  = ".*"
+    options.class_expose_protected_methods__regex = ".*"
+    options.class_override_virtual_methods_in_python__regex = ".*"
     generated_code = litgen.generate_code(options, code)
-    print(generated_code.pydef_code)
+    print(generated_code.glue_code)
+
+
+def play_pure():
+    code = """
+    struct A {
+    virtual void foo() = 0;
+    };
+    """
+    from srcmlcpp import SrcmlOptions
+
+    srcml_options = SrcmlOptions()
+    cpp_unit = srcmlcpp.code_to_cpp_unit(srcml_options, code)
+    print(cpp_unit.str_xml())
+    print("a")
 
 
 if __name__ == "__main__":
-    play_protected_method()
+    play_virtual_method()
+    # play_pure()

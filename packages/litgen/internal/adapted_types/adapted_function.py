@@ -207,6 +207,52 @@ class AdaptedFunction(AdaptedElement):
         r = self.cpp_element().is_constructor()
         return r
 
+    def glue_override_virtual_methods_in_python(self) -> List[str]:
+        assert self.cpp_element().is_virtual_method()
+
+        template_code = code_utils.unindent_code(
+            """
+        {return_type} {function_name_cpp}({param_list}){maybe_const} override
+        {
+        {_i_}{PYBIND11_OVERRIDE_NAME}(
+        {_i_}{_i_}{return_type}, // return type
+        {_i_}{_i_}{parent_class}, // parent class
+        {_i_}{_i_}"{function_name_python}", // function name (python)
+        {_i_}{_i_}{function_name_cpp}{maybe_comma_if_has_params} // function name (c++)
+        {_i_}{_i_}{param_names} // params
+        {_i_});
+        }
+        """,
+            flag_strip_empty_lines=True,
+        )
+
+        parent_struct = self.cpp_element().parent_struct_if_method()
+        has_params = len(self.cpp_element().parameter_list.parameters) > 0
+        is_pure_virtual = self.cpp_element().is_pure_virtual
+        assert parent_struct is not None
+
+        replacements = Munch()
+        replacements.PYBIND11_OVERRIDE_NAME = (
+            "PYBIND11_OVERRIDE_PURE_NAME" if is_pure_virtual else "PYBIND11_OVERRIDE_NAME"
+        )
+        replacements._i_ = self.options.indent_cpp_spaces()
+        replacements.return_type = self.cpp_element().return_type.str_return_type()
+        replacements.function_name_cpp = self.cpp_element().function_name
+        replacements.function_name_python = cpp_to_python.function_name_to_python(
+            self.options, self.cpp_element().function_name
+        )
+        replacements.maybe_const = " const" if self.cpp_element().is_const() else ""
+        replacements.parent_class = parent_struct.class_name
+        replacements.param_list = self.cpp_element().parameter_list.types_names_default_for_signature_str()
+        replacements.maybe_comma_if_has_params = "," if has_params else ""
+
+        lines_replacements = Munch()
+        lines_replacements.param_names = self.cpp_element().parameter_list.names_only_for_call() if has_params else None
+
+        code = code_utils.process_code_template(template_code, replacements, lines_replacements)
+        lines = code.split("\n")
+        return lines
+
     def function_name_python(self) -> str:
         from litgen.internal.adapted_types import operators
 
