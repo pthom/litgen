@@ -674,6 +674,24 @@ void py_init_module_lg_mylib(py::module& m)
             },     py::arg("o"))
         ;
 
+    { // <namespace Root>
+        py::module_ pyNamespaceRoot = m.def_submodule("Root", "");
+        { // <namespace Inner>
+            py::module_ pyNamespaceRoot_NamespaceInner = pyNamespaceRoot.def_submodule("Inner", "");
+            auto pyNamespaceRoot_NamespaceInner_ClassMyVirtualClass = py::class_<Root::Inner::MyVirtualClass>
+                (pyNamespaceRoot_NamespaceInner, "MyVirtualClass", "")
+                .def(py::init<>()) // implicit default constructor
+                .def("foo",
+                    &Root::Inner::MyVirtualClass_publicist::foo)
+                .def("foo2",
+                    &Root::Inner::MyVirtualClass_publicist::foo2)
+                .def("foo3",
+                    &Root::Inner::MyVirtualClass_publicist::foo3)
+                ;
+        } // </namespace Inner>
+
+    } // </namespace Root>
+
     { // <namespace SomeNamespace>
         py::module_ pyNamespaceSomeNamespace = m.def_submodule("SomeNamespace", "");
         auto pyNamespaceSomeNamespace_ClassParentStruct = py::class_<SomeNamespace::ParentStruct>

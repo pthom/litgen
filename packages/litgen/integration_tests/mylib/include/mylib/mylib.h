@@ -9,6 +9,7 @@
 #include "mylib/overload_test.h"
 #include "mylib/enum_test.h"
 #include "mylib/class_test.h"
+#include "mylib/class_virtual_test.h"
 #include "mylib/return_value_policy_test.h"
 #include "mylib/inner_class_test.h"
 #include "mylib/mix_adapters_class_test.h"
@@ -16,5 +17,3 @@
 #include "mylib/operators.h"
 
 // #include "mylib/sandbox.h"
-
-//#include "mylib/class_virtual_test.h"

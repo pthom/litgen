@@ -43,10 +43,10 @@ class LitgenGenerator:
         code_utils.write_generated_code_between_markers(output_cpp_pydef_file, "litgen_pydef", pydef_code)
         code_utils.write_generated_code_between_markers(output_stub_pyi_file, "litgen_stub", stub_code)
 
-        if self.has_glue_code():
-            assert len(output_cpp_glue_code_file) > 0
-            glue_code = self.glue_code()
-            code_utils.write_generated_code_between_markers(output_cpp_glue_code_file, "litgen_glue_code", glue_code)
+        if len(output_cpp_glue_code_file) == 0:
+            output_cpp_glue_code_file = output_cpp_pydef_file
+        glue_code = self.glue_code()
+        code_utils.write_generated_code_between_markers(output_cpp_glue_code_file, "litgen_glue_code", glue_code)
 
     def options(self) -> LitgenOptions:
         return self.lg_context.options
@@ -55,7 +55,19 @@ class LitgenGenerator:
         return len(self.lg_context.encountered_cpp_boxed_types) > 0
 
     def has_glue_code(self) -> bool:
-        return self.has_boxed_types()
+        r = (
+            self.has_boxed_types()
+            or len(self.lg_context.virtual_methods_glue_code) > 0
+            or len(self.lg_context.protected_methods_glue_code) > 0
+        )
+        return r
+
+    def glue_code(self) -> CppCode:
+        r = ""
+        r += self._boxed_types_cpp_code()
+        r += self.lg_context.virtual_methods_glue_code
+        r += self.lg_context.protected_methods_glue_code
+        return r
 
     def pydef_code(self) -> CppCode:
         pydef_codes = []
@@ -84,9 +96,6 @@ class LitgenGenerator:
             cpp_codes.append(boxed_python_type.boxed_type_cpp_struct_code(cpp_boxed_type, indent_str))
         r = "".join(cpp_codes)
         return r
-
-    def glue_code(self) -> CppCode:
-        return self._boxed_types_cpp_code()
 
     def _process_cpp_code(self, code: str, filename: str) -> None:
         if len(filename) > 0:

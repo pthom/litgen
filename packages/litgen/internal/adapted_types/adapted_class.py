@@ -327,13 +327,23 @@ class AdaptedClass(AdaptedElement):
             body_lines += spacing_lines
             body_lines += element_lines
 
+        if len(self.adapted_protected_methods) > 0:
+            body_lines += ["", "# <protected_methods>"]
+            for element in self.adapted_protected_methods:
+                element_lines = element._str_stub_lines()
+
+                spacing_lines = line_spacer.spacing_lines(element, element_lines)
+                body_lines += spacing_lines
+                body_lines += element_lines
+            body_lines += ["# </protected_methods>", ""]
+
         r = self._str_stub_layout_lines(title_lines, body_lines)
         return r
 
-    def _str_glue_publicist_protected_methods(self) -> List[str]:
+    def _store_protected_methods_glue_code(self) -> None:
         # See https://pybind11.readthedocs.io/en/stable/advanced/classes.html#binding-protected-member-functions
         if not self._shall_publish_protected_methods():
-            return []
+            return
 
         def scope_intro_outro() -> Tuple[List[str], List[str]]:
             intro = []
@@ -376,18 +386,21 @@ class AdaptedClass(AdaptedElement):
 
         ns_intro, ns_outro = scope_intro_outro()
 
-        r = []
-        r += ns_intro
-        r += publicist_class_code.split("\n")
-        r += ns_outro
+        glue_code = []
+        glue_code += ns_intro
+        glue_code += publicist_class_code.split("\n")
+        glue_code += ns_outro
 
-        return r
+        glue_code_str = "\n" + "\n".join(glue_code) + "\n"
+        self.lg_context.protected_methods_glue_code += glue_code_str
 
     # override
     def _str_pydef_lines(self) -> List[str]:
         if self.cpp_element().is_templated_class():
             self.cpp_element().emit_warning("Template classes are not yet supported")
             return []
+
+        self._store_protected_methods_glue_code()
 
         options = self.options
         _i_ = options.indent_cpp_spaces()

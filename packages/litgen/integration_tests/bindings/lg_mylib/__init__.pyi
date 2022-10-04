@@ -515,6 +515,11 @@ class MySingletonClass:
         pass
 
 #////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+#                       mylib/class_virtual_test.h included by mylib/mylib.h                                   //
+#//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+#////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 #                       mylib/return_value_policy_test.h included by mylib/mylib.h                             //
 #//////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -668,7 +673,29 @@ class IntWrapperSpaceship:
 
 # #include "mylib/sandbox.h"
 
-##include "mylib/class_virtual_test.h"
+
+# <submodule Root>
+class Root: # Proxy class that introduces typings for the *submodule* Root
+    # (This corresponds to a C++ namespace. All method are static!)
+
+    # <submodule Inner>
+    class Inner: # Proxy class that introduces typings for the *submodule* Inner
+        # (This corresponds to a C++ namespace. All method are static!)
+        class MyVirtualClass:
+
+            # <protected_methods>
+            def foo(self) -> int:
+                pass
+            def foo2(self) -> int:
+                pass
+            def foo3(self) -> int:
+                pass
+            # </protected_methods>
+
+
+    # </submodule Inner>
+
+# </submodule Root>
 
 # <submodule SomeNamespace>
 class SomeNamespace: # Proxy class that introduces typings for the *submodule* SomeNamespace
