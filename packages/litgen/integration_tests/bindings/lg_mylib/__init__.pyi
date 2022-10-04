@@ -668,6 +668,8 @@ class IntWrapperSpaceship:
 
 # #include "mylib/sandbox.h"
 
+##include "mylib/class_virtual_test.h"
+
 # <submodule SomeNamespace>
 class SomeNamespace: # Proxy class that introduces typings for the *submodule* SomeNamespace
     # (This corresponds to a C++ namespace. All method are static!)

@@ -1,6 +1,8 @@
 from __future__ import annotations
 
-from typing import Union, cast
+from typing import Union, cast, Tuple
+
+import munch  # type: ignore
 
 from srcmlcpp.srcml_types import *
 from srcmlcpp.srcml_exception import SrcMlException
@@ -228,11 +230,15 @@ class AdaptedClass(AdaptedElement):
     adapted_public_children: List[
         Union[AdaptedEmptyLine, AdaptedComment, AdaptedClassMember, AdaptedFunction, AdaptedClass, AdaptedEnum]
     ]
+    adapted_protected_methods: List[AdaptedFunction]
 
     def __init__(self, lg_context: LitgenContext, class_: CppStruct):
         super().__init__(lg_context, class_)
         self.adapted_public_children = []
         self._fill_public_children()
+
+        self.adapted_protected_methods = []
+        self._fill_protected_methods()
 
     def __str__(self):
         r = f"AdaptedClass({self.cpp_element().class_name})"
@@ -244,6 +250,12 @@ class AdaptedClass(AdaptedElement):
 
     def class_name_python(self) -> str:
         r = cpp_to_python.add_underscore_if_python_reserved_word(self.cpp_element().class_name)
+        return r
+
+    def _shall_publish_protected_methods(self) -> bool:
+        r = code_utils.does_match_regex(
+            self.options.class_expose_protected_methods__regex, self.cpp_element().class_name
+        )
         return r
 
     def _add_adapted_class_member(self, cpp_decl_statement: CppDeclStatement) -> None:
@@ -258,6 +270,15 @@ class AdaptedClass(AdaptedElement):
                 adapted_class_member = AdaptedClassMember(self.lg_context, cpp_decl, self)
                 if adapted_class_member.check_can_publish():
                     self.adapted_public_children.append(adapted_class_member)
+
+    def _fill_protected_methods(self) -> None:
+        if not self._shall_publish_protected_methods():
+            return
+        for child in self.cpp_element().get_protected_elements():
+            if isinstance(child, CppFunctionDecl):
+                if not code_utils.does_match_regex(self.options.fn_exclude_by_name__regex, child.function_name):
+                    is_overloaded = self.cpp_element().is_method_overloaded(child)
+                    self.adapted_protected_methods.append(AdaptedFunction(self.lg_context, child, is_overloaded))
 
     def _fill_public_children(self) -> None:
         public_elements = self.cpp_element().get_public_elements()
@@ -309,6 +330,59 @@ class AdaptedClass(AdaptedElement):
         r = self._str_stub_layout_lines(title_lines, body_lines)
         return r
 
+    def _str_glue_publicist_protected_methods(self) -> List[str]:
+        # See https://pybind11.readthedocs.io/en/stable/advanced/classes.html#binding-protected-member-functions
+        if not self._shall_publish_protected_methods():
+            return []
+
+        def scope_intro_outro() -> Tuple[List[str], List[str]]:
+            intro = []
+            outro = []
+            scope = self.cpp_element().cpp_scope(False)
+            for scope_part in scope.scope_parts:
+                if scope_part.scope_type == CppScopeType.Namespace:
+                    intro += [f"namespace {scope_part.scope_name}", "{"]
+                    outro += ["}" + f" // namespace {scope_part.scope_name}"]
+                else:
+                    raise SrcMlException("Bad scope for protected member")
+            outro = reversed(outro)
+            return intro, outro
+
+        def using_list() -> List[str]:
+            r = []
+            for child in self.adapted_protected_methods:
+                class_name = self.cpp_element().class_name
+                method_name = child.cpp_element().function_name
+                r.append(f"using {class_name}::{method_name};")
+            return r
+
+        publicist_class_template = code_utils.unindent_code(
+            """
+            class {publicist_class_name} : public {class_name} { // helper type for exposing protected functions
+            public:
+            {using_list}
+            };
+        """
+        )
+
+        replacements = munch.Munch()
+        replacements.publicist_class_name = self.cpp_element().class_name + "_publicist"
+        replacements.class_name = self.cpp_element().class_name
+        replacements.using_list = code_utils.indent_code(
+            "\n".join(using_list()), indent_str=self.options.indent_cpp_spaces()
+        )
+
+        publicist_class_code = code_utils.process_code_template(publicist_class_template, replacements, {})
+
+        ns_intro, ns_outro = scope_intro_outro()
+
+        r = []
+        r += ns_intro
+        r += publicist_class_code.split("\n")
+        r += ns_outro
+
+        return r
+
     # override
     def _str_pydef_lines(self) -> List[str]:
         if self.cpp_element().is_templated_class():
@@ -356,6 +430,15 @@ class AdaptedClass(AdaptedElement):
 
         for child in children_except_inner_classes:
             decl_code = child.str_pydef()
+            code += code_utils.indent_code(decl_code, indent_str=options.indent_cpp_spaces())
+
+        for child in self.adapted_protected_methods:
+            # Temporarily change the name of the parent struct, to use the publicist class
+            original_class_name = child.cpp_element().parent_struct_if_method().class_name
+            child.cpp_element().parent_struct_if_method().class_name = self.cpp_element().class_name + "_publicist"
+            decl_code = child.str_pydef()
+            child.cpp_element().parent_struct_if_method().class_name = original_class_name
+
             code += code_utils.indent_code(decl_code, indent_str=options.indent_cpp_spaces())
 
         code = code + code_outro

@@ -1346,6 +1346,18 @@ class CppStruct(CppElementAndComment):
                         r.append(child)
         return r
 
+    def get_protected_elements(self) -> List[CppElementAndComment]:
+        """
+        Returns the protected members, constructors, and methods
+        """
+        r: List[CppElementAndComment] = []
+        for access_zone in self.block.block_children:
+            if isinstance(access_zone, CppPublicProtectedPrivate):
+                if access_zone.access_type == "protected":
+                    for child in access_zone.block_children:
+                        r.append(child)
+        return r
+
     def all_methods(self) -> List[CppFunctionDecl]:
         r: List[CppFunctionDecl] = []
         for access_zone in self.block.block_children:

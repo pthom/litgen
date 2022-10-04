@@ -78,14 +78,29 @@ class Foo
     generated_code = litgen.generate_code(options, code)
     print(generated_code.pydef_code)
 
-    # from srcmlcpp import SrcmlOptions
-    # srcml_options = SrcmlOptions()
-    # cpp_unit = srcmlcpp.code_to_cpp_unit(srcml_options, code)
-    # print(cpp_unit.str_xml())
-    # struct = cpp_unit.all_structs_recursive()[0]
-    # f = struct.has_private_dtor()
-    # print("a")
+
+def play_protected_method() -> None:
+    # See https://pybind11.readthedocs.io/en/stable/advanced/classes.html#binding-protected-member-functions
+    code = """
+    namespace Root
+    {
+        namespace Inner
+        {
+            class A
+            {
+            protected:
+                int foo() const { return 42; }
+                int foo2() const { return 44; }
+                int foo3() const { return 46; }
+            };
+        }
+    }
+    """
+    options = LitgenOptions()
+    options.class_expose_protected_methods__regex = "A"
+    generated_code = litgen.generate_code(options, code)
+    print(generated_code.pydef_code)
 
 
 if __name__ == "__main__":
-    play_private_destructor()
+    play_protected_method()
