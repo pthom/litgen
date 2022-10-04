@@ -70,8 +70,6 @@ class LitgenOptions:
     python_ident_with_tabs: bool = False
     # Insert as many empty lines in the python stub as found in the header file, keep comments layout, etc.
     python_reproduce_cpp_layout: bool = True
-    # Reformat the generated python to remove long series of empty lines (disabled if < 0)
-    python_max_consecutive_empty_lines: int = -1
     # The generated code will try to adhere to this max length (if negative, this is ignored)
     python_max_line_length = 80
     # Strip (remove) empty comment lines
