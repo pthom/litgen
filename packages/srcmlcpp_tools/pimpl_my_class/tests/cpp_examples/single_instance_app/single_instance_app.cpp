@@ -10,30 +10,18 @@
  SingleInstanceApp: Helper to create a single instance application
  =================================================================
 
- Anatomy of an example app with `SingleInstanceApp`:
- ---------------------------------------------------
-
-````cpp
+Example usage
+ ````cpp
 int main()
 {
-    using namespace std::literals;
-
     SingleInstanceApp singleInstanceApp("MyLock");
     if (! singleInstanceApp.RunSingleInstanceListener())
-    {
-        std::cout << "Other instance found!\n";
-        return 0;
-    }
+        return 0; // Another instance was detected
 
-    while(true)
+    while(app_is_running)
     {
-        std::this_thread::sleep_for(100ms);
-        if (singleInstanceApp.WasPinged())
-            std::cout << "Ping received!\n";
-
-      // For example, scan keyboard key 'q' to quit
-      // if (scan_key() == 'q')
-      //     break;
+        if (singleInstanceApp.WasPinged()) // if another instance tried to launch and failed
+            BringAppToFront();
     }
 }
 ````
@@ -44,14 +32,6 @@ public:
     //
     // SingleInstanceApp enables to make sure that only one instance of an app runs on a given system
     //
-
-    static bool HasOtherInstance(const std::string& lockName)
-    {
-        auto s = SingleInstanceAppPImpl(lockName);
-        bool result = s.HasOtherInstance();
-        return result;
-    }
-
 
     // Construct a Single Instance
     SingleInstanceAppPImpl(const std::string& lockName) : mLockName(lockName){}
@@ -80,6 +60,13 @@ public:
             return true;
         }
         return false;
+    }
+
+    static bool HasOtherInstance(const std::string& lockName)
+    {
+        auto s = SingleInstanceAppPImpl(lockName);
+        bool result = s.HasOtherInstance();
+        return result;
     }
 
     // The destructor will stop the async listener loop
@@ -147,9 +134,6 @@ private:
     std::future<void> mFutureResult;
 };
 
-// TODO:
-//  static should be removed on glue code, but not on decl!
-//  static should call with ::
 bool SingleInstanceApp::HasOtherInstance(const std::string & lockName) { return SingleInstanceAppPImpl::HasOtherInstance(lockName); }
 SingleInstanceApp::SingleInstanceApp(const std::string & lockName) : impl(std::make_unique<SingleInstanceAppPImpl>(lockName)) { }
 bool SingleInstanceApp::RunSingleInstanceListener() { return impl->RunSingleInstanceListener(); }
@@ -159,8 +143,6 @@ SingleInstanceApp::~SingleInstanceApp() = default;
 
 int main()
 {
-    using namespace std::literals;
-
     SingleInstanceApp singleInstanceApp("MyLock");
     if (! singleInstanceApp.RunSingleInstanceListener())
     {
@@ -170,6 +152,7 @@ int main()
 
     while(true)
     {
+        using namespace std::literals;
         std::this_thread::sleep_for(100ms);
         if (singleInstanceApp.WasPinged())
             std::cout << "Ping received!\n";

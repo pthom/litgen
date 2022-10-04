@@ -1,8 +1,12 @@
+from typing import Optional
+
 from dataclasses import dataclass
 from munch import Munch  # type: ignore
 from xml.etree import ElementTree as ET  # noqa
 
 from codemanip import code_utils
+
+import srcmlcpp
 from srcmlcpp.srcml_types import *
 
 
@@ -20,7 +24,7 @@ class PimplOptions:
     pimpl_suffixes: List[str]
     indent_str: str = "    "
     indent_public: str = "  "
-    max_consecutive_empty_lines = 1
+    max_consecutive_empty_lines = 2
     line_feed_before_block: bool = True
     impl_member_name = "mPImpl"
 
@@ -240,3 +244,23 @@ class PimplMyClass:
         r.glue_code = self._glue_code()
         r.header_code = self._header_code()
         return r
+
+
+def pimpl_my_class(impl_class: CppStruct, options: Optional[PimplOptions] = None) -> PimplResult:
+    if options is None:
+        options = PimplOptions()
+    c = PimplMyClass(options, impl_class)
+    r = c.result()
+    return r
+
+
+def pimpl_my_code(
+    code: str, pimpl_options: Optional[PimplOptions], srcml_options: Optional[SrcmlOptions] = None
+) -> Optional[PimplResult]:
+    if pimpl_options is None:
+        pimpl_options = PimplOptions()
+    if srcml_options is None:
+        srcml_options = SrcmlOptions()
+    cpp_unit = srcmlcpp.code_to_cpp_unit(srcml_options, code)
+    first_struct = cpp_unit.first_struct()
+    return None if first_struct is None else pimpl_my_class(first_struct, pimpl_options)
