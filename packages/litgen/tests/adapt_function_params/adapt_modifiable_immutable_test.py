@@ -8,12 +8,24 @@ def test_modifiable_immutable_simple():
     options = litgen.LitgenOptions()
     options.fn_params_replace_modifiable_immutable_by_boxed__regex = r".*"
     code = "void foo(float * v);"
-    generated_code = litgen_generator.generate_code(options, code, omit_boxed_types_code=True)
+    generated_code = litgen_generator.generate_code(options, code)
 
     # logging.warning("\n" + generated_code.pydef_code)
     code_utils.assert_are_codes_equal(
         generated_code.pydef_code,
         """
+        ////////////////////    <generated_from:BoxedTypes>    ////////////////////
+        auto pyClassBoxedFloat = py::class_<BoxedFloat>
+            (m, "BoxedFloat", "")
+            .def_readwrite("value", &BoxedFloat::value, "")
+            .def(py::init<float>(),
+                py::arg("v") = 0.)
+            .def("__repr__",
+                &BoxedFloat::__repr__)
+            ;
+        ////////////////////    </generated_from:BoxedTypes>    ////////////////////
+
+
         m.def("foo",
             [](BoxedFloat & v)
             {
@@ -33,17 +45,39 @@ def test_modifiable_immutable_simple():
     code_utils.assert_are_codes_equal(
         generated_code.stub_code,
         """
+        ####################    <generated_from:BoxedTypes>    ####################
+        class BoxedFloat:
+            value: float
+            def __init__(self, v: float = 0.) -> None:
+                pass
+            def __repr__(self) -> str:
+                pass
+        ####################    </generated_from:BoxedTypes>    ####################
+
+
         def foo(v: BoxedFloat) -> None:
             pass
     """,
     )
 
     code = "void foo(float * v = nullptr);"
-    generated_code = litgen_generator.generate_code(options, code, omit_boxed_types_code=True)
+    generated_code = litgen_generator.generate_code(options, code)
     # logging.warning("\n" + generated_code.pydef_code)
     code_utils.assert_are_codes_equal(
         generated_code.pydef_code,
         """
+        ////////////////////    <generated_from:BoxedTypes>    ////////////////////
+        auto pyClassBoxedFloat = py::class_<BoxedFloat>
+            (m, "BoxedFloat", "")
+            .def_readwrite("value", &BoxedFloat::value, "")
+            .def(py::init<float>(),
+                py::arg("v") = 0.)
+            .def("__repr__",
+                &BoxedFloat::__repr__)
+            ;
+        ////////////////////    </generated_from:BoxedTypes>    ////////////////////
+
+
         m.def("foo",
             [](BoxedFloat * v = nullptr)
             {
@@ -62,11 +96,23 @@ def test_modifiable_immutable_simple():
     )
 
     code = "int foo(float & v);"
-    generated_code = litgen_generator.generate_code(options, code, omit_boxed_types_code=True)
+    generated_code = litgen_generator.generate_code(options, code)
     # logging.warning("\n" + generated_code.pydef_code)
     code_utils.assert_are_codes_equal(
         generated_code.pydef_code,
         """
+        ////////////////////    <generated_from:BoxedTypes>    ////////////////////
+        auto pyClassBoxedFloat = py::class_<BoxedFloat>
+            (m, "BoxedFloat", "")
+            .def_readwrite("value", &BoxedFloat::value, "")
+            .def(py::init<float>(),
+                py::arg("v") = 0.)
+            .def("__repr__",
+                &BoxedFloat::__repr__)
+            ;
+        ////////////////////    </generated_from:BoxedTypes>    ////////////////////
+
+
         m.def("foo",
             [](BoxedFloat & v) -> int
             {
@@ -88,7 +134,7 @@ def test_modifiable_immutable_mixed_with_buffer():
     options = litgen.LitgenOptions()
     options.fn_params_replace_modifiable_immutable_by_boxed__regex = r".*"
     code = "void foo(float * buf, int buf_size);"
-    generated_code = litgen_generator.generate_code(options, code, omit_boxed_types_code=True)
+    generated_code = litgen_generator.generate_code(options, code)
     # logging.warning("\n" + generated_code.stub_code)
     code_utils.assert_are_codes_equal(
         generated_code.stub_code,
@@ -99,12 +145,28 @@ def test_modifiable_immutable_mixed_with_buffer():
     )
 
     code = "void foo(float * buf, int buf_size, float *value, bool &flag);"
-    generated_code = litgen_generator.generate_code(options, code, omit_boxed_types_code=True)
+    generated_code = litgen_generator.generate_code(options, code)
     # logging.warning("\n" + generated_code.stub_code)
     code_utils.assert_are_codes_equal(
         generated_code.stub_code,
         """
+        ####################    <generated_from:BoxedTypes>    ####################
+        class BoxedBool:
+            value: bool
+            def __init__(self, v: bool = False) -> None:
+                pass
+            def __repr__(self) -> str:
+                pass
+        class BoxedFloat:
+            value: float
+            def __init__(self, v: float = 0.) -> None:
+                pass
+            def __repr__(self) -> str:
+                pass
+        ####################    </generated_from:BoxedTypes>    ####################
+
+
         def foo(buf: np.ndarray, value: BoxedFloat, flag: BoxedBool) -> None:
             pass
-    """,
+            """,
     )

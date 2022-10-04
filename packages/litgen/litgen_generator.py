@@ -26,11 +26,9 @@ class _GeneratedCode:
 class LitgenGenerator:
     lg_context: LitgenContext
     _generated_codes: List[_GeneratedCode]
-    _omit_boxed_types_code: bool = False
 
-    def __init__(self, options: LitgenOptions, omit_boxed_types_code: bool = False) -> None:
+    def __init__(self, options: LitgenOptions) -> None:
         self.lg_context = LitgenContext(options)
-        self._omit_boxed_types_code = omit_boxed_types_code
         self._generated_codes = []
 
     def process_cpp_file(self, filename: str) -> None:
@@ -45,7 +43,7 @@ class LitgenGenerator:
         code_utils.write_generated_code_between_markers(output_cpp_pydef_file, "litgen_pydef", pydef_code)
         code_utils.write_generated_code_between_markers(output_stub_pyi_file, "litgen_stub", stub_code)
 
-        if self.has_boxed_types() and not self._omit_boxed_types_code:
+        if self.has_boxed_types():
             assert len(output_cpp_glue_code_file) > 0
             boxed_types_cpp_code = self.boxed_types_cpp_code()
             code_utils.write_generated_code_between_markers(
@@ -79,8 +77,6 @@ class LitgenGenerator:
         return stub_code
 
     def boxed_types_cpp_code(self) -> CppCode:
-        if self._omit_boxed_types_code:
-            return ""
         cpp_codes = []
         for cpp_boxed_type in sorted(self.lg_context.encountered_cpp_boxed_types):
             indent_str = self.lg_context.options.indent_cpp_spaces()
@@ -115,15 +111,12 @@ class LitgenGenerator:
         return generated_code
 
     def _generated_codes_with_boxed_types(self) -> List[_GeneratedCode]:
-        if self._omit_boxed_types_code:
+        boxed_types_generated_code = self._boxed_types_generated_code()
+        if boxed_types_generated_code is None:
             return self._generated_codes
         else:
-            boxed_types_generated_code = self._boxed_types_generated_code()
-            if boxed_types_generated_code is None:
-                return self._generated_codes
-            else:
-                r = [boxed_types_generated_code] + self._generated_codes
-                return r
+            r = [boxed_types_generated_code] + self._generated_codes
+            return r
 
 
 def write_generated_code_for_files(
@@ -159,8 +152,8 @@ class GeneratedCodes:
     boxed_types_cpp_code: CppCode
 
 
-def generate_code(options: LitgenOptions, code: CppCode, omit_boxed_types_code: bool = False) -> GeneratedCodes:
-    generator = LitgenGenerator(options, omit_boxed_types_code=omit_boxed_types_code)
+def generate_code(options: LitgenOptions, code: CppCode) -> GeneratedCodes:
+    generator = LitgenGenerator(options)
     generator._process_cpp_code(code, "")
     r = GeneratedCodes(
         pydef_code=generator.pydef_code(),

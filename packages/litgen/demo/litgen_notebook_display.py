@@ -12,8 +12,8 @@ from codemanip.html_code_viewer.html_code_viewer import (
 )
 
 
-def generate_and_display_impl(options: LitgenOptions, cpp_code: str, omit_boxed_types_code: bool = True) -> str:
-    generated_codes = litgen.generate_code(options, cpp_code, omit_boxed_types_code=omit_boxed_types_code)
+def generate_and_display_impl(options: LitgenOptions, cpp_code: str) -> str:
+    generated_codes = litgen.generate_code(options, cpp_code)
 
     original_content = CodeAndTitle(CodeLanguage.Cpp, cpp_code, "Original C++ decls")
     stubs_content = CodeAndTitle(CodeLanguage.Python, generated_codes.stub_code, "Corresponding python decls (stub)")
@@ -33,8 +33,8 @@ def generate_and_display_impl(options: LitgenOptions, cpp_code: str, omit_boxed_
     return html
 
 
-def generate_and_display(options: LitgenOptions, cpp_code: str, omit_boxed_types_code: bool = True) -> None:
+def generate_and_display(options: LitgenOptions, cpp_code: str) -> None:
     from IPython.display import display  # type: ignore
 
-    html = generate_and_display_impl(options, cpp_code, omit_boxed_types_code)
+    html = generate_and_display_impl(options, cpp_code)
     display(HTML(html))
