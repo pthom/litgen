@@ -509,8 +509,14 @@ On ne fait qu'un niveau de derivation, c'est tout!
 ** Handle (deep)copy
 
 ** Interactive demo
-https://www.w3schools.com/howto/tryit.asp?filename=tryhow_js_collapsible_symbol
-EXport notebook:
+
+
+
+Export notebook:
 https://mljar.com/blog/jupyter-notebook-html/
 
 https://jupyter-contrib-nbextensions.readthedocs.io/en/latest/nbextensions/toc2/README.html
+
+   Issue with toc:
+     See https://github.com/ipython-contrib/jupyter_contrib_nbextensions/issues/1533
+       (jinja2.exceptions.TemplateNotFound: toc2)

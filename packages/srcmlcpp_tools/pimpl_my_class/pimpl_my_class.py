@@ -50,7 +50,7 @@ class PimplMyClass:
                 return impl_class_name[: -len(suffix)]
         raise Exception(f"pImpl class name needs to end with a suffix among {self.options.pimpl_suffixes}")
 
-    def _published_method_impl(self, cpp_function: CppFunctionDecl) -> str:
+    def _published_method_glue_impl(self, cpp_function: CppFunctionDecl) -> str:
         if "static" in cpp_function.return_type.specifiers:
             cpp_function = copy.deepcopy(cpp_function)
             # C++ peculiarity: static is not allowed for the implementation, only for decl
@@ -63,19 +63,22 @@ class PimplMyClass:
         if is_static:
             template = code_utils.unindent_code(
                 """
-            {return_type} {class_published}::{method_name}({params_list}) {maybe_const}{ {maybe_return}{class_impl}::{method_name}({param_names}); }
+            {return_type} {class_published}::{method_name}({params_list}) {maybe_const}{
+            {_i_}{maybe_return}{class_impl}::{method_name}({param_names}); }
             """,
                 flag_strip_empty_lines=True,
             )
         else:
             template = code_utils.unindent_code(
                 """
-            {return_type} {class_published}::{method_name}({params_list}) {maybe_const}{ {maybe_return}{impl_name}->{method_name}({param_names}); }
+            {return_type} {class_published}::{method_name}({params_list}) {maybe_const}{
+            {_i_}{maybe_return}{impl_name}->{method_name}({param_names}); }
             """,
                 flag_strip_empty_lines=True,
             )
 
         replacements = Munch()
+        replacements._i_ = self.options.indent_str
         replacements.class_published = self._published_class_name()
         replacements.class_impl = self._impl_class_name()
         replacements.impl_name = self.options.impl_member_name
@@ -133,12 +136,14 @@ class PimplMyClass:
     def _published_constructor_impl(self, cpp_constructor: CppConstructorDecl) -> str:
         template = code_utils.unindent_code(
             """
-    {class_published}::{class_published}({param_list}) : {impl_name}(std::make_unique<{class_impl}>({param_names})) { }
+        {class_published}::{class_published}({param_list})
+        {_i_}: {impl_name}(std::make_unique<{class_impl}>({param_names})) { }
         """,
             flag_strip_empty_lines=True,
         )
 
         replacements = Munch()
+        replacements._i_ = self.options.indent_str
         replacements.param_list = str(cpp_constructor.parameter_list)
         replacements.class_published = self._published_class_name()
         replacements.class_impl = self._impl_class_name()
@@ -178,7 +183,7 @@ class PimplMyClass:
                 if isinstance(child, CppConstructorDecl):
                     r += self._published_constructor_impl(child) + "\n"
                 elif isinstance(child, CppFunctionDecl):
-                    r += self._published_method_impl(child) + "\n"
+                    r += self._published_method_glue_impl(child) + "\n"
 
         r += f"{self._published_class_name()}::~{self._published_class_name()}() = default;\n"
         return r

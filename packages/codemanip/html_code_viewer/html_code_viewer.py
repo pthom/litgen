@@ -52,23 +52,27 @@ class CodeAndTitle:
 
 COLLAPSIBLE_CSS = """
 <style>
-.collapsible {
-  background-color: #777;
+.collapsible_header {
+  background-color: #AAAAAA;
   color: white;
   cursor: pointer;
-  padding: 10px;
+  padding: 3px;
   width: 100%;
   border: none;
   text-align: left;
   outline: none;
-  font-size: 15px;
+  font-style: italic;
 }
 
-.active, .collapsible:hover {
+.collapsible_header_opened {
   background-color: #555;
 }
 
-.collapsible:after {
+.collapsible_header:hover {
+  background-color: #AAAAFF;
+}
+
+.collapsible_header:after {
   content: '\\002B';
   color: white;
   font-weight: bold;
@@ -76,11 +80,11 @@ COLLAPSIBLE_CSS = """
   margin-left: 5px;
 }
 
-.active:after {
+.collapsible_header_opened:after {
   content: "\\2212";
 }
 
-.content {
+.collapsible_content {
   padding: 0 18px;
   max-height: 0;
   overflow-x: scroll;
@@ -92,9 +96,6 @@ COLLAPSIBLE_CSS = """
 </style>
 """
 
-# overflow: auto;
-# overflow-wrap: normal;
-
 
 HALF_WIDTH_DIVS_CSS = """
 <style>
@@ -103,51 +104,66 @@ HALF_WIDTH_DIVS_CSS = """
     flex-wrap: wrap;
   }
   div.half_width {
-     width:48.5%;
+     width:49.5%;
      overflow: auto;
   }
   div.half_width_spacer {
-     width:3%;
+     width:1%;
   }
   </style>
 """
 
 
+_ID_COUNTER = 0
+
+
 def collapsible_code_and_title(
     code_and_title: CodeAndTitle, max_visible_lines: Optional[int] = None, initially_opened: bool = False
 ) -> HtmlCode:
-    # r = COLLAPSIBLE_CSS
+    global _ID_COUNTER
 
-    code_as_html = ""
+    code_as_html: str
     if code_and_title.code_language == CodeLanguage.Python:
         code_as_html = html_python_code_viewer(code_and_title.code)
     else:
         code_as_html = html_cpp_code_viewer(code_and_title.code)
 
     time_id = str(time.time() * 1000).replace(".", "_")
-    button_id = "btn_" + time_id
-    content_id = "content_" + time_id
+    collapsible_header_id = "btn_" + time_id + "_" + str(_ID_COUNTER)
+    collapsible_content_id = "content_" + time_id + "_" + str(_ID_COUNTER)
+    _ID_COUNTER += 1
+
+    copyable_code = code_and_title.code
+    copyable_code = copyable_code.replace("`", r"\`").replace("$", r"\$")
 
     r = ""
     r += f"""
-    <button class="collapsible" id="{button_id}" >{code_and_title.title}</button>
-    <div class="content" id="{content_id}">
-    {code_as_html}
+    <script>
+       function copy_code_{time_id}() {{
+            let code = `{copyable_code}`;
+            navigator.clipboard.writeText(code);
+       }}
+    </script>
+    <button class="collapsible_header" id="{collapsible_header_id}" >{code_and_title.title}</button>
+    <div class="collapsible_content" id="{collapsible_content_id}">
+        <div>
+                <button onclick="copy_code_{time_id}()" align="right">copy &#x270d;</button>
+        </div>
+        {code_as_html}
     </div>
     """
 
     if max_visible_lines is None:
-        max_height_code = 'content.scrollHeight + "px"'
+        max_height_code = 'collapsible_content.scrollHeight + "px"'
     else:
         max_height_code = f'"{max_visible_lines}em"'
 
     r += f"""
     <script>
-    var button = document.getElementById("{button_id}");
+    var button = document.getElementById("{collapsible_header_id}");
     button.addEventListener("click", function() {{
-        this.classList.toggle("active");
-        var content = document.getElementById("{content_id}");
-        //var content = this.nextElementSibling;
+        this.classList.toggle("collapsible_header_opened");
+        var content = document.getElementById("{collapsible_content_id}");
         if (content.style.maxHeight){{
           content.style.maxHeight = null;
         }} else {{
@@ -160,9 +176,43 @@ def collapsible_code_and_title(
     if initially_opened:
         r += f"""
             <script>
-            var content = document.getElementById("{content_id}");
-            content.style.maxHeight = {max_height_code};
+            var collapsible_header = document.getElementById("{collapsible_header_id}");
+            collapsible_header.classList.toggle("collapsible_header_opened");
+            var collapsible_content = document.getElementById("{collapsible_content_id}");
+            collapsible_content.style.maxHeight = {max_height_code};
             </script>
             """
 
     return r
+
+
+def collapsible_code_and_title_two_columns(
+    code_and_title_1: CodeAndTitle,
+    code_and_title_2: CodeAndTitle,
+    max_visible_lines: Optional[int] = None,
+    initially_opened: bool = False,
+) -> HtmlCode:
+
+    viewer_1 = collapsible_code_and_title(
+        code_and_title_1, initially_opened=initially_opened, max_visible_lines=max_visible_lines
+    )
+    viewer_2 = collapsible_code_and_title(
+        code_and_title_2, initially_opened=initially_opened, max_visible_lines=max_visible_lines
+    )
+
+    html = COLLAPSIBLE_CSS
+    html += HALF_WIDTH_DIVS_CSS
+
+    html += f"""
+        <div class ="several_columns">
+            <div class="half_width">
+                {viewer_1}
+            </div>
+            <div class="half_width_spacer"></div>
+            <div class="half_width">
+                {viewer_2}
+            <br/>
+        </div>
+    """
+
+    return html
