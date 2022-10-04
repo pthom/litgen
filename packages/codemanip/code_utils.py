@@ -443,8 +443,8 @@ def write_generated_code_between_markers(
     flag_preserve_indentation: bool = True,
 ) -> None:
 
-    code_marker_in = f"<litgen_{marker_token}>"
-    code_marker_out = f"</litgen_{marker_token}>"
+    code_marker_in = f"<{marker_token}>"
+    code_marker_out = f"</{marker_token}>"
 
     if not os.path.isfile(inout_filename):
         raise FileNotFoundError(inout_filename)

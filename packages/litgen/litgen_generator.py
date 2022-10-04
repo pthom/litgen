@@ -42,14 +42,14 @@ class LitgenGenerator:
     ) -> None:
         pydef_code = self.pydef_code()
         stub_code = self.stub_code()
-        code_utils.write_generated_code_between_markers(output_cpp_pydef_file, "pydef", pydef_code)
-        code_utils.write_generated_code_between_markers(output_stub_pyi_file, "stub", stub_code)
+        code_utils.write_generated_code_between_markers(output_cpp_pydef_file, "litgen_pydef", pydef_code)
+        code_utils.write_generated_code_between_markers(output_stub_pyi_file, "litgen_stub", stub_code)
 
         if self.has_boxed_types() and not self._omit_boxed_types_code:
             assert len(output_cpp_boxed_types_header) > 0
             boxed_types_cpp_code = self.boxed_types_cpp_code()
             code_utils.write_generated_code_between_markers(
-                output_cpp_boxed_types_header, "boxed_types_header", boxed_types_cpp_code
+                output_cpp_boxed_types_header, "litgen_glue_code", boxed_types_cpp_code
             )
 
     def options(self) -> LitgenOptions:
