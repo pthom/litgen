@@ -990,11 +990,13 @@ class CppFunctionDecl(CppElementAndComment):
     template: CppTemplate
     is_auto_decl: bool  # True if it is a decl of the form `auto square(double) -> double`
     function_name: str
+    is_pure_virtual: bool
 
     def __init__(self, element: SrcmlXmlWrapper, cpp_element_comments: CppElementComments) -> None:
         super().__init__(element, cpp_element_comments)
         self.specifiers: List[str] = []
         self.is_auto_decl = False
+        self.is_pure_virtual = False
         self.function_name = ""
 
     def qualified_function_name(self) -> str:
@@ -1036,6 +1038,23 @@ class CppFunctionDecl(CppElementAndComment):
         assert hasattr(self, "parent")
         is_method = isinstance(self.parent, CppPublicProtectedPrivate)
         return is_method
+
+    def method_access_type(self) -> str:
+        """
+        Returns "public", "private", or "protected"
+        Will throw if this is not a method!
+        """
+        assert self.is_method()
+        assert hasattr(self, "parent")
+        assert isinstance(self.parent, CppPublicProtectedPrivate)
+        access_type = self.parent.access_type
+        return access_type
+
+    def is_virtual_method(self) -> bool:
+        if not self.is_method():
+            return False
+        is_virtual = "virtual" in self.return_type.specifiers
+        return is_virtual
 
     def parent_struct_if_method(self) -> Optional[CppStruct]:
         assert hasattr(self, "parent")

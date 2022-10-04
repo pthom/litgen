@@ -311,6 +311,14 @@ def fill_function_decl(
             child_text = child.text()
             if child_text is not None:
                 function_decl.cpp_element_comments.add_eol_comment(child_text)
+        elif child_tag == "literal":
+            # pure virtual function
+            child_text = child.text()
+            if child_text.strip() != "0":
+                raise SrcMlExceptionDetailed(
+                    child, f"unhandled literal {child_tag} (was expecting '=0' for a pure virtual function"
+                )
+            function_decl.is_pure_virtual = True
         else:
             raise SrcMlExceptionDetailed(child, f"unhandled tag {child_tag}")
 
