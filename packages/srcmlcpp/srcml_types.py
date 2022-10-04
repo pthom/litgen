@@ -24,7 +24,7 @@ import copy
 import logging
 from dataclasses import dataclass
 from enum import Enum
-from typing import Dict, List, Optional, Callable
+from typing import Dict, List, Optional, Callable, cast
 from xml.etree import ElementTree as ET  # noqa
 
 from codemanip import code_utils
@@ -368,6 +368,7 @@ class CppBlock(CppElementAndComment):
         return result
 
     def all_functions(self) -> List[CppFunctionDecl]:
+        """Gathers all CppFunctionDecl and CppFunction in the children (non recursive)"""
         r: List[CppFunctionDecl] = []
         for child in self.block_children:
             if isinstance(child, CppFunctionDecl):
@@ -375,11 +376,24 @@ class CppBlock(CppElementAndComment):
         return r
 
     def all_functions_with_name(self, name: str) -> List[CppFunctionDecl]:
+        """Gathers all CppFunctionDecl and CppFunction matching a given name"""
         all_functions = self.all_functions()
         r: List[CppFunctionDecl] = []
         for fn in all_functions:
             if fn.function_name == name:
                 r.append(fn)
+        return r
+
+    def all_structs_recursive(self) -> List[CppStruct]:
+        """Gathers all CppStruct and CppClass in the children (*recursively*)"""
+        r_ = self.all_cpp_elements_recursive(wanted_type=CppStruct)
+        r = [cast(CppStruct, v) for v in r_]
+        return r
+
+    def all_functions_recursive(self) -> List[CppFunctionDecl]:
+        """Gathers all CppFunctionDecl and CppFunction in the children (*recursive*)"""
+        r_ = self.all_cpp_elements_recursive(wanted_type=CppFunctionDecl)
+        r = [cast(CppFunctionDecl, v) for v in r_]
         return r
 
     def is_function_overloaded(self, function: CppFunctionDecl) -> bool:
@@ -408,13 +422,6 @@ class CppBlock(CppElementAndComment):
 
         self.visit_cpp_breadth_first(visitor_add_cpp_element)
         return _all_cpp_elements
-
-    def first_element_of_type(self, wanted_type: type) -> Optional[CppElement]:
-        elements = self.all_cpp_elements_recursive(wanted_type)
-        if len(elements) == 0:
-            return None
-        else:
-            return elements[0]
 
     def fill_children_parents(self) -> None:
         parents_stack: List[Optional[CppElement]] = [None]

@@ -348,7 +348,7 @@ def get_children_with_comments(element: SrcmlXmlWrapper) -> List[CppElementAndCo
 
     c_style_comments_idx: Set[int] = set()
 
-    def remove_comment_tokens():
+    def remove_comment_tokens() -> None:
         for i, element in enumerate(children):
             if element.tag() == "comment":
                 element_text = element.text()
