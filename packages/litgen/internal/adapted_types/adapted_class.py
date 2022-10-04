@@ -345,7 +345,7 @@ class AdaptedClass(AdaptedElement):
                     outro += ["}" + f" // namespace {scope_part.scope_name}"]
                 else:
                     raise SrcMlException("Bad scope for protected member")
-            outro = reversed(outro)
+            outro = list(reversed(outro))
             return intro, outro
 
         def using_list() -> List[str]:
@@ -434,10 +434,12 @@ class AdaptedClass(AdaptedElement):
 
         for child in self.adapted_protected_methods:
             # Temporarily change the name of the parent struct, to use the publicist class
-            original_class_name = child.cpp_element().parent_struct_if_method().class_name
-            child.cpp_element().parent_struct_if_method().class_name = self.cpp_element().class_name + "_publicist"
+            parent_struct = child.cpp_element().parent_struct_if_method()
+            assert parent_struct is not None
+            original_class_name = parent_struct.class_name
+            parent_struct.class_name = self.cpp_element().class_name + "_publicist"
             decl_code = child.str_pydef()
-            child.cpp_element().parent_struct_if_method().class_name = original_class_name
+            parent_struct.class_name = original_class_name
 
             code += code_utils.indent_code(decl_code, indent_str=options.indent_cpp_spaces())
 
