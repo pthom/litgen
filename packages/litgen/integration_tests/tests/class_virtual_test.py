@@ -1,8 +1,44 @@
+import pytest
 import lg_mylib
 
 
-def test_my_virtual_class():
+def test_my_protected_method():
     m = lg_mylib.Root.Inner.MyVirtualClass()
-    assert m.foo() == 42
-    assert m.foo2() == 44
-    assert m.foo3() == 46
+    assert m.foo_virtual_protected(1) == 43
+
+
+def test_virtual_pure_raises_exception():
+    m = lg_mylib.Root.Inner.MyVirtualClass()
+    with pytest.raises(RuntimeError):
+        # This should throw, since we are calling a pure virtual method
+        r = m.foo_virtual_public_pure()
+        print(r)
+
+
+class MyVirtualClassDerived(lg_mylib.Root.Inner.MyVirtualClass):
+    def foo_virtual_public_pure(self) -> int:
+        return 3
+
+    def foo_virtual_protected(self, x: int) -> int:
+        return 4 + x
+
+    def foo_virtual_protected_const_const(self, name: str) -> str:
+        return "Bye " + name
+
+
+def test_override_from_python():
+    """
+    for reference, we are testing against this C++ function, which will call python overrides:
+        MY_API std::string foo_concrete(int x, const std::string& name)
+        {
+            std::string r =
+                  std::to_string(foo_virtual_protected(x))
+                + "_" + std::to_string(foo_virtual_public_pure())
+                + "_" + foo_virtual_protected_const_const(name);
+            return r;
+        }
+    """
+    m = MyVirtualClassDerived()
+    r = m.foo_concrete(42, "Laeticia")
+    # print(r)
+    assert r == "46_3_Bye Laeticia"

@@ -500,9 +500,8 @@ Non : voir si possible retrouver same namespace par recherche dans CppUnit ou Ad
 
 
 ** Handle trampoline
-  handle virtual specifier in methods
-     on CppType
-     on Python
+    add unit tests?
+    same for protected?
 
 
 

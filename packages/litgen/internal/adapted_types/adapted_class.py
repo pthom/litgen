@@ -259,9 +259,13 @@ class AdaptedClass(AdaptedElement):
         return r
 
     def _shall_override_virtual_methods_in_python(self) -> bool:
-        r = code_utils.does_match_regex(
+        active = code_utils.does_match_regex(
             self.options.class_override_virtual_methods_in_python__regex, self.cpp_element().class_name
         )
+        if not active:
+            return False
+        virtual_methods = self._virtual_method_list()
+        r = len(virtual_methods) > 0
         return r
 
     def _add_adapted_class_member(self, cpp_decl_statement: CppDeclStatement) -> None:
@@ -346,17 +350,22 @@ class AdaptedClass(AdaptedElement):
         r = self._str_stub_layout_lines(title_lines, body_lines)
         return r
 
-    def _scope_intro_outro(self) -> Tuple[List[str], List[str]]:
-        intro = []
-        outro = []
+    def _scope_intro_outro(self) -> Tuple[str, str]:
         scope = self.cpp_element().cpp_scope(False)
+        nb_scope_parts = len(scope.scope_parts)
+        intro = ""
+        outro = "} " * nb_scope_parts
+
         for scope_part in scope.scope_parts:
             if scope_part.scope_type == CppScopeType.Namespace:
-                intro += [f"namespace {scope_part.scope_name}", "{"]
-                outro += ["}" + f" // namespace {scope_part.scope_name}"]
+                intro += f"namespace {scope_part.scope_name} {{ "
             else:
                 raise SrcMlException("Bad scope for protected member")
-        outro = list(reversed(outro))
+
+        for scope_part in reversed(scope.scope_parts):
+            if scope_part.scope_type == CppScopeType.Namespace:
+                outro += f" // namespace {scope_part.scope_name} "
+
         return intro, outro
 
     def _virtual_method_list(self) -> List[AdaptedFunction]:
@@ -374,9 +383,6 @@ class AdaptedClass(AdaptedElement):
         # See https://pybind11.readthedocs.io/en/stable/advanced/classes.html#overriding-virtual-functions-in-python
         if not self._shall_override_virtual_methods_in_python():
             return
-        virtual_methods = self._virtual_method_list()
-        if len(virtual_methods) == 0:
-            return
 
         trampoline_class_template = code_utils.unindent_code(
             """
@@ -393,6 +399,7 @@ class AdaptedClass(AdaptedElement):
         )
 
         trampoline_lines = []
+        virtual_methods = self._virtual_method_list()
         for virtual_method in virtual_methods:
             trampoline_lines += virtual_method.glue_override_virtual_methods_in_python()
 
@@ -407,10 +414,10 @@ class AdaptedClass(AdaptedElement):
 
         ns_intro, ns_outro = self._scope_intro_outro()
 
-        glue_code = []
-        glue_code += ns_intro
+        glue_code: List[str] = []
+        glue_code += [ns_intro]
         glue_code += publicist_class_code.split("\n")
-        glue_code += ns_outro
+        glue_code += [ns_outro]
 
         glue_code_str = "\n" + "\n".join(glue_code) + "\n"
         self.lg_context.virtual_methods_glue_code += glue_code_str
@@ -453,10 +460,10 @@ class AdaptedClass(AdaptedElement):
 
         ns_intro, ns_outro = self._scope_intro_outro()
 
-        glue_code = []
-        glue_code += ns_intro
+        glue_code: List[str] = []
+        glue_code += [ns_intro]
         glue_code += publicist_class_code.split("\n")
-        glue_code += ns_outro
+        glue_code += [ns_outro]
 
         glue_code_str = "\n" + "\n".join(glue_code) + "\n"
         self.lg_context.protected_methods_glue_code += glue_code_str
@@ -484,6 +491,13 @@ class AdaptedClass(AdaptedElement):
 
         if self.cpp_element().has_private_dtor():
             code_intro += f"auto {pydef_class_var} = py::class_<{qualified_struct_name}, std::unique_ptr<{qualified_struct_name}, py::nodelete>>{location}\n"
+        elif self._shall_override_virtual_methods_in_python():
+            scope = self.cpp_element().cpp_scope(False).str_cpp()
+            scope_prefix = scope + "::" if len(scope) > 0 else ""
+            qualified_trampoline_name = scope_prefix + self.cpp_element().class_name + "_trampoline"
+            code_intro += (
+                f"auto {pydef_class_var} = py::class_<{qualified_struct_name}, {qualified_trampoline_name}>{location}\n"
+            )
         else:
             code_intro += f"auto {pydef_class_var} = py::class_<{qualified_struct_name}>{location}\n"
         code_intro += f'{_i_}({pydef_class_var_parent}, "{bare_struct_name}", "{comment}")\n'

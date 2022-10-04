@@ -519,6 +519,26 @@ class MySingletonClass:
 #//////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
+#This test will exercise the following options:
+#
+#    # class_expose_protected_methods__regex:
+#    # regex giving the list of class names for which we want to expose protected methods.
+#    # (by default, only public methods are exposed)
+#    # If set, this will use the technique described at
+#    # https://pybind11.readthedocs.io/en/stable/advanced/classes.html#binding-protected-member-functions)
+#    class_expose_protected_methods__regex: str = ""
+#
+#    # class_expose_protected_methods__regex:
+#    # regex giving the list of class names for which we want to be able to override virtual methods
+#    # from python.
+#    # (by default, this is not possible)
+#    # If set, this will use the technique described at
+#    # https://pybind11.readthedocs.io/en/stable/advanced/classes.html#overriding-virtual-functions-in-python
+#    #
+#    # Note: if you want to override protected functions, also fill `class_expose_protected_methods__regex`
+#    class_override_virtual_methods_in_python__regex: str = ""
+
+
 #////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 #                       mylib/return_value_policy_test.h included by mylib/mylib.h                             //
 #//////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -682,12 +702,16 @@ class Root: # Proxy class that introduces typings for the *submodule* Root
         # (This corresponds to a C++ namespace. All method are static!)
         class MyVirtualClass:
 
+            def foo_concrete(self, x: int, name: str) -> str:
+                pass
+
+            def foo_virtual_public_pure(self) -> int:
+                pass
+
             # <protected_methods>
-            def foo(self) -> int:
+            def foo_virtual_protected(self, x: int) -> int:
                 pass
-            def foo2(self) -> int:
-                pass
-            def foo3(self) -> int:
+            def foo_virtual_protected_const_const(self, name: str) -> str:
                 pass
             # </protected_methods>
 

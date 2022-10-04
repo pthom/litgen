@@ -314,6 +314,11 @@ def fill_function_decl(
         elif child_tag == "literal":
             # pure virtual function
             child_text = child.text()
+            if child_text is None:
+                raise SrcMlExceptionDetailed(
+                    child, f"unhandled literal {child_tag} (was expecting '=0' for a pure virtual function"
+                )
+            assert child_text is not None
             if child_text.strip() != "0":
                 raise SrcMlExceptionDetailed(
                     child, f"unhandled literal {child_tag} (was expecting '=0' for a pure virtual function"

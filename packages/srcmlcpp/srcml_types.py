@@ -552,7 +552,7 @@ class CppType(CppElement):
     def authorized_modifiers() -> List[str]:
         return ["*", "&", "&&", "..."]
 
-    def str_return_type(self):
+    def str_return_type(self) -> str:
         # Possible specifiers : "const" "inline" "static" "virtual" "extern" "constexpr"
         # "inline", "virtual", "extern" and "static" do not change the return type
         specifiers = copy.copy(self.specifiers)
