@@ -38,7 +38,7 @@ class LitgenGenerator:
         self._process_cpp_code(code, filename)
 
     def write_generated_code(
-        self, output_cpp_pydef_file: str, output_stub_pyi_file: str, output_cpp_boxed_types_header: str = ""
+        self, output_cpp_pydef_file: str, output_stub_pyi_file: str, output_cpp_glue_code_file: str = ""
     ) -> None:
         pydef_code = self.pydef_code()
         stub_code = self.stub_code()
@@ -46,10 +46,10 @@ class LitgenGenerator:
         code_utils.write_generated_code_between_markers(output_stub_pyi_file, "litgen_stub", stub_code)
 
         if self.has_boxed_types() and not self._omit_boxed_types_code:
-            assert len(output_cpp_boxed_types_header) > 0
+            assert len(output_cpp_glue_code_file) > 0
             boxed_types_cpp_code = self.boxed_types_cpp_code()
             code_utils.write_generated_code_between_markers(
-                output_cpp_boxed_types_header, "litgen_glue_code", boxed_types_cpp_code
+                output_cpp_glue_code_file, "litgen_glue_code", boxed_types_cpp_code
             )
 
     def options(self) -> LitgenOptions:
@@ -131,13 +131,13 @@ def write_generated_code_for_files(
     input_cpp_header_files: List[str],
     output_cpp_pydef_file: str = "",
     output_stub_pyi_file: str = "",
-    output_cpp_boxed_types_header: str = "",
+    output_cpp_glue_code_file: str = "",
 ) -> None:
 
     generator = LitgenGenerator(options)
     for cpp_header in input_cpp_header_files:
         generator.process_cpp_file(cpp_header)
-    generator.write_generated_code(output_cpp_pydef_file, output_stub_pyi_file, output_cpp_boxed_types_header)
+    generator.write_generated_code(output_cpp_pydef_file, output_stub_pyi_file, output_cpp_glue_code_file)
 
 
 def write_generated_code_for_file(
@@ -145,10 +145,10 @@ def write_generated_code_for_file(
     input_cpp_header_file: str,
     output_cpp_pydef_file: str = "",
     output_stub_pyi_file: str = "",
-    output_cpp_boxed_types_header: str = "",
+    output_cpp_glue_code_file: str = "",
 ) -> None:
     return write_generated_code_for_files(
-        options, [input_cpp_header_file], output_cpp_pydef_file, output_stub_pyi_file, output_cpp_boxed_types_header
+        options, [input_cpp_header_file], output_cpp_pydef_file, output_stub_pyi_file, output_cpp_glue_code_file
     )
 
 
