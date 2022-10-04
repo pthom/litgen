@@ -34,7 +34,7 @@ def test_truc():
 
     # logging.warning(f"\nglue_code=\n{generator.glue_code()}")
     code_utils.assert_are_codes_equal(
-        generator.boxed_types_cpp_code(),
+        generator._boxed_types_cpp_code(),
         """
         struct BoxedString
         {

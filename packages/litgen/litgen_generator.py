@@ -43,18 +43,19 @@ class LitgenGenerator:
         code_utils.write_generated_code_between_markers(output_cpp_pydef_file, "litgen_pydef", pydef_code)
         code_utils.write_generated_code_between_markers(output_stub_pyi_file, "litgen_stub", stub_code)
 
-        if self.has_boxed_types():
+        if self.has_glue_code():
             assert len(output_cpp_glue_code_file) > 0
-            boxed_types_cpp_code = self.boxed_types_cpp_code()
-            code_utils.write_generated_code_between_markers(
-                output_cpp_glue_code_file, "litgen_glue_code", boxed_types_cpp_code
-            )
+            glue_code = self.glue_code()
+            code_utils.write_generated_code_between_markers(output_cpp_glue_code_file, "litgen_glue_code", glue_code)
 
     def options(self) -> LitgenOptions:
         return self.lg_context.options
 
     def has_boxed_types(self) -> bool:
         return len(self.lg_context.encountered_cpp_boxed_types) > 0
+
+    def has_glue_code(self) -> bool:
+        return self.has_boxed_types()
 
     def pydef_code(self) -> CppCode:
         pydef_codes = []
@@ -76,13 +77,16 @@ class LitgenGenerator:
         stub_code = "\n\n".join(stub_codes)
         return stub_code
 
-    def boxed_types_cpp_code(self) -> CppCode:
+    def _boxed_types_cpp_code(self) -> CppCode:
         cpp_codes = []
         for cpp_boxed_type in sorted(self.lg_context.encountered_cpp_boxed_types):
             indent_str = self.lg_context.options.indent_cpp_spaces()
             cpp_codes.append(boxed_python_type.boxed_type_cpp_struct_code(cpp_boxed_type, indent_str))
         r = "".join(cpp_codes)
         return r
+
+    def glue_code(self) -> CppCode:
+        return self._boxed_types_cpp_code()
 
     def _process_cpp_code(self, code: str, filename: str) -> None:
         if len(filename) > 0:
@@ -97,7 +101,7 @@ class LitgenGenerator:
     def _boxed_types_generated_code(self) -> Optional[_GeneratedCode]:
         if not self.has_boxed_types():
             return None
-        boxed_types_cpp_code = self.boxed_types_cpp_code()
+        boxed_types_cpp_code = self._boxed_types_cpp_code()
 
         standalone_options = LitgenOptions()
         standalone_options.cpp_indent_size = self.options().cpp_indent_size
@@ -158,7 +162,7 @@ def generate_code(options: LitgenOptions, code: CppCode) -> GeneratedCodes:
     r = GeneratedCodes(
         pydef_code=generator.pydef_code(),
         stub_code=generator.stub_code(),
-        glue_code=generator.boxed_types_cpp_code(),
+        glue_code=generator._boxed_types_cpp_code(),
     )
     return r
 
