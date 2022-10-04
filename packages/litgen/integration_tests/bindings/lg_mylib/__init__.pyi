@@ -673,7 +673,6 @@ class IntWrapperSpaceship:
 
 # #include "mylib/sandbox.h"
 
-
 # <submodule Root>
 class Root: # Proxy class that introduces typings for the *submodule* Root
     # (This corresponds to a C++ namespace. All method are static!)
