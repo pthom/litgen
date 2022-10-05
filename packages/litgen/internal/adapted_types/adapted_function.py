@@ -207,7 +207,7 @@ class AdaptedFunction(AdaptedElement):
         r = self.cpp_element().is_constructor()
         return r
 
-    def glue_override_virtual_methods_in_python(self) -> List[str]:
+    def glue_override_virtual_methods_in_python(self, implemented_class: str) -> List[str]:
         assert self.cpp_element().is_virtual_method()
 
         template_code = code_utils.unindent_code(
@@ -216,7 +216,7 @@ class AdaptedFunction(AdaptedElement):
         {
         {_i_}{PYBIND11_OVERRIDE_NAME}(
         {_i_}{_i_}{return_type}, // return type
-        {_i_}{_i_}{parent_class}, // parent class
+        {_i_}{_i_}{implemented_class}, // parent class
         {_i_}{_i_}"{function_name_python}", // function name (python)
         {_i_}{_i_}{function_name_cpp}{maybe_comma_if_has_params} // function name (c++)
         {_i_}{_i_}{param_names} // params
@@ -242,7 +242,7 @@ class AdaptedFunction(AdaptedElement):
             self.options, self.cpp_element().function_name
         )
         replacements.maybe_const = " const" if self.cpp_element().is_const() else ""
-        replacements.parent_class = parent_struct.class_name
+        replacements.implemented_class = implemented_class
         replacements.param_list = self.cpp_element().parameter_list.types_names_default_for_signature_str()
         replacements.maybe_comma_if_has_params = "," if has_params else ""
 

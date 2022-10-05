@@ -45,7 +45,7 @@ public:
     {
         PYBIND11_OVERRIDE_PURE_NAME(
             MY_API int, // return type
-            MyVirtualClass, // parent class
+            Root::Inner::MyVirtualClass, // parent class
             "foo_virtual_public_pure", // function name (python)
             foo_virtual_public_pure // function name (c++)
         );
@@ -54,7 +54,7 @@ public:
     {
         PYBIND11_OVERRIDE_NAME(
             MY_API int, // return type
-            MyVirtualClass, // parent class
+            Root::Inner::MyVirtualClass, // parent class
             "foo_virtual_protected", // function name (python)
             foo_virtual_protected, // function name (c++)
             x // params
@@ -64,7 +64,55 @@ public:
     {
         PYBIND11_OVERRIDE_NAME(
             MY_API std::string, // return type
-            MyVirtualClass, // parent class
+            Root::Inner::MyVirtualClass, // parent class
+            "foo_virtual_protected_const_const", // function name (python)
+            foo_virtual_protected_const_const, // function name (c++)
+            name // params
+        );
+    }
+};
+} }  // namespace Inner  // namespace Root
+
+namespace Root { namespace Inner {
+// helper type to enable overriding virtual methods in python
+class MyVirtualDerivate_trampoline : public MyVirtualDerivate
+{
+public:
+    using MyVirtualDerivate::MyVirtualDerivate;
+
+    MY_API int foo_derivate() override
+    {
+        PYBIND11_OVERRIDE_NAME(
+            MY_API int, // return type
+            Root::Inner::MyVirtualDerivate, // parent class
+            "foo_derivate", // function name (python)
+            foo_derivate // function name (c++)
+        );
+    }
+    MY_API int foo_virtual_public_pure() const override
+    {
+        PYBIND11_OVERRIDE_PURE_NAME(
+            MY_API int, // return type
+            Root::Inner::MyVirtualDerivate, // parent class
+            "foo_virtual_public_pure", // function name (python)
+            foo_virtual_public_pure // function name (c++)
+        );
+    }
+    MY_API int foo_virtual_protected(int x) const override
+    {
+        PYBIND11_OVERRIDE_NAME(
+            MY_API int, // return type
+            Root::Inner::MyVirtualDerivate, // parent class
+            "foo_virtual_protected", // function name (python)
+            foo_virtual_protected, // function name (c++)
+            x // params
+        );
+    }
+    MY_API std::string foo_virtual_protected_const_const(const std::string & name) const override
+    {
+        PYBIND11_OVERRIDE_NAME(
+            MY_API std::string, // return type
+            Root::Inner::MyVirtualDerivate, // parent class
             "foo_virtual_protected_const_const", // function name (python)
             foo_virtual_protected_const_const, // function name (c++)
             name // params
@@ -827,6 +875,17 @@ void py_init_module_lg_mylib(py::module& m)
                     &Root::Inner::MyVirtualClass_publicist::foo_virtual_protected, py::arg("x"))
                 .def("foo_virtual_protected_const_const",
                     &Root::Inner::MyVirtualClass_publicist::foo_virtual_protected_const_const, py::arg("name"))
+                ;
+
+
+            auto pyNamespaceRoot_NamespaceInner_ClassMyVirtualDerivate =
+                py::class_<Root::Inner::MyVirtualDerivate, Root::Inner::MyVirtualClass, Root::Inner::MyVirtualDerivate_trampoline>
+                    (pyNamespaceRoot_NamespaceInner, "MyVirtualDerivate", " Here, we test Combining virtual functions and inheritance\n See https://pybind11.readthedocs.io/en/stable/advanced/classes.html#combining-virtual-functions-and-inheritance")
+                .def(py::init<>())
+                .def("foo_virtual_public_pure",
+                    &Root::Inner::MyVirtualDerivate::foo_virtual_public_pure)
+                .def("foo_derivate",
+                    &Root::Inner::MyVirtualDerivate::foo_derivate)
                 ;
         } // </namespace Inner>
 

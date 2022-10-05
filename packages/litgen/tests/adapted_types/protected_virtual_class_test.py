@@ -112,7 +112,7 @@ def test_protected_virtual_class():
             {
                 PYBIND11_OVERRIDE_PURE_NAME(
                     MY_API int, // return type
-                    MyVirtualClass, // parent class
+                    Root::Inner::MyVirtualClass, // parent class
                     "foo_virtual_public_pure", // function name (python)
                     foo_virtual_public_pure // function name (c++)
                 );
@@ -121,7 +121,7 @@ def test_protected_virtual_class():
             {
                 PYBIND11_OVERRIDE_NAME(
                     MY_API int, // return type
-                    MyVirtualClass, // parent class
+                    Root::Inner::MyVirtualClass, // parent class
                     "foo_virtual_protected", // function name (python)
                     foo_virtual_protected, // function name (c++)
                     x // params
@@ -131,7 +131,7 @@ def test_protected_virtual_class():
             {
                 PYBIND11_OVERRIDE_NAME(
                     MY_API std::string, // return type
-                    MyVirtualClass, // parent class
+                    Root::Inner::MyVirtualClass, // parent class
                     "foo_virtual_protected_const_const", // function name (python)
                     foo_virtual_protected_const_const, // function name (c++)
                     name // params

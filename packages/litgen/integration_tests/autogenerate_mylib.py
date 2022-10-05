@@ -66,8 +66,8 @@ def mylib_litgen_options() -> litgen.LitgenOptions:
     # namespace
     options.namespace_root__regex = "Mylib"
 
-    options.class_expose_protected_methods__regex = "MyVirtualClass"
-    options.class_override_virtual_methods_in_python__regex = "MyVirtualClass"
+    options.class_expose_protected_methods__regex = "^MyVirtual"
+    options.class_override_virtual_methods_in_python__regex = "^MyVirtual"
 
     #
     # Sandbox for other options

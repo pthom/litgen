@@ -42,3 +42,23 @@ def test_override_from_python():
     r = m.foo_concrete(42, "Laeticia")
     # print(r)
     assert r == "46_3_Bye Laeticia"
+
+
+def test_combining_virtual_functions_and_inheritance():
+
+    c = lg_mylib.Root.Inner.MyVirtualDerivate()
+    assert c.foo_virtual_public_pure() == 53
+    assert c.foo_derivate() == 48
+    assert c.foo_concrete(3, "Robert") == "45_53_Hello Robert"
+
+    class MyVirtualClassDerivedAgainFromPython(lg_mylib.Root.Inner.MyVirtualDerivate):
+        def foo_derivate(self) -> int:
+            return 49
+
+        def foo_virtual_public_pure(self) -> int:
+            return 51
+
+    cp = MyVirtualClassDerivedAgainFromPython()
+    assert cp.foo_derivate() == 49
+    assert cp.foo_virtual_public_pure() == 51
+    assert cp.foo_concrete(3, "Robert") == "45_51_Hello Robert"

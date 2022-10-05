@@ -972,6 +972,16 @@ class CppParameterList(CppElement):
         super().__init__(element)
         self.parameters = []
 
+    def types_names_only(self) -> List[str]:
+        """Returns a list like ["int", "bool"]"""
+        r = []
+        for parameter in self.parameters:
+            r.append(parameter.decl.cpp_type.str_code())
+        return r
+
+    def types_names_only_str(self) -> str:
+        return ", ".join(self.types_names_only())
+
     def types_names_default_for_signature_list(self) -> List[str]:
         """Returns a list like ["int a", "bool flag = true"]"""
         params_strs = list(map(lambda param: param.type_name_default_for_signature(), self.parameters))
@@ -1118,6 +1128,8 @@ class CppFunctionDecl(CppElementAndComment):
 
     def is_virtual_method(self) -> bool:
         if not self.is_method():
+            return False
+        if not hasattr(self, "return_type"):
             return False
         is_virtual = "virtual" in self.return_type.specifiers
         return is_virtual
@@ -1516,6 +1528,29 @@ class CppStruct(CppElementAndComment):
             if method.is_virtual_method():
                 return True
         return False
+
+    def virtual_methods(self, include_inherited_virtual_methods: bool) -> List[CppFunctionDecl]:
+        virtual_methods = []
+        for base_method in self.all_methods():
+            if base_method.is_virtual_method():
+                virtual_methods.append(base_method)
+
+        def is_method_already_present(method: CppFunctionDecl) -> bool:
+            for present_method in virtual_methods:
+                same_name = present_method.function_name == method.function_name
+                same_parameters_types = (
+                    present_method.parameter_list.types_names_only_str() == method.parameter_list.types_names_only_str()
+                )
+                if same_name and same_parameters_types:
+                    return True
+            return False
+
+        for _access_type, base_class in self.base_classes():
+            for base_method in base_class.virtual_methods(include_inherited_virtual_methods):
+                if not is_method_already_present(base_method):
+                    virtual_methods.append(base_method)
+
+        return virtual_methods
 
     def visit_cpp_breadth_first(self, cpp_visitor_function: CppElementsVisitorFunction, depth: int = 0) -> None:
         cpp_visitor_function(self, CppElementsVisitorEvent.OnElement, depth)

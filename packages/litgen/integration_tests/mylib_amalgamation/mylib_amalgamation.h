@@ -640,6 +640,16 @@ namespace Root  // MY_API
                 return std::string("Hello ") + name;
             }
         };
+
+        // Here, we test Combining virtual functions and inheritance
+        // See https://pybind11.readthedocs.io/en/stable/advanced/classes.html#combining-virtual-functions-and-inheritance
+        class MyVirtualDerivate: public MyVirtualClass // MY_API
+        {
+        public:
+            MyVirtualDerivate(): MyVirtualClass() {};
+            MY_API int foo_virtual_public_pure() const override { return 53; };
+            MY_API virtual int foo_derivate() { return 48; }
+        };
     }
 }
 

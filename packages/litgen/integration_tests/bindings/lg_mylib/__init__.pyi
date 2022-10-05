@@ -764,6 +764,17 @@ class Root: # Proxy class that introduces typings for the *submodule* Root
             # </protected_methods>
 
 
+        class MyVirtualDerivate(Root.Inner.MyVirtualClass):
+            """ Here, we test Combining virtual functions and inheritance
+             See https://pybind11.readthedocs.io/en/stable/advanced/classes.html#combining-virtual-functions-and-inheritance
+            """
+            def __init__(self) -> None:
+                pass
+            def foo_virtual_public_pure(self) -> int:
+                pass
+            def foo_derivate(self) -> int:
+                pass
+
     # </submodule Inner>
 
 # </submodule Root>

@@ -264,7 +264,7 @@ class AdaptedClass(AdaptedElement):
         )
         if not active:
             return False
-        virtual_methods = self._virtual_method_list()
+        virtual_methods = self._virtual_method_list_including_inherited()
         r = len(virtual_methods) > 0
         return r
 
@@ -383,15 +383,8 @@ class AdaptedClass(AdaptedElement):
 
         return intro, outro
 
-    def _virtual_method_list(self) -> List[AdaptedFunction]:
-        r = []
-        for child in self.adapted_public_children:
-            if isinstance(child, AdaptedFunction):
-                if child.cpp_element().is_virtual_method():
-                    r.append(child)
-        for child in self.adapted_protected_methods:
-            if child.cpp_element().is_virtual_method():
-                r.append(child)
+    def _virtual_method_list_including_inherited(self) -> List[CppFunctionDecl]:
+        r = self.cpp_element().virtual_methods(include_inherited_virtual_methods=True)
         return r
 
     def _store_glue_override_virtual_methods_in_python(self) -> None:
@@ -414,9 +407,12 @@ class AdaptedClass(AdaptedElement):
         )
 
         trampoline_lines = []
-        virtual_methods = self._virtual_method_list()
+        virtual_methods = self._virtual_method_list_including_inherited()
         for virtual_method in virtual_methods:
-            trampoline_lines += virtual_method.glue_override_virtual_methods_in_python()
+            is_overloaded = False
+            adapted_virtual_method = AdaptedFunction(self.lg_context, virtual_method, is_overloaded)
+            qualified_class_name = self.cpp_element().cpp_scope(include_self=True).str_cpp()
+            trampoline_lines += adapted_virtual_method.glue_override_virtual_methods_in_python(qualified_class_name)
 
         replacements = munch.Munch()
         replacements.trampoline_class_name = self.cpp_element().class_name + "_trampoline"
