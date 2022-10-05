@@ -16,6 +16,10 @@ if (NOT LITGEN_CI)
         message(WARNING "A virtual env named .venv at the repository root is recommended
             ${CMAKE_SOURCE_DIR}/venv")
     endif()
+else()
+    if (IS_DIRECTORY ${CMAKE_SOURCE_DIR}/venv_ci/bin)
+        set(PYTHON_EXECUTABLE ${CMAKE_SOURCE_DIR}/venv_ci/bin/python)
+    endif()
 endif()
 
 add_subdirectory(lg_projects)

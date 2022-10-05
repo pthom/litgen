@@ -482,53 +482,58 @@ Problem 3: dans lg_test_runner (integration tests), tout est refusé (trouve pas
     Plutot faire une liste de namespace exclus
 
 
+
 ** Wish List / Easy
+  auto __repr__ for structs
 
   generator: error message with default pybind file template
 
   stackoverflow: review question ("type annotation: warn about mutable members becoming instance when initialized at decl site")
     https://docs.python.org/3/library/typing.html#typing.ClassVar
 
- keep pointer and references layout inside CppType (int *x vs int *x vs int * x)
+  keep pointer and references layout inside CppType (int *x vs int *x vs int * x)
 
- add functions_api_prefixes via property to LitgenOptions?
+   add functions_api_prefixes via property to LitgenOptions?
 
-*** test multiple litgen_glue_code with BoxedType: is there a link error / duplication?
+   test trampoline with  test with py-mahi-gui
+
+** test multiple litgen_glue_code with BoxedType: is there a link error / duplication?
     remove bindings/litgen_glue_code.h?
 
 
 ** Template classes and functions
+https://pybind11.readthedocs.io/en/stable/advanced/functions.html#binding-functions-with-template-parameters
+
+https://pybind11.readthedocs.io/en/stable/advanced/classes.html#binding-classes-with-template-parameters
 (by asking for a specialization name)
 templated functions can reuse the same name
 
 
-** auto __repr__ for structs
+** static field: https://pybind11.readthedocs.io/en/stable/classes.html#instance-and-static-fields
+test with
+    struct A {
+        static const int v_static = 1;
+        static int f_static() { return 2; }
+        int f() { return 3; }
+    };
 
 
-** Namespace:
-Non : voir si possible retrouver same namespace par recherche dans CppUnit ou AdaptedCppUnit
+** Vectorizing: https://pybind11.readthedocs.io/en/stable/advanced/pycpp/numpy.html#vectorizing-functions
+** Brace init:  https://pybind11.readthedocs.io/en/stable/advanced/classes.html#brace-initialization
 
+** Add options on code, like return_reference:
+*** Dynamic attribute (add py::dynamic_attr() at class construction)  https://pybind11.readthedocs.io/en/stable/classes.html#dynamic-attributes
+*** https://pybind11.readthedocs.io/en/stable/advanced/functions.html#additional-call-policies
+** Final classes: https://pybind11.readthedocs.io/en/stable/advanced/classes.html#binding-final-classes
 
-** Handle trampoline
-    add unit tests?
-    same for protected?
-    inheritance (store virtual functions in context)
+** args/kwargs: https://pybind11.readthedocs.io/en/stable/advanced/functions.html#accepting-args-and-kwargs
 
-    See example in py-mahi-gui
-
-
-
-
-** DONE: Hande Binding protected member functions
-   X Output publicist inside glueCode
-   X Rename boxed_type to GlueCode
-   X Try put Glue code in main pydef file
-
-
-
-** https://pybind11.readthedocs.io/en/stable/advanced/pycpp/numpy.html#vectorizing-functions
+** https://pybind11.readthedocs.io/en/stable/advanced/functions.html#allow-prohibiting-none-arguments
 
 ** Handle (deep)copy
+https://pybind11.readthedocs.io/en/stable/advanced/classes.html#deepcopy-support
+
+
 
 ** Interactive demo
 
