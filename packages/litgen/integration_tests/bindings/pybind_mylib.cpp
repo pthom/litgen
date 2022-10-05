@@ -619,6 +619,10 @@ void py_init_module_lg_mylib(py::module& m)
         ;
 
 
+    m.def("make_dog",
+        make_dog, "Test that downcasting works: the return type is Animal, but it should bark!");
+
+
     auto pyClassMyConfig =
         py::class_<MyConfig>
             (m, "MyConfig", "")
@@ -764,6 +768,48 @@ void py_init_module_lg_mylib(py::module& m)
                 return cmp(o);
             },     py::arg("o"))
         ;
+
+    { // <namespace Animals>
+        py::module_ pyNamespaceAnimals = m.def_submodule("Animals", "");
+        auto pyNamespaceAnimals_ClassAnimal =
+            py::class_<Animals::Animal>
+                (pyNamespaceAnimals, "Animal", "")
+            .def(py::init<const std::string &>(),
+                py::arg("name"))
+            .def_readwrite("name", &Animals::Animal::name, "")
+            ;
+
+
+        auto pyNamespaceAnimals_ClassDog =
+            py::class_<Animals::Dog, Animals::Animal>
+                (pyNamespaceAnimals, "Dog", "")
+            .def(py::init<const std::string &>(),
+                py::arg("name"))
+            .def("bark",
+                &Animals::Dog::bark)
+            ;
+    } // </namespace Animals>
+
+    { // <namespace Home>
+        py::module_ pyNamespaceHome = m.def_submodule("Home", "");
+        auto pyNamespaceHome_ClassPet =
+            py::class_<Home::Pet>
+                (pyNamespaceHome, "Pet", "")
+            .def(py::init<>()) // implicit default constructor
+            .def("is_pet",
+                &Home::Pet::is_pet)
+            ;
+
+
+        auto pyNamespaceHome_ClassPetDog =
+            py::class_<Home::PetDog, Animals::Dog, Home::Pet>
+                (pyNamespaceHome, "PetDog", "")
+            .def(py::init<const std::string &>(),
+                py::arg("name"))
+            .def("bark",
+                &Home::PetDog::bark)
+            ;
+    } // </namespace Home>
 
     { // <namespace Root>
         py::module_ pyNamespaceRoot = m.def_submodule("Root", "");

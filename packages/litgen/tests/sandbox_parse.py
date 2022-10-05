@@ -82,25 +82,21 @@ class Foo
 def play_virtual_method() -> None:
     # See https://pybind11.readthedocs.io/en/stable/advanced/classes.html#binding-protected-member-functions
     code = """
-    namespace Root
+    struct Base
     {
-        namespace Inner
-        {
-            class A
-            {
-            public:
-                virtual int foo(int a, bool f=true) const { return 42; }
-                virtual inline static const Widget& foo2() const;
-            };
-        }
-    }
+        int a = 0
+    };
+    struct Derivate: public Base
+    {
+        int b;
+    };
     """
     options = LitgenOptions()
     # options.fn_params_replace_modifiable_immutable_by_boxed__regex  = ".*"
     options.class_expose_protected_methods__regex = ".*"
     options.class_override_virtual_methods_in_python__regex = ".*"
     generated_code = litgen.generate_code(options, code)
-    print(generated_code.glue_code)
+    print(generated_code.pydef_code)
 
 
 def play_pure():

@@ -746,9 +746,13 @@ def replace_in_string(input_string: str, replacements: Dict[str, str]) -> str:
 def process_code_template(
     input_string: str,
     replacements: Dict[str, str],
-    replacements_with_line_removal_if_not_found: Dict[str, Optional[str]],
+    replacements_with_line_removal_if_not_found: Optional[Dict[str, Optional[str]]] = None,
     flag_replace_maybe_comma: bool = True,
 ) -> str:
+
+    if replacements_with_line_removal_if_not_found is None:
+        replacements_with_line_removal_if_not_found = {}
+
     r = input_string
     r = replace_in_string(r, replacements)
     r = replace_in_string_remove_line_if_none(r, replacements_with_line_removal_if_not_found)

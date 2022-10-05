@@ -397,6 +397,13 @@ def cpp_scope_to_pybind_scope(options: LitgenOptions, cpp_element: CppElement, i
     return cpp_scope
 
 
+def cpp_scope_to_pybind_scope_str(options: LitgenOptions, cpp_element: CppElement, include_self: bool) -> str:
+    scope = cpp_scope_to_pybind_scope(options, cpp_element, include_self)
+    scope_names = [scope_part.scope_name for scope_part in scope.scope_parts]
+    r = ".".join(scope_names)
+    return r
+
+
 def cpp_scope_to_pybind_var_name(options: LitgenOptions, cpp_element: CppElement) -> str:
     cpp_scope = cpp_scope_to_pybind_scope(options, cpp_element, True)
     scope_parts_strs = list(map(_scope_part_name, cpp_scope.scope_parts))
@@ -459,6 +466,8 @@ def standard_code_replacements() -> RegexReplacementList:
     \bstd::array\s*<\s*([\w:]*)\s*,\s*([\w:])\s*> -> List[\1]
     \bstd::tuple<(.*)> -> Tuple[\1]
     \bstd::optional<(.*?)> -> Optional[\1]
+    \bstd::unique_ptr<(.*?)> -> \1
+    \bstd::shared_ptr<(.*?)> -> \1
 
     \bvoid\s*\* -> Any
     \bvoid\b -> None

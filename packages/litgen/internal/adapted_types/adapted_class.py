@@ -326,7 +326,22 @@ class AdaptedClass(AdaptedElement):
         line_spacer = LineSpacerPython(self.options)
 
         class_name = self.class_name_python()
-        title = f"class {class_name}:"
+
+        def fill_possible_parents() -> str:
+            parents: List[str] = []
+            if not self.cpp_element().has_base_classes():
+                return ""
+            for _access_type, base_class in self.cpp_element().base_classes():
+                class_python_scope = cpp_to_python.cpp_scope_to_pybind_scope_str(
+                    self.options, base_class, include_self=True
+                )
+                parents.append(class_python_scope)
+            if len(parents) == 0:
+                return ""
+            else:
+                return "(" + ", ".join(parents) + ")"
+
+        title = f"class {class_name}{fill_possible_parents()}:"
         title_lines = [title]
 
         body_lines: List[str] = []
@@ -480,32 +495,63 @@ class AdaptedClass(AdaptedElement):
         options = self.options
         _i_ = options.indent_cpp_spaces()
 
-        bare_struct_name = self.cpp_element().class_name
-        location = self.info_original_location_cpp()
-        comment = self.comment_pydef_one_line()
+        def make_pyclass_creation_code() -> str:
+            # Additional template params to py::class_
+            qualified_struct_name = self.cpp_element().qualified_struct_name()
+            other_template_params_list = []
+            if self.cpp_element().has_base_classes():
+                base_classes = self.cpp_element().base_classes()
+                for access_type, base_class in base_classes:
+                    if access_type == PublicProtectedPrivate.public or access_type == PublicProtectedPrivate.protected:
+                        other_template_params_list.append(base_class.cpp_scope(include_self=True).str_cpp())
+            if self.cpp_element().has_private_dtor():
+                other_template_params_list.append(f"std::unique_ptr<{qualified_struct_name}, py::nodelete>")
+            if self._shall_override_virtual_methods_in_python():
+                scope = self.cpp_element().cpp_scope(False).str_cpp()
+                scope_prefix = scope + "::" if len(scope) > 0 else ""
+                qualified_trampoline_name = scope_prefix + self.cpp_element().class_name + "_trampoline"
+                other_template_params_list.append(qualified_trampoline_name)
 
-        code_intro = ""
-        pydef_class_var = cpp_to_python.cpp_scope_to_pybind_var_name(options, self.cpp_element())
-        pydef_class_var_parent = cpp_to_python.cpp_scope_to_pybind_parent_var_name(options, self.cpp_element())
+            if len(other_template_params_list) > 0:
+                other_template_params = ", " + ", ".join(other_template_params_list)
+            else:
+                other_template_params = ""
+
+            code_template = (
+                code_utils.unindent_code(
+                    """
+                auto {pydef_class_var} =
+                {_i_}py::class_<{qualified_struct_name}{other_template_params}>{location}
+                {_i_}{_i_}({pydef_class_var_parent}, "{bare_struct_name}", "{comment}")
+                """,
+                    flag_strip_empty_lines=True,
+                )
+                + "\n"
+            )
+
+            replacements = munch.Munch()
+            replacements._i_ = self.options.indent_cpp_spaces()
+            replacements.pydef_class_var = cpp_to_python.cpp_scope_to_pybind_var_name(options, self.cpp_element())
+            replacements.qualified_struct_name = qualified_struct_name
+            replacements.other_template_params = other_template_params
+            replacements.location = self.info_original_location_cpp()
+            replacements.bare_struct_name = self.cpp_element().class_name
+            replacements.pydef_class_var_parent = cpp_to_python.cpp_scope_to_pybind_parent_var_name(
+                options, self.cpp_element()
+            )
+            replacements.comment = self.comment_pydef_one_line()
+
+            pyclass_creation_code = code_utils.process_code_template(code_template, replacements)
+
+            return pyclass_creation_code
+
         qualified_struct_name = self.cpp_element().qualified_struct_name()
-
-        if self.cpp_element().has_private_dtor():
-            code_intro += f"auto {pydef_class_var} =\n{_i_}py::class_<{qualified_struct_name}, std::unique_ptr<{qualified_struct_name}, py::nodelete>>{location}\n"
-        elif self._shall_override_virtual_methods_in_python():
-            scope = self.cpp_element().cpp_scope(False).str_cpp()
-            scope_prefix = scope + "::" if len(scope) > 0 else ""
-            qualified_trampoline_name = scope_prefix + self.cpp_element().class_name + "_trampoline"
-            code_intro += f"auto {pydef_class_var} =\n{_i_}py::class_<{qualified_struct_name}, {qualified_trampoline_name}>{location}\n"
-        else:
-            code_intro += f"auto {pydef_class_var} =\n{_i_}py::class_<{qualified_struct_name}>{location}\n"
-        code_intro += f'{_i_}{_i_}({pydef_class_var_parent}, "{bare_struct_name}", "{comment}")\n'
-
         if options.generate_to_string:
             code_outro = f'{_i_}.def("__repr__", [](const {qualified_struct_name}& v) {{ return ToString(v); }});'
         else:
             code_outro = f"{_i_};"
 
-        code = code_intro
+        code = make_pyclass_creation_code()
 
         if not self.cpp_element().has_non_default_ctor() and not self.cpp_element().has_deleted_default_ctor():
             code += f"{_i_}.def(py::init<>()) // implicit default constructor\n"

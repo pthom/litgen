@@ -515,6 +515,18 @@ class MySingletonClass:
         pass
 
 #////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+#                       mylib/class_inheritance_test.h included by mylib/mylib.h                               //
+#//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+
+
+
+def make_dog() -> Animals.Animal:
+    """ Test that downcasting works: the return type is Animal, but it should bark!"""
+    pass
+
+#////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 #                       mylib/class_virtual_test.h included by mylib/mylib.h                                   //
 #//////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -691,7 +703,43 @@ class IntWrapperSpaceship:
 #                       mylib/mylib.h continued                                                                //
 #//////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-# #include "mylib/sandbox.h"
+##include "mylib/sandbox.h"
+
+# <submodule Animals>
+class Animals: # Proxy class that introduces typings for the *submodule* Animals
+    # (This corresponds to a C++ namespace. All method are static!)
+    class Animal:
+        def __init__(self, name: str) -> None:
+            pass
+        name: str
+
+
+    class Dog(Animals.Animal):
+        def __init__(self, name: str) -> None:
+            pass
+        def bark(self) -> str:
+            pass
+
+
+
+# </submodule Animals>
+
+# <submodule Home>
+class Home: # Proxy class that introduces typings for the *submodule* Home
+    # (This corresponds to a C++ namespace. All method are static!)
+    class Pet:
+        def is_pet(self) -> bool:
+            pass
+
+    class PetDog(Animals.Dog, Home.Pet):
+        def __init__(self, name: str) -> None:
+            pass
+        def bark(self) -> str:
+            pass
+
+
+
+# </submodule Home>
 
 # <submodule Root>
 class Root: # Proxy class that introduces typings for the *submodule* Root

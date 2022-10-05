@@ -137,14 +137,15 @@ Test multithread qui semble marcher:
 
 ** srcml_cpp as main project
 ...
-** ideas / other utilities
+* srcmlcppml utilities
 
 
 Add named parameters to functions
 
-Cerealize / cerealize
+** Cerealize / cerealize
+** _repr_my_code
 
-PimpMyCI:
+** PimpMyCI:
     check for doc
     check for snake_case
     hunt_fake_classes
@@ -152,8 +153,7 @@ PimpMyCI:
        Example / Mailer
        prefix class members
 
-
-* PimplMyClass
+** PimplMyClass
 
 review code => simplify and review srcmlcpp
 
@@ -172,7 +172,6 @@ render code block api (-> codemanip)
   render as collapsible
   copy button
 
-
 ** Triage
 Online:
   store ran codes
@@ -180,6 +179,13 @@ Online:
   example page
 
 mettre un decorateur @pimplmyclass
+
+const_my_code: look for decl and expr => const if set only once, const param if not modified (and ref if heavy)
+   ne devrait faire que des warning en CI
+
+** WriteMyHeader
+can reuse lots of parts of PimplMyClass
+
 
 * Dyndoc
 Voir note sur telephone
@@ -473,26 +479,30 @@ Problem 3: dans lg_test_runner (integration tests), tout est refusé (trouve pas
 
 
 *** Suffixe MY_API sur namespace ne sert qu'a faire ch...
-    Plutot faire une liste de
+    Plutot faire une liste de namespace exclus
 
 
 ** Wish List / Easy
 
+  generator: error message with default pybind file template
+
   stackoverflow: review question ("type annotation: warn about mutable members becoming instance when initialized at decl site")
     https://docs.python.org/3/library/typing.html#typing.ClassVar
 
+ keep pointer and references layout inside CppType (int *x vs int *x vs int * x)
 
-** DONE: Handle operators()
-References:
-https://en.wikipedia.org/wiki/Operators_in_C_and_C%2B%2B
-https://docs.python.org/3/reference/datamodel.html#emulating-numeric-types
+ add functions_api_prefixes via property to LitgenOptions?
 
-
+*** test multiple litgen_glue_code with BoxedType: is there a link error / duplication?
+    remove bindings/litgen_glue_code.h?
 
 
 ** Template classes and functions
 (by asking for a specialization name)
 templated functions can reuse the same name
+
+
+** auto __repr__ for structs
 
 
 ** Namespace:
@@ -502,11 +512,10 @@ Non : voir si possible retrouver same namespace par recherche dans CppUnit ou Ad
 ** Handle trampoline
     add unit tests?
     same for protected?
+    inheritance (store virtual functions in context)
 
+    See example in py-mahi-gui
 
-
-See example in py-mahi-gui
-On ne fait qu'un niveau de derivation, c'est tout!
 
 
 

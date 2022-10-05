@@ -24,7 +24,7 @@ import copy
 import logging
 from dataclasses import dataclass
 from enum import Enum
-from typing import Dict, List, Optional, Callable, cast
+from typing import Dict, List, Optional, Callable, Tuple, cast
 from xml.etree import ElementTree as ET  # noqa
 
 from codemanip import code_utils
@@ -37,6 +37,23 @@ from srcmlcpp.srcml_xml_wrapper import SrcmlXmlWrapper
 """
 """
 StringToIntDict = Dict[str, int]
+
+
+class PublicProtectedPrivate(Enum):
+    public = "public"
+    protected = "protected"
+    private = "private"
+
+    @staticmethod
+    def from_name(name: str) -> PublicProtectedPrivate:
+        if name == "public" or name == "":
+            return PublicProtectedPrivate.public
+        elif name == "protected":
+            return PublicProtectedPrivate.protected
+        elif name == "private":
+            return PublicProtectedPrivate.private
+        else:
+            raise AssertionError()
 
 
 @dataclass
@@ -241,6 +258,19 @@ class CppElement(SrcmlXmlWrapper):
             current_parent = current_parent.parent
         return ancestors
 
+    def root_cpp_unit_parent(self) -> CppUnit:
+        assert hasattr(self, "parent")  # parent should have been filled by parse_unit & CppBlock
+
+        current = self
+        while True:
+            root = current
+            if current.parent is None:
+                break
+            current = current.parent
+
+        assert isinstance(root, CppUnit)
+        return root
+
     def hierarchy_overview(self) -> str:
         log = ""
 
@@ -389,6 +419,42 @@ class CppBlock(CppElementAndComment):
         r_ = self.all_cpp_elements_recursive(wanted_type=CppStruct)
         r = [cast(CppStruct, v) for v in r_]
         return r
+
+    def find_struct_or_class(self, class_name_with_scope: str, current_scope: CppScope) -> Optional[CppStruct]:
+        """Given a current scope, look for an existing matching class
+        class_name_with_scope is a name that could include additional scopes
+        """
+        if "::" in class_name_with_scope:
+            items = class_name_with_scope.split("::")
+            class_name = items[-1]
+            class_scope_str = "::".join(items[:-1])
+        else:
+            class_name = class_name_with_scope
+            class_scope_str = ""
+
+        all_structs = self.all_structs_recursive()
+        for struct in all_structs:
+
+            current_scope_str = current_scope.str_cpp()
+
+            searched_scopes_strs = []
+            searched_scopes_strs.append(class_scope_str)
+            if len(current_scope_str) > 0:
+                searched_scopes_strs.append(current_scope_str + "::" + class_scope_str)
+
+            struct_scope_str = struct.cpp_scope(include_self=False).str_cpp()
+
+            is_struct_visible_from_scope = False
+            for searched_scope_str in searched_scopes_strs:
+                if searched_scope_str.startswith(struct_scope_str):
+                    is_struct_visible_from_scope = True
+
+            is_name_equal = struct.class_name == class_name
+
+            if is_name_equal and is_struct_visible_from_scope:
+                return struct
+
+        return None
 
     def all_functions_recursive(self) -> List[CppFunctionDecl]:
         """Gathers all CppFunctionDecl and CppFunction in the children (*recursive*)"""
@@ -1331,6 +1397,27 @@ class CppStruct(CppElementAndComment):
 
     def __str__(self) -> str:
         return self.str_commented()
+
+    def has_base_classes(self) -> bool:
+        if not hasattr(self, "super_list"):
+            return False
+        return len(self.super_list.super_list) > 0
+
+    def base_classes(self) -> List[Tuple[PublicProtectedPrivate, CppStruct]]:
+        if not self.has_base_classes():
+            return []
+
+        r = []
+        for cpp_super in self.super_list.super_list:
+            access_type = PublicProtectedPrivate.from_name(cpp_super.specifier)
+
+            root_cpp_unit = self.root_cpp_unit_parent()
+            base_struct = root_cpp_unit.find_struct_or_class(
+                cpp_super.superclass_name, self.cpp_scope(include_self=False)
+            )
+            if base_struct is not None:
+                r.append((access_type, base_struct))
+        return r
 
     def has_non_default_ctor(self) -> bool:
         found_non_default_ctor = False
