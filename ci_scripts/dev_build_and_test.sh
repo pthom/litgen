@@ -51,8 +51,8 @@ cd "$REPO_DIR"
 
 title "cmake build all"
 cd "$REPO_DIR"
-mkdir -p build
-cd build
+mkdir -p ci_build
+cd ci_build
 cmake ..
 make -j 4
 

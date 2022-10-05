@@ -3,6 +3,7 @@ venv/
 .idea/
 build/
 build*/
+ci_build/
 cmake-build-*/
 **/__pycache__/
 **/*.egg-info/
