@@ -211,7 +211,9 @@ class AdaptedClassMember(AdaptedDecl):
 
         location = self.info_original_location_python()
 
-        decl_template = f"{decl_name_python}: {decl_type_python}{maybe_equal}{maybe_defaultvalue_python}{maybe_comment_array}{maybe_comment}{location}"
+        maybe_static_info = " # (C++ static member)" if self.cpp_element().cpp_type.is_static() else ""
+
+        decl_template = f"{decl_name_python}: {decl_type_python}{maybe_equal}{maybe_defaultvalue_python}{maybe_comment_array}{maybe_comment}{maybe_static_info}{location}"
         code_lines += [decl_template]
 
         code_lines = self._cpp_original_code_lines() + code_lines

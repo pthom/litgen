@@ -466,9 +466,11 @@ class MyClass:
     # on both sides transparently.
     #///////////////////////////////////////////////////////////////////////
 
-    values: np.ndarray  # ndarray[type=int, size=2] default:{0, 1}
-    flags: np.ndarray   # ndarray[type=bool, size=3] default:{False, True, False}
+    values: np.ndarray            # ndarray[type=int, size=2] default:{0, 1}
+    flags: np.ndarray             # ndarray[type=bool, size=3] default:{False, True, False}
 
+    const_static_value: int = 101 # (C++ static member)
+    static_value: int             # (C++ static member)
 
     #/////////////////////////////////////////////////////////////////////////
     # Simple methods
@@ -513,6 +515,8 @@ class MySingletonClass:
     def instance() -> MySingletonClass:
         """return_value_policy::reference"""
         pass
+
+
 
 #////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 #                       mylib/class_inheritance_test.h included by mylib/mylib.h                               //

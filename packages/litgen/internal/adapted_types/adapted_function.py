@@ -580,7 +580,7 @@ class AdaptedFunction(AdaptedElement):
         """Create the full code of the pydef, with a direct call to the function or method"""
         template_code = code_utils.unindent_code(
             """
-            {module_or_class}.def("{function_name}",{location}
+            {module_or_class}.{def_maybe_static}("{function_name}",{location}
             {_i_}{function_pointer}{maybe_comma}{pydef_end_arg_docstring_returnpolicy}"""
         )[1:]
 
@@ -596,6 +596,7 @@ class AdaptedFunction(AdaptedElement):
         replace_tokens.module_or_class = "" if self.is_method() else parent_cpp_module_var_name
         replace_tokens.function_name = self.function_name_python()
         replace_tokens.location = self.info_original_location_cpp()
+        replace_tokens.def_maybe_static = "def_static" if self.cpp_element().is_static() else "def"
 
         # fill function_pointer
         function_name = self.cpp_element().function_name
@@ -637,7 +638,7 @@ class AdaptedFunction(AdaptedElement):
 
         template_code = code_utils.unindent_code(
             """
-            {module_or_class}.def("{function_name}",{location}
+            {module_or_class}.{def_maybe_static}("{function_name}",{location}
             {_i_}[]({params_call_with_self_if_method}){lambda_return_arrow}
             {_i_}{
             {_i_}{_i_}{lambda_adapter_code}
@@ -648,7 +649,7 @@ class AdaptedFunction(AdaptedElement):
 
         function_infos = self.cpp_adapted_function
 
-        # Standard replacements dict (r) and replacement dict with possible line removal (l)
+        # Standard replacement dict (r) and replacement dict with possible line removal (l)
         replace_tokens = Munch()
         replace_lines = Munch()
 
@@ -660,6 +661,7 @@ class AdaptedFunction(AdaptedElement):
         replace_tokens.module_or_class = "" if self.is_method() else parent_cpp_module_var_name
         replace_tokens.function_name = self.function_name_python()
         replace_tokens.location = self.info_original_location_cpp()
+        replace_tokens.def_maybe_static = "def_static" if self.cpp_element().is_static() else "def"
 
         # fill params_call_with_self_if_method
         _params_list = function_infos.parameter_list.types_names_default_for_signature_list()

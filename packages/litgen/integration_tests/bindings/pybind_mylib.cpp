@@ -642,6 +642,8 @@ void py_init_module_lg_mylib(py::module& m)
                 return pybind11::array(dtype, {3}, {sizeof(bool)}, self.flags, base);
             }, [](MyClass& self) {},
             "")
+        .def_readonly_static("const_static_value", &MyClass::const_static_value, "")
+        .def_readwrite_static("static_value", &MyClass::static_value, "")
         .def("calc",
             &MyClass::calc,
             py::arg("x"),
@@ -650,7 +652,7 @@ void py_init_module_lg_mylib(py::module& m)
             &MyClass::set_message,
             py::arg("m"),
             "set_message: another example of simple method")
-        .def("static_message",
+        .def_static("static_message",
             &MyClass::static_message, "Returns a static message")
         ;
 
@@ -660,7 +662,7 @@ void py_init_module_lg_mylib(py::module& m)
             (m, "MySingletonClass", " MySingletonClass: demonstrate how to instantiate a singleton\n - The instance method shall return with return_value_policy::reference\n - The destructor may be private")
         .def(py::init<>()) // implicit default constructor
         .def_readwrite("value", &MySingletonClass::value, "")
-        .def("instance",
+        .def_static("instance",
             &MySingletonClass::instance,
             "return_value_policy::reference",
             pybind11::return_value_policy::reference)
@@ -675,7 +677,7 @@ void py_init_module_lg_mylib(py::module& m)
         py::class_<MyConfig>
             (m, "MyConfig", "")
         .def(py::init<>()) // implicit default constructor
-        .def("instance",
+        .def_static("instance",
             &MyConfig::Instance,
             "return_value_policy::reference",
             pybind11::return_value_policy::reference)

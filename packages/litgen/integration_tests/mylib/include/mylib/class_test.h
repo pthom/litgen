@@ -46,6 +46,8 @@ public:
     // points is a fixed size array, but not of a numeric type. It will *not* be published!
     Point2 points[2];
 
+    static const int const_static_value = 101;
+    static int static_value;
 
     ///////////////////////////////////////////////////////////////////////////
     // Simple methods
@@ -101,3 +103,7 @@ private:
     // see https://pybind11.readthedocs.io/en/stable/advanced/classes.html#non-public-destructors
     ~MySingletonClass() {}
 };
+
+
+const int MyClass::const_static_value;
+int MyClass::static_value = 102;

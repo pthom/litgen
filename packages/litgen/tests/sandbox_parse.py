@@ -99,20 +99,20 @@ def play_virtual_method() -> None:
     print(generated_code.pydef_code)
 
 
-def play_pure():
+def play_static():
     code = """
     struct A {
-    virtual void foo() = 0;
+        static const int v_const_static = 1;       // def_readonly_static()
+        static int v_static = 1;                   // def_readwrite_static()
+        static int f_static() { return 2; }
+        int f() { return 3; }
     };
     """
-    from srcmlcpp import SrcmlOptions
-
-    srcml_options = SrcmlOptions()
-    cpp_unit = srcmlcpp.code_to_cpp_unit(srcml_options, code)
-    print(cpp_unit.str_xml())
-    print("a")
+    options = litgen.LitgenOptions()
+    generated_code = litgen.generate_code(options, code)
+    print(generated_code.pydef_code)
+    print(generated_code.stub_code)
 
 
 if __name__ == "__main__":
-    play_virtual_method()
-    # play_pure()
+    play_static()

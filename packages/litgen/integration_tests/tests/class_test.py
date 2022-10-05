@@ -1,4 +1,5 @@
 import lg_mylib
+import pytest
 
 
 def test_class_doc():
@@ -51,6 +52,18 @@ def test_class_simple_methods():
 
 def test_class_static_methods():
     assert lg_mylib.MyClass.static_message() == "Hi!"
+
+
+def test_class_static_member():
+    assert lg_mylib.MyClass.const_static_value == 101
+    assert lg_mylib.MyClass.static_value == 102
+
+    o = lg_mylib.MyClass()
+    with pytest.raises(AttributeError):
+        o.const_static_value = 103
+
+    o.static_value = 104
+    assert lg_mylib.MyClass.static_value == 104
 
 
 def test_struct_not_registered():

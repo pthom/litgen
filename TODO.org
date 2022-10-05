@@ -477,14 +477,14 @@ later! publish srcmlcpp before!
 Problem 2: dans lg_skbuild_template, tout est accpté dans example_lib...
 Problem 3: dans lg_test_runner (integration tests), tout est refusé (trouve pas les définitions)
 
+*** auto __repr__ for structs
+
+
+** Wish List / Easy
 
 *** Suffixe MY_API sur namespace ne sert qu'a faire ch...
     Plutot faire une liste de namespace exclus
 
-
-
-** Wish List / Easy
-  auto __repr__ for structs
 
   generator: error message with default pybind file template
 
@@ -508,14 +508,6 @@ https://pybind11.readthedocs.io/en/stable/advanced/classes.html#binding-classes-
 (by asking for a specialization name)
 templated functions can reuse the same name
 
-
-** static field: https://pybind11.readthedocs.io/en/stable/classes.html#instance-and-static-fields
-test with
-    struct A {
-        static const int v_static = 1;
-        static int f_static() { return 2; }
-        int f() { return 3; }
-    };
 
 
 ** Vectorizing: https://pybind11.readthedocs.io/en/stable/advanced/pycpp/numpy.html#vectorizing-functions
