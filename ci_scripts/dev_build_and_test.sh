@@ -44,6 +44,11 @@ cd "$REPO_DIR"
 pytest
 
 
+title "autogenerate_all"
+cd "$REPO_DIR"
+./ci_scripts/autogenerate_all.sh
+
+
 title "Build lg_imgui python module"
 cd "$REPO_DIR"/lg_projects/lg_imgui
 pip install -v -e .

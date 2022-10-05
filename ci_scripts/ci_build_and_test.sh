@@ -63,16 +63,21 @@ cd "$REPO_DIR"
 pytest
 
 
-title "Build lg_imgui python module"
+title "autogenerate_all"
+cd "$REPO_DIR"
+./ci_scripts/autogenerate_all.sh
+
+
+title "PIP Build lg_imgui python module"
 cd "$REPO_DIR"/lg_projects/lg_imgui
 pip install .
 
 
-title "Build lg_imgui_bundle python modules"
+title "PIP Build lg_imgui_bundle python modules"
 cd "$REPO_DIR"/lg_projects/lg_imgui_bundle
 pip install .
 
 
-title "Build lg_skbuild_template python modules"
+title "PIP Build lg_skbuild_template python modules"
 cd "$REPO_DIR"/lg_projects/lg_skbuild_template
 pip install .
