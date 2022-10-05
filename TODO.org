@@ -511,7 +511,6 @@ templated functions can reuse the same name
 
 
 ** Vectorizing: https://pybind11.readthedocs.io/en/stable/advanced/pycpp/numpy.html#vectorizing-functions
-** Brace init:  https://pybind11.readthedocs.io/en/stable/advanced/classes.html#brace-initialization
 
 ** Add options on code, like return_reference:
 *** Dynamic attribute (add py::dynamic_attr() at class construction)  https://pybind11.readthedocs.io/en/stable/classes.html#dynamic-attributes

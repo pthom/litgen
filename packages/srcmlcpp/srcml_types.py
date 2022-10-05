@@ -1481,6 +1481,17 @@ class CppStruct(CppElementAndComment):
                     r.append(access_zone)
         return r
 
+    def get_members(self) -> List[Tuple[PublicProtectedPrivate, CppDecl]]:
+        r: List[Tuple[PublicProtectedPrivate, CppDecl]] = []
+        for access_zone in self.block.block_children:
+            if isinstance(access_zone, CppPublicProtectedPrivate):
+                access_type = PublicProtectedPrivate.from_name(access_zone.access_type)
+                for child in access_zone.block_children:
+                    if isinstance(child, CppDeclStatement):
+                        for cpp_decl in child.cpp_decls:
+                            r.append((access_type, cpp_decl))
+        return r
+
     def get_public_elements(self) -> List[CppElementAndComment]:
         """
         Returns the public members, constructors, and methods
