@@ -2,10 +2,11 @@
 requires = [
     "setuptools>=42",
     "wheel",
-    "scikit-build",
-    "cmake",
-    "patch",
+    "pybind11>=2.9.2",
+    "scikit-build>=0.14.1",
+    "cmake>=3.22",
     "ninja; platform_system!='Windows'",
+    "patch",
 ]
 build-backend = "setuptools.build_meta"
 
