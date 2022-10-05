@@ -49,16 +49,23 @@ cd "$REPO_DIR"
 ./ci_scripts/autogenerate_all.sh
 
 
-title "Build lg_imgui python module"
+title "cmake build all"
+cd "$REPO_DIR"
+mkdir -p build
+cmake .. -GNinja
+ninja
+
+
+title "pip build lg_imgui python module"
 cd "$REPO_DIR"/lg_projects/lg_imgui
 pip install -v -e .
 
 
-title "Build lg_imgui_bundle python modules"
+title "pip build lg_imgui_bundle python modules"
 cd "$REPO_DIR"/lg_projects/lg_imgui_bundle
 pip install -v -e .
 
 
-title "Build lg_skbuild_template python modules"
+title "pip build lg_skbuild_template python modules"
 cd "$REPO_DIR"/lg_projects/lg_skbuild_template
 pip install -v -e .
