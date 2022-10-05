@@ -287,7 +287,7 @@ class AdaptedClass(AdaptedElement):
         for child in self.cpp_element().get_protected_elements():
             if isinstance(child, CppFunctionDecl):
                 if not code_utils.does_match_regex(self.options.fn_exclude_by_name__regex, child.function_name):
-                    is_overloaded = self.cpp_element().is_method_overloaded(child)
+                    is_overloaded = child.is_overloaded_method()
                     self.adapted_protected_methods.append(AdaptedFunction(self.lg_context, child, is_overloaded))
 
     def _fill_public_children(self) -> None:
@@ -300,7 +300,7 @@ class AdaptedClass(AdaptedElement):
                     self.adapted_public_children.append(AdaptedComment(self.lg_context, child))
                 elif isinstance(child, CppFunctionDecl):
                     if not code_utils.does_match_regex(self.options.fn_exclude_by_name__regex, child.function_name):
-                        is_overloaded = self.cpp_element().is_method_overloaded(child)
+                        is_overloaded = child.is_overloaded_method()
                         self.adapted_public_children.append(AdaptedFunction(self.lg_context, child, is_overloaded))
                 elif isinstance(child, CppDeclStatement):
                     self._add_adapted_class_member(child)

@@ -1056,6 +1056,16 @@ class CppFunctionDecl(CppElementAndComment):
         is_virtual = "virtual" in self.return_type.specifiers
         return is_virtual
 
+    def is_overloaded_method(self) -> bool:
+        if not self.is_method():
+            return False
+        parent_struct = self.parent_struct_if_method()
+        assert parent_struct is not None
+        methods_same_name = parent_struct.all_methods_with_name(self.function_name)
+        assert len(methods_same_name) >= 1
+        is_overloaded = len(methods_same_name) >= 2
+        return is_overloaded
+
     def parent_struct_if_method(self) -> Optional[CppStruct]:
         assert hasattr(self, "parent")
         if not self.is_method():
@@ -1413,11 +1423,12 @@ class CppStruct(CppElementAndComment):
                 r.append(fn)
         return r
 
-    def is_method_overloaded(self, method: CppFunctionDecl) -> bool:
-        methods_same_name = self.all_methods_with_name(method.function_name)
-        assert len(methods_same_name) >= 1
-        is_overloaded = len(methods_same_name) >= 2
-        return is_overloaded
+    def is_virtual(self) -> bool:
+        """Returns True if there is at least one virtual method"""
+        for method in self.all_methods():
+            if method.is_virtual_method():
+                return True
+        return False
 
     def visit_cpp_breadth_first(self, cpp_visitor_function: CppElementsVisitorFunction, depth: int = 0) -> None:
         cpp_visitor_function(self, CppElementsVisitorEvent.OnElement, depth)
