@@ -71,8 +71,9 @@ cd "$REPO_DIR"
 title "cmake build all"
 cd "$REPO_DIR"
 mkdir -p build
-cmake .. -GNinja
-ninja
+cd build
+cmake ..
+make -j 4
 
 
 title "pip build lg_imgui python module"
