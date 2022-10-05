@@ -24,6 +24,9 @@ jobs:
     - name: Install libraries required by glfw (used by hello-imgui)
       run: sudo apt-get update && sudo apt-get install -y libxrandr-dev libxinerama-dev libxcursor-dev libxi-dev mesa-common-dev
 
+    - name: apt-get install python-pybind11
+      run: sudo apt-get install -y python-pybind11
+
 #    - name: Setup interactive tmate session
 #      uses: mxschmitt/action-tmate@v3
 
