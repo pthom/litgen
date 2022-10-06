@@ -821,9 +821,12 @@ class CppDecl(CppElementAndComment):
         If this decl is a c array, return its size, e.g. for
             int v[4]
         It will return 4
-        However, it will return None for
-            int v[COUNT];  // where COUNT is a macro or constexpr value
-        Except if "COUNT" is a key of size_dict
+
+        However, it might return None for
+            int v[COUNT];
+        where COUNT is a macro or constexpr value
+
+        (but you can fill SrcmlOptions.named_number_macros to circumvent this)
         """
         size_as_str = self.c_array_size_as_str()
         maybe_size = _int_from_str_or_named_number_macros(self.options, size_as_str)
