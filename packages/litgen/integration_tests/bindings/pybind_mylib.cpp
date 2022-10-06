@@ -832,27 +832,27 @@ void py_init_module_lg_mylib(py::module& m)
         ;
 
     { // <namespace MathFunctions>
-        py::module_ pyNamespaceMathFunctions = m.def_submodule("MathFunctions", " Vectorizable functions example\n    Numeric functions (i.e. function accepting and returning only numeric params or py::array), can be vectorized\n    i.e. they will accept numpy arrays as an input.\n\n Auto-vectorization is enabled via the following options:\n     options.fn_namespace_vectorize__regex: str = r\"^MathFunctions$\"\n     options.fn_vectorize__regex = r\".*\"");
-        pyNamespaceMathFunctions.def("vectorizable_sum",
+        py::module_ pyNsMathFunctions = m.def_submodule("MathFunctions", " Vectorizable functions example\n    Numeric functions (i.e. function accepting and returning only numeric params or py::array), can be vectorized\n    i.e. they will accept numpy arrays as an input.\n\n Auto-vectorization is enabled via the following options:\n     options.fn_namespace_vectorize__regex: str = r\"^MathFunctions$\"\n     options.fn_vectorize__regex = r\".*\"");
+        pyNsMathFunctions.def("vectorizable_sum",
             MathFunctions::vectorizable_sum, py::arg("x"), py::arg("y"));
-        pyNamespaceMathFunctions.def("vectorizable_sum",
+        pyNsMathFunctions.def("vectorizable_sum",
             py::vectorize(MathFunctions::vectorizable_sum), py::arg("x"), py::arg("y"));
     } // </namespace MathFunctions>
 
     { // <namespace Animals>
-        py::module_ pyNamespaceAnimals = m.def_submodule("Animals", "");
-        auto pyNamespaceAnimals_ClassAnimal =
+        py::module_ pyNsAnimals = m.def_submodule("Animals", "");
+        auto pyNsAnimals_ClassAnimal =
             py::class_<Animals::Animal>
-                (pyNamespaceAnimals, "Animal", "")
+                (pyNsAnimals, "Animal", "")
             .def(py::init<const std::string &>(),
                 py::arg("name"))
             .def_readwrite("name", &Animals::Animal::name, "")
             ;
 
 
-        auto pyNamespaceAnimals_ClassDog =
+        auto pyNsAnimals_ClassDog =
             py::class_<Animals::Dog, Animals::Animal>
-                (pyNamespaceAnimals, "Dog", "")
+                (pyNsAnimals, "Dog", "")
             .def(py::init<const std::string &>(),
                 py::arg("name"))
             .def("bark",
@@ -861,19 +861,19 @@ void py_init_module_lg_mylib(py::module& m)
     } // </namespace Animals>
 
     { // <namespace Home>
-        py::module_ pyNamespaceHome = m.def_submodule("Home", "");
-        auto pyNamespaceHome_ClassPet =
+        py::module_ pyNsHome = m.def_submodule("Home", "");
+        auto pyNsHome_ClassPet =
             py::class_<Home::Pet>
-                (pyNamespaceHome, "Pet", "")
+                (pyNsHome, "Pet", "")
             .def(py::init<>()) // implicit default constructor
             .def("is_pet",
                 &Home::Pet::is_pet)
             ;
 
 
-        auto pyNamespaceHome_ClassPetDog =
+        auto pyNsHome_ClassPetDog =
             py::class_<Home::PetDog, Animals::Dog, Home::Pet>
-                (pyNamespaceHome, "PetDog", "")
+                (pyNsHome, "PetDog", "")
             .def(py::init<const std::string &>(),
                 py::arg("name"))
             .def("bark",
@@ -882,12 +882,12 @@ void py_init_module_lg_mylib(py::module& m)
     } // </namespace Home>
 
     { // <namespace Root>
-        py::module_ pyNamespaceRoot = m.def_submodule("Root", "");
+        py::module_ pyNsRoot = m.def_submodule("Root", "");
         { // <namespace Inner>
-            py::module_ pyNamespaceRoot_NamespaceInner = pyNamespaceRoot.def_submodule("Inner", "");
-            auto pyNamespaceRoot_NamespaceInner_ClassMyVirtualClass =
+            py::module_ pyNsRoot_NsInner = pyNsRoot.def_submodule("Inner", "");
+            auto pyNsRoot_NsInner_ClassMyVirtualClass =
                 py::class_<Root::Inner::MyVirtualClass, Root::Inner::MyVirtualClass_trampoline>
-                    (pyNamespaceRoot_NamespaceInner, "MyVirtualClass", "")
+                    (pyNsRoot_NsInner, "MyVirtualClass", "")
                 .def(py::init<>()) // implicit default constructor
                 .def("foo_concrete",
                     &Root::Inner::MyVirtualClass::foo_concrete, py::arg("x"), py::arg("name"))
@@ -900,9 +900,9 @@ void py_init_module_lg_mylib(py::module& m)
                 ;
 
 
-            auto pyNamespaceRoot_NamespaceInner_ClassMyVirtualDerivate =
+            auto pyNsRoot_NsInner_ClassMyVirtualDerivate =
                 py::class_<Root::Inner::MyVirtualDerivate, Root::Inner::MyVirtualClass, Root::Inner::MyVirtualDerivate_trampoline>
-                    (pyNamespaceRoot_NamespaceInner, "MyVirtualDerivate", " Here, we test Combining virtual functions and inheritance\n See https://pybind11.readthedocs.io/en/stable/advanced/classes.html#combining-virtual-functions-and-inheritance")
+                    (pyNsRoot_NsInner, "MyVirtualDerivate", " Here, we test Combining virtual functions and inheritance\n See https://pybind11.readthedocs.io/en/stable/advanced/classes.html#combining-virtual-functions-and-inheritance")
                 .def(py::init<>())
                 .def("foo_virtual_public_pure",
                     &Root::Inner::MyVirtualDerivate::foo_virtual_public_pure)
@@ -914,33 +914,33 @@ void py_init_module_lg_mylib(py::module& m)
     } // </namespace Root>
 
     { // <namespace SomeNamespace>
-        py::module_ pyNamespaceSomeNamespace = m.def_submodule("SomeNamespace", "");
-        auto pyNamespaceSomeNamespace_ClassParentStruct =
+        py::module_ pyNsSomeNamespace = m.def_submodule("SomeNamespace", "");
+        auto pyNsSomeNamespace_ClassParentStruct =
             py::class_<SomeNamespace::ParentStruct>
-                (pyNamespaceSomeNamespace, "ParentStruct", "")
+                (pyNsSomeNamespace, "ParentStruct", "")
             .def(py::init<>()) // implicit default constructor
             .def_readwrite("inner_struct", &SomeNamespace::ParentStruct::inner_struct, "")
             .def_readwrite("inner_enum", &SomeNamespace::ParentStruct::inner_enum, "")
             ;
         { // inner classes & enums of ParentStruct
-            auto pyNamespaceSomeNamespace_ClassParentStruct_ClassInnerStruct =
+            auto pyNsSomeNamespace_ClassParentStruct_ClassInnerStruct =
                 py::class_<SomeNamespace::ParentStruct::InnerStruct>
-                    (pyNamespaceSomeNamespace_ClassParentStruct, "InnerStruct", "")
+                    (pyNsSomeNamespace_ClassParentStruct, "InnerStruct", "")
                 .def_readwrite("value", &SomeNamespace::ParentStruct::InnerStruct::value, "")
                 .def(py::init<int>(),
                     py::arg("value") = 10)
                 .def("add",
                     &SomeNamespace::ParentStruct::InnerStruct::add, py::arg("a"), py::arg("b"))
                 ;
-            py::enum_<SomeNamespace::ParentStruct::InnerEnum>(pyNamespaceSomeNamespace_ClassParentStruct, "InnerEnum", py::arithmetic(), "")
+            py::enum_<SomeNamespace::ParentStruct::InnerEnum>(pyNsSomeNamespace_ClassParentStruct, "InnerEnum", py::arithmetic(), "")
                 .value("zero", SomeNamespace::ParentStruct::InnerEnum::Zero, "")
                 .value("one", SomeNamespace::ParentStruct::InnerEnum::One, "")
                 .value("two", SomeNamespace::ParentStruct::InnerEnum::Two, "")
                 .value("three", SomeNamespace::ParentStruct::InnerEnum::Three, "");
         } // end of inner classes & enums of ParentStruct
-        auto pyNamespaceSomeNamespace_ClassBlah =
+        auto pyNsSomeNamespace_ClassBlah =
             py::class_<SomeNamespace::Blah>
-                (pyNamespaceSomeNamespace, "Blah", "struct Blah - MY_API")
+                (pyNsSomeNamespace, "Blah", "struct Blah - MY_API")
             .def(py::init<>()) // implicit default constructor
             .def("toggle_bool_pointer",
                 [](SomeNamespace::Blah & self, BoxedBool & v)
@@ -1110,8 +1110,8 @@ void py_init_module_lg_mylib(py::module& m)
                 },     py::arg("items"), py::arg("output_0"), py::arg("output_1"))
             ;
         { // <namespace SomeInnerNamespace>
-            py::module_ pyNamespaceSomeNamespace_NamespaceSomeInnerNamespace = pyNamespaceSomeNamespace.def_submodule("SomeInnerNamespace", "namespace SomeInnerNamespace - MY_API");
-            pyNamespaceSomeNamespace_NamespaceSomeInnerNamespace.def("toggle_bool_pointer",
+            py::module_ pyNsSomeNamespace_NsSomeInnerNamespace = pyNsSomeNamespace.def_submodule("SomeInnerNamespace", "namespace SomeInnerNamespace - MY_API");
+            pyNsSomeNamespace_NsSomeInnerNamespace.def("toggle_bool_pointer",
                 [](BoxedBool & v)
                 {
                     auto ToggleBoolPointer_adapt_modifiable_immutable = [](BoxedBool & v)
@@ -1126,7 +1126,7 @@ void py_init_module_lg_mylib(py::module& m)
                 py::arg("v"),
                 "//, int vv[2])");
 
-            pyNamespaceSomeNamespace_NamespaceSomeInnerNamespace.def("toggle_bool_pointer_get_points",
+            pyNsSomeNamespace_NsSomeInnerNamespace.def("toggle_bool_pointer_get_points",
                 [](BoxedBool & v, BoxedInt & vv_0, BoxedInt & vv_1)
                 {
                     auto ToggleBoolPointerGetPoints_adapt_fixed_size_c_arrays = [](bool * v, BoxedInt & vv_0, BoxedInt & vv_1)
@@ -1150,7 +1150,7 @@ void py_init_module_lg_mylib(py::module& m)
                     ToggleBoolPointerGetPoints_adapt_modifiable_immutable(v, vv_0, vv_1);
                 },     py::arg("v"), py::arg("vv_0"), py::arg("vv_1"));
 
-            pyNamespaceSomeNamespace_NamespaceSomeInnerNamespace.def("modify_string",
+            pyNsSomeNamespace_NsSomeInnerNamespace.def("modify_string",
                 [](BoxedString & s)
                 {
                     auto ModifyString_adapt_modifiable_immutable = [](BoxedString & s)
@@ -1163,7 +1163,7 @@ void py_init_module_lg_mylib(py::module& m)
                     ModifyString_adapt_modifiable_immutable(s);
                 },     py::arg("s"));
 
-            pyNamespaceSomeNamespace_NamespaceSomeInnerNamespace.def("change_bool_int",
+            pyNsSomeNamespace_NsSomeInnerNamespace.def("change_bool_int",
                 [](const char * label, int value) -> std::tuple<bool, int>
                 {
                     auto ChangeBoolInt_adapt_modifiable_immutable_to_return = [](const char * label, int value) -> std::tuple<bool, int>
@@ -1177,7 +1177,7 @@ void py_init_module_lg_mylib(py::module& m)
                     return ChangeBoolInt_adapt_modifiable_immutable_to_return(label, value);
                 },     py::arg("label"), py::arg("value"));
 
-            pyNamespaceSomeNamespace_NamespaceSomeInnerNamespace.def("add_inside_buffer",
+            pyNsSomeNamespace_NsSomeInnerNamespace.def("add_inside_buffer",
                 [](py::array & buffer, uint8_t number_to_add)
                 {
                     auto add_inside_buffer_adapt_c_buffers = [](py::array & buffer, uint8_t number_to_add)
@@ -1201,7 +1201,7 @@ void py_init_module_lg_mylib(py::module& m)
                     add_inside_buffer_adapt_c_buffers(buffer, number_to_add);
                 },     py::arg("buffer"), py::arg("number_to_add"));
 
-            pyNamespaceSomeNamespace_NamespaceSomeInnerNamespace.def("templated_mul_inside_buffer",
+            pyNsSomeNamespace_NsSomeInnerNamespace.def("templated_mul_inside_buffer",
                 [](py::array & buffer, double factor)
                 {
                     auto templated_mul_inside_buffer_adapt_c_buffers = [](py::array & buffer, double factor)
@@ -1244,7 +1244,7 @@ void py_init_module_lg_mylib(py::module& m)
                     templated_mul_inside_buffer_adapt_c_buffers(buffer, factor);
                 },     py::arg("buffer"), py::arg("factor"));
 
-            pyNamespaceSomeNamespace_NamespaceSomeInnerNamespace.def("const_array2_add",
+            pyNsSomeNamespace_NsSomeInnerNamespace.def("const_array2_add",
                 [](const std::array<int, 2>& values) -> int
                 {
                     auto const_array2_add_adapt_fixed_size_c_arrays = [](const std::array<int, 2>& values) -> int
@@ -1256,7 +1256,7 @@ void py_init_module_lg_mylib(py::module& m)
                     return const_array2_add_adapt_fixed_size_c_arrays(values);
                 },     py::arg("values"));
 
-            pyNamespaceSomeNamespace_NamespaceSomeInnerNamespace.def("c_string_list_total_size",
+            pyNsSomeNamespace_NsSomeInnerNamespace.def("c_string_list_total_size",
                 [](const std::vector<std::string> & items, BoxedInt & output_0, BoxedInt & output_1) -> size_t
                 {
                     auto c_string_list_total_size_adapt_fixed_size_c_arrays = [](const char * const items[], int items_count, BoxedInt & output_0, BoxedInt & output_1) -> size_t
@@ -1289,10 +1289,10 @@ void py_init_module_lg_mylib(py::module& m)
     } // </namespace SomeNamespace>
 
     { // <namespace Inner>
-        py::module_ pyNamespaceInner = m.def_submodule("Inner", "this is an inner namespace (this comment should become the namespace doc)");
-        pyNamespaceInner.def("foo_inner",
+        py::module_ pyNsInner = m.def_submodule("Inner", "this is an inner namespace (this comment should become the namespace doc)");
+        pyNsInner.def("foo_inner",
             Mylib::Inner::FooInner);
-        pyNamespaceInner.def("foo_inner2",
+        pyNsInner.def("foo_inner2",
             Mylib::Inner::FooInner2);
     } // </namespace Inner>
     ////////////////////    </generated_from:mylib_amalgamation.h>    ////////////////////

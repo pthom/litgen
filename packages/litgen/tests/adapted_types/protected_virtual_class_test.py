@@ -76,12 +76,12 @@ def test_protected_virtual_class():
         generated_code.pydef_code,
         """
         { // <namespace Root>
-            py::module_ pyNamespaceRoot = m.def_submodule("Root", "");
+            py::module_ pyNsRoot = m.def_submodule("Root", "");
             { // <namespace Inner>
-                py::module_ pyNamespaceRoot_NamespaceInner = pyNamespaceRoot.def_submodule("Inner", "");
-                auto pyNamespaceRoot_NamespaceInner_ClassMyVirtualClass =
+                py::module_ pyNsRoot_NsInner = pyNsRoot.def_submodule("Inner", "");
+                auto pyNsRoot_NsInner_ClassMyVirtualClass =
                     py::class_<Root::Inner::MyVirtualClass, Root::Inner::MyVirtualClass_trampoline>
-                        (pyNamespaceRoot_NamespaceInner, "MyVirtualClass", "")
+                        (pyNsRoot_NsInner, "MyVirtualClass", "")
                     .def(py::init<>()) // implicit default constructor
                     .def("foo_concrete",
                         &Root::Inner::MyVirtualClass::foo_concrete, py::arg("x"), py::arg("name"))

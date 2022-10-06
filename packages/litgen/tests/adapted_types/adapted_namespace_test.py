@@ -83,10 +83,10 @@ namespace Main  // This namespace should not be outputted as a submodule
                 FooRoot);
 
             { // <namespace Inner>
-                py::module_ pyNamespaceInner = m.def_submodule("Inner", "this is an inner namespace (this comment should become the namespace doc)");
-                pyNamespaceInner.def("foo_inner",
+                py::module_ pyNsInner = m.def_submodule("Inner", "this is an inner namespace (this comment should become the namespace doc)");
+                pyNsInner.def("foo_inner",
                     Main::Inner::FooInner);
-                pyNamespaceInner.def("foo_inner2",
+                pyNsInner.def("foo_inner2",
                     Main::Inner::FooInner2);
             } // </namespace Inner>
     """,

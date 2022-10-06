@@ -330,10 +330,10 @@ def test_vectorization():
         generated_code.pydef_code,
         """
         { // <namespace MathFunctions>
-            py::module_ pyNamespaceMathFunctions = m.def_submodule("MathFunctions", "");
-            pyNamespaceMathFunctions.def("vectorizable_sum",
+            py::module_ pyNsMathFunctions = m.def_submodule("MathFunctions", "");
+            pyNsMathFunctions.def("vectorizable_sum",
                 MathFunctions::vectorizable_sum, py::arg("x"), py::arg("y"));
-            pyNamespaceMathFunctions.def("v_vectorizable_sum_v",
+            pyNsMathFunctions.def("v_vectorizable_sum_v",
                 py::vectorize(MathFunctions::vectorizable_sum), py::arg("x"), py::arg("y"));
         } // </namespace MathFunctions>
     """,

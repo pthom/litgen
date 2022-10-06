@@ -68,10 +68,10 @@ namespace Main
             Main::FooMain);
 
         { // <namespace Inner>
-            py::module_ pyNamespaceInner = m.def_submodule("Inner", "This is the inner namespace");
-            pyNamespaceInner.def("foo_inner",
+            py::module_ pyNsInner = m.def_submodule("Inner", "This is the inner namespace");
+            pyNsInner.def("foo_inner",
                 Main::Inner::FooInner);
-            pyNamespaceInner.def("foo_inner2",
+            pyNsInner.def("foo_inner2",
                 Main::Inner::FooInner2);
         } // </namespace Inner>
     """,
