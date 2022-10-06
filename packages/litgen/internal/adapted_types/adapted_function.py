@@ -552,7 +552,7 @@ class AdaptedFunction(AdaptedElement):
 
         _i_ = self.options.indent_cpp_spaces()
 
-        arg_types = function_infos.parameter_list.types_only_for_template()
+        arg_types = function_infos.parameter_list.str_types_only_for_overload()
         location = self.info_original_location_cpp()
 
         if len(self._pydef_pyarg_list()) > 0:
@@ -682,7 +682,7 @@ class AdaptedFunction(AdaptedElement):
             replace_tokens.function_pointer = "&" + replace_tokens.function_pointer
 
         if self.is_overloaded:
-            overload_types = self.cpp_element().parameter_list.types_only_for_template()
+            overload_types = self.cpp_element().parameter_list.str_types_only_for_overload()
             replace_tokens.function_pointer = f"py::overload_cast<{overload_types}>({replace_tokens.function_pointer})"
 
         # fill pydef_end_arg_docstring_returnpolicy

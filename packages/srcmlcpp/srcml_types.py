@@ -1027,8 +1027,14 @@ class CppParameterList(CppElement):
         r = ", ".join(names)
         return r
 
-    def types_only_for_template(self) -> str:
-        types = [param.full_type() for param in self.parameters]
+    def str_types_only_for_overload(self) -> str:
+        def type_with_star_for_array(param: CppParameter) -> str:
+            type_str = param.decl.cpp_type.str_code()
+            if param.decl.c_array_code.startswith("["):
+                type_str += " *"
+            return type_str
+
+        types = [type_with_star_for_array(param) for param in self.parameters]
         r = ", ".join(types)
         return r
 
