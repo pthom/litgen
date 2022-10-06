@@ -7,6 +7,7 @@ from srcmlcpp.srcml_types import *
 
 from litgen.internal import cpp_to_python
 from litgen.internal.context.litgen_context import LitgenContext
+from litgen import LitgenOptions
 from litgen.internal.adapted_types.adapted_decl import AdaptedDecl
 from litgen.internal.adapted_types.adapted_element import AdaptedElement
 
@@ -184,6 +185,21 @@ class AdaptedFunction(AdaptedElement):
 
         adapt_function_params.apply_all_adapters(self)
         self._store_replacement_in_context()
+
+    @staticmethod
+    def is_function_publishable(options: LitgenOptions, cpp_function: CppFunctionDecl) -> bool:
+        if code_utils.does_match_regex(options.fn_exclude_by_name__regex, cpp_function.function_name):
+            return False
+        elif len(options.srcml_options.functions_api_prefixes_list()) > 0 and options.fn_exclude_non_api:
+            if not hasattr(cpp_function, "return_type"):
+                return True
+            has_api_prefix = False
+            for api_prefix in options.srcml_options.functions_api_prefixes_list():
+                if api_prefix in cpp_function.return_type.specifiers:
+                    has_api_prefix = True
+            return has_api_prefix
+        else:
+            return True
 
     # override
     def cpp_element(self) -> CppFunctionDecl:

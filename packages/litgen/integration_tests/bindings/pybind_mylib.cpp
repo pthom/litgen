@@ -618,7 +618,7 @@ void py_init_module_lg_mylib(py::module& m)
 
     auto pyClassMyClass =
         py::class_<MyClass>
-            (m, "MyClass", " This is the class doc. It will be published as MyClass.__doc__\n The \"// MY_API\" comment after the class decl indicates that this class will be published.\n it is necessary, since `options.srcml_options.api_suffixes = \"MY_API\"`\n was set inside autogenerate_mylib.py")
+            (m, "MyClass", "This is the class doc. It will be published as MyClass.__doc__")
         .def(py::init<int, const std::string &>(),
             py::arg("factor") = 10, py::arg("message") = "hello")
         .def_readwrite("factor", &MyClass::factor, "")

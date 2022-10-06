@@ -496,9 +496,6 @@ class ClassEnum(Enum):
 
 
 // This is the class doc. It will be published as MyClass.__doc__
-// The "// MY_API" comment after the class decl indicates that this class will be published.
-// it is necessary, since `options.srcml_options.api_suffixes = "MY_API"`
-// was set inside autogenerate_mylib.py
 class MyClass
 {
 public:
@@ -548,8 +545,8 @@ public:
     // set_message: another example of simple method
     MY_API void set_message(const std::string & m) { message = m;}
 
-    // unpublished_calc: this function should not be published (no MY_API marker)
-    int unpublished_calc(int x) { return x * factor + delta + 3;}
+    // unpublished_method: this function should not be published (no MY_API marker)
+    int unpublished_method(int x) { return x * factor + delta + 3;}
 
     ///////////////////////////////////////////////////////////////////////////
     // Static method

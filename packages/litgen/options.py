@@ -30,9 +30,8 @@ class LitgenOptions:
     # There are interesting options to set in SrcmlOptions (see srcmlcpp/srcml_options.py)
     #
     # Notably:
-    # * fill srcml_options.functions_api_prefixes
-    #   (the prefixes that denotes the functions that shall be published)
-    # * Also, fill the excludes if you encounter issues with some functions or declarations you want to ignore
+    # * fill srcml_options.functions_api_prefixes: the prefix(es) that denotes exported dll functions
+    # * also set LitgenOptions.fn_exclude_non_api=True if you want to exclude non api functions and methods
     srcml_options: SrcmlOptions
 
     ################################################################################
@@ -104,6 +103,11 @@ class LitgenOptions:
     ################################################################################
     #    <functions and method adaptations>
     ################################################################################
+
+    # fn_exclude_non_api:
+    # if srcml_options.functions_api_prefixes is filled, and fn_exclude_non_api=True,
+    # then only functions with an api marker will be exported.
+    fn_exclude_non_api: bool = True
 
     # Exclude certain functions and methods by a regex on their name
     fn_exclude_by_name__regex: str = ""

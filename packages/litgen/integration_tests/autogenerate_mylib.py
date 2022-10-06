@@ -42,6 +42,7 @@ def mylib_litgen_options() -> litgen.LitgenOptions:
 
     # require MY_API for all exported functions
     options.srcml_options.functions_api_prefixes = "MY_API"
+    options.fn_exclude_non_api = True
 
     options.class_exclude_by_name__regex = "Detail$"
     options.enum_exclude_by_name__regex = "Detail$"

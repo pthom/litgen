@@ -101,7 +101,10 @@ def play_virtual_method() -> None:
 
 def play() -> None:
     code = """
-    MY_API int foo() { return 42; }
+    struct Foo
+    {
+        int foo() { return 42; }
+    };
     """
     options = litgen.LitgenOptions()
     options.srcml_options.functions_api_prefixes = "MY_API"

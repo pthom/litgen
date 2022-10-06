@@ -553,29 +553,6 @@ def is_operator_function(element_c: CppElementAndComment) -> bool:
         return type_attr == "operator"
 
 
-def _shall_publish_function(function_c: CppElementAndComment, options: SrcmlOptions) -> bool:
-    if len(options.functions_api_prefixes) == 0:
-        return True
-    for child_fn in function_c.srcml_xml:
-        child_fn_tag = srcml_utils.clean_tag_or_attrib(child_fn.tag)
-        if child_fn_tag == "type":
-            for child_type in child_fn:
-                child_type_tag = srcml_utils.clean_tag_or_attrib(child_type.tag)
-                if child_type_tag == "name":
-                    typename = child_type.text
-                    if typename in options.functions_api_prefixes_list():
-                        return True
-    return False
-
-
-def _shall_publish(cpp_element: CppElementAndComment, options: SrcmlOptions) -> bool:
-    tag = cpp_element.tag()
-    if tag in ["function", "function_decl"]:
-        return _shall_publish_function(cpp_element, options)
-    else:
-        return True
-
-
 def shall_ignore_comment(cpp_comment: CppComment, last_ignored_child: Optional[CppElementAndComment]) -> bool:
     ignore_comment = False
     if last_ignored_child is not None:
@@ -608,9 +585,6 @@ def fill_block(options: SrcmlOptions, element: SrcmlXmlWrapper, inout_block_cont
     children: List[CppElementAndComment] = srcml_comments.get_children_with_comments(element)
     for _i, child_c in enumerate(children):
         global_progress_bars().set_current_line(_PROGRESS_BAR_TITLE_SRCML_PARSE, child_c.start().line)
-
-        if not _shall_publish(child_c, options):
-            continue
 
         child_tag = child_c.tag()
         child_name = child_c.name_code()

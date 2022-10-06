@@ -479,18 +479,18 @@ Problem 3: dans lg_test_runner (integration tests), tout est refusé (trouve pas
 
 *** auto __repr__ for structs
 
+*** keep pointer and references layout inside CppType (int *x vs int *x vs int * x)
 
 ** Wish List / Easy
 
-
+  add functions_api_prefixes via property to LitgenOptions?
   generator: error message with default pybind file template
+
+  named_number_macros => LitgenOptions
 
   stackoverflow: review question ("type annotation: warn about mutable members becoming instance when initialized at decl site")
     https://docs.python.org/3/library/typing.html#typing.ClassVar
 
-  keep pointer and references layout inside CppType (int *x vs int *x vs int * x)
-
-   add functions_api_prefixes via property to LitgenOptions?
 
    test trampoline with  test with py-mahi-gui
 

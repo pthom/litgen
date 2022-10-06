@@ -11,10 +11,12 @@ class SrcmlOptions:
     #    <API prefixes for functions / API comment suffixes for classes>
     ################################################################################
 
-    # Prefixes that denote functions that should be parsed (
-    # For example you could use "MY_API" which would be defined as `__declspec(dllexport|dllimport)` on windows
-    # if empty, all function are parsed.
+    # Prefixes that denote exported dll functions.
+    # For example, you could use "MY_API" which would be defined as `__declspec(dllexport|dllimport)` on windows
     # You can have several prefixes: separate them with a "|", for example: "MY_API|OTHER_API"
+    #
+    # If you filled SrcmlOptions.functions_api_prefixes, then those prefixes will be mentioned
+    # as specifiers for the return type of the functions.
     functions_api_prefixes: str = ""
 
     ################################################################################

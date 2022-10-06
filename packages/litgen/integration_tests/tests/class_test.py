@@ -70,6 +70,10 @@ def test_struct_not_registered():
     assert "Struct_Detail" not in dir(lg_mylib)
 
 
+def test_unpublished_method():
+    assert "unpublished_method" not in dir(lg_mylib.MyClass)
+
+
 def test_singleton():
     i = lg_mylib.MySingletonClass.instance()
     assert i.value == 0
