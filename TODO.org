@@ -482,8 +482,6 @@ Problem 3: dans lg_test_runner (integration tests), tout est refusé (trouve pas
 
 ** Wish List / Easy
 
-  Suffixe MY_API sur namespace ne sert qu'a faire ch...
-    Plutot faire une liste de namespace exclus
 
   Supprimer MY_API in pybind file
 

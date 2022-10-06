@@ -20,26 +20,20 @@ enum BasicEnum
 };
 
 
-// ClassEnumNotRegistered should not be published, as it misses the marker "// MY_API"
-// By default, all enums, namespaces and classes are published,
-// but you can decide to include only "marked" ones, via this litgen option:
-//       options.srcml_options.api_suffixes = "MY_API"
-//
-// Note: Do not remove the empty line below, otherwise this comment would become part of
-//       the enum's doc, and cause it to be registered (since it contains "MY_API")
-
-enum class ClassEnumNotRegistered
+// ClassEnum: a class enum that should be published
+enum class ClassEnum
 {
-    On,
+    On = 0,
     Off,
     Unknown
 };
 
 
-// ClassEnum: a class enum that should be published
-enum class ClassEnum
+// EnumDetail should not be published, as its name ends with "Detail"
+// (see `options.enum_exclude_by_name__regex = "Detail$"` inside autogenerate_mylib.py)
+enum class EnumDetail
 {
-    On = 0,
+    On,
     Off,
     Unknown
 };

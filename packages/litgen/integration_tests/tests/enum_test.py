@@ -8,7 +8,7 @@ def test_basic_enum():
 
 
 def test_class_enum_not_registered():
-    assert "ClassEnumNotRegistered" not in dir(lg_mylib)
+    assert "EnumDetail" not in dir(lg_mylib)
 
 
 def test_class_enum():

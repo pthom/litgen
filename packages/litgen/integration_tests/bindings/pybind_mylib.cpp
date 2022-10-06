@@ -610,12 +610,6 @@ void py_init_module_lg_mylib(py::module& m)
         .value("b", BasicEnum_b, "This is value b");
 
 
-    py::enum_<ClassEnumNotRegistered>(m, "ClassEnumNotRegistered", py::arithmetic(), "")
-        .value("on", ClassEnumNotRegistered::On, "")
-        .value("off", ClassEnumNotRegistered::Off, "")
-        .value("unknown", ClassEnumNotRegistered::Unknown, "");
-
-
     py::enum_<ClassEnum>(m, "ClassEnum", py::arithmetic(), "ClassEnum: a class enum that should be published")
         .value("on", ClassEnum::On, "")
         .value("off", ClassEnum::Off, "")

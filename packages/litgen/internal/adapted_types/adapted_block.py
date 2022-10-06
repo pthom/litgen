@@ -69,7 +69,11 @@ class AdaptedBlock(AdaptedElement):
                     is_overloaded = self.cpp_element().is_function_overloaded(child)
                     self.adapted_elements.append(AdaptedFunction(self.lg_context, child, is_overloaded))
                 elif isinstance(child, CppEnum):
-                    self.adapted_elements.append(AdaptedEnum(self.lg_context, child))
+                    is_excluded_by_name = code_utils.does_match_regex(
+                        self.options.enum_exclude_by_name__regex, child.enum_name
+                    )
+                    if not is_excluded_by_name:
+                        self.adapted_elements.append(AdaptedEnum(self.lg_context, child))
                 elif isinstance(child, CppNamespace):
                     is_anonymous_namespace = child.ns_name == ""
                     is_excluded_by_name = code_utils.does_match_regex(

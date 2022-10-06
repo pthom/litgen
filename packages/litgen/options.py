@@ -88,6 +88,8 @@ class LitgenOptions:
     ################################################################################
     #    <enum adaptations>
     ################################################################################
+    # Exclude certain enums by a regex on their name
+    enum_exclude_by_name__regex: str = ""
     # Remove the typical "EnumName_" prefix from enum values.
     # For example, with the C enum:
     #     enum MyEnum { MyEnum_A = 0, MyEnum_B };
