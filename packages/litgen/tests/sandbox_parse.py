@@ -101,19 +101,11 @@ def play_virtual_method() -> None:
 
 def play() -> None:
     code = """
-namespace MathFunctions
-{
-    double vectorizable_sum(float x, double y)
-    {
-        return (double) x + y;
-    }
-}
+    MY_API int foo() { return 42; }
     """
     options = litgen.LitgenOptions()
-    options.fn_namespace_vectorize__regex = r"^MathFunctions$"
-    options.fn_vectorize__regex = r".*"
-    options.fn_vectorize_prefix = "v_"
-    options.fn_vectorize_suffix = "_v"
+    options.srcml_options.functions_api_prefixes = "MY_API"
+
     generated_code = litgen.generate_code(options, code)
     print(generated_code.pydef_code)
     print(generated_code.stub_code)

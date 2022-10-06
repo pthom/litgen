@@ -483,9 +483,6 @@ Problem 3: dans lg_test_runner (integration tests), tout est refusé (trouve pas
 ** Wish List / Easy
 
 
-  Supprimer MY_API in pybind file
-
-
   generator: error message with default pybind file template
 
   stackoverflow: review question ("type annotation: warn about mutable members becoming instance when initialized at decl site")

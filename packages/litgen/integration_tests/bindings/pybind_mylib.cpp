@@ -41,29 +41,29 @@ class MyVirtualClass_trampoline : public MyVirtualClass
 public:
     using MyVirtualClass::MyVirtualClass;
 
-    MY_API int foo_virtual_public_pure() const override
+    int foo_virtual_public_pure() const override
     {
         PYBIND11_OVERRIDE_PURE_NAME(
-            MY_API int, // return type
+            int, // return type
             Root::Inner::MyVirtualClass, // parent class
             "foo_virtual_public_pure", // function name (python)
             foo_virtual_public_pure // function name (c++)
         );
     }
-    MY_API int foo_virtual_protected(int x) const override
+    int foo_virtual_protected(int x) const override
     {
         PYBIND11_OVERRIDE_NAME(
-            MY_API int, // return type
+            int, // return type
             Root::Inner::MyVirtualClass, // parent class
             "foo_virtual_protected", // function name (python)
             foo_virtual_protected, // function name (c++)
             x // params
         );
     }
-    MY_API std::string foo_virtual_protected_const_const(const std::string & name) const override
+    std::string foo_virtual_protected_const_const(const std::string & name) const override
     {
         PYBIND11_OVERRIDE_NAME(
-            MY_API std::string, // return type
+            std::string, // return type
             Root::Inner::MyVirtualClass, // parent class
             "foo_virtual_protected_const_const", // function name (python)
             foo_virtual_protected_const_const, // function name (c++)
@@ -80,38 +80,38 @@ class MyVirtualDerivate_trampoline : public MyVirtualDerivate
 public:
     using MyVirtualDerivate::MyVirtualDerivate;
 
-    MY_API int foo_derivate() override
+    int foo_derivate() override
     {
         PYBIND11_OVERRIDE_NAME(
-            MY_API int, // return type
+            int, // return type
             Root::Inner::MyVirtualDerivate, // parent class
             "foo_derivate", // function name (python)
             foo_derivate // function name (c++)
         );
     }
-    MY_API int foo_virtual_public_pure() const override
+    int foo_virtual_public_pure() const override
     {
         PYBIND11_OVERRIDE_PURE_NAME(
-            MY_API int, // return type
+            int, // return type
             Root::Inner::MyVirtualDerivate, // parent class
             "foo_virtual_public_pure", // function name (python)
             foo_virtual_public_pure // function name (c++)
         );
     }
-    MY_API int foo_virtual_protected(int x) const override
+    int foo_virtual_protected(int x) const override
     {
         PYBIND11_OVERRIDE_NAME(
-            MY_API int, // return type
+            int, // return type
             Root::Inner::MyVirtualDerivate, // parent class
             "foo_virtual_protected", // function name (python)
             foo_virtual_protected, // function name (c++)
             x // params
         );
     }
-    MY_API std::string foo_virtual_protected_const_const(const std::string & name) const override
+    std::string foo_virtual_protected_const_const(const std::string & name) const override
     {
         PYBIND11_OVERRIDE_NAME(
-            MY_API std::string, // return type
+            std::string, // return type
             Root::Inner::MyVirtualDerivate, // parent class
             "foo_virtual_protected_const_const", // function name (python)
             foo_virtual_protected_const_const, // function name (c++)

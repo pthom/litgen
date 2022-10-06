@@ -598,7 +598,12 @@ class CppType(CppElement):
     # "unsigned int" -> ["unsigned", "int"]
     typenames: List[str]
 
-    # specifiers: could be ["const"], ["inline", "static", "const", "virtual"], ["extern"], ["constexpr"], etc.
+    # specifiers: a list of possible specifiers
+    # Acceptable specifiers: const, inline, virtual, extern, constexpr, etc.
+    #
+    # Important:
+    # if you filled SrcmlOptions.functions_api_prefixes, then those prefixes will be mentioned
+    #  as specifiers for the return type of the functions.
     specifiers: List[str]
 
     # modifiers: could be ["*"], ["&&"], ["&"], ["*", "*"], ["..."]
@@ -618,7 +623,7 @@ class CppType(CppElement):
     def authorized_modifiers() -> List[str]:
         return ["*", "&", "&&", "..."]
 
-    def str_return_type(self) -> str:
+    def str_return_type(self, remove_api_prefix: bool = True) -> str:
         # Possible specifiers : "const" "inline" "static" "virtual" "extern" "constexpr"
         # "inline", "virtual", "extern" and "static" do not change the return type
         specifiers = copy.copy(self.specifiers)
@@ -635,9 +640,14 @@ class CppType(CppElement):
         name = " ".join(self.typenames)
 
         strs = [specifiers_str, name, modifiers_str]
-        r = code_utils.join_remove_empty(" ", strs)
+        return_type_str = code_utils.join_remove_empty(" ", strs)
 
-        return r
+        if remove_api_prefix:
+            for api_prefix in self.options.functions_api_prefixes_list():
+                if return_type_str.startswith(api_prefix):
+                    return_type_str = return_type_str[len(api_prefix) :].lstrip()
+
+        return return_type_str
 
     def str_code(self) -> str:
         nb_const = self.specifiers.count("const")
