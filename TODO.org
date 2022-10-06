@@ -482,18 +482,7 @@ Problem 3: dans lg_test_runner (integration tests), tout est refusé (trouve pas
 *** keep pointer and references layout inside CppType (int *x vs int *x vs int * x)
 
 ** Wish List / Easy
-
-  work on auto return type
-
-  generator: error message with default pybind file template
-
-
-  test trampoline with  test with py-mahi-gui
-
-
-** test multiple litgen_glue_code with BoxedType: is there a link error / duplication?
-    remove bindings/litgen_glue_code.h?
-
+   Warning: Warning:
 
 ** Template classes and functions
 https://pybind11.readthedocs.io/en/stable/advanced/functions.html#binding-functions-with-template-parameters
@@ -516,6 +505,7 @@ https://pybind11.readthedocs.io/en/stable/advanced/classes.html#deepcopy-support
 
 
 
+** test trampoline with  test with py-mahi-gui
 ** Interactive demo
 
 
