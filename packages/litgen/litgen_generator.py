@@ -26,9 +26,11 @@ class _GeneratedCode:
 class LitgenGenerator:
     lg_context: LitgenContext
     _generated_codes: List[_GeneratedCode]
+    omit_boxed_types: bool
 
-    def __init__(self, options: LitgenOptions) -> None:
+    def __init__(self, options: LitgenOptions, omit_boxed_types: bool = False) -> None:
         self.lg_context = LitgenContext(options)
+        self.omit_boxed_types = omit_boxed_types
         self._generated_codes = []
 
     def process_cpp_file(self, filename: str) -> None:
@@ -56,7 +58,7 @@ class LitgenGenerator:
 
     def has_glue_code(self) -> bool:
         r = (
-            self.has_boxed_types()
+            (self.has_boxed_types() and not self.omit_boxed_types)
             or len(self.lg_context.virtual_methods_glue_code) > 0
             or len(self.lg_context.protected_methods_glue_code) > 0
         )
@@ -64,7 +66,8 @@ class LitgenGenerator:
 
     def glue_code(self) -> CppCode:
         r = ""
-        r += self._boxed_types_cpp_code()
+        if not self.omit_boxed_types:
+            r += self._boxed_types_cpp_code()
         r += self.lg_context.virtual_methods_glue_code
         r += self.lg_context.protected_methods_glue_code
         return r
@@ -108,6 +111,8 @@ class LitgenGenerator:
         self._generated_codes.append(generated_code)
 
     def _boxed_types_generated_code(self) -> Optional[_GeneratedCode]:
+        if self.omit_boxed_types:
+            return None
         if not self.has_boxed_types():
             return None
         boxed_types_cpp_code = self._boxed_types_cpp_code()
@@ -138,9 +143,10 @@ def write_generated_code_for_files(
     output_cpp_pydef_file: str = "",
     output_stub_pyi_file: str = "",
     output_cpp_glue_code_file: str = "",
+    omit_boxed_types: bool = False,
 ) -> None:
 
-    generator = LitgenGenerator(options)
+    generator = LitgenGenerator(options, omit_boxed_types)
     for cpp_header in input_cpp_header_files:
         generator.process_cpp_file(cpp_header)
     generator.write_generated_code(output_cpp_pydef_file, output_stub_pyi_file, output_cpp_glue_code_file)
@@ -152,9 +158,15 @@ def write_generated_code_for_file(
     output_cpp_pydef_file: str = "",
     output_stub_pyi_file: str = "",
     output_cpp_glue_code_file: str = "",
+    omit_boxed_types: bool = False,
 ) -> None:
     return write_generated_code_for_files(
-        options, [input_cpp_header_file], output_cpp_pydef_file, output_stub_pyi_file, output_cpp_glue_code_file
+        options,
+        [input_cpp_header_file],
+        output_cpp_pydef_file,
+        output_stub_pyi_file,
+        output_cpp_glue_code_file,
+        omit_boxed_types=omit_boxed_types,
     )
 
 
@@ -165,8 +177,8 @@ class GeneratedCodes:
     glue_code: CppCode
 
 
-def generate_code(options: LitgenOptions, code: CppCode) -> GeneratedCodes:
-    generator = LitgenGenerator(options)
+def generate_code(options: LitgenOptions, code: CppCode, omit_boxed_types: bool = False) -> GeneratedCodes:
+    generator = LitgenGenerator(options, omit_boxed_types)
     generator._process_cpp_code(code, "")
     r = GeneratedCodes(
         pydef_code=generator.pydef_code(),
@@ -185,15 +197,15 @@ def _read_code(options: LitgenOptions, filename: str) -> str:
 
 class LitgenGeneratorTestsHelper:
     @staticmethod
-    def code_to_pydef(options: LitgenOptions, code: str) -> str:
-        generator = LitgenGenerator(options)
+    def code_to_pydef(options: LitgenOptions, code: str, omit_boxed_types: bool = False) -> str:
+        generator = LitgenGenerator(options, omit_boxed_types)
         generator._process_cpp_code(code, "")
         r = generator.pydef_code()
         return r
 
     @staticmethod
-    def code_to_stub(options: LitgenOptions, code: str) -> str:
-        generator = LitgenGenerator(options)
+    def code_to_stub(options: LitgenOptions, code: str, omit_boxed_types: bool = False) -> str:
+        generator = LitgenGenerator(options, omit_boxed_types)
         generator._process_cpp_code(code, "")
         r = generator.stub_code()
         return r

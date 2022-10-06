@@ -141,10 +141,11 @@ def litgen_options_imgui() -> LitgenOptions:
     options.fn_params_exclude_types__regex = r"Callback$"
 
     # Version where we use Boxed types everywhere
-    # options.fn_params_adapt_modifiable_immutable_regexes = [r".*"]
+    # options.fn_params_replace_modifiable_immutable_by_boxed__regex = r".*"
     # Version where we return tuples
-    options.fn_params_replace_modifiable_c_array_by_boxed__regex = ""
     options.fn_params_output_modifiable_immutable_to_return__regex = r".*"
+
+    options.fn_params_replace_modifiable_c_array_by_boxed__regex = ""
 
     options.srcml_options.flag_show_progress = True
 
