@@ -24,3 +24,15 @@ def test_doc():
 def test_generic_function():
     r = lg_mylib.my_generic_function(1, 2, 3, a=4, b=5, c=6)
     assert r == 9  # == args.size() + 2 * kwargs.size()
+
+
+def test_vectorizable_functions():
+    assert lg_mylib.MathFunctions.vectorizable_sum(1, 2) == 3
+
+    import numpy as np
+
+    x = np.array([[1, 3], [5, 7]])
+    y = np.array([[2, 4], [6, 8]])
+    z = lg_mylib.MathFunctions.vectorizable_sum(x, y)
+    expected = np.array([[3.0, 7.0], [11.0, 15.0]])
+    assert (z == expected).all()

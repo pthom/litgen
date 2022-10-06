@@ -69,6 +69,10 @@ def mylib_litgen_options() -> litgen.LitgenOptions:
     options.class_expose_protected_methods__regex = "^MyVirtual"
     options.class_override_virtual_methods_in_python__regex = "^MyVirtual"
 
+    options.fn_namespace_vectorize__regex: str = r"^MathFunctions$"
+    options.fn_vectorize__regex = r".*"
+    # options.fn_vectorize_suffix = "_vectorized"
+
     #
     # Sandbox for other options
     #

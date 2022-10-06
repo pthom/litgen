@@ -831,6 +831,14 @@ void py_init_module_lg_mylib(py::module& m)
             },     py::arg("o"))
         ;
 
+    { // <namespace MathFunctions>
+        py::module_ pyNamespaceMathFunctions = m.def_submodule("MathFunctions", " Vectorizable functions example\n    Numeric functions (i.e. function accepting and returning only numeric params or py::array), can be vectorized\n    i.e. they will accept numpy arrays as an input.\n\n Auto-vectorization is enabled via the following options:\n     options.fn_namespace_vectorize__regex: str = r\"^MathFunctions$\"\n     options.fn_vectorize__regex = r\".*\"");
+        pyNamespaceMathFunctions.def("vectorizable_sum",
+            MathFunctions::vectorizable_sum, py::arg("x"), py::arg("y"));
+        pyNamespaceMathFunctions.def("vectorizable_sum",
+            py::vectorize(MathFunctions::vectorizable_sum), py::arg("x"), py::arg("y"));
+    } // </namespace MathFunctions>
+
     { // <namespace Animals>
         py::module_ pyNamespaceAnimals = m.def_submodule("Animals", "");
         auto pyNamespaceAnimals_ClassAnimal =

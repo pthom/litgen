@@ -1,5 +1,6 @@
 from srcmlcpp.srcml_types import *
 
+import litgen
 from litgen.options import LitgenOptions
 from litgen.litgen_generator import LitgenGeneratorTestsHelper
 
@@ -303,4 +304,51 @@ def test_py_none_param():
         m.def("foo",
             foo, py::arg("a") = Widget(NULL));
         """,
+    )
+
+
+def test_vectorization():
+    code = """
+    namespace MathFunctions
+    {
+        double vectorizable_sum(float x, double y)
+        {
+            return (double) x + y;
+        }
+    }
+        """
+
+    options = litgen.LitgenOptions()
+    options.fn_namespace_vectorize__regex = r"^MathFunctions$"
+    options.fn_vectorize__regex = r".*"
+    options.fn_vectorize_prefix = "v_"
+    options.fn_vectorize_suffix = "_v"
+
+    generated_code = litgen.generate_code(options, code)
+
+    code_utils.assert_are_codes_equal(
+        generated_code.pydef_code,
+        """
+        { // <namespace MathFunctions>
+            py::module_ pyNamespaceMathFunctions = m.def_submodule("MathFunctions", "");
+            pyNamespaceMathFunctions.def("vectorizable_sum",
+                MathFunctions::vectorizable_sum, py::arg("x"), py::arg("y"));
+            pyNamespaceMathFunctions.def("v_vectorizable_sum_v",
+                py::vectorize(MathFunctions::vectorizable_sum), py::arg("x"), py::arg("y"));
+        } // </namespace MathFunctions>
+    """,
+    )
+    code_utils.assert_are_codes_equal(
+        generated_code.stub_code,
+        """
+        # <submodule MathFunctions>
+        class MathFunctions: # Proxy class that introduces typings for the *submodule* MathFunctions
+            # (This corresponds to a C++ namespace. All method are static!)
+            def vectorizable_sum(x: float, y: float) -> float:
+                pass
+            def v_vectorizable_sum_v(x: np.ndarray, y: np.ndarray) -> np.ndarray:
+                pass
+
+        # </submodule MathFunctions>
+    """,
     )

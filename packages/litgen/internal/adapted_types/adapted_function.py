@@ -163,6 +163,7 @@ class AdaptedFunction(AdaptedElement):
     return_value_policy: str = ""
     is_overloaded: bool = False
     is_type_ignore: bool = False
+    is_vectorize_impl: bool = False
 
     def __init__(self, lg_context: LitgenContext, function_infos: CppFunctionDecl, is_overloaded: bool) -> None:
         from litgen.internal import adapt_function_params
@@ -187,6 +188,13 @@ class AdaptedFunction(AdaptedElement):
     # override
     def cpp_element(self) -> CppFunctionDecl:
         return cast(CppFunctionDecl, self._cpp_element)
+
+    def shall_vectorize(self) -> bool:
+        ns_name = self.cpp_element().cpp_scope(include_self=False).str_cpp()
+        match_ns_name = code_utils.does_match_regex(self.options.fn_namespace_vectorize__regex, ns_name)
+        match_fn_name = code_utils.does_match_regex(self.options.fn_vectorize__regex, self.cpp_element().function_name)
+        r = match_ns_name and match_fn_name and not self.is_vectorize_impl
+        return r
 
     def _store_replacement_in_context(self) -> None:
         return
@@ -299,6 +307,9 @@ class AdaptedFunction(AdaptedElement):
                 continue
 
             param_type_python = cpp_to_python.type_to_python(self.options, param_type_cpp)
+            if self.is_vectorize_impl:
+                param_type_python = "np.ndarray"
+
             param_default_value = cpp_to_python.var_value_to_python(self.lg_context, param.default_value())
 
             param_code = f"{param_name_python}: {param_type_python}"
@@ -332,9 +343,17 @@ class AdaptedFunction(AdaptedElement):
         else:
             type_ignore = ""
 
-        function_def_code = f"def {self.function_name_python()}("
+        function_name_python = self.function_name_python()
+        if self.is_vectorize_impl:
+            function_name_python = (
+                self.options.fn_vectorize_prefix + function_name_python + self.options.fn_vectorize_suffix
+            )
+        function_def_code = f"def {function_name_python}("
 
         return_code = f") -> {self.return_type_python()}:"
+        if self.is_vectorize_impl:
+            return_code = ") -> np.ndarray:"
+
         params_strs = self._paramlist_call_python()
 
         # Try to add function decl + all params and return type on the same line
@@ -372,6 +391,11 @@ class AdaptedFunction(AdaptedElement):
 
         if self.cpp_adapted_function.is_static_method():
             r = ["# (static method)"] + r
+
+        if self.shall_vectorize():
+            new_vectorized_function = copy.copy(self)
+            new_vectorized_function.is_vectorize_impl = True
+            r += new_vectorized_function._str_stub_lines()
 
         return r
 
@@ -601,7 +625,7 @@ class AdaptedFunction(AdaptedElement):
         """Create the full code of the pydef, with a direct call to the function or method"""
         template_code = code_utils.unindent_code(
             """
-            {module_or_class}.{def_maybe_static}("{function_name}",{location}
+            {module_or_class}.{def_maybe_static}("{function_name_python}",{location}
             {_i_}{function_pointer}{maybe_comma}{pydef_end_arg_docstring_returnpolicy}"""
         )[1:]
 
@@ -615,7 +639,12 @@ class AdaptedFunction(AdaptedElement):
         # fill module_or_class, function_name, location
         parent_cpp_module_var_name = cpp_to_python.cpp_scope_to_pybind_var_name(self.options, self.cpp_element())
         replace_tokens.module_or_class = "" if self.is_method() else parent_cpp_module_var_name
-        replace_tokens.function_name = self.function_name_python()
+        if self.is_vectorize_impl:
+            replace_tokens.function_name_python = (
+                self.options.fn_vectorize_prefix + self.function_name_python() + self.options.fn_vectorize_suffix
+            )
+        else:
+            replace_tokens.function_name_python = self.function_name_python()
         replace_tokens.location = self.info_original_location_cpp()
         replace_tokens.def_maybe_static = "def_static" if self.cpp_element().is_static() else "def"
 
@@ -623,7 +652,11 @@ class AdaptedFunction(AdaptedElement):
         function_name = self.cpp_element().function_name
         function_parent_scope = self.cpp_element().cpp_scope(False).str_cpp_prefix()
 
-        replace_tokens.function_pointer = f"{function_parent_scope}{function_name}"
+        if self.is_vectorize_impl:
+            replace_tokens.function_pointer = f"py::vectorize({function_parent_scope}{function_name})"
+        else:
+            replace_tokens.function_pointer = f"{function_parent_scope}{function_name}"
+
         if self.is_method():
             replace_tokens.function_pointer = "&" + replace_tokens.function_pointer
 
@@ -761,6 +794,12 @@ class AdaptedFunction(AdaptedElement):
             else:
                 code = self._pydef_without_lambda_str_impl()
         lines = code.split("\n")
+
+        if self.shall_vectorize():
+            new_vectorized_function = copy.copy(self)
+            new_vectorized_function.is_vectorize_impl = True
+            lines += new_vectorized_function._str_pydef_lines()
+
         return lines
 
     def __str__(self) -> str:

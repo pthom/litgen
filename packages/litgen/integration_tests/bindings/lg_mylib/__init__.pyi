@@ -96,6 +96,30 @@ def my_generic_function(*args, **kwargs) -> int:
 #
 #def my_mul(a: int, b: int) -> int:
 #    pass
+#
+#def my_generic_function(*args, **kwargs) -> int:
+#    """ This is a generic function for python, accepting (*args, **kwargs) as arguments"""
+#    pass
+#
+# # <submodule MathFunctions>
+#class MathFunctions: # Proxy class that introduces typings for the *submodule* MathFunctions
+#    # (This corresponds to a C++ namespace. All method are static!)
+#    """ Vectorizable functions example
+#        Numeric functions (i.e. function accepting and returning only numeric params or py::array), can be vectorized
+#        i.e. they will accept numpy arrays as an input.
+#
+#     Auto-vectorization is enabled via the following options:
+#         options.fn_namespace_vectorize__regex: str = r"^MathFunctions$"
+#         options.fn_vectorize__regex = r".*"
+#         options.fn_vectorize_prefix = "v_"
+#         options.fn_vectorize_suffix = "_v"
+#    """
+#    def vectorizable_sum(x: float, y: float) -> float:
+#        pass
+#    def vectorizable_sum(x: np.ndarray, y: np.ndarray) -> np.ndarray:
+#        pass
+#
+## </submodule MathFunctions>
 
 #////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 #                       mylib/header_filter_test.h included by mylib/mylib.h                                   //
@@ -720,6 +744,24 @@ class IntWrapperSpaceship:
 #//////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 ##include "mylib/sandbox.h"
+
+# <submodule MathFunctions>
+class MathFunctions: # Proxy class that introduces typings for the *submodule* MathFunctions
+    # (This corresponds to a C++ namespace. All method are static!)
+    """ Vectorizable functions example
+        Numeric functions (i.e. function accepting and returning only numeric params or py::array), can be vectorized
+        i.e. they will accept numpy arrays as an input.
+
+     Auto-vectorization is enabled via the following options:
+         options.fn_namespace_vectorize__regex: str = r"^MathFunctions$"
+         options.fn_vectorize__regex = r".*"
+    """
+    def vectorizable_sum(x: float, y: float) -> float:
+        pass
+    def vectorizable_sum(x: np.ndarray, y: np.ndarray) -> np.ndarray:
+        pass
+
+# </submodule MathFunctions>
 
 # <submodule Animals>
 class Animals: # Proxy class that introduces typings for the *submodule* Animals

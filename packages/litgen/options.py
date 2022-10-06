@@ -106,6 +106,26 @@ class LitgenOptions:
     # Exclude certain functions and methods by a regex on their name
     fn_exclude_by_name__regex: str = ""
 
+    # Vectorize functions options
+    # Numeric functions (i.e. function accepting and returning only numeric params or py::array), can be vectorized
+    # i.e. they will accept numpy arrays as an input.
+    # See https://pybind11.readthedocs.io/en/stable/advanced/pycpp/numpy.html#vectorizing-functions
+    # and https://github.com/pybind/pybind11/blob/master/tests/test_numpy_vectorize.cpp
+    #
+    # * fn_vectorize__regex and fn_namespace_vectorize__regex contain a regexes
+    # on functions names + namespace names for which this transformation will be applied.
+    #
+    # For example, to vectorize all function of the namespace MathFunctions, apply these options:
+    #     options.fn_namespace_vectorize__regex: str = r"MathFunctions^$"
+    #     options.fn_vectorize__regex = r".*"
+    #
+    # * fn_vectorize_prefix and fn_vectorize_suffix will be added to the vectorized functions names
+    #   (they can be empty, in which case the vectorized function will be a usable overload with the same name)
+    fn_vectorize__regex: str = r""
+    fn_namespace_vectorize__regex: str = r""
+    fn_vectorize_prefix: str = ""
+    fn_vectorize_suffix: str = ""
+
     # ------------------------------------------------------------------------------
     # C style buffers to py::array
     # ------------------------------------------------------------------------------
@@ -123,7 +143,7 @@ class LitgenOptions:
     #       def mul_inside_array(array: numpy.ndarray, factor: float) -> None            (python)
     # (and factor will be down-casted to the target type)
     #
-    # fn_params_buffer_replace_by_array_regexes contains a list of regexes on functions names
+    # fn_params_buffer_replace_by_array_regexes contains a regex on functions names
     # for which this transformation will be applied.
     # Set it to r".*" to apply this to all functions (which is the default), set it to "" to disable it
     #

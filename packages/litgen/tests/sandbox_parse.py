@@ -99,16 +99,21 @@ def play_virtual_method() -> None:
     print(generated_code.pydef_code)
 
 
-def play_static() -> None:
+def play() -> None:
     code = """
-// This is a generic function for python, accepting (*args, **kwargs) as arguments
-MY_API int my_generic_function(pybind11::args args, const pybind11::kwargs& kwargs)
+namespace MathFunctions
 {
-    int r = args.size() + 2 * kwargs.size();
-    return r;
+    double vectorizable_sum(float x, double y)
+    {
+        return (double) x + y;
+    }
 }
     """
     options = litgen.LitgenOptions()
+    options.fn_namespace_vectorize__regex = r"^MathFunctions$"
+    options.fn_vectorize__regex = r".*"
+    options.fn_vectorize_prefix = "v_"
+    options.fn_vectorize_suffix = "_v"
     generated_code = litgen.generate_code(options, code)
     print(generated_code.pydef_code)
     print(generated_code.stub_code)
@@ -120,4 +125,4 @@ MY_API int my_generic_function(pybind11::args args, const pybind11::kwargs& kwar
 
 
 if __name__ == "__main__":
-    play_static()
+    play()

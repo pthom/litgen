@@ -497,6 +497,7 @@ Problem 3: dans lg_test_runner (integration tests), tout est refusé (trouve pas
 
    test trampoline with  test with py-mahi-gui
 
+*** Simplifier noms des module / class dans pydef
 ** test multiple litgen_glue_code with BoxedType: is there a link error / duplication?
     remove bindings/litgen_glue_code.h?
 
