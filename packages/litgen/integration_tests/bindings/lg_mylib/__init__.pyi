@@ -51,6 +51,7 @@ class BoxedUnsignedLong:
 #                       mylib/basic_test.h included by mylib/mylib.h                                           //
 #//////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+
 def my_sub(a: int, b: int) -> int:
     """ Subtracts two numbers: this will be the function's __doc__ since my_sub does not have an end-of-line comment"""
     pass
@@ -69,6 +70,11 @@ def my_add(a: int, b: int) -> int:
 def my_mul(a: int, b: int) -> int:
     pass
 
+
+
+def my_generic_function(*args, **kwargs) -> int:
+    """ This is a generic function for python, accepting (*args, **kwargs) as arguments"""
+    pass
 
 
 #For info, below is the python pyi stub that is published for this file:

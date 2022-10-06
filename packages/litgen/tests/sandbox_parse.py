@@ -101,11 +101,12 @@ def play_virtual_method() -> None:
 
 def play_static() -> None:
     code = """
-    // My class A
-    struct A final
-    {
-        int a = 0;
-    };
+// This is a generic function for python, accepting (*args, **kwargs) as arguments
+MY_API int my_generic_function(pybind11::args args, const pybind11::kwargs& kwargs)
+{
+    int r = args.size() + 2 * kwargs.size();
+    return r;
+}
     """
     options = litgen.LitgenOptions()
     generated_code = litgen.generate_code(options, code)

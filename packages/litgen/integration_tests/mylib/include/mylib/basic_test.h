@@ -1,6 +1,8 @@
 #pragma once
 #include "mylib/api_marker.h"
 
+#include <pybind11/pybind11.h>
+
 // Subtracts two numbers: this will be the function's __doc__ since my_sub does not have an end-of-line comment
 MY_API int my_sub(int a, int b) { return a - b; }
 
@@ -17,6 +19,14 @@ MY_API int my_mul(int a, int b) { return a * b; }
 
 // This should not be published, as it is not marked with MY_API
 int my_div(int a, int b) { return a / b;}
+
+
+// This is a generic function for python, accepting (*args, **kwargs) as arguments
+MY_API int my_generic_function(pybind11::args args, const pybind11::kwargs& kwargs)
+{
+    int r = args.size() + 2 * kwargs.size();
+    return r;
+}
 
 
 /*
@@ -39,4 +49,9 @@ def my_add(a: int, b: int) -> int:
 
 def my_mul(a: int, b: int) -> int:
     pass
+
+def my_generic_function(*args, **kwargs) -> int:
+    """ This is a generic function for python, accepting (*args, **kwargs) as arguments"""
+    pass
+
 */

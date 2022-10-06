@@ -286,6 +286,18 @@ class AdaptedFunction(AdaptedElement):
         for param in cpp_parameters:
             param_name_python = cpp_to_python.var_name_to_python(self.options, param.decl.decl_name)
             param_type_cpp = param.decl.cpp_type.str_code()
+
+            # Handle *args and **kwargs
+            param_type_cpp_simplified = (
+                param_type_cpp.replace("const ", "").replace("pybind11::", "py::").replace(" &", "")
+            )
+            if param_type_cpp_simplified == "py::args":
+                r.append("*args")
+                continue
+            if param_type_cpp_simplified == "py::kwargs":
+                r.append("**kwargs")
+                continue
+
             param_type_python = cpp_to_python.type_to_python(self.options, param_type_cpp)
             param_default_value = cpp_to_python.var_value_to_python(self.lg_context, param.default_value())
 
@@ -371,6 +383,15 @@ class AdaptedFunction(AdaptedElement):
         pyarg_strs: List[str] = []
         for param in self.cpp_adapted_function.parameter_list.parameters:
             adapted_decl = AdaptedDecl(self.lg_context, param.decl)
+
+            # Skip *args and **kwarg
+            param_type_cpp = adapted_decl.cpp_element().cpp_type.str_code()
+            param_type_cpp_simplified = (
+                param_type_cpp.replace("const ", "").replace("pybind11::", "py::").replace(" &", "")
+            )
+            if param_type_cpp_simplified in ["py::args", "py::kwargs"]:
+                continue
+
             pyarg_str = adapted_decl._str_pydef_as_pyarg()
             pyarg_strs.append(pyarg_str)
         return pyarg_strs

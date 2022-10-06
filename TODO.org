@@ -516,7 +516,6 @@ templated functions can reuse the same name
 *** Dynamic attribute (add py::dynamic_attr() at class construction)  https://pybind11.readthedocs.io/en/stable/classes.html#dynamic-attributes
 *** https://pybind11.readthedocs.io/en/stable/advanced/functions.html#additional-call-policies
 
-** args/kwargs: https://pybind11.readthedocs.io/en/stable/advanced/functions.html#accepting-args-and-kwargs
 
 ** https://pybind11.readthedocs.io/en/stable/advanced/functions.html#allow-prohibiting-none-arguments
 
