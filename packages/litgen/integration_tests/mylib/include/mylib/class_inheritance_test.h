@@ -4,9 +4,9 @@
 #include <memory>
 
 
-namespace Animals // MY_API
+namespace Animals
 {
-    struct Animal // MY_API
+    struct Animal
     {
         MY_API Animal(const std::string &name) : name(name) { }
         std::string name;
@@ -14,7 +14,7 @@ namespace Animals // MY_API
         virtual ~Animal() = default;
     };
 
-    struct Dog : Animal // MY_API
+    struct Dog : Animal
     {
         MY_API Dog(const std::string &name) : Animal(name + "_dog") { }
         MY_API virtual std::string bark() const { return "BIG WOOF!"; }
@@ -24,14 +24,14 @@ namespace Animals // MY_API
 
 }
 
-namespace Home // MY_API
+namespace Home
 {
-    struct Pet // MY_API
+    struct Pet
     {
         MY_API bool is_pet() const { return true; }
     };
 
-    struct PetDog: public Animals::Dog, public Pet // MY_API
+    struct PetDog: public Animals::Dog, public Pet
     {
         MY_API PetDog(const std::string &name): Animals::Dog(name), Pet() {}
         MY_API virtual std::string bark() const { return "woof"; }

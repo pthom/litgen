@@ -16,7 +16,7 @@ MY_API int add_overload(int a, int b, int c) { return a + b + c; } // type: igno
 // overload on methods
 //
 
-struct FooOverload // MY_API
+struct FooOverload
 {
     MY_API int add_overload(int a, int b) { return a + b; } // type: ignore
     MY_API int add_overload(int a, int b, int c) { return a + b + c; } // type: ignore

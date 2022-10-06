@@ -37,7 +37,7 @@ MY_API int my_generic_function(pybind11::args args, const pybind11::kwargs& kwar
 //     options.fn_namespace_vectorize__regex: str = r"^MathFunctions$"
 //     options.fn_vectorize__regex = r".*"
 //
-namespace MathFunctions // MY_API
+namespace MathFunctions
 {
     MY_API double vectorizable_sum(float x, double y)
     {

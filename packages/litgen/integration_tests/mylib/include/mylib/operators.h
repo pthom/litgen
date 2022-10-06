@@ -1,6 +1,6 @@
 #include "mylib/api_marker.h"
 
-struct IntWrapper // MY_API
+struct IntWrapper
 {
     int value;
     IntWrapper(int v) : value(v) {}
@@ -25,7 +25,7 @@ struct IntWrapper // MY_API
 };
 
 
-struct IntWrapperSpaceship // MY_API
+struct IntWrapperSpaceship
 {
     int value;
 

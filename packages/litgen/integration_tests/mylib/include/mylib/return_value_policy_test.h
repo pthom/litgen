@@ -10,7 +10,7 @@
 // Note: `reference` could be replaced by `take_ownership`, or any other member of `pybind11::return_value_policy`
 
 
-struct MyConfig            // MY_API
+struct MyConfig
 {
     //
     // For example, singletons (such as the method below) should be returned as a reference,

@@ -6,9 +6,8 @@ import litgen
 def test_operators():
     options = litgen.LitgenOptions()
     options.srcml_options.functions_api_prefixes = "MY_API"
-    options.srcml_options.api_suffixes = "MY_API"
     code = """
-        struct IntWrapper // MY_API
+        struct IntWrapper
         {
             int value;
             IntWrapper(int v) : value(v) {}

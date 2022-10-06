@@ -81,13 +81,12 @@ namespace Main
 def test_context_replacements():
     options = LitgenOptions()
     options.srcml_options.functions_api_prefixes = "MY_API"
-    options.srcml_options.api_suffixes = "MY_API"
     code = """
-        enum class MyEnumClass // MY_API
+        enum class MyEnumClass
         {
             ValueA = 0,
         };
-        enum MyEnumNonClass // MY_API
+        enum MyEnumNonClass
         {
             MyEnumNonClass_ValueA = 0,
         };

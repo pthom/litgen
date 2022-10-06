@@ -21,7 +21,7 @@ MY_API inline void array2_modify(unsigned long values[2])
     values[1] = values[0] * values[1];
 }
 
-struct Point2 // MY_API
+struct Point2
 {
     int x, y;
 };

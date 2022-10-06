@@ -23,11 +23,11 @@ This test will exercise the following options:
     class_override_virtual_methods_in_python__regex: str = ""
  */
 
-namespace Root  // MY_API
+namespace Root
 {
-    namespace Inner // MY_API
+    namespace Inner
     {
-        class MyVirtualClass // MY_API
+        class MyVirtualClass
         {
         public:
             virtual ~MyVirtualClass() = default;
@@ -51,7 +51,7 @@ namespace Root  // MY_API
 
         // Here, we test Combining virtual functions and inheritance
         // See https://pybind11.readthedocs.io/en/stable/advanced/classes.html#combining-virtual-functions-and-inheritance
-        class MyVirtualDerivate: public MyVirtualClass // MY_API
+        class MyVirtualDerivate: public MyVirtualClass
         {
         public:
             MyVirtualDerivate(): MyVirtualClass() {};

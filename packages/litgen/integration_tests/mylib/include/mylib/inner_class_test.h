@@ -1,11 +1,11 @@
 #include "mylib/api_marker.h"
 
 
-namespace SomeNamespace                                        // MY_API
+namespace SomeNamespace
 {
-    struct ParentStruct                                        // MY_API
+    struct ParentStruct
     {
-        struct InnerStruct                                     // MY_API
+        struct InnerStruct
         {
             int value;
 
@@ -13,7 +13,7 @@ namespace SomeNamespace                                        // MY_API
             MY_API int add(int a, int b) { return a + b; }
         };
 
-        enum class InnerEnum                                   // MY_API
+        enum class InnerEnum
         {
             Zero = 0,
             One,

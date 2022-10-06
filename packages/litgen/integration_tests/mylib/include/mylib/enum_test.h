@@ -1,7 +1,7 @@
 #include "mylib/api_marker.h"
 
 // BasicEnum: a simple C-style enum
-enum BasicEnum     // MY_API
+enum BasicEnum
 {
     // C-style enums often contain a prefix that is the enum name in itself, in order
     // not to pollute the parent namespace.
@@ -37,7 +37,7 @@ enum class ClassEnumNotRegistered
 
 
 // ClassEnum: a class enum that should be published
-enum class ClassEnum // MY_API
+enum class ClassEnum
 {
     On = 0,
     Off,

@@ -10,9 +10,9 @@
 #include <cstddef>
 #include <string>
 
-namespace SomeNamespace // MY_API
+namespace SomeNamespace
 {
-    struct Blah // MY_API
+    struct Blah
     {
         MY_API void ToggleBoolPointer(bool *v)//, int vv[2])
         {
@@ -63,7 +63,7 @@ namespace SomeNamespace // MY_API
     }; // struct Blah
 
 
-    namespace SomeInnerNamespace       // MY_API
+    namespace SomeInnerNamespace
     {
         MY_API void ToggleBoolPointer(bool *v)//, int vv[2])
         {

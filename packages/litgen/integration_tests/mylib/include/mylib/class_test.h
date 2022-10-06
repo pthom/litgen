@@ -9,7 +9,7 @@
 // The "// MY_API" comment after the class decl indicates that this class will be published.
 // it is necessary, since `options.srcml_options.api_suffixes = "MY_API"`
 // was set inside autogenerate_mylib.py
-class MyClass            // MY_API
+class MyClass
 {
 public:
     MyClass(int factor = 10, const std::string& message = "hello"): factor(factor), message(message) {}
@@ -87,7 +87,7 @@ struct StructNotRegistered
 // MySingletonClass: demonstrate how to instantiate a singleton
 // - The instance method shall return with return_value_policy::reference
 // - The destructor may be private
-class MySingletonClass     // MY_API
+class MySingletonClass
 {
 public:
     int value = 0;
@@ -109,7 +109,7 @@ const int MyClass::const_static_value;
 int MyClass::static_value = 102;
 
 
-struct MyFinalClass final // MY_API
+struct MyFinalClass final
 {
     MY_API int foo() { return 42; };
 };

@@ -16,7 +16,7 @@ namespace // MY_API This anonymous namespace should be excluded
 namespace Mylib  // MY_API This namespace should not be outputted as a submodule (it is considered a root namespace)
 {
     // this is an inner namespace (this comment should become the namespace doc)
-    namespace Inner // MY_API
+    namespace Inner
     {
         MY_API int FooInner() { return 45; }
     }
@@ -24,7 +24,7 @@ namespace Mylib  // MY_API This namespace should not be outputted as a submodule
     // This is a second occurrence of the same inner namespace
     // The generated python module will merge these occurrences
     // (and this comment will be ignored, since the Inner namespace already has a doc)
-    namespace Inner // MY_API
+    namespace Inner
     {
         MY_API int FooInner2() { return 46; }
     }
