@@ -67,7 +67,7 @@ def test_class_static_member():
 
 
 def test_struct_not_registered():
-    assert "StructNotRegistered" not in dir(lg_mylib)
+    assert "Struct_Detail" not in dir(lg_mylib)
 
 
 def test_singleton():

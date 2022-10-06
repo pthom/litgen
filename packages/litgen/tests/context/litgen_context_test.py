@@ -121,5 +121,13 @@ def test_context_replacements():
             b: MyEnumNonClass = MyEnumNonClass.value_a
             ) -> int:
             pass
+
+        # <submodule Inner>
+        class Inner: # Proxy class that introduces typings for the *submodule* Inner
+            # (This corresponds to a C++ namespace. All method are static!)
+            def foo_value() -> int:
+                pass
+
+        # </submodule Inner>
     """,
     )

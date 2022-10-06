@@ -45,6 +45,14 @@ namespace MathFunctions
     }
 }
 
+// Ignored namespace example:
+// By default, any namespace whose name contains "internal" or "detail" will be excluded.
+// See LitgenOptions.namespace_exclude__regex
+namespace Detail
+{
+    MY_API int foo() { return 42; }
+}
+
 /*
 For info, below is the python pyi stub that is published for this file:
 

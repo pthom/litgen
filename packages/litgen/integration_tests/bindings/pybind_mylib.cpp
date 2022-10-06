@@ -438,7 +438,7 @@ void py_init_module_lg_mylib(py::module& m)
             return c_string_list_total_size_adapt_c_string_list(items, output_0, output_1);
         },
         py::arg("items"), py::arg("output_0"), py::arg("output_1"),
-        " C String lists tests:\n   Two consecutive params (const char *, int | size_t) are exported as List[str]\n\n The following function will be exported with the following python signature:\n -->    def c_string_list_total_size(items: List[str], output_0: BoxedInt, output_1: BoxedInt) -> int:");
+        "\n C String lists tests:\n   Two consecutive params (const char *, int | size_t) are exported as List[str]\n\n The following function will be exported with the following python signature:\n -->    def c_string_list_total_size(items: List[str], output_0: BoxedInt, output_1: BoxedInt) -> int:\n");
 
     m.def("toggle_bool_pointer",
         [](BoxedBool & v)
@@ -610,6 +610,12 @@ void py_init_module_lg_mylib(py::module& m)
         .value("b", BasicEnum_b, "This is value b");
 
 
+    py::enum_<ClassEnumNotRegistered>(m, "ClassEnumNotRegistered", py::arithmetic(), "")
+        .value("on", ClassEnumNotRegistered::On, "")
+        .value("off", ClassEnumNotRegistered::Off, "")
+        .value("unknown", ClassEnumNotRegistered::Unknown, "");
+
+
     py::enum_<ClassEnum>(m, "ClassEnum", py::arithmetic(), "ClassEnum: a class enum that should be published")
         .value("on", ClassEnum::On, "")
         .value("off", ClassEnum::Off, "")
@@ -674,7 +680,7 @@ void py_init_module_lg_mylib(py::module& m)
 
     auto pyClassMyFinalClass =
         py::class_<MyFinalClass>
-            (m, "MyFinalClass", py::is_final(), "(final class)")
+            (m, "MyFinalClass", py::is_final(), "\n(final class)")
         .def(py::init<>()) // implicit default constructor
         .def("foo",
             &MyFinalClass::foo)
@@ -832,7 +838,7 @@ void py_init_module_lg_mylib(py::module& m)
         ;
 
     { // <namespace MathFunctions>
-        py::module_ pyNsMathFunctions = m.def_submodule("MathFunctions", " Vectorizable functions example\n    Numeric functions (i.e. function accepting and returning only numeric params or py::array), can be vectorized\n    i.e. they will accept numpy arrays as an input.\n\n Auto-vectorization is enabled via the following options:\n     options.fn_namespace_vectorize__regex: str = r\"^MathFunctions$\"\n     options.fn_vectorize__regex = r\".*\"");
+        py::module_ pyNsMathFunctions = m.def_submodule("MathFunctions", " Vectorizable functions example\n    Numeric functions (i.e. function accepting and returning only numeric params or py::array), can be vectorized\n    i.e. they will accept numpy arrays as an input.\n\n Auto-vectorization is enabled via the following options:\n     options.fn_namespace_vectorize__regex: str = r\"^MathFunctions$\"\n     options.fn_vectorize__regex = r\".*\"\n");
         pyNsMathFunctions.def("vectorizable_sum",
             MathFunctions::vectorizable_sum, py::arg("x"), py::arg("y"));
         pyNsMathFunctions.def("vectorizable_sum",
@@ -940,7 +946,7 @@ void py_init_module_lg_mylib(py::module& m)
         } // end of inner classes & enums of ParentStruct
         auto pyNsSomeNamespace_ClassBlah =
             py::class_<SomeNamespace::Blah>
-                (pyNsSomeNamespace, "Blah", "struct Blah - MY_API")
+                (pyNsSomeNamespace, "Blah", "struct Blah")
             .def(py::init<>()) // implicit default constructor
             .def("toggle_bool_pointer",
                 [](SomeNamespace::Blah & self, BoxedBool & v)
@@ -1110,7 +1116,7 @@ void py_init_module_lg_mylib(py::module& m)
                 },     py::arg("items"), py::arg("output_0"), py::arg("output_1"))
             ;
         { // <namespace SomeInnerNamespace>
-            py::module_ pyNsSomeNamespace_NsSomeInnerNamespace = pyNsSomeNamespace.def_submodule("SomeInnerNamespace", "namespace SomeInnerNamespace - MY_API");
+            py::module_ pyNsSomeNamespace_NsSomeInnerNamespace = pyNsSomeNamespace.def_submodule("SomeInnerNamespace", "namespace SomeInnerNamespace");
             pyNsSomeNamespace_NsSomeInnerNamespace.def("toggle_bool_pointer",
                 [](BoxedBool & v)
                 {

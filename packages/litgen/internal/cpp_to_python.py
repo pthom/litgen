@@ -24,11 +24,6 @@ def _comment_apply_replacements(options: LitgenOptions, comment: str) -> str:
     if len(lines) == 0:
         return ""
 
-    last_line = lines[-1].strip()
-    if last_line in options.srcml_options.api_suffixes:
-        lines = lines[:-1]  # noqa
-        lines = code_utils.strip_empty_lines_in_list(lines)
-
     if len(lines) == 0:
         return ""
 

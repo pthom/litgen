@@ -52,12 +52,20 @@ MY_API int my_generic_function(pybind11::args args, const pybind11::kwargs& kwar
 //     options.fn_namespace_vectorize__regex: str = r"^MathFunctions$"
 //     options.fn_vectorize__regex = r".*"
 //
-namespace MathFunctions // MY_API
+namespace MathFunctions
 {
     MY_API double vectorizable_sum(float x, double y)
     {
         return (double) x + y;
     }
+}
+
+// Ignored namespace example:
+// By default, any namespace whose name contains "internal" or "detail" will be excluded.
+// See LitgenOptions.namespace_exclude__regex
+namespace Detail
+{
+    MY_API int foo() { return 42; }
 }
 
 /*
@@ -144,7 +152,7 @@ MY_API inline void array2_modify(unsigned long values[2])
     values[1] = values[0] * values[1];
 }
 
-struct Point2 // MY_API
+struct Point2
 {
     int x, y;
 };
@@ -383,7 +391,7 @@ MY_API int add_overload(int a, int b, int c) { return a + b + c; } // type: igno
 // overload on methods
 //
 
-struct FooOverload // MY_API
+struct FooOverload
 {
     MY_API int add_overload(int a, int b) { return a + b; } // type: ignore
     MY_API int add_overload(int a, int b, int c) { return a + b + c; } // type: ignore
@@ -414,7 +422,7 @@ For info, below is the generated C++ code that will publish these functions:
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 // BasicEnum: a simple C-style enum
-enum BasicEnum     // MY_API
+enum BasicEnum
 {
     // C-style enums often contain a prefix that is the enum name in itself, in order
     // not to pollute the parent namespace.
@@ -450,7 +458,7 @@ enum class ClassEnumNotRegistered
 
 
 // ClassEnum: a class enum that should be published
-enum class ClassEnum // MY_API
+enum class ClassEnum
 {
     On = 0,
     Off,
@@ -497,7 +505,7 @@ class ClassEnum(Enum):
 // The "// MY_API" comment after the class decl indicates that this class will be published.
 // it is necessary, since `options.srcml_options.api_suffixes = "MY_API"`
 // was set inside autogenerate_mylib.py
-class MyClass            // MY_API
+class MyClass
 {
 public:
     MyClass(int factor = 10, const std::string& message = "hello"): factor(factor), message(message) {}
@@ -558,15 +566,10 @@ public:
 };
 
 
-// StructNotRegistered should not be published, as it misses the marker "// MY_API"
-// By default, all enums, namespaces and classes are published,
-// but you can decide to include only "marked" ones, via this litgen option:
-//       options.srcml_options.api_suffixes = "MY_API"
-//
-// Note: Do not remove the empty line below, otherwise this comment would become part of
-//       the enum's doc, and cause it to be registered (since it contains "MY_API")
-
-struct StructNotRegistered
+// Struct_Detail should not be published, as the options exclude classes whose name end in "Detail".
+// See this line in autogenerate_mylib.py:
+//      options.class_exclude_by_name__regex = "Detail$"
+struct Struct_Detail
 {
     int a = 0;
 };
@@ -575,7 +578,7 @@ struct StructNotRegistered
 // MySingletonClass: demonstrate how to instantiate a singleton
 // - The instance method shall return with return_value_policy::reference
 // - The destructor may be private
-class MySingletonClass     // MY_API
+class MySingletonClass
 {
 public:
     int value = 0;
@@ -597,7 +600,7 @@ const int MyClass::const_static_value;
 int MyClass::static_value = 102;
 
 
-struct MyFinalClass final // MY_API
+struct MyFinalClass final
 {
     MY_API int foo() { return 42; };
 };
@@ -609,9 +612,9 @@ struct MyFinalClass final // MY_API
 #include <memory>
 
 
-namespace Animals // MY_API
+namespace Animals
 {
-    struct Animal // MY_API
+    struct Animal
     {
         MY_API Animal(const std::string &name) : name(name) { }
         std::string name;
@@ -619,7 +622,7 @@ namespace Animals // MY_API
         virtual ~Animal() = default;
     };
 
-    struct Dog : Animal // MY_API
+    struct Dog : Animal
     {
         MY_API Dog(const std::string &name) : Animal(name + "_dog") { }
         MY_API virtual std::string bark() const { return "BIG WOOF!"; }
@@ -629,14 +632,14 @@ namespace Animals // MY_API
 
 }
 
-namespace Home // MY_API
+namespace Home
 {
-    struct Pet // MY_API
+    struct Pet
     {
         MY_API bool is_pet() const { return true; }
     };
 
-    struct PetDog: public Animals::Dog, public Pet // MY_API
+    struct PetDog: public Animals::Dog, public Pet
     {
         MY_API PetDog(const std::string &name): Animals::Dog(name), Pet() {}
         MY_API virtual std::string bark() const { return "woof"; }
@@ -678,11 +681,11 @@ This test will exercise the following options:
     class_override_virtual_methods_in_python__regex: str = ""
  */
 
-namespace Root  // MY_API
+namespace Root
 {
-    namespace Inner // MY_API
+    namespace Inner
     {
-        class MyVirtualClass // MY_API
+        class MyVirtualClass
         {
         public:
             virtual ~MyVirtualClass() = default;
@@ -706,7 +709,7 @@ namespace Root  // MY_API
 
         // Here, we test Combining virtual functions and inheritance
         // See https://pybind11.readthedocs.io/en/stable/advanced/classes.html#combining-virtual-functions-and-inheritance
-        class MyVirtualDerivate: public MyVirtualClass // MY_API
+        class MyVirtualDerivate: public MyVirtualClass
         {
         public:
             MyVirtualDerivate(): MyVirtualClass() {};
@@ -730,7 +733,7 @@ namespace Root  // MY_API
 // Note: `reference` could be replaced by `take_ownership`, or any other member of `pybind11::return_value_policy`
 
 
-struct MyConfig            // MY_API
+struct MyConfig
 {
     //
     // For example, singletons (such as the method below) should be returned as a reference,
@@ -776,11 +779,11 @@ For info, below is the C++ generated binding code:
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
-namespace SomeNamespace                                        // MY_API
+namespace SomeNamespace
 {
-    struct ParentStruct                                        // MY_API
+    struct ParentStruct
     {
-        struct InnerStruct                                     // MY_API
+        struct InnerStruct
         {
             int value;
 
@@ -788,7 +791,7 @@ namespace SomeNamespace                                        // MY_API
             MY_API int add(int a, int b) { return a + b; }
         };
 
-        enum class InnerEnum                                   // MY_API
+        enum class InnerEnum
         {
             Zero = 0,
             One,
@@ -814,9 +817,9 @@ namespace SomeNamespace                                        // MY_API
 
 #include <cstddef>
 
-namespace SomeNamespace // MY_API
+namespace SomeNamespace
 {
-    struct Blah // MY_API
+    struct Blah
     {
         MY_API void ToggleBoolPointer(bool *v)//, int vv[2])
         {
@@ -867,7 +870,7 @@ namespace SomeNamespace // MY_API
     }; // struct Blah
 
 
-    namespace SomeInnerNamespace       // MY_API
+    namespace SomeInnerNamespace
     {
         MY_API void ToggleBoolPointer(bool *v)//, int vv[2])
         {
@@ -939,7 +942,7 @@ namespace // MY_API This anonymous namespace should be excluded
 namespace Mylib  // MY_API This namespace should not be outputted as a submodule (it is considered a root namespace)
 {
     // this is an inner namespace (this comment should become the namespace doc)
-    namespace Inner // MY_API
+    namespace Inner
     {
         MY_API int FooInner() { return 45; }
     }
@@ -947,7 +950,7 @@ namespace Mylib  // MY_API This namespace should not be outputted as a submodule
     // This is a second occurrence of the same inner namespace
     // The generated python module will merge these occurrences
     // (and this comment will be ignored, since the Inner namespace already has a doc)
-    namespace Inner // MY_API
+    namespace Inner
     {
         MY_API int FooInner2() { return 46; }
     }
@@ -957,7 +960,7 @@ namespace Mylib  // MY_API This namespace should not be outputted as a submodule
 //                       mylib/operators.h included by mylib/mylib.h                                            //
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-struct IntWrapper // MY_API
+struct IntWrapper
 {
     int value;
     IntWrapper(int v) : value(v) {}
@@ -982,7 +985,7 @@ struct IntWrapper // MY_API
 };
 
 
-struct IntWrapperSpaceship // MY_API
+struct IntWrapperSpaceship
 {
     int value;
 

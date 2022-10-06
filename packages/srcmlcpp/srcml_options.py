@@ -17,14 +17,6 @@ class SrcmlOptions:
     # You can have several prefixes: separate them with a "|", for example: "MY_API|OTHER_API"
     functions_api_prefixes: str = ""
 
-    # Suffixes that denote structs, classes, enums and namespaces that should be published, for example:
-    #       struct MyStruct        // IMMVISION_API_STRUCT     <== this is a suffix
-    #       { };
-    # if empty, all structs/enums/classes/namespaces are published
-    # you may decide to fill api_suffixes and functions_api_prefixes with the same value(s)
-    # You can have several suffixes: separate them with a "|", for example: "MY_API|OTHER_API"
-    api_suffixes: str = ""
-
     ################################################################################
     #    <Numbers parsing: resolve macros values>
     ################################################################################
@@ -98,9 +90,6 @@ class SrcmlOptions:
 
     def functions_api_prefixes_list(self) -> List[str]:
         return split_string_by_pipe_char(self.functions_api_prefixes)
-
-    def api_suffixes_list(self) -> List[str]:
-        return split_string_by_pipe_char(self.api_suffixes)
 
     def header_filter_acceptable_suffixes_list(self) -> List[str]:
         return split_string_by_pipe_char(self.header_filter_acceptable_suffixes)

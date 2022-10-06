@@ -1,4 +1,5 @@
 import lg_mylib
+import pytest
 
 
 def test_functions():
@@ -36,3 +37,9 @@ def test_vectorizable_functions():
     z = lg_mylib.MathFunctions.vectorizable_sum(x, y)
     expected = np.array([[3.0, 7.0], [11.0, 15.0]])
     assert (z == expected).all()
+
+
+def test_ignored_namespace():
+    assert "Detail" not in dir(lg_mylib)
+    with pytest.raises(AttributeError):
+        _ = lg_mylib.Detail.foo()

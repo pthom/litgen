@@ -77,6 +77,8 @@ def my_generic_function(*args, **kwargs) -> int:
     pass
 
 
+
+#
 #For info, below is the python pyi stub that is published for this file:
 #
 #def my_sub(a: int, b: int) -> int:
@@ -120,6 +122,8 @@ def my_generic_function(*args, **kwargs) -> int:
 #        pass
 #
 ## </submodule MathFunctions>
+#
+#
 
 #////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 #                       mylib/header_filter_test.h included by mylib/mylib.h                                   //
@@ -134,7 +138,9 @@ def my_generic_function(*args, **kwargs) -> int:
 #                       mylib/c_style_array_test.h included by mylib/mylib.h                                   //
 #//////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+#
 # C Style array tests
+#
 
 
 def const_array2_add(values: List[int]) -> int:
@@ -173,6 +179,7 @@ def array2_modify_mutable(out_0: Point2, out_1: Point2) -> None:
 #//////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
+#
 # C Style buffer to py::array tests
 #
 # litgen is able to recognize and transform pairs of params whose C++ signature resemble
@@ -181,6 +188,7 @@ def array2_modify_mutable(out_0: Point2, out_1: Point2) -> None:
 #   * `T` is a *known* numeric type, or a templated type
 #   * `count` name resemble a size
 #        (see LitgenOptions.fn_params_buffer_size_names__regex)
+#
 
 def add_inside_buffer(buffer: np.ndarray, number_to_add: int) -> None:
     """ add_inside_buffer: modifies a buffer by adding a value to its elements
@@ -230,11 +238,13 @@ def c_string_list_total_size(
     output_0: BoxedInt,
     output_1: BoxedInt
     ) -> int:
-    """ C String lists tests:
+    """
+     C String lists tests:
        Two consecutive params (const char *, int | size_t) are exported as List[str]
 
      The following function will be exported with the following python signature:
      -->    def c_string_list_total_size(items: List[str], output_0: BoxedInt, output_1: BoxedInt) -> int:
+
     """
     pass
 
@@ -243,7 +253,9 @@ def c_string_list_total_size(
 #//////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
+#
 # Modifiable immutable python types test
+#
 
 # litgen adapts functions params that use modifiable pointer or reference to a type
 # that is immutable in python.
@@ -354,17 +366,23 @@ def change_void_int_array(
 #                       mylib/overload_test.h included by mylib/mylib.h                                        //
 #//////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+#
 # litgen is able to detect automatically the presence of overloads that require
 # to use `py::overload_cast<...>` when publishing
+#
 
+#
 # overload on free functions
+#
 
 def add_overload(a: int, b: int) -> int:  # type: ignore
     pass
 def add_overload(a: int, b: int, c: int) -> int:  # type: ignore
     pass
 
+#
 # overload on methods
+#
 
 class FooOverload:
     def add_overload(self, a: int, b: int) -> int:          # type: ignore
@@ -373,6 +391,7 @@ class FooOverload:
         pass
 
 
+#
 #For info, below is the generated C++ code that will publish these functions:
 #
 #     m.def("add_overload",
@@ -389,6 +408,7 @@ class FooOverload:
 #        .def("add_overload",
 #            py::overload_cast<int, int, int>(&FooOverload::add_overload), py::arg("a"), py::arg("b"), py::arg("c"))
 #        ;
+#
 
 #////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 #                       mylib/enum_test.h included by mylib/mylib.h                                            //
@@ -419,6 +439,10 @@ class BasicEnum(Enum):
 # Note: Do not remove the empty line below, otherwise this comment would become part of
 #       the enum's doc, and cause it to be registered (since it contains "MY_API")
 
+class ClassEnumNotRegistered(Enum):
+    on = auto()      # (= 0)
+    off = auto()     # (= 1)
+    unknown = auto() # (= 2)
 
 
 class ClassEnum(Enum):
@@ -428,6 +452,7 @@ class ClassEnum(Enum):
     unknown = auto() # (= 2)
 
 
+#
 #For info, below is the python pyi stub that is published for this file:
 #
 #class BasicEnum(Enum):
@@ -452,6 +477,7 @@ class ClassEnum(Enum):
 #    on      # (= 0)
 #    off     # (= 1)
 #    unknown # (= 2)
+#
 
 #////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 #                       mylib/class_test.h included by mylib/mylib.h                                           //
@@ -524,14 +550,6 @@ class MyClass:
         pass
 
 
-# StructNotRegistered should not be published, as it misses the marker "// MY_API"
-# By default, all enums, namespaces and classes are published,
-# but you can decide to include only "marked" ones, via this litgen option:
-#       options.srcml_options.api_suffixes = "MY_API"
-#
-# Note: Do not remove the empty line below, otherwise this comment would become part of
-#       the enum's doc, and cause it to be registered (since it contains "MY_API")
-
 
 
 class MySingletonClass:
@@ -550,7 +568,9 @@ class MySingletonClass:
 
 
 class MyFinalClass:
-    """(final class)"""
+    """
+    (final class)
+    """
     def foo(self) -> int:
         pass
 
@@ -571,6 +591,7 @@ def make_dog() -> Animals.Animal:
 #//////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
+#
 #This test will exercise the following options:
 #
 #    # class_expose_protected_methods__regex:
@@ -589,6 +610,7 @@ def make_dog() -> Animals.Animal:
 #    #
 #    # Note: if you want to override protected functions, also fill `class_expose_protected_methods__regex`
 #    class_override_virtual_methods_in_python__regex: str = ""
+#
 
 
 #////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -606,8 +628,10 @@ def make_dog() -> Animals.Animal:
 
 
 class MyConfig:
+    #
     # For example, singletons (such as the method below) should be returned as a reference,
     # otherwise python might destroy the singleton instance as soon as it goes out of scope.
+    #
 
     # (static method)
     def instance() -> MyConfig:
@@ -621,6 +645,7 @@ def my_config_instance() -> MyConfig:
     pass
 
 
+#
 #For info, below is the C++ generated binding code:
 #
 #     auto pyClassMyConfig = py::class_<MyConfig>
@@ -638,6 +663,9 @@ def my_config_instance() -> MyConfig:
 #        MyConfigInstance,
 #        "return_value_policy::reference",
 #        pybind11::return_value_policy::reference);
+#
+#
+#
 
 #////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 #                       mylib/inner_class_test.h included by mylib/mylib.h                                     //
@@ -654,6 +682,7 @@ def my_config_instance() -> MyConfig:
 # The main intent of these tests is to verify that the generated code compiles.
 # The corresponding python test file will not test all these functions
 # (as they are in fact copy/pasted/adapted from other tests)
+#
 
 
 
@@ -755,6 +784,7 @@ class MathFunctions: # Proxy class that introduces typings for the *submodule* M
      Auto-vectorization is enabled via the following options:
          options.fn_namespace_vectorize__regex: str = r"^MathFunctions$"
          options.fn_vectorize__regex = r".*"
+
     """
     def vectorizable_sum(x: float, y: float) -> float:
         pass
@@ -858,7 +888,7 @@ class SomeNamespace: # Proxy class that introduces typings for the *submodule* S
         inner_struct: InnerStruct
         inner_enum: InnerEnum = InnerEnum.three
     class Blah:
-        """ struct Blah - MY_API"""
+        """ struct Blah"""
         def toggle_bool_pointer(self, v: BoxedBool) -> None:
             """//, int vv[2])"""
             pass
@@ -909,7 +939,7 @@ class SomeNamespace: # Proxy class that introduces typings for the *submodule* S
     # <submodule SomeInnerNamespace>
     class SomeInnerNamespace: # Proxy class that introduces typings for the *submodule* SomeInnerNamespace
         # (This corresponds to a C++ namespace. All method are static!)
-        """ namespace SomeInnerNamespace - MY_API"""
+        """ namespace SomeInnerNamespace"""
         def toggle_bool_pointer(v: BoxedBool) -> None:
             """//, int vv[2])"""
             pass

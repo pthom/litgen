@@ -361,7 +361,8 @@ class LitgenOptions:
     namespace_root__regex = r""
 
     # All C++ namespaces that match this regex will be excluded
-    namespace_exclude__regex = r"[Ii]nternal|[Dd]etail[sS]"
+    # By default, any namespace whose name contains "internal" or "detail" will be excluded.
+    namespace_exclude__regex = r"[Ii]nternal|[Dd]etail"
 
     ################################################################################
     #    <unclassified options>

@@ -42,9 +42,8 @@ def mylib_litgen_options() -> litgen.LitgenOptions:
 
     # require MY_API for all exported functions
     options.srcml_options.functions_api_prefixes = "MY_API"
-    # require MY_API as a suffix for all exported classes, enums, structs and namespaces
-    # (i.e. add "// MY_API" as end of line comment)
-    options.srcml_options.api_suffixes = "MY_API"
+
+    options.class_exclude_by_name__regex = "Detail$"
 
     # Python modifiable immutables options
     options.fn_params_replace_modifiable_immutable_by_boxed__regex = code_utils.join_string_by_pipe_char(

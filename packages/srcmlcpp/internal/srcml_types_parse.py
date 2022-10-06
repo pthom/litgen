@@ -469,7 +469,7 @@ def parse_super_list(options: SrcmlOptions, element: SrcmlXmlWrapper) -> CppSupe
 def _add_comment_child_before_block(element_c: CppElementAndComment, child: SrcmlXmlWrapper) -> None:
     """
     For struct, enum and namespace, we might add a comment like this:
-        struct Foo   // MY_API
+        struct Foo
         {
             ...
         };
@@ -572,19 +572,6 @@ def _shall_publish(cpp_element: CppElementAndComment, options: SrcmlOptions) -> 
     tag = cpp_element.tag()
     if tag in ["function", "function_decl"]:
         return _shall_publish_function(cpp_element, options)
-    elif tag in ["namespace", "enum", "struct", "class"]:
-        if len(options.api_suffixes_list()) == 0:
-            return True
-
-        comment = cpp_element.cpp_element_comments.comment_end_of_line + cpp_element.cpp_element_comments.comment()
-        for comment_child in srcml_utils.children_with_tag(cpp_element.srcml_xml, "comment"):
-            if comment_child.text is not None:
-                comment += comment_child.text
-
-        for api_suffix in options.api_suffixes_list():
-            if api_suffix in comment:
-                return True
-        return False
     else:
         return True
 
