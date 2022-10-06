@@ -1380,10 +1380,12 @@ class CppStruct(CppElementAndComment):
     super_list: CppSuperList
     block: CppBlock
     template: CppTemplate  # for template classes or structs
+    specifier: str  # "final" for final classes, empty otherwise
 
     def __init__(self, element: SrcmlXmlWrapper, cpp_element_comments: CppElementComments) -> None:
         super().__init__(element, cpp_element_comments)
         self.class_name = ""
+        self.specifier = ""
 
     def str_code(self) -> str:
         r = ""
@@ -1409,6 +1411,9 @@ class CppStruct(CppElementAndComment):
 
     def __str__(self) -> str:
         return self.str_commented()
+
+    def is_final(self) -> bool:
+        return self.specifier == "final"
 
     def has_base_classes(self) -> bool:
         if not hasattr(self, "super_list"):

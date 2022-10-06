@@ -669,6 +669,15 @@ void py_init_module_lg_mylib(py::module& m)
         ;
 
 
+    auto pyClassMyFinalClass =
+        py::class_<MyFinalClass>
+            (m, "MyFinalClass", py::is_final(), "(final class)")
+        .def(py::init<>()) // implicit default constructor
+        .def("foo",
+            &MyFinalClass::foo)
+        ;
+
+
     m.def("make_dog",
         make_dog, "Test that downcasting works: the return type is Animal, but it should bark!");
 

@@ -345,6 +345,9 @@ class AdaptedClass(AdaptedElement):
 
         title = f"class {class_name}{fill_possible_parents()}:"
         title_lines = [title]
+        if self.cpp_element().is_final():
+            self.cpp_element().cpp_element_comments.comment_on_previous_lines += "\n"
+            self.cpp_element().cpp_element_comments.comment_on_previous_lines += "(final class)"
 
         body_lines: List[str] = []
         for element in self.adapted_public_children:
@@ -520,7 +523,7 @@ class AdaptedClass(AdaptedElement):
                     """
                 auto {pydef_class_var} =
                 {_i_}py::class_<{qualified_struct_name}{other_template_params}>{location}
-                {_i_}{_i_}({pydef_class_var_parent}, "{bare_struct_name}", "{comment}")
+                {_i_}{_i_}({pydef_class_var_parent}, "{bare_struct_name}"{maybe_py_is_final}, "{comment}")
                 """,
                     flag_strip_empty_lines=True,
                 )
@@ -537,6 +540,7 @@ class AdaptedClass(AdaptedElement):
             replacements.pydef_class_var_parent = cpp_to_python.cpp_scope_to_pybind_parent_var_name(
                 options, self.cpp_element()
             )
+            replacements.maybe_py_is_final = ", py::is_final()" if self.cpp_element().is_final() else ""
             replacements.comment = self.comment_pydef_one_line()
 
             pyclass_creation_code = code_utils.process_code_template(code_template, replacements)

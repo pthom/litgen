@@ -107,3 +107,9 @@ private:
 
 const int MyClass::const_static_value;
 int MyClass::static_value = 102;
+
+
+struct MyFinalClass final // MY_API
+{
+    MY_API int foo() { return 42; };
+};

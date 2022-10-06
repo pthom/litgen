@@ -99,19 +99,23 @@ def play_virtual_method() -> None:
     print(generated_code.pydef_code)
 
 
-def play_static():
+def play_static() -> None:
     code = """
-    struct A {
-        static const int v_const_static = 1;       // def_readonly_static()
-        static int v_static = 1;                   // def_readwrite_static()
-        static int f_static() { return 2; }
-        int f() { return 3; }
+    // My class A
+    struct A final
+    {
+        int a = 0;
     };
     """
     options = litgen.LitgenOptions()
     generated_code = litgen.generate_code(options, code)
     print(generated_code.pydef_code)
     print(generated_code.stub_code)
+
+    # srcml_option = srcmlcpp.SrcmlOptions()
+    # cpp_unit = srcmlcpp.code_to_cpp_unit(srcml_option, code)
+    # print(cpp_unit.str_xml())
+    # print("a")
 
 
 if __name__ == "__main__":

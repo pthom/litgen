@@ -76,3 +76,10 @@ def test_singleton():
     i.value = 3
     i2 = lg_mylib.MySingletonClass.instance()
     assert i2.value == 3
+
+
+def test_final_class():
+    with pytest.raises(TypeError):
+
+        class MyFinalClassDeriv(lg_mylib.MyFinalClass):
+            pass

@@ -510,8 +510,12 @@ def parse_struct_or_class(options: SrcmlOptions, element_c: CppElementAndComment
             _add_comment_child_before_block(result, child)
         elif child_tag == "decl":
             raise SrcMlExceptionDetailed(child, "Skipped struct because it misses a ';' at the end")
+        elif child_tag == "specifier":
+            child_text = child.text()
+            assert child_text is not None
+            result.specifier = child_text
         else:
-            raise SrcMlExceptionDetailed(child, "unhandled tag {child_tag}")
+            raise SrcMlExceptionDetailed(child, f"unhandled tag {child_tag}")
 
     return result
 
