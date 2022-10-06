@@ -458,7 +458,7 @@ class CppBlock(CppElementAndComment):
 
     def all_functions_recursive(self) -> List[CppFunctionDecl]:
         """Gathers all CppFunctionDecl and CppFunction in the children (*recursive*)"""
-        r_ = self.all_cpp_elements_recursive(wanted_type=CppFunctionDecl)
+        r_ = self.all_elements_of_type(wanted_type=CppFunctionDecl)
         r = [cast(CppFunctionDecl, v) for v in r_]
         return r
 
@@ -488,6 +488,9 @@ class CppBlock(CppElementAndComment):
 
         self.visit_cpp_breadth_first(visitor_add_cpp_element)
         return _all_cpp_elements
+
+    def all_elements_of_type(self, wanted_type: type) -> List[CppElement]:
+        return self.all_cpp_elements_recursive(wanted_type)
 
     def fill_children_parents(self) -> None:
         parents_stack: List[Optional[CppElement]] = [None]
@@ -596,6 +599,7 @@ class CppType(CppElement):
 
     # A type name can be composed of several names, for example:
     # "unsigned int" -> ["unsigned", "int"]
+    # A type name can also be "auto" for inferred types.
     typenames: List[str]
 
     # specifiers: a list of possible specifiers
@@ -624,6 +628,7 @@ class CppType(CppElement):
         return ["*", "&", "&&", "..."]
 
     def str_return_type(self, remove_api_prefix: bool = True) -> str:
+        # Remove unwanted specifiers
         # Possible specifiers : "const" "inline" "static" "virtual" "extern" "constexpr"
         # "inline", "virtual", "extern" and "static" do not change the return type
         specifiers = copy.copy(self.specifiers)
@@ -631,14 +636,19 @@ class CppType(CppElement):
         for unwanted_specifier in unwanted_specifiers:
             if unwanted_specifier in self.specifiers:
                 specifiers.remove(unwanted_specifier)
+        specifiers_str = code_utils.join_remove_empty(" ", specifiers)
 
+        # Handle const
         nb_const = self.specifiers.count("const")
         assert nb_const <= 1
 
-        specifiers_str = code_utils.join_remove_empty(" ", specifiers)
-        modifiers_str = code_utils.join_remove_empty(" ", self.modifiers)
-        name = " ".join(self.typenames)
+        # Handle typenames with possible auto
+        if len(self.typenames) > 1 and self.typenames[0] == "auto":
+            name = " ".join(self.typenames[1:])
+        else:
+            name = " ".join(self.typenames)
 
+        modifiers_str = code_utils.join_remove_empty(" ", self.modifiers)
         strs = [specifiers_str, name, modifiers_str]
         return_type_str = code_utils.join_remove_empty(" ", strs)
 
@@ -691,6 +701,9 @@ class CppType(CppElement):
 
     def is_void(self) -> bool:
         return self.typenames == ["void"] and len(self.specifiers) == 0
+
+    def is_inferred_type(self) -> bool:
+        return self.typenames == ["auto"]
 
     def __str__(self) -> str:
         return self.str_code()
@@ -1077,14 +1090,12 @@ class CppFunctionDecl(CppElementAndComment):
 
     parameter_list: CppParameterList
     template: CppTemplate
-    is_auto_decl: bool  # True if it is a decl of the form `auto square(double) -> double`
     function_name: str
     is_pure_virtual: bool
 
     def __init__(self, element: SrcmlXmlWrapper, cpp_element_comments: CppElementComments) -> None:
         super().__init__(element, cpp_element_comments)
         self.specifiers: List[str] = []
-        self.is_auto_decl = False
         self.is_pure_virtual = False
         self.function_name = ""
 
@@ -1095,13 +1106,33 @@ class CppFunctionDecl(CppElementAndComment):
         else:
             return parent_scope + "::" + self.function_name
 
+    def is_inferred_return_type(self) -> bool:
+        if not hasattr(self, "return_type"):
+            return False
+        return "auto" in self.return_type.specifiers and len(self.return_type.typenames) == 0
+
+    def is_arrow_notation_return_type(self) -> bool:
+        if self.is_inferred_return_type():
+            return False
+        elif len(self.return_type.typenames) == 0:
+            return False
+        else:
+            first_typename = self.return_type.typenames[0]
+            return first_typename == "auto"
+
     def _str_signature(self) -> str:
         r = ""
 
         if hasattr(self, "template"):
             r += f"template<{str(self.template)}>"
 
-        r += f"{self.return_type} {self.function_name}({self.parameter_list})"
+        if self.is_arrow_notation_return_type():
+            if self.return_type.str_return_type() == "auto":
+                r += f"auto {self.function_name}({self.parameter_list})"
+            else:
+                r += f"auto {self.function_name}({self.parameter_list}) -> {self.return_type.str_return_type()}"
+        else:
+            r += f"{self.return_type.str_return_type()} {self.function_name}({self.parameter_list})"
 
         if len(self.specifiers) > 0:
             specifiers_strs = map(str, self.specifiers)
@@ -1109,11 +1140,14 @@ class CppFunctionDecl(CppElementAndComment):
 
         return r
 
+    # def is_auto_decl(self):
+    #     self.return_type.typenames[0]
+
     def str_code(self) -> str:
         r = self._str_signature() + ";"
         return r
 
-    def full_return_type(self) -> str:
+    def str_full_return_type(self) -> str:
         """The C++ return type of the function, without API, virtual or inline specifiers"""
         r = self.return_type.str_return_type()
         for prefix in self.options.functions_api_prefixes_list():
@@ -1210,7 +1244,7 @@ class CppFunctionDecl(CppElementAndComment):
         return r
 
     def returns_void(self) -> bool:
-        return self.full_return_type() == "void"
+        return self.str_full_return_type() == "void"
 
     def is_static(self) -> bool:
         if not hasattr(self, "return_type"):
@@ -1286,7 +1320,7 @@ class CppConstructorDecl(CppFunctionDecl):
             r = r + " " + " ".join(specifiers_strs)
         return r
 
-    def full_return_type(self) -> str:
+    def str_full_return_type(self) -> str:
         return ""
 
     def str_code(self) -> str:

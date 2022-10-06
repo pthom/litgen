@@ -103,7 +103,7 @@ def test_parse_function_decl():
 
     # Test with type declared after ->
     code = "auto divide(int a, int b) -> double;"
-    code_utils.assert_are_codes_equal(code_to_fn_decl(code), "double divide(int a, int b);")
+    code_utils.assert_are_codes_equal(code_to_fn_decl(code), "auto divide(int a, int b) -> double;")
 
     # Test with inferred type
     code = "auto minimum(int&&a, int b = 5);"

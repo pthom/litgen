@@ -172,7 +172,7 @@ class AdaptedFunction(AdaptedElement):
 
         self.cpp_adapted_function = function_infos
         operators.raise_if_unsupported_operator(self.cpp_adapted_function)
-        # self.parent_struct_name = parent_struct_name
+
         self.cpp_adapter_code = None
         self.lambda_to_call = None
         super().__init__(lg_context, function_infos)
@@ -182,6 +182,9 @@ class AdaptedFunction(AdaptedElement):
         self.is_overloaded = is_overloaded
         if code_utils.does_match_regex(self.options.fn_force_overload__regex, self.cpp_element().function_name):
             self.is_overloaded = True
+
+        if self.cpp_element().is_inferred_return_type():
+            self.cpp_element().cpp_element_comments.comment_end_of_line += "\n(C++ auto return type)"
 
         adapt_function_params.apply_all_adapters(self)
         self._store_replacement_in_context()
@@ -290,10 +293,12 @@ class AdaptedFunction(AdaptedElement):
             return r
 
     def return_type_python(self) -> str:
+        if self.cpp_element().is_inferred_return_type():
+            return "Any"
         if self.is_constructor():
             return "None"
         else:
-            return_type_cpp = self.cpp_adapted_function.full_return_type()
+            return_type_cpp = self.cpp_adapted_function.str_full_return_type()
             return_type_python = cpp_to_python.type_to_python(self.options, return_type_cpp)
             return return_type_python
 
@@ -746,7 +751,7 @@ class AdaptedFunction(AdaptedElement):
         if self.cpp_adapted_function.returns_void():
             replace_tokens.lambda_return_arrow = ""
         else:
-            full_return_type = self.cpp_adapted_function.full_return_type()
+            full_return_type = self.cpp_adapted_function.str_full_return_type()
             replace_tokens.lambda_return_arrow = f" -> {full_return_type}"
 
         # fill return_code

@@ -101,6 +101,7 @@ const int MyClass::const_static_value;
 int MyClass::static_value = 102;
 
 
+// This struct is final, and thus cannot be inherited from python
 struct MyFinalClass final
 {
     MY_API int foo() { return 42; };

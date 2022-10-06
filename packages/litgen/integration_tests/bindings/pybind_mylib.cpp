@@ -674,7 +674,7 @@ void py_init_module_lg_mylib(py::module& m)
 
     auto pyClassMyFinalClass =
         py::class_<MyFinalClass>
-            (m, "MyFinalClass", py::is_final(), "\n(final class)")
+            (m, "MyFinalClass", py::is_final(), " This struct is final, and thus cannot be inherited from python\n(final class)")
         .def(py::init<>()) // implicit default constructor
         .def("foo",
             &MyFinalClass::foo)

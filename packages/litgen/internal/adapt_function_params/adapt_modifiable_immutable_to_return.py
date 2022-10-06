@@ -249,7 +249,7 @@ def adapt_modifiable_immutable_to_return(adapted_function: AdaptedFunction) -> O
         if was_void_return_type:
             replacements.maybe_store_function_output = ""
         else:
-            old_return_type = old_function.full_return_type()
+            old_return_type = old_function.str_full_return_type()
             replacements.maybe_store_function_output = f"{old_return_type} r = "
 
         # fill function_name

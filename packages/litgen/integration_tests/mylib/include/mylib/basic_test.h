@@ -29,6 +29,7 @@ MY_API int my_generic_function(pybind11::args args, const pybind11::kwargs& kwar
     return r;
 }
 
+
 // Vectorizable functions example
 //    Numeric functions (i.e. function accepting and returning only numeric params or py::array), can be vectorized
 //    i.e. they will accept numpy arrays as an input.
@@ -52,6 +53,52 @@ namespace Detail
 {
     MY_API int foo() { return 42; }
 }
+
+// =================================================================================================
+
+/*
+
+ Note about function arrow-return type notation:
+-----------------------------------------------
+Arrow return notation function are correctly exported, including their return type.
+For example,
+    ````cpp
+     auto my_pow(double a, double b) -> double
+     ````
+Will result in:
+    ```python
+    def my_pow(a: float, b: float) -> float:
+        pass
+    ````
+
+Note about function inferred return type notation:
+-----------------------------------------------
+Functions with an inferred return type are correctly exported,
+however the published return type is unknown and will be marked as "Any"
+For example,
+    ````cpp
+     auto my_pow(double a, double b)
+     ````
+Will result in:
+    ```python
+    def my_pow(a: float, b: float) -> Any:
+        pass
+    ````
+
+
+Note about mixing auto return and API markers
+---------------------------------------------
+Mixing API marker and auto return type is not supported. Such function would not be exported!
+
+````cpp
+    MY_API auto my_modulo(int a, int b)
+    MY_API auto my_pow(double a, double b) -> double
+````
+*/
+
+
+// =================================================================================================
+
 
 /*
 For info, below is the python pyi stub that is published for this file:

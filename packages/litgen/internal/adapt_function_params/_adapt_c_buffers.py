@@ -261,7 +261,7 @@ class _AdaptBuffersHelper:
                     function_or_lambda_to_call = self.adapted_function.cpp_adapted_function.qualified_function_name()
 
             # Fill maybe_return
-            _fn_return_type = self.function_infos.full_return_type()
+            _fn_return_type = self.function_infos.str_full_return_type()
             maybe_return = "" if _fn_return_type == "void" else "return "
 
             #

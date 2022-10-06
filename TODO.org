@@ -470,7 +470,7 @@ later! publish srcmlcpp before!
 
 * Litgen TODO
 
-** Wish list / hard
+** Wish list / hard and later
 *** mypy: no_implicit_reexport
 *** issue with mypy compatibility with generated modules
 
@@ -483,16 +483,12 @@ Problem 3: dans lg_test_runner (integration tests), tout est refusé (trouve pas
 
 ** Wish List / Easy
 
-  add functions_api_prefixes via property to LitgenOptions?
+  work on auto return type
+
   generator: error message with default pybind file template
 
-  named_number_macros => LitgenOptions
 
-  stackoverflow: review question ("type annotation: warn about mutable members becoming instance when initialized at decl site")
-    https://docs.python.org/3/library/typing.html#typing.ClassVar
-
-
-   test trampoline with  test with py-mahi-gui
+  test trampoline with  test with py-mahi-gui
 
 
 ** test multiple litgen_glue_code with BoxedType: is there a link error / duplication?

@@ -100,23 +100,23 @@ def play_virtual_method() -> None:
 
 
 def play() -> None:
-    code = """
-    struct Foo
-    {
-        int foo() { return 42; }
-    };
-    """
+    code = "auto my_pow(double a, double b) -> double;"
     options = litgen.LitgenOptions()
-    options.srcml_options.functions_api_prefixes = "MY_API"
+    # options.srcml_options.functions_api_prefixes = "MY_API"
 
     generated_code = litgen.generate_code(options, code)
     print(generated_code.pydef_code)
     print(generated_code.stub_code)
 
-    # srcml_option = srcmlcpp.SrcmlOptions()
-    # cpp_unit = srcmlcpp.code_to_cpp_unit(srcml_option, code)
-    # print(cpp_unit.str_xml())
-    # print("a")
+    # srcml_options = srcmlcpp.SrcmlOptions()
+    # srcml_options.srcml_dump_positions = False
+    # xml_wrapper = srcmlcpp.code_to_srcml_xml_wrapper(srcml_options, code)
+    # print(xml_wrapper.str_xml())
+
+    # srcml_options = srcmlcpp.SrcmlOptions()
+    # cpp_unit = srcmlcpp.code_to_cpp_unit(srcml_options, code)
+    # f = cpp_unit.all_functions_recursive()[0]
+    # print(f.str_code())
 
 
 if __name__ == "__main__":

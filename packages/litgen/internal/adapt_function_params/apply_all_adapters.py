@@ -46,7 +46,7 @@ def _make_adapted_lambda_code_end(adapted_function: AdaptedFunction, lambda_adap
     adapted_cpp_parameters = ", ".join(lambda_adapter.adapted_cpp_parameter_list)
 
     # Fill auto_r_equal_or_void
-    _fn_return_type = adapted_function.cpp_adapted_function.full_return_type()
+    _fn_return_type = adapted_function.cpp_adapted_function.str_full_return_type()
     auto_r_equal_or_void = "auto r = " if _fn_return_type != "void" else ""
 
     # Fill function_or_lambda_to_call
@@ -122,7 +122,7 @@ def _make_adapted_lambda_code(adapted_function: AdaptedFunction, lambda_adapter:
 
     # Fill lambda_return_arrow
     # full_return_type = adapted_function.cpp_adapted_function.full_return_type(options.srcml_options)
-    full_return_type = lambda_adapter.new_function_infos.full_return_type()
+    full_return_type = lambda_adapter.new_function_infos.str_full_return_type()
     if full_return_type == "void":
         lambda_return_arrow = ""
     else:

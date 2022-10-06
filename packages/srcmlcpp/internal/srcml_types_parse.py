@@ -69,13 +69,13 @@ def parse_type(options: SrcmlOptions, element: SrcmlXmlWrapper, previous_decl: O
         else:
             raise SrcMlExceptionDetailed(child, f"unhandled tag {child_tag}")
 
-    if len(result.typenames) == 0 and "..." not in result.modifiers:
+    if len(result.typenames) == 0 and "..." not in result.modifiers and "auto" not in result.specifiers:
         if previous_decl is None:
             raise SrcMlExceptionDetailed(result, "Can't find type name")
         assert previous_decl is not None
         result.typenames = previous_decl.cpp_type.typenames
 
-    if len(result.typenames) == 0 and "..." not in result.modifiers:
+    if len(result.typenames) == 0 and "..." not in result.modifiers and "auto" not in result.specifiers:
         raise SrcMlExceptionDetailed(result, "len(result.names) == 0!")
 
     # process api names
@@ -326,9 +326,6 @@ def fill_function_decl(
             function_decl.is_pure_virtual = True
         else:
             raise SrcMlExceptionDetailed(child, f"unhandled tag {child_tag}")
-
-    if len(function_decl.return_type.typenames) >= 2 and function_decl.return_type.typenames[0] == "auto":
-        function_decl.return_type.typenames = function_decl.return_type.typenames[1:]
 
 
 def parse_function_decl(options: SrcmlOptions, element_c: CppElementAndComment) -> CppFunctionDecl:
