@@ -479,7 +479,6 @@ def standard_code_replacements() -> RegexReplacementList:
     \bLDBL_MAX\b -> sys.float_info.max
 
     \bpy::array\b -> np.ndarray
-    \bT\b -> np.ndarray
 
     \bconst\b -> REMOVE
     \bmutable\b -> REMOVE
