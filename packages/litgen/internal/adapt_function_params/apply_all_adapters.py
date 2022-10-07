@@ -112,9 +112,13 @@ def _make_adapted_lambda_code_end(adapted_function: AdaptedFunction, lambda_adap
         function_or_lambda_to_call = adapted_function.lambda_to_call
     else:
         if adapted_function.is_method():
-            function_or_lambda_to_call = "self." + adapted_function.cpp_adapted_function.function_name
+            function_or_lambda_to_call = (
+                "self." + adapted_function.cpp_adapted_function.function_name_with_instantiation()
+            )
         else:
-            function_or_lambda_to_call = adapted_function.cpp_adapted_function.qualified_function_name()
+            function_or_lambda_to_call = (
+                adapted_function.cpp_adapted_function.qualified_function_name_with_instantiation()
+            )
 
     # Fill maybe_return_r
     maybe_return_r = None if _fn_return_type == "void" else "return r"

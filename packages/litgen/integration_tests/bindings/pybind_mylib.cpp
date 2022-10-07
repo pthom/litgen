@@ -885,6 +885,66 @@ void py_init_module_lg_mylib(py::module& m)
         .def_readwrite_static("nb_destroy", &CallGuardLogger::nb_destroy, "")
         ;
 
+
+    m.def("add_templated",
+        AddTemplated<int>, py::arg("a"), py::arg("b"));
+    m.def("add_templated",
+        AddTemplated<double>, py::arg("a"), py::arg("b"));
+    m.def("add_templated",
+        AddTemplated<std::string>, py::arg("a"), py::arg("b"));
+
+    m.def("sum_vector_and_c_array",
+        [](std::vector<int> xs, const std::array<int, 2>& other_values) -> int
+        {
+            auto SumVectorAndCArray_adapt_fixed_size_c_arrays = [](std::vector<int> xs, const std::array<int, 2>& other_values) -> int
+            {
+                auto r = SumVectorAndCArray<int>(xs, other_values.data());
+                return r;
+            };
+
+            return SumVectorAndCArray_adapt_fixed_size_c_arrays(xs, other_values);
+        },     py::arg("xs"), py::arg("other_values"));
+    m.def("sum_vector_and_c_array",
+        [](std::vector<std::string> xs, const std::array<std::string, 2>& other_values) -> std::string
+        {
+            auto SumVectorAndCArray_adapt_fixed_size_c_arrays = [](std::vector<std::string> xs, const std::array<std::string, 2>& other_values) -> std::string
+            {
+                auto r = SumVectorAndCArray<std::string>(xs, other_values.data());
+                return r;
+            };
+
+            return SumVectorAndCArray_adapt_fixed_size_c_arrays(xs, other_values);
+        },     py::arg("xs"), py::arg("other_values"));
+
+
+    auto pyClassFooTemplateFunctionTest =
+        py::class_<FooTemplateFunctionTest>
+            (m, "FooTemplateFunctionTest", "")
+        .def(py::init<>()) // implicit default constructor
+        .def("sum_vector_and_c_array",
+            [](FooTemplateFunctionTest & self, std::vector<int> xs, const std::array<int, 2>& other_values) -> int
+            {
+                auto SumVectorAndCArray_adapt_fixed_size_c_arrays = [&self](std::vector<int> xs, const std::array<int, 2>& other_values) -> int
+                {
+                    auto r = self.SumVectorAndCArray<int>(xs, other_values.data());
+                    return r;
+                };
+
+                return SumVectorAndCArray_adapt_fixed_size_c_arrays(xs, other_values);
+            },     py::arg("xs"), py::arg("other_values"))
+        .def("sum_vector_and_c_array",
+            [](FooTemplateFunctionTest & self, std::vector<std::string> xs, const std::array<std::string, 2>& other_values) -> std::string
+            {
+                auto SumVectorAndCArray_adapt_fixed_size_c_arrays = [&self](std::vector<std::string> xs, const std::array<std::string, 2>& other_values) -> std::string
+                {
+                    auto r = self.SumVectorAndCArray<std::string>(xs, other_values.data());
+                    return r;
+                };
+
+                return SumVectorAndCArray_adapt_fixed_size_c_arrays(xs, other_values);
+            },     py::arg("xs"), py::arg("other_values"))
+        ;
+
     { // <namespace MathFunctions>
         py::module_ pyNsMathFunctions = m.def_submodule("MathFunctions", " Vectorizable functions example\n    Numeric functions (i.e. function accepting and returning only numeric params or py::array), can be vectorized\n    i.e. they will accept numpy arrays as an input.\n\n Auto-vectorization is enabled via the following options:\n     options.fn_namespace_vectorize__regex: str = r\"^MathFunctions$\"\n     options.fn_vectorize__regex = r\".*\"\n");
         pyNsMathFunctions.def("vectorizable_sum",

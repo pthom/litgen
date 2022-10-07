@@ -1,9 +1,14 @@
-from typing import List
+from typing import List, Dict
 
 from codemanip.code_replacements import RegexReplacementList
 from codemanip import code_utils
 
 from srcmlcpp import SrcmlOptions
+
+
+TemplatedFunctionNameRegexStr = str
+TemplatedCppTypeList = List[str]
+TemplateFunctionsOptions = Dict[TemplatedFunctionNameRegexStr, TemplatedCppTypeList]
 
 
 class LitgenOptions:
@@ -112,7 +117,27 @@ class LitgenOptions:
     # Exclude certain functions and methods by a regex on their name
     fn_exclude_by_name__regex: str = ""
 
+    # ------------------------------------------------------------------------------
+    # Templated functions options
+    # ------------------------------------------------------------------------------
+    # Template function must be instantiated for the desired types.
+    # See https://pybind11.readthedocs.io/en/stable/advanced/functions.html#binding-functions-with-template-parameters
+    #
+    # fn_template_functions_options:
+    #    of type Dict[ TemplatedFunctionNameRegexStr (aka str), List[CppTypeName] ]
+    #
+    # For example,
+    # 1. This line:
+    #        options.fn_template_functions_options[r"template^"] = ["int", double"]
+    #    would instantiate all template functions whose name end with "template" with "int" and "double"
+    # 2. This line:
+    #        options.fn_template_functions_options[r".*"] = ["int", double"]
+    #    would instantiate all template functions (whatever their name) with "int" and "double"
+    fn_template_functions_options: TemplateFunctionsOptions
+
+    # ------------------------------------------------------------------------------
     # Vectorize functions options
+    # ------------------------------------------------------------------------------
     # Numeric functions (i.e. function accepting and returning only numeric params or py::array), can be vectorized
     # i.e. they will accept numpy arrays as an input.
     # See https://pybind11.readthedocs.io/en/stable/advanced/pycpp/numpy.html#vectorizing-functions
@@ -131,6 +156,32 @@ class LitgenOptions:
     fn_namespace_vectorize__regex: str = r""
     fn_vectorize_prefix: str = ""
     fn_vectorize_suffix: str = ""
+
+    # ------------------------------------------------------------------------------
+    # Exclude some params by name
+    # ------------------------------------------------------------------------------
+    #
+    # Remove some params from the python published interface. A param can only be removed if it has a default value
+    # in the C++ signature
+    fn_params_exclude_names__regex: str = ""
+    fn_params_exclude_types__regex: str = ""
+
+    # ------------------------------------------------------------------------------
+    # Force overload
+    # ------------------------------------------------------------------------------
+    # Force using py::overload for functions that matches these regexes
+    fn_force_overload__regex: str = ""
+
+    # ------------------------------------------------------------------------------
+    # Return policy
+    # ------------------------------------------------------------------------------
+    # Force the function that match those regexes to use `pybind11::return_value_policy::reference`
+    #
+    # Note:
+    #    you can also write "// py::return_value_policy::reference" as an end of line comment after the function.
+    #    See packages/litgen/integration_tests/mylib/include/mylib/return_value_policy_test.h as an example
+    fn_return_force_policy_reference_for_pointers__regex: str = ""
+    fn_return_force_policy_reference_for_references__regex: str = ""
 
     # ------------------------------------------------------------------------------
     # C style buffers to py::array
@@ -261,32 +312,6 @@ class LitgenOptions:
     # fn_params_output_modifiable_immutable_to_return__regex contains a list of regexes on functions names
     # Set it to r".*" to apply this to all functions. Set it to "" to disable it
     fn_params_output_modifiable_immutable_to_return__regex: str = ""
-
-    # ------------------------------------------------------------------------------
-    # Exclude some params by name
-    # ------------------------------------------------------------------------------
-    #
-    # Remove some params from the python published interface. A param can only be removed if it has a default value
-    # in the C++ signature
-    fn_params_exclude_names__regex: str = ""
-    fn_params_exclude_types__regex: str = ""
-
-    # ------------------------------------------------------------------------------
-    # Force overload
-    # ------------------------------------------------------------------------------
-    # Force using py::overload for functions that matches these regexes
-    fn_force_overload__regex: str = ""
-
-    # ------------------------------------------------------------------------------
-    # Return policy
-    # ------------------------------------------------------------------------------
-    # Force the function that match those regexes to use `pybind11::return_value_policy::reference`
-    #
-    # Note:
-    #    you can also write "// py::return_value_policy::reference" as an end of line comment after the function.
-    #    See packages/litgen/integration_tests/mylib/include/mylib/return_value_policy_test.h as an example
-    fn_return_force_policy_reference_for_pointers__regex: str = ""
-    fn_return_force_policy_reference_for_references__regex: str = ""
 
     ################################################################################
     #    <class, struct, and member adaptations>
@@ -444,3 +469,5 @@ class LitgenOptions:
         self.code_replacements = cpp_to_python.standard_code_replacements()
         self.comments_replacements = cpp_to_python.standard_comment_replacements()
         self.names_replacements = RegexReplacementList()
+
+        self.fn_template_functions_options: TemplateFunctionsOptions = {}

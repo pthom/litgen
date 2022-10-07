@@ -257,9 +257,9 @@ def adapt_modifiable_immutable_to_return(adapted_function: AdaptedFunction) -> O
             replacements.lambda_to_call = adapted_function.lambda_to_call
         else:
             if old_function.is_method():
-                replacements.lambda_to_call = "self." + old_function.function_name
+                replacements.lambda_to_call = "self." + old_function.function_name_with_instantiation()
             else:
-                replacements.lambda_to_call = old_function.qualified_function_name()
+                replacements.lambda_to_call = old_function.qualified_function_name_with_instantiation()
 
         # fill params
         replacements.params = ", ".join(lambda_adapter.adapted_cpp_parameter_list)

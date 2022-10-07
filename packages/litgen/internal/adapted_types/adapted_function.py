@@ -1,3 +1,6 @@
+from __future__ import annotations
+
+import copy
 from dataclasses import dataclass
 from typing import cast
 
@@ -165,6 +168,7 @@ class AdaptedFunction(AdaptedElement):
     is_overloaded: bool = False
     is_type_ignore: bool = False
     is_vectorize_impl: bool = False
+    has_adapted_template_buffer: bool = False
 
     def __init__(
         self,
@@ -270,7 +274,7 @@ class AdaptedFunction(AdaptedElement):
         )
         replacements._i_ = self.options.indent_cpp_spaces()
         replacements.return_type = self.cpp_element().return_type.str_return_type()
-        replacements.function_name_cpp = self.cpp_element().function_name
+        replacements.function_name_cpp = self.cpp_element().function_name_with_instantiation()
         replacements.function_name_python = cpp_to_python.function_name_to_python(
             self.options, self.cpp_element().function_name
         )
@@ -360,12 +364,30 @@ class AdaptedFunction(AdaptedElement):
         # Handle <=> (aka spaceship) operator, which is split in 5 operators!
         from litgen.internal.adapted_types import operators
 
+        # Bail out if this is a <=> operator (aka spaceship operator)
+        # In this case, it will be split in 5 operators by calling 5 times _str_stub_lines()
         if operators.is_spaceship_operator(self):
             new_functions = operators.cpp_split_spaceship_operator(self)
             r = []
             for new_function in new_functions:
                 r += new_function._str_stub_lines()
             return r
+
+        # If this is a template function, implement as many versions
+        # as mentioned in the options (see LitgenOptions.fn_template_functions_options)
+        # and bail out
+        if self._is_template():
+            template_instantiations = self._split_into_template_instantiations()
+            if len(template_instantiations) == 0:
+                self.cpp_element().emit_warning(
+                    "Ignoring template function. You might need to set LitgenOptions.fn_template_functions_options"
+                )
+                return []
+            else:
+                r = []
+                for template_instantiation in template_instantiations:
+                    r += template_instantiation._str_stub_lines()
+                return r
 
         if self.is_type_ignore:
             comment_python_type_ignore = "  # type: ignore"
@@ -552,7 +574,9 @@ class AdaptedFunction(AdaptedElement):
         self_prefix = "self." if (self.is_method() and self.lambda_to_call is None) else ""
         # fill function_to_call
         function_to_call = (
-            self.lambda_to_call if self.lambda_to_call is not None else self.cpp_adapted_function.function_name
+            self.lambda_to_call
+            if self.lambda_to_call is not None
+            else self.cpp_adapted_function.function_name_with_instantiation()
         )
         # Fill params_call_inner
         params_call_inner = self.cpp_adapted_function.parameter_list.str_names_only_for_call()
@@ -670,7 +694,7 @@ class AdaptedFunction(AdaptedElement):
         replace_tokens.pydef_method_creation_part = self._pydef_method_creation_part()
 
         # fill function_pointer
-        function_name = self.cpp_element().function_name
+        function_name = self.cpp_element().function_name_with_instantiation()
         function_parent_scope = self.cpp_element().cpp_scope(False).str_cpp_prefix()
 
         if self.is_vectorize_impl:
@@ -856,18 +880,74 @@ class AdaptedFunction(AdaptedElement):
         r = self.cpp_adapter_code is not None or self.lambda_to_call is not None
         return r
 
+    def _is_one_param_template(self) -> bool:
+        assert self._is_template()  # call this after _is_template()!
+        nb_template_parameters = len(self.cpp_element().template.parameter_list.parameters)
+        is_supported = nb_template_parameters == 1
+        return is_supported
+
+    def _is_template(self) -> bool:
+        """Returns true if the function is a template
+        and if no prior templated buffer adaptation was done
+        (see _adapt_c_buffers.py)
+        """
+        if self.has_adapted_template_buffer:
+            return False
+        is_template = self.cpp_element().is_template()
+        return is_template
+
+    def _instantiate_template_for_type(self, cpp_type_str: str) -> AdaptedFunction:
+        assert self._is_template()
+        assert self._is_one_param_template()
+
+        new_cpp_function = self.cpp_element().with_instantiated_template_for_type(cpp_type_str)
+        new_adapted_function = AdaptedFunction(self.lg_context, new_cpp_function, self.is_overloaded)
+        return new_adapted_function
+
+    def _split_into_template_instantiations(self) -> List[AdaptedFunction]:
+        assert self._is_template()
+        if not self._is_one_param_template():
+            self.cpp_element().emit_warning("Only one parameters template are supported")
+            return []
+
+        template_options = self.options.fn_template_functions_options
+        for regex_fn_name, cpp_types_list in template_options.items():
+            if code_utils.does_match_regex(regex_fn_name, self.cpp_element().function_name):
+                new_functions: List[AdaptedFunction] = []
+                for cpp_type in cpp_types_list:
+                    new_function = self._instantiate_template_for_type(cpp_type)
+                    new_functions.append(new_function)
+                return new_functions
+        return []
+
     # override
     def _str_pydef_lines(self) -> List[str]:
-
-        # Handle <=> (aka spaceship) operator, which is split in 5 operators!
         from litgen.internal.adapted_types import operators
 
+        # Bail out if this is a <=> operator (aka spaceship operator)
+        # In this case, it will be split in 5 operators by calling 5 times _str_pydef_lines()
         if operators.is_spaceship_operator(self):
             new_functions = operators.cpp_split_spaceship_operator(self)
             r = []
             for new_function in new_functions:
                 r += new_function._str_pydef_lines()
             return r
+
+        # If this is a template function, implement as many versions
+        # as mentioned in the options (see LitgenOptions.fn_template_functions_options)
+        # and bail out
+        if self._is_template():
+            template_instantiations = self._split_into_template_instantiations()
+            if len(template_instantiations) == 0:
+                self.cpp_element().emit_warning(
+                    "Ignoring template function. You might need to set LitgenOptions.fn_template_functions_options"
+                )
+                return []
+            else:
+                r = []
+                for template_instantiation in template_instantiations:
+                    r += template_instantiation._str_pydef_lines()
+                return r
 
         if self.is_constructor():
             if self._pydef_flag_needs_lambda():

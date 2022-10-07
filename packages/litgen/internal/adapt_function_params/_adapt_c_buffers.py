@@ -70,6 +70,9 @@ class _AdaptBuffersHelper:
             if nb_strides > 1:
                 raise SrcMlException("More than one stride param found!")
 
+        if self.has_template_buffer_param() and self.shall_adapt():
+            self.adapted_function.has_adapted_template_buffer = True
+
     def lambda_input(self, idx_param: int) -> Optional[str]:
         if self._is_buffer_standard(idx_param):
             r = self._lambda_input_buffer_standard_convert_part(idx_param)
@@ -256,9 +259,13 @@ class _AdaptBuffersHelper:
                 function_or_lambda_to_call = self.adapted_function.lambda_to_call
             else:
                 if self.adapted_function.is_method():
-                    function_or_lambda_to_call = "self." + self.adapted_function.cpp_adapted_function.function_name
+                    function_or_lambda_to_call = (
+                        "self." + self.adapted_function.cpp_adapted_function.function_name_with_instantiation()
+                    )
                 else:
-                    function_or_lambda_to_call = self.adapted_function.cpp_adapted_function.qualified_function_name()
+                    function_or_lambda_to_call = (
+                        self.adapted_function.cpp_adapted_function.qualified_function_name_with_instantiation()
+                    )
 
             # Fill maybe_return
             _fn_return_type = self.function_infos.str_full_return_type()

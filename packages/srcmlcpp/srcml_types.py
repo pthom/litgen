@@ -12,7 +12,7 @@ All declarations are stored in a corresponding object:
     * enums -> CppEnum
     * etc.
 
-Implementations (expressions, function calls, etc) are stored as CppUnprocessed. It is still possible to retrieve their
+Implementations (expressions, function calls, etc.) are stored as CppUnprocessed. It is still possible to retrieve their
 original code.
 
 See doc/srcml_cpp_doc.png
@@ -481,7 +481,7 @@ class CppBlock(CppElementAndComment):
     def all_cpp_elements_recursive(self, wanted_type: Optional[type] = None) -> List[CppElement]:
         _all_cpp_elements = []
 
-        def visitor_add_cpp_element(cpp_element: CppElement, event: CppElementsVisitorEvent, depth: int) -> None:
+        def visitor_add_cpp_element(cpp_element: CppElement, event: CppElementsVisitorEvent, _depth: int) -> None:
             if event == CppElementsVisitorEvent.OnElement:
                 if wanted_type is None or isinstance(cpp_element, wanted_type):
                     _all_cpp_elements.append(cpp_element)
@@ -495,7 +495,7 @@ class CppBlock(CppElementAndComment):
     def fill_children_parents(self) -> None:
         parents_stack: List[Optional[CppElement]] = [None]
 
-        def visitor_fill_parent(cpp_element: CppElement, event: CppElementsVisitorEvent, depth: int) -> None:
+        def visitor_fill_parent(cpp_element: CppElement, event: CppElementsVisitorEvent, _depth: int) -> None:
             nonlocal parents_stack
             if event == CppElementsVisitorEvent.OnElement:
                 assert len(parents_stack) > 0
@@ -704,6 +704,12 @@ class CppType(CppElement):
 
     def is_inferred_type(self) -> bool:
         return self.typenames == ["auto"]
+
+    def with_instantiated_template_for_type(self, template_name: str, cpp_type_str: str) -> CppType:
+        new_type = copy.deepcopy(self)
+        for i in range(len(new_type.typenames)):
+            new_type.typenames[i] = new_type.typenames[i].replace(template_name, cpp_type_str)
+        return new_type
 
     def __str__(self) -> str:
         return self.str_code()
@@ -928,8 +934,8 @@ class CppParameter(CppElementAndComment):
     """
 
     decl: CppDecl
-    template_type: CppType  # This is only for template's CppParameterList
-    template_name: str = ""
+    template_type: CppType  # This is only for template's CppParameterList (will be "typename" or "class")
+    template_name: str = ""  # This is only for template's CppParameterList (name of the template type, e.g. "T")
 
     def __init__(self, element: SrcmlXmlWrapper) -> None:
         dummy_cpp_element_comments = CppElementComments()
@@ -1098,12 +1104,14 @@ class CppFunctionDecl(CppElementAndComment):
     template: CppTemplate
     function_name: str
     is_pure_virtual: bool
+    instantiated_template_param: str  # Will only be filled after calling with_instantiated_template_for_type
 
     def __init__(self, element: SrcmlXmlWrapper, cpp_element_comments: CppElementComments) -> None:
         super().__init__(element, cpp_element_comments)
         self.specifiers: List[str] = []
         self.is_pure_virtual = False
         self.function_name = ""
+        self.instantiated_template_param = ""
 
     def qualified_function_name(self) -> str:
         parent_scope = self.cpp_scope(False).str_cpp()
@@ -1111,6 +1119,39 @@ class CppFunctionDecl(CppElementAndComment):
             return self.function_name
         else:
             return parent_scope + "::" + self.function_name
+
+    def qualified_function_name_with_instantiation(self) -> str:
+        return self.qualified_function_name() + self._instantiation_str()
+
+    def is_template(self) -> bool:
+        return hasattr(self, "template")
+
+    def _instantiation_str(self) -> str:
+        if len(self.instantiated_template_param) > 0:
+            return f"<{self.instantiated_template_param}>"
+        else:
+            return ""
+
+    def function_name_with_instantiation(self) -> str:
+        return self.function_name + self._instantiation_str()
+
+    def with_instantiated_template_for_type(self, cpp_type_str: str) -> CppFunctionDecl:
+        """Returns a new non-templated function, implemented for the given type
+        Only works on templated function with *one* template parameter
+        """
+        assert self.is_template()
+        assert len(self.template.parameter_list.parameters) == 1
+        template_name = self.template.parameter_list.parameters[0].template_name
+
+        new_function = copy.deepcopy(self)
+        del new_function.template
+        new_function.return_type = self.return_type.with_instantiated_template_for_type(template_name, cpp_type_str)
+        for parameter in new_function.parameter_list.parameters:
+            parameter.decl.cpp_type = parameter.decl.cpp_type.with_instantiated_template_for_type(
+                template_name, cpp_type_str
+            )
+        new_function.instantiated_template_param = cpp_type_str
+        return new_function
 
     def is_inferred_return_type(self) -> bool:
         if not hasattr(self, "return_type"):
@@ -1134,11 +1175,11 @@ class CppFunctionDecl(CppElementAndComment):
 
         if self.is_arrow_notation_return_type():
             if self.return_type.str_return_type() == "auto":
-                r += f"auto {self.function_name}({self.parameter_list})"
+                r += f"auto {self.function_name}{self._instantiation_str()}({self.parameter_list})"
             else:
-                r += f"auto {self.function_name}({self.parameter_list}) -> {self.return_type.str_return_type()}"
+                r += f"auto {self.function_name}{self._instantiation_str()}({self.parameter_list}) -> {self.return_type.str_return_type()}"
         else:
-            r += f"{self.return_type.str_return_type()} {self.function_name}({self.parameter_list})"
+            r += f"{self.return_type.str_return_type()} {self.function_name}{self._instantiation_str()}({self.parameter_list})"
 
         if len(self.specifiers) > 0:
             specifiers_strs = map(str, self.specifiers)

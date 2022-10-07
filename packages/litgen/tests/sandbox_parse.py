@@ -101,9 +101,15 @@ def play_virtual_method() -> None:
 
 def play() -> None:
     code = """
-    Widget& GetWidget(); // py::call_guard<T>()
+    struct Foo
+    {
+        template<typename T>
+        MY_API T SumVector(std::vector<T> xs, const T other_values[2]);
+    };
     """
     options = litgen.LitgenOptions()
+    options.fn_template_functions_options[r"SumVector"] = ["int"]
+    options.fn_params_replace_buffer_by_array__regex = r".*"
     # options.srcml_options.functions_api_prefixes = "MY_API"
 
     generated_code = litgen.generate_code(options, code)

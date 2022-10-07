@@ -925,6 +925,73 @@ class CallGuardLogger:
     nb_destroy: int   # (C++ static member)
 
 
+#////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+#                       mylib/template_function_test.h included by mylib/mylib.h                               //
+#//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+# AddTemplated is a template function that will be implemented for the types ["int", "double", "std::string"]
+#
+# See autogenerate_mylib.py:
+#     options.fn_template_functions_options[r"^AddTemplated$"] = ["int", "double", "std::string"]
+
+def add_templated(a: int, b: int) -> int:
+    pass
+def add_templated(a: float, b: float) -> float:
+    pass
+def add_templated(a: str, b: str) -> str:
+    pass
+
+
+# SumVectorAndCArray is a template function that will be implemented for the types ["int", "std::string"]
+#
+# Here, we test two additional thing:
+#  - nesting of the T template parameter into a vector
+#  - mixing template and function parameter adaptations (here other_values[2] will be transformed into a List[T]
+#
+# See autogenerate_mylib.py:
+#     options.fn_template_functions_options[r"^SumVector"] = ["int", "std::string"]
+
+def sum_vector_and_c_array(xs: List[int], other_values: List[int]) -> int:
+    pass
+def sum_vector_and_c_array(xs: List[str], other_values: List[str]) -> str:
+    pass
+
+
+# Same test, as a method
+
+class FooTemplateFunctionTest:
+    def sum_vector_and_c_array(
+        self,
+        xs: List[int],
+        other_values: List[int]
+        ) -> int:
+        pass
+    def sum_vector_and_c_array(
+        self,
+        xs: List[str],
+        other_values: List[str]
+        ) -> str:
+        pass
+
+
+#
+#For info, here are the generated python stub signatures:
+#
+#def add_templated(a: int, b: int) -> int:
+#    pass
+#def add_templated(a: float, b: float) -> float:
+#    pass
+#def add_templated(a: str, b: str) -> str:
+#    pass
+#
+#def sum_vector_and_c_array(xs: List[int], other_values: List[int]) -> int:
+#    pass
+#def sum_vector_and_c_array(xs: List[str], other_values: List[str]) -> str:
+#    pass
+#
+#
+
 
 #////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 #                       mylib/mylib.h continued                                                                //
