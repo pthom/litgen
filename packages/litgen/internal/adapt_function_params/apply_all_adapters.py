@@ -1,4 +1,8 @@
+from munch import Munch  # type: ignore
+
 from codemanip import code_utils
+
+from srcmlcpp import srcmlcpp_main
 
 from litgen.internal.adapt_function_params._lambda_adapter import LambdaAdapter
 from litgen.internal.adapted_types import AdaptedFunction
@@ -15,6 +19,11 @@ def apply_all_adapters(inout_adapted_function: AdaptedFunction) -> None:
         adapt_modifiable_immutable_to_return,
     )
 
+    is_constructor = inout_adapted_function.cpp_adapted_function.is_constructor()
+    if is_constructor:
+        _apply_all_adapters_on_constructor(inout_adapted_function)
+        return
+
     all_adapters_functions = [
         adapt_exclude_params,
         adapt_c_buffers,
@@ -28,6 +37,55 @@ def apply_all_adapters(inout_adapted_function: AdaptedFunction) -> None:
         lambda_adapter = adapter_function(inout_adapted_function)
         if lambda_adapter is not None:
             _apply_lambda_adapter(inout_adapted_function, lambda_adapter)
+
+
+def _apply_all_adapters_on_constructor(inout_adapted_function: AdaptedFunction) -> None:
+    parent_struct = inout_adapted_function.cpp_element().parent_struct_if_method()
+    assert parent_struct is not None
+
+    parameter_list = inout_adapted_function.cpp_element().parameter_list
+
+    ctor_wrapper_signature_template = code_utils.unindent_code(
+        """
+            auto ctor_wrapper({parameters_code}) ->  std::unique_ptr<{class_name}>;
+        """,
+        flag_strip_empty_lines=True,
+    )
+    ctor_wrapper_lambda_template = code_utils.unindent_code(
+        """
+            auto ctor_wrapper = []({parameters_code}) ->  std::unique_ptr<{class_name}>
+            {
+                return std::make_unique<{class_name}>({parameters_names});
+            };
+        """,
+        flag_strip_empty_lines=True,
+    )
+    replacements = Munch()
+    replacements.parameters_code = parameter_list.str_types_names_default_for_signature()
+    replacements.class_name = parent_struct.class_name
+    replacements.parameters_names = parameter_list.str_names_only_for_call()
+
+    ctor_wrapper_signature_code = code_utils.process_code_template(ctor_wrapper_signature_template, replacements)
+    ctor_wrapper_lambda_code = code_utils.process_code_template(ctor_wrapper_lambda_template, replacements)
+
+    cpp_wrapper_function = srcmlcpp_main.code_first_function_decl(
+        inout_adapted_function.options.srcml_options, ctor_wrapper_signature_code
+    )
+    ctor_adapted_wrapper_function = AdaptedFunction(
+        inout_adapted_function.lg_context,
+        cpp_wrapper_function,
+        is_overloaded=False,
+        initial_lambda_to_call="ctor_wrapper",
+    )
+
+    if ctor_adapted_wrapper_function.cpp_adapter_code is None:
+        return
+
+    inout_adapted_function.cpp_adapter_code = (
+        ctor_wrapper_lambda_code + "\n" + ctor_adapted_wrapper_function.cpp_adapter_code
+    )
+    inout_adapted_function.lambda_to_call = ctor_adapted_wrapper_function.lambda_to_call
+    inout_adapted_function.cpp_adapted_function = ctor_adapted_wrapper_function.cpp_adapted_function
 
 
 def _make_adapted_lambda_code_end(adapted_function: AdaptedFunction, lambda_adapter: LambdaAdapter) -> str:

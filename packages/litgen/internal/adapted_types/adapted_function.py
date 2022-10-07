@@ -166,7 +166,13 @@ class AdaptedFunction(AdaptedElement):
     is_type_ignore: bool = False
     is_vectorize_impl: bool = False
 
-    def __init__(self, lg_context: LitgenContext, function_infos: CppFunctionDecl, is_overloaded: bool) -> None:
+    def __init__(
+        self,
+        lg_context: LitgenContext,
+        function_infos: CppFunctionDecl,
+        is_overloaded: bool,
+        initial_lambda_to_call: Optional[str] = None,
+    ) -> None:
         from litgen.internal import adapt_function_params
         from litgen.internal.adapted_types import operators
 
@@ -174,7 +180,7 @@ class AdaptedFunction(AdaptedElement):
         operators.raise_if_unsupported_operator(self.cpp_adapted_function)
 
         self.cpp_adapter_code = None
-        self.lambda_to_call = None
+        self.lambda_to_call = initial_lambda_to_call
         super().__init__(lg_context, function_infos)
         self._fill_return_value_policy()
         self._fill_is_type_ignore()
@@ -532,6 +538,221 @@ class AdaptedFunction(AdaptedElement):
         )
         return code
 
+    def _pydef_end_arg_docstring_returnpolicy(self) -> str:
+        template_code = code_utils.unindent_code(
+            """
+            {_i_}{maybe_py_arg}{maybe_comma}
+            {_i_}{maybe_docstring}{maybe_comma}
+            {_i_}{maybe_return_value_policy}{maybe_comma}"""
+        )[1:]
+
+        # Standard replacements dict (r) and replacement dict with possible line removal (l)
+        replace_tokens = Munch()
+        replace_lines = Munch()
+
+        # fill _i_
+        replace_tokens._i_ = self.options.indent_cpp_spaces()
+
+        # fill maybe_py_arg
+        pyarg_codes = self._pydef_pyarg_list()
+        if len(pyarg_codes) > 0:
+            replace_lines.maybe_py_arg = ", ".join(pyarg_codes)
+        else:
+            replace_lines.maybe_py_arg = None
+
+        # fill maybe_docstring
+        comment = self.comment_pydef_one_line()
+        if len(comment) == 0:
+            replace_lines.maybe_docstring = None
+        else:
+            replace_lines.maybe_docstring = f'"{comment}"'
+
+        # Fill maybe_return_value_policy
+        return_value_policy = self.return_value_policy
+        if len(return_value_policy) > 0:
+            replace_lines.maybe_return_value_policy = f"pybind11::return_value_policy::{return_value_policy}"
+        else:
+            replace_lines.maybe_return_value_policy = None
+
+        # Process template
+        code = code_utils.process_code_template(
+            input_string=template_code,
+            replacements=replace_tokens,
+            replacements_with_line_removal_if_not_found=replace_lines,
+            flag_replace_maybe_comma=True,
+        )
+
+        code = code + ")"
+        if not self.is_method():
+            code = code + ";"
+
+        return code
+
+    def _pydef_method_creation_part(self) -> str:
+        """Create the first code line of the pydef"""
+        template_code = code_utils.unindent_code(
+            """
+            {module_or_class}.{def_maybe_static}("{function_name_python}",{location}
+            """,
+            flag_strip_empty_lines=True,
+        )
+
+        # Standard replacements dict (r) and replacement dict with possible line removal (l)
+        replace_tokens = Munch()
+
+        # fill module_or_class, function_name, location
+        parent_cpp_module_var_name = cpp_to_python.cpp_scope_to_pybind_var_name(self.options, self.cpp_element())
+        replace_tokens.module_or_class = "" if self.is_method() else parent_cpp_module_var_name
+        if self.is_vectorize_impl:
+            replace_tokens.function_name_python = (
+                self.options.fn_vectorize_prefix + self.function_name_python() + self.options.fn_vectorize_suffix
+            )
+        else:
+            replace_tokens.function_name_python = self.function_name_python()
+        replace_tokens.location = self.info_original_location_cpp()
+        replace_tokens.def_maybe_static = "def_static" if self.cpp_element().is_static() else "def"
+
+        r = code_utils.process_code_template(template_code, replace_tokens)
+        return r
+
+    def _pydef_without_lambda_str_impl(self) -> str:
+        """Create the full code of the pydef, with a direct call to the function or method"""
+        template_code = code_utils.unindent_code(
+            """
+            {pydef_method_creation_part}
+            {_i_}{function_pointer}{maybe_comma}{pydef_end_arg_docstring_returnpolicy}"""
+        )[1:]
+
+        # Standard replacements dict (r) and replacement dict with possible line removal (l)
+        replace_tokens = Munch()
+        replace_lines = Munch()
+
+        # fill _i_
+        replace_tokens._i_ = self.options.indent_cpp_spaces()
+
+        replace_tokens.pydef_method_creation_part = self._pydef_method_creation_part()
+
+        # fill function_pointer
+        function_name = self.cpp_element().function_name
+        function_parent_scope = self.cpp_element().cpp_scope(False).str_cpp_prefix()
+
+        if self.is_vectorize_impl:
+            replace_tokens.function_pointer = f"py::vectorize({function_parent_scope}{function_name})"
+        else:
+            replace_tokens.function_pointer = f"{function_parent_scope}{function_name}"
+
+        if self.is_method():
+            replace_tokens.function_pointer = "&" + replace_tokens.function_pointer
+
+        if self.is_overloaded:
+            overload_types = self.cpp_element().parameter_list.str_types_only_for_overload()
+            replace_tokens.function_pointer = f"py::overload_cast<{overload_types}>({replace_tokens.function_pointer})"
+
+        # fill pydef_end_arg_docstring_returnpolicy
+        replace_tokens.pydef_end_arg_docstring_returnpolicy = self._pydef_end_arg_docstring_returnpolicy()
+
+        # If pydef_end_arg_docstring_returnpolicy is multiline, add \n
+        if "\n" in replace_tokens.pydef_end_arg_docstring_returnpolicy:
+            replace_tokens.pydef_end_arg_docstring_returnpolicy = (
+                "\n" + replace_tokens.pydef_end_arg_docstring_returnpolicy
+            )
+        else:
+            replace_tokens.pydef_end_arg_docstring_returnpolicy = (
+                replace_tokens.pydef_end_arg_docstring_returnpolicy.lstrip()
+            )
+
+        # Process template
+        code = code_utils.process_code_template(
+            input_string=template_code,
+            replacements=replace_tokens,
+            replacements_with_line_removal_if_not_found=replace_lines,
+            flag_replace_maybe_comma=True,
+        )
+
+        return code
+
+    def _pydef_with_lambda_str_impl(self) -> str:
+        """Create the full code of the pydef, with an inner lambda"""
+
+        template_code = code_utils.unindent_code(
+            """
+            {pydef_method_creation_part}
+            {_i_}[]({params_call_with_self_if_method}){lambda_return_arrow}
+            {_i_}{
+            {_i_}{_i_}{lambda_adapter_code}
+            {maybe_empty_line}
+            {_i_}{_i_}{return_code};
+            {_i_}}{maybe_close_paren_if_ctor}{maybe_comma}{pydef_end_arg_docstring_returnpolicy}"""
+        )[1:]
+
+        function_infos = self.cpp_adapted_function
+
+        # Standard replacement dict (r) and replacement dict with possible line removal (l)
+        replace_tokens = Munch()
+        replace_lines = Munch()
+
+        # fill _i_
+        replace_tokens._i_ = self.options.indent_cpp_spaces()
+
+        if self.is_constructor():
+            replace_tokens.pydef_method_creation_part = ".def(py::init("
+            replace_tokens.maybe_close_paren_if_ctor = ")"
+        else:
+            replace_tokens.pydef_method_creation_part = self._pydef_method_creation_part()
+            replace_tokens.maybe_close_paren_if_ctor = ""
+
+        # fill params_call_with_self_if_method
+        _params_list = function_infos.parameter_list.list_types_names_default_for_signature()
+        if self.is_method() and not self.is_constructor():
+            _self_param = f"{self.cpp_element().cpp_scope(True).str_cpp()} & self"
+            if function_infos.is_const():
+                _self_param = "const " + _self_param
+            _params_list = [_self_param] + _params_list
+        replace_tokens.params_call_with_self_if_method = ", ".join(_params_list)
+
+        # Fill lambda_return_arrow
+        if self.cpp_adapted_function.returns_void():
+            replace_tokens.lambda_return_arrow = ""
+        else:
+            full_return_type = self.cpp_adapted_function.str_full_return_type()
+            replace_tokens.lambda_return_arrow = f" -> {full_return_type}"
+
+        # fill return_code
+        replace_tokens.return_code = self._pydef_return_str()
+
+        # fill lambda_adapter_code
+        replace_lines.lambda_adapter_code = self.cpp_adapter_code
+
+        if replace_lines.lambda_adapter_code is not None:
+            replace_lines.lambda_adapter_code = code_utils.indent_code(
+                replace_lines.lambda_adapter_code,
+                indent_str=self.options.indent_cpp_spaces() * 2,
+                skip_first_line=True,
+            )
+            if replace_lines.lambda_adapter_code[-1] == "\n":
+                replace_lines.lambda_adapter_code = replace_lines.lambda_adapter_code[:-1]
+
+        # fill maybe_empty_line
+        replace_lines.maybe_empty_line = "" if replace_lines.lambda_adapter_code is not None else None
+
+        # fill pydef_end_arg_docstring_returnpolicy
+        replace_tokens.pydef_end_arg_docstring_returnpolicy = self._pydef_end_arg_docstring_returnpolicy()
+        # If pydef_end_arg_docstring_returnpolicy is multiline, add \n
+        if "\n" in replace_tokens.pydef_end_arg_docstring_returnpolicy:
+            replace_tokens.pydef_end_arg_docstring_returnpolicy = (
+                "\n" + replace_tokens.pydef_end_arg_docstring_returnpolicy
+            )
+
+        # Process template
+        code = code_utils.process_code_template(
+            input_string=template_code,
+            replacements=replace_tokens,
+            replacements_with_line_removal_if_not_found=replace_lines,
+            flag_replace_maybe_comma=True,
+        )
+
+        return code
+
     def _pydef_constructor_str(self) -> str:
         """
         A constructor decl look like this
@@ -594,204 +815,6 @@ class AdaptedFunction(AdaptedElement):
 
         return code
 
-    def _pydef_end_arg_docstring_returnpolicy(self) -> str:
-        template_code = code_utils.unindent_code(
-            """
-            {_i_}{maybe_py_arg}{maybe_comma}
-            {_i_}{maybe_docstring}{maybe_comma}
-            {_i_}{maybe_return_value_policy}{maybe_comma}"""
-        )[1:]
-
-        # Standard replacements dict (r) and replacement dict with possible line removal (l)
-        replace_tokens = Munch()
-        replace_lines = Munch()
-
-        # fill _i_
-        replace_tokens._i_ = self.options.indent_cpp_spaces()
-
-        # fill maybe_py_arg
-        pyarg_codes = self._pydef_pyarg_list()
-        if len(pyarg_codes) > 0:
-            replace_lines.maybe_py_arg = ", ".join(pyarg_codes)
-        else:
-            replace_lines.maybe_py_arg = None
-
-        # fill maybe_docstring
-        comment = self.comment_pydef_one_line()
-        if len(comment) == 0:
-            replace_lines.maybe_docstring = None
-        else:
-            replace_lines.maybe_docstring = f'"{comment}"'
-
-        # Fill maybe_return_value_policy
-        return_value_policy = self.return_value_policy
-        if len(return_value_policy) > 0:
-            replace_lines.maybe_return_value_policy = f"pybind11::return_value_policy::{return_value_policy}"
-        else:
-            replace_lines.maybe_return_value_policy = None
-
-        # Process template
-        code = code_utils.process_code_template(
-            input_string=template_code,
-            replacements=replace_tokens,
-            replacements_with_line_removal_if_not_found=replace_lines,
-            flag_replace_maybe_comma=True,
-        )
-
-        code = code + ")"
-        if not self.is_method():
-            code = code + ";"
-
-        return code
-
-    def _pydef_without_lambda_str_impl(self) -> str:
-        """Create the full code of the pydef, with a direct call to the function or method"""
-        template_code = code_utils.unindent_code(
-            """
-            {module_or_class}.{def_maybe_static}("{function_name_python}",{location}
-            {_i_}{function_pointer}{maybe_comma}{pydef_end_arg_docstring_returnpolicy}"""
-        )[1:]
-
-        # Standard replacements dict (r) and replacement dict with possible line removal (l)
-        replace_tokens = Munch()
-        replace_lines = Munch()
-
-        # fill _i_
-        replace_tokens._i_ = self.options.indent_cpp_spaces()
-
-        # fill module_or_class, function_name, location
-        parent_cpp_module_var_name = cpp_to_python.cpp_scope_to_pybind_var_name(self.options, self.cpp_element())
-        replace_tokens.module_or_class = "" if self.is_method() else parent_cpp_module_var_name
-        if self.is_vectorize_impl:
-            replace_tokens.function_name_python = (
-                self.options.fn_vectorize_prefix + self.function_name_python() + self.options.fn_vectorize_suffix
-            )
-        else:
-            replace_tokens.function_name_python = self.function_name_python()
-        replace_tokens.location = self.info_original_location_cpp()
-        replace_tokens.def_maybe_static = "def_static" if self.cpp_element().is_static() else "def"
-
-        # fill function_pointer
-        function_name = self.cpp_element().function_name
-        function_parent_scope = self.cpp_element().cpp_scope(False).str_cpp_prefix()
-
-        if self.is_vectorize_impl:
-            replace_tokens.function_pointer = f"py::vectorize({function_parent_scope}{function_name})"
-        else:
-            replace_tokens.function_pointer = f"{function_parent_scope}{function_name}"
-
-        if self.is_method():
-            replace_tokens.function_pointer = "&" + replace_tokens.function_pointer
-
-        if self.is_overloaded:
-            overload_types = self.cpp_element().parameter_list.str_types_only_for_overload()
-            replace_tokens.function_pointer = f"py::overload_cast<{overload_types}>({replace_tokens.function_pointer})"
-
-        # fill pydef_end_arg_docstring_returnpolicy
-        replace_tokens.pydef_end_arg_docstring_returnpolicy = self._pydef_end_arg_docstring_returnpolicy()
-
-        # If pydef_end_arg_docstring_returnpolicy is multiline, add \n
-        if "\n" in replace_tokens.pydef_end_arg_docstring_returnpolicy:
-            replace_tokens.pydef_end_arg_docstring_returnpolicy = (
-                "\n" + replace_tokens.pydef_end_arg_docstring_returnpolicy
-            )
-        else:
-            replace_tokens.pydef_end_arg_docstring_returnpolicy = (
-                replace_tokens.pydef_end_arg_docstring_returnpolicy.lstrip()
-            )
-
-        # Process template
-        code = code_utils.process_code_template(
-            input_string=template_code,
-            replacements=replace_tokens,
-            replacements_with_line_removal_if_not_found=replace_lines,
-            flag_replace_maybe_comma=True,
-        )
-
-        return code
-
-    def _pydef_with_lambda_str_impl(self) -> str:
-        """Create the full code of the pydef, with an inner lambda"""
-
-        template_code = code_utils.unindent_code(
-            """
-            {module_or_class}.{def_maybe_static}("{function_name}",{location}
-            {_i_}[]({params_call_with_self_if_method}){lambda_return_arrow}
-            {_i_}{
-            {_i_}{_i_}{lambda_adapter_code}
-            {maybe_empty_line}
-            {_i_}{_i_}{return_code};
-            {_i_}}{maybe_comma}{pydef_end_arg_docstring_returnpolicy}"""
-        )[1:]
-
-        function_infos = self.cpp_adapted_function
-
-        # Standard replacement dict (r) and replacement dict with possible line removal (l)
-        replace_tokens = Munch()
-        replace_lines = Munch()
-
-        # fill _i_
-        replace_tokens._i_ = self.options.indent_cpp_spaces()
-
-        # fill module_or_class, function_name, location
-        parent_cpp_module_var_name = cpp_to_python.cpp_scope_to_pybind_var_name(self.options, self.cpp_element())
-        replace_tokens.module_or_class = "" if self.is_method() else parent_cpp_module_var_name
-        replace_tokens.function_name = self.function_name_python()
-        replace_tokens.location = self.info_original_location_cpp()
-        replace_tokens.def_maybe_static = "def_static" if self.cpp_element().is_static() else "def"
-
-        # fill params_call_with_self_if_method
-        _params_list = function_infos.parameter_list.list_types_names_default_for_signature()
-        if self.is_method():
-            _self_param = f"{self.cpp_element().cpp_scope(True).str_cpp()} & self"
-            if function_infos.is_const():
-                _self_param = "const " + _self_param
-            _params_list = [_self_param] + _params_list
-        replace_tokens.params_call_with_self_if_method = ", ".join(_params_list)
-
-        # Fill lambda_return_arrow
-        if self.cpp_adapted_function.returns_void():
-            replace_tokens.lambda_return_arrow = ""
-        else:
-            full_return_type = self.cpp_adapted_function.str_full_return_type()
-            replace_tokens.lambda_return_arrow = f" -> {full_return_type}"
-
-        # fill return_code
-        replace_tokens.return_code = self._pydef_return_str()
-
-        # fill lambda_adapter_code
-        replace_lines.lambda_adapter_code = self.cpp_adapter_code
-
-        if replace_lines.lambda_adapter_code is not None:
-            replace_lines.lambda_adapter_code = code_utils.indent_code(
-                replace_lines.lambda_adapter_code,
-                indent_str=self.options.indent_cpp_spaces() * 2,
-                skip_first_line=True,
-            )
-            if replace_lines.lambda_adapter_code[-1] == "\n":
-                replace_lines.lambda_adapter_code = replace_lines.lambda_adapter_code[:-1]
-
-        # fill maybe_empty_line
-        replace_lines.maybe_empty_line = "" if replace_lines.lambda_adapter_code is not None else None
-
-        # fill pydef_end_arg_docstring_returnpolicy
-        replace_tokens.pydef_end_arg_docstring_returnpolicy = self._pydef_end_arg_docstring_returnpolicy()
-        # If pydef_end_arg_docstring_returnpolicy is multiline, add \n
-        if "\n" in replace_tokens.pydef_end_arg_docstring_returnpolicy:
-            replace_tokens.pydef_end_arg_docstring_returnpolicy = (
-                "\n" + replace_tokens.pydef_end_arg_docstring_returnpolicy
-            )
-
-        # Process template
-        code = code_utils.process_code_template(
-            input_string=template_code,
-            replacements=replace_tokens,
-            replacements_with_line_removal_if_not_found=replace_lines,
-            flag_replace_maybe_comma=True,
-        )
-
-        return code
-
     def _pydef_flag_needs_lambda(self) -> bool:
         r = self.cpp_adapter_code is not None or self.lambda_to_call is not None
         return r
@@ -810,12 +833,16 @@ class AdaptedFunction(AdaptedElement):
             return r
 
         if self.is_constructor():
-            code = self._pydef_constructor_str()
+            if self._pydef_flag_needs_lambda():
+                code = self._pydef_with_lambda_str_impl()
+            else:
+                code = self._pydef_constructor_str()
         else:
             if self._pydef_flag_needs_lambda():
                 code = self._pydef_with_lambda_str_impl()
             else:
                 code = self._pydef_without_lambda_str_impl()
+
         lines = code.split("\n")
 
         if self.shall_vectorize():

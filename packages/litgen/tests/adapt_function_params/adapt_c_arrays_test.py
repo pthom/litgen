@@ -132,7 +132,7 @@ def test_mixture():
 
 def test_mixture_no_replace():
     options = litgen.LitgenOptions()
-    options.fn_params_replace_const_c_array_by_std_array__regex = r".*"
+    options.fn_params_replace_c_array_const_by_std_array__regex = r".*"
     options.fn_params_replace_c_array_modifiable_by_boxed__regex = ""
 
     code = """void foo(bool flag, const double v[2], double outputs[2]);"""

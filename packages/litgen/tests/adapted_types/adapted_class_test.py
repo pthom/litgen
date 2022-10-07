@@ -166,8 +166,21 @@ def test_struct_stub_complex():
         auto pyClassColor4 =
             py::class_<Color4>
                 (m, "Color4", "A dummy class that handles 4 channel float colors")
-            .def(py::init<const float>(),
-                py::arg("values"))
+            .def(py::init(
+                [](const std::array<float, 4>& values) -> std::unique_ptr<Color4>
+                {
+                    auto ctor_wrapper = [](const float values[4]) ->  std::unique_ptr<Color4>
+                    {
+                        return std::make_unique<Color4>(values);
+                    };
+                    auto ctor_wrapper_adapt_fixed_size_c_arrays = [&ctor_wrapper](const std::array<float, 4>& values) -> std::unique_ptr<Color4>
+                    {
+                        auto r = ctor_wrapper(values.data());
+                        return r;
+                    };
+
+                    return ctor_wrapper_adapt_fixed_size_c_arrays(values);
+                }),     py::arg("values"))
             .def("to_gray",
                 &Color4::ToGray, "Return the color as a float gray value")
             .def("is_black",

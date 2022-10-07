@@ -685,6 +685,37 @@ void py_init_module_lg_mylib(py::module& m)
         make_dog, "Test that downcasting works: the return type is Animal, but it should bark!");
 
 
+    auto pyClassColor4 =
+        py::class_<Color4>
+            (m, "Color4", "")
+        .def(py::init(
+            [](const std::array<uint8_t, 4>& _rgba) -> std::unique_ptr<Color4>
+            {
+                auto ctor_wrapper = [](const uint8_t _rgba[4]) ->  std::unique_ptr<Color4>
+                {
+                    return std::make_unique<Color4>(_rgba);
+                };
+                auto ctor_wrapper_adapt_fixed_size_c_arrays = [&ctor_wrapper](const std::array<uint8_t, 4>& _rgba) -> std::unique_ptr<Color4>
+                {
+                    auto r = ctor_wrapper(_rgba.data());
+                    return r;
+                };
+
+                return ctor_wrapper_adapt_fixed_size_c_arrays(_rgba);
+            }),
+            py::arg("_rgba"),
+            "The constructor params will automatically be \"adapted\" into std::array<uint8_t, 4>")
+        .def_property("rgba",
+            [](Color4 &self) -> pybind11::array
+            {
+                auto dtype = pybind11::dtype(pybind11::format_descriptor<uint8_t>::format());
+                auto base = pybind11::array(dtype, {4}, {sizeof(uint8_t)});
+                return pybind11::array(dtype, {4}, {sizeof(uint8_t)}, self.rgba, base);
+            }, [](Color4& self) {},
+            "This member will be stored as a modifiable numpy array")
+        ;
+
+
     auto pyClassMyConfig =
         py::class_<MyConfig>
             (m, "MyConfig", "")
@@ -914,7 +945,7 @@ void py_init_module_lg_mylib(py::module& m)
     } // </namespace Root>
 
     { // <namespace SomeNamespace>
-        py::module_ pyNsSomeNamespace = m.def_submodule("SomeNamespace", "");
+        py::module_ pyNsSomeNamespace = m.def_submodule("SomeNamespace", "namespace SomeNamespace");
         auto pyNsSomeNamespace_ClassParentStruct =
             py::class_<SomeNamespace::ParentStruct>
                 (pyNsSomeNamespace, "ParentStruct", "")

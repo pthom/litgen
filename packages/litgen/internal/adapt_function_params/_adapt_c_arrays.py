@@ -74,7 +74,7 @@ def adapt_c_arrays(adapted_function: AdaptedFunction) -> Optional[LambdaAdapter]
         is_const = cpp_decl.is_const()
         return is_const and is_c_array_known_fixed_size and flag_replace_by_std_array
 
-    def needs_adapt_at_least_one_param():
+    def needs_adapt_at_least_one_param() -> bool:
         needs_adapt_r = False
         for param in adapted_function.adapted_parameters():
             if shall_replace_by_boxed(param):
