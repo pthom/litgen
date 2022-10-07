@@ -101,17 +101,7 @@ def play_virtual_method() -> None:
 
 def play() -> None:
     code = """
-    class Color4
-    {
-    public:
-        // void truc1(Widget values[4]);
-        // void truc2(const Widget values[4]);
-        // void truc3(const float values[4]);
-
-        //void truc4(float values[4]);
-
-        Color4(const float values[2]);
-    };
+    Widget& GetWidget(); // py::call_guard<T>()
     """
     options = litgen.LitgenOptions()
     # options.srcml_options.functions_api_prefixes = "MY_API"

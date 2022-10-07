@@ -280,9 +280,11 @@ class LitgenOptions:
     # ------------------------------------------------------------------------------
     # Return policy
     # ------------------------------------------------------------------------------
-    # Force the function that match those regexes to use `pybind11::return_value_policy::reference)`
-    # (Note: you can also write "// return_value_policy::reference" as an end of line comment after the function:
-    #  see packages/litgen/integration_tests/mylib/include/mylib/return_value_policy_test.h as an example)
+    # Force the function that match those regexes to use `pybind11::return_value_policy::reference`
+    #
+    # Note:
+    #    you can also write "// py::return_value_policy::reference" as an end of line comment after the function.
+    #    See packages/litgen/integration_tests/mylib/include/mylib/return_value_policy_test.h as an example
     fn_return_force_policy_reference_for_pointers__regex: str = ""
     fn_return_force_policy_reference_for_references__regex: str = ""
 

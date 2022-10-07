@@ -84,7 +84,7 @@ class MySingletonClass
 public:
     int value = 0;
 
-    MY_API static MySingletonClass& instance() // return_value_policy::reference
+    MY_API static MySingletonClass& instance() // py::return_value_policy::reference
     {
         static MySingletonClass instance;
         return instance;

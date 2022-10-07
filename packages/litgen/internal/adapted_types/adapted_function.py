@@ -482,9 +482,9 @@ class AdaptedFunction(AdaptedElement):
         """Parses the return_value_policy from the function end of line comment
         For example:
             // A static instance (which python shall not delete, as enforced by the marker return_policy below)
-            static Foo& Instance() { static Foo instance; return instance; }       // return_value_policy::reference
+            static Foo& Instance() { static Foo instance; return instance; }       // py::return_value_policy::reference
         """
-        token = "return_value_policy::"
+        token = "py::return_value_policy::"
 
         # Try to find it in eol comment (and clean eol comment if found)
         eol_comment = self.cpp_element().cpp_element_comments.comment_end_of_line
@@ -526,6 +526,23 @@ class AdaptedFunction(AdaptedElement):
         if (matches_regex_pointer and returns_pointer) or (matches_regex_reference and returns_reference):
             self.return_value_policy = "reference"
 
+    def _fill_call_policy_from_function_comment(self, call_policy_token: str) -> Optional[str]:
+        function_comment = self.cpp_element().cpp_element_comments.comment()
+        if call_policy_token in function_comment:
+            idx = function_comment.index(call_policy_token)
+            comment_rest = function_comment[idx:]
+            if "()" in comment_rest:
+                idx2 = comment_rest.index("()")
+                keep_alive_code = comment_rest[: idx2 + 2]
+                return keep_alive_code
+        return None
+
+    def _fill_keep_alive_from_function_comment(self) -> Optional[str]:
+        return self._fill_call_policy_from_function_comment("py::keep_alive")
+
+    def _fill_call_guard_from_function_comment(self) -> Optional[str]:
+        return self._fill_call_policy_from_function_comment("py::call_guard")
+
     def _pydef_return_str(self) -> str:
         """Creates the return part of the pydef"""
 
@@ -556,8 +573,12 @@ class AdaptedFunction(AdaptedElement):
             """
             {_i_}{maybe_py_arg}{maybe_comma}
             {_i_}{maybe_docstring}{maybe_comma}
-            {_i_}{maybe_return_value_policy}{maybe_comma}"""
-        )[1:]
+            {_i_}{maybe_return_value_policy}{maybe_comma}
+            {_i_}{maybe_keep_alive}{maybe_comma}
+            {_i_}{maybe_call_guard}{maybe_comma}
+            """,
+            flag_strip_empty_lines=True,
+        )
 
         # Standard replacements dict (r) and replacement dict with possible line removal (l)
         replace_tokens = Munch()
@@ -586,6 +607,9 @@ class AdaptedFunction(AdaptedElement):
             replace_lines.maybe_return_value_policy = f"pybind11::return_value_policy::{return_value_policy}"
         else:
             replace_lines.maybe_return_value_policy = None
+
+        replace_lines.maybe_keep_alive = self._fill_keep_alive_from_function_comment()
+        replace_lines.maybe_call_guard = self._fill_call_guard_from_function_comment()
 
         # Process template
         code = code_utils.process_code_template(

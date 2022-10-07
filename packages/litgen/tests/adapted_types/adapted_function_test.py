@@ -92,7 +92,7 @@ def test_return_value_policy() -> None:
     options = LitgenOptions()
     code = """
         // Returns a widget
-        Widget* Foo();  // return_value_policy::reference
+        Widget* Foo();  // py::return_value_policy::reference
     """
     generated_code = LitgenGeneratorTestsHelper.code_to_pydef(options, code)
     # logging.warning("\n" + generated_code)

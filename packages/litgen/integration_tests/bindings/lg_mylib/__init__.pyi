@@ -868,6 +868,25 @@ class IntWrapperSpaceship:
     def __gt__(self, o: int) -> bool:
         pass
 
+#////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+#                       mylib/call_policies_test.h included by mylib/mylib.h                                   //
+#//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+class CallGuardLogger:
+    def __init__(self) -> None:
+        pass
+
+    nb_construct: int # (C++ static member)
+    nb_destroy: int   # (C++ static member)
+
+
+
+def call_guard_tester() -> None:
+    """// py::call_guard<CallGuardLogger>()"""
+    pass
+
+
 
 #////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 #                       mylib/mylib.h continued                                                                //

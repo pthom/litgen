@@ -18,5 +18,6 @@
 #include "mylib/mix_adapters_class_test.h"
 #include "mylib/namespace_test.h"
 #include "mylib/operators.h"
+#include "mylib/call_policies_test.h"
 
 //#include "mylib/sandbox.h"

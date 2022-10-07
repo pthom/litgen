@@ -622,7 +622,7 @@ class MySingletonClass
 public:
     int value = 0;
 
-    MY_API static MySingletonClass& instance() // return_value_policy::reference
+    MY_API static MySingletonClass& instance() // py::return_value_policy::reference
     {
         static MySingletonClass instance;
         return instance;
@@ -858,7 +858,7 @@ struct MyConfig
     // otherwise python might destroy the singleton instance as soon as it goes out of scope.
     //
 
-    MY_API static MyConfig& Instance() // return_value_policy::reference
+    MY_API static MyConfig& Instance() // py::return_value_policy::reference
     {
         static MyConfig instance;
         return instance;
@@ -867,7 +867,7 @@ struct MyConfig
     int value = 0;
 };
 
-MY_API MyConfig* MyConfigInstance() { return & MyConfig::Instance(); } // return_value_policy::reference
+MY_API MyConfig* MyConfigInstance() { return & MyConfig::Instance(); } // py::return_value_policy::reference
 
 
 /*
@@ -1114,6 +1114,35 @@ struct IntWrapperSpaceship
     MY_API int operator<=>(IntWrapperSpaceship& o) { return value - o.value; }
     MY_API int operator<=>(int& o) { return value - o; }
 };
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//                       mylib/call_policies_test.h included by mylib/mylib.h                                   //
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+#include <iostream>
+
+struct CallGuardLogger
+{
+    CallGuardLogger() {
+        ++nb_construct;
+    }
+    ~CallGuardLogger() {
+        ++nb_destroy;
+    }
+
+    static int nb_construct;
+    static int nb_destroy;
+};
+
+int CallGuardLogger::nb_construct = 0;
+int CallGuardLogger::nb_destroy = 0;
+
+
+MY_API void call_guard_tester() // py::call_guard<CallGuardLogger>()
+{
+    std::cout << "call_guard_tester\n";
+}
+
 
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
