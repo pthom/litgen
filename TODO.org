@@ -483,9 +483,6 @@ Problem 3: dans lg_test_runner (integration tests), tout est refusé (trouve pas
 *** https://pybind11.readthedocs.io/en/stable/advanced/functions.html#additional-call-policies
 
 
-** https://pybind11.readthedocs.io/en/stable/advanced/functions.html#allow-prohibiting-none-arguments
-
-
 ** Template classes and functions
 https://pybind11.readthedocs.io/en/stable/advanced/functions.html#binding-functions-with-template-parameters
 

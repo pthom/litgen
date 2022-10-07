@@ -525,10 +525,6 @@ class AdaptedFunction(AdaptedElement):
 
         if (matches_regex_pointer and returns_pointer) or (matches_regex_reference and returns_reference):
             self.return_value_policy = "reference"
-            # self.cpp_element().emit_message(
-            #     "Forced function return_value_policy to reference",
-            #     message_header="Info",
-            # )
 
     def _pydef_return_str(self) -> str:
         """Creates the return part of the pydef"""
