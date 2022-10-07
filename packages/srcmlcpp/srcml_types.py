@@ -705,7 +705,7 @@ class CppType(CppElement):
     def is_inferred_type(self) -> bool:
         return self.typenames == ["auto"]
 
-    def with_instantiated_template_for_type(self, template_name: str, cpp_type_str: str) -> CppType:
+    def with_instantiated_template(self, template_name: str, cpp_type_str: str) -> CppType:
         new_type = copy.deepcopy(self)
         for i in range(len(new_type.typenames)):
             new_type.typenames[i] = new_type.typenames[i].replace(template_name, cpp_type_str)
@@ -1104,7 +1104,7 @@ class CppFunctionDecl(CppElementAndComment):
     template: CppTemplate
     function_name: str
     is_pure_virtual: bool
-    instantiated_template_param: str  # Will only be filled after calling with_instantiated_template_for_type
+    instantiated_template_param: str  # Will only be filled after calling with_instantiated_template
 
     def __init__(self, element: SrcmlXmlWrapper, cpp_element_comments: CppElementComments) -> None:
         super().__init__(element, cpp_element_comments)
@@ -1135,7 +1135,7 @@ class CppFunctionDecl(CppElementAndComment):
     def function_name_with_instantiation(self) -> str:
         return self.function_name + self._instantiation_str()
 
-    def with_instantiated_template_for_type(self, cpp_type_str: str) -> CppFunctionDecl:
+    def with_instantiated_template(self, cpp_type_str: str) -> CppFunctionDecl:
         """Returns a new non-templated function, implemented for the given type
         Only works on templated function with *one* template parameter
         """
@@ -1145,11 +1145,9 @@ class CppFunctionDecl(CppElementAndComment):
 
         new_function = copy.deepcopy(self)
         del new_function.template
-        new_function.return_type = self.return_type.with_instantiated_template_for_type(template_name, cpp_type_str)
+        new_function.return_type = self.return_type.with_instantiated_template(template_name, cpp_type_str)
         for parameter in new_function.parameter_list.parameters:
-            parameter.decl.cpp_type = parameter.decl.cpp_type.with_instantiated_template_for_type(
-                template_name, cpp_type_str
-            )
+            parameter.decl.cpp_type = parameter.decl.cpp_type.with_instantiated_template(template_name, cpp_type_str)
         new_function.instantiated_template_param = cpp_type_str
         return new_function
 

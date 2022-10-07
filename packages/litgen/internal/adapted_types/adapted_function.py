@@ -900,7 +900,7 @@ class AdaptedFunction(AdaptedElement):
         assert self._is_template()
         assert self._is_one_param_template()
 
-        new_cpp_function = self.cpp_element().with_instantiated_template_for_type(cpp_type_str)
+        new_cpp_function = self.cpp_element().with_instantiated_template(cpp_type_str)
         new_adapted_function = AdaptedFunction(self.lg_context, new_cpp_function, self.is_overloaded)
         return new_adapted_function
 
