@@ -296,7 +296,7 @@ class LitgenOptions:
     # class_expose_protected_methods__regex:
     # regex giving the list of class names for which we want to expose protected methods.
     # (by default, only public methods are exposed)
-    # If set, this will use the technique described at
+    # If active, this will use the technique described at
     # https://pybind11.readthedocs.io/en/stable/advanced/classes.html#binding-protected-member-functions)
     class_expose_protected_methods__regex: str = ""
 
@@ -304,11 +304,18 @@ class LitgenOptions:
     # regex giving the list of class names for which we want to be able to override virtual methods
     # from python.
     # (by default, this is not possible)
-    # If set, this will use the technique described at
+    # If active, this will use the technique described at
     # https://pybind11.readthedocs.io/en/stable/advanced/classes.html#overriding-virtual-functions-in-python
     #
     # Note: if you want to override protected functions, also fill `class_expose_protected_methods__regex`
     class_override_virtual_methods_in_python__regex: str = ""
+
+    # class_dynamic_attributes__regex
+    # By default, classes exported from C++ do not support dynamic attributes and the only writable attributes are
+    # the ones explicitly defined using class_::def_readwrite() or class_::def_property().
+    # If active, this will use the technique described at
+    # https://pybind11.readthedocs.io/en/stable/classes.html#dynamic-attributes
+    class_dynamic_attributes__regex: str = ""
 
     # Exclude certain members by a regex on their name
     member_exclude_by_name__regex: str = ""

@@ -606,6 +606,14 @@ class MyFinalClass:
     def foo(self) -> int:
         pass
 
+
+class MyStructDynamic:
+    """ This class accepts dynamic attributes
+     see autogenerate_mylib.py:
+         options.class_dynamic_attributes__regex = r"Dynamic$"
+    """
+    cpp_member: int = 1
+
 #////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 #                       mylib/class_inheritance_test.h included by mylib/mylib.h                               //
 #//////////////////////////////////////////////////////////////////////////////////////////////////////////////

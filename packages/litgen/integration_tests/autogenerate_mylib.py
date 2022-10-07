@@ -74,6 +74,8 @@ def mylib_litgen_options() -> litgen.LitgenOptions:
     options.fn_vectorize__regex = r".*"
     # options.fn_vectorize_suffix = "_vectorized"
 
+    options.class_dynamic_attributes__regex = r"Dynamic$"
+
     #
     # Sandbox for other options
     #

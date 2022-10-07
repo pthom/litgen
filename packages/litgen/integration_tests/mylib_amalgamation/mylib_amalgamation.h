@@ -645,6 +645,15 @@ struct MyFinalClass final
     MY_API int foo() { return 42; };
 };
 
+
+// This class accepts dynamic attributes
+// see autogenerate_mylib.py:
+//     options.class_dynamic_attributes__regex = r"Dynamic$"
+struct MyStructDynamic
+{
+    int cpp_member = 1;
+};
+
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //                       mylib/class_inheritance_test.h included by mylib/mylib.h                               //
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////

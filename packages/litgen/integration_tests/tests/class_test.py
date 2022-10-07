@@ -87,3 +87,14 @@ def test_final_class():
 
         class MyFinalClassDeriv(lg_mylib.MyFinalClass):
             pass
+
+
+def test_dynamic_class():
+    dynamic_instance = lg_mylib.MyStructDynamic()
+    assert dynamic_instance.cpp_member == 1
+    dynamic_instance.new_attrib = "Aye"
+    assert dynamic_instance.new_attrib == "Aye"
+
+    non_dyn_instance = lg_mylib.MyClass()
+    with pytest.raises(AttributeError):
+        non_dyn_instance.new_attrib = "Aye"

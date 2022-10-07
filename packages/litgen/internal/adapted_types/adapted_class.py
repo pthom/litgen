@@ -499,6 +499,8 @@ class AdaptedClass(AdaptedElement):
         def make_pyclass_creation_code() -> str:
             # Additional template params to py::class_
             qualified_struct_name = self.cpp_element().qualified_struct_name()
+
+            # fill py::class_ additional template params (base classes, nodelete, etc)
             other_template_params_list = []
             if self.cpp_element().has_base_classes():
                 base_classes = self.cpp_element().base_classes()
@@ -523,7 +525,7 @@ class AdaptedClass(AdaptedElement):
                     """
                 auto {pydef_class_var} =
                 {_i_}py::class_<{qualified_struct_name}{other_template_params}>{location}
-                {_i_}{_i_}({pydef_class_var_parent}, "{bare_struct_name}"{maybe_py_is_final}, "{comment}")
+                {_i_}{_i_}({pydef_class_var_parent}, "{bare_struct_name}"{maybe_py_is_final}{maybe_py_is_dynamic}, "{comment}")
                 """,
                     flag_strip_empty_lines=True,
                 )
@@ -541,6 +543,11 @@ class AdaptedClass(AdaptedElement):
                 options, self.cpp_element()
             )
             replacements.maybe_py_is_final = ", py::is_final()" if self.cpp_element().is_final() else ""
+            if code_utils.does_match_regex(self.options.class_dynamic_attributes__regex, self.cpp_element().class_name):
+                replacements.maybe_py_is_dynamic = ", py::dynamic_attr()"
+            else:
+                replacements.maybe_py_is_dynamic = ""
+
             replacements.comment = self.comment_pydef_one_line()
 
             pyclass_creation_code = code_utils.process_code_template(code_template, replacements)

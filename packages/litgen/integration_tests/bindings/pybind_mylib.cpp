@@ -681,6 +681,14 @@ void py_init_module_lg_mylib(py::module& m)
         ;
 
 
+    auto pyClassMyStructDynamic =
+        py::class_<MyStructDynamic>
+            (m, "MyStructDynamic", py::dynamic_attr(), " This class accepts dynamic attributes\n see autogenerate_mylib.py:\n     options.class_dynamic_attributes__regex = r\"Dynamic$\"")
+        .def(py::init<>()) // implicit default constructor
+        .def_readwrite("cpp_member", &MyStructDynamic::cpp_member, "")
+        ;
+
+
     m.def("make_dog",
         make_dog, "Test that downcasting works: the return type is Animal, but it should bark!");
 
