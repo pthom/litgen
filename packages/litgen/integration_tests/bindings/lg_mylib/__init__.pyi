@@ -934,13 +934,13 @@ class Root: # Proxy class that introduces typings for the *submodule* Root
             def foo_concrete(self, x: int, name: str) -> str:
                 pass
 
-            def foo_virtual_public_pure(self) -> int:
+            def foo_virtual_public_pure(self) -> int:                      # overridable (pure virtual)
                 pass
 
             # <protected_methods>
-            def foo_virtual_protected(self, x: int) -> int:
+            def foo_virtual_protected(self, x: int) -> int:                # overridable
                 pass
-            def foo_virtual_protected_const_const(self, name: str) -> str:
+            def foo_virtual_protected_const_const(self, name: str) -> str: # overridable
                 pass
             # </protected_methods>
 
@@ -953,7 +953,7 @@ class Root: # Proxy class that introduces typings for the *submodule* Root
                 pass
             def foo_virtual_public_pure(self) -> int:
                 pass
-            def foo_derivate(self) -> int:
+            def foo_derivate(self) -> int: # overridable
                 pass
 
     # </submodule Inner>

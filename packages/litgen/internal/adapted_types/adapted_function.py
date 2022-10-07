@@ -368,9 +368,22 @@ class AdaptedFunction(AdaptedElement):
             return r
 
         if self.is_type_ignore:
-            type_ignore = "  # type: ignore"
+            comment_python_type_ignore = "  # type: ignore"
         else:
-            type_ignore = ""
+            comment_python_type_ignore = ""
+
+        # Fill a comment that will be written as an indication in the python stub
+        comment_python_overridable = ""
+        if self.cpp_element().is_virtual_method():
+            parent_struct = self.cpp_element().parent_struct_if_method()
+            assert parent_struct is not None
+            is_overridable = code_utils.does_match_regex(
+                self.options.class_override_virtual_methods_in_python__regex, parent_struct.class_name
+            )
+            if is_overridable:
+                comment_python_overridable = " # overridable"
+                if self.cpp_element().is_pure_virtual:
+                    comment_python_overridable += " (pure virtual)"
 
         function_name_python = self.function_name_python()
         if self.is_vectorize_impl:
@@ -390,7 +403,7 @@ class AdaptedFunction(AdaptedElement):
             first_code_line_full = function_def_code
             first_code_line_full += ", ".join(params_strs)
             first_code_line_full += return_code
-            first_code_line_full += type_ignore
+            first_code_line_full += comment_python_type_ignore + comment_python_overridable
             if (
                 self.options.python_max_line_length <= 0
                 or len(first_code_line_full) < self.options.python_max_line_length
@@ -407,7 +420,11 @@ class AdaptedFunction(AdaptedElement):
                     params_strs_comma.append(param_str + ", ")
                 else:
                     params_strs_comma.append(param_str)
-            lines = [function_def_code + type_ignore] + params_strs_comma + [return_code]
+            lines = (
+                [function_def_code + comment_python_type_ignore + comment_python_overridable]
+                + params_strs_comma
+                + [return_code]
+            )
             return lines
 
         all_on_one_line = function_name_and_params_on_one_line()
