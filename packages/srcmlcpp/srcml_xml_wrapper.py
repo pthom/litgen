@@ -51,7 +51,9 @@ def emit_warning_if_not_quiet(options: SrcmlOptions, message: str) -> None:
     if in_pytest:
         logging.warning(message)
     else:
-        print("Warning: " + message, file=sys.stderr)
+        if not message.startswith("Warning"):
+            message = "Warning:" + message
+        print(message, file=sys.stderr)
 
 
 @dataclass
