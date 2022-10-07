@@ -998,31 +998,31 @@ class CppParameterList(CppElement):
         super().__init__(element)
         self.parameters = []
 
-    def types_names_only(self) -> List[str]:
+    def list_types_names_only(self) -> List[str]:
         """Returns a list like ["int", "bool"]"""
         r = []
         for parameter in self.parameters:
             r.append(parameter.decl.cpp_type.str_code())
         return r
 
-    def types_names_only_str(self) -> str:
-        return ", ".join(self.types_names_only())
+    def str_types_names_only(self) -> str:
+        return ", ".join(self.list_types_names_only())
 
-    def types_names_default_for_signature_list(self) -> List[str]:
+    def list_types_names_default_for_signature(self) -> List[str]:
         """Returns a list like ["int a", "bool flag = true"]"""
         params_strs = list(map(lambda param: param.type_name_default_for_signature(), self.parameters))
         return params_strs
 
-    def types_names_default_for_signature_str(self) -> str:
+    def str_types_names_default_for_signature(self) -> str:
         """Returns a string like "int a, bool flag = true" """
-        params_strs = self.types_names_default_for_signature_list()
+        params_strs = self.list_types_names_default_for_signature()
         params_str = ", ".join(params_strs)
         return params_str
 
     def str_code(self) -> str:
-        return self.types_names_default_for_signature_str()
+        return self.str_types_names_default_for_signature()
 
-    def names_only_for_call(self) -> str:
+    def str_names_only_for_call(self) -> str:
         names = [param.variable_name() for param in self.parameters]
         r = ", ".join(names)
         return r
@@ -1608,7 +1608,7 @@ class CppStruct(CppElementAndComment):
             for present_method in virtual_methods:
                 same_name = present_method.function_name == method.function_name
                 same_parameters_types = (
-                    present_method.parameter_list.types_names_only_str() == method.parameter_list.types_names_only_str()
+                    present_method.parameter_list.str_types_names_only() == method.parameter_list.str_types_names_only()
                 )
                 if same_name and same_parameters_types:
                     return True

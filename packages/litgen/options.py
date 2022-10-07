@@ -203,20 +203,20 @@ class LitgenOptions:
     # may be transformed to:
     #       void foo_const(const std::array<int, 2>& input)    (c++ bound signature)
     #       def foo_const(input: List[int]) -> None:           (python)
-    # fn_params_buffer_replace_by_array_regexes contains a list of regexes on functions names
+    # fn_params_replace_c_array_const_by_std_array__regex contains a list of regexes on functions names
     # for which this transformation will be applied.
     # Set it to r".*" to apply this to all functions, set it to "" to disable it
-    fn_params_replace_const_c_array_by_std_array__regex: str = r".*"
+    fn_params_replace_c_array_const_by_std_array__regex: str = r".*"
 
     # Signatures like
     #       void foo_non_const(int output[2])
     # may be transformed to:
     #       void foo_non_const(BoxedInt & output_0, BoxedInt & output_1)         (c++ bound signature)
     #       def foo_non_const(output_0: BoxedInt, output_0: BoxedInt) -> None    (python)
-    # fn_params_replace_modifiable_c_array_by_boxed__regex contains a list of regexes on functions names
+    # fn_params_replace_c_array_modifiable_by_boxed__regex contains a list of regexes on functions names
     # for which this transformation will be applied.
     # Set it to r".*" to apply this to all functions, set it to "" to disable it
-    fn_params_replace_modifiable_c_array_by_boxed__regex: str = r".*"
+    fn_params_replace_c_array_modifiable_by_boxed__regex: str = r".*"
     # (c_array_modifiable_max_size is the maximum number of params that can be boxed like this)
     fn_params_replace_modifiable_c_array__max_size = 10
 

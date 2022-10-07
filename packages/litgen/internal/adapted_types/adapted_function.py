@@ -270,11 +270,13 @@ class AdaptedFunction(AdaptedElement):
         )
         replacements.maybe_const = " const" if self.cpp_element().is_const() else ""
         replacements.implemented_class = implemented_class
-        replacements.param_list = self.cpp_element().parameter_list.types_names_default_for_signature_str()
+        replacements.param_list = self.cpp_element().parameter_list.str_types_names_default_for_signature()
         replacements.maybe_comma_if_has_params = "," if has_params else ""
 
         lines_replacements = Munch()
-        lines_replacements.param_names = self.cpp_element().parameter_list.names_only_for_call() if has_params else None
+        lines_replacements.param_names = (
+            self.cpp_element().parameter_list.str_names_only_for_call() if has_params else None
+        )
 
         code = code_utils.process_code_template(template_code, replacements, lines_replacements)
         lines = code.split("\n")
@@ -517,7 +519,7 @@ class AdaptedFunction(AdaptedElement):
             self.lambda_to_call if self.lambda_to_call is not None else self.cpp_adapted_function.function_name
         )
         # Fill params_call_inner
-        params_call_inner = self.cpp_adapted_function.parameter_list.names_only_for_call()
+        params_call_inner = self.cpp_adapted_function.parameter_list.str_names_only_for_call()
 
         code = code_utils.replace_in_string(
             template_code,
@@ -739,7 +741,7 @@ class AdaptedFunction(AdaptedElement):
         replace_tokens.def_maybe_static = "def_static" if self.cpp_element().is_static() else "def"
 
         # fill params_call_with_self_if_method
-        _params_list = function_infos.parameter_list.types_names_default_for_signature_list()
+        _params_list = function_infos.parameter_list.list_types_names_default_for_signature()
         if self.is_method():
             _self_param = f"{self.cpp_element().cpp_scope(True).str_cpp()} & self"
             if function_infos.is_const():

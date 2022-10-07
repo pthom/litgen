@@ -38,7 +38,7 @@ def play_pydef(code: str, options: LitgenOptions) -> None:
 
 def litgensample_options() -> litgen.LitgenOptions:
     options = litgen.LitgenOptions()
-    options.fn_params_replace_modifiable_c_array_by_boxed__regex = "array"
+    options.fn_params_replace_c_array_modifiable_by_boxed__regex = "array"
     options.fn_params_output_modifiable_immutable_to_return__regex = r".*"
     return options
 
@@ -100,7 +100,17 @@ def play_virtual_method() -> None:
 
 
 def play() -> None:
-    code = "auto my_pow(double a, double b) -> double;"
+    code = """
+    class Color4
+    {
+    public:
+        void truc1(Widget values[4]);
+        void truc2(const Widget values[4]);
+        void truc3(const float values[4]);
+        void truc4(float values[4]);
+        Color4(float values[4]);
+    };
+    """
     options = litgen.LitgenOptions()
     # options.srcml_options.functions_api_prefixes = "MY_API"
 

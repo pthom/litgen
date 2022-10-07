@@ -14,17 +14,27 @@ def adapt_c_arrays(adapted_function: AdaptedFunction) -> Optional[LambdaAdapter]
     We want to adapt functions that use fixed size C arrays like those:
         `void foo_const(const int input[2])` or `void foo_non_const(int output[2])`
 
-    For const parameters e.g. `int foo_const(const int input[2])`, we will generate a lambda that looks like
-        [](const std::array<int, 2>& input)
-        {
-            auto foo_const_adapt_fixed_size_c_arrays = [](const std::array<int, 2>& input)
+    Two possibilities:
+    1.  Using std::array, for const c-array parameter, e.g.
+            `int foo(const int input[2])`,
+        we will generate a python functions whose signature is:
+            def foo(self, values: List[int]) -> None:
+                pass
+        thanks to a lambda that looks like
+            [](const std::array<int, 2>& input)
             {
-                return foo_const(input.data()); // Sigh, this might differ for void functions!
-            };
-            return foo_const_adapt_fixed_size_c_arrays(input); // This might differ for void functions!
-        }
+                auto foo_const_adapt_fixed_size_c_arrays = [](const std::array<int, 2>& input)
+                {
+                    return foo_const(input.data()); // Sigh, this might differ for void functions!
+                };
+                return foo_const_adapt_fixed_size_c_arrays(input); // This might differ for void functions!
+            }
 
-    For non const parameters, e.g. `void foo_non_const(int output[2])` we will generate a lambda that looks like:
+    2.  Duplicating the params for non const c-array parameter, e.g.
+            `void foo_non_const(float output[2])`
+        we will generate a python function whose signature is:
+           def truc(self, input_0: BoxedFloat, input_1: BoxedFloat)
+        thanks to a lambda that looks like:
             [](BoxedInt & output_0, BoxedInt & output_1)
             {
                 auto foo_non_const_adapt_fixed_size_c_arrays = [](BoxedInt & output_0, BoxedInt & output_1)
@@ -45,29 +55,35 @@ def adapt_c_arrays(adapted_function: AdaptedFunction) -> Optional[LambdaAdapter]
     options = adapted_function.options
 
     function_name = adapted_function.cpp_adapted_function.function_name
-    flag_replace_const_c_array_by_std_array = code_utils.does_match_regex(
-        options.fn_params_replace_const_c_array_by_std_array__regex, function_name
-    )
-    flag_replace_modifiable_c_array_by_boxed = code_utils.does_match_regex(
-        options.fn_params_replace_modifiable_c_array_by_boxed__regex, function_name
-    )
 
-    if not flag_replace_const_c_array_by_std_array and not flag_replace_modifiable_c_array_by_boxed:
-        return None
+    def shall_replace_by_boxed(param: AdaptedParameter) -> bool:
+        flag_replace_by_boxed = code_utils.does_match_regex(
+            options.fn_params_replace_c_array_modifiable_by_boxed__regex, function_name
+        )
+        cpp_decl = param.adapted_decl().cpp_element()
+        is_c_array_known_fixed_size = cpp_decl.is_c_array_known_fixed_size()
+        is_modifiable = not cpp_decl.is_const()
+        return is_modifiable and is_c_array_known_fixed_size and flag_replace_by_boxed
 
-    needs_adapt = False
+    def shall_replace_by_std_array(param: AdaptedParameter) -> bool:
+        flag_replace_by_std_array = code_utils.does_match_regex(
+            options.fn_params_replace_c_array_const_by_std_array__regex, function_name
+        )
+        cpp_decl = param.adapted_decl().cpp_element()
+        is_c_array_known_fixed_size = cpp_decl.is_c_array_known_fixed_size()
+        is_const = cpp_decl.is_const()
+        return is_const and is_c_array_known_fixed_size and flag_replace_by_std_array
 
-    for old_adapted_param in adapted_function.adapted_parameters():
-        old_cpp_decl = old_adapted_param.adapted_decl().cpp_element()
-        is_c_array_known_fixed_size = old_cpp_decl.is_c_array_known_fixed_size()
-        is_const = old_cpp_decl.is_const()
-        if is_c_array_known_fixed_size:
-            if is_const and flag_replace_const_c_array_by_std_array:
-                needs_adapt = True
-            if not is_const and flag_replace_modifiable_c_array_by_boxed:
-                needs_adapt = True
+    def needs_adapt_at_least_one_param():
+        needs_adapt_r = False
+        for param in adapted_function.adapted_parameters():
+            if shall_replace_by_boxed(param):
+                needs_adapt_r = True
+            if shall_replace_by_std_array(param):
+                needs_adapt_r = True
+        return needs_adapt_r
 
-    if not needs_adapt:
+    if not needs_adapt_at_least_one_param():
         return None
 
     lambda_adapter = LambdaAdapter()
@@ -83,7 +99,7 @@ def adapt_c_arrays(adapted_function: AdaptedFunction) -> Optional[LambdaAdapter]
         old_cpp_decl = old_adapted_param.adapted_decl().cpp_element()
         if old_cpp_decl.is_c_array_known_fixed_size():
 
-            if old_cpp_decl.is_const() and flag_replace_const_c_array_by_std_array:
+            if shall_replace_by_std_array(old_adapted_param):
                 was_replaced = True
                 # Create new calling param (const std::array &)
                 new_adapted_decl = old_adapted_param.adapted_decl().c_array_fixed_size_to_const_std_array()
@@ -94,7 +110,7 @@ def adapt_c_arrays(adapted_function: AdaptedFunction) -> Optional[LambdaAdapter]
                 # Fill adapted_cpp_parameter_list (those that will call the original C style function)
                 lambda_adapter.adapted_cpp_parameter_list.append(new_adapted_decl.decl_name_cpp() + ".data()")
 
-            elif not old_cpp_decl.is_const() and flag_replace_modifiable_c_array_by_boxed:
+            elif shall_replace_by_boxed(old_adapted_param):
                 array_size_int = old_cpp_decl.c_array_size_as_int()
                 assert array_size_int is not None
 

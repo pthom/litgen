@@ -470,6 +470,33 @@ later! publish srcmlcpp before!
 
 * Litgen TODO
 
+** Work on constructor lambdas
+
+#+begin_src cpp
+
+  struct Foo
+  {
+      Foo(int v[2])
+      {
+          //...
+      }
+  };
+
+
+      auto  make_foo = [](int v[2]) -> std::unique_ptr<Foo> {
+          return std::make_unique<Foo>(v);
+      };
+
+
+     auto lambda_make_foo = [](std::array<int, 2>) ->  -> std::unique_ptr<Foo> {
+         // Call make foo
+     };
+
+
+#+end_src
+
+
+
 ** Wish list / hard and later
 *** mypy: no_implicit_reexport
 *** issue with mypy compatibility with generated modules
@@ -482,6 +509,7 @@ Problem 3: dans lg_test_runner (integration tests), tout est refusé (trouve pas
 *** keep pointer and references layout inside CppType (int *x vs int *x vs int * x)
 
 ** Wish List / Easy
+   Add "overridable"/"pure" in stubs / trampoline
    Warning: Warning:
 
 ** Template classes and functions

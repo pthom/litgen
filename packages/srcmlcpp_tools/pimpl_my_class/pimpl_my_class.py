@@ -86,7 +86,7 @@ class PimplMyClass:
         replacements.method_name = cpp_function.function_name
         replacements.params_list = cpp_function.parameter_list.str_code()
         replacements.maybe_return = "" if cpp_function.return_type.is_void() else "return "
-        replacements.param_names = cpp_function.parameter_list.names_only_for_call()
+        replacements.param_names = cpp_function.parameter_list.str_names_only_for_call()
         replacements.maybe_const = "const " if "const" in cpp_function.specifiers else ""
 
         replacements_by_line = Munch()
@@ -148,7 +148,7 @@ class PimplMyClass:
         replacements.class_published = self._published_class_name()
         replacements.class_impl = self._impl_class_name()
         replacements.impl_name = self.options.impl_member_name
-        replacements.param_names = cpp_constructor.parameter_list.names_only_for_call()
+        replacements.param_names = cpp_constructor.parameter_list.str_names_only_for_call()
 
         replacements_by_line = Munch()
 

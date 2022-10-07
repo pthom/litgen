@@ -57,7 +57,7 @@ def mylib_litgen_options() -> litgen.LitgenOptions:
     options.fn_params_output_modifiable_immutable_to_return__regex = r"^Change"
 
     # c style fixed size array options
-    options.fn_params_replace_modifiable_c_array_by_boxed__regex = code_utils.join_string_by_pipe_char(
+    options.fn_params_replace_c_array_modifiable_by_boxed__regex = code_utils.join_string_by_pipe_char(
         ["array", "GetPoints", r"c_string_list_total_size"]
     )
 
