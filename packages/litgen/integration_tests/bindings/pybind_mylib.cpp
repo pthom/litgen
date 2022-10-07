@@ -871,19 +871,19 @@ void py_init_module_lg_mylib(py::module& m)
         ;
 
 
-    auto pyClassCallGuardLogger =
-        py::class_<CallGuardLogger>
-            (m, "CallGuardLogger", "")
-        .def(py::init<>())
-        .def_readwrite_static("nb_construct", &CallGuardLogger::nb_construct, "")
-        .def_readwrite_static("nb_destroy", &CallGuardLogger::nb_destroy, "")
-        ;
-
-
     m.def("call_guard_tester",
         call_guard_tester,
         "// py::call_guard<CallGuardLogger>()",
         py::call_guard<CallGuardLogger>());
+
+
+    auto pyClassCallGuardLogger =
+        py::class_<CallGuardLogger>
+            (m, "CallGuardLogger", " ============================================================================\n CallGuardLogger: dummy call guard for the tests\n ============================================================================")
+        .def(py::init<>())
+        .def_readwrite_static("nb_construct", &CallGuardLogger::nb_construct, "")
+        .def_readwrite_static("nb_destroy", &CallGuardLogger::nb_destroy, "")
+        ;
 
     { // <namespace MathFunctions>
         py::module_ pyNsMathFunctions = m.def_submodule("MathFunctions", " Vectorizable functions example\n    Numeric functions (i.e. function accepting and returning only numeric params or py::array), can be vectorized\n    i.e. they will accept numpy arrays as an input.\n\n Auto-vectorization is enabled via the following options:\n     options.fn_namespace_vectorize__regex: str = r\"^MathFunctions$\"\n     options.fn_vectorize__regex = r\".*\"\n");
