@@ -66,8 +66,8 @@ class SrcmlOptions:
     # this is done by adding a dummy comment on the line.
     preserve_empty_lines: bool = True
 
-    # srcml_dump_positions: if True, code positions will be outputted in the xml tree (recommended)
-    srcml_dump_positions: bool = True
+    # flag_srcml_dump_positions: if True, code positions will be outputted in the xml tree (recommended)
+    flag_srcml_dump_positions: bool = True
 
     ################################################################################
     #    <Verbose / Quiet mode>

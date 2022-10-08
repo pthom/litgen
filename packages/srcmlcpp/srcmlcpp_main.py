@@ -62,7 +62,7 @@ def code_to_srcml_xml_wrapper(
     if options.preserve_empty_lines:
         code = srcml_comments.mark_empty_lines(code)
 
-    xml = srcml_caller.code_to_srcml(code, dump_positions=options.srcml_dump_positions, encoding=options.encoding)
+    xml = srcml_caller.code_to_srcml(code, dump_positions=options.flag_srcml_dump_positions, encoding=options.encoding)
 
     r = SrcmlXmlWrapper(options, xml, filename)
     return r
