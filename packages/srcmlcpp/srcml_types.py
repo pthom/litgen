@@ -22,9 +22,10 @@ See doc/srcml_cpp_doc.png
 from __future__ import annotations
 import copy
 import logging
+import re
 from dataclasses import dataclass
 from enum import Enum
-from typing import Dict, List, Optional, Callable, Tuple, cast
+from typing import Dict, List, Optional, Callable, Tuple, cast, Union
 from xml.etree import ElementTree as ET  # noqa
 
 from codemanip import code_utils
@@ -37,6 +38,25 @@ from srcmlcpp.srcml_xml_wrapper import SrcmlXmlWrapper
 """
 """
 StringToIntDict = Dict[str, int]
+
+
+class TemplateInstantiationSpec:
+    cpp_type_str: str
+    template_name: str = ""  # If empty, will be applied to the first available template param
+
+    def __init__(self, cpp_type: Union[CppType, str], template_name: str = ""):
+        if isinstance(cpp_type, str):
+            self.cpp_type_str = cpp_type
+            self.template_name = template_name
+
+    def __str__(self):
+        if len(self.template_name) > 0:
+            return f"{self.template_name} -> {self.cpp_type_str}"
+        else:
+            return self.cpp_type_str
+
+
+TemplateInstantiationSpecs = List[TemplateInstantiationSpec]
 
 
 class PublicProtectedPrivate(Enum):
@@ -598,7 +618,7 @@ class CppType(CppElement):
     """
 
     # A type name can be composed of several names, for example:
-    # "unsigned int" -> ["unsigned", "int"]
+    # "unsigned int" -> ["unsigned", "int", "std::vector<int>"]
     # A type name can also be "auto" for inferred types.
     typenames: List[str]
 
@@ -705,11 +725,28 @@ class CppType(CppElement):
     def is_inferred_type(self) -> bool:
         return self.typenames == ["auto"]
 
-    def with_instantiated_template(self, template_name: str, cpp_type_str: str) -> CppType:
+    def with_instantiated_template(self, template_spec: TemplateInstantiationSpec) -> Optional[CppType]:
+        """Returns a new type where "template_name" is replaced by "cpp_type"
+        Returns None if this type does not use "template_name"
+        """
+        was_changed = False
         new_type = copy.deepcopy(self)
         for i in range(len(new_type.typenames)):
-            new_type.typenames[i] = new_type.typenames[i].replace(template_name, cpp_type_str)
-        return new_type
+            if new_type.typenames[i] == template_spec.template_name:
+                was_changed = True
+                new_type.typenames[i] = template_spec.cpp_type_str
+            else:
+                new_typename, nb_sub = re.subn(
+                    rf"\b{template_spec.template_name}\b", template_spec.cpp_type_str, new_type.typenames[i]
+                )
+                if nb_sub > 0:
+                    was_changed = True
+                    new_type.typenames[i] = new_typename
+
+        if was_changed:
+            return new_type
+        else:
+            return None
 
     def __str__(self) -> str:
         return self.str_code()
@@ -886,6 +923,18 @@ class CppDecl(CppElementAndComment):
         Returns true if this decl is const"""
         return "const" in self.cpp_type.specifiers  # or "const" in self.cpp_type.names
 
+    def with_instantiated_template(self, template_spec: TemplateInstantiationSpec) -> Optional[CppDecl]:
+        """Returns a new decl where "template_name" is replaced by "cpp_type"
+        Returns None if this decl does not use "template_name"
+        """
+        new_type = self.cpp_type.with_instantiated_template(template_spec)
+        if new_type is None:
+            return None
+        else:
+            new_decl = copy.deepcopy(self)
+            new_decl.cpp_type = new_type
+            return new_decl
+
     def visit_cpp_breadth_first(self, cpp_visitor_function: CppElementsVisitorFunction, depth: int = 0) -> None:
         cpp_visitor_function(self, CppElementsVisitorEvent.OnElement, depth)
         cpp_visitor_function(self, CppElementsVisitorEvent.OnBeforeChildren, depth)
@@ -922,6 +971,28 @@ class CppDeclStatement(CppElementAndComment):
         for child in self.cpp_decls:
             child.visit_cpp_breadth_first(cpp_visitor_function, depth + 1)
         cpp_visitor_function(self, CppElementsVisitorEvent.OnAfterChildren, depth)
+
+    def with_instantiated_template(self, template_spec: TemplateInstantiationSpec) -> Optional[CppDeclStatement]:
+        """Returns a new CppDeclStatement where "template_name" is replaced by "cpp_type"
+        Returns None if this CppDeclStatement does not use "template_name"
+        """
+        was_changed = False
+
+        new_decl_statement = copy.deepcopy(self)
+        new_cpp_decls: List[CppDecl] = []
+        for cpp_decl in new_decl_statement.cpp_decls:
+            new_cpp_decl = cpp_decl.with_instantiated_template(template_spec)
+            if new_cpp_decl is not None:
+                was_changed = True
+                new_cpp_decls.append(new_cpp_decl)
+            else:
+                new_cpp_decls.append(cpp_decl)
+
+        if not was_changed:
+            return None
+        else:
+            new_decl_statement.cpp_decls = new_cpp_decls
+            return new_decl_statement
 
     def __str__(self) -> str:
         return self.str_commented()
@@ -1071,7 +1142,7 @@ class CppTemplate(CppElement):
     def str_code(self) -> str:
         typelist = [param.str_template_type() for param in self.parameter_list.parameters]
         typelist_str = ", ".join(typelist)
-        params_str = f"template<{typelist_str}>\n"
+        params_str = f"template<{typelist_str}> "
         return params_str
 
     def visit_cpp_breadth_first(self, cpp_visitor_function: CppElementsVisitorFunction, depth: int = 0) -> None:
@@ -1135,21 +1206,45 @@ class CppFunctionDecl(CppElementAndComment):
     def function_name_with_instantiation(self) -> str:
         return self.function_name + self._instantiation_str()
 
-    def with_instantiated_template(self, cpp_type_str: str) -> CppFunctionDecl:
+    def with_instantiated_template(self, template_spec: TemplateInstantiationSpec) -> Optional[CppFunctionDecl]:
         """Returns a new non-templated function, implemented for the given type
         Only works on templated function with *one* template parameter
         """
-        assert self.is_template()
-        assert len(self.template.parameter_list.parameters) == 1
-        template_name = self.template.parameter_list.parameters[0].template_name
-
         new_function = copy.deepcopy(self)
-        del new_function.template
-        new_function.return_type = self.return_type.with_instantiated_template(template_name, cpp_type_str)
+
+        if len(template_spec.template_name) == 0:
+            assert self.is_template()
+            assert len(self.template.parameter_list.parameters) == 1
+            template_spec.template_name = self.template.parameter_list.parameters[0].template_name
+            new_function.instantiated_template_param = template_spec.cpp_type_str
+
+        was_changed = False
+
+        if hasattr(new_function, "template"):
+            del new_function.template
+
+        new_return_type = new_function.return_type.with_instantiated_template(template_spec)
+        if new_return_type is not None:
+            was_changed = True
+            new_function.return_type = new_return_type
+
+        new_parameters: List[CppParameter] = []
         for parameter in new_function.parameter_list.parameters:
-            parameter.decl.cpp_type = parameter.decl.cpp_type.with_instantiated_template(template_name, cpp_type_str)
-        new_function.instantiated_template_param = cpp_type_str
-        return new_function
+            new_decl = parameter.decl.with_instantiated_template(template_spec)
+            if new_decl is not None:
+                new_parameter = copy.deepcopy(parameter)
+                new_parameter.decl = new_decl
+                new_parameters.append(new_parameter)
+                was_changed = True
+            else:
+                new_parameters.append(parameter)
+
+        new_function.parameter_list.parameters = new_parameters
+
+        if was_changed:
+            return new_function
+        else:
+            return None
 
     def is_inferred_return_type(self) -> bool:
         if not hasattr(self, "return_type"):
@@ -1169,7 +1264,7 @@ class CppFunctionDecl(CppElementAndComment):
         r = ""
 
         if hasattr(self, "template"):
-            r += f"template<{str(self.template)}>"
+            r += str(self.template)
 
         if self.is_arrow_notation_return_type():
             if self.return_type.str_return_type() == "auto":
@@ -1473,6 +1568,7 @@ class CppStruct(CppElementAndComment):
     block: CppBlock
     template: CppTemplate  # for template classes or structs
     specifier: str  # "final" for final classes, empty otherwise
+    instantiated_template_param: str  # Will only be filled after calling with_instantiated_template
 
     def __init__(self, element: SrcmlXmlWrapper, cpp_element_comments: CppElementComments) -> None:
         super().__init__(element, cpp_element_comments)
@@ -1659,6 +1755,55 @@ class CppStruct(CppElementAndComment):
                     virtual_methods.append(base_method)
 
         return virtual_methods
+
+    def is_template(self) -> bool:
+        return hasattr(self, "template")
+
+    def _instantiation_str(self) -> str:
+        if len(self.instantiated_template_param) > 0:
+            return f"<{self.instantiated_template_param}>"
+        else:
+            return ""
+
+    def class_name_with_instantiation(self) -> str:
+        return self.class_name + self._instantiation_str()
+
+    def with_instantiated_template(self, template_spec: TemplateInstantiationSpec) -> Optional[CppStruct]:
+        """Returns a new non-templated class, implemented for the given type
+        Only works on templated class with *one* template parameter
+        Will return None if the application of the template changes nothing
+        """
+        new_class = copy.deepcopy(self)
+
+        if len(template_spec.template_name) == 0:
+            assert self.is_template()
+            assert len(self.template.parameter_list.parameters) == 1
+            template_spec.template_name = self.template.parameter_list.parameters[0].template_name
+            new_class.instantiated_template_param = template_spec.cpp_type_str
+
+        if hasattr(new_class, "template"):
+            del new_class.template
+
+        was_changed = False
+
+        for ppp_block in new_class.block.block_children:
+            if isinstance(ppp_block, CppPublicProtectedPrivate):
+                ppp_new_block_children: List[CppElementAndComment] = []
+                for ppp_child in ppp_block.block_children:
+                    new_ppp_child: Optional[CppElementAndComment] = None
+                    if isinstance(ppp_child, (CppFunctionDecl, CppStruct, CppDeclStatement)):
+                        new_ppp_child = ppp_child.with_instantiated_template(template_spec)
+                    if new_ppp_child is not None:
+                        ppp_new_block_children.append(new_ppp_child)
+                        was_changed = True
+                    else:
+                        ppp_new_block_children.append(ppp_child)
+                ppp_block.block_children = ppp_new_block_children
+
+        if was_changed:
+            return new_class
+        else:
+            return None
 
     def visit_cpp_breadth_first(self, cpp_visitor_function: CppElementsVisitorFunction, depth: int = 0) -> None:
         cpp_visitor_function(self, CppElementsVisitorEvent.OnElement, depth)

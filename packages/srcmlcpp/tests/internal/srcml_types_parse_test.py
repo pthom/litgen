@@ -192,8 +192,7 @@ def test_parse_struct():
     expected_code = """
         // A somewhat contrived example
         // of a templated Point structure
-        template<typename NumericType>
-        struct Point : public Object
+        template<typename NumericType> struct Point : public Object
         {
             public:// <default_access_type/>
                 // coordinates

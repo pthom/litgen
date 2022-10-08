@@ -2,6 +2,7 @@ import os
 import sys
 
 import srcmlcpp
+from srcmlcpp.srcml_types import *
 
 import litgen
 from litgen import LitgenOptions
@@ -105,6 +106,7 @@ def play() -> None:
     {
         template<typename T>
         MY_API T SumVector(std::vector<T> xs, const T other_values[2]);
+        int a;
     };
     """
     options = litgen.LitgenOptions()
@@ -112,14 +114,14 @@ def play() -> None:
     options.fn_params_replace_buffer_by_array__regex = r".*"
     # options.srcml_options.functions_api_prefixes = "MY_API"
 
-    generated_code = litgen.generate_code(options, code)
-    print(generated_code.pydef_code)
-    print(generated_code.stub_code)
+    # generated_code = litgen.generate_code(options, code)
+    # print(generated_code.pydef_code)
+    # print(generated_code.stub_code)
 
-    # srcml_options = srcmlcpp.SrcmlOptions()
-    # srcml_options.srcml_dump_positions = False
-    # xml_wrapper = srcmlcpp.code_to_srcml_xml_wrapper(srcml_options, code)
-    # print(xml_wrapper.str_xml())
+    srcml_options = srcmlcpp.SrcmlOptions()
+    srcml_options.flag_srcml_dump_positions = False
+    xml_wrapper = srcmlcpp.code_to_srcml_xml_wrapper(srcml_options, code)
+    print(xml_wrapper.str_xml())
 
     # srcml_options = srcmlcpp.SrcmlOptions()
     # cpp_unit = srcmlcpp.code_to_cpp_unit(srcml_options, code)
@@ -127,5 +129,33 @@ def play() -> None:
     # print(f.str_code())
 
 
+def play_template() -> None:
+    # code = """
+    # template<typename T> T foo(T x, T y);
+    # """
+    # srcml_options = srcmlcpp.SrcmlOptions()
+    # cpp_unit = srcmlcpp.code_to_cpp_unit(srcml_options, code)
+    # f = cpp_unit.all_functions()[0]
+    # f_int = f.with_instantiated_template(TemplateInstantiationSpec("int"))
+    # print(f_int)
+
+    code = """
+    template<typename T>
+    struct Foo
+    {
+        T value0, value1;
+        int x, y;
+
+        std::array<T, 2> getValue(const T& m) { return {value0, value1}; } // chie ici
+    };
+    """
+    srcml_options = srcmlcpp.SrcmlOptions()
+    cpp_unit = srcmlcpp.code_to_cpp_unit(srcml_options, code)
+    s = cpp_unit.all_structs_recursive()[0]
+    s_int = s.with_instantiated_template(TemplateInstantiationSpec("std::complex<double>"))
+    assert s_int is not None
+    print(s_int.str_code())
+
+
 if __name__ == "__main__":
-    play()
+    play_template()
