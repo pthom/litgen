@@ -70,14 +70,20 @@ def mylib_litgen_options() -> litgen.LitgenOptions:
     options.class_expose_protected_methods__regex = "^MyVirtual"
     options.class_override_virtual_methods_in_python__regex = "^MyVirtual"
 
-    options.fn_namespace_vectorize__regex: str = r"^MathFunctions$"
+    options.fn_namespace_vectorize__regex = r"^MathFunctions$"
     options.fn_vectorize__regex = r".*"
     # options.fn_vectorize_suffix = "_vectorized"
 
     options.class_dynamic_attributes__regex = r"Dynamic$"
 
-    options.fn_template_options[r"^AddTemplated$"] = ["int", "double", "std::string"]
-    options.fn_template_options[r"^SumVector"] = ["int", "std::string"]
+    options.fn_template_options.add_instantiation(r"^AddTemplated$", ["int", "double", "std::string"])
+    options.fn_template_options.add_instantiation(r"^SumVector", ["int", "std::string"])
+
+    options.class_template_options.add_instantiation(
+        class_name_regex=r".*",  # r".*" => all classes
+        cpp_types_list=["int", "double"],  # instantiated types
+        naming_scheme=litgen.TemplateNamingScheme.camel_case_suffix,
+    )
 
     #
     # Sandbox for other options

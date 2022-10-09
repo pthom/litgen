@@ -1,4 +1,4 @@
-from litgen.options import LitgenOptions
+from litgen.options import LitgenOptions, TemplateNamingScheme
 
 from litgen.code_to_adapted_unit import code_to_adapted_unit
 from litgen.internal.cpp_to_python import standard_code_replacements, opencv_replacements, standard_comment_replacements

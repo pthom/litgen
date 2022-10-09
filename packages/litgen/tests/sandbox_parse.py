@@ -110,7 +110,7 @@ def play() -> None:
     };
     """
     options = litgen.LitgenOptions()
-    options.fn_template_options[r"SumVector"] = ["int"]
+    options.fn_template_options.add_instantiation(r"SumVector", ["int"])
     options.fn_params_replace_buffer_by_array__regex = r".*"
     # options.srcml_options.functions_api_prefixes = "MY_API"
 
@@ -130,31 +130,28 @@ def play() -> None:
 
 
 def play_template() -> None:
-    # code = """
-    # template<typename T> T foo(T x, T y);
-    # """
-    # srcml_options = srcmlcpp.SrcmlOptions()
-    # cpp_unit = srcmlcpp.code_to_cpp_unit(srcml_options, code)
-    # f = cpp_unit.all_functions()[0]
-    # f_int = f.with_instantiated_template(TemplateInstantiationPart("int"))
-    # print(f_int)
-
     code = """
-    template<typename T>
+    template <typename T>
     struct Foo
     {
-        T value0, value1;
-        int x, y;
+        std::vector<T> values;
 
-        std::array<T, 2> getValue(const T& m) { return {value0, value1}; } // chie ici
+        T GetValue(size_t idx) { return values[idx]; }
     };
     """
-    srcml_options = srcmlcpp.SrcmlOptions()
-    cpp_unit = srcmlcpp.code_to_cpp_unit(srcml_options, code)
-    s = cpp_unit.all_structs_recursive()[0]
-    s_int = s.with_instantiated_template(TemplateInstantiation.from_type_str("int"))
-    assert s_int is not None
-    print(s_int.str_code())
+
+    options = LitgenOptions()
+    options.class_template_options.add_instantiation(
+        class_name_regex="^Foo$",
+        cpp_types_list=["int", "float"],
+        naming_scheme=litgen.TemplateNamingScheme.camel_case_suffix,
+    )
+
+    generated_code = litgen.generate_code(options, code)
+
+    logging.warning("\n" + generated_code.stub_code)
+
+    logging.warning("\n" + generated_code.pydef_code)
 
 
 if __name__ == "__main__":

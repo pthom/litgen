@@ -119,7 +119,6 @@ def test_instantiate_class():
     """
     struct = code_first_struct(code)
     struct_inst = struct.with_instantiated_template(TemplateInstantiation.from_type_str("int"))
-    logging.warning("\n" + str(struct_inst))
     code_utils.assert_are_codes_equal(
         str(struct_inst),
         """

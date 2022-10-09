@@ -1,4 +1,7 @@
-from typing import List, Dict
+from __future__ import annotations
+from typing import List
+from enum import Enum
+from dataclasses import dataclass
 
 from codemanip.code_replacements import RegexReplacementList
 from codemanip import code_utils
@@ -6,9 +9,71 @@ from codemanip import code_utils
 from srcmlcpp import SrcmlOptions
 
 
-TemplatedFunctionNameRegexStr = str
-TemplatedCppTypeList = List[str]
-TemplateFunctionsOptions = Dict[TemplatedFunctionNameRegexStr, TemplatedCppTypeList]
+class TemplateNamingScheme(Enum):
+    snake_prefix = 0  # MyClass<int> will be named int_MyClass
+    snake_suffix = 1  # MyClass<int> will be named MyClass_int
+    camel_case_prefix = 2  # MyClass<int> will be named IntMyClass
+    camel_case_suffix = 3  # MyClass<int> will be named MyClassInt
+    nothing = 4  # Do not neither suffix nor prefix (only possible for functions, not classes)
+
+    @staticmethod
+    def apply(scheme: TemplateNamingScheme, class_or_function_name: str, type_name: str) -> str:
+        type_name = type_name.replace(" ", "_")
+        camel_case_type_name = type_name[:1].upper() + type_name[1:]
+
+        r = ""
+        if scheme == TemplateNamingScheme.camel_case_suffix:
+            r = class_or_function_name + camel_case_type_name
+        elif scheme == TemplateNamingScheme.camel_case_prefix:
+            r = camel_case_type_name + class_or_function_name
+        elif scheme == TemplateNamingScheme.snake_suffix:
+            r = class_or_function_name + "_" + type_name
+        elif scheme == TemplateNamingScheme.snake_prefix:
+            r = type_name + "_" + class_or_function_name
+        elif scheme == TemplateNamingScheme.nothing:
+            r = class_or_function_name
+        assert len(r) > 0
+        return r
+
+
+@dataclass
+class _TemplateInstantiationSpec:
+    name_regex: str
+    cpp_types_list: List[str]
+    naming_scheme: TemplateNamingScheme
+
+
+class TemplateFunctionsOptions:
+    specs: List[_TemplateInstantiationSpec]
+
+    def __init__(self) -> None:
+        self.specs = []
+
+    def add_instantiation(
+        self,
+        function_name_regex: str,
+        cpp_types_list: List[str],
+        naming_scheme: TemplateNamingScheme = TemplateNamingScheme.nothing,
+    ) -> None:
+        spec = _TemplateInstantiationSpec(function_name_regex, cpp_types_list, naming_scheme)
+        self.specs.append(spec)
+
+
+class TemplateClassOptions:
+    specs: List[_TemplateInstantiationSpec]
+
+    def __init__(self) -> None:
+        self.specs = []
+
+    def add_instantiation(
+        self,
+        class_name_regex: str,
+        cpp_types_list: List[str],
+        naming_scheme: TemplateNamingScheme = TemplateNamingScheme.camel_case_suffix,
+    ) -> None:
+        assert naming_scheme != TemplateNamingScheme.nothing  # Specialized class names must be different in Python
+        spec = _TemplateInstantiationSpec(class_name_regex, cpp_types_list, naming_scheme)
+        self.specs.append(spec)
 
 
 class LitgenOptions:
@@ -128,11 +193,11 @@ class LitgenOptions:
     #
     # For example,
     # 1. This line:
-    #        options.fn_template_options[r"template^"] = ["int", double"]
+    #        options.fn_template_options.add_instantiation(r"template^", ["int", double"])
     #    would instantiate all template functions whose name end with "template" with "int" and "double"
     # 2. This line:
-    #        options.fn_template_options[r".*"] = ["int", double"]
-    #    would instantiate all template functions (whatever their name) with "int" and "double"
+    #        options.fn_template_options.add_instantiation(r".*", ["int", float"])
+    #    would instantiate all template functions (whatever their name) with "int" and "float"
     fn_template_options: TemplateFunctionsOptions
 
     # ------------------------------------------------------------------------------
@@ -350,6 +415,26 @@ class LitgenOptions:
     # Exclude members based on their type
     member_exclude_by_type__regex: str = ""
 
+    # ------------------------------------------------------------------------------
+    # Templated class options
+    # ------------------------------------------------------------------------------
+    # Template class must be instantiated for the desired types, and a new name must be given for each instantiation
+    # See https://pybind11.readthedocs.io/en/stable/advanced/classes.html#binding-classes-with-template-parameters
+    #
+    # class_template_options enables to set this
+    #
+    # For example, this call, would instantiate all classes for types "int" and "double",
+    # with a naming scheme: MyClass<int> (cpp)  -> MyClassInt (python):
+    #     options.class_template_options.add_instantiation(
+    #         class_name_regex=r".*",                  # r".*" => all classes
+    #         cpp_types_list=["int", "double"],        # instantiated types
+    #         naming_scheme=TemplateNamingScheme.camel_case_suffix
+    #     )
+    class_template_options: TemplateClassOptions
+
+    # ------------------------------------------------------------------------------
+    # Adapt class members
+    # ------------------------------------------------------------------------------
     # adapt class members which are a fixed size array of a numeric type:
     #
     # For example
@@ -470,4 +555,5 @@ class LitgenOptions:
         self.comments_replacements = cpp_to_python.standard_comment_replacements()
         self.names_replacements = RegexReplacementList()
 
-        self.fn_template_options: TemplateFunctionsOptions = {}
+        self.fn_template_options = TemplateFunctionsOptions()
+        self.class_template_options = TemplateClassOptions()

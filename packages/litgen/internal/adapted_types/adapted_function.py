@@ -6,6 +6,7 @@ from typing import cast
 
 from munch import Munch  # type: ignore
 
+import litgen
 from srcmlcpp.srcml_types import *
 
 from litgen.internal import cpp_to_python
@@ -895,7 +896,9 @@ class AdaptedFunction(AdaptedElement):
             return False
         return self.cpp_element().is_template_non_specialized()
 
-    def _instantiate_template_for_type(self, cpp_type_str: str) -> AdaptedFunction:
+    def _instantiate_template_for_type(
+        self, cpp_type_str: str, naming_scheme: litgen.TemplateNamingScheme
+    ) -> AdaptedFunction:
         assert self._is_template_non_specialized()
         assert self._is_one_param_template()
 
@@ -903,21 +906,24 @@ class AdaptedFunction(AdaptedElement):
             TemplateInstantiation.from_type_str(cpp_type_str)
         )
         assert new_cpp_function is not None
+        new_cpp_function.function_name = litgen.TemplateNamingScheme.apply(
+            naming_scheme, new_cpp_function.function_name, cpp_type_str
+        )
         new_adapted_function = AdaptedFunction(self.lg_context, new_cpp_function, self.is_overloaded)
         return new_adapted_function
 
     def _split_into_template_instantiations(self) -> List[AdaptedFunction]:
         assert self._is_template_non_specialized()
         if not self._is_one_param_template():
-            self.cpp_element().emit_warning("Only one parameters template are supported")
+            self.cpp_element().emit_warning("Only one parameters template functions are supported")
             return []
 
         template_options = self.options.fn_template_options
-        for regex_fn_name, cpp_types_list in template_options.items():
-            if code_utils.does_match_regex(regex_fn_name, self.cpp_element().function_name):
+        for instantiation_spec in template_options.specs:
+            if code_utils.does_match_regex(instantiation_spec.name_regex, self.cpp_element().function_name):
                 new_functions: List[AdaptedFunction] = []
-                for cpp_type in cpp_types_list:
-                    new_function = self._instantiate_template_for_type(cpp_type)
+                for cpp_type in instantiation_spec.cpp_types_list:
+                    new_function = self._instantiate_template_for_type(cpp_type, instantiation_spec.naming_scheme)
                     new_functions.append(new_function)
                 return new_functions
         return []

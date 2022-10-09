@@ -510,11 +510,12 @@ Problem 3: dans lg_test_runner (integration tests), tout est refusé (trouve pas
 *** Bind srcml?
 ** Wish List / Easy
 
+add output in mylib header files
 
 ** Command line / srcmlcpp
   easy versions of code_first_function_decl and co.
 
-  Refac srcmlcpp:
+**  Refac srcmlcpp:
     split types
     review main
 
