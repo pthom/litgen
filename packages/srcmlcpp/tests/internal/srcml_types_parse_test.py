@@ -357,7 +357,7 @@ def disabled_test_parse_imgui():
     do_parse_imgui_implot(source_filename)
 
 
-def test_parse_implot():
+def disabled_test_parse_implot():
     source_filename = os.path.realpath(
         _THIS_DIR + "../../../../../lg_projects/lg_imgui_bundle/external/implot/implot.h"
     )
