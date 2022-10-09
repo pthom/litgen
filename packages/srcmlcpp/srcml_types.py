@@ -1322,10 +1322,11 @@ class CppFunctionDecl(CppElementAndComment, ICppTemplateHost):
 
         was_changed = False
 
-        new_return_type = new_function.return_type.with_instantiated_template(template_specs)
-        if new_return_type is not None:
-            was_changed = True
-            new_function.return_type = new_return_type
+        if hasattr(new_function, "return_type"):
+            new_return_type = new_function.return_type.with_instantiated_template(template_specs)
+            if new_return_type is not None:
+                was_changed = True
+                new_function.return_type = new_return_type
 
         new_parameters: List[CppParameter] = []
         for parameter in new_function.parameter_list.parameters:
@@ -1700,6 +1701,19 @@ class CppStruct(CppElementAndComment, ICppTemplateHost):
     def is_final(self) -> bool:
         return self.specifier == "final"
 
+    def qualified_class_name(self) -> str:
+        parent_scope = self.cpp_scope(False).str_cpp()
+        if len(parent_scope) == 0:
+            return self.class_name
+        else:
+            return parent_scope + "::" + self.class_name
+
+    def qualified_class_name_with_instantiation(self) -> str:
+        return self.qualified_class_name() + self._instantiation_str()
+
+    def class_name_with_instantiation(self) -> str:
+        return self.class_name + self._instantiation_str()
+
     def has_base_classes(self) -> bool:
         if not hasattr(self, "super_list"):
             return False
@@ -1850,8 +1864,12 @@ class CppStruct(CppElementAndComment, ICppTemplateHost):
 
         return virtual_methods
 
-    def class_name_with_instantiation(self) -> str:
-        return self.class_name + self._instantiation_str()
+    def _fill_children_parents(self) -> None:
+        self.block.parent = self
+        for ppp_block in self.block.block_children:
+            assert isinstance(ppp_block, CppPublicProtectedPrivate)
+            ppp_block.fill_children_parents()
+            ppp_block.parent = self.block
 
     def with_instantiated_template(self, template_specs: TemplateInstantiation) -> Optional[CppStruct]:
         """Returns a new non-templated class, implemented for the given type
@@ -1863,10 +1881,10 @@ class CppStruct(CppElementAndComment, ICppTemplateHost):
 
         was_changed = False
 
-        for ppp_block in new_class.block.block_children:
-            if isinstance(ppp_block, CppPublicProtectedPrivate):
+        for ppp_new_block in new_class.block.block_children:
+            if isinstance(ppp_new_block, CppPublicProtectedPrivate):
                 ppp_new_block_children: List[CppElementAndComment] = []
-                for ppp_child in ppp_block.block_children:
+                for ppp_child in ppp_new_block.block_children:
                     new_ppp_child: Optional[CppElementAndComment] = None
                     if isinstance(ppp_child, (CppFunctionDecl, CppStruct, CppDeclStatement)):
                         new_ppp_child = ppp_child.with_instantiated_template(template_specs)
@@ -1875,9 +1893,10 @@ class CppStruct(CppElementAndComment, ICppTemplateHost):
                         was_changed = True
                     else:
                         ppp_new_block_children.append(ppp_child)
-                ppp_block.block_children = ppp_new_block_children
+                ppp_new_block.block_children = ppp_new_block_children
 
         if was_changed:
+            new_class._fill_children_parents()
             return new_class
         else:
             return None
@@ -1892,14 +1911,6 @@ class CppStruct(CppElementAndComment, ICppTemplateHost):
         if hasattr(self, "template"):
             self.template.visit_cpp_breadth_first(cpp_visitor_function, depth + 1)
         cpp_visitor_function(self, CppElementsVisitorEvent.OnAfterChildren, depth)
-
-    def qualified_struct_name(self) -> str:
-        parent_cpp_scope_str = self.cpp_scope().str_cpp()
-        if len(parent_cpp_scope_str) > 0:
-            r = parent_cpp_scope_str + "::" + self.class_name
-        else:
-            r = self.class_name
-        return r
 
 
 @dataclass
