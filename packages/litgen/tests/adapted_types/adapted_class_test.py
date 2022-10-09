@@ -201,22 +201,103 @@ def test_struct_stub_complex():
 
 def test_templated_class():
     code = """
-    template typename<T>
-    class Foo
+    template<typename T>
+    struct MyTemplateClass
     {
-        T values[3];
+        std::vector<T> values;
 
-        T GetValue(size_t idx) { return values[idx]; }
+        // Standard constructor
+        MyTemplateClass() {}
+
+        // Constructor that will need a parameter adaptation
+        MyTemplateClass(const T v[2]);
+
+        // Standard method
+        T sum();
+
+        // Method that requires a parameter adaptation
+        T sum2(const T v[2]);
     };
     """
 
     options = LitgenOptions()
     options.class_template_options.add_specialization(
-        class_name_regex="^Foo$",
-        cpp_types_list=["int", "float"],
+        class_name_regex="^MyTemplateClass",
+        cpp_types_list=["std::string"],
         naming_scheme=litgen.TemplateNamingScheme.camel_case_suffix,
     )
 
     generated_code = litgen.generate_code(options, code)
 
-    logging.warning("\n" + generated_code.stub_code)
+    code_utils.assert_are_codes_equal(
+        generated_code.stub_code,
+        '''
+        #  ------------------------------------------------------------------------
+        #      <template specializations for class MyTemplateClass>
+        class MyTemplateClassString:
+            values: List[str]
+
+            def __init__(self) -> None:
+                """ Standard constructor"""
+                pass
+
+            def __init__(self, v: List[str]) -> None:
+                """ Constructor that will need a parameter adaptation"""
+                pass
+
+            def sum(self) -> str:
+                """ Standard method"""
+                pass
+
+            def sum2(self, v: List[str]) -> str:
+                """ Method that requires a parameter adaptation"""
+                pass
+        #      </template specializations for class MyTemplateClass>
+        #  ------------------------------------------------------------------------
+    ''',
+    )
+
+    code_utils.assert_are_codes_equal(
+        generated_code.pydef_code,
+        """
+        auto pyClassMyTemplateClass_string =
+            py::class_<MyTemplateClass<std::string>>
+                (m, "MyTemplateClassString", "")
+            .def_readwrite("values", &MyTemplateClass<std::string>::values, "")
+            .def(py::init<>(),
+                "Standard constructor")
+            .def(py::init(
+                [](const std::array<std::string, 2>& v) -> std::unique_ptr<MyTemplateClass<std::string>>
+                {
+                    auto ctor_wrapper = [](const std::string v[2]) ->  std::unique_ptr<MyTemplateClass<std::string>>
+                    {
+                        return std::make_unique<MyTemplateClass<std::string>>(v);
+                    };
+                    auto ctor_wrapper_adapt_fixed_size_c_arrays = [&ctor_wrapper](const std::array<std::string, 2>& v) -> std::unique_ptr<MyTemplateClass<std::string>>
+                    {
+                        auto r = ctor_wrapper(v.data());
+                        return r;
+                    };
+
+                    return ctor_wrapper_adapt_fixed_size_c_arrays(v);
+                }),
+                py::arg("v"),
+                "Constructor that will need a parameter adaptation")
+            .def("sum",
+                &MyTemplateClass<std::string>::sum, "Standard method")
+            .def("sum2",
+                [](MyTemplateClass<std::string> & self, const std::array<std::string, 2>& v) -> std::string
+                {
+                    auto sum2_adapt_fixed_size_c_arrays = [&self](const std::array<std::string, 2>& v) -> std::string
+                    {
+                        auto r = self.sum2(v.data());
+                        return r;
+                    };
+
+                    return sum2_adapt_fixed_size_c_arrays(v);
+                },
+                py::arg("v"),
+                "Method that requires a parameter adaptation")
+            ;
+    """,
+    )
