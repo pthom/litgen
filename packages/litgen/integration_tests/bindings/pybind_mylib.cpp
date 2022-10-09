@@ -945,6 +945,86 @@ void py_init_module_lg_mylib(py::module& m)
             },     py::arg("xs"), py::arg("other_values"))
         ;
 
+
+    auto pyClassMyTemplateClass_int =
+        py::class_<MyTemplateClass<int>>
+            (m, "MyTemplateClassInt", "")
+        .def_readwrite("values", &MyTemplateClass<int>::values, "")
+        .def(py::init<>(),
+            "Standard constructor")
+        .def(py::init(
+            [](const std::array<int, 2>& v) -> std::unique_ptr<MyTemplateClass<int>>
+            {
+                auto ctor_wrapper = [](const int v[2]) ->  std::unique_ptr<MyTemplateClass<int>>
+                {
+                    return std::make_unique<MyTemplateClass<int>>(v);
+                };
+                auto ctor_wrapper_adapt_fixed_size_c_arrays = [&ctor_wrapper](const std::array<int, 2>& v) -> std::unique_ptr<MyTemplateClass<int>>
+                {
+                    auto r = ctor_wrapper(v.data());
+                    return r;
+                };
+
+                return ctor_wrapper_adapt_fixed_size_c_arrays(v);
+            }),
+            py::arg("v"),
+            "Constructor that will need a parameter adaptation")
+        .def("sum",
+            &MyTemplateClass<int>::sum, "Standard method")
+        .def("sum2",
+            [](MyTemplateClass<int> & self, const std::array<int, 2>& v) -> int
+            {
+                auto sum2_adapt_fixed_size_c_arrays = [&self](const std::array<int, 2>& v) -> int
+                {
+                    auto r = self.sum2(v.data());
+                    return r;
+                };
+
+                return sum2_adapt_fixed_size_c_arrays(v);
+            },
+            py::arg("v"),
+            "Method that requires a parameter adaptation")
+        ;
+    auto pyClassMyTemplateClass_string =
+        py::class_<MyTemplateClass<std::string>>
+            (m, "MyTemplateClassString", "")
+        .def_readwrite("values", &MyTemplateClass<std::string>::values, "")
+        .def(py::init<>(),
+            "Standard constructor")
+        .def(py::init(
+            [](const std::array<std::string, 2>& v) -> std::unique_ptr<MyTemplateClass<std::string>>
+            {
+                auto ctor_wrapper = [](const std::string v[2]) ->  std::unique_ptr<MyTemplateClass<std::string>>
+                {
+                    return std::make_unique<MyTemplateClass<std::string>>(v);
+                };
+                auto ctor_wrapper_adapt_fixed_size_c_arrays = [&ctor_wrapper](const std::array<std::string, 2>& v) -> std::unique_ptr<MyTemplateClass<std::string>>
+                {
+                    auto r = ctor_wrapper(v.data());
+                    return r;
+                };
+
+                return ctor_wrapper_adapt_fixed_size_c_arrays(v);
+            }),
+            py::arg("v"),
+            "Constructor that will need a parameter adaptation")
+        .def("sum",
+            &MyTemplateClass<std::string>::sum, "Standard method")
+        .def("sum2",
+            [](MyTemplateClass<std::string> & self, const std::array<std::string, 2>& v) -> std::string
+            {
+                auto sum2_adapt_fixed_size_c_arrays = [&self](const std::array<std::string, 2>& v) -> std::string
+                {
+                    auto r = self.sum2(v.data());
+                    return r;
+                };
+
+                return sum2_adapt_fixed_size_c_arrays(v);
+            },
+            py::arg("v"),
+            "Method that requires a parameter adaptation")
+        ;
+
     { // <namespace MathFunctions>
         py::module_ pyNsMathFunctions = m.def_submodule("MathFunctions", " Vectorizable functions example\n    Numeric functions (i.e. function accepting and returning only numeric params or py::array), can be vectorized\n    i.e. they will accept numpy arrays as an input.\n\n Auto-vectorization is enabled via the following options:\n     options.fn_namespace_vectorize__regex: str = r\"^MathFunctions$\"\n     options.fn_vectorize__regex = r\".*\"\n");
         pyNsMathFunctions.def("vectorizable_sum",

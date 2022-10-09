@@ -1189,8 +1189,8 @@ int CallGuardLogger::nb_destroy = 0;
 
 // AddTemplated is a template function that will be implemented for the types ["int", "double", "std::string"]
 //
-// See autogenerate_mylib.py:
-//     options.fn_template_options[r"^AddTemplated$"] = ["int", "double", "std::string"]
+// See inside autogenerate_mylib.py:
+//     options.fn_template_options.add_instantiation(r"^AddTemplated$", ["int", "double", "std::string"])
 
 template<typename T>
 MY_API T AddTemplated(T a, T b)
@@ -1205,8 +1205,8 @@ MY_API T AddTemplated(T a, T b)
 //  - nesting of the T template parameter into a vector
 //  - mixing template and function parameter adaptations (here other_values[2] will be transformed into a List[T]
 //
-// See autogenerate_mylib.py:
-//     options.fn_template_options[r"^SumVector"] = ["int", "std::string"]
+// See inside autogenerate_mylib.py:
+//     options.fn_template_options.add_instantiation(r"^SumVector", ["int", "std::string"])
 
 template<typename T>
 MY_API T SumVectorAndCArray(std::vector<T> xs, const T other_values[2])
@@ -1253,6 +1253,51 @@ def sum_vector_and_c_array(xs: List[str], other_values: List[str]) -> str:
     pass
 
  */
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//                       mylib/template_class_test.h included by mylib/mylib.h                                  //
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+//  MyTemplateClass is a template class that will be implemented for the types ["int", "std::string"]
+//
+// See inside autogenerate_mylib.py:
+//        options.class_template_options.add_instantiation(
+//            class_name_regex=r"^MyTemplateClass$",  # r".*" => all classes
+//        cpp_types_list=["int", "double"],  # instantiated types
+//        naming_scheme=litgen.TemplateNamingScheme.camel_case_suffix,
+//        )
+
+template<typename T>
+struct MyTemplateClass
+{
+public:
+    std::vector<T> values;
+
+    // Standard constructor
+    MyTemplateClass() {}
+
+    // Constructor that will need a parameter adaptation
+    MyTemplateClass(const T v[2]) {
+        values.push_back(v[0]);
+        values.push_back(v[1]);
+    }
+
+    // Standard method
+    MY_API T sum()
+    {
+        T r = {};
+        for (const auto & x: values)
+            r += x;
+        return r;
+    }
+
+    // Method that requires a parameter adaptation
+    MY_API T sum2(const T v[2])
+    {
+        return sum() + v[0] + v[1];
+    }
+};
 
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////

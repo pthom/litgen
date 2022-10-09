@@ -20,5 +20,6 @@
 #include "mylib/operators.h"
 #include "mylib/call_policies_test.h"
 #include "mylib/template_function_test.h"
+#include "mylib/template_class_test.h"
 
 //#include "mylib/sandbox.h"

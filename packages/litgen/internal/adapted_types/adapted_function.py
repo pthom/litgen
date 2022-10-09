@@ -677,6 +677,21 @@ class AdaptedFunction(AdaptedElement):
         r = code_utils.process_code_template(template_code, replace_tokens)
         return r
 
+    def _str_parent_cpp_scope(self) -> str:
+        if self.is_method():
+            parent_struct = self.cpp_element().parent_struct_if_method()
+            assert parent_struct is not None
+            r = parent_struct.qualified_class_name_with_instantiation()
+        else:
+            r = self.cpp_element().cpp_scope(include_self=False).str_cpp()
+        return r
+
+    def _str_parent_cpp_scope_prefix(self) -> str:
+        r = self._str_parent_cpp_scope()
+        if len(r) > 0:
+            r += "::"
+        return r
+
     def _pydef_without_lambda_str_impl(self) -> str:
         """Create the full code of the pydef, with a direct call to the function or method"""
         template_code = code_utils.unindent_code(
@@ -695,13 +710,14 @@ class AdaptedFunction(AdaptedElement):
         replace_tokens.pydef_method_creation_part = self._pydef_method_creation_part()
 
         # fill function_pointer
+
         function_name = self.cpp_element().function_name_with_instantiation()
-        function_parent_scope = self.cpp_element().cpp_scope(False).str_cpp_prefix()
+        function_scope_prefix = self._str_parent_cpp_scope_prefix()
 
         if self.is_vectorize_impl:
-            replace_tokens.function_pointer = f"py::vectorize({function_parent_scope}{function_name})"
+            replace_tokens.function_pointer = f"py::vectorize({function_scope_prefix}{function_name})"
         else:
-            replace_tokens.function_pointer = f"{function_parent_scope}{function_name}"
+            replace_tokens.function_pointer = f"{function_scope_prefix}{function_name}"
 
         if self.is_method():
             replace_tokens.function_pointer = "&" + replace_tokens.function_pointer
@@ -766,7 +782,7 @@ class AdaptedFunction(AdaptedElement):
         # fill params_call_with_self_if_method
         _params_list = function_infos.parameter_list.list_types_names_default_for_signature()
         if self.is_method() and not self.is_constructor():
-            _self_param = f"{self.cpp_element().cpp_scope(True).str_cpp()} & self"
+            _self_param = f"{self._str_parent_cpp_scope()} & self"
             if function_infos.is_const():
                 _self_param = "const " + _self_param
             _params_list = [_self_param] + _params_list

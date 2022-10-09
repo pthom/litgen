@@ -932,8 +932,8 @@ class CallGuardLogger:
 
 # AddTemplated is a template function that will be implemented for the types ["int", "double", "std::string"]
 #
-# See autogenerate_mylib.py:
-#     options.fn_template_options[r"^AddTemplated$"] = ["int", "double", "std::string"]
+# See inside autogenerate_mylib.py:
+#     options.fn_template_options.add_instantiation(r"^AddTemplated$", ["int", "double", "std::string"])
 
 def add_templated(a: int, b: int) -> int:
     pass
@@ -949,8 +949,8 @@ def add_templated(a: str, b: str) -> str:
 #  - nesting of the T template parameter into a vector
 #  - mixing template and function parameter adaptations (here other_values[2] will be transformed into a List[T]
 #
-# See autogenerate_mylib.py:
-#     options.fn_template_options[r"^SumVector"] = ["int", "std::string"]
+# See inside autogenerate_mylib.py:
+#     options.fn_template_options.add_instantiation(r"^SumVector", ["int", "std::string"])
 
 def sum_vector_and_c_array(xs: List[int], other_values: List[int]) -> int:
     pass
@@ -991,6 +991,57 @@ class FooTemplateFunctionTest:
 #    pass
 #
 #
+
+#////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+#                       mylib/template_class_test.h included by mylib/mylib.h                                  //
+#//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+#  MyTemplateClass is a template class that will be implemented for the types ["int", "std::string"]
+#
+# See inside autogenerate_mylib.py:
+#        options.class_template_options.add_instantiation(
+#            class_name_regex=r"^MyTemplateClass$",  # r".*" => all classes
+#        cpp_types_list=["int", "double"],  # instantiated types
+#        naming_scheme=litgen.TemplateNamingScheme.camel_case_suffix,
+#        )
+
+class MyTemplateClassInt:
+    values: List[int]
+
+    def __init__(self) -> None:
+        """ Standard constructor"""
+        pass
+
+    def __init__(self, v: List[int]) -> None:
+        """ Constructor that will need a parameter adaptation"""
+        pass
+
+    def sum(self) -> int:
+        """ Standard method"""
+        pass
+
+    def sum2(self, v: List[int]) -> int:
+        """ Method that requires a parameter adaptation"""
+        pass
+class MyTemplateClassString:
+    values: List[str]
+
+    def __init__(self) -> None:
+        """ Standard constructor"""
+        pass
+
+    def __init__(self, v: List[str]) -> None:
+        """ Constructor that will need a parameter adaptation"""
+        pass
+
+    def sum(self) -> str:
+        """ Standard method"""
+        pass
+
+    def sum2(self, v: List[str]) -> str:
+        """ Method that requires a parameter adaptation"""
+        pass
 
 
 #////////////////////////////////////////////////////////////////////////////////////////////////////////////////

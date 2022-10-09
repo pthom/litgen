@@ -510,7 +510,10 @@ Problem 3: dans lg_test_runner (integration tests), tout est refusé (trouve pas
 *** Bind srcml?
 ** Wish List / Easy
 
-add output in mylib header files
+2 empty lines between class template specialization in stub + decoration
+
+
+add output in mylib header files + test
 
 ** Command line / srcmlcpp
   easy versions of code_first_function_decl and co.
@@ -524,6 +527,8 @@ https://pybind11.readthedocs.io/en/stable/advanced/functions.html#binding-functi
 
 https://pybind11.readthedocs.io/en/stable/advanced/classes.html#binding-classes-with-template-parameters
 
+
+revoir naming: with_instantiation or with_specialization / etre coherent
 
 
 ** Handle (deep)copy

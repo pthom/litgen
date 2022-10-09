@@ -404,6 +404,14 @@ def cpp_scope_to_pybind_var_name(options: LitgenOptions, cpp_element: CppElement
     scope_parts_strs = list(map(_scope_part_name, cpp_scope.scope_parts))
     if len(scope_parts_strs) > 0:
         r = "py" + "_".join(scope_parts_strs)
+        if isinstance(cpp_element, ICppTemplateHost):
+            if len(cpp_element.instantiated_template_params) > 0:
+                instantiated_template_params_str = [str(param) for param in cpp_element.instantiated_template_params]
+                instantiated_template_params_str = [
+                    param.replace(" ", "_").replace("std::", "").replace("::", "_")
+                    for param in instantiated_template_params_str
+                ]
+                r += "_" + "_".join(instantiated_template_params_str)
     else:
         r = "m"
     return r

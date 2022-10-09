@@ -17,6 +17,7 @@ from litgen.internal.adapted_types.adapted_decl import AdaptedDecl
 from litgen.internal.adapted_types.adapted_element import AdaptedElement
 from litgen.internal.adapted_types.adapted_function import AdaptedFunction
 from litgen.internal.adapted_types.adapted_enum import AdaptedEnum
+from litgen import TemplateNamingScheme
 
 
 @dataclass
@@ -139,7 +140,7 @@ class AdaptedClassMember(AdaptedDecl):
     def _str_pydef_lines_numeric_array(self) -> List[str]:
         # Cf. https://stackoverflow.com/questions/58718884/binding-an-array-using-pybind11
 
-        qualified_struct_name = self.class_parent.cpp_element().qualified_struct_name()
+        qualified_struct_name = self.class_parent.cpp_element().qualified_class_name_with_instantiation()
         location = self.info_original_location_cpp()
         name_python = self.decl_name_python()
         name_cpp = self.decl_name_cpp()
@@ -164,7 +165,7 @@ class AdaptedClassMember(AdaptedDecl):
         return lines
 
     def _str_pydef_lines_field(self) -> List[str]:
-        qualified_struct_name = self.class_parent.cpp_element().qualified_struct_name()
+        qualified_struct_name = self.class_parent.cpp_element().qualified_class_name_with_instantiation()
         location = self.info_original_location_cpp()
         name_python = self.decl_name_python()
         name_cpp = self.decl_name_cpp()
@@ -234,6 +235,13 @@ class AdaptedClass(AdaptedElement):
     ]
     adapted_protected_methods: List[AdaptedFunction]
 
+    @dataclass
+    class TemplateSpecialization:
+        class_name_python: str = ""
+        cpp_type: str = ""
+
+    template_specialization: Optional[TemplateSpecialization] = None
+
     def __init__(self, lg_context: LitgenContext, class_: CppStruct):
         super().__init__(lg_context, class_)
         self.adapted_public_children = []
@@ -251,6 +259,8 @@ class AdaptedClass(AdaptedElement):
         return cast(CppStruct, self._cpp_element)
 
     def class_name_python(self) -> str:
+        if self.template_specialization is not None:
+            return self.template_specialization.class_name_python
         r = cpp_to_python.add_underscore_if_python_reserved_word(self.cpp_element().class_name)
         return r
 
@@ -321,29 +331,45 @@ class AdaptedClass(AdaptedElement):
             except SrcMlException as e:
                 child.emit_warning(str(e))
 
+    def _str_parent_classes(self) -> str:
+        parents: List[str] = []
+        if not self.cpp_element().has_base_classes():
+            return ""
+        for _access_type, base_class in self.cpp_element().base_classes():
+            class_python_scope = cpp_to_python.cpp_scope_to_pybind_scope_str(
+                self.options, base_class, include_self=True
+            )
+            parents.append(class_python_scope)
+        if len(parents) == 0:
+            return ""
+        else:
+            return "(" + ", ".join(parents) + ")"
+
     # override
     def _str_stub_lines(self) -> List[str]:
+        # If this is a template class, implement as many versions
+        # as mentioned in the options (see LitgenOptions.class_template_options)
+        # and bail out
+        if self.cpp_element().is_template_non_specialized():
+            template_instantiations = self._split_into_template_instantiations()
+            if len(template_instantiations) == 0:
+                self.cpp_element().emit_warning(
+                    "Ignoring template class. You might need to set LitgenOptions.class_template_options"
+                )
+                return []
+            else:
+                r = []
+                for template_instantiation in template_instantiations:
+                    r += template_instantiation._str_stub_lines()
+                return r
+
         from litgen.internal.adapted_types.line_spacer import LineSpacerPython
 
         line_spacer = LineSpacerPython(self.options)
 
         class_name = self.class_name_python()
 
-        def fill_possible_parents() -> str:
-            parents: List[str] = []
-            if not self.cpp_element().has_base_classes():
-                return ""
-            for _access_type, base_class in self.cpp_element().base_classes():
-                class_python_scope = cpp_to_python.cpp_scope_to_pybind_scope_str(
-                    self.options, base_class, include_self=True
-                )
-                parents.append(class_python_scope)
-            if len(parents) == 0:
-                return ""
-            else:
-                return "(" + ", ".join(parents) + ")"
-
-        title = f"class {class_name}{fill_possible_parents()}:"
+        title = f"class {class_name}{self._str_parent_classes()}:"
         title_lines = [title]
         if self.cpp_element().is_final():
             self.cpp_element().cpp_element_comments.comment_on_previous_lines += "\n"
@@ -484,11 +510,57 @@ class AdaptedClass(AdaptedElement):
         glue_code_str = "\n" + "\n".join(glue_code) + "\n"
         self.lg_context.protected_methods_glue_code += glue_code_str
 
+    def _is_one_param_template(self) -> bool:
+        assert self.cpp_element().is_template_non_specialized()
+        nb_template_parameters = len(self.cpp_element().template.parameter_list.parameters)
+        is_supported = nb_template_parameters == 1
+        return is_supported
+
+    def _instantiate_template_for_type(self, cpp_type_str: str, naming_scheme: TemplateNamingScheme) -> AdaptedClass:
+        assert self.cpp_element().is_template_non_specialized()
+        assert self._is_one_param_template()
+
+        new_cpp_class = self.cpp_element().with_instantiated_template(TemplateInstantiation.from_type_str(cpp_type_str))
+        assert new_cpp_class is not None
+        new_adapted_class = AdaptedClass(self.lg_context, new_cpp_class)
+        new_adapted_class.template_specialization = AdaptedClass.TemplateSpecialization(
+            TemplateNamingScheme.apply(naming_scheme, self.cpp_element().class_name, cpp_type_str), cpp_type_str
+        )
+
+        return new_adapted_class
+
+    def _split_into_template_instantiations(self) -> List[AdaptedClass]:
+        assert self.cpp_element().is_template_non_specialized()
+        if not self._is_one_param_template():
+            self.cpp_element().emit_warning("Only one parameter template classes are supported")
+            return []
+
+        for instantiation_spec in self.options.class_template_options.specs:
+            if code_utils.does_match_regex(instantiation_spec.name_regex, self.cpp_element().class_name):
+                new_classes: List[AdaptedClass] = []
+                for cpp_type in instantiation_spec.cpp_types_list:
+                    new_class = self._instantiate_template_for_type(cpp_type, instantiation_spec.naming_scheme)
+                    new_classes.append(new_class)
+                return new_classes
+        return []
+
     # override
     def _str_pydef_lines(self) -> List[str]:
-        if self.cpp_element().is_template():
-            self.cpp_element().emit_warning("Template classes are not yet supported")
-            return []
+        # If this is a template class, implement as many versions
+        # as mentioned in the options (see LitgenOptions.class_template_options)
+        # and bail out
+        if self.cpp_element().is_template_non_specialized():
+            template_instantiations = self._split_into_template_instantiations()
+            if len(template_instantiations) == 0:
+                self.cpp_element().emit_warning(
+                    "Ignoring template class. You might need to set LitgenOptions.class_template_options"
+                )
+                return []
+            else:
+                r = []
+                for template_instantiation in template_instantiations:
+                    r += template_instantiation._str_pydef_lines()
+                return r
 
         self._store_glue_protected_methods()
         self._store_glue_override_virtual_methods_in_python()
@@ -497,8 +569,7 @@ class AdaptedClass(AdaptedElement):
         _i_ = options.indent_cpp_spaces()
 
         def make_pyclass_creation_code() -> str:
-            # Additional template params to py::class_
-            qualified_struct_name = self.cpp_element().qualified_struct_name()
+            qualified_struct_name = self.cpp_element().qualified_class_name_with_instantiation()
 
             # fill py::class_ additional template params (base classes, nodelete, etc)
             other_template_params_list = []
@@ -525,7 +596,7 @@ class AdaptedClass(AdaptedElement):
                     """
                 auto {pydef_class_var} =
                 {_i_}py::class_<{qualified_struct_name}{other_template_params}>{location}
-                {_i_}{_i_}({pydef_class_var_parent}, "{bare_struct_name}"{maybe_py_is_final}{maybe_py_is_dynamic}, "{comment}")
+                {_i_}{_i_}({pydef_class_var_parent}, "{class_name_python}"{maybe_py_is_final}{maybe_py_is_dynamic}, "{comment}")
                 """,
                     flag_strip_empty_lines=True,
                 )
@@ -538,7 +609,7 @@ class AdaptedClass(AdaptedElement):
             replacements.qualified_struct_name = qualified_struct_name
             replacements.other_template_params = other_template_params
             replacements.location = self.info_original_location_cpp()
-            replacements.bare_struct_name = self.cpp_element().class_name
+            replacements.class_name_python = self.class_name_python()
             replacements.pydef_class_var_parent = cpp_to_python.cpp_scope_to_pybind_parent_var_name(
                 options, self.cpp_element()
             )
@@ -554,7 +625,7 @@ class AdaptedClass(AdaptedElement):
 
             return pyclass_creation_code
 
-        qualified_struct_name = self.cpp_element().qualified_struct_name()
+        qualified_struct_name = self.cpp_element().qualified_class_name_with_instantiation()
         if options.generate_to_string:
             code_outro = f'{_i_}.def("__repr__", [](const {qualified_struct_name}& v) {{ return ToString(v); }});'
         else:

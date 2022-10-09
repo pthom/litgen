@@ -197,3 +197,26 @@ def test_struct_stub_complex():
             ;
         """,
     )
+
+
+def test_templated_class():
+    code = """
+    template typename<T>
+    class Foo
+    {
+        T values[3];
+
+        T GetValue(size_t idx) { return values[idx]; }
+    };
+    """
+
+    options = LitgenOptions()
+    options.class_template_options.add_instantiation(
+        class_name_regex="^Foo$",
+        cpp_types_list=["int", "float"],
+        naming_scheme=litgen.TemplateNamingScheme.camel_case_suffix,
+    )
+
+    generated_code = litgen.generate_code(options, code)
+
+    logging.warning("\n" + generated_code.stub_code)

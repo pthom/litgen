@@ -18,7 +18,7 @@ class TemplateNamingScheme(Enum):
 
     @staticmethod
     def apply(scheme: TemplateNamingScheme, class_or_function_name: str, type_name: str) -> str:
-        type_name = type_name.replace(" ", "_")
+        type_name = type_name.replace(" ", "_").replace("std::", "").replace("::", "_")
         camel_case_type_name = type_name[:1].upper() + type_name[1:]
 
         r = ""
