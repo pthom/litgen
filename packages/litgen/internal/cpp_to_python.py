@@ -585,3 +585,24 @@ def surround_cpp_code_with_filename(options: LitgenOptions, filename: Optional[s
 
 def surround_python_code_with_filename(options: LitgenOptions, filename: Optional[str], code: str) -> str:
     return _surround_code_with_filename_impl(options, filename, code, "#")
+
+
+def surround_python_code_lines(code_lines: List[str], message: str) -> List[str]:
+    intro = code_utils.unindent_code(
+        f"""
+    #  ------------------------------------------------------------------------
+    #      <{message}>
+    """,
+        flag_strip_empty_lines=True,
+    ).split("\n")
+
+    outro = code_utils.unindent_code(
+        f"""
+    #      </{message}>
+    #  ------------------------------------------------------------------------
+    """,
+        flag_strip_empty_lines=True,
+    ).split("\n")
+
+    r = intro + code_lines + outro
+    return r

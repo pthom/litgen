@@ -387,7 +387,16 @@ class AdaptedFunction(AdaptedElement):
             else:
                 r = []
                 for template_instantiation in template_instantiations:
+                    if len(r) > 0:
+                        if self.is_method():
+                            r += [""]  # 1 empty lines between methods
+                        else:
+                            r += ["", ""]  # 2 empty lines between functions
                     r += template_instantiation._str_stub_lines()
+                if self.options.fn_template_decorate_in_stub:
+                    r = cpp_to_python.surround_python_code_lines(
+                        r, f"template instantiations for function {self.cpp_element().function_name}"
+                    )
                 return r
 
         if self.is_type_ignore:

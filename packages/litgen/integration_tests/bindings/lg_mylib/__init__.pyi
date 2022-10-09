@@ -935,12 +935,20 @@ class CallGuardLogger:
 # See inside autogenerate_mylib.py:
 #     options.fn_template_options.add_instantiation(r"^AddTemplated$", ["int", "double", "std::string"])
 
+#  ------------------------------------------------------------------------
+#      <template instantiations for function AddTemplated>
 def add_templated(a: int, b: int) -> int:
     pass
+
+
 def add_templated(a: float, b: float) -> float:
     pass
+
+
 def add_templated(a: str, b: str) -> str:
     pass
+#      </template instantiations for function AddTemplated>
+#  ------------------------------------------------------------------------
 
 
 # SumVectorAndCArray is a template function that will be implemented for the types ["int", "std::string"]
@@ -952,27 +960,38 @@ def add_templated(a: str, b: str) -> str:
 # See inside autogenerate_mylib.py:
 #     options.fn_template_options.add_instantiation(r"^SumVector", ["int", "std::string"])
 
+#  ------------------------------------------------------------------------
+#      <template instantiations for function SumVectorAndCArray>
 def sum_vector_and_c_array(xs: List[int], other_values: List[int]) -> int:
     pass
+
+
 def sum_vector_and_c_array(xs: List[str], other_values: List[str]) -> str:
     pass
+#      </template instantiations for function SumVectorAndCArray>
+#  ------------------------------------------------------------------------
 
 
 # Same test, as a method
 
 class FooTemplateFunctionTest:
+    #  ------------------------------------------------------------------------
+    #      <template instantiations for function SumVectorAndCArray>
     def sum_vector_and_c_array(
         self,
         xs: List[int],
         other_values: List[int]
         ) -> int:
         pass
+
     def sum_vector_and_c_array(
         self,
         xs: List[str],
         other_values: List[str]
         ) -> str:
         pass
+    #      </template instantiations for function SumVectorAndCArray>
+    #  ------------------------------------------------------------------------
 
 
 #
@@ -1006,6 +1025,8 @@ class FooTemplateFunctionTest:
 #        naming_scheme=litgen.TemplateNamingScheme.camel_case_suffix,
 #        )
 
+#  ------------------------------------------------------------------------
+#      <template instantiations for class MyTemplateClass>
 class MyTemplateClassInt:
     values: List[int]
 
@@ -1024,6 +1045,8 @@ class MyTemplateClassInt:
     def sum2(self, v: List[int]) -> int:
         """ Method that requires a parameter adaptation"""
         pass
+
+
 class MyTemplateClassString:
     values: List[str]
 
@@ -1042,6 +1065,8 @@ class MyTemplateClassString:
     def sum2(self, v: List[str]) -> str:
         """ Method that requires a parameter adaptation"""
         pass
+#      </template instantiations for class MyTemplateClass>
+#  ------------------------------------------------------------------------
 
 
 #////////////////////////////////////////////////////////////////////////////////////////////////////////////////

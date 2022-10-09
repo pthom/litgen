@@ -199,6 +199,10 @@ class LitgenOptions:
     #        options.fn_template_options.add_instantiation(r".*", ["int", float"])
     #    would instantiate all template functions (whatever their name) with "int" and "float"
     fn_template_options: TemplateFunctionsOptions
+    # if fn_template_decorate_in_stub is True, then there will be some
+    # decorative comments in the stub file, in order to visually group
+    # the generated functions together
+    fn_template_decorate_in_stub: bool = True
 
     # ------------------------------------------------------------------------------
     # Vectorize functions options
@@ -431,6 +435,10 @@ class LitgenOptions:
     #         naming_scheme=TemplateNamingScheme.camel_case_suffix
     #     )
     class_template_options: TemplateClassOptions
+    # if class_template_decorate_in_stub is True, then there will be some
+    # decorative comments in the stub file, in order to visually group
+    # the generated classes together
+    class_template_decorate_in_stub: bool = True
 
     # ------------------------------------------------------------------------------
     # Adapt class members

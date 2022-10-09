@@ -510,8 +510,6 @@ Problem 3: dans lg_test_runner (integration tests), tout est refusé (trouve pas
 *** Bind srcml?
 ** Wish List / Easy
 
-2 empty lines between class template specialization in stub + decoration
-
 
 add output in mylib header files + test
 

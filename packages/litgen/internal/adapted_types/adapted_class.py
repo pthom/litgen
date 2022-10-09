@@ -360,7 +360,13 @@ class AdaptedClass(AdaptedElement):
             else:
                 r = []
                 for template_instantiation in template_instantiations:
+                    if len(r) > 0:
+                        r += ["", ""]  # 2 empty lines between classes
                     r += template_instantiation._str_stub_lines()
+                if self.options.class_template_decorate_in_stub:
+                    r = cpp_to_python.surround_python_code_lines(
+                        r, f"template instantiations for class {self.cpp_element().class_name}"
+                    )
                 return r
 
         from litgen.internal.adapted_types.line_spacer import LineSpacerPython
