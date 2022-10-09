@@ -221,7 +221,12 @@ def parse_parameter(options: SrcmlOptions, element: SrcmlXmlWrapper) -> CppParam
             child_c = CppElementAndComment(child, CppElementComments())
             result.decl = parse_decl(options, child_c, None)
         elif child_tag == "type":
-            result.template_type = parse_type(options, child, None)  # This is only for template parameters
+            # This is not the parameter's type, this is a template parameter which will be either "class" or "typename"
+            # as in template<typename T> or template<class T>
+            assert child.has_name()
+            template_type = child.name_code()
+            assert template_type is not None
+            result.template_type = template_type
         elif child_tag == "name":
             child_text = child.text()
             assert child_text is not None

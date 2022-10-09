@@ -116,12 +116,24 @@ def code_first_enum(options: SrcmlOptions, code: str) -> CppEnum:
     return cast(CppEnum, code_first_child_of_type(options, CppEnum, code))
 
 
+def code_first_decl_statement(options: SrcmlOptions, code: str) -> CppDeclStatement:
+    return cast(CppDeclStatement, code_first_child_of_type(options, CppDeclStatement, code))
+
+
 def code_first_decl(options: SrcmlOptions, code: str) -> CppDecl:
     return cast(CppDecl, code_first_child_of_type(options, CppDecl, code))
 
 
 def code_first_struct(options: SrcmlOptions, code: str) -> CppStruct:
     return cast(CppStruct, code_first_child_of_type(options, CppStruct, code))
+
+
+def code_to_cpp_type(options: SrcmlOptions, code: str) -> CppType:
+    code_plus_dummy_var = code + " dummy;"
+    first_decl_statement = code_first_decl_statement(options, code_plus_dummy_var)
+    first_decl = first_decl_statement.cpp_decls[0]
+    cpp_type = first_decl.cpp_type
+    return cpp_type
 
 
 def _tests_only_get_only_child_with_tag(options: SrcmlOptions, code: str, tag: str) -> CppElementAndComment:

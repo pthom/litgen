@@ -507,11 +507,13 @@ Problem 2: dans lg_skbuild_template, tout est accpté dans example_lib...
 Problem 3: dans lg_test_runner (integration tests), tout est refusé (trouve pas les définitions)
 *** N: auto __repr__ for structs
 *** N: keep pointer and references layout inside CppType (int *x vs int *x vs int * x)
+*** Bind srcml?
 ** Wish List / Easy
 
+easy versions of code_first_function_decl and co.
 Command line / srcmlcpp
 
-Bind srcml?
+
 
 layout struct: do  not indent public / private, etc.
 
@@ -519,16 +521,11 @@ layout struct: do  not indent public / private, etc.
 https://pybind11.readthedocs.io/en/stable/advanced/functions.html#binding-functions-with-template-parameters
 
 https://pybind11.readthedocs.io/en/stable/advanced/classes.html#binding-classes-with-template-parameters
-(by asking for a specialization name)
-templated functions can reuse the same name
 
 
-with_instantiated_template
-   list of specs
-   param CppType instead of str ?
-
-   unit test dans srcmlcpp
-
+- Review str(Function) pour que ca puisse compiler: https://godbolt.org/z/MEqsd7se1
+- Test / litgen
+-
 
 
 

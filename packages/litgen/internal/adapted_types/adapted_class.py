@@ -486,7 +486,7 @@ class AdaptedClass(AdaptedElement):
 
     # override
     def _str_pydef_lines(self) -> List[str]:
-        if self.cpp_element().is_templated_class():
+        if self.cpp_element().is_template():
             self.cpp_element().emit_warning("Template classes are not yet supported")
             return []
 
@@ -505,7 +505,7 @@ class AdaptedClass(AdaptedElement):
             if self.cpp_element().has_base_classes():
                 base_classes = self.cpp_element().base_classes()
                 for access_type, base_class in base_classes:
-                    if access_type == PublicProtectedPrivate.public or access_type == PublicProtectedPrivate.protected:
+                    if access_type == AccessTypes.public or access_type == AccessTypes.protected:
                         other_template_params_list.append(base_class.cpp_scope(include_self=True).str_cpp())
             if self.cpp_element().has_private_dtor():
                 other_template_params_list.append(f"std::unique_ptr<{qualified_struct_name}, py::nodelete>")

@@ -376,7 +376,7 @@ class AdaptedFunction(AdaptedElement):
         # If this is a template function, implement as many versions
         # as mentioned in the options (see LitgenOptions.fn_template_functions_options)
         # and bail out
-        if self._is_template():
+        if self._is_template_non_specialized():
             template_instantiations = self._split_into_template_instantiations()
             if len(template_instantiations) == 0:
                 self.cpp_element().emit_warning(
@@ -881,32 +881,33 @@ class AdaptedFunction(AdaptedElement):
         return r
 
     def _is_one_param_template(self) -> bool:
-        assert self._is_template()  # call this after _is_template()!
+        assert self._is_template_non_specialized()  # call this after _is_template()!
         nb_template_parameters = len(self.cpp_element().template.parameter_list.parameters)
         is_supported = nb_template_parameters == 1
         return is_supported
 
-    def _is_template(self) -> bool:
+    def _is_template_non_specialized(self) -> bool:
         """Returns true if the function is a template
         and if no prior templated buffer adaptation was done
         (see _adapt_c_buffers.py)
         """
         if self.has_adapted_template_buffer:
             return False
-        is_template = self.cpp_element().is_template()
-        return is_template
+        return self.cpp_element().is_template_non_specialized()
 
     def _instantiate_template_for_type(self, cpp_type_str: str) -> AdaptedFunction:
-        assert self._is_template()
+        assert self._is_template_non_specialized()
         assert self._is_one_param_template()
 
-        new_cpp_function = self.cpp_element().with_instantiated_template(TemplateInstantiationSpec(cpp_type_str))
+        new_cpp_function = self.cpp_element().with_instantiated_template(
+            TemplateInstantiation.from_type_str(cpp_type_str)
+        )
         assert new_cpp_function is not None
         new_adapted_function = AdaptedFunction(self.lg_context, new_cpp_function, self.is_overloaded)
         return new_adapted_function
 
     def _split_into_template_instantiations(self) -> List[AdaptedFunction]:
-        assert self._is_template()
+        assert self._is_template_non_specialized()
         if not self._is_one_param_template():
             self.cpp_element().emit_warning("Only one parameters template are supported")
             return []
@@ -937,7 +938,7 @@ class AdaptedFunction(AdaptedElement):
         # If this is a template function, implement as many versions
         # as mentioned in the options (see LitgenOptions.fn_template_functions_options)
         # and bail out
-        if self._is_template():
+        if self._is_template_non_specialized():
             template_instantiations = self._split_into_template_instantiations()
             if len(template_instantiations) == 0:
                 self.cpp_element().emit_warning(

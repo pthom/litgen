@@ -136,7 +136,7 @@ def play_template() -> None:
     # srcml_options = srcmlcpp.SrcmlOptions()
     # cpp_unit = srcmlcpp.code_to_cpp_unit(srcml_options, code)
     # f = cpp_unit.all_functions()[0]
-    # f_int = f.with_instantiated_template(TemplateInstantiationSpec("int"))
+    # f_int = f.with_instantiated_template(TemplateInstantiationPart("int"))
     # print(f_int)
 
     code = """
@@ -152,7 +152,7 @@ def play_template() -> None:
     srcml_options = srcmlcpp.SrcmlOptions()
     cpp_unit = srcmlcpp.code_to_cpp_unit(srcml_options, code)
     s = cpp_unit.all_structs_recursive()[0]
-    s_int = s.with_instantiated_template(TemplateInstantiationSpec("std::complex<double>"))
+    s_int = s.with_instantiated_template(TemplateInstantiation.from_type_str("int"))
     assert s_int is not None
     print(s_int.str_code())
 
