@@ -1190,7 +1190,7 @@ int CallGuardLogger::nb_destroy = 0;
 // AddTemplated is a template function that will be implemented for the types ["int", "double", "std::string"]
 //
 // See inside autogenerate_mylib.py:
-//     options.fn_template_options.add_instantiation(r"^AddTemplated$", ["int", "double", "std::string"])
+//     options.fn_template_options.add_specialization(r"^AddTemplated$", ["int", "double", "std::string"])
 
 template<typename T>
 MY_API T AddTemplated(T a, T b)
@@ -1206,7 +1206,7 @@ MY_API T AddTemplated(T a, T b)
 //  - mixing template and function parameter adaptations (here other_values[2] will be transformed into a List[T]
 //
 // See inside autogenerate_mylib.py:
-//     options.fn_template_options.add_instantiation(r"^SumVector", ["int", "std::string"])
+//     options.fn_template_options.add_specialization(r"^SumVector", ["int", "std::string"])
 
 template<typename T>
 MY_API T SumVectorAndCArray(std::vector<T> xs, const T other_values[2])
@@ -1262,7 +1262,7 @@ def sum_vector_and_c_array(xs: List[str], other_values: List[str]) -> str:
 //  MyTemplateClass is a template class that will be implemented for the types ["int", "std::string"]
 //
 // See inside autogenerate_mylib.py:
-//        options.class_template_options.add_instantiation(
+//        options.class_template_options.add_specialization(
 //            class_name_regex=r"^MyTemplateClass$",  # r".*" => all classes
 //        cpp_types_list=["int", "double"],  # instantiated types
 //        naming_scheme=litgen.TemplateNamingScheme.camel_case_suffix,

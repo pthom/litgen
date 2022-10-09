@@ -526,8 +526,6 @@ https://pybind11.readthedocs.io/en/stable/advanced/functions.html#binding-functi
 https://pybind11.readthedocs.io/en/stable/advanced/classes.html#binding-classes-with-template-parameters
 
 
-revoir naming: with_instantiation or with_specialization / etre coherent
-
 
 ** Handle (deep)copy
 https://pybind11.readthedocs.io/en/stable/advanced/classes.html#deepcopy-support

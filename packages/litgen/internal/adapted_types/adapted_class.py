@@ -350,7 +350,7 @@ class AdaptedClass(AdaptedElement):
         # If this is a template class, implement as many versions
         # as mentioned in the options (see LitgenOptions.class_template_options)
         # and bail out
-        if self.cpp_element().is_template_non_specialized():
+        if self.cpp_element().is_template_partially_specialized():
             template_instantiations = self._split_into_template_instantiations()
             if len(template_instantiations) == 0:
                 self.cpp_element().emit_warning(
@@ -358,14 +358,14 @@ class AdaptedClass(AdaptedElement):
                 )
                 return []
             else:
-                r = []
+                r: List[str] = []
                 for template_instantiation in template_instantiations:
                     if len(r) > 0:
                         r += ["", ""]  # 2 empty lines between classes
                     r += template_instantiation._str_stub_lines()
                 if self.options.class_template_decorate_in_stub:
                     r = cpp_to_python.surround_python_code_lines(
-                        r, f"template instantiations for class {self.cpp_element().class_name}"
+                        r, f"template specializations for class {self.cpp_element().class_name}"
                     )
                 return r
 
@@ -517,16 +517,16 @@ class AdaptedClass(AdaptedElement):
         self.lg_context.protected_methods_glue_code += glue_code_str
 
     def _is_one_param_template(self) -> bool:
-        assert self.cpp_element().is_template_non_specialized()
+        assert self.cpp_element().is_template_partially_specialized()
         nb_template_parameters = len(self.cpp_element().template.parameter_list.parameters)
         is_supported = nb_template_parameters == 1
         return is_supported
 
     def _instantiate_template_for_type(self, cpp_type_str: str, naming_scheme: TemplateNamingScheme) -> AdaptedClass:
-        assert self.cpp_element().is_template_non_specialized()
+        assert self.cpp_element().is_template_partially_specialized()
         assert self._is_one_param_template()
 
-        new_cpp_class = self.cpp_element().with_instantiated_template(TemplateInstantiation.from_type_str(cpp_type_str))
+        new_cpp_class = self.cpp_element().with_specialized_template(TemplateSpecialization.from_type_str(cpp_type_str))
         assert new_cpp_class is not None
         new_adapted_class = AdaptedClass(self.lg_context, new_cpp_class)
         new_adapted_class.template_specialization = AdaptedClass.TemplateSpecialization(
@@ -536,7 +536,7 @@ class AdaptedClass(AdaptedElement):
         return new_adapted_class
 
     def _split_into_template_instantiations(self) -> List[AdaptedClass]:
-        assert self.cpp_element().is_template_non_specialized()
+        assert self.cpp_element().is_template_partially_specialized()
         if not self._is_one_param_template():
             self.cpp_element().emit_warning("Only one parameter template classes are supported")
             return []
@@ -555,7 +555,7 @@ class AdaptedClass(AdaptedElement):
         # If this is a template class, implement as many versions
         # as mentioned in the options (see LitgenOptions.class_template_options)
         # and bail out
-        if self.cpp_element().is_template_non_specialized():
+        if self.cpp_element().is_template_partially_specialized():
             template_instantiations = self._split_into_template_instantiations()
             if len(template_instantiations) == 0:
                 self.cpp_element().emit_warning(

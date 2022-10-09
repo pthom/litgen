@@ -76,10 +76,10 @@ def mylib_litgen_options() -> litgen.LitgenOptions:
 
     options.class_dynamic_attributes__regex = r"Dynamic$"
 
-    options.fn_template_options.add_instantiation(r"^AddTemplated$", ["int", "double", "std::string"])
-    options.fn_template_options.add_instantiation(r"^SumVector", ["int", "std::string"])
+    options.fn_template_options.add_specialization(r"^AddTemplated$", ["int", "double", "std::string"])
+    options.fn_template_options.add_specialization(r"^SumVector", ["int", "std::string"])
 
-    options.class_template_options.add_instantiation(
+    options.class_template_options.add_specialization(
         class_name_regex=r"^MyTemplateClass$",  # r".*" => all classes
         cpp_types_list=["int", "std::string"],  # instantiated types
         naming_scheme=litgen.TemplateNamingScheme.camel_case_suffix,

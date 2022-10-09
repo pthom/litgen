@@ -5,7 +5,7 @@
 //  MyTemplateClass is a template class that will be implemented for the types ["int", "std::string"]
 //
 // See inside autogenerate_mylib.py:
-//        options.class_template_options.add_instantiation(
+//        options.class_template_options.add_specialization(
 //            class_name_regex=r"^MyTemplateClass$",  # r".*" => all classes
 //        cpp_types_list=["int", "double"],  # instantiated types
 //        naming_scheme=litgen.TemplateNamingScheme.camel_case_suffix,

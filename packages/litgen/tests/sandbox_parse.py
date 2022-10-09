@@ -110,7 +110,7 @@ def play() -> None:
     };
     """
     options = litgen.LitgenOptions()
-    options.fn_template_options.add_instantiation(r"SumVector", ["int"])
+    options.fn_template_options.add_specialization(r"SumVector", ["int"])
     options.fn_params_replace_buffer_by_array__regex = r".*"
     # options.srcml_options.functions_api_prefixes = "MY_API"
 
@@ -141,7 +141,7 @@ def play_template() -> None:
     """
 
     options = LitgenOptions()
-    options.class_template_options.add_instantiation(
+    options.class_template_options.add_specialization(
         class_name_regex="^Foo$",
         cpp_types_list=["int", "float"],
         naming_scheme=litgen.TemplateNamingScheme.camel_case_suffix,

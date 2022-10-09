@@ -395,7 +395,7 @@ class AdaptedFunction(AdaptedElement):
                     r += template_instantiation._str_stub_lines()
                 if self.options.fn_template_decorate_in_stub:
                     r = cpp_to_python.surround_python_code_lines(
-                        r, f"template instantiations for function {self.cpp_element().function_name}"
+                        r, f"template specializations for function {self.cpp_element().function_name}"
                     )
                 return r
 
@@ -919,7 +919,7 @@ class AdaptedFunction(AdaptedElement):
         """
         if self.has_adapted_template_buffer:
             return False
-        return self.cpp_element().is_template_non_specialized()
+        return self.cpp_element().is_template_partially_specialized()
 
     def _instantiate_template_for_type(
         self, cpp_type_str: str, naming_scheme: litgen.TemplateNamingScheme
@@ -927,8 +927,8 @@ class AdaptedFunction(AdaptedElement):
         assert self._is_template_non_specialized()
         assert self._is_one_param_template()
 
-        new_cpp_function = self.cpp_element().with_instantiated_template(
-            TemplateInstantiation.from_type_str(cpp_type_str)
+        new_cpp_function = self.cpp_element().with_specialized_template(
+            TemplateSpecialization.from_type_str(cpp_type_str)
         )
         assert new_cpp_function is not None
         new_cpp_function.function_name = litgen.TemplateNamingScheme.apply(

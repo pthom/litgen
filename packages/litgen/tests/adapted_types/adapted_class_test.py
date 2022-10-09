@@ -211,7 +211,7 @@ def test_templated_class():
     """
 
     options = LitgenOptions()
-    options.class_template_options.add_instantiation(
+    options.class_template_options.add_specialization(
         class_name_regex="^Foo$",
         cpp_types_list=["int", "float"],
         naming_scheme=litgen.TemplateNamingScheme.camel_case_suffix,

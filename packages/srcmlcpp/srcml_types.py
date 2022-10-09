@@ -708,14 +708,14 @@ class CppType(CppElement):
     def is_inferred_type(self) -> bool:
         return self.typenames == ["auto"]
 
-    def with_instantiated_template(self, template_specs: TemplateInstantiation) -> Optional[CppType]:
+    def with_specialized_template(self, template_specs: TemplateSpecialization) -> Optional[CppType]:
         """Returns a new type where "template_name" is replaced by "cpp_type"
         Returns None if this type does not use "template_name"
         """
         was_changed = False
         new_type = copy.deepcopy(self)
         for i in range(len(new_type.typenames)):
-            for template_spec in template_specs.instantiations:
+            for template_spec in template_specs.specializations:
                 assert len(template_spec.cpp_type.typenames) == 1
                 template_spec_type = template_spec.cpp_type.typenames[0]
                 if new_type.typenames[i] == template_spec.template_name:
@@ -913,11 +913,11 @@ class CppDecl(CppElementAndComment):
         Returns true if this decl is const"""
         return "const" in self.cpp_type.specifiers  # or "const" in self.cpp_type.names
 
-    def with_instantiated_template(self, template_specs: TemplateInstantiation) -> Optional[CppDecl]:
+    def with_specialized_template(self, template_specs: TemplateSpecialization) -> Optional[CppDecl]:
         """Returns a new decl where "template_name" is replaced by "cpp_type"
         Returns None if this decl does not use "template_name"
         """
-        new_type = self.cpp_type.with_instantiated_template(template_specs)
+        new_type = self.cpp_type.with_specialized_template(template_specs)
         if new_type is None:
             return None
         else:
@@ -962,7 +962,7 @@ class CppDeclStatement(CppElementAndComment):
             child.visit_cpp_breadth_first(cpp_visitor_function, depth + 1)
         cpp_visitor_function(self, CppElementsVisitorEvent.OnAfterChildren, depth)
 
-    def with_instantiated_template(self, template_specs: TemplateInstantiation) -> Optional[CppDeclStatement]:
+    def with_specialized_template(self, template_specs: TemplateSpecialization) -> Optional[CppDeclStatement]:
         """Returns a new CppDeclStatement where "template_name" is replaced by "cpp_type"
         Returns None if this CppDeclStatement does not use "template_name"
         """
@@ -971,7 +971,7 @@ class CppDeclStatement(CppElementAndComment):
         new_decl_statement = copy.deepcopy(self)
         new_cpp_decls: List[CppDecl] = []
         for cpp_decl in new_decl_statement.cpp_decls:
-            new_cpp_decl = cpp_decl.with_instantiated_template(template_specs)
+            new_cpp_decl = cpp_decl.with_specialized_template(template_specs)
             if new_cpp_decl is not None:
                 was_changed = True
                 new_cpp_decls.append(new_cpp_decl)
@@ -1144,7 +1144,7 @@ class CppTemplate(CppElement):
         return self.str_code()
 
 
-class TemplateInstantiationPart:
+class TemplateSpecializationPart:
     cpp_type: CppType
     template_name: str = ""  # If empty, will be applied to the first available template param
 
@@ -1170,29 +1170,29 @@ class TemplateInstantiationPart:
             return str(self.cpp_type)
 
 
-class TemplateInstantiation:
-    instantiations: List[TemplateInstantiationPart]
+class TemplateSpecialization:
+    specializations: List[TemplateSpecializationPart]
 
     def __init__(self, check_private_constructor: str):
         if check_private_constructor != "from_within":
             raise Exception("Please use named constructors, this constructor is private!")
 
     @staticmethod
-    def from_type_str(cpp_type_str: str, template_name: str = "") -> TemplateInstantiation:
-        r = TemplateInstantiation("from_within")
-        r.instantiations = [TemplateInstantiationPart(cpp_type_str, template_name)]
+    def from_type_str(cpp_type_str: str, template_name: str = "") -> TemplateSpecialization:
+        r = TemplateSpecialization("from_within")
+        r.specializations = [TemplateSpecializationPart(cpp_type_str, template_name)]
         return r
 
     @staticmethod
-    def from_type(cpp_type: CppType, template_name: str = "") -> TemplateInstantiation:
-        r = TemplateInstantiation("from_within")
-        r.instantiations = [TemplateInstantiationPart(cpp_type, template_name)]
+    def from_type(cpp_type: CppType, template_name: str = "") -> TemplateSpecialization:
+        r = TemplateSpecialization("from_within")
+        r.specializations = [TemplateSpecializationPart(cpp_type, template_name)]
         return r
 
     @staticmethod
-    def from_instantiations(instantiations: List[TemplateInstantiationPart]) -> TemplateInstantiation:
-        r = TemplateInstantiation("from_within")
-        r.instantiations = instantiations
+    def from_specializations(specializations: List[TemplateSpecializationPart]) -> TemplateSpecialization:
+        r = TemplateSpecialization("from_within")
+        r.specializations = specializations
         return r
 
 
@@ -1202,48 +1202,47 @@ class ICppTemplateHost:
     """
 
     template: CppTemplate
-    instantiated_template_params: List[CppType]  # Will only be filled after calling with_instantiated_template
+    specialized_template_params: List[CppType]  # Will only be filled after calling with_specialized_template
 
     def __init__(self, _element: SrcmlXmlWrapper, _cpp_element_comments: CppElementComments) -> None:
         self._init_template_host()
 
     def _init_template_host(self) -> None:
-        # self.template is not set by default
-        self.instantiated_template_params = []
+        # self.template is not set by default. This denotes that the class of function is not a template
+        self.specialized_template_params = []
 
     def is_template(self) -> bool:
         return hasattr(self, "template")
 
-    def is_template_non_specialized(self) -> bool:
-        return hasattr(self, "template") and not self.is_fully_specialized_template()
+    def is_template_partially_specialized(self) -> bool:
+        return self.is_template() and not self.is_template_fully_specialized()
 
-    def is_fully_specialized_template(self) -> bool:
+    def is_template_fully_specialized(self) -> bool:
         if not self.is_template():
             return False
         nb_params = len(self.template.parameter_list.parameters)
-        nb_inst = len(self.instantiated_template_params)
+        nb_inst = len(self.specialized_template_params)
         return nb_inst == nb_params
 
-    def str_instantiated_params(self) -> str:
-        return ", ".join([str(param) for param in self.instantiated_template_params])
-
-    def _instantiation_str(self) -> str:
-        if len(self.instantiated_template_params) > 0:
-            return f"<{self.str_instantiated_params()}>"
+    def str_template_specialization(self) -> str:
+        """Returns <int, double> if there is a specialization on (int, double). Return "" if no specialization"""
+        if len(self.specialized_template_params) > 0:
+            instantiated_params = ", ".join([str(param) for param in self.specialized_template_params])
+            return f"<{instantiated_params}>"
         else:
             return ""
 
-    def _store_template_specs(self, template_specs: TemplateInstantiation) -> None:
-        for template_spec in template_specs.instantiations:
+    def _store_template_specs(self, template_specs: TemplateSpecialization) -> None:
+        for template_spec in template_specs.specializations:
             if len(template_spec.template_name) == 0:
                 assert self.is_template()
                 nb_remaining_template_to_instantiate = len(self.template.parameter_list.parameters) - len(
-                    self.instantiated_template_params
+                    self.specialized_template_params
                 )
                 assert nb_remaining_template_to_instantiate > 0
-                idx_template = len(self.instantiated_template_params)
+                idx_template = len(self.specialized_template_params)
                 template_spec.template_name = self.template.parameter_list.parameters[idx_template].template_name
-                self.instantiated_template_params.append(template_spec.cpp_type)
+                self.specialized_template_params.append(template_spec.cpp_type)
 
     def str_template(self) -> str:
         if not hasattr(self, "template"):
@@ -1255,15 +1254,15 @@ class ICppTemplateHost:
         for i in range(len(self.template.parameter_list.parameters)):
             template_parameter = self.template.parameter_list.parameters[i]
             template_type_and_name = template_parameter.template_type + " " + template_parameter.template_name
-            if i < len(self.instantiated_template_params):
-                template_instantiation = self.instantiated_template_params[i]
+            if i < len(self.specialized_template_params):
+                template_instantiation = self.specialized_template_params[i]
                 template_params_strs.append(f"{template_type_and_name}={template_instantiation}")
             else:
                 template_params_strs.append(template_type_and_name)
 
         template_params_str = ", ".join(template_params_strs)
 
-        if len(self.instantiated_template_params) == 0:
+        if len(self.specialized_template_params) == 0:
             r = f"template<{template_params_str}> "
         else:
             if isinstance(self, CppFunctionDecl):
@@ -1308,12 +1307,12 @@ class CppFunctionDecl(CppElementAndComment, ICppTemplateHost):
             return parent_scope + "::" + self.function_name
 
     def qualified_function_name_with_instantiation(self) -> str:
-        return self.qualified_function_name() + self._instantiation_str()
+        return self.qualified_function_name() + self.str_template_specialization()
 
     def function_name_with_instantiation(self) -> str:
-        return self.function_name + self._instantiation_str()
+        return self.function_name + self.str_template_specialization()
 
-    def with_instantiated_template(self, template_specs: TemplateInstantiation) -> Optional[CppFunctionDecl]:
+    def with_specialized_template(self, template_specs: TemplateSpecialization) -> Optional[CppFunctionDecl]:
         """Returns a new non-templated function, implemented for the given type
         Only works on templated function with *one* template parameter
         """
@@ -1323,14 +1322,14 @@ class CppFunctionDecl(CppElementAndComment, ICppTemplateHost):
         was_changed = False
 
         if hasattr(new_function, "return_type"):
-            new_return_type = new_function.return_type.with_instantiated_template(template_specs)
+            new_return_type = new_function.return_type.with_specialized_template(template_specs)
             if new_return_type is not None:
                 was_changed = True
                 new_function.return_type = new_return_type
 
         new_parameters: List[CppParameter] = []
         for parameter in new_function.parameter_list.parameters:
-            new_decl = parameter.decl.with_instantiated_template(template_specs)
+            new_decl = parameter.decl.with_specialized_template(template_specs)
             if new_decl is not None:
                 new_parameter = copy.deepcopy(parameter)
                 new_parameter.decl = new_decl
@@ -1367,11 +1366,11 @@ class CppFunctionDecl(CppElementAndComment, ICppTemplateHost):
 
         if self.is_arrow_notation_return_type():
             if self.return_type.str_return_type() == "auto":
-                r += f"auto {self.function_name}{self._instantiation_str()}({self.parameter_list})"
+                r += f"auto {self.function_name}{self.str_template_specialization()}({self.parameter_list})"
             else:
-                r += f"auto {self.function_name}{self._instantiation_str()}({self.parameter_list}) -> {self.return_type.str_return_type()}"
+                r += f"auto {self.function_name}{self.str_template_specialization()}({self.parameter_list}) -> {self.return_type.str_return_type()}"
         else:
-            r += f"{self.return_type.str_return_type()} {self.function_name}{self._instantiation_str()}({self.parameter_list})"
+            r += f"{self.return_type.str_return_type()} {self.function_name}{self.str_template_specialization()}({self.parameter_list})"
 
         if len(self.specifiers) > 0:
             specifiers_strs = map(str, self.specifiers)
@@ -1709,10 +1708,10 @@ class CppStruct(CppElementAndComment, ICppTemplateHost):
             return parent_scope + "::" + self.class_name
 
     def qualified_class_name_with_instantiation(self) -> str:
-        return self.qualified_class_name() + self._instantiation_str()
+        return self.qualified_class_name() + self.str_template_specialization()
 
     def class_name_with_instantiation(self) -> str:
-        return self.class_name + self._instantiation_str()
+        return self.class_name + self.str_template_specialization()
 
     def has_base_classes(self) -> bool:
         if not hasattr(self, "super_list"):
@@ -1871,7 +1870,7 @@ class CppStruct(CppElementAndComment, ICppTemplateHost):
             ppp_block.fill_children_parents()
             ppp_block.parent = self.block
 
-    def with_instantiated_template(self, template_specs: TemplateInstantiation) -> Optional[CppStruct]:
+    def with_specialized_template(self, template_specs: TemplateSpecialization) -> Optional[CppStruct]:
         """Returns a new non-templated class, implemented for the given type
         Only works on templated class with *one* template parameter
         Will return None if the application of the template changes nothing
@@ -1887,7 +1886,7 @@ class CppStruct(CppElementAndComment, ICppTemplateHost):
                 for ppp_child in ppp_new_block.block_children:
                     new_ppp_child: Optional[CppElementAndComment] = None
                     if isinstance(ppp_child, (CppFunctionDecl, CppStruct, CppDeclStatement)):
-                        new_ppp_child = ppp_child.with_instantiated_template(template_specs)
+                        new_ppp_child = ppp_child.with_specialized_template(template_specs)
                     if new_ppp_child is not None:
                         ppp_new_block_children.append(new_ppp_child)
                         was_changed = True

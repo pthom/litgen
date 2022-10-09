@@ -5,7 +5,7 @@
 // AddTemplated is a template function that will be implemented for the types ["int", "double", "std::string"]
 //
 // See inside autogenerate_mylib.py:
-//     options.fn_template_options.add_instantiation(r"^AddTemplated$", ["int", "double", "std::string"])
+//     options.fn_template_options.add_specialization(r"^AddTemplated$", ["int", "double", "std::string"])
 
 template<typename T>
 MY_API T AddTemplated(T a, T b)
@@ -21,7 +21,7 @@ MY_API T AddTemplated(T a, T b)
 //  - mixing template and function parameter adaptations (here other_values[2] will be transformed into a List[T]
 //
 // See inside autogenerate_mylib.py:
-//     options.fn_template_options.add_instantiation(r"^SumVector", ["int", "std::string"])
+//     options.fn_template_options.add_specialization(r"^SumVector", ["int", "std::string"])
 
 template<typename T>
 MY_API T SumVectorAndCArray(std::vector<T> xs, const T other_values[2])

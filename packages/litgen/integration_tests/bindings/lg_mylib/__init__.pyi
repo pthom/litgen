@@ -933,10 +933,10 @@ class CallGuardLogger:
 # AddTemplated is a template function that will be implemented for the types ["int", "double", "std::string"]
 #
 # See inside autogenerate_mylib.py:
-#     options.fn_template_options.add_instantiation(r"^AddTemplated$", ["int", "double", "std::string"])
+#     options.fn_template_options.add_specialization(r"^AddTemplated$", ["int", "double", "std::string"])
 
 #  ------------------------------------------------------------------------
-#      <template instantiations for function AddTemplated>
+#      <template specializations for function AddTemplated>
 def add_templated(a: int, b: int) -> int:
     pass
 
@@ -947,7 +947,7 @@ def add_templated(a: float, b: float) -> float:
 
 def add_templated(a: str, b: str) -> str:
     pass
-#      </template instantiations for function AddTemplated>
+#      </template specializations for function AddTemplated>
 #  ------------------------------------------------------------------------
 
 
@@ -958,17 +958,17 @@ def add_templated(a: str, b: str) -> str:
 #  - mixing template and function parameter adaptations (here other_values[2] will be transformed into a List[T]
 #
 # See inside autogenerate_mylib.py:
-#     options.fn_template_options.add_instantiation(r"^SumVector", ["int", "std::string"])
+#     options.fn_template_options.add_specialization(r"^SumVector", ["int", "std::string"])
 
 #  ------------------------------------------------------------------------
-#      <template instantiations for function SumVectorAndCArray>
+#      <template specializations for function SumVectorAndCArray>
 def sum_vector_and_c_array(xs: List[int], other_values: List[int]) -> int:
     pass
 
 
 def sum_vector_and_c_array(xs: List[str], other_values: List[str]) -> str:
     pass
-#      </template instantiations for function SumVectorAndCArray>
+#      </template specializations for function SumVectorAndCArray>
 #  ------------------------------------------------------------------------
 
 
@@ -976,7 +976,7 @@ def sum_vector_and_c_array(xs: List[str], other_values: List[str]) -> str:
 
 class FooTemplateFunctionTest:
     #  ------------------------------------------------------------------------
-    #      <template instantiations for function SumVectorAndCArray>
+    #      <template specializations for function SumVectorAndCArray>
     def sum_vector_and_c_array(
         self,
         xs: List[int],
@@ -990,7 +990,7 @@ class FooTemplateFunctionTest:
         other_values: List[str]
         ) -> str:
         pass
-    #      </template instantiations for function SumVectorAndCArray>
+    #      </template specializations for function SumVectorAndCArray>
     #  ------------------------------------------------------------------------
 
 
@@ -1019,14 +1019,14 @@ class FooTemplateFunctionTest:
 #  MyTemplateClass is a template class that will be implemented for the types ["int", "std::string"]
 #
 # See inside autogenerate_mylib.py:
-#        options.class_template_options.add_instantiation(
+#        options.class_template_options.add_specialization(
 #            class_name_regex=r"^MyTemplateClass$",  # r".*" => all classes
 #        cpp_types_list=["int", "double"],  # instantiated types
 #        naming_scheme=litgen.TemplateNamingScheme.camel_case_suffix,
 #        )
 
 #  ------------------------------------------------------------------------
-#      <template instantiations for class MyTemplateClass>
+#      <template specializations for class MyTemplateClass>
 class MyTemplateClassInt:
     values: List[int]
 
@@ -1065,7 +1065,7 @@ class MyTemplateClassString:
     def sum2(self, v: List[str]) -> str:
         """ Method that requires a parameter adaptation"""
         pass
-#      </template instantiations for class MyTemplateClass>
+#      </template specializations for class MyTemplateClass>
 #  ------------------------------------------------------------------------
 
 

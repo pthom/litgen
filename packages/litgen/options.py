@@ -37,42 +37,42 @@ class TemplateNamingScheme(Enum):
 
 
 @dataclass
-class _TemplateInstantiationSpec:
+class _TemplateSpecializationSpec:
     name_regex: str
     cpp_types_list: List[str]
     naming_scheme: TemplateNamingScheme
 
 
 class TemplateFunctionsOptions:
-    specs: List[_TemplateInstantiationSpec]
+    specs: List[_TemplateSpecializationSpec]
 
     def __init__(self) -> None:
         self.specs = []
 
-    def add_instantiation(
+    def add_specialization(
         self,
         function_name_regex: str,
         cpp_types_list: List[str],
         naming_scheme: TemplateNamingScheme = TemplateNamingScheme.nothing,
     ) -> None:
-        spec = _TemplateInstantiationSpec(function_name_regex, cpp_types_list, naming_scheme)
+        spec = _TemplateSpecializationSpec(function_name_regex, cpp_types_list, naming_scheme)
         self.specs.append(spec)
 
 
 class TemplateClassOptions:
-    specs: List[_TemplateInstantiationSpec]
+    specs: List[_TemplateSpecializationSpec]
 
     def __init__(self) -> None:
         self.specs = []
 
-    def add_instantiation(
+    def add_specialization(
         self,
         class_name_regex: str,
         cpp_types_list: List[str],
         naming_scheme: TemplateNamingScheme = TemplateNamingScheme.camel_case_suffix,
     ) -> None:
         assert naming_scheme != TemplateNamingScheme.nothing  # Specialized class names must be different in Python
-        spec = _TemplateInstantiationSpec(class_name_regex, cpp_types_list, naming_scheme)
+        spec = _TemplateSpecializationSpec(class_name_regex, cpp_types_list, naming_scheme)
         self.specs.append(spec)
 
 
@@ -193,10 +193,10 @@ class LitgenOptions:
     #
     # For example,
     # 1. This line:
-    #        options.fn_template_options.add_instantiation(r"template^", ["int", double"])
+    #        options.fn_template_options.add_specialization(r"template^", ["int", double"])
     #    would instantiate all template functions whose name end with "template" with "int" and "double"
     # 2. This line:
-    #        options.fn_template_options.add_instantiation(r".*", ["int", float"])
+    #        options.fn_template_options.add_specialization(r".*", ["int", float"])
     #    would instantiate all template functions (whatever their name) with "int" and "float"
     fn_template_options: TemplateFunctionsOptions
     # if fn_template_decorate_in_stub is True, then there will be some
@@ -429,7 +429,7 @@ class LitgenOptions:
     #
     # For example, this call, would instantiate all classes for types "int" and "double",
     # with a naming scheme: MyClass<int> (cpp)  -> MyClassInt (python):
-    #     options.class_template_options.add_instantiation(
+    #     options.class_template_options.add_specialization(
     #         class_name_regex=r".*",                  # r".*" => all classes
     #         cpp_types_list=["int", "double"],        # instantiated types
     #         naming_scheme=TemplateNamingScheme.camel_case_suffix

@@ -363,7 +363,7 @@ def test_templated_function():
         };
         """
     options = litgen.LitgenOptions()
-    options.fn_template_options.add_instantiation(r"SumVector", ["int"])
+    options.fn_template_options.add_specialization(r"SumVector", ["int"])
     options.fn_params_replace_buffer_by_array__regex = r".*"
 
     generated_code = litgen.generate_code(options, code)
@@ -372,8 +372,12 @@ def test_templated_function():
         generated_code.stub_code,
         """
         class Foo:
+            #  ------------------------------------------------------------------------
+            #      <template specializations for function SumVector>
             def sum_vector(self, xs: List[int], other_values: List[int]) -> int:
                 pass
+            #      </template specializations for function SumVector>
+            #  ------------------------------------------------------------------------
     """,
     )
     code_utils.assert_are_codes_equal(
@@ -402,7 +406,7 @@ def test_templated_function():
 def test_templated_function_with_rename():
     code = """template<class T> T foo();"""
     options = LitgenOptions()
-    options.fn_template_options.add_instantiation(
+    options.fn_template_options.add_specialization(
         function_name_regex=r".*",
         cpp_types_list=["int", "double"],
         naming_scheme=litgen.TemplateNamingScheme.snake_suffix,
@@ -411,9 +415,15 @@ def test_templated_function_with_rename():
     code_utils.assert_are_codes_equal(
         generated_code.stub_code,
         """
+        #  ------------------------------------------------------------------------
+        #      <template specializations for function foo>
         def foo_int() -> int:
             pass
+
+
         def foo_double() -> float:
             pass
+        #      </template specializations for function foo>
+        #  ------------------------------------------------------------------------
     """,
     )
