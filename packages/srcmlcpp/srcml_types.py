@@ -1688,7 +1688,8 @@ class CppStruct(CppElementAndComment, ICppTemplateHost):
         r += "\n"
 
         r += "{\n"
-        r += code_utils.indent_code(str(self.block), 4)
+        # "public:", "private:", "protected:" are not indented, but their descendants are
+        r += str(self.block)
         r += "};\n"
 
         return r

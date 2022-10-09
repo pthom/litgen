@@ -125,21 +125,21 @@ def test_instantiate_class():
         """
         /*template<typename T=int>*/ struct Foo
         {
+        public:// <default_access_type/>
+            int value0;
+            int value1;
+            int x;
+            int y;
+
+            std::array<int, 2> getValue(const int & m);
+
+            struct Inner
+            {
             public:// <default_access_type/>
-                int value0;
-                int value1;
-                int x;
-                int y;
+                int inner_values[2];
+            };
 
-                std::array<int, 2> getValue(const int & m);
-
-                struct Inner
-                {
-                    public:// <default_access_type/>
-                        int inner_values[2];
-                };
-
-                std::function<int(int)> my_function();
+            std::function<int(int)> my_function();
         };
     """,
     )

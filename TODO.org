@@ -510,22 +510,20 @@ Problem 3: dans lg_test_runner (integration tests), tout est refusé (trouve pas
 *** Bind srcml?
 ** Wish List / Easy
 
-easy versions of code_first_function_decl and co.
-Command line / srcmlcpp
 
+move indent_cpp option into srcml
 
+** Command line / srcmlcpp
+  easy versions of code_first_function_decl and co.
 
-layout struct: do  not indent public / private, etc.
+  Refac srcmlcpp:
+    split types
+    review main
 
 ** Template classes and functions
 https://pybind11.readthedocs.io/en/stable/advanced/functions.html#binding-functions-with-template-parameters
 
 https://pybind11.readthedocs.io/en/stable/advanced/classes.html#binding-classes-with-template-parameters
-
-
-- Review str(Function) pour que ca puisse compiler: https://godbolt.org/z/MEqsd7se1
-- Test / litgen
--
 
 
 

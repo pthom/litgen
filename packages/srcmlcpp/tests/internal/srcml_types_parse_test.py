@@ -194,35 +194,35 @@ def test_parse_struct():
         // of a templated Point structure
         template<typename NumericType> struct Point : public Object
         {
-            public:// <default_access_type/>
-                // coordinates
-                NumericType x = NumericType{};
-                // coordinates
-                NumericType y = NumericType{};
+        public:// <default_access_type/>
+            // coordinates
+            NumericType x = NumericType{};
+            // coordinates
+            NumericType y = NumericType{};
 
-                // Constructor from coordinates
-                Point(T _x, T _y)<unprocessed_block/>
-                Point() // default constructor
+            // Constructor from coordinates
+            Point(T _x, T _y)<unprocessed_block/>
+            Point() // default constructor
 
-                T getX();
-                T getY(); // get y
-                T getZ();
+            T getX();
+            T getY(); // get y
+            T getZ();
 
-                //
-                //  Norms: we provide
-                //     * Norm2
-                //     * NormManhattan
-                //
+            //
+            //  Norms: we provide
+            //     * Norm2
+            //     * NormManhattan
+            //
 
-                T Norm2(); // this is the euclidean norm
-                T NormManhattan()<unprocessed_block/> // this is the manhattan norm
+            T Norm2(); // this is the euclidean norm
+            T NormManhattan()<unprocessed_block/> // this is the manhattan norm
 
-                <unprocessed_friend/>
+            <unprocessed_friend/>
 
-            private:
-                void Foo(); // A method that shall not be published
-                T x_old; // some members that shall not be published
-                T y_old; // some members that shall not be published
+        private:
+            void Foo(); // A method that shall not be published
+            T x_old; // some members that shall not be published
+            T y_old; // some members that shall not be published
         };
     """
 
@@ -294,14 +294,14 @@ def test_parse_unit():
             // Foo class
             class FooStruct
             {
-                private:// <default_access_type/>
-                    int mA;
-                    int mB;
-                public:
-                    // Constructor with a and b
-                    FooStruct(int a, int b)<unprocessed_block/>
+            private:// <default_access_type/>
+                int mA;
+                int mB;
+            public:
+                // Constructor with a and b
+                FooStruct(int a, int b)<unprocessed_block/>
 
-                    int add(int x)<unprocessed_block/> // an addition
+                int add(int x)<unprocessed_block/> // an addition
             };
 
             enum FooEnum
