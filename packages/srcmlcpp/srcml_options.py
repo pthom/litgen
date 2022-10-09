@@ -69,6 +69,9 @@ class SrcmlOptions:
     # flag_srcml_dump_positions: if True, code positions will be outputted in the xml tree (recommended)
     flag_srcml_dump_positions: bool = True
 
+    # indentation used by CppElements str_code() methods (4 spaces by default)
+    indent_cpp_str: str = "    "
+
     ################################################################################
     #    <Verbose / Quiet mode>
     ################################################################################

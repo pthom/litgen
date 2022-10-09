@@ -511,8 +511,6 @@ Problem 3: dans lg_test_runner (integration tests), tout est refusé (trouve pas
 ** Wish List / Easy
 
 
-move indent_cpp option into srcml
-
 ** Command line / srcmlcpp
   easy versions of code_first_function_decl and co.
 

@@ -567,7 +567,7 @@ class CppPublicProtectedPrivate(CppBlock):  # Also a CppElementAndComment
             r += "// <default_access_type/>"
         r += "\n"
 
-        r += code_utils.indent_code(self.str_block(), 4)
+        r += code_utils.indent_code(self.str_block(), indent_str=self.options.indent_cpp_str)
         return r
 
     def str_code(self) -> str:
@@ -1952,7 +1952,7 @@ class CppNamespace(CppElementAndComment):
     def str_code(self) -> str:
         r = f"namespace {self.ns_name}\n"
         r += "{\n"
-        r += code_utils.indent_code(str(self.block), 4)
+        r += code_utils.indent_code(str(self.block), indent_str=self.options.indent_cpp_str)
         r += "}"
         return r
 
@@ -1992,7 +1992,7 @@ class CppEnum(CppElementAndComment):
             r += f"enum {self.enum_name}\n"
         r += "{\n"
         block_code = self.block.str_block(is_enum=True)
-        r += code_utils.indent_code(block_code, 4)
+        r += code_utils.indent_code(block_code, indent_str=self.options.indent_cpp_str)
         r += "};\n"
         return r
 
