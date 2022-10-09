@@ -3,27 +3,23 @@ import os
 from codemanip import code_utils
 
 import litgen
-from codemanip.make_amalgamated_header import (
-    AmalgamationOptions,
-    write_amalgamate_header_file,
-)
+from codemanip import amalgamated_header
 from litgen import litgen_generator
 
 THIS_DIR = os.path.dirname(os.path.realpath(__file__))
-CPP_LIB_DIR = THIS_DIR + "/mylib"
 CPP_GENERATED_PYBIND_DIR = THIS_DIR + "/bindings"
 CPP_AMALGAMATED_HEADER = THIS_DIR + "/mylib_amalgamation/mylib_amalgamation.h"
 
 
-def make_testrunner_amalgamated_header() -> None:
-    options = AmalgamationOptions()
-    options.base_dir = CPP_LIB_DIR
+def write_mylib_amalgamation() -> None:
+    options = amalgamated_header.AmalgamationOptions()
+    options.base_dir = THIS_DIR
     options.local_includes_startwith = "mylib/"
-    options.include_subdirs = ["include"]
-    options.main_header_file = "mylib/mylib.h"
+    # options.include_subdirs = ["."]
+    options.main_header_file = "mylib/mylib_main/mylib.h"
     options.dst_amalgamated_header_file = CPP_AMALGAMATED_HEADER
 
-    write_amalgamate_header_file(options)
+    amalgamated_header.write_amalgamate_header_file(options)
 
 
 def all_header_files() -> List[str]:
@@ -113,7 +109,7 @@ def autogenerate_mylib() -> None:
     # - or by providing a list of files to litgen
     use_amalgamated_header = True
     if use_amalgamated_header:
-        make_testrunner_amalgamated_header()
+        write_mylib_amalgamation()
         litgen_generator.write_generated_code_for_file(
             options,
             CPP_AMALGAMATED_HEADER,
@@ -130,8 +126,12 @@ def autogenerate_mylib() -> None:
 
 
 def save_all_generated_codes_by_file():
+    """This is specific to litgen's integration tests.
+    It will generate all the files xxx_test.h.pydef.cpp and xxx_test.h.pyi
+    :return:
+    """
     options = mylib_litgen_options()
-    headers_dir = THIS_DIR + "/mylib/include/mylib/"
+    headers_dir = THIS_DIR + "/mylib/"
 
     def process_one_file(header_file: str):
         # print(header_file)

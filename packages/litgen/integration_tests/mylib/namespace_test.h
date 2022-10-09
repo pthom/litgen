@@ -1,4 +1,4 @@
-#include "mylib/api_marker.h"
+#include "api_marker.h"
 
 
 MY_API int FooRoot() { return 42; }

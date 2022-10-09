@@ -1,5 +1,5 @@
 #pragma once
-#include "mylib/api_marker.h"
+#include "api_marker.h"
 
 #include "mylib/basic_test.h"
 #include "mylib/header_filter_test.h"

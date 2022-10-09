@@ -5,7 +5,7 @@
 // (as they are in fact copy/pasted/adapted from other tests)
 //
 
-#include "mylib/api_marker.h"
+#include "api_marker.h"
 
 #include <cstddef>
 #include <string>

@@ -1,5 +1,5 @@
 #pragma once
-#include "mylib/api_marker.h"
+#include "api_marker.h"
 
 #include <pybind11/pybind11.h>
 #include <pybind11/numpy.h>

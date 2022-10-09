@@ -37,7 +37,7 @@ find_package(pybind11 CONFIG REQUIRED)
 ####################################################
 # Build testrunner Bound C++ library
 ####################################################
-add_subdirectory(mylib)                       # Will build the library mylib
+add_subdirectory(mylib/mylib_main)            # Will build the library mylib
 set(bound_library mylib)                      # The library for which we are building bindings
 
 

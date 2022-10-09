@@ -1,4 +1,4 @@
-#include "mylib/api_marker.h"
+#include "api_marker.h"
 
 //
 // C Style array tests
