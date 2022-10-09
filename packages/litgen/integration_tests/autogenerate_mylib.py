@@ -37,6 +37,8 @@ def all_header_files() -> List[str]:
 def mylib_litgen_options() -> litgen.LitgenOptions:
     options = litgen.LitgenOptions()
 
+    options.python_run_black_formatter = True
+
     # Generated C++ code style
     options.cpp_indent_size = 4
 
@@ -132,8 +134,7 @@ def save_all_generated_codes_by_file():
     headers_dir = THIS_DIR + "/mylib/include/mylib/"
 
     def process_one_file(header_file: str):
-        print(header_file)
-
+        # print(header_file)
         input_cpp_header_file = headers_dir + header_file
         output_cpp_pydef_file = input_cpp_header_file + ".pydef.cpp"
         output_stub_pyi_file = input_cpp_header_file + ".pyi"
