@@ -499,7 +499,6 @@ later! publish srcmlcpp before!
 
 * Litgen TODO
 
-
 ** Wish list / hard and later
 *** mypy: no_implicit_reexport
 *** issue with mypy compatibility with generated modules
@@ -510,22 +509,15 @@ Problem 3: dans lg_test_runner (integration tests), tout est refusé (trouve pas
 *** Bind srcml?
 ** Wish List / Easy
 
-
 add output in mylib header files + test
 
 ** Command line / srcmlcpp
+  se servir de https://github.com/google/python-fire
   easy versions of code_first_function_decl and co.
 
 **  Refac srcmlcpp:
     split types
     review main
-
-** Template classes and functions
-https://pybind11.readthedocs.io/en/stable/advanced/functions.html#binding-functions-with-template-parameters
-
-https://pybind11.readthedocs.io/en/stable/advanced/classes.html#binding-classes-with-template-parameters
-
-
 
 ** Handle (deep)copy
 https://pybind11.readthedocs.io/en/stable/advanced/classes.html#deepcopy-support

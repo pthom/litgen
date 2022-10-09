@@ -37,31 +37,3 @@ enum class EnumDetail
     Off,
     Unknown
 };
-
-
-/*
-For info, below is the python pyi stub that is published for this file:
-
-class BasicEnum(Enum):
-    """ BasicEnum: a simple C-style enum"""
-
-    a   # (= 1)  # This will be exported as BasicEnum.a
-    aa  # (= 2)  # This will be exported as BasicEnum.aa
-    aaa # (= 3)  # This will be exported as BasicEnum.aaa
-
-    # Lonely comment
-
-    # This is value b
-    b   # (= 4)
-
-    # This is c
-    # with doc on several lines
-    c   # (= BasicEnum.a | BasicEnum.b)
-
-
-class ClassEnum(Enum):
-    """ ClassEnum: a class enum that should be published"""
-    on      # (= 0)
-    off     # (= 1)
-    unknown # (= 2)
-*/

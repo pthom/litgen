@@ -50,21 +50,3 @@ struct FooTemplateFunctionTest
         return sum;
     }
 };
-
-
-/*
-For info, here are the generated python stub signatures:
-
-def add_templated(a: int, b: int) -> int:
-    pass
-def add_templated(a: float, b: float) -> float:
-    pass
-def add_templated(a: str, b: str) -> str:
-    pass
-
-def sum_vector_and_c_array(xs: List[int], other_values: List[int]) -> int:
-    pass
-def sum_vector_and_c_array(xs: List[str], other_values: List[str]) -> str:
-    pass
-
- */

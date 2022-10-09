@@ -33,26 +33,3 @@ struct MyConfig
 };
 
 MY_API MyConfig* MyConfigInstance() { return & MyConfig::Instance(); } // py::return_value_policy::reference
-
-
-/*
-For info, below is the C++ generated binding code:
-
-     auto pyClassMyConfig = py::class_<MyConfig>
-        (m, "MyConfig", "")
-        .def(py::init<>()) // implicit default constructor
-        .def_readwrite("value", &MyConfig::value, "")
-        .def("instance",
-            &MyConfig::Instance,
-            " Instance() is a method that returns a pointer that should use `return_value_policy::reference`\nreturn_value_policy::reference",
-            pybind11::return_value_policy::reference)
-        ;
-
-
-    m.def("my_config_instance",
-        MyConfigInstance,
-        "return_value_policy::reference",
-        pybind11::return_value_policy::reference);
-
-
-*/
