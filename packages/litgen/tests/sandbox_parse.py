@@ -110,7 +110,7 @@ def play() -> None:
     };
     """
     options = litgen.LitgenOptions()
-    options.fn_template_functions_options[r"SumVector"] = ["int"]
+    options.fn_template_options[r"SumVector"] = ["int"]
     options.fn_params_replace_buffer_by_array__regex = r".*"
     # options.srcml_options.functions_api_prefixes = "MY_API"
 

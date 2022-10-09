@@ -76,8 +76,8 @@ def mylib_litgen_options() -> litgen.LitgenOptions:
 
     options.class_dynamic_attributes__regex = r"Dynamic$"
 
-    options.fn_template_functions_options[r"^AddTemplated$"] = ["int", "double", "std::string"]
-    options.fn_template_functions_options[r"^SumVector"] = ["int", "std::string"]
+    options.fn_template_options[r"^AddTemplated$"] = ["int", "double", "std::string"]
+    options.fn_template_options[r"^SumVector"] = ["int", "std::string"]
 
     #
     # Sandbox for other options

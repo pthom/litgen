@@ -374,13 +374,13 @@ class AdaptedFunction(AdaptedElement):
             return r
 
         # If this is a template function, implement as many versions
-        # as mentioned in the options (see LitgenOptions.fn_template_functions_options)
+        # as mentioned in the options (see LitgenOptions.fn_template_options)
         # and bail out
         if self._is_template_non_specialized():
             template_instantiations = self._split_into_template_instantiations()
             if len(template_instantiations) == 0:
                 self.cpp_element().emit_warning(
-                    "Ignoring template function. You might need to set LitgenOptions.fn_template_functions_options"
+                    "Ignoring template function. You might need to set LitgenOptions.fn_template_options"
                 )
                 return []
             else:
@@ -912,7 +912,7 @@ class AdaptedFunction(AdaptedElement):
             self.cpp_element().emit_warning("Only one parameters template are supported")
             return []
 
-        template_options = self.options.fn_template_functions_options
+        template_options = self.options.fn_template_options
         for regex_fn_name, cpp_types_list in template_options.items():
             if code_utils.does_match_regex(regex_fn_name, self.cpp_element().function_name):
                 new_functions: List[AdaptedFunction] = []
@@ -936,13 +936,13 @@ class AdaptedFunction(AdaptedElement):
             return r
 
         # If this is a template function, implement as many versions
-        # as mentioned in the options (see LitgenOptions.fn_template_functions_options)
+        # as mentioned in the options (see LitgenOptions.fn_template_options)
         # and bail out
         if self._is_template_non_specialized():
             template_instantiations = self._split_into_template_instantiations()
             if len(template_instantiations) == 0:
                 self.cpp_element().emit_warning(
-                    "Ignoring template function. You might need to set LitgenOptions.fn_template_functions_options"
+                    "Ignoring template function. You might need to set LitgenOptions.fn_template_options"
                 )
                 return []
             else:

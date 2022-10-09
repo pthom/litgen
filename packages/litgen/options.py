@@ -123,17 +123,17 @@ class LitgenOptions:
     # Template function must be instantiated for the desired types.
     # See https://pybind11.readthedocs.io/en/stable/advanced/functions.html#binding-functions-with-template-parameters
     #
-    # fn_template_functions_options:
+    # fn_template_options:
     #    of type Dict[ TemplatedFunctionNameRegexStr (aka str), List[CppTypeName] ]
     #
     # For example,
     # 1. This line:
-    #        options.fn_template_functions_options[r"template^"] = ["int", double"]
+    #        options.fn_template_options[r"template^"] = ["int", double"]
     #    would instantiate all template functions whose name end with "template" with "int" and "double"
     # 2. This line:
-    #        options.fn_template_functions_options[r".*"] = ["int", double"]
+    #        options.fn_template_options[r".*"] = ["int", double"]
     #    would instantiate all template functions (whatever their name) with "int" and "double"
-    fn_template_functions_options: TemplateFunctionsOptions
+    fn_template_options: TemplateFunctionsOptions
 
     # ------------------------------------------------------------------------------
     # Vectorize functions options
@@ -470,4 +470,4 @@ class LitgenOptions:
         self.comments_replacements = cpp_to_python.standard_comment_replacements()
         self.names_replacements = RegexReplacementList()
 
-        self.fn_template_functions_options: TemplateFunctionsOptions = {}
+        self.fn_template_options: TemplateFunctionsOptions = {}

@@ -933,7 +933,7 @@ class CallGuardLogger:
 # AddTemplated is a template function that will be implemented for the types ["int", "double", "std::string"]
 #
 # See autogenerate_mylib.py:
-#     options.fn_template_functions_options[r"^AddTemplated$"] = ["int", "double", "std::string"]
+#     options.fn_template_options[r"^AddTemplated$"] = ["int", "double", "std::string"]
 
 def add_templated(a: int, b: int) -> int:
     pass
@@ -950,7 +950,7 @@ def add_templated(a: str, b: str) -> str:
 #  - mixing template and function parameter adaptations (here other_values[2] will be transformed into a List[T]
 #
 # See autogenerate_mylib.py:
-#     options.fn_template_functions_options[r"^SumVector"] = ["int", "std::string"]
+#     options.fn_template_options[r"^SumVector"] = ["int", "std::string"]
 
 def sum_vector_and_c_array(xs: List[int], other_values: List[int]) -> int:
     pass
