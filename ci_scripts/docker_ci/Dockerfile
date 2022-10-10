@@ -3,10 +3,7 @@ FROM ubuntu:22.04
 RUN apt-get update
 
 # Install required build utilities
-RUN DEBIAN_FRONTEND="noninteractive" apt-get install -y build-essential git cmake python3 python3-pip python3-venv
-
-# Install utilities
-RUN apt-get install -y wget tree
+RUN DEBIAN_FRONTEND="noninteractive" apt-get install -y build-essential git cmake python3 python3-pip python3-venv wget tree
 
 # install_x11vnc
 # /start_x_vnc.sh will start a "X server + vnc server + window manager" accessible via VNC
@@ -64,3 +61,6 @@ RUN sed -i '1s/^/#include <algorithm>\n/' /srcML/src/parser/UTF8CharBuffer.cpp
 RUN cd srcML && mkdir build && cd build && cmake .. && make -j 4 && cp bin/srcml /usr/local/bin/
 
 # RUN wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-aarch64.sh # Warning, ARM version
+
+# Install poetry
+RUN pip install poetry

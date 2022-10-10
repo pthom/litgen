@@ -4,7 +4,7 @@ venv/
 dist/
 build/
 build*/
-ci_build/
+build_ci/
 cmake-build-*/
 **/__pycache__/
 **/*.egg-info/
