@@ -6,8 +6,6 @@ import inspect
 import logging
 import sys
 import traceback
-import yaml  # type: ignore
-from srcmlcpp.internal import xmlplain
 from dataclasses import dataclass
 from typing import Optional, List, Callable, Tuple
 from xml.etree import ElementTree as ET
@@ -216,14 +214,6 @@ class SrcmlXmlWrapper:
     def _str_simplified_yaml(self) -> str:
         """Return the xml tree formatted in a yaml inspired format. Should be deprecated"""
         return srcml_utils.srcml_to_str_readable(self.srcml_xml)
-
-    def str_yaml(self) -> str:
-        """A yaml representation of the xml tree.
-        No guaranty is made that it a roundtrip xml->yaml->xml is possible"""
-        xml_str = self.str_xml(beautify=False)
-        root = xmlplain.xml_to_obj(xml_str, self.options.encoding)  # type: ignore
-        yaml_str: str = yaml.safe_dump(root, default_flow_style=False, allow_unicode=True)
-        return yaml_str
 
     def to_file(self, filename: str) -> None:
         """Save to file as xml"""

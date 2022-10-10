@@ -2,7 +2,6 @@ import os
 import sys
 
 import srcmlcpp
-from srcmlcpp.srcml_types import *
 
 import litgen
 from litgen import LitgenOptions
@@ -129,30 +128,13 @@ def play() -> None:
     # print(f.str_code())
 
 
-def play_template() -> None:
-    code = """
-    template <typename T>
-    struct Foo
-    {
-        std::vector<T> values;
-
-        T GetValue(size_t idx) { return values[idx]; }
-    };
-    """
-
-    options = LitgenOptions()
-    options.class_template_options.add_specialization(
-        class_name_regex="^Foo$",
-        cpp_types_list=["int", "float"],
-        naming_scheme=litgen.TemplateNamingScheme.camel_case_suffix,
-    )
-
-    generated_code = litgen.generate_code(options, code)
-
-    logging.warning("\n" + generated_code.stub_code)
-
-    logging.warning("\n" + generated_code.pydef_code)
+def play_srcml() -> None:
+    code = "int a = 1;"
+    options = srcmlcpp.SrcmlOptions()
+    wrapper = srcmlcpp.code_to_srcml_xml_wrapper(options, code)
+    print(wrapper.str_xml())
+    print("a")
 
 
 if __name__ == "__main__":
-    play_template()
+    play_srcml()

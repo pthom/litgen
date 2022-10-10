@@ -89,8 +89,12 @@ class _SrcmlCaller:
         os.remove(input_header_file.name)
         os.remove(output_xml_file.name)
 
+        ET.register_namespace("pos", "http://www.srcML.org/srcML/position")
+        ET.register_namespace("", "http://www.srcML.org/srcML/src")
         output_str = output_bytes.decode(encoding)
         element = ET.fromstring(output_str)
+        del element.attrib["filename"]
+
         self._stats_code_to_srcml.stop()
         return element
 

@@ -3,44 +3,49 @@ import fire
 import srcmlcpp
 
 
-class CliCommands:
+class SrcmlcppCliCommands:
     """Command line for srcmlcpp.
 
     The is a command line driven tool for srcmlcpp.
-    Once srcmlcpp is installed, the commands below are available via the "srcmlcpp" script.
+    Once srcmlcpp is installed, the commands below are available via the `srcmlcpp` command.
 
     For example:
         ````bash
-       >>  srcmlcpp xml "int a" --beautify=False
-        <unit xmlns="http://www.srcML.org/srcML/src" revision="1.0.0" language="C++"><decl><type><name>int</name></type> <name>a</name></decl></unit>
-        ````
+        >> srcmlcpp cpp_elements "int a = 1;"
+        CppUnit
+          CppDeclStatement
+            CppDecl name=a
+              CppType name=int
+
+        >>  srcmlcpp xml "int a = 1;" --beautify=False
+        <unit xmlns="http://www.srcML.org/srcML/src" revision="1.0.0" language="C++"><decl_stmt><decl><type><name>int</name></type> <name>a</name><init>=<expr><literal type="number">1</literal></expr></init></decl>;</decl_stmt></unit>
+       ````
     All commands will use default SrcmlOptions().
-    In order to change them, you will have to customize them via code.
     """
 
     @staticmethod
-    def xml(code, beautify: bool = True):
-        """Shows the xml tree parsed by srcML (http://srcml.org)
-
-        * if beautify=False (--beautify=False), the output will be the same as srcML
-             echo "int i = 1;" | srcml --language C++
-        * otherwise, the xml tree will be beautified and indented
-        """
-        srcml_options = srcmlcpp.SrcmlOptions()
-        srcml_options.flag_srcml_dump_positions = False
-        xml_wrapper = srcmlcpp.code_to_srcml_xml_wrapper(srcml_options, code)
-        print(xml_wrapper.str_xml(beautify=beautify))
-
-    @staticmethod
-    def cpp_overview(code):
-        """Shows an overview the AST built by srcmlcpp"""
+    def cpp_elements(code):
+        """Shows an overview the CppElements tree built by srcmlcpp"""
         srcml_options = srcmlcpp.SrcmlOptions()
         cpp_unit = srcmlcpp.code_to_cpp_unit(srcml_options, code)
         print(cpp_unit.hierarchy_overview())
 
+    @staticmethod
+    def xml(code, beautify: bool = True, position: bool = False):
+        """Shows the xml tree parsed by srcML (http://srcml.org)
+
+        * if beautify=False (--beautify=False), the output will be similar to the bare srcML output.
+          otherwise, the xml tree will be beautified and indented
+        * if position = True, then the code elements positions will be dumped in the xml tree
+        """
+        srcml_options = srcmlcpp.SrcmlOptions()
+        srcml_options.flag_srcml_dump_positions = position
+        xml_wrapper = srcmlcpp.code_to_srcml_xml_wrapper(srcml_options, code)
+        print(xml_wrapper.str_xml(beautify=beautify))
+
 
 def main():
-    fire.Fire(CliCommands)
+    fire.Fire(SrcmlcppCliCommands)
 
 
 if __name__ == "__main__":

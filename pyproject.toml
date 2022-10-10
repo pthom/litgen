@@ -50,7 +50,6 @@ srcmlcpp = 'srcmlcpp.cli.srcmlcpp_cli:main'
 [tool.poetry.dependencies]
 python = "^3.9"
 munch = "^2.5.0"
-PyYAML = "^6.0"
 fire = "^0.4.0"
 
 [tool.poetry.dev-dependencies]
