@@ -33,6 +33,7 @@ def test_adapted_function_stub():
         ####################    </generated_from:BoxedTypes>    ####################
 
 
+
         def foo(    # Line:7
             buffer: np.ndarray,
             out_values_0: BoxedDouble,
