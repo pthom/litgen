@@ -3,7 +3,7 @@
 	url = https://github.com/pthom/lg_skbuild_template.git
 [submodule "lg_projects/lg_imgui_bundle"]
 	path = lg_projects/lg_imgui_bundle
-	url = git@github.com:pthom/lg_imgui_bundle.git
+	url = https://github.com/pthom/lg_imgui_bundle.git
 [submodule "packages/litgen/integration_tests/lg_cmake_utils"]
 	path = packages/litgen/integration_tests/lg_cmake_utils
-	url = git@github.com:pthom/lg_cmake_utils.git
+	url = https://github.com/pthom/lg_cmake_utils.git
