@@ -8,7 +8,7 @@ from xml.etree import ElementTree as ET
 from codemanip import code_utils
 from codemanip.code_position import CodePosition, CodeContextWithCaret
 
-from srcmlcpp.internal import srcml_caller, srcml_utils
+from srcmlcpp.internal import srcml_caller, srcml_utils, code_cache
 from srcmlcpp.srcml_options import SrcmlOptions
 
 
@@ -232,11 +232,9 @@ class SrcmlWrapper:
         return message
 
     def str_code_context_with_caret(self) -> str:
-        from srcmlcpp import srcmlcpp_main
-
         context: CodeContextWithCaret
         r = ""
-        full_code = srcmlcpp_main._get_cached_file_code(self.filename)
+        full_code = code_cache.get_cached_code(self.filename)
         if len(full_code) > 0:
             full_code_lines = [""] + full_code.split("\n")
 

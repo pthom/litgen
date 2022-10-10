@@ -10,20 +10,9 @@ from typing import Type, cast
 
 from codemanip.parse_progress_bar import global_progress_bars
 
-from srcmlcpp.internal import srcml_caller, srcml_comments, srcml_types_parse
+from srcmlcpp.internal import srcml_caller, srcml_comments, srcml_types_parse, code_cache
 from srcmlcpp.srcml_exception import SrcmlException
 from srcmlcpp.srcml_types import *
-
-
-_Filename = str
-_Code = str
-_CODE_CACHE: Dict[Optional[_Filename], _Code] = {}
-
-
-def _get_cached_file_code(filename: Optional[str]) -> str:
-    if filename not in _CODE_CACHE.keys():
-        raise ValueError(f"filename {filename} not in code cache!")
-    return _CODE_CACHE[filename]
 
 
 def _code_or_file_content(options: SrcmlOptions, code: Optional[str] = None, filename: Optional[str] = None) -> str:
@@ -54,8 +43,7 @@ def code_to_srcml_xml_wrapper(
     if options.code_preprocess_function is not None:
         code = options.code_preprocess_function(code)
 
-    global _CODE_CACHE
-    _CODE_CACHE[filename] = code
+    code_cache.store_cached_code(filename, code)
 
     if options.preserve_empty_lines:
         code = srcml_comments.mark_empty_lines(code)
