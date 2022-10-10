@@ -1,4 +1,5 @@
 from __future__ import annotations
+from typing import List, Optional
 from dataclasses import dataclass
 
 
@@ -21,3 +22,32 @@ class CodePosition:
         column = int(items[1])
         r = CodePosition(line, column)
         return r
+
+
+@dataclass
+class CodeContextWithCaret:
+    """
+    Given a extract of the code, and positions in this code, returns a string that highlight
+    this position with a caret "^"
+
+    For example:
+
+            Widget widgets[2];
+            ^
+    """
+
+    concerned_code_lines: List[str]
+    start: Optional[CodePosition] = None
+    end: Optional[CodePosition] = None
+
+    def __str__(self) -> str:
+        msg = ""
+        for i, line in enumerate(self.concerned_code_lines):
+            msg += line + "\n"
+            if self.start is not None:
+                if i == self.start.line:
+                    nb_spaces = self.start.column - 1
+                    if nb_spaces < 0:
+                        nb_spaces = 0
+                    msg += " " * nb_spaces + "^" + "\n"
+        return msg

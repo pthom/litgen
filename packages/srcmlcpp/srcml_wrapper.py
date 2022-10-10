@@ -6,81 +6,15 @@ import inspect
 import logging
 import sys
 import traceback
-from dataclasses import dataclass
 from typing import Callable, List, Optional, Tuple
 from xml.etree import ElementTree as ET
 
 from codemanip import code_utils
-from codemanip.code_position import CodePosition
+from codemanip.code_position import CodePosition, CodeContextWithCaret
 
-from srcmlcpp.internal import srcml_caller, srcml_utils
 from srcmlcpp.srcml_exception import SrcmlException
+from srcmlcpp.internal import srcml_caller, srcml_utils
 from srcmlcpp.srcml_options import SrcmlOptions
-
-
-class SrcmlExceptionDetailed(SrcmlException):
-    def __init__(self, current_element: SrcmlWrapper, additional_message: str) -> None:
-        message = current_element._format_message(additional_message)
-        super().__init__(message)
-
-
-def _get_python_call_info() -> Tuple[str, str]:
-    stack_lines = traceback.format_stack()
-    error_line = stack_lines[-4]
-    frame = inspect.currentframe()
-    if frame is not None:
-        caller_function_name = inspect.getframeinfo(frame.f_back.f_back.f_back).function  # type: ignore
-    else:
-        caller_function_name = ""
-    return caller_function_name, error_line
-
-
-def show_python_callstack(python_error_line: str) -> str:
-    return f"""
-            Python call stack info:
-    {code_utils.indent_code(python_error_line, 4)}
-    """
-
-
-def emit_warning_if_not_quiet(options: SrcmlOptions, message: str) -> None:
-    if options.flag_quiet:
-        return
-    in_pytest = "pytest" in sys.modules
-    if in_pytest:
-        logging.warning(message)
-    else:
-        if not message.startswith("Warning"):
-            message = "Warning:" + message
-        print(message, file=sys.stderr)
-
-
-@dataclass
-class _CodeContextWithCaret:
-    """
-    Given a extract of the code, and positions in this code, returns a string that highlight
-    this position with a caret "^"
-
-    For example:
-
-            Widget widgets[2];
-            ^
-    """
-
-    concerned_code_lines: List[str]
-    start: Optional[CodePosition] = None
-    end: Optional[CodePosition] = None
-
-    def __str__(self) -> str:
-        msg = ""
-        for i, line in enumerate(self.concerned_code_lines):
-            msg += line + "\n"
-            if self.start is not None:
-                if i == self.start.line:
-                    nb_spaces = self.start.column - 1
-                    if nb_spaces < 0:
-                        nb_spaces = 0
-                    msg += " " * nb_spaces + "^" + "\n"
-        return msg
 
 
 class SrcmlWrapper:
@@ -244,6 +178,8 @@ class SrcmlWrapper:
     def raise_exception(self, message: str) -> None:
         """raises a SrcmlException which will display the message with a context
         that gives the location of this element in the code"""
+        from srcmlcpp.srcml_exception import SrcmlExceptionDetailed
+
         raise SrcmlExceptionDetailed(self, message)
 
     def emit_warning(self, message: str) -> None:
@@ -301,7 +237,7 @@ class SrcmlWrapper:
     def str_code_context_with_caret(self) -> str:
         from srcmlcpp import srcmlcpp_main
 
-        context: _CodeContextWithCaret
+        context: CodeContextWithCaret
         r = ""
         full_code = srcmlcpp_main._get_cached_file_code(self.filename)
         if len(full_code) > 0:
@@ -316,7 +252,7 @@ class SrcmlWrapper:
                     end.line - start.line,
                     end.column,
                 )
-                context = _CodeContextWithCaret(concerned_lines, new_start, new_end)
+                context = CodeContextWithCaret(concerned_lines, new_start, new_end)
                 r = str(context)
             else:
                 r = self.str_code_verbatim()
@@ -342,3 +278,39 @@ class SrcmlWrapper:
 # * first parameter: current child
 # * second parameter: depth
 SrcmlXmVisitorFunction = Callable[[SrcmlWrapper, int], None]
+
+
+class SrcmlExceptionDetailed(SrcmlException):
+    def __init__(self, current_element: SrcmlWrapper, additional_message: str) -> None:
+        message = current_element._format_message(additional_message)
+        super().__init__(message)
+
+
+def _get_python_call_info() -> Tuple[str, str]:
+    stack_lines = traceback.format_stack()
+    error_line = stack_lines[-4]
+    frame = inspect.currentframe()
+    if frame is not None:
+        caller_function_name = inspect.getframeinfo(frame.f_back.f_back.f_back).function  # type: ignore
+    else:
+        caller_function_name = ""
+    return caller_function_name, error_line
+
+
+def show_python_callstack(python_error_line: str) -> str:
+    return f"""
+            Python call stack info:
+    {code_utils.indent_code(python_error_line, 4)}
+    """
+
+
+def emit_warning_if_not_quiet(options: SrcmlOptions, message: str) -> None:
+    if options.flag_quiet:
+        return
+    in_pytest = "pytest" in sys.modules
+    if in_pytest:
+        logging.warning(message)
+    else:
+        if not message.startswith("Warning"):
+            message = "Warning:" + message
+        print(message, file=sys.stderr)
