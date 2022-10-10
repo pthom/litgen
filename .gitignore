@@ -1,6 +1,7 @@
 venv/
 .venv/
 .idea/
+dist/
 build/
 build*/
 ci_build/

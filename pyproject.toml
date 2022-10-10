@@ -1,5 +1,6 @@
 [build-system]
-requires = ["setuptools", "munch"]
+requires = [ "poetry-core>=1.0.0",]
+build-backend = "poetry.core.masonry.api"
 
 [tool.black]
 line-length = 120
@@ -8,15 +9,49 @@ line-length = 120
 extend-exclude = '''venv|^scratch|pybind11|importanize|.pyi$|lg_projects|ci_scripts/docker_ci/dvp'''
 
 [tool.poetry]
-name = "srcmlcpp-litgen"
+name = "srcmlcpp"
 version = "0.1.0"
-description = ""
+description = "srcmlcpp: C++ code tranformer library and tools, based on srcML (https://srcml.org)"
 authors = ["Pascal Thomet <pthomet@gmail.com>"]
+# license = "to be defined"
+readme = "README.md"
+# homepage = "..."
+repository = "https://github.com/pthom/srcmlcpp"
+# documentation = "..."
+keywords = ["code", "transformer", "cpp", "c++", "srcml", "pimpl"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Environment :: Console",
+    "Intended Audience :: Developers",
+    "Programming Language :: C++",
+    "Programming Language :: C",
+    "Programming Language :: Python",
+    "Topic :: Software Development :: Build Tools",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+    "Topic :: Software Development :: Documentation",
+    "Topic :: Text Processing :: Markup :: XML",
+    "Typing :: Typed"
+]
+
+
+packages = [
+    { include = "codemanip", from = "packages" },
+    { include = "litgen", from = "packages" },
+    { include = "srcmlcpp", from = "packages" },
+]
+# include = ["CHANGELOG.md"]
+# exclude = ["my_package/excluded.py"]
+
+[tool.poetry.scripts]
+#srcmlcpp = 'srcmlcpp.cli:run'
+srcmlcpp = 'srcmlcpp.cli.srcmlcpp_cli:main'
+
 
 [tool.poetry.dependencies]
 python = "^3.9"
 munch = "^2.5.0"
 PyYAML = "^6.0"
+fire = "^0.4.0"
 
 [tool.poetry.dev-dependencies]
 pytest = "^6.0"

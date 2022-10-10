@@ -236,6 +236,18 @@ docs = ["furo (>=2022.6.21)", "sphinx (>=5.1.1)", "sphinx-autodoc-typehints (>=1
 testing = ["covdefaults (>=2.2)", "coverage (>=6.4.2)", "pytest (>=7.1.2)", "pytest-cov (>=3)", "pytest-timeout (>=2.1)"]
 
 [[package]]
+name = "fire"
+version = "0.4.0"
+description = "A library for automatically generating command line interfaces."
+category = "main"
+optional = false
+python-versions = "*"
+
+[package.dependencies]
+six = "*"
+termcolor = "*"
+
+[[package]]
 name = "flake8"
 version = "5.0.4"
 description = "the modular source code checker: pep8 pyflakes and co"
@@ -1139,6 +1151,17 @@ optional = false
 python-versions = ">=3.6"
 
 [[package]]
+name = "termcolor"
+version = "2.0.1"
+description = "ANSI color formatting for output in terminal"
+category = "main"
+optional = false
+python-versions = ">=3.7"
+
+[package.extras]
+tests = ["pytest-cov", "pytest"]
+
+[[package]]
 name = "terminado"
 version = "0.16.0"
 description = "Tornado websocket backend for the Xterm.js Javascript terminal emulator library."
@@ -1318,7 +1341,7 @@ testing = ["pytest (>=6)", "pytest-checkdocs (>=2.4)", "pytest-flake8", "pytest-
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.9"
-content-hash = "b469e56cf0dd9e8cd4b6b4d44b4bdb35daa59ffe3679cc329cd2208ddef0d11a"
+content-hash = "2f999b61204c7b0128b5b0807d38aed561edf8d13f5d72afb674888a49a4b110"
 
 [metadata.files]
 appnope = [
@@ -1360,6 +1383,7 @@ distlib = []
 entrypoints = []
 fastjsonschema = []
 filelock = []
+fire = []
 flake8 = []
 flake8-bugbear = []
 flask = []
@@ -1554,6 +1578,7 @@ six = [
     {file = "six-1.16.0.tar.gz", hash = "sha256:1e61c37477a1626458e36f7b1d82aa5c9b094fa4802892072e49de9c60c4c926"},
 ]
 soupsieve = []
+termcolor = []
 terminado = []
 tinycss2 = []
 tokenize-rt = [
