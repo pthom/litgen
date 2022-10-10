@@ -1,5 +1,17 @@
 # Install requirement and create venv
 
+Install global pre-commit
+````
+python3 -m pip install pre-commit
+````
+
+Install poetry: https://python-poetry.org/docs/#installation
+
+````
+curl -sSL https://install.python-poetry.org | python3 -
+````
+
+
 ````bash
 poetry shell
 poetry install
