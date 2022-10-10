@@ -15,8 +15,8 @@ from codemanip.parse_progress_bar import global_progress_bars
 from srcmlcpp import SrcmlWrapper
 from srcmlcpp.cpp_types import *
 from srcmlcpp.internal import srcml_caller, srcml_comments, srcml_utils
-from srcmlcpp.internal.srcml_exception_detailed import (
-    SrcmlExceptionDetailed,
+from srcmlcpp.internal.srcmlcpp_exception_detailed import (
+    SrcmlcppExceptionDetailed,
     emit_warning_if_not_quiet,
 )
 from srcmlcpp.srcml_options import SrcmlOptions
@@ -70,21 +70,21 @@ def parse_type(options: SrcmlOptions, element: SrcmlWrapper, previous_decl: Opti
             modifier_text = child.text()
             assert modifier_text is not None
             if modifier_text not in CppType.authorized_modifiers():
-                raise SrcmlExceptionDetailed(child, f'modifier "{modifier_text}" is not authorized')
+                raise SrcmlcppExceptionDetailed(child, f'modifier "{modifier_text}" is not authorized')
             result.modifiers.append(modifier_text)
         # elif child_tag == "argument_list":
         #     result.argument_list.append(child.text)
         else:
-            raise SrcmlExceptionDetailed(child, f"unhandled tag {child_tag}")
+            raise SrcmlcppExceptionDetailed(child, f"unhandled tag {child_tag}")
 
     if len(result.typenames) == 0 and "..." not in result.modifiers and "auto" not in result.specifiers:
         if previous_decl is None:
-            raise SrcmlExceptionDetailed(result, "Can't find type name")
+            raise SrcmlcppExceptionDetailed(result, "Can't find type name")
         assert previous_decl is not None
         result.typenames = previous_decl.cpp_type.typenames
 
     if len(result.typenames) == 0 and "..." not in result.modifiers and "auto" not in result.specifiers:
-        raise SrcmlExceptionDetailed(result, "len(result.names) == 0!")
+        raise SrcmlcppExceptionDetailed(result, "len(result.names) == 0!")
 
     # process api names
     for name in result.typenames:
@@ -184,7 +184,7 @@ def parse_decl(
             # this is for C bit fields
             result.bitfield_range = child.str_code_verbatim()
         else:
-            raise SrcmlExceptionDetailed(child, f"unhandled tag {child_tag}")
+            raise SrcmlcppExceptionDetailed(child, f"unhandled tag {child_tag}")
 
     return result
 
@@ -204,12 +204,12 @@ def parse_decl_stmt(options: SrcmlOptions, element_c: CppElementAndComment) -> C
         if child_c.tag() == "decl":
             child_name = child_c.name_code()
             if child_name is None:
-                raise SrcmlExceptionDetailed(child, "Encountered decl without name!")
+                raise SrcmlcppExceptionDetailed(child, "Encountered decl without name!")
             cpp_decl = parse_decl(options, child_c, previous_decl)
             result.cpp_decls.append(cpp_decl)
             previous_decl = cpp_decl
         else:
-            raise SrcmlExceptionDetailed(child, f"unhandled tag {child_c.tag()}")
+            raise SrcmlcppExceptionDetailed(child, f"unhandled tag {child_c.tag()}")
 
     # the comments were copied to all the internal decls, we can remove them from the decl_stmt
     result.cpp_element_comments = CppElementComments()
@@ -240,9 +240,9 @@ def parse_parameter(options: SrcmlOptions, element: SrcmlWrapper) -> CppParamete
             assert child_text is not None
             result.template_name = child_text  # This is only for template parameters
         elif child_tag == "function_decl":
-            raise SrcmlExceptionDetailed(child, "Can't use a function_decl as a param.")
+            raise SrcmlcppExceptionDetailed(child, "Can't use a function_decl as a param.")
         else:
-            raise SrcmlExceptionDetailed(child, f"unhandled tag {child_tag}")
+            raise SrcmlcppExceptionDetailed(child, f"unhandled tag {child_tag}")
 
     return result
 
@@ -258,7 +258,7 @@ def parse_parameter_list(options: SrcmlOptions, element: SrcmlWrapper) -> CppPar
         if child_tag == "parameter":
             result.parameters.append(parse_parameter(options, child))
         else:
-            raise SrcmlExceptionDetailed(child, "unhandled tag")
+            raise SrcmlcppExceptionDetailed(child, "unhandled tag")
     return result
 
 
@@ -274,7 +274,7 @@ def parse_template(options: SrcmlOptions, element: SrcmlWrapper) -> CppTemplate:
         if child_tag == "parameter_list":
             result.parameter_list = parse_parameter_list(options, child)
         else:
-            raise SrcmlExceptionDetailed(child, f"unhandled tag {child_tag}")
+            raise SrcmlcppExceptionDetailed(child, f"unhandled tag {child_tag}")
     return result
 
 
@@ -319,7 +319,7 @@ def fill_function_decl(
         elif child_tag == "block":
             pass  # will be handled by parse_function
         elif child_tag == "modifier":
-            raise SrcmlExceptionDetailed(child, "C style function pointers are poorly supported")
+            raise SrcmlcppExceptionDetailed(child, "C style function pointers are poorly supported")
         elif child_tag == "comment":
             child_text = child.text()
             if child_text is not None:
@@ -328,17 +328,17 @@ def fill_function_decl(
             # pure virtual function
             child_text = child.text()
             if child_text is None:
-                raise SrcmlExceptionDetailed(
+                raise SrcmlcppExceptionDetailed(
                     child, f"unhandled literal {child_tag} (was expecting '=0' for a pure virtual function"
                 )
             assert child_text is not None
             if child_text.strip() != "0":
-                raise SrcmlExceptionDetailed(
+                raise SrcmlcppExceptionDetailed(
                     child, f"unhandled literal {child_tag} (was expecting '=0' for a pure virtual function"
                 )
             function_decl.is_pure_virtual = True
         else:
-            raise SrcmlExceptionDetailed(child, f"unhandled tag {child_tag}")
+            raise SrcmlcppExceptionDetailed(child, f"unhandled tag {child_tag}")
 
 
 def parse_function_decl(options: SrcmlOptions, element_c: CppElementAndComment) -> CppFunctionDecl:
@@ -375,7 +375,7 @@ def parse_function(options: SrcmlOptions, element_c: CppElementAndComment) -> Cp
         ]:
             pass  # already handled by fill_function_decl
         else:
-            raise SrcmlExceptionDetailed(child, f"unhandled tag {child_tag}")
+            raise SrcmlcppExceptionDetailed(child, f"unhandled tag {child_tag}")
     return result
 
 
@@ -402,7 +402,7 @@ def fill_constructor_decl(
         elif child_tag in ["block", "member_init_list"]:
             pass  # will be handled by parse_constructor
         else:
-            raise SrcmlExceptionDetailed(child, f"unhandled tag {child_tag}")
+            raise SrcmlcppExceptionDetailed(child, f"unhandled tag {child_tag}")
 
 
 def parse_constructor_decl(options: SrcmlOptions, element_c: CppElementAndComment) -> CppConstructorDecl:
@@ -433,7 +433,7 @@ def parse_constructor(options: SrcmlOptions, element_c: CppElementAndComment) ->
         elif child_tag in ["name", "parameter_list", "specifier", "attribute"]:
             pass  # alread handled by fill_constructor_decl
         else:
-            raise SrcmlExceptionDetailed(child, f"unhandled tag {child_tag}")
+            raise SrcmlcppExceptionDetailed(child, f"unhandled tag {child_tag}")
 
     return result
 
@@ -454,7 +454,7 @@ def parse_super(options: SrcmlOptions, element: SrcmlWrapper) -> CppSuper:
         elif child_tag == "name":
             result.superclass_name = _parse_name(child)
         else:
-            raise SrcmlExceptionDetailed(child, f"unhandled tag {child_tag}")
+            raise SrcmlcppExceptionDetailed(child, f"unhandled tag {child_tag}")
 
     return result
 
@@ -471,7 +471,7 @@ def parse_super_list(options: SrcmlOptions, element: SrcmlWrapper) -> CppSuperLi
         if child_tag == "super":
             result.super_list.append(parse_super(options, child))
         else:
-            raise SrcmlExceptionDetailed(child, f"unhandled tag {child_tag}")
+            raise SrcmlcppExceptionDetailed(child, f"unhandled tag {child_tag}")
 
     return result
 
@@ -519,13 +519,13 @@ def parse_struct_or_class(options: SrcmlOptions, element_c: CppElementAndComment
         elif child_tag == "comment":
             _add_comment_child_before_block(result, child)
         elif child_tag == "decl":
-            raise SrcmlExceptionDetailed(child, "Skipped struct because it misses a ';' at the end")
+            raise SrcmlcppExceptionDetailed(child, "Skipped struct because it misses a ';' at the end")
         elif child_tag == "specifier":
             child_text = child.text()
             assert child_text is not None
             result.specifier = child_text
         else:
-            raise SrcmlExceptionDetailed(child, f"unhandled tag {child_tag}")
+            raise SrcmlcppExceptionDetailed(child, f"unhandled tag {child_tag}")
 
     return result
 
@@ -639,7 +639,7 @@ def fill_block(options: SrcmlOptions, element: SrcmlWrapper, inout_block_content
             else:
                 last_ignored_child = child_c
                 inout_block_content.block_children.append(parse_unprocessed(options, child_c))
-        except SrcmlExceptionDetailed as e:
+        except SrcmlcppExceptionDetailed as e:
             emit_warning_if_not_quiet(options, f'A cpp element of type "{child_tag}" was ignored. Details follow\n{e}')
 
 
@@ -700,7 +700,7 @@ def parse_namespace(options: SrcmlOptions, element_c: CppElementAndComment) -> C
         elif child_tag == "comment":
             _add_comment_child_before_block(result, child)
         else:
-            raise SrcmlExceptionDetailed(child, f"unhandled tag {child_tag}")
+            raise SrcmlcppExceptionDetailed(child, f"unhandled tag {child_tag}")
     return result
 
 
@@ -726,6 +726,6 @@ def parse_enum(options: SrcmlOptions, element_c: CppElementAndComment) -> CppEnu
         elif child_tag == "comment":
             _add_comment_child_before_block(result, child)
         else:
-            raise SrcmlExceptionDetailed(child, f"unhandled tag {child_tag}")
+            raise SrcmlcppExceptionDetailed(child, f"unhandled tag {child_tag}")
 
     return result

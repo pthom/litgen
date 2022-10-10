@@ -14,7 +14,7 @@ from srcmlcpp.cpp_types import *
 from srcmlcpp.cpp_types import __all__ as _all_types
 
 # Exceptions produced by this module
-from srcmlcpp.srcml_exception import SrcmlException
+from srcmlcpp.srcmlcpp_exception import SrcmlcppException
 
 # A wrapper around the nodes of the xml tree produced by srcml
 from srcmlcpp.srcml_wrapper import SrcmlWrapper
@@ -34,7 +34,7 @@ __all__ = [
     # Functions
     "code_to_cpp_unit",
     "code_to_srcml_xml_wrapper",
-    "SrcmlException",
+    "SrcmlcppException",
     "SrcmlWrapper",
     #
     # Cpp Types

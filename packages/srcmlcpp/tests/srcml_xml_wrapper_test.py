@@ -3,8 +3,8 @@ from codemanip.code_position import CodePosition
 
 import srcmlcpp.srcmlcpp_main
 from srcmlcpp import SrcmlWrapper
-from srcmlcpp.internal.srcml_exception_detailed import SrcmlExceptionDetailed
-from srcmlcpp.srcml_exception import SrcmlException
+from srcmlcpp.internal.srcmlcpp_exception_detailed import SrcmlcppExceptionDetailed
+from srcmlcpp.srcmlcpp_exception import SrcmlcppException
 from srcmlcpp.srcml_options import SrcmlOptions
 from srcmlcpp.srcmlcpp_main import code_to_srcml_xml_wrapper
 
@@ -83,8 +83,8 @@ def test_warnings():
 
     got_exception = False
     try:
-        raise SrcmlExceptionDetailed(decl, "Artificial exception")
-    except SrcmlException as e:
+        raise SrcmlcppExceptionDetailed(decl, "Artificial exception")
+    except SrcmlcppException as e:
         got_exception = True
         msg = str(e)
         for part in [

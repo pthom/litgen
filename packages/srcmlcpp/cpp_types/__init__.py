@@ -13,7 +13,7 @@ All declarations are stored in a corresponding object:
     * etc.
 
 Implementations (expressions, function calls, etc.) are stored as CppUnprocessed. It is still possible to retrieve their
-original code.
+original code (see str_code_verbatim())
 
 See doc/srcml_cpp_doc.png
 """

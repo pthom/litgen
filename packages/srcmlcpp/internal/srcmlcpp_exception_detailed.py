@@ -6,12 +6,12 @@ from typing import Tuple
 
 from codemanip import code_utils
 
-from srcmlcpp.srcml_exception import SrcmlException
+from srcmlcpp.srcmlcpp_exception import SrcmlcppException
 from srcmlcpp.srcml_options import SrcmlOptions
 from srcmlcpp.srcml_wrapper import SrcmlWrapper
 
 
-class SrcmlExceptionDetailed(SrcmlException):
+class SrcmlcppExceptionDetailed(SrcmlcppException):
     def __init__(self, current_element: SrcmlWrapper, additional_message: str) -> None:
         message = current_element._format_message(additional_message)
         super().__init__(message)

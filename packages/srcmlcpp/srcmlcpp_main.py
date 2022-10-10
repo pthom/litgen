@@ -18,7 +18,7 @@ from srcmlcpp.internal import (
     srcml_comments,
     srcml_types_parse,
 )
-from srcmlcpp.srcml_exception import SrcmlException
+from srcmlcpp.srcmlcpp_exception import SrcmlcppException
 from srcmlcpp.srcml_options import SrcmlOptions
 
 
@@ -98,7 +98,7 @@ def code_first_child_of_type(
     for child in cpp_unit.block_children:
         if isinstance(child, type_of_cpp_element):
             return child
-    raise SrcmlException(f"Could not find a child of type {type_of_cpp_element}")
+    raise SrcmlcppException(f"Could not find a child of type {type_of_cpp_element}")
 
 
 def code_first_function_decl(options: SrcmlOptions, code: str) -> CppFunctionDecl:

@@ -171,17 +171,17 @@ class SrcmlWrapper:
             child.visit_xml_breadth_first(xml_visitor_function, depth + 1)
 
     def raise_exception(self, message: str) -> None:
-        """raises a SrcmlException which will display the message with a context
+        """raises a SrcmlcppException which will display the message with a context
         that gives the location of this element in the code"""
-        from srcmlcpp.internal.srcml_exception_detailed import SrcmlExceptionDetailed
+        from srcmlcpp.internal.srcmlcpp_exception_detailed import SrcmlcppExceptionDetailed
 
-        raise SrcmlExceptionDetailed(self, message)
+        raise SrcmlcppExceptionDetailed(self, message)
 
     def emit_warning(self, message: str) -> None:
         """emits a warning which will display the message with a context
         that gives the location of this element in the code"""
         message = self._format_message(message, "Warning")
-        from srcmlcpp.internal.srcml_exception_detailed import emit_warning_if_not_quiet
+        from srcmlcpp.internal.srcmlcpp_exception_detailed import emit_warning_if_not_quiet
 
         emit_warning_if_not_quiet(self.options, message)
 
@@ -209,7 +209,7 @@ class SrcmlWrapper:
         return message
 
     def _format_message(self, additional_message: str, message_header: str = "Warning") -> str:
-        from srcmlcpp.internal.srcml_exception_detailed import _get_python_call_info, show_python_callstack
+        from srcmlcpp.internal.srcmlcpp_exception_detailed import _get_python_call_info, show_python_callstack
 
         message = ""
 

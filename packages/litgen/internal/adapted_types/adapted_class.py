@@ -8,7 +8,7 @@ from codemanip import code_utils
 
 from srcmlcpp.cpp_types import *
 from srcmlcpp.cpp_types.cpp_scope import CppScopeType
-from srcmlcpp.srcml_exception import SrcmlException
+from srcmlcpp.srcmlcpp_exception import SrcmlcppException
 
 from litgen import TemplateNamingScheme
 from litgen.internal import cpp_to_python
@@ -331,7 +331,7 @@ class AdaptedClass(AdaptedElement):
                     child.emit_warning(
                         f"Public elements of type {child.tag()} are not supported in python conversion",
                     )
-            except SrcmlException as e:
+            except SrcmlcppException as e:
                 child.emit_warning(str(e))
 
     def _str_parent_classes(self) -> str:
@@ -415,7 +415,7 @@ class AdaptedClass(AdaptedElement):
             if scope_part.scope_type == CppScopeType.Namespace:
                 intro += f"namespace {scope_part.scope_name} {{ "
             else:
-                raise SrcmlException("Bad scope for protected member")
+                raise SrcmlcppException("Bad scope for protected member")
 
         for scope_part in reversed(scope.scope_parts):
             if scope_part.scope_type == CppScopeType.Namespace:

@@ -5,7 +5,7 @@ from codemanip import code_utils
 from codemanip.parse_progress_bar import global_progress_bars
 
 from srcmlcpp.cpp_types import *
-from srcmlcpp.srcml_exception import SrcmlException
+from srcmlcpp.srcmlcpp_exception import SrcmlcppException
 
 from litgen.internal.adapted_types.adapted_class import AdaptedClass
 from litgen.internal.adapted_types.adapted_comment import (
@@ -80,7 +80,7 @@ class AdaptedBlock(AdaptedElement):
                         self.adapted_elements.append(AdaptedNamespace(self.lg_context, child))  # type: ignore
                 elif isinstance(child, CppDeclStatement):
                     child.emit_warning(f"Block elements of type {child.tag()} are not supported in python conversion")
-            except SrcmlException as e:
+            except SrcmlcppException as e:
                 child.emit_warning(str(e))
 
     # override
