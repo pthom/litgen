@@ -4,6 +4,9 @@ from typing import List, Union
 from srcmlcpp.cpp_types.decls_types.cpp_type import CppType
 
 
+__all__ = ["TemplateSpecializationPart", "TemplateSpecialization"]
+
+
 class TemplateSpecializationPart:
     cpp_type: CppType
     template_name: str = ""  # If empty, will be applied to the first available template param

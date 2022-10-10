@@ -1,13 +1,16 @@
 from __future__ import annotations
 import copy
 from dataclasses import dataclass
-from typing import List, Optional
+from typing import TYPE_CHECKING, List, Optional
 
 from codemanip import code_utils
 
 from srcmlcpp.cpp_types.base import *
-from srcmlcpp.cpp_types.template.template_specialization import TemplateSpecialization
 from srcmlcpp.srcml_wrapper import SrcmlWrapper
+
+
+if TYPE_CHECKING:
+    from srcmlcpp.cpp_types.template.template_specialization import TemplateSpecialization
 
 
 __all__ = ["CppType"]

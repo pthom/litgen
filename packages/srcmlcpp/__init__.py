@@ -11,6 +11,7 @@ from srcmlcpp.srcml_options import SrcmlOptions
 
 # A collection of Cpp Types (CppStruct, CppDecl, CppNamespace, etc.)
 from srcmlcpp.cpp_types import *
+from srcmlcpp.cpp_types import __all__ as _all_types
 
 # Exceptions produced by this module
 from srcmlcpp.srcml_exception import SrcmlException
@@ -27,3 +28,12 @@ from srcmlcpp.srcmlcpp_main import code_to_cpp_unit
 
 # code_to_srcml_xml_wrapper is a lower level utility, that returns a wrapped version of the srcML tree
 from srcmlcpp.srcmlcpp_main import code_to_srcml_xml_wrapper
+
+
+# __all__ = [
+#     "SrcmlOptions",
+#     "SrcmlException",
+#     "SrcmlWrapper",
+#     "code_to_cpp_unit",
+#     "code_to_srcml_xml_wrapper",
+# ] + _all_types

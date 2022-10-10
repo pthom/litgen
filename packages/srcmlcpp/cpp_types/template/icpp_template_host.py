@@ -1,11 +1,10 @@
+from __future__ import annotations
 from typing import List
 
 from srcmlcpp.cpp_types.base import *
-from srcmlcpp.cpp_types.decls_types.cpp_type import (
-    CppType,
-    TemplateSpecialization,
-)
+from srcmlcpp.cpp_types.decls_types.cpp_type import CppType
 from srcmlcpp.cpp_types.template.cpp_template import CppTemplate
+from srcmlcpp.cpp_types.template.template_specialization import TemplateSpecialization
 from srcmlcpp.srcml_wrapper import SrcmlWrapper
 
 
@@ -81,6 +80,7 @@ class ICppTemplateHost:
 
         template_params_str = ", ".join(template_params_strs)
 
+        r = ""
         if len(self.specialized_template_params) == 0:
             r = f"template<{template_params_str}> "
         else:

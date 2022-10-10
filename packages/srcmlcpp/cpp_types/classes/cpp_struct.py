@@ -11,7 +11,7 @@ from srcmlcpp.cpp_types.blocks import (
 )
 from srcmlcpp.cpp_types.classes.cpp_super_list import CppSuperList
 from srcmlcpp.cpp_types.decls_types import CppDecl, CppDeclStatement
-from srcmlcpp.cpp_types.functions import CppConstructorDecl, CppFunctionDecl
+from srcmlcpp.cpp_types.functions import CppFunctionDecl
 from srcmlcpp.cpp_types.template.icpp_template_host import ICppTemplateHost
 from srcmlcpp.cpp_types.template.template_specialization import TemplateSpecialization
 from srcmlcpp.srcml_wrapper import SrcmlWrapper
@@ -102,6 +102,8 @@ class CppStruct(CppElementAndComment, ICppTemplateHost):
         return r
 
     def has_non_default_ctor(self) -> bool:
+        from srcmlcpp.cpp_types.functions.cpp_constructor_decl import CppConstructorDecl
+
         found_non_default_ctor = False
         for access_zone in self.block.block_children:
             if isinstance(access_zone, CppPublicProtectedPrivate):
@@ -116,6 +118,8 @@ class CppStruct(CppElementAndComment, ICppTemplateHost):
         return found_non_default_ctor
 
     def has_deleted_default_ctor(self) -> bool:
+        from srcmlcpp.cpp_types.functions.cpp_constructor_decl import CppConstructorDecl
+
         found_deleted_default_ctor = False
         for access_zone in self.block.block_children:
             if isinstance(access_zone, CppPublicProtectedPrivate):
@@ -184,6 +188,8 @@ class CppStruct(CppElementAndComment, ICppTemplateHost):
         return r
 
     def all_methods(self) -> List[CppFunctionDecl]:
+        from srcmlcpp.cpp_types.functions.cpp_function_decl import CppFunctionDecl
+
         r: List[CppFunctionDecl] = []
         for access_zone in self.block.block_children:
             if isinstance(access_zone, CppPublicProtectedPrivate):

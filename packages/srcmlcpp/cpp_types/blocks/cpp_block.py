@@ -1,12 +1,15 @@
 from __future__ import annotations
 from dataclasses import dataclass
-from typing import List, Optional, cast
+from typing import TYPE_CHECKING, List, Optional, cast
 
 from srcmlcpp.cpp_scope import CppScope
 from srcmlcpp.cpp_types.base import *
-from srcmlcpp.cpp_types.classes.cpp_struct import CppStruct
-from srcmlcpp.cpp_types.functions.cpp_function import CppFunctionDecl
+from srcmlcpp.cpp_types.functions import CppFunctionDecl
 from srcmlcpp.srcml_wrapper import SrcmlWrapper
+
+
+if TYPE_CHECKING:
+    from srcmlcpp.cpp_types.classes.cpp_struct import CppStruct
 
 
 __all__ = ["CppBlock"]
@@ -54,6 +57,8 @@ class CppBlock(CppElementAndComment):
 
     def all_functions(self) -> List[CppFunctionDecl]:
         """Gathers all CppFunctionDecl and CppFunction in the children (non recursive)"""
+        from srcmlcpp.cpp_types.functions.cpp_function_decl import CppFunctionDecl
+
         r: List[CppFunctionDecl] = []
         for child in self.block_children:
             if isinstance(child, CppFunctionDecl):

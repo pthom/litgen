@@ -1,16 +1,18 @@
 from __future__ import annotations
 import copy
 from dataclasses import dataclass
-from typing import List, Optional
+from typing import TYPE_CHECKING, List, Optional
 
 from srcmlcpp.cpp_types.base import *
-from srcmlcpp.cpp_types.blocks import CppBlock, CppPublicProtectedPrivate
-from srcmlcpp.cpp_types.classes.cpp_struct import CppStruct
 from srcmlcpp.cpp_types.decls_types.cpp_type import CppType
 from srcmlcpp.cpp_types.functions import CppParameter, CppParameterList
 from srcmlcpp.cpp_types.template.icpp_template_host import ICppTemplateHost
 from srcmlcpp.cpp_types.template.template_specialization import TemplateSpecialization
 from srcmlcpp.srcml_wrapper import SrcmlWrapper
+
+
+if TYPE_CHECKING:
+    from srcmlcpp.cpp_types.classes.cpp_struct import CppStruct
 
 
 __all__ = ["CppFunctionDecl"]
@@ -139,6 +141,8 @@ class CppFunctionDecl(CppElementAndComment, ICppTemplateHost):
         return "const" in self.specifiers
 
     def is_method(self) -> bool:
+        from srcmlcpp.cpp_types.blocks.cpp_public_protected_private import CppPublicProtectedPrivate
+
         assert hasattr(self, "parent")
         is_method = isinstance(self.parent, CppPublicProtectedPrivate)
         return is_method
@@ -148,6 +152,8 @@ class CppFunctionDecl(CppElementAndComment, ICppTemplateHost):
         Returns "public", "private", or "protected"
         Will throw if this is not a method!
         """
+        from srcmlcpp.cpp_types.blocks.cpp_public_protected_private import CppPublicProtectedPrivate
+
         assert self.is_method()
         assert hasattr(self, "parent")
         assert isinstance(self.parent, CppPublicProtectedPrivate)
@@ -173,6 +179,9 @@ class CppFunctionDecl(CppElementAndComment, ICppTemplateHost):
         return is_overloaded
 
     def parent_struct_if_method(self) -> Optional[CppStruct]:
+        from srcmlcpp.cpp_types.classes.cpp_struct import CppStruct
+        from srcmlcpp.cpp_types.blocks.cpp_block import CppBlock
+
         assert hasattr(self, "parent")
         if not self.is_method():
             return None

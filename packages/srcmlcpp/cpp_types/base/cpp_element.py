@@ -1,16 +1,13 @@
 from __future__ import annotations
 import copy
-from typing import List, Optional
+from enum import Enum
+from typing import Callable, List, Optional
 
 from srcmlcpp.cpp_scope import CppScope, CppScopePart, CppScopeType
-from srcmlcpp.cpp_types.base.cpp_element_visitor import (
-    CppElementsVisitorEvent,
-    CppElementsVisitorFunction,
-)
 from srcmlcpp.srcml_wrapper import SrcmlWrapper
 
 
-__all__ = ["CppElement"]
+__all__ = ["CppElement", "CppElementsVisitorFunction", "CppElementsVisitorEvent"]
 
 
 class CppElement(SrcmlWrapper):
@@ -144,3 +141,16 @@ class CppElement(SrcmlWrapper):
 
     def __str__(self) -> str:
         return self._str_simplified_yaml()
+
+
+class CppElementsVisitorEvent(Enum):
+    OnElement = 1  # We are visiting this element (will be raised for all elements, incl Blocks)
+    OnBeforeChildren = 2  # We are about to visit a block's children
+    OnAfterChildren = 3  # We finished visiting a block's children
+
+
+# This defines the type of function that will visit all the Cpp Elements
+# - First param: element being visited. A same element can be visited up to three times with different events
+# - Second param: event (see CppElementsVisitorEvent doc)
+# - Third param: depth in the source tree
+CppElementsVisitorFunction = Callable[[CppElement, CppElementsVisitorEvent, int], None]

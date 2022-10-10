@@ -1,9 +1,13 @@
 from __future__ import annotations
 from dataclasses import dataclass
+from typing import TYPE_CHECKING
 
 from srcmlcpp.cpp_types.base import *
-from srcmlcpp.cpp_types.functions import CppParameterList
 from srcmlcpp.srcml_wrapper import SrcmlWrapper
+
+
+if TYPE_CHECKING:
+    from srcmlcpp.cpp_types.functions import CppParameterList
 
 
 __all__ = ["CppTemplate"]
@@ -19,6 +23,8 @@ class CppTemplate(CppElement):
     parameter_list: CppParameterList
 
     def __init__(self, element: SrcmlWrapper) -> None:
+        from srcmlcpp.cpp_types.functions.cpp_parameter_list import CppParameterList
+
         super().__init__(element)
         self.parameter_list = CppParameterList(element)
 

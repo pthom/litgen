@@ -1,4 +1,4 @@
-__all__ = ["CppDecl", "CppDeclStatement"]
+__all__ = ["CppType", "CppDecl", "CppDeclStatement"]
 
 
 from srcmlcpp.cpp_types.decls_types.cpp_type import CppType
