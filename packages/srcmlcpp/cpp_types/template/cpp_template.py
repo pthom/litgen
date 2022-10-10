@@ -2,7 +2,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 
 from srcmlcpp.cpp_types.base import *
-from srcmlcpp.cpp_types.cpp_parameter import CppParameterList
+from srcmlcpp.cpp_types.functions import CppParameterList
 from srcmlcpp.srcml_wrapper import SrcmlWrapper
 
 

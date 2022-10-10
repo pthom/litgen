@@ -1,8 +1,11 @@
 from typing import List
 
 from srcmlcpp.cpp_types.base import *
+from srcmlcpp.cpp_types.decls_types.cpp_type import (
+    CppType,
+    TemplateSpecialization,
+)
 from srcmlcpp.cpp_types.template.cpp_template import CppTemplate
-from srcmlcpp.cpp_types.cpp_type import CppType, TemplateSpecialization
 from srcmlcpp.srcml_wrapper import SrcmlWrapper
 
 

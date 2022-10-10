@@ -2,8 +2,11 @@ from __future__ import annotations
 import copy
 from typing import List, Optional
 
-from srcmlcpp.cpp_types.base.cpp_element_visitor import CppElementsVisitorFunction, CppElementsVisitorEvent
 from srcmlcpp.cpp_scope import CppScope, CppScopePart, CppScopeType
+from srcmlcpp.cpp_types.base.cpp_element_visitor import (
+    CppElementsVisitorEvent,
+    CppElementsVisitorFunction,
+)
 from srcmlcpp.srcml_wrapper import SrcmlWrapper
 
 

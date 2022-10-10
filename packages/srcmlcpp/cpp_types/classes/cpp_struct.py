@@ -3,18 +3,18 @@ import copy
 from dataclasses import dataclass
 from typing import List, Optional, Tuple
 
-from srcmlcpp.srcml_wrapper import SrcmlWrapper
 from srcmlcpp.cpp_types.base import *
 from srcmlcpp.cpp_types.blocks import (
     CppBlock,
     CppPublicProtectedPrivate,
     CppUnit,
 )
-from srcmlcpp.cpp_types.cpp_decl import CppDecl, CppDeclStatement
-from srcmlcpp.cpp_types.functions import CppConstructorDecl, CppFunctionDecl
-from srcmlcpp.cpp_types.template.template_specialization import TemplateSpecialization
-from srcmlcpp.cpp_types.template.icpp_template_host import ICppTemplateHost
 from srcmlcpp.cpp_types.classes.cpp_super_list import CppSuperList
+from srcmlcpp.cpp_types.decls_types import CppDecl, CppDeclStatement
+from srcmlcpp.cpp_types.functions import CppConstructorDecl, CppFunctionDecl
+from srcmlcpp.cpp_types.template.icpp_template_host import ICppTemplateHost
+from srcmlcpp.cpp_types.template.template_specialization import TemplateSpecialization
+from srcmlcpp.srcml_wrapper import SrcmlWrapper
 
 
 __all__ = ["CppStruct"]

@@ -6,10 +6,10 @@ from typing import List, Optional
 from srcmlcpp.cpp_types.base import *
 from srcmlcpp.cpp_types.blocks import CppBlock, CppPublicProtectedPrivate
 from srcmlcpp.cpp_types.classes.cpp_struct import CppStruct
-from srcmlcpp.cpp_types.cpp_parameter import CppParameter, CppParameterList
-from srcmlcpp.cpp_types.cpp_type import CppType
-from srcmlcpp.cpp_types.template.template_specialization import TemplateSpecialization
+from srcmlcpp.cpp_types.decls_types.cpp_type import CppType
+from srcmlcpp.cpp_types.functions import CppParameter, CppParameterList
 from srcmlcpp.cpp_types.template.icpp_template_host import ICppTemplateHost
+from srcmlcpp.cpp_types.template.template_specialization import TemplateSpecialization
 from srcmlcpp.srcml_wrapper import SrcmlWrapper
 
 

@@ -26,12 +26,12 @@ from srcmlcpp.cpp_types.base import (
     CppElementsVisitorEvent,
     CppElementsVisitorFunction,
 )
-from srcmlcpp.cpp_types.cpp_type import CppType
-from srcmlcpp.cpp_types.cpp_parameter import CppParameter, CppParameterList
+from srcmlcpp.cpp_types.decls_types.cpp_type import CppType
+from srcmlcpp.cpp_types.functions import CppParameter, CppParameterList
 from srcmlcpp.cpp_types.template.cpp_template import CppTemplate
 from srcmlcpp.cpp_types.blocks import CppBlock, CppBlockContent, CppPublicProtectedPrivate, CppUnit
 from srcmlcpp.cpp_types.classes import CppSuper, CppSuperList, CppStruct, CppClass
-from srcmlcpp.cpp_types.cpp_decl import CppDecl, CppDeclStatement
+from srcmlcpp.cpp_types.decls_types import CppDecl, CppDeclStatement
 from srcmlcpp.cpp_types.cpp_enum import CppEnum
 from srcmlcpp.cpp_types.functions import CppFunctionDecl, CppFunction, CppConstructorDecl, CppConstructor
 from srcmlcpp.cpp_types.cpp_namespace import CppNamespace

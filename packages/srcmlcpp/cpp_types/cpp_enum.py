@@ -6,7 +6,7 @@ from codemanip import code_utils
 
 from srcmlcpp.cpp_types.base import *
 from srcmlcpp.cpp_types.blocks.cpp_block import CppBlock
-from srcmlcpp.cpp_types.cpp_decl import CppDecl
+from srcmlcpp.cpp_types.decls_types.cpp_decl import CppDecl
 from srcmlcpp.srcml_wrapper import SrcmlWrapper
 
 

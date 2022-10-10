@@ -1,7 +1,7 @@
 from __future__ import annotations
 from typing import List, Union
 
-from srcmlcpp.cpp_types.cpp_type import CppType
+from srcmlcpp.cpp_types.decls_types.cpp_type import CppType
 
 
 class TemplateSpecializationPart:
