@@ -2,8 +2,8 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import TYPE_CHECKING, List, Optional, cast
 
-from srcmlcpp.cpp_scope import CppScope
 from srcmlcpp.cpp_types.base import *
+from srcmlcpp.cpp_types.cpp_scope import CppScope
 from srcmlcpp.cpp_types.functions import CppFunctionDecl
 from srcmlcpp.srcml_wrapper import SrcmlWrapper
 

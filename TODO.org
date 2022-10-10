@@ -496,8 +496,8 @@ can reuse lots of parts of PimplMyClass
     etc
 
 **  Refac srcmlcpp:
-    split types
     rename srcml_options, exception, wrapper
+
 * Litgen TODO
 ** Wish list / hard and later
 *** mypy: no_implicit_reexport

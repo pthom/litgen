@@ -4,10 +4,10 @@ from typing import List, Union
 from srcmlcpp.cpp_types.decls_types.cpp_type import CppType
 
 
-__all__ = ["TemplateSpecializationPart", "TemplateSpecialization"]
+__all__ = ["CppTemplateSpecializationPart", "CppTemplateSpecialization"]
 
 
-class TemplateSpecializationPart:
+class CppTemplateSpecializationPart:
     cpp_type: CppType
     template_name: str = ""  # If empty, will be applied to the first available template param
 
@@ -33,27 +33,27 @@ class TemplateSpecializationPart:
             return str(self.cpp_type)
 
 
-class TemplateSpecialization:
-    specializations: List[TemplateSpecializationPart]
+class CppTemplateSpecialization:
+    specializations: List[CppTemplateSpecializationPart]
 
     def __init__(self, check_private_constructor: str):
         if check_private_constructor != "from_within":
             raise Exception("Please use named constructors, this constructor is private!")
 
     @staticmethod
-    def from_type_str(cpp_type_str: str, template_name: str = "") -> TemplateSpecialization:
-        r = TemplateSpecialization("from_within")
-        r.specializations = [TemplateSpecializationPart(cpp_type_str, template_name)]
+    def from_type_str(cpp_type_str: str, template_name: str = "") -> CppTemplateSpecialization:
+        r = CppTemplateSpecialization("from_within")
+        r.specializations = [CppTemplateSpecializationPart(cpp_type_str, template_name)]
         return r
 
     @staticmethod
-    def from_type(cpp_type: CppType, template_name: str = "") -> TemplateSpecialization:
-        r = TemplateSpecialization("from_within")
-        r.specializations = [TemplateSpecializationPart(cpp_type, template_name)]
+    def from_type(cpp_type: CppType, template_name: str = "") -> CppTemplateSpecialization:
+        r = CppTemplateSpecialization("from_within")
+        r.specializations = [CppTemplateSpecializationPart(cpp_type, template_name)]
         return r
 
     @staticmethod
-    def from_specializations(specializations: List[TemplateSpecializationPart]) -> TemplateSpecialization:
-        r = TemplateSpecialization("from_within")
+    def from_specializations(specializations: List[CppTemplateSpecializationPart]) -> CppTemplateSpecialization:
+        r = CppTemplateSpecialization("from_within")
         r.specializations = specializations
         return r

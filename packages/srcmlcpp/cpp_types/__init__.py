@@ -19,7 +19,7 @@ See doc/srcml_cpp_doc.png
 """
 
 from srcmlcpp.cpp_types.base import (
-    AccessTypes,
+    CppAccessTypes,
     CppElement,
     CppElementAndComment,
     CppElementComments,
@@ -46,9 +46,9 @@ from srcmlcpp.cpp_types.functions import (
 
 from srcmlcpp.cpp_types.template import (
     CppTemplate,
-    TemplateSpecializationPart,
-    TemplateSpecialization,
-    ICppTemplateHost,
+    CppTemplateSpecializationPart,
+    CppTemplateSpecialization,
+    CppITemplateHost,
 )
 
 from srcmlcpp.cpp_types.blocks import (
@@ -65,10 +65,11 @@ from srcmlcpp.cpp_types.classes import CppSuper, CppSuperList, CppStruct, CppCla
 
 from srcmlcpp.cpp_types.cpp_namespace import CppNamespace
 
+from srcmlcpp.cpp_types.cpp_scope import CppScope, CppScopeType, CppScopePart
 
 __all__ = [
     # base
-    "AccessTypes",
+    "CppAccessTypes",
     "CppElement",
     "CppElementAndComment",
     "CppElementComments",
@@ -96,14 +97,18 @@ __all__ = [
     "CppClass",
     # template
     "CppTemplate",
-    "TemplateSpecializationPart",
-    "TemplateSpecialization",
-    "ICppTemplateHost",
+    "CppTemplateSpecializationPart",
+    "CppTemplateSpecialization",
+    "CppITemplateHost",
     # blocks
     "CppBlock",
     "CppBlockContent",
     "CppPublicProtectedPrivate",
     "CppUnit",
+    # Scope
+    "CppScope",
+    "CppScopeType",
+    "CppScopePart",
     # standalone
     "CppEnum",
     "CppNamespace",

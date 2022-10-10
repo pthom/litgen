@@ -929,7 +929,7 @@ class AdaptedFunction(AdaptedElement):
         assert self._is_one_param_template()
 
         new_cpp_function = self.cpp_element().with_specialized_template(
-            TemplateSpecialization.from_type_str(cpp_type_str)
+            CppTemplateSpecialization.from_type_str(cpp_type_str)
         )
         assert new_cpp_function is not None
         new_cpp_function.function_name = litgen.TemplateNamingScheme.apply(

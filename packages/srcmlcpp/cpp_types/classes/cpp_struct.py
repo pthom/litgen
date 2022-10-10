@@ -12,8 +12,8 @@ from srcmlcpp.cpp_types.blocks import (
 from srcmlcpp.cpp_types.classes.cpp_super_list import CppSuperList
 from srcmlcpp.cpp_types.decls_types import CppDecl, CppDeclStatement
 from srcmlcpp.cpp_types.functions import CppFunctionDecl
-from srcmlcpp.cpp_types.template.icpp_template_host import ICppTemplateHost
-from srcmlcpp.cpp_types.template.template_specialization import TemplateSpecialization
+from srcmlcpp.cpp_types.template.cpp_i_template_host import CppITemplateHost
+from srcmlcpp.cpp_types.template.cpp_template_specialization import CppTemplateSpecialization
 from srcmlcpp.srcml_wrapper import SrcmlWrapper
 
 
@@ -21,7 +21,7 @@ __all__ = ["CppStruct"]
 
 
 @dataclass
-class CppStruct(CppElementAndComment, ICppTemplateHost):
+class CppStruct(CppElementAndComment, CppITemplateHost):
     """
     https://www.srcml.org/doc/cpp_srcML.html#struct-definition
     """
@@ -85,13 +85,13 @@ class CppStruct(CppElementAndComment, ICppTemplateHost):
             return False
         return len(self.super_list.super_list) > 0
 
-    def base_classes(self) -> List[Tuple[AccessTypes, CppStruct]]:
+    def base_classes(self) -> List[Tuple[CppAccessTypes, CppStruct]]:
         if not self.has_base_classes():
             return []
 
         r = []
         for cpp_super in self.super_list.super_list:
-            access_type = AccessTypes.from_name(cpp_super.specifier)
+            access_type = CppAccessTypes.from_name(cpp_super.specifier)
 
             root_cpp_unit = CppUnit.find_root_cpp_unit(self)
             base_struct = root_cpp_unit.find_struct_or_class(
@@ -152,11 +152,11 @@ class CppStruct(CppElementAndComment, ICppTemplateHost):
                     r.append(access_zone)
         return r
 
-    def get_members(self) -> List[Tuple[AccessTypes, CppDecl]]:
-        r: List[Tuple[AccessTypes, CppDecl]] = []
+    def get_members(self) -> List[Tuple[CppAccessTypes, CppDecl]]:
+        r: List[Tuple[CppAccessTypes, CppDecl]] = []
         for access_zone in self.block.block_children:
             if isinstance(access_zone, CppPublicProtectedPrivate):
-                access_type = AccessTypes.from_name(access_zone.access_type)
+                access_type = CppAccessTypes.from_name(access_zone.access_type)
                 for child in access_zone.block_children:
                     if isinstance(child, CppDeclStatement):
                         for cpp_decl in child.cpp_decls:
@@ -243,7 +243,7 @@ class CppStruct(CppElementAndComment, ICppTemplateHost):
             ppp_block.fill_children_parents()
             ppp_block.parent = self.block
 
-    def with_specialized_template(self, template_specs: TemplateSpecialization) -> Optional[CppStruct]:
+    def with_specialized_template(self, template_specs: CppTemplateSpecialization) -> Optional[CppStruct]:
         """Returns a new non-templated class, implemented for the given type
         Only works on templated class with *one* template parameter
         Will return None if the application of the template changes nothing

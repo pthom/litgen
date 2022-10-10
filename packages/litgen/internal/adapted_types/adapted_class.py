@@ -6,8 +6,8 @@ import munch  # type: ignore
 
 from codemanip import code_utils
 
-from srcmlcpp.cpp_scope import CppScopeType
 from srcmlcpp.cpp_types import *
+from srcmlcpp.cpp_types.cpp_scope import CppScopeType
 from srcmlcpp.srcml_exception import SrcmlException
 
 from litgen import TemplateNamingScheme
@@ -529,7 +529,9 @@ class AdaptedClass(AdaptedElement):
         assert self.cpp_element().is_template_partially_specialized()
         assert self._is_one_param_template()
 
-        new_cpp_class = self.cpp_element().with_specialized_template(TemplateSpecialization.from_type_str(cpp_type_str))
+        new_cpp_class = self.cpp_element().with_specialized_template(
+            CppTemplateSpecialization.from_type_str(cpp_type_str)
+        )
         assert new_cpp_class is not None
         new_adapted_class = AdaptedClass(self.lg_context, new_cpp_class)
         new_adapted_class.template_specialization = AdaptedClass.TemplateSpecialization(
@@ -585,7 +587,7 @@ class AdaptedClass(AdaptedElement):
             if self.cpp_element().has_base_classes():
                 base_classes = self.cpp_element().base_classes()
                 for access_type, base_class in base_classes:
-                    if access_type == AccessTypes.public or access_type == AccessTypes.protected:
+                    if access_type == CppAccessTypes.public or access_type == CppAccessTypes.protected:
                         other_template_params_list.append(base_class.cpp_scope(include_self=True).str_cpp())
             if self.cpp_element().has_private_dtor():
                 other_template_params_list.append(f"std::unique_ptr<{qualified_struct_name}, py::nodelete>")

@@ -30,10 +30,57 @@ from srcmlcpp.srcmlcpp_main import code_to_cpp_unit
 from srcmlcpp.srcmlcpp_main import code_to_srcml_xml_wrapper
 
 
-# __all__ = [
-#     "SrcmlOptions",
-#     "SrcmlException",
-#     "SrcmlWrapper",
-#     "code_to_cpp_unit",
-#     "code_to_srcml_xml_wrapper",
-# ] + _all_types
+__all__ = [
+    # Functions
+    "code_to_cpp_unit",
+    "code_to_srcml_xml_wrapper",
+    "SrcmlException",
+    "SrcmlWrapper",
+    #
+    # Cpp Types
+    #
+    # base
+    "CppAccessTypes",
+    "CppElement",
+    "CppElementAndComment",
+    "CppElementComments",
+    "CppElementsVisitorEvent",
+    "CppElementsVisitorFunction",
+    # cpp_unprocessed
+    "CppUnprocessed",
+    "CppEmptyLine",
+    "CppComment",
+    # decls_types
+    "CppType",
+    "CppDecl",
+    "CppDeclStatement",
+    # functions
+    "CppParameter",
+    "CppParameterList",
+    "CppFunctionDecl",
+    "CppFunction",
+    "CppConstructorDecl",
+    "CppConstructor",
+    # classes
+    "CppSuper",
+    "CppSuperList",
+    "CppStruct",
+    "CppClass",
+    # template
+    "CppTemplate",
+    "CppTemplateSpecializationPart",
+    "CppTemplateSpecialization",
+    "CppITemplateHost",
+    # blocks
+    "CppBlock",
+    "CppBlockContent",
+    "CppPublicProtectedPrivate",
+    "CppUnit",
+    # Scope
+    "CppScope",
+    "CppScopeType",
+    "CppScopePart",
+    # standalone
+    "CppEnum",
+    "CppNamespace",
+]

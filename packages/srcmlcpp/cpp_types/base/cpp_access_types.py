@@ -2,21 +2,21 @@ from __future__ import annotations
 from enum import Enum
 
 
-__all__ = ["AccessTypes"]
+__all__ = ["CppAccessTypes"]
 
 
-class AccessTypes(Enum):
+class CppAccessTypes(Enum):
     public = "public"
     protected = "protected"
     private = "private"
 
     @staticmethod
-    def from_name(name: str) -> AccessTypes:
+    def from_name(name: str) -> CppAccessTypes:
         if name == "public" or name == "":
-            return AccessTypes.public
+            return CppAccessTypes.public
         elif name == "protected":
-            return AccessTypes.protected
+            return CppAccessTypes.protected
         elif name == "private":
-            return AccessTypes.private
+            return CppAccessTypes.private
         else:
             raise AssertionError()

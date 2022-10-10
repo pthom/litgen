@@ -25,7 +25,7 @@ class CppScope:
             self.scope_parts = scopes
 
     def str_cpp(self) -> str:
-        """Returns this scope as a cpp, e.g Foo::Blah"""
+        """Returns this scope as a cpp scope, e.g Foo::Blah"""
         if len(self.scope_parts) == 0:
             return ""
         scope_names = map(lambda s: s.scope_name, self.scope_parts)
@@ -33,7 +33,7 @@ class CppScope:
         return r
 
     def str_cpp_prefix(self) -> str:
-        """Returns this scope as a cpp, e.g Foo::Blah::"""
+        """Returns this scope as a cpp prefix, e.g Foo::Blah::"""
         s = self.str_cpp()
         if len(s) == 0:
             return ""

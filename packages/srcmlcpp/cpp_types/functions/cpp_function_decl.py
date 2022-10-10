@@ -6,8 +6,8 @@ from typing import TYPE_CHECKING, List, Optional
 from srcmlcpp.cpp_types.base import *
 from srcmlcpp.cpp_types.decls_types.cpp_type import CppType
 from srcmlcpp.cpp_types.functions import CppParameter, CppParameterList
-from srcmlcpp.cpp_types.template.icpp_template_host import ICppTemplateHost
-from srcmlcpp.cpp_types.template.template_specialization import TemplateSpecialization
+from srcmlcpp.cpp_types.template.cpp_i_template_host import CppITemplateHost
+from srcmlcpp.cpp_types.template.cpp_template_specialization import CppTemplateSpecialization
 from srcmlcpp.srcml_wrapper import SrcmlWrapper
 
 
@@ -19,7 +19,7 @@ __all__ = ["CppFunctionDecl"]
 
 
 @dataclass
-class CppFunctionDecl(CppElementAndComment, ICppTemplateHost):
+class CppFunctionDecl(CppElementAndComment, CppITemplateHost):
     """
     https://www.srcml.org/doc/cpp_srcML.html#function-declaration
     """
@@ -57,7 +57,7 @@ class CppFunctionDecl(CppElementAndComment, ICppTemplateHost):
     def function_name_with_instantiation(self) -> str:
         return self.function_name + self.str_template_specialization()
 
-    def with_specialized_template(self, template_specs: TemplateSpecialization) -> Optional[CppFunctionDecl]:
+    def with_specialized_template(self, template_specs: CppTemplateSpecialization) -> Optional[CppFunctionDecl]:
         """Returns a new non-templated function, implemented for the given type
         Only works on templated function with *one* template parameter
         """

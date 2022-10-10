@@ -4,14 +4,14 @@ from typing import List
 from srcmlcpp.cpp_types.base import *
 from srcmlcpp.cpp_types.decls_types.cpp_type import CppType
 from srcmlcpp.cpp_types.template.cpp_template import CppTemplate
-from srcmlcpp.cpp_types.template.template_specialization import TemplateSpecialization
+from srcmlcpp.cpp_types.template.cpp_template_specialization import CppTemplateSpecialization
 from srcmlcpp.srcml_wrapper import SrcmlWrapper
 
 
-__all__ = ["ICppTemplateHost"]
+__all__ = ["CppITemplateHost"]
 
 
-class ICppTemplateHost:
+class CppITemplateHost:
     """
     Interface added to templatable classes: CppStruct (+CppClass) and CppFunctionDecl (+CppFunction)
     """
@@ -47,7 +47,7 @@ class ICppTemplateHost:
         else:
             return ""
 
-    def _store_template_specs(self, template_specs: TemplateSpecialization) -> None:
+    def _store_template_specs(self, template_specs: CppTemplateSpecialization) -> None:
         for template_spec in template_specs.specializations:
             if len(template_spec.template_name) == 0:
                 assert self.is_template()

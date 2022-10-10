@@ -10,7 +10,7 @@ from srcmlcpp.srcml_wrapper import SrcmlWrapper
 
 
 if TYPE_CHECKING:
-    from srcmlcpp.cpp_types.template.template_specialization import TemplateSpecialization
+    from srcmlcpp.cpp_types.template.cpp_template_specialization import CppTemplateSpecialization
 
 
 __all__ = ["CppType"]
@@ -144,7 +144,7 @@ class CppType(CppElement):
     def is_inferred_type(self) -> bool:
         return self.typenames == ["auto"]
 
-    def with_specialized_template(self, template_specs: TemplateSpecialization) -> Optional[CppType]:
+    def with_specialized_template(self, template_specs: CppTemplateSpecialization) -> Optional[CppType]:
         """Returns a new type where "template_name" is replaced by "cpp_type"
         Returns None if this type does not use "template_name"
         """

@@ -24,7 +24,7 @@ def test_instantiate_function():
     #
     code = "template<typename T> T f();"
     f = code_first_function_decl(code)
-    f_inst = f.with_specialized_template(TemplateSpecialization.from_type_str("int"))
+    f_inst = f.with_specialized_template(CppTemplateSpecialization.from_type_str("int"))
     code_utils.assert_are_codes_equal(f_inst, "template</*typename T=int*/> int f<int>();")
 
     #
@@ -32,7 +32,7 @@ def test_instantiate_function():
     #
     code = "template<typename T> void f(T * v);"
     f = code_first_function_decl(code)
-    f_inst = f.with_specialized_template(TemplateSpecialization.from_type_str("const int"))
+    f_inst = f.with_specialized_template(CppTemplateSpecialization.from_type_str("const int"))
     code_utils.assert_are_codes_equal(f_inst, "template</*typename T=const int*/> void f<const int>(const int * v);")
 
     #
@@ -40,10 +40,10 @@ def test_instantiate_function():
     #
     code = "template<typename T, class U> T f(const U& u);"
     f = code_first_function_decl(code)
-    f_inst_1 = f.with_specialized_template(TemplateSpecialization.from_type_str("int"))
+    f_inst_1 = f.with_specialized_template(CppTemplateSpecialization.from_type_str("int"))
     assert f_inst_1 is not None
     code_utils.assert_are_codes_equal(f_inst_1, "template</*typename T=int, class U*/> int f<int>(const U & u);")
-    f_inst_2 = f_inst_1.with_specialized_template(TemplateSpecialization.from_type_str("double"))
+    f_inst_2 = f_inst_1.with_specialized_template(CppTemplateSpecialization.from_type_str("double"))
     assert f_inst_2 is not None
     code_utils.assert_are_codes_equal(
         f_inst_2, "template</*typename T=int, class U=double*/> int f<int, double>(const double & u);"
@@ -53,7 +53,7 @@ def test_instantiate_function():
     # we should not be able to further instantiate f_inst_2, since it is fully specialized
     #
     with pytest.raises(AssertionError):
-        _ = f_inst_2.with_specialized_template(TemplateSpecialization.from_type_str("double"))
+        _ = f_inst_2.with_specialized_template(CppTemplateSpecialization.from_type_str("double"))
 
     #
     # direct multiple specialization
@@ -61,8 +61,8 @@ def test_instantiate_function():
     code = "template<typename T, class U> T f(const U& u);"
     f = code_first_function_decl(code)
     f_inst = f.with_specialized_template(
-        TemplateSpecialization.from_specializations(
-            [TemplateSpecializationPart("int"), TemplateSpecializationPart("double")]
+        CppTemplateSpecialization.from_specializations(
+            [CppTemplateSpecializationPart("int"), CppTemplateSpecializationPart("double")]
         )
     )
     code_utils.assert_are_codes_equal(
@@ -76,7 +76,7 @@ def test_instantiate_function():
     #
     code = "T f();"
     f = code_first_function_decl(code)
-    f_inst = f.with_specialized_template(TemplateSpecialization.from_type_str("int", "T"))
+    f_inst = f.with_specialized_template(CppTemplateSpecialization.from_type_str("int", "T"))
     code_utils.assert_are_codes_equal(f_inst, "int f();")
 
     #
@@ -85,7 +85,7 @@ def test_instantiate_function():
     #
     code = "T f();"
     f = code_first_function_decl(code)
-    f_inst = f.with_specialized_template(TemplateSpecialization.from_type_str("int", "U"))
+    f_inst = f.with_specialized_template(CppTemplateSpecialization.from_type_str("int", "U"))
     assert f_inst is None
 
     #
@@ -93,7 +93,7 @@ def test_instantiate_function():
     #
     code = "template<typename T> T sum2(array<T, 2> values);"
     f = code_first_function_decl(code)
-    f_inst = f.with_specialized_template(TemplateSpecialization.from_type_str("vector<int>"))
+    f_inst = f.with_specialized_template(CppTemplateSpecialization.from_type_str("vector<int>"))
     code_utils.assert_are_codes_equal(
         f_inst, "template</*typename T=vector<int>*/> vector<int> sum2<vector<int>>(array<vector<int>, 2> values);"
     )
@@ -118,7 +118,7 @@ def test_instantiate_class():
     };
     """
     struct = code_first_struct(code)
-    struct_inst = struct.with_specialized_template(TemplateSpecialization.from_type_str("int"))
+    struct_inst = struct.with_specialized_template(CppTemplateSpecialization.from_type_str("int"))
     code_utils.assert_are_codes_equal(
         str(struct_inst),
         """

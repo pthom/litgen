@@ -7,7 +7,7 @@ from codemanip import code_utils
 
 from srcmlcpp.cpp_types.base import *
 from srcmlcpp.cpp_types.decls_types.cpp_decl import CppDecl
-from srcmlcpp.cpp_types.template.template_specialization import TemplateSpecialization
+from srcmlcpp.cpp_types.template.cpp_template_specialization import CppTemplateSpecialization
 from srcmlcpp.srcml_wrapper import SrcmlWrapper
 
 
@@ -43,7 +43,7 @@ class CppDeclStatement(CppElementAndComment):
             child.visit_cpp_breadth_first(cpp_visitor_function, depth + 1)
         cpp_visitor_function(self, CppElementsVisitorEvent.OnAfterChildren, depth)
 
-    def with_specialized_template(self, template_specs: TemplateSpecialization) -> Optional[CppDeclStatement]:
+    def with_specialized_template(self, template_specs: CppTemplateSpecialization) -> Optional[CppDeclStatement]:
         """Returns a new CppDeclStatement where "template_name" is replaced by "cpp_type"
         Returns None if this CppDeclStatement does not use "template_name"
         """

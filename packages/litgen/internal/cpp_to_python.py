@@ -5,9 +5,9 @@ from typing import List, Optional
 from codemanip import code_utils
 from codemanip.code_replacements import RegexReplacementList
 
-from srcmlcpp.cpp_scope import CppScope, CppScopePart, CppScopeType
 from srcmlcpp.cpp_types import *
-from srcmlcpp.cpp_types.template.icpp_template_host import ICppTemplateHost
+from srcmlcpp.cpp_types.cpp_scope import CppScope, CppScopePart, CppScopeType
+from srcmlcpp.cpp_types.template.cpp_i_template_host import CppITemplateHost
 
 from litgen import LitgenOptions
 from litgen.internal import LitgenContext
@@ -408,7 +408,7 @@ def cpp_scope_to_pybind_var_name(options: LitgenOptions, cpp_element: CppElement
     scope_parts_strs = list(map(_scope_part_name, cpp_scope.scope_parts))
     if len(scope_parts_strs) > 0:
         r = "py" + "_".join(scope_parts_strs)
-        if isinstance(cpp_element, ICppTemplateHost):
+        if isinstance(cpp_element, CppITemplateHost):
             if len(cpp_element.specialized_template_params) > 0:
                 instantiated_template_params_str = [str(param) for param in cpp_element.specialized_template_params]
                 instantiated_template_params_str = [

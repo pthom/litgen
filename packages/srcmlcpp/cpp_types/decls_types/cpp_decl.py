@@ -5,7 +5,7 @@ from typing import Optional
 
 from srcmlcpp.cpp_types.base import *
 from srcmlcpp.cpp_types.decls_types.cpp_type import CppType
-from srcmlcpp.cpp_types.template.template_specialization import TemplateSpecialization
+from srcmlcpp.cpp_types.template.cpp_template_specialization import CppTemplateSpecialization
 from srcmlcpp.srcml_options import (
     SrcmlOptions,
     _int_from_str_or_named_number_macros,
@@ -187,7 +187,7 @@ class CppDecl(CppElementAndComment):
         Returns true if this decl is const"""
         return "const" in self.cpp_type.specifiers  # or "const" in self.cpp_type.names
 
-    def with_specialized_template(self, template_specs: TemplateSpecialization) -> Optional[CppDecl]:
+    def with_specialized_template(self, template_specs: CppTemplateSpecialization) -> Optional[CppDecl]:
         """Returns a new decl where "template_name" is replaced by "cpp_type"
         Returns None if this decl does not use "template_name"
         """
