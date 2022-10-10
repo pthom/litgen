@@ -6,14 +6,17 @@ The main interface of this module is:
 
 All the other functions can be considered private to this module.
 """
+from xml.etree import ElementTree as ET
+
 from codemanip.parse_progress_bar import global_progress_bars
 
-from srcmlcpp.internal import srcml_caller, srcml_comments, srcml_utils
 from srcmlcpp.cpp_types import *
+from srcmlcpp.internal import srcml_caller, srcml_comments, srcml_utils
 from srcmlcpp.internal.srcml_exception_detailed import (
     SrcmlExceptionDetailed,
     emit_warning_if_not_quiet,
 )
+from srcmlcpp.srcml_options import SrcmlOptions
 
 
 _PROGRESS_BAR_TITLE_SRCML_PARSE = "srcmlcpp: Create CppElements................. "

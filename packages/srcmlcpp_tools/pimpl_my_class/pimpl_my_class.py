@@ -8,6 +8,7 @@ from codemanip import code_utils
 
 import srcmlcpp
 from srcmlcpp.cpp_types import *
+from srcmlcpp.srcml_options import SrcmlOptions
 
 
 # Todo: const, constexpr, and other methods specifiers

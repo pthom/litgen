@@ -1,7 +1,6 @@
+import lg_mylib
 import numpy as np
 import pytest
-
-import lg_mylib
 
 
 def test_add_inside_buffer():

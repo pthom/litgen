@@ -6,9 +6,9 @@ from typing import Callable, List, Optional
 from xml.etree import ElementTree as ET
 
 from codemanip import code_utils
-from codemanip.code_position import CodePosition, CodeContextWithCaret
+from codemanip.code_position import CodeContextWithCaret, CodePosition
 
-from srcmlcpp.internal import srcml_caller, srcml_utils, code_cache
+from srcmlcpp.internal import code_cache, srcml_caller, srcml_utils
 from srcmlcpp.srcml_options import SrcmlOptions
 
 

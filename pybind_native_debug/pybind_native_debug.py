@@ -2,9 +2,11 @@
 import os
 import sys
 
+import demodocking  # type:ignore
+
+
 # import play_implot  # type: ignore
 # import play_himgui  # type: ignore
-import demodocking  # type:ignore
 
 
 THIS_DIR = os.path.dirname(__file__)

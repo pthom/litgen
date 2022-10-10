@@ -3,8 +3,8 @@ from typing import Union, cast
 
 from codemanip.parse_progress_bar import global_progress_bars
 
-from srcmlcpp.srcml_exception import SrcmlException
 from srcmlcpp.cpp_types import *
+from srcmlcpp.srcml_exception import SrcmlException
 
 from litgen.internal.adapted_types.adapted_class import AdaptedClass
 from litgen.internal.adapted_types.adapted_comment import (

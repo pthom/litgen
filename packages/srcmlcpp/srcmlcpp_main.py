@@ -10,9 +10,15 @@ from typing import Type, cast
 
 from codemanip.parse_progress_bar import global_progress_bars
 
-from srcmlcpp.internal import srcml_caller, srcml_comments, srcml_types_parse, code_cache
-from srcmlcpp.srcml_exception import SrcmlException
 from srcmlcpp.cpp_types import *
+from srcmlcpp.internal import (
+    code_cache,
+    srcml_caller,
+    srcml_comments,
+    srcml_types_parse,
+)
+from srcmlcpp.srcml_exception import SrcmlException
+from srcmlcpp.srcml_options import SrcmlOptions
 
 
 def _code_or_file_content(options: SrcmlOptions, code: Optional[str] = None, filename: Optional[str] = None) -> str:

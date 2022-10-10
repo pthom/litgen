@@ -1,9 +1,10 @@
 from codemanip.code_position import CodePosition
 
 import srcmlcpp.srcmlcpp_main
-from srcmlcpp.srcml_exception import SrcmlException
-from srcmlcpp.internal.srcml_exception_detailed import SrcmlExceptionDetailed
 from srcmlcpp.cpp_types import *
+from srcmlcpp.internal.srcml_exception_detailed import SrcmlExceptionDetailed
+from srcmlcpp.srcml_exception import SrcmlException
+from srcmlcpp.srcml_options import SrcmlOptions
 from srcmlcpp.srcmlcpp_main import code_to_srcml_xml_wrapper
 
 

@@ -1,6 +1,5 @@
-import pytest
-
 import lg_mylib
+import pytest
 
 
 def test_functions():

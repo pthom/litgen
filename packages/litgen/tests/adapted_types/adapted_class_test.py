@@ -6,6 +6,8 @@ from litgen.options import LitgenOptions
 
 
 def log_code(code: str) -> None:
+    import logging
+
     logging.warning(f"\n>>>{code}<<<")
 
 

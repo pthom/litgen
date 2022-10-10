@@ -3,8 +3,8 @@ from typing import Tuple, Union, cast
 
 import munch  # type: ignore
 
-from srcmlcpp.srcml_exception import SrcmlException
 from srcmlcpp.cpp_types import *
+from srcmlcpp.srcml_exception import SrcmlException
 
 from litgen import TemplateNamingScheme
 from litgen.internal import cpp_to_python

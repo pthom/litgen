@@ -1,13 +1,13 @@
-from typing import Tuple
-import traceback
 import inspect
 import logging
 import sys
+import traceback
+from typing import Tuple
 
 from codemanip import code_utils
 
-from srcmlcpp.srcml_options import SrcmlOptions
 from srcmlcpp.srcml_exception import SrcmlException
+from srcmlcpp.srcml_options import SrcmlOptions
 from srcmlcpp.srcml_wrapper import SrcmlWrapper
 
 
