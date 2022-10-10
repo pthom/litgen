@@ -1,4 +1,4 @@
-"""SrcmlXmlWrapper is a wrapper around the nodes in the xml tree produced by srcml"""
+"""SrcmlWrapper is a wrapper around the nodes in the xml tree produced by srcml"""
 
 from __future__ import annotations
 import copy
@@ -14,12 +14,12 @@ from codemanip import code_utils
 from codemanip.code_position import CodePosition
 
 from srcmlcpp.internal import srcml_caller, srcml_utils
-from srcmlcpp.srcml_exception import SrcMlException
+from srcmlcpp.srcml_exception import SrcmlException
 from srcmlcpp.srcml_options import SrcmlOptions
 
 
-class SrcMlExceptionDetailed(SrcMlException):
-    def __init__(self, current_element: SrcmlXmlWrapper, additional_message: str) -> None:
+class SrcmlExceptionDetailed(SrcmlException):
+    def __init__(self, current_element: SrcmlWrapper, additional_message: str) -> None:
         message = current_element._format_message(additional_message)
         super().__init__(message)
 
@@ -83,7 +83,7 @@ class _CodeContextWithCaret:
         return msg
 
 
-class SrcmlXmlWrapper:
+class SrcmlWrapper:
     """A wrapper around the nodes in the xml tree produced by srcml"""
 
     # Misc options: in this class, we only use the encoding
@@ -94,7 +94,7 @@ class SrcmlXmlWrapper:
     filename: Optional[str] = None
 
     # members that are always copied as shallow members (this is intentionally a static list)
-    SrcmlXmlWrapper__deep_copy_force_shallow_ = ["options", "srcml_xml"]
+    SrcmlWrapper__deep_copy_force_shallow_ = ["options", "srcml_xml"]
 
     def __init__(self, options: SrcmlOptions, srcml_xml: ET.Element, filename: Optional[str]) -> None:
         """Create a wrapper from a xml sub node
@@ -115,7 +115,7 @@ class SrcmlXmlWrapper:
         self.filename = filename
 
     def __deepcopy__(self, memo=None):
-        """SrcmlXmlWrapper.__deepcopy__: force shallow copy of SrcmlOptions and srcml_xml (ET.Element)
+        """SrcmlWrapper.__deepcopy__: force shallow copy of SrcmlOptions and srcml_xml (ET.Element)
         This improves the performance a lot.
         Reason:
         - options are global during parsing
@@ -131,7 +131,7 @@ class SrcmlXmlWrapper:
         result = cls.__new__(cls)
         memo[id(self)] = result
         for k, v in self.__dict__.items():
-            if k not in SrcmlXmlWrapper.SrcmlXmlWrapper__deep_copy_force_shallow_:
+            if k not in SrcmlWrapper.SrcmlWrapper__deep_copy_force_shallow_:
                 setattr(result, k, copy.deepcopy(v, memo))
             else:
                 setattr(result, k, v)
@@ -219,14 +219,14 @@ class SrcmlXmlWrapper:
         """Save to file as xml"""
         srcml_utils.srcml_write_to_file(self.options.encoding, self.srcml_xml, filename)
 
-    def make_wrapped_children(self) -> List[SrcmlXmlWrapper]:
+    def make_wrapped_children(self) -> List[SrcmlWrapper]:
         """Extract the xml sub nodes and wraps them"""
         r = []
         for child_xml in self.srcml_xml:
-            r.append(SrcmlXmlWrapper(self.options, child_xml, self.filename))
+            r.append(SrcmlWrapper(self.options, child_xml, self.filename))
         return r
 
-    def wrapped_children_with_tag(self, tag: str) -> List[SrcmlXmlWrapper]:
+    def wrapped_children_with_tag(self, tag: str) -> List[SrcmlWrapper]:
         """Extract the xml sub nodes and wraps them"""
         children = self.make_wrapped_children()
 
@@ -244,7 +244,7 @@ class SrcmlXmlWrapper:
     def raise_exception(self, message: str) -> None:
         """raises a SrcmlException which will display the message with a context
         that gives the location of this element in the code"""
-        raise SrcMlExceptionDetailed(self, message)
+        raise SrcmlExceptionDetailed(self, message)
 
     def emit_warning(self, message: str) -> None:
         """emits a warning which will display the message with a context
@@ -341,4 +341,4 @@ class SrcmlXmlWrapper:
 # This defines the type of function that will visit all the children
 # * first parameter: current child
 # * second parameter: depth
-SrcmlXmVisitorFunction = Callable[[SrcmlXmlWrapper, int], None]
+SrcmlXmVisitorFunction = Callable[[SrcmlWrapper, int], None]

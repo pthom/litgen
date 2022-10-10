@@ -3,7 +3,7 @@ from typing import Tuple, Union, cast
 
 import munch  # type: ignore
 
-from srcmlcpp.srcml_exception import SrcMlException
+from srcmlcpp.srcml_exception import SrcmlException
 from srcmlcpp.srcml_types import *
 
 from litgen import TemplateNamingScheme
@@ -327,7 +327,7 @@ class AdaptedClass(AdaptedElement):
                     child.emit_warning(
                         f"Public elements of type {child.tag()} are not supported in python conversion",
                     )
-            except SrcMlException as e:
+            except SrcmlException as e:
                 child.emit_warning(str(e))
 
     def _str_parent_classes(self) -> str:
@@ -411,7 +411,7 @@ class AdaptedClass(AdaptedElement):
             if scope_part.scope_type == CppScopeType.Namespace:
                 intro += f"namespace {scope_part.scope_name} {{ "
             else:
-                raise SrcMlException("Bad scope for protected member")
+                raise SrcmlException("Bad scope for protected member")
 
         for scope_part in reversed(scope.scope_parts):
             if scope_part.scope_type == CppScopeType.Namespace:

@@ -11,7 +11,7 @@ from typing import Type, cast
 from codemanip.parse_progress_bar import global_progress_bars
 
 from srcmlcpp.internal import srcml_caller, srcml_comments, srcml_types_parse
-from srcmlcpp.srcml_exception import SrcMlException
+from srcmlcpp.srcml_exception import SrcmlException
 from srcmlcpp.srcml_types import *
 
 
@@ -40,8 +40,8 @@ def _code_or_file_content(options: SrcmlOptions, code: Optional[str] = None, fil
 
 def code_to_srcml_xml_wrapper(
     options: SrcmlOptions, code: Optional[str] = None, filename: Optional[str] = None
-) -> SrcmlXmlWrapper:
-    """Create a srcML tree from c++ code, and wraps it into a SrcmlXmlWrapper
+) -> SrcmlWrapper:
+    """Create a srcML tree from c++ code, and wraps it into a SrcmlWrapper
 
     Note:
         * if `cpp_code` is not empty, the code will be taken from it.
@@ -62,7 +62,7 @@ def code_to_srcml_xml_wrapper(
 
     xml = srcml_caller.code_to_srcml(code, dump_positions=options.flag_srcml_dump_positions, encoding=options.encoding)
 
-    r = SrcmlXmlWrapper(options, xml, filename)
+    r = SrcmlWrapper(options, xml, filename)
     return r
 
 
@@ -103,7 +103,7 @@ def code_first_child_of_type(
     for child in cpp_unit.block_children:
         if isinstance(child, type_of_cpp_element):
             return child
-    raise SrcMlException(f"Could not find a child of type {type_of_cpp_element}")
+    raise SrcmlException(f"Could not find a child of type {type_of_cpp_element}")
 
 
 def code_first_function_decl(options: SrcmlOptions, code: str) -> CppFunctionDecl:

@@ -3,7 +3,7 @@ from typing import List, Optional
 
 from codemanip import code_utils
 
-from srcmlcpp import SrcMlException
+from srcmlcpp import SrcmlException
 from srcmlcpp.srcml_types import CppFunctionDecl, CppParameter
 
 from litgen.internal import cpp_to_python
@@ -68,7 +68,7 @@ class _AdaptBuffersHelper:
                 if self._is_stride_param(idx_param):
                     nb_strides += 1
             if nb_strides > 1:
-                raise SrcMlException("More than one stride param found!")
+                raise SrcmlException("More than one stride param found!")
 
         if self.has_template_buffer_param() and self.shall_adapt():
             self.adapted_function.has_adapted_template_buffer = True
@@ -366,7 +366,7 @@ class _AdaptBuffersHelper:
     def _pyarray_count(self, idx_param: int) -> str:
         last_idx_buffer_param = self._last_idx_buffer_param_before(idx_param)
         if last_idx_buffer_param is None:
-            raise SrcMlException("No previous buffer param!")
+            raise SrcmlException("No previous buffer param!")
         return f"{self._param_name(last_idx_buffer_param)}_count"
 
     def _const_space_or_empty(self, idx_param: int) -> str:

@@ -1,7 +1,7 @@
 from codemanip.code_position import CodePosition
 
 import srcmlcpp.srcmlcpp_main
-from srcmlcpp import SrcMlException, SrcMlExceptionDetailed
+from srcmlcpp import SrcmlException, SrcmlExceptionDetailed
 from srcmlcpp.srcml_types import *
 from srcmlcpp.srcmlcpp_main import code_to_srcml_xml_wrapper
 
@@ -80,8 +80,8 @@ def test_warnings():
 
     got_exception = False
     try:
-        raise SrcMlExceptionDetailed(decl, "Artificial exception")
-    except SrcMlException as e:
+        raise SrcmlExceptionDetailed(decl, "Artificial exception")
+    except SrcmlException as e:
         got_exception = True
         msg = str(e)
         for part in [
@@ -140,7 +140,7 @@ def test_visitor():
 
     visit_recap = ""
 
-    def my_visitor(element: SrcmlXmlWrapper, depth: int) -> None:
+    def my_visitor(element: SrcmlWrapper, depth: int) -> None:
         nonlocal visit_recap
         if element.has_name():
             name = element.name_code()

@@ -14,7 +14,7 @@ from codemanip import code_utils
 from srcmlcpp.filter_preprocessor_regions import filter_preprocessor_regions
 from srcmlcpp.internal import srcml_utils
 from srcmlcpp.srcml_types import CppElementAndComment, CppElementComments
-from srcmlcpp.srcml_xml_wrapper import SrcmlXmlWrapper
+from srcmlcpp.srcml_wrapper import SrcmlWrapper
 
 
 COMMENT_NEW_LINE_TOKEN = "_SRCML_LINEFEED_"
@@ -118,13 +118,13 @@ def mark_empty_lines(code: str) -> str:
     return result
 
 
-def _group_consecutive_comments(srcml_code: SrcmlXmlWrapper) -> SrcmlXmlWrapper:
+def _group_consecutive_comments(srcml_code: SrcmlWrapper) -> SrcmlWrapper:
     # srcml_xml_grouped will contain an xml node in which we group the comments
     # we will need to create a wrapper around it before returning
     srcml_xml_grouped = ET.Element(srcml_code.srcml_xml.tag)
 
-    previous_previous_child: Optional[SrcmlXmlWrapper] = None
-    previous_child: Optional[SrcmlXmlWrapper] = None
+    previous_previous_child: Optional[SrcmlWrapper] = None
+    previous_child: Optional[SrcmlWrapper] = None
 
     for child in srcml_code.make_wrapped_children():
 
@@ -132,7 +132,7 @@ def _group_consecutive_comments(srcml_code: SrcmlXmlWrapper) -> SrcmlXmlWrapper:
             nonlocal previous_child, previous_previous_child
 
             # In this low level case, we need to manually clone child.srcml_xml,
-            # since SrcmlXmlWrapper.__deepcopy__() forces a shallow copy of srcml_xml
+            # since SrcmlWrapper.__deepcopy__() forces a shallow copy of srcml_xml
             child_copy = copy.copy(child)
             child_copy.srcml_xml = copy.deepcopy(child.srcml_xml)
 
@@ -196,11 +196,11 @@ def _group_consecutive_comments(srcml_code: SrcmlXmlWrapper) -> SrcmlXmlWrapper:
     for child_r in srcml_xml_grouped:
         children_r.append(child_r)
 
-    r = SrcmlXmlWrapper(srcml_code.options, srcml_xml_grouped, srcml_code.filename)
+    r = SrcmlWrapper(srcml_code.options, srcml_xml_grouped, srcml_code.filename)
     return r
 
 
-def _is_comment_end_of_line(children: List[SrcmlXmlWrapper], idx: int) -> bool:
+def _is_comment_end_of_line(children: List[SrcmlWrapper], idx: int) -> bool:
     if not 0 <= idx < len(children):
         return False
     if idx == 0:
@@ -222,7 +222,7 @@ def _is_comment_end_of_line(children: List[SrcmlXmlWrapper], idx: int) -> bool:
     return False
 
 
-def _is_comment_on_previous_line(children: List[SrcmlXmlWrapper], idx: int) -> bool:
+def _is_comment_on_previous_line(children: List[SrcmlWrapper], idx: int) -> bool:
     if not 0 <= idx < len(children):
         return False
     if idx == len(children) - 1:
@@ -322,11 +322,11 @@ IsCStyleComment = bool
 
 
 def _group_comments(
-    srcml_code: SrcmlXmlWrapper,
-) -> List[SrcmlXmlWrapper]:
-    srcml_code_grouped: SrcmlXmlWrapper = _group_consecutive_comments(srcml_code)
+    srcml_code: SrcmlWrapper,
+) -> List[SrcmlWrapper]:
+    srcml_code_grouped: SrcmlWrapper = _group_consecutive_comments(srcml_code)
 
-    children_comments_grouped: List[SrcmlXmlWrapper] = []
+    children_comments_grouped: List[SrcmlWrapper] = []
 
     for element in srcml_code_grouped.make_wrapped_children():
         children_comments_grouped.append(element)
@@ -334,7 +334,7 @@ def _group_comments(
     return children_comments_grouped
 
 
-def get_children_with_comments(element: SrcmlXmlWrapper) -> List[CppElementAndComment]:
+def get_children_with_comments(element: SrcmlWrapper) -> List[CppElementAndComment]:
     if element.options.header_filter_preprocessor_regions:
         element.srcml_xml = filter_preprocessor_regions(
             element.srcml_xml, element.options.header_filter_acceptable_suffixes_list()

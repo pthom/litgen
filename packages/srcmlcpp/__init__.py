@@ -13,10 +13,10 @@ from srcmlcpp.srcml_options import SrcmlOptions
 from srcmlcpp.srcml_types import *
 
 # Exceptions produced by this module
-from srcmlcpp.srcml_xml_wrapper import SrcMlException, SrcMlExceptionDetailed
+from srcmlcpp.srcml_wrapper import SrcmlException, SrcmlExceptionDetailed
 
 # A wrapper around the nodes of the xml tree produced by srcml
-from srcmlcpp.srcml_xml_wrapper import SrcmlXmlWrapper
+from srcmlcpp.srcml_wrapper import SrcmlWrapper
 
 #
 # 2. Main functions provided by this module

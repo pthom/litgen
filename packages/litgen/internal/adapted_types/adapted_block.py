@@ -3,7 +3,7 @@ from typing import Union, cast
 
 from codemanip.parse_progress_bar import global_progress_bars
 
-from srcmlcpp.srcml_exception import SrcMlException
+from srcmlcpp.srcml_exception import SrcmlException
 from srcmlcpp.srcml_types import *
 
 from litgen.internal.adapted_types.adapted_class import AdaptedClass
@@ -79,7 +79,7 @@ class AdaptedBlock(AdaptedElement):
                         self.adapted_elements.append(AdaptedNamespace(self.lg_context, child))  # type: ignore
                 elif isinstance(child, CppDeclStatement):
                     child.emit_warning(f"Block elements of type {child.tag()} are not supported in python conversion")
-            except SrcMlException as e:
+            except SrcmlException as e:
                 child.emit_warning(str(e))
 
     # override
