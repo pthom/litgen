@@ -1,14 +1,18 @@
 from dataclasses import dataclass
 
-from srcmlcpp.cpp_types.cpp_element import (
-    CppElementAndComment,
-    CppElementComments,
-)
+from srcmlcpp.cpp_types.base import *
 from srcmlcpp.srcml_wrapper import SrcmlWrapper
+
+
+__all__ = ["CppEmptyLine", "CppUnprocessed", "CppComment"]
 
 
 @dataclass
 class CppEmptyLine(CppElementAndComment):
+    """Describe an empty line. This is not part of srcML, and was added in srcmlcpp
+    in order to better keep track of function and classes comments.
+    """
+
     def __init__(self, element: SrcmlWrapper) -> None:
         dummy_comments = CppElementComments()
         super().__init__(element, dummy_comments)
@@ -43,8 +47,7 @@ class CppUnprocessed(CppElementAndComment):
 
 @dataclass
 class CppComment(CppElementAndComment):
-    """
-    https://www.srcml.org/doc/cpp_srcML.html#comment
+    """https://www.srcml.org/doc/cpp_srcML.html#comment
     Warning, the text contains "//" or "/* ... */" and "\n"
     """
 

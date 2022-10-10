@@ -1,8 +1,9 @@
 import os
 import sys
 
+from codemanip import code_utils
+
 from srcmlcpp import srcmlcpp_main
-from srcmlcpp.cpp_types import *
 
 import litgen
 from litgen.internal.adapted_types import AdaptedFunction, LitgenContext

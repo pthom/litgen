@@ -2,14 +2,13 @@ from dataclasses import dataclass
 
 from codemanip import code_utils
 
-from srcmlcpp.cpp_types.cpp_blocks import CppBlock
-from srcmlcpp.cpp_types.cpp_element import (
-    CppElementAndComment,
-    CppElementComments,
-    CppElementsVisitorEvent,
-    CppElementsVisitorFunction,
-)
+from srcmlcpp.cpp_types.base import *
+from srcmlcpp.cpp_types.base.cpp_element_comments import CppElementComments
+from srcmlcpp.cpp_types.blocks.cpp_block import CppBlock
 from srcmlcpp.srcml_wrapper import SrcmlWrapper
+
+
+__all__ = ["CppNamespace"]
 
 
 @dataclass

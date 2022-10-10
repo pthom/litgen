@@ -6,10 +6,13 @@ The main interface of this module is:
 
 All the other functions can be considered private to this module.
 """
+from typing import List, Optional
 from xml.etree import ElementTree as ET
 
+from codemanip import code_utils
 from codemanip.parse_progress_bar import global_progress_bars
 
+from srcmlcpp import SrcmlWrapper
 from srcmlcpp.cpp_types import *
 from srcmlcpp.internal import srcml_caller, srcml_comments, srcml_utils
 from srcmlcpp.internal.srcml_exception_detailed import (

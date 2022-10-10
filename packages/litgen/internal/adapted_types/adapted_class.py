@@ -1,8 +1,12 @@
 from __future__ import annotations
-from typing import Tuple, Union, cast
+from dataclasses import dataclass
+from typing import List, Optional, Tuple, Union, cast
 
 import munch  # type: ignore
 
+from codemanip import code_utils
+
+from srcmlcpp.cpp_scope import CppScopeType
 from srcmlcpp.cpp_types import *
 from srcmlcpp.srcml_exception import SrcmlException
 

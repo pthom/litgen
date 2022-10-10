@@ -3,79 +3,21 @@ import copy
 from dataclasses import dataclass
 from typing import List, Optional, Tuple
 
-from codemanip import code_utils
-
-from srcmlcpp.cpp_types.access_types import AccessTypes
-from srcmlcpp.cpp_types.cpp_blocks import (
+from srcmlcpp.srcml_wrapper import SrcmlWrapper
+from srcmlcpp.cpp_types.base import *
+from srcmlcpp.cpp_types.blocks import (
     CppBlock,
     CppPublicProtectedPrivate,
     CppUnit,
 )
 from srcmlcpp.cpp_types.cpp_decl import CppDecl, CppDeclStatement
-from srcmlcpp.cpp_types.cpp_element import (
-    CppElement,
-    CppElementAndComment,
-    CppElementComments,
-    CppElementsVisitorEvent,
-    CppElementsVisitorFunction,
-)
-from srcmlcpp.cpp_types.cpp_function import CppConstructorDecl, CppFunctionDecl
-from srcmlcpp.cpp_types.cpp_template import (
-    ICppTemplateHost,
-    TemplateSpecialization,
-)
-from srcmlcpp.srcml_wrapper import SrcmlWrapper
+from srcmlcpp.cpp_types.functions import CppConstructorDecl, CppFunctionDecl
+from srcmlcpp.cpp_types.template.template_specialization import TemplateSpecialization
+from srcmlcpp.cpp_types.template.icpp_template_host import ICppTemplateHost
+from srcmlcpp.cpp_types.classes.cpp_super_list import CppSuperList
 
 
-@dataclass
-class CppSuper(CppElement):
-    """
-    Define a super classes of a struct or class
-    https://www.srcml.org/doc/cpp_srcML.html#struct-definition
-    """
-
-    specifier: str = ""  # public, private or protected inheritance
-    superclass_name: str = ""  # name of the super class
-
-    def __init__(self, element: SrcmlWrapper):
-        super().__init__(element)
-
-    def str_code(self) -> str:
-        if len(self.specifier) > 0:
-            return f"{self.specifier} {self.superclass_name}"
-        else:
-            return self.superclass_name
-
-    def __str__(self) -> str:
-        return self.str_code()
-
-
-@dataclass
-class CppSuperList(CppElement):
-    """
-    Define a list of super classes of a struct or class
-    https://www.srcml.org/doc/cpp_srcML.html#struct-definition
-    """
-
-    super_list: List[CppSuper]
-
-    def __init__(self, element: SrcmlWrapper):
-        super().__init__(element)
-        self.super_list: List[CppSuper] = []
-
-    def str_code(self) -> str:
-        strs = list(map(str, self.super_list))
-        return " : " + code_utils.join_remove_empty(", ", strs)
-
-    def __str__(self) -> str:
-        return self.str_code()
-
-    def visit_cpp_breadth_first(self, cpp_visitor_function: CppElementsVisitorFunction, depth: int = 0) -> None:
-        cpp_visitor_function(self, CppElementsVisitorEvent.OnElement, depth)
-        cpp_visitor_function(self, CppElementsVisitorEvent.OnBeforeChildren, depth)
-        for super_class in self.super_list:
-            super_class.visit_cpp_breadth_first(cpp_visitor_function, depth + 1)
-        cpp_visitor_function(self, CppElementsVisitorEvent.OnAfterChildren, depth)
+__all__ = ["CppStruct"]
 
 
 @dataclass
@@ -96,6 +38,8 @@ class CppStruct(CppElementAndComment, ICppTemplateHost):
         self.specifier = ""
 
     def str_code(self) -> str:
+        from srcmlcpp.cpp_types.classes.cpp_class import CppClass
+
         r = ""
         r += self.str_template()
 
@@ -333,16 +277,3 @@ class CppStruct(CppElementAndComment, ICppTemplateHost):
         if hasattr(self, "template"):
             self.template.visit_cpp_breadth_first(cpp_visitor_function, depth + 1)
         cpp_visitor_function(self, CppElementsVisitorEvent.OnAfterChildren, depth)
-
-
-@dataclass
-class CppClass(CppStruct):
-    """
-    https://www.srcml.org/doc/cpp_srcML.html#class-definition
-    """
-
-    def __init__(self, element: SrcmlWrapper, cpp_element_comments: CppElementComments):
-        super().__init__(element, cpp_element_comments)
-
-    def __str__(self) -> str:
-        return self.str_commented()

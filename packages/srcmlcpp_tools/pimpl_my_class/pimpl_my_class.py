@@ -1,5 +1,6 @@
+import copy
 from dataclasses import dataclass
-from typing import Optional
+from typing import List, Optional
 from xml.etree import ElementTree as ET  # noqa
 
 from munch import Munch  # type: ignore

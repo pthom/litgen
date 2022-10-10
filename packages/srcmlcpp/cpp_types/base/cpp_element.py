@@ -1,11 +1,13 @@
 from __future__ import annotations
 import copy
-from dataclasses import dataclass
-from enum import Enum
-from typing import Callable, List, Optional
+from typing import List, Optional
 
+from srcmlcpp.cpp_types.base.cpp_element_visitor import CppElementsVisitorFunction, CppElementsVisitorEvent
 from srcmlcpp.cpp_scope import CppScope, CppScopePart, CppScopeType
 from srcmlcpp.srcml_wrapper import SrcmlWrapper
+
+
+__all__ = ["CppElement"]
 
 
 class CppElement(SrcmlWrapper):
@@ -92,7 +94,7 @@ class CppElement(SrcmlWrapper):
             }
         }
         """
-        from srcmlcpp.cpp_types.cpp_class import CppStruct
+        from srcmlcpp.cpp_types.classes.cpp_struct import CppStruct
         from srcmlcpp.cpp_types.cpp_namespace import CppNamespace
         from srcmlcpp.cpp_types.cpp_enum import CppEnum
 
@@ -139,128 +141,3 @@ class CppElement(SrcmlWrapper):
 
     def __str__(self) -> str:
         return self._str_simplified_yaml()
-
-
-@dataclass
-class CppElementAndComment(CppElement):
-    """A CppElement to which we add comments"""
-
-    cpp_element_comments: CppElementComments
-
-    def __init__(self, element: SrcmlWrapper, cpp_element_comments: CppElementComments) -> None:
-        super().__init__(element)
-        self.cpp_element_comments = cpp_element_comments
-
-    def str_commented(self, is_enum: bool = False, is_decl_stmt: bool = False) -> str:
-        result = self.cpp_element_comments.top_comment_code()
-        result += self.str_code()
-        if is_enum:
-            result += ","
-        if is_decl_stmt:
-            result += ";"
-        result += self.cpp_element_comments.eol_comment_code()
-        return result
-
-    def __str__(self) -> str:
-        return self.str_commented()
-
-
-@dataclass
-class CppElementComments:
-    """Gathers the C++ comments about functions, declarations, etc. : each CppElement can store
-     comment on previous lines, and a single line comment next to its declaration.
-
-    Lonely comments are stored as `CppComment`
-
-     Example:
-         `````cpp
-         /*
-         A multiline C comment
-         about Foo1
-         */
-         void Foo1();
-
-         // First line of comment on Foo2()
-         // Second line of comment on Foo2()
-         void Foo2();
-
-         // A lonely comment
-
-         //
-         // Another lonely comment, on two lines
-         // which ends on this second line, but has surrounding empty lines
-         //
-
-         // A comment on top of Foo3() & Foo4(), which should be kept as a standalone comment
-         // since Foo3 and Foo4 have eol comments
-         Void Foo3(); // Comment on end of line for Foo3()
-         Void Foo4(); // Comment on end of line for Foo4()
-         // A comment that shall not be grouped to the previous (which was an EOL comment for Foo4())
-         ````
-    """
-
-    comment_on_previous_lines: str
-    comment_end_of_line: str
-    is_c_style_comment: bool  # Will be True if comment_on_previous_lines was a /* */ comment
-
-    def __init__(self) -> None:
-        self.comment_on_previous_lines = ""
-        self.comment_end_of_line = ""
-        self.is_c_style_comment = False
-
-    def comment(self) -> str:
-        if len(self.comment_on_previous_lines) > 0 and len(self.comment_end_of_line) > 0:
-            return self.comment_on_previous_lines + "\n" + self.comment_end_of_line
-        else:
-            return self.comment_on_previous_lines + self.comment_end_of_line
-
-    def top_comment_code(self, add_eol: bool = True, preserve_c_style_comment: bool = True) -> str:
-
-        if preserve_c_style_comment and self.is_c_style_comment:
-            r = "/*" + self.comment_on_previous_lines + "*/"
-            return r
-
-        top_comments = map(lambda comment: "//" + comment, self.comment_on_previous_lines.splitlines())
-        top_comment = "\n".join(top_comments)
-        if add_eol:
-            if len(top_comment) > 0:
-                if not top_comment.endswith("\n"):
-                    top_comment += "\n"
-        else:
-            while top_comment.endswith("\n"):
-                top_comment = top_comment[:-1]
-        return top_comment
-
-    def eol_comment_code(self) -> str:
-        if len(self.comment_end_of_line) == 0:
-            return ""
-        else:
-            if self.comment_end_of_line.startswith("//"):
-                return self.comment_end_of_line
-            else:
-                return " //" + self.comment_end_of_line
-
-    def add_eol_comment(self, comment: str) -> None:
-        if len(self.comment_end_of_line) == 0:
-            self.comment_end_of_line = comment
-        else:
-            self.comment_end_of_line += " - " + comment
-
-    def full_comment(self) -> str:
-        if len(self.comment_on_previous_lines) > 0 and len(self.comment_end_of_line) > 0:
-            return self.comment_on_previous_lines + "\n\n" + self.comment_end_of_line
-        else:
-            return self.comment_on_previous_lines + self.comment_end_of_line
-
-
-class CppElementsVisitorEvent(Enum):
-    OnElement = 1  # We are visiting this element (will be raised for all elements, incl Blocks)
-    OnBeforeChildren = 2  # We are about to visit a block's children
-    OnAfterChildren = 3  # We finished visiting a block's children
-
-
-# This defines the type of function that will visit all the Cpp Elements
-# - First param: element being visited. A same element can be visited up to three times with different events
-# - Second param: event (see CppElementsVisitorEvent doc)
-# - Third param: depth in the source tree
-CppElementsVisitorFunction = Callable[[CppElement, CppElementsVisitorEvent, int], None]

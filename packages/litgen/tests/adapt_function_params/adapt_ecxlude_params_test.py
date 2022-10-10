@@ -1,4 +1,4 @@
-from srcmlcpp.cpp_types import *
+from codemanip import code_utils
 
 import litgen
 

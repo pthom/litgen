@@ -2,19 +2,14 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import List, Optional, cast
 
-from codemanip import code_utils
-
 from srcmlcpp.cpp_scope import CppScope
-from srcmlcpp.cpp_types.cpp_class import CppStruct
-from srcmlcpp.cpp_types.cpp_element import (
-    CppElement,
-    CppElementAndComment,
-    CppElementComments,
-    CppElementsVisitorEvent,
-    CppElementsVisitorFunction,
-)
-from srcmlcpp.cpp_types.cpp_function import CppFunctionDecl
+from srcmlcpp.cpp_types.base import *
+from srcmlcpp.cpp_types.classes.cpp_struct import CppStruct
+from srcmlcpp.cpp_types.functions.cpp_function import CppFunctionDecl
 from srcmlcpp.srcml_wrapper import SrcmlWrapper
+
+
+__all__ = ["CppBlock"]
 
 
 @dataclass
@@ -174,80 +169,3 @@ class CppBlock(CppElementAndComment):
 
     def __str__(self) -> str:
         return self.str_block()
-
-
-@dataclass
-class CppUnit(CppBlock):
-    """A kind of block representing a full file."""
-
-    def __init__(self, element: SrcmlWrapper) -> None:
-        super().__init__(element)
-
-    def __str__(self) -> str:
-        return self.str_block()
-
-    @staticmethod
-    def find_root_cpp_unit(element: CppElement) -> CppUnit:
-        assert hasattr(element, "parent")  # parent should have been filled by parse_unit & CppBlock
-
-        current = element
-        while True:
-            root = current
-            if current.parent is None:
-                break
-            current = current.parent
-
-        assert isinstance(root, CppUnit)
-        return root
-
-
-@dataclass
-class CppBlockContent(CppBlock):
-    """A kind of block used by function and anonymous blocks, where the code is inside <block><block_content>
-    This can be viewed as a sub-block with a different name
-    """
-
-    def __init__(self, element: SrcmlWrapper):
-        super().__init__(element)
-
-    def __str__(self) -> str:
-        return self.str_block()
-
-
-@dataclass
-class CppPublicProtectedPrivate(CppBlock):  # Also a CppElementAndComment
-    """A kind of block defined by a public/protected/private zone in a struct or in a class
-
-    See https://www.srcml.org/doc/cpp_srcML.html#public-access-specifier
-    Note: this is not a direct adaptation. Here we merge the different access types, and we derive from CppBlockContent
-    """
-
-    access_type: str = ""  # "public", "private", or "protected"
-    default_or_explicit: str = ""  # "default" or "" ("default" means it was added automatically)
-
-    def __init__(self, element: SrcmlWrapper, access_type: str, default_or_explicit: Optional[str]) -> None:
-        super().__init__(element)
-        assert default_or_explicit in [None, "", "default"]
-        assert access_type in ["public", "protected", "private"]
-        self.access_type = access_type
-        self.default_or_explicit = default_or_explicit if default_or_explicit is not None else ""
-
-    def str_public_protected_private(self) -> str:
-        r = ""
-
-        r += f"{self.access_type}" + ":"
-        if self.default_or_explicit == "default":
-            r += "// <default_access_type/>"
-        r += "\n"
-
-        r += code_utils.indent_code(self.str_block(), indent_str=self.options.indent_cpp_str)
-        return r
-
-    def str_code(self) -> str:
-        return self.str_public_protected_private()
-
-    def str_commented(self, is_enum: bool = False, is_decl_stmt: bool = False) -> str:  # noqa
-        return self.str_code()
-
-    def __str__(self) -> str:
-        return self.str_public_protected_private()

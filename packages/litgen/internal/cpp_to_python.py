@@ -1,9 +1,13 @@
 import keyword
 from dataclasses import dataclass  # noqa
+from typing import List, Optional
 
+from codemanip import code_utils
 from codemanip.code_replacements import RegexReplacementList
 
+from srcmlcpp.cpp_scope import CppScope, CppScopePart, CppScopeType
 from srcmlcpp.cpp_types import *
+from srcmlcpp.cpp_types.template.icpp_template_host import ICppTemplateHost
 
 from litgen import LitgenOptions
 from litgen.internal import LitgenContext

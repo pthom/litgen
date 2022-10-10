@@ -1,5 +1,8 @@
+from typing import Optional
+
+from codemanip import code_utils
+
 from srcmlcpp import srcmlcpp_main
-from srcmlcpp.cpp_types import *
 
 import litgen
 from litgen import LitgenOptions

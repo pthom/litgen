@@ -5,9 +5,12 @@ from typing import List, Optional
 
 from codemanip import code_utils
 
-from srcmlcpp.cpp_types.cpp_element import CppElement
-from srcmlcpp.cpp_types.cpp_template import TemplateSpecialization
+from srcmlcpp.cpp_types.base import *
+from srcmlcpp.cpp_types.template.template_specialization import TemplateSpecialization
 from srcmlcpp.srcml_wrapper import SrcmlWrapper
+
+
+__all__ = ["CppType"]
 
 
 @dataclass

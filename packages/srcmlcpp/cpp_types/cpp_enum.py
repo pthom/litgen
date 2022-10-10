@@ -4,15 +4,13 @@ from typing import List, Optional
 
 from codemanip import code_utils
 
-from srcmlcpp.cpp_types.cpp_blocks import CppBlock
+from srcmlcpp.cpp_types.base import *
+from srcmlcpp.cpp_types.blocks.cpp_block import CppBlock
 from srcmlcpp.cpp_types.cpp_decl import CppDecl
-from srcmlcpp.cpp_types.cpp_element import (
-    CppElementAndComment,
-    CppElementComments,
-    CppElementsVisitorEvent,
-    CppElementsVisitorFunction,
-)
 from srcmlcpp.srcml_wrapper import SrcmlWrapper
+
+
+__all__ = ["CppEnum"]
 
 
 @dataclass

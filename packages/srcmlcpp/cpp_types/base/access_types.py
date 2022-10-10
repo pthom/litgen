@@ -2,6 +2,9 @@ from __future__ import annotations
 from enum import Enum
 
 
+__all__ = ["AccessTypes"]
+
+
 class AccessTypes(Enum):
     public = "public"
     protected = "protected"

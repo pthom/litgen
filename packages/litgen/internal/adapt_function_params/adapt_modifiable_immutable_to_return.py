@@ -3,6 +3,8 @@ from typing import List, Optional, Tuple
 
 from munch import Munch  # type: ignore
 
+from codemanip import code_utils
+
 from srcmlcpp.cpp_types import *
 
 from litgen.internal.adapt_function_params._lambda_adapter import LambdaAdapter

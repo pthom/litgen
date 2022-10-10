@@ -1,15 +1,12 @@
 from dataclasses import dataclass
 from typing import List
 
+from srcmlcpp.cpp_types.base import *
 from srcmlcpp.cpp_types.cpp_decl import CppDecl
-from srcmlcpp.cpp_types.cpp_element import (
-    CppElement,
-    CppElementAndComment,
-    CppElementComments,
-    CppElementsVisitorEvent,
-    CppElementsVisitorFunction,
-)
 from srcmlcpp.srcml_wrapper import SrcmlWrapper
+
+
+__all__ = ["CppParameter", "CppParameterList"]
 
 
 @dataclass

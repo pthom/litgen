@@ -3,22 +3,17 @@ import copy
 from dataclasses import dataclass
 from typing import List, Optional
 
-from srcmlcpp.cpp_types.cpp_blocks import CppBlock, CppPublicProtectedPrivate
-from srcmlcpp.cpp_types.cpp_class import CppStruct
-from srcmlcpp.cpp_types.cpp_element import (
-    CppElementAndComment,
-    CppElementComments,
-    CppElementsVisitorEvent,
-    CppElementsVisitorFunction,
-)
+from srcmlcpp.cpp_types.base import *
+from srcmlcpp.cpp_types.blocks import CppBlock, CppPublicProtectedPrivate
+from srcmlcpp.cpp_types.classes.cpp_struct import CppStruct
 from srcmlcpp.cpp_types.cpp_parameter import CppParameter, CppParameterList
-from srcmlcpp.cpp_types.cpp_template import (
-    ICppTemplateHost,
-    TemplateSpecialization,
-)
 from srcmlcpp.cpp_types.cpp_type import CppType
-from srcmlcpp.cpp_types.cpp_unprocessed import CppUnprocessed
+from srcmlcpp.cpp_types.template.template_specialization import TemplateSpecialization
+from srcmlcpp.cpp_types.template.icpp_template_host import ICppTemplateHost
 from srcmlcpp.srcml_wrapper import SrcmlWrapper
+
+
+__all__ = ["CppFunctionDecl"]
 
 
 @dataclass
@@ -252,101 +247,4 @@ class CppFunctionDecl(CppElementAndComment, ICppTemplateHost):
             self.parameter_list.visit_cpp_breadth_first(cpp_visitor_function, depth + 1)
         if hasattr(self, "template"):
             self.template.visit_cpp_breadth_first(cpp_visitor_function, depth + 1)
-        cpp_visitor_function(self, CppElementsVisitorEvent.OnAfterChildren, depth)
-
-
-@dataclass
-class CppFunction(CppFunctionDecl):
-    """
-    https://www.srcml.org/doc/cpp_srcML.html#function-definition
-    """
-
-    block: CppUnprocessed
-
-    def __init__(self, element: SrcmlWrapper, cpp_element_comments: CppElementComments) -> None:
-        super().__init__(element, cpp_element_comments)
-
-    def str_code(self) -> str:
-        r = self._str_signature()
-        if hasattr(self, "block"):
-            r += str(self.block)
-        return r
-
-    def __str__(self) -> str:
-        r = ""
-        if len(self.cpp_element_comments.top_comment_code()) > 0:
-            r += self.cpp_element_comments.top_comment_code()
-        r += self._str_signature() + self.cpp_element_comments.eol_comment_code()
-        r += "\n" + str(self.block) + "\n"
-        return r
-
-    def visit_cpp_breadth_first(self, cpp_visitor_function: CppElementsVisitorFunction, depth: int = 0) -> None:
-        cpp_visitor_function(self, CppElementsVisitorEvent.OnElement, depth)
-        if hasattr(self, "block"):
-            cpp_visitor_function(self, CppElementsVisitorEvent.OnBeforeChildren, depth)
-            self.block.visit_cpp_breadth_first(cpp_visitor_function, depth + 1)
-            cpp_visitor_function(self, CppElementsVisitorEvent.OnAfterChildren, depth)
-
-
-@dataclass
-class CppConstructorDecl(CppFunctionDecl):
-    """
-    https://www.srcml.org/doc/cpp_srcML.html#constructor-declaration
-    """
-
-    def __init__(self, element: SrcmlWrapper, cpp_element_comments: CppElementComments) -> None:
-        super().__init__(element, cpp_element_comments)
-        self.specifiers: List[str] = []
-        self.function_name = ""
-
-    def _str_signature(self) -> str:
-        r = f"{self.function_name}({self.parameter_list})"
-        if len(self.specifiers) > 0:
-            specifiers_strs = map(str, self.specifiers)
-            r = r + " " + " ".join(specifiers_strs)
-        return r
-
-    def str_full_return_type(self) -> str:
-        return ""
-
-    def str_code(self) -> str:
-        return self._str_signature()
-
-    def __str__(self) -> str:
-        return self.str_commented()
-
-
-@dataclass
-class CppConstructor(CppConstructorDecl):
-    """
-    https://www.srcml.org/doc/cpp_srcML.html#constructor
-    """
-
-    block: CppUnprocessed
-    member_init_list: CppUnprocessed
-
-    def __init__(self, element: SrcmlWrapper, cpp_element_comments: CppElementComments) -> None:
-        super().__init__(element, cpp_element_comments)
-
-    def str_code(self) -> str:
-        r = self._str_signature()
-        if hasattr(self, "block"):
-            r += str(self.block)
-        return r
-
-    def __str__(self) -> str:
-        r = ""
-        if len(self.cpp_element_comments.top_comment_code()) > 0:
-            r += self.cpp_element_comments.top_comment_code()
-        r += self._str_signature() + self.cpp_element_comments.eol_comment_code()
-        r += "\n" + str(self.block) + "\n"
-        return r
-
-    def visit_cpp_breadth_first(self, cpp_visitor_function: CppElementsVisitorFunction, depth: int = 0) -> None:
-        cpp_visitor_function(self, CppElementsVisitorEvent.OnElement, depth)
-        cpp_visitor_function(self, CppElementsVisitorEvent.OnBeforeChildren, depth)
-        if hasattr(self, "block"):
-            self.block.visit_cpp_breadth_first(cpp_visitor_function, depth + 1)
-        if hasattr(self, "member_init_list"):
-            self.member_init_list.visit_cpp_breadth_first(cpp_visitor_function, depth + 1)
         cpp_visitor_function(self, CppElementsVisitorEvent.OnAfterChildren, depth)
