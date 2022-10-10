@@ -1,6 +1,3 @@
-[submodule "ci_scripts/importanize"]
-	path = ci_scripts/importanize
-	url = https://github.com/miki725/importanize.git
 [submodule "lg_projects/lg_hello_imgui"]
 	path = lg_projects/lg_imgui_bundle
 	url = https://github.com/pthom/lg_hello_imgui.git

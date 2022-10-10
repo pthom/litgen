@@ -41,7 +41,9 @@ Regularly run [importanize](https://github.com/miki725/importanize), to reorder 
 
 Install importanize (from master branch, in submodule)
 ````
-cd ci_scripts/importanize
+cd ci_scripts
+git clone https://github.com/miki725/importanize.git
+cd importanize
 pip install -v -e .
 cd -
 ````

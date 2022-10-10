@@ -13,6 +13,7 @@
     {"type": "local"}
   ],
   "exclude": [
+    ".venv/*py",
     "venv/*.py",
     "build/*.py",
     "ci_scripts/*.py",
