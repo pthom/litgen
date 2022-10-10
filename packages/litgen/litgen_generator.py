@@ -47,11 +47,13 @@ class LitgenGenerator:
             code_utils.write_generated_code_between_markers(output_cpp_pydef_file, "litgen_pydef", pydef_code)
         except (FileNotFoundError, RuntimeError):
             logging.warning(help_pybind_file(output_cpp_pydef_file))
+            raise
 
         try:
             code_utils.write_generated_code_between_markers(output_stub_pyi_file, "litgen_stub", stub_code)
         except (FileNotFoundError, RuntimeError):
             logging.warning(help_stub_file(output_stub_pyi_file))
+            raise
 
         if len(output_cpp_glue_code_file) == 0:
             output_cpp_glue_code_file = output_cpp_pydef_file
@@ -63,6 +65,7 @@ class LitgenGenerator:
                 logging.warning(help_glue_file(output_cpp_glue_code_file))
             else:
                 logging.warning(help_stub_file(output_stub_pyi_file))
+                raise
 
     def options(self) -> LitgenOptions:
         return self.lg_context.options

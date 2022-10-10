@@ -501,7 +501,6 @@ can reuse lots of parts of PimplMyClass
     rename srcmlxmlwrapper
 ** Refac repo
 *** srcml_cpp as main project
-*** Suppr modules inutile (lg_imgui) & review paths
 * Litgen TODO
 ** Wish list / hard and later
 *** mypy: no_implicit_reexport

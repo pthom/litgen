@@ -27,8 +27,5 @@ python ./lg_projects/lg_skbuild_template/autogenerate_lg_examplelib.py
 title "python ./packages/litgen/integration_tests/autogenerate_mylib.py"
 python ./packages/litgen/integration_tests/autogenerate_mylib.py
 
-title "python ./lg_projects/lg_imgui/autogenerate_imgui.py"
-python ./lg_projects/lg_imgui/autogenerate_imgui.py
-
 title "python ./lg_projects/lg_imgui_bundle/autogenerate_imgui_bundle/autogenerate_imgui_bundle.py"
 python ./lg_projects/lg_imgui_bundle/autogenerate_imgui_bundle/autogenerate_imgui_bundle.py
