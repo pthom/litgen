@@ -1,15 +1,14 @@
-from litgen import LitgenOptions
-import litgen
-
 from IPython.core.display import HTML  # type: ignore
 
-
 from codemanip.html_code_viewer.html_code_viewer import (
-    CodeLanguage,
     CodeAndTitle,
+    CodeLanguage,
     collapsible_code_and_title,
     collapsible_code_and_title_two_columns,
 )
+
+import litgen
+from litgen import LitgenOptions
 
 
 def generate_and_display_impl(options: LitgenOptions, cpp_code: str) -> str:

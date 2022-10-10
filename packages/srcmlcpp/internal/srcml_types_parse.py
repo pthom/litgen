@@ -8,10 +8,12 @@ All the other functions can be considered private to this module.
 """
 from codemanip.parse_progress_bar import global_progress_bars
 
+from srcmlcpp.internal import srcml_caller, srcml_comments, srcml_utils
 from srcmlcpp.srcml_types import *
-from srcmlcpp.srcml_xml_wrapper import SrcMlExceptionDetailed, emit_warning_if_not_quiet
-from srcmlcpp.internal import srcml_caller, srcml_utils
-from srcmlcpp.internal import srcml_comments
+from srcmlcpp.srcml_xml_wrapper import (
+    SrcMlExceptionDetailed,
+    emit_warning_if_not_quiet,
+)
 
 
 _PROGRESS_BAR_TITLE_SRCML_PARSE = "srcmlcpp: Create CppElements................. "

@@ -1,15 +1,16 @@
 from dataclasses import dataclass
 from typing import List, cast
+
 from munch import Munch  # type: ignore
 
 from codemanip import code_utils
 
 from srcmlcpp.srcml_types import CppNamespace
 
-from litgen.internal.context.litgen_context import LitgenContext
-from litgen.internal.adapted_types.adapted_element import AdaptedElement
-from litgen.internal.adapted_types.adapted_block import AdaptedBlock
 from litgen.internal import cpp_to_python
+from litgen.internal.adapted_types.adapted_block import AdaptedBlock
+from litgen.internal.adapted_types.adapted_element import AdaptedElement
+from litgen.internal.context.litgen_context import LitgenContext
 
 
 @dataclass

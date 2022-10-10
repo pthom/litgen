@@ -1,7 +1,9 @@
-from typing import Dict, Optional, List
+from typing import Dict, List, Optional
 
 from srcmlcpp.srcml_types import *
+
 from litgen.internal.adapted_types import AdaptedFunction
+
 
 CppOperatorName = str
 PythonOperatorName = str

@@ -1,8 +1,8 @@
 from srcmlcpp.srcml_types import *
 
 import litgen
-from litgen.options import LitgenOptions
 from litgen.litgen_generator import LitgenGeneratorTestsHelper
+from litgen.options import LitgenOptions
 
 
 def test_adapted_function_stub():
@@ -31,7 +31,6 @@ def test_adapted_function_stub():
             def __repr__(self) -> str:
                 pass
         ####################    </generated_from:BoxedTypes>    ####################
-
 
 
         def foo(    # Line:7

@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 import fire  # type: ignore
+
 import litgen
 
 

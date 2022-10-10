@@ -5,6 +5,7 @@ from codemanip import code_utils
 
 from srcmlcpp.internal import srcml_caller, srcml_utils
 
+
 _THIS_DIR = os.path.dirname(__file__)
 sys.path.append(_THIS_DIR + "/../..")
 

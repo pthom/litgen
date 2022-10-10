@@ -1,8 +1,8 @@
-from typing import Optional
-
 from dataclasses import dataclass
-from munch import Munch  # type: ignore
+from typing import Optional
 from xml.etree import ElementTree as ET  # noqa
+
+from munch import Munch  # type: ignore
 
 from codemanip import code_utils
 

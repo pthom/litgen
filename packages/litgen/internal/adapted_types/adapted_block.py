@@ -3,22 +3,22 @@ from typing import Union, cast
 
 from codemanip.parse_progress_bar import global_progress_bars
 
-from srcmlcpp.srcml_types import *
 from srcmlcpp.srcml_exception import SrcMlException
+from srcmlcpp.srcml_types import *
 
-from litgen.internal.context.litgen_context import LitgenContext
 from litgen.internal.adapted_types.adapted_class import AdaptedClass
 from litgen.internal.adapted_types.adapted_comment import (
     AdaptedComment,
     AdaptedEmptyLine,
 )
 from litgen.internal.adapted_types.adapted_element import (
-    AdaptedElement,
-    _PROGRESS_BAR_TITLE_STUB,
     _PROGRESS_BAR_TITLE_PYDEF,
+    _PROGRESS_BAR_TITLE_STUB,
+    AdaptedElement,
 )
 from litgen.internal.adapted_types.adapted_enum import AdaptedEnum
 from litgen.internal.adapted_types.adapted_function import AdaptedFunction
+from litgen.internal.context.litgen_context import LitgenContext
 
 
 @dataclass

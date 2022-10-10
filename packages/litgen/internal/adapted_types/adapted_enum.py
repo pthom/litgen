@@ -1,18 +1,18 @@
 from __future__ import annotations
 from typing import Union, cast
 
-from codemanip.code_replacements import RegexReplacementList, RegexReplacement
+from codemanip.code_replacements import RegexReplacement, RegexReplacementList
 
 from srcmlcpp.srcml_types import *
 
 from litgen.internal import cpp_to_python
-from litgen.internal.context.litgen_context import LitgenContext
 from litgen.internal.adapted_types.adapted_comment import (
     AdaptedComment,
     AdaptedEmptyLine,
 )
 from litgen.internal.adapted_types.adapted_decl import AdaptedDecl
 from litgen.internal.adapted_types.adapted_element import AdaptedElement
+from litgen.internal.context.litgen_context import LitgenContext
 
 
 @dataclass

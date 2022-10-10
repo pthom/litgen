@@ -2,8 +2,8 @@ from codemanip.code_position import CodePosition
 
 import srcmlcpp.srcmlcpp_main
 from srcmlcpp import SrcMlException, SrcMlExceptionDetailed
-from srcmlcpp.srcmlcpp_main import code_to_srcml_xml_wrapper
 from srcmlcpp.srcml_types import *
+from srcmlcpp.srcmlcpp_main import code_to_srcml_xml_wrapper
 
 
 def test_srcml_cpp():

@@ -1,8 +1,8 @@
 import os
 import sys
 
-from srcmlcpp.srcml_types import *
 from srcmlcpp import srcmlcpp_main
+from srcmlcpp.srcml_types import *
 
 import litgen
 from litgen.internal.adapted_types import AdaptedFunction, LitgenContext

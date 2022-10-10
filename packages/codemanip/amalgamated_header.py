@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
-from dataclasses import dataclass
 import os
+from dataclasses import dataclass
 from sys import version_info
 from typing import List
 

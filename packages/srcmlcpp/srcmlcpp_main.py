@@ -10,11 +10,9 @@ from typing import Type, cast
 
 from codemanip.parse_progress_bar import global_progress_bars
 
-from srcmlcpp.internal import srcml_comments
-from srcmlcpp.srcml_types import *
-from srcmlcpp.internal import srcml_caller
-from srcmlcpp.internal import srcml_types_parse
+from srcmlcpp.internal import srcml_caller, srcml_comments, srcml_types_parse
 from srcmlcpp.srcml_exception import SrcMlException
+from srcmlcpp.srcml_types import *
 
 
 _Filename = str

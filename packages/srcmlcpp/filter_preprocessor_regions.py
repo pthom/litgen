@@ -4,6 +4,7 @@ from xml.etree import ElementTree as ET
 
 from srcmlcpp.internal import srcml_utils
 
+
 """
 Filters a code unit (i.e a file) a removes regions that are inside preprocessor tests
 (except for header inclusion guards)

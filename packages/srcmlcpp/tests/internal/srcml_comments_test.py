@@ -8,6 +8,7 @@ from srcmlcpp import srcmlcpp_main
 from srcmlcpp.internal import srcml_comments, srcml_utils
 from srcmlcpp.srcml_types import *
 
+
 _THIS_DIR = os.path.dirname(__file__)
 sys.path.append(_THIS_DIR + "/../..")
 

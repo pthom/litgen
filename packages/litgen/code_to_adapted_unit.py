@@ -2,7 +2,10 @@ from typing import Optional
 
 import srcmlcpp
 
-from litgen.internal.adapted_types.adapted_unit import AdaptedUnit, LitgenContext
+from litgen.internal.adapted_types.adapted_unit import (
+    AdaptedUnit,
+    LitgenContext,
+)
 
 
 def code_to_adapted_unit(

@@ -1,13 +1,12 @@
-from typing import Optional
-
+import time
 from dataclasses import dataclass
 from enum import Enum
-import time
+from typing import Optional
 
 from pygments import highlight
-from pygments.lexers import Python3Lexer, CppLexer
-from pygments.lexer import Lexer
 from pygments.formatters import HtmlFormatter
+from pygments.lexer import Lexer
+from pygments.lexers import CppLexer, Python3Lexer
 
 
 HtmlCode = str

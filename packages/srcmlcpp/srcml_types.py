@@ -25,15 +25,18 @@ import logging
 import re
 from dataclasses import dataclass
 from enum import Enum
-from typing import Dict, List, Optional, Callable, Tuple, cast, Union
+from typing import Callable, Dict, List, Optional, Tuple, Union, cast
 from xml.etree import ElementTree as ET  # noqa
 
 from codemanip import code_utils
 
 from srcmlcpp.cpp_scope import CppScope, CppScopePart, CppScopeType
-from srcmlcpp.srcml_options import SrcmlOptions
-from srcmlcpp.srcml_options import _int_from_str_or_named_number_macros
+from srcmlcpp.srcml_options import (
+    SrcmlOptions,
+    _int_from_str_or_named_number_macros,
+)
 from srcmlcpp.srcml_xml_wrapper import SrcmlXmlWrapper
+
 
 """
 """

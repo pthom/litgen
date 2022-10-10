@@ -2,8 +2,8 @@ import pytest
 
 from codemanip import code_utils
 
-from srcmlcpp.srcml_types import *
 import srcmlcpp
+from srcmlcpp.srcml_types import *
 
 
 def code_first_function_decl(code: str) -> CppFunctionDecl:

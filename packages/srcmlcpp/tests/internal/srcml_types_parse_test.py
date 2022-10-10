@@ -1,10 +1,11 @@
 import os
+
 from codemanip import code_utils
 
-from srcmlcpp import srcml_types
+from srcmlcpp import srcml_types, srcmlcpp_main
 from srcmlcpp.internal import srcml_types_parse
 from srcmlcpp.srcml_options import SrcmlOptions
-from srcmlcpp import srcmlcpp_main
+
 
 _THIS_DIR = os.path.dirname(__file__)
 

@@ -6,6 +6,7 @@ from codemanip import code_utils
 from srcmlcpp import filter_preprocessor_regions
 from srcmlcpp.internal import srcml_caller
 
+
 _THIS_DIR = os.path.dirname(__file__)
 sys.path.append(_THIS_DIR + "/../..")
 

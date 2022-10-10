@@ -1,10 +1,10 @@
 from __future__ import annotations
-from typing import List
-from enum import Enum
 from dataclasses import dataclass
+from enum import Enum
+from typing import List
 
-from codemanip.code_replacements import RegexReplacementList
 from codemanip import code_utils
+from codemanip.code_replacements import RegexReplacementList
 
 from srcmlcpp import SrcmlOptions
 

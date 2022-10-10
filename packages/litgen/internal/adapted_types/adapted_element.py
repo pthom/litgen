@@ -5,8 +5,8 @@ from codemanip.parse_progress_bar import global_progress_bars
 from srcmlcpp.srcml_types import *
 
 from litgen.internal import cpp_to_python
-from litgen.options import LitgenOptions
 from litgen.internal.context.litgen_context import LitgenContext
+from litgen.options import LitgenOptions
 
 
 _PROGRESS_BAR_TITLE_ADAPTED_ELEMENTS = "litgen:   Create AdaptedElements............. "

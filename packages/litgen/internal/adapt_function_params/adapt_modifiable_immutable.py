@@ -2,11 +2,12 @@ import copy
 from typing import List, Optional
 
 from codemanip import code_utils
+
 from srcmlcpp.srcml_types import CppParameter
 
+from litgen.internal import boxed_python_type
 from litgen.internal.adapt_function_params._lambda_adapter import LambdaAdapter
 from litgen.internal.adapted_types import AdaptedFunction, AdaptedParameter
-from litgen.internal import boxed_python_type
 
 
 def adapt_modifiable_immutable(adapted_function: AdaptedFunction) -> Optional[LambdaAdapter]:

@@ -1,19 +1,17 @@
 from typing import Optional
 
-from flask import Flask
-from flask import request, render_template
+from flask import Flask, render_template, request
 from markupsafe import escape
+
+from codemanip.html_code_viewer.html_code_viewer import (  # COLLAPSIBLE_CSS, HALF_WIDTH_DIVS_CSS,
+    CodeAndTitle,
+    CodeLanguage,
+    collapsible_code_and_title,
+    collapsible_code_and_title_two_columns,
+)
 
 from srcmlcpp_tools.pimpl_my_class.pimpl_my_class import pimpl_my_code
 
-from codemanip.html_code_viewer.html_code_viewer import (
-    collapsible_code_and_title,
-    collapsible_code_and_title_two_columns,
-    CodeAndTitle,
-    CodeLanguage,
-    # COLLAPSIBLE_CSS,
-    # HALF_WIDTH_DIVS_CSS,
-)
 
 # flask --app pimpl_server.py --debug  run
 

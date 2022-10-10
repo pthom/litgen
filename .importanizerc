@@ -13,6 +13,7 @@
     {"type": "local"}
   ],
   "exclude": [
+    "ci_scripts",
     ".venv/*py",
     "venv/*.py",
     "build/*.py",
@@ -20,7 +21,6 @@
     "_skbuild/*.py",
     "*/_skbuild/*.py",
     "*/pybind11/*.py",
-    "litgenold/*.py",
     "*/__init__.py"
   ],
   "allow_plugins": true

@@ -1,19 +1,18 @@
 from __future__ import annotations
-
 import copy
 from dataclasses import dataclass
 from typing import cast
 
 from munch import Munch  # type: ignore
 
-import litgen
 from srcmlcpp.srcml_types import *
 
-from litgen.internal import cpp_to_python
-from litgen.internal.context.litgen_context import LitgenContext
+import litgen
 from litgen import LitgenOptions
+from litgen.internal import cpp_to_python
 from litgen.internal.adapted_types.adapted_decl import AdaptedDecl
 from litgen.internal.adapted_types.adapted_element import AdaptedElement
+from litgen.internal.context.litgen_context import LitgenContext
 
 
 @dataclass

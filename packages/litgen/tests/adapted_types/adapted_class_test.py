@@ -1,8 +1,8 @@
 from srcmlcpp.srcml_types import *
 
 import litgen
-from litgen.options import LitgenOptions
 from litgen.litgen_generator import LitgenGeneratorTestsHelper
+from litgen.options import LitgenOptions
 
 
 def log_code(code: str) -> None:

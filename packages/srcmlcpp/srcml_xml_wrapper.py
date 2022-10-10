@@ -7,15 +7,15 @@ import logging
 import sys
 import traceback
 from dataclasses import dataclass
-from typing import Optional, List, Callable, Tuple
+from typing import Callable, List, Optional, Tuple
 from xml.etree import ElementTree as ET
 
-from codemanip.code_position import CodePosition
 from codemanip import code_utils
+from codemanip.code_position import CodePosition
 
-from srcmlcpp.srcml_options import SrcmlOptions
 from srcmlcpp.internal import srcml_caller, srcml_utils
 from srcmlcpp.srcml_exception import SrcMlException
+from srcmlcpp.srcml_options import SrcmlOptions
 
 
 class SrcMlExceptionDetailed(SrcMlException):

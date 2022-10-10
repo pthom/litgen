@@ -1,4 +1,4 @@
-from codemanip.code_replacements import RegexReplacementList, RegexReplacement
+from codemanip.code_replacements import RegexReplacement, RegexReplacementList
 
 
 class ReplacementsCache:

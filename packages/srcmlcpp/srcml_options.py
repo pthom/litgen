@@ -2,6 +2,7 @@
 Options for srcmlcpp. Read the doc near all options elements.
 """
 from typing import Callable, Dict, List, Optional
+
 from codemanip.code_utils import split_string_by_pipe_char
 
 

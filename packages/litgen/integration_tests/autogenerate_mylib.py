@@ -1,10 +1,11 @@
-from typing import List
 import os
-from codemanip import code_utils
+from typing import List
+
+from codemanip import amalgamated_header, code_utils
 
 import litgen
-from codemanip import amalgamated_header
 from litgen import litgen_generator
+
 
 THIS_DIR = os.path.dirname(os.path.realpath(__file__))
 CPP_GENERATED_PYBIND_DIR = THIS_DIR + "/bindings"

@@ -11,13 +11,10 @@ from xml.etree import ElementTree as ET
 
 from codemanip import code_utils
 
-from srcmlcpp.internal import srcml_utils
-from srcmlcpp.srcml_types import (
-    CppElementAndComment,
-    CppElementComments,
-)
-from srcmlcpp.srcml_xml_wrapper import SrcmlXmlWrapper
 from srcmlcpp.filter_preprocessor_regions import filter_preprocessor_regions
+from srcmlcpp.internal import srcml_utils
+from srcmlcpp.srcml_types import CppElementAndComment, CppElementComments
+from srcmlcpp.srcml_xml_wrapper import SrcmlXmlWrapper
 
 
 COMMENT_NEW_LINE_TOKEN = "_SRCML_LINEFEED_"

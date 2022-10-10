@@ -1,23 +1,22 @@
 from __future__ import annotations
-
-from typing import Union, cast, Tuple
+from typing import Tuple, Union, cast
 
 import munch  # type: ignore
 
-from srcmlcpp.srcml_types import *
 from srcmlcpp.srcml_exception import SrcMlException
+from srcmlcpp.srcml_types import *
 
+from litgen import TemplateNamingScheme
 from litgen.internal import cpp_to_python
-from litgen.internal.context.litgen_context import LitgenContext
 from litgen.internal.adapted_types.adapted_comment import (
     AdaptedComment,
     AdaptedEmptyLine,
 )
 from litgen.internal.adapted_types.adapted_decl import AdaptedDecl
 from litgen.internal.adapted_types.adapted_element import AdaptedElement
-from litgen.internal.adapted_types.adapted_function import AdaptedFunction
 from litgen.internal.adapted_types.adapted_enum import AdaptedEnum
-from litgen import TemplateNamingScheme
+from litgen.internal.adapted_types.adapted_function import AdaptedFunction
+from litgen.internal.context.litgen_context import LitgenContext
 
 
 @dataclass

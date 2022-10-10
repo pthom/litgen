@@ -1,6 +1,11 @@
 #!/usr/bin/env python3
-import sys
 import os
+import sys
+
+# import play_implot  # type: ignore
+# import play_himgui  # type: ignore
+import demodocking  # type:ignore
+
 
 THIS_DIR = os.path.dirname(__file__)
 
@@ -15,10 +20,6 @@ sys.path.append(path_lg_imgui_bundle_playground)
 
 # print(path_lg_imgui_playground)
 
-
-# import play_implot  # type: ignore
-# import play_himgui  # type: ignore
-import demodocking  # type:ignore
 
 demodocking.main()
 

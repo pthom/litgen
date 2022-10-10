@@ -4,10 +4,9 @@ from typing import cast
 
 from srcmlcpp.srcml_types import *
 
-from litgen.internal import cpp_to_python
-from litgen.internal.context.litgen_context import LitgenContext
+from litgen.internal import boxed_python_type, cpp_to_python
 from litgen.internal.adapted_types.adapted_element import AdaptedElement
-from litgen.internal import boxed_python_type
+from litgen.internal.context.litgen_context import LitgenContext
 
 
 @dataclass

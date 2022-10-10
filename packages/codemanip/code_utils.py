@@ -7,6 +7,7 @@ import re
 import traceback
 from typing import Any, Dict, Iterable, Iterator, List, Optional, Tuple, TypeVar
 
+
 """Low level code utilities
 
 Note: This module shall work standalone, and not depend on anything inside litgen or srcmlcpp!
