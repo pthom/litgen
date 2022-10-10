@@ -1,9 +1,6 @@
-
-![Pip](https://github.com/pthom/litgen/workflows/ci_build_and_test/badge.svg)
-
+![Pip](https://github.com/pthom/srcmlcpp/workflows/ci_build_and_test/badge.svg)
 
 
-
-`srcmlcpp`: C++ code tranformer library and tools, based on srcML (https://srcml.org)
+`srcmlcpp`: C++ code transformer library and tools, based on srcML (https://srcml.org)
 
 _srcmlcpp is not ready to be used outside its nest yet! Expect refactorings at a rapid pace!_
