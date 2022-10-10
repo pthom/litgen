@@ -10,7 +10,7 @@ from codemanip.parse_progress_bar import global_progress_bars
 
 from srcmlcpp.internal import srcml_caller, srcml_comments, srcml_utils
 from srcmlcpp.srcml_types import *
-from srcmlcpp.srcml_wrapper import (
+from srcmlcpp.internal.srcml_exception_detailed import (
     SrcmlExceptionDetailed,
     emit_warning_if_not_quiet,
 )

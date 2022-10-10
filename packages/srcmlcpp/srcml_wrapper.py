@@ -2,17 +2,12 @@
 
 from __future__ import annotations
 import copy
-import inspect
-import logging
-import sys
-import traceback
-from typing import Callable, List, Optional, Tuple
+from typing import Callable, List, Optional
 from xml.etree import ElementTree as ET
 
 from codemanip import code_utils
 from codemanip.code_position import CodePosition, CodeContextWithCaret
 
-from srcmlcpp.srcml_exception import SrcmlException
 from srcmlcpp.internal import srcml_caller, srcml_utils
 from srcmlcpp.srcml_options import SrcmlOptions
 
@@ -178,15 +173,16 @@ class SrcmlWrapper:
     def raise_exception(self, message: str) -> None:
         """raises a SrcmlException which will display the message with a context
         that gives the location of this element in the code"""
-        from srcmlcpp.srcml_exception import SrcmlExceptionDetailed
+        from srcmlcpp.internal.srcml_exception_detailed import SrcmlExceptionDetailed
 
         raise SrcmlExceptionDetailed(self, message)
 
     def emit_warning(self, message: str) -> None:
         """emits a warning which will display the message with a context
         that gives the location of this element in the code"""
-        """emit a message"""
         message = self._format_message(message, "Warning")
+        from srcmlcpp.internal.srcml_exception_detailed import emit_warning_if_not_quiet
+
         emit_warning_if_not_quiet(self.options, message)
 
     def _warning_message_str(self, message: str, message_header: str = "Warning") -> str:
@@ -213,6 +209,7 @@ class SrcmlWrapper:
         return message
 
     def _format_message(self, additional_message: str, message_header: str = "Warning") -> str:
+        from srcmlcpp.internal.srcml_exception_detailed import _get_python_call_info, show_python_callstack
 
         message = ""
 
@@ -278,39 +275,3 @@ class SrcmlWrapper:
 # * first parameter: current child
 # * second parameter: depth
 SrcmlXmVisitorFunction = Callable[[SrcmlWrapper, int], None]
-
-
-class SrcmlExceptionDetailed(SrcmlException):
-    def __init__(self, current_element: SrcmlWrapper, additional_message: str) -> None:
-        message = current_element._format_message(additional_message)
-        super().__init__(message)
-
-
-def _get_python_call_info() -> Tuple[str, str]:
-    stack_lines = traceback.format_stack()
-    error_line = stack_lines[-4]
-    frame = inspect.currentframe()
-    if frame is not None:
-        caller_function_name = inspect.getframeinfo(frame.f_back.f_back.f_back).function  # type: ignore
-    else:
-        caller_function_name = ""
-    return caller_function_name, error_line
-
-
-def show_python_callstack(python_error_line: str) -> str:
-    return f"""
-            Python call stack info:
-    {code_utils.indent_code(python_error_line, 4)}
-    """
-
-
-def emit_warning_if_not_quiet(options: SrcmlOptions, message: str) -> None:
-    if options.flag_quiet:
-        return
-    in_pytest = "pytest" in sys.modules
-    if in_pytest:
-        logging.warning(message)
-    else:
-        if not message.startswith("Warning"):
-            message = "Warning:" + message
-        print(message, file=sys.stderr)
