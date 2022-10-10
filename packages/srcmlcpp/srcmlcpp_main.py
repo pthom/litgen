@@ -12,7 +12,7 @@ from codemanip.parse_progress_bar import global_progress_bars
 
 from srcmlcpp.internal import srcml_caller, srcml_comments, srcml_types_parse, code_cache
 from srcmlcpp.srcml_exception import SrcmlException
-from srcmlcpp.srcml_types import *
+from srcmlcpp.cpp_types import *
 
 
 def _code_or_file_content(options: SrcmlOptions, code: Optional[str] = None, filename: Optional[str] = None) -> str:

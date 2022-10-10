@@ -2,7 +2,7 @@ from typing import Any
 
 from codemanip.parse_progress_bar import global_progress_bars
 
-from srcmlcpp.srcml_types import *
+from srcmlcpp.cpp_types import *
 
 from litgen.internal import cpp_to_python
 from litgen.internal.context.litgen_context import LitgenContext

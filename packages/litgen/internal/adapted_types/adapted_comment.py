@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 from typing import List, cast
 
-from srcmlcpp.srcml_types import CppComment, CppEmptyLine
+from srcmlcpp.cpp_types import CppComment, CppEmptyLine
 
 from litgen.internal import cpp_to_python
 from litgen.internal.adapted_types.adapted_element import AdaptedElement

@@ -1,4 +1,4 @@
-from srcmlcpp.srcml_types import *
+from srcmlcpp.cpp_types import *
 
 import litgen
 from litgen.litgen_generator import LitgenGeneratorTestsHelper

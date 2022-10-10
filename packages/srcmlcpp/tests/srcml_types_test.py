@@ -1,7 +1,7 @@
 import srcmlcpp
 from srcmlcpp import srcmlcpp_main
 from srcmlcpp.srcml_options import SrcmlOptions
-from srcmlcpp.srcml_types import *
+from srcmlcpp.cpp_types import *
 
 
 def to_decl(code: str) -> CppDecl:

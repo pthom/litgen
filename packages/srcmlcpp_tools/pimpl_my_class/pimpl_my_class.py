@@ -7,7 +7,7 @@ from munch import Munch  # type: ignore
 from codemanip import code_utils
 
 import srcmlcpp
-from srcmlcpp.srcml_types import *
+from srcmlcpp.cpp_types import *
 
 
 # Todo: const, constexpr, and other methods specifiers

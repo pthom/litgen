@@ -5,7 +5,7 @@ from munch import Munch  # type: ignore
 
 from codemanip import code_utils
 
-from srcmlcpp.srcml_types import CppNamespace
+from srcmlcpp.cpp_types import CppNamespace
 
 from litgen.internal import cpp_to_python
 from litgen.internal.adapted_types.adapted_block import AdaptedBlock

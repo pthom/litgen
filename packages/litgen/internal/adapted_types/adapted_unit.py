@@ -2,7 +2,7 @@ from typing import cast
 
 from codemanip.parse_progress_bar import global_progress_bars
 
-from srcmlcpp.srcml_types import CppUnit
+from srcmlcpp.cpp_types import CppUnit
 
 from litgen.internal.adapted_types.adapted_block import AdaptedBlock
 from litgen.internal.adapted_types.adapted_element import (

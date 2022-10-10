@@ -5,7 +5,7 @@ from typing import cast
 
 from munch import Munch  # type: ignore
 
-from srcmlcpp.srcml_types import *
+from srcmlcpp.cpp_types import *
 
 import litgen
 from litgen import LitgenOptions

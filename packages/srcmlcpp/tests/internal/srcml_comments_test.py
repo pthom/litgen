@@ -6,7 +6,7 @@ from codemanip import code_utils
 import srcmlcpp
 from srcmlcpp import srcmlcpp_main
 from srcmlcpp.internal import srcml_comments, srcml_utils
-from srcmlcpp.srcml_types import *
+from srcmlcpp.cpp_types import *
 
 
 _THIS_DIR = os.path.dirname(__file__)

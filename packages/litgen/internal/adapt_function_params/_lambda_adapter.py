@@ -1,6 +1,6 @@
 from typing import List, Optional
 
-from srcmlcpp.srcml_types import CppFunctionDecl
+from srcmlcpp.cpp_types import CppFunctionDecl
 
 
 class LambdaAdapter:

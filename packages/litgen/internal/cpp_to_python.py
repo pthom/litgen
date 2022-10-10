@@ -3,7 +3,7 @@ from dataclasses import dataclass  # noqa
 
 from codemanip.code_replacements import RegexReplacementList
 
-from srcmlcpp.srcml_types import *
+from srcmlcpp.cpp_types import *
 
 from litgen import LitgenOptions
 from litgen.internal import LitgenContext

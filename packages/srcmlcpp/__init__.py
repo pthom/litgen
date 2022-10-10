@@ -10,7 +10,7 @@ Interface to srcML (https://www.srcml.org/)
 from srcmlcpp.srcml_options import SrcmlOptions
 
 # A collection of Cpp Types (CppStruct, CppDecl, CppNamespace, etc.)
-from srcmlcpp.srcml_types import *
+from srcmlcpp.cpp_types import *
 
 # Exceptions produced by this module
 from srcmlcpp.srcml_exception import SrcmlException

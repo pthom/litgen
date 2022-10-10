@@ -13,7 +13,7 @@ from codemanip import code_utils
 
 from srcmlcpp.internal.filter_preprocessor_regions import filter_preprocessor_regions
 from srcmlcpp.internal import srcml_utils
-from srcmlcpp.srcml_types import CppElementAndComment, CppElementComments
+from srcmlcpp.cpp_types import CppElementAndComment, CppElementComments
 from srcmlcpp.srcml_wrapper import SrcmlWrapper
 
 

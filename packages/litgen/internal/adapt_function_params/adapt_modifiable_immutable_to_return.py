@@ -3,7 +3,7 @@ from typing import List, Optional, Tuple
 
 from munch import Munch  # type: ignore
 
-from srcmlcpp.srcml_types import *
+from srcmlcpp.cpp_types import *
 
 from litgen.internal.adapt_function_params._lambda_adapter import LambdaAdapter
 from litgen.internal.adapted_types import AdaptedFunction, AdaptedParameter

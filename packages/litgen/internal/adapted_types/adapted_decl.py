@@ -2,7 +2,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import cast
 
-from srcmlcpp.srcml_types import *
+from srcmlcpp.cpp_types import *
 
 from litgen.internal import boxed_python_type, cpp_to_python
 from litgen.internal.adapted_types.adapted_element import AdaptedElement
