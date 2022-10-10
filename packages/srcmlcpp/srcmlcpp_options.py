@@ -6,7 +6,7 @@ from typing import Callable, Dict, List, Optional
 from codemanip.code_utils import split_string_by_pipe_char
 
 
-class SrcmlOptions:
+class SrcmlcppOptions:
 
     ################################################################################
     #    <API prefixes for functions / API comment suffixes for classes>
@@ -16,7 +16,7 @@ class SrcmlOptions:
     # For example, you could use "MY_API" which would be defined as `__declspec(dllexport|dllimport)` on windows
     # You can have several prefixes: separate them with a "|", for example: "MY_API|OTHER_API"
     #
-    # If you filled SrcmlOptions.functions_api_prefixes, then those prefixes will be mentioned
+    # If you filled SrcmlcppOptions.functions_api_prefixes, then those prefixes will be mentioned
     # as specifiers for the return type of the functions.
     functions_api_prefixes: str = ""
 
@@ -101,7 +101,7 @@ class SrcmlOptions:
         return split_string_by_pipe_char(self.header_filter_acceptable_suffixes)
 
 
-def _int_from_str_or_named_number_macros(options: SrcmlOptions, int_str: Optional[str]) -> Optional[int]:
+def _int_from_str_or_named_number_macros(options: SrcmlcppOptions, int_str: Optional[str]) -> Optional[int]:
     if int_str is None:
         return None
 

@@ -9,7 +9,7 @@ from codemanip import code_utils
 
 import srcmlcpp
 from srcmlcpp.cpp_types import *
-from srcmlcpp.srcml_options import SrcmlOptions
+from srcmlcpp.srcmlcpp_options import SrcmlcppOptions
 
 
 # Todo: const, constexpr, and other methods specifiers
@@ -262,12 +262,12 @@ def pimpl_my_class(impl_class: CppStruct, options: Optional[PimplOptions] = None
 
 
 def pimpl_my_code(
-    code: str, pimpl_options: Optional[PimplOptions] = None, srcml_options: Optional[SrcmlOptions] = None
+    code: str, pimpl_options: Optional[PimplOptions] = None, srcmlcpp_options: Optional[SrcmlcppOptions] = None
 ) -> Optional[PimplResult]:
     if pimpl_options is None:
         pimpl_options = PimplOptions()
-    if srcml_options is None:
-        srcml_options = SrcmlOptions()
-    cpp_unit = srcmlcpp.code_to_cpp_unit(srcml_options, code)
+    if srcmlcpp_options is None:
+        srcmlcpp_options = SrcmlcppOptions()
+    cpp_unit = srcmlcpp.code_to_cpp_unit(srcmlcpp_options, code)
     all_structs = cpp_unit.all_structs_recursive()
     return None if len(all_structs) == 0 else pimpl_my_class(all_structs[0], pimpl_options)

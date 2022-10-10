@@ -7,14 +7,14 @@ from srcmlcpp.cpp_types import *
 
 
 def code_first_function_decl(code: str) -> CppFunctionDecl:
-    srcml_options = srcmlcpp.SrcmlOptions()
-    r = srcmlcpp.srcmlcpp_main.code_first_function_decl(srcml_options, code)
+    srcmlcpp_options = srcmlcpp.SrcmlcppOptions()
+    r = srcmlcpp.srcmlcpp_main.code_first_function_decl(srcmlcpp_options, code)
     return r
 
 
 def code_first_struct(code: str) -> CppStruct:
-    srcml_options = srcmlcpp.SrcmlOptions()
-    r = srcmlcpp.srcmlcpp_main.code_first_struct(srcml_options, code)
+    srcmlcpp_options = srcmlcpp.SrcmlcppOptions()
+    r = srcmlcpp.srcmlcpp_main.code_first_struct(srcmlcpp_options, code)
     return r
 
 

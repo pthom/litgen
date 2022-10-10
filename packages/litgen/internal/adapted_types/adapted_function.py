@@ -205,11 +205,11 @@ class AdaptedFunction(AdaptedElement):
     def is_function_publishable(options: LitgenOptions, cpp_function: CppFunctionDecl) -> bool:
         if code_utils.does_match_regex(options.fn_exclude_by_name__regex, cpp_function.function_name):
             return False
-        elif len(options.srcml_options.functions_api_prefixes_list()) > 0 and options.fn_exclude_non_api:
+        elif len(options.srcmlcpp_options.functions_api_prefixes_list()) > 0 and options.fn_exclude_non_api:
             if not hasattr(cpp_function, "return_type"):
                 return True
             has_api_prefix = False
-            for api_prefix in options.srcml_options.functions_api_prefixes_list():
+            for api_prefix in options.srcmlcpp_options.functions_api_prefixes_list():
                 if api_prefix in cpp_function.return_type.specifiers:
                     has_api_prefix = True
             return has_api_prefix

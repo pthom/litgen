@@ -218,7 +218,7 @@ def generate_code_for_file(options: LitgenOptions, filename: str, omit_boxed_typ
 
 def _read_code(options: LitgenOptions, filename: str) -> str:
     assert os.path.isfile(filename)
-    with open(filename, "r", encoding=options.srcml_options.encoding) as f:
+    with open(filename, "r", encoding=options.srcmlcpp_options.encoding) as f:
         code_str = f.read()
     return code_str
 

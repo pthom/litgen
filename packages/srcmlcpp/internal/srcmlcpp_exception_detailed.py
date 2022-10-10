@@ -7,7 +7,7 @@ from typing import Tuple
 from codemanip import code_utils
 
 from srcmlcpp.srcmlcpp_exception import SrcmlcppException
-from srcmlcpp.srcml_options import SrcmlOptions
+from srcmlcpp.srcmlcpp_options import SrcmlcppOptions
 from srcmlcpp.srcml_wrapper import SrcmlWrapper
 
 
@@ -35,7 +35,7 @@ def show_python_callstack(python_error_line: str) -> str:
     """
 
 
-def emit_warning_if_not_quiet(options: SrcmlOptions, message: str) -> None:
+def emit_warning_if_not_quiet(options: SrcmlcppOptions, message: str) -> None:
     if options.flag_quiet:
         return
     in_pytest = "pytest" in sys.modules

@@ -80,7 +80,7 @@ namespace Main
 
 def test_context_replacements():
     options = LitgenOptions()
-    options.srcml_options.functions_api_prefixes = "MY_API"
+    options.srcmlcpp_options.functions_api_prefixes = "MY_API"
     code = """
         enum class MyEnumClass
         {

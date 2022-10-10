@@ -40,7 +40,7 @@ def mylib_litgen_options() -> litgen.LitgenOptions:
     options.cpp_indent_size = 4
 
     # require MY_API for all exported functions
-    options.srcml_options.functions_api_prefixes = "MY_API"
+    options.srcmlcpp_options.functions_api_prefixes = "MY_API"
     options.fn_exclude_non_api = True
 
     options.class_exclude_by_name__regex = "Detail$"
@@ -92,7 +92,7 @@ def mylib_litgen_options() -> litgen.LitgenOptions:
     # options.original_location_nb_parent_folders = 0
     # options.original_signature_flag_show = True
     # options.python_run_black_formatter = True
-    # options.srcml_options.flag_show_python_callstack = True
+    # options.srcmlcpp_options.flag_show_python_callstack = True
 
     return options
 

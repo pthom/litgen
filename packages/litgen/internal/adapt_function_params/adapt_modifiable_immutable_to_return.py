@@ -146,7 +146,7 @@ def adapt_modifiable_immutable_to_return(adapted_function: AdaptedFunction) -> O
             from srcmlcpp import srcmlcpp_main
 
             new_decl_str = f"std::array<{array_type}, {array_size}> {decl_name}"
-            new_decl = srcmlcpp_main.code_first_decl(options.srcml_options, new_decl_str)
+            new_decl = srcmlcpp_main.code_first_decl(options.srcmlcpp_options, new_decl_str)
             new_param.decl = new_decl
 
             new_function_params.append(new_param)

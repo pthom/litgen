@@ -76,6 +76,8 @@ class CppBlock(CppElementAndComment):
 
     def all_structs_recursive(self) -> List[CppStruct]:
         """Gathers all CppStruct and CppClass in the children (*recursively*)"""
+        from srcmlcpp.cpp_types.classes.cpp_struct import CppStruct
+
         r_ = self.all_cpp_elements_recursive(wanted_type=CppStruct)
         r = [cast(CppStruct, v) for v in r_]
         return r

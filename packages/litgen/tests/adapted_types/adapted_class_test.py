@@ -13,7 +13,7 @@ def log_code(code: str) -> None:
 
 def test_struct_stub_layouts():
     options = litgen.LitgenOptions()
-    options.srcml_options.named_number_macros = {"MY_VALUE": 256}
+    options.srcmlcpp_options.named_number_macros = {"MY_VALUE": 256}
 
     code = """
 // Doc about Foo
@@ -76,7 +76,7 @@ struct Foo
 
 def test_struct_pydef_simple():
     options = litgen.LitgenOptions()
-    options.srcml_options.named_number_macros = {"MY_VALUE": 256}
+    options.srcmlcpp_options.named_number_macros = {"MY_VALUE": 256}
     code = """
         // Doc about Foo
         struct Foo
@@ -113,7 +113,7 @@ def test_struct_pydef_simple():
 
 def test_struct_stub_complex():
     options = LitgenOptions()
-    options.srcml_options.functions_api_prefixes = "MY_API"
+    options.srcmlcpp_options.functions_api_prefixes = "MY_API"
     options.fn_params_replace_modifiable_immutable_by_boxed__regex
     code = """
         // A dummy class that handles 4 channel float colors

@@ -80,7 +80,7 @@ def var_name_to_python(options: LitgenOptions, name: str) -> str:
 
 def var_value_to_python(context: LitgenContext, default_value_cpp: str) -> str:
     r = context.options.code_replacements.apply(default_value_cpp)
-    for number_macro, value in context.options.srcml_options.named_number_macros.items():
+    for number_macro, value in context.options.srcmlcpp_options.named_number_macros.items():
         r = r.replace(number_macro, str(value))
     r = context.replacements_cache.apply(r)
     return r

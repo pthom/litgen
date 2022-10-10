@@ -7,7 +7,7 @@ Interface to srcML (https://www.srcml.org/)
 #
 
 # Options
-from srcmlcpp.srcml_options import SrcmlOptions
+from srcmlcpp.srcmlcpp_options import SrcmlcppOptions
 
 # A collection of Cpp Types (CppStruct, CppDecl, CppNamespace, etc.)
 from srcmlcpp.cpp_types import *
@@ -27,13 +27,14 @@ from srcmlcpp.srcml_wrapper import SrcmlWrapper
 from srcmlcpp.srcmlcpp_main import code_to_cpp_unit
 
 # code_to_srcml_xml_wrapper is a lower level utility, that returns a wrapped version of the srcML tree
-from srcmlcpp.srcmlcpp_main import code_to_srcml_xml_wrapper
+from srcmlcpp.srcmlcpp_main import code_to_srcml_wrapper
 
 
 __all__ = [
     # Functions
     "code_to_cpp_unit",
-    "code_to_srcml_xml_wrapper",
+    "code_to_srcml_wrapper",
+    "SrcmlcppOptions",
     "SrcmlcppException",
     "SrcmlWrapper",
     #

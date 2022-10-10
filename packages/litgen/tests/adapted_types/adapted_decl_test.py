@@ -8,7 +8,7 @@ from litgen.options import LitgenOptions
 
 
 def to_adapted_decl(code: str, options: LitgenOptions) -> AdaptedDecl:
-    cpp_decl = srcmlcpp_main.code_first_decl(options.srcml_options, code)
+    cpp_decl = srcmlcpp_main.code_first_decl(options.srcmlcpp_options, code)
     lg_context = LitgenContext(options)
     adapted_decl = AdaptedDecl(lg_context, cpp_decl)
     return adapted_decl
@@ -16,7 +16,7 @@ def to_adapted_decl(code: str, options: LitgenOptions) -> AdaptedDecl:
 
 def test_c_array_fixed_size_to_std_array():
     options = litgen.LitgenOptions()
-    options.srcml_options.named_number_macros = {"COUNT": 3}
+    options.srcmlcpp_options.named_number_macros = {"COUNT": 3}
 
     code = "const int v[COUNT]"
     adapted_decl = to_adapted_decl(code, options)

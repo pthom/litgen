@@ -8,7 +8,7 @@ from litgen.internal.adapted_types import *
 
 def test_adapted_enum():
     options = litgen.LitgenOptions()
-    options.srcml_options.named_number_macros = {"MY_VALUE": 256}
+    options.srcmlcpp_options.named_number_macros = {"MY_VALUE": 256}
     lg_context = LitgenContext(options)
 
     code = """
@@ -29,7 +29,7 @@ enum Foo
     Foo_count, // And this is count
 };
     """
-    enum = srcmlcpp_main.code_first_enum(options.srcml_options, code)
+    enum = srcmlcpp_main.code_first_enum(options.srcmlcpp_options, code)
     adapted_enum = AdaptedEnum(lg_context, enum)
     decls = adapted_enum.adapted_enum_decls
 

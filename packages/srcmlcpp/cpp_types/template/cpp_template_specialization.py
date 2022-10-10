@@ -16,9 +16,9 @@ class CppTemplateSpecializationPart:
             self.cpp_type = cpp_type
         elif isinstance(cpp_type, str):
             from srcmlcpp import srcmlcpp_main
-            from srcmlcpp.srcml_options import SrcmlOptions
+            from srcmlcpp.srcmlcpp_options import SrcmlcppOptions
 
-            dummy_options = SrcmlOptions()
+            dummy_options = SrcmlcppOptions()
             self.cpp_type = srcmlcpp_main.code_to_cpp_type(dummy_options, cpp_type)
             self.template_name = template_name
 

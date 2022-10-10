@@ -87,7 +87,7 @@ class CppEnum(CppElementAndComment):
                             decl.emit_warning(
                                 """
                                 Cannot parse the value of this enum element.
-                                Hint: maybe add an entry to SrcmlOptions.named_number_macros""",
+                                Hint: maybe add an entry to SrcmlcppOptions.named_number_macros""",
                             )
 
                 last_decl = decl_with_value

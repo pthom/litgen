@@ -22,7 +22,7 @@ def read_file_content(filename: str) -> str:
 
 def play_parse(code: str) -> None:
     options = litgen_options_imgui()
-    cpp_unit = srcmlcpp.code_to_cpp_unit(options.srcml_options, code)
+    cpp_unit = srcmlcpp.code_to_cpp_unit(options.srcmlcpp_options, code)
     print(cpp_unit)
 
 
@@ -111,27 +111,27 @@ def play() -> None:
     options = litgen.LitgenOptions()
     options.fn_template_options.add_specialization(r"SumVector", ["int"])
     options.fn_params_replace_buffer_by_array__regex = r".*"
-    # options.srcml_options.functions_api_prefixes = "MY_API"
+    # options.srcmlcpp_options.functions_api_prefixes = "MY_API"
 
     # generated_code = litgen.generate_code(options, code)
     # print(generated_code.pydef_code)
     # print(generated_code.stub_code)
 
-    srcml_options = srcmlcpp.SrcmlOptions()
-    srcml_options.flag_srcml_dump_positions = False
-    xml_wrapper = srcmlcpp.code_to_srcml_xml_wrapper(srcml_options, code)
+    srcmlcpp_options = srcmlcpp.SrcmlcppOptions()
+    srcmlcpp_options.flag_srcml_dump_positions = False
+    xml_wrapper = srcmlcpp.code_to_srcml_wrapper(srcmlcpp_options, code)
     print(xml_wrapper.str_xml())
 
-    # srcml_options = srcmlcpp.SrcmlOptions()
-    # cpp_unit = srcmlcpp.code_to_cpp_unit(srcml_options, code)
+    # srcmlcpp_options = srcmlcpp.SrcmlcppOptions()
+    # cpp_unit = srcmlcpp.code_to_cpp_unit(srcmlcpp_options, code)
     # f = cpp_unit.all_functions_recursive()[0]
     # print(f.str_code())
 
 
 def play_srcml() -> None:
     code = "int a = 1;"
-    options = srcmlcpp.SrcmlOptions()
-    wrapper = srcmlcpp.code_to_srcml_xml_wrapper(options, code)
+    options = srcmlcpp.SrcmlcppOptions()
+    wrapper = srcmlcpp.code_to_srcml_wrapper(options, code)
     print(wrapper.str_xml())
     print("a")
 

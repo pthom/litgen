@@ -25,7 +25,7 @@ class AdaptedFunction2(CppFunctionDecl):
 
 
 def test_inherit():
-    options = srcmlcpp.SrcmlOptions()
+    options = srcmlcpp.SrcmlcppOptions()
     code = "void Foo();"
     cpp_function = srcmlcpp_main.code_first_child_of_type(options, CppFunctionDecl, code)
     assert isinstance(cpp_function, CppFunctionDecl)

@@ -6,7 +6,7 @@ from typing import List
 from codemanip import code_utils
 from codemanip.code_replacements import RegexReplacementList
 
-from srcmlcpp import SrcmlOptions
+from srcmlcpp import SrcmlcppOptions
 
 
 class TemplateNamingScheme(Enum):
@@ -97,12 +97,12 @@ class LitgenOptions:
     ################################################################################
     #    <srcmlcpp options>
     ################################################################################
-    # There are interesting options to set in SrcmlOptions (see srcmlcpp/srcml_options.py)
+    # There are interesting options to set in SrcmlcppOptions (see srcmlcpp/srcmlcpp_options.py)
     #
     # Notably:
-    # * fill srcml_options.functions_api_prefixes: the prefix(es) that denotes exported dll functions
+    # * fill srcmlcpp_options.functions_api_prefixes: the prefix(es) that denotes exported dll functions
     # * also set LitgenOptions.fn_exclude_non_api=True if you want to exclude non api functions and methods
-    srcml_options: SrcmlOptions
+    srcmlcpp_options: SrcmlcppOptions
 
     ################################################################################
     #    <show the original location and or signature of elements as a comment>
@@ -175,7 +175,7 @@ class LitgenOptions:
     ################################################################################
 
     # fn_exclude_non_api:
-    # if srcml_options.functions_api_prefixes is filled, and fn_exclude_non_api=True,
+    # if srcmlcpp_options.functions_api_prefixes is filled, and fn_exclude_non_api=True,
     # then only functions with an api marker will be exported.
     fn_exclude_non_api: bool = True
 
@@ -556,8 +556,8 @@ class LitgenOptions:
         # See doc for all the params at their declaration site (scroll up to the top of this file!)
         from litgen.internal import cpp_to_python
 
-        self.srcml_options = SrcmlOptions()
-        self.srcml_options.header_filter_preprocessor_regions = True
+        self.srcmlcpp_options = SrcmlcppOptions()
+        self.srcmlcpp_options.header_filter_preprocessor_regions = True
 
         self.code_replacements = cpp_to_python.standard_code_replacements()
         self.comments_replacements = cpp_to_python.standard_comment_replacements()

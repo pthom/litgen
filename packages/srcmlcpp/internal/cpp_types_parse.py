@@ -2,7 +2,7 @@
 This is the heart of the parsing of a xml tree into a tree of Cpp Elements (defined in srcml_types).
 
 The main interface of this module is:
-    parse_unit(options: SrcmlOptions, element: SrcmlWrapper) -> CppUnit
+    parse_unit(options: SrcmlcppOptions, element: SrcmlWrapper) -> CppUnit
 
 All the other functions can be considered private to this module.
 """
@@ -19,19 +19,19 @@ from srcmlcpp.internal.srcmlcpp_exception_detailed import (
     SrcmlcppExceptionDetailed,
     emit_warning_if_not_quiet,
 )
-from srcmlcpp.srcml_options import SrcmlOptions
+from srcmlcpp.srcmlcpp_options import SrcmlcppOptions
 
 
 _PROGRESS_BAR_TITLE_SRCML_PARSE = "srcmlcpp: Create CppElements................. "
 
 
-def parse_unprocessed(options: SrcmlOptions, element_c: CppElementAndComment) -> CppUnprocessed:  # noqa
+def parse_unprocessed(options: SrcmlcppOptions, element_c: CppElementAndComment) -> CppUnprocessed:  # noqa
     result = CppUnprocessed(element_c, element_c.cpp_element_comments)
     result.code = srcml_caller.srcml_to_code(element_c.srcml_xml)
     return result
 
 
-def parse_type(options: SrcmlOptions, element: SrcmlWrapper, previous_decl: Optional[CppDecl]) -> CppType:
+def parse_type(options: SrcmlcppOptions, element: SrcmlWrapper, previous_decl: Optional[CppDecl]) -> CppType:
     """
     https://www.srcml.org/doc/cpp_srcML.html#type
 
@@ -157,7 +157,7 @@ def _parse_name(element: SrcmlWrapper) -> str:
 
 
 def parse_decl(
-    options: SrcmlOptions,
+    options: SrcmlcppOptions,
     element_c: CppElementAndComment,
     previous_decl: Optional[CppDecl],
 ) -> CppDecl:
@@ -189,7 +189,7 @@ def parse_decl(
     return result
 
 
-def parse_decl_stmt(options: SrcmlOptions, element_c: CppElementAndComment) -> CppDeclStatement:
+def parse_decl_stmt(options: SrcmlcppOptions, element_c: CppElementAndComment) -> CppDeclStatement:
     """
     https://www.srcml.org/doc/cpp_srcML.html#variable-declaration-statement
     https://www.srcml.org/doc/cpp_srcML.html#variable-declaration
@@ -217,7 +217,7 @@ def parse_decl_stmt(options: SrcmlOptions, element_c: CppElementAndComment) -> C
     return result
 
 
-def parse_parameter(options: SrcmlOptions, element: SrcmlWrapper) -> CppParameter:
+def parse_parameter(options: SrcmlcppOptions, element: SrcmlWrapper) -> CppParameter:
     """
     https://www.srcml.org/doc/cpp_srcML.html#function-declaration
     """
@@ -247,7 +247,7 @@ def parse_parameter(options: SrcmlOptions, element: SrcmlWrapper) -> CppParamete
     return result
 
 
-def parse_parameter_list(options: SrcmlOptions, element: SrcmlWrapper) -> CppParameterList:
+def parse_parameter_list(options: SrcmlcppOptions, element: SrcmlWrapper) -> CppParameterList:
     """
     https://www.srcml.org/doc/cpp_srcML.html#function-declaration
     """
@@ -262,7 +262,7 @@ def parse_parameter_list(options: SrcmlOptions, element: SrcmlWrapper) -> CppPar
     return result
 
 
-def parse_template(options: SrcmlOptions, element: SrcmlWrapper) -> CppTemplate:
+def parse_template(options: SrcmlcppOptions, element: SrcmlWrapper) -> CppTemplate:
     """
     Template parameters of a function, struct or class
     https://www.srcml.org/doc/cpp_srcML.html#template
@@ -279,7 +279,7 @@ def parse_template(options: SrcmlOptions, element: SrcmlWrapper) -> CppTemplate:
 
 
 def fill_function_decl(
-    options: SrcmlOptions,
+    options: SrcmlcppOptions,
     element_c: CppElementAndComment,
     function_decl: CppFunctionDecl,
 ) -> None:
@@ -341,7 +341,7 @@ def fill_function_decl(
             raise SrcmlcppExceptionDetailed(child, f"unhandled tag {child_tag}")
 
 
-def parse_function_decl(options: SrcmlOptions, element_c: CppElementAndComment) -> CppFunctionDecl:
+def parse_function_decl(options: SrcmlcppOptions, element_c: CppElementAndComment) -> CppFunctionDecl:
     """
     https://www.srcml.org/doc/cpp_srcML.html#function-declaration
     """
@@ -351,7 +351,7 @@ def parse_function_decl(options: SrcmlOptions, element_c: CppElementAndComment) 
     return result
 
 
-def parse_function(options: SrcmlOptions, element_c: CppElementAndComment) -> CppFunction:
+def parse_function(options: SrcmlcppOptions, element_c: CppElementAndComment) -> CppFunction:
     """
     https://www.srcml.org/doc/cpp_srcML.html#function-definition
     """
@@ -383,7 +383,7 @@ def parse_function(options: SrcmlOptions, element_c: CppElementAndComment) -> Cp
 
 
 def fill_constructor_decl(
-    options: SrcmlOptions,
+    options: SrcmlcppOptions,
     element_c: CppElementAndComment,
     constructor_decl: CppConstructorDecl,
 ) -> None:
@@ -405,7 +405,7 @@ def fill_constructor_decl(
             raise SrcmlcppExceptionDetailed(child, f"unhandled tag {child_tag}")
 
 
-def parse_constructor_decl(options: SrcmlOptions, element_c: CppElementAndComment) -> CppConstructorDecl:
+def parse_constructor_decl(options: SrcmlcppOptions, element_c: CppElementAndComment) -> CppConstructorDecl:
     """
     https://www.srcml.org/doc/cpp_srcML.html#constructor-declaration
     """
@@ -415,7 +415,7 @@ def parse_constructor_decl(options: SrcmlOptions, element_c: CppElementAndCommen
     return result
 
 
-def parse_constructor(options: SrcmlOptions, element_c: CppElementAndComment) -> CppConstructor:
+def parse_constructor(options: SrcmlcppOptions, element_c: CppElementAndComment) -> CppConstructor:
     """
     https://www.srcml.org/doc/cpp_srcML.html#function-definition
     """
@@ -438,7 +438,7 @@ def parse_constructor(options: SrcmlOptions, element_c: CppElementAndComment) ->
     return result
 
 
-def parse_super(options: SrcmlOptions, element: SrcmlWrapper) -> CppSuper:
+def parse_super(options: SrcmlcppOptions, element: SrcmlWrapper) -> CppSuper:
     """
     Define a super classes of a struct or class
     https://www.srcml.org/doc/cpp_srcML.html#struct-definition
@@ -459,7 +459,7 @@ def parse_super(options: SrcmlOptions, element: SrcmlWrapper) -> CppSuper:
     return result
 
 
-def parse_super_list(options: SrcmlOptions, element: SrcmlWrapper) -> CppSuperList:
+def parse_super_list(options: SrcmlcppOptions, element: SrcmlWrapper) -> CppSuperList:
     """
     Define a list of super classes of a struct or class
     https://www.srcml.org/doc/cpp_srcML.html#struct-definition
@@ -494,7 +494,7 @@ def _add_comment_child_before_block(element_c: CppElementAndComment, child: Srcm
     element_c.cpp_element_comments.comment_end_of_line += comment_text
 
 
-def parse_struct_or_class(options: SrcmlOptions, element_c: CppElementAndComment) -> CppStruct:
+def parse_struct_or_class(options: SrcmlcppOptions, element_c: CppElementAndComment) -> CppStruct:
     """
     https://www.srcml.org/doc/cpp_srcML.html#struct-definition
     https://www.srcml.org/doc/cpp_srcML.html#class-definition
@@ -530,7 +530,9 @@ def parse_struct_or_class(options: SrcmlOptions, element_c: CppElementAndComment
     return result
 
 
-def parse_public_protected_private(options: SrcmlOptions, element_c: CppElementAndComment) -> CppPublicProtectedPrivate:
+def parse_public_protected_private(
+    options: SrcmlcppOptions, element_c: CppElementAndComment
+) -> CppPublicProtectedPrivate:
     """
     See https://www.srcml.org/doc/cpp_srcML.html#public-access-specifier
     Note: this is not a direct adaptation. Here we merge the different access types
@@ -543,7 +545,7 @@ def parse_public_protected_private(options: SrcmlOptions, element_c: CppElementA
     return block_content
 
 
-def parse_block(options: SrcmlOptions, element: SrcmlWrapper) -> CppBlock:
+def parse_block(options: SrcmlcppOptions, element: SrcmlWrapper) -> CppBlock:
     """
     https://www.srcml.org/doc/cpp_srcML.html#block
     """
@@ -585,7 +587,7 @@ def shall_ignore_comment(cpp_comment: CppComment, last_ignored_child: Optional[C
     return ignore_comment
 
 
-def fill_block(options: SrcmlOptions, element: SrcmlWrapper, inout_block_content: CppBlock) -> None:
+def fill_block(options: SrcmlcppOptions, element: SrcmlWrapper, inout_block_content: CppBlock) -> None:
     """
     https://www.srcml.org/doc/cpp_srcML.html#block_content
     """
@@ -643,7 +645,7 @@ def fill_block(options: SrcmlOptions, element: SrcmlWrapper, inout_block_content
             emit_warning_if_not_quiet(options, f'A cpp element of type "{child_tag}" was ignored. Details follow\n{e}')
 
 
-def parse_unit(options: SrcmlOptions, element: SrcmlWrapper) -> CppUnit:
+def parse_unit(options: SrcmlcppOptions, element: SrcmlWrapper) -> CppUnit:
     assert element.tag() == "unit"
     cpp_unit = CppUnit(element)
     fill_block(options, element, cpp_unit)
@@ -652,7 +654,7 @@ def parse_unit(options: SrcmlOptions, element: SrcmlWrapper) -> CppUnit:
 
 
 def parse_block_content(
-    options: SrcmlOptions, element_c: CppElementAndComment
+    options: SrcmlcppOptions, element_c: CppElementAndComment
 ) -> CppBlockContent:  # element: SrcmlWrapper) -> CppBlockContent:
     """
     https://www.srcml.org/doc/cpp_srcML.html#block_content
@@ -664,7 +666,7 @@ def parse_block_content(
     return block_content
 
 
-def parse_comment(options: SrcmlOptions, element_c: CppElementAndComment) -> CppComment:
+def parse_comment(options: SrcmlcppOptions, element_c: CppElementAndComment) -> CppComment:
     """
     https://www.srcml.org/doc/cpp_srcML.html#comment
     """
@@ -685,7 +687,7 @@ def parse_comment(options: SrcmlOptions, element_c: CppElementAndComment) -> Cpp
     return result
 
 
-def parse_namespace(options: SrcmlOptions, element_c: CppElementAndComment) -> CppNamespace:
+def parse_namespace(options: SrcmlcppOptions, element_c: CppElementAndComment) -> CppNamespace:
     """
     https://www.srcml.org/doc/cpp_srcML.html#namespace
     """
@@ -704,7 +706,7 @@ def parse_namespace(options: SrcmlOptions, element_c: CppElementAndComment) -> C
     return result
 
 
-def parse_enum(options: SrcmlOptions, element_c: CppElementAndComment) -> CppEnum:
+def parse_enum(options: SrcmlcppOptions, element_c: CppElementAndComment) -> CppEnum:
     """
     https://www.srcml.org/doc/cpp_srcML.html#enum-definition
     https://www.srcml.org/doc/cpp_srcML.html#enum-class

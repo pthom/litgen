@@ -148,7 +148,7 @@ private:
 """
 
 
-options = srcmlcpp.SrcmlOptions()
+options = srcmlcpp.SrcmlcppOptions()
 cpp_unit = srcmlcpp.code_to_cpp_unit(options, code)
 first_struct = cpp_unit.all_structs_recursive()[0]
 

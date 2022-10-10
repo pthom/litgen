@@ -3,19 +3,19 @@ import os
 from codemanip import code_utils
 
 from srcmlcpp import cpp_types, srcmlcpp_main
-from srcmlcpp.internal import srcml_types_parse
-from srcmlcpp.srcml_options import SrcmlOptions
+from srcmlcpp.internal import cpp_types_parse
+from srcmlcpp.srcmlcpp_options import SrcmlcppOptions
 
 
 _THIS_DIR = os.path.dirname(__file__)
 
 
 def test_parse_cpp_decl_statement():
-    options = SrcmlOptions()
+    options = SrcmlcppOptions()
 
     def code_to_decl_statement(code: str) -> cpp_types.CppDeclStatement:
         element_c = srcmlcpp_main._tests_only_get_only_child_with_tag(options, code, "decl_stmt")
-        cpp_decl_statement = srcml_types_parse.parse_decl_stmt(options, element_c)
+        cpp_decl_statement = cpp_types_parse.parse_decl_stmt(options, element_c)
         return cpp_decl_statement
 
     # Basic test
@@ -78,11 +78,11 @@ def test_parse_cpp_decl_statement():
 
 
 def test_parse_function_decl():
-    options = SrcmlOptions()
+    options = SrcmlcppOptions()
 
     def code_to_fn_decl(code: str) -> cpp_types.CppFunctionDecl:
         element = srcmlcpp_main._tests_only_get_only_child_with_tag(options, code, "function_decl")
-        fn_decl = srcml_types_parse.parse_function_decl(options, element)
+        fn_decl = cpp_types_parse.parse_function_decl(options, element)
         return fn_decl
 
     # # Basic test with str
@@ -123,11 +123,11 @@ def test_parse_function_decl():
 
 
 def test_parse_function():
-    options = SrcmlOptions()
+    options = SrcmlcppOptions()
 
     def code_to_fn_decl(code: str) -> cpp_types.CppFunctionDecl:
         element = srcmlcpp_main._tests_only_get_only_child_with_tag(options, code, "function")
-        fn = srcml_types_parse.parse_function(options, element)
+        fn = cpp_types_parse.parse_function(options, element)
         return fn
 
     # # Basic test
@@ -146,11 +146,11 @@ def test_parse_function():
 
 
 def test_parse_struct():
-    options = SrcmlOptions()
+    options = SrcmlcppOptions()
 
     def code_to_struct_decl(code: str) -> str:
         element_c = srcmlcpp_main._tests_only_get_only_child_with_tag(options, code, "struct")
-        cpp_element = srcml_types_parse.parse_struct_or_class(options, element_c)
+        cpp_element = cpp_types_parse.parse_struct_or_class(options, element_c)
         cpp_element_str = str(cpp_element)
         # logging.warning("\n" + cpp_element_str)
         return cpp_element_str
@@ -231,7 +231,7 @@ def test_parse_struct():
 
 
 def test_parse_unit():
-    options = SrcmlOptions()
+    options = SrcmlcppOptions()
     options.header_filter_preprocessor_regions = True
 
     def code_to_unit_str(code: str) -> str:
@@ -339,7 +339,7 @@ def do_parse_imgui_implot(filename: str) -> None:
         new_code = re.sub(r"IM_FMTLIST\(\d\)", "", new_code)
         return new_code
 
-    options = SrcmlOptions()
+    options = SrcmlcppOptions()
     options.code_preprocess_function = preprocess_imgui_code
     options.flag_quiet = True
     options.header_filter_acceptable_suffixes += "|IMGUI_DISABLE"

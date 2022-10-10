@@ -17,7 +17,7 @@ import numpy
 
 # Here, we test that functions placed under unknown preprocessor conditions are not exported by default
 # You could choose to add them anyway with:
-#    options.srcml_options.header_filter_acceptable_suffixes += "|OBSCURE_OPTION"
+#    options.srcmlcpp_options.header_filter_acceptable_suffixes += "|OBSCURE_OPTION"
 
 ####################    </generated_from:header_filter_test.h>    ####################
 

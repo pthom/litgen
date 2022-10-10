@@ -7,7 +7,7 @@ def test_protected_virtual_class():
     options = litgen.LitgenOptions()
     options.class_expose_protected_methods__regex = "^MyVirtualClass$"
     options.class_override_virtual_methods_in_python__regex = "^MyVirtualClass$"
-    options.srcml_options.functions_api_prefixes = "MY_API"
+    options.srcmlcpp_options.functions_api_prefixes = "MY_API"
     code = """
         namespace Root
         {

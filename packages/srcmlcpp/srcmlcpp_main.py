@@ -16,13 +16,13 @@ from srcmlcpp.internal import (
     code_cache,
     srcml_caller,
     srcml_comments,
-    srcml_types_parse,
+    cpp_types_parse,
 )
 from srcmlcpp.srcmlcpp_exception import SrcmlcppException
-from srcmlcpp.srcml_options import SrcmlOptions
+from srcmlcpp.srcmlcpp_options import SrcmlcppOptions
 
 
-def _code_or_file_content(options: SrcmlOptions, code: Optional[str] = None, filename: Optional[str] = None) -> str:
+def _code_or_file_content(options: SrcmlcppOptions, code: Optional[str] = None, filename: Optional[str] = None) -> str:
     if code is None:
         if filename is None:
             raise ValueError("Either cpp_code or filename needs to be specified!")
@@ -34,8 +34,8 @@ def _code_or_file_content(options: SrcmlOptions, code: Optional[str] = None, fil
     return code_str
 
 
-def code_to_srcml_xml_wrapper(
-    options: SrcmlOptions, code: Optional[str] = None, filename: Optional[str] = None
+def code_to_srcml_wrapper(
+    options: SrcmlcppOptions, code: Optional[str] = None, filename: Optional[str] = None
 ) -> SrcmlWrapper:
     """Create a srcML tree from c++ code, and wraps it into a SrcmlWrapper
 
@@ -61,29 +61,31 @@ def code_to_srcml_xml_wrapper(
     return r
 
 
-def nb_lines_in_code_or_file(options: SrcmlOptions, code: Optional[str] = None, filename: Optional[str] = None) -> int:
+def _nb_lines_in_code_or_file(
+    options: SrcmlcppOptions, code: Optional[str] = None, filename: Optional[str] = None
+) -> int:
     code_str = _code_or_file_content(options, code, filename)
     nb_lines = code_str.count("\n")
     return nb_lines
 
 
 def _code_to_cpp_unit_impl(
-    options: SrcmlOptions, code: Optional[str] = None, filename: Optional[str] = None
+    options: SrcmlcppOptions, code: Optional[str] = None, filename: Optional[str] = None
 ) -> CppUnit:
-    xml_wrapper = code_to_srcml_xml_wrapper(options, code, filename)
-    cpp_unit = srcml_types_parse.parse_unit(options, xml_wrapper)
+    xml_wrapper = code_to_srcml_wrapper(options, code, filename)
+    cpp_unit = cpp_types_parse.parse_unit(options, xml_wrapper)
     return cpp_unit
 
 
-def code_to_cpp_unit(options: SrcmlOptions, code: Optional[str] = None, filename: Optional[str] = None) -> CppUnit:
+def code_to_cpp_unit(options: SrcmlcppOptions, code: Optional[str] = None, filename: Optional[str] = None) -> CppUnit:
     if options.flag_show_progress:
-        nb_lines = nb_lines_in_code_or_file(options, code, filename)
+        nb_lines = _nb_lines_in_code_or_file(options, code, filename)
         global_progress_bars().set_nb_total_lines(nb_lines)
         global_progress_bars().set_enabled(True)
     else:
         global_progress_bars().set_enabled(False)
 
-    from srcmlcpp.internal.srcml_types_parse import _PROGRESS_BAR_TITLE_SRCML_PARSE
+    from srcmlcpp.internal.cpp_types_parse import _PROGRESS_BAR_TITLE_SRCML_PARSE
 
     global_progress_bars().start_progress_bar(_PROGRESS_BAR_TITLE_SRCML_PARSE)
     cpp_unit = _code_to_cpp_unit_impl(options, code, filename)
@@ -92,7 +94,7 @@ def code_to_cpp_unit(options: SrcmlOptions, code: Optional[str] = None, filename
 
 
 def code_first_child_of_type(
-    options: SrcmlOptions, type_of_cpp_element: Type[CppElement], code: str
+    options: SrcmlcppOptions, type_of_cpp_element: Type[CppElement], code: str
 ) -> CppElementAndComment:
     cpp_unit = _code_to_cpp_unit_impl(options, code)
     for child in cpp_unit.block_children:
@@ -101,27 +103,27 @@ def code_first_child_of_type(
     raise SrcmlcppException(f"Could not find a child of type {type_of_cpp_element}")
 
 
-def code_first_function_decl(options: SrcmlOptions, code: str) -> CppFunctionDecl:
+def code_first_function_decl(options: SrcmlcppOptions, code: str) -> CppFunctionDecl:
     return cast(CppFunctionDecl, code_first_child_of_type(options, CppFunctionDecl, code))
 
 
-def code_first_enum(options: SrcmlOptions, code: str) -> CppEnum:
+def code_first_enum(options: SrcmlcppOptions, code: str) -> CppEnum:
     return cast(CppEnum, code_first_child_of_type(options, CppEnum, code))
 
 
-def code_first_decl_statement(options: SrcmlOptions, code: str) -> CppDeclStatement:
+def code_first_decl_statement(options: SrcmlcppOptions, code: str) -> CppDeclStatement:
     return cast(CppDeclStatement, code_first_child_of_type(options, CppDeclStatement, code))
 
 
-def code_first_decl(options: SrcmlOptions, code: str) -> CppDecl:
+def code_first_decl(options: SrcmlcppOptions, code: str) -> CppDecl:
     return cast(CppDecl, code_first_child_of_type(options, CppDecl, code))
 
 
-def code_first_struct(options: SrcmlOptions, code: str) -> CppStruct:
+def code_first_struct(options: SrcmlcppOptions, code: str) -> CppStruct:
     return cast(CppStruct, code_first_child_of_type(options, CppStruct, code))
 
 
-def code_to_cpp_type(options: SrcmlOptions, code: str) -> CppType:
+def code_to_cpp_type(options: SrcmlcppOptions, code: str) -> CppType:
     code_plus_dummy_var = code + " dummy;"
     first_decl_statement = code_first_decl_statement(options, code_plus_dummy_var)
     first_decl = first_decl_statement.cpp_decls[0]
@@ -129,10 +131,10 @@ def code_to_cpp_type(options: SrcmlOptions, code: str) -> CppType:
     return cpp_type
 
 
-def _tests_only_get_only_child_with_tag(options: SrcmlOptions, code: str, tag: str) -> CppElementAndComment:
+def _tests_only_get_only_child_with_tag(options: SrcmlcppOptions, code: str, tag: str) -> CppElementAndComment:
     from srcmlcpp.internal import srcml_comments
 
-    srcml_unit = code_to_srcml_xml_wrapper(options, code)
+    srcml_unit = code_to_srcml_wrapper(options, code)
     children = srcml_comments.get_children_with_comments(srcml_unit)
     children_with_tag = list(filter(lambda child: child.tag() == tag, children))
     assert len(children_with_tag) == 1

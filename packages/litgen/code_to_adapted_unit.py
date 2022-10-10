@@ -13,7 +13,7 @@ def code_to_adapted_unit(
     code: Optional[str] = None,
     filename: Optional[str] = None,
 ) -> AdaptedUnit:
-    cpp_unit = srcmlcpp.code_to_cpp_unit(lg_context.options.srcml_options, code, filename)
+    cpp_unit = srcmlcpp.code_to_cpp_unit(lg_context.options.srcmlcpp_options, code, filename)
 
     adapted_unit = AdaptedUnit(lg_context, cpp_unit)
 

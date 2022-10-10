@@ -6,8 +6,8 @@ from typing import Optional
 from srcmlcpp.cpp_types.base import *
 from srcmlcpp.cpp_types.decls_types.cpp_type import CppType
 from srcmlcpp.cpp_types.template.cpp_template_specialization import CppTemplateSpecialization
-from srcmlcpp.srcml_options import (
-    SrcmlOptions,
+from srcmlcpp.srcmlcpp_options import (
+    SrcmlcppOptions,
     _int_from_str_or_named_number_macros,
 )
 from srcmlcpp.srcml_wrapper import SrcmlWrapper
@@ -146,7 +146,7 @@ class CppDecl(CppElementAndComment):
             int v[COUNT];
         where COUNT is a macro or constexpr value
 
-        (but you can fill SrcmlOptions.named_number_macros to circumvent this)
+        (but you can fill SrcmlcppOptions.named_number_macros to circumvent this)
         """
         size_as_str = self.c_array_size_as_str()
         maybe_size = _int_from_str_or_named_number_macros(self.options, size_as_str)
@@ -158,7 +158,7 @@ class CppDecl(CppElementAndComment):
         """
         return self.c_array_size_as_int() is not None
 
-    def is_c_array_no_size(self, options: SrcmlOptions) -> bool:
+    def is_c_array_no_size(self, options: SrcmlcppOptions) -> bool:
         """Returns true if this decl is a c array, and has a no fixed size, e.g.
         int a[];
         """

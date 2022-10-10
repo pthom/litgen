@@ -9,14 +9,14 @@ from codemanip import code_utils
 from codemanip.code_position import CodeContextWithCaret, CodePosition
 
 from srcmlcpp.internal import code_cache, srcml_caller, srcml_utils
-from srcmlcpp.srcml_options import SrcmlOptions
+from srcmlcpp.srcmlcpp_options import SrcmlcppOptions
 
 
 class SrcmlWrapper:
     """A wrapper around the nodes in the xml tree produced by srcml"""
 
     # Misc options: in this class, we only use the encoding
-    options: SrcmlOptions
+    options: SrcmlcppOptions
     # the xml tree created by srcML
     srcml_xml: ET.Element
     # the filename from which this tree was parsed
@@ -25,7 +25,7 @@ class SrcmlWrapper:
     # members that are always copied as shallow members (this is intentionally a static list)
     SrcmlWrapper__deep_copy_force_shallow_ = ["options", "srcml_xml"]
 
-    def __init__(self, options: SrcmlOptions, srcml_xml: ET.Element, filename: Optional[str]) -> None:
+    def __init__(self, options: SrcmlcppOptions, srcml_xml: ET.Element, filename: Optional[str]) -> None:
         """Create a wrapper from a xml sub node
         :param options:  the options
         :param srcml_xml: the xml node which will be wrapped
@@ -44,7 +44,7 @@ class SrcmlWrapper:
         self.filename = filename
 
     def __deepcopy__(self, memo=None):
-        """SrcmlWrapper.__deepcopy__: force shallow copy of SrcmlOptions and srcml_xml (ET.Element)
+        """SrcmlWrapper.__deepcopy__: force shallow copy of SrcmlcppOptions and srcml_xml (ET.Element)
         This improves the performance a lot.
         Reason:
         - options are global during parsing

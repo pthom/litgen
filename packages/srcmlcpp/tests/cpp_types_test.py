@@ -3,11 +3,11 @@ from codemanip import code_utils
 import srcmlcpp
 from srcmlcpp import srcmlcpp_main
 from srcmlcpp.cpp_types import *
-from srcmlcpp.srcml_options import SrcmlOptions
+from srcmlcpp.srcmlcpp_options import SrcmlcppOptions
 
 
 def to_decl(code: str) -> CppDecl:
-    options = SrcmlOptions()
+    options = SrcmlcppOptions()
     cpp_decl = srcmlcpp_main.code_first_decl(options, code)
     return cpp_decl
 
@@ -29,7 +29,7 @@ def test_is_c_string_list_ptr():
 
 
 def test_visitor():
-    options = SrcmlOptions()
+    options = SrcmlcppOptions()
     code = "int a = 1;"
     cpp_unit = srcmlcpp.code_to_cpp_unit(options, code)
 
@@ -73,7 +73,7 @@ def test_parents_and_scope():
         };
     }
     """
-    options = SrcmlOptions()
+    options = SrcmlcppOptions()
     cpp_unit = srcmlcpp.code_to_cpp_unit(options, code)
 
     log_parents = ""
@@ -129,7 +129,7 @@ def test_hierarchy_overview():
         };
     }
     """
-    options = SrcmlOptions()
+    options = SrcmlcppOptions()
     cpp_unit = srcmlcpp.code_to_cpp_unit(options, code)
     overview = cpp_unit.hierarchy_overview()
     # logging.warning("\n" + overview)
@@ -164,7 +164,7 @@ def test_methods():
         };
         void fn();
     """
-    options = srcmlcpp.SrcmlOptions()
+    options = srcmlcpp.SrcmlcppOptions()
     cpp_unit = srcmlcpp.code_to_cpp_unit(options, code)
 
     nb_found = 0

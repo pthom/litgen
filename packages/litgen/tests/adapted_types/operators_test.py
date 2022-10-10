@@ -5,7 +5,7 @@ import litgen
 
 def test_operators():
     options = litgen.LitgenOptions()
-    options.srcml_options.functions_api_prefixes = "MY_API"
+    options.srcmlcpp_options.functions_api_prefixes = "MY_API"
     code = """
         struct IntWrapper
         {

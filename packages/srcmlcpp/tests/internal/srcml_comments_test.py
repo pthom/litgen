@@ -8,7 +8,7 @@ import srcmlcpp
 from srcmlcpp import srcmlcpp_main
 from srcmlcpp.cpp_types import *
 from srcmlcpp.internal import srcml_comments, srcml_utils
-from srcmlcpp.srcml_options import SrcmlOptions
+from srcmlcpp.srcmlcpp_options import SrcmlcppOptions
 
 
 _THIS_DIR = os.path.dirname(__file__)
@@ -51,9 +51,9 @@ def test_mark_empty_lines():
 
 
 def test_group_consecutive_comment():
-    options = SrcmlOptions()
+    options = SrcmlcppOptions()
     code = srcml_comments.mark_empty_lines(srcml_comments._EXAMPLE_COMMENTS_TO_GROUPS)
-    srcml_code = srcmlcpp.code_to_srcml_xml_wrapper(options, code)  # srcmlcpp.internal.srcml_caller.code_to_srcml(code)
+    srcml_code = srcmlcpp.code_to_srcml_wrapper(options, code)  # srcmlcpp.internal.srcml_caller.code_to_srcml(code)
     srcml_grouped = srcml_comments._group_consecutive_comments(srcml_code)
     grouped_str = srcml_utils.srcml_to_str_readable(srcml_grouped.srcml_xml)
     # logging.warning("\n" + grouped_str)
@@ -68,9 +68,9 @@ def test_iterate_children_simple():
     void Boo3();
 
     """
-    options = SrcmlOptions()
+    options = SrcmlcppOptions()
     code = srcml_comments.mark_empty_lines(code)
-    srcml_code = srcmlcpp.code_to_srcml_xml_wrapper(options, code)  # srcmlcpp.internal.srcml_caller.code_to_srcml(code)
+    srcml_code = srcmlcpp.code_to_srcml_wrapper(options, code)  # srcmlcpp.internal.srcml_caller.code_to_srcml(code)
     children_and_comments = srcml_comments.get_children_with_comments(srcml_code)
     msgs = [str(as_dict_cpp_element_and_comment(child)) for child in children_and_comments]
     msg = "\n".join(msgs)
@@ -89,8 +89,8 @@ def test_iterate_children_simple():
 
 
 def test_iterate_children_with_comments():
-    options = SrcmlOptions()
-    xml_wrapper = srcmlcpp_main.code_to_srcml_xml_wrapper(options, srcml_comments._EXAMPLE_COMMENTS_TO_GROUPS)
+    options = SrcmlcppOptions()
+    xml_wrapper = srcmlcpp_main.code_to_srcml_wrapper(options, srcml_comments._EXAMPLE_COMMENTS_TO_GROUPS)
     children_and_comments = srcml_comments.get_children_with_comments(xml_wrapper)
     msgs = [str(as_dict_cpp_element_and_comment(child)) for child in children_and_comments]
     msg = "\n".join(msgs)
@@ -108,8 +108,8 @@ def test_group_comment():
     """[
         1:
     ]
-    options = SrcmlOptions()
-    xml_wrapper = srcmlcpp_main.code_to_srcml_xml_wrapper(options, code)
+    options = SrcmlcppOptions()
+    xml_wrapper = srcmlcpp_main.code_to_srcml_wrapper(options, code)
     children_and_comments = srcml_comments.get_children_with_comments(xml_wrapper)
     assert children_and_comments[0].tag() == "comment"
     assert children_and_comments[1].tag() == "function_decl"
@@ -131,8 +131,8 @@ def test_multiline_c_style_comment():
     """,
         flag_strip_empty_lines=True,
     )
-    options = SrcmlOptions()
-    xml_wrapper = srcmlcpp_main.code_to_srcml_xml_wrapper(options, code)
+    options = SrcmlcppOptions()
+    xml_wrapper = srcmlcpp_main.code_to_srcml_wrapper(options, code)
     children_and_comments = srcml_comments.get_children_with_comments(xml_wrapper)
     assert len(children_and_comments) == 1
     assert (

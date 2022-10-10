@@ -45,7 +45,7 @@ class CppType(CppElement):
     # Acceptable specifiers: const, inline, virtual, extern, constexpr, etc.
     #
     # Important:
-    # if you filled SrcmlOptions.functions_api_prefixes, then those prefixes will be mentioned
+    # if you filled SrcmlcppOptions.functions_api_prefixes, then those prefixes will be mentioned
     #  as specifiers for the return type of the functions.
     specifiers: List[str]
 

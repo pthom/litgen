@@ -13,9 +13,9 @@ from litgen.litgen_generator import LitgenGeneratorTestsHelper
 def gen_pydef_code(code: str, options: Optional[LitgenOptions] = None) -> str:
     if options is None:
         options = litgen.options.LitgenOptions()
-        options.srcml_options.functions_api_prefixes = "MY_API"
+        options.srcmlcpp_options.functions_api_prefixes = "MY_API"
 
-    cpp_function = srcmlcpp_main.code_first_function_decl(options.srcml_options, code)
+    cpp_function = srcmlcpp_main.code_first_function_decl(options.srcmlcpp_options, code)
     adapted_function = AdaptedFunction(LitgenContext(options), cpp_function, False)
     generated_code = adapted_function.str_pydef()
     return generated_code
@@ -23,9 +23,9 @@ def gen_pydef_code(code: str, options: Optional[LitgenOptions] = None) -> str:
 
 def my_make_adapted_function(code: str) -> AdaptedFunction:
     options = litgen.options.LitgenOptions()
-    options.srcml_options.functions_api_prefixes = "MY_API"
+    options.srcmlcpp_options.functions_api_prefixes = "MY_API"
 
-    function_decl = srcmlcpp_main.code_first_function_decl(options.srcml_options, code)
+    function_decl = srcmlcpp_main.code_first_function_decl(options.srcmlcpp_options, code)
     adapted_function = AdaptedFunction(LitgenContext(options), function_decl, False)
     return adapted_function
 
@@ -166,7 +166,7 @@ def test_in_method():
         };
     """
     options = litgen.LitgenOptions()
-    options.srcml_options.functions_api_prefixes = "IMGUI_API"
+    options.srcmlcpp_options.functions_api_prefixes = "IMGUI_API"
     options.original_location_flag_show = True
     generated_code = LitgenGeneratorTestsHelper.code_to_pydef(options, code)
     # logging.warning("\n" + generated_code)

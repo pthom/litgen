@@ -5,12 +5,12 @@ import srcmlcpp.srcmlcpp_main
 from srcmlcpp import SrcmlWrapper
 from srcmlcpp.internal.srcmlcpp_exception_detailed import SrcmlcppExceptionDetailed
 from srcmlcpp.srcmlcpp_exception import SrcmlcppException
-from srcmlcpp.srcml_options import SrcmlOptions
-from srcmlcpp.srcmlcpp_main import code_to_srcml_xml_wrapper
+from srcmlcpp.srcmlcpp_options import SrcmlcppOptions
+from srcmlcpp.srcmlcpp_main import code_to_srcml_wrapper
 
 
 def test_srcml_cpp():
-    options = SrcmlOptions()
+    options = SrcmlcppOptions()
     code = code_utils.unindent_code(
         """
     // doc about a
@@ -27,7 +27,7 @@ def test_srcml_cpp():
     )
 
     # test code_verbatim
-    code_wrapper = code_to_srcml_xml_wrapper(options, code, "main.h")
+    code_wrapper = code_to_srcml_wrapper(options, code, "main.h")
     assert code_wrapper.str_code_verbatim() == code
 
     # Test child_with_tag
@@ -74,7 +74,7 @@ def test_srcml_cpp():
 
 
 def test_warnings():
-    options = SrcmlOptions()
+    options = SrcmlcppOptions()
     options.flag_show_python_callstack = True
     code = "void foo(int a);"
 
@@ -99,7 +99,7 @@ def test_warnings():
 
 
 def test_warnings_2():
-    options = srcmlcpp.SrcmlOptions()
+    options = srcmlcpp.SrcmlcppOptions()
     code = code_utils.unindent_code(
         """
         struct __Foo
@@ -128,7 +128,7 @@ def test_warnings_2():
 
 
 def test_visitor():
-    options = SrcmlOptions()
+    options = SrcmlcppOptions()
     code = code_utils.unindent_code(
         """
     namespace ns
@@ -139,7 +139,7 @@ def test_visitor():
     """,
         flag_strip_empty_lines=True,
     )
-    xml_tree = srcmlcpp.code_to_srcml_xml_wrapper(options, code)
+    xml_tree = srcmlcpp.code_to_srcml_wrapper(options, code)
 
     visit_recap = ""
 

@@ -43,10 +43,10 @@ def litgen_options_imgui() -> LitgenOptions:
     options.original_location_flag_show = True
     options.original_signature_flag_show = True
 
-    options.srcml_options.functions_api_prefixes = "IMGUI_API"
-    options.srcml_options.header_filter_acceptable_suffixes += "|IMGUI_DISABLE"
+    options.srcmlcpp_options.functions_api_prefixes = "IMGUI_API"
+    options.srcmlcpp_options.header_filter_acceptable_suffixes += "|IMGUI_DISABLE"
 
-    options.srcml_options.code_preprocess_function = _preprocess_imgui_code
+    options.srcmlcpp_options.code_preprocess_function = _preprocess_imgui_code
 
     options.fn_exclude_by_name__regex = join_string_by_pipe_char(
         [
@@ -147,6 +147,6 @@ def litgen_options_imgui() -> LitgenOptions:
 
     options.fn_params_replace_c_array_modifiable_by_boxed__regex = ""
 
-    options.srcml_options.flag_show_progress = True
+    options.srcmlcpp_options.flag_show_progress = True
 
     return options

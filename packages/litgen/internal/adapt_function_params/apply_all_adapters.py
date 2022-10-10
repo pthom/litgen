@@ -69,7 +69,7 @@ def _apply_all_adapters_on_constructor(inout_adapted_function: AdaptedFunction) 
     ctor_wrapper_lambda_code = code_utils.process_code_template(ctor_wrapper_lambda_template, replacements)
 
     cpp_wrapper_function = srcmlcpp_main.code_first_function_decl(
-        inout_adapted_function.options.srcml_options, ctor_wrapper_signature_code
+        inout_adapted_function.options.srcmlcpp_options, ctor_wrapper_signature_code
     )
     ctor_adapted_wrapper_function = AdaptedFunction(
         inout_adapted_function.lg_context,
@@ -183,7 +183,7 @@ def _make_adapted_lambda_code(adapted_function: AdaptedFunction, lambda_adapter:
     adapted_python_parameters = lambda_adapter.new_function_infos.parameter_list.str_code()
 
     # Fill lambda_return_arrow
-    # full_return_type = adapted_function.cpp_adapted_function.full_return_type(options.srcml_options)
+    # full_return_type = adapted_function.cpp_adapted_function.full_return_type(options.srcmlcpp_options)
     full_return_type = lambda_adapter.new_function_infos.str_full_return_type()
     if full_return_type == "void":
         lambda_return_arrow = ""

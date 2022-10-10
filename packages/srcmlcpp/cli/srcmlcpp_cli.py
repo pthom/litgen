@@ -21,14 +21,14 @@ class SrcmlcppCliCommands:
         >>  srcmlcpp xml "int a = 1;" --beautify=False
         <unit xmlns="http://www.srcML.org/srcML/src" revision="1.0.0" language="C++"><decl_stmt><decl><type><name>int</name></type> <name>a</name><init>=<expr><literal type="number">1</literal></expr></init></decl>;</decl_stmt></unit>
        ````
-    All commands will use default SrcmlOptions().
+    All commands will use default SrcmlcppOptions().
     """
 
     @staticmethod
     def cpp_elements(code: str) -> None:
         """Shows an overview the CppElements tree built by srcmlcpp"""
-        srcml_options = srcmlcpp.SrcmlOptions()
-        cpp_unit = srcmlcpp.code_to_cpp_unit(srcml_options, code)
+        srcmlcpp_options = srcmlcpp.SrcmlcppOptions()
+        cpp_unit = srcmlcpp.code_to_cpp_unit(srcmlcpp_options, code)
         print(cpp_unit.hierarchy_overview())
 
     @staticmethod
@@ -39,9 +39,9 @@ class SrcmlcppCliCommands:
           otherwise, the xml tree will be beautified and indented
         * if position = True, then the code elements positions will be dumped in the xml tree
         """
-        srcml_options = srcmlcpp.SrcmlOptions()
-        srcml_options.flag_srcml_dump_positions = position
-        xml_wrapper = srcmlcpp.code_to_srcml_xml_wrapper(srcml_options, code)
+        srcmlcpp_options = srcmlcpp.SrcmlcppOptions()
+        srcmlcpp_options.flag_srcml_dump_positions = position
+        xml_wrapper = srcmlcpp.code_to_srcml_wrapper(srcmlcpp_options, code)
         print(xml_wrapper.str_xml(beautify=beautify))
 
 
