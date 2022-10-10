@@ -1,12 +1,12 @@
 #!/usr/bin/env python
-import fire
+import fire  # type: ignore
 import srcmlcpp
 
 
 class SrcmlcppCliCommands:
     """Command line for srcmlcpp.
 
-    The is a command line driven tool for srcmlcpp.
+    This is a command line driven tool for srcmlcpp.
     Once srcmlcpp is installed, the commands below are available via the `srcmlcpp` command.
 
     For example:
@@ -24,14 +24,14 @@ class SrcmlcppCliCommands:
     """
 
     @staticmethod
-    def cpp_elements(code):
+    def cpp_elements(code: str) -> None:
         """Shows an overview the CppElements tree built by srcmlcpp"""
         srcml_options = srcmlcpp.SrcmlOptions()
         cpp_unit = srcmlcpp.code_to_cpp_unit(srcml_options, code)
         print(cpp_unit.hierarchy_overview())
 
     @staticmethod
-    def xml(code, beautify: bool = True, position: bool = False):
+    def xml(code: str, beautify: bool = True, position: bool = False) -> None:
         """Shows the xml tree parsed by srcML (http://srcml.org)
 
         * if beautify=False (--beautify=False), the output will be similar to the bare srcML output.
@@ -44,7 +44,7 @@ class SrcmlcppCliCommands:
         print(xml_wrapper.str_xml(beautify=beautify))
 
 
-def main():
+def main() -> None:
     fire.Fire(SrcmlcppCliCommands)
 
 

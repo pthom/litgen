@@ -45,6 +45,7 @@ packages = [
 [tool.poetry.scripts]
 #srcmlcpp = 'srcmlcpp.cli:run'
 srcmlcpp = 'srcmlcpp.cli.srcmlcpp_cli:main'
+litgen = 'litgen.cli.litgen_cli:main'
 
 
 [tool.poetry.dependencies]

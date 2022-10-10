@@ -133,89 +133,6 @@ Test multithread qui semble marcher:
 
 
 
-* srcml_cpp
-
-** srcml_cpp as main project
-...
-* srcmlcppm utilities
-
-
-** Add named parameters to functions
-** Cerealize / cerealize
-** _repr_my_code
-
-** PimpMyCI:
-    check for doc
-    check for snake_case
-    hunt_fake_classes
-       "a class with a constructor and only one public function is not a class. Use a namespace!"
-       Example / Mailer
-       prefix class members
-
-** PimplMyClass
-
-review code => simplify and review srcmlcpp
-
-command line
-  integration tests
-
-
-online service
-  layout on one page:
-     Big Form / Implementation Code
-     Render[ImplCode]       Render[GlueCode]
-                            Render[PublishedApi]
-
-
-render code block api (-> codemanip)
-  render as collapsible
-  copy button
-
-** Triage
-Online:
-  store ran codes
-  short link service?
-  example page
-
-mettre un decorateur @pimplmyclass
-
-const_my_code: look for decl and expr => const if set only once, const param if not modified (and ref if heavy)
-   ne devrait faire que des warning en CI
-
-** WriteMyHeader
-can reuse lots of parts of PimplMyClass
-
-** Template instantiator:
-    Template in cpp file
-    => generated Overloads in headers (different name?)
-
-** Decorators:
-
-#+begin_src
-    // @logtime
-    void MyFunction_undec()
-    {
-      ...
-    }
-
-    // <autogen:decorator>
-    void MyFunction_undec()
-    {
-      start_time = ...
-      ...
-      end_time = ...
-      std::cout << ...
-    }
-    // </autogen:decorator>
-
-#+end_src
-
-
-
-    log fn time
-    log inputs
-    etc
-
 * Dyndoc
 Voir note sur telephone
 
@@ -489,6 +406,7 @@ insert diagram via mermaid (see integration with emacs)
 
 
 * Hello ImGui Bundle TOOO
+
 later! publish srcmlcpp before!
 ** auto-resize and other goodies from immvision
 ** Add imgui-node-editor ?
@@ -497,8 +415,95 @@ later! publish srcmlcpp before!
 
 
 
-* Litgen TODO
+* srcml_cpp
+** srcmlcpp utilities
 
+
+*** Add named parameters to functions
+*** Cerealize / cerealize
+*** _repr_my_code
+
+*** PimpMyCI:
+    check for doc
+    check for snake_case
+    hunt_fake_classes
+       "a class with a constructor and only one public function is not a class. Use a namespace!"
+       Example / Mailer
+       prefix class members
+
+*** PimplMyClass
+
+review code => simplify and review srcmlcpp
+
+command line
+  integration tests
+
+
+online service
+  layout on one page:
+     Big Form / Implementation Code
+     Render[ImplCode]       Render[GlueCode]
+                            Render[PublishedApi]
+
+
+render code block api (-> codemanip)
+  render as collapsible
+  copy button
+
+*** Triage
+Online:
+  store ran codes
+  short link service?
+  example page
+
+mettre un decorateur @pimplmyclass
+
+const_my_code: look for decl and expr => const if set only once, const param if not modified (and ref if heavy)
+   ne devrait faire que des warning en CI
+
+*** WriteMyHeader
+can reuse lots of parts of PimplMyClass
+
+*** Template instantiator:
+    Template in cpp file
+    => generated Overloads in headers (different name?)
+
+*** Decorators:
+
+#+begin_src
+    // @logtime
+    void MyFunction_undec()
+    {
+      ...
+    }
+
+    // <autogen:decorator>
+    void MyFunction_undec()
+    {
+      start_time = ...
+      ...
+      end_time = ...
+      std::cout << ...
+    }
+    // </autogen:decorator>
+
+#+end_src
+
+
+
+    log fn time
+    log inputs
+    etc
+
+**  Refac srcmlcpp:
+    split types
+    review main
+    rename srcmlxmlwrapper
+** Refac repo
+*** srcml_cpp as main project
+*** Suppr modules inutile (lg_imgui) & review paths
+
+* Litgen TODO
 ** Wish list / hard and later
 *** mypy: no_implicit_reexport
 *** issue with mypy compatibility with generated modules
@@ -508,23 +513,11 @@ Problem 3: dans lg_test_runner (integration tests), tout est refusé (trouve pas
 *** N: keep pointer and references layout inside CppType (int *x vs int *x vs int * x)
 *** Bind srcml?
 ** Wish List / Easy
-
-** srcmlcpp Installer
-
-*** Command line / srcmlcpp
-  * Pb / output xml de srcmlcpp: remove filename, investigate ns0:
-
-**  Refac srcmlcpp:
-    split types
-    review main
-
 ** Handle (deep)copy
 https://pybind11.readthedocs.io/en/stable/advanced/classes.html#deepcopy-support
 
 
-
 ** test trampoline with  test with py-mahi-gui
-
 ** Interactive demo
 
 
