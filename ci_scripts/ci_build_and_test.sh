@@ -54,13 +54,13 @@ title "cmake build all"
 cd "$REPO_DIR"
 mkdir -p build_ci
 cd build_ci
-poetry run cmake ..
+cmake ..
 make -j 4
 
 
 title "pip build lg_skbuild_template python modules"
 cd "$REPO_DIR"/lg_projects/lg_skbuild_template
-poetry run pip install -v $PIP_INSTALL_EDITABLE .
+pip install -v $PIP_INSTALL_EDITABLE .
 
 
 title "pip build lg_imgui_bundle python modules"
