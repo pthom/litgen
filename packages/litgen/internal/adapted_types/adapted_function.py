@@ -276,7 +276,7 @@ class AdaptedFunction(AdaptedElement):
         )
         replacements._i_ = self.options.indent_cpp_spaces()
         replacements.return_type = self.cpp_element().return_type.str_return_type()
-        replacements.function_name_cpp = self.cpp_element().function_name_with_instantiation()
+        replacements.function_name_cpp = self.cpp_element().function_name_with_specialization()
         replacements.function_name_python = cpp_to_python.function_name_to_python(
             self.options, self.cpp_element().function_name
         )
@@ -587,7 +587,7 @@ class AdaptedFunction(AdaptedElement):
         function_to_call = (
             self.lambda_to_call
             if self.lambda_to_call is not None
-            else self.cpp_adapted_function.function_name_with_instantiation()
+            else self.cpp_adapted_function.function_name_with_specialization()
         )
         # Fill params_call_inner
         params_call_inner = self.cpp_adapted_function.parameter_list.str_names_only_for_call()
@@ -691,7 +691,7 @@ class AdaptedFunction(AdaptedElement):
         if self.is_method():
             parent_struct = self.cpp_element().parent_struct_if_method()
             assert parent_struct is not None
-            r = parent_struct.qualified_class_name_with_instantiation()
+            r = parent_struct.qualified_class_name_with_specialization()
         else:
             r = self.cpp_element().cpp_scope(include_self=False).str_cpp()
         return r
@@ -721,7 +721,7 @@ class AdaptedFunction(AdaptedElement):
 
         # fill function_pointer
 
-        function_name = self.cpp_element().function_name_with_instantiation()
+        function_name = self.cpp_element().function_name_with_specialization()
         function_scope_prefix = self._str_parent_cpp_scope_prefix()
 
         if self.is_vectorize_impl:

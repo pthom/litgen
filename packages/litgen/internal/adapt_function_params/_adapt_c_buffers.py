@@ -260,11 +260,11 @@ class _AdaptBuffersHelper:
             else:
                 if self.adapted_function.is_method():
                     function_or_lambda_to_call = (
-                        "self." + self.adapted_function.cpp_adapted_function.function_name_with_instantiation()
+                        "self." + self.adapted_function.cpp_adapted_function.function_name_with_specialization()
                     )
                 else:
                     function_or_lambda_to_call = (
-                        self.adapted_function.cpp_adapted_function.qualified_function_name_with_instantiation()
+                        self.adapted_function.cpp_adapted_function.qualified_function_name_with_specialization()
                     )
 
             # Fill maybe_return

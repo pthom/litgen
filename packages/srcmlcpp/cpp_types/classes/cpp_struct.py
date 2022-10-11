@@ -74,10 +74,10 @@ class CppStruct(CppElementAndComment, CppITemplateHost):
         else:
             return parent_scope + "::" + self.class_name
 
-    def qualified_class_name_with_instantiation(self) -> str:
+    def qualified_class_name_with_specialization(self) -> str:
         return self.qualified_class_name() + self.str_template_specialization()
 
-    def class_name_with_instantiation(self) -> str:
+    def class_name_with_specialization(self) -> str:
         return self.class_name + self.str_template_specialization()
 
     def has_base_classes(self) -> bool:
@@ -138,7 +138,7 @@ class CppStruct(CppElementAndComment, CppITemplateHost):
         found_private_dtor = False
         for access_zone in self.block.block_children:
             if isinstance(access_zone, CppPublicProtectedPrivate):
-                if access_zone.access_type == "private":
+                if access_zone.access_type == CppAccessTypes.private:
                     for child in access_zone.block_children:
                         if child.tag() == "destructor_decl" or child.tag() == "destructor":
                             found_private_dtor = True
@@ -152,7 +152,7 @@ class CppStruct(CppElementAndComment, CppITemplateHost):
         r: List[CppPublicProtectedPrivate] = []
         for access_zone in self.block.block_children:
             if isinstance(access_zone, CppPublicProtectedPrivate):
-                if access_zone.access_type == "public":
+                if access_zone.access_type == CppAccessTypes.public:
                     r.append(access_zone)
         return r
 
@@ -160,34 +160,31 @@ class CppStruct(CppElementAndComment, CppITemplateHost):
         r: List[Tuple[CppAccessTypes, CppDecl]] = []
         for access_zone in self.block.block_children:
             if isinstance(access_zone, CppPublicProtectedPrivate):
-                access_type = CppAccessTypes.from_name(access_zone.access_type)
+                access_type = access_zone.access_type
                 for child in access_zone.block_children:
                     if isinstance(child, CppDeclStatement):
                         for cpp_decl in child.cpp_decls:
                             r.append((access_type, cpp_decl))
         return r
 
-    def get_public_elements(self) -> List[CppElementAndComment]:
+    def get_elements(
+        self, access_type: Optional[CppAccessTypes] = None, element_type: Optional[type] = None
+    ) -> List[CppElementAndComment]:
         """
-        Returns the public members, constructors, and methods
-        """
-        r: List[CppElementAndComment] = []
-        for access_zone in self.block.block_children:
-            if isinstance(access_zone, CppPublicProtectedPrivate):
-                if access_zone.access_type == "public":
-                    for child in access_zone.block_children:
-                        r.append(child)
-        return r
-
-    def get_protected_elements(self) -> List[CppElementAndComment]:
-        """
-        Returns the protected members, constructors, and methods
+        Returns all the elements of this struct
+        (include members, methods, inner struct)
         """
         r: List[CppElementAndComment] = []
         for access_zone in self.block.block_children:
             if isinstance(access_zone, CppPublicProtectedPrivate):
-                if access_zone.access_type == "protected":
-                    for child in access_zone.block_children:
+                if access_type is not None:
+                    if access_zone.access_type != access_type:
+                        continue
+                for child in access_zone.block_children:
+                    if element_type is not None:
+                        if isinstance(child, element_type):
+                            r.append(child)
+                    else:
                         r.append(child)
         return r
 

@@ -62,7 +62,7 @@ def _apply_all_adapters_on_constructor(inout_adapted_function: AdaptedFunction) 
     )
     replacements = Munch()
     replacements.parameters_code = parameter_list.str_types_names_default_for_signature()
-    replacements.class_name = parent_struct.qualified_class_name_with_instantiation()
+    replacements.class_name = parent_struct.qualified_class_name_with_specialization()
     replacements.parameters_names = parameter_list.str_names_only_for_call()
 
     ctor_wrapper_signature_code = code_utils.process_code_template(ctor_wrapper_signature_template, replacements)
@@ -113,11 +113,11 @@ def _make_adapted_lambda_code_end(adapted_function: AdaptedFunction, lambda_adap
     else:
         if adapted_function.is_method():
             function_or_lambda_to_call = (
-                "self." + adapted_function.cpp_adapted_function.function_name_with_instantiation()
+                "self." + adapted_function.cpp_adapted_function.function_name_with_specialization()
             )
         else:
             function_or_lambda_to_call = (
-                adapted_function.cpp_adapted_function.qualified_function_name_with_instantiation()
+                adapted_function.cpp_adapted_function.qualified_function_name_with_specialization()
             )
 
     # Fill maybe_return_r

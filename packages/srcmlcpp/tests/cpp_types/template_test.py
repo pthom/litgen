@@ -18,7 +18,7 @@ def code_first_struct(code: str) -> CppStruct:
     return r
 
 
-def test_instantiate_function():
+def test_specialize_function():
     #
     # simple specialization
     #
@@ -99,7 +99,7 @@ def test_instantiate_function():
     )
 
 
-def test_instantiate_class():
+def test_specialize_class():
     code = """
     template<typename T>
     struct Foo

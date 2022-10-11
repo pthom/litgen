@@ -540,7 +540,7 @@ def parse_public_protected_private(
     access_type = element_c.tag()
     assert access_type in ["public", "protected", "private"]
     type = element_c.attribute_value("type")
-    block_content = CppPublicProtectedPrivate(element_c, access_type, type)
+    block_content = CppPublicProtectedPrivate(element_c, CppAccessTypes.from_name(access_type), type)
     fill_block(options, element_c, block_content)
     return block_content
 

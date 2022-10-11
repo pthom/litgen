@@ -143,7 +143,7 @@ class AdaptedClassMember(AdaptedDecl):
     def _str_pydef_lines_numeric_array(self) -> List[str]:
         # Cf. https://stackoverflow.com/questions/58718884/binding-an-array-using-pybind11
 
-        qualified_struct_name = self.class_parent.cpp_element().qualified_class_name_with_instantiation()
+        qualified_struct_name = self.class_parent.cpp_element().qualified_class_name_with_specialization()
         location = self.info_original_location_cpp()
         name_python = self.decl_name_python()
         name_cpp = self.decl_name_cpp()
@@ -168,7 +168,7 @@ class AdaptedClassMember(AdaptedDecl):
         return lines
 
     def _str_pydef_lines_field(self) -> List[str]:
-        qualified_struct_name = self.class_parent.cpp_element().qualified_class_name_with_instantiation()
+        qualified_struct_name = self.class_parent.cpp_element().qualified_class_name_with_specialization()
         location = self.info_original_location_cpp()
         name_python = self.decl_name_python()
         name_cpp = self.decl_name_cpp()
@@ -299,14 +299,14 @@ class AdaptedClass(AdaptedElement):
     def _fill_protected_methods(self) -> None:
         if not self._shall_publish_protected_methods():
             return
-        for child in self.cpp_element().get_protected_elements():
+        for child in self.cpp_element().get_elements(access_type=CppAccessTypes.protected):
             if isinstance(child, CppFunctionDecl):
                 if AdaptedFunction.is_function_publishable(self.options, child):
                     is_overloaded = child.is_overloaded_method()
                     self.adapted_protected_methods.append(AdaptedFunction(self.lg_context, child, is_overloaded))
 
     def _fill_public_children(self) -> None:
-        public_elements = self.cpp_element().get_public_elements()
+        public_elements = self.cpp_element().get_elements(access_type=CppAccessTypes.public)
         for child in public_elements:
             try:
                 if isinstance(child, CppEmptyLine):
@@ -580,7 +580,7 @@ class AdaptedClass(AdaptedElement):
         _i_ = options.indent_cpp_spaces()
 
         def make_pyclass_creation_code() -> str:
-            qualified_struct_name = self.cpp_element().qualified_class_name_with_instantiation()
+            qualified_struct_name = self.cpp_element().qualified_class_name_with_specialization()
 
             # fill py::class_ additional template params (base classes, nodelete, etc)
             other_template_params_list = []
@@ -636,7 +636,7 @@ class AdaptedClass(AdaptedElement):
 
             return pyclass_creation_code
 
-        qualified_struct_name = self.cpp_element().qualified_class_name_with_instantiation()
+        qualified_struct_name = self.cpp_element().qualified_class_name_with_specialization()
         if options.generate_to_string:
             code_outro = f'{_i_}.def("__repr__", [](const {qualified_struct_name}& v) {{ return ToString(v); }});'
         else:

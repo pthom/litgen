@@ -51,10 +51,10 @@ class CppFunctionDecl(CppElementAndComment, CppITemplateHost):
         else:
             return parent_scope + "::" + self.function_name
 
-    def qualified_function_name_with_instantiation(self) -> str:
+    def qualified_function_name_with_specialization(self) -> str:
         return self.qualified_function_name() + self.str_template_specialization()
 
-    def function_name_with_instantiation(self) -> str:
+    def function_name_with_specialization(self) -> str:
         return self.function_name + self.str_template_specialization()
 
     def with_specialized_template(self, template_specs: CppTemplateSpecialization) -> Optional[CppFunctionDecl]:
@@ -147,7 +147,7 @@ class CppFunctionDecl(CppElementAndComment, CppITemplateHost):
         is_method = isinstance(self.parent, CppPublicProtectedPrivate)
         return is_method
 
-    def method_access_type(self) -> str:
+    def method_access_type(self) -> CppAccessTypes:
         """
         Returns "public", "private", or "protected"
         Will throw if this is not a method!
@@ -210,7 +210,7 @@ class CppFunctionDecl(CppElementAndComment, CppITemplateHost):
             return None
         ppp = self.parent
         assert isinstance(ppp, CppPublicProtectedPrivate)
-        r = CppAccessTypes.from_name(ppp.access_type)
+        r = ppp.access_type
         return r
 
     def parent_struct_name_if_method(self) -> Optional[str]:
