@@ -84,3 +84,91 @@ namespace Ns
           CppComment
       """,
     )
+
+
+def test_parents_and_scope():
+    code = """
+    namespace Blah
+    {
+        struct Foo
+        {
+            enum A {
+                a = 0;
+            };
+            void dummy();
+        };
+    }
+    """
+    options = srcmlcpp.SrcmlcppOptions()
+    cpp_unit = srcmlcpp.code_to_cpp_unit(options, code)
+
+    log_parents = ""
+
+    def visitor_log_parents(cpp_element: CppElement, event: CppElementsVisitorEvent, depth: int) -> None:
+        nonlocal log_parents
+        if event == CppElementsVisitorEvent.OnElement:
+            assert hasattr(cpp_element, "parent")
+            if cpp_element.parent is None:
+                msg_parent = "None"
+            else:
+                msg_parent = cpp_element.parent.short_cpp_element_info(False)
+
+            msg_parent = f" (parent: {msg_parent})"
+
+            msg = cpp_element.short_cpp_element_info() + msg_parent
+            log_parents += "  " * depth + msg + "\n"
+
+    cpp_unit.visit_cpp_breadth_first(visitor_log_parents)
+    # print("\n" + log_parents)
+    code_utils.assert_are_codes_equal(
+        log_parents,
+        """
+        CppUnit (parent: None)
+          CppEmptyLine (parent: CppUnit)
+          CppNamespace name=Blah (parent: CppUnit)
+            CppBlock scope=Blah (parent: CppNamespace name=Blah)
+              CppStruct name=Foo scope=Blah (parent: CppBlock)
+                CppBlock scope=Blah::Foo (parent: CppStruct name=Foo)
+                  CppPublicProtectedPrivate scope=Blah::Foo (parent: CppBlock)
+                    CppEnum name=A scope=Blah::Foo (parent: CppPublicProtectedPrivate)
+                      CppBlock scope=Blah::Foo::A (parent: CppEnum name=A)
+                        CppDecl name=a scope=Blah::Foo::A (parent: CppBlock)
+                        CppUnprocessed scope=Blah::Foo::A (parent: CppBlock)
+                    CppFunctionDecl name=dummy scope=Blah::Foo (parent: CppPublicProtectedPrivate)
+                      CppType name=void scope=Blah::Foo (parent: CppFunctionDecl name=dummy)
+                      CppParameterList scope=Blah::Foo (parent: CppFunctionDecl name=dummy)
+          CppEmptyLine (parent: CppUnit)
+        """,
+    )
+
+
+def test_visitor():
+    options = srcmlcpp.SrcmlcppOptions()
+    code = "int a = 1;"
+    cpp_unit = srcmlcpp.code_to_cpp_unit(options, code)
+
+    visit_recap = ""
+
+    def my_visitor(element: CppElement, event: CppElementsVisitorEvent, depth: int) -> None:
+        nonlocal visit_recap
+
+        if event == CppElementsVisitorEvent.OnElement:
+            type_name = type(element).__name__
+
+            code = element.str_code_verbatim().strip()
+            code_first_line = code.split("\n")[0].strip()
+
+            info = f"{type_name} ({code_first_line})"
+            visit_recap += "  " * depth + info + "\n"
+
+    cpp_unit.visit_cpp_breadth_first(my_visitor)
+    # logging.warning("\n" + visit_recap)
+    code_utils.assert_are_codes_equal(
+        visit_recap,
+        """
+        CppUnit (int a = 1;)
+          CppDeclStatement (int a = 1;)
+            CppDecl (int a = 1;)
+              CppType (int)
+          """,
+    )

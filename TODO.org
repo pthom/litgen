@@ -497,7 +497,7 @@ can reuse lots of parts of PimplMyClass
 
 
 ** Separate litgen and srmclcpp folders
-** More unit tests / cpp_function, element, type
+** More unit tests / enum
 ** Add CppConstructor[Decl]
 
 * Litgen TODO

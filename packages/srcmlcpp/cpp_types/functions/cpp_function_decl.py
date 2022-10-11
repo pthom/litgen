@@ -93,7 +93,7 @@ class CppFunctionDecl(CppElementAndComment, CppITemplateHost):
     def is_inferred_return_type(self) -> bool:
         if not hasattr(self, "return_type"):
             return False
-        return "auto" in self.return_type.specifiers and len(self.return_type.typenames) == 0
+        return self.return_type.typenames == ["auto"]
 
     def is_arrow_notation_return_type(self) -> bool:
         if self.is_inferred_return_type():
