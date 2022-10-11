@@ -89,7 +89,7 @@ class CppBlock(CppElementAndComment):
         class_name_with_scope is a name that could include additional scopes
         """
         if current_scope is None:
-            current_scope = CppScope()
+            current_scope = self.cpp_scope()
         if "::" in class_name_with_scope:
             items = class_name_with_scope.split("::")
             class_name = items[-1]
