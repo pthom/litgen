@@ -165,7 +165,7 @@ class CppFunctionDecl(CppElementAndComment, CppITemplateHost):
             return False
         if not hasattr(self, "return_type"):
             return False
-        is_virtual = "virtual" in self.return_type.specifiers
+        is_virtual = "virtual" in self.return_type.specifiers or "override" in self.specifiers
         return is_virtual
 
     def is_overloaded_method(self) -> bool:
@@ -173,7 +173,7 @@ class CppFunctionDecl(CppElementAndComment, CppITemplateHost):
             return False
         parent_struct = self.parent_struct_if_method()
         assert parent_struct is not None
-        methods_same_name = parent_struct.all_methods_with_name(self.function_name)
+        methods_same_name = parent_struct.get_methods_with_name(self.function_name)
         assert len(methods_same_name) >= 1
         is_overloaded = len(methods_same_name) >= 2
         return is_overloaded

@@ -103,11 +103,11 @@ class CppStruct(CppElementAndComment, CppITemplateHost):
 
     def has_user_defined_constructor(self) -> bool:
         nb_constructor = 0
-        last_constructor: Optional[CppFunctionDecl]
-        for method in self.all_methods():
+        optional_constructor: Optional[CppFunctionDecl]
+        for method in self.get_methods():
             if method.is_constructor():
                 nb_constructor += 1
-                last_constructor = method
+                optional_constructor = method
         if nb_constructor == 0:
             return False
         elif nb_constructor > 1:
@@ -115,20 +115,21 @@ class CppStruct(CppElementAndComment, CppITemplateHost):
         else:  # nb_constructor = 1
             # If a struct has only one constructor which is = default,
             # the struct will not be considered as containing a user defined constructor
-            if last_constructor.is_default_constructor() and "default" in last_constructor.specifiers:
+            assert optional_constructor is not None
+            if optional_constructor.is_default_constructor() and "default" in optional_constructor.specifiers:
                 return False
             else:
                 return True
         return False
 
     def has_deleted_default_constructor(self) -> bool:
-        for method in self.all_methods():
+        for method in self.get_methods():
             if method.is_default_constructor() and "delete" in method.specifiers:
                 return True
         return False
 
     def get_user_defined_copy_constructor(self) -> Optional[CppFunctionDecl]:
-        for method in self.all_methods():
+        for method in self.get_methods():
             if method.is_copy_constructor():
                 return method
         return None
@@ -190,7 +191,7 @@ class CppStruct(CppElementAndComment, CppITemplateHost):
                         r.append(child)
         return r
 
-    def all_methods(self) -> List[CppFunctionDecl]:
+    def get_methods(self) -> List[CppFunctionDecl]:
         from srcmlcpp.cpp_types.functions.cpp_function_decl import CppFunctionDecl
 
         r: List[CppFunctionDecl] = []
@@ -201,8 +202,8 @@ class CppStruct(CppElementAndComment, CppITemplateHost):
                         r.append(child)
         return r
 
-    def all_methods_with_name(self, name: str) -> List[CppFunctionDecl]:
-        all_methods = self.all_methods()
+    def get_methods_with_name(self, name: str) -> List[CppFunctionDecl]:
+        all_methods = self.get_methods()
         r: List[CppFunctionDecl] = []
         for fn in all_methods:
             if fn.function_name == name:
@@ -211,14 +212,14 @@ class CppStruct(CppElementAndComment, CppITemplateHost):
 
     def is_virtual(self) -> bool:
         """Returns True if there is at least one virtual method"""
-        for method in self.all_methods():
+        for method in self.get_methods():
             if method.is_virtual_method():
                 return True
         return False
 
     def virtual_methods(self, include_inherited_virtual_methods: bool) -> List[CppFunctionDecl]:
         virtual_methods = []
-        for base_method in self.all_methods():
+        for base_method in self.get_methods():
             if base_method.is_virtual_method():
                 virtual_methods.append(base_method)
 

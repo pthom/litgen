@@ -82,10 +82,14 @@ class CppBlock(CppElementAndComment):
         r = [cast(CppStruct, v) for v in r_]
         return r
 
-    def find_struct_or_class(self, class_name_with_scope: str, current_scope: CppScope) -> Optional[CppStruct]:
+    def find_struct_or_class(
+        self, class_name_with_scope: str, current_scope: Optional[CppScope] = None
+    ) -> Optional[CppStruct]:
         """Given a current scope, look for an existing matching class
         class_name_with_scope is a name that could include additional scopes
         """
+        if current_scope is None:
+            current_scope = CppScope()
         if "::" in class_name_with_scope:
             items = class_name_with_scope.split("::")
             class_name = items[-1]
