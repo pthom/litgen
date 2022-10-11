@@ -497,8 +497,7 @@ can reuse lots of parts of PimplMyClass
 
 
 ** Separate litgen and srmclcpp folders
-** coherence naming entre ctor / dtor vs constructor destructor
-** More unit tests / cpp_function block, element, type
+** More unit tests / cpp_function, element, type
 ** Add CppConstructor[Decl]
 
 * Litgen TODO

@@ -1,10 +1,14 @@
 from __future__ import annotations
 import copy
 from enum import Enum
-from typing import Callable, List, Optional
+from typing import TYPE_CHECKING, Callable, List, Optional
 
 from srcmlcpp.cpp_types.cpp_scope import CppScope, CppScopePart, CppScopeType
 from srcmlcpp.srcml_wrapper import SrcmlWrapper
+
+
+if TYPE_CHECKING:
+    from srcmlcpp.cpp_types.blocks.cpp_unit import CppUnit
 
 
 __all__ = ["CppElement", "CppElementsVisitorFunction", "CppElementsVisitorEvent"]
@@ -138,6 +142,11 @@ class CppElement(SrcmlWrapper):
 
         self.visit_cpp_breadth_first(visitor_log_info)
         return log
+
+    def root_cpp_unit(self) -> CppUnit:
+        from srcmlcpp.cpp_types.blocks.cpp_unit import CppUnit
+
+        return CppUnit.find_root_cpp_unit(self)
 
     def __str__(self) -> str:
         return self._str_simplified_yaml()

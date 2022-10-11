@@ -95,6 +95,7 @@ class SrcmlcppOptions:
         self.named_number_macros = {}
 
     def functions_api_prefixes_list(self) -> List[str]:
+        assert isinstance(self.functions_api_prefixes, str)
         return split_string_by_pipe_char(self.functions_api_prefixes)
 
     def header_filter_acceptable_suffixes_list(self) -> List[str]:
