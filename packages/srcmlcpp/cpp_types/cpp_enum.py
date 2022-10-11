@@ -45,7 +45,7 @@ class CppEnum(CppElementAndComment):
     def __str__(self) -> str:
         return self.str_code()
 
-    def get_enum_decls_poub(self) -> List[CppDecl]:
+    def get_enum_decls(self) -> List[CppDecl]:
         r: List[CppDecl] = []
         for child in self.block.block_children:
             if isinstance(child, CppDecl):
