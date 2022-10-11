@@ -345,7 +345,7 @@ def parse_function_decl(options: SrcmlcppOptions, element_c: CppElementAndCommen
     """
     https://www.srcml.org/doc/cpp_srcML.html#function-declaration
     """
-    assert element_c.tag() == "function_decl"
+    assert element_c.tag() in ["function_decl", "destructor_decl"]
     result = CppFunctionDecl(element_c, element_c.cpp_element_comments)
     fill_function_decl(options, element_c, result)
     return result
@@ -355,7 +355,7 @@ def parse_function(options: SrcmlcppOptions, element_c: CppElementAndComment) ->
     """
     https://www.srcml.org/doc/cpp_srcML.html#function-definition
     """
-    assert element_c.tag() == "function"
+    assert element_c.tag() in ["function", "destructor"]
     result = CppFunction(element_c, element_c.cpp_element_comments)
     fill_function_decl(options, element_c, result)
 
@@ -607,10 +607,10 @@ def fill_block(options: SrcmlcppOptions, element: SrcmlWrapper, inout_block_cont
             elif child_tag == "decl":
                 cpp_decl = parse_decl(options, child_c, None)
                 inout_block_content.block_children.append(cpp_decl)
-            elif child_tag == "function_decl":
+            elif child_tag in ["function_decl", "destructor_decl"]:
                 assert child_name is not None
                 inout_block_content.block_children.append(parse_function_decl(options, child_c))
-            elif child_tag == "function":
+            elif child_tag in ["function", "destructor"]:
                 assert child_name is not None
                 inout_block_content.block_children.append(parse_function(options, child_c))
             elif child_tag == "constructor_decl":

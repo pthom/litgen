@@ -203,6 +203,8 @@ class AdaptedFunction(AdaptedElement):
 
     @staticmethod
     def is_function_publishable(options: LitgenOptions, cpp_function: CppFunctionDecl) -> bool:
+        if cpp_function.is_destructor():
+            return False
         if code_utils.does_match_regex(options.fn_exclude_by_name__regex, cpp_function.function_name):
             return False
         elif len(options.srcmlcpp_options.functions_api_prefixes_list()) > 0 and options.fn_exclude_non_api:

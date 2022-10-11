@@ -29,7 +29,7 @@ def test_c_enum():
     enum_children = enum_color.get_children_with_filled_decl_values()
     assert len(enum_children) == 6  # 3 decl + 2 empty lines + 1 comment
     assert isinstance(enum_children[1], CppDecl)
-    assert cast(CppDecl, enum_children[1]).initial_value_code == "1"
+    assert enum_children[1].initial_value_code == "1"
 
 
 def test_enum_class():

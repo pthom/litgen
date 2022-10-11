@@ -111,6 +111,19 @@ def test_constructor_destructor():
     assert user_defined_copy_constructor.access_type_if_method() == srcmlcpp.CppAccessTypes.protected
 
 
+def test_destructor():
+    options = srcmlcpp.SrcmlcppOptions()
+    code = """
+    struct Foo
+    {
+        ~Foo();
+    };
+    """
+    cpp_unit = srcmlcpp.code_to_cpp_unit(options, code)
+    f = cpp_unit.all_functions_recursive()[0]
+    assert f.is_destructor()
+
+
 def test_struct_mix():
     """
     Some tests for:

@@ -135,15 +135,14 @@ class CppStruct(CppElementAndComment, CppITemplateHost):
         return None
 
     def has_private_destructor(self) -> bool:
-        found_private_dtor = False
-        for access_zone in self.block.block_children:
-            if isinstance(access_zone, CppPublicProtectedPrivate):
-                if access_zone.access_type == CppAccessTypes.private:
-                    for child in access_zone.block_children:
-                        if child.tag() == "destructor_decl" or child.tag() == "destructor":
-                            found_private_dtor = True
-                            break
-        return found_private_dtor
+        r = False
+        for method in self.get_methods():
+            if method.is_destructor():
+                access_type = method.access_type_if_method()
+                assert access_type is not None
+                if access_type == CppAccessTypes.private:
+                    r = True
+        return r
 
     def get_public_blocks(self) -> List[CppPublicProtectedPrivate]:
         """

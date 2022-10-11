@@ -132,6 +132,8 @@ class CppFunctionDecl(CppElementAndComment, CppITemplateHost):
 
     def str_full_return_type(self) -> str:
         """The C++ return type of the function, without API, virtual or inline specifiers"""
+        if self.is_destructor():
+            return ""
         r = self.return_type.str_return_type()
         for prefix in self.options.functions_api_prefixes_list():
             r = r.replace(prefix + " ", "")
@@ -225,6 +227,12 @@ class CppFunctionDecl(CppElementAndComment, CppITemplateHost):
         if parent_struct_name is None:
             return False
         r = self.function_name == parent_struct_name
+        return r
+
+    def is_destructor(self) -> bool:
+        r = self.function_name.startswith("~")
+        if r:
+            assert self.is_method()
         return r
 
     def is_default_constructor(self) -> bool:
