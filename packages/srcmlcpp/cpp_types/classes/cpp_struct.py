@@ -101,36 +101,39 @@ class CppStruct(CppElementAndComment, CppITemplateHost):
                 r.append((access_type, base_struct))
         return r
 
-    def has_non_default_ctor(self) -> bool:
-        from srcmlcpp.cpp_types.functions.cpp_constructor_decl import CppConstructorDecl
+    def has_user_defined_constructor(self) -> bool:
+        nb_constructor = 0
+        last_constructor: Optional[CppFunctionDecl]
+        for method in self.all_methods():
+            if method.is_constructor():
+                nb_constructor += 1
+                last_constructor = method
+        if nb_constructor == 0:
+            return False
+        elif nb_constructor > 1:
+            return True
+        else:  # nb_constructor = 1
+            # If a struct has only one constructor which is = default,
+            # the struct will not be considered as containing a user defined constructor
+            if last_constructor.is_default_constructor() and "default" in last_constructor.specifiers:
+                return False
+            else:
+                return True
+        return False
 
-        found_non_default_ctor = False
-        for access_zone in self.block.block_children:
-            if isinstance(access_zone, CppPublicProtectedPrivate):
-                for child in access_zone.block_children:
-                    if isinstance(child, CppConstructorDecl):
-                        found_non_default_ctor = True
-                        break
-                    if isinstance(child, CppFunctionDecl) and child.function_name == self.class_name:
-                        found_non_default_ctor = True
-                        break
+    def has_deleted_default_constructor(self) -> bool:
+        for method in self.all_methods():
+            if method.is_default_constructor() and "delete" in method.specifiers:
+                return True
+        return False
 
-        return found_non_default_ctor
+    def get_user_defined_copy_constructor(self) -> Optional[CppFunctionDecl]:
+        for method in self.all_methods():
+            if method.is_copy_constructor():
+                return method
+        return None
 
-    def has_deleted_default_ctor(self) -> bool:
-        from srcmlcpp.cpp_types.functions.cpp_constructor_decl import CppConstructorDecl
-
-        found_deleted_default_ctor = False
-        for access_zone in self.block.block_children:
-            if isinstance(access_zone, CppPublicProtectedPrivate):
-                for child in access_zone.block_children:
-                    if isinstance(child, CppConstructorDecl):
-                        if "delete" in child.specifiers:
-                            found_deleted_default_ctor = True
-                            break
-        return found_deleted_default_ctor
-
-    def has_private_dtor(self) -> bool:
+    def has_private_destructor(self) -> bool:
         found_private_dtor = False
         for access_zone in self.block.block_children:
             if isinstance(access_zone, CppPublicProtectedPrivate):
@@ -244,8 +247,7 @@ class CppStruct(CppElementAndComment, CppITemplateHost):
             ppp_block.parent = self.block
 
     def with_specialized_template(self, template_specs: CppTemplateSpecialization) -> Optional[CppStruct]:
-        """Returns a new non-templated class, implemented for the given type
-        Only works on templated class with *one* template parameter
+        """Returns a new partially or fully specialized class, implemented for the given type
         Will return None if the application of the template changes nothing
         """
         new_class = copy.deepcopy(self)

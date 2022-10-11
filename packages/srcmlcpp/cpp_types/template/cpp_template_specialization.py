@@ -8,8 +8,17 @@ __all__ = ["CppTemplateSpecializationPart", "CppTemplateSpecialization"]
 
 
 class CppTemplateSpecializationPart:
+    """A specialization that can be applied to a template class, a template function
+    or to a non template method of a template class.
+
+        * template_name is the name of the template param, e.g. "T"
+          it can be empty, in which can the specialization will be applied to
+          the first non yet specialized template param
+        * cpp_type is the type that will replace occurrences of the template name
+    """
+
     cpp_type: CppType
-    template_name: str = ""  # If empty, will be applied to the first available template param
+    template_name: str = ""
 
     def __init__(self, cpp_type: Union[CppType, str], template_name: str = ""):
         if isinstance(cpp_type, CppType):
@@ -22,8 +31,8 @@ class CppTemplateSpecializationPart:
             self.cpp_type = srcmlcpp_main.code_to_cpp_type(dummy_options, cpp_type)
             self.template_name = template_name
 
-        # We do not support type composed of multiple word here, such as "unsigned int".
-        # Please use "uint" or other typedefs.
+        # We do not support specialization types whose name is composed of multiple words,
+        # such as "unsigned int". Please use "uint" or other typedefs.
         assert len(self.cpp_type.typenames) == 1
 
     def __str__(self):

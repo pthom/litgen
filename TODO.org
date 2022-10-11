@@ -495,8 +495,11 @@ can reuse lots of parts of PimplMyClass
     log inputs
     etc
 
-**  Refac srcmlcpp:
-    rename srcml_options, exception, wrapper
+
+** Separate litgen and srmclcpp folders
+** coherence naming entre ctor / dtor vs constructor destructor
+** More unit tests / cpp_struct & cpp_function
+** Add CppConstructor[Decl]
 
 * Litgen TODO
 ** Wish list / hard and later
@@ -504,13 +507,12 @@ can reuse lots of parts of PimplMyClass
 *** issue with mypy compatibility with generated modules
 Problem 2: dans lg_skbuild_template, tout est accpté dans example_lib...
 Problem 3: dans lg_test_runner (integration tests), tout est refusé (trouve pas les définitions)
-*** N: auto __repr__ for structs
 *** N: keep pointer and references layout inside CppType (int *x vs int *x vs int * x)
 *** Bind srcml?
 ** Wish List / Easy
+** N: auto __repr__ for structs
 ** Handle (deep)copy
 https://pybind11.readthedocs.io/en/stable/advanced/classes.html#deepcopy-support
-
 
 ** test trampoline with  test with py-mahi-gui
 ** Interactive demo

@@ -589,7 +589,7 @@ class AdaptedClass(AdaptedElement):
                 for access_type, base_class in base_classes:
                     if access_type == CppAccessTypes.public or access_type == CppAccessTypes.protected:
                         other_template_params_list.append(base_class.cpp_scope(include_self=True).str_cpp())
-            if self.cpp_element().has_private_dtor():
+            if self.cpp_element().has_private_destructor():
                 other_template_params_list.append(f"std::unique_ptr<{qualified_struct_name}, py::nodelete>")
             if self._shall_override_virtual_methods_in_python():
                 scope = self.cpp_element().cpp_scope(False).str_cpp()
@@ -644,9 +644,12 @@ class AdaptedClass(AdaptedElement):
 
         code = make_pyclass_creation_code()
 
-        if not self.cpp_element().has_non_default_ctor() and not self.cpp_element().has_deleted_default_ctor():
+        if (
+            not self.cpp_element().has_user_defined_constructor()
+            and not self.cpp_element().has_deleted_default_constructor()
+        ):
             code += f"{_i_}.def(py::init<>()) // implicit default constructor\n"
-        if self.cpp_element().has_deleted_default_ctor():
+        if self.cpp_element().has_deleted_default_constructor():
             code += f"{_i_}// (default constructor explicitly deleted)\n"
 
         def is_class_or_enum(e: AdaptedElement) -> bool:

@@ -24,7 +24,7 @@ class CppFunctionDecl(CppElementAndComment, CppITemplateHost):
     https://www.srcml.org/doc/cpp_srcML.html#function-declaration
     """
 
-    specifiers: List[str]  # "const" or ""
+    specifiers: List[str]  # can contain "const", "delete" or "default" for constructors & destructors
 
     # warning: return_type may include API and inline markers i.e for
     #       MY_API inline int foo()
@@ -58,8 +58,8 @@ class CppFunctionDecl(CppElementAndComment, CppITemplateHost):
         return self.function_name + self.str_template_specialization()
 
     def with_specialized_template(self, template_specs: CppTemplateSpecialization) -> Optional[CppFunctionDecl]:
-        """Returns a new non-templated function, implemented for the given type
-        Only works on templated function with *one* template parameter
+        """Returns a new partially or fully specialized template function, implemented for the given type
+        Returns None if the type(s) provided by template_specs is not used by this function.
         """
         new_function = copy.deepcopy(self)
         new_function._store_template_specs(template_specs)
@@ -203,6 +203,16 @@ class CppFunctionDecl(CppElementAndComment, CppITemplateHost):
         assert isinstance(parent_struct_, CppStruct)
         return parent_struct_
 
+    def access_type_if_method(self) -> Optional[CppAccessTypes]:
+        from srcmlcpp.cpp_types.blocks.cpp_public_protected_private import CppPublicProtectedPrivate
+
+        if not self.is_method():
+            return None
+        ppp = self.parent
+        assert isinstance(ppp, CppPublicProtectedPrivate)
+        r = CppAccessTypes.from_name(ppp.access_type)
+        return r
+
     def parent_struct_name_if_method(self) -> Optional[str]:
         parent_struct = self.parent_struct_if_method()
         if parent_struct is None:
@@ -216,6 +226,29 @@ class CppFunctionDecl(CppElementAndComment, CppITemplateHost):
             return False
         r = self.function_name == parent_struct_name
         return r
+
+    def is_default_constructor(self) -> bool:
+        if not self.is_constructor():
+            return False
+        nb_params = len(self.parameter_list.parameters)
+        return nb_params == 0
+
+    def is_copy_constructor(self) -> bool:
+        if not self.is_constructor():
+            return False
+        if len(self.parameter_list.parameters) != 1:
+            return False
+
+        parent_struct_name = self.parent_struct_name_if_method()
+        assert parent_struct_name is not None
+        param_type = self.parameter_list.parameters[0].decl.cpp_type
+
+        is_same_type = param_type.typenames == [parent_struct_name]
+        is_const_ref = "const" in param_type.specifiers and param_type.modifiers == ["&"]
+        is_pass_by_copy = len(param_type.specifiers) == 0 and len(param_type.modifiers) == 0
+
+        is_copy_ctor = is_same_type and (is_const_ref or is_pass_by_copy)
+        return is_copy_ctor
 
     def is_operator(self) -> bool:
         return self.function_name.startswith("operator")
