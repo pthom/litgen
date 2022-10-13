@@ -2,6 +2,7 @@ import copy
 from typing import List, Optional
 from xml.etree import ElementTree as ET
 
+import srcmlcpp
 from srcmlcpp.internal import srcml_utils
 
 
@@ -57,8 +58,29 @@ class _SrcmlPreprocessorState:
 
     count_preprocessor_tests = 0
 
+    debug = False
+
     def __init__(self, header_acceptable_suffixes: List[str]) -> None:
         self.header_acceptable_suffixes = header_acceptable_suffixes
+
+    def _log_state(self, element: ET.Element) -> str:
+        if not self.debug:
+            return
+
+        options = srcmlcpp.SrcmlcppOptions()
+        wrapper = srcmlcpp.SrcmlWrapper(options, element, None)
+
+        element_code = wrapper.str_code_verbatim()
+        while element_code.endswith("\n"):
+            element_code = element_code[:-1]
+
+        line = 0
+        end = srcml_utils.element_end_position(element)
+        if end is not None:
+            line = end.line
+
+        info = f"Line: {line:04} {self.count_preprocessor_tests=} {element_code}"
+        print(info)
 
     def process_tag(self, element: ET.Element) -> None:
         self.last_element = element
@@ -68,6 +90,8 @@ class _SrcmlPreprocessorState:
         if end is None:
             return
         element_line = end.line
+        if element_line == 416:
+            print("f")
 
         def extract_ifndef_name() -> str:
             for child in element:
@@ -100,6 +124,9 @@ class _SrcmlPreprocessorState:
             self.last_preprocessor_stmt_line = element_line
             if not is_inclusion_guard_ifndef():
                 self.count_preprocessor_tests += 1
+
+        if tag in ["ifdef", "if", "endif", "else", "elif", "ifndef"]:
+            self._log_state(element)
 
     def shall_ignore(self) -> bool:
         assert self.count_preprocessor_tests >= -1  # -1 because we can ignore the inclusion guard
