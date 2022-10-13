@@ -137,6 +137,7 @@ Test multithread qui semble marcher:
 Voir note sur telephone
 
 * Litgen doc
+Revoir https://www.youtube.com/watch?v=8Ab3ArE8W3s&t=270s ("Stop Writing Dead Programs" by Jack Rusher (Strange Loop 2022))
 ** Sources de stubs connues: $
 Voir https://github.com/python/typeshed and https://github.com/microsoft/python-type-stubs
 
@@ -408,13 +409,38 @@ insert diagram via mermaid (see integration with emacs)
 * Hello ImGui Bundle TOOO
 
 later! publish srcmlcpp before!
-** auto-resize and other goodies from immvision
+** Add imgui_internal
+
+Line IM_MSVC_RUNTIME_CHECKS_OFF => add ;
+IM_MSVC_RUNTIME_CHECKS_OFF; idem
+
+header_filter_acceptable_suffixes should be a regex
+IMGUI_HAS_DOCK
+
+Warning:A cpp element of type "function" was ignored. Details follow
+Warning: Can't find type name
+While parsing a "type", corresponding to this C++ code:
+/Users/pascal/dvp/OpenSource/ImGuiWork/litgen/demos/litgen/lg_imgui_bundle/external/imgui/imgui.h:2475:5
+        inline operator ImVec4() const                                  { return Value; }
+
+
+        => was ignored : => was stored as unprocessed
+
+srcmlcpp: Create CppElements.................  100.0% - Line 3322/3322
+Warning: AdaptedClassMember: Can't parse the size of this array.
+Hint: use a vector, or extend `options.c_array_numeric_member_types`
+While parsing a "decl", corresponding to this C++ code:
+/Users/pascal/dvp/OpenSource/ImGuiWork/litgen/demos/litgen/lg_imgui_bundle/external/imgui/imgui.h:1960:5
+        ImVec4      Colors[ImGuiCol_COUNT];
+
 ** Add imgui-node-editor ?
   Much later, add it to suggestions ?
   Needs to add its application class (which provides zooming: see when running example)
 
 
 
+
+** auto-resize and other goodies from immvision
 * srcml_cpp
 ** srcmlcpp utilities
 

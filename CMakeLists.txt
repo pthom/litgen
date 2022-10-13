@@ -25,7 +25,7 @@ if(NOT DEFINED PYTHON_EXECUTABLE)
     message("Searched python via poetry: PYTHON_EXECUTABLE=${PYTHON_EXECUTABLE}")
 endif()
 
-add_subdirectory(lg_projects)
+add_subdirectory(demos)
 add_subdirectory(pybind_native_debug)
 
 add_subdirectory(packages/litgen/integration_tests)
