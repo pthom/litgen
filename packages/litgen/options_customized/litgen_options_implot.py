@@ -5,7 +5,7 @@ from litgen.options_customized.litgen_options_imgui import litgen_options_imgui,
 
 
 def litgen_options_implot() -> LitgenOptions:
-    options = litgen_options_imgui(ImguiOptionsType.imgui_h)
+    options = litgen_options_imgui(ImguiOptionsType.imgui_h, docking_branch=True)
     options.namespace_root__regex = "^ImPlot$"
     options.srcmlcpp_options.functions_api_prefixes = "IMPLOT_API|IMPLOT_TMP"
 

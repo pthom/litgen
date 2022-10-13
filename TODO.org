@@ -414,6 +414,7 @@ later! publish srcmlcpp before!
 syntax imgui_internal.pyi
 
 
+exclude ImFontAtlas*
 
 ** Add imgui-node-editor ?
   Much later, add it to suggestions ?

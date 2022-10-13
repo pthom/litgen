@@ -21,7 +21,7 @@ def read_file_content(filename: str) -> str:
 
 
 def play_parse(code: str) -> None:
-    options = litgen_options_imgui(ImguiOptionsType.imgui_h)
+    options = litgen_options_imgui(ImguiOptionsType.imgui_h, docking_branch=True)
     cpp_unit = srcmlcpp.code_to_cpp_unit(options.srcmlcpp_options, code)
     print(cpp_unit)
 
@@ -131,7 +131,7 @@ struct ImColor
 def play_imgui() -> None:
     from litgen.options_customized.litgen_options_imgui import litgen_options_imgui, ImguiOptionsType
 
-    options = litgen_options_imgui(ImguiOptionsType.imgui_internal_h)
+    options = litgen_options_imgui(ImguiOptionsType.imgui_internal_h, docking_branch=True)
     code = """
     inline ImGuiID          GetFocusID()    { ImGuiContext& g = *GImGui; return g.NavId; }
     IMGUI_API void          SetActiveID(ImGuiID id, ImGuiWindow* window);

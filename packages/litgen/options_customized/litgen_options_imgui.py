@@ -34,7 +34,7 @@ def _preprocess_imgui_code(code: str) -> str:
     return new_code
 
 
-def litgen_options_imgui(type: ImguiOptionsType) -> LitgenOptions:
+def litgen_options_imgui(type: ImguiOptionsType, docking_branch: bool) -> LitgenOptions:
     from litgen.internal import cpp_to_python
 
     options = LitgenOptions()
@@ -55,7 +55,10 @@ def litgen_options_imgui(type: ImguiOptionsType) -> LitgenOptions:
     options.original_signature_flag_show = True
 
     options.srcmlcpp_options.functions_api_prefixes = "IMGUI_API"
+
     options.srcmlcpp_options.header_filter_acceptable__regex += "|^IMGUI_DISABLE$"
+    if docking_branch:
+        options.srcmlcpp_options.header_filter_acceptable__regex += "|^IMGUI_HAS_DOCK$"
 
     options.srcmlcpp_options.code_preprocess_function = _preprocess_imgui_code
 
@@ -113,6 +116,11 @@ def litgen_options_imgui(type: ImguiOptionsType) -> LitgenOptions:
             r"const ImWchar\s*\*",
             r"unsigned char\s*\*",
             r"unsigned int\s*\*",
+            r"^ImVector",
+            r"^ImPool",
+            r"^ImChunkStream",
+            r"^ImSpan",
+            r"^ImBitArray",
         ]
     )
 
@@ -170,6 +178,13 @@ def litgen_options_imgui(type: ImguiOptionsType) -> LitgenOptions:
         options.fn_exclude_by_name__regex += "|^InputText"
     elif type == ImguiOptionsType.imgui_internal_h:
         options.fn_template_options.add_ignore(".*")
+        options.fn_exclude_by_name__regex += join_string_by_pipe_char(
+            [
+                r"^ImStr",
+                r"^ImFormat",
+                r"^ImParseFormat",
+            ]
+        )
         options.class_template_options.add_ignore(".*")
     elif type == ImguiOptionsType.imgui_stdlib_h:
         pass
