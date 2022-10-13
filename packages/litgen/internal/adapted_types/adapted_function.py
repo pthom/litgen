@@ -205,11 +205,26 @@ class AdaptedFunction(AdaptedElement):
     def is_function_publishable(options: LitgenOptions, cpp_function: CppFunctionDecl) -> bool:
         if cpp_function.is_destructor():
             return False
+
+        # Check options.fn_exclude_by_name__regex
         if code_utils.does_match_regex(options.fn_exclude_by_name__regex, cpp_function.function_name):
             return False
+
+        # Exclude pointer to pointer
         if cpp_function.returns_pointer_to_pointer() or cpp_function.parameter_list.contains_pointer_to_pointer_param():
             return False
-        elif len(options.srcmlcpp_options.functions_api_prefixes_list()) > 0 and options.fn_exclude_non_api:
+
+        # Check options.fn_exclude_by_param_type__regex
+        reg = options.fn_exclude_by_param_type__regex
+        if hasattr(cpp_function, "return_type"):
+            if code_utils.does_match_regex(reg, cpp_function.return_type.str_code()):
+                return False
+        for param in cpp_function.parameter_list.parameters:
+            if code_utils.does_match_regex(reg, param.decl.cpp_type.str_code()):
+                return False
+
+        # Check options.functions_api_prefixes_list
+        if len(options.srcmlcpp_options.functions_api_prefixes_list()) > 0 and options.fn_exclude_non_api:
             if not hasattr(cpp_function, "return_type"):
                 return True
             has_api_prefix = False

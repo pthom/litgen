@@ -190,6 +190,16 @@ class LitgenOptions:
     # Exclude certain functions and methods by a regex on their name
     fn_exclude_by_name__regex: str = ""
 
+    # Exclude certain functions and methods by a regex on any of their parameter type and/or return type
+    # (those should be decorated type)
+    # For example:
+    #     options.fn_exclude_by_param_type__regex = "^char\s*$|^unsigned\s+char$|Callback$"
+    # would exclude all functions having params of type "char *", "unsigned char", "xxxCallback"
+    #
+    # Note: this is distinct from `fn_params_exclude_types__regex` which removes params
+    # from the function signature, but not the function itself.
+    fn_exclude_by_param_type__regex: str = ""
+
     # ------------------------------------------------------------------------------
     # Templated functions options
     # ------------------------------------------------------------------------------

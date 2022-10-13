@@ -46,7 +46,13 @@ def litgen_options_imgui(type: ImguiOptionsType, docking_branch: bool) -> Litgen
 
     options.code_replacements = cpp_to_python.standard_code_replacements()
     options.code_replacements.merge_replacements(
-        RegexReplacementList.from_string(r"\bImVector\s*<\s*([\w:]*)\s*> -> List[\1]")
+        RegexReplacementList.from_string(
+            r"""
+            \bImVector\s*<\s*([\w:]*)\s*> -> List[\1]
+            ^signed char$ -> int
+            ^char$ -> int
+            """
+        )
     )
 
     options.python_max_line_length = -1  # in ImGui, the function decls are on *one* line
@@ -91,12 +97,18 @@ def litgen_options_imgui(type: ImguiOptionsType, docking_branch: bool) -> Litgen
             # Exclude function whose name ends with V, like for example
             #       IMGUI_API void          TextV(const char* fmt, va_list args)                            IM_FMTLIST(1);
             # which are utilities for variadic print format
-            r"\w*V\Z",
+            r"[a-z0-9]V$",
             # Low level utility functions from imgui_internal.h
             r"^ImStr",
             r"^ImFormat",
             r"^ImParseFormat",
             r"^ImFontAtlasBuild",
+            r"^ImText\w*To",
+            r"^ImText\w*From",
+            r"^DataType",
+            r"^InputTextEx$",
+            r"^TempInput",
+            r"^ErrorCheckEnd",
         ]
     )
 
@@ -169,6 +181,7 @@ def litgen_options_imgui(type: ImguiOptionsType, docking_branch: bool) -> Litgen
     # Exclude callbacks from the params when they have a default value
     # (since imgui use bare C function pointers, not easily portable)
     options.fn_params_exclude_types__regex = r"Callback$"
+    options.fn_exclude_by_param_type__regex = "^char$"
 
     # Version where we use Boxed types everywhere
     # options.fn_params_replace_modifiable_immutable_by_boxed__regex = r".*"

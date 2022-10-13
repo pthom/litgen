@@ -416,6 +416,8 @@ syntax imgui_internal.pyi
 
 exclude ImFontAtlas*
 
+test input_text pas cassé!
+
 ** Add imgui-node-editor ?
   Much later, add it to suggestions ?
   Needs to add its application class (which provides zooming: see when running example)

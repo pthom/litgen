@@ -46,7 +46,7 @@ class AdaptedNamespace(AdaptedElement):
         proxy_class_code = code_utils.unindent_code(
             f"""
             class {ns_name}: # Proxy class that introduces typings for the *submodule* {ns_name}
-            {_i_}# (This corresponds to a C++ namespace. All method are static!)
+            {_i_}pass # (This corresponds to a C++ namespace. All method are static!)
             """,
             flag_strip_empty_lines=True,
         )

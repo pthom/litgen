@@ -44,7 +44,7 @@ class NamespacesCodeTree:
     def full_tree_code(self, indent_str: str, current_namespace_name: str = "") -> str:
         r = ""
 
-        if len(current_namespace_name) == 0:
+        if len(current_namespace_name) == 0 or len(self._namespace_code) == 0:
             is_namespace_ignored = True
         else:
             is_namespace_ignored = code_utils.does_match_regex(

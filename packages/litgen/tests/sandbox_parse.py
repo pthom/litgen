@@ -133,8 +133,7 @@ def play_imgui() -> None:
 
     options = litgen_options_imgui(ImguiOptionsType.imgui_internal_h, docking_branch=True)
     code = """
-    inline ImGuiID          GetFocusID()    { ImGuiContext& g = *GImGui; return g.NavId; }
-    IMGUI_API void          SetActiveID(ImGuiID id, ImGuiWindow* window);
+IMGUI_API int           ImTextStrToUtf8(char* out_buf, int out_buf_size, const ImWchar* in_text, const ImWchar* in_text_end);       /* original C++ signature */
     """
     generated_code = litgen.generate_code(options, code)
     print(generated_code.stub_code)
