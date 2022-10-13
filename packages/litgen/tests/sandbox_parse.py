@@ -6,7 +6,7 @@ import srcmlcpp
 import litgen
 from litgen import LitgenOptions
 from litgen.litgen_generator import LitgenGeneratorTestsHelper
-from litgen.options_customized.litgen_options_imgui import litgen_options_imgui
+from litgen.options_customized.litgen_options_imgui import litgen_options_imgui, ImguiOptionsType
 from litgen.options_customized.litgen_options_implot import litgen_options_implot
 
 
@@ -21,7 +21,7 @@ def read_file_content(filename: str) -> str:
 
 
 def play_parse(code: str) -> None:
-    options = litgen_options_imgui()
+    options = litgen_options_imgui(ImguiOptionsType.imgui_h)
     cpp_unit = srcmlcpp.code_to_cpp_unit(options.srcmlcpp_options, code)
     print(cpp_unit)
 

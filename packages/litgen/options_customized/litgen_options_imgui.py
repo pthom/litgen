@@ -1,7 +1,15 @@
+from enum import Enum
+
 from codemanip.code_replacements import RegexReplacementList
 from codemanip.code_utils import join_string_by_pipe_char
 
 from litgen.options import LitgenOptions
+
+
+class ImguiOptionsType(Enum):
+    imgui_h = 1
+    imgui_stdlib_h = 2
+    imgui_internal = 3
 
 
 def _preprocess_imgui_code(code: str) -> str:
@@ -26,7 +34,7 @@ def _preprocess_imgui_code(code: str) -> str:
     return new_code
 
 
-def litgen_options_imgui() -> LitgenOptions:
+def litgen_options_imgui(type: ImguiOptionsType) -> LitgenOptions:
     from litgen.internal import cpp_to_python
 
     options = LitgenOptions()
@@ -157,5 +165,13 @@ def litgen_options_imgui() -> LitgenOptions:
     options.fn_params_replace_c_array_modifiable_by_boxed__regex = ""
 
     options.srcmlcpp_options.flag_show_progress = True
+
+    if type == ImguiOptionsType.imgui_h:
+        options.fn_exclude_by_name__regex += "|^InputText"
+    elif type == ImguiOptionsType.imgui_internal:
+        options.fn_template_options.add_ignore(".*")
+        options.class_template_options.add_ignore(".*")
+    elif type == ImguiOptionsType.imgui_stdlib_h:
+        pass
 
     return options
