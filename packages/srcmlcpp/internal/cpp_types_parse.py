@@ -533,6 +533,10 @@ def parse_struct_or_class(options: SrcmlcppOptions, element_c: CppElementAndComm
             child_text = child.text()
             assert child_text is not None
             result.specifier = child_text
+        elif child_tag == "macro":
+            macro_name = child.name_code()
+            assert macro_name is not None
+            result.macro = macro_name
         else:
             raise SrcmlcppExceptionDetailed(child, f"unhandled tag {child_tag}")
 

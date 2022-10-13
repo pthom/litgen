@@ -30,6 +30,7 @@ class CppStruct(CppElementAndComment, CppITemplateHost):
     super_list: CppSuperList
     block: CppBlock
     specifier: str  # "final" for final classes, empty otherwise
+    macro: str  # used in rare cases, such as `struct MY_API Foo { };` where macro will be "MY_API"
 
     def __init__(self, element: SrcmlWrapper, cpp_element_comments: CppElementComments) -> None:
         super().__init__(element, cpp_element_comments)
