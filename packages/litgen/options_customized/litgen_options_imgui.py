@@ -74,6 +74,8 @@ def litgen_options_imgui() -> LitgenOptions:
             # IMGUI_API ImVec2            CalcTextSizeA(float size, float max_width, float wrap_width, const char* text_begin, const char* text_end = NULL, const char** remaining = NULL) const; // utf8
             #                                                                                                                                                         ^
             r"\bCalcTextSizeA\b",
+            r"ImFormatStringToTempBuffer",
+            r"ImTextStrFromUtf8",
             "appendfv",
             # Exclude function whose name ends with V, like for example
             #       IMGUI_API void          TextV(const char* fmt, va_list args)                            IM_FMTLIST(1);
@@ -87,7 +89,7 @@ def litgen_options_imgui() -> LitgenOptions:
             #     typedef void (*ImDrawCallback)(const ImDrawList* parent_list, const ImDrawCmd* cmd);
             #     ImDrawCallback  UserCallback;       // 4-8  // If != NULL, call the function instead of rendering the vertices. clip_rect and texture_id will be set normally.
             #     ^
-            r"\bUserCallback\b",
+            r"Callback$",
             # struct ImDrawData
             # { ...
             #     ImDrawList**    CmdLists;               // Array of ImDrawList* to render. The ImDrawList are owned by ImGuiContext and only pointed to from here.
@@ -122,6 +124,7 @@ def litgen_options_imgui() -> LitgenOptions:
         ]
     )
 
+    # options.fn_force_overload__regex = r".*"
     options.fn_force_overload__regex = join_string_by_pipe_char(
         [
             r"^SetScroll",
@@ -131,6 +134,9 @@ def litgen_options_imgui() -> LitgenOptions:
             r"Popup",
             r"DrawList",
             r"^Table",
+            r"^SetWindowPos",
+            r"^SetWindowSize",
+            r"^SetWindowCollapsed",
         ]
     )
 
