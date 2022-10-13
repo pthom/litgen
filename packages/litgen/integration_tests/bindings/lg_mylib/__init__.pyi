@@ -348,22 +348,22 @@ class BasicEnum(Enum):
     # not to pollute the parent namespace.
     # Since enum members do not leak to the parent namespace in python, litgen will remove the prefix by default.
 
-    a = auto()   # (= 1)  # This will be exported as BasicEnum.a
-    aa = auto()  # (= 2)  # This will be exported as BasicEnum.aa
-    aaa = auto() # (= 3)  # This will be exported as BasicEnum.aaa
+    a = enum.auto()   # (= 1)  # This will be exported as BasicEnum.a
+    aa = enum.auto()  # (= 2)  # This will be exported as BasicEnum.aa
+    aaa = enum.auto() # (= 3)  # This will be exported as BasicEnum.aaa
 
     # Lonely comment
 
     # This is value b
-    b = auto()   # (= 4)
+    b = enum.auto()   # (= 4)
 
 
 
 class ClassEnum(Enum):
     """ ClassEnum: a class enum that should be published"""
-    on = auto()      # (= 0)
-    off = auto()     # (= 1)
-    unknown = auto() # (= 2)
+    on = enum.auto()      # (= 0)
+    off = enum.auto()     # (= 1)
+    unknown = enum.auto() # (= 2)
 
 
 
@@ -944,10 +944,10 @@ class SomeNamespace: # Proxy class that introduces typings for the *submodule* S
                 pass
 
         class InnerEnum(Enum):
-            zero = auto()  # (= 0)
-            one = auto()   # (= 1)
-            two = auto()   # (= 2)
-            three = auto() # (= 3)
+            zero = enum.auto()  # (= 0)
+            one = enum.auto()   # (= 1)
+            two = enum.auto()   # (= 2)
+            three = enum.auto() # (= 3)
 
         inner_struct: InnerStruct
         inner_enum: InnerEnum = InnerEnum.three

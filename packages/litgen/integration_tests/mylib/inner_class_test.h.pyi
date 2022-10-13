@@ -31,10 +31,10 @@ class SomeNamespace: # Proxy class that introduces typings for the *submodule* S
                 pass
 
         class InnerEnum(Enum):
-            zero = auto()  # (= 0)
-            one = auto()   # (= 1)
-            two = auto()   # (= 2)
-            three = auto() # (= 3)
+            zero = enum.auto()  # (= 0)
+            one = enum.auto()   # (= 1)
+            two = enum.auto()   # (= 2)
+            three = enum.auto() # (= 3)
 
         inner_struct: InnerStruct
         inner_enum: InnerEnum = InnerEnum.three

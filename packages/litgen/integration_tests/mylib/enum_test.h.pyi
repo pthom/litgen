@@ -21,22 +21,22 @@ class BasicEnum(Enum):
     # not to pollute the parent namespace.
     # Since enum members do not leak to the parent namespace in python, litgen will remove the prefix by default.
 
-    a = auto()   # (= 1)  # This will be exported as BasicEnum.a
-    aa = auto()  # (= 2)  # This will be exported as BasicEnum.aa
-    aaa = auto() # (= 3)  # This will be exported as BasicEnum.aaa
+    a = enum.auto()   # (= 1)  # This will be exported as BasicEnum.a
+    aa = enum.auto()  # (= 2)  # This will be exported as BasicEnum.aa
+    aaa = enum.auto() # (= 3)  # This will be exported as BasicEnum.aaa
 
     # Lonely comment
 
     # This is value b
-    b = auto()   # (= 4)
+    b = enum.auto()   # (= 4)
 
 
 
 class ClassEnum(Enum):
     """ ClassEnum: a class enum that should be published"""
-    on = auto()      # (= 0)
-    off = auto()     # (= 1)
-    unknown = auto() # (= 2)
+    on = enum.auto()      # (= 0)
+    off = enum.auto()     # (= 1)
+    unknown = enum.auto() # (= 2)
 
 
 ####################    </generated_from:enum_test.h>    ####################
