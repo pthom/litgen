@@ -44,7 +44,7 @@ def litgen_options_imgui() -> LitgenOptions:
     options.original_signature_flag_show = True
 
     options.srcmlcpp_options.functions_api_prefixes = "IMGUI_API"
-    options.srcmlcpp_options.header_filter_acceptable_suffixes += "|IMGUI_DISABLE"
+    options.srcmlcpp_options.header_filter_acceptable_ifndef__regex += "|^IMGUI_DISABLE$"
 
     options.srcmlcpp_options.code_preprocess_function = _preprocess_imgui_code
 

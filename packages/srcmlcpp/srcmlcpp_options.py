@@ -41,11 +41,11 @@ class SrcmlcppOptions:
     # See srcmlcpp/filter_preprocessor_regions.py for more complete examples
     header_filter_preprocessor_regions: bool = False
     # If header_filter_preprocessor_regions is True,
-    # you need to also fill header_filter_acceptable_suffixes in order to accept code contained inside header_guards
-    # and other acceptable preprocessor defines.
-    # You can have several suffixes: separate them with a "|", for example: "_H|_HPP|MY_ACCEPTABLE_MACRO"
+    # you need to also fill header_filter_acceptable_ifndef__regex in order to accept code contained
+    # inside header_guards (and other acceptable preprocessor defines you may set in this list)
+    # Your regex can have several options: separate them with a "|".
     # By default, all macros names ending with "_H", "HPP", "HXX" are considered as header guards.
-    header_filter_acceptable_suffixes: str = "_H|HPP|HXX"
+    header_filter_acceptable_ifndef__regex: str = "_h$|_H$|hpp$|HPP$|hxx$|HXX$"
 
     ################################################################################
     #    <Custom preprocess of the code>
@@ -97,9 +97,6 @@ class SrcmlcppOptions:
     def functions_api_prefixes_list(self) -> List[str]:
         assert isinstance(self.functions_api_prefixes, str)
         return split_string_by_pipe_char(self.functions_api_prefixes)
-
-    def header_filter_acceptable_suffixes_list(self) -> List[str]:
-        return split_string_by_pipe_char(self.header_filter_acceptable_suffixes)
 
 
 def _int_from_str_or_named_number_macros(options: SrcmlcppOptions, int_str: Optional[str]) -> Optional[int]:

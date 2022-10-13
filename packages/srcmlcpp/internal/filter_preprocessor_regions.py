@@ -1,6 +1,8 @@
 import copy
-from typing import List, Optional
+from typing import Optional
 from xml.etree import ElementTree as ET
+
+from codemanip import code_utils
 
 import srcmlcpp
 from srcmlcpp.internal import srcml_utils
@@ -50,7 +52,7 @@ class _SrcmlPreprocessorState:
     We will test that a ifndef is an inclusion guard by checking comparing its suffix with HEADER_GUARD_SUFFIXES
     """
 
-    header_acceptable_suffixes: List[str]
+    header_acceptable_ifndef__regex: str
 
     was_last_element_a_preprocessor_stmt: bool = False
     last_preprocessor_stmt_line: int = -1
@@ -60,10 +62,10 @@ class _SrcmlPreprocessorState:
 
     debug = False
 
-    def __init__(self, header_acceptable_suffixes: List[str]) -> None:
-        self.header_acceptable_suffixes = header_acceptable_suffixes
+    def __init__(self, header_acceptable__regex: str) -> None:
+        self.header_acceptable_ifndef__regex = header_acceptable__regex
 
-    def _log_state(self, element: ET.Element) -> str:
+    def _log_state(self, element: ET.Element) -> None:
         if not self.debug:
             return
 
@@ -100,11 +102,10 @@ class _SrcmlPreprocessorState:
                     return child.text
             return ""
 
-        def is_inclusion_guard_ifndef() -> bool:
+        def is_acceptable_ifndef() -> bool:
             ifndef_name = extract_ifndef_name()
-            for suffix in self.header_acceptable_suffixes:
-                if ifndef_name.upper().endswith(suffix.upper()):
-                    return True
+            if code_utils.does_match_regex(self.header_acceptable_ifndef__regex, ifndef_name):
+                return True
             return False
 
         self.was_last_element_a_preprocessor_stmt = False
@@ -122,7 +123,7 @@ class _SrcmlPreprocessorState:
         elif tag == "ifndef":
             self.was_last_element_a_preprocessor_stmt = True
             self.last_preprocessor_stmt_line = element_line
-            if not is_inclusion_guard_ifndef():
+            if not is_acceptable_ifndef():
                 self.count_preprocessor_tests += 1
 
         if tag in ["ifdef", "if", "endif", "else", "elif", "ifndef"]:
@@ -147,9 +148,9 @@ class _SrcmlPreprocessorState:
             return False
 
 
-def filter_preprocessor_regions(unit: ET.Element, header_acceptable_suffixes: List[str]) -> ET.Element:
+def filter_preprocessor_regions(unit: ET.Element, header_acceptable__regex: str) -> ET.Element:
     filtered_unit = copy.deepcopy(unit)
-    processor = _SrcmlPreprocessorState(header_acceptable_suffixes)
+    processor = _SrcmlPreprocessorState(header_acceptable__regex)
     children_to_remove = []
 
     for child in filtered_unit:
