@@ -200,7 +200,7 @@ class SrcmlWrapper:
 
     def _show_element_info(self) -> str:
         element_tag = self.tag()
-        concerned_code = self.str_code_context_with_caret()
+        concerned_code = self.str_code_context_with_caret(max_lines=2)
         message = f"""
         While parsing a "{element_tag}", corresponding to this C++ code:
         {self.str_code_location()}
@@ -231,7 +231,7 @@ class SrcmlWrapper:
 
         return message
 
-    def str_code_context_with_caret(self) -> str:
+    def str_code_context_with_caret(self, max_lines: int) -> str:
         context: CodeContextWithCaret
         r = ""
         full_code = code_cache.get_cached_code(self.filename)
@@ -241,6 +241,9 @@ class SrcmlWrapper:
             start = self.start()
             end = self.end()
             if start.line >= 0 and end.line >= 0:
+                if end.line > start.line + max_lines:
+                    end.line = start.line + max_lines
+
                 concerned_lines = full_code_lines[start.line : end.line + 1]
                 new_start = CodePosition(0, start.column)
                 new_end = CodePosition(

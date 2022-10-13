@@ -55,6 +55,5 @@ def test_warnings_2():
             ^
             {
                 int a = 1;
-            };
     """,
     )
