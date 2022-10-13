@@ -41,11 +41,11 @@ class SrcmlcppOptions:
     # See srcmlcpp/filter_preprocessor_regions.py for more complete examples
     header_filter_preprocessor_regions: bool = False
     # If header_filter_preprocessor_regions is True,
-    # you need to also fill header_filter_acceptable_ifndef__regex in order to accept code contained
-    # inside header_guards (and other acceptable preprocessor defines you may set in this list)
+    # you need to also fill header_filter_acceptable__regex in order to accept code contained
+    # inside header_guards (and other acceptable preprocessor defines you may set via this regex)
     # Your regex can have several options: separate them with a "|".
-    # By default, all macros names ending with "_H", "HPP", "HXX" are considered as header guards.
-    header_filter_acceptable_ifndef__regex: str = "_h$|_H$|hpp$|HPP$|hxx$|HXX$"
+    # By default, all macros names ending with "_H", "HPP", "HXX" are considered as acceptable.
+    header_filter_acceptable__regex: str = "_h$|_H$|hpp$|HPP$|hxx$|HXX$"
 
     ################################################################################
     #    <Custom preprocess of the code>

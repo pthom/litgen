@@ -337,7 +337,7 @@ def _group_comments(
 def get_children_with_comments(element: SrcmlWrapper) -> List[CppElementAndComment]:
     if element.options.header_filter_preprocessor_regions:
         element.srcml_xml = filter_preprocessor_regions(
-            element.srcml_xml, element.options.header_filter_acceptable_ifndef__regex
+            element.srcml_xml, element.options.header_filter_acceptable__regex
         )
 
     result = []

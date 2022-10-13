@@ -1,5 +1,5 @@
 import copy
-from typing import Optional
+from typing import Optional, List
 from xml.etree import ElementTree as ET
 
 from codemanip import code_utils
@@ -23,14 +23,19 @@ void Foo() {}     // This function and this comment should be included
 
 #ifdef SOME_OPTION
 // We are probably entering a zone that handle arcane options and should not be included in the bindings
-    void Foo2() {}    // this should be ignored
+void Foo2() {}    // this should be ignored
 #else
-    void Foo3() {}    // this should be ignored also
+void Foo3() {}    // this should be ignored also
 #endif // #ifdef SOME_OPTION  <- this comment should be removed (on same line as an ifdef/endif)
 
 #ifndef WIN32
-    // We are also probably entering a zone that handle arcane options and should not be included in the bindings
-    void Foo4() {}
+// We are also probably entering a zone that handle arcane options and should not be included in the bindings
+void Foo4() {}
+#endif
+
+#ifdef SOME_OPTION_ACCEPTED
+// We are entering a zone which we want to accept if we add "ACCEPTED$" to options.header_acceptable__regex
+void FooAccepted();
 #endif
 
 #endif // #ifndef MY_HEADER_H
@@ -41,7 +46,8 @@ _EXPECTED_FILTERED_HEADER = """
 
 void Foo() {}     // This function and this comment should be included
 
-
+// We are entering a zone which we want to accept if we add "ACCEPTED$" to options.header_acceptable__regex
+void FooAccepted();
 """
 
 
@@ -52,18 +58,19 @@ class _SrcmlPreprocessorState:
     We will test that a ifndef is an inclusion guard by checking comparing its suffix with HEADER_GUARD_SUFFIXES
     """
 
-    header_acceptable_ifndef__regex: str
+    header_acceptable__regex: str
 
     was_last_element_a_preprocessor_stmt: bool = False
-    last_preprocessor_stmt_line: int = -1
+    last_ignored_preprocessor_stmt_line: int = -1
     last_element: Optional[ET.Element] = None
 
-    count_preprocessor_tests = 0
-
+    encountered_if: List[str]
     debug = False
 
     def __init__(self, header_acceptable__regex: str) -> None:
-        self.header_acceptable_ifndef__regex = header_acceptable__regex
+        self.header_acceptable__regex = header_acceptable__regex
+        self.shall_exclude = False
+        self.encountered_if = []
 
     def _log_state(self, element: ET.Element) -> None:
         if not self.debug:
@@ -81,56 +88,59 @@ class _SrcmlPreprocessorState:
         if end is not None:
             line = end.line
 
-        info = f"Line: {line:04} {self.count_preprocessor_tests=} {element_code}"
+        info = f"Line: {line:04} {element_code} => {self.encountered_if=}"
         print(info)
 
     def process_tag(self, element: ET.Element) -> None:
         self.last_element = element
         tag = srcml_utils.clean_tag_or_attrib(element.tag)
 
+        is_ifdef = tag in ["ifdef", "if", "endif", "else", "elif", "ifndef"]
+
         end = srcml_utils.element_end_position(element)
         if end is None:
             return
         element_line = end.line
-        if element_line == 416:
-            print("f")
 
-        def extract_ifndef_name() -> str:
+        def extract_ifdef_var_name() -> str:
+            if not is_ifdef:
+                return ""
             for child in element:
                 if srcml_utils.clean_tag_or_attrib(child.tag) == "name":
                     assert child.text is not None
                     return child.text
             return ""
 
-        def is_acceptable_ifndef() -> bool:
-            ifndef_name = extract_ifndef_name()
-            if code_utils.does_match_regex(self.header_acceptable_ifndef__regex, ifndef_name):
-                return True
-            return False
+        ifdef_var_name = extract_ifdef_var_name()
 
         self.was_last_element_a_preprocessor_stmt = False
         if tag in ["ifdef", "if"]:
             self.was_last_element_a_preprocessor_stmt = True
-            self.last_preprocessor_stmt_line = element_line
-            self.count_preprocessor_tests += 1
-        elif tag == "endif":
-            self.was_last_element_a_preprocessor_stmt = True
-            self.last_preprocessor_stmt_line = element_line
-            self.count_preprocessor_tests -= 1
-        elif tag in ["else", "elif"]:
-            self.was_last_element_a_preprocessor_stmt = True
-            self.last_preprocessor_stmt_line = element_line
+            self.last_ignored_preprocessor_stmt_line = element_line
+            self.encountered_if.append(ifdef_var_name)
         elif tag == "ifndef":
             self.was_last_element_a_preprocessor_stmt = True
-            self.last_preprocessor_stmt_line = element_line
-            if not is_acceptable_ifndef():
-                self.count_preprocessor_tests += 1
+            self.last_ignored_preprocessor_stmt_line = element_line
+            self.encountered_if.append(ifdef_var_name)
+        elif tag == "endif":
+            self.was_last_element_a_preprocessor_stmt = True
+            self.last_ignored_preprocessor_stmt_line = element_line
+            assert len(self.encountered_if) > 0
+            self.encountered_if = self.encountered_if[:-1]
+        elif tag in ["else", "elif"]:
+            self.was_last_element_a_preprocessor_stmt = True
+            self.last_ignored_preprocessor_stmt_line = element_line
 
-        if tag in ["ifdef", "if", "endif", "else", "elif", "ifndef"]:
+        if self.debug and is_ifdef:
             self._log_state(element)
 
+    def has_one_excluded_ifdef(self) -> bool:
+        for ifdef_var_name in self.encountered_if:
+            if not code_utils.does_match_regex(self.header_acceptable__regex, ifdef_var_name):
+                return True
+        return False
+
     def shall_ignore(self) -> bool:
-        assert self.count_preprocessor_tests >= -1  # -1 because we can ignore the inclusion guard
         if self.was_last_element_a_preprocessor_stmt:
             return True
         if self.last_element is None:
@@ -139,13 +149,11 @@ class _SrcmlPreprocessorState:
             start = srcml_utils.element_start_position(self.last_element)
             if start is not None:
                 comment_line = start.line
-                if comment_line == self.last_preprocessor_stmt_line:
+                if comment_line == self.last_ignored_preprocessor_stmt_line:
                     return True
 
-        if self.count_preprocessor_tests > 0:
-            return True
-        else:
-            return False
+        r = self.has_one_excluded_ifdef()
+        return r
 
 
 def filter_preprocessor_regions(unit: ET.Element, header_acceptable__regex: str) -> ET.Element:
