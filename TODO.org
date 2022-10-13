@@ -412,7 +412,7 @@ later! publish srcmlcpp before!
 ** Add imgui_internal
 
 syntax imgui_internal.pyi
-enum auto() ==> Enum.auto()
+
 
 
 ** Add imgui-node-editor ?

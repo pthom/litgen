@@ -50,6 +50,8 @@ def type_to_python(options: LitgenOptions, type_cpp: str) -> str:
     r = type_cpp
     r = r.replace("static ", "")
     r = options.code_replacements.apply(r).strip()
+    if r == "char":  # this transformation is applied only to types! (could be too broad otherwise)
+        r = "str"
     return r
 
 
