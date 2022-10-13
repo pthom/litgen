@@ -658,7 +658,10 @@ def fill_block(options: SrcmlcppOptions, element: SrcmlWrapper, inout_block_cont
                 last_ignored_child = child_c
                 inout_block_content.block_children.append(parse_unprocessed(options, child_c))
         except SrcmlcppExceptionDetailed as e:
-            emit_warning_if_not_quiet(options, f'A cpp element of type "{child_tag}" was ignored. Details follow\n{e}')
+            inout_block_content.block_children.append(parse_unprocessed(options, child_c))
+            emit_warning_if_not_quiet(
+                options, f'A cpp element of type "{child_tag}" was stored as CppUnprocessed. Details follow\n{e}'
+            )
 
 
 def parse_unit(options: SrcmlcppOptions, element: SrcmlWrapper) -> CppUnit:
