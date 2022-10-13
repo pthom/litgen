@@ -128,14 +128,17 @@ struct ImColor
     # print(f.str_code())
 
 
-def play_srcml() -> None:
-    code = "int a = 1;"
-    options = srcmlcpp.SrcmlcppOptions()
-    wrapper = srcmlcpp.code_to_srcml_wrapper(options, code)
-    print(wrapper.str_xml())
-    print("a")
+def play_imgui() -> None:
+    from litgen.options_customized.litgen_options_imgui import litgen_options_imgui, ImguiOptionsType
+
+    options = litgen_options_imgui(ImguiOptionsType.imgui_internal_h)
+    code = """
+    inline ImGuiID          GetFocusID()    { ImGuiContext& g = *GImGui; return g.NavId; }
+    IMGUI_API void          SetActiveID(ImGuiID id, ImGuiWindow* window);
+    """
+    generated_code = litgen.generate_code(options, code)
+    print(generated_code.stub_code)
 
 
 if __name__ == "__main__":
-    # play_srcml()
-    play()
+    play_imgui()

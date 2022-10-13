@@ -411,21 +411,9 @@ insert diagram via mermaid (see integration with emacs)
 later! publish srcmlcpp before!
 ** Add imgui_internal
 
-Warning:A cpp element of type "function" was ignored. Details follow
-Warning: Can't find type name
-While parsing a "type", corresponding to this C++ code:
-/Users/pascal/dvp/OpenSource/ImGuiWork/litgen/demos/litgen/lg_imgui_bundle/external/imgui/imgui.h:2475:5
-        inline operator ImVec4() const                                  { return Value; }
+syntax imgui_internal.pyi
+enum auto() ==> Enum.auto()
 
-
-        => was ignored : => was stored as unprocessed
-
-srcmlcpp: Create CppElements.................  100.0% - Line 3322/3322
-Warning: AdaptedClassMember: Can't parse the size of this array.
-Hint: use a vector, or extend `options.c_array_numeric_member_types`
-While parsing a "decl", corresponding to this C++ code:
-/Users/pascal/dvp/OpenSource/ImGuiWork/litgen/demos/litgen/lg_imgui_bundle/external/imgui/imgui.h:1960:5
-        ImVec4      Colors[ImGuiCol_COUNT];
 
 ** Add imgui-node-editor ?
   Much later, add it to suggestions ?

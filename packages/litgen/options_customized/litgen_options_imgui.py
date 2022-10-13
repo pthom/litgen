@@ -9,7 +9,7 @@ from litgen.options import LitgenOptions
 class ImguiOptionsType(Enum):
     imgui_h = 1
     imgui_stdlib_h = 2
-    imgui_internal = 3
+    imgui_internal_h = 3
 
 
 def _preprocess_imgui_code(code: str) -> str:
@@ -168,7 +168,7 @@ def litgen_options_imgui(type: ImguiOptionsType) -> LitgenOptions:
 
     if type == ImguiOptionsType.imgui_h:
         options.fn_exclude_by_name__regex += "|^InputText"
-    elif type == ImguiOptionsType.imgui_internal:
+    elif type == ImguiOptionsType.imgui_internal_h:
         options.fn_template_options.add_ignore(".*")
         options.class_template_options.add_ignore(".*")
     elif type == ImguiOptionsType.imgui_stdlib_h:
