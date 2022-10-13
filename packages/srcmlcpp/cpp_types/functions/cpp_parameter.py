@@ -17,8 +17,10 @@ class CppParameter(CppElementAndComment):
     """
 
     decl: CppDecl
+
     template_type: str  # This is only for template's CppParameterList (will be "typename" or "class")
     template_name: str = ""  # This is only for template's CppParameterList (name of the template type, e.g. "T")
+    template_init: str = ""  # For templates with default int value, e.g. `template<int N=1> void f()`
 
     def __init__(self, element: SrcmlWrapper) -> None:
         dummy_cpp_element_comments = CppElementComments()

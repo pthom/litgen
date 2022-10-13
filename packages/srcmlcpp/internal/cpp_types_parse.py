@@ -246,6 +246,9 @@ def parse_parameter(options: SrcmlcppOptions, element: SrcmlWrapper) -> CppParam
             child_text = child.text()
             assert child_text is not None
             result.template_name = child_text  # This is only for template parameters
+        elif child_tag == "init":
+            # This is only for int template parameters e.g. `template<int N=1> void f()`
+            result.template_init = _parse_init_expr(child)
         elif child_tag == "function_decl":
             raise SrcmlcppExceptionDetailed(child, "Can't use a function_decl as a param.")
         else:
