@@ -92,6 +92,11 @@ def litgen_options_imgui(type: ImguiOptionsType, docking_branch: bool) -> Litgen
             #       IMGUI_API void          TextV(const char* fmt, va_list args)                            IM_FMTLIST(1);
             # which are utilities for variadic print format
             r"\w*V\Z",
+            # Low level utility functions from imgui_internal.h
+            r"^ImStr",
+            r"^ImFormat",
+            r"^ImParseFormat",
+            r"^ImFontAtlasBuild",
         ]
     )
 
@@ -178,13 +183,6 @@ def litgen_options_imgui(type: ImguiOptionsType, docking_branch: bool) -> Litgen
         options.fn_exclude_by_name__regex += "|^InputText"
     elif type == ImguiOptionsType.imgui_internal_h:
         options.fn_template_options.add_ignore(".*")
-        options.fn_exclude_by_name__regex += join_string_by_pipe_char(
-            [
-                r"^ImStr",
-                r"^ImFormat",
-                r"^ImParseFormat",
-            ]
-        )
         options.class_template_options.add_ignore(".*")
     elif type == ImguiOptionsType.imgui_stdlib_h:
         pass
