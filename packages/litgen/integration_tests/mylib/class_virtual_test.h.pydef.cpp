@@ -62,6 +62,15 @@ class MyVirtualDerivate_trampoline : public MyVirtualDerivate
 public:
     using MyVirtualDerivate::MyVirtualDerivate;
 
+    int foo_virtual_public_pure() const override
+    {
+        PYBIND11_OVERRIDE_NAME(
+            int, // return type
+            Root::Inner::MyVirtualDerivate, // parent class
+            "foo_virtual_public_pure", // function name (python)
+            foo_virtual_public_pure // function name (c++)
+        );
+    }
     int foo_derivate() override
     {
         PYBIND11_OVERRIDE_NAME(
@@ -69,15 +78,6 @@ public:
             Root::Inner::MyVirtualDerivate, // parent class
             "foo_derivate", // function name (python)
             foo_derivate // function name (c++)
-        );
-    }
-    int foo_virtual_public_pure() const override
-    {
-        PYBIND11_OVERRIDE_PURE_NAME(
-            int, // return type
-            Root::Inner::MyVirtualDerivate, // parent class
-            "foo_virtual_public_pure", // function name (python)
-            foo_virtual_public_pure // function name (c++)
         );
     }
     int foo_virtual_protected(int x) const override

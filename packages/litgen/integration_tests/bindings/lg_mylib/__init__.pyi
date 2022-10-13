@@ -920,9 +920,9 @@ class Root: # Proxy class that introduces typings for the *submodule* Root
             """
             def __init__(self) -> None:
                 pass
-            def foo_virtual_public_pure(self) -> int:
+            def foo_virtual_public_pure(self) -> int: # overridable
                 pass
-            def foo_derivate(self) -> int: # overridable
+            def foo_derivate(self) -> int:            # overridable
                 pass
 
     # </submodule Inner>
