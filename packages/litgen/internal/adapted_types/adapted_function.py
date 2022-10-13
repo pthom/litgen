@@ -383,9 +383,6 @@ class AdaptedFunction(AdaptedElement):
         if self._is_template_non_specialized():
             template_instantiations = self._split_into_template_instantiations()
             if len(template_instantiations) == 0:
-                self.cpp_element().emit_warning(
-                    "Ignoring template function. You might need to set LitgenOptions.fn_template_options"
-                )
                 return []
             else:
                 r = []
@@ -942,19 +939,27 @@ class AdaptedFunction(AdaptedElement):
 
     def _split_into_template_instantiations(self) -> List[AdaptedFunction]:
         assert self._is_template_non_specialized()
-        if not self._is_one_param_template():
+
+        matching_template_spec = None
+        for template_spec in self.options.fn_template_options.specs:
+            if code_utils.does_match_regex(template_spec.name_regex, self.cpp_element().function_name):
+                matching_template_spec = template_spec
+
+        if matching_template_spec is None:
+            self.cpp_element().emit_warning(
+                "Ignoring template function. You might need to set LitgenOptions.fn_template_options"
+            )
+            return []
+
+        if not self._is_one_param_template() and len(matching_template_spec.cpp_types_list) > 0:
             self.cpp_element().emit_warning("Only one parameters template functions are supported")
             return []
 
-        template_options = self.options.fn_template_options
-        for instantiation_spec in template_options.specs:
-            if code_utils.does_match_regex(instantiation_spec.name_regex, self.cpp_element().function_name):
-                new_functions: List[AdaptedFunction] = []
-                for cpp_type in instantiation_spec.cpp_types_list:
-                    new_function = self._instantiate_template_for_type(cpp_type, instantiation_spec.naming_scheme)
-                    new_functions.append(new_function)
-                return new_functions
-        return []
+        new_functions: List[AdaptedFunction] = []
+        for cpp_type in matching_template_spec.cpp_types_list:
+            new_function = self._instantiate_template_for_type(cpp_type, matching_template_spec.naming_scheme)
+            new_functions.append(new_function)
+        return new_functions
 
     # override
     def _str_pydef_lines(self) -> List[str]:
@@ -975,9 +980,6 @@ class AdaptedFunction(AdaptedElement):
         if self._is_template_non_specialized():
             template_instantiations = self._split_into_template_instantiations()
             if len(template_instantiations) == 0:
-                self.cpp_element().emit_warning(
-                    "Ignoring template function. You might need to set LitgenOptions.fn_template_options"
-                )
                 return []
             else:
                 r = []

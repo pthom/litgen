@@ -356,9 +356,6 @@ class AdaptedClass(AdaptedElement):
         if self.cpp_element().is_template_partially_specialized():
             template_instantiations = self._split_into_template_instantiations()
             if len(template_instantiations) == 0:
-                self.cpp_element().emit_warning(
-                    "Ignoring template class. You might need to set LitgenOptions.class_template_options"
-                )
                 return []
             else:
                 r: List[str] = []
@@ -542,18 +539,27 @@ class AdaptedClass(AdaptedElement):
 
     def _split_into_template_instantiations(self) -> List[AdaptedClass]:
         assert self.cpp_element().is_template_partially_specialized()
-        if not self._is_one_param_template():
-            self.cpp_element().emit_warning("Only one parameter template classes are supported")
+
+        matching_template_spec = None
+        for template_spec in self.options.class_template_options.specs:
+            if code_utils.does_match_regex(template_spec.name_regex, self.cpp_element().class_name):
+                matching_template_spec = template_spec
+
+        if matching_template_spec is None:
+            self.cpp_element().emit_warning(
+                "Ignoring template class. You might need to set LitgenOptions.fn_template_options"
+            )
             return []
 
-        for instantiation_spec in self.options.class_template_options.specs:
-            if code_utils.does_match_regex(instantiation_spec.name_regex, self.cpp_element().class_name):
-                new_classes: List[AdaptedClass] = []
-                for cpp_type in instantiation_spec.cpp_types_list:
-                    new_class = self._instantiate_template_for_type(cpp_type, instantiation_spec.naming_scheme)
-                    new_classes.append(new_class)
-                return new_classes
-        return []
+        if not self._is_one_param_template() and len(matching_template_spec.cpp_types_list) > 0:
+            self.cpp_element().emit_warning("Only one parameters template classes are supported")
+            return []
+
+        new_classes: List[AdaptedClass] = []
+        for cpp_type in matching_template_spec.cpp_types_list:
+            new_class = self._instantiate_template_for_type(cpp_type, matching_template_spec.naming_scheme)
+            new_classes.append(new_class)
+        return new_classes
 
     # override
     def _str_pydef_lines(self) -> List[str]:
@@ -563,9 +569,6 @@ class AdaptedClass(AdaptedElement):
         if self.cpp_element().is_template_partially_specialized():
             template_instantiations = self._split_into_template_instantiations()
             if len(template_instantiations) == 0:
-                self.cpp_element().emit_warning(
-                    "Ignoring template class. You might need to set LitgenOptions.class_template_options"
-                )
                 return []
             else:
                 r = []

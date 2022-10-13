@@ -58,6 +58,10 @@ class TemplateFunctionsOptions:
         spec = _TemplateSpecializationSpec(function_name_regex, cpp_types_list, naming_scheme)
         self.specs.append(spec)
 
+    def add_ignore(self, function_name_regex: str) -> None:
+        spec = _TemplateSpecializationSpec(function_name_regex, [], TemplateNamingScheme.nothing)
+        self.specs.append(spec)
+
 
 class TemplateClassOptions:
     specs: List[_TemplateSpecializationSpec]
@@ -73,6 +77,10 @@ class TemplateClassOptions:
     ) -> None:
         assert naming_scheme != TemplateNamingScheme.nothing  # Specialized class names must be different in Python
         spec = _TemplateSpecializationSpec(class_name_regex, cpp_types_list, naming_scheme)
+        self.specs.append(spec)
+
+    def add_ignore(self, class_name_regex: str) -> None:
+        spec = _TemplateSpecializationSpec(class_name_regex, [], TemplateNamingScheme.nothing)
         self.specs.append(spec)
 
 
