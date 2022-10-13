@@ -32,6 +32,12 @@ class CppParameterList(CppElement):
     def str_types_names_only(self) -> str:
         return ", ".join(self.list_types_names_only())
 
+    def contains_pointer_to_pointer_param(self) -> bool:
+        for p in self.parameters:
+            if p.decl.cpp_type.modifiers.count("*") == 2:
+                return True
+        return False
+
     def list_types_names_default_for_signature(self) -> List[str]:
         """Returns a list like ["int a", "bool flag = true"]"""
         params_strs = list(map(lambda param: param.type_name_default_for_signature(), self.parameters))

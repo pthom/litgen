@@ -207,6 +207,8 @@ class AdaptedFunction(AdaptedElement):
             return False
         if code_utils.does_match_regex(options.fn_exclude_by_name__regex, cpp_function.function_name):
             return False
+        if cpp_function.returns_pointer_to_pointer() or cpp_function.parameter_list.contains_pointer_to_pointer_param():
+            return False
         elif len(options.srcmlcpp_options.functions_api_prefixes_list()) > 0 and options.fn_exclude_non_api:
             if not hasattr(cpp_function, "return_type"):
                 return True

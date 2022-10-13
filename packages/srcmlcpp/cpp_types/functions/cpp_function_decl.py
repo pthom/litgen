@@ -272,6 +272,10 @@ class CppFunctionDecl(CppElementAndComment, CppITemplateHost):
         r = hasattr(self, "return_type") and self.return_type.modifiers == ["*"]
         return r
 
+    def returns_pointer_to_pointer(self) -> bool:
+        r = hasattr(self, "return_type") and self.return_type.modifiers.count("*") == 2
+        return r
+
     def returns_reference(self) -> bool:
         r = hasattr(self, "return_type") and self.return_type.modifiers == ["&"]
         return r
