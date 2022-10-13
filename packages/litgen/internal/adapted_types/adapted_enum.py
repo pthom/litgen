@@ -115,7 +115,7 @@ class AdaptedEnumDecl(AdaptedDecl):
         lines = []
         decl_name = self.decl_name_python()
         decl_value = self.decl_value_python()
-        decl_part = f"{decl_name} = auto() # (= {decl_value})"
+        decl_part = f"{decl_name} = enum.auto() # (= {decl_value})"
 
         cpp_decl = self.cpp_element()
         if self.comment_python_shall_place_at_end_of_line():

@@ -52,15 +52,15 @@ enum Foo
             """ Doc about Foo
              On several lines
             """
-            a = auto() # (= 0)  # This is a
+            a = enum.auto() # (= 0)  # This is a
 
             # And this is b and c's comment
-            b = auto() # (= 1)
-            c = auto() # (= 256)  # c has a special comment
+            b = enum.auto() # (= 1)
+            c = enum.auto() # (= 256)  # c has a special comment
 
-            d = auto() # (= Foo.a | Foo.b + Foo.c)  # And a computed value
+            d = enum.auto() # (= Foo.a | Foo.b + Foo.c)  # And a computed value
 
-            e = auto() # (= 4)
+            e = enum.auto() # (= 4)
     ''',
     )
 
@@ -77,16 +77,16 @@ enum Foo
             """
 
             # This is a
-            a = auto() # (= 0)
+            a = enum.auto() # (= 0)
 
             # And this is b and c's comment
 
-            b = auto() # (= 1)
+            b = enum.auto() # (= 1)
             # c has a special comment
-            c = auto() # (= 256)
+            c = enum.auto() # (= 256)
             # And a computed value
-            d = auto() # (= Foo.a | Foo.b + Foo.c)
-            e = auto() # (= 4)
+            d = enum.auto() # (= Foo.a | Foo.b + Foo.c)
+            e = enum.auto() # (= 4)
         ''',
     )
 

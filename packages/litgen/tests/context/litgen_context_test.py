@@ -111,9 +111,9 @@ def test_context_replacements():
         generated_code.stub_code,
         """
         class MyEnumClass(Enum):
-            value_a = auto() # (= 0)
+            value_a = enum.auto() # (= 0)
         class MyEnumNonClass(Enum):
-            value_a = auto() # (= 0)
+            value_a = enum.auto() # (= 0)
 
         def foo_inner(
             x: int = Inner.FooValue(),
