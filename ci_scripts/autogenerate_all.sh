@@ -22,10 +22,10 @@ $decoration
 }
 
 title "python ./lg_projects/lg_skbuild_template/autogenerate_lg_examplelib.py"
-python ./lg_projects/lg_skbuild_template/autogenerate_lg_examplelib.py
+python ./demos/litgen/lg_skbuild_template/autogenerate_lg_examplelib.py
 
 title "python ./packages/litgen/integration_tests/autogenerate_mylib.py"
 python ./packages/litgen/integration_tests/autogenerate_mylib.py
 
 title "python ./lg_projects/lg_imgui_bundle/autogenerate_imgui_bundle/autogenerate_imgui_bundle.py"
-python ./lg_projects/lg_imgui_bundle/autogenerate_imgui_bundle/autogenerate_imgui_bundle.py
+python ./demos/litgen/lg_imgui_bundle/autogenerate_imgui_bundle/autogenerate_imgui_bundle.py

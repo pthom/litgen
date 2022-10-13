@@ -59,10 +59,10 @@ make -j 4
 
 
 title "pip build lg_skbuild_template python modules"
-cd "$REPO_DIR"/lg_projects/lg_skbuild_template
+cd "$REPO_DIR"/demos/litgen/lg_skbuild_template
 pip install -v $PIP_INSTALL_EDITABLE .
 
 
 title "pip build lg_imgui_bundle python modules"
-cd "$REPO_DIR"/lg_projects/lg_imgui_bundle
+cd "$REPO_DIR"/demos/litgen/lg_imgui_bundle
 pip install -v $PIP_INSTALL_EDITABLE .

@@ -409,14 +409,6 @@ insert diagram via mermaid (see integration with emacs)
 * Hello ImGui Bundle TOOO
 
 later! publish srcmlcpp before!
-** Add imgui_internal
-
-syntax imgui_internal.pyi
-
-
-exclude ImFontAtlas*
-
-test input_text pas cassé!
 
 ** Add imgui-node-editor ?
   Much later, add it to suggestions ?
@@ -507,7 +499,8 @@ can reuse lots of parts of PimplMyClass
     etc
 
 
-** Separate litgen and srmclcpp folders
+** suppress warning
+** parallel execution?
 
 * Litgen TODO
 ** Wish list / hard and later

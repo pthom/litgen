@@ -45,8 +45,8 @@ namespace Main
 
 
         # <submodule Inner>
-        class Inner: # Proxy class that introduces typings for the *submodule* Inner
-            # (This corresponds to a C++ namespace. All method are static!)
+        class Inner:  # Proxy class that introduces typings for the *submodule* Inner
+            pass  # (This corresponds to a C++ namespace. All method are static!)
             """ This is the inner namespace"""
             def foo_inner() -> None:
                 pass
@@ -123,8 +123,8 @@ def test_context_replacements():
             pass
 
         # <submodule Inner>
-        class Inner: # Proxy class that introduces typings for the *submodule* Inner
-            # (This corresponds to a C++ namespace. All method are static!)
+        class Inner:  # Proxy class that introduces typings for the *submodule* Inner
+            pass  # (This corresponds to a C++ namespace. All method are static!)
             def foo_value() -> int:
                 pass
 

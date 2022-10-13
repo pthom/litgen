@@ -342,8 +342,8 @@ def test_vectorization():
         generated_code.stub_code,
         """
         # <submodule MathFunctions>
-        class MathFunctions: # Proxy class that introduces typings for the *submodule* MathFunctions
-            # (This corresponds to a C++ namespace. All method are static!)
+        class MathFunctions:  # Proxy class that introduces typings for the *submodule* MathFunctions
+            pass  # (This corresponds to a C++ namespace. All method are static!)
             def vectorizable_sum(x: float, y: float) -> float:
                 pass
             def v_vectorizable_sum_v(x: np.ndarray, y: np.ndarray) -> np.ndarray:
