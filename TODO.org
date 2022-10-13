@@ -411,12 +411,6 @@ insert diagram via mermaid (see integration with emacs)
 later! publish srcmlcpp before!
 ** Add imgui_internal
 
-Line IM_MSVC_RUNTIME_CHECKS_OFF => add ;
-IM_MSVC_RUNTIME_CHECKS_OFF; idem
-
-header_filter_acceptable_suffixes should be a regex
-IMGUI_HAS_DOCK
-
 Warning:A cpp element of type "function" was ignored. Details follow
 Warning: Can't find type name
 While parsing a "type", corresponding to this C++ code:

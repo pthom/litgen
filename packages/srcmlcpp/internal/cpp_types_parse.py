@@ -31,7 +31,12 @@ def parse_unprocessed(options: SrcmlcppOptions, element_c: CppElementAndComment)
     return result
 
 
-def parse_type(options: SrcmlcppOptions, element: SrcmlWrapper, previous_decl: Optional[CppDecl]) -> CppType:
+def parse_type(
+    options: SrcmlcppOptions,
+    element: SrcmlWrapper,
+    previous_decl: Optional[CppDecl],
+    is_operator_return_type: bool = False,
+) -> CppType:
     """
     https://www.srcml.org/doc/cpp_srcML.html#type
 
@@ -77,14 +82,16 @@ def parse_type(options: SrcmlcppOptions, element: SrcmlWrapper, previous_decl: O
         else:
             raise SrcmlcppExceptionDetailed(child, f"unhandled tag {child_tag}")
 
-    if len(result.typenames) == 0 and "..." not in result.modifiers and "auto" not in result.specifiers:
-        if previous_decl is None:
-            raise SrcmlcppExceptionDetailed(result, "Can't find type name")
-        assert previous_decl is not None
-        result.typenames = previous_decl.cpp_type.typenames
+    if not is_operator_return_type:
+        # C++ cast operator will not be parsed as having a return type (since the type is actually the function name!)
+        if len(result.typenames) == 0 and "..." not in result.modifiers and "auto" not in result.specifiers:
+            if previous_decl is None:
+                raise SrcmlcppExceptionDetailed(result, "Can't find type name")
+            assert previous_decl is not None
+            result.typenames = previous_decl.cpp_type.typenames
 
-    if len(result.typenames) == 0 and "..." not in result.modifiers and "auto" not in result.specifiers:
-        raise SrcmlcppExceptionDetailed(result, "len(result.names) == 0!")
+        if len(result.typenames) == 0 and "..." not in result.modifiers and "auto" not in result.specifiers:
+            raise SrcmlcppExceptionDetailed(result, "len(result.names) == 0!")
 
     # process api names
     for name in result.typenames:
@@ -152,7 +159,7 @@ def _parse_name(element: SrcmlWrapper) -> str:
         # composed name
         name = element.str_code_verbatim().strip()
     else:
-        name = element_text
+        name = element_text.strip()
     return name
 
 
@@ -287,7 +294,7 @@ def fill_function_decl(
         child_tag = child.tag()
         if child_tag == "type":
             if not hasattr(function_decl, "return_type") or len(function_decl.return_type.typenames) == 0:
-                parsed_type = parse_type(options, child, None)
+                parsed_type = parse_type(options, child, None, is_operator_return_type=is_operator_function(element_c))
                 function_decl.return_type = parsed_type
             else:
                 additional_type = parse_type(options, child, None)
@@ -305,6 +312,8 @@ def fill_function_decl(
                 sub_names = child.wrapped_children_with_tag("name")
                 assert len(sub_names) == 1
                 operator_name = _parse_name(sub_names[0])
+                if len(operator_name) > 0 and (operator_name[0].isalpha() or operator_name[0] == "_"):
+                    function_decl.function_name += " "
                 function_decl.function_name += operator_name
         elif child_tag == "parameter_list":
             function_decl.parameter_list = parse_parameter_list(options, child)

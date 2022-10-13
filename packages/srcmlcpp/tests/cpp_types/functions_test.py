@@ -45,6 +45,23 @@ def test_arrow_return():
 
 def test_operator():
     options = srcmlcpp.SrcmlcppOptions()
+    # Call operator
     f = srcmlcpp.srcmlcpp_main.code_first_function_decl(options, "int operator()(int rhs);")
     assert f.is_operator()
     assert f.operator_name() == "()"
+    assert f.return_type.str_code() == "int"
+    # + operator
+    f = srcmlcpp.srcmlcpp_main.code_first_function_decl(options, "int operator+(int rhs);")
+    assert f.is_operator()
+    assert f.operator_name() == "+"
+    assert f.return_type.str_code() == "int"
+    # cast operator
+    f = srcmlcpp.srcmlcpp_main.code_first_function_decl(options, "operator ImVec4() const;")
+    assert f.is_operator()
+    assert f.operator_name() == "ImVec4"
+    assert not hasattr(f, "return_type")
+    # inline cast operator
+    f = srcmlcpp.srcmlcpp_main.code_first_function_decl(options, "inline operator ImVec4() const;")
+    assert f.is_operator()
+    assert f.operator_name() == "ImVec4"
+    assert f.return_type.str_code() == "inline"

@@ -101,12 +101,10 @@ def play_virtual_method() -> None:
 
 def play() -> None:
     code = """
-    struct Foo
-    {
-        template<typename T>
-        MY_API T SumVector(std::vector<T> xs, const T other_values[2]);
-        int a;
-    };
+struct ImColor
+{
+    inline operator ImVec4() const;
+};
     """
     options = litgen.LitgenOptions()
     options.fn_template_options.add_specialization(r"SumVector", ["int"])
@@ -117,13 +115,15 @@ def play() -> None:
     # print(generated_code.pydef_code)
     # print(generated_code.stub_code)
 
-    srcmlcpp_options = srcmlcpp.SrcmlcppOptions()
-    srcmlcpp_options.flag_srcml_dump_positions = False
-    xml_wrapper = srcmlcpp.code_to_srcml_wrapper(srcmlcpp_options, code)
-    print(xml_wrapper.str_xml())
-
     # srcmlcpp_options = srcmlcpp.SrcmlcppOptions()
-    # cpp_unit = srcmlcpp.code_to_cpp_unit(srcmlcpp_options, code)
+    # srcmlcpp_options.flag_srcml_dump_positions = False
+    # xml_wrapper = srcmlcpp.code_to_srcml_wrapper(srcmlcpp_options, code)
+    # print(xml_wrapper.str_xml())
+
+    srcmlcpp_options = srcmlcpp.SrcmlcppOptions()
+    cpp_unit = srcmlcpp.code_to_cpp_unit(srcmlcpp_options, code)
+    f = cpp_unit.all_functions_recursive()[0]
+    print(f)
     # f = cpp_unit.all_functions_recursive()[0]
     # print(f.str_code())
 
@@ -137,4 +137,5 @@ def play_srcml() -> None:
 
 
 if __name__ == "__main__":
-    play_srcml()
+    # play_srcml()
+    play()

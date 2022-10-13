@@ -118,7 +118,9 @@ class CppFunctionDecl(CppElementAndComment, CppITemplateHost):
             r += f"{self.return_type.str_return_type()} {self.function_name}{self.str_template_specialization()}({self.parameter_list})"
 
         if len(self.specifiers) > 0:
-            specifiers_strs = map(str, self.specifiers)
+            specifiers_strs = list(map(str, self.specifiers))
+            if len(specifiers_strs) > 0 and len(r) > 0:
+                r += " "
             r = r + " ".join(specifiers_strs)
 
         return r
@@ -263,7 +265,7 @@ class CppFunctionDecl(CppElementAndComment, CppITemplateHost):
 
     def operator_name(self) -> str:
         assert self.is_operator()
-        r = self.function_name[len("operator") :]
+        r = self.function_name[len("operator") :].strip()
         return r
 
     def returns_pointer(self) -> bool:
