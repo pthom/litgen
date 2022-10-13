@@ -334,6 +334,21 @@ perf = ["ipython"]
 testing = ["pytest (>=6)", "pytest-checkdocs (>=2.4)", "pytest-flake8", "flake8 (<5)", "pytest-cov", "pytest-enabler (>=1.3)", "packaging", "pyfakefs", "flufl.flake8", "pytest-perf (>=0.9.2)", "pytest-black (>=0.3.7)", "pytest-mypy (>=0.9.1)", "importlib-resources (>=1.3)"]
 
 [[package]]
+name = "importlib-resources"
+version = "5.10.0"
+description = "Read resources from Python packages"
+category = "dev"
+optional = false
+python-versions = ">=3.7"
+
+[package.dependencies]
+zipp = {version = ">=3.1.0", markers = "python_version < \"3.10\""}
+
+[package.extras]
+docs = ["sphinx (>=3.5)", "jaraco.packaging (>=9)", "rst.linker (>=1.9)", "furo", "jaraco.tidelift (>=1.4)"]
+testing = ["pytest (>=6)", "pytest-checkdocs (>=2.4)", "pytest-flake8", "flake8 (<5)", "pytest-cov", "pytest-enabler (>=1.3)", "pytest-black (>=0.3.7)", "pytest-mypy (>=0.9.1)"]
+
+[[package]]
 name = "iniconfig"
 version = "1.1.1"
 description = "iniconfig: brain-dead simple config-ini parsing"
@@ -470,6 +485,8 @@ python-versions = ">=3.7"
 
 [package.dependencies]
 attrs = ">=17.4.0"
+importlib-resources = {version = ">=1.4.0", markers = "python_version < \"3.9\""}
+pkgutil-resolve-name = {version = ">=1.3.10", markers = "python_version < \"3.9\""}
 pyrsistent = ">=0.14.0,<0.17.0 || >0.17.0,<0.17.1 || >0.17.1,<0.17.2 || >0.17.2"
 
 [package.extras]
@@ -511,7 +528,7 @@ test = ["flake8 (>=3.9.2,<4)", "flake8-docstrings (>=1.6.0,<2)", "flake8-import-
 
 [[package]]
 name = "jupyter-client"
-version = "7.3.5"
+version = "7.4.2"
 description = "Jupyter protocol implementation and client libraries"
 category = "dev"
 optional = false
@@ -710,7 +727,7 @@ webpdf = ["pyppeteer (>=1,<1.1)"]
 
 [[package]]
 name = "nbformat"
-version = "5.6.1"
+version = "5.7.0"
 description = "The Jupyter Notebook format"
 category = "dev"
 optional = false
@@ -773,7 +790,7 @@ test = ["pytest", "coverage", "requests", "testpath", "nbval", "selenium", "pyte
 
 [[package]]
 name = "numpy"
-version = "1.23.3"
+version = "1.23.4"
 description = "NumPy is the fundamental package for array computing with Python."
 category = "dev"
 optional = false
@@ -847,6 +864,14 @@ description = "Tiny 'shelve'-like database with concurrency support"
 category = "dev"
 optional = false
 python-versions = "*"
+
+[[package]]
+name = "pkgutil-resolve-name"
+version = "1.3.10"
+description = "Resolve a name to an object."
+category = "dev"
+optional = false
+python-versions = ">=3.6"
 
 [[package]]
 name = "platformdirs"
@@ -1340,8 +1365,8 @@ testing = ["pytest (>=6)", "pytest-checkdocs (>=2.4)", "pytest-flake8", "flake8 
 
 [metadata]
 lock-version = "1.1"
-python-versions = "^3.9"
-content-hash = "c110caf626b827f798620b9e30031064123ad561def49a8f16cf886a4b96d51e"
+python-versions = "^3.8"
+content-hash = "33b45866116c535a6c9043c9211b29f7a0d3d0d493b5ca1d1fabc5116b68551e"
 
 [metadata.files]
 appnope = [
@@ -1393,6 +1418,7 @@ importanize = [
     {file = "importanize-0.7.0.tar.gz", hash = "sha256:1bd383aa79d594e3c4cab8722046fe6bd6baf887950531f035ae6152489876f5"},
 ]
 importlib-metadata = []
+importlib-resources = []
 iniconfig = [
     {file = "iniconfig-1.1.1-py2.py3-none-any.whl", hash = "sha256:011e24c64b7f47f6ebd835bb12a743f2fbe9a26d4cecaa7f53bc4f35ee9da8b3"},
     {file = "iniconfig-1.1.1.tar.gz", hash = "sha256:bc3af051d7d14b2ee5ef9969666def0cd1a000e121eaea580d4a313df4b37f32"},
@@ -1490,6 +1516,7 @@ pickleshare = [
     {file = "pickleshare-0.7.5-py2.py3-none-any.whl", hash = "sha256:9649af414d74d4df115d5d718f82acb59c9d418196b7b4290ed47a12ce62df56"},
     {file = "pickleshare-0.7.5.tar.gz", hash = "sha256:87683d47965c1da65cdacaf31c8441d12b8044cdec9aca500cd78fc2c683afca"},
 ]
+pkgutil-resolve-name = []
 platformdirs = [
     {file = "platformdirs-2.5.2-py3-none-any.whl", hash = "sha256:027d8e83a2d7de06bbac4e5ef7e023c02b863d7ea5d079477e722bb41ab25788"},
     {file = "platformdirs-2.5.2.tar.gz", hash = "sha256:58c8abb07dcb441e6ee4b11d8df0ac856038f944ab98b7be6b27b2a3c7feef19"},
