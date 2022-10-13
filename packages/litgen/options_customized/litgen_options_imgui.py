@@ -5,21 +5,24 @@ from litgen.options import LitgenOptions
 
 
 def _preprocess_imgui_code(code: str) -> str:
-    """
-    The imgui code uses two macros (IM_FMTARGS and IM_FMTLIST) which help the compiler
-        #define IM_FMTARGS(FMT)             __attribute__((format(printf, FMT, FMT+1)))
-        #define IM_FMTLIST(FMT)             __attribute__((format(printf, FMT, 0)))
-
-    They are used like this:
-        IMGUI_API bool          TreeNode(const char* str_id, const char* fmt, ...) IM_FMTARGS(2);
-
-    They are removed before processing the header, because they would not be correctly interpreted by srcml.
-    """
+    # The imgui code uses two macros (IM_FMTARGS and IM_FMTLIST) which help the compiler
+    #     #define IM_FMTARGS(FMT)             __attribute__((format(printf, FMT, FMT+1)))
+    #     #define IM_FMTLIST(FMT)             __attribute__((format(printf, FMT, 0)))
+    #
+    # They are used like this:
+    #     IMGUI_API bool          TreeNode(const char* str_id, const char* fmt, ...) IM_FMTARGS(2);
+    #
+    # They are removed before processing the header, because they would not be correctly interpreted by srcml.
     import re
 
     new_code = code
-    new_code = re.sub(r"IM_FMTARGS\(\d\)", "", new_code)
-    new_code = re.sub(r"IM_FMTLIST\(\d\)", "", new_code)
+    new_code, _n = re.subn(r"IM_FMTARGS\(\d\)", "", new_code)
+    new_code, _n = re.subn(r"IM_FMTLIST\(\d\)", "", new_code)
+    # Also, imgui_internal.h contains lines like this (with no final ";"):
+    #       IM_MSVC_RUNTIME_CHECKS_OFF
+    # This confuses srcML, so we add a ";" at the end of those lines
+    new_code, _n = re.subn(r"\nIM_MSVC_RUNTIME_CHECKS_OFF\n", "\nIM_MSVC_RUNTIME_CHECKS_OFF;\n", new_code)
+    new_code, _n = re.subn(r"\nIM_MSVC_RUNTIME_CHECKS_RESTORE\n", "\nIM_MSVC_RUNTIME_CHECKS_RESTORE;\n", new_code)
     return new_code
 
 
