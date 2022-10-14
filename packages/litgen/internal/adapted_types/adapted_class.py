@@ -233,6 +233,19 @@ class AdaptedClassMember(AdaptedDecl):
 
 @dataclass
 class AdaptedClass(AdaptedElement):
+    """AdaptedClass: an adapted CppStruct or CppClass
+
+    @see AdaptedElement
+
+    AdaptedClass is able to handle quite a lot of cases. Its code is separated in several logical sections:
+        - Initialization and basic services
+        - pydef and stub code generation
+        - _cp_: (deep)copy handling
+        - _tpl_: template classes handling
+        - _virt_: virtual methods handling
+        - _prot_: protected methods handling (when they are published)
+    """
+
     adapted_public_children: List[
         Union[AdaptedEmptyLine, AdaptedComment, AdaptedClassMember, AdaptedFunction, AdaptedClass, AdaptedEnum]
     ]
@@ -245,125 +258,25 @@ class AdaptedClass(AdaptedElement):
 
     template_specialization: Optional[TemplateSpecialization] = None
 
+    #  ============================================================================================
+    #
+    #    Initialization
+    #
+    #  ============================================================================================
+
     def __init__(self, lg_context: LitgenContext, class_: CppStruct):
         super().__init__(lg_context, class_)
         self.adapted_public_children = []
-        self._fill_public_children()
+        self._init_fill_public_children()
 
         self.adapted_protected_methods = []
-        self._fill_protected_methods()
+        self._prot_fill_methods()
 
     def __str__(self):
         r = f"AdaptedClass({self.cpp_element().class_name})"
         return r
 
-    # override
-    def cpp_element(self) -> CppStruct:
-        return cast(CppStruct, self._cpp_element)
-
-    def class_name_python(self) -> str:
-        if self.template_specialization is not None:
-            return self.template_specialization.class_name_python
-        r = cpp_to_python.add_underscore_if_python_reserved_word(self.cpp_element().class_name)
-        return r
-
-    def _shall_publish_protected_methods(self) -> bool:
-        r = code_utils.does_match_regex(
-            self.options.class_expose_protected_methods__regex, self.cpp_element().class_name
-        )
-        return r
-
-    #  =========================================================================
-    #    <_cp_:(deep)copy>
-    #  cf https://pybind11.readthedocs.io/en/stable/advanced/classes.html#deepcopy-support
-    #  =========================================================================
-    def _cp_shall_create_copy_impl(self, copy_or_deepcopy: str) -> bool:
-        if copy_or_deepcopy == "copy":
-            match_regex = self.options.class_copy__regex
-        else:
-            match_regex = self.options.class_deep_copy__regex
-
-        if not code_utils.does_match_regex(match_regex, self.cpp_element().class_name):
-            return False
-
-        user_defined_copy_constructor = self.cpp_element().get_user_defined_copy_constructor()
-        if user_defined_copy_constructor is None:
-            return True
-        else:
-            is_api = self.cpp_element().is_user_defined_copy_constructor_part_of_api()
-            return is_api
-
-    def _cp_shall_create_deep_copy(self) -> bool:
-        return self._cp_shall_create_copy_impl(self.options.class_deep_copy__regex)
-
-    def _cp_shall_create_copy(self) -> bool:
-        return self._cp_shall_create_copy_impl(self.options.class_copy__regex)
-
-    def _cp_stub_comment(self) -> str:
-        if not self.options.class_copy_add_info_in_stub:
-            return ""
-        supported_list = []
-        if self._cp_shall_create_copy():
-            supported_list.append("copy.copy")
-        if self._cp_shall_create_deep_copy():
-            supported_list.append("copy.deepcopy")
-
-        if len(supported_list) > 0:
-            all_supported = " and ".join(supported_list)
-            r = f"(has support for {all_supported})"
-            return r
-        else:
-            return ""
-
-    def _cp_pydef(self) -> str:
-        code_template = code_utils.unindent_code(
-            """
-            .def("__{copy_or_deep_copy}__",  [](const {qualified_class_name} &self{maybe_pydict}) {
-            {_i_}return {qualified_class_name}(self);
-            }{maybe_memo})
-        """,
-            flag_strip_empty_lines=True,
-        )
-
-        replacements = munch.Munch()
-        replacements._i_ = self.options.indent_cpp_spaces()
-        replacements.qualified_class_name = self.cpp_element().qualified_class_name_with_specialization()
-
-        full_code = ""
-        for copy_or_deep_copy in ["copy", "deepcopy"]:
-            replacements.copy_or_deep_copy = copy_or_deep_copy
-            shall_create = self._cp_shall_create_copy_impl(copy_or_deep_copy)
-
-            if copy_or_deep_copy == "copy":
-                replacements.maybe_pydict = ""
-                replacements.maybe_memo = ""
-            else:
-                replacements.maybe_pydict = ", py::dict"
-                replacements.maybe_memo = ', py::arg("memo")'
-
-            if shall_create:
-                code = code_utils.process_code_template(code_template, replacements)
-                if len(full_code) > 0:
-                    full_code += "\n"
-                full_code += code
-
-        return full_code
-
-    #  =========================================================================
-    #    </_cp_:(deep)copy>
-    #  =========================================================================
-
-    def _shall_override_virtual_methods_in_python(self) -> bool:
-        active = code_utils.does_match_regex(
-            self.options.class_override_virtual_methods_in_python__regex, self.cpp_element().class_name
-        )
-        if not active:
-            return False
-        virtual_methods = self._virtual_method_list_including_inherited()
-        r = len(virtual_methods) > 0
-        return r
-
-    def _add_adapted_class_member(self, cpp_decl_statement: CppDeclStatement) -> None:
+    def _init_add_adapted_class_member(self, cpp_decl_statement: CppDeclStatement) -> None:
         for cpp_decl in cpp_decl_statement.cpp_decls:
             is_excluded_by_name = code_utils.does_match_regex(
                 self.options.member_exclude_by_name__regex, cpp_decl.decl_name
@@ -376,16 +289,7 @@ class AdaptedClass(AdaptedElement):
                 if adapted_class_member.check_can_publish():
                     self.adapted_public_children.append(adapted_class_member)
 
-    def _fill_protected_methods(self) -> None:
-        if not self._shall_publish_protected_methods():
-            return
-        for child in self.cpp_element().get_elements(access_type=CppAccessType.protected):
-            if isinstance(child, CppFunctionDecl):
-                if AdaptedFunction.is_function_publishable(self.options, child):
-                    is_overloaded = child.is_overloaded_method()
-                    self.adapted_protected_methods.append(AdaptedFunction(self.lg_context, child, is_overloaded))
-
-    def _fill_public_children(self) -> None:
+    def _init_fill_public_children(self) -> None:
         public_elements = self.cpp_element().get_elements(access_type=CppAccessType.public)
         for child in public_elements:
             try:
@@ -398,7 +302,7 @@ class AdaptedClass(AdaptedElement):
                         is_overloaded = child.is_overloaded_method()
                         self.adapted_public_children.append(AdaptedFunction(self.lg_context, child, is_overloaded))
                 elif isinstance(child, CppDeclStatement):
-                    self._add_adapted_class_member(child)
+                    self._init_add_adapted_class_member(child)
                 elif isinstance(child, CppUnprocessed):
                     continue
                 elif isinstance(child, CppStruct):
@@ -414,19 +318,28 @@ class AdaptedClass(AdaptedElement):
             except SrcmlcppException as e:
                 child.emit_warning(str(e))
 
-    def _str_parent_classes(self) -> str:
-        parents: List[str] = []
-        if not self.cpp_element().has_base_classes():
-            return ""
-        for _access_type, base_class in self.cpp_element().base_classes():
-            class_python_scope = cpp_to_python.cpp_scope_to_pybind_scope_str(
-                self.options, base_class, include_self=True
-            )
-            parents.append(class_python_scope)
-        if len(parents) == 0:
-            return ""
-        else:
-            return "(" + ", ".join(parents) + ")"
+    #  ============================================================================================
+    #
+    #    Basic services
+    #
+    #  ============================================================================================
+
+    # override
+    def cpp_element(self) -> CppStruct:
+        return cast(CppStruct, self._cpp_element)
+
+    def class_name_python(self) -> str:
+        if self.template_specialization is not None:
+            return self.template_specialization.class_name_python
+        r = cpp_to_python.add_underscore_if_python_reserved_word(self.cpp_element().class_name)
+        return r
+
+    #  ============================================================================================
+    #
+    #    _str_stub_lines & _str_pydef_lines: main API for code generation
+    #    We override those methods from AdaptedElement
+    #
+    #  ============================================================================================
 
     # override
     def _str_stub_lines(self) -> List[str]:
@@ -434,7 +347,7 @@ class AdaptedClass(AdaptedElement):
         # as mentioned in the options (see LitgenOptions.class_template_options)
         # and bail out
         if self.cpp_element().is_template_partially_specialized():
-            template_instantiations = self._split_into_template_instantiations()
+            template_instantiations = self._tpl_split_into_template_instantiations()
             if len(template_instantiations) == 0:
                 return []
             else:
@@ -449,13 +362,27 @@ class AdaptedClass(AdaptedElement):
                     )
                 return r
 
+        def str_parent_classes_python() -> str:
+            parents: List[str] = []
+            if not self.cpp_element().has_base_classes():
+                return ""
+            for _access_type, base_class in self.cpp_element().base_classes():
+                class_python_scope = cpp_to_python.cpp_scope_to_pybind_scope_str(
+                    self.options, base_class, include_self=True
+                )
+                parents.append(class_python_scope)
+            if len(parents) == 0:
+                return ""
+            else:
+                return "(" + ", ".join(parents) + ")"
+
         from litgen.internal.adapted_types.line_spacer import LineSpacerPython
 
         line_spacer = LineSpacerPython(self.options)
 
         class_name = self.class_name_python()
 
-        title = f"class {class_name}{self._str_parent_classes()}:"
+        title = f"class {class_name}{str_parent_classes_python()}:"
         title_lines = [title]
         if self.cpp_element().is_final():
             self.cpp_element().cpp_element_comments.comment_on_previous_lines += "\n"
@@ -484,172 +411,13 @@ class AdaptedClass(AdaptedElement):
         r = self._str_stub_layout_lines(title_lines, body_lines)
         return r
 
-    def _scope_intro_outro(self) -> Tuple[str, str]:
-        scope = self.cpp_element().cpp_scope(False)
-        nb_scope_parts = len(scope.scope_parts)
-        intro = ""
-        outro = "} " * nb_scope_parts
-
-        for scope_part in scope.scope_parts:
-            if scope_part.scope_type == CppScopeType.Namespace:
-                intro += f"namespace {scope_part.scope_name} {{ "
-            else:
-                raise SrcmlcppException("Bad scope for protected member")
-
-        for scope_part in reversed(scope.scope_parts):
-            if scope_part.scope_type == CppScopeType.Namespace:
-                outro += f" // namespace {scope_part.scope_name} "
-
-        return intro, outro
-
-    def _virtual_method_list_including_inherited(self) -> List[CppFunctionDecl]:
-        r = self.cpp_element().virtual_methods(include_inherited_virtual_methods=True)
-        return r
-
-    def _store_glue_override_virtual_methods_in_python(self) -> None:
-        # See https://pybind11.readthedocs.io/en/stable/advanced/classes.html#overriding-virtual-functions-in-python
-        if not self._shall_override_virtual_methods_in_python():
-            return
-
-        trampoline_class_template = code_utils.unindent_code(
-            """
-            // helper type to enable overriding virtual methods in python
-            class {trampoline_class_name} : public {class_name}
-            {
-            public:
-                using {class_name}::{class_name};
-
-            {trampoline_list}
-            };
-            """,
-            flag_strip_empty_lines=True,
-        )
-
-        trampoline_lines = []
-        virtual_methods = self._virtual_method_list_including_inherited()
-        for virtual_method in virtual_methods:
-            is_overloaded = False
-            adapted_virtual_method = AdaptedFunction(self.lg_context, virtual_method, is_overloaded)
-            qualified_class_name = self.cpp_element().cpp_scope(include_self=True).str_cpp()
-            trampoline_lines += adapted_virtual_method.glue_override_virtual_methods_in_python(qualified_class_name)
-
-        replacements = munch.Munch()
-        replacements.trampoline_class_name = self.cpp_element().class_name + "_trampoline"
-        replacements.class_name = self.cpp_element().class_name
-        replacements.trampoline_list = code_utils.indent_code(
-            "\n".join(trampoline_lines), indent_str=self.options.indent_cpp_spaces()
-        )
-
-        publicist_class_code = code_utils.process_code_template(trampoline_class_template, replacements, {})
-
-        ns_intro, ns_outro = self._scope_intro_outro()
-
-        glue_code: List[str] = []
-        glue_code += [ns_intro]
-        glue_code += publicist_class_code.split("\n")
-        glue_code += [ns_outro]
-
-        glue_code_str = "\n" + "\n".join(glue_code) + "\n"
-        self.lg_context.virtual_methods_glue_code += glue_code_str
-
-    def _store_glue_protected_methods(self) -> None:
-        # See https://pybind11.readthedocs.io/en/stable/advanced/classes.html#binding-protected-member-functions
-        if not self._shall_publish_protected_methods():
-            return
-        if len(self.adapted_protected_methods) == 0:
-            return
-
-        def using_list() -> List[str]:
-            r = []
-            for child in self.adapted_protected_methods:
-                class_name = self.cpp_element().class_name
-                method_name = child.cpp_element().function_name
-                r.append(f"using {class_name}::{method_name};")
-            return r
-
-        publicist_class_template = code_utils.unindent_code(
-            """
-            // helper type for exposing protected functions
-            class {publicist_class_name} : public {class_name}
-            {
-            public:
-            {using_list}
-            };
-        """,
-            flag_strip_empty_lines=True,
-        )
-
-        replacements = munch.Munch()
-        replacements.publicist_class_name = self.cpp_element().class_name + "_publicist"
-        replacements.class_name = self.cpp_element().class_name
-        replacements.using_list = code_utils.indent_code(
-            "\n".join(using_list()), indent_str=self.options.indent_cpp_spaces()
-        )
-
-        publicist_class_code = code_utils.process_code_template(publicist_class_template, replacements, {})
-
-        ns_intro, ns_outro = self._scope_intro_outro()
-
-        glue_code: List[str] = []
-        glue_code += [ns_intro]
-        glue_code += publicist_class_code.split("\n")
-        glue_code += [ns_outro]
-
-        glue_code_str = "\n" + "\n".join(glue_code) + "\n"
-        self.lg_context.protected_methods_glue_code += glue_code_str
-
-    def _is_one_param_template(self) -> bool:
-        assert self.cpp_element().is_template_partially_specialized()
-        nb_template_parameters = len(self.cpp_element().template.parameter_list.parameters)
-        is_supported = nb_template_parameters == 1
-        return is_supported
-
-    def _instantiate_template_for_type(self, cpp_type_str: str, naming_scheme: TemplateNamingScheme) -> AdaptedClass:
-        assert self.cpp_element().is_template_partially_specialized()
-        assert self._is_one_param_template()
-
-        new_cpp_class = self.cpp_element().with_specialized_template(
-            CppTemplateSpecialization.from_type_str(cpp_type_str)
-        )
-        assert new_cpp_class is not None
-        new_adapted_class = AdaptedClass(self.lg_context, new_cpp_class)
-        new_adapted_class.template_specialization = AdaptedClass.TemplateSpecialization(
-            TemplateNamingScheme.apply(naming_scheme, self.cpp_element().class_name, cpp_type_str), cpp_type_str
-        )
-
-        return new_adapted_class
-
-    def _split_into_template_instantiations(self) -> List[AdaptedClass]:
-        assert self.cpp_element().is_template_partially_specialized()
-
-        matching_template_spec = None
-        for template_spec in self.options.class_template_options.specs:
-            if code_utils.does_match_regex(template_spec.name_regex, self.cpp_element().class_name):
-                matching_template_spec = template_spec
-
-        if matching_template_spec is None:
-            self.cpp_element().emit_warning(
-                "Ignoring template class. You might need to set LitgenOptions.fn_template_options"
-            )
-            return []
-
-        if not self._is_one_param_template() and len(matching_template_spec.cpp_types_list) > 0:
-            self.cpp_element().emit_warning("Only one parameters template classes are supported")
-            return []
-
-        new_classes: List[AdaptedClass] = []
-        for cpp_type in matching_template_spec.cpp_types_list:
-            new_class = self._instantiate_template_for_type(cpp_type, matching_template_spec.naming_scheme)
-            new_classes.append(new_class)
-        return new_classes
-
     # override
     def _str_pydef_lines(self) -> List[str]:
         # If this is a template class, implement as many versions
         # as mentioned in the options (see LitgenOptions.class_template_options)
         # and bail out
         if self.cpp_element().is_template_partially_specialized():
-            template_instantiations = self._split_into_template_instantiations()
+            template_instantiations = self._tpl_split_into_template_instantiations()
             if len(template_instantiations) == 0:
                 return []
             else:
@@ -658,8 +426,8 @@ class AdaptedClass(AdaptedElement):
                     r += template_instantiation._str_pydef_lines()
                 return r
 
-        self._store_glue_protected_methods()
-        self._store_glue_override_virtual_methods_in_python()
+        self._prot_store_glue()
+        self._virt_store_glue_override()
 
         options = self.options
         _i_ = options.indent_cpp_spaces()
@@ -676,7 +444,7 @@ class AdaptedClass(AdaptedElement):
                         other_template_params_list.append(base_class.cpp_scope(include_self=True).str_cpp())
             if self.cpp_element().has_private_destructor():
                 other_template_params_list.append(f"std::unique_ptr<{qualified_struct_name}, py::nodelete>")
-            if self._shall_override_virtual_methods_in_python():
+            if self._virt_shall_override():
                 scope = self.cpp_element().cpp_scope(False).str_cpp()
                 scope_prefix = scope + "::" if len(scope) > 0 else ""
                 qualified_trampoline_name = scope_prefix + self.cpp_element().class_name + "_trampoline"
@@ -690,10 +458,10 @@ class AdaptedClass(AdaptedElement):
             code_template = (
                 code_utils.unindent_code(
                     """
-                auto {pydef_class_var} =
-                {_i_}py::class_<{qualified_struct_name}{other_template_params}>{location}
-                {_i_}{_i_}({pydef_class_var_parent}, "{class_name_python}"{maybe_py_is_final}{maybe_py_is_dynamic}, "{comment}")
-                """,
+                    auto {pydef_class_var} =
+                    {_i_}py::class_<{qualified_struct_name}{other_template_params}>{location}
+                    {_i_}{_i_}({pydef_class_var_parent}, "{class_name_python}"{maybe_py_is_final}{maybe_py_is_dynamic}, "{comment}")
+                    """,
                     flag_strip_empty_lines=True,
                 )
                 + "\n"
@@ -775,3 +543,290 @@ class AdaptedClass(AdaptedElement):
 
         lines = code.split("\n")
         return lines
+
+    #  ============================================================================================
+    #
+    #    (deep)copy support: methods prefix = _cp_
+    #    cf https://pybind11.readthedocs.io/en/stable/advanced/classes.html#deepcopy-support
+    #
+    #  ============================================================================================
+
+    def _cp_shall_create_copy_impl(self, copy_or_deepcopy: str) -> bool:
+        if copy_or_deepcopy == "copy":
+            match_regex = self.options.class_copy__regex
+        else:
+            match_regex = self.options.class_deep_copy__regex
+
+        if not code_utils.does_match_regex(match_regex, self.cpp_element().class_name):
+            return False
+
+        user_defined_copy_constructor = self.cpp_element().get_user_defined_copy_constructor()
+        if user_defined_copy_constructor is None:
+            return True
+        else:
+            is_api = self.cpp_element().is_user_defined_copy_constructor_part_of_api()
+            return is_api
+
+    def _cp_shall_create_deep_copy(self) -> bool:
+        return self._cp_shall_create_copy_impl(self.options.class_deep_copy__regex)
+
+    def _cp_shall_create_copy(self) -> bool:
+        return self._cp_shall_create_copy_impl(self.options.class_copy__regex)
+
+    def _cp_stub_comment(self) -> str:
+        if not self.options.class_copy_add_info_in_stub:
+            return ""
+        supported_list = []
+        if self._cp_shall_create_copy():
+            supported_list.append("copy.copy")
+        if self._cp_shall_create_deep_copy():
+            supported_list.append("copy.deepcopy")
+
+        if len(supported_list) > 0:
+            all_supported = " and ".join(supported_list)
+            r = f"(has support for {all_supported})"
+            return r
+        else:
+            return ""
+
+    def _cp_pydef(self) -> str:
+        code_template = code_utils.unindent_code(
+            """
+            .def("__{copy_or_deep_copy}__",  [](const {qualified_class_name} &self{maybe_pydict}) {
+            {_i_}return {qualified_class_name}(self);
+            }{maybe_memo})
+        """,
+            flag_strip_empty_lines=True,
+        )
+
+        replacements = munch.Munch()
+        replacements._i_ = self.options.indent_cpp_spaces()
+        replacements.qualified_class_name = self.cpp_element().qualified_class_name_with_specialization()
+
+        full_code = ""
+        for copy_or_deep_copy in ["copy", "deepcopy"]:
+            replacements.copy_or_deep_copy = copy_or_deep_copy
+            shall_create = self._cp_shall_create_copy_impl(copy_or_deep_copy)
+
+            if copy_or_deep_copy == "copy":
+                replacements.maybe_pydict = ""
+                replacements.maybe_memo = ""
+            else:
+                replacements.maybe_pydict = ", py::dict"
+                replacements.maybe_memo = ', py::arg("memo")'
+
+            if shall_create:
+                code = code_utils.process_code_template(code_template, replacements)
+                if len(full_code) > 0:
+                    full_code += "\n"
+                full_code += code
+
+        return full_code
+
+    #  ============================================================================================
+    #
+    #    Template classes support: methods prefix = _tpl_
+    #    cf https://pybind11.readthedocs.io/en/stable/advanced/classes.html?highlight=template#binding-classes-with-template-parameters
+    #
+    #  ============================================================================================
+
+    def _tpl_is_one_param_template(self) -> bool:
+        assert self.cpp_element().is_template_partially_specialized()
+        nb_template_parameters = len(self.cpp_element().template.parameter_list.parameters)
+        is_supported = nb_template_parameters == 1
+        return is_supported
+
+    def _tpl_instantiate_template_for_type(
+        self, cpp_type_str: str, naming_scheme: TemplateNamingScheme
+    ) -> AdaptedClass:
+        assert self.cpp_element().is_template_partially_specialized()
+        assert self._tpl_is_one_param_template()
+
+        new_cpp_class = self.cpp_element().with_specialized_template(
+            CppTemplateSpecialization.from_type_str(cpp_type_str)
+        )
+        assert new_cpp_class is not None
+        new_adapted_class = AdaptedClass(self.lg_context, new_cpp_class)
+        new_adapted_class.template_specialization = AdaptedClass.TemplateSpecialization(
+            TemplateNamingScheme.apply(naming_scheme, self.cpp_element().class_name, cpp_type_str), cpp_type_str
+        )
+
+        return new_adapted_class
+
+    def _tpl_split_into_template_instantiations(self) -> List[AdaptedClass]:
+        assert self.cpp_element().is_template_partially_specialized()
+
+        matching_template_spec = None
+        for template_spec in self.options.class_template_options.specs:
+            if code_utils.does_match_regex(template_spec.name_regex, self.cpp_element().class_name):
+                matching_template_spec = template_spec
+
+        if matching_template_spec is None:
+            self.cpp_element().emit_warning(
+                "Ignoring template class. You might need to set LitgenOptions.fn_template_options"
+            )
+            return []
+
+        if not self._tpl_is_one_param_template() and len(matching_template_spec.cpp_types_list) > 0:
+            self.cpp_element().emit_warning("Only one parameters template classes are supported")
+            return []
+
+        new_classes: List[AdaptedClass] = []
+        for cpp_type in matching_template_spec.cpp_types_list:
+            new_class = self._tpl_instantiate_template_for_type(cpp_type, matching_template_spec.naming_scheme)
+            new_classes.append(new_class)
+        return new_classes
+
+    #  ============================================================================================
+    #
+    #    Overriding virtual functions in python: methods prefix = _virt_
+    #    cf https://pybind11.readthedocs.io/en/stable/advanced/classes.html#overriding-virtual-functions-in-python
+    #    cf https://pybind11.readthedocs.io/en/stable/advanced/classes.html#combining-virtual-functions-and-inheritance
+    #
+    #  ============================================================================================
+
+    def _virt_method_list_including_inherited(self) -> List[CppFunctionDecl]:
+        r = self.cpp_element().virtual_methods(include_inherited_virtual_methods=True)
+        return r
+
+    def _virt_store_glue_override(self) -> None:
+        # See https://pybind11.readthedocs.io/en/stable/advanced/classes.html#overriding-virtual-functions-in-python
+        if not self._virt_shall_override():
+            return
+
+        trampoline_class_template = code_utils.unindent_code(
+            """
+            // helper type to enable overriding virtual methods in python
+            class {trampoline_class_name} : public {class_name}
+            {
+            public:
+                using {class_name}::{class_name};
+
+            {trampoline_list}
+            };
+            """,
+            flag_strip_empty_lines=True,
+        )
+
+        trampoline_lines = []
+        virtual_methods = self._virt_method_list_including_inherited()
+        for virtual_method in virtual_methods:
+            is_overloaded = False
+            adapted_virtual_method = AdaptedFunction(self.lg_context, virtual_method, is_overloaded)
+            qualified_class_name = self.cpp_element().cpp_scope(include_self=True).str_cpp()
+            trampoline_lines += adapted_virtual_method.glue_override_virtual_methods_in_python(qualified_class_name)
+
+        replacements = munch.Munch()
+        replacements.trampoline_class_name = self.cpp_element().class_name + "_trampoline"
+        replacements.class_name = self.cpp_element().class_name
+        replacements.trampoline_list = code_utils.indent_code(
+            "\n".join(trampoline_lines), indent_str=self.options.indent_cpp_spaces()
+        )
+
+        publicist_class_code = code_utils.process_code_template(trampoline_class_template, replacements, {})
+
+        ns_intro, ns_outro = self._glue_scope_intro_outro()
+
+        glue_code: List[str] = []
+        glue_code += [ns_intro]
+        glue_code += publicist_class_code.split("\n")
+        glue_code += [ns_outro]
+
+        glue_code_str = "\n" + "\n".join(glue_code) + "\n"
+        self.lg_context.virtual_methods_glue_code += glue_code_str
+
+    def _virt_shall_override(self) -> bool:
+        active = code_utils.does_match_regex(
+            self.options.class_override_virtual_methods_in_python__regex, self.cpp_element().class_name
+        )
+        if not active:
+            return False
+        virtual_methods = self._virt_method_list_including_inherited()
+        r = len(virtual_methods) > 0
+        return r
+
+    def _glue_scope_intro_outro(self) -> Tuple[str, str]:
+        scope = self.cpp_element().cpp_scope(False)
+        nb_scope_parts = len(scope.scope_parts)
+        intro = ""
+        outro = "} " * nb_scope_parts
+
+        for scope_part in scope.scope_parts:
+            if scope_part.scope_type == CppScopeType.Namespace:
+                intro += f"namespace {scope_part.scope_name} {{ "
+            else:
+                raise SrcmlcppException("Bad scope for protected member")
+
+        for scope_part in reversed(scope.scope_parts):
+            if scope_part.scope_type == CppScopeType.Namespace:
+                outro += f" // namespace {scope_part.scope_name} "
+
+        return intro, outro
+
+    #  ============================================================================================
+    #
+    #    Publish protected methods: methods prefix = _prot_
+    #    cf https://pybind11.readthedocs.io/en/stable/advanced/classes.html#binding-protected-member-functions
+    #
+    #  ============================================================================================
+
+    def _prot_store_glue(self) -> None:
+        # See https://pybind11.readthedocs.io/en/stable/advanced/classes.html#binding-protected-member-functions
+        if not self._prot_shall_publish():
+            return
+        if len(self.adapted_protected_methods) == 0:
+            return
+
+        def using_list() -> List[str]:
+            r = []
+            for child in self.adapted_protected_methods:
+                class_name = self.cpp_element().class_name
+                method_name = child.cpp_element().function_name
+                r.append(f"using {class_name}::{method_name};")
+            return r
+
+        publicist_class_template = code_utils.unindent_code(
+            """
+            // helper type for exposing protected functions
+            class {publicist_class_name} : public {class_name}
+            {
+            public:
+            {using_list}
+            };
+        """,
+            flag_strip_empty_lines=True,
+        )
+
+        replacements = munch.Munch()
+        replacements.publicist_class_name = self.cpp_element().class_name + "_publicist"
+        replacements.class_name = self.cpp_element().class_name
+        replacements.using_list = code_utils.indent_code(
+            "\n".join(using_list()), indent_str=self.options.indent_cpp_spaces()
+        )
+
+        publicist_class_code = code_utils.process_code_template(publicist_class_template, replacements, {})
+
+        ns_intro, ns_outro = self._glue_scope_intro_outro()
+
+        glue_code: List[str] = []
+        glue_code += [ns_intro]
+        glue_code += publicist_class_code.split("\n")
+        glue_code += [ns_outro]
+
+        glue_code_str = "\n" + "\n".join(glue_code) + "\n"
+        self.lg_context.protected_methods_glue_code += glue_code_str
+
+    def _prot_fill_methods(self) -> None:
+        if not self._prot_shall_publish():
+            return
+        for child in self.cpp_element().get_elements(access_type=CppAccessType.protected):
+            if isinstance(child, CppFunctionDecl):
+                if AdaptedFunction.is_function_publishable(self.options, child):
+                    is_overloaded = child.is_overloaded_method()
+                    self.adapted_protected_methods.append(AdaptedFunction(self.lg_context, child, is_overloaded))
+
+    def _prot_shall_publish(self) -> bool:
+        r = code_utils.does_match_regex(
+            self.options.class_expose_protected_methods__regex, self.cpp_element().class_name
+        )
+        return r

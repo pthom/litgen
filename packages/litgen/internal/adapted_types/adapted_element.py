@@ -18,6 +18,17 @@ _PROGRESS_BAR_TITLE_STUB = "litgen:   Generate stubs..................... "
 
 @dataclass
 class AdaptedElement:  # (abc.ABC):  # Cannot be abstract (mypy limitation:  https://github.com/python/mypy/issues/5374)
+    """AdaptedElement: base class of all the Cpp element that can be outputted as pydef + stub files
+
+    This is an abstract class! Each of its derived classes (AdaptedClass, AdaptedFunction, AdaptedCppUnit, etc.) must:
+        - implement `_str_pydef_lines`, which will fill the C++ binding code for this derived class
+        - implement `_str_stub_lines`, which will fill the python stub code  for this derived class
+
+    Some derived classes may add information into the context (lg_context), for example:
+        - list of the encountered namespaces code (which will be dumped at the end)
+        - list of encountered "boxed types"
+    """
+
     _cpp_element: CppElementAndComment
     options: LitgenOptions
     lg_context: LitgenContext
