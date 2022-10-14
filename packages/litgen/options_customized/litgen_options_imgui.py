@@ -39,7 +39,6 @@ def litgen_options_imgui(type: ImguiOptionsType, docking_branch: bool) -> Litgen
 
     options = LitgenOptions()
 
-    options.generate_to_string = False
     options.cpp_indent_size = 4
 
     options.namespace_root__regex = "^ImGui$"
