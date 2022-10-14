@@ -231,14 +231,26 @@ class CppStruct(CppElementAndComment, CppITemplateHost):
         self.block.add_element(ppp_block)
         return ppp_block
 
-    # def add_method(self, cpp_code: str, access_type: CppAccessType = CppAccessType.public):
-    #     fn = srcmlcpp.srcmlcpp_main.code_first_function_decl(self.options, cpp_code)
-    #
-    #     blocks = self.get_access_blocks(access_type=access_type)
-    #     if len(blocks) == 0:
-    #         self.add_access_block(access_type)
-    #
-    #     block = self.get_access_blocks(access_type)[-1]
+    def add_method(
+        self,
+        cpp_code: str,
+        access_type: CppAccessType = CppAccessType.public,
+        comments: Optional[CppElementComments] = None,
+    ) -> CppFunctionDecl:
+
+        access_blocks = self.get_access_blocks(access_type=access_type)
+        if len(access_blocks) == 0:
+            self.add_access_block(access_type)
+
+        access_block = self.get_access_blocks(access_type)[-1]
+
+        fn = srcmlcpp.srcmlcpp_main.code_first_function_decl(self.options, cpp_code)
+        if comments is not None:
+            fn.cpp_element_comments = comments
+
+        access_block.add_element(fn)
+
+        return fn
 
     def get_methods_with_name(self, name: str) -> List[CppFunctionDecl]:
         all_methods = self.get_methods()

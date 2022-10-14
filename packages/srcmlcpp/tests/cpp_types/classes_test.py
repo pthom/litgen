@@ -335,3 +335,48 @@ def test_add_block():
             };
        """,
     )
+
+
+def test_add_method():
+    options = srcmlcpp.SrcmlcppOptions()
+    code = """
+            struct Foo
+            {
+                int a;
+            };
+    """
+    struct = srcmlcpp.srcmlcpp_main.code_first_struct(options, code)
+
+    struct.add_method("int get_a() { return a; }", CppAccessType.public)
+    code_utils.assert_are_codes_equal(
+        struct.str_code(),
+        """
+            struct Foo
+            {
+            public: // <default_access_type/>
+                int a;
+                int get_a()<unprocessed_block/>
+            };
+    """,
+    )
+
+    method = struct.get_methods()[0]
+    code_utils.assert_are_codes_equal(method.str_code_verbatim(), "int get_a() { return a; }")
+
+    comments = CppElementComments.from_comments("This is a super private method\nDon't touch", "I'm looking at you!")
+    struct.add_method("void set_a(int _a) { a = _a; }", CppAccessType.private, comments)
+    code_utils.assert_are_codes_equal(
+        struct.str_code(),
+        """
+            struct Foo
+            {
+            public: // <default_access_type/>
+                int a;
+                int get_a()<unprocessed_block/>
+            private:
+                // This is a super private method
+                // Don't touch
+                void set_a(int _a)<unprocessed_block/> // I'm looking at you!
+            };
+    """,
+    )

@@ -78,7 +78,13 @@ class CppElementComments:
             r = "/*" + self.comment_on_previous_lines + "*/"
             return r
 
-        top_comments = map(lambda comment: "//" + comment, self.comment_on_previous_lines.splitlines())
+        def add_line_comment_token_if_needed(comment_line: str) -> str:
+            if not comment_line.strip().startswith("//"):
+                return "//" + comment_line
+            else:
+                return comment_line
+
+        top_comments = map(add_line_comment_token_if_needed, self.comment_on_previous_lines.splitlines())
         top_comment = "\n".join(top_comments)
         if add_eol:
             if len(top_comment) > 0:
@@ -93,7 +99,7 @@ class CppElementComments:
         if len(self.comment_end_of_line) == 0:
             return ""
         else:
-            if self.comment_end_of_line.startswith("//"):
+            if self.comment_end_of_line.strip().startswith("//"):
                 return self.comment_end_of_line
             else:
                 return " //" + self.comment_end_of_line
