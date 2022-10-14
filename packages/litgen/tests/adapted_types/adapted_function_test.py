@@ -222,7 +222,7 @@ def test_overloads() -> None:
                 (m, "Foo", "")
             .def(py::init<>()) // implicit default constructor
             .def("foo",
-                py::overload_cast<>(&Foo::foo))
+                [](Foo & self) { return self.foo(); })
             .def("foo",
                 py::overload_cast<int>(&Foo::foo), py::arg("a"))
             .def("blah",

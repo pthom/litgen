@@ -768,6 +768,15 @@ void py_init_module_lg_mylib(py::module& m)
         ;
 
 
+    auto pyClassTextEditor =
+        py::class_<TextEditor>
+            (m, "TextEditor", "")
+        .def(py::init<>()) // implicit default constructor
+        .def("get_text",
+            [](TextEditor & self) { return self.GetText(); })
+        ;
+
+
     auto pyClassMyConfig =
         py::class_<MyConfig>
             (m, "MyConfig", "")
@@ -800,7 +809,7 @@ void py_init_module_lg_mylib(py::module& m)
         .def("__sub__",
             py::overload_cast<IntWrapper>(&IntWrapper::operator-), py::arg("b"))
         .def("__neg__",
-            py::overload_cast<>(&IntWrapper::operator-), "Unary minus operator")
+            [](IntWrapper & self) { return self.operator-(); }, "Unary minus operator")
         .def("__lt__",
             &IntWrapper::operator<,
             py::arg("b"),

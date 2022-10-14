@@ -34,7 +34,7 @@ void py_init_module_mylib(py::module& m)
         .def("__sub__",
             py::overload_cast<IntWrapper>(&IntWrapper::operator-), py::arg("b"))
         .def("__neg__",
-            py::overload_cast<>(&IntWrapper::operator-), "Unary minus operator")
+            [](IntWrapper & self) { return self.operator-(); }, "Unary minus operator")
         .def("__lt__",
             &IntWrapper::operator<,
             py::arg("b"),
