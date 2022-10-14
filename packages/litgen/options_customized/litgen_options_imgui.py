@@ -55,6 +55,15 @@ def litgen_options_imgui(type: ImguiOptionsType, docking_branch: bool) -> Litgen
         )
     )
 
+    options.names_replacements.merge_replacements(
+        RegexReplacementList.from_string(
+            r"""
+            RGBtoHSV -> RgbToHsv
+            HSVtoRGB -> HsvToRgb
+            """
+        )
+    )
+
     options.python_max_line_length = -1  # in ImGui, the function decls are on *one* line
     options.python_convert_to_snake_case = True
     options.original_location_flag_show = True

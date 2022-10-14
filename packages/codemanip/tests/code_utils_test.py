@@ -79,9 +79,14 @@ def test_strip_empty_lines():
 
 
 def test_to_snake_case():
+    assert code_utils.to_snake_case("VSliderFloat") == "v_slider_float"
     assert code_utils.to_snake_case("CamelCase") == "camel_case"
     assert code_utils.to_snake_case("ToRGB") == "to_rgb"
     assert code_utils.to_snake_case("CvMat_To_Array") == "cv_mat_to_array"
+    assert code_utils.to_snake_case("__repr__") == "__repr__"
+    assert code_utils.to_snake_case("ConfigMacOSXBehaviors") == "config_mac_osx_behaviors"
+    assert code_utils.to_snake_case("SizeOfIDStack") == "size_of_id_stack"
+    # assert code_utils.to_snake_case("RGBtoHSV") == "rgb_to_hsv"  (from imgui.h : this one is too tricky)
 
 
 def test_unindent_code():
