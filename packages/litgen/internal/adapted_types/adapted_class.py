@@ -505,12 +505,6 @@ class AdaptedClass(AdaptedElement):
 
             return pyclass_creation_code
 
-        qualified_struct_name = self.cpp_element().qualified_class_name_with_specialization()
-        if options.generate_to_string:
-            code_outro = f'{_i_}.def("__repr__", [](const {qualified_struct_name}& v) {{ return ToString(v); }});'
-        else:
-            code_outro = f"{_i_};"
-
         code = make_pyclass_creation_code()
 
         if (
@@ -548,7 +542,7 @@ class AdaptedClass(AdaptedElement):
         # add (deep)copy support if required
         code += code_utils.indent_code(self._cp_pydef(), indent_str=self.options.indent_cpp_spaces())
 
-        code = code + code_outro
+        code = code + f"{_i_};"
 
         if len(children_inner_classes) > 0:
             code += "\n{" + f" // inner classes & enums of {self.class_name_python()}\n"

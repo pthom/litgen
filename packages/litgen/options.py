@@ -460,12 +460,6 @@ class LitgenOptions:
     namespace_exclude__regex = r"[Ii]nternal|[Dd]etail"
 
     ################################################################################
-    #    <unclassified options>
-    ################################################################################
-    # Shall we generate a __str__() method for structs / Work in progress!
-    generate_to_string: bool = False
-
-    ################################################################################
     #    <Sanity checks and utilities below>
     ################################################################################
     def check_options_consistency(self) -> None:
