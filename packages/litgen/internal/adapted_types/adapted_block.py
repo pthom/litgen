@@ -62,7 +62,7 @@ class AdaptedBlock(AdaptedElement):
                     if not is_excluded_by_name:
                         self.adapted_elements.append(AdaptedClass(self.lg_context, child))
                 elif isinstance(child, CppFunctionDecl):
-                    if AdaptedFunction.is_function_publishable(self.options, child):
+                    if AdaptedFunction.init_is_function_publishable(self.options, child):
                         is_overloaded = self.cpp_element().is_function_overloaded(child)
                         self.adapted_elements.append(AdaptedFunction(self.lg_context, child, is_overloaded))
                 elif isinstance(child, CppEnum):

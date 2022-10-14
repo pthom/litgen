@@ -272,10 +272,6 @@ class AdaptedClass(AdaptedElement):
         self.adapted_protected_methods = []
         self._prot_fill_methods()
 
-    def __str__(self):
-        r = f"AdaptedClass({self.cpp_element().class_name})"
-        return r
-
     def _init_add_adapted_class_member(self, cpp_decl_statement: CppDeclStatement) -> None:
         for cpp_decl in cpp_decl_statement.cpp_decls:
             is_excluded_by_name = code_utils.does_match_regex(
@@ -298,7 +294,7 @@ class AdaptedClass(AdaptedElement):
                 elif isinstance(child, CppComment):
                     self.adapted_public_children.append(AdaptedComment(self.lg_context, child))
                 elif isinstance(child, CppFunctionDecl):
-                    if AdaptedFunction.is_function_publishable(self.options, child):
+                    if AdaptedFunction.init_is_function_publishable(self.options, child):
                         is_overloaded = child.is_overloaded_method()
                         self.adapted_public_children.append(AdaptedFunction(self.lg_context, child, is_overloaded))
                 elif isinstance(child, CppDeclStatement):
@@ -323,6 +319,10 @@ class AdaptedClass(AdaptedElement):
     #    Basic services
     #
     #  ============================================================================================
+
+    def __str__(self):
+        r = f"AdaptedClass({self.cpp_element().class_name})"
+        return r
 
     # override
     def cpp_element(self) -> CppStruct:
@@ -714,7 +714,9 @@ class AdaptedClass(AdaptedElement):
             is_overloaded = False
             adapted_virtual_method = AdaptedFunction(self.lg_context, virtual_method, is_overloaded)
             qualified_class_name = self.cpp_element().cpp_scope(include_self=True).str_cpp()
-            trampoline_lines += adapted_virtual_method.glue_override_virtual_methods_in_python(qualified_class_name)
+            trampoline_lines += adapted_virtual_method.virt_glue_override_virtual_methods_in_python(
+                qualified_class_name
+            )
 
         replacements = munch.Munch()
         replacements.trampoline_class_name = self.cpp_element().class_name + "_trampoline"
@@ -821,7 +823,7 @@ class AdaptedClass(AdaptedElement):
             return
         for child in self.cpp_element().get_elements(access_type=CppAccessType.protected):
             if isinstance(child, CppFunctionDecl):
-                if AdaptedFunction.is_function_publishable(self.options, child):
+                if AdaptedFunction.init_is_function_publishable(self.options, child):
                     is_overloaded = child.is_overloaded_method()
                     self.adapted_protected_methods.append(AdaptedFunction(self.lg_context, child, is_overloaded))
 
