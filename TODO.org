@@ -519,9 +519,7 @@ Problem 3: dans lg_test_runner (integration tests), tout est refusé (trouve pas
 *** Bind srcml?
 *** N: keep pointer and references layout inside CppType (int *x vs int *x vs int * x)
 ** Wish List / Easy
-*** ==> Classer methodes par themes dans Adapt...
 *** test trampoline with  test with py-mahi-gui
-*** define __all__ for litgen
 ** Interactive demo
 
 

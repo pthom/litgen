@@ -84,14 +84,14 @@ class AdaptedBlock(AdaptedElement):
                 child.emit_warning(str(e))
 
     # override
-    def _str_stub_lines(self) -> List[str]:
+    def stub_lines(self) -> List[str]:
         from litgen.internal.adapted_types.line_spacer import LineSpacerCpp
 
         line_spacer = LineSpacerCpp()
 
         lines = []
         for adapted_element in self.adapted_elements:
-            element_lines = adapted_element._str_stub_lines()
+            element_lines = adapted_element.stub_lines()
 
             current_line = adapted_element.cpp_element().start().line
             global_progress_bars().set_current_line(_PROGRESS_BAR_TITLE_STUB, current_line)
@@ -104,7 +104,7 @@ class AdaptedBlock(AdaptedElement):
         return lines
 
     # override
-    def _str_pydef_lines(self) -> List[str]:
+    def pydef_lines(self) -> List[str]:
         from litgen.internal.adapted_types.line_spacer import LineSpacerCpp
 
         line_spacer = LineSpacerCpp()
@@ -115,7 +115,7 @@ class AdaptedBlock(AdaptedElement):
             current_line = adapted_element.cpp_element().start().line
             global_progress_bars().set_current_line(_PROGRESS_BAR_TITLE_PYDEF, current_line)
 
-            element_lines = adapted_element._str_pydef_lines()
+            element_lines = adapted_element.pydef_lines()
 
             spacing_lines = line_spacer.spacing_lines(adapted_element, element_lines)
             lines += spacing_lines

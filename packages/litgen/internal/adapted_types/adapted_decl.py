@@ -139,13 +139,13 @@ class AdaptedDecl(AdaptedElement):
         return param_line
 
     # override
-    def _str_pydef_lines(self) -> List[str]:
+    def pydef_lines(self) -> List[str]:
         """intentionally not implemented, since it depends on the context
         (is this decl a function param, a method member, an enum member, etc.)"""
         raise ValueError("Not implemented")
 
     # override
-    def _str_stub_lines(self) -> List[str]:
+    def stub_lines(self) -> List[str]:
         """intentionally not implemented, since it depends on the context
         (is this decl a function param, a method member, an enum member, etc.)"""
         raise ValueError("Not implemented")

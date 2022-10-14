@@ -27,11 +27,11 @@ class AdaptedParameter(AdaptedElement):
         return cast(CppParameter, self._cpp_element)
 
     # override
-    def _str_stub_lines(self) -> List[str]:
+    def stub_lines(self) -> List[str]:
         raise NotImplementedError()
 
     # override
-    def _str_pydef_lines(self) -> List[str]:
+    def pydef_lines(self) -> List[str]:
         raise NotImplementedError()
 
     def is_modifiable_python_immutable_fixed_size_array(self) -> bool:
@@ -331,7 +331,7 @@ class AdaptedFunction(AdaptedElement):
     #  ============================================================================================
 
     # override
-    def _str_pydef_lines(self) -> List[str]:
+    def pydef_lines(self) -> List[str]:
         from litgen.internal.adapted_types import operators
 
         # Bail out if this is a <=> operator (aka spaceship operator)
@@ -340,7 +340,7 @@ class AdaptedFunction(AdaptedElement):
             new_functions = operators.cpp_split_spaceship_operator(self)
             r = []
             for new_function in new_functions:
-                r += new_function._str_pydef_lines()
+                r += new_function.pydef_lines()
             return r
 
         # If this is a template function, implement as many versions
@@ -353,7 +353,7 @@ class AdaptedFunction(AdaptedElement):
             else:
                 r = []
                 for template_instantiation in template_instantiations:
-                    r += template_instantiation._str_pydef_lines()
+                    r += template_instantiation.pydef_lines()
                 return r
 
         if self.is_constructor():
@@ -372,7 +372,7 @@ class AdaptedFunction(AdaptedElement):
         if self.shall_vectorize():
             new_vectorized_function = copy.copy(self)
             new_vectorized_function.is_vectorize_impl = True
-            lines += new_vectorized_function._str_pydef_lines()
+            lines += new_vectorized_function.pydef_lines()
 
         return lines
 
@@ -799,7 +799,7 @@ class AdaptedFunction(AdaptedElement):
     #  ============================================================================================
 
     # override
-    def _str_stub_lines(self) -> List[str]:
+    def stub_lines(self) -> List[str]:
 
         # Handle <=> (aka spaceship) operator, which is split in 5 operators!
         from litgen.internal.adapted_types import operators
@@ -810,7 +810,7 @@ class AdaptedFunction(AdaptedElement):
             new_functions = operators.cpp_split_spaceship_operator(self)
             r = []
             for new_function in new_functions:
-                r += new_function._str_stub_lines()
+                r += new_function.stub_lines()
             return r
 
         # If this is a template function, implement as many versions
@@ -828,7 +828,7 @@ class AdaptedFunction(AdaptedElement):
                             r += [""]  # 1 empty lines between methods
                         else:
                             r += ["", ""]  # 2 empty lines between functions
-                    r += template_instantiation._str_stub_lines()
+                    r += template_instantiation.stub_lines()
                 if self.options.fn_template_decorate_in_stub:
                     r = cpp_to_python.surround_python_code_lines(
                         r, f"template specializations for function {self.cpp_element().function_name}"
@@ -909,7 +909,7 @@ class AdaptedFunction(AdaptedElement):
         if self.shall_vectorize():
             new_vectorized_function = copy.copy(self)
             new_vectorized_function.is_vectorize_impl = True
-            r += new_vectorized_function._str_stub_lines()
+            r += new_vectorized_function.stub_lines()
 
         return r
 

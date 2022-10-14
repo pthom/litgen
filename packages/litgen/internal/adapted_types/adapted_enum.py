@@ -111,7 +111,7 @@ class AdaptedEnumDecl(AdaptedDecl):
         return replacement_list
 
     # override
-    def _str_stub_lines(self) -> List[str]:
+    def stub_lines(self) -> List[str]:
         lines = []
         decl_name = self.decl_name_python()
         decl_value = self.decl_value_python()
@@ -129,7 +129,7 @@ class AdaptedEnumDecl(AdaptedDecl):
         return self._cpp_original_code_lines() + lines
 
     # override
-    def _str_pydef_lines(self) -> List[str]:
+    def pydef_lines(self) -> List[str]:
         decl_name_cpp = self.decl_name_cpp_decorated()
         decl_name_python = self.decl_name_python()
         value_comment = self.comment_pydef_one_line()
@@ -183,7 +183,7 @@ class AdaptedEnum(AdaptedElement):
         return r
 
     # override
-    def _str_stub_lines(self) -> List[str]:
+    def stub_lines(self) -> List[str]:
         from litgen.internal.adapted_types.line_spacer import LineSpacerPython
 
         line_spacer = LineSpacerPython(self.options)
@@ -192,7 +192,7 @@ class AdaptedEnum(AdaptedElement):
 
         body_lines: List[str] = []
         for child in self.adapted_children:
-            element_lines = child._str_stub_lines()
+            element_lines = child.stub_lines()
             spacing_lines = line_spacer.spacing_lines(child, element_lines)
             body_lines += spacing_lines
             body_lines += element_lines
@@ -201,7 +201,7 @@ class AdaptedEnum(AdaptedElement):
         return all_lines
 
     # override
-    def _str_pydef_lines(self) -> List[str]:
+    def pydef_lines(self) -> List[str]:
         enum_name_cpp = self.cpp_element().cpp_scope(True).str_cpp()
         # enum_name_cpp = self.cpp_element().enum_name
         enum_name_python = self.enum_name_python()
@@ -221,7 +221,7 @@ class AdaptedEnum(AdaptedElement):
         for child in self.adapted_children:
             if isinstance(child, AdaptedEnumDecl):
                 adapted_decl = child
-                value_decl_lines = adapted_decl._str_pydef_lines()
+                value_decl_lines = adapted_decl.pydef_lines()
                 lines += value_decl_lines
 
         # Add ; on the last line

@@ -101,11 +101,21 @@ class AdaptedElement:  # (abc.ABC):  # Cannot be abstract (mypy limitation:  htt
         pass
 
     # @abc.abstractmethod
-    def _str_stub_lines(self) -> List[str]:
+    def stub_lines(self) -> List[str]:
+        """
+        This is an abstract class! Each of its derived classes (AdaptedClass, AdaptedFunction, AdaptedCppUnit, etc.) must:
+            - implement `_str_pydef_lines`, which will fill the C++ binding code for this derived class
+            - implement `_str_stub_lines`, which will fill the python stub code  for this derived class
+        """
         raise NotImplementedError()
 
     # @abc.abstractmethod
-    def _str_pydef_lines(self) -> List[str]:
+    def pydef_lines(self) -> List[str]:
+        """
+        This is an abstract class! Each of its derived classes (AdaptedClass, AdaptedFunction, AdaptedCppUnit, etc.) must:
+            - implement `_str_pydef_lines`, which will fill the C++ binding code for this derived class
+            - implement `_str_stub_lines`, which will fill the python stub code  for this derived class
+        """
         raise NotImplementedError()
 
     def comment_pydef_one_line(self) -> str:
@@ -125,14 +135,14 @@ class AdaptedElement:  # (abc.ABC):  # Cannot be abstract (mypy limitation:  htt
         return r
 
     def str_stub(self) -> str:
-        stub_lines = self._str_stub_lines()
+        stub_lines = self.stub_lines()
         if len(stub_lines) == 0:
             return ""
         r = "\n".join(stub_lines)
         return r
 
     def str_pydef(self) -> str:
-        pydef_lines = self._str_pydef_lines()
+        pydef_lines = self.pydef_lines()
         if len(pydef_lines) == 0:
             return ""
         r = "\n".join(pydef_lines) + "\n"

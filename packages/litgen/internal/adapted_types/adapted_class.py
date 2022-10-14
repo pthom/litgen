@@ -189,7 +189,7 @@ class AdaptedClassMember(AdaptedDecl):
         return cast(CppDecl, self._cpp_element)
 
     # override
-    def _str_stub_lines(self) -> List[str]:
+    def stub_lines(self) -> List[str]:
         code_lines: List[str] = []
 
         if not self.comment_python_shall_place_at_end_of_line():
@@ -224,7 +224,7 @@ class AdaptedClassMember(AdaptedDecl):
         return code_lines
 
     # override
-    def _str_pydef_lines(self) -> List[str]:
+    def pydef_lines(self) -> List[str]:
         if self._is_numeric_c_array():
             return self._str_pydef_lines_numeric_array()
         else:
@@ -342,7 +342,7 @@ class AdaptedClass(AdaptedElement):
     #  ============================================================================================
 
     # override
-    def _str_stub_lines(self) -> List[str]:
+    def stub_lines(self) -> List[str]:
         # If this is a template class, implement as many versions
         # as mentioned in the options (see LitgenOptions.class_template_options)
         # and bail out
@@ -355,7 +355,7 @@ class AdaptedClass(AdaptedElement):
                 for template_instantiation in template_instantiations:
                     if len(r) > 0:
                         r += ["", ""]  # 2 empty lines between classes
-                    r += template_instantiation._str_stub_lines()
+                    r += template_instantiation.stub_lines()
                 if self.options.class_template_decorate_in_stub:
                     r = cpp_to_python.surround_python_code_lines(
                         r, f"template specializations for class {self.cpp_element().class_name}"
@@ -392,7 +392,7 @@ class AdaptedClass(AdaptedElement):
 
         body_lines: List[str] = []
         for element in self.adapted_public_children:
-            element_lines = element._str_stub_lines()
+            element_lines = element.stub_lines()
 
             spacing_lines = line_spacer.spacing_lines(element, element_lines)
             body_lines += spacing_lines
@@ -401,7 +401,7 @@ class AdaptedClass(AdaptedElement):
         if len(self.adapted_protected_methods) > 0:
             body_lines += ["", "# <protected_methods>"]
             for element in self.adapted_protected_methods:
-                element_lines = element._str_stub_lines()
+                element_lines = element.stub_lines()
 
                 spacing_lines = line_spacer.spacing_lines(element, element_lines)
                 body_lines += spacing_lines
@@ -412,7 +412,7 @@ class AdaptedClass(AdaptedElement):
         return r
 
     # override
-    def _str_pydef_lines(self) -> List[str]:
+    def pydef_lines(self) -> List[str]:
         # If this is a template class, implement as many versions
         # as mentioned in the options (see LitgenOptions.class_template_options)
         # and bail out
@@ -423,7 +423,7 @@ class AdaptedClass(AdaptedElement):
             else:
                 r = []
                 for template_instantiation in template_instantiations:
-                    r += template_instantiation._str_pydef_lines()
+                    r += template_instantiation.pydef_lines()
                 return r
 
         self._prot_store_glue()

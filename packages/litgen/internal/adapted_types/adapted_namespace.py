@@ -54,12 +54,12 @@ class AdaptedNamespace(AdaptedElement):
         return r
 
     # override
-    def _str_stub_lines(self) -> List[str]:
+    def stub_lines(self) -> List[str]:
 
         lines: List[str] = []
         if not self.lg_context.namespaces_stub.was_namespace_created(self._qualified_namespace_name()):
             lines += cpp_to_python.docstring_lines(self.options, self.cpp_element())
-        lines += self.adapted_block._str_stub_lines()
+        lines += self.adapted_block.stub_lines()
         lines.append("")
 
         if self.flag_create_python_namespace():
@@ -102,8 +102,8 @@ class AdaptedNamespace(AdaptedElement):
         return submodule_code_.split("\n")
 
     # override
-    def _str_pydef_lines(self) -> List[str]:
-        lines = self.adapted_block._str_pydef_lines()
+    def pydef_lines(self) -> List[str]:
+        lines = self.adapted_block.pydef_lines()
 
         if self.flag_create_python_namespace():
             context_stored_lines = self._pydef_def_submodule_code() + lines

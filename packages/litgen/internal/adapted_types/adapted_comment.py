@@ -18,14 +18,14 @@ class AdaptedEmptyLine(AdaptedElement):
         return cast(CppEmptyLine, self._cpp_element)
 
     # override
-    def _str_stub_lines(self) -> List[str]:
+    def stub_lines(self) -> List[str]:
         if self.options.python_reproduce_cpp_layout:
             return [""]
         else:
             return []
 
     # override
-    def _str_pydef_lines(self) -> List[str]:
+    def pydef_lines(self) -> List[str]:
         return []
 
 
@@ -39,7 +39,7 @@ class AdaptedComment(AdaptedElement):
         return cast(CppComment, self._cpp_element)
 
     # override
-    def _str_stub_lines(self) -> List[str]:
+    def stub_lines(self) -> List[str]:
         comment_cpp = self.cpp_element().comment
         comment_python = cpp_to_python._comment_apply_replacements(self.options, comment_cpp)
 
@@ -53,5 +53,5 @@ class AdaptedComment(AdaptedElement):
         return comment_python_lines
 
     # override
-    def _str_pydef_lines(self) -> List[str]:
+    def pydef_lines(self) -> List[str]:
         return []
