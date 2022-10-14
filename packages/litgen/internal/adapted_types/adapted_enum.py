@@ -188,7 +188,7 @@ class AdaptedEnum(AdaptedElement):
 
         line_spacer = LineSpacerPython(self.options)
 
-        title_line = f"class {self.cpp_element().enum_name}(Enum):"
+        title_line = f"class {self.cpp_element().enum_name}(enum.Enum):"
 
         body_lines: List[str] = []
         for child in self.adapted_children:

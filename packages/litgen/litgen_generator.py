@@ -289,7 +289,6 @@ def _typical_stub_file() -> str:
 import sys
 from typing import Literal, List, Any, Optional, Tuple, Dict
 import numpy as np
-from enum import Enum
 import enum
 import numpy
 

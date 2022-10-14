@@ -48,7 +48,7 @@ enum Foo
     code_utils.assert_are_codes_equal(
         stub_code,
         '''
-        class Foo(Enum):
+        class Foo(enum.Enum):
             """ Doc about Foo
              On several lines
             """
@@ -71,7 +71,7 @@ enum Foo
     code_utils.assert_are_codes_equal(
         stub_code,
         '''
-        class Foo(Enum):
+        class Foo(enum.Enum):
             """ Doc about Foo
              On several lines
             """
