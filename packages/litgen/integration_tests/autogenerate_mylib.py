@@ -86,6 +86,11 @@ def mylib_litgen_options() -> litgen.LitgenOptions:
 
     options.class_deep_copy__regex = r"^Copyable_"
     options.class_copy__regex = r"^Copyable_"
+    options.class_template_options.add_specialization(
+        class_name_regex=r"^Copyable_",  # r".*" => all classes
+        cpp_types_list=["int"],  # instantiated types
+        naming_scheme=litgen.TemplateNamingScheme.camel_case_suffix,
+    )
 
     #
     # Sandbox for other options

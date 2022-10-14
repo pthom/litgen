@@ -366,6 +366,9 @@ class LitgenOptions:
     # https://pybind11.readthedocs.io/en/stable/advanced/classes.html#deepcopy-support
     class_deep_copy__regex: str = ""
     class_copy__regex: str = ""
+    # If class_copy_add_info_in_stub=True, the existence of __copy__ and __deepcopy__
+    # will be mentioned in the stub file.
+    class_copy_add_info_in_stub: bool = False
 
     # Exclude certain members by a regex on their name
     member_exclude_by_name__regex: str = ""

@@ -273,6 +273,86 @@ class AdaptedClass(AdaptedElement):
         )
         return r
 
+    #  =========================================================================
+    #    <_cp_:(deep)copy>
+    #  cf https://pybind11.readthedocs.io/en/stable/advanced/classes.html#deepcopy-support
+    #  =========================================================================
+    def _cp_shall_create_copy_impl(self, copy_or_deepcopy: str) -> bool:
+        if copy_or_deepcopy == "copy":
+            match_regex = self.options.class_copy__regex
+        else:
+            match_regex = self.options.class_deep_copy__regex
+
+        if not code_utils.does_match_regex(match_regex, self.cpp_element().class_name):
+            return False
+
+        user_defined_copy_constructor = self.cpp_element().get_user_defined_copy_constructor()
+        if user_defined_copy_constructor is None:
+            return True
+        else:
+            is_api = self.cpp_element().is_user_defined_copy_constructor_part_of_api()
+            return is_api
+
+    def _cp_shall_create_deep_copy(self) -> bool:
+        return self._cp_shall_create_copy_impl(self.options.class_deep_copy__regex)
+
+    def _cp_shall_create_copy(self) -> bool:
+        return self._cp_shall_create_copy_impl(self.options.class_copy__regex)
+
+    def _cp_stub_comment(self) -> str:
+        if not self.options.class_copy_add_info_in_stub:
+            return ""
+        supported_list = []
+        if self._cp_shall_create_copy():
+            supported_list.append("copy.copy")
+        if self._cp_shall_create_deep_copy():
+            supported_list.append("copy.deepcopy")
+
+        if len(supported_list) > 0:
+            all_supported = " and ".join(supported_list)
+            r = f"(has support for {all_supported})"
+            return r
+        else:
+            return ""
+
+    def _cp_pydef(self) -> str:
+        code_template = code_utils.unindent_code(
+            """
+            .def("__{copy_or_deep_copy}__",  [](const {qualified_class_name} &self{maybe_pydict}) {
+            {_i_}return {qualified_class_name}(self);
+            }{maybe_memo})
+        """,
+            flag_strip_empty_lines=True,
+        )
+
+        replacements = munch.Munch()
+        replacements._i_ = self.options.indent_cpp_spaces()
+        replacements.qualified_class_name = self.cpp_element().qualified_class_name_with_specialization()
+
+        full_code = ""
+        for copy_or_deep_copy in ["copy", "deepcopy"]:
+            replacements.copy_or_deep_copy = copy_or_deep_copy
+            shall_create = self._cp_shall_create_copy_impl(copy_or_deep_copy)
+
+            if copy_or_deep_copy == "copy":
+                replacements.maybe_pydict = ""
+                replacements.maybe_memo = ""
+            else:
+                replacements.maybe_pydict = ", py::dict"
+                replacements.maybe_memo = ', py::arg("memo")'
+
+            if shall_create:
+                code = code_utils.process_code_template(code_template, replacements)
+                if len(full_code) > 0:
+                    full_code += "\n"
+                full_code += code
+
+        return full_code
+
+    #  =========================================================================
+    #    </_cp_:(deep)copy>
+    #  =========================================================================
+
     def _shall_override_virtual_methods_in_python(self) -> bool:
         active = code_utils.does_match_regex(
             self.options.class_override_virtual_methods_in_python__regex, self.cpp_element().class_name
@@ -380,6 +460,8 @@ class AdaptedClass(AdaptedElement):
         if self.cpp_element().is_final():
             self.cpp_element().cpp_element_comments.comment_on_previous_lines += "\n"
             self.cpp_element().cpp_element_comments.comment_on_previous_lines += "(final class)"
+        if len(self._cp_stub_comment()) > 0:
+            self.cpp_element().cpp_element_comments.comment_on_previous_lines += "\n" + self._cp_stub_comment()
 
         body_lines: List[str] = []
         for element in self.adapted_public_children:
@@ -678,6 +760,9 @@ class AdaptedClass(AdaptedElement):
             parent_struct.class_name = original_class_name
 
             code += code_utils.indent_code(decl_code, indent_str=options.indent_cpp_spaces())
+
+        # add (deep)copy support if required
+        code += code_utils.indent_code(self._cp_pydef(), indent_str=self.options.indent_cpp_spaces())
 
         code = code + code_outro
 

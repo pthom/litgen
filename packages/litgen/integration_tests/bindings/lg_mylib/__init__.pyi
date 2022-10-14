@@ -516,8 +516,9 @@ class Copyable_ExplicitPrivateCopyCtor:
 
 class Copyable_DeletedCopyCtor:
     a: int = 1
-    def __init__(self, : Copyable_DeletedCopyCtor) -> None:
+    def __init__(self) -> None:
         pass
+
 
 #////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 #                       mylib/class_virtual_test.h included by mylib/mylib_main/mylib.h                        //
@@ -919,6 +920,18 @@ class Home:  # Proxy class that introduces typings for the *submodule* Home
 
 
 # </submodule Home>
+
+# <submodule AAA>
+class AAA:  # Proxy class that introduces typings for the *submodule* AAA
+    pass  # (This corresponds to a C++ namespace. All method are static!)
+    #  ------------------------------------------------------------------------
+    #      <template specializations for class Copyable_Template>
+    class Copyable_TemplateInt:
+        value: int
+    #      </template specializations for class Copyable_Template>
+    #  ------------------------------------------------------------------------
+
+# </submodule AAA>
 
 # <submodule Root>
 class Root:  # Proxy class that introduces typings for the *submodule* Root

@@ -729,7 +729,12 @@ void py_init_module_lg_mylib(py::module& m)
             (m, "Copyable_ImplicitCopyCtor", "")
         .def(py::init<>()) // implicit default constructor
         .def_readwrite("a", &Copyable_ImplicitCopyCtor::a, "")
-        ;
+        .def("__copy__",  [](const Copyable_ImplicitCopyCtor &self) {
+            return Copyable_ImplicitCopyCtor(self);
+        })
+        .def("__deepcopy__",  [](const Copyable_ImplicitCopyCtor &self, py::dict) {
+            return Copyable_ImplicitCopyCtor(self);
+        }, py::arg("memo"))    ;
 
 
     auto pyClassCopyable_ExplicitCopyCtor =
@@ -739,7 +744,12 @@ void py_init_module_lg_mylib(py::module& m)
         .def(py::init<const Copyable_ExplicitCopyCtor &>(),
             py::arg("other"))
         .def_readwrite("a", &Copyable_ExplicitCopyCtor::a, "")
-        ;
+        .def("__copy__",  [](const Copyable_ExplicitCopyCtor &self) {
+            return Copyable_ExplicitCopyCtor(self);
+        })
+        .def("__deepcopy__",  [](const Copyable_ExplicitCopyCtor &self, py::dict) {
+            return Copyable_ExplicitCopyCtor(self);
+        }, py::arg("memo"))    ;
 
 
     auto pyClassCopyable_ExplicitPrivateCopyCtor =
@@ -754,7 +764,7 @@ void py_init_module_lg_mylib(py::module& m)
         py::class_<Copyable_DeletedCopyCtor>
             (m, "Copyable_DeletedCopyCtor", "")
         .def_readwrite("a", &Copyable_DeletedCopyCtor::a, "")
-
+        .def(py::init<>())
         ;
 
 
@@ -1108,6 +1118,21 @@ void py_init_module_lg_mylib(py::module& m)
                 &Home::PetDog::bark)
             ;
     } // </namespace Home>
+
+    { // <namespace AAA>
+        py::module_ pyNsAAA = m.def_submodule("AAA", "");
+        auto pyNsAAA_ClassCopyable_Template_int =
+            py::class_<AAA::Copyable_Template<int>>
+                (pyNsAAA, "Copyable_TemplateInt", "")
+            .def(py::init<>()) // implicit default constructor
+            .def_readwrite("value", &AAA::Copyable_Template<int>::value, "")
+            .def("__copy__",  [](const AAA::Copyable_Template<int> &self) {
+                return AAA::Copyable_Template<int>(self);
+            })
+            .def("__deepcopy__",  [](const AAA::Copyable_Template<int> &self, py::dict) {
+                return AAA::Copyable_Template<int>(self);
+            }, py::arg("memo"))    ;
+    } // </namespace AAA>
 
     { // <namespace Root>
         py::module_ pyNsRoot = m.def_submodule("Root", "");

@@ -206,6 +206,9 @@ class AdaptedFunction(AdaptedElement):
         if cpp_function.is_destructor():
             return False
 
+        if "delete" in cpp_function.specifiers:
+            return False
+
         # Check options.fn_exclude_by_name__regex
         if code_utils.does_match_regex(options.fn_exclude_by_name__regex, cpp_function.function_name):
             return False

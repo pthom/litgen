@@ -28,5 +28,16 @@ private:
 struct Copyable_DeletedCopyCtor
 {
     int a = 1;
+    Copyable_DeletedCopyCtor() = default;
     Copyable_DeletedCopyCtor(const Copyable_DeletedCopyCtor&) = delete;
 };
+
+
+namespace AAA
+{
+    template<typename T>
+    struct Copyable_Template
+    {
+        T value;
+    };
+}

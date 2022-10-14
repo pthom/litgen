@@ -303,3 +303,91 @@ def test_templated_class():
             ;
     """,
     )
+
+
+def test_deepcopy_simple():
+    # Note: there are lots of other tests inside litgen/integration_tests/mylib/class_copy_test.h
+    code = "struct Foo {};"
+    options = litgen.LitgenOptions()
+    options.class_deep_copy__regex = r".*"
+    options.class_copy__regex = r".*"
+    options.class_copy_add_info_in_stub = True
+    generated_code = litgen.generate_code(options, code)
+
+    code_utils.assert_are_codes_equal(
+        generated_code.pydef_code,
+        """
+        auto pyClassFoo =
+            py::class_<Foo>
+                (m, "Foo", "\\n(has support for copy.copy and copy.deepcopy)")
+            .def(py::init<>()) // implicit default constructor
+            .def("__copy__",  [](const Foo &self) {
+                return Foo(self);
+            })
+            .def("__deepcopy__",  [](const Foo &self, py::dict) {
+                return Foo(self);
+            }, py::arg("memo"))    ;
+    """,
+    )
+
+    code_utils.assert_are_codes_equal(
+        generated_code.stub_code,
+        '''
+        class Foo:
+            """
+            (has support for copy.copy and copy.deepcopy)
+            """
+            pass
+    ''',
+    )
+
+
+def test_deepcopy_with_specialization():
+    code = """
+    namespace Ns
+    {
+        template<typename T>
+        struct Foo
+        {
+            T value;
+        };
+    }
+    """
+    options = litgen.LitgenOptions()
+    options.class_template_options.add_specialization(".*", ["int"])
+    options.class_deep_copy__regex = r".*"
+    generated_code = litgen.generate_code(options, code)
+
+    code_utils.assert_are_codes_equal(
+        generated_code.pydef_code,
+        """
+        { // <namespace Ns>
+            py::module_ pyNsNs = m.def_submodule("Ns", "");
+            auto pyNsNs_ClassFoo_int =
+                py::class_<Ns::Foo<int>>
+                    (pyNsNs, "FooInt", "")
+                .def(py::init<>()) // implicit default constructor
+                .def_readwrite("value", &Ns::Foo<int>::value, "")
+                .def("__deepcopy__",  [](const Ns::Foo<int> &self, py::dict) {
+                    return Ns::Foo<int>(self);
+                }, py::arg("memo"))    ;
+        } // </namespace Ns>
+    """,
+    )
+
+    code_utils.assert_are_codes_equal(
+        generated_code.stub_code,
+        """
+        # <submodule Ns>
+        class Ns:  # Proxy class that introduces typings for the *submodule* Ns
+            pass  # (This corresponds to a C++ namespace. All method are static!)
+            #  ------------------------------------------------------------------------
+            #      <template specializations for class Foo>
+            class FooInt:
+                value: int
+            #      </template specializations for class Foo>
+            #  ------------------------------------------------------------------------
+
+        # </submodule Ns>
+    """,
+    )
