@@ -699,9 +699,64 @@ class AdaptedFunction(AdaptedElement):
         r = self.cpp_adapter_code is not None or self.lambda_to_call is not None
         return r
 
+    def _pydef_adapt_param_if_using_inner_class(self, param: CppParameter) -> CppParameter:
+        """
+        In the following example, the first param  of the "register" method
+        uses a default value which depends on the inner scope of the struct.
+        However, this scope is unavailable outside the struct declaration!
+            struct Foo {
+                enum class Choice { A = 0, };
+                void register(Choice value = Choice::A) { return 0; }
+            };
+        => We need to add the struct scope if we detect this.
+        """
+        if not self.is_method():
+            return param
+
+        parent_struct = self.cpp_element().parent_struct_if_method()
+        assert parent_struct is not None
+
+        def get_inner_structs_enums_names() -> List[str]:
+            assert parent_struct is not None
+            inner_structs = parent_struct.get_elements(element_type=CppStruct)
+            inner_enums = parent_struct.get_elements(element_type=CppEnum)
+
+            inner_struct_enums_names = []
+            for inner_struct in inner_structs:
+                assert isinstance(inner_struct, CppStruct)
+                inner_struct_enums_names.append(inner_struct.class_name)
+            for inner_enum in inner_enums:
+                assert isinstance(inner_enum, CppEnum)
+                inner_struct_enums_names.append(inner_enum.enum_name)
+
+            return inner_struct_enums_names
+
+        def add_class_scope_to_initial_value(initial_value_code: str) -> Optional[str]:
+            # Will return None if no change is needed
+            assert parent_struct is not None
+            items = initial_value_code.split("::")
+            if len(items) < 2:
+                return None
+
+            if items[0] in get_inner_structs_enums_names():
+                items = [parent_struct.class_name] + items
+                initial_value_code_with_class_scope = "::".join(items)
+                return initial_value_code_with_class_scope
+            else:
+                return None
+
+        new_initial_value_code = add_class_scope_to_initial_value(param.decl.initial_value_code)
+        if new_initial_value_code is not None:
+            new_param = copy.deepcopy(param)
+            new_param.decl.initial_value_code = new_initial_value_code
+            return new_param
+        else:
+            return param
+
     def _pydef_pyarg_list(self) -> List[str]:
         pyarg_strs: List[str] = []
         for param in self.cpp_adapted_function.parameter_list.parameters:
+            param = self._pydef_adapt_param_if_using_inner_class(param)
             adapted_decl = AdaptedDecl(self.lg_context, param.decl)
 
             # Skip *args and **kwarg

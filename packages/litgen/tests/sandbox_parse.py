@@ -112,14 +112,15 @@ IMGUI_API int           ImTextStrToUtf8(char* out_buf, int out_buf_size, const I
 
 def play() -> None:
     code = """
-struct Copyable_DeletedCopyCtor
+struct TextEditor
 {
-    int a = 1;
-    Copyable_DeletedCopyCtor(const Copyable_DeletedCopyCtor&) = delete;
+public:
+    enum class Choice { A = 0, };
+    MY_API int HandleChoice(Choice value = Choice::A) { return 0; }
 };
     """
     options = litgen.LitgenOptions()
-    options.class_deep_copy__regex = r".*"
+    # options.class_deep_copy__regex = r".*"
     generated_code = litgen.generate_code(options, code)
     print(generated_code.pydef_code)
     print(generated_code.stub_code)
