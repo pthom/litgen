@@ -44,8 +44,8 @@ def my_generic_function(*args, **kwargs) -> int:
 
 
 # <submodule MathFunctions>
-class MathFunctions: # Proxy class that introduces typings for the *submodule* MathFunctions
-    # (This corresponds to a C++ namespace. All method are static!)
+class MathFunctions:  # Proxy class that introduces typings for the *submodule* MathFunctions
+    pass  # (This corresponds to a C++ namespace. All method are static!)
     """ Vectorizable functions example
         Numeric functions (i.e. function accepting and returning only numeric params or py::array), can be vectorized
         i.e. they will accept numpy arrays as an input.

@@ -18,8 +18,8 @@ import numpy
 
 
 # <submodule SomeNamespace>
-class SomeNamespace: # Proxy class that introduces typings for the *submodule* SomeNamespace
-    # (This corresponds to a C++ namespace. All method are static!)
+class SomeNamespace:  # Proxy class that introduces typings for the *submodule* SomeNamespace
+    pass  # (This corresponds to a C++ namespace. All method are static!)
     """ namespace SomeNamespace"""
     class ParentStruct:
         class InnerStruct:
@@ -30,7 +30,7 @@ class SomeNamespace: # Proxy class that introduces typings for the *submodule* S
             def add(self, a: int, b: int) -> int:
                 pass
 
-        class InnerEnum(Enum):
+        class InnerEnum(enum.Enum):
             zero = enum.auto()  # (= 0)
             one = enum.auto()   # (= 1)
             two = enum.auto()   # (= 2)

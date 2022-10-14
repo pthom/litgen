@@ -341,7 +341,7 @@ class FooOverload:
 #                       mylib/enum_test.h included by mylib/mylib_main/mylib.h                                 //
 #//////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-class BasicEnum(Enum):
+class BasicEnum(enum.Enum):
     """ BasicEnum: a simple C-style enum"""
     # C-style enums often contain a prefix that is the enum name in itself, in order
     # not to pollute the parent namespace.
@@ -358,7 +358,7 @@ class BasicEnum(Enum):
 
 
 
-class ClassEnum(Enum):
+class ClassEnum(enum.Enum):
     """ ClassEnum: a class enum that should be published"""
     on = enum.auto()      # (= 0)
     off = enum.auto()     # (= 1)
@@ -837,8 +837,8 @@ class MyTemplateClassString:
 ##include "mylib/sandbox.h"
 
 # <submodule MathFunctions>
-class MathFunctions: # Proxy class that introduces typings for the *submodule* MathFunctions
-    # (This corresponds to a C++ namespace. All method are static!)
+class MathFunctions:  # Proxy class that introduces typings for the *submodule* MathFunctions
+    pass  # (This corresponds to a C++ namespace. All method are static!)
     """ Vectorizable functions example
         Numeric functions (i.e. function accepting and returning only numeric params or py::array), can be vectorized
         i.e. they will accept numpy arrays as an input.
@@ -856,8 +856,8 @@ class MathFunctions: # Proxy class that introduces typings for the *submodule* M
 # </submodule MathFunctions>
 
 # <submodule Animals>
-class Animals: # Proxy class that introduces typings for the *submodule* Animals
-    # (This corresponds to a C++ namespace. All method are static!)
+class Animals:  # Proxy class that introduces typings for the *submodule* Animals
+    pass  # (This corresponds to a C++ namespace. All method are static!)
     class Animal:
         def __init__(self, name: str) -> None:
             pass
@@ -875,8 +875,8 @@ class Animals: # Proxy class that introduces typings for the *submodule* Animals
 # </submodule Animals>
 
 # <submodule Home>
-class Home: # Proxy class that introduces typings for the *submodule* Home
-    # (This corresponds to a C++ namespace. All method are static!)
+class Home:  # Proxy class that introduces typings for the *submodule* Home
+    pass  # (This corresponds to a C++ namespace. All method are static!)
     class Pet:
         def is_pet(self) -> bool:
             pass
@@ -892,12 +892,12 @@ class Home: # Proxy class that introduces typings for the *submodule* Home
 # </submodule Home>
 
 # <submodule Root>
-class Root: # Proxy class that introduces typings for the *submodule* Root
-    # (This corresponds to a C++ namespace. All method are static!)
+class Root:  # Proxy class that introduces typings for the *submodule* Root
+    pass  # (This corresponds to a C++ namespace. All method are static!)
 
     # <submodule Inner>
-    class Inner: # Proxy class that introduces typings for the *submodule* Inner
-        # (This corresponds to a C++ namespace. All method are static!)
+    class Inner:  # Proxy class that introduces typings for the *submodule* Inner
+        pass  # (This corresponds to a C++ namespace. All method are static!)
         class MyVirtualClass:
 
             def foo_concrete(self, x: int, name: str) -> str:
@@ -930,8 +930,8 @@ class Root: # Proxy class that introduces typings for the *submodule* Root
 # </submodule Root>
 
 # <submodule SomeNamespace>
-class SomeNamespace: # Proxy class that introduces typings for the *submodule* SomeNamespace
-    # (This corresponds to a C++ namespace. All method are static!)
+class SomeNamespace:  # Proxy class that introduces typings for the *submodule* SomeNamespace
+    pass  # (This corresponds to a C++ namespace. All method are static!)
     """ namespace SomeNamespace"""
     class ParentStruct:
         class InnerStruct:
@@ -942,7 +942,7 @@ class SomeNamespace: # Proxy class that introduces typings for the *submodule* S
             def add(self, a: int, b: int) -> int:
                 pass
 
-        class InnerEnum(Enum):
+        class InnerEnum(enum.Enum):
             zero = enum.auto()  # (= 0)
             one = enum.auto()   # (= 1)
             two = enum.auto()   # (= 2)
@@ -1000,8 +1000,8 @@ class SomeNamespace: # Proxy class that introduces typings for the *submodule* S
 
 
     # <submodule SomeInnerNamespace>
-    class SomeInnerNamespace: # Proxy class that introduces typings for the *submodule* SomeInnerNamespace
-        # (This corresponds to a C++ namespace. All method are static!)
+    class SomeInnerNamespace:  # Proxy class that introduces typings for the *submodule* SomeInnerNamespace
+        pass  # (This corresponds to a C++ namespace. All method are static!)
         """ namespace SomeInnerNamespace"""
         def toggle_bool_pointer(v: BoxedBool) -> None:
             """//, int vv[2])"""
@@ -1046,8 +1046,8 @@ class SomeNamespace: # Proxy class that introduces typings for the *submodule* S
 # </submodule SomeNamespace>
 
 # <submodule Inner>
-class Inner: # Proxy class that introduces typings for the *submodule* Inner
-    # (This corresponds to a C++ namespace. All method are static!)
+class Inner:  # Proxy class that introduces typings for the *submodule* Inner
+    pass  # (This corresponds to a C++ namespace. All method are static!)
     """ this is an inner namespace (this comment should become the namespace doc)"""
     def foo_inner() -> int:
         pass
