@@ -408,7 +408,8 @@ insert diagram via mermaid (see integration with emacs)
 
 * Hello ImGui Bundle TOOO
 
-later! publish srcmlcpp before!
+** En cours: Publish to pypi
+
 
 ** Add imgui-node-editor ?
   Much later, add it to suggestions ?
@@ -419,6 +420,10 @@ later! publish srcmlcpp before!
 
 ** auto-resize and other goodies from immvision
 * srcml_cpp
+** srcmlcpp easy
+
+
+
 ** srcmlcpp utilities
 
 
@@ -499,8 +504,10 @@ can reuse lots of parts of PimplMyClass
     etc
 
 
-** suppress warning
-** parallel execution?
+** Later: options / suppress warning
+** Later: parallel execution?
+    ouch because context
+
 
 * Litgen TODO
 ** Wish list / hard and later
@@ -508,15 +515,15 @@ can reuse lots of parts of PimplMyClass
 *** issue with mypy compatibility with generated modules
 Problem 2: dans lg_skbuild_template, tout est accpté dans example_lib...
 Problem 3: dans lg_test_runner (integration tests), tout est refusé (trouve pas les définitions)
-*** N: keep pointer and references layout inside CppType (int *x vs int *x vs int * x)
+*** auto __repr__ for structs?
 *** Bind srcml?
-** Handle (deep)copy
+*** N: keep pointer and references layout inside CppType (int *x vs int *x vs int * x)
+** Wish List / Easy
+*** Handle (deep)copy
 https://pybind11.readthedocs.io/en/stable/advanced/classes.html#deepcopy-support
 
-** Wish List / Easy
-** auto __repr__ for structs?
-** define __all__ for litgen
-** test trampoline with  test with py-mahi-gui
+*** test trampoline with  test with py-mahi-gui
+*** define __all__ for litgen
 ** Interactive demo
 
 

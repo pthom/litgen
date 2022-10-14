@@ -1,6 +1,6 @@
 from __future__ import annotations
 from dataclasses import dataclass
-from typing import Set
+from typing import TYPE_CHECKING, Set
 
 from litgen.internal.context.namespaces_code_tree import (
     NamespacesCodeTree,
@@ -8,7 +8,10 @@ from litgen.internal.context.namespaces_code_tree import (
 )
 from litgen.internal.context.replacements_cache import ReplacementsCache
 from litgen.internal.context.type_synonyms import *
-from litgen.options import LitgenOptions
+
+
+if TYPE_CHECKING:
+    from litgen.options import LitgenOptions
 
 
 @dataclass
