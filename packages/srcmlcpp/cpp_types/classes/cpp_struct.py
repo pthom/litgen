@@ -86,13 +86,13 @@ class CppStruct(CppElementAndComment, CppITemplateHost):
             return False
         return len(self.super_list.super_list) > 0
 
-    def base_classes(self) -> List[Tuple[CppAccessTypes, CppStruct]]:
+    def base_classes(self) -> List[Tuple[CppAccessType, CppStruct]]:
         if not self.has_base_classes():
             return []
 
         r = []
         for cpp_super in self.super_list.super_list:
-            access_type = CppAccessTypes.from_name(cpp_super.specifier)
+            access_type = CppAccessType.from_name(cpp_super.specifier)
 
             root_cpp_unit = CppUnit.find_root_cpp_unit(self)
             base_struct = root_cpp_unit.find_struct_or_class(

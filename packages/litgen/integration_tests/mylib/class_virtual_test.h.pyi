@@ -39,12 +39,12 @@ import numpy
 
 
 # <submodule Root>
-class Root: # Proxy class that introduces typings for the *submodule* Root
-    # (This corresponds to a C++ namespace. All method are static!)
+class Root:  # Proxy class that introduces typings for the *submodule* Root
+    pass  # (This corresponds to a C++ namespace. All method are static!)
 
     # <submodule Inner>
-    class Inner: # Proxy class that introduces typings for the *submodule* Inner
-        # (This corresponds to a C++ namespace. All method are static!)
+    class Inner:  # Proxy class that introduces typings for the *submodule* Inner
+        pass  # (This corresponds to a C++ namespace. All method are static!)
         class MyVirtualClass:
 
             def foo_concrete(self, x: int, name: str) -> str:

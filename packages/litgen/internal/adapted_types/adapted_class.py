@@ -299,14 +299,14 @@ class AdaptedClass(AdaptedElement):
     def _fill_protected_methods(self) -> None:
         if not self._shall_publish_protected_methods():
             return
-        for child in self.cpp_element().get_elements(access_type=CppAccessTypes.protected):
+        for child in self.cpp_element().get_elements(access_type=CppAccessType.protected):
             if isinstance(child, CppFunctionDecl):
                 if AdaptedFunction.is_function_publishable(self.options, child):
                     is_overloaded = child.is_overloaded_method()
                     self.adapted_protected_methods.append(AdaptedFunction(self.lg_context, child, is_overloaded))
 
     def _fill_public_children(self) -> None:
-        public_elements = self.cpp_element().get_elements(access_type=CppAccessTypes.public)
+        public_elements = self.cpp_element().get_elements(access_type=CppAccessType.public)
         for child in public_elements:
             try:
                 if isinstance(child, CppEmptyLine):
@@ -590,7 +590,7 @@ class AdaptedClass(AdaptedElement):
             if self.cpp_element().has_base_classes():
                 base_classes = self.cpp_element().base_classes()
                 for access_type, base_class in base_classes:
-                    if access_type == CppAccessTypes.public or access_type == CppAccessTypes.protected:
+                    if access_type == CppAccessType.public or access_type == CppAccessType.protected:
                         other_template_params_list.append(base_class.cpp_scope(include_self=True).str_cpp())
             if self.cpp_element().has_private_destructor():
                 other_template_params_list.append(f"std::unique_ptr<{qualified_struct_name}, py::nodelete>")

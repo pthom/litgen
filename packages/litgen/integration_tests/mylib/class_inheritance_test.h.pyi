@@ -24,8 +24,8 @@ def make_dog() -> Animals.Animal:
     pass
 
 # <submodule Animals>
-class Animals: # Proxy class that introduces typings for the *submodule* Animals
-    # (This corresponds to a C++ namespace. All method are static!)
+class Animals:  # Proxy class that introduces typings for the *submodule* Animals
+    pass  # (This corresponds to a C++ namespace. All method are static!)
     class Animal:
         def __init__(self, name: str) -> None:
             pass
@@ -43,8 +43,8 @@ class Animals: # Proxy class that introduces typings for the *submodule* Animals
 # </submodule Animals>
 
 # <submodule Home>
-class Home: # Proxy class that introduces typings for the *submodule* Home
-    # (This corresponds to a C++ namespace. All method are static!)
+class Home:  # Proxy class that introduces typings for the *submodule* Home
+    pass  # (This corresponds to a C++ namespace. All method are static!)
     class Pet:
         def is_pet(self) -> bool:
             pass
