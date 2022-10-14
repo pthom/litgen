@@ -491,6 +491,35 @@ class Color4:
     rgba: np.ndarray  # ndarray[type=uint8_t, size=4]
 
 #////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+#                       mylib/class_copy_test.h included by mylib/mylib_main/mylib.h                           //
+#//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+class Copyable_ImplicitCopyCtor:
+    a: int = 1
+
+
+class Copyable_ExplicitCopyCtor:
+    def __init__(self) -> None:
+        pass
+    def __init__(self, other: Copyable_ExplicitCopyCtor) -> None:
+        pass
+    a: int = 1
+
+
+class Copyable_ExplicitPrivateCopyCtor:
+    def __init__(self) -> None:
+        pass
+    a: int = 1
+
+
+
+class Copyable_DeletedCopyCtor:
+    a: int = 1
+    def __init__(self, : Copyable_DeletedCopyCtor) -> None:
+        pass
+
+#////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 #                       mylib/class_virtual_test.h included by mylib/mylib_main/mylib.h                        //
 #//////////////////////////////////////////////////////////////////////////////////////////////////////////////
 

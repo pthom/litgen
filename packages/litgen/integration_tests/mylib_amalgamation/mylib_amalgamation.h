@@ -577,6 +577,41 @@ struct Color4
 };
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//                       mylib/class_copy_test.h included by mylib/mylib_main/mylib.h                           //
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+struct Copyable_ImplicitCopyCtor
+{
+    int a = 1;
+};
+
+
+struct Copyable_ExplicitCopyCtor
+{
+    Copyable_ExplicitCopyCtor() = default;
+    Copyable_ExplicitCopyCtor(const Copyable_ExplicitCopyCtor& other): a(other.a){}
+    int a = 1;
+};
+
+
+struct Copyable_ExplicitPrivateCopyCtor
+{
+    Copyable_ExplicitPrivateCopyCtor() = default;
+    int a = 1;
+
+private:
+    Copyable_ExplicitPrivateCopyCtor(const Copyable_ExplicitPrivateCopyCtor& other): a(other.a){}
+};
+
+
+struct Copyable_DeletedCopyCtor
+{
+    int a = 1;
+    Copyable_DeletedCopyCtor(const Copyable_DeletedCopyCtor&) = delete;
+};
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //                       mylib/class_virtual_test.h included by mylib/mylib_main/mylib.h                        //
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 

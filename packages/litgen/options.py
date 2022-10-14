@@ -359,6 +359,14 @@ class LitgenOptions:
     # https://pybind11.readthedocs.io/en/stable/classes.html#dynamic-attributes
     class_dynamic_attributes__regex: str = ""
 
+    # class_deep_copy__regex & class_copy__regex:
+    # By default, structs and classes exported from C++ do not support (deep)copy.
+    # However, if they do have a copy constructor (implicit or user defined),
+    # (deep)copy can be enabled by invoking this constructor.
+    # https://pybind11.readthedocs.io/en/stable/advanced/classes.html#deepcopy-support
+    class_deep_copy__regex: str = ""
+    class_copy__regex: str = ""
+
     # Exclude certain members by a regex on their name
     member_exclude_by_name__regex: str = ""
 

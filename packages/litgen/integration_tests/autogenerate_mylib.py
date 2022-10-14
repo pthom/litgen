@@ -84,6 +84,9 @@ def mylib_litgen_options() -> litgen.LitgenOptions:
         naming_scheme=litgen.TemplateNamingScheme.camel_case_suffix,
     )
 
+    options.class_deep_copy__regex = r"^Copyable_"
+    options.class_copy__regex = r"^Copyable_"
+
     #
     # Sandbox for other options
     #

@@ -724,6 +724,40 @@ void py_init_module_lg_mylib(py::module& m)
         ;
 
 
+    auto pyClassCopyable_ImplicitCopyCtor =
+        py::class_<Copyable_ImplicitCopyCtor>
+            (m, "Copyable_ImplicitCopyCtor", "")
+        .def(py::init<>()) // implicit default constructor
+        .def_readwrite("a", &Copyable_ImplicitCopyCtor::a, "")
+        ;
+
+
+    auto pyClassCopyable_ExplicitCopyCtor =
+        py::class_<Copyable_ExplicitCopyCtor>
+            (m, "Copyable_ExplicitCopyCtor", "")
+        .def(py::init<>())
+        .def(py::init<const Copyable_ExplicitCopyCtor &>(),
+            py::arg("other"))
+        .def_readwrite("a", &Copyable_ExplicitCopyCtor::a, "")
+        ;
+
+
+    auto pyClassCopyable_ExplicitPrivateCopyCtor =
+        py::class_<Copyable_ExplicitPrivateCopyCtor>
+            (m, "Copyable_ExplicitPrivateCopyCtor", "")
+        .def(py::init<>())
+        .def_readwrite("a", &Copyable_ExplicitPrivateCopyCtor::a, "")
+        ;
+
+
+    auto pyClassCopyable_DeletedCopyCtor =
+        py::class_<Copyable_DeletedCopyCtor>
+            (m, "Copyable_DeletedCopyCtor", "")
+        .def_readwrite("a", &Copyable_DeletedCopyCtor::a, "")
+
+        ;
+
+
     auto pyClassMyConfig =
         py::class_<MyConfig>
             (m, "MyConfig", "")

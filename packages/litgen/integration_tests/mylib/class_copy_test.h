@@ -1,48 +1,32 @@
 #include "api_marker.h"
 
-#include <string>
-#include <memory>
 
-
-namespace Animals
+struct Copyable_ImplicitCopyCtor
 {
-    struct Animal
-    {
-        MY_API Animal(const std::string &name) : name(name) { }
-        std::string name;
+    int a = 1;
+};
 
-        virtual ~Animal() = default;
-    };
 
-    struct Dog : Animal
-    {
-        MY_API Dog(const std::string &name) : Animal(name + "_dog") { }
-        MY_API virtual std::string bark() const { return "BIG WOOF!"; }
-
-        virtual ~Dog() = default;
-    };
-
-}
-
-namespace Home
+struct Copyable_ExplicitCopyCtor
 {
-    struct Pet
-    {
-        MY_API bool is_pet() const { return true; }
-    };
+    Copyable_ExplicitCopyCtor() = default;
+    Copyable_ExplicitCopyCtor(const Copyable_ExplicitCopyCtor& other): a(other.a){}
+    int a = 1;
+};
 
-    struct PetDog: public Animals::Dog, public Pet
-    {
-        MY_API PetDog(const std::string &name): Animals::Dog(name), Pet() {}
-        MY_API virtual std::string bark() const { return "woof"; }
 
-        virtual ~PetDog() = default;
-    };
-
-}
-
-// Test that downcasting works: the return type is Animal, but it should bark!
-MY_API std::unique_ptr<Animals::Animal> make_dog()
+struct Copyable_ExplicitPrivateCopyCtor
 {
-    return std::make_unique<Animals::Dog>("Rolf");
-}
+    Copyable_ExplicitPrivateCopyCtor() = default;
+    int a = 1;
+
+private:
+    Copyable_ExplicitPrivateCopyCtor(const Copyable_ExplicitPrivateCopyCtor& other): a(other.a){}
+};
+
+
+struct Copyable_DeletedCopyCtor
+{
+    int a = 1;
+    Copyable_DeletedCopyCtor(const Copyable_DeletedCopyCtor&) = delete;
+};

@@ -12,6 +12,7 @@
 #include "mylib/class_test.h"
 #include "mylib/class_inheritance_test.h"
 #include "mylib/class_adapt_test.h"
+#include "mylib/class_copy_test.h"
 #include "mylib/class_virtual_test.h"
 #include "mylib/return_value_policy_test.h"
 #include "mylib/inner_class_test.h"
