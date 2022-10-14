@@ -1,5 +1,5 @@
 venv/
-.venv/
+.venv
 .idea/
 dist/
 build/
