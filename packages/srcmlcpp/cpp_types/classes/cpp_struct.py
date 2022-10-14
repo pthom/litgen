@@ -3,6 +3,8 @@ import copy
 from dataclasses import dataclass
 from typing import List, Optional, Tuple
 
+import codemanip.code_utils
+import srcmlcpp
 from srcmlcpp.cpp_types.base import *
 from srcmlcpp.cpp_types.blocks import (
     CppBlock,
@@ -135,6 +137,17 @@ class CppStruct(CppElementAndComment, CppITemplateHost):
                 return method
         return None
 
+    def is_user_defined_copy_constructor_part_of_api(self) -> bool:
+        """If there is a user defined copy constructor, is it public and not deleted?"""
+        user_defined_copy_constructor = self.get_user_defined_copy_constructor()
+        assert user_defined_copy_constructor is not None
+        access_type = user_defined_copy_constructor.method_access_type()
+        if access_type != CppAccessType.public:
+            return False
+        if "delete" in user_defined_copy_constructor.specifiers:
+            return False
+        return True
+
     def has_private_destructor(self) -> bool:
         r = False
         for method in self.get_methods():
@@ -145,7 +158,7 @@ class CppStruct(CppElementAndComment, CppITemplateHost):
                     r = True
         return r
 
-    def get_blocks(self, access_type: Optional[CppAccessType]) -> List[CppPublicProtectedPrivate]:
+    def get_access_blocks(self, access_type: Optional[CppAccessType]) -> List[CppPublicProtectedPrivate]:
         """
         Returns the public blocks of the class
         """
@@ -198,6 +211,34 @@ class CppStruct(CppElementAndComment, CppITemplateHost):
                     if isinstance(child, CppFunctionDecl):
                         r.append(child)
         return r
+
+    def add_access_block(
+        self, access_type: CppAccessType, comments: Optional[CppElementComments] = None
+    ) -> CppPublicProtectedPrivate:
+
+        # Create ppp_block (CppPublicProtectedPrivate) via C++ code:
+        code = codemanip.code_utils.unindent_code(access_type.name + ":")
+        cpp_unit = srcmlcpp.code_to_cpp_unit(self.options, code)
+        assert len(cpp_unit.block_children) == 1
+        ppp_block = cpp_unit.block_children[0]
+        assert isinstance(ppp_block, CppPublicProtectedPrivate)
+
+        # Set comments
+        if comments is not None:
+            ppp_block.cpp_element_comments = comments
+
+        # Store and return block
+        self.block.add_element(ppp_block)
+        return ppp_block
+
+    # def add_method(self, cpp_code: str, access_type: CppAccessType = CppAccessType.public):
+    #     fn = srcmlcpp.srcmlcpp_main.code_first_function_decl(self.options, cpp_code)
+    #
+    #     blocks = self.get_access_blocks(access_type=access_type)
+    #     if len(blocks) == 0:
+    #         self.add_access_block(access_type)
+    #
+    #     block = self.get_access_blocks(access_type)[-1]
 
     def get_methods_with_name(self, name: str) -> List[CppFunctionDecl]:
         all_methods = self.get_methods()

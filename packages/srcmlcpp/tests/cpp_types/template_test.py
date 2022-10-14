@@ -124,7 +124,7 @@ def test_specialize_class():
         """
         /*template<typename T=int>*/ struct Foo
         {
-        public:// <default_access_type/>
+        public: // <default_access_type/>
             int value0;
             int value1;
             int x;
@@ -134,7 +134,7 @@ def test_specialize_class():
 
             struct Inner
             {
-            public:// <default_access_type/>
+            public: // <default_access_type/>
                 int inner_values[2];
             };
 

@@ -30,9 +30,13 @@ class CppPublicProtectedPrivate(CppBlock):  # Also a CppElementAndComment
     def str_public_protected_private(self) -> str:
         r = ""
 
+        if len(self.cpp_element_comments.comment_on_previous_lines) > 0:
+            r += self.cpp_element_comments.comment_on_previous_lines
         r += f"{self.access_type.name}" + ":"
         if self.default_or_explicit == "default":
-            r += "// <default_access_type/>"
+            r += " // <default_access_type/>"
+        elif len(self.cpp_element_comments.comment_end_of_line) > 0:
+            r += self.cpp_element_comments.comment_end_of_line
         r += "\n"
 
         r += code_utils.indent_code(self.str_block(), indent_str=self.options.indent_cpp_str)

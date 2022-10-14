@@ -128,7 +128,7 @@ def test_parse_struct():
         // of a templated Point structure
         template<typename NumericType> struct Point : public Object
         {
-        public:// <default_access_type/>
+        public: // <default_access_type/>
             // coordinates
             NumericType x = NumericType{};
             // coordinates
@@ -228,7 +228,7 @@ def test_parse_unit():
             // Foo class
             class FooStruct
             {
-            private:// <default_access_type/>
+            private: // <default_access_type/>
                 int mA;
                 int mB;
             public:

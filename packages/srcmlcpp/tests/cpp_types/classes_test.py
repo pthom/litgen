@@ -25,7 +25,7 @@ def test_str_code():
         """
         struct Parent
         {
-        public:// <default_access_type/>
+        public: // <default_access_type/>
         public:
             int x = 0;
             <unprocessed_ifdef/>
@@ -43,7 +43,7 @@ def test_str_code():
         """
         struct Parent
         {
-        public:// <default_access_type/>
+        public: // <default_access_type/>
         public:
             int x = 0;
         };
@@ -248,7 +248,7 @@ def test_struct_mix():
         """
         struct Inner
         {
-        public:// <default_access_type/>
+        public: // <default_access_type/>
             int t;
             double u;
             int get_t()<unprocessed_block/>
@@ -291,3 +291,47 @@ def test_methods():
     cpp_unit.visit_cpp_breadth_first(visitor_check_methods)
 
     assert nb_found == 3
+
+
+def test_add_block():
+    options = srcmlcpp.SrcmlcppOptions()
+    code = """
+            struct Foo
+            {
+                int a;
+            };
+    """
+
+    struct = srcmlcpp.srcmlcpp_main.code_first_struct(options, code)
+
+    struct.add_access_block(access_type=CppAccessType.private)
+    new_code = struct.str_code()
+    code_utils.assert_are_codes_equal(
+        new_code,
+        """
+            struct Foo
+            {
+            public: // <default_access_type/>
+                int a;
+            private:
+            };
+       """,
+    )
+
+    comments = CppElementComments.from_comments("Artificial\n public block", "Hey!")
+    struct.add_access_block(access_type=CppAccessType.public, comments=comments)
+    new_code = struct.str_code()
+    code_utils.assert_are_codes_equal(
+        new_code,
+        """
+            struct Foo
+            {
+            public: // <default_access_type/>
+                int a;
+            private:
+            // Artificial
+            //  public block
+            public: // Hey!
+            };
+       """,
+    )

@@ -178,5 +178,9 @@ class CppBlock(CppElementAndComment):
 
         self.visit_cpp_breadth_first(visitor_fill_parent)
 
+    def add_element(self, element: CppElementAndComment) -> None:
+        element.parent = self
+        self.block_children.append(element)
+
     def __str__(self) -> str:
         return self.str_block()

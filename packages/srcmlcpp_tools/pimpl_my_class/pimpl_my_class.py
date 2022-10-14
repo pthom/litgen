@@ -180,7 +180,7 @@ class PimplMyClass:
 
     def _glue_code(self) -> str:
         r = ""
-        for public_block in self.impl_class.get_blocks(CppAccessType.public):
+        for public_block in self.impl_class.get_access_blocks(CppAccessType.public):
             for child in public_block.block_children:
                 if isinstance(child, CppConstructorDecl):
                     r += self._published_constructor_impl(child) + "\n"
@@ -192,7 +192,7 @@ class PimplMyClass:
 
     def _published_method_decls(self) -> str:
         published_methods = ""
-        for public_block in self.impl_class.get_blocks(CppAccessType.public):
+        for public_block in self.impl_class.get_access_blocks(CppAccessType.public):
             for child in public_block.block_children:
                 if isinstance(child, CppConstructorDecl):
                     published_methods += self._published_constructor_decl(child) + "\n"

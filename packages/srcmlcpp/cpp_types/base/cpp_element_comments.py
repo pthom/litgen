@@ -48,6 +48,24 @@ class CppElementComments:
         self.comment_end_of_line = ""
         self.is_c_style_comment = False
 
+    @staticmethod
+    def from_comments(
+        comment_on_previous_lines: str = "", comment_end_of_line: str = "", format_comments: bool = True
+    ) -> CppElementComments:
+        if format_comments:
+            if len(comment_on_previous_lines) > 0:
+                comment_on_previous_lines = "// " + "\n// ".join(comment_on_previous_lines.split("\n"))
+                if not comment_on_previous_lines.endswith("\n"):
+                    comment_on_previous_lines += "\n"
+            if len(comment_end_of_line) > 0:
+                comment_end_of_line = " // " + comment_end_of_line.replace("\n", " | ")
+
+        r = CppElementComments()
+        r.comment_on_previous_lines = comment_on_previous_lines
+        r.comment_end_of_line = comment_end_of_line
+        r.is_c_style_comment = r.comment_on_previous_lines.startswith("/*")
+        return r
+
     def comment(self) -> str:
         if len(self.comment_on_previous_lines) > 0 and len(self.comment_end_of_line) > 0:
             return self.comment_on_previous_lines + "\n" + self.comment_end_of_line
