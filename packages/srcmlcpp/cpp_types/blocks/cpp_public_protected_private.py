@@ -3,7 +3,7 @@ from typing import Optional
 
 from codemanip import code_utils
 
-from srcmlcpp.cpp_types.base.cpp_access_types import CppAccessTypes
+from srcmlcpp.cpp_types.base.cpp_access_type import CppAccessType
 from srcmlcpp.cpp_types.blocks.cpp_block import CppBlock
 from srcmlcpp.srcml_wrapper import SrcmlWrapper
 
@@ -18,10 +18,10 @@ class CppPublicProtectedPrivate(CppBlock):  # Also a CppElementAndComment
     Note: this is not a direct adaptation. Here we merge the different access types, and we derive from CppBlockContent
     """
 
-    access_type: CppAccessTypes = CppAccessTypes.public  # "public", "private", or "protected"
+    access_type: CppAccessType = CppAccessType.public  # "public", "private", or "protected"
     default_or_explicit: str = ""  # "default" or "" ("default" means it was added automatically)
 
-    def __init__(self, element: SrcmlWrapper, access_type: CppAccessTypes, default_or_explicit: Optional[str]) -> None:
+    def __init__(self, element: SrcmlWrapper, access_type: CppAccessType, default_or_explicit: Optional[str]) -> None:
         super().__init__(element)
         assert default_or_explicit in [None, "", "default"]
         self.access_type = access_type

@@ -141,23 +141,23 @@ class CppStruct(CppElementAndComment, CppITemplateHost):
             if method.is_destructor():
                 access_type = method.access_type_if_method()
                 assert access_type is not None
-                if access_type == CppAccessTypes.private:
+                if access_type == CppAccessType.private:
                     r = True
         return r
 
-    def get_public_blocks(self) -> List[CppPublicProtectedPrivate]:
+    def get_blocks(self, access_type: Optional[CppAccessType]) -> List[CppPublicProtectedPrivate]:
         """
         Returns the public blocks of the class
         """
         r: List[CppPublicProtectedPrivate] = []
         for access_zone in self.block.block_children:
             if isinstance(access_zone, CppPublicProtectedPrivate):
-                if access_zone.access_type == CppAccessTypes.public:
+                if access_type is None or access_zone.access_type == access_type:
                     r.append(access_zone)
         return r
 
-    def get_members(self) -> List[Tuple[CppAccessTypes, CppDecl]]:
-        r: List[Tuple[CppAccessTypes, CppDecl]] = []
+    def get_members(self) -> List[Tuple[CppAccessType, CppDecl]]:
+        r: List[Tuple[CppAccessType, CppDecl]] = []
         for access_zone in self.block.block_children:
             if isinstance(access_zone, CppPublicProtectedPrivate):
                 access_type = access_zone.access_type
@@ -168,7 +168,7 @@ class CppStruct(CppElementAndComment, CppITemplateHost):
         return r
 
     def get_elements(
-        self, access_type: Optional[CppAccessTypes] = None, element_type: Optional[type] = None
+        self, access_type: Optional[CppAccessType] = None, element_type: Optional[type] = None
     ) -> List[CppElementAndComment]:
         """
         Returns all the elements of this struct

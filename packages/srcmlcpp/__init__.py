@@ -41,7 +41,7 @@ __all__ = [
     # Cpp Types
     #
     # base
-    "CppAccessTypes",
+    "CppAccessType",
     "CppElement",
     "CppElementAndComment",
     "CppElementComments",

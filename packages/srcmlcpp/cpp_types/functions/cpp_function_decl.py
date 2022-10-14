@@ -151,7 +151,7 @@ class CppFunctionDecl(CppElementAndComment, CppITemplateHost):
         is_method = isinstance(self.parent, CppPublicProtectedPrivate)
         return is_method
 
-    def method_access_type(self) -> CppAccessTypes:
+    def method_access_type(self) -> CppAccessType:
         """
         Returns "public", "private", or "protected"
         Will throw if this is not a method!
@@ -207,7 +207,7 @@ class CppFunctionDecl(CppElementAndComment, CppITemplateHost):
         assert isinstance(parent_struct_, CppStruct)
         return parent_struct_
 
-    def access_type_if_method(self) -> Optional[CppAccessTypes]:
+    def access_type_if_method(self) -> Optional[CppAccessType]:
         from srcmlcpp.cpp_types.blocks.cpp_public_protected_private import CppPublicProtectedPrivate
 
         if not self.is_method():

@@ -1,5 +1,5 @@
 __all__ = [
-    "CppAccessTypes",
+    "CppAccessType",
     "CppElement",
     "CppElementComments",
     "CppElementAndComment",
@@ -8,7 +8,7 @@ __all__ = [
 ]
 
 
-from srcmlcpp.cpp_types.base.cpp_access_types import CppAccessTypes
+from srcmlcpp.cpp_types.base.cpp_access_type import CppAccessType
 from srcmlcpp.cpp_types.base.cpp_element import CppElement, CppElementsVisitorEvent, CppElementsVisitorFunction
 from srcmlcpp.cpp_types.base.cpp_element_comments import CppElementComments
 from srcmlcpp.cpp_types.base.cpp_element_and_comments import CppElementAndComment

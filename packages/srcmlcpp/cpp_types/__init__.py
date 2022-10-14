@@ -19,7 +19,7 @@ See doc/srcml_cpp_doc.png
 """
 
 from srcmlcpp.cpp_types.base import (
-    CppAccessTypes,
+    CppAccessType,
     CppElement,
     CppElementAndComment,
     CppElementComments,
@@ -69,7 +69,7 @@ from srcmlcpp.cpp_types.cpp_scope import CppScope, CppScopeType, CppScopePart
 
 __all__ = [
     # base
-    "CppAccessTypes",
+    "CppAccessType",
     "CppElement",
     "CppElementAndComment",
     "CppElementComments",

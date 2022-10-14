@@ -108,7 +108,7 @@ def test_constructor_destructor():
     # Test user_defined_copy_constructor
     user_defined_copy_constructor = struct.get_user_defined_copy_constructor()
     assert user_defined_copy_constructor is not None
-    assert user_defined_copy_constructor.access_type_if_method() == srcmlcpp.CppAccessTypes.protected
+    assert user_defined_copy_constructor.access_type_if_method() == srcmlcpp.CppAccessType.protected
 
 
 def test_destructor():
@@ -199,7 +199,7 @@ def test_struct_mix():
     child_base_classes = child.base_classes()
     assert len(child_base_classes) == 1
     access_type, child_base_class = child_base_classes[0]
-    assert access_type == srcmlcpp.CppAccessTypes.public
+    assert access_type == srcmlcpp.CppAccessType.public
     assert child_base_class is parent
     assert len(child.get_members()) == 0
     assert len(child.get_methods()) == 2
@@ -215,7 +215,7 @@ def test_struct_mix():
     frankenstein_base_classes = frankenstein.base_classes()
     assert len(frankenstein_base_classes) == 1
     access_type, frankenstein_base_class = frankenstein_base_classes[0]
-    assert access_type == srcmlcpp.CppAccessTypes.protected
+    assert access_type == srcmlcpp.CppAccessType.protected
     assert frankenstein_base_class is child
     assert len(frankenstein.get_members()) == 0
     assert len(frankenstein.get_methods()) == 1
@@ -238,7 +238,7 @@ def test_struct_mix():
 
     # Test on specialized Inner
     frankenstein2_inner_structs = frankenstein2.get_elements(
-        access_type=srcmlcpp.CppAccessTypes.private, element_type=srcmlcpp.CppStruct
+        access_type=srcmlcpp.CppAccessType.private, element_type=srcmlcpp.CppStruct
     )
     assert len(frankenstein2_inner_structs) == 1
     f2_inner = frankenstein2_inner_structs[0]
