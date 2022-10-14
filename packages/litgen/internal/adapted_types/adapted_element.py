@@ -29,9 +29,25 @@ class AdaptedElement:  # (abc.ABC):  # Cannot be abstract (mypy limitation:  htt
         - list of encountered "boxed types"
     """
 
+    #  ============================================================================================
+    #
+    #    Members
+    #
+    #  ============================================================================================
+
+    # The adapted CppElement (can be a CppClass, CppFunctionDecl, etc.)
     _cpp_element: CppElementAndComment
+    # Generation options
     options: LitgenOptions
+    # Context were some additional namespace and boxed types info
+    # can be stored during creation of the tree of AdaptedElements
     lg_context: LitgenContext
+
+    #  ============================================================================================
+    #
+    #    Init
+    #
+    #  ============================================================================================
 
     def __init__(self, lg_context: LitgenContext, cpp_element: CppElementAndComment) -> None:
         self._cpp_element = cpp_element
@@ -40,64 +56,16 @@ class AdaptedElement:  # (abc.ABC):  # Cannot be abstract (mypy limitation:  htt
         element_line = cpp_element.start().line
         global_progress_bars().set_current_line(_PROGRESS_BAR_TITLE_ADAPTED_ELEMENTS, element_line)
 
-    def _info_original_location(self, comment_token: str) -> str:
-        r = cpp_to_python.info_original_location(self.options, self._cpp_element, comment_token)
-        return r
-
-    def info_original_location_cpp(self) -> str:
-        return self._info_original_location("//")
-
-    def info_original_location_python(self) -> str:
-        return self._info_original_location("#")
-
-    def _cpp_original_code_lines(self) -> List[str]:
-        if not self.options.original_signature_flag_show:
-            return []
-
-        cpp_original_code = self._cpp_element.str_code_verbatim()
-        cpp_original_code = code_utils.strip_empty_lines(cpp_original_code)
-        if len(cpp_original_code) == 0:
-            return []
-        else:
-            cpp_original_code_lines = cpp_original_code.split("\n")
-            cpp_original_code_lines = list(map(lambda s: "# " + s, cpp_original_code_lines))
-            cpp_original_code_lines[0] += "    /* original C++ signature */"
-            return cpp_original_code_lines
-
-    def _str_stub_layout_lines(self, title_lines: List[str], body_lines: Optional[List[str]] = None) -> List[str]:
-        """Common layout for class, enum, and functions stubs
-        :param title_lines: class, enum or function decl + function params. Will be followed by docstring
-        :param body_lines: body lines for enums and classes, [] for functions
-        :return: a list of python code lines for the stub declaration
-        """
-
-        # Preprocess: add location on first line
-        assert len(title_lines) > 0
-        first_line = title_lines[0] + self.info_original_location_python()
-        title_lines = [first_line] + title_lines[1:]
-
-        # Preprocess: align comments in body
-        if body_lines is None or (isinstance(body_lines, list) and len(body_lines) == 0):
-            body_lines = ["pass"]
-        body_lines = code_utils.align_python_comments_in_block_lines(body_lines)
-
-        all_lines = title_lines
-        docstring_lines = cpp_to_python.docstring_lines(self.options, self.cpp_element())
-        all_lines += docstring_lines
-        if len(docstring_lines) > 0 and not self.options.python_reproduce_cpp_layout and body_lines != ["pass"]:
-            all_lines.append("")
-
-        all_lines += body_lines
-
-        all_lines = code_utils.indent_code_lines(
-            all_lines, skip_first_line=True, indent_str=self.options.indent_python_spaces()
-        )
-
-        return all_lines
+    #  ============================================================================================
+    #
+    #    Abstract methods that shall be implemented by derived classes
+    #
+    #  ============================================================================================
 
     # @abc.abstractmethod
     def cpp_element(self) -> Any:
-        # please implement cpp_element in derived classes, it should return the correct CppElement type
+        # please implement cpp_element in derived classes, it should return
+        #     `cast(AdaptedXXX, self._cpp_element)`
         pass
 
     # @abc.abstractmethod
@@ -118,21 +86,12 @@ class AdaptedElement:  # (abc.ABC):  # Cannot be abstract (mypy limitation:  htt
         """
         raise NotImplementedError()
 
-    def comment_pydef_one_line(self) -> str:
-        r = cpp_to_python.comment_pydef_one_line(self.options, self._cpp_element.cpp_element_comments.full_comment())
-        return r
-
-    def comment_python_shall_place_at_end_of_line(self) -> bool:
-        r = cpp_to_python.comment_python_shall_place_at_end_of_line(self.options, self._cpp_element)
-        return r
-
-    def comment_python_end_of_line(self) -> str:
-        r = cpp_to_python.comment_python_end_of_line(self.options, self._cpp_element)
-        return r
-
-    def comment_python_previous_lines(self) -> List[str]:
-        r = cpp_to_python.comment_python_previous_lines(self.options, self._cpp_element)
-        return r
+    #  ============================================================================================
+    #
+    #    Main interface: str_stub() and str_pydef() return the generated code
+    #    They will be called for an AdaptedUnit (i.e. a fully adapted C++ file)
+    #
+    #  ============================================================================================
 
     def str_stub(self) -> str:
         stub_lines = self.stub_lines()
@@ -147,3 +106,82 @@ class AdaptedElement:  # (abc.ABC):  # Cannot be abstract (mypy limitation:  htt
             return ""
         r = "\n".join(pydef_lines) + "\n"
         return r
+
+    #  ============================================================================================
+    #
+    #    Utilities used by derived classes
+    #
+    #    Methods prefix: _elm_
+    #
+    #  ============================================================================================
+
+    def _elm_comment_pydef_one_line(self) -> str:
+        r = cpp_to_python.comment_pydef_one_line(self.options, self._cpp_element.cpp_element_comments.full_comment())
+        return r
+
+    def _elm_comment_python_shall_place_at_end_of_line(self) -> bool:
+        r = cpp_to_python.comment_python_shall_place_at_end_of_line(self.options, self._cpp_element)
+        return r
+
+    def _elm_comment_python_end_of_line(self) -> str:
+        r = cpp_to_python.comment_python_end_of_line(self.options, self._cpp_element)
+        return r
+
+    def _elm_comment_python_previous_lines(self) -> List[str]:
+        r = cpp_to_python.comment_python_previous_lines(self.options, self._cpp_element)
+        return r
+
+    def _elmpriv_info_original_location(self, comment_token: str) -> str:
+        r = cpp_to_python.info_original_location(self.options, self._cpp_element, comment_token)
+        return r
+
+    def _elm_info_original_location_cpp(self) -> str:
+        return self._elmpriv_info_original_location("//")
+
+    def _elm_info_original_location_python(self) -> str:
+        return self._elmpriv_info_original_location("#")
+
+    def _elm_stub_original_code_lines_info(self) -> List[str]:
+        if not self.options.original_signature_flag_show:
+            return []
+
+        cpp_original_code = self._cpp_element.str_code_verbatim()
+        cpp_original_code = code_utils.strip_empty_lines(cpp_original_code)
+        if len(cpp_original_code) == 0:
+            return []
+        else:
+            cpp_original_code_lines = cpp_original_code.split("\n")
+            cpp_original_code_lines = list(map(lambda s: "# " + s, cpp_original_code_lines))
+            cpp_original_code_lines[0] += "    /* original C++ signature */"
+            return cpp_original_code_lines
+
+    def _elm_str_stub_layout_lines(self, title_lines: List[str], body_lines: Optional[List[str]] = None) -> List[str]:
+        """Common layout for class, enum, and functions stubs
+        :param title_lines: class, enum or function decl + function params. Will be followed by docstring
+        :param body_lines: body lines for enums and classes, [] for functions
+        :return: a list of python code lines for the stub declaration
+        """
+
+        # Preprocess: add location on first line
+        assert len(title_lines) > 0
+        first_line = title_lines[0] + self._elm_info_original_location_python()
+        title_lines = [first_line] + title_lines[1:]
+
+        # Preprocess: align comments in body
+        if body_lines is None or (isinstance(body_lines, list) and len(body_lines) == 0):
+            body_lines = ["pass"]
+        body_lines = code_utils.align_python_comments_in_block_lines(body_lines)
+
+        all_lines = title_lines
+        docstring_lines = cpp_to_python.docstring_lines(self.options, self.cpp_element())
+        all_lines += docstring_lines
+        if len(docstring_lines) > 0 and not self.options.python_reproduce_cpp_layout and body_lines != ["pass"]:
+            all_lines.append("")
+
+        all_lines += body_lines
+
+        all_lines = code_utils.indent_code_lines(
+            all_lines, skip_first_line=True, indent_str=self.options.indent_python_spaces()
+        )
+
+        return all_lines

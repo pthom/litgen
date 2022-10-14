@@ -144,10 +144,10 @@ class AdaptedClassMember(AdaptedDecl):
         # Cf. https://stackoverflow.com/questions/58718884/binding-an-array-using-pybind11
 
         qualified_struct_name = self.class_parent.cpp_element().qualified_class_name_with_specialization()
-        location = self.info_original_location_cpp()
+        location = self._elm_info_original_location_cpp()
         name_python = self.decl_name_python()
         name_cpp = self.decl_name_cpp()
-        comment = self.comment_pydef_one_line()
+        comment = self._elm_comment_pydef_one_line()
 
         array_typename = self.cpp_element().cpp_type.str_code()
         array_size = self.cpp_element().c_array_size_as_int()
@@ -169,10 +169,10 @@ class AdaptedClassMember(AdaptedDecl):
 
     def _str_pydef_lines_field(self) -> List[str]:
         qualified_struct_name = self.class_parent.cpp_element().qualified_class_name_with_specialization()
-        location = self.info_original_location_cpp()
+        location = self._elm_info_original_location_cpp()
         name_python = self.decl_name_python()
         name_cpp = self.decl_name_cpp()
-        comment = self.comment_pydef_one_line()
+        comment = self._elm_comment_pydef_one_line()
 
         pybind_definition_mode = "def_readwrite"
         cpp_type = self.cpp_element().cpp_type
@@ -192,8 +192,8 @@ class AdaptedClassMember(AdaptedDecl):
     def stub_lines(self) -> List[str]:
         code_lines: List[str] = []
 
-        if not self.comment_python_shall_place_at_end_of_line():
-            code_lines += self.comment_python_previous_lines()
+        if not self._elm_comment_python_shall_place_at_end_of_line():
+            code_lines += self._elm_comment_python_previous_lines()
 
         decl_name_python = self.decl_name_python()
         decl_type_python = self.decl_type_python()
@@ -206,21 +206,21 @@ class AdaptedClassMember(AdaptedDecl):
             maybe_defaultvalue_python = ""
             maybe_equal = ""
 
-        if not self.comment_python_shall_place_at_end_of_line():
+        if not self._elm_comment_python_shall_place_at_end_of_line():
             maybe_comment = ""
         else:
-            maybe_comment = self.comment_python_end_of_line()
+            maybe_comment = self._elm_comment_python_end_of_line()
 
         maybe_comment_array = self.comment_array()
 
-        location = self.info_original_location_python()
+        location = self._elm_info_original_location_python()
 
         maybe_static_info = " # (C++ static member)" if self.cpp_element().cpp_type.is_static() else ""
 
         decl_template = f"{decl_name_python}: {decl_type_python}{maybe_equal}{maybe_defaultvalue_python}{maybe_comment_array}{maybe_comment}{maybe_static_info}{location}"
         code_lines += [decl_template]
 
-        code_lines = self._cpp_original_code_lines() + code_lines
+        code_lines = self._elm_stub_original_code_lines_info() + code_lines
         return code_lines
 
     # override
@@ -246,11 +246,20 @@ class AdaptedClass(AdaptedElement):
         - _prot_: protected methods handling (when they are published)
     """
 
+    #  ============================================================================================
+    #
+    #    Members
+    #
+    #  ============================================================================================
+
+    # List of all public children (methods, members, inner structs, etc.)
     adapted_public_children: List[
         Union[AdaptedEmptyLine, AdaptedComment, AdaptedClassMember, AdaptedFunction, AdaptedClass, AdaptedEnum]
     ]
+    # Protected methods, if this class is supposed to output binding for its protected methods
     adapted_protected_methods: List[AdaptedFunction]
 
+    # template_specialization store the optional specialization of this AdaptedClass
     @dataclass
     class TemplateSpecialization:
         class_name_python: str = ""
@@ -336,8 +345,8 @@ class AdaptedClass(AdaptedElement):
 
     #  ============================================================================================
     #
-    #    _str_stub_lines & _str_pydef_lines: main API for code generation
-    #    We override those methods from AdaptedElement
+    #    _str_stub_lines: main API for code generation
+    #    We override this methods from AdaptedElement
     #
     #  ============================================================================================
 
@@ -408,8 +417,15 @@ class AdaptedClass(AdaptedElement):
                 body_lines += element_lines
             body_lines += ["# </protected_methods>", ""]
 
-        r = self._str_stub_layout_lines(title_lines, body_lines)
+        r = self._elm_str_stub_layout_lines(title_lines, body_lines)
         return r
+
+    #  ============================================================================================
+    #
+    #    _str_pydef_lines: main API for code generation
+    #    We override this methods from AdaptedElement
+    #
+    #  ============================================================================================
 
     # override
     def pydef_lines(self) -> List[str]:
@@ -472,7 +488,7 @@ class AdaptedClass(AdaptedElement):
             replacements.pydef_class_var = cpp_to_python.cpp_scope_to_pybind_var_name(options, self.cpp_element())
             replacements.qualified_struct_name = qualified_struct_name
             replacements.other_template_params = other_template_params
-            replacements.location = self.info_original_location_cpp()
+            replacements.location = self._elm_info_original_location_cpp()
             replacements.class_name_python = self.class_name_python()
             replacements.pydef_class_var_parent = cpp_to_python.cpp_scope_to_pybind_parent_var_name(
                 options, self.cpp_element()
@@ -483,7 +499,7 @@ class AdaptedClass(AdaptedElement):
             else:
                 replacements.maybe_py_is_dynamic = ""
 
-            replacements.comment = self.comment_pydef_one_line()
+            replacements.comment = self._elm_comment_pydef_one_line()
 
             pyclass_creation_code = code_utils.process_code_template(code_template, replacements)
 

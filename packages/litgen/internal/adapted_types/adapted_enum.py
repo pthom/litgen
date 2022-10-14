@@ -118,7 +118,7 @@ class AdaptedEnumDecl(AdaptedDecl):
         decl_part = f"{decl_name} = enum.auto() # (= {decl_value})"
 
         cpp_decl = self.cpp_element()
-        if self.comment_python_shall_place_at_end_of_line():
+        if self._elm_comment_python_shall_place_at_end_of_line():
             decl_line = decl_part + cpp_to_python.comment_python_end_of_line(self.options, cpp_decl)
             lines.append(decl_line)
         else:
@@ -126,13 +126,13 @@ class AdaptedEnumDecl(AdaptedDecl):
             lines += comment_lines
             lines.append(decl_part)
 
-        return self._cpp_original_code_lines() + lines
+        return self._elm_stub_original_code_lines_info() + lines
 
     # override
     def pydef_lines(self) -> List[str]:
         decl_name_cpp = self.decl_name_cpp_decorated()
         decl_name_python = self.decl_name_python()
-        value_comment = self.comment_pydef_one_line()
+        value_comment = self._elm_comment_pydef_one_line()
         line = f'.value("{decl_name_python}", {decl_name_cpp}, "{value_comment}")'
         return [line]
 
@@ -197,7 +197,7 @@ class AdaptedEnum(AdaptedElement):
             body_lines += spacing_lines
             body_lines += element_lines
 
-        all_lines = self._str_stub_layout_lines([title_line], body_lines)
+        all_lines = self._elm_str_stub_layout_lines([title_line], body_lines)
         return all_lines
 
     # override
@@ -205,8 +205,8 @@ class AdaptedEnum(AdaptedElement):
         enum_name_cpp = self.cpp_element().cpp_scope(True).str_cpp()
         # enum_name_cpp = self.cpp_element().enum_name
         enum_name_python = self.enum_name_python()
-        comment = self.comment_pydef_one_line()
-        location = self.info_original_location_cpp()
+        comment = self._elm_comment_pydef_one_line()
+        location = self._elm_info_original_location_cpp()
 
         lines: List[str] = []
 

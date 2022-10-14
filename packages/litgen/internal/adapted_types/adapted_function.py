@@ -430,7 +430,7 @@ class AdaptedFunction(AdaptedElement):
             replace_lines.maybe_py_arg = None
 
         # fill maybe_docstring
-        comment = self.comment_pydef_one_line()
+        comment = self._elm_comment_pydef_one_line()
         if len(comment) == 0:
             replace_lines.maybe_docstring = None
         else:
@@ -477,11 +477,11 @@ class AdaptedFunction(AdaptedElement):
         replace_tokens.module_or_class = "" if self.is_method() else parent_cpp_module_var_name
         if self.is_vectorize_impl:
             replace_tokens.function_name_python = (
-                self.options.fn_vectorize_prefix + self.stub_function_name_python() + self.options.fn_vectorize_suffix
+                self.options.fn_vectorize_prefix + self._stub_function_name_python() + self.options.fn_vectorize_suffix
             )
         else:
-            replace_tokens.function_name_python = self.stub_function_name_python()
-        replace_tokens.location = self.info_original_location_cpp()
+            replace_tokens.function_name_python = self._stub_function_name_python()
+        replace_tokens.location = self._elm_info_original_location_cpp()
         replace_tokens.def_maybe_static = "def_static" if self.cpp_element().is_static() else "def"
 
         r = code_utils.process_code_template(template_code, replace_tokens)
@@ -649,15 +649,15 @@ class AdaptedFunction(AdaptedElement):
         _i_ = self.options.indent_cpp_spaces()
 
         arg_types = function_infos.parameter_list.str_types_only_for_overload()
-        location = self.info_original_location_cpp()
+        location = self._elm_info_original_location_cpp()
 
         if len(self._pydef_pyarg_list()) > 0:
             maybe_pyarg = ", ".join(self._pydef_pyarg_list())
         else:
             maybe_pyarg = None
 
-        if len(self.comment_pydef_one_line()) > 0:
-            maybe_docstring = f'"{self.comment_pydef_one_line()}"'
+        if len(self._elm_comment_pydef_one_line()) > 0:
+            maybe_docstring = f'"{self._elm_comment_pydef_one_line()}"'
         else:
             maybe_docstring = None
 
@@ -853,14 +853,14 @@ class AdaptedFunction(AdaptedElement):
                 if self.cpp_element().is_pure_virtual:
                     comment_python_overridable += " (pure virtual)"
 
-        function_name_python = self.stub_function_name_python()
+        function_name_python = self._stub_function_name_python()
         if self.is_vectorize_impl:
             function_name_python = (
                 self.options.fn_vectorize_prefix + function_name_python + self.options.fn_vectorize_suffix
             )
         function_def_code = f"def {function_name_python}("
 
-        return_code = f") -> {self.stub_return_type_python()}:"
+        return_code = f") -> {self._stub_return_type_python()}:"
         if self.is_vectorize_impl:
             return_code = ") -> np.ndarray:"
 
@@ -900,8 +900,8 @@ class AdaptedFunction(AdaptedElement):
         title_lines = [all_on_one_line] if all_on_one_line is not None else function_name_and_params_line_by_line()
         body_lines: List[str] = []
 
-        r = self._str_stub_layout_lines(title_lines, body_lines)
-        r = self._cpp_original_code_lines() + r
+        r = self._elm_str_stub_layout_lines(title_lines, body_lines)
+        r = self._elm_stub_original_code_lines_info() + r
 
         if self.cpp_adapted_function.is_static_method():
             r = ["# (static method)"] + r
@@ -913,7 +913,7 @@ class AdaptedFunction(AdaptedElement):
 
         return r
 
-    def stub_function_name_python(self) -> str:
+    def _stub_function_name_python(self) -> str:
         from litgen.internal.adapted_types import operators
 
         if self.is_constructor():
@@ -925,7 +925,7 @@ class AdaptedFunction(AdaptedElement):
             r = cpp_to_python.function_name_to_python(self.options, self.cpp_adapted_function.function_name)
             return r
 
-    def stub_return_type_python(self) -> str:
+    def _stub_return_type_python(self) -> str:
         if self.cpp_element().is_inferred_return_type():
             return "Any"
         if self.is_constructor():
