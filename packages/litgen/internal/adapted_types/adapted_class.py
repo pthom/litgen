@@ -448,7 +448,23 @@ class AdaptedClass(AdaptedElement):
         options = self.options
         _i_ = options.indent_cpp_spaces()
 
+        def is_class_or_enum(e: AdaptedElement) -> bool:
+            return isinstance(e, AdaptedClass) or isinstance(e, AdaptedEnum)
+
+        def not_is_class_or_enum(e: AdaptedElement) -> bool:
+            return not (isinstance(e, AdaptedClass) or isinstance(e, AdaptedEnum))
+
+        children_except_inner_classes = list(filter(not_is_class_or_enum, self.adapted_public_children))
+        children_inner_classes = list(filter(is_class_or_enum, self.adapted_public_children))
+
         def make_pyclass_creation_code() -> str:
+            """Return the C++ code that instantiates the class.
+
+            Will look like:
+                auto pyClassFoo =
+                    py::class_<Foo>
+                        (m, "Foo", "");
+            """
             qualified_struct_name = self.cpp_element().qualified_class_name_with_specialization()
 
             # fill py::class_ additional template params (base classes, nodelete, etc)
@@ -505,51 +521,60 @@ class AdaptedClass(AdaptedElement):
 
             return pyclass_creation_code
 
+        def make_default_constructor_code() -> str:
+            if (
+                not self.cpp_element().has_user_defined_constructor()
+                and not self.cpp_element().has_deleted_default_constructor()
+            ):
+                return f"{_i_}.def(py::init<>()) // implicit default constructor\n"
+            elif self.cpp_element().has_deleted_default_constructor():
+                return f"{_i_}// (default constructor explicitly deleted)\n"
+            else:
+                return ""
+
+        def make_children_code() -> str:
+            r = ""
+            for child in children_except_inner_classes:
+                decl_code = child.str_pydef()
+                r += code_utils.indent_code(decl_code, indent_str=options.indent_cpp_spaces())
+            return r
+
+        def make_inner_classes_code() -> str:
+            r = ""
+            if len(children_inner_classes) > 0:
+                r += "\n{" + f" // inner classes & enums of {self.class_name_python()}\n"
+                for child in children_inner_classes:
+                    decl_code = child.str_pydef()
+                    r += code_utils.indent_code(decl_code, indent_str=options.indent_cpp_spaces())
+                r += "}" + f" // end of inner classes & enums of {self.class_name_python()}"
+            return r
+
+        def make_protected_methods_code() -> str:
+            r = ""
+            for child in self.adapted_protected_methods:
+                # Temporarily change the name of the parent struct, to use the publicist class
+                parent_struct = child.cpp_element().parent_struct_if_method()
+                assert parent_struct is not None
+                original_class_name = parent_struct.class_name
+                parent_struct.class_name = self.cpp_element().class_name + "_publicist"
+                decl_code = child.str_pydef()
+                parent_struct.class_name = original_class_name
+
+                r += code_utils.indent_code(decl_code, indent_str=options.indent_cpp_spaces())
+            return r
+
+        def make_copy_deepcopy_code() -> str:
+            r = code_utils.indent_code(self._cp_pydef(), indent_str=self.options.indent_cpp_spaces())
+            return r
+
         code = make_pyclass_creation_code()
-
-        if (
-            not self.cpp_element().has_user_defined_constructor()
-            and not self.cpp_element().has_deleted_default_constructor()
-        ):
-            code += f"{_i_}.def(py::init<>()) // implicit default constructor\n"
-        if self.cpp_element().has_deleted_default_constructor():
-            code += f"{_i_}// (default constructor explicitly deleted)\n"
-
-        def is_class_or_enum(e: AdaptedElement) -> bool:
-            return isinstance(e, AdaptedClass) or isinstance(e, AdaptedEnum)
-
-        def not_is_class_or_enum(e: AdaptedElement) -> bool:
-            return not (isinstance(e, AdaptedClass) or isinstance(e, AdaptedEnum))
-
-        children_except_inner_classes = list(filter(not_is_class_or_enum, self.adapted_public_children))
-        children_inner_classes = list(filter(is_class_or_enum, self.adapted_public_children))
-
-        for child in children_except_inner_classes:
-            decl_code = child.str_pydef()
-            code += code_utils.indent_code(decl_code, indent_str=options.indent_cpp_spaces())
-
-        for child in self.adapted_protected_methods:
-            # Temporarily change the name of the parent struct, to use the publicist class
-            parent_struct = child.cpp_element().parent_struct_if_method()
-            assert parent_struct is not None
-            original_class_name = parent_struct.class_name
-            parent_struct.class_name = self.cpp_element().class_name + "_publicist"
-            decl_code = child.str_pydef()
-            parent_struct.class_name = original_class_name
-
-            code += code_utils.indent_code(decl_code, indent_str=options.indent_cpp_spaces())
-
-        # add (deep)copy support if required
-        code += code_utils.indent_code(self._cp_pydef(), indent_str=self.options.indent_cpp_spaces())
+        code += make_default_constructor_code()
+        code += make_children_code()
+        code += make_protected_methods_code()
+        code += make_inner_classes_code()
+        code += make_copy_deepcopy_code()
 
         code = code + f"{_i_};"
-
-        if len(children_inner_classes) > 0:
-            code += "\n{" + f" // inner classes & enums of {self.class_name_python()}\n"
-            for child in children_inner_classes:
-                decl_code = child.str_pydef()
-                code += code_utils.indent_code(decl_code, indent_str=options.indent_cpp_spaces())
-            code += "}" + f" // end of inner classes & enums of {self.class_name_python()}"
 
         lines = code.split("\n")
         return lines
@@ -700,7 +725,10 @@ class AdaptedClass(AdaptedElement):
         return r
 
     def _virt_store_glue_override(self) -> None:
-        # See https://pybind11.readthedocs.io/en/stable/advanced/classes.html#overriding-virtual-functions-in-python
+        """If needed, add glue code (a trampoline class) in order to be able to override methods from python.
+
+        See https://pybind11.readthedocs.io/en/stable/advanced/classes.html#overriding-virtual-functions-in-python
+        """
         if not self._virt_shall_override():
             return
 
@@ -783,7 +811,10 @@ class AdaptedClass(AdaptedElement):
     #  ============================================================================================
 
     def _prot_store_glue(self) -> None:
-        # See https://pybind11.readthedocs.io/en/stable/advanced/classes.html#binding-protected-member-functions
+        """if needed, add glue code (a publicist class) to be able to publish protected methods.
+
+        See https://pybind11.readthedocs.io/en/stable/advanced/classes.html#binding-protected-member-functions
+        """
         if not self._prot_shall_publish():
             return
         if len(self.adapted_protected_methods) == 0:
