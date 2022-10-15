@@ -487,16 +487,13 @@ class AdaptedClass(AdaptedElement):
             else:
                 other_template_params = ""
 
-            code_template = (
-                code_utils.unindent_code(
-                    """
+            code_template = code_utils.unindent_code(
+                """
                     auto {pydef_class_var} =
                     {_i_}py::class_<{qualified_struct_name}{other_template_params}>{location}
                     {_i_}{_i_}({pydef_class_var_parent}, "{class_name_python}"{maybe_py_is_final}{maybe_py_is_dynamic}, "{comment}")
                     """,
-                    flag_strip_empty_lines=True,
-                )
-                + "\n"
+                flag_strip_empty_lines=True,
             )
 
             replacements = munch.Munch()
@@ -532,7 +529,7 @@ class AdaptedClass(AdaptedElement):
             else:
                 return ""
 
-        def make_children_code() -> str:
+        def make_public_children_code() -> str:
             r = ""
             for child in children_except_inner_classes:
                 decl_code = child.str_pydef()
@@ -567,12 +564,25 @@ class AdaptedClass(AdaptedElement):
             r = code_utils.indent_code(self._cp_pydef(), indent_str=self.options.indent_cpp_spaces())
             return r
 
+        def make_all_children_code() -> str:
+            children_code = make_default_constructor_code()
+            children_code += make_public_children_code()
+            children_code += make_protected_methods_code()
+            children_code += make_copy_deepcopy_code()
+            return children_code
+
+        inner_classes_code = make_inner_classes_code()
+
         code = make_pyclass_creation_code()
-        code += make_default_constructor_code()
-        code += make_children_code()
-        code += make_protected_methods_code()
-        code += make_inner_classes_code()
-        code += make_copy_deepcopy_code()
+        if len(inner_classes_code) > 0:
+            pydef_class_var = cpp_to_python.cpp_scope_to_pybind_var_name(options, self.cpp_element())
+
+            code += ";\n"
+            code += inner_classes_code + "\n\n"
+            code += pydef_class_var + "\n"
+            code += make_all_children_code()
+        else:
+            code += "\n" + make_all_children_code()
 
         code = code + f"{_i_};"
 
