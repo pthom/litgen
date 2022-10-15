@@ -219,7 +219,7 @@ def parse_decl_stmt(
         child_c = element_c
         child_c.srcml_xml = child.srcml_xml
         if child_c.tag() == "decl":
-            child_name = child_c.name_code()
+            child_name = child_c.extract_name_from_xml()
             if child_name is None:
                 raise SrcmlcppExceptionDetailed(child, "Encountered decl without name!")
             cpp_decl = parse_decl(options, child_c, result, previous_decl)
@@ -249,8 +249,8 @@ def parse_parameter(options: SrcmlcppOptions, element: SrcmlWrapper, parent: Cpp
         elif child_tag == "type":
             # This is not the parameter's type, this is a template parameter which will be either "class" or "typename"
             # as in template<typename T> or template<class T>
-            assert child.has_name()
-            template_type = child.name_code()
+            assert child.has_xml_name()
+            template_type = child.extract_name_from_xml()
             assert template_type is not None
             result.template_type = template_type
         elif child_tag == "name":
@@ -571,7 +571,7 @@ def parse_struct_or_class(
             assert child_text is not None
             result.specifier = child_text
         elif child_tag == "macro":
-            macro_name = child.name_code()
+            macro_name = child.extract_name_from_xml()
             assert macro_name is not None
             result.macro = macro_name
         else:
@@ -651,7 +651,7 @@ def fill_block(options: SrcmlcppOptions, element: SrcmlWrapper, inout_block_cont
         global_progress_bars().set_current_line(_PROGRESS_BAR_TITLE_SRCML_PARSE, child_c.start().line)
 
         child_tag = child_c.tag()
-        child_name = child_c.name_code()
+        child_name = child_c.extract_name_from_xml()
 
         try:
             block_children = inout_block_content.block_children

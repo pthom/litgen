@@ -39,6 +39,9 @@ class CppEnum(CppElementAndComment):
     def is_enum_class(self) -> bool:
         return self.enum_type == "class"
 
+    def name(self) -> str:
+        return self.enum_name
+
     def str_code(self) -> str:
         r = ""
         if self.enum_type == "class":

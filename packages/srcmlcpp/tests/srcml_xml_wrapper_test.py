@@ -89,8 +89,8 @@ def test_visitor():
 
     def my_visitor(element: SrcmlWrapper, depth: int) -> None:
         nonlocal visit_recap
-        if element.has_name():
-            name = element.name_code()
+        if element.has_xml_name():
+            name = element.extract_name_from_xml()
         else:
             name = "None"
         spacing = "  " * depth

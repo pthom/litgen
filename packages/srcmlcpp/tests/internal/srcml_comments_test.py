@@ -18,7 +18,7 @@ sys.path.append(_THIS_DIR + "/../..")
 def as_dict_cpp_element(cpp_element: CppElement) -> Dict[str, str]:
     as_dict = {
         "tag": cpp_element.tag(),
-        "name": code_utils.str_or_none_token(cpp_element.name_code()),
+        "name": code_utils.str_or_none_token(cpp_element.extract_name_from_xml()),
         "text": code_utils.str_or_none_token(cpp_element.text()),
         "start": str(cpp_element.start()),
         "end": str(cpp_element.end()),

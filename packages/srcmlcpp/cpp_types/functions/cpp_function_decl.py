@@ -65,6 +65,9 @@ class CppFunctionDecl(CppElementAndComment, CppITemplateHost):
         for param in self._parameter_list.parameters:
             param.parent = self._parameter_list
 
+    def name(self) -> str:
+        return self.function_name
+
     def qualified_function_name(self) -> str:
         parent_scope = self.cpp_scope(False).str_cpp()
         if len(parent_scope) == 0:

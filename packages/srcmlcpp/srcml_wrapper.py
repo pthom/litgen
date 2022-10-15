@@ -79,11 +79,11 @@ class SrcmlWrapper:
         """Text part of the xml element"""
         return self.srcml_xml.text
 
-    def has_name(self) -> bool:
+    def has_xml_name(self) -> bool:
         name_children = srcml_utils.children_with_tag(self.srcml_xml, "name")
         return len(name_children) == 1
 
-    def name_code(self) -> Optional[str]:
+    def extract_name_from_xml(self) -> Optional[str]:
         """Returns the C++ code corresponding to the name extracted from the srcML xml tree.
 
         * In simple cases, it will be a simple text extraction, for example with the code:
@@ -104,7 +104,7 @@ class SrcmlWrapper:
                     </index>
                 </name>
         """
-        if not self.has_name():
+        if not self.has_xml_name():
             return None
         name_element = srcml_utils.child_with_tag(self.srcml_xml, "name")
         assert name_element is not None
@@ -191,8 +191,8 @@ class SrcmlWrapper:
 
     def short_xml_info(self) -> str:
         r = f"tag={self.tag()}"
-        if self.has_name():
-            r += f" name={self.name_code()}"
+        if self.has_xml_name():
+            r += f" name={self.extract_name_from_xml()}"
         return r
 
     def __str__(self):

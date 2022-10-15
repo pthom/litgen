@@ -80,8 +80,8 @@ class CppElement(SrcmlWrapper):
 
     def short_cpp_element_info(self, include_scope: bool = True) -> str:
         r = type(self).__name__
-        if self.has_name():
-            r += f" name={self.name_code()}"
+        if self.has_xml_name():
+            r += f" name={self.extract_name_from_xml()}"
         if include_scope:
             scope_str = self.cpp_scope().str_cpp()
             if len(scope_str) > 0:
