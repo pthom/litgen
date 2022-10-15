@@ -1,6 +1,6 @@
 from __future__ import annotations
 from dataclasses import dataclass
-from typing import TYPE_CHECKING, List, Optional, cast
+from typing import TYPE_CHECKING, List, Optional, Union, cast
 
 from srcmlcpp.cpp_types.base import *
 from srcmlcpp.cpp_types.cpp_scope import CppScope
@@ -10,6 +10,7 @@ from srcmlcpp.srcml_wrapper import SrcmlWrapper
 
 if TYPE_CHECKING:
     from srcmlcpp.cpp_types.classes.cpp_struct import CppStruct
+    from srcmlcpp.cpp_types.cpp_enum import CppEnum
 
 
 __all__ = ["CppBlock"]
@@ -170,6 +171,20 @@ class CppBlock(CppElementAndComment):
     def add_element(self, element: CppElementAndComment) -> None:
         element.parent = self
         self.block_children.append(element)
+
+    def visible_structs_enums_from_scope(self, current_scope: CppScope) -> List[Union[CppStruct, CppEnum]]:
+        from srcmlcpp.cpp_types.classes.cpp_struct import CppStruct
+        from srcmlcpp.cpp_types.cpp_enum import CppEnum
+
+        r: List[Union[CppStruct, CppEnum]] = []
+        all_elements = self.all_cpp_elements_recursive()
+        for element in all_elements:
+            if isinstance(element, (CppStruct, CppEnum)):
+                element_parent_scope = element.cpp_scope(include_self=False)
+                is_visible_from_current_scope = current_scope.str_cpp().startswith(element_parent_scope.str_cpp())
+                if is_visible_from_current_scope:
+                    r.append(element)
+        return r
 
     def __str__(self) -> str:
         return self.str_block()

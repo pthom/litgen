@@ -56,3 +56,36 @@ def test_block():
     assert cpp_unit.is_function_overloaded(f0)
     assert cpp_unit.is_function_overloaded(f1)
     assert not cpp_unit.is_function_overloaded(g)
+
+
+def test_visible_structs_enums_from_scope():
+    code = """
+    namespace N1
+    {
+        struct Foo1 {};
+        void f1();
+
+        namespace N2
+        {
+            struct Foo2a {};
+            struct Foo2b {};
+            void f2();
+
+            namespace N3
+            {
+                struct Foo3 {};
+                void f3();
+            }
+        }
+    }
+    """
+    options = srcmlcpp.SrcmlcppOptions()
+    cpp_unit = srcmlcpp.code_to_cpp_unit(options, code)
+    all_functions = cpp_unit.all_functions_recursive()
+    assert len(all_functions) == 3
+    f1 = all_functions[0]
+    f2 = all_functions[1]
+    f3 = all_functions[2]
+    assert len(cpp_unit.visible_structs_enums_from_scope(f1.cpp_scope())) == 1
+    assert len(cpp_unit.visible_structs_enums_from_scope(f2.cpp_scope())) == 3
+    assert len(cpp_unit.visible_structs_enums_from_scope(f3.cpp_scope())) == 4
