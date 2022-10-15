@@ -6,6 +6,7 @@ from typing import TYPE_CHECKING, List, Optional
 from codemanip import code_utils
 
 from srcmlcpp.cpp_types.base import *
+from srcmlcpp.cpp_types.cpp_scope import CppScope
 from srcmlcpp.srcml_wrapper import SrcmlWrapper
 
 
@@ -103,7 +104,7 @@ class CppType(CppElementAndComment):
         nb_const = self.specifiers.count("const")
 
         if nb_const > 2:
-            raise ValueError("I cannot handle more than two `const` occurrences in a type!")
+            raise ValueError("CppType.str_code() cannot handle more than two `const` occurrences in a type!")
 
         specifiers = copy.copy(self.specifiers)
         if nb_const == 2:
@@ -129,6 +130,31 @@ class CppType(CppElementAndComment):
     def name_without_modifier_specifier(self) -> str:
         name = " ".join(self.typenames)
         return name
+
+    def name_with_qualified_known_types(self, current_caller_scope: CppScope) -> str:
+        """Tries to identify the matching type in the full CppUnit root tree
+        For example, if
+                self.typenames = ["MyStruct"]
+            and
+                current_caller_scope = Ns::Inner
+            and there is a type named Ns::MyStruct in the CppUnit root tree
+        then, we will return Ns::MyStruct
+        otherwise we will return MyStruct
+        """
+        from srcmlcpp.cpp_types.cpp_enum import CppEnum
+
+        raw_name = " ".join(self.typenames)
+        structs_enums = self.root_cpp_unit().visible_structs_enums_from_scope(current_caller_scope)
+        for struct_or_enum in structs_enums:
+            if isinstance(struct_or_enum, CppEnum):
+                struct_or_enum_name = struct_or_enum.enum_name
+            else:
+                struct_or_enum_name = struct_or_enum.class_name
+            if raw_name == struct_or_enum_name:
+                qualified_name = struct_or_enum.cpp_scope(include_self=False).str_cpp_prefix() + raw_name
+                return qualified_name
+
+        return raw_name
 
     def is_const(self) -> bool:
         return "const" in self.specifiers

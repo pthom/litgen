@@ -146,3 +146,29 @@ def test_decl_statement():
     int a = 42; // This is an EOL comment
     """,
     )
+
+
+def test_name_with_qualified_known_types():
+    code = """
+    namespace N1
+    {
+        struct Foo1 {};
+
+        namespace N2
+        {
+            struct Foo2 {};
+            namespace N3
+            {
+                struct Foo3 {};
+                void f(Foo1 foo = Foo1());
+            }
+        }
+    }
+    """
+    options = srcmlcpp.SrcmlcppOptions()
+    cpp_unit = srcmlcpp.code_to_cpp_unit(options, code)
+    f = cpp_unit.all_functions_recursive()[0]
+    cpp_type = f.parameter_list.parameters[0].decl.cpp_type
+    assert cpp_type.name_code() == "Foo1"
+    cpp_typename_with_qualified_known_types = cpp_type.name_with_qualified_known_types(f.cpp_scope())
+    assert cpp_typename_with_qualified_known_types == "N1::Foo1"
