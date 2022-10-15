@@ -434,7 +434,7 @@ def test_qualified_param_types():
     code = """
     namespace Ns {
         struct S {};
-        void f(S s);
+        void f(S s = S());
         void f(int a);
     }
     """
@@ -453,7 +453,7 @@ def test_qualified_param_types():
 
 
             pyNsNs.def("f",
-                py::overload_cast<Ns::S>(Ns::f), py::arg("s"));
+                py::overload_cast<Ns::S>(Ns::f), py::arg("s") = Ns::S());
 
             pyNsNs.def("f",
                 py::overload_cast<int>(Ns::f), py::arg("a"));
