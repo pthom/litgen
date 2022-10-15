@@ -22,7 +22,7 @@ class CppDecl(CppElementAndComment):
     https://www.srcml.org/doc/cpp_srcML.html#variable-declaration
     """
 
-    cpp_type: CppType
+    _cpp_type: CppType
 
     # decl_name, i.e. the variable name
     decl_name: str = ""
@@ -58,6 +58,15 @@ class CppDecl(CppElementAndComment):
 
     def __init__(self, element: SrcmlWrapper, cpp_element_comments: CppElementComments) -> None:
         super().__init__(element, cpp_element_comments)
+
+    @property
+    def cpp_type(self) -> CppType:
+        return self._cpp_type
+
+    @cpp_type.setter
+    def cpp_type(self, value: CppType) -> None:
+        self._cpp_type = value
+        self.fill_children_parents()
 
     def str_code(self) -> str:
         r = ""

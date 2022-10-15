@@ -31,9 +31,9 @@ class CppFunctionDecl(CppElementAndComment, CppITemplateHost):
     # then return_type = "MY_API inline int"
     #
     # Use full_return_type() to get a return type without those.
-    return_type: CppType
+    _return_type: CppType  # use the property return_type!
 
-    parameter_list: CppParameterList
+    _parameter_list: CppParameterList  # this is private: use the property parameter_list
     function_name: str
     is_pure_virtual: bool
 
@@ -43,6 +43,26 @@ class CppFunctionDecl(CppElementAndComment, CppITemplateHost):
         self.specifiers: List[str] = []
         self.is_pure_virtual = False
         self.function_name = ""
+
+    @property
+    def return_type(self) -> CppType:
+        return self._return_type
+
+    @return_type.setter
+    def return_type(self, new_return_type: CppType) -> None:
+        self._return_type = new_return_type
+        self._return_type.parent = self
+
+    @property
+    def parameter_list(self) -> CppParameterList:
+        return self._parameter_list
+
+    @parameter_list.setter
+    def parameter_list(self, new_parameter_list: CppParameterList) -> None:
+        self._parameter_list = new_parameter_list
+        self._parameter_list.parent = self
+        for param in self._parameter_list.parameters:
+            param.parent = self._parameter_list
 
     def qualified_function_name(self) -> str:
         parent_scope = self.cpp_scope(False).str_cpp()

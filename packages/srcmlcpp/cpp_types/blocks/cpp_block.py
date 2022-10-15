@@ -36,12 +36,21 @@ class CppBlock(CppElementAndComment):
      https://www.srcml.org/doc/cpp_srcML.html#block
     """
 
-    block_children: List[CppElementAndComment]
+    _block_children: List[CppElementAndComment]
 
     def __init__(self, element: SrcmlWrapper) -> None:
         dummy_cpp_comments = CppElementComments()
         super().__init__(element, dummy_cpp_comments)
-        self.block_children: List[CppElementAndComment] = []
+        self._block_children: List[CppElementAndComment] = []
+
+    @property
+    def block_children(self) -> List[CppElementAndComment]:
+        return self._block_children
+
+    @block_children.setter
+    def block_children(self, value: List[CppElementAndComment]) -> None:
+        self._block_children = value
+        self.fill_children_parents()
 
     def str_block(self, is_enum: bool = False) -> str:
         result = ""

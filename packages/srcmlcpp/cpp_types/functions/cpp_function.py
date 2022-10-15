@@ -16,10 +16,19 @@ class CppFunction(CppFunctionDecl):
     https://www.srcml.org/doc/cpp_srcML.html#function-definition
     """
 
-    block: CppUnprocessed
+    _block: CppUnprocessed
 
     def __init__(self, element: SrcmlWrapper, cpp_element_comments: CppElementComments) -> None:
         super().__init__(element, cpp_element_comments)
+
+    @property
+    def block(self) -> CppUnprocessed:
+        return self._block
+
+    @block.setter
+    def block(self, value: CppUnprocessed) -> None:
+        self._block = value
+        self.fill_children_parents()
 
     def str_code(self) -> str:
         r = self._str_signature()

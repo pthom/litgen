@@ -10,17 +10,27 @@ __all__ = ["CppParameterList"]
 
 
 @dataclass
-class CppParameterList(CppElement):
+class CppParameterList(CppElementAndComment):
     """
     List of parameters of a function (or list of template parameters)
     https://www.srcml.org/doc/cpp_srcML.html#function-declaration
     """
 
-    parameters: List[CppParameter]
+    _parameters: List[CppParameter]
 
     def __init__(self, element: SrcmlWrapper) -> None:
-        super().__init__(element)
-        self.parameters = []
+        empty_comments = CppElementComments()
+        super().__init__(element, empty_comments)
+        self._parameters = []
+
+    @property
+    def parameters(self) -> List[CppParameter]:
+        return self._parameters
+
+    @parameters.setter
+    def parameters(self, new_parameters: List[CppParameter]) -> None:
+        self._parameters = new_parameters
+        self.fill_children_parents()
 
     def list_types_names_only(self) -> List[str]:
         """Returns a list like ["int", "bool"]"""

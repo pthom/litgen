@@ -16,7 +16,7 @@ class CppParameter(CppElementAndComment):
     https://www.srcml.org/doc/cpp_srcML.html#function-declaration
     """
 
-    decl: CppDecl
+    _decl: CppDecl
 
     template_type: str  # This is only for template's CppParameterList (will be "typename" or "class")
     template_name: str = ""  # This is only for template's CppParameterList (name of the template type, e.g. "T")
@@ -25,6 +25,15 @@ class CppParameter(CppElementAndComment):
     def __init__(self, element: SrcmlWrapper) -> None:
         dummy_cpp_element_comments = CppElementComments()
         super().__init__(element, dummy_cpp_element_comments)
+
+    @property
+    def decl(self) -> CppDecl:
+        return self._decl
+
+    @decl.setter
+    def decl(self, new_decl: CppDecl) -> None:
+        self._decl = new_decl
+        self._decl.parent = self
 
     def type_name_default_for_signature(self) -> str:
         assert hasattr(self, "decl")

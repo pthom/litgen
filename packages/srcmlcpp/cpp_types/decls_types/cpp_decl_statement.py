@@ -20,11 +20,20 @@ class CppDeclStatement(CppElementAndComment):
     https://www.srcml.org/doc/cpp_srcML.html#variable-declaration-statement
     """
 
-    cpp_decls: List[CppDecl]  # A CppDeclStatement can initialize several variables
+    _cpp_decls: List[CppDecl]  # A CppDeclStatement can initialize several variables
 
     def __init__(self, element: SrcmlWrapper, cpp_element_comments: CppElementComments) -> None:
         super().__init__(element, cpp_element_comments)
-        self.cpp_decls: List[CppDecl] = []
+        self._cpp_decls: List[CppDecl] = []
+
+    @property
+    def cpp_decls(self) -> List[CppDecl]:
+        return self._cpp_decls
+
+    @cpp_decls.setter
+    def cpp_decls(self, value):
+        self._cpp_decls = value
+        self.fill_children_parents()
 
     def str_code(self) -> str:
         str_decls = list(

@@ -14,19 +14,29 @@ __all__ = ["CppTemplate"]
 
 
 @dataclass
-class CppTemplate(CppElement):
+class CppTemplate(CppElementAndComment):
     """
     Template parameters of a function, struct or class
     https://www.srcml.org/doc/cpp_srcML.html#template
     """
 
-    parameter_list: CppParameterList
+    _parameter_list: CppParameterList
 
     def __init__(self, element: SrcmlWrapper) -> None:
         from srcmlcpp.cpp_types.functions.cpp_parameter_list import CppParameterList
 
-        super().__init__(element)
-        self.parameter_list = CppParameterList(element)
+        empty_comments = CppElementComments()
+        super().__init__(element, empty_comments)
+        self._parameter_list = CppParameterList(element)
+
+    @property
+    def parameter_list(self) -> CppParameterList:
+        return self._parameter_list
+
+    @parameter_list.setter
+    def parameter_list(self, value: CppParameterList) -> None:
+        self._parameter_list = value
+        self.fill_children_parents()
 
     def str_code(self) -> str:
         typelist = [param.str_template_type() for param in self.parameter_list.parameters]

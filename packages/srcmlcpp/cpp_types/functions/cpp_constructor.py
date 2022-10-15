@@ -16,11 +16,29 @@ class CppConstructor(CppConstructorDecl):
     https://www.srcml.org/doc/cpp_srcML.html#constructor
     """
 
-    block: CppUnprocessed
-    member_init_list: CppUnprocessed
+    _block: CppUnprocessed
+    _member_init_list: CppUnprocessed
 
     def __init__(self, element: SrcmlWrapper, cpp_element_comments: CppElementComments) -> None:
         super().__init__(element, cpp_element_comments)
+
+    @property
+    def block(self) -> CppUnprocessed:
+        return self._block
+
+    @block.setter
+    def block(self, value: CppUnprocessed) -> None:
+        self._block = value
+        self.fill_children_parents()
+
+    @property
+    def member_init_list(self) -> CppUnprocessed:
+        return self._member_init_list
+
+    @member_init_list.setter
+    def member_init_list(self, value: CppUnprocessed) -> None:
+        self._member_init_list = value
+        self.fill_children_parents()
 
     def str_code(self) -> str:
         r = self._str_signature()

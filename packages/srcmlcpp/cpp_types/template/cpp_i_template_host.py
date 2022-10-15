@@ -16,11 +16,20 @@ class CppITemplateHost:
     Interface added to templatable classes: CppStruct (+CppClass) and CppFunctionDecl (+CppFunction)
     """
 
-    template: CppTemplate
+    _template: CppTemplate
     specialized_template_params: List[CppType]  # Will only be filled after calling with_specialized_template
 
     def __init__(self, _element: SrcmlWrapper, _cpp_element_comments: CppElementComments) -> None:
         self._init_template_host()
+
+    @property
+    def template(self) -> CppTemplate:
+        return self._template
+
+    @template.setter
+    def template(self, value: CppTemplate) -> None:
+        # We can't call self.fill_children_parents() from here !
+        self._template = value
 
     def _init_template_host(self) -> None:
         # self.template is not set by default. This denotes that the class of function is not a template

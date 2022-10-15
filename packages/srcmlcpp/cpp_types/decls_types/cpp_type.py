@@ -17,7 +17,7 @@ __all__ = ["CppType"]
 
 
 @dataclass
-class CppType(CppElement):
+class CppType(CppElementAndComment):
     """
     Describes a full C++ type, as seen by srcML
     See https://www.srcml.org/doc/cpp_srcML.html#type
@@ -57,7 +57,8 @@ class CppType(CppElement):
     # argument_list: List[str]
 
     def __init__(self, element: SrcmlWrapper) -> None:
-        super().__init__(element)
+        empty_comments = CppElementComments()
+        super().__init__(element, empty_comments)
         self.typenames: List[str] = []
         self.specifiers: List[str] = []
         self.modifiers: List[str] = []

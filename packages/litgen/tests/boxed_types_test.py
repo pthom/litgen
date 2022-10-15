@@ -21,7 +21,7 @@ def test_boxed_type_cpp_struct_code():
     )
 
 
-def test_truc():
+def test_const_vs_non_const():
     options = litgen.LitgenOptions()
     options.fn_params_replace_modifiable_immutable_by_boxed__regex = ".*"
     cpp_code = """

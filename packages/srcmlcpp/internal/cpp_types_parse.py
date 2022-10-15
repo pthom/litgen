@@ -25,15 +25,19 @@ from srcmlcpp.srcmlcpp_options import SrcmlcppOptions
 _PROGRESS_BAR_TITLE_SRCML_PARSE = "srcmlcpp: Create CppElements................. "
 
 
-def parse_unprocessed(options: SrcmlcppOptions, element_c: CppElementAndComment) -> CppUnprocessed:  # noqa
+def parse_unprocessed(
+    options: SrcmlcppOptions, element_c: CppElementAndComment, parent: CppElementAndComment
+) -> CppUnprocessed:  # noqa
     result = CppUnprocessed(element_c, element_c.cpp_element_comments)
     result.code = srcml_caller.srcml_to_code(element_c.srcml_xml)
+    result.parent = parent
     return result
 
 
 def parse_type(
     options: SrcmlcppOptions,
     element: SrcmlWrapper,
+    parent: CppElementAndComment,
     previous_decl: Optional[CppDecl],
     is_operator_return_type: bool = False,
 ) -> CppType:
@@ -62,6 +66,7 @@ def parse_type(
 
     assert element.tag() == "type"
     result = CppType(element)
+    result.parent = parent
     for child in element.make_wrapped_children():
         child_tag = child.tag()
         if child_tag == "name":
@@ -166,6 +171,7 @@ def _parse_name(element: SrcmlWrapper) -> str:
 def parse_decl(
     options: SrcmlcppOptions,
     element_c: CppElementAndComment,
+    parent: CppElementAndComment,
     previous_decl: Optional[CppDecl],
 ) -> CppDecl:
     """
@@ -173,10 +179,11 @@ def parse_decl(
     """
     assert element_c.tag() == "decl"
     result = CppDecl(element_c, element_c.cpp_element_comments)
+    result.parent = parent
     for child in element_c.make_wrapped_children():
         child_tag = child.tag()
         if child_tag == "type":
-            result.cpp_type = parse_type(options, child, previous_decl)
+            result.cpp_type = parse_type(options, child, element_c, previous_decl)
         elif child_tag == "name":
             decl_name_and_array = _parse_name(child)
             if "[" in decl_name_and_array and decl_name_and_array.endswith("]"):
@@ -196,7 +203,9 @@ def parse_decl(
     return result
 
 
-def parse_decl_stmt(options: SrcmlcppOptions, element_c: CppElementAndComment) -> CppDeclStatement:
+def parse_decl_stmt(
+    options: SrcmlcppOptions, element_c: CppElementAndComment, parent: CppElementAndComment
+) -> CppDeclStatement:
     """
     https://www.srcml.org/doc/cpp_srcML.html#variable-declaration-statement
     https://www.srcml.org/doc/cpp_srcML.html#variable-declaration
@@ -205,6 +214,7 @@ def parse_decl_stmt(options: SrcmlcppOptions, element_c: CppElementAndComment) -
 
     previous_decl: Optional[CppDecl] = None
     result = CppDeclStatement(element_c, element_c.cpp_element_comments)
+    result.parent = parent
     for child in element_c.make_wrapped_children():
         child_c = element_c
         child_c.srcml_xml = child.srcml_xml
@@ -212,7 +222,7 @@ def parse_decl_stmt(options: SrcmlcppOptions, element_c: CppElementAndComment) -
             child_name = child_c.name_code()
             if child_name is None:
                 raise SrcmlcppExceptionDetailed(child, "Encountered decl without name!")
-            cpp_decl = parse_decl(options, child_c, previous_decl)
+            cpp_decl = parse_decl(options, child_c, result, previous_decl)
             result.cpp_decls.append(cpp_decl)
             previous_decl = cpp_decl
         else:
@@ -224,17 +234,18 @@ def parse_decl_stmt(options: SrcmlcppOptions, element_c: CppElementAndComment) -
     return result
 
 
-def parse_parameter(options: SrcmlcppOptions, element: SrcmlWrapper) -> CppParameter:
+def parse_parameter(options: SrcmlcppOptions, element: SrcmlWrapper, parent: CppElementAndComment) -> CppParameter:
     """
     https://www.srcml.org/doc/cpp_srcML.html#function-declaration
     """
     assert element.tag() == "parameter"
     result = CppParameter(element)
+    result.parent = parent
     for child in element.make_wrapped_children():
         child_tag = child.tag()
         if child_tag == "decl":
             child_c = CppElementAndComment(child, CppElementComments())
-            result.decl = parse_decl(options, child_c, None)
+            result.decl = parse_decl(options, child_c, result, None)
         elif child_tag == "type":
             # This is not the parameter's type, this is a template parameter which will be either "class" or "typename"
             # as in template<typename T> or template<class T>
@@ -257,32 +268,36 @@ def parse_parameter(options: SrcmlcppOptions, element: SrcmlWrapper) -> CppParam
     return result
 
 
-def parse_parameter_list(options: SrcmlcppOptions, element: SrcmlWrapper) -> CppParameterList:
+def parse_parameter_list(
+    options: SrcmlcppOptions, element: SrcmlWrapper, parent: CppElementAndComment
+) -> CppParameterList:
     """
     https://www.srcml.org/doc/cpp_srcML.html#function-declaration
     """
     assert element.tag() == "parameter_list"
     result = CppParameterList(element)
+    result.parent = parent
     for child in element.make_wrapped_children():
         child_tag = child.tag()
         if child_tag == "parameter":
-            result.parameters.append(parse_parameter(options, child))
+            result.parameters.append(parse_parameter(options, child, result))
         else:
             raise SrcmlcppExceptionDetailed(child, "unhandled tag")
     return result
 
 
-def parse_template(options: SrcmlcppOptions, element: SrcmlWrapper) -> CppTemplate:
+def parse_template(options: SrcmlcppOptions, element: SrcmlWrapper, parent: CppElementAndComment) -> CppTemplate:
     """
     Template parameters of a function, struct or class
     https://www.srcml.org/doc/cpp_srcML.html#template
     """
     assert element.tag() == "template"
     result = CppTemplate(element)
+    result.parent = parent
     for child in element.make_wrapped_children():
         child_tag = child.tag()
         if child_tag == "parameter_list":
-            result.parameter_list = parse_parameter_list(options, child)
+            result.parameter_list = parse_parameter_list(options, child, result)
         else:
             raise SrcmlcppExceptionDetailed(child, f"unhandled tag {child_tag}")
     return result
@@ -297,10 +312,12 @@ def fill_function_decl(
         child_tag = child.tag()
         if child_tag == "type":
             if not hasattr(function_decl, "return_type") or len(function_decl.return_type.typenames) == 0:
-                parsed_type = parse_type(options, child, None, is_operator_return_type=is_operator_function(element_c))
+                parsed_type = parse_type(
+                    options, child, function_decl, None, is_operator_return_type=is_operator_function(element_c)
+                )
                 function_decl.return_type = parsed_type
             else:
-                additional_type = parse_type(options, child, None)
+                additional_type = parse_type(options, child, function_decl.return_type, None)
                 function_decl.return_type.typenames += additional_type.typenames
         elif child_tag == "name":
             function_decl.function_name = _parse_name(child)
@@ -319,7 +336,7 @@ def fill_function_decl(
                     function_decl.function_name += " "
                 function_decl.function_name += operator_name
         elif child_tag == "parameter_list":
-            function_decl.parameter_list = parse_parameter_list(options, child)
+            function_decl.parameter_list = parse_parameter_list(options, child, function_decl)
         elif child_tag == "specifier":
             child_text = child.text()
             assert child_text is not None
@@ -327,7 +344,7 @@ def fill_function_decl(
         elif child_tag == "attribute":
             pass  # compiler options, such as [[gnu::optimize(0)]]
         elif child_tag == "template":
-            function_decl.template = parse_template(options, child)
+            function_decl.template = parse_template(options, child, function_decl)
         elif child_tag == "block":
             pass  # will be handled by parse_function
         elif child_tag == "modifier":
@@ -353,29 +370,35 @@ def fill_function_decl(
             raise SrcmlcppExceptionDetailed(child, f"unhandled tag {child_tag}")
 
 
-def parse_function_decl(options: SrcmlcppOptions, element_c: CppElementAndComment) -> CppFunctionDecl:
+def parse_function_decl(
+    options: SrcmlcppOptions, element_c: CppElementAndComment, parent: CppElementAndComment
+) -> CppFunctionDecl:
     """
     https://www.srcml.org/doc/cpp_srcML.html#function-declaration
     """
     assert element_c.tag() in ["function_decl", "destructor_decl"]
     result = CppFunctionDecl(element_c, element_c.cpp_element_comments)
+    result.parent = parent
     fill_function_decl(options, element_c, result)
     return result
 
 
-def parse_function(options: SrcmlcppOptions, element_c: CppElementAndComment) -> CppFunction:
+def parse_function(
+    options: SrcmlcppOptions, element_c: CppElementAndComment, parent: CppElementAndComment
+) -> CppFunction:
     """
     https://www.srcml.org/doc/cpp_srcML.html#function-definition
     """
     assert element_c.tag() in ["function", "destructor"]
     result = CppFunction(element_c, element_c.cpp_element_comments)
+    result.parent = parent
     fill_function_decl(options, element_c, result)
 
     for child in element_c.make_wrapped_children():
         child_tag = child.tag()
         if child_tag == "block":
             child_c = CppElementAndComment(child, CppElementComments())
-            result.block = parse_unprocessed(options, child_c)
+            result.block = parse_unprocessed(options, child_c, result)
         elif child_tag in [
             "type",
             "name",
@@ -404,7 +427,7 @@ def fill_constructor_decl(
         if child_tag == "name":
             constructor_decl.function_name = _parse_name(child)
         elif child_tag == "parameter_list":
-            constructor_decl.parameter_list = parse_parameter_list(options, child)
+            constructor_decl.parameter_list = parse_parameter_list(options, child, constructor_decl)
         elif child_tag == "specifier":
             child_text = child.text()
             assert child_text is not None
@@ -417,31 +440,37 @@ def fill_constructor_decl(
             raise SrcmlcppExceptionDetailed(child, f"unhandled tag {child_tag}")
 
 
-def parse_constructor_decl(options: SrcmlcppOptions, element_c: CppElementAndComment) -> CppConstructorDecl:
+def parse_constructor_decl(
+    options: SrcmlcppOptions, element_c: CppElementAndComment, parent: CppElementAndComment
+) -> CppConstructorDecl:
     """
     https://www.srcml.org/doc/cpp_srcML.html#constructor-declaration
     """
     assert element_c.tag() == "constructor_decl"
     result = CppConstructorDecl(element_c, element_c.cpp_element_comments)
+    result.parent = parent
     fill_constructor_decl(options, element_c, result)
     return result
 
 
-def parse_constructor(options: SrcmlcppOptions, element_c: CppElementAndComment) -> CppConstructor:
+def parse_constructor(
+    options: SrcmlcppOptions, element_c: CppElementAndComment, parent: CppElementAndComment
+) -> CppConstructor:
     """
     https://www.srcml.org/doc/cpp_srcML.html#function-definition
     """
     assert element_c.tag() == "constructor"
     result = CppConstructor(element_c, element_c.cpp_element_comments)
+    result.parent = parent
     fill_constructor_decl(options, element_c, result)
 
     for child in element_c.make_wrapped_children():
         child_c = CppElementAndComment(child, CppElementComments())
         child_tag = child.tag()
         if child_tag == "block":
-            result.block = parse_unprocessed(options, child_c)
+            result.block = parse_unprocessed(options, child_c, result)
         elif child_tag == "member_init_list":
-            result.member_init_list = parse_unprocessed(options, child_c)
+            result.member_init_list = parse_unprocessed(options, child_c, result)
         elif child_tag in ["name", "parameter_list", "specifier", "attribute"]:
             pass  # alread handled by fill_constructor_decl
         else:
@@ -450,13 +479,14 @@ def parse_constructor(options: SrcmlcppOptions, element_c: CppElementAndComment)
     return result
 
 
-def parse_super(options: SrcmlcppOptions, element: SrcmlWrapper) -> CppSuper:
+def parse_super(options: SrcmlcppOptions, element: SrcmlWrapper, parent: CppElementAndComment) -> CppSuper:
     """
     Define a super classes of a struct or class
     https://www.srcml.org/doc/cpp_srcML.html#struct-definition
     """
     assert element.tag() == "super"
     result = CppSuper(element)
+    result.parent = parent
     for child in element.make_wrapped_children():
         child_tag = child.tag()
         if child_tag == "specifier":
@@ -471,17 +501,18 @@ def parse_super(options: SrcmlcppOptions, element: SrcmlWrapper) -> CppSuper:
     return result
 
 
-def parse_super_list(options: SrcmlcppOptions, element: SrcmlWrapper) -> CppSuperList:
+def parse_super_list(options: SrcmlcppOptions, element: SrcmlWrapper, parent: CppElementAndComment) -> CppSuperList:
     """
     Define a list of super classes of a struct or class
     https://www.srcml.org/doc/cpp_srcML.html#struct-definition
     """
     assert element.tag() == "super_list"
     result = CppSuperList(element)
+    result.parent = parent
     for child in element.make_wrapped_children():
         child_tag = child.tag()
         if child_tag == "super":
-            result.super_list.append(parse_super(options, child))
+            result.super_list.append(parse_super(options, child, result))
         else:
             raise SrcmlcppExceptionDetailed(child, f"unhandled tag {child_tag}")
 
@@ -506,7 +537,9 @@ def _add_comment_child_before_block(element_c: CppElementAndComment, child: Srcm
     element_c.cpp_element_comments.comment_end_of_line += comment_text
 
 
-def parse_struct_or_class(options: SrcmlcppOptions, element_c: CppElementAndComment) -> CppStruct:
+def parse_struct_or_class(
+    options: SrcmlcppOptions, element_c: CppElementAndComment, parent: CppElementAndComment
+) -> CppStruct:
     """
     https://www.srcml.org/doc/cpp_srcML.html#struct-definition
     https://www.srcml.org/doc/cpp_srcML.html#class-definition
@@ -517,17 +550,18 @@ def parse_struct_or_class(options: SrcmlcppOptions, element_c: CppElementAndComm
         result = CppStruct(element_c, element_c.cpp_element_comments)
     else:
         result = CppClass(element_c, element_c.cpp_element_comments)
+    result.parent = parent
 
     for child in element_c.make_wrapped_children():
         child_tag = child.tag()
         if child_tag == "name":
             result.class_name = _parse_name(child)
         elif child_tag == "super_list":
-            result.super_list = parse_super_list(options, child)
+            result.super_list = parse_super_list(options, child, result)
         elif child_tag == "block":
-            result.block = parse_block(options, child)
+            result.block = parse_block(options, child, result)
         elif child_tag == "template":
-            result.template = parse_template(options, child)
+            result.template = parse_template(options, child, result)
         elif child_tag == "comment":
             _add_comment_child_before_block(result, child)
         elif child_tag == "decl":
@@ -547,7 +581,7 @@ def parse_struct_or_class(options: SrcmlcppOptions, element_c: CppElementAndComm
 
 
 def parse_public_protected_private(
-    options: SrcmlcppOptions, element_c: CppElementAndComment
+    options: SrcmlcppOptions, element_c: CppElementAndComment, parent: CppElementAndComment
 ) -> CppPublicProtectedPrivate:
     """
     See https://www.srcml.org/doc/cpp_srcML.html#public-access-specifier
@@ -557,17 +591,19 @@ def parse_public_protected_private(
     assert access_type in ["public", "protected", "private"]
     type = element_c.attribute_value("type")
     block_content = CppPublicProtectedPrivate(element_c, CppAccessType.from_name(access_type), type)
+    block_content.parent = parent
     fill_block(options, element_c, block_content)
     return block_content
 
 
-def parse_block(options: SrcmlcppOptions, element: SrcmlWrapper) -> CppBlock:
+def parse_block(options: SrcmlcppOptions, element: SrcmlWrapper, parent: CppElementAndComment) -> CppBlock:
     """
     https://www.srcml.org/doc/cpp_srcML.html#block
     """
     assert element.tag() == "block"
 
     cpp_block = CppBlock(element)
+    cpp_block.parent = parent
     fill_block(options, element, cpp_block)
     return cpp_block
 
@@ -618,47 +654,50 @@ def fill_block(options: SrcmlcppOptions, element: SrcmlWrapper, inout_block_cont
         child_name = child_c.name_code()
 
         try:
+            block_children = inout_block_content.block_children
             if child_tag == "decl_stmt":
-                inout_block_content.block_children.append(parse_decl_stmt(options, child_c))
+                block_children.append(parse_decl_stmt(options, child_c, inout_block_content))
             elif child_tag == "decl":
-                cpp_decl = parse_decl(options, child_c, None)
-                inout_block_content.block_children.append(cpp_decl)
+                cpp_decl = parse_decl(options, child_c, inout_block_content, None)
+                block_children.append(cpp_decl)
             elif child_tag in ["function_decl", "destructor_decl"]:
                 assert child_name is not None
-                inout_block_content.block_children.append(parse_function_decl(options, child_c))
+                block_children.append(parse_function_decl(options, child_c, inout_block_content))
             elif child_tag in ["function", "destructor"]:
                 assert child_name is not None
-                inout_block_content.block_children.append(parse_function(options, child_c))
+                block_children.append(parse_function(options, child_c, inout_block_content))
             elif child_tag == "constructor_decl":
-                inout_block_content.block_children.append(parse_constructor_decl(options, child_c))
+                block_children.append(parse_constructor_decl(options, child_c, inout_block_content))
             elif child_tag == "constructor":
-                inout_block_content.block_children.append(parse_constructor(options, child_c))
+                block_children.append(parse_constructor(options, child_c, inout_block_content))
 
             elif child_tag == "comment":
-                cpp_comment = parse_comment(options, child_c)
+                cpp_comment = parse_comment(options, child_c, inout_block_content)
 
                 if srcml_comments.EMPTY_LINE_COMMENT_CONTENT in cpp_comment.comment:
-                    inout_block_content.block_children.append(CppEmptyLine(child_c))
+                    empty_line = CppEmptyLine(child_c)
+                    empty_line.parent = inout_block_content
+                    block_children.append(empty_line)
                 else:
                     if not shall_ignore_comment(cpp_comment, last_ignored_child):
-                        inout_block_content.block_children.append(cpp_comment)
+                        block_children.append(cpp_comment)
 
             elif child_tag == "struct" or child_tag == "class":
                 assert child_name is not None
-                inout_block_content.block_children.append(parse_struct_or_class(options, child_c))
+                block_children.append(parse_struct_or_class(options, child_c, inout_block_content))
             elif child_tag == "namespace":
-                inout_block_content.block_children.append(parse_namespace(options, child_c))
+                block_children.append(parse_namespace(options, child_c, inout_block_content))
             elif child_tag == "enum":
-                inout_block_content.block_children.append(parse_enum(options, child_c))
+                block_children.append(parse_enum(options, child_c, inout_block_content))
             elif child_tag == "block_content":
-                inout_block_content.block_children.append(parse_block_content(options, child_c))
+                block_children.append(parse_block_content(options, child_c, inout_block_content))
             elif child_tag in ["public", "protected", "private"]:
-                inout_block_content.block_children.append(parse_public_protected_private(options, child_c))
+                block_children.append(parse_public_protected_private(options, child_c, inout_block_content))
             else:
                 last_ignored_child = child_c
-                inout_block_content.block_children.append(parse_unprocessed(options, child_c))
+                block_children.append(parse_unprocessed(options, child_c, inout_block_content))
         except SrcmlcppExceptionDetailed as e:
-            inout_block_content.block_children.append(parse_unprocessed(options, child_c))
+            block_children.append(parse_unprocessed(options, child_c, inout_block_content))
             emit_warning_if_not_quiet(
                 options, f'A cpp element of type "{child_tag}" was stored as CppUnprocessed. Details follow\n{e}'
             )
@@ -673,7 +712,7 @@ def parse_unit(options: SrcmlcppOptions, element: SrcmlWrapper) -> CppUnit:
 
 
 def parse_block_content(
-    options: SrcmlcppOptions, element_c: CppElementAndComment
+    options: SrcmlcppOptions, element_c: CppElementAndComment, parent: CppElementAndComment
 ) -> CppBlockContent:  # element: SrcmlWrapper) -> CppBlockContent:
     """
     https://www.srcml.org/doc/cpp_srcML.html#block_content
@@ -681,11 +720,14 @@ def parse_block_content(
     assert element_c.tag() == "block_content"
 
     block_content = CppBlockContent(element_c)
+    block_content.parent = parent
     fill_block(options, element_c, block_content)
     return block_content
 
 
-def parse_comment(options: SrcmlcppOptions, element_c: CppElementAndComment) -> CppComment:
+def parse_comment(
+    options: SrcmlcppOptions, element_c: CppElementAndComment, parent: CppElementAndComment
+) -> CppComment:
     """
     https://www.srcml.org/doc/cpp_srcML.html#comment
     """
@@ -693,6 +735,7 @@ def parse_comment(options: SrcmlcppOptions, element_c: CppElementAndComment) -> 
     assert len(element_c.srcml_xml) == 0  # a comment has no child
 
     result = CppComment(element_c, element_c.cpp_element_comments)
+    result.parent = parent
 
     comment = code_utils.str_none_empty(element_c.text())
     lines = comment.split("\n")
@@ -706,18 +749,21 @@ def parse_comment(options: SrcmlcppOptions, element_c: CppElementAndComment) -> 
     return result
 
 
-def parse_namespace(options: SrcmlcppOptions, element_c: CppElementAndComment) -> CppNamespace:
+def parse_namespace(
+    options: SrcmlcppOptions, element_c: CppElementAndComment, parent: CppElementAndComment
+) -> CppNamespace:
     """
     https://www.srcml.org/doc/cpp_srcML.html#namespace
     """
     assert element_c.tag() == "namespace"
     result = CppNamespace(element_c, element_c.cpp_element_comments)
+    result.parent = parent
     for child in element_c.make_wrapped_children():
         child_tag = child.tag()
         if child_tag == "name":
             result.ns_name = _parse_name(child)
         elif child_tag == "block":
-            result.block = parse_block(options, child)
+            result.block = parse_block(options, child, element_c)
         elif child_tag == "comment":
             _add_comment_child_before_block(result, child)
         else:
@@ -725,13 +771,14 @@ def parse_namespace(options: SrcmlcppOptions, element_c: CppElementAndComment) -
     return result
 
 
-def parse_enum(options: SrcmlcppOptions, element_c: CppElementAndComment) -> CppEnum:
+def parse_enum(options: SrcmlcppOptions, element_c: CppElementAndComment, parent: CppElementAndComment) -> CppEnum:
     """
     https://www.srcml.org/doc/cpp_srcML.html#enum-definition
     https://www.srcml.org/doc/cpp_srcML.html#enum-class
     """
     assert element_c.tag() == "enum"
     result = CppEnum(element_c, element_c.cpp_element_comments)
+    result.parent = parent
 
     if "type" in element_c.srcml_xml.attrib.keys():
         enum_type = element_c.attribute_value("type")
@@ -743,7 +790,7 @@ def parse_enum(options: SrcmlcppOptions, element_c: CppElementAndComment) -> Cpp
         if child_tag == "name":
             result.enum_name = _parse_name(child)
         elif child_tag == "block":
-            result.block = parse_block(options, child)
+            result.block = parse_block(options, child, element_c)
         elif child_tag == "comment":
             _add_comment_child_before_block(result, child)
         else:

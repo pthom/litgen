@@ -18,11 +18,20 @@ class CppNamespace(CppElementAndComment):
     """
 
     ns_name: str
-    block: CppBlock
+    _block: CppBlock
 
     def __init__(self, element: SrcmlWrapper, cpp_element_comments: CppElementComments) -> None:
         super().__init__(element, cpp_element_comments)
         self.ns_name = ""
+
+    @property
+    def block(self) -> CppBlock:
+        return self._block
+
+    @block.setter
+    def block(self, value: CppBlock) -> None:
+        self._block = value
+        self.fill_children_parents()
 
     def str_code(self) -> str:
         r = f"namespace {self.ns_name}\n"

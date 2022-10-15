@@ -13,17 +13,27 @@ __all__ = ["CppSuperList"]
 
 
 @dataclass
-class CppSuperList(CppElement):
+class CppSuperList(CppElementAndComment):
     """
     Define a list of super classes of a struct or class
     https://www.srcml.org/doc/cpp_srcML.html#struct-definition
     """
 
-    super_list: List[CppSuper]
+    _super_list: List[CppSuper]
 
     def __init__(self, element: SrcmlWrapper):
-        super().__init__(element)
-        self.super_list: List[CppSuper] = []
+        empty_comments = CppElementComments()
+        super().__init__(element, empty_comments)
+        self._super_list: List[CppSuper] = []
+
+    @property
+    def super_list(self) -> List[CppSuper]:
+        return self._super_list
+
+    @super_list.setter
+    def super_list(self, value: List[CppSuper]) -> None:
+        self._super_list = value
+        self.fill_children_parents()
 
     def str_code(self) -> str:
         strs = list(map(str, self.super_list))

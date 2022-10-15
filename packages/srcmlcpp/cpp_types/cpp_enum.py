@@ -20,12 +20,21 @@ class CppEnum(CppElementAndComment):
     https://www.srcml.org/doc/cpp_srcML.html#enum-class
     """
 
-    block: CppBlock
+    _block: CppBlock
     enum_type: str = ""  # "class" or ""
     enum_name: str = ""
 
     def __init__(self, element: SrcmlWrapper, cpp_element_comments: CppElementComments) -> None:
         super().__init__(element, cpp_element_comments)
+
+    @property
+    def block(self) -> CppBlock:
+        return self._block
+
+    @block.setter
+    def block(self, value: CppBlock) -> None:
+        self._block = value
+        self.fill_children_parents()
 
     def is_enum_class(self) -> bool:
         return self.enum_type == "class"

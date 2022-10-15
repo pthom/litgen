@@ -15,7 +15,7 @@ def test_parse_function_decl():
 
     def code_to_fn_decl(code: str) -> cpp_types.CppFunctionDecl:
         element = srcmlcpp_main._tests_only_get_only_child_with_tag(options, code, "function_decl")
-        fn_decl = cpp_types_parse.parse_function_decl(options, element)
+        fn_decl = cpp_types_parse.parse_function_decl(options, element, None)  # type: ignore
         return fn_decl
 
     # # Basic test with str
@@ -60,7 +60,7 @@ def test_parse_function():
 
     def code_to_fn_decl(code: str) -> cpp_types.CppFunctionDecl:
         element = srcmlcpp_main._tests_only_get_only_child_with_tag(options, code, "function")
-        fn = cpp_types_parse.parse_function(options, element)
+        fn = cpp_types_parse.parse_function(options, element, None)  # type: ignore
         return fn
 
     # # Basic test
@@ -83,7 +83,7 @@ def test_parse_struct():
 
     def code_to_struct_decl(code: str) -> str:
         element_c = srcmlcpp_main._tests_only_get_only_child_with_tag(options, code, "struct")
-        cpp_element = cpp_types_parse.parse_struct_or_class(options, element_c)
+        cpp_element = cpp_types_parse.parse_struct_or_class(options, element_c, None)  # type: ignore
         cpp_element_str = str(cpp_element)
         # logging.warning("\n" + cpp_element_str)
         return cpp_element_str

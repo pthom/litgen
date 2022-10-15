@@ -29,8 +29,8 @@ class CppStruct(CppElementAndComment, CppITemplateHost):
     """
 
     class_name: str  # either the class or the struct name
-    super_list: CppSuperList
-    block: CppBlock
+    _super_list: CppSuperList
+    _block: CppBlock
     specifier: str  # "final" for final classes, empty otherwise
     macro: str  # used in rare cases, such as `struct MY_API Foo { };` where macro will be "MY_API"
 
@@ -39,6 +39,24 @@ class CppStruct(CppElementAndComment, CppITemplateHost):
         self._init_template_host()
         self.class_name = ""
         self.specifier = ""
+
+    @property
+    def super_list(self) -> CppSuperList:
+        return self._super_list
+
+    @super_list.setter
+    def super_list(self, value: CppSuperList) -> None:
+        self._super_list = value
+        self.fill_children_parents()
+
+    @property
+    def block(self) -> CppBlock:
+        return self._block
+
+    @block.setter
+    def block(self, value: CppBlock) -> None:
+        self._block = value
+        self.fill_children_parents()
 
     def str_code(self) -> str:
         from srcmlcpp.cpp_types.classes.cpp_class import CppClass
