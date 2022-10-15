@@ -220,19 +220,26 @@ class AdaptedFunction(AdaptedElement):
     def __init__(
         self,
         lg_context: LitgenContext,
-        function_infos: CppFunctionDecl,
+        function_decl: CppFunctionDecl,
         is_overloaded: bool,
         initial_lambda_to_call: Optional[str] = None,
     ) -> None:
         from litgen.internal import adapt_function_params
         from litgen.internal.adapted_types import operators
 
-        self.cpp_adapted_function = function_infos
+        # Logic test: we should have parents
+        if len(function_decl.parameter_list.parameters) > 0:
+            assert function_decl.parameter_list.parameters[0].parent is not None
+
+        # qualify the params of the input function
+        function_decl = function_decl.with_qualified_types()
+
+        self.cpp_adapted_function = function_decl
         operators.raise_if_unsupported_operator(self.cpp_adapted_function)
 
         self.cpp_adapter_code = None
         self.lambda_to_call = initial_lambda_to_call
-        super().__init__(lg_context, function_infos)
+        super().__init__(lg_context, function_decl)
         self._pydef_fill_return_value_policy()
         self._stub_fill_is_type_ignore()
 

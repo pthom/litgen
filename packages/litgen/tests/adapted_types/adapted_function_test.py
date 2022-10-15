@@ -427,3 +427,78 @@ def test_templated_function_with_rename():
         #  ------------------------------------------------------------------------
     """,
     )
+
+
+def test_qualified_param_types():
+    # in the pydef code, "S s" should be transcribed to Ns::S
+    code = """
+    namespace Ns {
+        struct S {};
+        void f(S s);
+        void f(int a);
+    }
+    """
+    options = litgen.LitgenOptions()
+    generated_code = litgen.generate_code(options, code)
+    code_utils.assert_are_codes_equal(
+        generated_code.pydef_code,
+        """
+        { // <namespace Ns>
+            py::module_ pyNsNs = m.def_submodule("Ns", "");
+            auto pyNsNs_ClassS =
+                py::class_<Ns::S>
+                    (pyNsNs, "S", "")
+                .def(py::init<>()) // implicit default constructor
+                ;
+
+
+            pyNsNs.def("f",
+                py::overload_cast<Ns::S>(Ns::f), py::arg("s"));
+
+            pyNsNs.def("f",
+                py::overload_cast<int>(Ns::f), py::arg("a"));
+        } // </namespace Ns>
+    """,
+    )
+
+
+def test_qualified_param_types_with_adapted_params():
+    # in the pydef code, "S s" should be transcribed to Ns::S
+    code = """
+    namespace Ns {
+        struct S {};
+        void f(S s[1]);
+    }
+    """
+    options = litgen.LitgenOptions()
+    generated_code = litgen.generate_code(options, code)
+    code_utils.assert_are_codes_equal(
+        generated_code.pydef_code,
+        """
+        { // <namespace Ns>
+            py::module_ pyNsNs = m.def_submodule("Ns", "");
+            auto pyNsNs_ClassS =
+                py::class_<Ns::S>
+                    (pyNsNs, "S", "")
+                .def(py::init<>()) // implicit default constructor
+                ;
+
+
+            pyNsNs.def("f",
+                [](Ns::S & s_0)
+                {
+                    auto f_adapt_fixed_size_c_arrays = [](Ns::S & s_0)
+                    {
+                        Ns::S s_raw[1];
+                        s_raw[0] = s_0;
+
+                        Ns::f(s_raw);
+
+                        s_0 = s_raw[0];
+                    };
+
+                    f_adapt_fixed_size_c_arrays(s_0);
+                },     py::arg("s_0"));
+        } // </namespace Ns>
+        """,
+    )

@@ -131,31 +131,6 @@ class CppType(CppElementAndComment):
         name = " ".join(self.typenames)
         return name
 
-    def name_with_qualified_known_types(self, current_caller_scope: CppScope) -> str:
-        """Tries to identify the matching type in the full CppUnit root tree
-        For example, if
-                self.typenames = ["MyStruct"]
-            and
-                current_caller_scope = Ns::Inner
-            and there is a type named Ns::MyStruct in the CppUnit root tree
-        then, we will return Ns::MyStruct
-        otherwise we will return MyStruct
-        """
-        from srcmlcpp.cpp_types.cpp_enum import CppEnum
-
-        raw_name = " ".join(self.typenames)
-        structs_enums = self.root_cpp_unit().visible_structs_enums_from_scope(current_caller_scope)
-        for struct_or_enum in structs_enums:
-            if isinstance(struct_or_enum, CppEnum):
-                struct_or_enum_name = struct_or_enum.enum_name
-            else:
-                struct_or_enum_name = struct_or_enum.class_name
-            if raw_name == struct_or_enum_name:
-                qualified_name = struct_or_enum.cpp_scope(include_self=False).str_cpp_prefix() + raw_name
-                return qualified_name
-
-        return raw_name
-
     def is_const(self) -> bool:
         return "const" in self.specifiers
 
@@ -202,6 +177,33 @@ class CppType(CppElementAndComment):
             return new_type
         else:
             return None
+
+    def with_qualified_types(self, current_scope: CppScope) -> CppType:
+        """Returns a possibly new fully qualified type, by searching for matching types in the full CppUnit root tree
+        For example, if
+                self.typenames = ["MyStruct"]
+            and
+                current_caller_scope = Ns::Inner
+            and there is a type named Ns::MyStruct in the CppUnit root tree
+        then, we will return Ns::MyStruct
+        otherwise we will return MyStruct
+        """
+        from srcmlcpp.cpp_types.cpp_enum import CppEnum
+
+        raw_name = " ".join(self.typenames)
+        structs_enums = self.root_cpp_unit().visible_structs_enums_from_scope(current_scope)
+        for struct_or_enum in structs_enums:
+            if isinstance(struct_or_enum, CppEnum):
+                struct_or_enum_name = struct_or_enum.enum_name
+            else:
+                struct_or_enum_name = struct_or_enum.class_name
+            if raw_name == struct_or_enum_name:
+                qualified_name = struct_or_enum.cpp_scope(include_self=False).str_cpp_prefix() + raw_name
+                new_cpp_type = copy.deepcopy(self)
+                new_cpp_type.typenames = [qualified_name]
+                return new_cpp_type
+
+        return self
 
     def __str__(self) -> str:
         return self.str_code()

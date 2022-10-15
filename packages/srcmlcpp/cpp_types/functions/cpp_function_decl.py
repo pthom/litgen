@@ -110,6 +110,34 @@ class CppFunctionDecl(CppElementAndComment, CppITemplateHost):
         else:
             return None
 
+    def with_qualified_types(self) -> CppFunctionDecl:
+        """Returns a possibly new FunctionDecl where the params and return types are qualified given the function scope.
+
+        For example, given the code:
+            namespace Ns {
+                struct S {};
+                void f(S s);
+            }
+        then, f.with_qualified_types = void f(Ns::S s)
+        """
+        was_changed = False
+        new_function_decl = copy.deepcopy(self)
+        if hasattr(self, "return_type"):
+            new_function_decl.return_type = self.return_type.with_qualified_types(self.cpp_scope())
+            if new_function_decl.return_type is not self.return_type:
+                was_changed = True
+        for i in range(len(self.parameter_list.parameters)):
+            new_param = new_function_decl.parameter_list.parameters[i]
+            self_param = self.parameter_list.parameters[i]
+            new_param.decl.cpp_type = self_param.decl.cpp_type.with_qualified_types(self.cpp_scope())
+            if new_param.decl.cpp_type is not self_param.decl.cpp_type:
+                was_changed = True
+
+        if was_changed:
+            return new_function_decl
+        else:
+            return self
+
     def is_inferred_return_type(self) -> bool:
         if not hasattr(self, "return_type"):
             return False

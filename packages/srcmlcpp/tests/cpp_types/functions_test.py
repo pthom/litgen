@@ -1,3 +1,5 @@
+from codemanip import code_utils
+
 import srcmlcpp
 
 
@@ -65,3 +67,28 @@ def test_operator():
     assert f.is_operator()
     assert f.operator_name() == "ImVec4"
     assert f.return_type.str_code() == "inline"
+
+
+def test_with_qualified_types():
+    code = """
+        namespace Ns {
+            struct S {};
+            void f1(S s);
+            void f2(int);
+        }
+    """
+    options = srcmlcpp.SrcmlcppOptions()
+    cpp_unit = srcmlcpp.code_to_cpp_unit(options, code)
+    functions = cpp_unit.all_functions_recursive()
+    f1 = functions[0]
+    f2 = functions[1]
+
+    f1_qualified = f1.with_qualified_types()
+    code_utils.assert_are_codes_equal(f1_qualified.str_code(), "void f1(Ns::S s);")
+    code_utils.assert_are_codes_equal(f1.str_code(), "void f1(S s);")
+    assert f1_qualified is not f1
+
+    f2_qualified = f2.with_qualified_types()
+    code_utils.assert_are_codes_equal(f2_qualified.str_code(), "void f2(int );")
+    code_utils.assert_are_codes_equal(f2.str_code(), "void f2(int );")
+    assert f2_qualified is f2

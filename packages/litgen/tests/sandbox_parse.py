@@ -112,12 +112,17 @@ IMGUI_API int           ImTextStrToUtf8(char* out_buf, int out_buf_size, const I
 
 def play() -> None:
     code = """
-struct Foo
-{
-public:
-    enum class Choice { A = 0, };
-    MY_API int HandleChoice(Choice value = Choice::A) { return 0; }
-};
+namespace Ns {
+namespace Inner {
+    struct StyleVar {};
+
+    void h(StyleVar s);
+
+    //void PushStyleVar(StyleVar varIndex, float value);
+    //void PushStyleVar(StyleVar varIndex, const ImVec2& value);
+    //void g(StyleVar f[2]);
+}
+}
     """
     options = litgen.LitgenOptions()
     options.fn_template_options.add_specialization(".*", ["int"])

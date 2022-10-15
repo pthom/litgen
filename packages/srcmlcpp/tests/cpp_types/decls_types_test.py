@@ -159,16 +159,25 @@ def test_name_with_qualified_known_types():
             struct Foo2 {};
             namespace N3
             {
-                struct Foo3 {};
-                void f(Foo1 foo = Foo1());
+                struct Foo3 {
+                    Foo2 f2;
+                    int a;
+                };
             }
         }
     }
     """
     options = srcmlcpp.SrcmlcppOptions()
     cpp_unit = srcmlcpp.code_to_cpp_unit(options, code)
-    f = cpp_unit.all_functions_recursive()[0]
-    cpp_type = f.parameter_list.parameters[0].decl.cpp_type
-    assert cpp_type.name_code() == "Foo1"
-    cpp_typename_with_qualified_known_types = cpp_type.name_with_qualified_known_types(f.cpp_scope())
-    assert cpp_typename_with_qualified_known_types == "N1::Foo1"
+    structs = cpp_unit.all_structs_recursive()
+    foo3 = structs[2]
+
+    _access_type, foo3_member = foo3.get_members()[0]
+    foo3_member_type = foo3_member.cpp_type
+    assert foo3_member_type.str_code() == "Foo2"
+
+    foo3_member_type_qualified = foo3_member_type.with_qualified_types(foo3.cpp_scope())
+    assert foo3_member_type_qualified.str_code() == "N1::N2::Foo2"
+
+    _access_type, foo3_member2 = foo3.get_members()[1]
+    assert foo3_member2.cpp_type.with_qualified_types(foo3.cpp_scope()) is foo3_member2.cpp_type
