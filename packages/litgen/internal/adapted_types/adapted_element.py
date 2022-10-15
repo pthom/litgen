@@ -54,6 +54,10 @@ class AdaptedElement:  # (abc.ABC):  # Cannot be abstract (mypy limitation:  htt
         self.lg_context = lg_context
         self.options = lg_context.options
         element_line = cpp_element.start().line
+        if isinstance(self._cpp_element, CppUnit):
+            assert self._cpp_element.parent is None
+        else:
+            assert self._cpp_element.parent is not None
         global_progress_bars().set_current_line(_PROGRESS_BAR_TITLE_ADAPTED_ELEMENTS, element_line)
 
     #  ============================================================================================

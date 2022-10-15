@@ -2,6 +2,7 @@ from munch import Munch  # type: ignore
 
 from codemanip import code_utils
 
+from srcmlcpp.cpp_types import *
 from srcmlcpp import srcmlcpp_main
 
 from litgen.internal.adapt_function_params._lambda_adapter import LambdaAdapter
@@ -23,6 +24,17 @@ def apply_all_adapters(inout_adapted_function: AdaptedFunction) -> None:
     if is_constructor:
         _apply_all_adapters_on_constructor(inout_adapted_function)
         return
+
+    # Logic test: we should have parents
+    def assert_parents_are_present() -> None:
+        original_function: CppFunctionDecl = inout_adapted_function.cpp_element()
+        adapted_function: CppFunctionDecl = inout_adapted_function.cpp_adapted_function
+        if len(original_function.parameter_list.parameters) > 0:
+            assert original_function.parameter_list.parameters[0].parent is not None
+        if len(adapted_function.parameter_list.parameters) > 0:
+            assert adapted_function.parameter_list.parameters[0].parent is not None
+
+    assert_parents_are_present()
 
     all_adapters_functions = [
         adapt_exclude_params,
@@ -71,6 +83,7 @@ def _apply_all_adapters_on_constructor(inout_adapted_function: AdaptedFunction) 
     cpp_wrapper_function = srcmlcpp_main.code_first_function_decl(
         inout_adapted_function.options.srcmlcpp_options, ctor_wrapper_signature_code
     )
+    cpp_wrapper_function.parent = inout_adapted_function.cpp_element().parent
     ctor_adapted_wrapper_function = AdaptedFunction(
         inout_adapted_function.lg_context,
         cpp_wrapper_function,
