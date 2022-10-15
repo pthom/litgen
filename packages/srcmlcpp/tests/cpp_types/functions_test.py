@@ -74,7 +74,9 @@ def test_with_qualified_types():
         namespace Ns {
             struct S {};
             void f1(S s);
-            void f2(int);
+            int f2(int);
+            void f3(S s = S());
+            void f4(int v = f2(4));
         }
     """
     options = srcmlcpp.SrcmlcppOptions()
@@ -82,13 +84,25 @@ def test_with_qualified_types():
     functions = cpp_unit.all_functions_recursive()
     f1 = functions[0]
     f2 = functions[1]
+    f3 = functions[2]
+    f4 = functions[3]
 
     f1_qualified = f1.with_qualified_types()
-    code_utils.assert_are_codes_equal(f1_qualified.str_code(), "void f1(Ns::S s);")
     code_utils.assert_are_codes_equal(f1.str_code(), "void f1(S s);")
+    code_utils.assert_are_codes_equal(f1_qualified.str_code(), "void f1(Ns::S s);")
     assert f1_qualified is not f1
 
     f2_qualified = f2.with_qualified_types()
-    code_utils.assert_are_codes_equal(f2_qualified.str_code(), "void f2(int );")
-    code_utils.assert_are_codes_equal(f2.str_code(), "void f2(int );")
+    code_utils.assert_are_codes_equal(f2.str_code(), "int f2(int );")
+    code_utils.assert_are_codes_equal(f2_qualified.str_code(), "int f2(int );")
     assert f2_qualified is f2
+
+    f3_qualified = f3.with_qualified_types()
+    code_utils.assert_are_codes_equal(f3.str_code(), "void f3(S s = S());")
+    code_utils.assert_are_codes_equal(f3_qualified.str_code(), "void f3(Ns::S s = Ns::S());")
+    assert f3_qualified is not f3
+
+    f4_qualified = f4.with_qualified_types()
+    code_utils.assert_are_codes_equal(f4.str_code(), "void f4(int v = f2(4));")
+    code_utils.assert_are_codes_equal(f4_qualified.str_code(), "void f4(int v = Ns::f2(4));")
+    assert f4_qualified is not f4

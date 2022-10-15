@@ -4,6 +4,7 @@ from dataclasses import dataclass
 from typing import Optional
 
 from srcmlcpp.cpp_types.base import *
+from srcmlcpp.cpp_types.cpp_scope import CppScope
 from srcmlcpp.cpp_types.decls_types.cpp_type import CppType
 from srcmlcpp.cpp_types.template.cpp_template_specialization import CppTemplateSpecialization
 from srcmlcpp.srcmlcpp_options import (
@@ -192,9 +193,57 @@ class CppDecl(CppElementAndComment):
         return r
 
     def is_const(self) -> bool:
-        """
-        Returns true if this decl is const"""
+        """Returns true if this decl is const"""
         return "const" in self.cpp_type.specifiers  # or "const" in self.cpp_type.names
+
+    def with_qualified_types(self, current_scope: Optional[CppScope]) -> CppDecl:
+        if current_scope is None:
+            current_scope = self.cpp_scope()
+        was_changed = False
+        new_decl = copy.deepcopy(self)
+        new_decl.cpp_type = self.cpp_type.with_qualified_types(current_scope)
+
+        if new_decl.cpp_type is not self._cpp_type:
+            was_changed = True
+
+        def initial_value_code_with_qualified_types() -> str:
+            assert current_scope is not None
+            from srcmlcpp.cpp_types.classes import CppStruct
+
+            if len(self.initial_value_code) == 0:
+                return ""
+            if "::" in self.initial_value_code:
+                return self.initial_value_code  # too complex!
+            if "(" not in self.initial_value_code:
+                return self.initial_value_code
+
+            initial_value_type = self.initial_value_code[: self.initial_value_code.index("(")].strip()
+            structs_functions = self.root_cpp_unit().visible_structs_and_functions_from_scope(current_scope)
+            for struct_or_function in structs_functions:
+                if isinstance(struct_or_function, CppStruct):
+                    struct_or_enum_name = struct_or_function.class_name
+                else:
+                    struct_or_enum_name = struct_or_function.function_name
+                if initial_value_type == struct_or_enum_name:
+                    qualified_type_name = (
+                        struct_or_function.cpp_scope(include_self=False).str_cpp_prefix() + initial_value_type
+                    )
+                    new_initial_value_code = (
+                        qualified_type_name + self.initial_value_code[self.initial_value_code.index("(") :]
+                    )
+                    return new_initial_value_code
+
+            return self.initial_value_code
+
+        new_initial_value_code = initial_value_code_with_qualified_types()
+        if new_initial_value_code != self.initial_value_code:
+            new_decl.initial_value_code = new_initial_value_code
+            was_changed = True
+
+        if was_changed:
+            return new_decl
+        else:
+            return self
 
     def with_specialized_template(self, template_specs: CppTemplateSpecialization) -> Optional[CppDecl]:
         """Returns a new decl where "template_name" is replaced by "cpp_type"

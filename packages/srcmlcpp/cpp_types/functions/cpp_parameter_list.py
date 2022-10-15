@@ -1,7 +1,10 @@
+from __future__ import annotations
 from dataclasses import dataclass
-from typing import List
+from typing import List, Optional
+import copy
 
 from srcmlcpp.cpp_types.base import *
+from srcmlcpp.cpp_types.cpp_scope import CppScope
 from srcmlcpp.cpp_types.functions.cpp_parameter import CppParameter
 from srcmlcpp.srcml_wrapper import SrcmlWrapper
 
@@ -77,6 +80,32 @@ class CppParameterList(CppElementAndComment):
         types = [type_with_star_for_array(param) for param in self.parameters]
         r = ", ".join(types)
         return r
+
+    def with_qualified_types(self, current_scope: Optional[CppScope] = None) -> CppParameterList:
+        """Returns a possibly new FunctionDecl where the params and return types are qualified given the function scope.
+
+        For example, given the code:
+            namespace Ns {
+                struct S {};
+                void f(S s);
+            }
+        then, f.with_qualified_types = void f(Ns::S s)
+        """
+        if current_scope is None:
+            current_scope = self.cpp_scope()
+        was_changed = False
+        new_parameter_list = copy.deepcopy(self)
+        for i in range(len(self.parameters)):
+            new_param = new_parameter_list.parameters[i]
+            self_param = self.parameters[i]
+            new_param.decl = self_param.decl.with_qualified_types(current_scope)
+            if new_param.decl is not self_param.decl:
+                was_changed = True
+
+        if was_changed:
+            return new_parameter_list
+        else:
+            return self
 
     def visit_cpp_breadth_first(self, cpp_visitor_function: CppElementsVisitorFunction, depth: int = 0) -> None:
         cpp_visitor_function(self, CppElementsVisitorEvent.OnElement, depth)

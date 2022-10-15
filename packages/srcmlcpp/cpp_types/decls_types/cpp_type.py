@@ -178,7 +178,7 @@ class CppType(CppElementAndComment):
         else:
             return None
 
-    def with_qualified_types(self, current_scope: CppScope) -> CppType:
+    def with_qualified_types(self, current_scope: Optional[CppScope] = None) -> CppType:
         """Returns a possibly new fully qualified type, by searching for matching types in the full CppUnit root tree
         For example, if
                 self.typenames = ["MyStruct"]
@@ -189,6 +189,9 @@ class CppType(CppElementAndComment):
         otherwise we will return MyStruct
         """
         from srcmlcpp.cpp_types.cpp_enum import CppEnum
+
+        if current_scope is None:
+            current_scope = self.cpp_scope()
 
         raw_name = " ".join(self.typenames)
         structs_enums = self.root_cpp_unit().visible_structs_enums_from_scope(current_scope)
