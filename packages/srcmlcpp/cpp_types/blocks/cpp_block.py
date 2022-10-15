@@ -172,16 +172,17 @@ class CppBlock(CppElementAndComment):
         element.parent = self
         self.block_children.append(element)
 
-    def visible_structs_and_functions_from_scope(
+    def visible_structs_functions_enums_from_scope(
         self, current_scope: CppScope
-    ) -> List[Union[CppStruct, CppFunctionDecl]]:
+    ) -> List[Union[CppStruct, CppFunctionDecl, CppEnum]]:
         from srcmlcpp.cpp_types.classes.cpp_struct import CppStruct
         from srcmlcpp.cpp_types.functions import CppFunctionDecl
+        from srcmlcpp.cpp_types.cpp_enum import CppEnum
 
-        r: List[Union[CppStruct, CppFunctionDecl]] = []
+        r: List[Union[CppStruct, CppFunctionDecl, CppEnum]] = []
         all_elements = self.all_cpp_elements_recursive()
         for element in all_elements:
-            if isinstance(element, (CppStruct, CppFunctionDecl)):
+            if isinstance(element, (CppStruct, CppFunctionDecl, CppEnum)):
                 element_parent_scope = element.cpp_scope(include_self=False)
                 is_visible_from_current_scope = current_scope.str_cpp().startswith(element_parent_scope.str_cpp())
                 if is_visible_from_current_scope:

@@ -519,6 +519,10 @@ Problem 3: dans lg_test_runner (integration tests), tout est refusé (trouve pas
 *** Bind srcml?
 *** N: keep pointer and references layout inside CppType (int *x vs int *x vs int * x)
 ** Wish List / Easy
+** Work on qualified types
+   Fix enum in test_with_qualified_types()  (f5)
+
+
 ** Interactive demo
 
 

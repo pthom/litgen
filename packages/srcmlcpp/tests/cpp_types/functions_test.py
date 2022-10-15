@@ -73,10 +73,12 @@ def test_with_qualified_types():
     code = """
         namespace Ns {
             struct S {};
+            enum class E { a = 0 };
             void f1(S s);
             int f2(int);
             void f3(S s = S());
             void f4(int v = f2(4));
+            void f5(E e = E::a);
         }
     """
     options = srcmlcpp.SrcmlcppOptions()
@@ -86,6 +88,7 @@ def test_with_qualified_types():
     f2 = functions[1]
     f3 = functions[2]
     f4 = functions[3]
+    f5 = functions[4]
 
     f1_qualified = f1.with_qualified_types()
     code_utils.assert_are_codes_equal(f1.str_code(), "void f1(S s);")
@@ -106,3 +109,9 @@ def test_with_qualified_types():
     code_utils.assert_are_codes_equal(f4.str_code(), "void f4(int v = f2(4));")
     code_utils.assert_are_codes_equal(f4_qualified.str_code(), "void f4(int v = Ns::f2(4));")
     assert f4_qualified is not f4
+
+    f5_qualified = f5.with_qualified_types()
+    code_utils.assert_are_codes_equal(f5.str_code(), "void f5(E e = E::a);")
+    # s = f5_qualified.str_code()
+    # code_utils.assert_are_codes_equal(f5_qualified.str_code(), "void f5(Ns::E e = Ns::E::a);")
+    assert f5_qualified is not f5

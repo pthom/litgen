@@ -208,25 +208,23 @@ class CppDecl(CppElementAndComment):
 
         def initial_value_code_with_qualified_types() -> str:
             assert current_scope is not None
-            from srcmlcpp.cpp_types.classes import CppStruct
 
             if len(self.initial_value_code) == 0:
                 return ""
             if "::" in self.initial_value_code:
-                return self.initial_value_code  # too complex!
+                # Fixme: struct are not handled yet
+                # (because the changes might be too broad?)
+                return self.initial_value_code
             if "(" not in self.initial_value_code:
                 return self.initial_value_code
 
             initial_value_type = self.initial_value_code[: self.initial_value_code.index("(")].strip()
-            structs_functions = self.root_cpp_unit().visible_structs_and_functions_from_scope(current_scope)
-            for struct_or_function in structs_functions:
-                if isinstance(struct_or_function, CppStruct):
-                    struct_or_enum_name = struct_or_function.class_name
-                else:
-                    struct_or_enum_name = struct_or_function.function_name
+            structs_functions_enums = self.root_cpp_unit().visible_structs_functions_enums_from_scope(current_scope)
+            for cpp_element in structs_functions_enums:
+                struct_or_enum_name = cpp_element.name()
                 if initial_value_type == struct_or_enum_name:
                     qualified_type_name = (
-                        struct_or_function.cpp_scope(include_self=False).str_cpp_prefix() + initial_value_type
+                        cpp_element.cpp_scope(include_self=False).str_cpp_prefix() + initial_value_type
                     )
                     new_initial_value_code = (
                         qualified_type_name + self.initial_value_code[self.initial_value_code.index("(") :]
