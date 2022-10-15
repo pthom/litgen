@@ -148,6 +148,32 @@ class CppElement(SrcmlWrapper):
 
         return CppUnit.find_root_cpp_unit(self)
 
+    def fill_children_parents(self) -> None:
+        from srcmlcpp.cpp_types.blocks.cpp_unit import CppUnit
+
+        if isinstance(self, CppUnit):
+            top_parent = None
+        else:
+            top_parent = self.parent
+        parents_stack: List[Optional[CppElement]] = [top_parent]
+
+        def visitor_fill_parent(cpp_element: CppElement, event: CppElementsVisitorEvent, _depth: int) -> None:
+            nonlocal parents_stack
+            if event == CppElementsVisitorEvent.OnElement:
+                assert len(parents_stack) > 0
+
+                last_parent = parents_stack[-1]
+                if len(parents_stack) > 1:
+                    assert last_parent is not None
+
+                cpp_element.parent = last_parent
+            elif event == CppElementsVisitorEvent.OnBeforeChildren:
+                parents_stack.append(cpp_element)
+            elif event == CppElementsVisitorEvent.OnAfterChildren:
+                parents_stack.pop()
+
+        self.visit_cpp_breadth_first(visitor_fill_parent)
+
     def __str__(self) -> str:
         return self._str_simplified_yaml()
 

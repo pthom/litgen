@@ -158,26 +158,6 @@ class CppBlock(CppElementAndComment):
     def all_elements_of_type(self, wanted_type: type) -> List[CppElement]:
         return self.all_cpp_elements_recursive(wanted_type)
 
-    def fill_children_parents(self) -> None:
-        parents_stack: List[Optional[CppElement]] = [None]
-
-        def visitor_fill_parent(cpp_element: CppElement, event: CppElementsVisitorEvent, _depth: int) -> None:
-            nonlocal parents_stack
-            if event == CppElementsVisitorEvent.OnElement:
-                assert len(parents_stack) > 0
-
-                last_parent = parents_stack[-1]
-                if len(parents_stack) > 1:
-                    assert last_parent is not None
-
-                cpp_element.parent = last_parent
-            elif event == CppElementsVisitorEvent.OnBeforeChildren:
-                parents_stack.append(cpp_element)
-            elif event == CppElementsVisitorEvent.OnAfterChildren:
-                parents_stack.pop()
-
-        self.visit_cpp_breadth_first(visitor_fill_parent)
-
     def add_element(self, element: CppElementAndComment) -> None:
         element.parent = self
         self.block_children.append(element)
