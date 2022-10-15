@@ -689,6 +689,24 @@ void py_init_module_lg_mylib(py::module& m)
         ;
 
 
+    auto pyClassMyStructWithNestedEnum =
+        py::class_<MyStructWithNestedEnum>
+            (m, "MyStructWithNestedEnum", "");
+
+    { // inner classes & enums of MyStructWithNestedEnum
+        py::enum_<MyStructWithNestedEnum::Choice>(pyClassMyStructWithNestedEnum, "Choice", py::arithmetic(), "")
+            .value("a", MyStructWithNestedEnum::Choice::A, "");
+    } // end of inner classes & enums of MyStructWithNestedEnum
+
+    pyClassMyStructWithNestedEnum
+        .def(py::init<>()) // implicit default constructor
+        .def("handle_choice",
+            &MyStructWithNestedEnum::HandleChoice,
+            py::arg("value") = MyStructWithNestedEnum::Choice::A,
+            " The first param of this function uses the inner scope of this class!\n When building the bindings, we need to add MyStructWithNestedEnum::")
+        ;
+
+
     m.def("make_dog",
         make_dog, "Test that downcasting works: the return type is Animal, but it should bark!");
 
@@ -765,15 +783,6 @@ void py_init_module_lg_mylib(py::module& m)
             (m, "Copyable_DeletedCopyCtor", "")
         .def_readwrite("a", &Copyable_DeletedCopyCtor::a, "")
         .def(py::init<>())
-        ;
-
-
-    auto pyClassTextEditor =
-        py::class_<TextEditor>
-            (m, "TextEditor", "")
-        .def(py::init<>()) // implicit default constructor
-        .def("get_text",
-            [](TextEditor & self) { return self.GetText(); })
         ;
 
 
@@ -1179,11 +1188,8 @@ void py_init_module_lg_mylib(py::module& m)
         py::module_ pyNsSomeNamespace = m.def_submodule("SomeNamespace", "namespace SomeNamespace");
         auto pyNsSomeNamespace_ClassParentStruct =
             py::class_<SomeNamespace::ParentStruct>
-                (pyNsSomeNamespace, "ParentStruct", "")
-            .def(py::init<>()) // implicit default constructor
-            .def_readwrite("inner_struct", &SomeNamespace::ParentStruct::inner_struct, "")
-            .def_readwrite("inner_enum", &SomeNamespace::ParentStruct::inner_enum, "")
-            ;
+                (pyNsSomeNamespace, "ParentStruct", "");
+
         { // inner classes & enums of ParentStruct
             auto pyNsSomeNamespace_ClassParentStruct_ClassInnerStruct =
                 py::class_<SomeNamespace::ParentStruct::InnerStruct>
@@ -1200,6 +1206,12 @@ void py_init_module_lg_mylib(py::module& m)
                 .value("two", SomeNamespace::ParentStruct::InnerEnum::Two, "")
                 .value("three", SomeNamespace::ParentStruct::InnerEnum::Three, "");
         } // end of inner classes & enums of ParentStruct
+
+        pyNsSomeNamespace_ClassParentStruct
+            .def(py::init<>()) // implicit default constructor
+            .def_readwrite("inner_struct", &SomeNamespace::ParentStruct::inner_struct, "")
+            .def_readwrite("inner_enum", &SomeNamespace::ParentStruct::inner_enum, "")
+            ;
         auto pyNsSomeNamespace_ClassBlah =
             py::class_<SomeNamespace::Blah>
                 (pyNsSomeNamespace, "Blah", "struct Blah")

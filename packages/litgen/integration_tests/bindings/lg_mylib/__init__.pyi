@@ -465,6 +465,16 @@ class MyStructDynamic:
     """
     cpp_member: int = 1
 
+
+class MyStructWithNestedEnum:
+    class Choice(enum.Enum):
+        a = enum.auto() # (= 0)
+    def handle_choice(self, value: Choice = Choice.a) -> int:
+        """ The first param of this function uses the inner scope of this class!
+         When building the bindings, we need to add MyStructWithNestedEnum::
+        """
+        pass
+
 #////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 #                       mylib/class_inheritance_test.h included by mylib/mylib_main/mylib.h                    //
 #//////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -546,17 +556,6 @@ class Copyable_DeletedCopyCtor:
 #    # Note: if you want to override protected functions, also fill `class_expose_protected_methods__regex`
 #    class_override_virtual_methods_in_python__regex: str = ""
 #
-
-
-#////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-#                       mylib/class_nested_test.h included by mylib/mylib_main/mylib.h                         //
-#//////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-
-class TextEditor:
-    def get_text(self) -> str:
-        pass
-
 
 
 #////////////////////////////////////////////////////////////////////////////////////////////////////////////////

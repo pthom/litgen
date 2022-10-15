@@ -98,3 +98,9 @@ def test_dynamic_class():
     non_dyn_instance = lg_mylib.MyClass()
     with pytest.raises(AttributeError):
         non_dyn_instance.new_attrib = "Aye"
+
+
+def test_nested_enum():
+    c = lg_mylib.MyStructWithNestedEnum()
+    assert c.handle_choice() == 0
+    assert c.handle_choice(lg_mylib.MyStructWithNestedEnum.Choice.a) == 0

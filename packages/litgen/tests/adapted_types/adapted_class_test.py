@@ -391,3 +391,71 @@ def test_deepcopy_with_specialization():
         # </submodule Ns>
     """,
     )
+
+
+def test_inner_class() -> None:
+    """
+    When we have an inner enum, class or struct:
+        1. We must place the pydef code of the inner struct *before* the pydef of the parent struct's children.
+           Otherwise, the python module will fail to import: in the example below,
+           "Choice" must be pydefined before the method "HandleChoice"
+        2. Params that use the inner scope of the struct such as `Choice value = Choice::A`, which is in fact
+           `Foo::Choice value = Foo::Choice::A` must be adjusted by adding the struct scope if necessary.
+    """
+    code = """
+        struct Foo
+        {
+        public:
+            enum class Choice {
+                A = 0,
+            };
+            MY_API int HandleChoice(Choice value = Choice::A) { return 0; }
+        };
+    """
+    options = litgen.LitgenOptions()
+    generated_code = litgen.generate_code(options, code)
+    # print(generated_code.pydef_code)
+    code_utils.assert_are_codes_equal(
+        generated_code.pydef_code,
+        """
+        auto pyClassFoo =
+            py::class_<Foo>
+                (m, "Foo", "");
+
+        { // inner classes & enums of Foo
+            py::enum_<Foo::Choice>(pyClassFoo, "Choice", py::arithmetic(), "")
+                .value("a", Foo::Choice::A, "");
+        } // end of inner classes & enums of Foo
+
+        pyClassFoo
+            .def(py::init<>()) // implicit default constructor
+            .def("handle_choice",
+                &Foo::HandleChoice, py::arg("value") = Foo::Choice::A)
+            ;
+    """,
+    )
+
+
+def test_no_inner_class() -> None:
+    code = """
+        struct Foo
+        {
+        public:
+            MY_API int HandleChoice(int value = 1) { return 0; }
+        };
+    """
+    options = litgen.LitgenOptions()
+    generated_code = litgen.generate_code(options, code)
+    # print(generated_code.pydef_code)
+    code_utils.assert_are_codes_equal(
+        generated_code.pydef_code,
+        """
+        auto pyClassFoo =
+            py::class_<Foo>
+                (m, "Foo", "")
+            .def(py::init<>()) // implicit default constructor
+            .def("handle_choice",
+                &Foo::HandleChoice, py::arg("value") = 1)
+            ;
+    """,
+    )

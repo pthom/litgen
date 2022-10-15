@@ -112,7 +112,7 @@ IMGUI_API int           ImTextStrToUtf8(char* out_buf, int out_buf_size, const I
 
 def play() -> None:
     code = """
-struct TextEditor
+struct Foo
 {
 public:
     enum class Choice { A = 0, };
@@ -120,10 +120,11 @@ public:
 };
     """
     options = litgen.LitgenOptions()
+    options.fn_template_options.add_specialization(".*", ["int"])
     # options.class_deep_copy__regex = r".*"
     generated_code = litgen.generate_code(options, code)
     print(generated_code.pydef_code)
-    print(generated_code.stub_code)
+    # print(generated_code.stub_code)
 
 
 if __name__ == "__main__":

@@ -115,3 +115,12 @@ struct MyStructDynamic
 {
     int cpp_member = 1;
 };
+
+
+struct MyStructWithNestedEnum
+{
+    enum class Choice { A = 0 };
+    // The first param of this function uses the inner scope of this class!
+    // When building the bindings, we need to add MyStructWithNestedEnum::
+    MY_API int HandleChoice(Choice value = Choice::A) { return 0; }
+};

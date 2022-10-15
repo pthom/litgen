@@ -506,6 +506,15 @@ struct MyStructDynamic
     int cpp_member = 1;
 };
 
+
+struct MyStructWithNestedEnum
+{
+    enum class Choice { A = 0 };
+    // The first param of this function uses the inner scope of this class!
+    // When building the bindings, we need to add MyStructWithNestedEnum::
+    MY_API int HandleChoice(Choice value = Choice::A) { return 0; }
+};
+
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //                       mylib/class_inheritance_test.h included by mylib/mylib_main/mylib.h                    //
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -685,21 +694,6 @@ namespace Root
         };
     }
 }
-
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//                       mylib/class_nested_test.h included by mylib/mylib_main/mylib.h                         //
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-
-class TextEditor
-{
-public:
-    MY_API std::string GetText() const { return "abc"; }
-
-private:
-    std::string GetText(int a) const { return std::to_string(a); }
-};
-
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //                       mylib/return_value_policy_test.h included by mylib/mylib_main/mylib.h                  //

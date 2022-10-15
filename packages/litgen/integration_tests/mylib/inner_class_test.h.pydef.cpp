@@ -28,11 +28,8 @@ void py_init_module_mylib(py::module& m)
         py::module_ pyNsSomeNamespace = m.def_submodule("SomeNamespace", "namespace SomeNamespace");
         auto pyNsSomeNamespace_ClassParentStruct =
             py::class_<SomeNamespace::ParentStruct>
-                (pyNsSomeNamespace, "ParentStruct", "")
-            .def(py::init<>()) // implicit default constructor
-            .def_readwrite("inner_struct", &SomeNamespace::ParentStruct::inner_struct, "")
-            .def_readwrite("inner_enum", &SomeNamespace::ParentStruct::inner_enum, "")
-            ;
+                (pyNsSomeNamespace, "ParentStruct", "");
+
         { // inner classes & enums of ParentStruct
             auto pyNsSomeNamespace_ClassParentStruct_ClassInnerStruct =
                 py::class_<SomeNamespace::ParentStruct::InnerStruct>
@@ -49,6 +46,12 @@ void py_init_module_mylib(py::module& m)
                 .value("two", SomeNamespace::ParentStruct::InnerEnum::Two, "")
                 .value("three", SomeNamespace::ParentStruct::InnerEnum::Three, "");
         } // end of inner classes & enums of ParentStruct
+
+        pyNsSomeNamespace_ClassParentStruct
+            .def(py::init<>()) // implicit default constructor
+            .def_readwrite("inner_struct", &SomeNamespace::ParentStruct::inner_struct, "")
+            .def_readwrite("inner_enum", &SomeNamespace::ParentStruct::inner_enum, "")
+            ;
     } // </namespace SomeNamespace>
     ////////////////////    </generated_from:inner_class_test.h>    ////////////////////
 
