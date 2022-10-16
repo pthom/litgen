@@ -94,19 +94,19 @@ class AdaptedEnumDecl(AdaptedDecl):
         if is_enum_class:
             replace_what = rf"\b{enum_name_cpp}.{enum_member_name_cpp}\b|{enum_name_cpp}.{enum_member_name_cpp}\b"
             replacement = RegexReplacement(replace_what, by_what)
-            replacement_list.add_replacement(replacement)
+            replacement_list.add_first_regex_replacement(replacement)
         else:
             if enum_member_name_cpp.lower().startswith(enum_name_cpp.lower()):
                 replace_what = rf"\b{enum_member_name_cpp}\b"
                 replacement = RegexReplacement(replace_what, by_what)
-                replacement_list.add_replacement(replacement)
+                replacement_list.add_first_regex_replacement(replacement)
             else:
                 # No replacement, this could lead to many unwanted replacements!
                 # Only accept this if we are inside the enum generation
                 if from_inside_block:
                     replace_what_inside = rf"\b{enum_member_name_cpp}\b"
                     replacement_inside_block = RegexReplacement(replace_what_inside, by_what)
-                    replacement_list.add_replacement(replacement_inside_block)
+                    replacement_list.add_first_regex_replacement(replacement_inside_block)
 
         return replacement_list
 

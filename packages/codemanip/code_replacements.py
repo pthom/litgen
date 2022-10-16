@@ -58,8 +58,19 @@ class RegexReplacementList:
             r = replacement.apply(r)
         return r
 
-    def add_replacement(self, replacement: RegexReplacement) -> None:
+    def add_last_regex_replacement(self, replacement: RegexReplacement) -> None:
         self.replacements.append(replacement)
+
+    def add_last_replacement(self, replace_what_regex: str, by_what: str) -> None:
+        r = RegexReplacement(replace_what_regex, by_what)
+        self.add_last_regex_replacement(r)
+
+    def add_first_regex_replacement(self, replacement: RegexReplacement) -> None:
+        self.replacements = [replacement] + self.replacements
+
+    def add_first_replacement(self, replace_what_regex: str, by_what: str) -> None:
+        r = RegexReplacement(replace_what_regex, by_what)
+        self.add_first_regex_replacement(r)
 
     def merge_replacements(self, other: RegexReplacementList) -> None:
         self.replacements += other.replacements
