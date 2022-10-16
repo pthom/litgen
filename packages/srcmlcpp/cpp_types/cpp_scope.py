@@ -1,3 +1,4 @@
+from __future__ import annotations
 from dataclasses import dataclass
 from enum import Enum
 from typing import List, Optional
@@ -7,6 +8,7 @@ class CppScopeType(Enum):
     Namespace = "Namespace"
     ClassOrStruct = "ClassOrStruct"
     Enum = "Enum"
+    _Unknown = "_Unknown"
 
 
 @dataclass
@@ -24,6 +26,50 @@ class CppScope:
         else:
             self.scope_parts = scopes
 
+    @staticmethod
+    def from_string(s: str) -> CppScope:
+        scope_strs = s.split("::")
+        scope_parts = [CppScopePart(CppScopeType._Unknown, scope_str) for scope_str in scope_strs]
+        r = CppScope(scope_parts)
+        return r
+
+    def __eq__(self, other: object) -> bool:
+        if not isinstance(other, CppScope):
+            return NotImplemented
+        return self.str_cpp() == other.str_cpp()
+
+    def parent_scope(self) -> Optional[CppScope]:
+        if len(self.scope_parts) == 0:
+            return None
+        new_scope_parts = self.scope_parts[:-1]
+        return CppScope(new_scope_parts)
+
+    def scope_hierarchy_list(self) -> List[CppScope]:
+        """Given "A::B::C", return ["A::B::C", "A::B", "A", ""]"""
+        r = [self]
+        parent_scope = self.parent_scope()
+        if parent_scope is not None:
+            r += parent_scope.scope_hierarchy_list()
+        return r
+
+    def can_access_scope(self, other_scope: CppScope) -> bool:
+        parent: Optional[CppScope] = self
+        while parent is not None:
+            if parent == other_scope:
+                return True
+            parent = parent.parent_scope()
+        return False
+
+    # def qualify_child_scope(self, child_scope: CppScope) -> Optional[CppScope]:
+    #     """if self = N1::N2::N3, then
+    #             - if child_scope = N1::N2::N3 or N2::N3 or N3 then return N1::N2::N3
+    #             - if child_scope = N1::N2 or N2, then return N1::N2
+    #             - if child_scope = N1 then return N1
+    #         else return None
+    #     """
+    #     if not self.can_access_scope(child_scope):
+    #         return None
+
     def str_cpp(self) -> str:
         """Returns this scope as a cpp scope, e.g Foo::Blah"""
         if len(self.scope_parts) == 0:
@@ -40,5 +86,11 @@ class CppScope:
         else:
             return s + "::"
 
+    def qualified_name(self, name: str) -> str:
+        return self.str_cpp_prefix() + name
+
     def __str__(self):
+        return self.str_cpp()
+
+    def __repr__(self):
         return self.str_cpp()
