@@ -190,7 +190,7 @@ class CppStruct(CppElementAndComment, CppITemplateHost):
                     r.append(access_zone)
         return r
 
-    def get_members(self) -> List[Tuple[CppAccessType, CppDecl]]:
+    def get_members_with_access_type(self) -> List[Tuple[CppAccessType, CppDecl]]:
         r: List[Tuple[CppAccessType, CppDecl]] = []
         for access_zone in self.block.block_children:
             if isinstance(access_zone, CppPublicProtectedPrivate):
@@ -199,6 +199,17 @@ class CppStruct(CppElementAndComment, CppITemplateHost):
                     if isinstance(child, CppDeclStatement):
                         for cpp_decl in child.cpp_decls:
                             r.append((access_type, cpp_decl))
+        return r
+
+    def get_members(self, access_type: Optional[CppAccessType] = None) -> List[CppDecl]:
+        r: List[CppDecl] = []
+        for access_zone in self.block.block_children:
+            if isinstance(access_zone, CppPublicProtectedPrivate):
+                if access_type is None or access_type == access_zone.access_type:
+                    for child in access_zone.block_children:
+                        if isinstance(child, CppDeclStatement):
+                            for cpp_decl in child.cpp_decls:
+                                r.append(cpp_decl)
         return r
 
     def get_elements(

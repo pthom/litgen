@@ -185,7 +185,7 @@ def test_struct_mix():
     # Test on parent
     assert not parent.has_base_classes()
     assert len(parent.base_classes()) == 0
-    assert len(parent.get_members()) == 0
+    assert len(parent.get_members_with_access_type()) == 0
     assert len(parent.get_methods()) == 0
     assert parent.class_name == "Parent"
     assert parent.qualified_class_name() == "Ns::Parent"
@@ -201,7 +201,7 @@ def test_struct_mix():
     access_type, child_base_class = child_base_classes[0]
     assert access_type == srcmlcpp.CppAccessType.public
     assert child_base_class is parent
-    assert len(child.get_members()) == 0
+    assert len(child.get_members_with_access_type()) == 0
     assert len(child.get_methods()) == 2
     assert child.class_name == "Child"
     assert child.qualified_class_name() == "Ns::Child"
@@ -217,7 +217,7 @@ def test_struct_mix():
     access_type, frankenstein_base_class = frankenstein_base_classes[0]
     assert access_type == srcmlcpp.CppAccessType.protected
     assert frankenstein_base_class is child
-    assert len(frankenstein.get_members()) == 0
+    assert len(frankenstein.get_members_with_access_type()) == 0
     assert len(frankenstein.get_methods()) == 1
     assert frankenstein.class_name == "Frankenstein"
     assert frankenstein.qualified_class_name() == "Ns::Frankenstein"
