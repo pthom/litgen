@@ -198,7 +198,7 @@ def parse_decl(
             # this is for C bit fields
             result.bitfield_range = child.str_code_verbatim()
         else:
-            raise SrcmlcppExceptionDetailed(child, f"unhandled tag {child_tag}")
+            raise SrcmlcppExceptionDetailed(child, f"parse_decl: unhandled tag {child_tag}")
 
     return result
 
@@ -281,8 +281,10 @@ def parse_parameter_list(
         child_tag = child.tag()
         if child_tag == "parameter":
             result.parameters.append(parse_parameter(options, child, result))
+        elif child_tag == "comment":
+            pass
         else:
-            raise SrcmlcppExceptionDetailed(child, "unhandled tag")
+            element.emit_warning(f"parse_parameter_list unhandled tag {child_tag}")
     return result
 
 
