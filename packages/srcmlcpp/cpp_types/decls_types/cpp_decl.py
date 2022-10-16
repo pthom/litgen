@@ -214,7 +214,7 @@ class CppDecl(CppElementAndComment):
         """Returns true if this decl is const"""
         return "const" in self.cpp_type.specifiers  # or "const" in self.cpp_type.names
 
-    def initial_value_code_with_qualified_types(self, current_scope: Optional[CppScope] = None) -> str:
+    def _initial_value_code_with_qualified_types(self, current_scope: Optional[CppScope] = None) -> str:
         """Qualifies the initial values of a decl, e.g.
                 N2::Foo foo = N2::Foo()
             might become
@@ -295,9 +295,7 @@ class CppDecl(CppElementAndComment):
         elif search_type == SearchType.callable_init_list:
             known_candidates = self.root_cpp_unit().known_callables_init_list()
 
-        # All root candidate elements for the decl: in the example, this would be [S2, E2, f2, E3, f3, g]
-        # all_parsed_elements = self.root_cpp_unit().visible_elements_from_scope(current_scope)
-        # # All the scopes into which we can see
+        # All the scopes into which we can see
         visibility_scopes = current_scope.scope_hierarchy_list()
         for known_candidate in known_candidates:
             for visibility_scope in visibility_scopes:
@@ -330,7 +328,7 @@ class CppDecl(CppElementAndComment):
         if new_decl.cpp_type is not self._cpp_type:
             was_changed = True
 
-        new_initial_value_code = self.initial_value_code_with_qualified_types(current_scope)
+        new_initial_value_code = self._initial_value_code_with_qualified_types(current_scope)
         if new_initial_value_code != self.initial_value_code:
             new_decl.initial_value_code = new_initial_value_code
             was_changed = True

@@ -188,23 +188,22 @@ class CppType(CppElementAndComment):
         then, we will return Ns::MyStruct
         otherwise we will return MyStruct
         """
-        from srcmlcpp.cpp_types.cpp_enum import CppEnum
-
         if current_scope is None:
             current_scope = self.cpp_scope()
 
-        raw_name = " ".join(self.typenames)
-        structs_enums = self.root_cpp_unit().kk_visible_structs_enums_from_scope(current_scope)
-        for struct_or_enum in structs_enums:
-            if isinstance(struct_or_enum, CppEnum):
-                struct_or_enum_name = struct_or_enum.enum_name
-            else:
-                struct_or_enum_name = struct_or_enum.class_name
-            if raw_name == struct_or_enum_name:
-                qualified_name = struct_or_enum.cpp_scope(include_self=False).str_cpp_prefix() + raw_name
-                new_cpp_type = copy.deepcopy(self)
-                new_cpp_type.typenames = [qualified_name]
-                return new_cpp_type
+        typename = " ".join(self.typenames)
+        known_types = self.root_cpp_unit().known_types()
+
+        # All the scopes into which we can see
+        visibility_scopes = current_scope.scope_hierarchy_list()
+        for known_type in known_types:
+            for visibility_scope in visibility_scopes:
+                known_type_qualified_name = known_type.cpp_scope(include_self=True)
+                typename_tentative_qualified = visibility_scope.qualified_name(typename)
+                if known_type_qualified_name.str_cpp() == typename_tentative_qualified:
+                    new_type = copy.deepcopy(self)
+                    new_type.typenames = [typename_tentative_qualified]
+                    return new_type
 
         return self
 
