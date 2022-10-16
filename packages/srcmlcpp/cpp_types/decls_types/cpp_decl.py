@@ -1,6 +1,7 @@
 from __future__ import annotations
 import copy
 from dataclasses import dataclass
+from enum import Enum
 from typing import Optional
 
 from srcmlcpp.cpp_types.base import *
@@ -15,6 +16,15 @@ from srcmlcpp.srcml_wrapper import SrcmlWrapper
 
 
 __all__ = ["CppDecl"]
+
+
+class CppDeclContext(Enum):
+    """Contexts where a CppDecl can occur"""
+
+    VarDecl = "VarDecl"  # i.e. inside a decl statement that declares a variable
+    EnumDecl = "EnumDecl"  # i.e. a member of an enum
+    ParamDecl = "ParamDecl"  # i.e. a parameter of a function
+    Unknown = "Unknown"
 
 
 @dataclass
@@ -59,6 +69,9 @@ class CppDecl(CppElementAndComment):
 
     def __init__(self, element: SrcmlWrapper, cpp_element_comments: CppElementComments) -> None:
         super().__init__(element, cpp_element_comments)
+
+    def name(self):
+        return self.decl_name
 
     @property
     def cpp_type(self) -> CppType:
@@ -261,3 +274,36 @@ class CppDecl(CppElementAndComment):
         if hasattr(self, "cpp_type"):
             self.cpp_type.visit_cpp_breadth_first(cpp_visitor_function, depth + 1)
         cpp_visitor_function(self, CppElementsVisitorEvent.OnAfterChildren, depth)
+
+    def decl_context(self) -> CppDeclContext:
+        from srcmlcpp.cpp_types.decls_types import CppDeclStatement
+        from srcmlcpp.cpp_types.blocks import CppBlock
+        from srcmlcpp.cpp_types.cpp_enum import CppEnum
+        from srcmlcpp.cpp_types.functions import CppParameter, CppParameterList, CppFunctionDecl
+
+        if isinstance(self.parent, CppDeclStatement):
+            """
+            >> srcmlcpp xml --beautify=False "int a"
+                => <decl><type><name>int</name></type> <name>a</name></decl>
+            """
+            return CppDeclContext.VarDecl
+        elif isinstance(self.parent, CppBlock):
+            """
+            >> srcmlcpp xml --beautify=False "enum A{a};"
+                => <enum>enum <name>A</name><block>{<decl><name>a</name></decl>}</block>;</enum>
+            """
+            if isinstance(self.parent.parent, CppEnum):
+                return CppDeclContext.EnumDecl
+        elif isinstance(self.parent, CppParameter):
+            """
+            >> srcmlcpp xml --beautify=False "void f(int a);"
+            <function_decl><type><name>void</name></type> <name>f</name>
+                <parameter_list>(
+                    <parameter><decl><type><name>int</name></type> <name>a</name></decl></parameter>)
+                </parameter_list>;
+            </function_decl>
+            """
+            if isinstance(self.parent.parent, CppParameterList):
+                if isinstance(self.parent.parent.parent, CppFunctionDecl):
+                    return CppDeclContext.ParamDecl
+        return CppDeclContext.Unknown
