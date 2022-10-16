@@ -471,7 +471,7 @@ class MyStructWithNestedEnum:
         a = enum.auto() # (= 0)
     def handle_choice(
         self,
-        value: MyStructWithNestedEnum.Choice = Choice.a
+        value: MyStructWithNestedEnum.Choice = MyStructWithNestedEnum.Choice.a
         ) -> int:
         """ The first param of this function uses the inner scope of this class!
          When building the bindings, we need to add MyStructWithNestedEnum::
@@ -746,6 +746,12 @@ class CallGuardLogger:
 
     nb_construct: int # (C++ static member)
     nb_destroy: int   # (C++ static member)
+
+
+#////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+#                       mylib/qualified_scoping_test.h included by mylib/mylib_main/mylib.h                    //
+#//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 
 
 #////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1111,6 +1117,25 @@ class Inner:  # Proxy class that introduces typings for the *submodule* Inner
         pass
 
 # </submodule Inner>
+
+# <submodule N>
+class N:  # Proxy class that introduces typings for the *submodule* N
+    pass  # (This corresponds to a C++ namespace. All method are static!)
+    class S:
+        pass
+    class EC(enum.Enum):
+        a = enum.auto() # (= 0)
+    class E(enum.Enum):
+        a = enum.auto() # (= 0)
+
+    def foo(e: N.EC = N.EC.a) -> None:
+        pass
+    def foo(e: N.E = N.E.a) -> None:
+        pass
+    def foo(e: N.E = N.E.a, s: N.S = N.S()) -> None:
+        pass
+
+# </submodule N>
 ####################    </generated_from:mylib_amalgamation.h>    ####################
 
 # </litgen_stub>

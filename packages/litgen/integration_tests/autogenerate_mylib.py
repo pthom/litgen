@@ -181,7 +181,7 @@ def pydef_template_code(header_filename: str) -> str:
 #include <pybind11/stl.h>
 #include <pybind11/functional.h>
 #include <pybind11/numpy.h>
-#include "mylib/mylib_main/mylib.h"
+#include "mylib_main/mylib.h"
 
 namespace py = pybind11;
 

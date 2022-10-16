@@ -170,7 +170,7 @@ def test_decl_qualified_type_full():
                         int _f = f(),             // => int _f = f()
                         N2::S2 s2 = N2::S2(),     // => N1::N2::S2 s2 = N1::N2::S2()
                         N2::E2 e2 = N2::E2::a,    // => N1::N2::E2 e2 = N1::N2::E2::a       (enum class)
-                        E3 e3 = E3::a,            // => N1::N3::E3 a = N1::N3::a            (enum non class)
+                        E3 e3 = N3::a,            // => N1::N3::E3 a = N1::N3::a            (enum non class)
                         int _f3 = N1::N3::f3(),   // => int _f3 = N1::N3::f3()
                         int other = N1::N4::f4(), // => int other = N1::N4::f4()            (untouched!)
                         int _s2 = N2::S2::s2      // => int _s2 = N1::N2::S2::s2
@@ -203,9 +203,9 @@ def test_decl_qualified_type_full():
     t2 = params[2].decl.cpp_type.with_qualified_types().str_code()
     assert t2 == "N1::N2::E2"
 
-    # E3 e3 = E3::a,           // => N1::N3::E3 a = N1::N3::a      (enum non class!)
+    # E3 e3 = N3::a,            // => N1::N3::E3 a = N1::N3::a            (enum non class)
     i3 = params[3].decl._initial_value_code_with_qualified_types()
-    assert i3 == "N1::N3::E3::a"
+    assert i3 == "N1::N3::a"
     t3 = params[3].decl.cpp_type.with_qualified_types().str_code()
     assert t3 == "N1::N3::E3"
 

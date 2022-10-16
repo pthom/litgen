@@ -116,7 +116,7 @@ class MyStructWithNestedEnum:
         a = enum.auto() # (= 0)
     def handle_choice(
         self,
-        value: MyStructWithNestedEnum.Choice = Choice.a
+        value: MyStructWithNestedEnum.Choice = MyStructWithNestedEnum.Choice.a
         ) -> int:
         """ The first param of this function uses the inner scope of this class!
          When building the bindings, we need to add MyStructWithNestedEnum::
