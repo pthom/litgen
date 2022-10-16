@@ -345,7 +345,7 @@ class CppFunctionDecl(CppElementAndComment, CppITemplateHost):
         return self.is_method() and self.is_static()
 
     def __str__(self) -> str:
-        return self.str_commented()
+        return self.str_code()
 
     def visit_cpp_breadth_first(self, cpp_visitor_function: CppElementsVisitorFunction, depth: int = 0) -> None:
         cpp_visitor_function(self, CppElementsVisitorEvent.OnElement, depth)

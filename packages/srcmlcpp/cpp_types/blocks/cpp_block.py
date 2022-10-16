@@ -13,6 +13,8 @@ if TYPE_CHECKING:
     from srcmlcpp.cpp_types.cpp_enum import CppEnum
     from srcmlcpp.cpp_types.decls_types import CppDecl
 
+    KnownElementTypes = Union[CppStruct, CppFunctionDecl, CppDecl, CppEnum]
+    KnownElementTypesList = List[KnownElementTypes]
 
 __all__ = ["CppBlock"]
 
@@ -173,7 +175,7 @@ class CppBlock(CppElementAndComment):
         element.parent = self
         self.block_children.append(element)
 
-    def known_callables(self) -> List[Union[CppStruct, CppFunctionDecl]]:
+    def known_callables(self) -> KnownElementTypesList:
         """The subpart of the known elements that can be called via ()
         Simple:
             - Structs and classes, when calling their constructor via (...)
@@ -185,25 +187,25 @@ class CppBlock(CppElementAndComment):
         from srcmlcpp.cpp_types.classes.cpp_struct import CppStruct
         from srcmlcpp.cpp_types.functions import CppFunctionDecl
 
-        r: List[Union[CppStruct, CppFunctionDecl]] = []
+        r: KnownElementTypesList = []
         all_elements = self.all_cpp_elements_recursive()
         for element in all_elements:
             if isinstance(element, (CppStruct, CppFunctionDecl)):
                 r.append(element)
         return r
 
-    def known_callables_init_list(self) -> List[CppStruct]:
+    def known_callables_init_list(self) -> KnownElementTypesList:
         """The subpart of the known elements that can be called via {}, i.e. structs and classes"""
         from srcmlcpp.cpp_types.classes.cpp_struct import CppStruct
 
-        r: List[CppStruct] = []
+        r: KnownElementTypesList = []
         all_elements = self.all_cpp_elements_recursive()
         for element in all_elements:
             if isinstance(element, (CppStruct)):
                 r.append(element)
         return r
 
-    def known_values(self) -> List[CppDecl]:
+    def known_values(self) -> KnownElementTypesList:
         """The subpart of the elements that declare variable,
         Declarations (CppDecl), only in certain cases:
             - When they are member of an Enum, Struct, Namespace
@@ -212,7 +214,7 @@ class CppBlock(CppElementAndComment):
         """
         from srcmlcpp.cpp_types.decls_types.cpp_decl import CppDecl, CppDeclContext
 
-        r: List[CppDecl] = []
+        r: KnownElementTypesList = []
         all_elements = self.all_cpp_elements_recursive()
         for element in all_elements:
             if isinstance(element, CppDecl):
@@ -226,21 +228,21 @@ class CppBlock(CppElementAndComment):
                     r.append(element)
         return r
 
-    def known_types(self) -> List[Union[CppStruct, CppEnum]]:
+    def known_types(self) -> KnownElementTypesList:
         """The subpart of the elements that could be as a type.
         We do *not* support synonyms defined via `typedef` or `using` !
         """
         from srcmlcpp.cpp_types.classes.cpp_struct import CppStruct
         from srcmlcpp.cpp_types.cpp_enum import CppEnum
 
-        r: List[Union[CppStruct, CppEnum]] = []
+        r: KnownElementTypesList = []
         all_elements = self.all_cpp_elements_recursive()
         for element in all_elements:
             if isinstance(element, (CppStruct, CppEnum)):
                 r.append(element)
         return r
 
-    def visible_structs_enums_from_scope(self, current_scope: CppScope) -> List[Union[CppStruct, CppEnum]]:
+    def kk_visible_structs_enums_from_scope(self, current_scope: CppScope) -> List[Union[CppStruct, CppEnum]]:
         from srcmlcpp.cpp_types.classes.cpp_struct import CppStruct
         from srcmlcpp.cpp_types.cpp_enum import CppEnum
 

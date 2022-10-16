@@ -474,7 +474,7 @@ struct NodeId final: Details::SafePointerType<NodeId>
 ** auto-resize and other goodies from immvision
 * srcml_cpp
 ** srcmlcpp easy
-
+when parsing: stop throwing, only emit warnings and store as unprocessed
 
 
 ** srcmlcpp utilities

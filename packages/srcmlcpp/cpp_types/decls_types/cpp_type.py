@@ -194,7 +194,7 @@ class CppType(CppElementAndComment):
             current_scope = self.cpp_scope()
 
         raw_name = " ".join(self.typenames)
-        structs_enums = self.root_cpp_unit().visible_structs_enums_from_scope(current_scope)
+        structs_enums = self.root_cpp_unit().kk_visible_structs_enums_from_scope(current_scope)
         for struct_or_enum in structs_enums:
             if isinstance(struct_or_enum, CppEnum):
                 struct_or_enum_name = struct_or_enum.enum_name
