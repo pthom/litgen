@@ -58,7 +58,7 @@ class CppStruct(CppElementAndComment, CppITemplateHost):
         self._block = value
         self.fill_children_parents()
 
-    def name(self):
+    def name(self) -> str:
         return self.class_name
 
     def str_code(self) -> str:

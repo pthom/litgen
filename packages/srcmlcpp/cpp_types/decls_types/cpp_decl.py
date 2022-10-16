@@ -70,7 +70,7 @@ class CppDecl(CppElementAndComment):
     def __init__(self, element: SrcmlWrapper, cpp_element_comments: CppElementComments) -> None:
         super().__init__(element, cpp_element_comments)
 
-    def name(self):
+    def name(self) -> str:
         return self.decl_name
 
     @property
