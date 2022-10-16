@@ -58,34 +58,53 @@ def test_block():
     assert not cpp_unit.is_function_overloaded(g)
 
 
-def test_visible_structs_enums_from_scope():
+def test_known_elements():
     code = """
-    namespace N1
-    {
-        struct Foo1 {};
-        void f1();
-
-        namespace N2
-        {
-            struct Foo2a {};
-            struct Foo2b {};
-            void f2();
-
-            namespace N3
+            int f();
+            constexpr int Global = 0;
+            namespace N1
             {
-                struct Foo3 {};
-                void f3();
-            }
-        }
-    }
+                namespace N2
+                {
+                    struct S2 { int s2_value = 0; };
+                    enum class E2 { a = 0 };  // enum class!
+                    int f2();
+                }
+
+                namespace N3
+                {
+                    enum E3 { a = 0 };        // C enum!
+                    int f3();
+
+                    // We want to qualify the parameters' declarations of this function
+                    void g(
+                            int _f = f(),
+                            N2::S2 s2 = N2::S2(),
+                            N2::E2 e2 = N2::a,      // subtle difference for
+                            E3 e3 = E3::a,          // enum and enum class
+                            int _f3 = N1::N3::f3(),
+                            int other = N1::N4::f4() // unknown function
+                        );
+
+                    int n3_value = 0;
+                } // namespace N3
+            }  // namespace N1
     """
     options = srcmlcpp.SrcmlcppOptions()
     cpp_unit = srcmlcpp.code_to_cpp_unit(options, code)
-    all_functions = cpp_unit.all_functions_recursive()
-    assert len(all_functions) == 3
-    f1 = all_functions[0]
-    f2 = all_functions[1]
-    f3 = all_functions[2]
-    assert len(cpp_unit.visible_structs_enums_from_scope(f1.cpp_scope())) == 1
-    assert len(cpp_unit.visible_structs_enums_from_scope(f2.cpp_scope())) == 3
-    assert len(cpp_unit.visible_structs_enums_from_scope(f3.cpp_scope())) == 4
+
+    known_types = cpp_unit.known_types()
+    known_types_names = [k.name() for k in known_types]
+    assert known_types_names == ["S2", "E2", "E3"]
+
+    known_callables = cpp_unit.known_callables()
+    known_callables_names = [k.name() for k in known_callables]
+    assert known_callables_names == ["f", "S2", "f2", "f3", "g"]
+
+    known_callables_init_list = cpp_unit.known_callables_init_list()
+    known_callables_init_list_names = [k.name() for k in known_callables_init_list]
+    assert known_callables_init_list_names == ["S2"]
+
+    known_values = cpp_unit.known_values()
+    known_values_names = [k.name() for k in known_values]
+    assert known_values_names == ["Global", "s2_value", "a", "a", "n3_value"]

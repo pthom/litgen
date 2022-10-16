@@ -11,6 +11,7 @@ from srcmlcpp.srcml_wrapper import SrcmlWrapper
 if TYPE_CHECKING:
     from srcmlcpp.cpp_types.classes.cpp_struct import CppStruct
     from srcmlcpp.cpp_types.cpp_enum import CppEnum
+    from srcmlcpp.cpp_types.decls_types import CppDecl
 
 
 __all__ = ["CppBlock"]
@@ -172,21 +173,71 @@ class CppBlock(CppElementAndComment):
         element.parent = self
         self.block_children.append(element)
 
-    def visible_structs_functions_enums_from_scope(
-        self, current_scope: CppScope
-    ) -> List[Union[CppStruct, CppFunctionDecl, CppEnum]]:
+    def known_callables(self) -> List[Union[CppStruct, CppFunctionDecl]]:
+        """The subpart of the known elements that can be called via ()
+        Simple:
+            - Structs and classes, when calling their constructor via (...)
+            - Functions and methods
+        Declarations (CppDecl), only in certain cases:
+            - when they are decl statement that defines a lambda, a std::function, etc.
+              This case is too complex and not supported
+        """
         from srcmlcpp.cpp_types.classes.cpp_struct import CppStruct
         from srcmlcpp.cpp_types.functions import CppFunctionDecl
-        from srcmlcpp.cpp_types.cpp_enum import CppEnum
 
-        r: List[Union[CppStruct, CppFunctionDecl, CppEnum]] = []
+        r: List[Union[CppStruct, CppFunctionDecl]] = []
         all_elements = self.all_cpp_elements_recursive()
         for element in all_elements:
-            if isinstance(element, (CppStruct, CppFunctionDecl, CppEnum)):
-                element_parent_scope = element.cpp_scope(include_self=False)
-                is_visible_from_current_scope = current_scope.str_cpp().startswith(element_parent_scope.str_cpp())
-                if is_visible_from_current_scope:
+            if isinstance(element, (CppStruct, CppFunctionDecl)):
+                r.append(element)
+        return r
+
+    def known_callables_init_list(self) -> List[CppStruct]:
+        """The subpart of the known elements that can be called via {}, i.e. structs and classes"""
+        from srcmlcpp.cpp_types.classes.cpp_struct import CppStruct
+
+        r: List[CppStruct] = []
+        all_elements = self.all_cpp_elements_recursive()
+        for element in all_elements:
+            if isinstance(element, (CppStruct)):
+                r.append(element)
+        return r
+
+    def known_values(self) -> List[CppDecl]:
+        """The subpart of the elements that declare variable,
+        Declarations (CppDecl), only in certain cases:
+            - When they are member of an Enum, Struct, Namespace
+            - When they are inside a DeclStatement (which could also be a lambda decl)
+            But *not* when they are function parameters!
+        """
+        from srcmlcpp.cpp_types.decls_types.cpp_decl import CppDecl, CppDeclContext
+
+        r: List[CppDecl] = []
+        all_elements = self.all_cpp_elements_recursive()
+        for element in all_elements:
+            if isinstance(element, CppDecl):
+                """
+                Declarations (CppDecl), only in certain cases:
+                    - When they from a decl statement
+                    - When they are inside a DeclStatement (which can be inside an Enum, Struct, Namespace)
+                    But *not* when they are function parameters!
+                """
+                if element.decl_context() in [CppDeclContext.VarDecl, CppDeclContext.EnumDecl]:
                     r.append(element)
+        return r
+
+    def known_types(self) -> List[Union[CppStruct, CppEnum]]:
+        """The subpart of the elements that could be as a type.
+        We do *not* support synonyms defined via `typedef` or `using` !
+        """
+        from srcmlcpp.cpp_types.classes.cpp_struct import CppStruct
+        from srcmlcpp.cpp_types.cpp_enum import CppEnum
+
+        r: List[Union[CppStruct, CppEnum]] = []
+        all_elements = self.all_cpp_elements_recursive()
+        for element in all_elements:
+            if isinstance(element, (CppStruct, CppEnum)):
+                r.append(element)
         return r
 
     def visible_structs_enums_from_scope(self, current_scope: CppScope) -> List[Union[CppStruct, CppEnum]]:
