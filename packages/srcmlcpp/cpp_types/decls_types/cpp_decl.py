@@ -305,12 +305,15 @@ class CppDecl(CppElementAndComment):
                 if isinstance(known_candidate, CppDecl):
                     maybe_enum = known_candidate.parent_enum_if_applicable()
                     if maybe_enum is not None and maybe_enum.enum_type != "class":
-                        # Yes, standard enum scope leaks...
                         if known_candidate.parent is not None:
                             enum_not_class = maybe_enum
                             enum_parent = enum_not_class.parent
-                            enum_parent_scope = enum_parent.cpp_scope(include_self=False)
-                            known_candidate_qualified_name = enum_parent_scope.qualified_name(known_candidate.name())
+                            if enum_parent is not None:
+                                # Yes, standard enum scope leaks to the parent...
+                                enum_parent_scope = enum_parent.cpp_scope(include_self=False)
+                                known_candidate_qualified_name = enum_parent_scope.qualified_name(
+                                    known_candidate.name()
+                                )
 
                 initial_value_tentative_qualified_name = visibility_scope.qualified_name(initial_value_token)
                 if initial_value_tentative_qualified_name == known_candidate_qualified_name:
