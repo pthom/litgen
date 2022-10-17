@@ -13,18 +13,29 @@ function(find_python_via_poetry)
         OUTPUT_STRIP_TRAILING_WHITESPACE
         ECHO_OUTPUT_VARIABLE
         ECHO_ERROR_VARIABLE
+        RESULT_VARIABLE result
     )
-    if (NOT EXISTS ${poetry_python_path_stdout})
-        message(FATAL_ERROR "Could not find python via poetry")
+    # message(FATAL_ERROR "result=${result}")
+    if (NOT result EQUAL "0")
+        message(STATUS "Could not find python via poetry")
+    else()
+        set(PYTHON_EXECUTABLE ${poetry_python_path_stdout} CACHE STRING "Path to python exe" FORCE)
+        message(STATUS "Found python via poetry: PYTHON_EXECUTABLE=${PYTHON_EXECUTABLE}")
     endif()
-    set(PYTHON_EXECUTABLE ${poetry_python_path_stdout} PARENT_SCOPE)
 endfunction()
 
-if(NOT DEFINED PYTHON_EXECUTABLE)
-    find_python_via_poetry()
-    message("Searched python via poetry: PYTHON_EXECUTABLE=${PYTHON_EXECUTABLE}")
-endif()
+function(find_python)
+    set(PYTHON_EXECUTABLE "" CACHE STRING "Path to python exe")
 
+    if (PYTHON_EXECUTABLE MATCHES "^$")  # if empty
+        find_python_via_poetry()
+        if (PYTHON_EXECUTABLE MATCHES "^$")
+            message(FATAL_ERROR "Python not found, please specify its path via -DPYTHON_EXECUTABLE=path/to/python(.exe)")
+        endif()
+    endif()
+endfunction()
+
+find_python()
 add_subdirectory(demos)
 add_subdirectory(pybind_native_debug)
 
