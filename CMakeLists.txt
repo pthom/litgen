@@ -1,4 +1,6 @@
 cmake_minimum_required(VERSION 3.17)
+# This CmakeLists is not useful for srcmlcpp. It is only useful for litgen, for which it generate
+# the native demos libraries (see demos/litgen/)
 project(litgen)
 
 option(LITGEN_CI "Set CI mode" OFF)
