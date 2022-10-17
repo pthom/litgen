@@ -60,16 +60,6 @@ class CppScope:
             parent = parent.parent_scope()
         return False
 
-    # def qualify_child_scope(self, child_scope: CppScope) -> Optional[CppScope]:
-    #     """if self = N1::N2::N3, then
-    #             - if child_scope = N1::N2::N3 or N2::N3 or N3 then return N1::N2::N3
-    #             - if child_scope = N1::N2 or N2, then return N1::N2
-    #             - if child_scope = N1 then return N1
-    #         else return None
-    #     """
-    #     if not self.can_access_scope(child_scope):
-    #         return None
-
     def str_cpp(self) -> str:
         """Returns this scope as a cpp scope, e.g Foo::Blah"""
         if len(self.scope_parts) == 0:

@@ -215,50 +215,6 @@ class CppDecl(CppElementAndComment):
         return "const" in self.cpp_type.specifiers  # or "const" in self.cpp_type.names
 
     def _initial_value_code_with_qualified_types(self, current_scope: Optional[CppScope] = None) -> str:
-        """Qualifies the initial values of a decl, e.g.
-                N2::Foo foo = N2::Foo()
-            might become
-                N1::N2::Foo foo = N1::N2::Foo()
-
-            Here we deal only with the initial_value part (after the = sign)
-
-            Note: We do *not* handle `using namespace SomeNamespace`, `typedef ... = T` and `using T = ...`
-
-        This example is an extract from the tests, that shows what this method is capable of:
-
-            int f();
-            namespace N1 {
-                namespace N2 {
-                    struct S2 { constexpr static int s2 = 0; };
-                    enum class E2 { a = 0 };  // enum class!
-                    int f2();
-                }
-                namespace N3 {
-                    enum E3 { a = 0 };        // C enum!
-                    int f3();
-
-                    // We want to qualify the parameters' declarations of this function
-                    // Note the subtle difference for enum and enum class
-                    // The comment column gives the expected qualified type and initial values
-                    void g(
-                            int _f = f(),             // => int _f = f()
-                            N2::S2 s2 = N2::S2(),     // => N1::N2 s2 = N1::N2::S2()
-                            N2::E2 e2 = N2::E2::a,    // => N1::N2::E2 e2 = N1::N2::E2::a
-                            E3 e3 = E3::a,            // => N1::N3::E3 a = N1::N3::a
-                            int _f3 = N1::N3::f3(),   // => int _f3 = N1::N3::f3()
-                            int other = N1::N4::f4(), // => N1::N4::f4()                    (untouched!)
-                            int _s2 = N2::S2::s2      // => N1::N2::S2::s2
-                        );
-                }
-            }
-        Then, the first parameters decls of g should be qualified as
-                            int _f = f(),
-                            N1::N2::S2 s2 = N1::N2::S2(),
-                            N1::N2::E2 e2 = N1::N2::a,
-                            N1::N3::E3 e3 = N1::N3::E3::a,
-                            int _f3 = N1::N3::f3()
-                            int other = N1::N4::f4()
-        """
         if current_scope is None:
             current_scope = self.cpp_scope()
 
@@ -323,6 +279,50 @@ class CppDecl(CppElementAndComment):
         return self.initial_value_code
 
     def with_qualified_types(self, current_scope: Optional[CppScope] = None) -> CppDecl:
+        """Qualifies the types and initial values of a decl, e.g.
+                N2::Foo foo = N2::Foo()
+            might become
+                N1::N2::Foo foo = N1::N2::Foo()
+
+            Here we deal only with the initial_value part (after the = sign)
+
+            Note: We do *not* handle `using namespace SomeNamespace`, `typedef ... = T` and `using T = ...`
+
+        This example is an extract from the tests, that shows what this method is capable of:
+
+            int f();
+            namespace N1 {
+                namespace N2 {
+                    struct S2 { constexpr static int s2 = 0; };
+                    enum class E2 { a = 0 };  // enum class!
+                    int f2();
+                }
+                namespace N3 {
+                    enum E3 { a = 0 };        // C enum!
+                    int f3();
+
+                    // We want to qualify the parameters' declarations of this function
+                    // Note the subtle difference for enum and enum class
+                    // The comment column gives the expected qualified type and initial values
+                    void g(
+                            int _f = f(),             // => int _f = f()
+                            N2::S2 s2 = N2::S2(),     // => N1::N2 s2 = N1::N2::S2()
+                            N2::E2 e2 = N2::E2::a,    // => N1::N2::E2 e2 = N1::N2::E2::a
+                            E3 e3 = E3::a,            // => N1::N3::E3 a = N1::N3::a
+                            int _f3 = N1::N3::f3(),   // => int _f3 = N1::N3::f3()
+                            int other = N1::N4::f4(), // => N1::N4::f4()                    (untouched!)
+                            int _s2 = N2::S2::s2      // => N1::N2::S2::s2
+                        );
+                }
+            }
+        Then, the first parameters decls of g should be qualified as
+                            int _f = f(),
+                            N1::N2::S2 s2 = N1::N2::S2(),
+                            N1::N2::E2 e2 = N1::N2::a,
+                            N1::N3::E3 e3 = N1::N3::E3::a,
+                            int _f3 = N1::N3::f3()
+                            int other = N1::N4::f4()
+        """
         if current_scope is None:
             current_scope = self.cpp_scope()
         was_changed = False
@@ -333,6 +333,64 @@ class CppDecl(CppElementAndComment):
             was_changed = True
 
         new_initial_value_code = self._initial_value_code_with_qualified_types(current_scope)
+        if new_initial_value_code != self.initial_value_code:
+            new_decl.initial_value_code = new_initial_value_code
+            was_changed = True
+
+        if was_changed:
+            return new_decl
+        else:
+            return self
+
+    def _initial_value_code_with_terse_type(self, current_scope: Optional[CppScope]) -> str:
+        """Returns a terse version of the initial value (with only the required scoping)
+        In this example code:
+            namespace N0
+            {
+                namespace N1 {
+                    namespace N2 {
+                        struct S2 { constexpr static int s2 = 0; };
+                    }
+                    namespace N3 {
+                        void g(int _s2 = N1::N2::S2::s2);
+                    }
+                }
+            }
+
+        the initial value of the first parameter of g
+            N1::N2::S2::s2
+        will be replaced by
+            N2::S2::s2
+        """
+        if current_scope is None:
+            current_scope = self.cpp_scope()
+
+        initial_value_fully_qualified = self._initial_value_code_with_qualified_types(current_scope)
+        initial_value_scope = CppScope.from_string(initial_value_fully_qualified)
+        current_scope_copy = copy.deepcopy(current_scope)
+        # Any part at the start of initial_value_scope that is identical to current_scope_copy can be removed
+        while True:
+            if len(current_scope_copy.scope_parts) == 0 or len(initial_value_scope.scope_parts) == 0:
+                break
+            if current_scope_copy.scope_parts[0].scope_name == initial_value_scope.scope_parts[0].scope_name:
+                current_scope_copy.scope_parts = current_scope_copy.scope_parts[1:]
+                initial_value_scope.scope_parts = initial_value_scope.scope_parts[1:]
+            else:
+                break
+        r = initial_value_scope.str_cpp()
+        return r
+
+    def with_terse_types(self, current_scope: Optional[CppScope] = None) -> CppDecl:
+        if current_scope is None:
+            current_scope = self.cpp_scope()
+        was_changed = False
+        new_decl = copy.deepcopy(self)
+        new_decl.cpp_type = self.cpp_type.with_terse_types(current_scope)
+
+        if new_decl.cpp_type is not self._cpp_type:
+            was_changed = True
+
+        new_initial_value_code = self._initial_value_code_with_terse_type(current_scope)
         if new_initial_value_code != self.initial_value_code:
             new_decl.initial_value_code = new_initial_value_code
             was_changed = True

@@ -207,5 +207,31 @@ class CppType(CppElementAndComment):
 
         return self
 
+    def with_terse_types(self, current_scope: Optional[CppScope] = None) -> CppType:
+        if current_scope is None:
+            current_scope = self.cpp_scope()
+
+        type_qualified = self.with_qualified_types()
+        type_name_qualified = " ".join(type_qualified.typenames)
+
+        type_name_qualified_scope = CppScope.from_string(type_name_qualified)
+        current_scope_copy = copy.deepcopy(current_scope)
+
+        while True:
+            if len(current_scope_copy.scope_parts) == 0 or len(type_name_qualified_scope.scope_parts) == 0:
+                break
+            if current_scope_copy.scope_parts[0].scope_name == type_name_qualified_scope.scope_parts[0].scope_name:
+                current_scope_copy.scope_parts = current_scope_copy.scope_parts[1:]
+                type_name_qualified_scope.scope_parts = type_name_qualified_scope.scope_parts[1:]
+            else:
+                break
+        new_type_name = type_name_qualified_scope.str_cpp()
+        if new_type_name != " ".join(self.typenames):
+            new_cpp_type = copy.deepcopy(self)
+            new_cpp_type.typenames = [new_type_name]
+            return new_cpp_type
+        else:
+            return self
+
     def __str__(self) -> str:
         return self.str_code()

@@ -148,9 +148,7 @@ def test_decl_statement():
     )
 
 
-def test_decl_qualified_type_full():
-
-    # Given the current code
+def test_decl_qualified_type():
     code = """
         int f();
         namespace N1 {
@@ -220,3 +218,97 @@ def test_decl_qualified_type_full():
     # int _s2 = N2::S2::s2      // => int _s2 = N1::N2::S2::s2
     p6 = params[6].decl.with_qualified_types().str_code()
     assert p6 == "int _s2 = N1::N2::S2::s2"
+
+
+def test_with_qualified_types_method():
+    code = """
+    namespace N
+    {
+        S make_s_function(S s = S());
+        struct S
+        {
+            S make_s_method(S s = S());
+        };
+    }
+    """
+    options = srcmlcpp.SrcmlcppOptions()
+    cpp_unit = srcmlcpp.code_to_cpp_unit(options, code)
+    fn = cpp_unit.all_functions_recursive()[0]
+    method = cpp_unit.all_functions_recursive()[1]
+
+    fn_q = fn.with_qualified_types()
+    print()
+    print(fn_q.str_code())
+    assert fn_q.str_code() == "N::S make_s_function(N::S s = N::S());"
+
+    method_q = method.with_qualified_types()
+    print(method_q.str_code())
+    assert method_q.str_code() == "N::S make_s_method(N::S s = N::S());"
+
+
+def test_with_terse_types_free_function():
+    code = """
+            namespace N0
+            {
+                namespace N1
+                {
+                    namespace N2
+                    {
+                        struct S1 {};
+                        struct S2 { constexpr static S1 s1 = S1(); };
+                    }
+                    namespace N3
+                    {
+                        struct S3 {};
+                        void g(
+                            N0::N1::N3::S3 _s31 = N0::N1::N3::S3(),
+                            N1::N3::S3 _s32 = N1::N3::S3(),
+                            N3::S3 _s33 = N3::S3(),
+                            S3 _s34 = S3()
+                        );
+
+                        void h(
+                            N0::N1::N2::S1 _s11 = N0::N1::N2::S2::s1,
+                            N1::N2::S1 _s12 = N1::N2::S2::s1,
+                            N2::S1 _s13 = N2::S2::s1
+                        );
+                    }
+                }
+            }
+    """
+    options = srcmlcpp.SrcmlcppOptions()
+    cpp_unit = srcmlcpp.code_to_cpp_unit(options, code)
+
+    g = cpp_unit.all_functions_recursive()[0]
+    g_terse = g.with_terse_types()
+    print()
+    assert g_terse.str_code() == "void g(S3 _s31 = S3(), S3 _s32 = S3(), S3 _s33 = S3(), S3 _s34 = S3());"
+
+    h = cpp_unit.all_functions_recursive()[1]
+    h_terse = h.with_terse_types()
+    assert h_terse.str_code() == "void h(N2::S1 _s11 = N2::S2::s1, N2::S1 _s12 = N2::S2::s1, N2::S1 _s13 = N2::S2::s1);"
+
+
+def test_with_terse_types_method():
+    code = """
+    namespace N
+    {
+        N::S make_s_function(N::S s = N::S());
+        struct S
+        {
+            N::S make_s_method(N::S s = N::S());
+        };
+    }
+    """
+    options = srcmlcpp.SrcmlcppOptions()
+    cpp_unit = srcmlcpp.code_to_cpp_unit(options, code)
+    fn = cpp_unit.all_functions_recursive()[0]
+    method = cpp_unit.all_functions_recursive()[1]
+
+    fn_terse = fn.with_terse_types()
+    assert fn_terse.str_code() == "S make_s_function(S s = S());"
+
+    # Although the method is inside an inner scope,
+    # its declaration cannot yet use it (only the method body can)
+    method_terse = method.with_terse_types()
+    assert method_terse.str_code() == "S make_s_method(S s = S());"

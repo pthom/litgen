@@ -107,6 +107,23 @@ class CppParameterList(CppElementAndComment):
         else:
             return self
 
+    def with_terse_types(self, current_scope: Optional[CppScope] = None) -> CppParameterList:
+        if current_scope is None:
+            current_scope = self.cpp_scope()
+        was_changed = False
+        new_parameter_list = copy.deepcopy(self)
+        for i in range(len(self.parameters)):
+            new_param = new_parameter_list.parameters[i]
+            self_param = self.parameters[i]
+            new_param.decl = self_param.decl.with_terse_types(current_scope)
+            if new_param.decl is not self_param.decl:
+                was_changed = True
+
+        if was_changed:
+            return new_parameter_list
+        else:
+            return self
+
     def visit_cpp_breadth_first(self, cpp_visitor_function: CppElementsVisitorFunction, depth: int = 0) -> None:
         cpp_visitor_function(self, CppElementsVisitorEvent.OnElement, depth)
         cpp_visitor_function(self, CppElementsVisitorEvent.OnBeforeChildren, depth)

@@ -119,10 +119,16 @@ class CppFunctionDecl(CppElementAndComment, CppITemplateHost):
 
         For example, given the code:
             namespace Ns {
-                struct S {};
-                void f(S s);
+                struct S {
+                    S f(S s = S());
+                };
             }
-        then, f.with_qualified_types = void f(Ns::S s)
+        then,
+            f.with_qualified_types() = Ns::S f(Ns::S s = Ns::S())
+
+        Note: In the future, it would be desirable to be able to optionally qualify the function name, i.e.
+                    f.with_qualified_types() = Ns::S Ns::S::f(Ns::S s = Ns::S())
+              As of today, only the return type and parameter types are qualified
         """
         if current_scope is None:
             current_scope = self.cpp_scope()
@@ -135,6 +141,44 @@ class CppFunctionDecl(CppElementAndComment, CppITemplateHost):
                 was_changed = True
 
         new_function_decl.parameter_list = self.parameter_list.with_qualified_types(current_scope)
+        if new_function_decl.parameter_list is not self.parameter_list:
+            was_changed = True
+
+        if was_changed:
+            return new_function_decl
+        else:
+            return self
+
+    def with_terse_types(self, current_scope: Optional[CppScope] = None) -> CppFunctionDecl:
+        """Returns a possibly new FunctionDecl where the params and return types are qualified given the function scope.
+
+        For example, given the code:
+            namespace Ns {
+                struct S {};
+                void f(NS::S s = Ns::S());
+            }
+        then, f.with_terse_types() = void f(Ns::S s = S())
+        """
+        if current_scope is None:
+            current_scope = self.cpp_scope()
+        if self.is_method() and len(current_scope.scope_parts) > 0:
+            # Scoping inside a class declaration (not inside methods body!)
+            # need to include the class name!
+            last_scope = current_scope.scope_parts[-1]
+            parent_struct = self.parent_struct_if_method()
+            assert parent_struct is not None
+            if last_scope.scope_name == parent_struct.class_name:
+                current_scope.scope_parts = current_scope.scope_parts[:-1]
+
+        was_changed = False
+        new_function_decl = copy.deepcopy(self)
+
+        if hasattr(self, "return_type"):
+            new_function_decl.return_type = self.return_type.with_terse_types(current_scope)
+            if new_function_decl.return_type is not self.return_type:
+                was_changed = True
+
+        new_function_decl.parameter_list = self.parameter_list.with_terse_types(current_scope)
         if new_function_decl.parameter_list is not self.parameter_list:
             was_changed = True
 
