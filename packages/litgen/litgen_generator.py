@@ -6,6 +6,8 @@ from typing import List, Optional
 
 from codemanip import code_utils
 
+from srcmlcpp.internal.srcml_caller import _SRCML_CALLER
+
 from litgen import LitgenOptions
 from litgen.code_to_adapted_unit import code_to_adapted_unit
 from litgen.internal import boxed_python_type, cpp_to_python
@@ -167,6 +169,9 @@ def write_generated_code_for_files(
     for cpp_header in input_cpp_header_files:
         generator.process_cpp_file(cpp_header)
         generator.write_generated_code(output_cpp_pydef_file, output_stub_pyi_file, output_cpp_glue_code_file)
+
+    if _SRCML_CALLER.total_time() > 3.0 and options.srcmlcpp_options.flag_show_progress:
+        print(_SRCML_CALLER.profiling_stats())
 
 
 def write_generated_code_for_file(

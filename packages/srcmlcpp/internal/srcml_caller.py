@@ -129,12 +129,28 @@ class _SrcmlCaller:
         self._stats_srcml_to_code.stop()
         return code_str
 
+    def total_time(self) -> float:
+        total_time = self._stats_code_to_srcml.total_time + self._stats_srcml_to_code.total_time
+        return total_time
+
+    def profiling_stats(self) -> str:
+        from codemanip import code_utils
+
+        r = code_utils.unindent_code(
+            f"""
+        Time taken by calls to srcML:
+            code_to_srcml {self._stats_code_to_srcml.stats_string()}
+            srcml_to_code {self._stats_srcml_to_code.stats_string()}
+            total time: {self.total_time():.3f}s
+        """,
+            flag_strip_empty_lines=True,
+        )
+        return r
+
     def __del__(self):
         global _FLAG_PROFILE_SRCML_CALLS
         if _FLAG_PROFILE_SRCML_CALLS:
-            print(
-                f"_SrcmlCaller: code_to_srcml {self._stats_code_to_srcml.stats_string()}    |    srcml_to_code {self._stats_srcml_to_code.stats_string()}"
-            )
+            print(self.profiling_stats())
 
 
 _SRCML_CALLER = _SrcmlCaller()

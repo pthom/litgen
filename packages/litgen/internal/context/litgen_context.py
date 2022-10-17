@@ -32,6 +32,8 @@ class LitgenContext:
     # cf https://pybind11.readthedocs.io/en/stable/advanced/classes.html#overriding-virtual-functions-in-python
     virtual_methods_glue_code: str = ""
 
+    current_parsed_filename: str = ""
+
     def __init__(self, options: LitgenOptions):
         self.options = options
         self.encountered_cpp_boxed_types = set()
