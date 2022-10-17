@@ -5,6 +5,7 @@ from typing import TYPE_CHECKING, List, Optional
 
 from srcmlcpp.cpp_types.base import *
 from srcmlcpp.cpp_types.scope.cpp_scope import CppScope
+from srcmlcpp.cpp_types.scope.scoped_element_cache import ScopedElementCache
 from srcmlcpp.cpp_types.decls_types.cpp_type import CppType
 from srcmlcpp.cpp_types.functions import CppParameter, CppParameterList
 from srcmlcpp.cpp_types.template.cpp_i_template_host import CppITemplateHost
@@ -38,12 +39,17 @@ class CppFunctionDecl(CppElementAndComment, CppITemplateHost):
     function_name: str
     is_pure_virtual: bool
 
+    _cache_with_qualified_types: ScopedElementCache
+    _cache_with_terse_types: ScopedElementCache
+
     def __init__(self, element: SrcmlWrapper, cpp_element_comments: CppElementComments) -> None:
         super().__init__(element, cpp_element_comments)
         self._init_template_host()
         self.specifiers: List[str] = []
         self.is_pure_virtual = False
         self.function_name = ""
+        self._cache_with_qualified_types = ScopedElementCache()
+        self._cache_with_terse_types = ScopedElementCache()
 
     @property
     def return_type(self) -> CppType:
@@ -132,6 +138,11 @@ class CppFunctionDecl(CppElementAndComment, CppITemplateHost):
         """
         if current_scope is None:
             current_scope = self.cpp_scope()
+        if self._cache_with_qualified_types.contains(current_scope):
+            r = self._cache_with_qualified_types.get(current_scope)
+            assert isinstance(r, CppFunctionDecl)
+            return r
+
         was_changed = False
         new_function_decl = copy.deepcopy(self)
 
@@ -144,10 +155,9 @@ class CppFunctionDecl(CppElementAndComment, CppITemplateHost):
         if new_function_decl.parameter_list is not self.parameter_list:
             was_changed = True
 
-        if was_changed:
-            return new_function_decl
-        else:
-            return self
+        r = new_function_decl if was_changed else self
+        self._cache_with_qualified_types.store(current_scope, r)
+        return r
 
     def with_terse_types(self, current_scope: Optional[CppScope] = None) -> CppFunctionDecl:
         """Returns a possibly new FunctionDecl where the params and return types are qualified given the function scope.
@@ -161,6 +171,11 @@ class CppFunctionDecl(CppElementAndComment, CppITemplateHost):
         """
         if current_scope is None:
             current_scope = self.cpp_scope()
+        if self._cache_with_terse_types.contains(current_scope):
+            r = self._cache_with_terse_types.get(current_scope)
+            assert isinstance(r, CppFunctionDecl)
+            return r
+
         if self.is_method() and len(current_scope.scope_parts) > 0:
             # Scoping inside a class declaration (not inside methods body!)
             # need to include the class name!
@@ -182,10 +197,9 @@ class CppFunctionDecl(CppElementAndComment, CppITemplateHost):
         if new_function_decl.parameter_list is not self.parameter_list:
             was_changed = True
 
-        if was_changed:
-            return new_function_decl
-        else:
-            return self
+        r = new_function_decl if was_changed else self
+        self._cache_with_terse_types.store(current_scope, r)
+        return r
 
     def is_inferred_return_type(self) -> bool:
         if not hasattr(self, "return_type"):
