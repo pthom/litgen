@@ -538,6 +538,8 @@ replace deep copy by simple copy ?
   Avant
       time python demos/litgen/lg_imgui_bundle/autogenerate_imgui_bundle/autogenerate_imgui_bundle.py
       python   112.40s user 20.99s system 91% cpu 2:25.37 total
+      Apres cache Qualified/ Terse: 90s
+      Apres cache Known types: 50s
 
 
 ** Wish List / Easy

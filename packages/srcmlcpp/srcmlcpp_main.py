@@ -70,14 +70,18 @@ def _nb_lines_in_code_or_file(
 
 
 def _code_to_cpp_unit_impl(
-    options: SrcmlcppOptions, code: Optional[str] = None, filename: Optional[str] = None
+    options: SrcmlcppOptions, code: Optional[str] = None, filename: Optional[str] = None, fill_known_cache: bool = True
 ) -> CppUnit:
     xml_wrapper = code_to_srcml_wrapper(options, code, filename)
     cpp_unit = cpp_types_parse.parse_unit(options, xml_wrapper)
+    if fill_known_cache:
+        cpp_unit.fill_known_cache()
     return cpp_unit
 
 
-def code_to_cpp_unit(options: SrcmlcppOptions, code: Optional[str] = None, filename: Optional[str] = None) -> CppUnit:
+def code_to_cpp_unit(
+    options: SrcmlcppOptions, code: Optional[str] = None, filename: Optional[str] = None, fill_known_cache: bool = True
+) -> CppUnit:
     if options.flag_show_progress:
         nb_lines = _nb_lines_in_code_or_file(options, code, filename)
         global_progress_bars().set_nb_total_lines(nb_lines)
@@ -88,7 +92,7 @@ def code_to_cpp_unit(options: SrcmlcppOptions, code: Optional[str] = None, filen
     from srcmlcpp.internal.cpp_types_parse import _PROGRESS_BAR_TITLE_SRCML_PARSE
 
     global_progress_bars().start_progress_bar(_PROGRESS_BAR_TITLE_SRCML_PARSE)
-    cpp_unit = _code_to_cpp_unit_impl(options, code, filename)
+    cpp_unit = _code_to_cpp_unit_impl(options, code, filename, fill_known_cache)
     global_progress_bars().stop_progress_bar(_PROGRESS_BAR_TITLE_SRCML_PARSE)
     return cpp_unit
 

@@ -42,6 +42,11 @@ class CppBlock(CppElementAndComment):
 
     _block_children: List[CppElementAndComment]
 
+    _cache_known_types: KnownElementTypesList
+    _cache_known_values: KnownElementTypesList
+    _cache_known_callables: KnownElementTypesList
+    _cache_known_callables_init_list: KnownElementTypesList
+
     def __init__(self, element: SrcmlWrapper) -> None:
         dummy_cpp_comments = CppElementComments()
         super().__init__(element, dummy_cpp_comments)
@@ -193,7 +198,13 @@ class CppBlock(CppElementAndComment):
         element.parent = self
         self.block_children.append(element)
 
-    def known_callables(self) -> KnownElementTypesList:
+    def fill_known_cache(self) -> None:
+        self._cache_known_types = self.known_types(False)
+        self._cache_known_callables = self.known_callables(False)
+        self._cache_known_callables_init_list = self.known_callables_init_list(False)
+        self._cache_known_values = self.known_values(False)
+
+    def known_callables(self, use_cache: bool = True) -> KnownElementTypesList:
         """The subpart of the known elements that can be called via ()
         Simple:
             - Structs and classes, when calling their constructor via (...)
@@ -205,6 +216,10 @@ class CppBlock(CppElementAndComment):
         from srcmlcpp.cpp_types.classes.cpp_struct import CppStruct
         from srcmlcpp.cpp_types.functions import CppFunctionDecl
 
+        if use_cache:
+            assert hasattr(self, "_cache_known_callables")
+            return self._cache_known_callables
+
         r: KnownElementTypesList = []
         all_elements = self.all_cpp_elements_recursive()
         for element in all_elements:
@@ -212,9 +227,13 @@ class CppBlock(CppElementAndComment):
                 r.append(element)
         return r
 
-    def known_callables_init_list(self) -> KnownElementTypesList:
+    def known_callables_init_list(self, use_cache: bool = True) -> KnownElementTypesList:
         """The subpart of the known elements that can be called via {}, i.e. structs and classes"""
         from srcmlcpp.cpp_types.classes.cpp_struct import CppStruct
+
+        if use_cache:
+            assert hasattr(self, "_cache_known_callables_init_list")
+            return self._cache_known_callables_init_list
 
         r: KnownElementTypesList = []
         all_elements = self.all_cpp_elements_recursive()
@@ -223,7 +242,7 @@ class CppBlock(CppElementAndComment):
                 r.append(element)
         return r
 
-    def known_values(self) -> KnownElementTypesList:
+    def known_values(self, use_cache: bool = True) -> KnownElementTypesList:
         """The subpart of the elements that declare variable,
         Declarations (CppDecl), only in certain cases:
             - When they are member of an Enum, Struct, Namespace
@@ -231,6 +250,10 @@ class CppBlock(CppElementAndComment):
             But *not* when they are function parameters!
         """
         from srcmlcpp.cpp_types.decls_types.cpp_decl import CppDecl, CppDeclContext
+
+        if use_cache:
+            assert hasattr(self, "_cache_known_values")
+            return self._cache_known_values
 
         r: KnownElementTypesList = []
         all_elements = self.all_cpp_elements_recursive()
@@ -246,12 +269,16 @@ class CppBlock(CppElementAndComment):
                     r.append(element)
         return r
 
-    def known_types(self) -> KnownElementTypesList:
+    def known_types(self, use_cache: bool = True) -> KnownElementTypesList:
         """The subpart of the elements that could be as a type.
         We do *not* support synonyms defined via `typedef` or `using` !
         """
         from srcmlcpp.cpp_types.classes.cpp_struct import CppStruct
         from srcmlcpp.cpp_types.cpp_enum import CppEnum
+
+        if use_cache:
+            assert hasattr(self, "_cache_known_types")
+            return self._cache_known_types
 
         r: KnownElementTypesList = []
         all_elements = self.all_cpp_elements_recursive()
