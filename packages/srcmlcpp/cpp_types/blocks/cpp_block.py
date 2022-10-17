@@ -11,7 +11,7 @@ from srcmlcpp.srcml_wrapper import SrcmlWrapper
 if TYPE_CHECKING:
     from srcmlcpp.cpp_types.classes.cpp_struct import CppStruct
     from srcmlcpp.cpp_types.cpp_enum import CppEnum
-    from srcmlcpp.cpp_types.decls_types import CppDecl
+    from srcmlcpp.cpp_types.decls_types import CppDecl, CppDeclStatement
 
     KnownElementTypes = Union[CppStruct, CppFunctionDecl, CppDecl, CppEnum]
     KnownElementTypesList = List[KnownElementTypes]
@@ -139,6 +139,24 @@ class CppBlock(CppElementAndComment):
         """Gathers all CppFunctionDecl and CppFunction in the children (*recursive*)"""
         r_ = self.all_elements_of_type(wanted_type=CppFunctionDecl)
         r = [cast(CppFunctionDecl, v) for v in r_]
+        return r
+
+    def all_decl_statement_recursive(self) -> List[CppDeclStatement]:
+        """Gathers all CppDeclStatement in the children (*recursive*)"""
+        from srcmlcpp.cpp_types.decls_types.cpp_decl_statement import CppDeclStatement
+
+        r_ = self.all_elements_of_type(wanted_type=CppDeclStatement)
+        r = [cast(CppDeclStatement, v) for v in r_]
+        return r
+
+    def all_decl_recursive(self) -> List[CppDecl]:
+        """Gathers all CppDecl in the children (*recursive*)
+        This can include decls from DeclStatements, function parameter, enum values, etc.
+        """
+        from srcmlcpp.cpp_types.decls_types.cpp_decl import CppDecl
+
+        r_ = self.all_elements_of_type(wanted_type=CppDecl)
+        r = [cast(CppDecl, v) for v in r_]
         return r
 
     def is_function_overloaded(self, function: CppFunctionDecl) -> bool:
