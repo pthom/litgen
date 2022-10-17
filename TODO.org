@@ -431,11 +431,12 @@ insert diagram via mermaid (see integration with emacs)
       m.def("selectable",    // imgui.h:623
 
 * srcml_cpp
-** with_terse_type
 
+** srcmlcpp hard and later
+*** Later: options / suppress warning
+*** Later: parallel execution?
+    ouch because context
 
-** srcmlcpp easy
-when parsing: stop throwing, only emit warnings and store as unprocessed
 
 ** srcmlcpp utilities
 
@@ -517,10 +518,8 @@ can reuse lots of parts of PimplMyClass
     etc
 
 
-** Later: options / suppress warning
-** Later: parallel execution?
-    ouch because context
-
+** srcmlcpp easy
+when parsing: stop throwing, only emit warnings and store as unprocessed
 
 * Litgen TODO
 ** Wish list / hard and later
@@ -531,17 +530,6 @@ Problem 3: dans lg_test_runner (integration tests), tout est refusé (trouve pas
 *** auto __repr__ for structs?
 *** Bind srcml?
 *** N: keep pointer and references layout inside CppType (int *x vs int *x vs int * x)
-** Profiling
-
-cache tersed and qualified versions ?
-replace deep copy by simple copy ?
-  Avant
-      time python demos/litgen/lg_imgui_bundle/autogenerate_imgui_bundle/autogenerate_imgui_bundle.py
-      python   112.40s user 20.99s system 91% cpu 2:25.37 total
-      Apres cache Qualified/ Terse: 90s
-      Apres cache Known types: 50s
-
-
 ** Wish List / Easy
 
 option code_replacements => types_replacements
@@ -553,14 +541,6 @@ mettre des @staticmethod
         {
             struct S {}; => pas d'__init__ genere? (voir litgen_Generator_test)
            }
-
-
-** Work on qualified types
-   Fix enum in test_with_qualified_types()  (f5)
-
-   Bad consequence / default namespace: see imgui_markdown.pyi:402
-
-   Then, regenerate imgui & implot
 
 ** Interactive demo
 
