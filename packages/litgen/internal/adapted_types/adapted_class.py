@@ -7,7 +7,7 @@ import munch  # type: ignore
 from codemanip import code_utils
 
 from srcmlcpp.cpp_types import *
-from srcmlcpp.cpp_types.cpp_scope import CppScopeType
+from srcmlcpp.cpp_types.scope.cpp_scope import CppScopeType
 from srcmlcpp.srcmlcpp_exception import SrcmlcppException
 
 from litgen import TemplateNamingScheme

@@ -6,7 +6,7 @@ from codemanip import code_utils
 from codemanip.code_replacements import RegexReplacementList
 
 from srcmlcpp.cpp_types import *
-from srcmlcpp.cpp_types.cpp_scope import CppScope, CppScopePart, CppScopeType
+from srcmlcpp.cpp_types.scope.cpp_scope import CppScope, CppScopePart, CppScopeType
 from srcmlcpp.cpp_types.template.cpp_i_template_host import CppITemplateHost
 
 from litgen import LitgenOptions

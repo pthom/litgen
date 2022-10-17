@@ -65,7 +65,7 @@ from srcmlcpp.cpp_types.classes import CppSuper, CppSuperList, CppStruct, CppCla
 
 from srcmlcpp.cpp_types.cpp_namespace import CppNamespace
 
-from srcmlcpp.cpp_types.cpp_scope import CppScope, CppScopeType, CppScopePart
+from srcmlcpp.cpp_types.scope.cpp_scope import CppScope, CppScopeType, CppScopePart
 
 __all__ = [
     # base

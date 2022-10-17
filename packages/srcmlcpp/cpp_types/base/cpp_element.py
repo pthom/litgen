@@ -3,7 +3,7 @@ import copy
 from enum import Enum
 from typing import TYPE_CHECKING, Callable, List, Optional
 
-from srcmlcpp.cpp_types.cpp_scope import CppScope, CppScopePart, CppScopeType
+from srcmlcpp.cpp_types.scope.cpp_scope import CppScope, CppScopePart, CppScopeType
 from srcmlcpp.srcml_wrapper import SrcmlWrapper
 
 

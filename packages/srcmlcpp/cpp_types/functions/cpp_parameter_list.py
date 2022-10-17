@@ -4,7 +4,7 @@ from typing import List, Optional
 import copy
 
 from srcmlcpp.cpp_types.base import *
-from srcmlcpp.cpp_types.cpp_scope import CppScope
+from srcmlcpp.cpp_types.scope.cpp_scope import CppScope
 from srcmlcpp.cpp_types.functions.cpp_parameter import CppParameter
 from srcmlcpp.srcml_wrapper import SrcmlWrapper
 

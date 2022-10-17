@@ -6,7 +6,7 @@ from typing import TYPE_CHECKING, List, Optional
 from codemanip import code_utils
 
 from srcmlcpp.cpp_types.base import *
-from srcmlcpp.cpp_types.cpp_scope import CppScope
+from srcmlcpp.cpp_types.scope.cpp_scope import CppScope
 from srcmlcpp.srcml_wrapper import SrcmlWrapper
 
 

@@ -1,4 +1,4 @@
-from srcmlcpp.cpp_types.cpp_scope import CppScope
+from srcmlcpp.cpp_types.scope.cpp_scope import CppScope
 
 
 def test_parent_scope():

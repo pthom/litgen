@@ -4,7 +4,7 @@ from dataclasses import dataclass
 from typing import TYPE_CHECKING, List, Optional
 
 from srcmlcpp.cpp_types.base import *
-from srcmlcpp.cpp_types.cpp_scope import CppScope
+from srcmlcpp.cpp_types.scope.cpp_scope import CppScope
 from srcmlcpp.cpp_types.decls_types.cpp_type import CppType
 from srcmlcpp.cpp_types.functions import CppParameter, CppParameterList
 from srcmlcpp.cpp_types.template.cpp_i_template_host import CppITemplateHost
