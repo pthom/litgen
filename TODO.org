@@ -437,7 +437,6 @@ insert diagram via mermaid (see integration with emacs)
 ** srcmlcpp easy
 when parsing: stop throwing, only emit warnings and store as unprocessed
 
-
 ** srcmlcpp utilities
 
 
@@ -532,10 +531,26 @@ Problem 3: dans lg_test_runner (integration tests), tout est refusé (trouve pas
 *** auto __repr__ for structs?
 *** Bind srcml?
 *** N: keep pointer and references layout inside CppType (int *x vs int *x vs int * x)
+** Profiling
+
+cache tersed and qualified versions ?
+replace deep copy by simple copy ?
+  Avant
+      time python demos/litgen/lg_imgui_bundle/autogenerate_imgui_bundle/autogenerate_imgui_bundle.py
+      python   112.40s user 20.99s system 91% cpu 2:25.37 total
+
+
 ** Wish List / Easy
+
 option code_replacements => types_replacements
 mettre des @staticmethod
 { // <namespace N>  => // { <namespace N>
+
+
+        namespace N
+        {
+            struct S {}; => pas d'__init__ genere? (voir litgen_Generator_test)
+           }
 
 
 ** Work on qualified types

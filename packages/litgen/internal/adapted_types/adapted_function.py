@@ -933,7 +933,7 @@ class AdaptedFunction(AdaptedElement):
         if self.is_vectorize_impl:
             return_code = ") -> np.ndarray:"
 
-        params_strs = self._stub_paramlist_call_python()
+        params_strs = self._stub_params_list_signature()
 
         # Try to add function decl + all params and return type on the same line
         def function_name_and_params_on_one_line() -> Optional[str]:
@@ -1000,16 +1000,20 @@ class AdaptedFunction(AdaptedElement):
         if self.is_constructor():
             return "None"
         else:
-            return_type_cpp = self.cpp_adapted_function.str_full_return_type()
+            cpp_adapted_function_terse = self.cpp_adapted_function.with_terse_types()
+            return_type_cpp = cpp_adapted_function_terse.str_full_return_type()
             return_type_python = cpp_to_python.type_to_python(self.options, return_type_cpp)
             return return_type_python
 
-    def _stub_paramlist_call_python(self) -> List[str]:
-        cpp_parameters = self.cpp_adapted_function.parameter_list.parameters
+    def _stub_params_list_signature(self) -> List[str]:
+        cpp_adapted_function_terse = self.cpp_adapted_function.with_terse_types()
+        cpp_parameters = cpp_adapted_function_terse.parameter_list.parameters
         r = []
         for param in cpp_parameters:
-            param_name_python = cpp_to_python.var_name_to_python(self.options, param.decl.decl_name)
-            param_type_cpp = param.decl.cpp_type.str_code()
+            param_decl = param.decl
+
+            param_name_python = cpp_to_python.var_name_to_python(self.options, param_decl.decl_name)
+            param_type_cpp = param_decl.cpp_type.str_code()
 
             # Handle *args and **kwargs
             param_type_cpp_simplified = (
@@ -1026,7 +1030,7 @@ class AdaptedFunction(AdaptedElement):
             if self.is_vectorize_impl:
                 param_type_python = "np.ndarray"
 
-            param_default_value = cpp_to_python.var_value_to_python(self.lg_context, param.default_value())
+            param_default_value = cpp_to_python.var_value_to_python(self.lg_context, param_decl.initial_value_code)
 
             param_code = f"{param_name_python}: {param_type_python}"
             if len(param_default_value) > 0:

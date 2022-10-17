@@ -22,11 +22,11 @@ class N:  # Proxy class that introduces typings for the *submodule* N
     class E(enum.Enum):
         a = enum.auto() # (= 0)
 
-    def foo(e: N.EC = N.EC.a) -> None:
+    def foo(e: EC = EC.a) -> None:
         pass
-    def foo(e: N.E = N.E.a) -> None:
+    def foo(e: E = E.a) -> None:
         pass
-    def foo(e: N.E = N.E.a, s: N.S = N.S()) -> None:
+    def foo(e: E = E.a, s: S = S()) -> None:
         pass
 
 # </submodule N>

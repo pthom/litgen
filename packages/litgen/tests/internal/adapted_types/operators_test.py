@@ -71,6 +71,24 @@ def test_operators():
     )
 
 
+def test_scoping():
+    options = litgen.LitgenOptions()
+    code = """
+        struct S {
+            S f(S& o);
+        };
+    """
+    generated_code = litgen.generate_code(options, code)
+    code_utils.assert_are_codes_equal(
+        generated_code.stub_code,
+        """
+        class S:
+            def f(self, o: S) -> S:
+                pass
+    """,
+    )
+
+
 def test_spaceship_operator():
     options = litgen.LitgenOptions()
     code = """
