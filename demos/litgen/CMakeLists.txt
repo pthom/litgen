@@ -1,2 +1,2 @@
-add_subdirectory(lg_imgui_bundle)
+add_subdirectory(imgui_bundle)
 add_subdirectory(lg_skbuild_template)

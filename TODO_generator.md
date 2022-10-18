@@ -1,4 +1,4 @@
-lg_imgui_bundle:
+imgui_bundle:
     Review description (imgui first)
     Re-try add mahi-gui
 

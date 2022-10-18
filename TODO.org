@@ -408,36 +408,43 @@ insert diagram via mermaid (see integration with emacs)
 
 * Hello ImGui Bundle TOOO
 
+** Later
+*** not important: on windows, link fails with msvc (but pip install works)
+** Rename to imgui_bundle
+   And test name on Pypi
+
 ** En cours: Publish to pypi
 
+** Add imgui-node-editor
+  bug python
+  fail on  config.settings_file = "..." # const char * !!!!
+    => Trouver alternative / config
 
-** Add imgui-node-editor ?
-  Much later, add it to suggestions ?
-  Needs to add its application class (which provides zooming: see when running example)
+** Demos & Doc
+   Display source code per demo
+   Demo Stable Diffusion?
 
-*** fail on  config.settings_file = "..." # const char * !!!!
-  Trouver alternative / config
+** Add immvision
 
+** Clean pyi errors
 
 ** auto-resize and other goodies from immvision
 
-** on windows, link fails with msvc (but pip install works)
+** standby: Window CI, internal compiler error
+Post issue on pybind11 ?
 
-** Window CI, internal compiler error
- https://github.com/pthom/lg_imgui_bundle/actions/runs/3262823761/jobs/5360572719
-  D:\a\lg_imgui_bundle\lg_imgui_bundle\bindings\pybind_imgui.cpp(1501): fatal error C1001: Internal compiler error.
-  (compiler file 'D:\a\_work\1\s\src\vctools\Compiler\CxxFE\sl\p1\c\convert.h', line 1492)
+Compiler error
+https://nam.safelink.emails.azure.net/redirect/?destination=https%3A%2F%2Fdevelopercommunity.visualstudio.com%2Ft%2FMSVC-1933316300-Internal-Compiler-Err%2F10175047&p=bT1iZjMyY2FlOS0yNmZhLTRjNjYtYTY3ZC0yNWNhMWE3MmE2ODQmdT1hZW8mbD0xMDE3NTA0Nw%3D%3D
+Installer error
+https://nam.safelink.emails.azure.net/redirect/?destination=https%3A%2F%2Fdevelopercommunity.visualstudio.com%2Ft%2FError--Sorry-something-went-wrong-wh%2F10175056&p=bT00Mjg1ZWFiMi1jNDdhLTQxYmUtYmUzMi05MTMyNjI0NGM5ZjUmdT1hZW8mbD0xMDE3NTA1Ng%3D%3D
 
-      m.def("selectable",    // imgui.h:623
 
 * srcml_cpp
-
+** Easy
 ** srcmlcpp hard and later
 *** Later: options / suppress warning
 *** Later: parallel execution?
     ouch because context
-
-
 ** srcmlcpp utilities
 
 
@@ -517,9 +524,10 @@ can reuse lots of parts of PimplMyClass
     log inputs
     etc
 
-
-** srcmlcpp easy
-when parsing: stop throwing, only emit warnings and store as unprocessed
+** parse no except
+   See branch parse_no_except
+   when parsing: stop throwing, only emit warnings and store as unprocessed
+   when message, write the name of the calling function in the message
 
 * Litgen TODO
 ** Wish list / hard and later
@@ -541,7 +549,6 @@ mettre des @staticmethod
         {
             struct S {}; => pas d'__init__ genere? (voir litgen_Generator_test)
            }
-
 ** Interactive demo
 
 

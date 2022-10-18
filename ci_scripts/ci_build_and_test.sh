@@ -63,6 +63,6 @@ cd "$REPO_DIR"/demos/litgen/lg_skbuild_template
 pip install -v $PIP_INSTALL_EDITABLE .
 
 
-title "pip build lg_imgui_bundle python modules"
-cd "$REPO_DIR"/demos/litgen/lg_imgui_bundle
+title "pip build imgui_bundle python modules"
+cd "$REPO_DIR"/demos/litgen/imgui_bundle
 pip install -v $PIP_INSTALL_EDITABLE .
