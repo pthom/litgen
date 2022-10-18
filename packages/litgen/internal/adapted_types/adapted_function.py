@@ -973,7 +973,7 @@ class AdaptedFunction(AdaptedElement):
         r = self._elm_stub_original_code_lines_info() + r
 
         if self.cpp_adapted_function.is_static_method():
-            r = ["# (static method)"] + r
+            r = ["@staticmethod"] + r
 
         if self.shall_vectorize():
             new_vectorized_function = copy.copy(self)
