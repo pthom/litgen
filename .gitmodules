@@ -4,3 +4,6 @@
 [submodule "packages/litgen/integration_tests/lg_cmake_utils"]
 	path = packages/litgen/integration_tests/lg_cmake_utils
 	url = https://github.com/pthom/lg_cmake_utils.git
+[submodule "demos/litgen/imgui_bundle"]
+	path = demos/litgen/imgui_bundle
+	url = https://github.com/pthom/imgui_bundle.git
