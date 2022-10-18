@@ -414,8 +414,9 @@ insert diagram via mermaid (see integration with emacs)
 ** En cours: Publish to pypi
 
 ** Demos & Doc
-   Display source code per demo
-   Demo Stable Diffusion?
+   Recup code demodocking => demo hello_imgui
+   Reorga code demo et hunt bug / node editor zoom and select
+
 
 ** Add immvision
 

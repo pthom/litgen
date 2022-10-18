@@ -11,11 +11,14 @@ def cpp_to_snake_case(cpp_code: str) -> str:
         if element.tag() in ["function", "function_decl", "decl"]:
             if element.has_xml_name():
                 old_name = element.extract_name_from_xml()
+                assert old_name is not None
                 new_name = code_utils.to_snake_case(old_name)
                 element.change_name_child_text(new_name)
         if element.tag() == "comment":
-            if "// _SRCML_EMPTY_LINE_" in element.text():
-                element.set_text("")
+            element_text = element.text()
+            if element_text is not None:
+                if "// _SRCML_EMPTY_LINE_" in element_text:
+                    element.set_text("")
 
     root_wrapper.visit_xml_breadth_first(visitor_to_snake_case)
     r = root_wrapper.str_code_verbatim()
