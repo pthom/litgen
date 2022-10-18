@@ -11,6 +11,7 @@ def litgen_options_implot() -> LitgenOptions:
 
     options.fn_force_overload__regex = "BeginPlot"
     options.fn_params_exclude_types__regex = "ImPlotFormatter"
+    options.fn_exclude_by_param_type__regex = "ImPlotTransform"
 
     options.fn_params_buffer_types = join_string_by_pipe_char(
         [
