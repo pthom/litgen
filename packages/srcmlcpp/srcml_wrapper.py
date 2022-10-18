@@ -79,9 +79,17 @@ class SrcmlWrapper:
         """Text part of the xml element"""
         return self.srcml_xml.text
 
+    def set_text(self, new_text: str) -> None:
+        self.srcml_xml.text = new_text
+
     def has_xml_name(self) -> bool:
         name_children = srcml_utils.children_with_tag(self.srcml_xml, "name")
         return len(name_children) == 1
+
+    def change_name_child_text(self, new_name: str) -> None:
+        name_children = srcml_utils.children_with_tag(self.srcml_xml, "name")
+        assert len(name_children) == 1
+        name_children[0].text = new_name
 
     def extract_name_from_xml(self) -> Optional[str]:
         """Returns the C++ code corresponding to the name extracted from the srcML xml tree.

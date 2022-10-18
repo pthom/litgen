@@ -2,6 +2,7 @@
 import fire  # type: ignore
 
 import litgen
+from litgen import cpp_port_helper
 
 
 class LitgenCliCommands:
@@ -39,6 +40,20 @@ class LitgenCliCommands:
         options = litgen.LitgenOptions()
         generated_code = litgen.generate_code(options, code)
         print(generated_code.glue_code)
+
+    @staticmethod
+    def cpp_to_snake_case(cpp_code: str) -> None:
+        """Transforms the functions and decl names into snake case in the given code"""
+        r = cpp_port_helper.cpp_to_snake_case(cpp_code)
+        print(r)
+
+    @staticmethod
+    def cpp_to_python_helper(cpp_code: str) -> None:
+        """Transforms the functions and decl names into snake case in the given code,
+        then replace "::" by ".", "{" and "}" by ""
+        """
+        r = cpp_port_helper.cpp_to_python_helper(cpp_code)
+        print(r)
 
 
 def main() -> None:

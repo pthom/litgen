@@ -413,11 +413,6 @@ insert diagram via mermaid (see integration with emacs)
 
 ** En cours: Publish to pypi
 
-** Add imgui-node-editor
-  bug python
-  fail on  config.settings_file = "..." # const char * !!!!
-    => Trouver alternative / config
-
 ** Demos & Doc
    Display source code per demo
    Demo Stable Diffusion?
@@ -438,6 +433,8 @@ https://nam.safelink.emails.azure.net/redirect/?destination=https%3A%2F%2Fdevelo
 * srcml_cpp
 ** Easy
 ** srcmlcpp hard and later
+*** CppElement: composition, not derivation from SrcmlWrapper!
+     en profiter pour renommer has_xml_name/change_name_child_text
 *** Later: options / suppress warning
 *** Later: parallel execution?
     ouch because context
