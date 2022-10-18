@@ -24,28 +24,22 @@ class BoxedUnsignedLong:
 
 
 ####################    <generated_from:c_style_array_test.h>    ####################
-
 #
 # C Style array tests
 #
 
-
 def const_array2_add(values: List[int]) -> int:
-    """ Tests with const array: since the input numbers are const, their params are published as List[int],
-     and the python signature will be:
-     -->    def add_c_array2(values: List[int]) -> int:
-     (and the runtime will check that the list size is exactly 2)
+    """Tests with const array: since the input numbers are const, their params are published as List[int],
+    and the python signature will be:
+    -->    def add_c_array2(values: List[int]) -> int:
+    (and the runtime will check that the list size is exactly 2)
     """
     pass
 
-
-def array2_modify(
-    values_0: BoxedUnsignedLong,
-    values_1: BoxedUnsignedLong
-    ) -> None:
-    """ Test with a modifiable array: since the input array is not const, it could be modified.
-     Thus, it will be published as a function accepting Boxed values:
-     -->    def array2_modify(values_0: BoxedUnsignedLong, values_1: BoxedUnsignedLong) -> None:
+def array2_modify(values_0: BoxedUnsignedLong, values_1: BoxedUnsignedLong) -> None:
+    """Test with a modifiable array: since the input array is not const, it could be modified.
+    Thus, it will be published as a function accepting Boxed values:
+    -->    def array2_modify(values_0: BoxedUnsignedLong, values_1: BoxedUnsignedLong) -> None:
     """
     pass
 
@@ -54,7 +48,7 @@ class Point2:
     y: int
 
 def array2_modify_mutable(out_0: Point2, out_1: Point2) -> None:
-    """ Test with a modifiable array that uses a user defined struct.
+    """Test with a modifiable array that uses a user defined struct.
      Since the user defined struct is mutable in python, it will not be Boxed,
      and the python signature will be:
     -->    def get_points(out_0: Point2, out_1: Point2) -> None:

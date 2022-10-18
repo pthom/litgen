@@ -24,19 +24,15 @@ class BoxedInt:
 
 
 ####################    <generated_from:c_string_list_test.h>    ####################
-
-
 def c_string_list_total_size(
-    items: List[str],
-    output_0: BoxedInt,
-    output_1: BoxedInt
-    ) -> int:
+    items: List[str], output_0: BoxedInt, output_1: BoxedInt
+) -> int:
     """
-     C String lists tests:
-       Two consecutive params (const char *, int | size_t) are exported as List[str]
+    C String lists tests:
+      Two consecutive params (const char *, int | size_t) are exported as List[str]
 
-     The following function will be exported with the following python signature:
-     -->    def c_string_list_total_size(items: List[str], output_0: BoxedInt, output_1: BoxedInt) -> int:
+    The following function will be exported with the following python signature:
+    -->    def c_string_list_total_size(items: List[str], output_0: BoxedInt, output_1: BoxedInt) -> int:
 
     """
     pass
