@@ -410,8 +410,6 @@ insert diagram via mermaid (see integration with emacs)
 
 ** Later
 *** not important: on windows, link fails with msvc (but pip install works)
-** Rename to imgui_bundle
-   And test name on Pypi
 
 ** En cours: Publish to pypi
 
@@ -431,8 +429,6 @@ insert diagram via mermaid (see integration with emacs)
 ** auto-resize and other goodies from immvision
 
 ** standby: Window CI, internal compiler error
-Post issue on pybind11 ?
-
 Compiler error
 https://nam.safelink.emails.azure.net/redirect/?destination=https%3A%2F%2Fdevelopercommunity.visualstudio.com%2Ft%2FMSVC-1933316300-Internal-Compiler-Err%2F10175047&p=bT1iZjMyY2FlOS0yNmZhLTRjNjYtYTY3ZC0yNWNhMWE3MmE2ODQmdT1hZW8mbD0xMDE3NTA0Nw%3D%3D
 Installer error
@@ -538,8 +534,7 @@ Problem 3: dans lg_test_runner (integration tests), tout est refusé (trouve pas
 *** auto __repr__ for structs?
 *** Bind srcml?
 *** N: keep pointer and references layout inside CppType (int *x vs int *x vs int * x)
-** Wish List / Easy
-
+*** Review code replacemnts
 option code_replacements => types_replacements
 mettre des @staticmethod
 { // <namespace N>  => // { <namespace N>
@@ -549,10 +544,7 @@ mettre des @staticmethod
         {
             struct S {}; => pas d'__init__ genere? (voir litgen_Generator_test)
            }
-** Interactive demo
-
-
-
+*** Interactive demo
 Export notebook:
 https://mljar.com/blog/jupyter-notebook-html/
 
@@ -561,3 +553,4 @@ https://jupyter-contrib-nbextensions.readthedocs.io/en/latest/nbextensions/toc2/
    Issue with toc:
      See https://github.com/ipython-contrib/jupyter_contrib_nbextensions/issues/1533
        (jinja2.exceptions.TemplateNotFound: toc2)
+** Wish List / Easy
