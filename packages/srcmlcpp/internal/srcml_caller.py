@@ -147,11 +147,6 @@ class _SrcmlCaller:
         )
         return r
 
-    def __del__(self):
-        global _FLAG_PROFILE_SRCML_CALLS
-        if _FLAG_PROFILE_SRCML_CALLS:
-            print(self.profiling_stats())
-
 
 _SRCML_CALLER = _SrcmlCaller()
 
