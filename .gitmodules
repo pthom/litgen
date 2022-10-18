@@ -1,9 +1,6 @@
 [submodule "lg_projects/lg_skbuild_template"]
 	path = demos/litgen/lg_skbuild_template
 	url = https://github.com/pthom/lg_skbuild_template.git
-[submodule "lg_projects/lg_imgui_bundle"]
-	path = demos/litgen/imgui_bundle
-	url = https://github.com/pthom/lg_imgui_bundle.git
 [submodule "packages/litgen/integration_tests/lg_cmake_utils"]
 	path = packages/litgen/integration_tests/lg_cmake_utils
 	url = https://github.com/pthom/lg_cmake_utils.git
