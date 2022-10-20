@@ -414,9 +414,13 @@ insert diagram via mermaid (see integration with emacs)
 ** En cours: Publish to pypi
 
 ** Demos & Doc
-   Recup code demodocking => demo hello_imgui
-   Reorga code demo et hunt bug / node editor zoom and select
+   link demo hello imgui
 
+** Markdown
+Devra aller carrement dans HelloImGui
+Avec une option pour l'activer
+separer assets fondamentaux et user assets
+comme ca pas besoin de trafiquer le load des fontes
 
 ** Add immvision
 

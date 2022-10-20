@@ -41,8 +41,6 @@ def test_line_python_comment_position():
     code = "        # my comment"
     assert code_utils.line_python_comment_eol_position(code) is None
 
-    print("a")
-
 
 def test_align_python_comments_in_block():
     code = """
