@@ -411,28 +411,36 @@ insert diagram via mermaid (see integration with emacs)
 ** Later
 *** not important: on windows, link fails with msvc (but pip install works)
 
+*** Add immvision
+
+*** auto-resize and other goodies from immvision
+see pybind/src_python/immvision/imgui_runner/imgui_app_params.py
+
+    # app_window_size: Application window size:
+    # if app_window_size==None and app_window_size_restore_last==False:
+    #     then, the app window size will try to match the widgets size.
+    app_window_size: Optional[WindowSize] = None
+
+    # restore_last_window_size: should we restore the application window size of the last run
+    # if app_window_size_restore_last==True, the app window size will not try to match the widgets size.
+    app_window_size_restore_last: bool = False
+
+
 ** En cours: Publish to pypi
 
 ** Demos & Doc
-   link demo hello imgui
+    Markdown in all pages
+    Page / imgui_bundle
+    Page / Advices and port from C++
 
-** Markdown
-Devra aller carrement dans HelloImGui
-Avec une option pour l'activer
-separer assets fondamentaux et user assets
-comme ca pas besoin de trafiquer le load des fontes
+    Readme
 
-** Add immvision
+    Script de demos installe via pip
 
-** Clean pyi errors
+    CI / Run sample app
 
-** auto-resize and other goodies from immvision
-
-** standby: Window CI, internal compiler error
-Compiler error
-https://nam.safelink.emails.azure.net/redirect/?destination=https%3A%2F%2Fdevelopercommunity.visualstudio.com%2Ft%2FMSVC-1933316300-Internal-Compiler-Err%2F10175047&p=bT1iZjMyY2FlOS0yNmZhLTRjNjYtYTY3ZC0yNWNhMWE3MmE2ODQmdT1hZW8mbD0xMDE3NTA0Nw%3D%3D
-Installer error
-https://nam.safelink.emails.azure.net/redirect/?destination=https%3A%2F%2Fdevelopercommunity.visualstudio.com%2Ft%2FError--Sorry-something-went-wrong-wh%2F10175056&p=bT00Mjg1ZWFiMi1jNDdhLTQxYmUtYmUzMi05MTMyNjI0NGM5ZjUmdT1hZW8mbD0xMDE3NTA1Ng%3D%3D
+Soucis sur gitmodules:
+  imspinner absent (normal, because history), et implot present deux fois
 
 
 * srcml_cpp
