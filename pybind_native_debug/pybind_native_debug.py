@@ -13,6 +13,7 @@ def demo_node_editor() -> None:
     import demo_all  # type: ignore
 
     demo_all.main()
+
     # import demo_node_editor  # type: ignore
     # demo_node_editor.main()
 

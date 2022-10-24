@@ -429,18 +429,39 @@ see pybind/src_python/immvision/imgui_runner/imgui_app_params.py
 ** En cours: Publish to pypi
 
 ** Demos & Doc
-    Markdown in all pages
-    Page / imgui_bundle
-    Page / Advices and port from C++
 
-    Readme
+** Pub
 
-    Script de demos installe via pip
+Ca chie sur l'install et donc dans le package:
+  _skbuikd/cmake_install contient une copie de tout!
 
-    CI / Run sample app
+
+bundle c++
+  CI Build
+
+
+
+
+  => Add Bindings for ImGuiBundle::Run
+
+
+Pkoi le build deconne chez moi?
+
+
+check install on win & linux
+  pb zoom sous windows: trop petit
+     float ratio = ImGui::GetIO().FontGlobalScale
+     voir https://github.com/ocornut/imgui/issues/5081 et https://github.com/ocornut/imgui/blob/master/docs/FAQ.md#q-how-should-i-handle-dpi-in-my-application
+
+  demo node editor sous linux
+
+
+** Small issues
+CI / Run sample app
 
 Soucis sur gitmodules:
-  imspinner absent (normal, because history), et implot present deux fois
+  imspinner absent et implot present deux fois
+
 
 
 * srcml_cpp
