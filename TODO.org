@@ -432,17 +432,10 @@ see pybind/src_python/immvision/imgui_runner/imgui_app_params.py
 
 ** Pub
 
-Ca chie sur l'install et donc dans le package:
-  _skbuikd/cmake_install contient une copie de tout!
-
 
 bundle c++
   CI Build
 
-
-
-
-  => Add Bindings for ImGuiBundle::Run
 
 
 Pkoi le build deconne chez moi?
