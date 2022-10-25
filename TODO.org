@@ -433,13 +433,17 @@ see pybind/src_python/immvision/imgui_runner/imgui_app_params.py
 ** Pub
 
 LICENSE (ADD TO SETUP) / haiku
-Correct Now() => ClockSeconds()
 
 
 Inform third parties maintainers
 
+On Linux:
+  Editable install seems to fail
+     => upgrade pip!
+        pip install -U pip
+  Multiprocess fails
+  Find References pyi fails
 
-pb demu multiprocess sous docker => essayer avec veritable machine virtuelle
 
 
 check install on win & linux
