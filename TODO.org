@@ -432,9 +432,11 @@ see pybind/src_python/immvision/imgui_runner/imgui_app_params.py
 
 ** Pub
 
+LICENSE (ADD TO SETUP) / haiku
+Correct Now() => ClockSeconds()
 
-bundle c++
-  CI Build
+
+Inform third parties maintainers
 
 
 pb demu multiprocess sous docker => essayer avec veritable machine virtuelle
