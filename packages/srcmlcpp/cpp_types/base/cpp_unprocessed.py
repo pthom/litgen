@@ -29,10 +29,8 @@ class CppEmptyLine(CppElementAndComment):
 
 class CppUnprocessed(CppElementAndComment):
     """Any Cpp Element that is not yet processed by srcmlcpp
-    We keep its original source under the form of a string
+    The original source can be accessed via self.str_code_verbatim()
     """
-
-    code: str
 
     def __init__(self, element: SrcmlWrapper, cpp_element_comments: CppElementComments) -> None:
         super().__init__(element, cpp_element_comments)
@@ -42,6 +40,7 @@ class CppUnprocessed(CppElementAndComment):
         return f"<unprocessed_{self.tag()}/>"
 
     def __str__(self) -> str:
+        self.str_code_verbatim()
         return self.str_commented()
 
 

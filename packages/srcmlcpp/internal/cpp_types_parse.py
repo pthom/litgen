@@ -29,7 +29,6 @@ def parse_unprocessed(
     options: SrcmlcppOptions, element_c: CppElementAndComment, parent: CppElementAndComment
 ) -> CppUnprocessed:  # noqa
     result = CppUnprocessed(element_c, element_c.cpp_element_comments)
-    result.code = srcml_caller.srcml_to_code(element_c.srcml_xml)
     result.parent = parent
     return result
 

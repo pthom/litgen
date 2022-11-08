@@ -426,14 +426,61 @@ see pybind/src_python/immvision/imgui_runner/imgui_app_params.py
     app_window_size_restore_last: bool = False
 
 
-** En cours: Publish to pypi
+** AutoSize & other from ImmVision
 
-** Demos & Doc
+  Check work:
+    Fullscreens
+       Sdl/FullScreenDesktopResolution:
+         click issue (need click higher !) on monitor 0
+         ok on monitor 1
+       Glfw/FullScreenDesktopResolution: OK on monitor 0 and 1
+
+       Sdl/FullScreen:
+         Ok monitor 0 and 1 (change resolution, update windowSize info)
+       Glfw/FullScreen
+         Monitor 0: does not change resolution
+         Monitor 1: does change resolution...
+
+       FullMonitorWorkArea: OK
+
+
+    X MonitorIdx
+    X Position
+
+    X SizeState
+    X borderless
+    X resizable
+
+    X Sdl / Glfw
+    X emscripten
+
+
+
+  Impl:
+    N API Desktop sizes
+    X Correct Position and Size
+
+    X SizeAuto
+    X Save Geometry
+        X Voir _ImguiAppParamsHelper (Rename to GeometryHelper) & AutoSizeAppWindow
+
+    X PowerSave
+
+    Doc HelloImGui:
+      X PowerSave
+      X AutoSize
+      X API / Run simple autosize & powerSave
+      FAQ / full screen
+
+    Windows / Scaling & Multimonitor
+
+    Screenshot
+
+
+    Test notebook (& test exception)
+
 
 ** Pub
-
-X LICENSE (ADD TO SETUP) / haiku
-
 
 Inform third parties maintainers
 
@@ -446,14 +493,16 @@ pb zoom sous windows: trop petit
 
 
 ** Small issues
-CI / Run sample app
-
 Soucis sur gitmodules:
   imspinner absent et implot present deux fois
 
-
+** Add ImGui callbacks via patch std::function?
 
 * srcml_cpp
+  Test libclang: see https://shaharmike.com/cpp/libclang/ & https://libclang.readthedocs.io/en/latest/
+     https://bastian.rieck.me/blog/posts/2015/baby_steps_libclang_ast/
+
+
 ** Easy
 ** srcmlcpp hard and later
 *** CppElement: composition, not derivation from SrcmlWrapper!
