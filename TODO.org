@@ -413,22 +413,10 @@ insert diagram via mermaid (see integration with emacs)
 
 *** Add immvision
 
-*** auto-resize and other goodies from immvision
-see pybind/src_python/immvision/imgui_runner/imgui_app_params.py
-
-    # app_window_size: Application window size:
-    # if app_window_size==None and app_window_size_restore_last==False:
-    #     then, the app window size will try to match the widgets size.
-    app_window_size: Optional[WindowSize] = None
-
-    # restore_last_window_size: should we restore the application window size of the last run
-    # if app_window_size_restore_last==True, the app window size will not try to match the widgets size.
-    app_window_size_restore_last: bool = False
-
 
 ** AutoSize & other from ImmVision
 
-  Check work:
+*** X Check work:
     Fullscreens
        Sdl/FullScreenDesktopResolution:
          click issue (need click higher !) on monitor 0
@@ -456,7 +444,7 @@ see pybind/src_python/immvision/imgui_runner/imgui_app_params.py
 
 
 
-  Impl:
+*** X Impl:
     N API Desktop sizes
     X Correct Position and Size
 
@@ -470,14 +458,21 @@ see pybind/src_python/immvision/imgui_runner/imgui_app_params.py
       X PowerSave
       X AutoSize
       X API / Run simple autosize & powerSave
-      FAQ / full screen
-
-    Windows / Scaling & Multimonitor
-
-    Screenshot
+      N FAQ / full screen
 
 
-    Test notebook (& test exception)
+*** X Windows / Scaling & Multimonitor
+
+X Revoir LoadAdditionalFonts : doit pouvoir prendre en param un ContentScale (ou le lire dans runnerParams)
+X Publier contentScale dans Params
+
+*** Correct CI
+
+*** Pub ImGuiBundle dans HelloImGui
+
+*** Screenshot
+
+*** Test notebook (& test exception)
 
 
 ** Pub
