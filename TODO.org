@@ -408,16 +408,26 @@ insert diagram via mermaid (see integration with emacs)
 
 * Hello ImGui Bundle TOOO
 
+** Pub
+
+Inform third parties maintainers
+Reddit
+ImGui gallery
+Python forums
+
+** Small issues
+Soucis sur gitmodules:
+  imspinner absent et implot present deux fois
+
 ** Later
 *** not important: on windows, link fails with msvc (but pip install works)
 
 *** Add immvision
 
+*** Add ImGui callbacks via patch std::function?
 
 ** AutoSize & other from ImmVision
-
-*** X Check work:
-    Fullscreens
+*** Faq Fullscreens
        Sdl/FullScreenDesktopResolution:
          click issue (need click higher !) on monitor 0
          ok on monitor 1
@@ -432,66 +442,38 @@ insert diagram via mermaid (see integration with emacs)
        FullMonitorWorkArea: OK
 
 
-    X MonitorIdx
-    X Position
+*** X Correct CI
+     X Limit cibuildwheel versions
 
-    X SizeState
-    X borderless
-    X resizable
-
-    X Sdl / Glfw
-    X emscripten
-
-
-
-*** X Impl:
-    N API Desktop sizes
-    X Correct Position and Size
-
-    X SizeAuto
-    X Save Geometry
-        X Voir _ImguiAppParamsHelper (Rename to GeometryHelper) & AutoSizeAppWindow
-
-    X PowerSave
-
-    Doc HelloImGui:
-      X PowerSave
-      X AutoSize
-      X API / Run simple autosize & powerSave
-      N FAQ / full screen
-
-
-*** X Windows / Scaling & Multimonitor
-
-X Revoir LoadAdditionalFonts : doit pouvoir prendre en param un ContentScale (ou le lire dans runnerParams)
-X Publier contentScale dans Params
-
-*** Correct CI
-
-*** Pub ImGuiBundle dans HelloImGui
+*** X Pub ImGuiBundle dans HelloImGui
 
 *** Screenshot
+https://registry.khronos.org/OpenGL-Refpages/gl4/html/glReadPixels.xhtml
+
+
 
 *** Test notebook (& test exception)
 
 
-** Pub
+** Bug Win Notebook
 
-Inform third parties maintainers
-
-
-check install on win & linux
-
-pb zoom sous windows: trop petit
-     float ratio = ImGui::GetIO().FontGlobalScale
-     voir https://github.com/ocornut/imgui/issues/5081 et https://github.com/ocornut/imgui/blob/master/docs/FAQ.md#q-how-should-i-handle-dpi-in-my-application
+Bug sur plots:
+  bar = np.array([1,2,5,3,4,1,2,5,3,4], np.float64) bien dessiné
+  bar = np.array([1,2,5,3,4,1,2,5,3,4]) mal dessiné
+  study mixed plot
 
 
-** Small issues
-Soucis sur gitmodules:
-  imspinner absent et implot present deux fois
 
-** Add ImGui callbacks via patch std::function?
+  else if (values_type == 'L') // size=4 ie 32 bits under windows!
+                      //MyLog(static_cast<const uint64_t *>(values_from_pyarray), static_cast<int>(values_count));
+                      MyLog(static_cast<const uint32_t *>(values_from_pyarray), static_cast<int>(values_count));
+  else if (values_type == 'l') // size=4 ie 32 bits under windows!
+                      //MyLog(static_cast<const int64_t *>(values_from_pyarray), static_cast<int>(values_count));
+                      MyLog(static_cast<const int32_t *>(values_from_pyarray), static_cast<int>(values_count));
+
+
+
+** check install on linux
 
 * srcml_cpp
   Test libclang: see https://shaharmike.com/cpp/libclang/ & https://libclang.readthedocs.io/en/latest/
