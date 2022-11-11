@@ -125,6 +125,13 @@ def test_implot_one_buffer() -> None:
                     const void * values_from_pyarray = values.data();
                     py::ssize_t values_count = values.shape()[0];
 
+                    #ifdef _WIN32
+                    using np_uint_l = uint32_t;
+                    using np_int_l = int32_t;
+                    #else
+                    using np_uint_l = uint64_t;
+                    using np_int_l = int64_t;
+                    #endif
                     // call the correct template version by casting
                     char values_type = values.dtype().char_();
                     if (values_type == 'B')
@@ -140,9 +147,9 @@ def test_implot_one_buffer() -> None:
                     else if (values_type == 'i')
                         PlotScatter(static_cast<const int32_t *>(values_from_pyarray), static_cast<int>(values_count));
                     else if (values_type == 'L')
-                        PlotScatter(static_cast<const uint64_t *>(values_from_pyarray), static_cast<int>(values_count));
+                        PlotScatter(static_cast<const np_uint_l *>(values_from_pyarray), static_cast<int>(values_count));
                     else if (values_type == 'l')
-                        PlotScatter(static_cast<const int64_t *>(values_from_pyarray), static_cast<int>(values_count));
+                        PlotScatter(static_cast<const np_int_l *>(values_from_pyarray), static_cast<int>(values_count));
                     else if (values_type == 'f')
                         PlotScatter(static_cast<const float *>(values_from_pyarray), static_cast<int>(values_count));
                     else if (values_type == 'd')

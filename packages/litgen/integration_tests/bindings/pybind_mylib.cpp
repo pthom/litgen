@@ -373,6 +373,13 @@ void py_init_module_lg_mylib(py::module& m)
                 void * buffer_from_pyarray = buffer.mutable_data();
                 py::ssize_t buffer_count = buffer.shape()[0];
 
+                #ifdef _WIN32
+                using np_uint_l = uint32_t;
+                using np_int_l = int32_t;
+                #else
+                using np_uint_l = uint64_t;
+                using np_int_l = int64_t;
+                #endif
                 // call the correct template version by casting
                 char buffer_type = buffer.dtype().char_();
                 if (buffer_type == 'B')
@@ -388,9 +395,9 @@ void py_init_module_lg_mylib(py::module& m)
                 else if (buffer_type == 'i')
                     templated_mul_inside_buffer(static_cast<int32_t *>(buffer_from_pyarray), static_cast<size_t>(buffer_count), factor);
                 else if (buffer_type == 'L')
-                    templated_mul_inside_buffer(static_cast<uint64_t *>(buffer_from_pyarray), static_cast<size_t>(buffer_count), factor);
+                    templated_mul_inside_buffer(static_cast<np_uint_l *>(buffer_from_pyarray), static_cast<size_t>(buffer_count), factor);
                 else if (buffer_type == 'l')
-                    templated_mul_inside_buffer(static_cast<int64_t *>(buffer_from_pyarray), static_cast<size_t>(buffer_count), factor);
+                    templated_mul_inside_buffer(static_cast<np_int_l *>(buffer_from_pyarray), static_cast<size_t>(buffer_count), factor);
                 else if (buffer_type == 'f')
                     templated_mul_inside_buffer(static_cast<float *>(buffer_from_pyarray), static_cast<size_t>(buffer_count), factor);
                 else if (buffer_type == 'd')
@@ -1310,6 +1317,13 @@ void py_init_module_lg_mylib(py::module& m)
                         void * buffer_from_pyarray = buffer.mutable_data();
                         py::ssize_t buffer_count = buffer.shape()[0];
 
+                        #ifdef _WIN32
+                        using np_uint_l = uint32_t;
+                        using np_int_l = int32_t;
+                        #else
+                        using np_uint_l = uint64_t;
+                        using np_int_l = int64_t;
+                        #endif
                         // call the correct template version by casting
                         char buffer_type = buffer.dtype().char_();
                         if (buffer_type == 'B')
@@ -1325,9 +1339,9 @@ void py_init_module_lg_mylib(py::module& m)
                         else if (buffer_type == 'i')
                             self.templated_mul_inside_buffer(static_cast<int32_t *>(buffer_from_pyarray), static_cast<size_t>(buffer_count), factor);
                         else if (buffer_type == 'L')
-                            self.templated_mul_inside_buffer(static_cast<uint64_t *>(buffer_from_pyarray), static_cast<size_t>(buffer_count), factor);
+                            self.templated_mul_inside_buffer(static_cast<np_uint_l *>(buffer_from_pyarray), static_cast<size_t>(buffer_count), factor);
                         else if (buffer_type == 'l')
-                            self.templated_mul_inside_buffer(static_cast<int64_t *>(buffer_from_pyarray), static_cast<size_t>(buffer_count), factor);
+                            self.templated_mul_inside_buffer(static_cast<np_int_l *>(buffer_from_pyarray), static_cast<size_t>(buffer_count), factor);
                         else if (buffer_type == 'f')
                             self.templated_mul_inside_buffer(static_cast<float *>(buffer_from_pyarray), static_cast<size_t>(buffer_count), factor);
                         else if (buffer_type == 'd')
@@ -1484,6 +1498,13 @@ void py_init_module_lg_mylib(py::module& m)
                         void * buffer_from_pyarray = buffer.mutable_data();
                         py::ssize_t buffer_count = buffer.shape()[0];
 
+                        #ifdef _WIN32
+                        using np_uint_l = uint32_t;
+                        using np_int_l = int32_t;
+                        #else
+                        using np_uint_l = uint64_t;
+                        using np_int_l = int64_t;
+                        #endif
                         // call the correct template version by casting
                         char buffer_type = buffer.dtype().char_();
                         if (buffer_type == 'B')
@@ -1499,9 +1520,9 @@ void py_init_module_lg_mylib(py::module& m)
                         else if (buffer_type == 'i')
                             SomeNamespace::SomeInnerNamespace::templated_mul_inside_buffer(static_cast<int32_t *>(buffer_from_pyarray), static_cast<size_t>(buffer_count), factor);
                         else if (buffer_type == 'L')
-                            SomeNamespace::SomeInnerNamespace::templated_mul_inside_buffer(static_cast<uint64_t *>(buffer_from_pyarray), static_cast<size_t>(buffer_count), factor);
+                            SomeNamespace::SomeInnerNamespace::templated_mul_inside_buffer(static_cast<np_uint_l *>(buffer_from_pyarray), static_cast<size_t>(buffer_count), factor);
                         else if (buffer_type == 'l')
-                            SomeNamespace::SomeInnerNamespace::templated_mul_inside_buffer(static_cast<int64_t *>(buffer_from_pyarray), static_cast<size_t>(buffer_count), factor);
+                            SomeNamespace::SomeInnerNamespace::templated_mul_inside_buffer(static_cast<np_int_l *>(buffer_from_pyarray), static_cast<size_t>(buffer_count), factor);
                         else if (buffer_type == 'f')
                             SomeNamespace::SomeInnerNamespace::templated_mul_inside_buffer(static_cast<float *>(buffer_from_pyarray), static_cast<size_t>(buffer_count), factor);
                         else if (buffer_type == 'd')

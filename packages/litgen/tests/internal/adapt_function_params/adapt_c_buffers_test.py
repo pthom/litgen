@@ -170,6 +170,13 @@ def test_template_buffer():
                     const void * buf_from_pyarray = buf.data();
                     py::ssize_t buf_count = buf.shape()[0];
 
+                    #ifdef _WIN32
+                    using np_uint_l = uint32_t;
+                    using np_int_l = int32_t;
+                    #else
+                    using np_uint_l = uint64_t;
+                    using np_int_l = int64_t;
+                    #endif
                     // call the correct template version by casting
                     char buf_type = buf.dtype().char_();
                     if (buf_type == 'B')
@@ -185,9 +192,9 @@ def test_template_buffer():
                     else if (buf_type == 'i')
                         return foo(static_cast<const int32_t *>(buf_from_pyarray), static_cast<size_t>(buf_count), flag);
                     else if (buf_type == 'L')
-                        return foo(static_cast<const uint64_t *>(buf_from_pyarray), static_cast<size_t>(buf_count), flag);
+                        return foo(static_cast<const np_uint_l *>(buf_from_pyarray), static_cast<size_t>(buf_count), flag);
                     else if (buf_type == 'l')
-                        return foo(static_cast<const int64_t *>(buf_from_pyarray), static_cast<size_t>(buf_count), flag);
+                        return foo(static_cast<const np_int_l *>(buf_from_pyarray), static_cast<size_t>(buf_count), flag);
                     else if (buf_type == 'f')
                         return foo(static_cast<const float *>(buf_from_pyarray), static_cast<size_t>(buf_count), flag);
                     else if (buf_type == 'd')
