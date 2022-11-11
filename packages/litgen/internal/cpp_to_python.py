@@ -173,8 +173,8 @@ _PY_ARRAY_TYPE_TO_CPP_TYPE = {
     "h": "int16_t",
     "I": "uint32_t",
     "i": "int32_t",
-    "L": "uint64_t",
-    "l": "int64_t",
+    "L": "np_uint_l",  # Platform dependent: "uint64_t" on *nixes, "uint32_t" on windows
+    "l": "np_int_l",  # Platform dependent: "int64_t" on *nixes, "int32_t" on windows
     "f": "float",
     "d": "double",
     "g": "long double",

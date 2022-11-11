@@ -228,6 +228,13 @@ class _AdaptBuffersHelper:
     def make_adapted_lambda_code_end_template_buffer(self) -> str:
 
         template_intro = """
+            #ifdef _WIN32
+            using np_uint_l = uint32_t;
+            using np_int_l = int32_t;
+            #else
+            using np_uint_l = uint64_t;
+            using np_int_l = int64_t;
+            #endif
             // call the correct template version by casting
             char {template_buffer_name}_type = {template_buffer_name}.dtype().char_();
         """

@@ -30,8 +30,8 @@ def litgen_options_implot() -> LitgenOptions:
             "int16_t",
             "uint32_t",
             "int32_t",
-            "uint64_t",  # those correspond to `unsigned long` and `long` on linux 64 bits
-            "int64_t",  # and they are not available within imgui.h (i.e the ImUXX types need to be reviewed in imgui)
+            "np_uint_l",  # Platform dependent: "uint64_t" on *nixes, "uint32_t" on windows
+            "np_int_l",  # Platform dependent: "int64_t" on *nixes, "int32_t" on windows
             "float",
             "double",
             "long double",  # Note: long double not supported in implot (yet?)

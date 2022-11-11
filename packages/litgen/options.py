@@ -235,8 +235,8 @@ class LitgenOptions:
             "int16_t",
             "uint32_t",
             "int32_t",
-            "uint64_t",
-            "int64_t",
+            "np_uint_l",  # Platform dependent: "uint64_t" on *nixes, "uint32_t" on windows
+            "np_int_l",  # Platform dependent: "int64_t" on *nixes, "int32_t" on windows
             "float",
             "double",
             "long double",
@@ -475,8 +475,8 @@ class LitgenOptions:
             "int16_t",
             "uint32_t",
             "int32_t",
-            "uint64_t",
-            "int64_t",
+            "np_uint_l",  # Platform dependent: "uint64_t" on *nixes, "uint32_t" on windows
+            "np_int_l",  # Platform dependent: "int64_t" on *nixes, "int32_t" on windows
             "float",
             "double",
             "long double",
