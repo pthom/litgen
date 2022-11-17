@@ -20,6 +20,7 @@ from litgen.internal.adapted_types.adapted_element import (
 from litgen.internal.adapted_types.adapted_enum import AdaptedEnum
 from litgen.internal.adapted_types.adapted_function import AdaptedFunction
 from litgen.internal.context.litgen_context import LitgenContext
+from litgen.internal.adapted_types.adapted_define import AdaptedDefine
 
 
 @dataclass
@@ -32,6 +33,7 @@ class AdaptedBlock(AdaptedElement):
             AdaptedClass,
             AdaptedFunction,
             AdaptedEnum,
+            AdaptedDefine,
             # AdaptedNamespace,  # There is actually a circular dependency here (with no important consequences)
             # A Block can contain a namespace, and a namespace contains a block
         ]
@@ -65,6 +67,13 @@ class AdaptedBlock(AdaptedElement):
                     if AdaptedFunction.init_is_function_publishable(self.options, child):
                         is_overloaded = self.cpp_element().is_function_overloaded(child)
                         self.adapted_elements.append(AdaptedFunction(self.lg_context, child, is_overloaded))
+                elif isinstance(child, CppDefine):
+                    is_included = code_utils.does_match_regex(
+                        self.options.macro_define_include_by_name__regex, child.macro_name
+                    )
+                    is_publishable = AdaptedDefine.is_publishable(child)
+                    if is_included and is_publishable:
+                        self.adapted_elements.append(AdaptedDefine(self.lg_context, child))
                 elif isinstance(child, CppEnum):
                     is_excluded_by_name = code_utils.does_match_regex(
                         self.options.enum_exclude_by_name__regex, child.enum_name

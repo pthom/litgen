@@ -92,6 +92,9 @@ def mylib_litgen_options() -> litgen.LitgenOptions:
         naming_scheme=litgen.TemplateNamingScheme.camel_case_suffix,
     )
 
+    options.macro_define_include_by_name__regex = r"^MY_"
+    options.macro_name_replacements.add_first_replacement("MY_", "")
+
     #
     # Sandbox for other options
     #

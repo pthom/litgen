@@ -104,6 +104,19 @@ class LitgenOptions:
     enum_make_arithmetic__regex = r".*"
 
     ################################################################################
+    #    <define adaptations>
+    ################################################################################
+    # Simple preprocessor defines can be exported as global variables, e.g.:
+    #     #define MY_VALUE 1
+    #     #define MY_FLOAT 1.5
+    #     #define MY_STRING "abc"
+    #     #define MY_HEX_VALUE 0x00010009
+    # This is limited to *simple* defines (no param, string, int, float or hex only)
+    # By default nothing is exported
+    macro_define_include_by_name__regex: str = ""
+    macro_name_replacements: RegexReplacementList
+
+    ################################################################################
     #    <functions and method adaptations>
     ################################################################################
 
@@ -518,6 +531,7 @@ class LitgenOptions:
         self.code_replacements = cpp_to_python.standard_code_replacements()
         self.comments_replacements = cpp_to_python.standard_comment_replacements()
         self.names_replacements = RegexReplacementList()
+        self.macro_name_replacements = RegexReplacementList()
 
         self.fn_template_options = TemplateFunctionsOptions()
         self.class_template_options = TemplateClassOptions()

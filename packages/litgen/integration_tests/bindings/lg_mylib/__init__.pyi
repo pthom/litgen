@@ -796,6 +796,26 @@ def extern_c_add(a: int, b: int) -> int:
 def foo_void_param() -> int:
     pass
 
+def foo_unnamed_param(param_0: int, param_1: bool, param_2: float) -> int:
+    pass
+
+# This is zero
+# Will be published with is comment
+ANSWER_ZERO_COMMENTED = 0
+
+# Will be published with its two comments (incl this one)
+# This is one
+ANSWER_ONE_COMMENTED = 1
+
+# Will be published
+HEXVALUE = 0x43242
+# Will be published
+OCTALVALUE = 0o43242
+# Will be published
+STRING = "Hello"
+# Will be published
+FLOAT = 3.14
+
 # ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 #                       mylib/mylib_main/mylib.h continued                                                     //
 # //////////////////////////////////////////////////////////////////////////////////////////////////////////////

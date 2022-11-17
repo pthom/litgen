@@ -1101,6 +1101,15 @@ void py_init_module_lg_mylib(py::module& m)
     m.def("foo_void_param",
         foo_void_param);
 
+    m.def("foo_unnamed_param",
+        foo_unnamed_param, py::arg("param_0"), py::arg("param_1"), py::arg("param_2"));
+    m.attr("ANSWER_ZERO_COMMENTED") = 0;
+    m.attr("ANSWER_ONE_COMMENTED") = 1;
+    m.attr("HEXVALUE") = 0x43242;
+    m.attr("OCTALVALUE") = 043242;
+    m.attr("STRING") = "Hello";
+    m.attr("FLOAT") = 3.14;
+
     { // <namespace MathFunctions>
         py::module_ pyNsMathFunctions = m.def_submodule("MathFunctions", " Vectorizable functions example\n    Numeric functions (i.e. function accepting and returning only numeric params or py::array), can be vectorized\n    i.e. they will accept numpy arrays as an input.\n\n Auto-vectorization is enabled via the following options:\n     options.fn_namespace_vectorize__regex: str = r\"^MathFunctions$\"\n     options.fn_vectorize__regex = r\".*\"\n");
         pyNsMathFunctions.def("vectorizable_sum",
