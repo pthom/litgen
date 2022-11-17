@@ -29,6 +29,7 @@ MY_API int extern_c_add(int a, int b) { return a + b; }
 
 MY_API int foo_void_param(void) { return 42; }
 
+MY_API int foo_unnamed_param(int , bool, float) { return 42; }
 #ifdef __cplusplus
 }
 #endif

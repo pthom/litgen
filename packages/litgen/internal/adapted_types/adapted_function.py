@@ -235,6 +235,10 @@ class AdaptedFunction(AdaptedElement):
         function_decl = function_decl.with_qualified_types()
 
         self.cpp_adapted_function = function_decl
+
+        # Python does not support unnamed params!
+        self.add_names_to_unnamed_params()
+
         operators.raise_if_unsupported_operator(self.cpp_adapted_function)
 
         self.cpp_adapter_code = None
@@ -313,6 +317,18 @@ class AdaptedFunction(AdaptedElement):
     def is_constructor(self) -> bool:
         r = self.cpp_element().is_constructor()
         return r
+
+    def add_names_to_unnamed_params(self):
+        has_unnamed_param = False
+        parameters_list = self.cpp_adapted_function.parameter_list
+        for param in parameters_list.parameters:
+            if param.decl.decl_name == "":
+                has_unnamed_param = True
+        if has_unnamed_param:
+            parameters_list.parameters = copy.deepcopy(parameters_list.parameters)
+            for i, param in enumerate(parameters_list.parameters):
+                if param.decl.decl_name == "":
+                    param.decl.decl_name = f"param_{i}"
 
     def adapted_parameters(self) -> List[AdaptedParameter]:
         r: List[AdaptedParameter] = []
