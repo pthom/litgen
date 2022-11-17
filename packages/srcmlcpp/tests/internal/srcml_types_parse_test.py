@@ -1,5 +1,7 @@
 import os
+from typing import cast
 
+import srcmlcpp
 from codemanip import code_utils
 
 from srcmlcpp import cpp_types, srcmlcpp_main
@@ -8,6 +10,49 @@ from srcmlcpp.srcmlcpp_options import SrcmlcppOptions
 
 
 _THIS_DIR = os.path.dirname(__file__)
+
+
+def test_parse_define():
+    code = """
+#define ADD(x, y) (x + y)
+
+#define SUB(x, y) (x \
+- y)
+
+// This is zero
+#define ZERO_COMMENTED 0
+
+#define ONE_COMMENTED 1 // This is one
+
+#define NO_VALUE /* This is a bare define */
+    """
+    options = srcmlcpp.SrcmlcppOptions()
+    cpp_unit = srcmlcpp.code_to_cpp_unit(options, code)
+    cpp_defines = cpp_unit.all_cpp_elements_recursive(cpp_types.CppDefine)
+    assert len(cpp_defines) == 5
+
+    define_add = cast(cpp_types.CppDefine, cpp_defines[0])
+    assert define_add.macro_name == "ADD"
+    assert define_add.macro_parameters_str == "(x, y)"
+    assert define_add.macro_value == "(x + y)"
+    assert str(define_add) == "#define ADD(x, y) (x + y)"
+
+    define_sub = cast(cpp_types.CppDefine, cpp_defines[1])
+    assert define_sub.macro_name == "SUB"
+    assert define_sub.macro_parameters_str == "(x, y)"
+    assert define_sub.macro_value == "(x - y)"
+    assert str(define_sub) == "#define SUB(x, y) (x - y)"
+
+    define_zero = cast(cpp_types.CppDefine, cpp_defines[2])
+    assert str(define_zero) == "#define ZERO_COMMENTED 0"
+    assert define_zero.cpp_element_comments.comment_on_previous_lines == " This is zero"
+
+    define_one = cast(cpp_types.CppDefine, cpp_defines[3])
+    assert define_one.cpp_element_comments.comment_end_of_line == " This is one"
+
+    define_no_value = cast(cpp_types.CppDefine, cpp_defines[4])
+    assert not hasattr(define_no_value, "macro_value")
+    assert define_no_value.cpp_element_comments.comment_end_of_line == " This is a bare define "
 
 
 def test_parse_function_decl():
@@ -220,7 +265,7 @@ def test_parse_unit():
     cpp_element_str = code_to_unit_str(code)
 
     expected_code = """
-        <unprocessed_define/>
+        #define MY_API_H
 
         namespace MyApi
         {

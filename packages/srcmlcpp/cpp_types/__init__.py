@@ -67,6 +67,8 @@ from srcmlcpp.cpp_types.cpp_namespace import CppNamespace
 
 from srcmlcpp.cpp_types.scope.cpp_scope import CppScope, CppScopeType, CppScopePart
 
+from srcmlcpp.cpp_types.cpp_define import CppDefine
+
 __all__ = [
     # base
     "CppAccessType",
@@ -112,4 +114,5 @@ __all__ = [
     # standalone
     "CppEnum",
     "CppNamespace",
+    "CppDefine",
 ]

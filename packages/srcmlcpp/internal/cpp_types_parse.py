@@ -167,6 +167,57 @@ def _parse_name(element: SrcmlWrapper) -> str:
     return name
 
 
+def parse_define(options: SrcmlcppOptions, element_c: CppElementAndComment, parent: CppElementAndComment) -> CppDefine:
+    """
+    https://www.srcml.org/doc/cpp_srcML.html##define
+
+    srcmlcpp xml "#define MY_ANSWER(x) (x+ 1)"
+
+        <?xml version="1.0" ?>
+        <unit xmlns="http://www.srcML.org/srcML/src" xmlns:ns1="http://www.srcML.org/srcML/cpp" revision="1.0.0" language="C++">
+           <ns1:define>
+              #
+              <ns1:directive>define</ns1:directive>
+
+              <ns1:macro>
+                 <name>MY_ANSWER</name>
+                 <parameter_list>
+                    (
+                    <parameter>
+                       <type>
+                          <name>x</name>
+                       </type>
+                    </parameter>
+                    )
+                 </parameter_list>
+              </ns1:macro>
+              <ns1:value>(x+ 1)</ns1:value>
+           </ns1:define>
+        </unit>
+    """
+    assert element_c.tag() == "define"
+    result = CppDefine(element_c, element_c.cpp_element_comments)
+    result.parent = parent
+
+    def parse_inner_macro(macro_element):
+        for macro_child in macro_element.make_wrapped_children():
+            macro_child_tag = macro_child.tag()
+            if macro_child_tag == "name":
+                result.macro_name = macro_child.text()
+            elif macro_child_tag == "parameter_list":
+                result.macro_parameters_str = macro_child.str_code_verbatim()
+
+    for child in element_c.make_wrapped_children():
+        child_tag = child.tag()
+        if child_tag == "directive":
+            continue
+        elif child_tag == "macro":
+            parse_inner_macro(child)
+        elif child_tag == "value":
+            result.macro_value = child.text()
+    return result
+
+
 def parse_decl(
     options: SrcmlcppOptions,
     element_c: CppElementAndComment,
@@ -729,6 +780,8 @@ def fill_block(options: SrcmlcppOptions, element: SrcmlWrapper, inout_block_cont
                 block_children.append(parse_enum(options, child_c, inout_block_content))
             elif child_tag == "block_content":
                 block_children.append(parse_block_content(options, child_c, inout_block_content))
+            elif child_tag == "define":
+                block_children.append(parse_define(options, child_c, inout_block_content))
             elif child_tag == "extern":
                 fill_extern_c_block(options, child_c, inout_block_content)
             elif child_tag in ["public", "protected", "private"]:
