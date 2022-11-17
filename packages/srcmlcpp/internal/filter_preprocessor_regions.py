@@ -125,8 +125,11 @@ class _SrcmlPreprocessorState:
         elif tag == "endif":
             self.was_last_element_a_preprocessor_stmt = True
             self.last_ignored_preprocessor_stmt_line = element_line
-            assert len(self.encountered_if) > 0
-            self.encountered_if = self.encountered_if[:-1]
+            # Note: with extern "C" blocks, we might encounter the #ifdef / #endif out of order
+            # so that we cannot rely on having len(self.encountered_if) > 0
+            # assert len(self.encountered_if) > 0
+            if len(self.encountered_if) > 0:
+                self.encountered_if = self.encountered_if[:-1]
         elif tag in ["else", "elif"]:
             self.was_last_element_a_preprocessor_stmt = True
             self.last_ignored_preprocessor_stmt_line = element_line

@@ -767,6 +767,33 @@ class MyTemplateClassString:
 #  ------------------------------------------------------------------------
 
 # ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+#                       mylib/c_extern_c.h included by mylib/mylib_main/mylib.h                                //
+# //////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+#
+#
+# Here, we test litgen with C libraries, such a glfw:
+#
+# Features:
+# - Handle #ifdef __cpluscplus
+#    __cpluscplus should be assumed to be always True
+# - Handle extern:
+#        extern "C" { ... }
+#    The code inside such a block should be parsed as if extern was not there.
+# - Handle functions with a None instead of empty params:
+#        None foo(None)
+# - unnamed params:
+#        None blah(int)
+# - Export #define as variable
+#    #define GLFW_KEY_LEFT_BRACKET       91  / * [ * /
+#    #define GLFW_PLATFORM_ERROR         0x00010008
+#    etc.
+#
+
+def add(a: int, b: int) -> int:
+    pass
+
+# ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 #                       mylib/mylib_main/mylib.h continued                                                     //
 # //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 

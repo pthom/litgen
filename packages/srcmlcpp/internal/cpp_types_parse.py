@@ -640,6 +640,43 @@ def shall_ignore_comment(cpp_comment: CppComment, last_ignored_child: Optional[C
     return ignore_comment
 
 
+def fill_extern_c_block(options: SrcmlcppOptions, element: SrcmlWrapper, inout_block_content: CppBlock) -> None:
+    """
+    Handle `extern "C"` blocks
+    xml for
+        extern "C" { void foo(); }'
+    is
+        <?xml version="1.0" ?>
+        <unit xmlns="http://www.srcML.org/srcML/src" revision="1.0.0" language="C++">
+           <extern>
+              extern
+              <literal type="string">&quot;C&quot;</literal>
+              <block>
+                 {
+                 <block_content>
+                    <function_decl> <type> <name>void</name> </type> <name>foo</name> <parameter_list>()</parameter_list></function_decl>
+                 </block_content>
+                 }
+              </block>
+           </extern>
+        </unit>
+
+    """
+    literal_elements = element.wrapped_children_with_tag("literal")
+    if len(literal_elements) != 1:
+        return
+    extern_type = literal_elements[0].text()
+    if extern_type != '"C"':
+        return
+    block_elements = element.wrapped_children_with_tag("block")
+    if len(block_elements) != 1:
+        return
+    block_contents = block_elements[0].wrapped_children_with_tag("block_content")
+    if len(block_contents) != 1:
+        return
+    fill_block(options, block_contents[0], inout_block_content)
+
+
 def fill_block(options: SrcmlcppOptions, element: SrcmlWrapper, inout_block_content: CppBlock) -> None:
     """
     https://www.srcml.org/doc/cpp_srcML.html#block_content
@@ -692,6 +729,8 @@ def fill_block(options: SrcmlcppOptions, element: SrcmlWrapper, inout_block_cont
                 block_children.append(parse_enum(options, child_c, inout_block_content))
             elif child_tag == "block_content":
                 block_children.append(parse_block_content(options, child_c, inout_block_content))
+            elif child_tag == "extern":
+                fill_extern_c_block(options, child_c, inout_block_content)
             elif child_tag in ["public", "protected", "private"]:
                 block_children.append(parse_public_protected_private(options, child_c, inout_block_content))
             else:
