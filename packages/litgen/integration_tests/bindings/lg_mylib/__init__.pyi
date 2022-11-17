@@ -790,7 +790,10 @@ class MyTemplateClassString:
 #    etc.
 #
 
-def add(a: int, b: int) -> int:
+def extern_c_add(a: int, b: int) -> int:
+    pass
+
+def foo_void_param() -> int:
     pass
 
 # ////////////////////////////////////////////////////////////////////////////////////////////////////////////////

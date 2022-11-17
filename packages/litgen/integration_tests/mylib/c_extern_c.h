@@ -25,7 +25,9 @@ Features:
 extern "C" {
 #endif
 
-MY_API int add(int a, int b) { return a + b; }
+MY_API int extern_c_add(int a, int b) { return a + b; }
+
+MY_API int foo_void_param(void) { return 42; }
 
 #ifdef __cplusplus
 }

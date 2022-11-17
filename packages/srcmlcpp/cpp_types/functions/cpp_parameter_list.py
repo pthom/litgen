@@ -95,12 +95,19 @@ class CppParameterList(CppElementAndComment):
             current_scope = self.cpp_scope()
         was_changed = False
         new_parameter_list = copy.deepcopy(self)
-        for i in range(len(self.parameters)):
-            new_param = new_parameter_list.parameters[i]
-            self_param = self.parameters[i]
-            new_param.decl = self_param.decl.with_qualified_types(current_scope)
-            if new_param.decl is not self_param.decl:
-                was_changed = True
+
+        # handle void instead of empty param:
+        #     void foo(void)
+        if len(self.parameters) == 1 and self.parameters[0].decl.cpp_type.is_void():
+            new_parameter_list.parameters = []
+            was_changed = True
+        else:
+            for i in range(len(self.parameters)):
+                new_param = new_parameter_list.parameters[i]
+                self_param = self.parameters[i]
+                new_param.decl = self_param.decl.with_qualified_types(current_scope)
+                if new_param.decl is not self_param.decl:
+                    was_changed = True
 
         if was_changed:
             return new_parameter_list
