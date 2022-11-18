@@ -62,6 +62,7 @@ def litgen_options_imgui(type: ImguiOptionsType, docking_branch: bool) -> Litgen
             """
         )
     )
+    # options.names_replacements.add_last_replacement(r"(^ImGui)([A-Z])", r"\2")
 
     options.python_max_line_length = -1  # in ImGui, the function decls are on *one* line
     options.python_convert_to_snake_case = True

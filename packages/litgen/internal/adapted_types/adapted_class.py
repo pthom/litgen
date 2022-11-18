@@ -340,7 +340,7 @@ class AdaptedClass(AdaptedElement):
     def class_name_python(self) -> str:
         if self.template_specialization is not None:
             return self.template_specialization.class_name_python
-        r = cpp_to_python.add_underscore_if_python_reserved_word(self.cpp_element().class_name)
+        r = cpp_to_python._class_name_to_python(self.options, self.cpp_element().class_name)
         return r
 
     #  ============================================================================================
@@ -367,7 +367,7 @@ class AdaptedClass(AdaptedElement):
                     r += template_instantiation.stub_lines()
                 if self.options.class_template_decorate_in_stub:
                     r = cpp_to_python.surround_python_code_lines(
-                        r, f"template specializations for class {self.cpp_element().class_name}"
+                        r, f"template specializations for class {self.class_name_python()}"
                     )
                 return r
 

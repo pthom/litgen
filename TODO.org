@@ -444,6 +444,10 @@ issue windows arm:
     Pb compat dylib glfw original vs glfw imgui_bundle?
     Test usage dans demo_imgui_color_text_edit()
 
+** Renaming ImGui[A-Z]
+    Review options:
+      code_replacements / names_replacements / comments_replacements
+      => need: class_names_replacements, functions_names_replacements, var_names_replacements, types_replacements, value_replacements (qui contient types_replacements)
 
 
 ** Add ImGui callbacks via patch std::function?
