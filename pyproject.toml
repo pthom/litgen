@@ -6,7 +6,7 @@ build-backend = "poetry.core.masonry.api"
 line-length = 120
 # A regex preceded with ^/ will apply only to files and directories
 # in the root of the project.
-extend-exclude = '''venv|^scratch|pybind11|importanize|.pyi$|lg_projects|ci_scripts/docker_ci/dvp|md4c'''
+extend-exclude = '''venv|^scratch|pybind11|importanize|.pyi$|lg_projects|ci_scripts/docker_ci/dvp|md4c|external/SDL'''
 
 [tool.poetry]
 name = "srcmlcpp"
