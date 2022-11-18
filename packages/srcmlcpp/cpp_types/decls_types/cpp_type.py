@@ -141,7 +141,7 @@ class CppType(CppElementAndComment):
         return "*" in self.modifiers
 
     def is_void(self) -> bool:
-        return self.typenames == ["void"] and len(self.specifiers) == 0
+        return self.typenames == ["void"] and len(self.specifiers) == 0 and len(self.modifiers) == 0
 
     def is_inferred_type(self) -> bool:
         return self.typenames == ["auto"]
