@@ -318,7 +318,7 @@ class AdaptedFunction(AdaptedElement):
         r = self.cpp_element().is_constructor()
         return r
 
-    def add_names_to_unnamed_params(self):
+    def add_names_to_unnamed_params(self) -> None:
         has_unnamed_param = False
         parameters_list = self.cpp_adapted_function.parameter_list
         for param in parameters_list.parameters:

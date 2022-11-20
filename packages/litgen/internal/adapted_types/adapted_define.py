@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 from enum import Enum
 from typing import List, cast
-from munch import Munch
+from munch import Munch  # type:ignore
 
 from srcmlcpp.cpp_types import CppDefine
 from codemanip import code_utils
@@ -62,7 +62,7 @@ class AdaptedDefine(AdaptedElement):
         super().__init__(lg_context, cpp_define)
 
     @staticmethod
-    def is_publishable(cpp_define: CppDefine):
+    def is_publishable(cpp_define: CppDefine) -> bool:
         if hasattr(cpp_define, "macro_parameters_str"):
             return False
         if not hasattr(cpp_define, "macro_value"):
@@ -73,11 +73,11 @@ class AdaptedDefine(AdaptedElement):
         else:
             return True
 
-    def published_name(self):
+    def published_name(self) -> str:
         r = self.options.macro_name_replacements.apply(self.cpp_element().macro_name)
         return r
 
-    def published_python_value(self):
+    def published_python_value(self) -> str:
         macro_value = self.cpp_element().macro_value
         if _compute_define_value_type(macro_value) == _PreprocessorDefineValueType.Octal:
             return (

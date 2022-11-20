@@ -199,11 +199,13 @@ def parse_define(options: SrcmlcppOptions, element_c: CppElementAndComment, pare
     result = CppDefine(element_c, element_c.cpp_element_comments)
     result.parent = parent
 
-    def parse_inner_macro(macro_element):
+    def parse_inner_macro(macro_element: SrcmlWrapper) -> None:
         for macro_child in macro_element.make_wrapped_children():
             macro_child_tag = macro_child.tag()
             if macro_child_tag == "name":
-                result.macro_name = macro_child.text()
+                text = macro_child.text()
+                if text is not None:
+                    result.macro_name = text
             elif macro_child_tag == "parameter_list":
                 result.macro_parameters_str = macro_child.str_code_verbatim()
 
@@ -214,7 +216,9 @@ def parse_define(options: SrcmlcppOptions, element_c: CppElementAndComment, pare
         elif child_tag == "macro":
             parse_inner_macro(child)
         elif child_tag == "value":
-            result.macro_value = child.text()
+            text = child.text()
+            if text is not None:
+                result.macro_value = text
     return result
 
 
