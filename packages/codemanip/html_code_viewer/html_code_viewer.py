@@ -3,10 +3,10 @@ from dataclasses import dataclass
 from enum import Enum
 from typing import Optional
 
-from pygments import highlight
-from pygments.formatters import HtmlFormatter
-from pygments.lexer import Lexer
-from pygments.lexers import CppLexer, Python3Lexer
+from pygments import highlight  # type: ignore
+from pygments.formatters import HtmlFormatter  # type: ignore
+from pygments.lexer import Lexer  # type: ignore
+from pygments.lexers import CppLexer, Python3Lexer  # type: ignore
 
 
 HtmlCode = str
