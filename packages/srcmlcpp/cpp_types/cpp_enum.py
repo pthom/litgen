@@ -23,6 +23,8 @@ class CppEnum(CppElementAndComment):
     _block: CppBlock
     enum_type: str = ""  # "class" or ""
     enum_name: str = ""
+    # enum_data_type is almost always empty, but can contain the inner data type, e.g. uint32_t
+    enum_data_type: str = ""
 
     def __init__(self, element: SrcmlWrapper, cpp_element_comments: CppElementComments) -> None:
         super().__init__(element, cpp_element_comments)

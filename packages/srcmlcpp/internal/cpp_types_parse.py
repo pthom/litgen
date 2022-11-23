@@ -890,6 +890,12 @@ def parse_enum(options: SrcmlcppOptions, element_c: CppElementAndComment, parent
             result.block = parse_block(options, child, element_c)
         elif child_tag == "comment":
             _add_comment_child_before_block(result, child)
+        elif child_tag == "type":
+            name_children = child.wrapped_children_with_tag("name")
+            if len(name_children) == 1:
+                enum_data_type = name_children[0].text()
+                if enum_data_type is not None:
+                    result.enum_data_type = enum_data_type
         else:
             raise SrcmlcppExceptionDetailed(child, f"unhandled tag {child_tag}")
 
