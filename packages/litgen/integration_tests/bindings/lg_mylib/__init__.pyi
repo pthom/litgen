@@ -96,6 +96,9 @@ def array2_modify(values_0: BoxedUnsignedLong, values_1: BoxedUnsignedLong) -> N
 class Point2:
     x: int
     y: int
+    def __init__(self, x: int, y: int) -> None:
+        """Auto-generated default constructor"""
+        pass
 
 def array2_modify_mutable(out_0: Point2, out_1: Point2) -> None:
     """Test with a modifiable array that uses a user defined struct.
@@ -302,6 +305,9 @@ class FooOverload:
         pass
     def add_overload(self, a: int, b: int, c: int) -> int:  # type: ignore
         pass
+    def __init__(self) -> None:
+        """Auto-generated default constructor"""
+        pass
 
 # ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 #                       mylib/enum_test.h included by mylib/mylib_main/mylib.h                                 //
@@ -400,6 +406,9 @@ class MySingletonClass:
     def instance() -> MySingletonClass:
         """return_value_policy::reference"""
         pass
+    def __init__(self) -> None:
+        """Auto-generated default constructor (omit named params)"""
+        pass
 
 class MyFinalClass:
     """This struct is final, and thus cannot be inherited from python
@@ -407,6 +416,9 @@ class MyFinalClass:
     """
 
     def foo(self) -> int:
+        pass
+    def __init__(self) -> None:
+        """Auto-generated default constructor"""
         pass
 
 class MyStructDynamic:
@@ -416,6 +428,9 @@ class MyStructDynamic:
     """
 
     cpp_member: int = 1
+    def __init__(self, cpp_member: int = 1) -> None:
+        """Auto-generated default constructor"""
+        pass
 
 class MyStructWithNestedEnum:
     class Choice(enum.Enum):
@@ -426,6 +441,9 @@ class MyStructWithNestedEnum:
         """The first param of this function uses the inner scope of this class!
         When building the bindings, we need to add MyStructWithNestedEnum::
         """
+        pass
+    def __init__(self) -> None:
+        """Auto-generated default constructor"""
         pass
 
 # ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -453,6 +471,9 @@ class Color4:
 
 class Copyable_ImplicitCopyCtor:
     a: int = 1
+    def __init__(self, a: int = 1) -> None:
+        """Auto-generated default constructor"""
+        pass
 
 class Copyable_ExplicitCopyCtor:
     def __init__(self) -> None:
@@ -526,6 +547,9 @@ class MyConfig:
         """return_value_policy::reference"""
         pass
     value: int = 0
+    def __init__(self, value: int = 0) -> None:
+        """Auto-generated default constructor"""
+        pass
 
 def my_config_instance() -> MyConfig:
     """return_value_policy::reference"""
@@ -715,6 +739,9 @@ class FooTemplateFunctionTest:
         pass
     #      </template specializations for function SumVectorAndCArray>
     #  ------------------------------------------------------------------------
+    def __init__(self) -> None:
+        """Auto-generated default constructor"""
+        pass
 
 # ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 #                       mylib/template_class_test.h included by mylib/mylib_main/mylib.h                       //
@@ -817,6 +844,10 @@ STRING = "Hello"
 FLOAT = 3.14
 
 # ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+#                       mylib/class_default_ctor_test.h included by mylib/mylib_main/mylib.h                   //
+# //////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+# ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 #                       mylib/mylib_main/mylib.h continued                                                     //
 # //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -865,6 +896,9 @@ class Home:  # Proxy class that introduces typings for the *submodule* Home
     class Pet:
         def is_pet(self) -> bool:
             pass
+        def __init__(self) -> None:
+            """Auto-generated default constructor"""
+            pass
 
     class PetDog(Animals.Dog, Home.Pet):
         def __init__(self, name: str) -> None:
@@ -881,6 +915,9 @@ class AAA:  # Proxy class that introduces typings for the *submodule* AAA
     #      <template specializations for class Copyable_Template>
     class Copyable_TemplateInt:
         value: int
+        def __init__(self, value: int) -> None:
+            """Auto-generated default constructor"""
+            pass
     #      </template specializations for class Copyable_Template>
     #  ------------------------------------------------------------------------
 
@@ -898,6 +935,9 @@ class Root:  # Proxy class that introduces typings for the *submodule* Root
             def foo_concrete(self, x: int, name: str) -> str:
                 pass
             def foo_virtual_public_pure(self) -> int:  # overridable (pure virtual)
+                pass
+            def __init__(self) -> None:
+                """Auto-generated default constructor (omit named params)"""
                 pass
             # <protected_methods>
             def foo_virtual_protected(self, x: int) -> int:  # overridable
@@ -942,8 +982,15 @@ class SomeNamespace:  # Proxy class that introduces typings for the *submodule* 
             one = enum.auto()  # (= 1)
             two = enum.auto()  # (= 2)
             three = enum.auto()  # (= 3)
-        inner_struct: InnerStruct
+        inner_struct: InnerStruct = InnerStruct()
         inner_enum: InnerEnum = InnerEnum.three
+        def __init__(
+            self,
+            inner_struct: ParentStruct.InnerStruct = ParentStruct.InnerStruct(),
+            inner_enum: ParentStruct.InnerEnum = ParentStruct.InnerEnum.three,
+        ) -> None:
+            """Auto-generated default constructor"""
+            pass
 
     class Blah:
         """struct Blah"""
@@ -970,6 +1017,9 @@ class SomeNamespace:  # Proxy class that introduces typings for the *submodule* 
         def c_string_list_total_size(
             self, items: List[str], output_0: BoxedInt, output_1: BoxedInt
         ) -> int:
+            pass
+        def __init__(self) -> None:
+            """Auto-generated default constructor"""
             pass
     # <submodule SomeInnerNamespace>
     class SomeInnerNamespace:  # Proxy class that introduces typings for the *submodule* SomeInnerNamespace
@@ -1016,7 +1066,9 @@ class N:  # Proxy class that introduces typings for the *submodule* N
     pass  # (This corresponds to a C++ namespace. All method are static!)
 
     class S:
-        pass
+        def __init__(self) -> None:
+            """Auto-generated default constructor"""
+            pass
 
     class EC(enum.Enum):
         a = enum.auto()  # (= 0)
@@ -1031,6 +1083,33 @@ class N:  # Proxy class that introduces typings for the *submodule* N
         pass
 
 # </submodule N>
+
+# <submodule A>
+class A:  # Proxy class that introduces typings for the *submodule* A
+    pass  # (This corresponds to a C++ namespace. All method are static!)
+
+    class Foo(enum.Enum):
+        foo1 = enum.auto()  # (= 0)
+        foo2 = enum.auto()  # (= 1)
+        foo3 = enum.auto()  # (= 2)
+
+    class ClassNoDefaultCtor:
+        """This struct has no default constructor, so a default named constructor
+        will be provided for python
+        """
+
+        b: bool = True
+        a: int
+        c: int = 3
+        foo: Foo = Foo.foo1
+        s: str = "Allo"
+        def __init__(
+            self, a: int, b: bool = True, c: int = 3, foo: Foo = Foo.foo1
+        ) -> None:
+            """Auto-generated default constructor"""
+            pass
+
+# </submodule A>
 ####################    </generated_from:mylib_amalgamation.h>    ####################
 
 # </litgen_stub>

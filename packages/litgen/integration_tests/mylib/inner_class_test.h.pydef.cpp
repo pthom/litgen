@@ -48,7 +48,16 @@ void py_init_module_mylib(py::module& m)
         } // end of inner classes & enums of ParentStruct
 
         pyNsSomeNamespace_ClassParentStruct
-            .def(py::init<>()) // implicit default constructor
+            .def(py::init<>([](
+            SomeNamespace::ParentStruct::InnerStruct inner_struct = SomeNamespace::ParentStruct::InnerStruct(), SomeNamespace::ParentStruct::InnerEnum inner_enum = SomeNamespace::ParentStruct::InnerEnum::Three)
+            {
+                auto r = std::make_unique<SomeNamespace::ParentStruct>();
+                r->inner_struct = inner_struct;
+                r->inner_enum = inner_enum;
+                return r;
+            })
+            , py::arg("inner_struct") = SomeNamespace::ParentStruct::InnerStruct(), py::arg("inner_enum") = SomeNamespace::ParentStruct::InnerEnum::Three
+            )
             .def_readwrite("inner_struct", &SomeNamespace::ParentStruct::inner_struct, "")
             .def_readwrite("inner_enum", &SomeNamespace::ParentStruct::inner_enum, "")
             ;

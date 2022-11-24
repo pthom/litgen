@@ -4,6 +4,7 @@ from typing import List, Optional, Tuple, Union, cast
 
 import munch  # type: ignore
 
+import srcmlcpp
 from codemanip import code_utils
 
 from srcmlcpp.cpp_types import *
@@ -400,12 +401,21 @@ class AdaptedClass(AdaptedElement):
             self.cpp_element().cpp_element_comments.comment_on_previous_lines += "\n" + self._cp_stub_comment()
 
         body_lines: List[str] = []
+
         for element in self.adapted_public_children:
             element_lines = element.stub_lines()
 
             spacing_lines = line_spacer.spacing_lines(element, element_lines)
             body_lines += spacing_lines
             body_lines += element_lines
+
+        if (
+            not self.cpp_element().has_user_defined_constructor()
+            and not self.cpp_element().has_deleted_default_constructor()
+        ):
+            ctor_helper = PythonNamedConstructorHelper(self)
+            ctor_code = ctor_helper.stub_code()
+            body_lines += ctor_code.split("\n")
 
         if len(self.adapted_protected_methods) > 0:
             body_lines += ["", "# <protected_methods>"]
@@ -519,13 +529,16 @@ class AdaptedClass(AdaptedElement):
             return pyclass_creation_code
 
         def make_default_constructor_code() -> str:
-            if (
+            need_create_default_ctor = (
                 not self.cpp_element().has_user_defined_constructor()
                 and not self.cpp_element().has_deleted_default_constructor()
-            ):
-                return f"{_i_}.def(py::init<>()) // implicit default constructor\n"
-            elif self.cpp_element().has_deleted_default_constructor():
+            )
+            if self.cpp_element().has_deleted_default_constructor():
                 return f"{_i_}// (default constructor explicitly deleted)\n"
+            elif need_create_default_ctor:
+                # return f"{_i_}.def(py::init<>()) // implicit default constructor\n"
+                python_named_ctor_helper = PythonNamedConstructorHelper(self)
+                return python_named_ctor_helper.pydef_code()
             else:
                 return ""
 
@@ -882,4 +895,184 @@ class AdaptedClass(AdaptedElement):
         r = code_utils.does_match_regex(
             self.options.class_expose_protected_methods__regex, self.cpp_element().class_name
         )
+        return r
+
+
+class PythonNamedConstructorHelper:
+    adapted_class: AdaptedClass
+    cpp_class: CppStruct
+
+    def __init__(self, adapted_class: AdaptedClass) -> None:
+        self.adapted_class = adapted_class
+        self.cpp_class = adapted_class.cpp_element()
+        assert (
+            not self.cpp_class.has_user_defined_constructor() and not self.cpp_class.has_deleted_default_constructor()
+        )
+
+    def named_constructor_decl(self) -> CppFunctionDecl:
+        def flag_generate_named_ctor_params() -> bool:
+            if type(self.adapted_class.cpp_element()) == CppClass:
+                ctor__regex = self.adapted_class.options.class_create_default_named_ctor__regex
+            else:
+                ctor__regex = self.adapted_class.options.struct_create_default_named_ctor__regex
+            flag = code_utils.does_match_regex(ctor__regex, self.adapted_class.cpp_element().class_name)
+
+            if self.adapted_class.cpp_element().has_private_destructor():
+                flag = False
+            return flag
+
+        def compatible_members_list() -> List[CppDecl]:
+            """The list of members which we will include in the named params"""
+            if not flag_generate_named_ctor_params():
+                return []
+
+            members_decls = self.cpp_class.get_members(access_type=CppAccessType.public)
+
+            def can_be_set(member: CppDecl) -> bool:
+                if member.cpp_type.modifiers.count("*") > 1:
+                    return False  # refuse double pointers
+
+                specifiers = member.cpp_type.specifiers
+                if "const" in specifiers or "constexpr" in specifiers or "extern" in specifiers:
+                    return False
+
+                if len(member.bitfield_range) > 0:
+                    return False  # Refuse bitfields!
+
+                if len(member.c_array_code) > 0:
+                    return False  # Refuse c style arrays
+
+                # if member.cpp_type.modifiers.count("&") > 0:
+                #     return False # refuse references ?
+                return True
+
+            members_decls = list(filter(can_be_set, members_decls))
+
+            def has_default_value(member: CppDecl) -> bool:
+                return len(member.initial_value_code) > 0
+
+            def has_no_default(member: CppDecl) -> bool:
+                return len(member.initial_value_code) == 0
+
+            # Sort members decls so that members with a default value come first
+            members_no_default = list(filter(has_no_default, members_decls))
+            members_default = list(filter(has_default_value, members_decls))
+
+            members_decls = members_no_default + members_default
+            return members_decls
+
+        def make_fake_struct_cpp_code() -> str:
+            class_name = self.adapted_class.cpp_element().class_name
+            members = compatible_members_list()
+            members_strs = []
+            for member in members:
+                s = f"{member.cpp_type.str_code()} {member.name()}"
+                if len(member.initial_value_code) > 0:
+                    s += " = " + member.initial_value_code
+                members_strs.append(s)
+            parameters_str = ", ".join(members_strs)
+            str_cpp_code = f"""
+                struct {class_name} {{
+                    {class_name}({parameters_str});
+                }};
+            """
+            return str_cpp_code
+
+        def make_cpp_constructor() -> CppFunctionDecl:
+            def make_cpp_unit_quiet(options, code: str) -> CppUnit:
+                flag_progress = options.srcmlcpp_options.flag_show_progress
+                options.srcmlcpp_options.flag_show_progress = False
+                unit = srcmlcpp.code_to_cpp_unit(options.srcmlcpp_options, code)
+                options.srcmlcpp_options.flag_show_progress = flag_progress
+                return unit
+
+            cpp_code = make_fake_struct_cpp_code()
+            cpp_unit = make_cpp_unit_quiet(self.adapted_class.options, cpp_code)
+
+            # We have a CppUnit, that represents a struct, but we need to reparent the constructor
+            #      srcmlcpp xml "struct Foo { Foo(); };"
+            #        <struct>struct
+            #           <name>Foo</name>
+            #           <block>{
+            #              <public type="default">    <=======   reattach this public to the block of the correct class
+            #                 <constructor_decl> <name>Foo</name>
+            #                    <parameter_list>()</parameter_list>;
+            #                 </constructor_decl>
+            #              </public>}
+            #           </block>;
+            #        </struct>
+            public_regions = cpp_unit.all_cpp_elements_recursive(CppPublicProtectedPrivate)
+            assert len(public_regions) == 1
+            public_region = public_regions[0]
+            public_region.parent = self.adapted_class.cpp_element().block
+
+            # Find the constructor
+            ctors = cpp_unit.all_cpp_elements_recursive(CppConstructorDecl)
+            if len(ctors) != 1:
+                print("argh")
+            assert len(ctors) == 1
+            ctor_decl = cast(CppConstructorDecl, ctors[0])
+            if flag_generate_named_ctor_params():
+                ctor_decl.cpp_element_comments.comment_on_previous_lines = "Auto-generated default constructor"
+            else:
+                ctor_decl.cpp_element_comments.comment_on_previous_lines = (
+                    "Auto-generated default constructor (omit named params)"
+                )
+            # And qualify its types
+            ctor_qualified = ctor_decl.with_qualified_types()
+            return ctor_qualified
+
+        return make_cpp_constructor()
+
+    def pydef_code(self) -> str:
+        _i_ = self.adapted_class.options.indent_cpp_spaces()
+        ctor_decl = self.named_constructor_decl()
+        adapted_function = AdaptedFunction(self.adapted_class.lg_context, ctor_decl, False)
+
+        if len(ctor_decl.parameter_list.parameters) == 0:
+            return f"{_i_}.def(py::init<>()) // implicit default constructor \n"
+
+        template = code_utils.unindent_code(
+            """
+            .def(py::init<>([](
+            {all_params_signature})
+            {
+            {_i_}auto r = std::make_unique<{qualified_struct_name}>();
+            {all_params_set_values}
+            {_i_}return r;
+            })
+            , {maybe_pyargs}
+            )
+        """,
+            flag_strip_empty_lines=True,
+        )
+
+        replacements = munch.Munch()
+        replacements._i_ = _i_
+        replacements.qualified_struct_name = self.cpp_class.qualified_class_name_with_specialization()
+        replacements.all_params_signature = ctor_decl.parameter_list.str_types_names_default_for_signature()
+
+        replacements_lines = munch.Munch()
+        replacements_lines.maybe_pyargs = ", ".join(adapted_function._pydef_pyarg_list())
+
+        def get_all_params_set_values() -> str:
+            all_params_set_values_list = []
+            for param in ctor_decl.parameter_list.parameters:
+                code = f"r->{param.decl.name()} = {param.decl.name()};"
+                all_params_set_values_list.append(code)
+            all_params_set_values = "\n".join(all_params_set_values_list)
+            all_params_set_values = code_utils.indent_code(all_params_set_values, indent_str=_i_)
+            return all_params_set_values
+
+        replacements.all_params_set_values = get_all_params_set_values()
+
+        final_code = code_utils.process_code_template(template, replacements, replacements_lines)
+        final_code = code_utils.indent_code(final_code, indent_str=_i_) + "\n"
+
+        return final_code
+
+    def stub_code(self) -> str:
+        ctor_decl = self.named_constructor_decl()
+        adapted_function = AdaptedFunction(self.adapted_class.lg_context, ctor_decl, False)
+        r = "\n".join(adapted_function.stub_lines())
         return r

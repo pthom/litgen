@@ -419,36 +419,30 @@ Python forums
 Soucis sur gitmodules:
   imspinner absent et implot present deux fois
 
-** Later
-*** not important: on windows, link fails with msvc (but pip install works)
+** Faq Fullscreens
+       Sdl/FullScreenDesktopResolution:
+         click issue (need click higher !) on monitor 0
+         ok on monitor 1
+       Glfw/FullScreenDesktopResolution: OK on monitor 0 and 1
 
-** Styling
-  Review styling / scroll too dark
+       Sdl/FullScreen:
+         Ok monitor 0 and 1 (change resolution, update windowSize info)
+       Glfw/FullScreen
+         Monitor 0: does not change resolution
+         Monitor 1: does change resolution...
 
-** Add immvision
-
-immvision enabled only if opencv found!
-
-Strategy / install opencv
-  Via apt ou brew par default
-  Si pas trouvé test via conan
-
-
-Disable by default
-Install doc in readme (cf cmake)
-Use conan for pip ???
+       FullMonitorWorkArea: OK
 
 
-** Renaming ImGui[A-Z]
-    Review options:
-    code_replacements / names_replacements / comments_replacements
-      => need: class_names_replacements, functions_names_replacements, var_names_replacements, types_replacements, value_replacements (qui contient types_replacements)
 
 
-** Add ImGui callbacks via patch std::function?
-
+Remove SimpleRunnerParams
+Make docking mode simpler
 
 ** App Icon???
+
+voir cx-freeze
+
 On Mac, need to create an app bundle: see https://py2app.readthedocs.io/en/latest/
   Bundle example : See /Users/pascal/dvp/OpenSource/ImGuiWork/litgen/icons_test
 On Windows, see py2exe
@@ -475,20 +469,25 @@ bool RunnerGlfwOpenGl3::Impl_SetAppIcon(const std::string& iconAssetPath)
             return false;
     }
 
+** Add ImGui callbacks via patch std::function?
 
-** Faq Fullscreens
-       Sdl/FullScreenDesktopResolution:
-         click issue (need click higher !) on monitor 0
-         ok on monitor 1
-       Glfw/FullScreenDesktopResolution: OK on monitor 0 and 1
 
-       Sdl/FullScreen:
-         Ok monitor 0 and 1 (change resolution, update windowSize info)
-       Glfw/FullScreen
-         Monitor 0: does not change resolution
-         Monitor 1: does change resolution...
 
-       FullMonitorWorkArea: OK
+** Renaming ImGui[A-Z]
+    Review options:
+    code_replacements / names_replacements / comments_replacements
+      => need: class_names_replacements, functions_names_replacements, var_names_replacements, types_replacements, value_replacements (qui contient types_replacements)
+
+
+
+** EasyRunner:
+     AutoGenerate named constructors
+
+
+     Remove Simplerunnerparams
+
+     GetRunnerParams() always available
+     Easy docking config (review enum)
 
 
 

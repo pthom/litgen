@@ -46,7 +46,10 @@ struct Foo
             def add(self, v: int) -> int:
                 """ Simple addition"""
                 pass
-    ''',
+            def __init__(self, a: int, flag: bool) -> None:
+                """Auto-generated default constructor"""
+                pass
+     ''',
     )
 
     options.python_reproduce_cpp_layout = False
@@ -69,6 +72,9 @@ struct Foo
 
             def add(self, v: int) -> int:
                 """ Simple addition"""
+                pass
+            def __init__(self, a: int, flag: bool) -> None:
+                """Auto-generated default constructor"""
                 pass
     ''',
     )
@@ -99,7 +105,16 @@ def test_struct_pydef_simple():
         auto pyClassFoo =
             py::class_<Foo>
                 (m, "Foo", "Doc about Foo")
-            .def(py::init<>()) // implicit default constructor
+            .def(py::init<>([](
+            int a, bool flag)
+            {
+                auto r = std::make_unique<Foo>();
+                r->a = a;
+                r->flag = flag;
+                return r;
+            })
+            , py::arg("a"), py::arg("flag")
+            )
             .def_readwrite("a", &Foo::a, "Doc about a")
             .def_readwrite("flag", &Foo::flag, "Doc about flag")
             .def("add",
@@ -337,7 +352,9 @@ def test_deepcopy_simple():
             """
             (has support for copy.copy and copy.deepcopy)
             """
-            pass
+            def __init__(self) -> None:
+                """Auto-generated default constructor"""
+                pass
     ''',
     )
 
@@ -366,7 +383,15 @@ def test_deepcopy_with_specialization():
             auto pyNsNs_ClassFoo_int =
                 py::class_<Ns::Foo<int>>
                     (pyNsNs, "FooInt", "")
-                .def(py::init<>()) // implicit default constructor
+                .def(py::init<>([](
+                int value)
+                {
+                    auto r = std::make_unique<Ns::Foo<int>>();
+                    r->value = value;
+                    return r;
+                })
+                , py::arg("value")
+                )
                 .def_readwrite("value", &Ns::Foo<int>::value, "")
                 .def("__deepcopy__",  [](const Ns::Foo<int> &self, py::dict) {
                     return Ns::Foo<int>(self);
@@ -377,7 +402,7 @@ def test_deepcopy_with_specialization():
 
     code_utils.assert_are_codes_equal(
         generated_code.stub_code,
-        """
+        '''
         # <submodule Ns>
         class Ns:  # Proxy class that introduces typings for the *submodule* Ns
             pass  # (This corresponds to a C++ namespace. All method are static!)
@@ -385,11 +410,14 @@ def test_deepcopy_with_specialization():
             #      <template specializations for class Foo>
             class FooInt:
                 value: int
+                def __init__(self, value: int) -> None:
+                    """Auto-generated default constructor"""
+                    pass
             #      </template specializations for class Foo>
             #  ------------------------------------------------------------------------
 
         # </submodule Ns>
-    """,
+    ''',
     )
 
 
@@ -458,4 +486,133 @@ def test_no_inner_class() -> None:
                 &Foo::HandleChoice, py::arg("value") = 1)
             ;
     """,
+    )
+
+
+def test_named_ctor_helper_struct() -> None:
+    code = """
+    namespace A
+    {
+        enum class Foo
+        {
+            Foo1 = 0
+        };
+        struct ClassNoDefaultCtor
+        {
+            bool b = true;
+            int a;
+            int c = 3;
+            Foo foo = Foo::Foo1;
+            const std::string s = "Allo";
+        };
+    }
+    """
+    options = litgen.LitgenOptions()
+    generated_code = litgen.generate_code(options, code)
+
+    code_utils.assert_are_codes_equal(
+        generated_code.stub_code,
+        '''
+        # <submodule A>
+        class A:  # Proxy class that introduces typings for the *submodule* A
+            pass  # (This corresponds to a C++ namespace. All method are static!)
+            class Foo(enum.Enum):
+                foo1 = enum.auto() # (= 0)
+            class ClassNoDefaultCtor:
+                b: bool = True
+                a: int
+                c: int = 3
+                foo: Foo = Foo.foo1
+                s: str = "Allo"
+                def __init__(
+                    self,
+                    a: int,
+                    b: bool = True,
+                    c: int = 3,
+                    foo: Foo = Foo.foo1
+                    ) -> None:
+                    """Auto-generated default constructor"""
+                    pass
+
+        # </submodule A>
+    ''',
+    )
+
+    # print(generated_code.pydef_code)
+
+    code_utils.assert_are_codes_equal(
+        generated_code.pydef_code,
+        """
+        { // <namespace A>
+            py::module_ pyNsA = m.def_submodule("A", "");
+            py::enum_<A::Foo>(pyNsA, "Foo", py::arithmetic(), "")
+                .value("foo1", A::Foo::Foo1, "");
+
+
+            auto pyNsA_ClassClassNoDefaultCtor =
+                py::class_<A::ClassNoDefaultCtor>
+                    (pyNsA, "ClassNoDefaultCtor", "")
+                .def(py::init<>([](
+                int a, bool b = true, int c = 3, A::Foo foo = A::Foo::Foo1)
+                {
+                    auto r = std::make_unique<A::ClassNoDefaultCtor>();
+                    r->a = a;
+                    r->b = b;
+                    r->c = c;
+                    r->foo = foo;
+                    return r;
+                })
+                , py::arg("a"), py::arg("b") = true, py::arg("c") = 3, py::arg("foo") = A::Foo::Foo1
+                )
+                .def_readwrite("b", &A::ClassNoDefaultCtor::b, "")
+                .def_readwrite("a", &A::ClassNoDefaultCtor::a, "")
+                .def_readwrite("c", &A::ClassNoDefaultCtor::c, "")
+                .def_readwrite("foo", &A::ClassNoDefaultCtor::foo, "")
+                .def_readonly("s", &A::ClassNoDefaultCtor::s, "")
+                ;
+        } // </namespace A>
+    """,
+    )
+
+
+def test_named_ctor_helper_class() -> None:
+    code = """
+        class ClassNoDefaultCtor
+        {
+        public:
+            bool b = true;
+            int a;
+            int c = 3;
+            const std::string s = "Allo";
+        };
+    """
+    options = litgen.LitgenOptions()
+    generated_code = litgen.generate_code(options, code)
+    code_utils.assert_are_codes_equal(
+        generated_code.stub_code,
+        '''
+        class ClassNoDefaultCtor:
+            b: bool = True
+            a: int
+            c: int = 3
+            s: str = "Allo"
+            def __init__(self) -> None:
+                """Auto-generated default constructor (omit named params)"""
+                pass
+    ''',
+    )
+
+    code_utils.assert_are_codes_equal(
+        generated_code.pydef_code,
+        """
+        auto pyClassClassNoDefaultCtor =
+            py::class_<ClassNoDefaultCtor>
+                (m, "ClassNoDefaultCtor", "")
+            .def(py::init<>()) // implicit default constructor
+            .def_readwrite("b", &ClassNoDefaultCtor::b, "")
+            .def_readwrite("a", &ClassNoDefaultCtor::a, "")
+            .def_readwrite("c", &ClassNoDefaultCtor::c, "")
+            .def_readonly("s", &ClassNoDefaultCtor::s, "")
+            ;
+        """,
     )

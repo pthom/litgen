@@ -27,7 +27,15 @@ void py_init_module_mylib(py::module& m)
     auto pyClassMyConfig =
         py::class_<MyConfig>
             (m, "MyConfig", "")
-        .def(py::init<>()) // implicit default constructor
+        .def(py::init<>([](
+        int value = 0)
+        {
+            auto r = std::make_unique<MyConfig>();
+            r->value = value;
+            return r;
+        })
+        , py::arg("value") = 0
+        )
         .def_static("instance",
             &MyConfig::Instance,
             "return_value_policy::reference",

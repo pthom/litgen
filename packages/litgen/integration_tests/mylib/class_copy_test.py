@@ -40,7 +40,7 @@ def test_copy_deleted_copy_ctor():
 
 
 def test_copy_template():
-    c = lg_mylib.AAA.Copyable_TemplateInt()
+    c = lg_mylib.AAA.Copyable_TemplateInt(6)
     c.value = 5
     c2 = copy.copy(c)
     assert c2.value == 5

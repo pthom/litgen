@@ -81,11 +81,14 @@ def test_scoping():
     generated_code = litgen.generate_code(options, code)
     code_utils.assert_are_codes_equal(
         generated_code.stub_code,
-        """
+        '''
         class S:
             def f(self, o: S) -> S:
                 pass
-    """,
+            def __init__(self) -> None:
+                """Auto-generated default constructor"""
+                pass
+     ''',
     )
 
 

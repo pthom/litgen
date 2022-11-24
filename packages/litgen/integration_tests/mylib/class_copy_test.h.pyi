@@ -11,6 +11,9 @@
 ####################    <generated_from:class_copy_test.h>    ####################
 class Copyable_ImplicitCopyCtor:
     a: int = 1
+    def __init__(self, a: int = 1) -> None:
+        """Auto-generated default constructor"""
+        pass
 
 class Copyable_ExplicitCopyCtor:
     def __init__(self) -> None:
@@ -36,6 +39,9 @@ class AAA:  # Proxy class that introduces typings for the *submodule* AAA
     #      <template specializations for class Copyable_Template>
     class Copyable_TemplateInt:
         value: int
+        def __init__(self, value: int) -> None:
+            """Auto-generated default constructor"""
+            pass
     #      </template specializations for class Copyable_Template>
     #  ------------------------------------------------------------------------
 

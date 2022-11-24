@@ -80,7 +80,16 @@ void py_init_module_mylib(py::module& m)
     auto pyClassPoint2 =
         py::class_<Point2>
             (m, "Point2", "")
-        .def(py::init<>()) // implicit default constructor
+        .def(py::init<>([](
+        int x, int y)
+        {
+            auto r = std::make_unique<Point2>();
+            r->x = x;
+            r->y = y;
+            return r;
+        })
+        , py::arg("x"), py::arg("y")
+        )
         .def_readwrite("x", &Point2::x, "")
         .def_readwrite("y", &Point2::y, "")
         ;

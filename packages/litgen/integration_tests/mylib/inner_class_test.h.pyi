@@ -33,8 +33,15 @@ class SomeNamespace:  # Proxy class that introduces typings for the *submodule* 
             one = enum.auto()  # (= 1)
             two = enum.auto()  # (= 2)
             three = enum.auto()  # (= 3)
-        inner_struct: InnerStruct
+        inner_struct: InnerStruct = InnerStruct()
         inner_enum: InnerEnum = InnerEnum.three
+        def __init__(
+            self,
+            inner_struct: ParentStruct.InnerStruct = ParentStruct.InnerStruct(),
+            inner_enum: ParentStruct.InnerEnum = ParentStruct.InnerEnum.three,
+        ) -> None:
+            """Auto-generated default constructor"""
+            pass
 
 # </submodule SomeNamespace>
 ####################    </generated_from:inner_class_test.h>    ####################

@@ -14,7 +14,9 @@ class N:  # Proxy class that introduces typings for the *submodule* N
     pass  # (This corresponds to a C++ namespace. All method are static!)
 
     class S:
-        pass
+        def __init__(self) -> None:
+            """Auto-generated default constructor"""
+            pass
 
     class EC(enum.Enum):
         a = enum.auto()  # (= 0)

@@ -42,7 +42,7 @@ def test_protected_virtual_class():
 
     code_utils.assert_are_codes_equal(
         generated_code.stub_code,
-        """
+        '''
         # <submodule Root>
         class Root:  # Proxy class that introduces typings for the *submodule* Root
             pass  # (This corresponds to a C++ namespace. All method are static!)
@@ -57,6 +57,9 @@ def test_protected_virtual_class():
 
                     def foo_virtual_public_pure(self) -> int:                      # overridable (pure virtual)
                         pass
+                    def __init__(self) -> None:
+                        """Auto-generated default constructor (omit named params)"""
+                        pass
 
                     # <protected_methods>
                     def foo_virtual_protected(self, x: int) -> int:                # overridable
@@ -69,7 +72,7 @@ def test_protected_virtual_class():
             # </submodule Inner>
 
         # </submodule Root>
-    """,
+    ''',
     )
 
     code_utils.assert_are_codes_equal(

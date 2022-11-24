@@ -46,6 +46,9 @@ def array2_modify(values_0: BoxedUnsignedLong, values_1: BoxedUnsignedLong) -> N
 class Point2:
     x: int
     y: int
+    def __init__(self, x: int, y: int) -> None:
+        """Auto-generated default constructor"""
+        pass
 
 def array2_modify_mutable(out_0: Point2, out_1: Point2) -> None:
     """Test with a modifiable array that uses a user defined struct.

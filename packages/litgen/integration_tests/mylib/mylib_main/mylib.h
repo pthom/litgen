@@ -24,5 +24,6 @@
 #include "mylib/template_function_test.h"
 #include "mylib/template_class_test.h"
 #include "mylib/c_extern_c.h"
+#include "mylib/class_default_ctor_test.h"
 
 //#include "mylib/sandbox.h"

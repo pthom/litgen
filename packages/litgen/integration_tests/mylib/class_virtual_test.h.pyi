@@ -48,6 +48,9 @@ class Root:  # Proxy class that introduces typings for the *submodule* Root
                 pass
             def foo_virtual_public_pure(self) -> int:  # overridable (pure virtual)
                 pass
+            def __init__(self) -> None:
+                """Auto-generated default constructor (omit named params)"""
+                pass
             # <protected_methods>
             def foo_virtual_protected(self, x: int) -> int:  # overridable
                 pass

@@ -377,7 +377,7 @@ def test_templated_function():
 
     code_utils.assert_are_codes_equal(
         generated_code.stub_code,
-        """
+        '''
         class Foo:
             #  ------------------------------------------------------------------------
             #      <template specializations for function SumVector>
@@ -385,7 +385,10 @@ def test_templated_function():
                 pass
             #      </template specializations for function SumVector>
             #  ------------------------------------------------------------------------
-    """,
+            def __init__(self) -> None:
+                """Auto-generated default constructor"""
+                pass
+             ''',
     )
     code_utils.assert_are_codes_equal(
         generated_code.pydef_code,

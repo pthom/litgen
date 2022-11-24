@@ -241,7 +241,16 @@ void py_init_module_lg_mylib(py::module& m)
     auto pyClassPoint2 =
         py::class_<Point2>
             (m, "Point2", "")
-        .def(py::init<>()) // implicit default constructor
+        .def(py::init<>([](
+        int x, int y)
+        {
+            auto r = std::make_unique<Point2>();
+            r->x = x;
+            r->y = y;
+            return r;
+        })
+        , py::arg("x"), py::arg("y")
+        )
         .def_readwrite("x", &Point2::x, "")
         .def_readwrite("y", &Point2::y, "")
         ;
@@ -691,7 +700,15 @@ void py_init_module_lg_mylib(py::module& m)
     auto pyClassMyStructDynamic =
         py::class_<MyStructDynamic>
             (m, "MyStructDynamic", py::dynamic_attr(), " This class accepts dynamic attributes\n see autogenerate_mylib.py:\n     options.class_dynamic_attributes__regex = r\"Dynamic$\"")
-        .def(py::init<>()) // implicit default constructor
+        .def(py::init<>([](
+        int cpp_member = 1)
+        {
+            auto r = std::make_unique<MyStructDynamic>();
+            r->cpp_member = cpp_member;
+            return r;
+        })
+        , py::arg("cpp_member") = 1
+        )
         .def_readwrite("cpp_member", &MyStructDynamic::cpp_member, "")
         ;
 
@@ -752,7 +769,15 @@ void py_init_module_lg_mylib(py::module& m)
     auto pyClassCopyable_ImplicitCopyCtor =
         py::class_<Copyable_ImplicitCopyCtor>
             (m, "Copyable_ImplicitCopyCtor", "")
-        .def(py::init<>()) // implicit default constructor
+        .def(py::init<>([](
+        int a = 1)
+        {
+            auto r = std::make_unique<Copyable_ImplicitCopyCtor>();
+            r->a = a;
+            return r;
+        })
+        , py::arg("a") = 1
+        )
         .def_readwrite("a", &Copyable_ImplicitCopyCtor::a, "")
         .def("__copy__",  [](const Copyable_ImplicitCopyCtor &self) {
             return Copyable_ImplicitCopyCtor(self);
@@ -796,7 +821,15 @@ void py_init_module_lg_mylib(py::module& m)
     auto pyClassMyConfig =
         py::class_<MyConfig>
             (m, "MyConfig", "")
-        .def(py::init<>()) // implicit default constructor
+        .def(py::init<>([](
+        int value = 0)
+        {
+            auto r = std::make_unique<MyConfig>();
+            r->value = value;
+            return r;
+        })
+        , py::arg("value") = 0
+        )
         .def_static("instance",
             &MyConfig::Instance,
             "return_value_policy::reference",
@@ -1165,7 +1198,15 @@ void py_init_module_lg_mylib(py::module& m)
         auto pyNsAAA_ClassCopyable_Template_int =
             py::class_<AAA::Copyable_Template<int>>
                 (pyNsAAA, "Copyable_TemplateInt", "")
-            .def(py::init<>()) // implicit default constructor
+            .def(py::init<>([](
+            int value)
+            {
+                auto r = std::make_unique<AAA::Copyable_Template<int>>();
+                r->value = value;
+                return r;
+            })
+            , py::arg("value")
+            )
             .def_readwrite("value", &AAA::Copyable_Template<int>::value, "")
             .def("__copy__",  [](const AAA::Copyable_Template<int> &self) {
                 return AAA::Copyable_Template<int>(self);
@@ -1231,7 +1272,16 @@ void py_init_module_lg_mylib(py::module& m)
         } // end of inner classes & enums of ParentStruct
 
         pyNsSomeNamespace_ClassParentStruct
-            .def(py::init<>()) // implicit default constructor
+            .def(py::init<>([](
+            SomeNamespace::ParentStruct::InnerStruct inner_struct = SomeNamespace::ParentStruct::InnerStruct(), SomeNamespace::ParentStruct::InnerEnum inner_enum = SomeNamespace::ParentStruct::InnerEnum::Three)
+            {
+                auto r = std::make_unique<SomeNamespace::ParentStruct>();
+                r->inner_struct = inner_struct;
+                r->inner_enum = inner_enum;
+                return r;
+            })
+            , py::arg("inner_struct") = SomeNamespace::ParentStruct::InnerStruct(), py::arg("inner_enum") = SomeNamespace::ParentStruct::InnerEnum::Three
+            )
             .def_readwrite("inner_struct", &SomeNamespace::ParentStruct::inner_struct, "")
             .def_readwrite("inner_enum", &SomeNamespace::ParentStruct::inner_enum, "")
             ;
@@ -1633,6 +1683,37 @@ void py_init_module_lg_mylib(py::module& m)
         pyNsN.def("foo",
             py::overload_cast<N::E, N::S>(N::Foo), py::arg("e") = N::E_a, py::arg("s") = N::S());
     } // </namespace N>
+
+    { // <namespace A>
+        py::module_ pyNsA = m.def_submodule("A", "");
+        py::enum_<A::Foo>(pyNsA, "Foo", py::arithmetic(), "")
+            .value("foo1", A::Foo::Foo1, "")
+            .value("foo2", A::Foo::Foo2, "")
+            .value("foo3", A::Foo::Foo3, "");
+
+
+        auto pyNsA_ClassClassNoDefaultCtor =
+            py::class_<A::ClassNoDefaultCtor>
+                (pyNsA, "ClassNoDefaultCtor", " This struct has no default constructor, so a default named constructor\n will be provided for python")
+            .def(py::init<>([](
+            int a, bool b = true, int c = 3, A::Foo foo = A::Foo::Foo1)
+            {
+                auto r = std::make_unique<A::ClassNoDefaultCtor>();
+                r->a = a;
+                r->b = b;
+                r->c = c;
+                r->foo = foo;
+                return r;
+            })
+            , py::arg("a"), py::arg("b") = true, py::arg("c") = 3, py::arg("foo") = A::Foo::Foo1
+            )
+            .def_readwrite("b", &A::ClassNoDefaultCtor::b, "")
+            .def_readwrite("a", &A::ClassNoDefaultCtor::a, "")
+            .def_readwrite("c", &A::ClassNoDefaultCtor::c, "")
+            .def_readwrite("foo", &A::ClassNoDefaultCtor::foo, "")
+            .def_readonly("s", &A::ClassNoDefaultCtor::s, "")
+            ;
+    } // </namespace A>
     ////////////////////    </generated_from:mylib_amalgamation.h>    ////////////////////
 
     // </litgen_pydef> // Autogenerated code end

@@ -40,6 +40,9 @@ class MyConfig:
         """return_value_policy::reference"""
         pass
     value: int = 0
+    def __init__(self, value: int = 0) -> None:
+        """Auto-generated default constructor"""
+        pass
 
 def my_config_instance() -> MyConfig:
     """return_value_policy::reference"""

@@ -21,7 +21,7 @@ namespace SomeNamespace
             Three
         };
 
-        InnerStruct inner_struct;
+        InnerStruct inner_struct = InnerStruct();
         InnerEnum inner_enum = InnerEnum::Three;
     };
 } // namespace SomeNamespace

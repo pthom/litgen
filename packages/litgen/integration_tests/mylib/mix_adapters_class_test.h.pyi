@@ -73,6 +73,9 @@ class SomeNamespace:  # Proxy class that introduces typings for the *submodule* 
             self, items: List[str], output_0: BoxedInt, output_1: BoxedInt
         ) -> int:
             pass
+        def __init__(self) -> None:
+            """Auto-generated default constructor"""
+            pass
     # <submodule SomeInnerNamespace>
     class SomeInnerNamespace:  # Proxy class that introduces typings for the *submodule* SomeInnerNamespace
         pass  # (This corresponds to a C++ namespace. All method are static!)

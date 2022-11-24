@@ -80,6 +80,9 @@ class MySingletonClass:
     def instance() -> MySingletonClass:
         """return_value_policy::reference"""
         pass
+    def __init__(self) -> None:
+        """Auto-generated default constructor (omit named params)"""
+        pass
 
 class MyFinalClass:
     """This struct is final, and thus cannot be inherited from python
@@ -87,6 +90,9 @@ class MyFinalClass:
     """
 
     def foo(self) -> int:
+        pass
+    def __init__(self) -> None:
+        """Auto-generated default constructor"""
         pass
 
 class MyStructDynamic:
@@ -96,6 +102,9 @@ class MyStructDynamic:
     """
 
     cpp_member: int = 1
+    def __init__(self, cpp_member: int = 1) -> None:
+        """Auto-generated default constructor"""
+        pass
 
 class MyStructWithNestedEnum:
     class Choice(enum.Enum):
@@ -106,6 +115,9 @@ class MyStructWithNestedEnum:
         """The first param of this function uses the inner scope of this class!
         When building the bindings, we need to add MyStructWithNestedEnum::
         """
+        pass
+    def __init__(self) -> None:
+        """Auto-generated default constructor"""
         pass
 ####################    </generated_from:class_test.h>    ####################
 

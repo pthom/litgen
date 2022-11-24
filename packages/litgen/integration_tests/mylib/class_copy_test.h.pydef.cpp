@@ -26,7 +26,15 @@ void py_init_module_mylib(py::module& m)
     auto pyClassCopyable_ImplicitCopyCtor =
         py::class_<Copyable_ImplicitCopyCtor>
             (m, "Copyable_ImplicitCopyCtor", "")
-        .def(py::init<>()) // implicit default constructor
+        .def(py::init<>([](
+        int a = 1)
+        {
+            auto r = std::make_unique<Copyable_ImplicitCopyCtor>();
+            r->a = a;
+            return r;
+        })
+        , py::arg("a") = 1
+        )
         .def_readwrite("a", &Copyable_ImplicitCopyCtor::a, "")
         .def("__copy__",  [](const Copyable_ImplicitCopyCtor &self) {
             return Copyable_ImplicitCopyCtor(self);
@@ -71,7 +79,15 @@ void py_init_module_mylib(py::module& m)
         auto pyNsAAA_ClassCopyable_Template_int =
             py::class_<AAA::Copyable_Template<int>>
                 (pyNsAAA, "Copyable_TemplateInt", "")
-            .def(py::init<>()) // implicit default constructor
+            .def(py::init<>([](
+            int value)
+            {
+                auto r = std::make_unique<AAA::Copyable_Template<int>>();
+                r->value = value;
+                return r;
+            })
+            , py::arg("value")
+            )
             .def_readwrite("value", &AAA::Copyable_Template<int>::value, "")
             .def("__copy__",  [](const AAA::Copyable_Template<int> &self) {
                 return AAA::Copyable_Template<int>(self);

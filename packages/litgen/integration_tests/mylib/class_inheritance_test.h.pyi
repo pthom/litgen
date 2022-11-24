@@ -42,6 +42,9 @@ class Home:  # Proxy class that introduces typings for the *submodule* Home
     class Pet:
         def is_pet(self) -> bool:
             pass
+        def __init__(self) -> None:
+            """Auto-generated default constructor"""
+            pass
 
     class PetDog(Animals.Dog, Home.Pet):
         def __init__(self, name: str) -> None:
