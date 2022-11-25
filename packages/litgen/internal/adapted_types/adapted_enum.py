@@ -32,7 +32,7 @@ class AdaptedEnumDecl(AdaptedDecl):
     def decl_name_cpp_decorated(self) -> str:
         is_class_enum = self.enum_parent.cpp_element().enum_type == "class"
 
-        scope_str = self.enum_parent.cpp_element().cpp_scope(is_class_enum).str_cpp()
+        scope_str = self.enum_parent.cpp_element().cpp_scope_str(is_class_enum)
         decl_name_cpp = self.cpp_element().decl_name
 
         if len(scope_str) > 0:
@@ -202,7 +202,7 @@ class AdaptedEnum(AdaptedElement):
 
     # override
     def pydef_lines(self) -> List[str]:
-        enum_name_cpp = self.cpp_element().cpp_scope(True).str_cpp()
+        enum_name_cpp = self.cpp_element().cpp_scope_str(True)
         # enum_name_cpp = self.cpp_element().enum_name
         enum_name_python = self.enum_name_python()
         comment = self._elm_comment_pydef_one_line()

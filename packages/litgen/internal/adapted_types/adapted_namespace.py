@@ -33,7 +33,7 @@ class AdaptedNamespace(AdaptedElement):
         return cast(CppNamespace, self._cpp_element)
 
     def _qualified_namespace_name(self) -> str:
-        ns_qualified_name = self.cpp_element().cpp_scope(include_self=True).str_cpp()
+        ns_qualified_name = self.cpp_element().cpp_scope_str(include_self=True)
         return ns_qualified_name
 
     def _stub_class_as_ns_creation_code(self) -> List[str]:

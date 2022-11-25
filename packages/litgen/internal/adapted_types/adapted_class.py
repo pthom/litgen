@@ -484,7 +484,7 @@ class AdaptedClass(AdaptedElement):
                 base_classes = self.cpp_element().base_classes()
                 for access_type, base_class in base_classes:
                     if access_type == CppAccessType.public or access_type == CppAccessType.protected:
-                        other_template_params_list.append(base_class.cpp_scope(include_self=True).str_cpp())
+                        other_template_params_list.append(base_class.cpp_scope_str(include_self=True))
             if self.cpp_element().has_private_destructor():
                 other_template_params_list.append(f"std::unique_ptr<{qualified_struct_name}, py::nodelete>")
             if self._virt_shall_override():
@@ -775,7 +775,7 @@ class AdaptedClass(AdaptedElement):
         for virtual_method in virtual_methods:
             is_overloaded = False
             adapted_virtual_method = AdaptedFunction(self.lg_context, virtual_method, is_overloaded)
-            qualified_class_name = self.cpp_element().cpp_scope(include_self=True).str_cpp()
+            qualified_class_name = self.cpp_element().cpp_scope_str(include_self=True)
             trampoline_lines += adapted_virtual_method.virt_glue_override_virtual_methods_in_python(
                 qualified_class_name
             )

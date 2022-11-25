@@ -126,7 +126,7 @@ class CppBlock(CppElementAndComment):
             if len(current_scope_str) > 0:
                 searched_scopes_strs.append(current_scope_str + "::" + class_scope_str)
 
-            struct_scope_str = struct.cpp_scope(include_self=False).str_cpp()
+            struct_scope_str = struct.cpp_scope_str(include_self=False)
 
             is_struct_visible_from_scope = False
             for searched_scope_str in searched_scopes_strs:

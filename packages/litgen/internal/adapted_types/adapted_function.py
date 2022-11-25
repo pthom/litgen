@@ -338,7 +338,7 @@ class AdaptedFunction(AdaptedElement):
         return r
 
     def shall_vectorize(self) -> bool:
-        ns_name = self.cpp_element().cpp_scope(include_self=False).str_cpp()
+        ns_name = self.cpp_element().cpp_scope_str(include_self=False)
         match_ns_name = code_utils.does_match_regex(self.options.fn_namespace_vectorize__regex, ns_name)
         match_fn_name = code_utils.does_match_regex(self.options.fn_vectorize__regex, self.cpp_element().function_name)
         r = match_ns_name and match_fn_name and not self.is_vectorize_impl
@@ -865,7 +865,7 @@ class AdaptedFunction(AdaptedElement):
             assert parent_struct is not None
             r = parent_struct.qualified_class_name_with_specialization()
         else:
-            r = self.cpp_element().cpp_scope(include_self=False).str_cpp()
+            r = self.cpp_element().cpp_scope_str(include_self=False)
         return r
 
     def _pydef_str_parent_cpp_scope_prefix(self) -> str:

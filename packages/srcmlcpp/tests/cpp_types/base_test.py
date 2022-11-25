@@ -54,7 +54,7 @@ namespace Ns
 
     foo2 = ns_block.block_children[1]
     assert isinstance(foo2, CppFunctionDecl)
-    assert foo2.cpp_scope().str_cpp() == "Ns"
+    assert foo2.cpp_scope_str() == "Ns"
     assert foo2.cpp_element_comments.top_comment_code() == ""
     # fixme: why is there a leading space.
     assert foo2.cpp_element_comments.eol_comment_code() == " // eol comment for foo2"

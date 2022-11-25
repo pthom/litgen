@@ -75,7 +75,7 @@ class CppFunctionDecl(CppElementAndComment, CppITemplateHost):
         return self.function_name
 
     def qualified_function_name(self) -> str:
-        parent_scope = self.cpp_scope(False).str_cpp()
+        parent_scope = self.cpp_scope_str(False)
         if len(parent_scope) == 0:
             return self.function_name
         else:

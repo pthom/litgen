@@ -83,10 +83,39 @@ class CppElement(SrcmlWrapper):
         if self.has_xml_name():
             r += f" name={self.extract_name_from_xml()}"
         if include_scope:
-            scope_str = self.cpp_scope().str_cpp()
+            scope_str = self.cpp_scope_str(include_self=False)
             if len(scope_str) > 0:
                 r += f" scope={scope_str}"
         return r
+
+    def self_scope(self) -> Optional[CppScopePart]:
+        from srcmlcpp.cpp_types.classes.cpp_struct import CppStruct
+        from srcmlcpp.cpp_types.cpp_namespace import CppNamespace
+        from srcmlcpp.cpp_types.cpp_enum import CppEnum
+
+        if isinstance(self, CppStruct):  # this also tests for CppClass
+            return CppScopePart(CppScopeType.ClassOrStruct, self.class_name)
+        elif isinstance(self, CppNamespace):
+            return CppScopePart(CppScopeType.Namespace, self.ns_name)
+        elif isinstance(self, CppEnum):
+            return CppScopePart(CppScopeType.Enum, self.enum_name)
+
+        return None
+
+    def cpp_scope_str(self, include_self: bool = False) -> str:
+        if include_self:
+            if hasattr(self, "_cached_cpp_scope_include_self_str"):
+                return self._cached_cpp_scope_include_self_str
+        else:
+            if hasattr(self, "_cached_cpp_scope_str"):
+                return self._cached_cpp_scope_str
+
+        if include_self:
+            self._cached_cpp_scope_include_self_str: str = self.cpp_scope(include_self).str_cpp()
+            return self._cached_cpp_scope_include_self_str
+        else:
+            self._cached_cpp_scope_str: str = self.cpp_scope(include_self).str_cpp()
+            return self._cached_cpp_scope_str
 
     def cpp_scope(self, include_self: bool = False) -> CppScope:
         """Return this element cpp scope
@@ -105,21 +134,14 @@ class CppElement(SrcmlWrapper):
             if hasattr(self, "_cached_cpp_scope"):
                 return self._cached_cpp_scope
 
-        from srcmlcpp.cpp_types.classes.cpp_struct import CppStruct
-        from srcmlcpp.cpp_types.cpp_namespace import CppNamespace
-        from srcmlcpp.cpp_types.cpp_enum import CppEnum
-
         ancestors = self.ancestors_list(include_self)
         ancestors.reverse()
 
         scope = CppScope()
         for ancestor in ancestors:
-            if isinstance(ancestor, CppStruct):  # this also tests for CppClass
-                scope.scope_parts.append(CppScopePart(CppScopeType.ClassOrStruct, ancestor.class_name))
-            elif isinstance(ancestor, CppNamespace):
-                scope.scope_parts.append(CppScopePart(CppScopeType.Namespace, ancestor.ns_name))
-            elif isinstance(ancestor, CppEnum):
-                scope.scope_parts.append(CppScopePart(CppScopeType.Enum, ancestor.enum_name))
+            scope_part = ancestor.self_scope()
+            if scope_part is not None:
+                scope.scope_parts.append(scope_part)
 
         if include_self:
             self._cached_cpp_scope_include_self: CppScope = copy.deepcopy(scope)
