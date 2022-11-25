@@ -46,7 +46,7 @@ class SrcmlWrapper:
         self.filename = filename
 
         # fill code_location
-        def fill_code_location():
+        def fill_code_location() -> str:
             if filename is None:
                 filename_simple = ""
             else:

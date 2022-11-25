@@ -63,11 +63,7 @@ class _SrcmlCaller:
         r = tempfile.gettempdir() + "/" + r
         return r
 
-    def code_to_srcml(self, encoding: str, input_str: str, dump_positions: bool = False) -> ET.Element:
-        """
-        Calls srcml with the given code and return the srcml as xml Element
-        """
-        self._stats_code_to_srcml.start()
+    def _make_xml_str_by_subprocess(self, encoding: str, input_str: str, dump_positions: bool = False) -> str:
         input_header_filename = self._random_filename() + ".h"
         output_xml_filename = self._random_filename() + ".xml"
 
@@ -88,10 +84,34 @@ class _SrcmlCaller:
 
         os.remove(input_header_file.name)
         os.remove(output_xml_file.name)
+        output_str = output_bytes.decode(encoding)
+        return output_str
 
+    def _make_cpp_str_by_subprocess(self, xml_bytes: bytes, encoding: str) -> str:
+        input_xml_filename = self._random_filename() + ".xml"
+        output_header_filename = self._random_filename() + ".h"
+        with open(input_xml_filename, "wb") as input_xml_file:
+            input_xml_file.write(xml_bytes)
+            input_xml_file.close()
+
+        self._call_subprocess(encoding, input_xml_filename, output_header_filename, False)
+
+        with open(output_header_filename, "rb") as output_header_file:
+            output_bytes = output_header_file.read()
+            output_header_file.close()
+        os.remove(input_xml_filename)
+        os.remove(output_header_filename)
+        code_str = output_bytes.decode(encoding)
+        return code_str
+
+    def code_to_srcml(self, encoding: str, input_str: str, dump_positions: bool = False) -> ET.Element:
+        """
+        Calls srcml with the given code and return the srcml as xml Element
+        """
+        self._stats_code_to_srcml.start()
+        output_str = self._make_xml_str_by_subprocess(encoding, input_str, dump_positions)
         ET.register_namespace("pos", "http://www.srcML.org/srcML/position")
         ET.register_namespace("", "http://www.srcML.org/srcML/src")
-        output_str = output_bytes.decode(encoding)
         element = ET.fromstring(output_str)
         del element.attrib["filename"]
 
@@ -105,27 +125,13 @@ class _SrcmlCaller:
         if element is None:
             return "<srcml_to_code(None)>"
 
-        input_xml_filename = self._random_filename() + ".xml"
-        output_header_filename = self._random_filename() + ".h"
+        unit_element = _embed_element_into_unit(element)
+        xml_bytes: bytes = ET.tostring(unit_element, encoding="utf8", method="xml")
+        # xml_str = xml_bytes.decode("utf8")
 
         self._stats_srcml_to_code.start()
-        unit_element = _embed_element_into_unit(element)
+        code_str = self._make_cpp_str_by_subprocess(xml_bytes, encoding)
 
-        with open(input_xml_filename, "wb") as input_xml_file:
-            element_tree = ET.ElementTree(unit_element)
-            element_tree.write(input_xml_file.name)
-            input_xml_file.close()
-
-        self._call_subprocess(encoding, input_xml_filename, output_header_filename, False)
-
-        with open(output_header_filename, "rb") as output_header_file:
-            output_bytes = output_header_file.read()
-            output_header_file.close()
-
-        os.remove(input_xml_filename)
-        os.remove(output_header_filename)
-
-        code_str = output_bytes.decode(encoding)
         self._stats_srcml_to_code.stop()
         return code_str
 
