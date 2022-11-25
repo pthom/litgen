@@ -122,9 +122,9 @@ class CppElement(SrcmlWrapper):
                 scope.scope_parts.append(CppScopePart(CppScopeType.Enum, ancestor.enum_name))
 
         if include_self:
-            self._cached_cpp_scope_include_self: CppScope = copy.deepcopy(scope)  # type: ignore
+            self._cached_cpp_scope_include_self: CppScope = copy.deepcopy(scope)
         else:
-            self._cached_cpp_scope: CppScope = copy.deepcopy(scope)  # type: ignore
+            self._cached_cpp_scope: CppScope = copy.deepcopy(scope)
 
         return scope
 

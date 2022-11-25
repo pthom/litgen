@@ -4,6 +4,7 @@ from typing import List, Optional, Tuple, Union, cast
 
 import munch  # type: ignore
 
+import litgen
 import srcmlcpp
 from codemanip import code_utils
 
@@ -979,7 +980,7 @@ class PythonNamedConstructorHelper:
             return str_cpp_code
 
         def make_cpp_constructor() -> CppFunctionDecl:
-            def make_cpp_unit_quiet(options, code: str) -> CppUnit:
+            def make_cpp_unit_quiet(options: litgen.LitgenOptions, code: str) -> CppUnit:
                 flag_progress = options.srcmlcpp_options.flag_show_progress
                 options.srcmlcpp_options.flag_show_progress = False
                 unit = srcmlcpp.code_to_cpp_unit(options.srcmlcpp_options, code)
