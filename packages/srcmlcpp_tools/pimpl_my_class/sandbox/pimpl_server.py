@@ -1,7 +1,7 @@
 from typing import Optional
 
-from flask import Flask, render_template, request  # type: ignore
-from markupsafe import escape  # type: ignore
+from flask import Flask, render_template, request
+from markupsafe import escape
 
 from codemanip.html_code_viewer.html_code_viewer import (
     # COLLAPSIBLE_CSS, HALF_WIDTH_DIVS_CSS,
