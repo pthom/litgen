@@ -1,7 +1,7 @@
 """
 Calls the external program srcml (https://www.srcml.org/)
 """
-
+from typing import Optional
 import logging
 import os
 import random
@@ -13,6 +13,8 @@ from xml.etree import ElementTree as ET
 
 # Count the total time used by call to the exe srcml
 _FLAG_PROFILE_SRCML_CALLS: bool = True
+
+_USE_SRCML_MODULE = False
 
 
 def _embed_element_into_unit(element: ET.Element) -> ET.Element:
@@ -104,16 +106,46 @@ class _SrcmlCaller:
         code_str = output_bytes.decode(encoding)
         return code_str
 
+    def _make_xml_str_by_module(self, input_str: str, dump_positions: bool = False) -> str:
+        import lg_srcml_cpp_caller
+
+        r = lg_srcml_cpp_caller.to_srcml(cpp_code=input_str, include_positions=dump_positions)  # type: ignore
+        assert r is not None
+
+        def patch_xml(s: str) -> str:
+            xml_prefix = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\n'
+            search = '<unit revision="1.0.0"'
+            replace = '<unit xmlns="http://www.srcML.org/srcML" xmlns:pos="http://www.srcML.org/srcML/position" xmlns:cpp="http://www.srcML.org/srcML/cpp" revision="1.0.0"'
+            xml_patched = s.replace(search, replace)
+            xml_patched = xml_prefix + xml_patched
+            return xml_patched
+
+        patched = patch_xml(r)
+        return patched
+
+    def _make_cpp_str_by_module(self, input_str: str) -> str:
+        import lg_srcml_cpp_caller
+
+        r: Optional[str] = lg_srcml_cpp_caller.to_cpp(xml_str=input_str)  # type: ignore
+        assert r is not None
+        return r
+
     def code_to_srcml(self, encoding: str, input_str: str, dump_positions: bool = False) -> ET.Element:
         """
         Calls srcml with the given code and return the srcml as xml Element
         """
         self._stats_code_to_srcml.start()
-        output_str = self._make_xml_str_by_subprocess(encoding, input_str, dump_positions)
+
+        if _USE_SRCML_MODULE:
+            output_str = self._make_xml_str_by_module(input_str, dump_positions)
+        else:
+            output_str = self._make_xml_str_by_subprocess(encoding, input_str, dump_positions)
+
         ET.register_namespace("pos", "http://www.srcML.org/srcML/position")
         ET.register_namespace("", "http://www.srcML.org/srcML/src")
         element = ET.fromstring(output_str)
-        del element.attrib["filename"]
+        if "filename" in element.attrib.keys():
+            del element.attrib["filename"]
 
         self._stats_code_to_srcml.stop()
         return element
@@ -127,10 +159,15 @@ class _SrcmlCaller:
 
         unit_element = _embed_element_into_unit(element)
         xml_bytes: bytes = ET.tostring(unit_element, encoding="utf8", method="xml")
-        # xml_str = xml_bytes.decode("utf8")
+        xml_str = xml_bytes.decode("utf8")
 
         self._stats_srcml_to_code.start()
-        code_str = self._make_cpp_str_by_subprocess(xml_bytes, encoding)
+
+        code_str: str
+        if _USE_SRCML_MODULE:
+            code_str = self._make_cpp_str_by_module(xml_str)
+        else:
+            code_str = self._make_cpp_str_by_subprocess(xml_bytes, encoding)
 
         self._stats_srcml_to_code.stop()
         return code_str

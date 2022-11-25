@@ -43,7 +43,19 @@ def test_srcml_xml():
         </unit>
     """
 
-    code_utils.assert_are_codes_equal(xml_str, expected_xml_str)
+    def remove_xmlns_lines(s: str) -> str:
+        lines = s.split("\n")
+
+        def not_is_xmlns(line: str) -> bool:
+            return "unit xmlns" not in line
+
+        lines = list(filter(not_is_xmlns, lines))
+        r = "\n".join(lines)
+        return r
+
+    xml_str2 = remove_xmlns_lines(xml_str)
+    expected_xml_str2 = remove_xmlns_lines(expected_xml_str)
+    code_utils.assert_are_codes_equal(xml_str2, expected_xml_str2)
 
 
 def test_srcml_does_not_modify_code():

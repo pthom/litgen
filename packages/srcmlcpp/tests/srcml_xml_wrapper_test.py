@@ -68,7 +68,19 @@ def test_srcml_cpp():
            ;
         </decl_stmt>
     """
-    code_utils.assert_are_codes_equal(first_decl_xml_str, expected_xml_str)
+
+    def remove_xmlns_lines(s: str) -> str:
+        lines = s.split("\n")
+
+        def not_is_xmlns(line: str) -> bool:
+            return "xmlns" not in line
+
+        lines = list(filter(not_is_xmlns, lines))
+        r = "\n".join(lines)
+        return r
+
+    first_decl_xml_str = first_decl_xml_str.replace("ns0:", "")
+    code_utils.assert_are_codes_equal(remove_xmlns_lines(first_decl_xml_str), remove_xmlns_lines(expected_xml_str))
 
 
 def test_visitor():
