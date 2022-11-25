@@ -82,12 +82,12 @@ def raise_if_unsupported_operator(cpp_function_decl: CppFunctionDecl) -> None:
     nb_parameters = len(cpp_function_decl.parameter_list.parameters)
     if nb_parameters == 0:
         if _cpp_to_python_operator_zero_param(operator_name) is None:
-            cpp_function_decl.raise_exception(f'Unsupported zero param "operator{operator_name}"')
+            cpp_function_decl.raise_exception(f'Unsupported zero param "operator {operator_name}"')
     elif nb_parameters == 1:
         if _cpp_to_python_operator_one_param(operator_name) is None:
-            cpp_function_decl.raise_exception(f'Unsupported one param "operator{operator_name}"')
+            cpp_function_decl.raise_exception(f'Unsupported one param "operator {operator_name}"')
     else:
-        cpp_function_decl.raise_exception(f'Unsupported  "operator{operator_name}" (only 0 or 1 params are accepted')
+        cpp_function_decl.raise_exception(f'Unsupported "operator {operator_name}" (only 0 or 1 params are accepted')
 
 
 def cpp_to_python_operator_name(cpp_function_decl: CppFunctionDecl) -> str:

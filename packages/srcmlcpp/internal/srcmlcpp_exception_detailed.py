@@ -9,6 +9,7 @@ from codemanip import code_utils
 from srcmlcpp.srcmlcpp_exception import SrcmlcppException
 from srcmlcpp.srcmlcpp_options import SrcmlcppOptions
 from srcmlcpp.srcml_wrapper import SrcmlWrapper
+from srcmlcpp.scrml_warning_settings import WarningType
 
 
 class SrcmlcppExceptionDetailed(SrcmlcppException):
@@ -35,13 +36,18 @@ def show_python_callstack(python_error_line: str) -> str:
     """
 
 
-def emit_warning_if_not_quiet(options: SrcmlcppOptions, message: str) -> None:
+def emit_warning_if_not_quiet(options: SrcmlcppOptions, message: str, warning_type: WarningType) -> None:
     if options.flag_quiet:
         return
+    if warning_type in options.ignored_warnings:
+        return
+    for ignored_warning_part in options.ignored_warning_parts:
+        if ignored_warning_part in message:
+            return
     in_pytest = "pytest" in sys.modules
     if in_pytest:
         logging.warning(message)
     else:
-        if not message.startswith("Warning"):
-            message = "Warning:" + message
+        warning_str = f"({warning_type.name}) "
+        message = message.replace("Warning: ", "Warning: " + warning_str)
         print(message, file=sys.stderr)

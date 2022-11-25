@@ -2,7 +2,7 @@ import os
 from typing import List
 
 from codemanip import amalgamated_header, code_utils
-
+from srcmlcpp.scrml_warning_settings import WarningType
 import litgen
 from litgen import litgen_generator
 
@@ -33,6 +33,10 @@ def all_header_files() -> List[str]:
 
 def mylib_litgen_options() -> litgen.LitgenOptions:
     options = litgen.LitgenOptions()
+    options.srcmlcpp_options.ignored_warnings = [
+        WarningType.LitgenClassMemberNonNumericCStyleArray,
+        WarningType.LitgenIgnoreElement,
+    ]
 
     options.python_run_black_formatter = True
 

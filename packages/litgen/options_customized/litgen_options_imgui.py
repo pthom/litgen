@@ -2,6 +2,7 @@ from enum import Enum
 
 from codemanip.code_replacements import RegexReplacementList
 from codemanip.code_utils import join_string_by_pipe_char
+from srcmlcpp.srcmlcpp_options import WarningType
 
 from litgen.options import LitgenOptions
 
@@ -38,6 +39,20 @@ def litgen_options_imgui(type: ImguiOptionsType, docking_branch: bool) -> Litgen
     from litgen.internal import cpp_to_python
 
     options = LitgenOptions()
+
+    options.srcmlcpp_options.ignored_warnings = [
+        WarningType.LitgenClassMemberSkipBitfield,
+        WarningType.LitgenClassMemberUnparsableSize,
+        WarningType.LitgenClassMemberNonNumericCStyleArray,
+    ]
+
+    options.srcmlcpp_options.ignored_warning_parts = [
+        "C style function pointers",
+        "function_decl as a param",
+        'Unsupported zero param "operator bool"',
+        "ImGuiDataType_Pointer",
+        "ImGuiDataType_ID",
+    ]
 
     options.cpp_indent_size = 4
 

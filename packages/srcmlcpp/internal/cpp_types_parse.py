@@ -13,11 +13,11 @@ from codemanip import code_utils
 from codemanip.parse_progress_bar import global_progress_bars
 
 from srcmlcpp import SrcmlWrapper
+from srcmlcpp.scrml_warning_settings import WarningType
 from srcmlcpp.cpp_types import *
 from srcmlcpp.internal import srcml_caller, srcml_comments, srcml_utils
 from srcmlcpp.internal.srcmlcpp_exception_detailed import (
     SrcmlcppExceptionDetailed,
-    emit_warning_if_not_quiet,
 )
 from srcmlcpp.srcmlcpp_options import SrcmlcppOptions
 
@@ -795,8 +795,9 @@ def fill_block(options: SrcmlcppOptions, element: SrcmlWrapper, inout_block_cont
                 block_children.append(parse_unprocessed(options, child_c, inout_block_content))
         except SrcmlcppExceptionDetailed as e:
             block_children.append(parse_unprocessed(options, child_c, inout_block_content))
-            emit_warning_if_not_quiet(
-                options, f'A cpp element of type "{child_tag}" was stored as CppUnprocessed. Details follow\n{e}'
+            element.emit_warning(
+                f'A cpp element of type "{child_tag}" was stored as CppUnprocessed. Details follow\n{e}',
+                WarningType.SrcmlcppIgnoreElement,
             )
 
 

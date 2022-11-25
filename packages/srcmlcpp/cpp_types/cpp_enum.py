@@ -5,6 +5,7 @@ from typing import List, Optional
 from codemanip import code_utils
 
 from srcmlcpp.cpp_types.base import *
+from srcmlcpp.scrml_warning_settings import WarningType
 from srcmlcpp.cpp_types.blocks.cpp_block import CppBlock
 from srcmlcpp.cpp_types.decls_types.cpp_decl import CppDecl
 from srcmlcpp.srcml_wrapper import SrcmlWrapper
@@ -102,6 +103,7 @@ class CppEnum(CppElementAndComment):
                                 """
                                 Cannot parse the value of this enum element.
                                 Hint: maybe add an entry to SrcmlcppOptions.named_number_macros""",
+                                WarningType.LitgenEnumUnparsableValue,
                             )
 
                 last_decl = decl_with_value

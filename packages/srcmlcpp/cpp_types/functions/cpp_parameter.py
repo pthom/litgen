@@ -1,6 +1,7 @@
 from dataclasses import dataclass
 
 from srcmlcpp.cpp_types.base import *
+from srcmlcpp.scrml_warning_settings import WarningType
 from srcmlcpp.cpp_types.decls_types.cpp_decl import CppDecl
 from srcmlcpp.srcml_wrapper import SrcmlWrapper
 
@@ -46,7 +47,7 @@ class CppParameter(CppElementAndComment):
             return str(self.decl)
         else:
             if not hasattr(self, "template_type"):
-                self.emit_warning("CppParameter.__str__() with no decl and no template_type")
+                self.emit_warning("CppParameter.__str__() with no decl and no template_type", WarningType.Unclassified)
             return str(self.template_type) + " " + self.template_name
 
     def str_template_type(self) -> str:

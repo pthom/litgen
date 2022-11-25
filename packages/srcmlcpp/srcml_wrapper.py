@@ -10,6 +10,7 @@ from codemanip.code_position import CodeContextWithCaret, CodePosition
 
 from srcmlcpp.internal import code_cache, srcml_caller, srcml_utils
 from srcmlcpp.srcmlcpp_options import SrcmlcppOptions
+from srcmlcpp.scrml_warning_settings import WarningType
 
 
 class SrcmlWrapper:
@@ -202,13 +203,13 @@ class SrcmlWrapper:
 
         raise SrcmlcppExceptionDetailed(self, message)
 
-    def emit_warning(self, message: str) -> None:
+    def emit_warning(self, message: str, warning_type: WarningType = WarningType.Undefined) -> None:
         """emits a warning which will display the message with a context
         that gives the location of this element in the code"""
         message = self._format_message(message, "Warning")
         from srcmlcpp.internal.srcmlcpp_exception_detailed import emit_warning_if_not_quiet
 
-        emit_warning_if_not_quiet(self.options, message)
+        emit_warning_if_not_quiet(self.options, message, warning_type)
 
     def _warning_message_str(self, message: str, message_header: str = "Warning") -> str:
         r = self._format_message(message, message_header=message_header)

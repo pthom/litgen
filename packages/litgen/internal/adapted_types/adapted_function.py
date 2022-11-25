@@ -8,6 +8,7 @@ from munch import Munch  # type: ignore
 from codemanip import code_utils
 
 from srcmlcpp.cpp_types import *
+from srcmlcpp.scrml_warning_settings import WarningType
 
 import litgen
 from litgen import LitgenOptions
@@ -1120,12 +1121,15 @@ class AdaptedFunction(AdaptedElement):
 
         if matching_template_spec is None:
             self.cpp_element().emit_warning(
-                "Ignoring template function. You might need to set LitgenOptions.fn_template_options"
+                "Ignoring template function. You might need to set LitgenOptions.fn_template_options",
+                WarningType.LitgenTemplateFunctionIgnore,
             )
             return []
 
         if not self._tpl_is_one_param_template() and len(matching_template_spec.cpp_types_list) > 0:
-            self.cpp_element().emit_warning("Only one parameters template functions are supported")
+            self.cpp_element().emit_warning(
+                "Only one parameters template functions are supported", WarningType.LitgenTemplateFunctionMultipleIgnore
+            )
             return []
 
         new_functions: List[AdaptedFunction] = []

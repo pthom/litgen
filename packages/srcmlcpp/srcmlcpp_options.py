@@ -4,6 +4,7 @@ Options for srcmlcpp. Read the doc near all options elements.
 from typing import Callable, Dict, List, Optional
 
 from codemanip.code_utils import split_string_by_pipe_char
+from srcmlcpp.scrml_warning_settings import WarningType
 
 
 class SrcmlcppOptions:
@@ -80,6 +81,11 @@ class SrcmlcppOptions:
     # if quiet, all warning messages are discarded (warning messages go to stderr)
     flag_quiet: bool = False
 
+    # List of ignored warnings
+    ignored_warnings: List[WarningType]
+    # List of ignored warnings, identified by a part of the warning message
+    ignored_warning_parts: List[str]
+
     # Show python callstack when warnings are raised
     flag_show_python_callstack: bool = False
 
@@ -93,6 +99,8 @@ class SrcmlcppOptions:
     def __init__(self) -> None:
         # See doc for all the params at their declaration site (scroll up!)
         self.named_number_macros = {}
+        self.ignored_warnings = []
+        self.ignored_warning_parts = []
 
     def functions_api_prefixes_list(self) -> List[str]:
         assert isinstance(self.functions_api_prefixes, str)

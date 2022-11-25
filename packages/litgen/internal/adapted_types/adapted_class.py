@@ -11,6 +11,7 @@ from codemanip import code_utils
 from srcmlcpp.cpp_types import *
 from srcmlcpp.cpp_types.scope.cpp_scope import CppScopeType
 from srcmlcpp.srcmlcpp_exception import SrcmlcppException
+from srcmlcpp.scrml_warning_settings import WarningType
 
 from litgen import TemplateNamingScheme
 from litgen.internal import cpp_to_python
@@ -69,6 +70,7 @@ class AdaptedClassMember(AdaptedDecl):
                 AdaptedClassMember: Only numeric C Style arrays are supported
                 Hint: use a vector, or extend `options.c_array_numeric_member_types`
                 """,
+                WarningType.LitgenClassMemberNonNumericCStyleArray,
             )
             return False
 
@@ -80,6 +82,7 @@ class AdaptedClassMember(AdaptedDecl):
                 Hint: modify `options.member_numeric_c_array_replace__regex`
                 """,
             )
+            WarningType.LitgenClassMemberNumericCStyleArray_Setting
             return False
 
         if cpp_decl.c_array_size_as_int() is None:
@@ -89,6 +92,7 @@ class AdaptedClassMember(AdaptedDecl):
                 AdaptedClassMember: Detected a numeric C Style array, but its size is not parsable.
                 Hint: may be, add the value "{array_size_str}" to `options.c_array_numeric_member_size_dict`
                 """,
+                WarningType.LitgenClassMemberNumericCStyleArray_UnparsableSize,
             )
             return False
 
@@ -101,6 +105,7 @@ class AdaptedClassMember(AdaptedDecl):
         if cpp_decl.is_bitfield():  # is_bitfield()
             cpp_decl.emit_warning(
                 f"AdaptedClassMember: Skipped bitfield member {cpp_decl.decl_name}",
+                WarningType.LitgenClassMemberSkipBitfield,
             )
             return False
         elif cpp_decl.is_c_array_fixed_size_unparsable():
@@ -109,6 +114,7 @@ class AdaptedClassMember(AdaptedDecl):
                 AdaptedClassMember: Can't parse the size of this array.
                 Hint: use a vector, or extend `options.c_array_numeric_member_types`
                 """,
+                WarningType.LitgenClassMemberUnparsableSize,
             )
             return False
         elif cpp_decl.is_c_array_known_fixed_size():
@@ -321,9 +327,10 @@ class AdaptedClass(AdaptedElement):
                 else:
                     child.emit_warning(
                         f"Public elements of type {child.tag()} are not supported in python conversion",
+                        WarningType.LitgenClassMemberUnsupported,
                     )
             except SrcmlcppException as e:
-                child.emit_warning(str(e))
+                child.emit_warning(str(e), WarningType.LitgenClassMemberException)
 
     #  ============================================================================================
     #
@@ -722,12 +729,16 @@ class AdaptedClass(AdaptedElement):
 
         if matching_template_spec is None:
             self.cpp_element().emit_warning(
-                "Ignoring template class. You might need to set LitgenOptions.fn_template_options"
+                "Ignoring template class. You might need to set LitgenOptions.class_template_options",
+                WarningType.LitgenTemplateClassIgnore,
             )
             return []
 
         if not self._tpl_is_one_param_template() and len(matching_template_spec.cpp_types_list) > 0:
-            self.cpp_element().emit_warning("Only one parameters template classes are supported")
+            self.cpp_element().emit_warning(
+                "Template classes with more than one parameter are not supported",
+                WarningType.LitgenTemplateClassMultipleIgnore,
+            )
             return []
 
         new_classes: List[AdaptedClass] = []

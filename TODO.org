@@ -495,9 +495,8 @@ bool RunnerGlfwOpenGl3::Impl_SetAppIcon(const std::string& iconAssetPath)
 
 Handle default value for string, know types, etc. / may be exclude those that don't have default value
 opt-in add when there is a default?
-suppr arrays
 Filter litgen & srcmlcpp errors
-Profile litgen imgui
+Profile litgen imgui & finish cache scope ?
 
 
 ** Scratch
@@ -519,13 +518,11 @@ namespace_test / bug dbl namespace inner2
      Easy docking config (review enum)
 
 
-
-
 * srcml_cpp
   Test libclang: see https://shaharmike.com/cpp/libclang/ & https://libclang.readthedocs.io/en/latest/
      https://bastian.rieck.me/blog/posts/2015/baby_steps_libclang_ast/
 
-
+** Finish binding lg_srcML (see folder srcML at root)
 ** Easy
 ** srcmlcpp hard and later
 *** CppElement: composition, not derivation from SrcmlWrapper!
