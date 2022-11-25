@@ -21,6 +21,8 @@ class SrcmlWrapper:
     srcml_xml: ET.Element
     # the filename from which this tree was parsed
     filename: Optional[str] = None
+    # debugging help: a string showing the start position of this element in the code
+    code_location: str
 
     # members that are always copied as shallow members (this is intentionally a static list)
     SrcmlWrapper__deep_copy_force_shallow_ = ["options", "srcml_xml"]
@@ -42,6 +44,21 @@ class SrcmlWrapper:
                 self.raise_exception("filename params must either be `None` or non empty!")
 
         self.filename = filename
+
+        # fill code_location
+        def fill_code_location():
+            if filename is None:
+                filename_simple = ""
+            else:
+                filename_normalized = filename.replace("\\", "/")
+                items = filename_normalized.split("/")
+                items = items[-3:]
+                filename_simple = "/".join(items)
+            start_loc = self.start()
+            r = f"{filename_simple}:{start_loc.line}:{start_loc.column}"
+            return r
+
+        self.code_position_start = fill_code_location()
 
     def __deepcopy__(self, memo=None):
         """SrcmlWrapper.__deepcopy__: force shallow copy of SrcmlcppOptions and srcml_xml (ET.Element)
