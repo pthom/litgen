@@ -136,6 +136,14 @@ Test multithread qui semble marcher:
 * Dyndoc
 Voir note sur telephone
 
+
+* Web Version Python + ImGui Bundle?
+** With REPL
+See https://pyodide.org/en/stable/index.html
+It has opencv + lots of doc!!!
+
+Later !!!!
+
 * Litgen doc
 Revoir https://www.youtube.com/watch?v=8Ab3ArE8W3s&t=270s ("Stop Writing Dead Programs" by Jack Rusher (Strange Loop 2022))
 ** Sources de stubs connues: $
@@ -469,8 +477,32 @@ bool RunnerGlfwOpenGl3::Impl_SetAppIcon(const std::string& iconAssetPath)
             return false;
     }
 
+** Online asm ImGuiBundle Demos
+(mandel, fn comp, image editing, etc)
+
 ** Add ImGui callbacks via patch std::function?
 
+
+
+** Add ImGuizmo
+
+** Inspector Exe
+=> Envoi a Vincent
+=> Avec outils de manip / node?
+
+
+** Add named ctors
+
+Handle default value for string, know types, etc. / may be exclude those that don't have default value
+opt-in add when there is a default?
+suppr arrays
+Filter litgen & srcmlcpp errors
+Profile litgen imgui
+
+
+** Scratch
+pybind_hello_imgui.cpp => namespace annnotation disappeared!
+namespace_test / bug dbl namespace inner2
 
 
 ** Renaming ImGui[A-Z]
@@ -478,16 +510,14 @@ bool RunnerGlfwOpenGl3::Impl_SetAppIcon(const std::string& iconAssetPath)
     code_replacements / names_replacements / comments_replacements
       => need: class_names_replacements, functions_names_replacements, var_names_replacements, types_replacements, value_replacements (qui contient types_replacements)
 
-
-
 ** EasyRunner:
      AutoGenerate named constructors
 
-
-     Remove Simplerunnerparams
-
+     Remove Simplerunnerparams?
      GetRunnerParams() always available
+       => No: provide easy setup callback
      Easy docking config (review enum)
+
 
 
 

@@ -86,6 +86,13 @@ class NamespacesCodeTree:
 
     def store_code(self, qualified_namespace_name: CppQualifiedNamespaceName, code: str) -> None:
         namespaces_names = qualified_namespace_name.split("::")
+
+        def shall_use_this_namespace(namespace_name: str) -> bool:
+            is_root_namespace = code_utils.does_match_regex(self._options.namespace_root__regex, namespace_name)
+            return not is_root_namespace
+
+        namespaces_names = list(filter(shall_use_this_namespace, namespaces_names))
+
         self._store_code_in_tree(namespaces_names, code)
 
     def was_namespace_created(self, qualified_namespace_name: CppQualifiedNamespaceName) -> bool:

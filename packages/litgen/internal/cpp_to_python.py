@@ -386,6 +386,9 @@ def _scope_part_name(scope_part: CppScopePart) -> str:
 
 
 def cpp_scope_to_pybind_scope(options: LitgenOptions, cpp_element: CppElement, include_self: bool) -> CppScope:
+    """Remove namespaces considered as root namespace in the options
+    (it requires to add a using namespace in the pybind_xxx.cpp file, but this is ok)
+    """
     cpp_scope = cpp_element.cpp_scope(include_self)
     scope_parts = cpp_scope.scope_parts
 

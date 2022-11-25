@@ -98,6 +98,13 @@ class CppElement(SrcmlWrapper):
             }
         }
         """
+        if include_self:
+            if hasattr(self, "_cached_cpp_scope_include_self"):
+                return self._cached_cpp_scope_include_self
+        else:
+            if hasattr(self, "_cached_cpp_scope"):
+                return self._cached_cpp_scope
+
         from srcmlcpp.cpp_types.classes.cpp_struct import CppStruct
         from srcmlcpp.cpp_types.cpp_namespace import CppNamespace
         from srcmlcpp.cpp_types.cpp_enum import CppEnum
@@ -113,6 +120,11 @@ class CppElement(SrcmlWrapper):
                 scope.scope_parts.append(CppScopePart(CppScopeType.Namespace, ancestor.ns_name))
             elif isinstance(ancestor, CppEnum):
                 scope.scope_parts.append(CppScopePart(CppScopeType.Enum, ancestor.enum_name))
+
+        if include_self:
+            self._cached_cpp_scope_include_self: CppScope = copy.deepcopy(scope)  # type: ignore
+        else:
+            self._cached_cpp_scope: CppScope = copy.deepcopy(scope)  # type: ignore
 
         return scope
 
