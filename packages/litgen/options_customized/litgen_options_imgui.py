@@ -69,6 +69,8 @@ def litgen_options_imgui(type: ImguiOptionsType, docking_branch: bool) -> Litgen
     options.original_location_flag_show = True
     options.original_signature_flag_show = True
 
+    options.python_run_black_formatter = True
+
     options.srcmlcpp_options.functions_api_prefixes = "IMGUI_API"
 
     options.srcmlcpp_options.header_filter_acceptable__regex += "|^IMGUI_DISABLE$"
@@ -150,7 +152,9 @@ def litgen_options_imgui(type: ImguiOptionsType, docking_branch: bool) -> Litgen
         ]
     )
 
-    options.class_exclude_by_name__regex = join_string_by_pipe_char([r"^ImVector\b", "ImGuiTextBuffer"])
+    options.class_exclude_by_name__regex = join_string_by_pipe_char(
+        [r"^ImVector\b", "ImGuiTextBuffer", "^ImGuiStorage$"]
+    )
 
     options.member_numeric_c_array_types += "|" + join_string_by_pipe_char(
         [
