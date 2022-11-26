@@ -81,14 +81,14 @@ void py_init_module_mylib(py::module& m)
         py::class_<Point2>
             (m, "Point2", "")
         .def(py::init<>([](
-        int x, int y)
+        int x = int(), int y = int())
         {
             auto r = std::make_unique<Point2>();
             r->x = x;
             r->y = y;
             return r;
         })
-        , py::arg("x"), py::arg("y")
+        , py::arg("x") = int(), py::arg("y") = int()
         )
         .def_readwrite("x", &Point2::x, "")
         .def_readwrite("y", &Point2::y, "")

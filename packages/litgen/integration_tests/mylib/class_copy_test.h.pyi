@@ -39,7 +39,7 @@ class AAA:  # Proxy class that introduces typings for the *submodule* AAA
     #      <template specializations for class Copyable_Template>
     class Copyable_TemplateInt:
         value: int
-        def __init__(self, value: int) -> None:
+        def __init__(self, value: int = int()) -> None:
             """Auto-generated default constructor"""
             pass
     #      </template specializations for class Copyable_Template>

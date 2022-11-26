@@ -494,9 +494,10 @@ bool RunnerGlfwOpenGl3::Impl_SetAppIcon(const std::string& iconAssetPath)
 ** Add named ctors
 
 Handle default value for string, know types, etc. / may be exclude those that don't have default value
+   => en cours:
+     cleanup / remove added code
+
 opt-in add when there is a default?
-Filter litgen & srcmlcpp errors
-Profile litgen imgui & finish cache scope ?
 
 
 ** Scratch

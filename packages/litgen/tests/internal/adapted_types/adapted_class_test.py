@@ -46,7 +46,7 @@ struct Foo
             def add(self, v: int) -> int:
                 """ Simple addition"""
                 pass
-            def __init__(self, a: int, flag: bool) -> None:
+            def __init__(self, a: int = int(), flag: bool = bool()) -> None:
                 """Auto-generated default constructor"""
                 pass
      ''',
@@ -73,7 +73,7 @@ struct Foo
             def add(self, v: int) -> int:
                 """ Simple addition"""
                 pass
-            def __init__(self, a: int, flag: bool) -> None:
+            def __init__(self, a: int = int(), flag: bool = bool()) -> None:
                 """Auto-generated default constructor"""
                 pass
     ''',
@@ -106,14 +106,14 @@ def test_struct_pydef_simple():
             py::class_<Foo>
                 (m, "Foo", "Doc about Foo")
             .def(py::init<>([](
-            int a, bool flag)
+            int a = int(), bool flag = bool())
             {
                 auto r = std::make_unique<Foo>();
                 r->a = a;
                 r->flag = flag;
                 return r;
             })
-            , py::arg("a"), py::arg("flag")
+            , py::arg("a") = int(), py::arg("flag") = bool()
             )
             .def_readwrite("a", &Foo::a, "Doc about a")
             .def_readwrite("flag", &Foo::flag, "Doc about flag")
@@ -384,13 +384,13 @@ def test_deepcopy_with_specialization():
                 py::class_<Ns::Foo<int>>
                     (pyNsNs, "FooInt", "")
                 .def(py::init<>([](
-                int value)
+                int value = int())
                 {
                     auto r = std::make_unique<Ns::Foo<int>>();
                     r->value = value;
                     return r;
                 })
-                , py::arg("value")
+                , py::arg("value") = int()
                 )
                 .def_readwrite("value", &Ns::Foo<int>::value, "")
                 .def("__deepcopy__",  [](const Ns::Foo<int> &self, py::dict) {
@@ -410,7 +410,7 @@ def test_deepcopy_with_specialization():
             #      <template specializations for class Foo>
             class FooInt:
                 value: int
-                def __init__(self, value: int) -> None:
+                def __init__(self, value: int = int()) -> None:
                     """Auto-generated default constructor"""
                     pass
             #      </template specializations for class Foo>
@@ -526,8 +526,8 @@ def test_named_ctor_helper_struct() -> None:
                 s: str = "Allo"
                 def __init__(
                     self,
-                    a: int,
                     b: bool = True,
+                    a: int = int(),
                     c: int = 3,
                     foo: Foo = Foo.foo1
                     ) -> None:
@@ -553,16 +553,16 @@ def test_named_ctor_helper_struct() -> None:
                 py::class_<A::ClassNoDefaultCtor>
                     (pyNsA, "ClassNoDefaultCtor", "")
                 .def(py::init<>([](
-                int a, bool b = true, int c = 3, A::Foo foo = A::Foo::Foo1)
+                bool b = true, int a = int(), int c = 3, A::Foo foo = A::Foo::Foo1)
                 {
                     auto r = std::make_unique<A::ClassNoDefaultCtor>();
-                    r->a = a;
                     r->b = b;
+                    r->a = a;
                     r->c = c;
                     r->foo = foo;
                     return r;
                 })
-                , py::arg("a"), py::arg("b") = true, py::arg("c") = 3, py::arg("foo") = A::Foo::Foo1
+                , py::arg("b") = true, py::arg("a") = int(), py::arg("c") = 3, py::arg("foo") = A::Foo::Foo1
                 )
                 .def_readwrite("b", &A::ClassNoDefaultCtor::b, "")
                 .def_readwrite("a", &A::ClassNoDefaultCtor::a, "")

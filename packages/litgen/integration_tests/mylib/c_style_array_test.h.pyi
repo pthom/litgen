@@ -46,7 +46,7 @@ def array2_modify(values_0: BoxedUnsignedLong, values_1: BoxedUnsignedLong) -> N
 class Point2:
     x: int
     y: int
-    def __init__(self, x: int, y: int) -> None:
+    def __init__(self, x: int = int(), y: int = int()) -> None:
         """Auto-generated default constructor"""
         pass
 

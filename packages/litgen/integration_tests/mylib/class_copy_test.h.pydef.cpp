@@ -80,13 +80,13 @@ void py_init_module_mylib(py::module& m)
             py::class_<AAA::Copyable_Template<int>>
                 (pyNsAAA, "Copyable_TemplateInt", "")
             .def(py::init<>([](
-            int value)
+            int value = int())
             {
                 auto r = std::make_unique<AAA::Copyable_Template<int>>();
                 r->value = value;
                 return r;
             })
-            , py::arg("value")
+            , py::arg("value") = int()
             )
             .def_readwrite("value", &AAA::Copyable_Template<int>::value, "")
             .def("__copy__",  [](const AAA::Copyable_Template<int> &self) {

@@ -36,16 +36,16 @@ void py_init_module_mylib(py::module& m)
             py::class_<A::ClassNoDefaultCtor>
                 (pyNsA, "ClassNoDefaultCtor", " This struct has no default constructor, so a default named constructor\n will be provided for python")
             .def(py::init<>([](
-            int a, bool b = true, int c = 3, A::Foo foo = A::Foo::Foo1)
+            bool b = true, int a = int(), int c = 3, A::Foo foo = A::Foo::Foo1)
             {
                 auto r = std::make_unique<A::ClassNoDefaultCtor>();
-                r->a = a;
                 r->b = b;
+                r->a = a;
                 r->c = c;
                 r->foo = foo;
                 return r;
             })
-            , py::arg("a"), py::arg("b") = true, py::arg("c") = 3, py::arg("foo") = A::Foo::Foo1
+            , py::arg("b") = true, py::arg("a") = int(), py::arg("c") = 3, py::arg("foo") = A::Foo::Foo1
             )
             .def_readwrite("b", &A::ClassNoDefaultCtor::b, "")
             .def_readwrite("a", &A::ClassNoDefaultCtor::a, "")

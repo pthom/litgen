@@ -29,7 +29,7 @@ class A:  # Proxy class that introduces typings for the *submodule* A
         foo: Foo = Foo.foo1
         s: str = "Allo"
         def __init__(
-            self, a: int, b: bool = True, c: int = 3, foo: Foo = Foo.foo1
+            self, b: bool = True, a: int = int(), c: int = 3, foo: Foo = Foo.foo1
         ) -> None:
             """Auto-generated default constructor"""
             pass

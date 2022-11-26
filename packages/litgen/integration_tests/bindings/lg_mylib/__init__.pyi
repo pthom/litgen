@@ -96,7 +96,7 @@ def array2_modify(values_0: BoxedUnsignedLong, values_1: BoxedUnsignedLong) -> N
 class Point2:
     x: int
     y: int
-    def __init__(self, x: int, y: int) -> None:
+    def __init__(self, x: int = int(), y: int = int()) -> None:
         """Auto-generated default constructor"""
         pass
 
@@ -915,7 +915,7 @@ class AAA:  # Proxy class that introduces typings for the *submodule* AAA
     #      <template specializations for class Copyable_Template>
     class Copyable_TemplateInt:
         value: int
-        def __init__(self, value: int) -> None:
+        def __init__(self, value: int = int()) -> None:
             """Auto-generated default constructor"""
             pass
     #      </template specializations for class Copyable_Template>
@@ -1104,7 +1104,7 @@ class A:  # Proxy class that introduces typings for the *submodule* A
         foo: Foo = Foo.foo1
         s: str = "Allo"
         def __init__(
-            self, a: int, b: bool = True, c: int = 3, foo: Foo = Foo.foo1
+            self, b: bool = True, a: int = int(), c: int = 3, foo: Foo = Foo.foo1
         ) -> None:
             """Auto-generated default constructor"""
             pass

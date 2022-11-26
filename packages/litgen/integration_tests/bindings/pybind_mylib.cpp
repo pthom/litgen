@@ -242,14 +242,14 @@ void py_init_module_lg_mylib(py::module& m)
         py::class_<Point2>
             (m, "Point2", "")
         .def(py::init<>([](
-        int x, int y)
+        int x = int(), int y = int())
         {
             auto r = std::make_unique<Point2>();
             r->x = x;
             r->y = y;
             return r;
         })
-        , py::arg("x"), py::arg("y")
+        , py::arg("x") = int(), py::arg("y") = int()
         )
         .def_readwrite("x", &Point2::x, "")
         .def_readwrite("y", &Point2::y, "")
@@ -1199,13 +1199,13 @@ void py_init_module_lg_mylib(py::module& m)
             py::class_<AAA::Copyable_Template<int>>
                 (pyNsAAA, "Copyable_TemplateInt", "")
             .def(py::init<>([](
-            int value)
+            int value = int())
             {
                 auto r = std::make_unique<AAA::Copyable_Template<int>>();
                 r->value = value;
                 return r;
             })
-            , py::arg("value")
+            , py::arg("value") = int()
             )
             .def_readwrite("value", &AAA::Copyable_Template<int>::value, "")
             .def("__copy__",  [](const AAA::Copyable_Template<int> &self) {
@@ -1696,16 +1696,16 @@ void py_init_module_lg_mylib(py::module& m)
             py::class_<A::ClassNoDefaultCtor>
                 (pyNsA, "ClassNoDefaultCtor", " This struct has no default constructor, so a default named constructor\n will be provided for python")
             .def(py::init<>([](
-            int a, bool b = true, int c = 3, A::Foo foo = A::Foo::Foo1)
+            bool b = true, int a = int(), int c = 3, A::Foo foo = A::Foo::Foo1)
             {
                 auto r = std::make_unique<A::ClassNoDefaultCtor>();
-                r->a = a;
                 r->b = b;
+                r->a = a;
                 r->c = c;
                 r->foo = foo;
                 return r;
             })
-            , py::arg("a"), py::arg("b") = true, py::arg("c") = 3, py::arg("foo") = A::Foo::Foo1
+            , py::arg("b") = true, py::arg("a") = int(), py::arg("c") = 3, py::arg("foo") = A::Foo::Foo1
             )
             .def_readwrite("b", &A::ClassNoDefaultCtor::b, "")
             .def_readwrite("a", &A::ClassNoDefaultCtor::a, "")

@@ -954,23 +954,20 @@ class PythonNamedConstructorHelper:
                 if len(member.c_array_code) > 0:
                     return False  # Refuse c style arrays
 
-                # if member.cpp_type.modifiers.count("&") > 0:
-                #     return False # refuse references ?
+                if member.cpp_type.modifiers.count("*") > 0:
+                    return False  # refuse pointers
+
+                if member.cpp_type.modifiers.count("&") > 0:
+                    return False  # refuse references
+
+                if " " in member.cpp_type.str_code():
+                    # refuse types with spaces like "unsigned int"
+                    # they introduce too many syntax exceptions
+                    return False
+
                 return True
 
             members_decls = list(filter(can_be_set, members_decls))
-
-            def has_default_value(member: CppDecl) -> bool:
-                return len(member.initial_value_code) > 0
-
-            def has_no_default(member: CppDecl) -> bool:
-                return len(member.initial_value_code) == 0
-
-            # Sort members decls so that members with a default value come first
-            members_no_default = list(filter(has_no_default, members_decls))
-            members_default = list(filter(has_default_value, members_decls))
-
-            members_decls = members_no_default + members_default
             return members_decls
 
         def make_fake_struct_cpp_code() -> str:
@@ -981,6 +978,9 @@ class PythonNamedConstructorHelper:
                 s = f"{member.cpp_type.str_code()} {member.name()}"
                 if len(member.initial_value_code) > 0:
                     s += " = " + member.initial_value_code
+                else:
+                    cpp_type_str = member.cpp_type.str_code()
+                    s += " = " + cpp_type_str + "()"
                 members_strs.append(s)
             parameters_str = ", ".join(members_strs)
             str_cpp_code = f"""
