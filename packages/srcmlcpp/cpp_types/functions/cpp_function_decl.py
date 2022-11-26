@@ -51,6 +51,9 @@ class CppFunctionDecl(CppElementAndComment, CppITemplateHost):
         self._cache_with_qualified_types = ScopedElementCache()
         self._cache_with_terse_types = ScopedElementCache()
 
+    def has_return_type(self):
+        return hasattr(self, "_return_type")
+
     @property
     def return_type(self) -> CppType:
         return self._return_type
@@ -220,7 +223,9 @@ class CppFunctionDecl(CppElementAndComment, CppITemplateHost):
 
         r += self.str_template()
 
-        if self.is_arrow_notation_return_type():
+        if not self.has_return_type():
+            r = f"{self.function_name}{self.str_template_specialization()}({self.parameter_list})"
+        elif self.is_arrow_notation_return_type():
             if self.return_type.str_return_type() == "auto":
                 r += f"auto {self.function_name}{self.str_template_specialization()}({self.parameter_list})"
             else:
