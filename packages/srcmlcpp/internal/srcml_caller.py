@@ -126,7 +126,7 @@ class _SrcmlCaller:
     def _make_cpp_str_by_module(self, input_str: str) -> str:
         import srcmlcpp_caller as srcmlcpp_nativebinding
 
-        r: Optional[str] = srcmlcpp_nativebinding.to_cpp(xml_str=input_str)
+        r: Optional[str] = srcmlcpp_nativebinding.to_cpp(xml_str=input_str)  # type: ignore
         assert r is not None
         return r
 
