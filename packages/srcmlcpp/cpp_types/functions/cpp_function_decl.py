@@ -51,7 +51,7 @@ class CppFunctionDecl(CppElementAndComment, CppITemplateHost):
         self._cache_with_qualified_types = ScopedElementCache()
         self._cache_with_terse_types = ScopedElementCache()
 
-    def has_return_type(self):
+    def has_return_type(self) -> bool:
         return hasattr(self, "_return_type")
 
     @property
