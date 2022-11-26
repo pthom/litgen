@@ -109,7 +109,7 @@ class _SrcmlCaller:
     def _make_xml_str_by_module(self, input_str: str, dump_positions: bool = False) -> str:
         import srcmlcpp_caller as srcmlcpp_nativebinding  # type: ignore # noqa
 
-        r = srcmlcpp_caller.to_srcml(cpp_code=input_str, include_positions=dump_positions)  # type: ignore  # noqa: F821
+        r = srcmlcpp_nativebinding.to_srcml(cpp_code=input_str, include_positions=dump_positions)  # type: ignore  # noqa: F821
         assert r is not None
 
         def patch_xml(s: str) -> str:

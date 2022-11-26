@@ -922,6 +922,8 @@ class PythonNamedConstructorHelper:
         )
 
     def named_constructor_decl(self) -> CppFunctionDecl:
+        options = self.adapted_class.options
+
         def flag_generate_named_ctor_params() -> bool:
             if type(self.adapted_class.cpp_element()) == CppClass:
                 ctor__regex = self.adapted_class.options.class_create_default_named_ctor__regex
@@ -960,9 +962,13 @@ class PythonNamedConstructorHelper:
                 if member.cpp_type.modifiers.count("&") > 0:
                     return False  # refuse references
 
-                if " " in member.cpp_type.str_code():
+                cpp_type_str = member.cpp_type.str_code()
+                if " " in cpp_type_str:
                     # refuse types with spaces like "unsigned int"
                     # they introduce too many syntax exceptions
+                    return False
+
+                if code_utils.does_match_regex(options.member_exclude_by_type__regex, cpp_type_str):
                     return False
 
                 return True
