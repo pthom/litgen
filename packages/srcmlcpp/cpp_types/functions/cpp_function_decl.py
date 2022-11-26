@@ -356,8 +356,11 @@ class CppFunctionDecl(CppElementAndComment, CppITemplateHost):
     def is_default_constructor(self) -> bool:
         if not self.is_constructor():
             return False
-        nb_params = len(self.parameter_list.parameters)
-        return nb_params == 0
+        nb_params_without_default_value = 0
+        for param in self.parameter_list.parameters:
+            if len(param.decl.initial_value_code) == 0:
+                nb_params_without_default_value += 1
+        return nb_params_without_default_value == 0
 
     def is_copy_constructor(self) -> bool:
         if not self.is_constructor():

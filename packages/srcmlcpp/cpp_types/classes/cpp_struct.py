@@ -125,24 +125,15 @@ class CppStruct(CppElementAndComment, CppITemplateHost):
                 r.append((access_type, base_struct))
         return r
 
+    def has_user_defined_default_constructor(self) -> bool:
+        for method in self.get_methods():
+            if method.is_default_constructor():
+                return True
+        return False
+
     def has_user_defined_constructor(self) -> bool:
-        nb_constructor = 0
-        optional_constructor: Optional[CppFunctionDecl]
         for method in self.get_methods():
             if method.is_constructor():
-                nb_constructor += 1
-                optional_constructor = method
-        if nb_constructor == 0:
-            return False
-        elif nb_constructor > 1:
-            return True
-        else:  # nb_constructor = 1
-            # If a struct has only one constructor which is = default,
-            # the struct will not be considered as containing a user defined constructor
-            assert optional_constructor is not None
-            if optional_constructor.is_default_constructor() and "default" in optional_constructor.specifiers:
-                return False
-            else:
                 return True
         return False
 

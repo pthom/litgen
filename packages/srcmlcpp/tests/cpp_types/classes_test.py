@@ -75,7 +75,7 @@ def test_constructor_destructor():
     """
     struct = srcmlcpp.srcmlcpp_main.code_first_struct(options, code)
     assert not struct.has_deleted_default_constructor()
-    assert not struct.has_user_defined_constructor()
+    assert struct.has_user_defined_constructor()
     assert struct.get_user_defined_copy_constructor() is None
     assert struct.has_private_destructor()
 
