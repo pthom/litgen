@@ -31,7 +31,14 @@ jobs:
       - name: Build and install
         run: pip install --verbose .
 
-      - name: Test
+      - name: generate integration test bindings
+        run: |
+          cd packages/litgen/integration_tests
+          python autogenerate_mylib.py
+          pip install -v .
+          cd -
+
+      - name: Test & integration tests
         run: |
           pip install pytest
           pytest

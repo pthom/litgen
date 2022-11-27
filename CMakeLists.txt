@@ -38,7 +38,12 @@ function(find_python)
 endfunction()
 
 find_python()
-add_subdirectory(demos)
+
+option(SRCMLCPP_BUILD_DEMOS OFF)
+if (SRCMLCPP_BUILD_DEMOS)
+    add_subdirectory(demos)
+endif()
+
 add_subdirectory(pybind_native_debug)
 
 add_subdirectory(packages/litgen/integration_tests)
