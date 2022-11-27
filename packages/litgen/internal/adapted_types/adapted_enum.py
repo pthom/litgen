@@ -152,7 +152,7 @@ class AdaptedEnum(AdaptedElement):
         self._fill_children()
 
         replacements = self.cpp_to_python_replacements()
-        self.lg_context.replacements_cache.store_replacements(replacements)
+        self.lg_context.var_values_replacements_cache.store_replacements(replacements)
 
     # override
     def cpp_element(self) -> CppEnum:

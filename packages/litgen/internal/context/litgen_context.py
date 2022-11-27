@@ -25,7 +25,7 @@ class LitgenContext:
     encountered_cpp_boxed_types: Set[CppTypeName]
     namespaces_stub: NamespacesCodeTree
     namespaces_pydef: NamespacesCodeTree
-    replacements_cache: ReplacementsCache
+    var_values_replacements_cache: ReplacementsCache
 
     # cf https://pybind11.readthedocs.io/en/stable/advanced/classes.html#binding-protected-member-functions
     protected_methods_glue_code: str = ""
@@ -39,4 +39,4 @@ class LitgenContext:
         self.encountered_cpp_boxed_types = set()
         self.namespaces_stub = NamespacesCodeTree(self.options, PydefOrStub.Stub)
         self.namespaces_pydef = NamespacesCodeTree(self.options, PydefOrStub.Pydef)
-        self.replacements_cache = ReplacementsCache()
+        self.var_values_replacements_cache = ReplacementsCache()
