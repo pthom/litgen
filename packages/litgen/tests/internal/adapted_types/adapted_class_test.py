@@ -269,7 +269,6 @@ def test_templated_class():
             def sum2(self, v: List[str]) -> str:
                 """ Method that requires a parameter adaptation"""
                 pass
-
         #      </template specializations for class MyTemplateClass>
         #  ------------------------------------------------------------------------
     ''',

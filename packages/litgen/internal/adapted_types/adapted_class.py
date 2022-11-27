@@ -418,7 +418,10 @@ class AdaptedClass(AdaptedElement):
             body_lines += element_lines
 
         # add named constructor (if active via options)
-        if not self.cpp_element().has_deleted_default_constructor():
+        if (
+            not self.cpp_element().has_user_defined_constructor()
+            and not self.cpp_element().has_deleted_default_constructor()
+        ):
             ctor_helper = PythonNamedConstructorHelper(self)
             ctor_code = ctor_helper.stub_code()
             body_lines += ctor_code.split("\n")
@@ -537,9 +540,11 @@ class AdaptedClass(AdaptedElement):
         def make_default_constructor_code() -> str:
             if self.cpp_element().has_deleted_default_constructor():
                 return f"{_i_}// (default constructor explicitly deleted)\n"
-            else:
+            elif not self.cpp_element().has_user_defined_constructor():
                 python_named_ctor_helper = PythonNamedConstructorHelper(self)
                 return python_named_ctor_helper.pydef_code()
+            else:
+                return ""
 
         def make_public_children_code() -> str:
             r = ""
@@ -910,20 +915,17 @@ class PythonNamedConstructorHelper:
         self.adapted_class = adapted_class
         self.cpp_class = adapted_class.cpp_element()
         self.options = self.adapted_class.options
-        assert not self.cpp_class.has_deleted_default_constructor()
+        assert (
+            not self.cpp_class.has_deleted_default_constructor() and not self.cpp_class.has_user_defined_constructor()
+        )
 
     def flag_generate_named_ctor_params(self) -> bool:
         cpp_class = self.adapted_class.cpp_element()
+        ctor__regex = ""
         if type(cpp_class) == CppClass:
-            if not cpp_class.has_user_defined_constructor():
-                ctor__regex = self.options.class_create_default_named_ctor__regex
-            else:
-                ctor__regex = self.options.class_force_default_named_ctor__regex
+            ctor__regex = self.options.class_create_default_named_ctor__regex
         elif type(cpp_class) == CppStruct:
-            if not cpp_class.has_user_defined_constructor():
-                ctor__regex = self.options.struct_create_default_named_ctor__regex
-            else:
-                ctor__regex = self.options.struct_force_default_named_ctor__regex
+            ctor__regex = self.options.struct_create_default_named_ctor__regex
         result = code_utils.does_match_regex(ctor__regex, self.adapted_class.cpp_element().class_name)
 
         if cpp_class.has_private_destructor():

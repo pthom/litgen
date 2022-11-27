@@ -94,8 +94,6 @@ def litgen_options_imgui(options_type: ImguiOptionsType, docking_branch: bool) -
 
     options.srcmlcpp_options.code_preprocess_function = _preprocess_imgui_code
 
-    options.struct_force_default_named_ctor__regex = r".*"
-
     options.fn_exclude_by_name__regex = join_string_by_pipe_char(
         [
             # IMGUI_API void          SetAllocatorFunctions(ImGuiMemAllocFunc alloc_func, ImGuiMemFreeFunc free_func, void* user_data = NULL);
