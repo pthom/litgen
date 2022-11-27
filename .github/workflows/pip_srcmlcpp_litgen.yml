@@ -20,6 +20,9 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
+      - name: Checkout submodules
+        run: git submodule update --init
+
       - uses: actions/setup-python@v4
         with:
           python-version: ${{ matrix.python-version }}
