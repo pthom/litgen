@@ -15,7 +15,7 @@ from xml.etree import ElementTree as ET
 # Count the total time used by call to the exe srcml
 _FLAG_PROFILE_SRCML_CALLS: bool = True
 
-_USE_SRCML_MODULE = True
+_USE_NATIVE_SRCML_CALLER_MODULE = True
 
 
 def _embed_element_into_unit(element: ET.Element) -> ET.Element:
@@ -143,7 +143,7 @@ class _SrcmlCaller:
         """
         self._stats_code_to_srcml.start()
 
-        if _USE_SRCML_MODULE:
+        if _USE_NATIVE_SRCML_CALLER_MODULE:
             output_str = self._make_xml_str_by_module(input_str, encoding, dump_positions)
         else:
             output_str = self._make_xml_str_by_subprocess(encoding, input_str, dump_positions)
@@ -171,7 +171,7 @@ class _SrcmlCaller:
         self._stats_srcml_to_code.start()
 
         code_str: str
-        if _USE_SRCML_MODULE:
+        if _USE_NATIVE_SRCML_CALLER_MODULE:
             code_str = self._make_cpp_str_by_module(xml_str, encoding)
         else:
             code_str = self._make_cpp_str_by_subprocess(xml_bytes, encoding)
