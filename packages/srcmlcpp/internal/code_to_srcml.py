@@ -108,7 +108,7 @@ class _SrcmlCaller:
         return code_str
 
     def _make_xml_str_by_module(self, input_str: str, dump_positions: bool = False) -> str:
-        import srcmlcpp_caller as srcml_nativecaller  # type: ignore # noqa
+        import srcml_caller as srcml_nativecaller  # type: ignore # noqa
 
         r = srcml_nativecaller.to_srcml(cpp_code=input_str, include_positions=dump_positions)  # type: ignore  # noqa: F821
         assert r is not None
@@ -125,7 +125,7 @@ class _SrcmlCaller:
         return patched
 
     def _make_cpp_str_by_module(self, input_str: str) -> str:
-        import srcmlcpp_caller as srcml_nativecaller
+        import srcml_caller as srcml_nativecaller
 
         r: Optional[str] = srcml_nativecaller.to_cpp(xml_str=input_str)  # type: ignore
         assert r is not None
