@@ -1285,7 +1285,7 @@ python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*"
 name = "pybind11"
 version = "2.10.1"
 description = "Seamless operability between C++11 and Python"
-category = "dev"
+category = "main"
 optional = false
 python-versions = ">=3.6"
 
@@ -1870,7 +1870,7 @@ testing = ["pytest (>=6)", "pytest-checkdocs (>=2.4)", "flake8 (<5)", "pytest-co
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.8"
-content-hash = "cf558b0e482fa5cb17ed69e7fa1c5021e0f015611640236ba02d2c5baf92336f"
+content-hash = "a73aac22e0c796dd86f9010cc634a77973843ecca3413d454cbaecf21aee5642"
 
 [metadata.files]
 anyio = []
