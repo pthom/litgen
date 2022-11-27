@@ -6,7 +6,7 @@ from typing import List, Optional
 
 from codemanip import code_utils
 
-from srcmlcpp.internal.srcml_caller import _SRCML_CALLER
+from srcmlcpp.internal.code_to_srcml import _SRCML_CALLER
 
 from litgen import LitgenOptions
 from litgen.code_to_adapted_unit import code_to_adapted_unit

@@ -8,7 +8,7 @@ from xml.etree import ElementTree as ET
 from codemanip import code_utils
 from codemanip.code_position import CodeContextWithCaret, CodePosition
 
-from srcmlcpp.internal import code_cache, srcml_caller, srcml_utils
+from srcmlcpp.internal import code_cache, code_to_srcml, srcml_utils
 from srcmlcpp.srcmlcpp_options import SrcmlcppOptions
 from srcmlcpp.scrml_warning_settings import WarningType
 
@@ -137,7 +137,7 @@ class SrcmlWrapper:
         if name_element.text is not None:
             return name_element.text
         else:
-            return srcml_caller.srcml_to_code(name_element)
+            return code_to_srcml.srcml_to_code(name_element)
 
     def attribute_value(self, attr_name: str) -> Optional[str]:
         """Gets the attribute value if present"""
@@ -158,7 +158,7 @@ class SrcmlWrapper:
 
     def str_code_verbatim(self) -> str:
         """Return the exact C++ code from which this xml node was constructed by calling the executable srcml"""
-        r = srcml_caller.srcml_to_code(self.srcml_xml, encoding=self.options.encoding)
+        r = code_to_srcml.srcml_to_code(self.srcml_xml, encoding=self.options.encoding)
         return r
 
     def str_xml(self, beautify: bool = True) -> str:

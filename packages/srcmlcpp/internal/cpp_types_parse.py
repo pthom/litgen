@@ -15,7 +15,7 @@ from codemanip.parse_progress_bar import global_progress_bars
 from srcmlcpp import SrcmlWrapper
 from srcmlcpp.scrml_warning_settings import WarningType
 from srcmlcpp.cpp_types import *
-from srcmlcpp.internal import srcml_caller, srcml_comments, srcml_utils
+from srcmlcpp.internal import code_to_srcml, srcml_comments, srcml_utils
 from srcmlcpp.internal.srcmlcpp_exception_detailed import (
     SrcmlcppExceptionDetailed,
 )
@@ -147,7 +147,7 @@ def _parse_init_expr(element: SrcmlWrapper) -> str:
         if eval_literal_value is not None:
             r = eval_literal_value
         else:
-            r = srcml_caller.srcml_to_code(expr)
+            r = code_to_srcml.srcml_to_code(expr)
     else:
         r = element.str_code_verbatim().strip()
         if r.startswith("="):

@@ -14,7 +14,7 @@ from srcmlcpp import SrcmlWrapper
 from srcmlcpp.cpp_types import *
 from srcmlcpp.internal import (
     code_cache,
-    srcml_caller,
+    code_to_srcml,
     srcml_comments,
     cpp_types_parse,
 )
@@ -55,7 +55,7 @@ def code_to_srcml_wrapper(
     if options.preserve_empty_lines:
         code = srcml_comments.mark_empty_lines(code)
 
-    xml = srcml_caller.code_to_srcml(code, dump_positions=options.flag_srcml_dump_positions, encoding=options.encoding)
+    xml = code_to_srcml.code_to_srcml(code, dump_positions=options.flag_srcml_dump_positions, encoding=options.encoding)
 
     r = SrcmlWrapper(options, xml, filename)
     return r

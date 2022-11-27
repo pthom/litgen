@@ -3,7 +3,7 @@ import sys
 
 from codemanip import code_utils
 
-from srcmlcpp.internal import srcml_caller, srcml_utils
+from srcmlcpp.internal import code_to_srcml, srcml_utils
 
 
 _THIS_DIR = os.path.dirname(__file__)
@@ -14,14 +14,14 @@ def assert_code_unmodified_by_srcml(code: str) -> None:
     """
     We transform the code to xml (srcML), and assert that it can safely be translated back to the same code
     """
-    root = srcml_caller.code_to_srcml(code)
-    code2 = srcml_caller.srcml_to_code(root)
+    root = code_to_srcml.code_to_srcml(code)
+    code2 = code_to_srcml.srcml_to_code(root)
     assert code2 == code
 
 
 def test_srcml_xml():
     code = "int a = 1"
-    element = srcml_caller.code_to_srcml(code, False)
+    element = code_to_srcml.code_to_srcml(code, False)
     xml_str = srcml_utils.srcml_to_str(element)
     expected_xml_str = """
         <?xml version="1.0" ?>

@@ -53,7 +53,7 @@ def test_mark_empty_lines():
 def test_group_consecutive_comment():
     options = SrcmlcppOptions()
     code = srcml_comments.mark_empty_lines(srcml_comments._EXAMPLE_COMMENTS_TO_GROUPS)
-    srcml_code = srcmlcpp.code_to_srcml_wrapper(options, code)  # srcmlcpp.internal.srcml_caller.code_to_srcml(code)
+    srcml_code = srcmlcpp.code_to_srcml_wrapper(options, code)  # srcmlcpp.internal.code_to_srcml.code_to_srcml(code)
     srcml_grouped = srcml_comments._group_consecutive_comments(srcml_code)
     grouped_str = srcml_utils.srcml_to_str_readable(srcml_grouped.srcml_xml)
     # logging.warning("\n" + grouped_str)
@@ -70,7 +70,7 @@ def test_iterate_children_simple():
     """
     options = SrcmlcppOptions()
     code = srcml_comments.mark_empty_lines(code)
-    srcml_code = srcmlcpp.code_to_srcml_wrapper(options, code)  # srcmlcpp.internal.srcml_caller.code_to_srcml(code)
+    srcml_code = srcmlcpp.code_to_srcml_wrapper(options, code)  # srcmlcpp.internal.code_to_srcml.code_to_srcml(code)
     children_and_comments = srcml_comments.get_children_with_comments(srcml_code)
     msgs = [str(as_dict_cpp_element_and_comment(child)) for child in children_and_comments]
     msg = "\n".join(msgs)
