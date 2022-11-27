@@ -29,9 +29,9 @@ jobs:
         run : ./ci_scripts/install_srcmlcaller_reqs_ubuntu.sh
 
       - name: Build and install
-        run: pip install --verbose .[test]
+        run: pip install --verbose .
 
-#      - name: Test
-#        run: |
-#          pip install pytest
-#          pytest
+      - name: Test
+        run: |
+          pip install pytest
+          pytest
