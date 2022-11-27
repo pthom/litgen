@@ -1,6 +1,7 @@
 """
 Calls the external program srcml (https://www.srcml.org/)
 """
+# mypy: warn_unused_ignores=False
 from typing import Optional
 import logging
 import os
@@ -107,9 +108,9 @@ class _SrcmlCaller:
         return code_str
 
     def _make_xml_str_by_module(self, input_str: str, dump_positions: bool = False) -> str:
-        import srcmlcpp_caller as srcmlcpp_nativebinding  # type: ignore # noqa
+        import srcmlcpp_caller as srcml_nativecaller  # type: ignore # noqa
 
-        r = srcmlcpp_nativebinding.to_srcml(cpp_code=input_str, include_positions=dump_positions)  # type: ignore  # noqa: F821
+        r = srcml_nativecaller.to_srcml(cpp_code=input_str, include_positions=dump_positions)  # type: ignore  # noqa: F821
         assert r is not None
 
         def patch_xml(s: str) -> str:
@@ -124,9 +125,9 @@ class _SrcmlCaller:
         return patched
 
     def _make_cpp_str_by_module(self, input_str: str) -> str:
-        import srcmlcpp_caller as srcmlcpp_nativebinding
+        import srcmlcpp_caller as srcml_nativecaller
 
-        r: Optional[str] = srcmlcpp_nativebinding.to_cpp(xml_str=input_str)  # type: ignore
+        r: Optional[str] = srcml_nativecaller.to_cpp(xml_str=input_str)  # type: ignore
         assert r is not None
         return r
 
