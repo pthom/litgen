@@ -20,21 +20,18 @@ class BoxedBool:
         pass
     def __repr__(self) -> str:
         pass
-
 class BoxedInt:
     value: int
     def __init__(self, v: int = 0) -> None:
         pass
     def __repr__(self) -> str:
         pass
-
 class BoxedString:
     value: str
     def __init__(self, v: str = "") -> None:
         pass
     def __repr__(self) -> str:
         pass
-
 ####################    </generated_from:BoxedTypes>    ####################
 
 
