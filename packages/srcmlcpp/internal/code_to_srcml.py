@@ -107,10 +107,16 @@ class _SrcmlCaller:
         code_str = output_bytes.decode(encoding)
         return code_str
 
-    def _make_xml_str_by_module(self, input_str: str, dump_positions: bool = False) -> str:
+    def _make_xml_str_by_module(self, input_str: str, encoding: str, dump_positions: bool = False) -> str:
         import srcml_caller as srcml_nativecaller  # type: ignore # noqa
 
-        r = srcml_nativecaller.to_srcml(cpp_code=input_str, include_positions=dump_positions)  # type: ignore  # noqa: F821
+        r = srcml_nativecaller.to_srcml(
+            code=input_str,
+            language=srcml_nativecaller.CodeLanguage.c_plus_cplus,
+            encoding_src=encoding,
+            encoding_xml=encoding,
+            include_positions=dump_positions,
+        )  # type: ignore  # noqa: F821
         assert r is not None
 
         def patch_xml(s: str) -> str:
@@ -124,10 +130,10 @@ class _SrcmlCaller:
         patched = patch_xml(r)
         return patched
 
-    def _make_cpp_str_by_module(self, input_str: str) -> str:
+    def _make_cpp_str_by_module(self, input_str: str, encoding: str) -> str:
         import srcml_caller as srcml_nativecaller
 
-        r: Optional[str] = srcml_nativecaller.to_cpp(xml_str=input_str)  # type: ignore
+        r: Optional[str] = srcml_nativecaller.to_code(xml_str=input_str, encoding_xml=encoding, encoding_src=encoding)  # type: ignore
         assert r is not None
         return r
 
@@ -138,7 +144,7 @@ class _SrcmlCaller:
         self._stats_code_to_srcml.start()
 
         if _USE_SRCML_MODULE:
-            output_str = self._make_xml_str_by_module(input_str, dump_positions)
+            output_str = self._make_xml_str_by_module(input_str, encoding, dump_positions)
         else:
             output_str = self._make_xml_str_by_subprocess(encoding, input_str, dump_positions)
 
@@ -166,7 +172,7 @@ class _SrcmlCaller:
 
         code_str: str
         if _USE_SRCML_MODULE:
-            code_str = self._make_cpp_str_by_module(xml_str)
+            code_str = self._make_cpp_str_by_module(xml_str, encoding)
         else:
             code_str = self._make_cpp_str_by_subprocess(xml_bytes, encoding)
 
