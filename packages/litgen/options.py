@@ -359,7 +359,7 @@ class LitgenOptions:
     # class_force_default_named_ctor__regex / struct_create_default_named_ctor__regex:
     # regex giving the list of struct names for which we want to generate a named
     # constructor for Python, even if a default constructor (zero param) is provided by C++
-    struct_force_default_named_ctor__regex: str = r""
+    struct_force_default_named_ctor__regex: str = r".*"
     class_force_default_named_ctor__regex: str = r""
 
     # class_expose_protected_methods__regex:

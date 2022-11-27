@@ -353,7 +353,16 @@ class CppFunctionDecl(CppElementAndComment, CppITemplateHost):
             assert self.is_method()
         return r
 
+    def is_default_constructor_zero_param(self) -> bool:
+        """Returns true if this constructor has zero params"""
+        if not self.is_constructor():
+            return False
+        return len(self.parameter_list.parameters) == 0
+
     def is_default_constructor(self) -> bool:
+        """Returns true if this constructor can be called with zero params
+        (i.e. either it has zero params, or all params have default values)
+        """
         if not self.is_constructor():
             return False
         nb_params_without_default_value = 0

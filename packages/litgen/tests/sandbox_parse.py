@@ -112,23 +112,25 @@ IMGUI_API int           ImTextStrToUtf8(char* out_buf, int out_buf_size, const I
 
 def play() -> None:
     code = """
-namespace Ns {
-namespace Inner {
-    struct StyleVar {};
+struct CallGuardLogger
+{
+    CallGuardLogger() {
+        ++nb_construct;
+    }
+    ~CallGuardLogger() {
+        ++nb_destroy;
+    }
 
-    void h(StyleVar s);
-
-    //void PushStyleVar(StyleVar varIndex, float value);
-    //void PushStyleVar(StyleVar varIndex, const ImVec2& value);
-    //void g(StyleVar f[2]);
-}
-}
+    static int nb_construct;
+    static int nb_destroy;
+};
     """
     options = litgen.LitgenOptions()
-    options.fn_template_options.add_specialization(".*", ["int"])
+    # options = litgen_options_imgui(ImguiOptionsType.imgui_h, True)
+    # options.fn_template_options.add_specialization(".*", ["int"])
     # options.class_deep_copy__regex = r".*"
     generated_code = litgen.generate_code(options, code)
-    print(generated_code.pydef_code)
+    print(generated_code.stub_code)
     # print(generated_code.stub_code)
 
 

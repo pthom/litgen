@@ -125,6 +125,18 @@ class CppStruct(CppElementAndComment, CppITemplateHost):
                 r.append((access_type, base_struct))
         return r
 
+    def has_user_defined_default_constructor_zero_param(self) -> bool:
+        for method in self.get_methods():
+            if method.is_default_constructor_zero_param():
+                return True
+        return False
+
+    def has_user_defined_default_constructor_non_zero_param(self) -> bool:
+        for method in self.get_methods():
+            if method.is_constructor() and len(method.parameter_list.parameters) > 0:
+                return True
+        return False
+
     def has_user_defined_default_constructor(self) -> bool:
         for method in self.get_methods():
             if method.is_default_constructor():

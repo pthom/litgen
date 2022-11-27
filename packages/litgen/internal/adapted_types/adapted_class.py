@@ -928,8 +928,8 @@ class PythonNamedConstructorHelper:
 
         if cpp_class.has_private_destructor():
             result = False
-        if cpp_class.has_user_defined_constructor() and not cpp_class.has_user_defined_default_constructor():
-            # class is not default constructible!
+        if cpp_class.has_user_defined_default_constructor_non_zero_param():
+            # There is already a specialized constructor with some params => bail out!
             result = False
         return result
 
@@ -1063,6 +1063,13 @@ class PythonNamedConstructorHelper:
         if not self.flag_generate_named_ctor_params():
             return ""
         ctor_decl = self.named_constructor_decl()
+
+        if (
+            len(ctor_decl.parameter_list.parameters) == 0
+            and self.cpp_class.has_user_defined_default_constructor_zero_param()
+        ):
+            return ""
+
         adapted_function = AdaptedFunction(self.adapted_class.lg_context, ctor_decl, False)
 
         if len(ctor_decl.parameter_list.parameters) == 0:
@@ -1121,6 +1128,12 @@ class PythonNamedConstructorHelper:
         if not self.flag_generate_named_ctor_params():
             return ""
         ctor_decl = self.named_constructor_decl()
+        if (
+            len(ctor_decl.parameter_list.parameters) == 0
+            and self.cpp_class.has_user_defined_default_constructor_zero_param()
+        ):
+            return ""
+
         adapted_function = AdaptedFunction(self.adapted_class.lg_context, ctor_decl, False)
         r = "\n".join(adapted_function.stub_lines())
         return r
