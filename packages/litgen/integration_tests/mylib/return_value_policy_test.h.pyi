@@ -41,7 +41,7 @@ class MyConfig:
         pass
     value: int = 0
     def __init__(self, value: int = 0) -> None:
-        """Auto-generated default constructor"""
+        """Auto-generated default constructor with named params"""
         pass
 
 def my_config_instance() -> MyConfig:

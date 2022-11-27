@@ -53,6 +53,7 @@ def test_modifiable_immutable_simple():
                 pass
             def __repr__(self) -> str:
                 pass
+
         ####################    </generated_from:BoxedTypes>    ####################
 
 
@@ -160,12 +161,14 @@ def test_modifiable_immutable_mixed_with_buffer():
                 pass
             def __repr__(self) -> str:
                 pass
+
         class BoxedFloat:
             value: float
             def __init__(self, v: float = 0.) -> None:
                 pass
             def __repr__(self) -> str:
                 pass
+
         ####################    </generated_from:BoxedTypes>    ####################
 
 

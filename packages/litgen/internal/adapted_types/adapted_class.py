@@ -417,10 +417,8 @@ class AdaptedClass(AdaptedElement):
             body_lines += spacing_lines
             body_lines += element_lines
 
-        if (
-            not self.cpp_element().has_user_defined_constructor()
-            and not self.cpp_element().has_deleted_default_constructor()
-        ):
+        # add named constructor (if active via options)
+        if not self.cpp_element().has_deleted_default_constructor():
             ctor_helper = PythonNamedConstructorHelper(self)
             ctor_code = ctor_helper.stub_code()
             body_lines += ctor_code.split("\n")
@@ -537,18 +535,11 @@ class AdaptedClass(AdaptedElement):
             return pyclass_creation_code
 
         def make_default_constructor_code() -> str:
-            need_create_default_ctor = (
-                not self.cpp_element().has_user_defined_constructor()
-                and not self.cpp_element().has_deleted_default_constructor()
-            )
             if self.cpp_element().has_deleted_default_constructor():
                 return f"{_i_}// (default constructor explicitly deleted)\n"
-            elif need_create_default_ctor:
-                # return f"{_i_}.def(py::init<>()) // implicit default constructor\n"
+            else:
                 python_named_ctor_helper = PythonNamedConstructorHelper(self)
                 return python_named_ctor_helper.pydef_code()
-            else:
-                return ""
 
         def make_public_children_code() -> str:
             r = ""
@@ -913,31 +904,48 @@ class AdaptedClass(AdaptedElement):
 class PythonNamedConstructorHelper:
     adapted_class: AdaptedClass
     cpp_class: CppStruct
+    options: litgen.LitgenOptions
 
     def __init__(self, adapted_class: AdaptedClass) -> None:
         self.adapted_class = adapted_class
         self.cpp_class = adapted_class.cpp_element()
-        assert (
-            not self.cpp_class.has_user_defined_constructor() and not self.cpp_class.has_deleted_default_constructor()
+        self.options = self.adapted_class.options
+        assert not self.cpp_class.has_deleted_default_constructor()
+
+    def flag_generate_named_ctor_params(self) -> bool:
+        cpp_class = self.adapted_class.cpp_element()
+        if type(cpp_class) == CppClass:
+            if not cpp_class.has_user_defined_constructor():
+                ctor__regex = self.options.class_create_default_named_ctor__regex
+            else:
+                ctor__regex = self.options.class_force_default_named_ctor__regex
+        elif type(cpp_class) == CppStruct:
+            if not cpp_class.has_user_defined_constructor():
+                ctor__regex = self.options.struct_create_default_named_ctor__regex
+            else:
+                ctor__regex = self.options.struct_force_default_named_ctor__regex
+        result = code_utils.does_match_regex(ctor__regex, self.adapted_class.cpp_element().class_name)
+
+        if cpp_class.has_private_destructor():
+            result = False
+        if cpp_class.has_user_defined_constructor() and not cpp_class.has_user_defined_default_constructor():
+            # class is not default constructible!
+            result = False
+        return result
+
+    def flag_generate_void_constructor(self) -> bool:
+        result = (
+            not self.adapted_class.cpp_element().has_user_defined_constructor()
+            and not self.flag_generate_named_ctor_params()
         )
+        return result
 
     def named_constructor_decl(self) -> CppFunctionDecl:
         options = self.adapted_class.options
 
-        def flag_generate_named_ctor_params() -> bool:
-            if type(self.adapted_class.cpp_element()) == CppClass:
-                ctor__regex = self.adapted_class.options.class_create_default_named_ctor__regex
-            else:
-                ctor__regex = self.adapted_class.options.struct_create_default_named_ctor__regex
-            flag = code_utils.does_match_regex(ctor__regex, self.adapted_class.cpp_element().class_name)
-
-            if self.adapted_class.cpp_element().has_private_destructor():
-                flag = False
-            return flag
-
         def compatible_members_list() -> List[CppDecl]:
             """The list of members which we will include in the named params"""
-            if not flag_generate_named_ctor_params():
+            if not self.flag_generate_named_ctor_params():
                 return []
 
             members_decls = self.cpp_class.get_members(access_type=CppAccessType.public)
@@ -969,6 +977,9 @@ class PythonNamedConstructorHelper:
                     return False
 
                 if code_utils.does_match_regex(options.member_exclude_by_type__regex, cpp_type_str):
+                    return False
+
+                if code_utils.does_match_regex(options.member_exclude_by_name__regex, member.name()):
                     return False
 
                 return True
@@ -1026,16 +1037,19 @@ class PythonNamedConstructorHelper:
 
             # Find the constructor
             ctors = cpp_unit.all_cpp_elements_recursive(CppConstructorDecl)
-            if len(ctors) != 1:
-                print("argh")
             assert len(ctors) == 1
             ctor_decl = cast(CppConstructorDecl, ctors[0])
-            if flag_generate_named_ctor_params():
-                ctor_decl.cpp_element_comments.comment_on_previous_lines = "Auto-generated default constructor"
-            else:
+            if self.flag_generate_void_constructor():
                 ctor_decl.cpp_element_comments.comment_on_previous_lines = (
                     "Auto-generated default constructor (omit named params)"
                 )
+            else:
+                if len(ctor_decl.parameter_list.parameters) > 0:
+                    ctor_decl.cpp_element_comments.comment_on_previous_lines = (
+                        "Auto-generated default constructor with named params"
+                    )
+                else:
+                    ctor_decl.cpp_element_comments.comment_on_previous_lines = "Auto-generated default constructor"
             # And qualify its types
             ctor_qualified = ctor_decl.with_qualified_types()
             return ctor_qualified
@@ -1044,6 +1058,10 @@ class PythonNamedConstructorHelper:
 
     def pydef_code(self) -> str:
         _i_ = self.adapted_class.options.indent_cpp_spaces()
+        if self.flag_generate_void_constructor():
+            return f"{_i_}.def(py::init<>()) // implicit default constructor\n"
+        if not self.flag_generate_named_ctor_params():
+            return ""
         ctor_decl = self.named_constructor_decl()
         adapted_function = AdaptedFunction(self.adapted_class.lg_context, ctor_decl, False)
 
@@ -1090,6 +1108,18 @@ class PythonNamedConstructorHelper:
         return final_code
 
     def stub_code(self) -> str:
+        if self.flag_generate_void_constructor():
+            r = code_utils.unindent_code(
+                '''
+            def __init__(self) -> None:
+                """Autogenerated default constructor"""
+                pass
+            ''',
+                flag_strip_empty_lines=True,
+            )
+            return r
+        if not self.flag_generate_named_ctor_params():
+            return ""
         ctor_decl = self.named_constructor_decl()
         adapted_function = AdaptedFunction(self.adapted_class.lg_context, ctor_decl, False)
         r = "\n".join(adapted_function.stub_lines())

@@ -20,6 +20,7 @@ class BoxedUnsignedLong:
         pass
     def __repr__(self) -> str:
         pass
+
 ####################    </generated_from:BoxedTypes>    ####################
 
 
@@ -47,7 +48,7 @@ class Point2:
     x: int
     y: int
     def __init__(self, x: int = int(), y: int = int()) -> None:
-        """Auto-generated default constructor"""
+        """Auto-generated default constructor with named params"""
         pass
 
 def array2_modify_mutable(out_0: Point2, out_1: Point2) -> None:

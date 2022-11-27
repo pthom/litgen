@@ -12,7 +12,7 @@
 class Copyable_ImplicitCopyCtor:
     a: int = 1
     def __init__(self, a: int = 1) -> None:
-        """Auto-generated default constructor"""
+        """Auto-generated default constructor with named params"""
         pass
 
 class Copyable_ExplicitCopyCtor:
@@ -40,7 +40,7 @@ class AAA:  # Proxy class that introduces typings for the *submodule* AAA
     class Copyable_TemplateInt:
         value: int
         def __init__(self, value: int = int()) -> None:
-            """Auto-generated default constructor"""
+            """Auto-generated default constructor with named params"""
             pass
     #      </template specializations for class Copyable_Template>
     #  ------------------------------------------------------------------------

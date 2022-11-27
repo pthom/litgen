@@ -30,6 +30,7 @@ def test_adapted_function_stub():
                 pass
             def __repr__(self) -> str:
                 pass
+
         ####################    </generated_from:BoxedTypes>    ####################
 
 

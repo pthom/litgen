@@ -20,6 +20,7 @@ class BoxedInt:
         pass
     def __repr__(self) -> str:
         pass
+
 ####################    </generated_from:BoxedTypes>    ####################
 
 

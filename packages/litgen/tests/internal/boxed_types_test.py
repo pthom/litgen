@@ -56,6 +56,7 @@ def test_const_vs_non_const():
                 pass
             def __repr__(self) -> str:
                 pass
+
         ####################    </generated_from:BoxedTypes>    ####################
 
 

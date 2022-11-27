@@ -40,7 +40,7 @@ class SomeNamespace:  # Proxy class that introduces typings for the *submodule* 
             inner_struct: ParentStruct.InnerStruct = ParentStruct.InnerStruct(),
             inner_enum: ParentStruct.InnerEnum = ParentStruct.InnerEnum.three,
         ) -> None:
-            """Auto-generated default constructor"""
+            """Auto-generated default constructor with named params"""
             pass
 
 # </submodule SomeNamespace>

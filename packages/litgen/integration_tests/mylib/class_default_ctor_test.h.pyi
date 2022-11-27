@@ -31,7 +31,7 @@ class A:  # Proxy class that introduces typings for the *submodule* A
         def __init__(
             self, b: bool = True, a: int = int(), c: int = 3, foo: Foo = Foo.foo1
         ) -> None:
-            """Auto-generated default constructor"""
+            """Auto-generated default constructor with named params"""
             pass
 
 # </submodule A>
