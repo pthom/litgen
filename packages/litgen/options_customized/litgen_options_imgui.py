@@ -35,7 +35,7 @@ def _preprocess_imgui_code(code: str) -> str:
     return new_code
 
 
-def litgen_options_imgui(type: ImguiOptionsType, docking_branch: bool) -> LitgenOptions:
+def litgen_options_imgui(options_type: ImguiOptionsType, docking_branch: bool) -> LitgenOptions:
     from litgen.internal import cpp_to_python
 
     options = LitgenOptions()
@@ -166,11 +166,17 @@ def litgen_options_imgui(type: ImguiOptionsType, docking_branch: bool) -> Litgen
             r"^ImChunkStream",
             r"^ImSpan",
             r"^ImBitArray",
+            r"::STB_",
+            # r"^ImGuiStorage$"
         ]
     )
 
     options.class_exclude_by_name__regex = join_string_by_pipe_char(
-        [r"^ImVector\b", "ImGuiTextBuffer", "^ImGuiStorage$"]
+        [
+            r"^ImVector\b",
+            # "ImGuiTextBuffer",
+            # "^ImGuiStorage$"
+        ]
     )
 
     options.member_numeric_c_array_types += "|" + join_string_by_pipe_char(
@@ -222,12 +228,12 @@ def litgen_options_imgui(type: ImguiOptionsType, docking_branch: bool) -> Litgen
 
     options.srcmlcpp_options.flag_show_progress = True
 
-    if type == ImguiOptionsType.imgui_h:
+    if options_type == ImguiOptionsType.imgui_h:
         options.fn_exclude_by_name__regex += "|^InputText"
-    elif type == ImguiOptionsType.imgui_internal_h:
+    elif options_type == ImguiOptionsType.imgui_internal_h:
         options.fn_template_options.add_ignore(".*")
         options.class_template_options.add_ignore(".*")
-    elif type == ImguiOptionsType.imgui_stdlib_h:
+    elif options_type == ImguiOptionsType.imgui_stdlib_h:
         pass
 
     return options
