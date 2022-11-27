@@ -39,11 +39,8 @@ packages = [
     { include = "litgen", from = "packages" },
     { include = "srcmlcpp", from = "packages" },
 ]
-# include = ["CHANGELOG.md"]
-# exclude = ["my_package/excluded.py"]
 
 [tool.poetry.scripts]
-#srcmlcpp = 'srcmlcpp.cli:run'
 srcmlcpp = 'srcmlcpp.cli.srcmlcpp_cli:main'
 litgen = 'litgen.cli.litgen_cli:main'
 
@@ -52,6 +49,7 @@ litgen = 'litgen.cli.litgen_cli:main'
 python = "^3.8"
 munch = "^2.5.0"
 fire = "^0.4.0"
+srcml_caller = "^0.1.1"
 
 [tool.poetry.dev-dependencies]
 pytest = "^6.0"

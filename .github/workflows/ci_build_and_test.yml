@@ -18,8 +18,8 @@ jobs:
         version: 11
         platform: x64
 
-    - name: Install srcML
-      run : sudo ./ci_scripts/install_srcml_ubuntu.sh
+#    - name: Install srcML
+#      run : sudo ./ci_scripts/install_srcml_ubuntu.sh
 
     - name: Install libraries required by glfw (used by hello-imgui)
       run: sudo apt-get update && sudo apt-get install -y libxrandr-dev libxinerama-dev libxcursor-dev libxi-dev mesa-common-dev
