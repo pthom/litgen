@@ -33,6 +33,7 @@ jobs:
 
       - name: generate integration test bindings
         run: |
+          pip install -r requirements.txt
           cd packages/litgen/integration_tests
           python autogenerate_mylib.py
           pip install -v .
