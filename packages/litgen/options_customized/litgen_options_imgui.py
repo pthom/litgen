@@ -69,7 +69,7 @@ def litgen_options_imgui(options_type: ImguiOptionsType, docking_branch: bool) -
         )
     )
 
-    options.names_replacements.merge_replacements(
+    options.function_names_replacements.merge_replacements(
         RegexReplacementList.from_string(
             r"""
             RGBtoHSV -> RgbToHsv

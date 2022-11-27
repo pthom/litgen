@@ -65,23 +65,26 @@ def _class_name_to_python(options: LitgenOptions, name: str) -> str:  # noqa
     return name_with_replacements
 
 
-def _function_or_var_name_to_python(options: LitgenOptions, name: str) -> str:  # noqa
-    name_with_replacements = options.names_replacements.apply(name)
+def function_name_to_python(options: LitgenOptions, name: str) -> str:
+    name_with_replacements = options.function_names_replacements.apply(name)
     if options.python_convert_to_snake_case:
         name_snake_case = code_utils.to_snake_case(name_with_replacements)
         r = add_underscore_if_python_reserved_word(name_snake_case)
     else:
         r = add_underscore_if_python_reserved_word(name_with_replacements)
-    r = options.names_replacements.apply(r)
+    r = options.function_names_replacements.apply(r)
     return r
 
 
-def function_name_to_python(options: LitgenOptions, name: str) -> str:
-    return _function_or_var_name_to_python(options, name)
-
-
 def var_name_to_python(options: LitgenOptions, name: str) -> str:
-    return _function_or_var_name_to_python(options, name)
+    name_with_replacements = options.var_names_replacements.apply(name)
+    if options.python_convert_to_snake_case:
+        name_snake_case = code_utils.to_snake_case(name_with_replacements)
+        r = add_underscore_if_python_reserved_word(name_snake_case)
+    else:
+        r = add_underscore_if_python_reserved_word(name_with_replacements)
+    r = options.var_names_replacements.apply(r)
+    return r
 
 
 def var_value_to_python(context: LitgenContext, default_value_cpp: str) -> str:
