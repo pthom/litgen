@@ -38,6 +38,8 @@ function(find_python)
 endfunction()
 
 find_python()
+include(${CMAKE_CURRENT_LIST_DIR}/cmake/find_pybind11.cmake)
+find_pybind11()
 
 option(SRCMLCPP_BUILD_DEMOS OFF)
 if (SRCMLCPP_BUILD_DEMOS)
