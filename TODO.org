@@ -500,11 +500,6 @@ Handle default value for string, know types, etc. / may be exclude those that do
 opt-in add when there is a default?
 
 
-** Scratch
-pybind_hello_imgui.cpp => namespace annnotation disappeared!
-namespace_test / bug dbl namespace inner2
-
-
 ** Renaming ImGui[A-Z]
     Review options:
     code_replacements / names_replacements / comments_replacements
