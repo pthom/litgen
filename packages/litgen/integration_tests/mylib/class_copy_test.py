@@ -22,15 +22,13 @@ def test_copy_explicit_copy_ctor():
     assert c3.a == c.a
 
 
-def disabled_test_copy_private_copy_ctor():
-    """Test disabled because the exception is not raised with pypi..."""
-    pass
-    # c = lg_mylib.Copyable_ExplicitPrivateCopyCtor()
-    # c.a = 5
-    # with pytest.raises(Exception):
-    #     copy.copy(c)
-    # with pytest.raises(Exception):
-    #     copy.deepcopy(c)
+def test_copy_private_copy_ctor():
+    c = lg_mylib.Copyable_ExplicitPrivateCopyCtor()
+    c.a = 5
+    with pytest.raises(Exception):
+        copy.copy(c)
+    with pytest.raises(Exception):
+        copy.deepcopy(c)
 
 
 def test_copy_deleted_copy_ctor():
