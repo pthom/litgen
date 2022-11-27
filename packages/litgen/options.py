@@ -61,6 +61,7 @@ class LitgenOptions:
     code_replacements: RegexReplacementList  # = cpp_to_python.standard_code_replacements() by default
     comments_replacements: RegexReplacementList  # = cpp_to_python.standard_comment_replacements() by default
     names_replacements: RegexReplacementList  # = RegexReplacementList() by default (i.e. empty)
+    class_names_replacements: RegexReplacementList  # = RegexReplacementList() by default (i.e. empty)
 
     ################################################################################
     #    <Layout settings for the generated python stub code>
@@ -539,7 +540,9 @@ class LitgenOptions:
 
         self.code_replacements = cpp_to_python.standard_code_replacements()
         self.comments_replacements = cpp_to_python.standard_comment_replacements()
+
         self.names_replacements = RegexReplacementList()
+        self.class_names_replacements = RegexReplacementList()
         self.macro_name_replacements = RegexReplacementList()
 
         self.fn_template_options = TemplateFunctionsOptions()
