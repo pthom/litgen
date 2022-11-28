@@ -212,7 +212,7 @@ def toggle_bool_pointer(v: BoxedBool) -> None:
     """
     pass
 
-def toggle_bool_nullable(v: BoxedBool = None) -> None:
+def toggle_bool_nullable(v: Optional[BoxedBool] = None) -> None:
     """Test with nullable pointer
     Will be published in python as:
     -->    def toggle_bool_nullable(v: BoxedBool = None) -> None:
