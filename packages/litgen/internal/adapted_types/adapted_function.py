@@ -1011,6 +1011,16 @@ class AdaptedFunction(AdaptedElement):
             r = cpp_to_python.function_name_to_python(self.options, self.cpp_adapted_function.function_name)
             return r
 
+    def _surround_type_with_quote_if_equal_this_class_name(self, type_python: str):
+        if not self.is_method():
+            return type_python
+        parent_struct = self.cpp_element().parent_struct_if_method()
+        assert parent_struct is not None
+        if type_python == parent_struct.class_name:
+            return f'"{type_python}"'
+        else:
+            return type_python
+
     def _stub_return_type_python(self) -> str:
         if self.cpp_element().is_inferred_return_type():
             return "Any"
@@ -1020,6 +1030,7 @@ class AdaptedFunction(AdaptedElement):
             cpp_adapted_function_terse = self.cpp_adapted_function.with_terse_types()
             return_type_cpp = cpp_adapted_function_terse.str_full_return_type()
             return_type_python = cpp_to_python.type_to_python(self.options, return_type_cpp)
+            return_type_python = self._surround_type_with_quote_if_equal_this_class_name(return_type_python)
             return return_type_python
 
     def _stub_params_list_signature(self) -> List[str]:
@@ -1047,6 +1058,7 @@ class AdaptedFunction(AdaptedElement):
             # Add Optional to param_type_python if cpp_type is a pointer with default = nullptr or NULL
             if "*" in param_decl.cpp_type.modifiers and param_decl.initial_value_code in ["NULL", "nullptr"]:
                 param_type_python = f"Optional[{param_type_python}]"
+            param_type_python = self._surround_type_with_quote_if_equal_this_class_name(param_type_python)
 
             if self.is_vectorize_impl:
                 param_type_python = "np.ndarray"
