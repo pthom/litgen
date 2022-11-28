@@ -51,20 +51,19 @@ class LitgenOptions:
     #    <names translation from C++ to python>
     ################################################################################
     # List of code replacements when going from C++ to Python
-    # These replacements are applied to type names (for example double -> float, vector-> List, etc)
-    # as well as comment (which may contain type names), and function/member names
-    #
-    # Note:
+    # Notes:
     # - by default, type_replacements is prefilled with standard_type_replacements()
+    #   type_replacements will be applied to all types (including class and enum names)
     # - by default, value_replacements is prefilled with standard_value_replacements()
     # - by default, comments_replacements is prefilled with standard_comments_replacements()
     # - by default, the others are empty
+    # - type_replacements, var_names_replacements and function_names_replacements enable you
+    #   to modify the outputted python code
     type_replacements: RegexReplacementList  # = cpp_to_python.standard_type_replacements() by default
+    var_names_replacements: RegexReplacementList  # = RegexReplacementList() by default (i.e. empty)
+    function_names_replacements: RegexReplacementList  # = RegexReplacementList() by default (i.e. empty)
     value_replacements: RegexReplacementList  # = cpp_to_python.standard_value_replacements() by default
     comments_replacements: RegexReplacementList  # = cpp_to_python.standard_comment_replacements() by default
-    class_names_replacements: RegexReplacementList  # = RegexReplacementList() by default (i.e. empty)
-    function_names_replacements: RegexReplacementList  # = RegexReplacementList() by default (i.e. empty)
-    var_names_replacements: RegexReplacementList  # = RegexReplacementList() by default (i.e. empty)
     macro_name_replacements: RegexReplacementList  # = RegexReplacementList() by default (i.e. empty)
 
     ################################################################################
@@ -545,7 +544,6 @@ class LitgenOptions:
         self.value_replacements = cpp_to_python.standard_value_replacements()
         self.comments_replacements = cpp_to_python.standard_comment_replacements()
 
-        self.class_names_replacements = RegexReplacementList()
         self.function_names_replacements = RegexReplacementList()
         self.var_names_replacements = RegexReplacementList()
         self.macro_name_replacements = RegexReplacementList()
