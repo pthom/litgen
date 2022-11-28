@@ -15,6 +15,8 @@ def litgen_options_implot() -> LitgenOptions:
     options.function_names_replacements.add_first_replacement("ImGui", "Imgui")
     options.type_replacements.add_first_replacement("ImGuiContext", "ImGui_Context")
 
+    options.type_replacements.add_last_replacement(r"ImPlot([A-Z][a-zA-Z0-9]*)", r"\1")
+
     options.fn_params_buffer_types = join_string_by_pipe_char(
         [
             # // Scalar data types defined by imgui.h
