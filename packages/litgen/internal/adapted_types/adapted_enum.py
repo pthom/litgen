@@ -85,7 +85,7 @@ class AdaptedEnumDecl(AdaptedDecl):
 
         enum_name_cpp = self.enum_parent.cpp_element().enum_name
         enum_member_name_cpp = self.cpp_element().decl_name
-        enum_name_python = enum_name_cpp
+        enum_name_python = cpp_to_python.enum_name_to_python(self.options, enum_name_cpp)
         enum_member_name_python = self.decl_name_python()
 
         is_enum_class = self.enum_parent.cpp_element().is_enum_class()
@@ -159,7 +159,7 @@ class AdaptedEnum(AdaptedElement):
         return cast(CppEnum, self._cpp_element)
 
     def enum_name_python(self) -> str:
-        r = cpp_to_python.add_underscore_if_python_reserved_word(self.cpp_element().enum_name)
+        r = cpp_to_python.enum_name_to_python(self.options, self.cpp_element().enum_name)
         return r
 
     def _fill_children(self) -> None:
@@ -188,7 +188,7 @@ class AdaptedEnum(AdaptedElement):
 
         line_spacer = LineSpacerPython(self.options)
 
-        title_line = f"class {self.cpp_element().enum_name}(enum.Enum):"
+        title_line = f"class {self.enum_name_python()}(enum.Enum):"
 
         body_lines: List[str] = []
         for child in self.adapted_children:
@@ -203,7 +203,6 @@ class AdaptedEnum(AdaptedElement):
     # override
     def pydef_lines(self) -> List[str]:
         enum_name_cpp = self.cpp_element().cpp_scope_str(True)
-        # enum_name_cpp = self.cpp_element().enum_name
         enum_name_python = self.enum_name_python()
         comment = self._elm_comment_pydef_one_line()
         location = self._elm_info_original_location_cpp()

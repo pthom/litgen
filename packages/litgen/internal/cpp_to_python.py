@@ -60,7 +60,13 @@ def add_underscore_if_python_reserved_word(name: str) -> str:
 
 
 def _class_name_to_python(options: LitgenOptions, name: str) -> str:  # noqa
-    name_with_replacements = options.class_names_replacements.apply(name)
+    name_with_replacements = options.type_replacements.apply(name)
+    name_with_replacements = add_underscore_if_python_reserved_word(name_with_replacements)
+    return name_with_replacements
+
+
+def enum_name_to_python(options: LitgenOptions, name: str) -> str:  # noqa
+    name_with_replacements = options.type_replacements.apply(name)
     name_with_replacements = add_underscore_if_python_reserved_word(name_with_replacements)
     return name_with_replacements
 
