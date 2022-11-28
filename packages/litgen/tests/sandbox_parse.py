@@ -111,21 +111,13 @@ IMGUI_API int           ImTextStrToUtf8(char* out_buf, int out_buf_size, const I
 
 
 def play() -> None:
-    code = """
-struct CallGuardLogger
-{
-    CallGuardLogger() {
-        ++nb_construct;
-    }
-    ~CallGuardLogger() {
-        ++nb_destroy;
-    }
+    options = litgen.options.LitgenOptions()
+    options.fn_params_output_modifiable_immutable_to_return__regex = r".*"
 
-    static int nb_construct;
-    static int nb_destroy;
-};
+    code = """
+    void SliderVoidIntDefaultNull(int * value = nullptr);
     """
-    options = litgen.LitgenOptions()
+
     # options = litgen_options_imgui(ImguiOptionsType.imgui_h, True)
     # options.fn_template_options.add_specialization(".*", ["int"])
     # options.class_deep_copy__regex = r".*"

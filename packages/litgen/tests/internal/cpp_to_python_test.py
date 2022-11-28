@@ -9,11 +9,11 @@ def test_standard_replacements():
 
     s = "a = 1.5f;"
     r = litgen.opencv_replacements().apply(s)
-    r = litgen.standard_code_replacements().apply(s)
+    r = litgen.standard_value_replacements().apply(s)
     assert r == "a = 1.5;"
 
     s = "a = -1.5d;"
-    r = litgen.standard_code_replacements().apply(s)
+    r = litgen.standard_value_replacements().apply(s)
     assert r == "a = -1.5;"
 
 

@@ -49,7 +49,7 @@ def comment_pydef_one_line(options: LitgenOptions, title_cpp: str) -> str:
 def type_to_python(options: LitgenOptions, type_cpp: str) -> str:
     r = type_cpp
     r = r.replace("static ", "")
-    r = options.code_replacements.apply(r).strip()
+    r = options.type_replacements.apply(r).strip()
     return r
 
 
@@ -88,7 +88,9 @@ def var_name_to_python(options: LitgenOptions, name: str) -> str:
 
 
 def var_value_to_python(context: LitgenContext, default_value_cpp: str) -> str:
-    r = context.options.code_replacements.apply(default_value_cpp)
+    r = default_value_cpp
+    r = context.options.type_replacements.apply(r)
+    r = context.options.value_replacements.apply(r)
     for number_macro, value in context.options.srcmlcpp_options.named_number_macros.items():
         r = r.replace(number_macro, str(value))
     r = context.var_values_replacements_cache.apply(r)
@@ -443,7 +445,7 @@ def cpp_scope_to_pybind_parent_var_name(options: LitgenOptions, cpp_element: Cpp
         return r
 
 
-def standard_code_replacements() -> RegexReplacementList:
+def standard_type_replacements() -> RegexReplacementList:
     """Replacements for C++ code when translating to python.
 
     Consists mostly of
@@ -479,8 +481,6 @@ def standard_code_replacements() -> RegexReplacementList:
     \bsize_t\b -> int
     \bstd::string\(\) -> ""
     \bstd::string\b -> str
-    \btrue\b -> True
-    \bfalse\b -> False
     \bstd::vector\s*<\s*([\w:]*)\s*> -> List[\1]
     \bstd::array\s*<\s*([\w:]*)\s*,\s*([\w:])\s*> -> List[\1]
     \bstd::tuple<(.*)> -> Tuple[\1]
@@ -490,10 +490,43 @@ def standard_code_replacements() -> RegexReplacementList:
 
     \bvoid\s*\* -> Any
     \bvoid\b -> None
+
+    \bpy::array\b -> np.ndarray
+
+    \bconst\b -> REMOVE
+    \bmutable\b -> REMOVE
+    & -> REMOVE
+    \* -> REMOVE
+
+    :: -> .
+    """
+    # Note: the two last regexes replace C numbers like 1.5f or 1.5d by 1.5
+
+    replaces = RegexReplacementList.from_string(replacements_str)
+    return replaces
+
+
+def standard_value_replacements() -> RegexReplacementList:
+    """Replacements for C++ code when translating to python.
+
+    Consists mostly of
+    * number translation (e.g. `1.5f` -> `1.5`)
+    """
+    replacements_str = r"""
+
+    \btrue\b -> True
+    \bfalse\b -> False
+    \bvoid\s*\* -> Any
+    \bvoid\b -> None
     \bNULL\b -> None
     \bnullptr\b -> None
     \std::nullopt\b -> None
     ^std::nullopt\b$ -> None
+    \std.nullopt\b -> None
+    ^std.nullopt\b$ -> None
+
+    \bstd::string\(\) -> ""
+    \bstd.string\(\) -> ""
 
     \bFLT_MIN\b -> sys.float_info.min
     \bFLT_MAX\b -> sys.float_info.max
@@ -502,12 +535,6 @@ def standard_code_replacements() -> RegexReplacementList:
     \bLDBL_MIN\b -> sys.float_info.min
     \bLDBL_MAX\b -> sys.float_info.max
 
-    \bpy::array\b -> np.ndarray
-
-    \bconst\b -> REMOVE
-    \bmutable\b -> REMOVE
-    & -> REMOVE
-    \* -> REMOVE
 
     ([+-]?[0-9]+([.][0-9]*)?|[.][0-9]+)(d?) -> \1
     ([+-]?[0-9]+([.][0-9]*)?|[.][0-9]+)(f?) -> \1

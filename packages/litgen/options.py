@@ -48,21 +48,24 @@ class LitgenOptions:
     original_signature_flag_show = False
 
     ################################################################################
-    #    <Type names translation from C++ to python>
+    #    <names translation from C++ to python>
     ################################################################################
     # List of code replacements when going from C++ to Python
     # These replacements are applied to type names (for example double -> float, vector-> List, etc)
     # as well as comment (which may contain type names), and function/member names
     #
     # Note:
-    # - by default, code_replacements is prefilled with standard_code_replacements()
+    # - by default, type_replacements is prefilled with standard_type_replacements()
+    # - by default, value_replacements is prefilled with standard_value_replacements()
     # - by default, comments_replacements is prefilled with standard_comments_replacements()
-    # - by default, names_replacements is empty
-    code_replacements: RegexReplacementList  # = cpp_to_python.standard_code_replacements() by default
+    # - by default, the others are empty
+    type_replacements: RegexReplacementList  # = cpp_to_python.standard_type_replacements() by default
+    value_replacements: RegexReplacementList  # = cpp_to_python.standard_value_replacements() by default
     comments_replacements: RegexReplacementList  # = cpp_to_python.standard_comment_replacements() by default
     class_names_replacements: RegexReplacementList  # = RegexReplacementList() by default (i.e. empty)
     function_names_replacements: RegexReplacementList  # = RegexReplacementList() by default (i.e. empty)
     var_names_replacements: RegexReplacementList  # = RegexReplacementList() by default (i.e. empty)
+    macro_name_replacements: RegexReplacementList  # = RegexReplacementList() by default (i.e. empty)
 
     ################################################################################
     #    <Layout settings for the generated python stub code>
@@ -116,7 +119,6 @@ class LitgenOptions:
     # This is limited to *simple* defines (no param, string, int, float or hex only)
     # By default nothing is exported
     macro_define_include_by_name__regex: str = ""
-    macro_name_replacements: RegexReplacementList
 
     ################################################################################
     #    <functions and method adaptations>
@@ -539,7 +541,8 @@ class LitgenOptions:
         self.srcmlcpp_options = SrcmlcppOptions()
         self.srcmlcpp_options.header_filter_preprocessor_regions = True
 
-        self.code_replacements = cpp_to_python.standard_code_replacements()
+        self.type_replacements = cpp_to_python.standard_type_replacements()
+        self.value_replacements = cpp_to_python.standard_value_replacements()
         self.comments_replacements = cpp_to_python.standard_comment_replacements()
 
         self.class_names_replacements = RegexReplacementList()

@@ -2,7 +2,12 @@ from litgen.options import LitgenOptions
 from litgen.internal.template_options import TemplateNamingScheme
 
 from litgen.code_to_adapted_unit import code_to_adapted_unit
-from litgen.internal.cpp_to_python import standard_code_replacements, opencv_replacements, standard_comment_replacements
+from litgen.internal.cpp_to_python import (
+    standard_type_replacements,
+    standard_value_replacements,
+    opencv_replacements,
+    standard_comment_replacements,
+)
 from litgen.litgen_generator import (
     LitgenGenerator,
     GeneratedCodes,
@@ -25,7 +30,7 @@ __all__ = [
     "GeneratedCodes",
     "generate_code_for_file",
     # Configure replacements
-    "standard_code_replacements",
+    "standard_type_replacements",
     "opencv_replacements",
     "standard_comment_replacements",
 ]
