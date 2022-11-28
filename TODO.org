@@ -497,29 +497,6 @@ bool RunnerGlfwOpenGl3::Impl_SetAppIcon(const std::string& iconAssetPath)
 answer cvnp
 
 
-** Renaming ImGui[A-Z]
-    Review options:
-    code_replacements / names_replacements / comments_replacements
-      => need:
-      X class_names_replacements,
-      X functions_names_replacements,
-      X var_names_replacements,
-      X types_replacements,
-      X value_replacements (qui contient types_replacements)
-      X Add EnumReplacement => missing in ImGui...
-
-      X 2 pb sur ImPlotSetImGuiContext: renaming raté + Context ImGui qui va clasher apres remove ImPlot
-
-      Test / demos
-      mypy!
-
-    IMGUI_API void          ShowDemoWindow(bool* p_open = NULL);        // create Demo window. demonstrate most ImGui features. call this to learn about the library! try to make it always available in your application!
-    IMGUI_API ImGuiContext* CreateContext(ImFontAtlas* shared_font_atlas = NULL);
-
-
-      decorator / staticmethod
-
-
 ** EasyRunner:
      AutoGenerate named constructors
 
