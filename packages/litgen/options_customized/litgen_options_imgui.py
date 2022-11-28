@@ -139,6 +139,7 @@ def litgen_options_imgui(options_type: ImguiOptionsType, docking_branch: bool) -
             r"^InputTextEx$",
             r"^TempInput",
             r"^ErrorCheckEnd",
+            r"ImFileLoadToMemory",
         ]
     )
 

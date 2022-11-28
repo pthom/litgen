@@ -1044,6 +1044,10 @@ class AdaptedFunction(AdaptedElement):
                 continue
 
             param_type_python = cpp_to_python.type_to_python(self.options, param_type_cpp)
+            # Add Optional to param_type_python if cpp_type is a pointer with default = nullptr or NULL
+            if "*" in param_decl.cpp_type.modifiers and param_decl.initial_value_code in ["NULL", "nullptr"]:
+                param_type_python = f"Optional[{param_type_python}]"
+
             if self.is_vectorize_impl:
                 param_type_python = "np.ndarray"
 
