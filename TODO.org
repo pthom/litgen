@@ -494,7 +494,13 @@ bool RunnerGlfwOpenGl3::Impl_SetAppIcon(const std::string& iconAssetPath)
 ** X Add named ctors
 
 ** scratch
-answer cvnp
+FontAtlas
+  Hack GetGlyphRangesDefault
+
+Hack callback
+typedef int     (*ImGuiInputTextCallback)(ImGuiInputTextCallbackData* data);    // Callback function for ImGui::InputText()
+typedef void    (*ImGuiSizeCallback)(ImGuiSizeCallbackData* data);              // Callback function for ImGui::SetNextWindowSizeConstraints()
+
 
 
 ** EasyRunner:
