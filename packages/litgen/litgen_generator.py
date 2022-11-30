@@ -38,7 +38,7 @@ class LitgenGenerator:
 
     def process_cpp_file(self, filename: str) -> None:
         code = _read_code(self.lg_context.options, filename)
-        self._process_cpp_code(code, filename)
+        self.process_cpp_code(code, filename)
 
     def write_generated_code(
         self, output_cpp_pydef_file: str, output_stub_pyi_file: str, output_cpp_glue_code_file: str = ""
@@ -119,7 +119,7 @@ class LitgenGenerator:
         r = "".join(cpp_codes)
         return r
 
-    def _process_cpp_code(self, code: str, filename: str) -> None:
+    def process_cpp_code(self, code: str, filename: str) -> None:
         if len(filename) > 0:
             adapted_unit = code_to_adapted_unit(self.lg_context, code, filename)
         else:
@@ -201,7 +201,7 @@ class GeneratedCodes:
 
 def generate_code(options: LitgenOptions, code: CppCode, omit_boxed_types: bool = False) -> GeneratedCodes:
     generator = LitgenGenerator(options, omit_boxed_types)
-    generator._process_cpp_code(code, "")
+    generator.process_cpp_code(code, "")
     r = GeneratedCodes(
         pydef_code=generator.pydef_code(),
         stub_code=generator.stub_code(),
@@ -232,14 +232,14 @@ class LitgenGeneratorTestsHelper:
     @staticmethod
     def code_to_pydef(options: LitgenOptions, code: str, omit_boxed_types: bool = False) -> str:
         generator = LitgenGenerator(options, omit_boxed_types)
-        generator._process_cpp_code(code, "")
+        generator.process_cpp_code(code, "")
         r = generator.pydef_code()
         return r
 
     @staticmethod
     def code_to_stub(options: LitgenOptions, code: str, omit_boxed_types: bool = False) -> str:
         generator = LitgenGenerator(options, omit_boxed_types)
-        generator._process_cpp_code(code, "")
+        generator.process_cpp_code(code, "")
         r = generator.stub_code()
         return r
 

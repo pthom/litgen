@@ -30,7 +30,7 @@ def test_const_vs_non_const():
     """
 
     generator = LitgenGenerator(options)
-    generator._process_cpp_code(cpp_code, "file.h")
+    generator.process_cpp_code(cpp_code, "file.h")
 
     # logging.warning(f"\nglue_code=\n{generator.glue_code()}")
     code_utils.assert_are_codes_equal(
