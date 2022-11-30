@@ -110,7 +110,7 @@ def parse_type(
     return result
 
 
-def _parse_init_expr(element: SrcmlWrapper) -> str:
+def _parse_expr(element: SrcmlWrapper) -> str:
     """
     Can parse simple literals, like "hello", whose tree looks like:
             <ns0:expr>
@@ -125,7 +125,6 @@ def _parse_init_expr(element: SrcmlWrapper) -> str:
             </ns0:expr>
     we will call srcml_to_code, which will invoke the executable srcml
     """
-    assert element.tag() == "init"
 
     def expr_literal_value(expr_element: ET.Element) -> Optional[str]:
         # Case for simple literals
@@ -141,13 +140,23 @@ def _parse_init_expr(element: SrcmlWrapper) -> str:
                         return expr_child.text
         return None
 
-    expr = srcml_utils.child_with_tag(element.srcml_xml, "expr")
+    assert element.tag() == "expr"
+    expr = element
+    eval_literal_value = expr_literal_value(expr.srcml_xml)
+    if eval_literal_value is not None:
+        r = eval_literal_value
+    else:
+        r = code_to_srcml.srcml_to_code(expr.srcml_xml)
+
+    return r
+
+
+def _parse_init_expr(element: SrcmlWrapper) -> str:
+    assert element.tag() == "init"
+
+    expr = element.wrapped_child_with_tag("expr")
     if expr is not None:
-        eval_literal_value = expr_literal_value(expr)
-        if eval_literal_value is not None:
-            r = eval_literal_value
-        else:
-            r = code_to_srcml.srcml_to_code(expr)
+        r = _parse_expr(expr)
     else:
         r = element.str_code_verbatim().strip()
         if r.startswith("="):
@@ -222,6 +231,27 @@ def parse_define(options: SrcmlcppOptions, element_c: CppElementAndComment, pare
     return result
 
 
+def _parse_decl_initializer_list(_options: SrcmlcppOptions, element_c: SrcmlWrapper) -> str:
+    assert element_c.tag() == "argument_list"
+    arguments = element_c.wrapped_children_with_tag("argument")
+    arguments_values = []
+    for argument in arguments:
+        expr = argument.wrapped_child_with_tag("expr")
+        if expr is None:
+            element_c.raise_exception("parse_decl: initializer list with with unparsable expr")
+        else:
+            expr_value = _parse_expr(expr)
+            arguments_values.append(expr_value)
+
+    if len(arguments_values) == 0:
+        return "{}"
+    elif len(arguments_values) == 1:
+        return arguments_values[0]
+    else:
+        r = "{" + ", ".join(arguments_values) + "}"
+        return r
+
+
 def parse_decl(
     options: SrcmlcppOptions,
     element_c: CppElementAndComment,
@@ -248,6 +278,10 @@ def parse_decl(
                 result.decl_name = decl_name_and_array
         elif child_tag == "init":
             result.initial_value_code = _parse_init_expr(child)
+        elif child_tag == "argument_list":
+            # initializer list
+            result.initial_value_via_initializer_list = True
+            result.initial_value_code = _parse_decl_initializer_list(options, child)
         elif child_tag == "range":
             # this is for C bit fields
             result.bitfield_range = child.str_code_verbatim()

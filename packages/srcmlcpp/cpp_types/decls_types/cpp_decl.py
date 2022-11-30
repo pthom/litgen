@@ -70,6 +70,9 @@ class CppDecl(CppElementAndComment):
     # And `<init>= <expr> <literal type="number">5</literal> </expr> </init>` is transcribed as "5"
     initial_value_code: str = ""  # initial or default value
 
+    # indicates whether the initial value was obtained via an initializer list
+    initial_value_via_initializer_list: bool = False
+
     bitfield_range: str = ""  # Will be filled for bitfield members
 
     def __init__(self, element: SrcmlWrapper, cpp_element_comments: CppElementComments) -> None:

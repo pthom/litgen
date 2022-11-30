@@ -18,6 +18,34 @@ def to_decl_statement(code: str) -> CppDeclStatement:
     return cpp_decl
 
 
+def test_parse_decl_init_list():
+    options = srcmlcpp.SrcmlcppOptions()
+
+    code = "bool b {false};"
+    cpp_unit = srcmlcpp.code_to_cpp_unit(options, code)
+    decls = cpp_unit.all_decl_recursive()
+    assert len(decls) == 1
+    decl = decls[0]
+    assert decl.initial_value_code == "false"
+    assert decl.initial_value_via_initializer_list
+
+    code = "std::vector<int> v{1, 2, 3};"
+    cpp_unit = srcmlcpp.code_to_cpp_unit(options, code)
+    decls = cpp_unit.all_decl_recursive()
+    assert len(decls) == 1
+    decl = decls[0]
+    assert decl.initial_value_code == "{1, 2, 3}"
+    assert decl.initial_value_via_initializer_list
+
+    code = 'std::map<std::string, int> m {{ "a", 1}, };'  # note the final ","
+    cpp_unit = srcmlcpp.code_to_cpp_unit(options, code)
+    decls = cpp_unit.all_decl_recursive()
+    assert len(decls) == 1
+    decl = decls[0]
+    assert decl.initial_value_code == '{ "a", 1}'  # which is omitted here
+    assert decl.initial_value_via_initializer_list
+
+
 def test_is_c_string_list_ptr():
     assert to_decl("const char * const items[]").is_c_string_list_ptr()
     assert to_decl("const char * items[]").is_c_string_list_ptr()

@@ -181,6 +181,11 @@ class SrcmlWrapper:
             r.append(SrcmlWrapper(self.options, child_xml, self.filename))
         return r
 
+    def wrapped_child_with_tag(self, tag: str) -> Optional[SrcmlWrapper]:
+        """Extract the xml sub nodes and wraps them"""
+        children = self.wrapped_children_with_tag(tag)
+        return children[0] if len(children) == 1 else None
+
     def wrapped_children_with_tag(self, tag: str) -> List[SrcmlWrapper]:
         """Extract the xml sub nodes and wraps them"""
         children = self.make_wrapped_children()
