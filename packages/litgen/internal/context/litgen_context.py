@@ -40,3 +40,7 @@ class LitgenContext:
         self.namespaces_stub = NamespacesCodeTree(self.options, PydefOrStub.Stub)
         self.namespaces_pydef = NamespacesCodeTree(self.options, PydefOrStub.Pydef)
         self.var_values_replacements_cache = ReplacementsCache()
+
+    def clear_namespaces_code_tree(self) -> None:
+        self.namespaces_stub = NamespacesCodeTree(self.options, PydefOrStub.Stub)
+        self.namespaces_pydef = NamespacesCodeTree(self.options, PydefOrStub.Pydef)

@@ -126,6 +126,7 @@ class LitgenGenerator:
             adapted_unit = code_to_adapted_unit(self.lg_context, code)
         stub_code = adapted_unit.str_stub()
         pydef_code = adapted_unit.str_pydef()
+        self.lg_context.clear_namespaces_code_tree()
         generated_code = _GeneratedCode(source_filename=filename, stub_code=stub_code, pydef_code=pydef_code)
         self._generated_codes.append(generated_code)
 
