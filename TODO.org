@@ -480,18 +480,31 @@ bool RunnerGlfwOpenGl3::Impl_SetAppIcon(const std::string& iconAssetPath)
 ** Online asm ImGuiBundle Demos
 (mandel, fn comp, image editing, etc)
 
-** Add ImGui callbacks via patch std::function?
-
-
 
 ** Add ImGuizmo
+
+
+** Videos by subject
+    Code generation / fidelity & doc
+    For research and devel portability
+      compare c++ and python
+    For Learners (comp)
+    For fast devel (immap)
+    Implot
+    Notebook
+    For computer vision
+      imdebug!
+    Theme editor
+
+
 
 ** Inspector Exe
 => Envoi a Vincent
 => Avec outils de manip / node?
 
 
-** X Add named ctors
+** Add immapp (ImmediateApp) !!!!
+    run et compagnie
 
 ** scratch
 FontAtlas
@@ -504,13 +517,16 @@ typedef void    (*ImGuiSizeCallback)(ImGuiSizeCallbackData* data);              
 
 
 ** EasyRunner:
-     AutoGenerate named constructors
 
      Remove Simplerunnerparams?
      GetRunnerParams() always available
        => No: provide easy setup callback
      Easy docking config (review enum)
 
+
+** Licence in all file (refers to main license file)
+
+** Contact authors one by one
 
 * srcml_cpp
   Test libclang: see https://shaharmike.com/cpp/libclang/ & https://libclang.readthedocs.io/en/latest/
