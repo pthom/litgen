@@ -32,6 +32,11 @@ def _preprocess_imgui_code(code: str) -> str:
     # This confuses srcML, so we add a ";" at the end of those lines
     new_code, _n = re.subn(r"\nIM_MSVC_RUNTIME_CHECKS_OFF\n", "\nIM_MSVC_RUNTIME_CHECKS_OFF;\n", new_code)
     new_code, _n = re.subn(r"\nIM_MSVC_RUNTIME_CHECKS_RESTORE\n", "\nIM_MSVC_RUNTIME_CHECKS_RESTORE;\n", new_code)
+
+    # force publish GetCurrentWindow
+    new_code = new_code.replace(
+        "inline    ImGuiWindow*  GetCurrentWindow()", "IMGUI_API ImGuiWindow*  GetCurrentWindow()"
+    )
     return new_code
 
 
