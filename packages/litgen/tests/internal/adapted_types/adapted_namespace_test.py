@@ -67,8 +67,10 @@ namespace Main  // This namespace should not be outputted as a submodule
         class Inner:  # Proxy class that introduces typings for the *submodule* Inner
             pass  # (This corresponds to a C++ namespace. All method are static!)
             """ this is an inner namespace (this comment should become the namespace doc)"""
+            @staticmethod
             def foo_inner() -> None:
                 pass
+            @staticmethod
             def foo_inner2() -> None:
                 pass
 

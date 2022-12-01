@@ -865,8 +865,10 @@ class MathFunctions:  # Proxy class that introduces typings for the *submodule* 
          options.fn_vectorize__regex = r".*"
 
     """
+    @staticmethod
     def vectorizable_sum(x: float, y: float) -> float:
         pass
+    @staticmethod
     def vectorizable_sum(x: np.ndarray, y: np.ndarray) -> np.ndarray:
         pass
 
@@ -1025,23 +1027,31 @@ class SomeNamespace:  # Proxy class that introduces typings for the *submodule* 
     class SomeInnerNamespace:  # Proxy class that introduces typings for the *submodule* SomeInnerNamespace
         pass  # (This corresponds to a C++ namespace. All method are static!)
         """ namespace SomeInnerNamespace"""
+        @staticmethod
         def toggle_bool_pointer(v: BoxedBool) -> None:
             """//, int vv[2])"""
             pass
+        @staticmethod
         def toggle_bool_pointer_get_points(
             v: BoxedBool, vv_0: BoxedInt, vv_1: BoxedInt
         ) -> None:
             pass
+        @staticmethod
         def modify_string(s: BoxedString) -> None:
             pass
+        @staticmethod
         def change_bool_int(label: str, value: int) -> Tuple[bool, int]:
             pass
+        @staticmethod
         def add_inside_buffer(buffer: np.ndarray, number_to_add: int) -> None:
             pass
+        @staticmethod
         def templated_mul_inside_buffer(buffer: np.ndarray, factor: float) -> None:
             pass
+        @staticmethod
         def const_array2_add(values: List[int]) -> int:
             pass
+        @staticmethod
         def c_string_list_total_size(
             items: List[str], output_0: BoxedInt, output_1: BoxedInt
         ) -> int:
@@ -1054,8 +1064,10 @@ class SomeNamespace:  # Proxy class that introduces typings for the *submodule* 
 class Inner:  # Proxy class that introduces typings for the *submodule* Inner
     pass  # (This corresponds to a C++ namespace. All method are static!)
     """ this is an inner namespace (this comment should become the namespace doc)"""
+    @staticmethod
     def foo_inner() -> int:
         pass
+    @staticmethod
     def foo_inner2() -> int:
         pass
 
@@ -1075,10 +1087,13 @@ class N:  # Proxy class that introduces typings for the *submodule* N
 
     class E(enum.Enum):
         a = enum.auto()  # (= 0)
+    @staticmethod
     def foo(e: EC = EC.a) -> None:
         pass
+    @staticmethod
     def foo(e: E = E.a) -> None:
         pass
+    @staticmethod
     def foo(e: E = E.a, s: S = S()) -> None:
         pass
 

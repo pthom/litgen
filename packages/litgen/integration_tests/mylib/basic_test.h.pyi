@@ -46,8 +46,10 @@ class MathFunctions:  # Proxy class that introduces typings for the *submodule* 
          options.fn_vectorize__regex = r".*"
 
     """
+    @staticmethod
     def vectorizable_sum(x: float, y: float) -> float:
         pass
+    @staticmethod
     def vectorizable_sum(x: np.ndarray, y: np.ndarray) -> np.ndarray:
         pass
 

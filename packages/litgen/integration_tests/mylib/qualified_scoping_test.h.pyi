@@ -23,10 +23,13 @@ class N:  # Proxy class that introduces typings for the *submodule* N
 
     class E(enum.Enum):
         a = enum.auto()  # (= 0)
+    @staticmethod
     def foo(e: EC = EC.a) -> None:
         pass
+    @staticmethod
     def foo(e: E = E.a) -> None:
         pass
+    @staticmethod
     def foo(e: E = E.a, s: S = S()) -> None:
         pass
 

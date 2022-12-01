@@ -23,8 +23,10 @@ def foo_root() -> int:
 class Inner:  # Proxy class that introduces typings for the *submodule* Inner
     pass  # (This corresponds to a C++ namespace. All method are static!)
     """ this is an inner namespace (this comment should become the namespace doc)"""
+    @staticmethod
     def foo_inner() -> int:
         pass
+    @staticmethod
     def foo_inner2() -> int:
         pass
 

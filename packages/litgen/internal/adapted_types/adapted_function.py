@@ -987,6 +987,9 @@ class AdaptedFunction(AdaptedElement):
         body_lines: List[str] = []
 
         r = self._elm_str_stub_layout_lines(title_lines, body_lines)
+        if self._stub_need_add_staticmethod_decorator_for_module_proxy_class():
+            r = ["@staticmethod"] + r
+
         r = self._elm_stub_original_code_lines_info() + r
 
         if self.cpp_adapted_function.is_static_method():
@@ -998,6 +1001,19 @@ class AdaptedFunction(AdaptedElement):
             r += new_vectorized_function.stub_lines()
 
         return r
+
+    def _stub_need_add_staticmethod_decorator_for_module_proxy_class(self) -> bool:
+        if self.cpp_element().is_method():
+            return False
+        cpp_parents = self.cpp_element().ancestors_list(include_self=False)
+        cpp_parents_namespaces = filter(lambda elmt: isinstance(elmt, CppNamespace), cpp_parents)
+        has_module_proxy_class = False
+        for cpp_parents_namespace in cpp_parents_namespaces:
+            assert isinstance(cpp_parents_namespace, CppNamespace)
+            is_root_ns = code_utils.does_match_regex(self.options.namespace_root__regex, cpp_parents_namespace.ns_name)
+            if not is_root_ns:
+                has_module_proxy_class = True
+        return has_module_proxy_class
 
     def _stub_function_name_python(self) -> str:
         from litgen.internal.adapted_types import operators

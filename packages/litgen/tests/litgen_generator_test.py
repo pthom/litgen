@@ -74,10 +74,13 @@ def test_scoping_no_root_namespace():
             class E(enum.Enum):
                 a = enum.auto() # (= 0)
 
+            @staticmethod
             def foo(e: EC = EC.a) -> EC:
                 pass
+            @staticmethod
             def foo(e: E = E.a) -> E:
                 pass
+            @staticmethod
             def foo(e: E = E.a, s: S = S()) -> S:
                 pass
 

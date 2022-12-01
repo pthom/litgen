@@ -80,23 +80,31 @@ class SomeNamespace:  # Proxy class that introduces typings for the *submodule* 
     class SomeInnerNamespace:  # Proxy class that introduces typings for the *submodule* SomeInnerNamespace
         pass  # (This corresponds to a C++ namespace. All method are static!)
         """ namespace SomeInnerNamespace"""
+        @staticmethod
         def toggle_bool_pointer(v: BoxedBool) -> None:
             """//, int vv[2])"""
             pass
+        @staticmethod
         def toggle_bool_pointer_get_points(
             v: BoxedBool, vv_0: BoxedInt, vv_1: BoxedInt
         ) -> None:
             pass
+        @staticmethod
         def modify_string(s: BoxedString) -> None:
             pass
+        @staticmethod
         def change_bool_int(label: str, value: int) -> Tuple[bool, int]:
             pass
+        @staticmethod
         def add_inside_buffer(buffer: np.ndarray, number_to_add: int) -> None:
             pass
+        @staticmethod
         def templated_mul_inside_buffer(buffer: np.ndarray, factor: float) -> None:
             pass
+        @staticmethod
         def const_array2_add(values: List[int]) -> int:
             pass
+        @staticmethod
         def c_string_list_total_size(
             items: List[str], output_0: BoxedInt, output_1: BoxedInt
         ) -> int:

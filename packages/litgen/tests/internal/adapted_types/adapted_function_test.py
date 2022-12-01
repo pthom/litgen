@@ -351,8 +351,10 @@ def test_vectorization():
         # <submodule MathFunctions>
         class MathFunctions:  # Proxy class that introduces typings for the *submodule* MathFunctions
             pass  # (This corresponds to a C++ namespace. All method are static!)
+            @staticmethod
             def vectorizable_sum(x: float, y: float) -> float:
                 pass
+            @staticmethod
             def v_vectorizable_sum_v(x: np.ndarray, y: np.ndarray) -> np.ndarray:
                 pass
 
