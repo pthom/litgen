@@ -1011,11 +1011,24 @@ class AdaptedFunction(AdaptedElement):
             r = cpp_to_python.function_name_to_python(self.options, self.cpp_adapted_function.function_name)
             return r
 
-    def _add_class_hierarchy_to_python_type(self, python_type: str) -> str:
+    def _add_class_hierarchy_to_python_type__fixme(self, python_type: str) -> str:
         """Work around a bug in mypy:
         if a given type (param type or return type) is equal to the current class,
         then we need to provide the whole class hierarchy.
+
+        Fixme: this is not the only issue: the stub code below will show a typing error.
+
+            class ImCurveEdit:  # Proxy class that introduces typings for the *submodule* ImCurveEdit
+                class CurveType:
+                    ...
+                class Delegate:
+                    def get_curve_type(self) -> CurveType:  <== here we should write ImCurveEdit.CurveType
+                        ...
+
+        This implies that we need to include the whole namespace hierarchy,
+        at least when using proxy class to introduce namespaces.
         """
+
         if not self.cpp_element().is_method():
             return python_type
         parent_struct = self.cpp_element().parent_struct_if_method()
@@ -1029,6 +1042,8 @@ class AdaptedFunction(AdaptedElement):
         for ancestor in ancestors:
             if isinstance(ancestor, CppStruct):
                 ancestor_structs_names.append(ancestor.class_name)
+            if isinstance(ancestor, CppNamespace):
+                ancestor_structs_names.append(ancestor.ns_name)
 
         parent_struct_scope_python = ".".join(ancestor_structs_names)
         if len(parent_struct_scope_python) > 0:
@@ -1046,7 +1061,7 @@ class AdaptedFunction(AdaptedElement):
             cpp_adapted_function_terse = self.cpp_adapted_function.with_terse_types()
             return_type_cpp = cpp_adapted_function_terse.str_full_return_type()
             return_type_python = cpp_to_python.type_to_python(self.options, return_type_cpp)
-            return_type_python = self._add_class_hierarchy_to_python_type(return_type_python)
+            return_type_python = self._add_class_hierarchy_to_python_type__fixme(return_type_python)
             return return_type_python
 
     def _stub_params_list_signature(self) -> List[str]:
@@ -1074,7 +1089,7 @@ class AdaptedFunction(AdaptedElement):
             # Add Optional to param_type_python if cpp_type is a pointer with default = nullptr or NULL
             if "*" in param_decl.cpp_type.modifiers and param_decl.initial_value_code in ["NULL", "nullptr"]:
                 param_type_python = f"Optional[{param_type_python}]"
-            param_type_python = self._add_class_hierarchy_to_python_type(param_type_python)
+            param_type_python = self._add_class_hierarchy_to_python_type__fixme(param_type_python)
 
             if self.is_vectorize_impl:
                 param_type_python = "np.ndarray"
