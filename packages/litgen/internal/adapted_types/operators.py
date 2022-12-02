@@ -57,6 +57,7 @@ def _cpp_to_python_operator_zero_param(cpp_operator_name: CppOperatorName) -> Op
     known_conversions: Dict[CppOperatorName, PythonOperatorName] = {
         "-": "__neg__",  # Unary minus (negation)
         "+": "__pos__",  # Unary plus
+        "bool": "__bool__",
     }
     if cpp_operator_name in known_conversions.keys():
         return known_conversions[cpp_operator_name]

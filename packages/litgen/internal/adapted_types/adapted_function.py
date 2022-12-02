@@ -1073,6 +1073,8 @@ class AdaptedFunction(AdaptedElement):
             return "Any"
         if self.is_constructor():
             return "None"
+        elif self.cpp_element().is_operator() and self.cpp_element().operator_name() == "bool":
+            return "bool"
         else:
             cpp_adapted_function_terse = self.cpp_adapted_function.with_terse_types()
             return_type_cpp = cpp_adapted_function_terse.str_full_return_type()

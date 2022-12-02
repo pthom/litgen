@@ -447,6 +447,34 @@ Soucis sur gitmodules:
 Remove SimpleRunnerParams
 Make docking mode simpler
 
+** Online emscripten ImGuiBundle Demos
+(mandel, fn comp, image editing, etc)
+
+
+** Videos by subject
+    Code generation / fidelity & doc
+    For research and devel portability
+      compare c++ and python
+    For Learners (comp)
+    For fast devel (immap)
+    Implot
+    Notebook
+    For computer vision
+      imdebug!
+    Theme editor
+
+
+
+** Inspector Exe
+=> Envoi a Vincent
+=> Avec outils de manip / node?
+
+
+** Licence in all file (refers to main license file)
+
+** Contact authors one by one
+
+
 ** App Icon???
 
 voir cx-freeze
@@ -477,44 +505,12 @@ bool RunnerGlfwOpenGl3::Impl_SetAppIcon(const std::string& iconAssetPath)
             return false;
     }
 
-** Online asm ImGuiBundle Demos
-(mandel, fn comp, image editing, etc)
+** test platforms
+    remove symlink imgui_bundle (genant sous linux si install non editable)
 
-
-** Add ImGuizmo
-
-
-** Videos by subject
-    Code generation / fidelity & doc
-    For research and devel portability
-      compare c++ and python
-    For Learners (comp)
-    For fast devel (immap)
-    Implot
-    Notebook
-    For computer vision
-      imdebug!
-    Theme editor
-
-
-
-** Inspector Exe
-=> Envoi a Vincent
-=> Avec outils de manip / node?
-
-
-** Add immapp (ImmediateApp) !!!!
-    run et compagnie
-
-** scratch
-FontAtlas
-  Hack GetGlyphRangesDefault
-
-Hack callback
-typedef int     (*ImGuiInputTextCallback)(ImGuiInputTextCallbackData* data);    // Callback function for ImGui::InputText()
-typedef void    (*ImGuiSizeCallback)(ImGuiSizeCallbackData* data);              // Callback function for ImGui::SetNextWindowSizeConstraints()
-
-
+    linux:
+       si opencv apt: ok, mais immvision not avail bien que compilé
+       si opencv pip: pb / opencv-imgcodecs
 
 ** EasyRunner:
 
@@ -524,9 +520,34 @@ typedef void    (*ImGuiSizeCallback)(ImGuiSizeCallbackData* data);              
      Easy docking config (review enum)
 
 
-** Licence in all file (refers to main license file)
+*** Add immapp (ImmediateApp) !!!!
+    run et compagnie
 
-** Contact authors one by one
+** Demos cpp close too python
+   Group
+   Code
+   ...
+
+** Ajout https://github.com/andyborrell/imgui_tex_inspect
+
+API / Load images & texture
+
+
+** Guizmo
+
+API add GizmoMatrices + tuple <bool, GizmoMatrices>
+add API bool only?
+
+Essayer d'utiliser au max glm
+
+Checbox too dark => see style
+slider instead of inputFloat?
+
+Module ImGuizmo => gizmo
+
+Rename ImGuizmoStl => ImGuizmo
+
+
 
 * srcml_cpp
   Test libclang: see https://shaharmike.com/cpp/libclang/ & https://libclang.readthedocs.io/en/latest/
