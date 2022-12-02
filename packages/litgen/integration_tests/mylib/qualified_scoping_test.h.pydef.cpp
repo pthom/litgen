@@ -25,7 +25,7 @@ void py_init_module_mylib(py::module& m)
     ////////////////////    <generated_from:qualified_scoping_test.h>    ////////////////////
 
     { // <namespace N>
-        py::module_ pyNsN = m.def_submodule("N", "");
+        py::module_ pyNsN = m.def_submodule("n", "");
         auto pyNsN_ClassS =
             py::class_<N::S>
                 (pyNsN, "S", "")

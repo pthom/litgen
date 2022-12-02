@@ -75,7 +75,7 @@ void py_init_module_mylib(py::module& m)
         ;
 
     { // <namespace AAA>
-        py::module_ pyNsAAA = m.def_submodule("AAA", "");
+        py::module_ pyNsAAA = m.def_submodule("aaa", "");
         auto pyNsAAA_ClassCopyable_Template_int =
             py::class_<AAA::Copyable_Template<int>>
                 (pyNsAAA, "Copyable_TemplateInt", "")

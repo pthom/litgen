@@ -379,7 +379,7 @@ def test_deepcopy_with_specialization():
         generated_code.pydef_code,
         """
         { // <namespace Ns>
-            py::module_ pyNsNs = m.def_submodule("Ns", "");
+            py::module_ pyNsNs = m.def_submodule("ns", "");
             auto pyNsNs_ClassFoo_int =
                 py::class_<Ns::Foo<int>>
                     (pyNsNs, "FooInt", "")
@@ -403,8 +403,8 @@ def test_deepcopy_with_specialization():
     code_utils.assert_are_codes_equal(
         generated_code.stub_code,
         '''
-        # <submodule Ns>
-        class Ns:  # Proxy class that introduces typings for the *submodule* Ns
+        # <submodule ns>
+        class ns:  # Proxy class that introduces typings for the *submodule* ns
             pass  # (This corresponds to a C++ namespace. All method are static!)
             #  ------------------------------------------------------------------------
             #      <template specializations for class Foo>
@@ -416,7 +416,7 @@ def test_deepcopy_with_specialization():
             #      </template specializations for class Foo>
             #  ------------------------------------------------------------------------
 
-        # </submodule Ns>
+        # </submodule ns>
     ''',
     )
 
@@ -513,8 +513,8 @@ def test_named_ctor_helper_struct() -> None:
     code_utils.assert_are_codes_equal(
         generated_code.stub_code,
         '''
-        # <submodule A>
-        class A:  # Proxy class that introduces typings for the *submodule* A
+        # <submodule a>
+        class a:  # Proxy class that introduces typings for the *submodule* a
             pass  # (This corresponds to a C++ namespace. All method are static!)
             class Foo(enum.Enum):
                 foo1 = enum.auto() # (= 0)
@@ -534,7 +534,7 @@ def test_named_ctor_helper_struct() -> None:
                     """Auto-generated default constructor with named params"""
                     pass
 
-        # </submodule A>
+        # </submodule a>
     ''',
     )
 
@@ -544,7 +544,7 @@ def test_named_ctor_helper_struct() -> None:
         generated_code.pydef_code,
         """
         { // <namespace A>
-            py::module_ pyNsA = m.def_submodule("A", "");
+            py::module_ pyNsA = m.def_submodule("a", "");
             py::enum_<A::Foo>(pyNsA, "Foo", py::arithmetic(), "")
                 .value("foo1", A::Foo::Foo1, "");
 

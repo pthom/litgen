@@ -3,19 +3,19 @@ import pytest
 
 
 def test_my_protected_method():
-    m = lg_mylib.Root.Inner.MyVirtualClass()
+    m = lg_mylib.root.inner.MyVirtualClass()
     assert m.foo_virtual_protected(1) == 43
 
 
 def test_virtual_pure_raises_exception():
-    m = lg_mylib.Root.Inner.MyVirtualClass()
+    m = lg_mylib.root.inner.MyVirtualClass()
     with pytest.raises(RuntimeError):
         # This should throw, since we are calling a pure virtual method
         r = m.foo_virtual_public_pure()
         print(r)
 
 
-class MyVirtualClassDerived(lg_mylib.Root.Inner.MyVirtualClass):
+class MyVirtualClassDerived(lg_mylib.root.inner.MyVirtualClass):
     def foo_virtual_public_pure(self) -> int:
         return 3
 
@@ -46,12 +46,12 @@ def test_override_from_python():
 
 def test_combining_virtual_functions_and_inheritance():
 
-    c = lg_mylib.Root.Inner.MyVirtualDerivate()
+    c = lg_mylib.root.inner.MyVirtualDerivate()
     assert c.foo_virtual_public_pure() == 53
     assert c.foo_derivate() == 48
     assert c.foo_concrete(3, "Robert") == "45_53_Hello Robert"
 
-    class MyVirtualClassDerivedAgainFromPython(lg_mylib.Root.Inner.MyVirtualDerivate):
+    class MyVirtualClassDerivedAgainFromPython(lg_mylib.root.inner.MyVirtualDerivate):
         def foo_derivate(self) -> int:
             return 49
 

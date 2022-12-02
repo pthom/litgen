@@ -337,7 +337,7 @@ def test_vectorization():
         generated_code.pydef_code,
         """
         { // <namespace MathFunctions>
-            py::module_ pyNsMathFunctions = m.def_submodule("MathFunctions", "");
+            py::module_ pyNsMathFunctions = m.def_submodule("math_functions", "");
             pyNsMathFunctions.def("vectorizable_sum",
                 MathFunctions::vectorizable_sum, py::arg("x"), py::arg("y"));
             pyNsMathFunctions.def("v_vectorizable_sum_v",
@@ -348,8 +348,8 @@ def test_vectorization():
     code_utils.assert_are_codes_equal(
         generated_code.stub_code,
         """
-        # <submodule MathFunctions>
-        class MathFunctions:  # Proxy class that introduces typings for the *submodule* MathFunctions
+        # <submodule math_functions>
+        class math_functions:  # Proxy class that introduces typings for the *submodule* math_functions
             pass  # (This corresponds to a C++ namespace. All method are static!)
             @staticmethod
             def vectorizable_sum(x: float, y: float) -> float:
@@ -358,7 +358,7 @@ def test_vectorization():
             def v_vectorizable_sum_v(x: np.ndarray, y: np.ndarray) -> np.ndarray:
                 pass
 
-        # </submodule MathFunctions>
+        # </submodule math_functions>
     """,
     )
 
@@ -456,7 +456,7 @@ def test_qualified_param_types():
         generated_code.pydef_code,
         """
         { // <namespace Ns>
-            py::module_ pyNsNs = m.def_submodule("Ns", "");
+            py::module_ pyNsNs = m.def_submodule("ns", "");
             auto pyNsNs_ClassS =
                 py::class_<Ns::S>
                     (pyNsNs, "S", "")
@@ -488,7 +488,7 @@ def test_qualified_param_types_with_adapted_params():
         generated_code.pydef_code,
         """
         { // <namespace Ns>
-            py::module_ pyNsNs = m.def_submodule("Ns", "");
+            py::module_ pyNsNs = m.def_submodule("ns", "");
             auto pyNsNs_ClassS =
                 py::class_<Ns::S>
                     (pyNsNs, "S", "")

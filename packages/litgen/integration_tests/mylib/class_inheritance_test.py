@@ -2,11 +2,11 @@ import lg_mylib
 
 
 def test_inherit():
-    dog = lg_mylib.Animals.Dog("Lonely dog")
+    dog = lg_mylib.animals.Dog("Lonely dog")
     assert dog.name == "Lonely dog_dog"
     assert dog.bark() == "BIG WOOF!"
 
-    pet_dog = lg_mylib.Home.PetDog("Sammy")
+    pet_dog = lg_mylib.home.PetDog("Sammy")
     assert pet_dog.name == "Sammy_dog"
     assert pet_dog.bark() == "woof"
     assert pet_dog.is_pet()

@@ -63,8 +63,8 @@ namespace Main  // This namespace should not be outputted as a submodule
         """This namespace should not be outputted as a submodule"""
 
 
-        # <submodule Inner>
-        class Inner:  # Proxy class that introduces typings for the *submodule* Inner
+        # <submodule inner>
+        class inner:  # Proxy class that introduces typings for the *submodule* inner
             pass  # (This corresponds to a C++ namespace. All method are static!)
             """ this is an inner namespace (this comment should become the namespace doc)"""
             @staticmethod
@@ -74,7 +74,7 @@ namespace Main  // This namespace should not be outputted as a submodule
             def foo_inner2() -> None:
                 pass
 
-        # </submodule Inner>
+        # </submodule inner>
     ''',
     )
 
@@ -85,7 +85,7 @@ namespace Main  // This namespace should not be outputted as a submodule
                 FooRoot);
 
             { // <namespace Inner>
-                py::module_ pyNsInner = m.def_submodule("Inner", "this is an inner namespace (this comment should become the namespace doc)");
+                py::module_ pyNsInner = m.def_submodule("inner", "this is an inner namespace (this comment should become the namespace doc)");
                 pyNsInner.def("foo_inner",
                     Main::Inner::FooInner);
                 pyNsInner.def("foo_inner2",

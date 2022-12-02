@@ -43,12 +43,12 @@ def test_protected_virtual_class():
     code_utils.assert_are_codes_equal(
         generated_code.stub_code,
         '''
-        # <submodule Root>
-        class Root:  # Proxy class that introduces typings for the *submodule* Root
+        # <submodule root>
+        class root:  # Proxy class that introduces typings for the *submodule* root
             pass  # (This corresponds to a C++ namespace. All method are static!)
 
-            # <submodule Inner>
-            class Inner:  # Proxy class that introduces typings for the *submodule* Inner
+            # <submodule inner>
+            class inner:  # Proxy class that introduces typings for the *submodule* inner
                 pass  # (This corresponds to a C++ namespace. All method are static!)
                 class MyVirtualClass:
 
@@ -69,9 +69,9 @@ def test_protected_virtual_class():
                     # </protected_methods>
 
 
-            # </submodule Inner>
+            # </submodule inner>
 
-        # </submodule Root>
+        # </submodule root>
     ''',
     )
 
@@ -79,9 +79,9 @@ def test_protected_virtual_class():
         generated_code.pydef_code,
         """
         { // <namespace Root>
-            py::module_ pyNsRoot = m.def_submodule("Root", "");
+            py::module_ pyNsRoot = m.def_submodule("root", "");
             { // <namespace Inner>
-                py::module_ pyNsRoot_NsInner = pyNsRoot.def_submodule("Inner", "");
+                py::module_ pyNsRoot_NsInner = pyNsRoot.def_submodule("inner", "");
                 auto pyNsRoot_NsInner_ClassMyVirtualClass =
                     py::class_<Root::Inner::MyVirtualClass, Root::Inner::MyVirtualClass_trampoline>
                         (pyNsRoot_NsInner, "MyVirtualClass", "")

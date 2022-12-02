@@ -1144,7 +1144,7 @@ void py_init_module_lg_mylib(py::module& m)
     m.attr("FLOAT") = 3.14;
 
     { // <namespace MathFunctions>
-        py::module_ pyNsMathFunctions = m.def_submodule("MathFunctions", " Vectorizable functions example\n    Numeric functions (i.e. function accepting and returning only numeric params or py::array), can be vectorized\n    i.e. they will accept numpy arrays as an input.\n\n Auto-vectorization is enabled via the following options:\n     options.fn_namespace_vectorize__regex: str = r\"^MathFunctions$\"\n     options.fn_vectorize__regex = r\".*\"\n");
+        py::module_ pyNsMathFunctions = m.def_submodule("math_functions", " Vectorizable functions example\n    Numeric functions (i.e. function accepting and returning only numeric params or py::array), can be vectorized\n    i.e. they will accept numpy arrays as an input.\n\n Auto-vectorization is enabled via the following options:\n     options.fn_namespace_vectorize__regex: str = r\"^MathFunctions$\"\n     options.fn_vectorize__regex = r\".*\"\n");
         pyNsMathFunctions.def("vectorizable_sum",
             MathFunctions::vectorizable_sum, py::arg("x"), py::arg("y"));
         pyNsMathFunctions.def("vectorizable_sum",
@@ -1152,7 +1152,7 @@ void py_init_module_lg_mylib(py::module& m)
     } // </namespace MathFunctions>
 
     { // <namespace Animals>
-        py::module_ pyNsAnimals = m.def_submodule("Animals", "");
+        py::module_ pyNsAnimals = m.def_submodule("animals", "");
         auto pyNsAnimals_ClassAnimal =
             py::class_<Animals::Animal>
                 (pyNsAnimals, "Animal", "")
@@ -1173,7 +1173,7 @@ void py_init_module_lg_mylib(py::module& m)
     } // </namespace Animals>
 
     { // <namespace Home>
-        py::module_ pyNsHome = m.def_submodule("Home", "");
+        py::module_ pyNsHome = m.def_submodule("home", "");
         auto pyNsHome_ClassPet =
             py::class_<Home::Pet>
                 (pyNsHome, "Pet", "")
@@ -1194,7 +1194,7 @@ void py_init_module_lg_mylib(py::module& m)
     } // </namespace Home>
 
     { // <namespace AAA>
-        py::module_ pyNsAAA = m.def_submodule("AAA", "");
+        py::module_ pyNsAAA = m.def_submodule("aaa", "");
         auto pyNsAAA_ClassCopyable_Template_int =
             py::class_<AAA::Copyable_Template<int>>
                 (pyNsAAA, "Copyable_TemplateInt", "")
@@ -1217,9 +1217,9 @@ void py_init_module_lg_mylib(py::module& m)
     } // </namespace AAA>
 
     { // <namespace Root>
-        py::module_ pyNsRoot = m.def_submodule("Root", "");
+        py::module_ pyNsRoot = m.def_submodule("root", "");
         { // <namespace Inner>
-            py::module_ pyNsRoot_NsInner = pyNsRoot.def_submodule("Inner", "");
+            py::module_ pyNsRoot_NsInner = pyNsRoot.def_submodule("inner", "");
             auto pyNsRoot_NsInner_ClassMyVirtualClass =
                 py::class_<Root::Inner::MyVirtualClass, Root::Inner::MyVirtualClass_trampoline>
                     (pyNsRoot_NsInner, "MyVirtualClass", "")
@@ -1249,7 +1249,7 @@ void py_init_module_lg_mylib(py::module& m)
     } // </namespace Root>
 
     { // <namespace SomeNamespace>
-        py::module_ pyNsSomeNamespace = m.def_submodule("SomeNamespace", "namespace SomeNamespace");
+        py::module_ pyNsSomeNamespace = m.def_submodule("some_namespace", "namespace SomeNamespace");
         auto pyNsSomeNamespace_ClassParentStruct =
             py::class_<SomeNamespace::ParentStruct>
                 (pyNsSomeNamespace, "ParentStruct", "");
@@ -1464,7 +1464,7 @@ void py_init_module_lg_mylib(py::module& m)
                 },     py::arg("items"), py::arg("output_0"), py::arg("output_1"))
             ;
         { // <namespace SomeInnerNamespace>
-            py::module_ pyNsSomeNamespace_NsSomeInnerNamespace = pyNsSomeNamespace.def_submodule("SomeInnerNamespace", "namespace SomeInnerNamespace");
+            py::module_ pyNsSomeNamespace_NsSomeInnerNamespace = pyNsSomeNamespace.def_submodule("some_inner_namespace", "namespace SomeInnerNamespace");
             pyNsSomeNamespace_NsSomeInnerNamespace.def("toggle_bool_pointer",
                 [](BoxedBool & v)
                 {
@@ -1650,7 +1650,7 @@ void py_init_module_lg_mylib(py::module& m)
     } // </namespace SomeNamespace>
 
     { // <namespace Inner>
-        py::module_ pyNsInner = m.def_submodule("Inner", "this is an inner namespace (this comment should become the namespace doc)");
+        py::module_ pyNsInner = m.def_submodule("inner", "this is an inner namespace (this comment should become the namespace doc)");
         pyNsInner.def("foo_inner",
             Mylib::Inner::FooInner);
         pyNsInner.def("foo_inner2",
@@ -1658,7 +1658,7 @@ void py_init_module_lg_mylib(py::module& m)
     } // </namespace Inner>
 
     { // <namespace N>
-        py::module_ pyNsN = m.def_submodule("N", "");
+        py::module_ pyNsN = m.def_submodule("n", "");
         auto pyNsN_ClassS =
             py::class_<N::S>
                 (pyNsN, "S", "")
@@ -1685,7 +1685,7 @@ void py_init_module_lg_mylib(py::module& m)
     } // </namespace N>
 
     { // <namespace A>
-        py::module_ pyNsA = m.def_submodule("A", "");
+        py::module_ pyNsA = m.def_submodule("a", "");
         py::enum_<A::Foo>(pyNsA, "Foo", py::arithmetic(), "")
             .value("foo1", A::Foo::Foo1, "")
             .value("foo2", A::Foo::Foo2, "")

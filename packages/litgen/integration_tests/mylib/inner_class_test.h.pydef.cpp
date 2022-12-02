@@ -25,7 +25,7 @@ void py_init_module_mylib(py::module& m)
     ////////////////////    <generated_from:inner_class_test.h>    ////////////////////
 
     { // <namespace SomeNamespace>
-        py::module_ pyNsSomeNamespace = m.def_submodule("SomeNamespace", "namespace SomeNamespace");
+        py::module_ pyNsSomeNamespace = m.def_submodule("some_namespace", "namespace SomeNamespace");
         auto pyNsSomeNamespace_ClassParentStruct =
             py::class_<SomeNamespace::ParentStruct>
                 (pyNsSomeNamespace, "ParentStruct", "");

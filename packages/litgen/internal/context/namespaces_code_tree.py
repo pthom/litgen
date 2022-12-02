@@ -1,6 +1,5 @@
 from __future__ import annotations
 from typing import TYPE_CHECKING, Dict, List, Set
-
 from codemanip import code_utils
 
 from litgen.internal.context.type_synonyms import *
@@ -45,6 +44,8 @@ class NamespacesCodeTree:
             self._namespace_code_outro = "\n} // </namespace NS_NAME>\n"
 
     def full_tree_code(self, indent_str: str, current_namespace_name: str = "") -> str:
+        from litgen.internal import cpp_to_python
+
         r = ""
 
         if len(current_namespace_name) == 0 or len(self._namespace_code) == 0:
@@ -54,8 +55,12 @@ class NamespacesCodeTree:
                 self._options.namespace_root__regex, current_namespace_name
             )
 
+        ns_written_name = current_namespace_name
+        if self._code_type == PydefOrStub.Stub:
+            ns_written_name = cpp_to_python.namespace_name_to_python(self._options, ns_written_name)
+
         if not is_namespace_ignored:
-            r += self._namespace_code_intro.replace("NS_NAME", current_namespace_name)
+            r += self._namespace_code_intro.replace("NS_NAME", ns_written_name)
 
         r += self._namespace_code
 
@@ -66,7 +71,7 @@ class NamespacesCodeTree:
             r += sub_code
 
         if not is_namespace_ignored:
-            r += self._namespace_code_outro.replace("NS_NAME", current_namespace_name)
+            r += self._namespace_code_outro.replace("NS_NAME", ns_written_name)
 
         return r
 

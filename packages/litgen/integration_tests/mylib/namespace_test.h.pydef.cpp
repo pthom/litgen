@@ -27,7 +27,7 @@ void py_init_module_mylib(py::module& m)
         FooRoot);
 
     { // <namespace Inner>
-        py::module_ pyNsInner = m.def_submodule("Inner", "this is an inner namespace (this comment should become the namespace doc)");
+        py::module_ pyNsInner = m.def_submodule("inner", "this is an inner namespace (this comment should become the namespace doc)");
         pyNsInner.def("foo_inner",
             Mylib::Inner::FooInner);
         pyNsInner.def("foo_inner2",

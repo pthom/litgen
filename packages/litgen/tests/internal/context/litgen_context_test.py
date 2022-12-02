@@ -44,8 +44,8 @@ namespace Main
             pass
 
 
-        # <submodule Inner>
-        class Inner:  # Proxy class that introduces typings for the *submodule* Inner
+        # <submodule inner>
+        class inner:  # Proxy class that introduces typings for the *submodule* inner
             pass  # (This corresponds to a C++ namespace. All method are static!)
             """ This is the inner namespace"""
             @staticmethod
@@ -55,7 +55,7 @@ namespace Main
             def foo_inner2() -> None:
                 pass
 
-        # </submodule Inner>
+        # </submodule inner>
     ''',
     )
 
@@ -70,7 +70,7 @@ namespace Main
             Main::FooMain);
 
         { // <namespace Inner>
-            py::module_ pyNsInner = m.def_submodule("Inner", "This is the inner namespace");
+            py::module_ pyNsInner = m.def_submodule("inner", "This is the inner namespace");
             pyNsInner.def("foo_inner",
                 Main::Inner::FooInner);
             pyNsInner.def("foo_inner2",
@@ -124,13 +124,13 @@ def test_context_replacements():
             ) -> int:
             pass
 
-        # <submodule Inner>
-        class Inner:  # Proxy class that introduces typings for the *submodule* Inner
+        # <submodule inner>
+        class inner:  # Proxy class that introduces typings for the *submodule* inner
             pass  # (This corresponds to a C++ namespace. All method are static!)
             @staticmethod
             def foo_value() -> int:
                 pass
 
-        # </submodule Inner>
+        # </submodule inner>
     """,
     )

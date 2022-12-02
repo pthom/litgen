@@ -78,7 +78,7 @@ void py_init_module_mylib(py::module& m)
     ////////////////////    <generated_from:mix_adapters_class_test.h>    ////////////////////
 
     { // <namespace SomeNamespace>
-        py::module_ pyNsSomeNamespace = m.def_submodule("SomeNamespace", "");
+        py::module_ pyNsSomeNamespace = m.def_submodule("some_namespace", "");
         auto pyNsSomeNamespace_ClassBlah =
             py::class_<SomeNamespace::Blah>
                 (pyNsSomeNamespace, "Blah", "struct Blah")
@@ -258,7 +258,7 @@ void py_init_module_mylib(py::module& m)
                 },     py::arg("items"), py::arg("output_0"), py::arg("output_1"))
             ;
         { // <namespace SomeInnerNamespace>
-            py::module_ pyNsSomeNamespace_NsSomeInnerNamespace = pyNsSomeNamespace.def_submodule("SomeInnerNamespace", "namespace SomeInnerNamespace");
+            py::module_ pyNsSomeNamespace_NsSomeInnerNamespace = pyNsSomeNamespace.def_submodule("some_inner_namespace", "namespace SomeInnerNamespace");
             pyNsSomeNamespace_NsSomeInnerNamespace.def("toggle_bool_pointer",
                 [](BoxedBool & v)
                 {

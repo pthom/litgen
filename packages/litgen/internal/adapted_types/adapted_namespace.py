@@ -41,7 +41,7 @@ class AdaptedNamespace(AdaptedElement):
             return []
         self.lg_context.namespaces_stub.register_namespace_creation(self._qualified_namespace_name())
 
-        ns_name = self.namespace_name()
+        ns_name = cpp_to_python.namespace_name_to_python(self.options, self.namespace_name())
         _i_ = self.options.indent_python_spaces()
         proxy_class_code = code_utils.unindent_code(
             f"""
@@ -92,7 +92,7 @@ class AdaptedNamespace(AdaptedElement):
             self.options, self.cpp_element().cpp_element_comments.full_comment()
         )
 
-        replace_tokens.module_name = self.namespace_name()
+        replace_tokens.module_name = cpp_to_python.namespace_name_to_python(self.options, self.namespace_name())
 
         submodule_code_ = code_utils.process_code_template(
             input_string=submodule_code_template,

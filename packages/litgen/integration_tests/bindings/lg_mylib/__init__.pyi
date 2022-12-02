@@ -853,8 +853,8 @@ FLOAT = 3.14
 
 ##include "mylib/sandbox.h"
 
-# <submodule MathFunctions>
-class MathFunctions:  # Proxy class that introduces typings for the *submodule* MathFunctions
+# <submodule math_functions>
+class math_functions:  # Proxy class that introduces typings for the *submodule* math_functions
     pass  # (This corresponds to a C++ namespace. All method are static!)
     """ Vectorizable functions example
         Numeric functions (i.e. function accepting and returning only numeric params or py::array), can be vectorized
@@ -872,10 +872,10 @@ class MathFunctions:  # Proxy class that introduces typings for the *submodule* 
     def vectorizable_sum(x: np.ndarray, y: np.ndarray) -> np.ndarray:
         pass
 
-# </submodule MathFunctions>
+# </submodule math_functions>
 
-# <submodule Animals>
-class Animals:  # Proxy class that introduces typings for the *submodule* Animals
+# <submodule animals>
+class animals:  # Proxy class that introduces typings for the *submodule* animals
     pass  # (This corresponds to a C++ namespace. All method are static!)
 
     class Animal:
@@ -889,10 +889,10 @@ class Animals:  # Proxy class that introduces typings for the *submodule* Animal
         def bark(self) -> str:
             pass
 
-# </submodule Animals>
+# </submodule animals>
 
-# <submodule Home>
-class Home:  # Proxy class that introduces typings for the *submodule* Home
+# <submodule home>
+class home:  # Proxy class that introduces typings for the *submodule* home
     pass  # (This corresponds to a C++ namespace. All method are static!)
 
     class Pet:
@@ -908,10 +908,10 @@ class Home:  # Proxy class that introduces typings for the *submodule* Home
         def bark(self) -> str:
             pass
 
-# </submodule Home>
+# </submodule home>
 
-# <submodule AAA>
-class AAA:  # Proxy class that introduces typings for the *submodule* AAA
+# <submodule aaa>
+class aaa:  # Proxy class that introduces typings for the *submodule* aaa
     pass  # (This corresponds to a C++ namespace. All method are static!)
     #  ------------------------------------------------------------------------
     #      <template specializations for class Copyable_Template>
@@ -923,14 +923,14 @@ class AAA:  # Proxy class that introduces typings for the *submodule* AAA
     #      </template specializations for class Copyable_Template>
     #  ------------------------------------------------------------------------
 
-# </submodule AAA>
+# </submodule aaa>
 
-# <submodule Root>
-class Root:  # Proxy class that introduces typings for the *submodule* Root
+# <submodule root>
+class root:  # Proxy class that introduces typings for the *submodule* root
     pass  # (This corresponds to a C++ namespace. All method are static!)
 
-    # <submodule Inner>
-    class Inner:  # Proxy class that introduces typings for the *submodule* Inner
+    # <submodule inner>
+    class inner:  # Proxy class that introduces typings for the *submodule* inner
         pass  # (This corresponds to a C++ namespace. All method are static!)
 
         class MyVirtualClass:
@@ -961,12 +961,12 @@ class Root:  # Proxy class that introduces typings for the *submodule* Root
                 pass
             def foo_derivate(self) -> int:  # overridable
                 pass
-    # </submodule Inner>
+    # </submodule inner>
 
-# </submodule Root>
+# </submodule root>
 
-# <submodule SomeNamespace>
-class SomeNamespace:  # Proxy class that introduces typings for the *submodule* SomeNamespace
+# <submodule some_namespace>
+class some_namespace:  # Proxy class that introduces typings for the *submodule* some_namespace
     pass  # (This corresponds to a C++ namespace. All method are static!)
     """ namespace SomeNamespace"""
 
@@ -1023,8 +1023,8 @@ class SomeNamespace:  # Proxy class that introduces typings for the *submodule* 
         def __init__(self) -> None:
             """Auto-generated default constructor"""
             pass
-    # <submodule SomeInnerNamespace>
-    class SomeInnerNamespace:  # Proxy class that introduces typings for the *submodule* SomeInnerNamespace
+    # <submodule some_inner_namespace>
+    class some_inner_namespace:  # Proxy class that introduces typings for the *submodule* some_inner_namespace
         pass  # (This corresponds to a C++ namespace. All method are static!)
         """ namespace SomeInnerNamespace"""
         @staticmethod
@@ -1056,12 +1056,12 @@ class SomeNamespace:  # Proxy class that introduces typings for the *submodule* 
             items: List[str], output_0: BoxedInt, output_1: BoxedInt
         ) -> int:
             pass
-    # </submodule SomeInnerNamespace>
+    # </submodule some_inner_namespace>
 
-# </submodule SomeNamespace>
+# </submodule some_namespace>
 
-# <submodule Inner>
-class Inner:  # Proxy class that introduces typings for the *submodule* Inner
+# <submodule inner>
+class inner:  # Proxy class that introduces typings for the *submodule* inner
     pass  # (This corresponds to a C++ namespace. All method are static!)
     """ this is an inner namespace (this comment should become the namespace doc)"""
     @staticmethod
@@ -1071,10 +1071,10 @@ class Inner:  # Proxy class that introduces typings for the *submodule* Inner
     def foo_inner2() -> int:
         pass
 
-# </submodule Inner>
+# </submodule inner>
 
-# <submodule N>
-class N:  # Proxy class that introduces typings for the *submodule* N
+# <submodule n>
+class n:  # Proxy class that introduces typings for the *submodule* n
     pass  # (This corresponds to a C++ namespace. All method are static!)
 
     class S:
@@ -1097,10 +1097,10 @@ class N:  # Proxy class that introduces typings for the *submodule* N
     def foo(e: E = E.a, s: S = S()) -> None:
         pass
 
-# </submodule N>
+# </submodule n>
 
-# <submodule A>
-class A:  # Proxy class that introduces typings for the *submodule* A
+# <submodule a>
+class a:  # Proxy class that introduces typings for the *submodule* a
     pass  # (This corresponds to a C++ namespace. All method are static!)
 
     class Foo(enum.Enum):
@@ -1124,7 +1124,7 @@ class A:  # Proxy class that introduces typings for the *submodule* A
             """Auto-generated default constructor with named params"""
             pass
 
-# </submodule A>
+# </submodule a>
 ####################    </generated_from:mylib_amalgamation.h>    ####################
 
 # </litgen_stub>

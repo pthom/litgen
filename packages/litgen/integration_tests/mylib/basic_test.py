@@ -28,18 +28,18 @@ def test_generic_function():
 
 
 def test_vectorizable_functions():
-    assert lg_mylib.MathFunctions.vectorizable_sum(1, 2) == 3
+    assert lg_mylib.math_functions.vectorizable_sum(1, 2) == 3
 
     import numpy as np
 
     x = np.array([[1, 3], [5, 7]])
     y = np.array([[2, 4], [6, 8]])
-    z = lg_mylib.MathFunctions.vectorizable_sum(x, y)
+    z = lg_mylib.math_functions.vectorizable_sum(x, y)
     expected = np.array([[3.0, 7.0], [11.0, 15.0]])
     assert (z == expected).all()
 
 
 def test_ignored_namespace():
-    assert "Detail" not in dir(lg_mylib)
+    assert "detail" not in dir(lg_mylib)
     with pytest.raises(AttributeError):
-        _ = lg_mylib.Detail.foo()
+        _ = lg_mylib.detail.foo()

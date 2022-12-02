@@ -61,6 +61,7 @@ class LitgenOptions:
     #   to modify the outputted python code
     type_replacements: RegexReplacementList  # = cpp_to_python.standard_type_replacements() by default
     var_names_replacements: RegexReplacementList  # = RegexReplacementList() by default (i.e. empty)
+    namespace_names_replacements: RegexReplacementList  # = RegexReplacementList() by default (i.e. empty)
     function_names_replacements: RegexReplacementList  # = RegexReplacementList() by default (i.e. empty)
     value_replacements: RegexReplacementList  # = cpp_to_python.standard_value_replacements() by default
     comments_replacements: RegexReplacementList  # = cpp_to_python.standard_comment_replacements() by default
@@ -69,7 +70,7 @@ class LitgenOptions:
     ################################################################################
     #    <Layout settings for the generated python stub code>
     ################################################################################
-    # Convert variables and functions names to snake_case (class, structs, and enums names are always preserved)
+    # Convert variables, functions and namespaces names to snake_case (class, structs, and enums names are always preserved)
     python_convert_to_snake_case: bool = True
     # Size of an indentation in the python stubs
     python_indent_size = 4
@@ -547,6 +548,7 @@ class LitgenOptions:
         self.function_names_replacements = RegexReplacementList()
         self.var_names_replacements = RegexReplacementList()
         self.macro_name_replacements = RegexReplacementList()
+        self.namespace_names_replacements = RegexReplacementList()
 
         self.fn_template_options = TemplateFunctionsOptions()
         self.class_template_options = TemplateClassOptions()

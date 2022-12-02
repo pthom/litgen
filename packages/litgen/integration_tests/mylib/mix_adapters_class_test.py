@@ -9,7 +9,7 @@ import numpy as np
 
 
 def test_template_method():
-    blah = lg_mylib.SomeNamespace.Blah()
+    blah = lg_mylib.some_namespace.Blah()
     x = np.array((1, 2, 3), float)
     blah.templated_mul_inside_buffer(x, 3.0)
     assert (x == np.array((3, 6, 9), float)).all()

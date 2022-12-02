@@ -25,7 +25,7 @@ void py_init_module_mylib(py::module& m)
     ////////////////////    <generated_from:class_default_ctor_test.h>    ////////////////////
 
     { // <namespace A>
-        py::module_ pyNsA = m.def_submodule("A", "");
+        py::module_ pyNsA = m.def_submodule("a", "");
         py::enum_<A::Foo>(pyNsA, "Foo", py::arithmetic(), "")
             .value("foo1", A::Foo::Foo1, "")
             .value("foo2", A::Foo::Foo2, "")

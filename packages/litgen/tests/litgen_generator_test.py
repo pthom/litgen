@@ -30,7 +30,7 @@ def test_scoping_no_root_namespace():
         generated_code.pydef_code,
         """
             { // <namespace N>
-                py::module_ pyNsN = m.def_submodule("N", "");
+                py::module_ pyNsN = m.def_submodule("n", "");
                 auto pyNsN_ClassS =
                     py::class_<N::S>
                         (pyNsN, "S", "")
@@ -62,8 +62,8 @@ def test_scoping_no_root_namespace():
     code_utils.assert_are_codes_equal(
         generated_code.stub_code,
         '''
-        # <submodule N>
-        class N:  # Proxy class that introduces typings for the *submodule* N
+        # <submodule n>
+        class n:  # Proxy class that introduces typings for the *submodule* n
             pass  # (This corresponds to a C++ namespace. All method are static!)
             class S:
                 def __init__(self) -> None:
@@ -84,6 +84,6 @@ def test_scoping_no_root_namespace():
             def foo(e: E = E.a, s: S = S()) -> S:
                 pass
 
-        # </submodule N>
+        # </submodule n>
     ''',
     )

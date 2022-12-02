@@ -27,7 +27,7 @@ void py_init_module_mylib(py::module& m)
         make_dog, "Test that downcasting works: the return type is Animal, but it should bark!");
 
     { // <namespace Animals>
-        py::module_ pyNsAnimals = m.def_submodule("Animals", "");
+        py::module_ pyNsAnimals = m.def_submodule("animals", "");
         auto pyNsAnimals_ClassAnimal =
             py::class_<Animals::Animal>
                 (pyNsAnimals, "Animal", "")
@@ -48,7 +48,7 @@ void py_init_module_mylib(py::module& m)
     } // </namespace Animals>
 
     { // <namespace Home>
-        py::module_ pyNsHome = m.def_submodule("Home", "");
+        py::module_ pyNsHome = m.def_submodule("home", "");
         auto pyNsHome_ClassPet =
             py::class_<Home::Pet>
                 (pyNsHome, "Pet", "")

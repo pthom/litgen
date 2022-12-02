@@ -122,9 +122,9 @@ void py_init_module_mylib(py::module& m)
     ////////////////////    <generated_from:class_virtual_test.h>    ////////////////////
 
     { // <namespace Root>
-        py::module_ pyNsRoot = m.def_submodule("Root", "");
+        py::module_ pyNsRoot = m.def_submodule("root", "");
         { // <namespace Inner>
-            py::module_ pyNsRoot_NsInner = pyNsRoot.def_submodule("Inner", "");
+            py::module_ pyNsRoot_NsInner = pyNsRoot.def_submodule("inner", "");
             auto pyNsRoot_NsInner_ClassMyVirtualClass =
                 py::class_<Root::Inner::MyVirtualClass, Root::Inner::MyVirtualClass_trampoline>
                     (pyNsRoot_NsInner, "MyVirtualClass", "")

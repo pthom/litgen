@@ -533,19 +533,12 @@ bool RunnerGlfwOpenGl3::Impl_SetAppIcon(const std::string& iconAssetPath)
 API / Load images & texture
 
 
+Issue / MacOS
+Add tool / load Image
+
 ** Guizmo
 
-API add GizmoMatrices + tuple <bool, GizmoMatrices>
-add API bool only?
-
-Essayer d'utiliser au max glm
-
-Checbox too dark => see style
-slider instead of inputFloat?
-
-Module ImGuizmo => gizmo
-
-Rename ImGuizmoStl => ImGuizmo
+add lib to lib tool & autogen
 
 
 
