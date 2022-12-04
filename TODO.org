@@ -427,6 +427,12 @@ Python forums
 Soucis sur gitmodules:
   imspinner absent et implot present deux fois
 
+** Post Issue https://github.com/andyborrell/imgui_tex_inspect
+Poster Issue shader MacOS
+
+
+
+
 ** Faq Fullscreens
        Sdl/FullScreenDesktopResolution:
          click issue (need click higher !) on monitor 0
@@ -465,14 +471,18 @@ Make docking mode simpler
 
 
 
-** Inspector Exe
-=> Envoi a Vincent
-=> Avec outils de manip / node?
-
-
 ** Licence in all file (refers to main license file)
 
 ** Contact authors one by one
+** Demos cpp close too python
+   Group
+   Code
+   ...
+
+   Doc markdow by lib with code
+     => MdWrapper: handle code with TextEdit! (resizable? see https://github.com/ocornut/imgui/issues/319)
+
+  Integrer ImGuiManual
 
 
 ** App Icon???
@@ -505,42 +515,49 @@ bool RunnerGlfwOpenGl3::Impl_SetAppIcon(const std::string& iconAssetPath)
             return false;
     }
 
+** Inspector Exe
+=> Envoi a Vincent
+=> Avec outils de manip / node?
+
+
 ** test platforms
-    remove symlink imgui_bundle (genant sous linux si install non editable)
-
     linux:
-       si opencv apt: ok, mais immvision not avail bien que compilé
        si opencv pip: pb / opencv-imgcodecs
-
 ** EasyRunner:
-
      Remove Simplerunnerparams?
      GetRunnerParams() always available
        => No: provide easy setup callback
      Easy docking config (review enum)
 
-
-*** Add immapp (ImmediateApp) !!!!
+** Add immapp (ImmediateApp) !!!!
     run et compagnie
 
-** Demos cpp close too python
-   Group
-   Code
-   ...
 
-** Ajout https://github.com/andyborrell/imgui_tex_inspect
+** Wheels
 
-API / Load images & texture
-
-
-Issue / MacOS
-Add tool / load Image
-
-** Guizmo
-
-add lib to lib tool & autogen
+Wheels Ubuntu:
+  Use opencv package
+  read https://cibuildwheel.readthedocs.io/en/stable/faq/
+    => installer via yum, apk, etc (voir pyproject)
+    => essayer cibuildwheel en local
 
 
+Ajouter un CI windows qui compile avec OpenCV et s'assure que immvision est present
+Tenter de compiler des wheels ubuntu avec OpenCV from apt?
+Compiler les wheels @home, avec pyenv: see https://towardsdatascience.com/how-to-use-manage-multiple-python-versions-on-an-apple-silicon-m1-mac-d69ee6ed0250
+    pyenv install --list | grep '\[x86\]'
+
+
+Utiliser dll de opencv-python?
+  Sous windows, il suffit de copier opencv_world
+  Sous linux, on demandera probablement d'installer le package opencv et il sera a la meme position que lors du build CI.
+
+
+  Bug / my VM Windows:
+     Build cpp amd KC
+     Build cpp arm OK
+     pip arm OK mais opencv-python pas dispo
+     pip amd ok, mais lent...
 
 * srcml_cpp
   Test libclang: see https://shaharmike.com/cpp/libclang/ & https://libclang.readthedocs.io/en/latest/
