@@ -158,6 +158,9 @@ CPP_PYTHON_NUMERIC_INT_SYNONYMS = [
     CppPythonTypesSynonyms("int32_t", "int"),
     CppPythonTypesSynonyms("uint64_t", "int"),
     CppPythonTypesSynonyms("int64_t", "int"),
+    CppPythonTypesSynonyms("size_t", "int"),
+    CppPythonTypesSynonyms("ssize_t", "int"),
+    CppPythonTypesSynonyms("std::size_t", "int"),
 ]
 
 CPP_PYTHON_NUMERIC_FLOAT_SYNONYMS = [
