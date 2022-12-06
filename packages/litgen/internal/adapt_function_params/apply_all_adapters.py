@@ -45,6 +45,8 @@ def apply_all_adapters(inout_adapted_function: AdaptedFunction) -> None:
         adapt_c_string_list,
         adapt_variadic_format,
     ]
+    all_adapters_functions += inout_adapted_function.options.fn_custom_adapters
+
     for adapter_function in all_adapters_functions:
         lambda_adapter = adapter_function(inout_adapted_function)
         if lambda_adapter is not None:

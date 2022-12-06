@@ -1,5 +1,5 @@
 from __future__ import annotations
-from typing import List
+from typing import List, Any
 
 from codemanip import code_utils
 from codemanip.code_replacements import RegexReplacementList
@@ -345,6 +345,13 @@ class LitgenOptions:
     # Set it to r".*" to apply this to all functions. Set it to "" to disable it
     fn_params_output_modifiable_immutable_to_return__regex: str = ""
 
+    # ------------------------------------------------------------------------------
+    # Custom adapters (advanced, very advanced and not documented here)
+    # fn_custom_adapters may contain callables of signature
+    #   f(adapted_function: AdaptedFunction) -> Optional[LambdaAdapter]
+    # ------------------------------------------------------------------------------
+    fn_custom_adapters: List[Any]
+
     ################################################################################
     #    <class, struct, and member adaptations>
     ################################################################################
@@ -552,3 +559,5 @@ class LitgenOptions:
 
         self.fn_template_options = TemplateFunctionsOptions()
         self.class_template_options = TemplateClassOptions()
+
+        self.fn_custom_adapters = []
