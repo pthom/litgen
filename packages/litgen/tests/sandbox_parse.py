@@ -1,13 +1,9 @@
 import os
 import sys
 
-import srcmlcpp
-
 import litgen
 from litgen import LitgenOptions
 from litgen.litgen_generator import LitgenGeneratorTestsHelper
-from litgen.options_customized.litgen_options_imgui import litgen_options_imgui, ImguiOptionsType
-from litgen.options_customized.litgen_options_implot import litgen_options_implot
 
 
 _THIS_DIR = os.path.dirname(__file__)
@@ -18,12 +14,6 @@ def read_file_content(filename: str) -> str:
     with open(filename, "r") as f:
         content = f.read()
     return content
-
-
-def play_parse(code: str) -> None:
-    options = litgen_options_imgui(ImguiOptionsType.imgui_h, docking_branch=True)
-    cpp_unit = srcmlcpp.code_to_cpp_unit(options.srcmlcpp_options, code)
-    print(cpp_unit)
 
 
 def play_stub(code: str, options: LitgenOptions) -> None:
@@ -41,16 +31,6 @@ def litgensample_options() -> litgen.LitgenOptions:
     options.fn_params_replace_c_array_modifiable_by_boxed__regex = "array"
     options.fn_params_output_modifiable_immutable_to_return__regex = r".*"
     return options
-
-
-def my_play() -> None:
-    code = """
-//IMPLOT_API void truc(float* a = NULL, float* b = NULL);
-IMPLOT_API std::tuple<std::vector<int>, std::vector<float>> foo();
-    """
-    options = litgen_options_implot()
-    generated_code = litgen.generate_code(options, code)
-    print(generated_code.stub_code)
 
 
 def play_operator() -> None:
@@ -97,17 +77,6 @@ def play_virtual_method() -> None:
     options.class_override_virtual_methods_in_python__regex = ".*"
     generated_code = litgen.generate_code(options, code)
     print(generated_code.pydef_code)
-
-
-def play_imgui() -> None:
-    from litgen.options_customized.litgen_options_imgui import litgen_options_imgui, ImguiOptionsType
-
-    options = litgen_options_imgui(ImguiOptionsType.imgui_internal_h, docking_branch=True)
-    code = """
-IMGUI_API int           ImTextStrToUtf8(char* out_buf, int out_buf_size, const ImWchar* in_text, const ImWchar* in_text_end);       /* original C++ signature */
-    """
-    generated_code = litgen.generate_code(options, code)
-    print(generated_code.stub_code)
 
 
 def play() -> None:

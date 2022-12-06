@@ -533,6 +533,44 @@ bool RunnerGlfwOpenGl3::Impl_SetAppIcon(const std::string& iconAssetPath)
     run et compagnie
 
 
+** Wheels / Fight Week-End summary / Liste des emmerdes relevées:
+
+*** Conan:
+**** marche un jour puis plus, suite update jasper
+**** Jasper cassé => OpenCV conan cassé
+*** Mon mac compile en ARM, et Github en x64
+*** Github workflows:
+**** Pas possible de lancer unzip sur ssh en remote access windows CI
+*** OpenCV
+**** OpenCV qui refuse de fonctionner avec cmake-3.25 => besoin de compiler cmake 3.25.1
+**** OpenCV n'offre pas de choix pour sélectionner ARM64 et choisit x64 dans une compil ARM64
+     ==> besoin de hacker CMAKE_PLATFORM
+*** Msvc:
+**** Lance son debug dans un repertoire différent de l'exe => besoin de le forcer
+**** Pas de message clair quand une dll n'est pas trouvée
+*** Parallels
+**** Desactive le mode 'no limit' de la VM et me passe en ultra lent
+*** Windows ARM64
+**** Tres lent, Visual studio code hangs
+**** numpy pas dispo sur python ARM64 windows
+*** VsCode
+**** Decide de mettre des Tabs partout
+**** Extensions qui hang (ident helper, et autres conneries)
+*** Shells microsoft: bataille de standard, entre MSDos, Powershell et Gitbash
+    ==> faire une commande multiligne est different partout
+*** Compilation tentée sur Microsoft  Azure:
+**** 1 image sur 2 n'est plus dispo mais on ne le sait qu'a la fin
+**** Compil lente
+**** De toute façon, pas possible de lancer une application OpenGL sur ces p.. de machines
+**** Pour avoir une machine avec GPU, il faut faire une demande au support...
+*** Je mets à jour le Mac Mini pour m'apercevoir qu'il ne peut pas aller au dela de MacOS High Sierra.
+**** Impossible de mettre à jour Parallels dessus
+**** De toute façon, on pourrait pas reproduire les bugs de High DPI windows dessus => abandon
+*** Et je m'en sors quand même en fin de week-end avec une compil qui marche sur Win en CI et un package OpenCV precompilé
+
+
+
+
 ** Wheels
 
 Wheels Ubuntu:
@@ -558,6 +596,15 @@ Utiliser dll de opencv-python?
      Build cpp arm OK
      pip arm OK mais opencv-python pas dispo
      pip amd ok, mais lent...
+
+
+  cibuildwheeel:
+    "est ce que OpenCV sera linké"?
+      sous linux: peut etre mais peut etre faudra-t-il copier les .so .et .dylib
+      sous mac et windows: rien d'écrit dans le script...
+          voir CIBW_ENVIRONMENT_MACOS & CIBW_ENVIRONMENT_WINDOWS ici: https://cibuildwheel.readthedocs.io/en/stable/options/#environment
+    => installer cibuildwheel en local et essayer / debugger
+
 
 * srcml_cpp
   Test libclang: see https://shaharmike.com/cpp/libclang/ & https://libclang.readthedocs.io/en/latest/

@@ -41,7 +41,7 @@ repos:
     hooks:
       - id: black-repo-wide
         name: "Repo wide formatting checking with black"
-        entry: bash -c 'echo "Running black hook" && ~/.poetry/bin/poetry run black .'
+        entry: bash -c 'echo "Running black hook" && ~/.local/bin/poetry run black .'
         language: system
         types: [python]
         pass_filenames: false
