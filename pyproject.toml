@@ -49,7 +49,7 @@ litgen = 'litgen.cli.litgen_cli:main'
 python = "^3.8"
 munch = "^2.5.0"
 fire = "^0.4.0"
-srcml_caller = "^0.1.1"
+srcml_caller = "^0.1.2"
 pybind11 = "^2.10.0"
 
 [tool.poetry.dev-dependencies]
