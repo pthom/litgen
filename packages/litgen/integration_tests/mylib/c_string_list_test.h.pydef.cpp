@@ -51,11 +51,11 @@ void py_init_module_mylib(py::module& m)
                 output_raw[0] = output_0.value;
                 output_raw[1] = output_1.value;
 
-                auto r = c_string_list_total_size(items, items_count, output_raw);
+                auto lambda_result = c_string_list_total_size(items, items_count, output_raw);
 
                 output_0.value = output_raw[0];
                 output_1.value = output_raw[1];
-                return r;
+                return lambda_result;
             };
             auto c_string_list_total_size_adapt_c_string_list = [&c_string_list_total_size_adapt_fixed_size_c_arrays](const std::vector<std::string> & items, BoxedInt & output_0, BoxedInt & output_1) -> size_t
             {
@@ -64,8 +64,8 @@ void py_init_module_mylib(py::module& m)
                     items_ptrs.push_back(v.c_str());
                 int items_count = static_cast<int>(items.size());
 
-                auto r = c_string_list_total_size_adapt_fixed_size_c_arrays(items_ptrs.data(), items_count, output_0, output_1);
-                return r;
+                auto lambda_result = c_string_list_total_size_adapt_fixed_size_c_arrays(items_ptrs.data(), items_count, output_0, output_1);
+                return lambda_result;
             };
 
             return c_string_list_total_size_adapt_c_string_list(items, output_0, output_1);

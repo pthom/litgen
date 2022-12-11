@@ -35,8 +35,8 @@ void py_init_module_mylib(py::module& m)
                 };
                 auto ctor_wrapper_adapt_fixed_size_c_arrays = [&ctor_wrapper](const std::array<uint8_t, 4>& _rgba) -> std::unique_ptr<Color4>
                 {
-                    auto r = ctor_wrapper(_rgba.data());
-                    return r;
+                    auto lambda_result = ctor_wrapper(_rgba.data());
+                    return lambda_result;
                 };
 
                 return ctor_wrapper_adapt_fixed_size_c_arrays(_rgba);

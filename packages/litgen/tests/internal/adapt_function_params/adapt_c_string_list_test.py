@@ -66,11 +66,11 @@ def test_mix_array_and_string_list():
                     ouput_raw[0] = ouput_0.value;
                     ouput_raw[1] = ouput_1.value;
 
-                    auto r = foo(items, items_count, ouput_raw);
+                    auto lambda_result = foo(items, items_count, ouput_raw);
 
                     ouput_0.value = ouput_raw[0];
                     ouput_1.value = ouput_raw[1];
-                    return r;
+                    return lambda_result;
                 };
                 auto foo_adapt_c_string_list = [&foo_adapt_fixed_size_c_arrays](const std::vector<std::string> & items, BoxedInt & ouput_0, BoxedInt & ouput_1) -> int
                 {
@@ -79,8 +79,8 @@ def test_mix_array_and_string_list():
                         items_ptrs.push_back(v.c_str());
                     int items_count = static_cast<int>(items.size());
 
-                    auto r = foo_adapt_fixed_size_c_arrays(items_ptrs.data(), items_count, ouput_0, ouput_1);
-                    return r;
+                    auto lambda_result = foo_adapt_fixed_size_c_arrays(items_ptrs.data(), items_count, ouput_0, ouput_1);
+                    return lambda_result;
                 };
 
                 return foo_adapt_c_string_list(items, ouput_0, ouput_1);

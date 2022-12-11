@@ -16,6 +16,7 @@ def apply_all_adapters(inout_adapted_function: AdaptedFunction) -> None:
     from litgen.internal.adapt_function_params._adapt_c_buffers import adapt_c_buffers
     from litgen.internal.adapt_function_params._adapt_variadic_format import adapt_variadic_format
     from litgen.internal.adapt_function_params.adapt_modifiable_immutable import adapt_modifiable_immutable
+    from litgen.internal.adapt_function_params._adapt_force_lambda import adapt_force_lambda
     from litgen.internal.adapt_function_params.adapt_modifiable_immutable_to_return import (
         adapt_modifiable_immutable_to_return,
     )
@@ -51,6 +52,13 @@ def apply_all_adapters(inout_adapted_function: AdaptedFunction) -> None:
         lambda_adapter = adapter_function(inout_adapted_function)
         if lambda_adapter is not None:
             _apply_lambda_adapter(inout_adapted_function, lambda_adapter)
+
+    flag_force_lambda = code_utils.does_match_regex(
+        inout_adapted_function.options.fn_force_lambda__regex, inout_adapted_function.cpp_adapted_function.function_name
+    )
+    if flag_force_lambda and inout_adapted_function.lambda_to_call is None:
+        lambda_adapter = adapt_force_lambda(inout_adapted_function)
+        _apply_lambda_adapter(inout_adapted_function, lambda_adapter)
 
 
 def _apply_all_adapters_on_constructor(inout_adapted_function: AdaptedFunction) -> None:
@@ -120,7 +128,7 @@ def _make_adapted_lambda_code_end(adapted_function: AdaptedFunction, lambda_adap
 
     # Fill auto_r_equal_or_void
     _fn_return_type = adapted_function.cpp_adapted_function.str_full_return_type()
-    auto_r_equal_or_void = "auto r = " if _fn_return_type != "void" else ""
+    auto_r_equal_or_void = "auto lambda_result = " if _fn_return_type != "void" else ""
 
     # Fill function_or_lambda_to_call
     if adapted_function.lambda_to_call is not None:
@@ -136,7 +144,7 @@ def _make_adapted_lambda_code_end(adapted_function: AdaptedFunction, lambda_adap
             )
 
     # Fill maybe_return_r
-    maybe_return_r = None if _fn_return_type == "void" else "return r"
+    maybe_return_r = None if _fn_return_type == "void" else "return lambda_result"
 
     # Fill maybe_lambda_output_code
     if len(lambda_adapter.lambda_output_code) > 0:

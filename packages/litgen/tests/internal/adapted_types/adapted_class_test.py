@@ -192,8 +192,8 @@ def test_struct_stub_complex():
                     };
                     auto ctor_wrapper_adapt_fixed_size_c_arrays = [&ctor_wrapper](const std::array<float, 4>& values) -> std::unique_ptr<Color4>
                     {
-                        auto r = ctor_wrapper(values.data());
-                        return r;
+                        auto lambda_result = ctor_wrapper(values.data());
+                        return lambda_result;
                     };
 
                     return ctor_wrapper_adapt_fixed_size_c_arrays(values);
@@ -292,8 +292,8 @@ def test_templated_class():
                     };
                     auto ctor_wrapper_adapt_fixed_size_c_arrays = [&ctor_wrapper](const std::array<std::string, 2>& v) -> std::unique_ptr<MyTemplateClass<std::string>>
                     {
-                        auto r = ctor_wrapper(v.data());
-                        return r;
+                        auto lambda_result = ctor_wrapper(v.data());
+                        return lambda_result;
                     };
 
                     return ctor_wrapper_adapt_fixed_size_c_arrays(v);
@@ -307,8 +307,8 @@ def test_templated_class():
                 {
                     auto sum2_adapt_fixed_size_c_arrays = [&self](const std::array<std::string, 2>& v) -> std::string
                     {
-                        auto r = self.sum2(v.data());
-                        return r;
+                        auto lambda_result = self.sum2(v.data());
+                        return lambda_result;
                     };
 
                     return sum2_adapt_fixed_size_c_arrays(v);

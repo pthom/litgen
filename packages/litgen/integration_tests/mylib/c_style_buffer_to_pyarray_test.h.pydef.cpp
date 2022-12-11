@@ -72,8 +72,8 @@ void py_init_module_mylib(py::module& m)
                 if (buffer_stride == -1)
                     buffer_stride = (int)buffer.itemsize();
 
-                auto r = buffer_sum(static_cast<const uint8_t *>(buffer_from_pyarray), static_cast<size_t>(buffer_count), static_cast<size_t>(buffer_stride));
-                return r;
+                auto lambda_result = buffer_sum(static_cast<const uint8_t *>(buffer_from_pyarray), static_cast<size_t>(buffer_count), static_cast<size_t>(buffer_stride));
+                return lambda_result;
             };
 
             return buffer_sum_adapt_c_buffers(buffer, stride);

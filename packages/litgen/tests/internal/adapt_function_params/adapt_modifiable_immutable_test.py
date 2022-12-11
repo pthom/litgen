@@ -123,8 +123,8 @@ def test_modifiable_immutable_simple():
                 {
                     float & v_boxed_value = v.value;
 
-                    auto r = foo(v_boxed_value);
-                    return r;
+                    auto lambda_result = foo(v_boxed_value);
+                    return lambda_result;
                 };
 
                 return foo_adapt_modifiable_immutable(v);

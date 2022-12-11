@@ -208,8 +208,8 @@ void py_init_module_lg_mylib(py::module& m)
         {
             auto const_array2_add_adapt_fixed_size_c_arrays = [](const std::array<int, 2>& values) -> int
             {
-                auto r = const_array2_add(values.data());
-                return r;
+                auto lambda_result = const_array2_add(values.data());
+                return lambda_result;
             };
 
             return const_array2_add_adapt_fixed_size_c_arrays(values);
@@ -325,8 +325,8 @@ void py_init_module_lg_mylib(py::module& m)
                 if (buffer_stride == -1)
                     buffer_stride = (int)buffer.itemsize();
 
-                auto r = buffer_sum(static_cast<const uint8_t *>(buffer_from_pyarray), static_cast<size_t>(buffer_count), static_cast<size_t>(buffer_stride));
-                return r;
+                auto lambda_result = buffer_sum(static_cast<const uint8_t *>(buffer_from_pyarray), static_cast<size_t>(buffer_count), static_cast<size_t>(buffer_stride));
+                return lambda_result;
             };
 
             return buffer_sum_adapt_c_buffers(buffer, stride);
@@ -434,11 +434,11 @@ void py_init_module_lg_mylib(py::module& m)
                 output_raw[0] = output_0.value;
                 output_raw[1] = output_1.value;
 
-                auto r = c_string_list_total_size(items, items_count, output_raw);
+                auto lambda_result = c_string_list_total_size(items, items_count, output_raw);
 
                 output_0.value = output_raw[0];
                 output_1.value = output_raw[1];
-                return r;
+                return lambda_result;
             };
             auto c_string_list_total_size_adapt_c_string_list = [&c_string_list_total_size_adapt_fixed_size_c_arrays](const std::vector<std::string> & items, BoxedInt & output_0, BoxedInt & output_1) -> size_t
             {
@@ -447,8 +447,8 @@ void py_init_module_lg_mylib(py::module& m)
                     items_ptrs.push_back(v.c_str());
                 int items_count = static_cast<int>(items.size());
 
-                auto r = c_string_list_total_size_adapt_fixed_size_c_arrays(items_ptrs.data(), items_count, output_0, output_1);
-                return r;
+                auto lambda_result = c_string_list_total_size_adapt_fixed_size_c_arrays(items_ptrs.data(), items_count, output_0, output_1);
+                return lambda_result;
             };
 
             return c_string_list_total_size_adapt_c_string_list(items, output_0, output_1);
@@ -747,8 +747,8 @@ void py_init_module_lg_mylib(py::module& m)
                 };
                 auto ctor_wrapper_adapt_fixed_size_c_arrays = [&ctor_wrapper](const std::array<uint8_t, 4>& _rgba) -> std::unique_ptr<Color4>
                 {
-                    auto r = ctor_wrapper(_rgba.data());
-                    return r;
+                    auto lambda_result = ctor_wrapper(_rgba.data());
+                    return lambda_result;
                 };
 
                 return ctor_wrapper_adapt_fixed_size_c_arrays(_rgba);
@@ -1000,8 +1000,8 @@ void py_init_module_lg_mylib(py::module& m)
         {
             auto SumVectorAndCArray_adapt_fixed_size_c_arrays = [](std::vector<int> xs, const std::array<int, 2>& other_values) -> int
             {
-                auto r = SumVectorAndCArray<int>(xs, other_values.data());
-                return r;
+                auto lambda_result = SumVectorAndCArray<int>(xs, other_values.data());
+                return lambda_result;
             };
 
             return SumVectorAndCArray_adapt_fixed_size_c_arrays(xs, other_values);
@@ -1011,8 +1011,8 @@ void py_init_module_lg_mylib(py::module& m)
         {
             auto SumVectorAndCArray_adapt_fixed_size_c_arrays = [](std::vector<std::string> xs, const std::array<std::string, 2>& other_values) -> std::string
             {
-                auto r = SumVectorAndCArray<std::string>(xs, other_values.data());
-                return r;
+                auto lambda_result = SumVectorAndCArray<std::string>(xs, other_values.data());
+                return lambda_result;
             };
 
             return SumVectorAndCArray_adapt_fixed_size_c_arrays(xs, other_values);
@@ -1028,8 +1028,8 @@ void py_init_module_lg_mylib(py::module& m)
             {
                 auto SumVectorAndCArray_adapt_fixed_size_c_arrays = [&self](std::vector<int> xs, const std::array<int, 2>& other_values) -> int
                 {
-                    auto r = self.SumVectorAndCArray<int>(xs, other_values.data());
-                    return r;
+                    auto lambda_result = self.SumVectorAndCArray<int>(xs, other_values.data());
+                    return lambda_result;
                 };
 
                 return SumVectorAndCArray_adapt_fixed_size_c_arrays(xs, other_values);
@@ -1039,8 +1039,8 @@ void py_init_module_lg_mylib(py::module& m)
             {
                 auto SumVectorAndCArray_adapt_fixed_size_c_arrays = [&self](std::vector<std::string> xs, const std::array<std::string, 2>& other_values) -> std::string
                 {
-                    auto r = self.SumVectorAndCArray<std::string>(xs, other_values.data());
-                    return r;
+                    auto lambda_result = self.SumVectorAndCArray<std::string>(xs, other_values.data());
+                    return lambda_result;
                 };
 
                 return SumVectorAndCArray_adapt_fixed_size_c_arrays(xs, other_values);
@@ -1063,8 +1063,8 @@ void py_init_module_lg_mylib(py::module& m)
                 };
                 auto ctor_wrapper_adapt_fixed_size_c_arrays = [&ctor_wrapper](const std::array<int, 2>& v) -> std::unique_ptr<MyTemplateClass<int>>
                 {
-                    auto r = ctor_wrapper(v.data());
-                    return r;
+                    auto lambda_result = ctor_wrapper(v.data());
+                    return lambda_result;
                 };
 
                 return ctor_wrapper_adapt_fixed_size_c_arrays(v);
@@ -1078,8 +1078,8 @@ void py_init_module_lg_mylib(py::module& m)
             {
                 auto sum2_adapt_fixed_size_c_arrays = [&self](const std::array<int, 2>& v) -> int
                 {
-                    auto r = self.sum2(v.data());
-                    return r;
+                    auto lambda_result = self.sum2(v.data());
+                    return lambda_result;
                 };
 
                 return sum2_adapt_fixed_size_c_arrays(v);
@@ -1102,8 +1102,8 @@ void py_init_module_lg_mylib(py::module& m)
                 };
                 auto ctor_wrapper_adapt_fixed_size_c_arrays = [&ctor_wrapper](const std::array<std::string, 2>& v) -> std::unique_ptr<MyTemplateClass<std::string>>
                 {
-                    auto r = ctor_wrapper(v.data());
-                    return r;
+                    auto lambda_result = ctor_wrapper(v.data());
+                    return lambda_result;
                 };
 
                 return ctor_wrapper_adapt_fixed_size_c_arrays(v);
@@ -1117,8 +1117,8 @@ void py_init_module_lg_mylib(py::module& m)
             {
                 auto sum2_adapt_fixed_size_c_arrays = [&self](const std::array<std::string, 2>& v) -> std::string
                 {
-                    auto r = self.sum2(v.data());
-                    return r;
+                    auto lambda_result = self.sum2(v.data());
+                    return lambda_result;
                 };
 
                 return sum2_adapt_fixed_size_c_arrays(v);
@@ -1126,7 +1126,10 @@ void py_init_module_lg_mylib(py::module& m)
             py::arg("v"),
             "Method that requires a parameter adaptation")
         ;
-
+    // #ifdef __cplusplus
+    //
+    // #endif
+    //
 
     m.def("extern_c_add",
         extern_c_add, py::arg("a"), py::arg("b"));
@@ -1142,6 +1145,10 @@ void py_init_module_lg_mylib(py::module& m)
     m.attr("OCTALVALUE") = 043242;
     m.attr("STRING") = "Hello";
     m.attr("FLOAT") = 3.14;
+    // #ifdef __cplusplus
+    //
+    // #endif
+    //
 
     { // <namespace MathFunctions>
         py::module_ pyNsMathFunctions = m.def_submodule("math_functions", " Vectorizable functions example\n    Numeric functions (i.e. function accepting and returning only numeric params or py::array), can be vectorized\n    i.e. they will accept numpy arrays as an input.\n\n Auto-vectorization is enabled via the following options:\n     options.fn_namespace_vectorize__regex: str = r\"^MathFunctions$\"\n     options.fn_vectorize__regex = r\".*\"\n");
@@ -1428,8 +1435,8 @@ void py_init_module_lg_mylib(py::module& m)
                 {
                     auto const_array2_add_adapt_fixed_size_c_arrays = [&self](const std::array<int, 2>& values) -> int
                     {
-                        auto r = self.const_array2_add(values.data());
-                        return r;
+                        auto lambda_result = self.const_array2_add(values.data());
+                        return lambda_result;
                     };
 
                     return const_array2_add_adapt_fixed_size_c_arrays(values);
@@ -1443,11 +1450,11 @@ void py_init_module_lg_mylib(py::module& m)
                         output_raw[0] = output_0.value;
                         output_raw[1] = output_1.value;
 
-                        auto r = self.c_string_list_total_size(items, items_count, output_raw);
+                        auto lambda_result = self.c_string_list_total_size(items, items_count, output_raw);
 
                         output_0.value = output_raw[0];
                         output_1.value = output_raw[1];
-                        return r;
+                        return lambda_result;
                     };
                     auto c_string_list_total_size_adapt_c_string_list = [&c_string_list_total_size_adapt_fixed_size_c_arrays](const std::vector<std::string> & items, BoxedInt & output_0, BoxedInt & output_1) -> size_t
                     {
@@ -1456,8 +1463,8 @@ void py_init_module_lg_mylib(py::module& m)
                             items_ptrs.push_back(v.c_str());
                         int items_count = static_cast<int>(items.size());
 
-                        auto r = c_string_list_total_size_adapt_fixed_size_c_arrays(items_ptrs.data(), items_count, output_0, output_1);
-                        return r;
+                        auto lambda_result = c_string_list_total_size_adapt_fixed_size_c_arrays(items_ptrs.data(), items_count, output_0, output_1);
+                        return lambda_result;
                     };
 
                     return c_string_list_total_size_adapt_c_string_list(items, output_0, output_1);
@@ -1610,8 +1617,8 @@ void py_init_module_lg_mylib(py::module& m)
                 {
                     auto const_array2_add_adapt_fixed_size_c_arrays = [](const std::array<int, 2>& values) -> int
                     {
-                        auto r = SomeNamespace::SomeInnerNamespace::const_array2_add(values.data());
-                        return r;
+                        auto lambda_result = SomeNamespace::SomeInnerNamespace::const_array2_add(values.data());
+                        return lambda_result;
                     };
 
                     return const_array2_add_adapt_fixed_size_c_arrays(values);
@@ -1626,11 +1633,11 @@ void py_init_module_lg_mylib(py::module& m)
                         output_raw[0] = output_0.value;
                         output_raw[1] = output_1.value;
 
-                        auto r = SomeNamespace::SomeInnerNamespace::c_string_list_total_size(items, items_count, output_raw);
+                        auto lambda_result = SomeNamespace::SomeInnerNamespace::c_string_list_total_size(items, items_count, output_raw);
 
                         output_0.value = output_raw[0];
                         output_1.value = output_raw[1];
-                        return r;
+                        return lambda_result;
                     };
                     auto c_string_list_total_size_adapt_c_string_list = [&c_string_list_total_size_adapt_fixed_size_c_arrays](const std::vector<std::string> & items, BoxedInt & output_0, BoxedInt & output_1) -> size_t
                     {
@@ -1639,8 +1646,8 @@ void py_init_module_lg_mylib(py::module& m)
                             items_ptrs.push_back(v.c_str());
                         int items_count = static_cast<int>(items.size());
 
-                        auto r = c_string_list_total_size_adapt_fixed_size_c_arrays(items_ptrs.data(), items_count, output_0, output_1);
-                        return r;
+                        auto lambda_result = c_string_list_total_size_adapt_fixed_size_c_arrays(items_ptrs.data(), items_count, output_0, output_1);
+                        return lambda_result;
                     };
 
                     return c_string_list_total_size_adapt_c_string_list(items, output_0, output_1);

@@ -817,6 +817,11 @@ class MyTemplateClassString:
 #    etc.
 #
 
+# #ifdef __cplusplus
+#
+# #endif
+#
+
 def extern_c_add(a: int, b: int) -> int:
     pass
 
@@ -842,6 +847,11 @@ OCTALVALUE = 0o43242
 STRING = "Hello"
 # Will be published
 FLOAT = 3.14
+
+# #ifdef __cplusplus
+#
+# #endif
+#
 
 # ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 #                       mylib/class_default_ctor_test.h included by mylib/mylib_main/mylib.h                   //

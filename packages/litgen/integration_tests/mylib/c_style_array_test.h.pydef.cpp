@@ -47,8 +47,8 @@ void py_init_module_mylib(py::module& m)
         {
             auto const_array2_add_adapt_fixed_size_c_arrays = [](const std::array<int, 2>& values) -> int
             {
-                auto r = const_array2_add(values.data());
-                return r;
+                auto lambda_result = const_array2_add(values.data());
+                return lambda_result;
             };
 
             return const_array2_add_adapt_fixed_size_c_arrays(values);

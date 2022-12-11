@@ -51,8 +51,8 @@ def test_mutable_buffer_return_int():
                                         (using py::array::dtype().char_() as an id)
                             )msg"));
 
-                    auto r = foo(static_cast<uint32_t *>(buf_from_pyarray), static_cast<size_t>(buf_count));
-                    return r;
+                    auto lambda_result = foo(static_cast<uint32_t *>(buf_from_pyarray), static_cast<size_t>(buf_count));
+                    return lambda_result;
                 };
 
                 return foo_adapt_c_buffers(buf);
@@ -142,8 +142,8 @@ def test_two_buffers():
                                         (using py::array::dtype().char_() as an id)
                             )msg"));
 
-                    auto r = foo(static_cast<const uint32_t *>(buf1_from_pyarray), static_cast<size_t>(buf1_count), static_cast<const uint32_t *>(buf2_from_pyarray), static_cast<size_t>(buf2_count));
-                    return r;
+                    auto lambda_result = foo(static_cast<const uint32_t *>(buf1_from_pyarray), static_cast<size_t>(buf1_count), static_cast<const uint32_t *>(buf2_from_pyarray), static_cast<size_t>(buf2_count));
+                    return lambda_result;
                 };
 
                 return foo_adapt_c_buffers(buf1, buf2);

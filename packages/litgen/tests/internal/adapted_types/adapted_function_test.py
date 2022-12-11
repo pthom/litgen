@@ -404,8 +404,8 @@ def test_templated_function():
                 {
                     auto SumVector_adapt_fixed_size_c_arrays = [&self](std::vector<int> xs, const std::array<int, 2>& other_values) -> int
                     {
-                        auto r = self.SumVector<int>(xs, other_values.data());
-                        return r;
+                        auto lambda_result = self.SumVector<int>(xs, other_values.data());
+                        return lambda_result;
                     };
 
                     return SumVector_adapt_fixed_size_c_arrays(xs, other_values);

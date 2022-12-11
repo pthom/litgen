@@ -506,7 +506,9 @@ class AdaptedFunction(AdaptedElement):
         else:
             replace_tokens.function_name_python = self._stub_function_name_python()
         replace_tokens.location = self._elm_info_original_location_cpp()
-        replace_tokens.def_maybe_static = "def_static" if self.cpp_element().is_static() else "def"
+        replace_tokens.def_maybe_static = (
+            "def_static" if self.cpp_element().is_static() and self.cpp_element().is_method() else "def"
+        )
 
         r = code_utils.process_code_template(template_code, replace_tokens)
         return r

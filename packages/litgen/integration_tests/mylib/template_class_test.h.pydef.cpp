@@ -38,8 +38,8 @@ void py_init_module_mylib(py::module& m)
                 };
                 auto ctor_wrapper_adapt_fixed_size_c_arrays = [&ctor_wrapper](const std::array<int, 2>& v) -> std::unique_ptr<MyTemplateClass<int>>
                 {
-                    auto r = ctor_wrapper(v.data());
-                    return r;
+                    auto lambda_result = ctor_wrapper(v.data());
+                    return lambda_result;
                 };
 
                 return ctor_wrapper_adapt_fixed_size_c_arrays(v);
@@ -53,8 +53,8 @@ void py_init_module_mylib(py::module& m)
             {
                 auto sum2_adapt_fixed_size_c_arrays = [&self](const std::array<int, 2>& v) -> int
                 {
-                    auto r = self.sum2(v.data());
-                    return r;
+                    auto lambda_result = self.sum2(v.data());
+                    return lambda_result;
                 };
 
                 return sum2_adapt_fixed_size_c_arrays(v);
@@ -77,8 +77,8 @@ void py_init_module_mylib(py::module& m)
                 };
                 auto ctor_wrapper_adapt_fixed_size_c_arrays = [&ctor_wrapper](const std::array<std::string, 2>& v) -> std::unique_ptr<MyTemplateClass<std::string>>
                 {
-                    auto r = ctor_wrapper(v.data());
-                    return r;
+                    auto lambda_result = ctor_wrapper(v.data());
+                    return lambda_result;
                 };
 
                 return ctor_wrapper_adapt_fixed_size_c_arrays(v);
@@ -92,8 +92,8 @@ void py_init_module_mylib(py::module& m)
             {
                 auto sum2_adapt_fixed_size_c_arrays = [&self](const std::array<std::string, 2>& v) -> std::string
                 {
-                    auto r = self.sum2(v.data());
-                    return r;
+                    auto lambda_result = self.sum2(v.data());
+                    return lambda_result;
                 };
 
                 return sum2_adapt_fixed_size_c_arrays(v);

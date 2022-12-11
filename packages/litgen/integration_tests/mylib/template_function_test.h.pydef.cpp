@@ -35,8 +35,8 @@ void py_init_module_mylib(py::module& m)
         {
             auto SumVectorAndCArray_adapt_fixed_size_c_arrays = [](std::vector<int> xs, const std::array<int, 2>& other_values) -> int
             {
-                auto r = SumVectorAndCArray<int>(xs, other_values.data());
-                return r;
+                auto lambda_result = SumVectorAndCArray<int>(xs, other_values.data());
+                return lambda_result;
             };
 
             return SumVectorAndCArray_adapt_fixed_size_c_arrays(xs, other_values);
@@ -46,8 +46,8 @@ void py_init_module_mylib(py::module& m)
         {
             auto SumVectorAndCArray_adapt_fixed_size_c_arrays = [](std::vector<std::string> xs, const std::array<std::string, 2>& other_values) -> std::string
             {
-                auto r = SumVectorAndCArray<std::string>(xs, other_values.data());
-                return r;
+                auto lambda_result = SumVectorAndCArray<std::string>(xs, other_values.data());
+                return lambda_result;
             };
 
             return SumVectorAndCArray_adapt_fixed_size_c_arrays(xs, other_values);
@@ -63,8 +63,8 @@ void py_init_module_mylib(py::module& m)
             {
                 auto SumVectorAndCArray_adapt_fixed_size_c_arrays = [&self](std::vector<int> xs, const std::array<int, 2>& other_values) -> int
                 {
-                    auto r = self.SumVectorAndCArray<int>(xs, other_values.data());
-                    return r;
+                    auto lambda_result = self.SumVectorAndCArray<int>(xs, other_values.data());
+                    return lambda_result;
                 };
 
                 return SumVectorAndCArray_adapt_fixed_size_c_arrays(xs, other_values);
@@ -74,8 +74,8 @@ void py_init_module_mylib(py::module& m)
             {
                 auto SumVectorAndCArray_adapt_fixed_size_c_arrays = [&self](std::vector<std::string> xs, const std::array<std::string, 2>& other_values) -> std::string
                 {
-                    auto r = self.SumVectorAndCArray<std::string>(xs, other_values.data());
-                    return r;
+                    auto lambda_result = self.SumVectorAndCArray<std::string>(xs, other_values.data());
+                    return lambda_result;
                 };
 
                 return SumVectorAndCArray_adapt_fixed_size_c_arrays(xs, other_values);

@@ -186,11 +186,11 @@ def test_in_method():
                         out_raw[0] = out_0;
                         out_raw[1] = out_1;
 
-                        auto r = self.thing(out_raw);
+                        auto lambda_result = self.thing(out_raw);
 
                         out_0 = out_raw[0];
                         out_1 = out_raw[1];
-                        return r;
+                        return lambda_result;
                     };
 
                     return thing_adapt_fixed_size_c_arrays(out_0, out_1);
