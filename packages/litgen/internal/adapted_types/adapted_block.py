@@ -22,6 +22,7 @@ from litgen.internal.adapted_types.adapted_enum import AdaptedEnum
 from litgen.internal.adapted_types.adapted_function import AdaptedFunction
 from litgen.internal.context.litgen_context import LitgenContext
 from litgen.internal.adapted_types.adapted_define import AdaptedDefine
+from litgen.internal.adapted_types.adapted_condition_macro import AdaptedConditionMacro
 
 
 @dataclass
@@ -35,6 +36,7 @@ class AdaptedBlock(AdaptedElement):
             AdaptedFunction,
             AdaptedEnum,
             AdaptedDefine,
+            AdaptedConditionMacro
             # AdaptedNamespace,  # There is actually a circular dependency here (with no important consequences)
             # A Block can contain a namespace, and a namespace contains a block
         ]
@@ -58,6 +60,8 @@ class AdaptedBlock(AdaptedElement):
                     self.adapted_elements.append(AdaptedEmptyLine(self.lg_context, child))
                 elif isinstance(child, CppComment):
                     self.adapted_elements.append(AdaptedComment(self.lg_context, child))
+                elif isinstance(child, CppConditionMacro):
+                    self.adapted_elements.append(AdaptedConditionMacro(self.lg_context, child))
                 elif isinstance(child, CppStruct):
                     is_excluded_by_name = code_utils.does_match_regex(
                         self.options.class_exclude_by_name__regex, child.class_name

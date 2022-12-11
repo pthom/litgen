@@ -422,15 +422,19 @@ Inform third parties maintainers
 Reddit
 ImGui gallery
 Python forums
+Contact authors one by one
+** immvision does not work out of imgui_bundle
+  Is your your OpenGL Loader initialized?Assertion failed: (false)
 
-** Small issues
-Soucis sur gitmodules:
-  imspinner absent et implot present deux fois
+idee: dans immapp.cpp:
+#include "hello_imgui/hello_imgui_include_opengl.h"
 
-** Post Issue https://github.com/andyborrell/imgui_tex_inspect
-Poster Issue shader MacOS
+bool truc()
+{
+    bool err = gladLoadGLLoader(reinterpret_cast<GLADloadproc>(glfwGetProcAddress)) == 0;
+}
 
-
+reste a trouver la procAddress
 
 
 ** Faq Fullscreens
@@ -473,7 +477,6 @@ Make docking mode simpler
 
 ** Licence in all file (refers to main license file)
 
-** Contact authors one by one
 ** Demos cpp close too python
    Group
    Code
@@ -520,90 +523,32 @@ bool RunnerGlfwOpenGl3::Impl_SetAppIcon(const std::string& iconAssetPath)
 => Avec outils de manip / node?
 
 
-** test platforms
-    linux:
-       si opencv pip: pb / opencv-imgcodecs
+
 ** EasyRunner:
+     Goal: Easy docking config (review enum)
      Remove Simplerunnerparams?
      GetRunnerParams() always available
        => No: provide easy setup callback
-     Easy docking config (review enum)
+
 
 ** Add immapp (ImmediateApp) !!!!
     run et compagnie
+    bouger VisualProg?
 
-
-** Wheels / Fight Week-End summary / Liste des emmerdes relevées:
-
-*** Conan:
-**** marche un jour puis plus, suite update jasper
-**** Jasper cassé => OpenCV conan cassé
-*** Mon mac compile en ARM, et Github en x64
-*** Github workflows:
-**** Pas possible de lancer unzip sur ssh en remote access windows CI
-*** OpenCV
-**** OpenCV qui refuse de fonctionner avec cmake-3.25 => besoin de compiler cmake 3.25.1
-**** OpenCV n'offre pas de choix pour sélectionner ARM64 et choisit x64 dans une compil ARM64
-     ==> besoin de hacker CMAKE_PLATFORM
-*** Msvc:
-**** Lance son debug dans un repertoire différent de l'exe => besoin de le forcer
-**** Pas de message clair quand une dll n'est pas trouvée
-*** Parallels
-**** Desactive le mode 'no limit' de la VM et me passe en ultra lent
-*** Windows ARM64
-**** Tres lent, Visual studio code hangs
-**** numpy pas dispo sur python ARM64 windows
-*** VsCode
-**** Decide de mettre des Tabs partout
-**** Extensions qui hang (ident helper, et autres conneries)
-*** Shells microsoft: bataille de standard, entre MSDos, Powershell et Gitbash
-    ==> faire une commande multiligne est different partout
-*** Compilation tentée sur Microsoft  Azure:
-**** 1 image sur 2 n'est plus dispo mais on ne le sait qu'a la fin
-**** Compil lente
-**** De toute façon, pas possible de lancer une application OpenGL sur ces p.. de machines
-**** Pour avoir une machine avec GPU, il faut faire une demande au support...
-*** Je mets à jour le Mac Mini pour m'apercevoir qu'il ne peut pas aller au dela de MacOS High Sierra.
-**** Impossible de mettre à jour Parallels dessus
-**** De toute façon, on pourrait pas reproduire les bugs de High DPI windows dessus => abandon
-*** Et je m'en sors quand même en fin de week-end avec une compil qui marche sur Win en CI et un package OpenCV precompilé
+** PRs ImVec2/4
+add ref / cast
+add ImVec2 in __repr__
+use std::array for Colors[COUNT]
 
 
 
+** Clean
+   classify sln
 
 ** Wheels
+Test wheels on Mac/Linux/Window
+Compil python 3.10, 3.9 ?
 
-Wheels Ubuntu:
-  Use opencv package
-  read https://cibuildwheel.readthedocs.io/en/stable/faq/
-    => installer via yum, apk, etc (voir pyproject)
-    => essayer cibuildwheel en local
-
-
-Ajouter un CI windows qui compile avec OpenCV et s'assure que immvision est present
-Tenter de compiler des wheels ubuntu avec OpenCV from apt?
-Compiler les wheels @home, avec pyenv: see https://towardsdatascience.com/how-to-use-manage-multiple-python-versions-on-an-apple-silicon-m1-mac-d69ee6ed0250
-    pyenv install --list | grep '\[x86\]'
-
-
-Utiliser dll de opencv-python?
-  Sous windows, il suffit de copier opencv_world
-  Sous linux, on demandera probablement d'installer le package opencv et il sera a la meme position que lors du build CI.
-
-
-  Bug / my VM Windows:
-     Build cpp amd KC
-     Build cpp arm OK
-     pip arm OK mais opencv-python pas dispo
-     pip amd ok, mais lent...
-
-
-  cibuildwheeel:
-    "est ce que OpenCV sera linké"?
-      sous linux: peut etre mais peut etre faudra-t-il copier les .so .et .dylib
-      sous mac et windows: rien d'écrit dans le script...
-          voir CIBW_ENVIRONMENT_MACOS & CIBW_ENVIRONMENT_WINDOWS ici: https://cibuildwheel.readthedocs.io/en/stable/options/#environment
-    => installer cibuildwheel en local et essayer / debugger
 
 
 * srcml_cpp

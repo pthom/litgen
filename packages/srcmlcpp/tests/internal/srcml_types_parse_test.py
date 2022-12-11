@@ -265,6 +265,7 @@ def test_parse_unit():
     cpp_element_str = code_to_unit_str(code)
 
     expected_code = """
+        #ifndef MY_API_H
         #define MY_API_H
 
         namespace MyApi
@@ -303,6 +304,7 @@ def test_parse_unit():
         {
             void Foo2();
         }
+        #endif
     """
 
     code_utils.assert_are_codes_equal(cpp_element_str, expected_code)

@@ -28,9 +28,9 @@ def test_str_code():
         public: // <default_access_type/>
         public:
             int x = 0;
-            <unprocessed_ifdef/>
+            #ifdef BLAH
             int y = 4;
-            <unprocessed_endif/>
+            #endif
         };
     """,
     )

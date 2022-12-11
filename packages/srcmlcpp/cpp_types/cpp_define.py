@@ -61,3 +61,21 @@ class CppDefine(CppElementAndComment):
 
     def visit_cpp_breadth_first(self, cpp_visitor_function: CppElementsVisitorFunction, depth: int = 0) -> None:
         cpp_visitor_function(self, CppElementsVisitorEvent.OnElement, depth)
+
+
+class CppConditionMacro(CppElementAndComment):
+    """Stores preprocessor macros like #if, #ifdef, #ifndef, #endif, #else, #elif"""
+
+    macro_code: str  # a verbatim copy of the C(++) code for this macro (including spaces and LF)
+
+    def __init__(self, element: SrcmlWrapper, cpp_element_comments: CppElementComments) -> None:
+        super().__init__(element, cpp_element_comments)
+
+    def str_code(self) -> str:
+        return self.macro_code.rstrip()
+
+    def __str__(self):
+        return self.str_code()
+
+    def visit_cpp_breadth_first(self, cpp_visitor_function: CppElementsVisitorFunction, depth: int = 0) -> None:
+        cpp_visitor_function(self, CppElementsVisitorEvent.OnElement, depth)

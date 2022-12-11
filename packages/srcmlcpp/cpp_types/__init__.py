@@ -67,7 +67,7 @@ from srcmlcpp.cpp_types.cpp_namespace import CppNamespace
 
 from srcmlcpp.cpp_types.scope.cpp_scope import CppScope, CppScopeType, CppScopePart
 
-from srcmlcpp.cpp_types.cpp_define import CppDefine
+from srcmlcpp.cpp_types.cpp_define import CppDefine, CppConditionMacro
 
 __all__ = [
     # base
@@ -115,4 +115,5 @@ __all__ = [
     "CppEnum",
     "CppNamespace",
     "CppDefine",
+    "CppConditionMacro",
 ]

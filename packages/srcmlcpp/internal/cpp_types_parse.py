@@ -9,6 +9,7 @@ All the other functions can be considered private to this module.
 from typing import List, Optional
 from xml.etree import ElementTree as ET
 
+import srcmlcpp.internal.code_to_srcml
 from codemanip import code_utils
 from codemanip.parse_progress_bar import global_progress_bars
 
@@ -174,6 +175,18 @@ def _parse_name(element: SrcmlWrapper) -> str:
     else:
         name = element_text.strip()
     return name
+
+
+def parse_condition_macro(
+    _options: SrcmlcppOptions, element_c: CppElementAndComment, parent: CppElementAndComment
+) -> CppConditionMacro:
+    # accept only #if, #ifdef, #ifndef, #endif, #else, #elif
+    assert element_c.tag() in ["if", "ifdef", "ifndef", "endif", "else", "elif"]
+    result = CppConditionMacro(element_c, element_c.cpp_element_comments)
+    result.parent = parent
+    macro_code = srcmlcpp.internal.code_to_srcml.srcml_to_code(element_c.srcml_xml)
+    result.macro_code = macro_code
+    return result
 
 
 def parse_define(options: SrcmlcppOptions, element_c: CppElementAndComment, parent: CppElementAndComment) -> CppDefine:
@@ -820,6 +833,15 @@ def fill_block(options: SrcmlcppOptions, element: SrcmlWrapper, inout_block_cont
                 block_children.append(parse_block_content(options, child_c, inout_block_content))
             elif child_tag == "define":
                 block_children.append(parse_define(options, child_c, inout_block_content))
+            elif child_tag in [
+                "if",
+                "ifdef",
+                "ifndef",
+                "endif",
+                "else",
+                "elif",
+            ]:  # #if, #ifdef, #ifndef, #endif, #else, #elif
+                block_children.append(parse_condition_macro(options, child_c, inout_block_content))
             elif child_tag == "extern":
                 fill_extern_c_block(options, child_c, inout_block_content)
             elif child_tag in ["public", "protected", "private"]:

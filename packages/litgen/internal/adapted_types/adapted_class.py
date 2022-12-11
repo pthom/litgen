@@ -23,6 +23,7 @@ from litgen.internal.adapted_types.adapted_decl import AdaptedDecl
 from litgen.internal.adapted_types.adapted_element import AdaptedElement
 from litgen.internal.adapted_types.adapted_enum import AdaptedEnum
 from litgen.internal.adapted_types.adapted_function import AdaptedFunction
+from litgen.internal.adapted_types.adapted_condition_macro import AdaptedConditionMacro
 from litgen.internal.context.litgen_context import LitgenContext
 
 
@@ -262,7 +263,15 @@ class AdaptedClass(AdaptedElement):
 
     # List of all public children (methods, members, inner structs, etc.)
     adapted_public_children: List[
-        Union[AdaptedEmptyLine, AdaptedComment, AdaptedClassMember, AdaptedFunction, AdaptedClass, AdaptedEnum]
+        Union[
+            AdaptedEmptyLine,
+            AdaptedComment,
+            AdaptedClassMember,
+            AdaptedFunction,
+            AdaptedClass,
+            AdaptedEnum,
+            AdaptedConditionMacro,
+        ]
     ]
     # Protected methods, if this class is supposed to output binding for its protected methods
     adapted_protected_methods: List[AdaptedFunction]
@@ -324,6 +333,9 @@ class AdaptedClass(AdaptedElement):
                 elif isinstance(child, CppEnum):
                     adapted_enum = AdaptedEnum(self.lg_context, child)
                     self.adapted_public_children.append(adapted_enum)
+                elif isinstance(child, CppConditionMacro):
+                    adapted_macro = AdaptedConditionMacro(self.lg_context, child)
+                    self.adapted_public_children.append(adapted_macro)
                 else:
                     child.emit_warning(
                         f"Public elements of type {child.tag()} are not supported in python conversion",

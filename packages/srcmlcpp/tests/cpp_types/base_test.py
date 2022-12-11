@@ -67,6 +67,7 @@ namespace Ns
         """
         CppUnit
           CppEmptyLine
+          CppConditionMacro name=MY_CLASS_H
           CppEmptyLine
           CppEmptyLine
           CppFunction name=foo
@@ -81,6 +82,7 @@ namespace Ns
               CppFunctionDecl name=foo3 scope=Ns
                 CppType name=int scope=Ns
                 CppParameterList scope=Ns
+          CppConditionMacro
           CppComment
       """,
     )

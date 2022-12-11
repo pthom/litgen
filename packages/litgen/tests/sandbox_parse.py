@@ -84,7 +84,6 @@ def play() -> None:
     options.fn_params_output_modifiable_immutable_to_return__regex = r".*"
 
     code = """
-    void SliderVoidIntDefaultNull(int * value = nullptr);
     """
 
     # options = litgen_options_imgui(ImguiOptionsType.imgui_h, True)

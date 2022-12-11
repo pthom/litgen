@@ -42,12 +42,16 @@ void FooAccepted();
     """
 
 _EXPECTED_FILTERED_HEADER = """
-// We are in the main header, and this comment should be included (the previous ifndef was just an inclusion guard)
+#ifndef MY_HEADER_H   // We are in the main header, and this comment should be included (the previous ifndef was just an inclusion guard)
 
 void Foo() {}     // This function and this comment should be included
 
+#ifdef SOME_OPTION_ACCEPTED
 // We are entering a zone which we want to accept if we add "ACCEPTED$" to options.header_acceptable__regex
 void FooAccepted();
+#endif
+
+#endif
 """
 
 
@@ -60,7 +64,7 @@ class _SrcmlPreprocessorState:
 
     header_acceptable__regex: str
 
-    was_last_element_a_preprocessor_stmt: bool = False
+    was_last_element_an_ignored_endif: bool = False
     last_ignored_preprocessor_stmt_line: int = -1
     last_element: Optional[ET.Element] = None
 
@@ -113,17 +117,16 @@ class _SrcmlPreprocessorState:
 
         ifdef_var_name = extract_ifdef_var_name()
 
-        self.was_last_element_a_preprocessor_stmt = False
+        self.was_last_element_an_ignored_endif = False
         if tag in ["ifdef", "if"]:
-            self.was_last_element_a_preprocessor_stmt = True
             self.last_ignored_preprocessor_stmt_line = element_line
             self.encountered_if.append(ifdef_var_name)
         elif tag == "ifndef":
-            self.was_last_element_a_preprocessor_stmt = True
             self.last_ignored_preprocessor_stmt_line = element_line
             self.encountered_if.append(ifdef_var_name)
         elif tag == "endif":
-            self.was_last_element_a_preprocessor_stmt = True
+            if self.has_one_excluded_ifdef():
+                self.was_last_element_an_ignored_endif = True
             self.last_ignored_preprocessor_stmt_line = element_line
             # Note: with extern "C" blocks, we might encounter the #ifdef / #endif out of order
             # so that we cannot rely on having len(self.encountered_if) > 0
@@ -131,7 +134,6 @@ class _SrcmlPreprocessorState:
             if len(self.encountered_if) > 0:
                 self.encountered_if = self.encountered_if[:-1]
         elif tag in ["else", "elif"]:
-            self.was_last_element_a_preprocessor_stmt = True
             self.last_ignored_preprocessor_stmt_line = element_line
 
         if self.debug and is_ifdef:
@@ -144,7 +146,7 @@ class _SrcmlPreprocessorState:
         return False
 
     def shall_ignore(self) -> bool:
-        if self.was_last_element_a_preprocessor_stmt:
+        if self.was_last_element_an_ignored_endif:
             return True
         if self.last_element is None:
             return False
