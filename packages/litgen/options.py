@@ -203,6 +203,10 @@ class LitgenOptions:
     # ------------------------------------------------------------------------------
     # Force using py::overload for functions that matches these regexes
     fn_force_overload__regex: str = ""
+    # Force using a lambda for functions that matches these regexes
+    # (useful when pybind11 is confused and gives error like
+    #     error: no matching function for call to object of type 'const detail::overload_cast_impl<...>'
+    fn_force_lambda__regex: str = ""
 
     # ------------------------------------------------------------------------------
     # Return policy
