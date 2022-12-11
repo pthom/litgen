@@ -244,7 +244,9 @@ class AdaptedFunction(AdaptedElement):
 
         self.cpp_adapter_code = None
         self.lambda_to_call = initial_lambda_to_call
+
         super().__init__(lg_context, function_decl)
+
         self._pydef_fill_return_value_policy()
         self._stub_fill_is_type_ignore()
 
@@ -256,9 +258,30 @@ class AdaptedFunction(AdaptedElement):
             self.cpp_element().cpp_element_comments.comment_end_of_line += "\n(C++ auto return type)"
 
         adapt_function_params.apply_all_adapters(self)
+        self.init_add_warning_if_non_published_api()
+
+    def init_add_warning_if_non_published_api(self) -> None:
+        options = self.lg_context.options
+        has_api_prefixes = len(options.srcmlcpp_options.functions_api_prefixes_list()) > 0
+        include_non_api = not options.fn_exclude_non_api and has_api_prefixes
+
+        if include_non_api:
+            is_private_api = not AdaptedFunction.init_is_function_publishable(
+                options, self.cpp_element(), exclude_even_if_options_fn_exclude_non_api=True
+            )
+            if is_private_api:
+                if len(self.cpp_element().cpp_element_comments.comment_on_previous_lines) > 0:
+                    print("a")
+                self._cpp_element = copy.deepcopy(self._cpp_element)
+                if len(self._cpp_element.cpp_element_comments.comment_on_previous_lines) == 0:
+                    self._cpp_element.cpp_element_comments.comment_on_previous_lines = "(private API)"
+                else:
+                    self._cpp_element.cpp_element_comments.comment_on_previous_lines += "\n(private API)"
 
     @staticmethod
-    def init_is_function_publishable(options: LitgenOptions, cpp_function: CppFunctionDecl) -> bool:
+    def init_is_function_publishable(
+        options: LitgenOptions, cpp_function: CppFunctionDecl, exclude_even_if_options_fn_exclude_non_api: bool = False
+    ) -> bool:
         """
         This static method is called even before construction. If it returns False,
         it mean that the CppFunctionDecl shall not be ported to python.
@@ -286,15 +309,25 @@ class AdaptedFunction(AdaptedElement):
             if code_utils.does_match_regex(reg, param.decl.cpp_type.str_code()):
                 return False
 
-        # Check options.functions_api_prefixes_list
-        if len(options.srcmlcpp_options.functions_api_prefixes_list()) > 0 and options.fn_exclude_non_api:
-            if not hasattr(cpp_function, "return_type"):
-                return True
+        def has_one_ok_prefix() -> bool:
             has_api_prefix = False
             for api_prefix in options.srcmlcpp_options.functions_api_prefixes_list():
                 if api_prefix in cpp_function.return_type.specifiers:
                     has_api_prefix = True
             return has_api_prefix
+
+        if not hasattr(cpp_function, "return_type"):
+            return True
+
+        has_prefix_options = len(options.srcmlcpp_options.functions_api_prefixes_list()) > 0
+
+        flag_really_check_prefix = has_prefix_options
+        include_non_api = not options.fn_exclude_non_api
+        if include_non_api and not exclude_even_if_options_fn_exclude_non_api:
+            flag_really_check_prefix = False
+
+        if flag_really_check_prefix:
+            return has_one_ok_prefix()
         else:
             return True
 
