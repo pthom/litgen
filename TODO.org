@@ -535,10 +535,7 @@ bool RunnerGlfwOpenGl3::Impl_SetAppIcon(const std::string& iconAssetPath)
     run et compagnie
     bouger VisualProg?
 
-** PRs ImVec2/4
-add ref / cast
-add ImVec2 in __repr__
-use std::array for Colors[COUNT]
+
 
 
 

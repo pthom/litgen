@@ -1,2 +1,6 @@
 add_subdirectory(imgui_bundle)
 add_subdirectory(lg_skbuild_template)
+option(IMGUI_BUNDLE_BUILD_FIATLUX OFF)
+if(IMGUI_BUNDLE_BUILD_FIATLUX)
+    add_subdirectory(fiatlux)
+endif()

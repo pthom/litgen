@@ -270,8 +270,6 @@ class AdaptedFunction(AdaptedElement):
                 options, self.cpp_element(), exclude_even_if_options_fn_exclude_non_api=True
             )
             if is_private_api:
-                if len(self.cpp_element().cpp_element_comments.comment_on_previous_lines) > 0:
-                    print("a")
                 self._cpp_element = copy.deepcopy(self._cpp_element)
                 if len(self._cpp_element.cpp_element_comments.comment_on_previous_lines) == 0:
                     self._cpp_element.cpp_element_comments.comment_on_previous_lines = "(private API)"
