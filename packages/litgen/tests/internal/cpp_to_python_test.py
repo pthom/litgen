@@ -14,3 +14,10 @@ def test_standard_replacements():
     s = "a = -1.5d;"
     r = litgen.standard_value_replacements().apply(s)
     assert r == "a = -1.5;"
+
+
+def test_std_array():
+    s = "std::array<ImVec4, ImGuiCol_COUNT> Colors;"
+    r = litgen.standard_type_replacements().apply(s)
+    assert r == "List[ImVec4] Colors;"
+    print(r)

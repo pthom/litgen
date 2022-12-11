@@ -502,7 +502,7 @@ def standard_type_replacements() -> RegexReplacementList:
     \bstd::string\(\) -> ""
     \bstd::string\b -> str
     \bstd::vector\s*<\s*([\w:]*)\s*> -> List[\1]
-    \bstd::array\s*<\s*([\w:]*)\s*,\s*([\w:])\s*> -> List[\1]
+    \bstd::array\s*<\s*([\w:]*)\s*,\s*([\w:]*)\s*> -> List[\1]
     \bstd::tuple<(.*)> -> Tuple[\1]
     \bstd::optional<(.*?)> -> Optional[\1]
     \bstd::unique_ptr<(.*?)> -> \1

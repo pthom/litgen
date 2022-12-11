@@ -542,8 +542,8 @@ use std::array for Colors[COUNT]
 
 
 
-** Clean
-   classify sln
+** Classify demos
+
 
 ** Wheels
 Test wheels on Mac/Linux/Window
