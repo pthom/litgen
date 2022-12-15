@@ -530,28 +530,28 @@ Compil python 3.10, 3.9 ?
 
 
 
+** Add fiatlux to bindings: add generic way (cmake & co, group everything in one folder)
+
 ** EasyRunner:
      Goal: Easy docking config (review enum)
      Remove Simplerunnerparams?
      GetRunnerParams() always available
        => No: provide easy setup callback
 
-
-** Add immapp (ImmediateApp) !!!!
-    run et compagnie
-    bouger VisualProg?
-
+** Sizing HiDPI 3rd parties
+*** Spacing Markdown?
+*** ImFileDialog too small;
+*** Sizing toggle
+*** Sizing knob
 
 ** Classify demos
-*** Corriger demos
 
-** Mini / Release
-*** ImGuiStyle::SetColor cassé
-*** Challenge / array
-*** Merge PRs?
-*** Operator setitem?
-*** FiatLux separation
-      Add fiatlux to bindings: add generic way (cmake & co, group everything in one folder)
+
+** Wheels
+  pb / wheel arm64 macOS: essaie de charger Intel iPPIcv (because compiled on intel)?
+  demos plante car trouve pas demos_cpp
+
+  Idee: struct EmVec2 implicitely convertible into ImVec2
 
 * srcml_cpp
   Test libclang: see https://shaharmike.com/cpp/libclang/ & https://libclang.readthedocs.io/en/latest/

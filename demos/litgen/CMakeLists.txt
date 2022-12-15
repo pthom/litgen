@@ -1,6 +1,6 @@
 add_subdirectory(imgui_bundle)
 add_subdirectory(lg_skbuild_template)
 option(IMGUI_BUNDLE_BUILD_FIATLUX OFF)
-if(IMGUI_BUNDLE_BUILD_FIATLUX)
+if(IMGUI_BUNDLE_BUILD_FIATLUX AND IMGUI_BUNDLE_WITH_IMMVISION)
     add_subdirectory(fiatlux)
 endif()
