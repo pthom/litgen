@@ -90,7 +90,7 @@ class SrcmlWrapper:
         assert self.srcml_xml.tag is not None
         return srcml_utils.clean_tag_or_attrib(self.srcml_xml.tag)
 
-    def has_text(self):
+    def has_text(self) -> bool:
         return self.srcml_xml.text is not None
 
     def text(self) -> Optional[str]:

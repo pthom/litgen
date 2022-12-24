@@ -258,8 +258,6 @@ def _parse_decl_initializer_list(_options: SrcmlcppOptions, element_c: SrcmlWrap
 
     if len(arguments_values) == 0:
         return "{}"
-    elif len(arguments_values) == 1:
-        return arguments_values[0]
     else:
         r = "{" + ", ".join(arguments_values) + "}"
         return r

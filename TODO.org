@@ -538,20 +538,36 @@ Compil python 3.10, 3.9 ?
      GetRunnerParams() always available
        => No: provide easy setup callback
 
-** Sizing HiDPI 3rd parties
-*** Spacing Markdown?
-*** ImFileDialog too small;
-*** Sizing toggle
-*** Sizing knob
-
-** Classify demos
-
-
 ** Wheels
   pb / wheel arm64 macOS: essaie de charger Intel iPPIcv (because compiled on intel)?
-  demos plante car trouve pas demos_cpp
+  ==>
 
-  Idee: struct EmVec2 implicitely convertible into ImVec2
+
+  Release v0.7.1 & release mac arm manually
+
+  Readme
+
+
+  Build Windows
+    use OpenCV Fetch source?
+
+  logger trop petit sous windows
+
+
+** Fiatlux:
+   Commit rename
+   Bouger bindingd SuspendNodeEditorCanvas dans imgui_node
+
+
+   ** F
+
+
+FUCKING fix_brace_init_default_value:
+   One should not restore the braces immediately, since adapters will need to be applied later
+   and they will fail if braces are present....
+     STOP STOP STOP => Back to holidays!!!!
+
+
 
 * srcml_cpp
   Test libclang: see https://shaharmike.com/cpp/libclang/ & https://libclang.readthedocs.io/en/latest/

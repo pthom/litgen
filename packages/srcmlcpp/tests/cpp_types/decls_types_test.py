@@ -26,7 +26,7 @@ def test_parse_decl_init_list():
     decls = cpp_unit.all_decl_recursive()
     assert len(decls) == 1
     decl = decls[0]
-    assert decl.initial_value_code == "false"
+    assert decl.initial_value_code == "{false}"
     assert decl.initial_value_via_initializer_list
 
     code = "std::vector<int> v{1, 2, 3};"
@@ -42,7 +42,7 @@ def test_parse_decl_init_list():
     decls = cpp_unit.all_decl_recursive()
     assert len(decls) == 1
     decl = decls[0]
-    assert decl.initial_value_code == '{ "a", 1}'  # which is omitted here
+    assert decl.initial_value_code == '{{ "a", 1}}'  # which is omitted here
     assert decl.initial_value_via_initializer_list
 
 
