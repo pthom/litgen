@@ -507,6 +507,7 @@ def standard_type_replacements() -> RegexReplacementList:
     \bstd::optional<(.*?)> -> Optional[\1]
     \bstd::unique_ptr<(.*?)> -> \1
     \bstd::shared_ptr<(.*?)> -> \1
+    \bstd::map<\s*([\w:]*)\s*,\s*([\w:]*)\s*> -> Dict[\1, \2]
 
     \bvoid\s*\* -> Any
     \bvoid\b -> None
