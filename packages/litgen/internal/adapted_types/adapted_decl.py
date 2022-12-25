@@ -35,7 +35,10 @@ class AdaptedDecl(AdaptedElement):
         return decl_name_python
 
     def decl_value_python(self) -> str:
-        decl_value_cpp = self.cpp_element().initial_value_code
+        decl_value_cpp = self.cpp_element().initial_value_code.strip()
+        if decl_value_cpp.startswith("{") and decl_value_cpp.endswith("}"):
+            # special case for brace init default value
+            decl_value_cpp = self.cpp_element().cpp_type.typenames[0] + "(" + decl_value_cpp[1:-1] + ")"
         decl_value_python = cpp_to_python.var_value_to_python(self.lg_context, decl_value_cpp)
         return decl_value_python
 
@@ -119,6 +122,9 @@ class AdaptedDecl(AdaptedElement):
         param_template = 'py::arg("{argname_python}"){maybe_equal}{maybe_defaultvalue_cpp}'
 
         maybe_defaultvalue_cpp = self.cpp_element().initial_value_code
+        if maybe_defaultvalue_cpp.strip().startswith("{"):
+            # special case for default value with brace init
+            maybe_defaultvalue_cpp = self.cpp_element().cpp_type.typenames[0] + maybe_defaultvalue_cpp
         if maybe_defaultvalue_cpp in ["NULL", "nullptr", "std::nullopt"]:
             maybe_defaultvalue_cpp = "py::none()"
         if len(maybe_defaultvalue_cpp) > 0:

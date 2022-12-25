@@ -1213,6 +1213,23 @@ namespace A
     };
 }
 
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//                       mylib/brace_init_default_value.h included by mylib/mylib_main/mylib.h                  //
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+#include <map>
+
+
+struct FooBrace {
+    std::vector<int> int_values = {1, 2, 3};
+    std::map<std::string, int> dict_string_int{{"abc", 3}};
+};
+
+
+MY_API int FnBrace(FooBrace foo_brace = {}, std::vector<int> ints = {1, 2, 3})
+{
+    return foo_brace.int_values[0] + ints[0];
+}
+
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //                       mylib/mylib_main/mylib.h continued                                                     //

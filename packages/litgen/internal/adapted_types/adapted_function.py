@@ -1145,7 +1145,11 @@ class AdaptedFunction(AdaptedElement):
             if self.is_vectorize_impl:
                 param_type_python = "np.ndarray"
 
-            param_default_value = cpp_to_python.var_value_to_python(self.lg_context, param_decl.initial_value_code)
+            initial_value_code = param_decl.initial_value_code.strip()
+            if initial_value_code.strip().startswith("{") and initial_value_code.endswith("}"):
+                # Special case for initial value with brace init
+                initial_value_code = param_decl.cpp_type.typenames[0] + "(" + initial_value_code[1:-1] + ")"
+            param_default_value = cpp_to_python.var_value_to_python(self.lg_context, initial_value_code)
 
             param_code = f"{param_name_python}: {param_type_python}"
             if len(param_default_value) > 0:

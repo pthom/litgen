@@ -25,5 +25,6 @@
 #include "mylib/template_class_test.h"
 #include "mylib/c_extern_c.h"
 #include "mylib/class_default_ctor_test.h"
+#include "mylib/brace_init_default_value.h"
 
 //#include "mylib/sandbox.h"

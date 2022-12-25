@@ -69,7 +69,7 @@ def _apply_all_adapters_on_constructor(inout_adapted_function: AdaptedFunction) 
 
     ctor_wrapper_signature_template = code_utils.unindent_code(
         """
-            auto ctor_wrapper({parameters_code}) ->  std::unique_ptr<{class_name}>;
+            std::unique_ptr<{class_name}> ctor_wrapper({parameters_code});
         """,
         flag_strip_empty_lines=True,
     )

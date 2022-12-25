@@ -369,8 +369,8 @@ class MyClass:
     # on both sides transparently.
     # ///////////////////////////////////////////////////////////////////////
 
-    values: np.ndarray  # ndarray[type=int, size=2] default:{0, 1}
-    flags: np.ndarray  # ndarray[type=bool, size=3] default:{False, True, False}
+    values: np.ndarray  # ndarray[type=int, size=2] default:int(0, 1)
+    flags: np.ndarray  # ndarray[type=bool, size=3] default:bool(False, True, False)
 
     const_static_value: int = 101  # (C++ static member)
     static_value: int  # (C++ static member)
@@ -856,6 +856,18 @@ FLOAT = 3.14
 # ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 #                       mylib/class_default_ctor_test.h included by mylib/mylib_main/mylib.h                   //
 # //////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+class FooBrace:
+    int_values: List[int] = List[int](1, 2, 3)
+    dict_string_int: Dict[str, int] = Dict[str, int]({"abc", 3})
+    def __init__(self, int_values: List[int] = List[int](1, 2, 3)) -> None:
+        """Auto-generated default constructor with named params"""
+        pass
+
+def fn_brace(
+    foo_brace: FooBrace = FooBrace(), ints: List[int] = List[int](1, 2, 3)
+) -> int:
+    pass
 
 # ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 #                       mylib/mylib_main/mylib.h continued                                                     //

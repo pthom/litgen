@@ -1150,6 +1150,27 @@ void py_init_module_lg_mylib(py::module& m)
     // #endif
     //
 
+
+    auto pyClassFooBrace =
+        py::class_<FooBrace>
+            (m, "FooBrace", "")
+        .def(py::init<>([](
+        std::vector<int> int_values = {1, 2, 3})
+        {
+            auto r = std::make_unique<FooBrace>();
+            r->int_values = int_values;
+            return r;
+        })
+        , py::arg("int_values") = std::vector<int>{1, 2, 3}
+        )
+        .def_readwrite("int_values", &FooBrace::int_values, "")
+        .def_readwrite("dict_string_int", &FooBrace::dict_string_int, "")
+        ;
+
+
+    m.def("fn_brace",
+        FnBrace, py::arg("foo_brace") = FooBrace{}, py::arg("ints") = std::vector<int>{1, 2, 3});
+
     { // <namespace MathFunctions>
         py::module_ pyNsMathFunctions = m.def_submodule("math_functions", " Vectorizable functions example\n    Numeric functions (i.e. function accepting and returning only numeric params or py::array), can be vectorized\n    i.e. they will accept numpy arrays as an input.\n\n Auto-vectorization is enabled via the following options:\n     options.fn_namespace_vectorize__regex: str = r\"^MathFunctions$\"\n     options.fn_vectorize__regex = r\".*\"\n");
         pyNsMathFunctions.def("vectorizable_sum",
