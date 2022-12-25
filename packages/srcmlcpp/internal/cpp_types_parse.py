@@ -16,7 +16,7 @@ from codemanip.parse_progress_bar import global_progress_bars
 from srcmlcpp import SrcmlWrapper
 from srcmlcpp.scrml_warning_settings import WarningType
 from srcmlcpp.cpp_types import *
-from srcmlcpp.internal import code_to_srcml, srcml_comments, srcml_utils
+from srcmlcpp.internal import code_to_srcml, srcml_comments, srcml_utils, fix_brace_init_default_value
 from srcmlcpp.internal.srcmlcpp_exception_detailed import (
     SrcmlcppExceptionDetailed,
 )
@@ -794,7 +794,21 @@ def fill_block(options: SrcmlcppOptions, element: SrcmlWrapper, inout_block_cont
         try:
             block_children = inout_block_content.block_children
             if child_tag == "decl_stmt":
-                block_children.append(parse_decl_stmt(options, child_c, inout_block_content))
+                cpp_decl_stmt = parse_decl_stmt(options, child_c, inout_block_content)
+                # Fix brace init default / functions
+                fixed_function = fix_brace_init_default_value.change_decl_stmt_to_function_decl_if_suspicious(
+                    options, cpp_decl_stmt
+                )
+                if fixed_function is not None:
+                    block_children.append(fixed_function)
+                else:
+                    block_children.append(cpp_decl_stmt)
+            elif child_tag == "macro" and isinstance(inout_block_content, CppPublicProtectedPrivate):
+                # Fixed brace init default / constructors
+                macro_maybe_constructor = parse_unprocessed(options, child_c, inout_block_content)
+                fixed_ctor = fix_brace_init_default_value.change_macro_to_constructor(options, macro_maybe_constructor)
+                if fixed_ctor is not None:
+                    block_children.append(fixed_ctor)
             elif child_tag == "decl":
                 cpp_decl = parse_decl(options, child_c, inout_block_content, None)
                 block_children.append(cpp_decl)
