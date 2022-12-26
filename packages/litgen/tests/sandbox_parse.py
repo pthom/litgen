@@ -84,8 +84,20 @@ def play() -> None:
     # options.srcmlcpp_options.fix_brace_init_default_value = False
 
     code = """
-    void foo(int a /*=1*/, int b /*=2*/);
-    """
+    struct TobiiResearchPoint3D
+    {
+        float x;
+        float y;
+        float z;
+    };
+    struct gazeOrigin
+    {
+        // The gaze origin position in 3D in the user coordinate system.
+        TobiiResearchPoint3D position_in_user_coordinates = {1.f, 2.f, 3.f};
+
+        bool available = false;
+    };
+        """
 
     # code = "void f(V v={1,2,3});"
 
@@ -93,7 +105,7 @@ def play() -> None:
     # options.fn_template_options.add_specialization(".*", ["int"])
     # options.class_deep_copy__regex = r".*"
     generated_code = litgen.generate_code(options, code)
-    print(generated_code.pydef_code)
+    print(generated_code.stub_code)
 
 
 if __name__ == "__main__":

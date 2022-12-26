@@ -39,6 +39,13 @@ class CppFunctionDecl(CppElementAndComment, CppITemplateHost):
     function_name: str
     is_pure_virtual: bool
 
+    # _noexcept will be
+    #     * None if not specified
+    #     * "" for `void foo() noexcept;`
+    #     * "(false)" for `void foo() noexcept(false);`
+    #     * "(some_condition())" for `void foo() noexcept(some_condition());`
+    _noexcept: Optional[str]
+
     _cache_with_qualified_types: ScopedElementCache
     _cache_with_terse_types: ScopedElementCache
 
@@ -50,6 +57,7 @@ class CppFunctionDecl(CppElementAndComment, CppITemplateHost):
         self.function_name = ""
         self._cache_with_qualified_types = ScopedElementCache()
         self._cache_with_terse_types = ScopedElementCache()
+        self._noexcept = None
 
     def has_return_type(self) -> bool:
         return hasattr(self, "_return_type")
@@ -73,6 +81,30 @@ class CppFunctionDecl(CppElementAndComment, CppITemplateHost):
         self._parameter_list.parent = self
         for param in self._parameter_list.parameters:
             param.parent = self._parameter_list
+
+    @property
+    def noexcept(self):
+        return self._noexcept
+
+    @noexcept.setter
+    def noexcept(self, v) -> None:
+        self._noexcept = v
+
+    def is_noexcept(self):
+        if self._noexcept is None:
+            return False
+        if self._noexcept == "":
+            return True
+
+        noexcept_str = self.noexcept.strip()
+        if noexcept_str.startswith("(") and noexcept_str.endswith(")"):
+            noexcept_str = noexcept_str[1:-1].strip()
+        if noexcept_str.lower() in ["false", "0"]:
+            return False
+        elif noexcept_str.lower() in ["true", "1"]:
+            return True
+        else:
+            return False
 
     def name(self) -> str:
         return self.function_name

@@ -467,6 +467,12 @@ def fill_function_decl(
                     child, f"unhandled literal {child_tag} (was expecting '=0' for a pure virtual function"
                 )
             function_decl.is_pure_virtual = True
+        elif child_tag == "noexcept":
+            arg_list = child.wrapped_child_with_tag("argument_list")
+            if arg_list is None:
+                function_decl._noexcept = ""
+            else:
+                function_decl._noexcept = arg_list.str_code_verbatim()
         else:
             raise SrcmlcppExceptionDetailed(child, f"unhandled tag {child_tag}")
 
@@ -508,6 +514,7 @@ def parse_function(
             "attribute",
             "template",
             "comment",
+            "noexcept",
         ]:
             pass  # already handled by fill_function_decl
         else:
