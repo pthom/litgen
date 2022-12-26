@@ -533,6 +533,9 @@ def fill_constructor_decl(
             child_text = child.text()
             assert child_text is not None
             constructor_decl.specifiers.append(child_text)
+        elif child_tag == "comment":
+            if child.has_text():
+                constructor_decl.cpp_element_comments.comment_end_of_line += " " + child.text()
         elif child_tag == "attribute":
             pass  # compiler options, such as [[gnu::optimize(0)]]
         elif child_tag in ["block", "member_init_list"]:
@@ -574,6 +577,8 @@ def parse_constructor(
             result.member_init_list = parse_unprocessed(options, child_c, result)
         elif child_tag in ["name", "parameter_list", "specifier", "attribute"]:
             pass  # alread handled by fill_constructor_decl
+        elif child_tag == "comment":
+            pass
         else:
             raise SrcmlcppExceptionDetailed(child, f"unhandled tag {child_tag}")
 

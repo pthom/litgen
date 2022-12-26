@@ -84,27 +84,7 @@ def play() -> None:
     # options.srcmlcpp_options.fix_brace_init_default_value = False
 
     code = """
-
-    struct TobiiResearchPoint3D
-    {
-        float x;
-        float y;
-        float z;
-    };
-    struct gazeOrigin
-    {
-        // The gaze origin position in 3D in the user coordinate system.
-        TobiiResearchPoint3D position_in_user_coordinates = {1.f, 2.f, 3.f};
-
-        bool available = false;
-    };
-            """
-
-    code = """
-        int FnBrace(FooBrace f = {}, std::vector<int> v = {1, 2, 3})
-        {
-            return 0;
-        }
+    void foo(int a /*=1*/, int b /*=2*/);
     """
 
     # code = "void f(V v={1,2,3});"
