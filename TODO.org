@@ -416,6 +416,7 @@ insert diagram via mermaid (see integration with emacs)
 
 * Hello ImGui Bundle TOOO
 
+** Fiatlux
 ** Pub
 
 Inform third parties maintainers
@@ -423,49 +424,11 @@ Reddit
 ImGui gallery
 Python forums
 Contact authors one by one
-** immvision does not work out of imgui_bundle
-  Is your your OpenGL Loader initialized?Assertion failed: (false)
-
-idee: dans immapp.cpp:
-#include "hello_imgui/hello_imgui_include_opengl.h"
-
-bool truc()
-{
-    bool err = gladLoadGLLoader(reinterpret_cast<GLADloadproc>(glfwGetProcAddress)) == 0;
-}
-
-reste a trouver la procAddress
-
-
-** Faq Fullscreens
-       Sdl/FullScreenDesktopResolution:
-         click issue (need click higher !) on monitor 0
-         ok on monitor 1
-       Glfw/FullScreenDesktopResolution: OK on monitor 0 and 1
-
-       Sdl/FullScreen:
-         Ok monitor 0 and 1 (change resolution, update windowSize info)
-       Glfw/FullScreen
-         Monitor 0: does not change resolution
-         Monitor 1: does change resolution...
-
-       FullMonitorWorkArea: OK
-
-
-
-
-Remove SimpleRunnerParams
-Make docking mode simpler
-
-** Online emscripten ImGuiBundle Demos
-(mandel, fn comp, image editing, etc)
-
-
 ** Videos by subject
     Code generation / fidelity & doc
     For research and devel portability
       compare c++ and python
-    For Learners (comp)
+      For Learners (comp)
     For fast devel (immap)
     Implot
     Notebook
@@ -475,98 +438,11 @@ Make docking mode simpler
 
 
 
-** Licence in all file (refers to main license file)
-
-** Demos cpp close too python
-   Group
-   Code
-   ...
-
-   Doc markdow by lib with code
-     => MdWrapper: handle code with TextEdit! (resizable? see https://github.com/ocornut/imgui/issues/319)
-
-  Integrer ImGuiManual
-
-
-** App Icon???
-
-voir cx-freeze
-
-On Mac, need to create an app bundle: see https://py2app.readthedocs.io/en/latest/
-  Bundle example : See /Users/pascal/dvp/OpenSource/ImGuiWork/litgen/icons_test
-On Windows, see py2exe
-https://py2app.readthedocs.io/en/latest/examples.html#cross-platform
-
-bool RunnerGlfwOpenGl3::Impl_SetAppIcon(const std::string& iconAssetPath)
-    {
-        auto assetData = LoadAssetFileData(iconAssetPath.c_str());
-        if (assetData.data != nullptr)
-        {
-            int image_width, image_height;
-            unsigned char*image_data = stbi_load_from_memory(
-                (unsigned char *)assetData.data, (int)assetData.dataSize,
-                &image_width, &image_height, NULL, 4);
-            GLFWimage images[1];
-            images[0].pixels = image_data;
-            images[0].width = image_width;
-            images[0].height = image_height;
-            glfwSetWindowIcon((GLFWwindow *)mWindow, 1, images);
-            stbi_image_free(image_data);
-            return true;
-        }
-        else
-            return false;
-    }
-
-** Inspector Exe
-=> Envoi a Vincent
-=> Avec outils de manip / node?
-
-
 
 ** Wheels
-Test wheels on Mac/Linux/Window
-Compil python 3.10, 3.9 ?
 
 
-
-** Add fiatlux to bindings: add generic way (cmake & co, group everything in one folder)
-
-** EasyRunner:
-     Goal: Easy docking config (review enum)
-     Remove Simplerunnerparams?
-     GetRunnerParams() always available
-       => No: provide easy setup callback
-
-** Wheels
-  pb / wheel arm64 macOS: essaie de charger Intel iPPIcv (because compiled on intel)?
-  ==>
-
-
-  Release v0.7.1 & release mac arm manually
-
-  Readme
-
-
-  Build Windows
-    use OpenCV Fetch source?
-
-  logger trop petit sous windows
-
-
-** Fiatlux:
-   Commit rename
-   Bouger bindingd SuspendNodeEditorCanvas dans imgui_node
-
-
-   ** F
-
-
-FUCKING fix_brace_init_default_value:
-   One should not restore the braces immediately, since adapters will need to be applied later
-   and they will fail if braces are present....
-     STOP STOP STOP => Back to holidays!!!!
-
+** Finish & publish
 
 
 * srcml_cpp
