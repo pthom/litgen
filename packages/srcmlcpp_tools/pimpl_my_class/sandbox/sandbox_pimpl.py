@@ -11,7 +11,7 @@ code = """
  Anatomy of an example app with `SingleInstanceApp`:
  ---------------------------------------------------
 
-````cpp
+```cpp
 int main()
 {
     using namespace std::literals;
@@ -34,7 +34,7 @@ int main()
       //     break;
     }
 }
-````
+```
 **/
 class SingleInstanceAppPImpl
 {

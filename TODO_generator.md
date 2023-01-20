@@ -15,7 +15,7 @@ himgui:
 
     Nettoyage:
         himgui.__init__.pyi, hacké:
-            ````
+            ```
             from lg_imgui import ImVec2, ImVec4, ImTextureID, ImFontConfig, ImFont, ImGuiWindowFlags
             from lg_imgui import ImGuiCond, ImGuiCond_
 
@@ -28,7 +28,7 @@ himgui:
             ImGuiDir_Down = ImGuiDir_.down
             AnyEventCallback = Callable[[Any], bool]
             VoidFunction = Callable[[], None]
-            ````
+            ```
 
         Trucs à régler dans __init__.pyi:
             default_im_gui_window_type:DefaultImGuiWindowType = DefaultImGuiWindowType::ProvideFullScreenWindow

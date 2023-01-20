@@ -12,11 +12,11 @@ class LitgenCliCommands:
     Once srcmlcpp is installed, the commands below are available via the `litgen` command.
 
     For example:
-        ````bash
+        ```bash
         >> litgen stub "int f(int a=1, const float v[2]);"
         def f(a: int = 1, v: List[float]) -> int:
             pass
-       ````
+       ```
     All commands will use default LitgenOptions().
     """
 

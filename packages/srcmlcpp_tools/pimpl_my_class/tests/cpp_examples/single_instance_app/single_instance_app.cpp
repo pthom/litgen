@@ -11,7 +11,7 @@
  =================================================================
 
 Example usage
- ````cpp
+ ```cpp
 int main()
 {
     SingleInstanceApp singleInstanceApp("MyLock");
@@ -24,7 +24,7 @@ int main()
             BringAppToFront();
     }
 }
-````
+```
 **/
 class SingleInstanceAppPImpl
 {

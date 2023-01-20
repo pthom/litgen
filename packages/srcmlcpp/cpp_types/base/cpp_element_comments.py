@@ -13,7 +13,7 @@ class CppElementComments:
     Lonely comments are stored as `CppComment`
 
      Example:
-         `````cpp
+         ````cpp
          /*
          A multiline C comment
          about Foo1
@@ -36,7 +36,7 @@ class CppElementComments:
          Void Foo3(); // Comment on end of line for Foo3()
          Void Foo4(); // Comment on end of line for Foo4()
          // A comment that shall not be grouped to the previous (which was an EOL comment for Foo4())
-         ````
+         ```
     """
 
     comment_on_previous_lines: str

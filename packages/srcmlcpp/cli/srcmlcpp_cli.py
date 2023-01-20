@@ -11,7 +11,7 @@ class SrcmlcppCliCommands:
     Once srcmlcpp is installed, the commands below are available via the `srcmlcpp` command.
 
     For example:
-        ````bash
+        ```bash
         >> srcmlcpp cpp_elements "int a = 1;"
         CppUnit
           CppDeclStatement
@@ -20,7 +20,7 @@ class SrcmlcppCliCommands:
 
         >>  srcmlcpp xml "int a = 1;" --beautify=False
         <unit xmlns="http://www.srcML.org/srcML/src" revision="1.0.0" language="C++"><decl_stmt><decl><type><name>int</name></type> <name>a</name><init>=<expr><literal type="number">1</literal></expr></init></decl>;</decl_stmt></unit>
-       ````
+       ```
     All commands will use default SrcmlcppOptions().
     """
 

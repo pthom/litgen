@@ -5,9 +5,9 @@ This folder contains a full suite of integration tests for litgen.
 - It builds a python binding library called "lg_mylib" (with a corresponding pip package name "lg-mylib")
 
 You can install the "lg-mylib" pip package with:
-````bash
+```bash
 pip install [-e] .
-````
+```
 
 ## List of tests and documentation
 
@@ -23,7 +23,7 @@ This folder structure is based on [lg_skbuild_template](https://github.com/pthom
 
 Below is a summary of the structure:
 
-````
+```
 ./
 ├── pyproject.toml                            # Pip configuration file
 ├── setup.py                                  # Pip configuration file
@@ -73,4 +73,4 @@ Below is a summary of the structure:
 │
 ├── mylib_amalgamation/
 │         └── mylib_amalgamation.h            # amalgamated header for mylib/
-````
+```
