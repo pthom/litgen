@@ -30,6 +30,11 @@ export PATH=$poetry_python_folder:$PATH
 echo poetry_python_folder=$poetry_python_folder
 
 
+title "Run black"
+cd "$REPO_DIR"
+black .
+
+
 title "Run mypy static checker"
 cd "$REPO_DIR"
 mypy .
