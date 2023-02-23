@@ -87,7 +87,7 @@ class CppFunctionDecl(CppElementAndComment, CppITemplateHost):
         return self._noexcept
 
     @noexcept.setter
-    def noexcept(self, v) -> None:
+    def noexcept(self, v: Optional[str]) -> None:
         self._noexcept = v
 
     def is_noexcept(self):
