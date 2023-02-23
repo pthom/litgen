@@ -417,6 +417,8 @@ insert diagram via mermaid (see integration with emacs)
 * Hello ImGui Bundle TOOO
 
 ** Fiatlux
+playground / imgproc
+https://docs.opencv.org/4.x/d7/da8/tutorial_table_of_content_imgproc.html
 ** Pub
 
 Inform third parties maintainers
@@ -438,11 +440,33 @@ Contact authors one by one
 
 
 
-
 ** Wheels
-
-
 ** Finish & publish
+** License:
+    https://ethicalsource.dev/licenses/
+    https://github.com/raisely/NoHarm/blob/publish/LICENSE.md
+    https://github.com/ml5js/Code-of-Conduct
+
+
+
+Post reddit python
+
+
+
+* Reddit Post / Chat GPT
+  Dire que l'IA n'est qu'un outil pourrait être comparé à dire
+  que la chimie  n'est qu'un outil.
+
+  Oui, la chimie est peut-être un outil, mais c'est un outil qui permet de créer plein de choses,
+  certaines peuvent être utilisées pour le plus grand bien de tous, et certaines peuvent présenter
+  un danger général pour la population si elles sont mal utilisées et déployées à large
+  et pourtant plein de régulation existent pour nous
+  protéger contre les additifs que voudraient rajouter les industriels dans nos aliments
+
+  Avec la chimie, on peut créer des substance hautement addictives
+
+  Si j'étais a la tête de Wagner, je
+
 
 
 * srcml_cpp
