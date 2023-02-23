@@ -24,9 +24,6 @@ jobs:
     - name: install_srcml_reqs_ubuntu
       run : ./ci_scripts/install_srcmlcaller_reqs_ubuntu.sh
 
-    - name: Install libraries required by glfw (used by hello-imgui)
-      run: sudo apt-get update && sudo apt-get install -y libxrandr-dev libxinerama-dev libxcursor-dev libxi-dev mesa-common-dev
-
     - name: Install poetry
       run: curl -sSL https://install.python-poetry.org | python3 -
 
