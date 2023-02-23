@@ -1,0 +1,6 @@
+libxml2-dev
+libxml2-utils
+libxslt1-dev
+libarchive-dev
+libssl-dev
+libcurl4-openssl-dev
