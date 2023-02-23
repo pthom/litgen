@@ -17,7 +17,6 @@ function(find_python_via_poetry)
         ECHO_ERROR_VARIABLE
         RESULT_VARIABLE result
     )
-    # message(FATAL_ERROR "result=${result}")
     if (NOT result EQUAL "0")
         message(STATUS "Could not find python via poetry")
     else()
