@@ -238,9 +238,9 @@ class LitgenOptions:
     #
     # fn_params_buffer_replace_by_array_regexes contains a regex on functions names
     # for which this transformation will be applied.
-    # Set it to r".*" to apply this to all functions (which is the default), set it to "" to disable it
+    # Set it to r".*" to apply this to all functions, set it to "" to disable it
     #
-    fn_params_replace_buffer_by_array__regex: str = r".*"
+    fn_params_replace_buffer_by_array__regex: str = r""
 
     # fn_params_buffer_types: list of numeric types that are considered as possible buffers.
     # You can customize this list in your own options by removing items from it,
