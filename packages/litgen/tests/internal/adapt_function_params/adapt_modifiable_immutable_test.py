@@ -135,6 +135,7 @@ def test_modifiable_immutable_simple():
 
 def test_modifiable_immutable_mixed_with_buffer():
     options = litgen.LitgenOptions()
+    options.fn_params_replace_buffer_by_array__regex = r".*"
     options.fn_params_replace_modifiable_immutable_by_boxed__regex = r".*"
     code = "void foo(float * buf, int buf_size);"
     generated_code = litgen_generator.generate_code(options, code)

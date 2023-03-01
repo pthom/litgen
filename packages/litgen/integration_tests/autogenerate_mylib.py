@@ -75,6 +75,8 @@ def mylib_litgen_options() -> litgen.LitgenOptions:
 
     options.fn_namespace_vectorize__regex = r"^MathFunctions$"
     options.fn_vectorize__regex = r".*"
+
+    options.fn_params_replace_buffer_by_array__regex = r".*"
     # options.fn_vectorize_suffix = "_vectorized"
 
     options.class_dynamic_attributes__regex = r"Dynamic$"
