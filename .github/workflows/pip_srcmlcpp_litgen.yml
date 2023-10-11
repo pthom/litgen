@@ -38,6 +38,9 @@ jobs:
         if: ${{ matrix.platform == 'ubuntu-latest' }}
         run : ./ci_scripts/install_srcmlcaller_reqs_ubuntu.sh
 
+      - name: Install srcML
+        run : sudo ./ci_scripts/install_srcml_ubuntu.sh
+
       - name: Build and install
         run: pip install --verbose .
 
