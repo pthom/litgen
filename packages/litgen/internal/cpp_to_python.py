@@ -403,7 +403,7 @@ def _scope_part_name(scope_part: CppScopePart) -> str:
         r += "Class"
     elif scope_part.scope_type == CppScopeType.Namespace:
         r += "Ns"
-    elif scope_part.scope_type == CppScopeType.Namespace:
+    elif scope_part.scope_type == CppScopeType.Enum:
         r += "Enum"
     r += scope_part.scope_name
     return r
