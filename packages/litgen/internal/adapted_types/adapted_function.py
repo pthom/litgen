@@ -251,8 +251,6 @@ class AdaptedFunction(AdaptedElement):
         self._stub_fill_is_type_ignore()
 
         self.is_overloaded = is_overloaded
-        if code_utils.does_match_regex(self.options.fn_force_overload__regex, self.cpp_element().function_name):
-            self.is_overloaded = True
 
         if self.cpp_element().is_inferred_return_type():
             self.cpp_element().cpp_element_comments.comment_end_of_line += "\n(C++ auto return type)"
@@ -574,7 +572,10 @@ class AdaptedFunction(AdaptedElement):
         if self.is_method():
             replace_tokens.function_pointer = "&" + replace_tokens.function_pointer
 
-        if self.is_overloaded:
+        force_overload_in_pydef = code_utils.does_match_regex(
+            self.options.fn_force_overload__regex, self.cpp_element().function_name
+        )
+        if self.is_overloaded or force_overload_in_pydef:
             if self.is_method() and len(self.cpp_element().parameter_list.parameters) == 0:
                 # overload_cast fails with 0 parameter...
                 parent_scope = self._pydef_str_parent_cpp_scope()
