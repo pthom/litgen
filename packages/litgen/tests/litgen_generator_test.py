@@ -75,12 +75,15 @@ def test_scoping_no_root_namespace():
                 a = enum.auto() # (= 0)
 
             @staticmethod
+            @overload
             def foo(e: EC = EC.a) -> EC:
                 pass
             @staticmethod
+            @overload
             def foo(e: E = E.a) -> E:
                 pass
             @staticmethod
+            @overload
             def foo(e: E = E.a, s: S = S()) -> S:
                 pass
 

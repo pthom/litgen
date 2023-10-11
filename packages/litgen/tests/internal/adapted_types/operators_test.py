@@ -45,9 +45,11 @@ def test_operators():
             # arithmetic operators
             def __add__(self, b: IntWrapper) -> IntWrapper:
                 pass
+            @overload
             def __sub__(self, b: IntWrapper) -> IntWrapper:
                 pass
 
+            @overload
             def __neg__(self) -> IntWrapper:
                 """ Unary minus operator"""
                 pass
@@ -57,14 +59,18 @@ def test_operators():
                 pass
 
             # Two overload of the += operator
+            @overload
             def __iadd__(self, b: IntWrapper) -> IntWrapper:
                 pass
+            @overload
             def __iadd__(self, b: int) -> IntWrapper:
                 pass
 
             # Two overload of the call operator, with different results
+            @overload
             def __call__(self, b: IntWrapper) -> int:
                 pass
+            @overload
             def __call__(self, b: int) -> int:
                 pass
     ''',

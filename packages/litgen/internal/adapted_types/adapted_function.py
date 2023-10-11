@@ -1017,16 +1017,25 @@ class AdaptedFunction(AdaptedElement):
         all_on_one_line = function_name_and_params_on_one_line()
 
         title_lines = [all_on_one_line] if all_on_one_line is not None else function_name_and_params_line_by_line()
+
+        # Add staticmethod or overload decorator
+        decorators = []
+        if self.is_overloaded:
+            decorators.append("@overload")
+        if (
+            self._stub_need_add_staticmethod_decorator_for_module_proxy_class()
+            or self.cpp_adapted_function.is_static_method()
+        ):
+            decorators.append("@staticmethod")
+
         body_lines: List[str] = []
 
         r = self._elm_str_stub_layout_lines(title_lines, body_lines)
-        if self._stub_need_add_staticmethod_decorator_for_module_proxy_class():
-            r = ["@staticmethod"] + r
+
+        for decorator in decorators:
+            r = [decorator] + r
 
         r = self._elm_stub_original_code_lines_info() + r
-
-        if self.cpp_adapted_function.is_static_method():
-            r = ["@staticmethod"] + r
 
         if self.shall_vectorize():
             new_vectorized_function = copy.copy(self)
