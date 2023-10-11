@@ -115,7 +115,6 @@ def mylib_litgen_options() -> litgen.LitgenOptions:
 
 
 def autogenerate_mylib() -> None:
-
     output_cpp_module = CPP_GENERATED_PYBIND_DIR + "/pybind_mylib.cpp"
     output_stub_pyi_file = CPP_GENERATED_PYBIND_DIR + "/lg_mylib/__init__.pyi"
 

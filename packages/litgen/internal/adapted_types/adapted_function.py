@@ -919,7 +919,6 @@ class AdaptedFunction(AdaptedElement):
 
     # override
     def stub_lines(self) -> List[str]:
-
         # Handle <=> (aka spaceship) operator, which is split in 5 operators!
         from litgen.internal.adapted_types import operators
 
