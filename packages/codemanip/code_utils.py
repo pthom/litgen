@@ -443,7 +443,6 @@ def write_generated_code_between_markers(
     code_to_insert: str,
     flag_preserve_indentation: bool = True,
 ) -> None:
-
     code_marker_in = f"<{marker_token}>"
     code_marker_out = f"</{marker_token}>"
 
@@ -750,7 +749,6 @@ def process_code_template(
     replacements_with_line_removal_if_not_found: Optional[Dict[str, Optional[str]]] = None,
     flag_replace_maybe_comma: bool = True,
 ) -> str:
-
     if replacements_with_line_removal_if_not_found is None:
         replacements_with_line_removal_if_not_found = {}
 
@@ -769,7 +767,6 @@ def process_code_template(
 
 
 def replace_in_string_remove_line_if_none(input_string: str, replacements: Dict[str, Optional[str]]) -> str:
-
     r = input_string
 
     for search, replace in replacements.items():

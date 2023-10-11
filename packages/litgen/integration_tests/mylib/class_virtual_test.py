@@ -45,7 +45,6 @@ def test_override_from_python():
 
 
 def test_combining_virtual_functions_and_inheritance():
-
     c = lg_mylib.root.inner.MyVirtualDerivate()
     assert c.foo_virtual_public_pure() == 53
     assert c.foo_derivate() == 48

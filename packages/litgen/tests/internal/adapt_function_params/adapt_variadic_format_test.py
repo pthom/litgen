@@ -15,7 +15,6 @@ def make_pydef_code(code: str) -> str:
 
 
 def test_adapt_variadic_format() -> None:
-
     expected_code = """
         m.def("log",
             [](LogLevel level, const char * const format)

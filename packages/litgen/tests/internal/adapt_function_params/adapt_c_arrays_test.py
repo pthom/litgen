@@ -31,7 +31,6 @@ def my_make_adapted_function(code: str) -> AdaptedFunction:
 
 
 def test_make_function_params_adapter() -> None:
-
     # Easy test with const
     code = """MY_API void foo(const int v[2]);"""
     adapted_function = my_make_adapted_function(code)

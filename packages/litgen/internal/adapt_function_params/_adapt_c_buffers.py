@@ -226,7 +226,6 @@ class _AdaptBuffersHelper:
         return r
 
     def make_adapted_lambda_code_end_template_buffer(self) -> str:
-
         template_intro = """
             #ifdef _WIN32
             using np_uint_l = uint32_t;
@@ -292,7 +291,6 @@ class _AdaptBuffersHelper:
 
             # Add loop code
             for i, cpp_numeric_type in enumerate(self.options.fn_params_buffer_types_list()):
-
                 pyarray_type_char = cpp_to_python.cpp_type_to_py_array_type(cpp_numeric_type)
 
                 # fill maybe_else

@@ -118,7 +118,6 @@ class CppBlock(CppElementAndComment):
 
         all_structs = self.all_structs_recursive()
         for struct in all_structs:
-
             current_scope_str = current_scope.str_cpp()
 
             searched_scopes_strs = []

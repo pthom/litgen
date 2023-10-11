@@ -55,7 +55,6 @@ class AdaptedNamespace(AdaptedElement):
 
     # override
     def stub_lines(self) -> List[str]:
-
         lines: List[str] = []
         if not self.lg_context.namespaces_stub.was_namespace_created(self._qualified_namespace_name()):
             lines += cpp_to_python.docstring_lines(self.options, self.cpp_element())

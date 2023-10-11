@@ -42,7 +42,6 @@ def adapt_exclude_params(adapted_function: AdaptedFunction) -> Optional[LambdaAd
 
     for old_param in old_function_params:
         if shall_exclude(old_param):
-
             #
             # Create new calling param (std::vector<std::string> &) -> not needed
             #

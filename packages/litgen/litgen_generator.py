@@ -165,7 +165,6 @@ def write_generated_code_for_files(
     output_cpp_glue_code_file: str = "",
     omit_boxed_types: bool = False,
 ) -> None:
-
     generator = LitgenGenerator(options, omit_boxed_types)
     for cpp_header in input_cpp_header_files:
         generator.process_cpp_file(cpp_header)

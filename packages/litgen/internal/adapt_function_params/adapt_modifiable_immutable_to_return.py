@@ -66,7 +66,6 @@ def adapt_modifiable_immutable_to_return(adapted_function: AdaptedFunction) -> O
     new_output_function_params: List[CppParameter] = []
     for old_adapted_param in old_function_params:
         if old_adapted_param.is_modifiable_python_immutable_ref_or_pointer():
-
             is_pointer = old_adapted_param.cpp_element().decl.cpp_type.modifiers == ["*"]
 
             # For signatures like
@@ -192,7 +191,6 @@ def adapt_modifiable_immutable_to_return(adapted_function: AdaptedFunction) -> O
     was_void_return_type = old_function.returns_void()
 
     def new_return_type_and_names() -> Tuple[str, str]:
-
         number_of_return_params = len(new_output_function_params)
         if not was_void_return_type:
             number_of_return_params += 1

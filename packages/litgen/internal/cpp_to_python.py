@@ -258,7 +258,6 @@ def decl_python_value(context: LitgenContext, cpp_decl: CppDecl) -> str:
 
 
 def info_original_location(options: LitgenOptions, cpp_element: CppElement, comment_token: str) -> str:
-
     if not options.original_location_flag_show:
         return ""
 

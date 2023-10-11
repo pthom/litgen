@@ -250,7 +250,6 @@ class CppStruct(CppElementAndComment, CppITemplateHost):
     def add_access_block(
         self, access_type: CppAccessType, comments: Optional[CppElementComments] = None
     ) -> CppPublicProtectedPrivate:
-
         # Create ppp_block (CppPublicProtectedPrivate) via C++ code:
         code = codemanip.code_utils.unindent_code(access_type.name + ":")
         cpp_unit = srcmlcpp.code_to_cpp_unit(self.options, code)
@@ -272,7 +271,6 @@ class CppStruct(CppElementAndComment, CppITemplateHost):
         access_type: CppAccessType = CppAccessType.public,
         comments: Optional[CppElementComments] = None,
     ) -> CppFunctionDecl:
-
         access_blocks = self.get_access_blocks(access_type=access_type)
         if len(access_blocks) == 0:
             self.add_access_block(access_type)

@@ -73,7 +73,6 @@ class CppElementComments:
             return self.comment_on_previous_lines + self.comment_end_of_line
 
     def top_comment_code(self, add_eol: bool = True, preserve_c_style_comment: bool = True) -> str:
-
         if preserve_c_style_comment and self.is_c_style_comment:
             r = "/*" + self.comment_on_previous_lines + "*/"
             return r

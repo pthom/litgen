@@ -8,7 +8,6 @@ from srcmlcpp.scrml_warning_settings import WarningType
 
 
 class SrcmlcppOptions:
-
     ################################################################################
     #    <API prefixes for functions / API comment suffixes for classes>
     ################################################################################

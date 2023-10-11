@@ -129,7 +129,6 @@ class AdaptedBlock(AdaptedElement):
 
         lines = []
         for adapted_element in self.adapted_elements:
-
             current_line = adapted_element.cpp_element().start().line
             global_progress_bars().set_current_line(_PROGRESS_BAR_TITLE_PYDEF, current_line)
 

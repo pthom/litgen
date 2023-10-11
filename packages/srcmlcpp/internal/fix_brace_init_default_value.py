@@ -137,7 +137,6 @@ def _change_fn_params_default_to_brace_init(fn: CppFunctionDecl) -> None:
 def change_decl_stmt_to_function_decl_if_suspicious(
     options: srcmlcpp.SrcmlcppOptions, decl_stmt: CppDeclStatement
 ) -> Optional[CppFunctionDecl]:
-
     if not options.fix_brace_init_default_value:
         return None
     fixed_code = _rewrite_decl_if_suspicious_fn_decl(decl_stmt)

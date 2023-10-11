@@ -98,7 +98,6 @@ def adapt_c_arrays(adapted_function: AdaptedFunction) -> Optional[LambdaAdapter]
         was_replaced = False
         old_cpp_decl = old_adapted_param.adapted_decl().cpp_element()
         if old_cpp_decl.is_c_array_known_fixed_size():
-
             if shall_replace_by_std_array(old_adapted_param):
                 was_replaced = True
                 # Create new calling param (const std::array &)
@@ -115,7 +114,6 @@ def adapt_c_arrays(adapted_function: AdaptedFunction) -> Optional[LambdaAdapter]
                 assert array_size_int is not None
 
                 if array_size_int <= options.fn_params_replace_modifiable_c_array__max_size:
-
                     was_replaced = True
 
                     new_adapted_decls = old_adapted_param.adapted_decl().c_array_fixed_size_to_mutable_new_boxed_decls()

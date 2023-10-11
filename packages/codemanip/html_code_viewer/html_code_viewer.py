@@ -191,7 +191,6 @@ def collapsible_code_and_title_two_columns(
     max_visible_lines: Optional[int] = None,
     initially_opened: bool = False,
 ) -> HtmlCode:
-
     viewer_1 = collapsible_code_and_title(
         code_and_title_1, initially_opened=initially_opened, max_visible_lines=max_visible_lines
     )
