@@ -24,12 +24,14 @@ Format text: Here is *some* content, and some //italic//
 
 *** diagrams and drawings
 
+Il faut d'abord evaluer ce code: Ctrl-space to select, M-x "eval-region"
+Ensuite, "M-a s" (Alt-a, puis s)
 
-(local-unset-key "M-a")
 (define-prefix-command 'pascal-map)
 (define-key pascal-map (kbd "s") 'org-babel-execute-src-block)
 (local-set-key (kbd "M-a") 'pascal-map)
 (setq org-confirm-babel-evaluate nil)
+
 
 *** With mermaid
 
@@ -453,6 +455,19 @@ Post reddit python
 
 
 
+
+** Bind SDL:
+  sdl_window_hello_imgui cassé
+  info / github issue
+
+** user Gallery on github
+
+
+* Mandel:
+
+See https://jmaio.dev/mandelbrot-maps#/m@0.2361652,0.5633767,4,0.2/j@0.4364131,-0.6468786,4,2.12
+
+
 * Reddit Post / Chat GPT
   Dire que l'IA n'est qu'un outil pourrait être comparé à dire
   que la chimie  n'est qu'un outil.
@@ -466,6 +481,8 @@ Post reddit python
   Avec la chimie, on peut créer des substance hautement addictives
 
   Si j'étais a la tête de Wagner, je
+
+
 
 
 
@@ -487,7 +504,6 @@ Post reddit python
 *** Add named parameters to functions
 *** Cerealize / cerealize
 *** _repr_my_code
-
 *** PimpMyCI:
     check for doc
     check for snake_case
