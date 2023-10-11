@@ -15,7 +15,9 @@ from xml.etree import ElementTree as ET
 # Count the total time used by call to the exe srcml
 _FLAG_PROFILE_SRCML_CALLS: bool = True
 
-_USE_NATIVE_SRCML_CALLER_MODULE = True
+# At the moment, the build of srcML (inside the pip module srcml_caller) fails.
+# So, we use the srcml command line
+_USE_NATIVE_SRCML_CALLER_MODULE = False
 
 
 def _embed_element_into_unit(element: ET.Element) -> ET.Element:
