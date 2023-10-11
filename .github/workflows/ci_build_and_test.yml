@@ -18,8 +18,8 @@ jobs:
         version: 11
         platform: x64
 
-#    - name: Install srcML
-#      run : sudo ./ci_scripts/install_srcml_ubuntu.sh
+    - name: Install srcML
+      run : sudo ./ci_scripts/install_srcml_ubuntu.sh
 
     - name: install_srcml_reqs_ubuntu
       run : ./ci_scripts/install_srcmlcaller_reqs_ubuntu.sh
