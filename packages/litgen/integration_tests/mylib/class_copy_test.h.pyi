@@ -16,26 +16,29 @@ class Copyable_ImplicitCopyCtor:
         pass
 
 class Copyable_ExplicitCopyCtor:
+    @overload
     def __init__(self) -> None:
         pass
+    @overload
     def __init__(self, other: Copyable_ExplicitCopyCtor) -> None:
         pass
     a: int = 1
 
 class Copyable_ExplicitPrivateCopyCtor:
+    @overload
     def __init__(self) -> None:
         pass
     a: int = 1
 
 class Copyable_DeletedCopyCtor:
     a: int = 1
+    @overload
     def __init__(self) -> None:
         pass
 
 # <submodule aaa>
 class aaa:  # Proxy class that introduces typings for the *submodule* aaa
     pass  # (This corresponds to a C++ namespace. All method are static!)
-
     #  ------------------------------------------------------------------------
     #      <template specializations for class Copyable_Template>
     class Copyable_TemplateInt:

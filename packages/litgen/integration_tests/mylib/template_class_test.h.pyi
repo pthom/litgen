@@ -28,9 +28,11 @@ import numpy
 class MyTemplateClassInt:
     values: List[int]
 
+    @overload
     def __init__(self) -> None:
         """Standard constructor"""
         pass
+    @overload
     def __init__(self, v: List[int]) -> None:
         """Constructor that will need a parameter adaptation"""
         pass
@@ -44,9 +46,11 @@ class MyTemplateClassInt:
 class MyTemplateClassString:
     values: List[str]
 
+    @overload
     def __init__(self) -> None:
         """Standard constructor"""
         pass
+    @overload
     def __init__(self, v: List[str]) -> None:
         """Constructor that will need a parameter adaptation"""
         pass

@@ -290,9 +290,11 @@ def change_void_int_array(label: str, value: List[int]) -> Tuple[bool, List[int]
 # overload on free functions
 #
 
+@overload
 def add_overload(a: int, b: int) -> int:  # type: ignore
     pass
 
+@overload
 def add_overload(a: int, b: int, c: int) -> int:  # type: ignore
     pass
 
@@ -301,8 +303,10 @@ def add_overload(a: int, b: int, c: int) -> int:  # type: ignore
 #
 
 class FooOverload:
+    @overload
     def add_overload(self, a: int, b: int) -> int:  # type: ignore
         pass
+    @overload
     def add_overload(self, a: int, b: int, c: int) -> int:  # type: ignore
         pass
     def __init__(self) -> None:
@@ -476,19 +480,23 @@ class Copyable_ImplicitCopyCtor:
         pass
 
 class Copyable_ExplicitCopyCtor:
+    @overload
     def __init__(self) -> None:
         pass
+    @overload
     def __init__(self, other: Copyable_ExplicitCopyCtor) -> None:
         pass
     a: int = 1
 
 class Copyable_ExplicitPrivateCopyCtor:
+    @overload
     def __init__(self) -> None:
         pass
     a: int = 1
 
 class Copyable_DeletedCopyCtor:
     a: int = 1
+    @overload
     def __init__(self) -> None:
         pass
 
@@ -589,8 +597,10 @@ class IntWrapper:
     # arithmetic operators
     def __add__(self, b: IntWrapper) -> IntWrapper:
         pass
+    @overload
     def __sub__(self, b: IntWrapper) -> IntWrapper:
         pass
+    @overload
     def __neg__(self) -> IntWrapper:
         """Unary minus operator"""
         pass
@@ -598,13 +608,17 @@ class IntWrapper:
         """Comparison operator"""
         pass
     # Two overload of the += operator
+    @overload
     def __iadd__(self, b: IntWrapper) -> IntWrapper:
         pass
+    @overload
     def __iadd__(self, b: int) -> IntWrapper:
         pass
     # Two overload of the call operator, with different results
+    @overload
     def __call__(self, b: IntWrapper) -> int:
         pass
+    @overload
     def __call__(self, b: int) -> int:
         pass
 
@@ -616,24 +630,34 @@ class IntWrapperSpaceship:
     # Test spaceship operator, which will be split into 5 operators in Python!
     # ( <, <=, ==, >=, >)
     # Since we have two overloads, 10 python methods will be built
+    @overload
     def __lt__(self, o: IntWrapperSpaceship) -> bool:
         pass
+    @overload
     def __le__(self, o: IntWrapperSpaceship) -> bool:
         pass
+    @overload
     def __eq__(self, o: IntWrapperSpaceship) -> bool:
         pass
+    @overload
     def __ge__(self, o: IntWrapperSpaceship) -> bool:
         pass
+    @overload
     def __gt__(self, o: IntWrapperSpaceship) -> bool:
         pass
+    @overload
     def __lt__(self, o: int) -> bool:
         pass
+    @overload
     def __le__(self, o: int) -> bool:
         pass
+    @overload
     def __eq__(self, o: int) -> bool:
         pass
+    @overload
     def __ge__(self, o: int) -> bool:
         pass
+    @overload
     def __gt__(self, o: int) -> bool:
         pass
 
@@ -761,9 +785,11 @@ class FooTemplateFunctionTest:
 class MyTemplateClassInt:
     values: List[int]
 
+    @overload
     def __init__(self) -> None:
         """Standard constructor"""
         pass
+    @overload
     def __init__(self, v: List[int]) -> None:
         """Constructor that will need a parameter adaptation"""
         pass
@@ -777,9 +803,11 @@ class MyTemplateClassInt:
 class MyTemplateClassString:
     values: List[str]
 
+    @overload
     def __init__(self) -> None:
         """Standard constructor"""
         pass
+    @overload
     def __init__(self, v: List[str]) -> None:
         """Constructor that will need a parameter adaptation"""
         pass
@@ -1110,12 +1138,15 @@ class n:  # Proxy class that introduces typings for the *submodule* n
     class E(enum.Enum):
         a = enum.auto()  # (= 0)
     @staticmethod
+    @overload
     def foo(e: EC = EC.a) -> None:
         pass
     @staticmethod
+    @overload
     def foo(e: E = E.a) -> None:
         pass
     @staticmethod
+    @overload
     def foo(e: E = E.a, s: S = S()) -> None:
         pass
 

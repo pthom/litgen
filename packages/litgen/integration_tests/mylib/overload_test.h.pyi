@@ -23,9 +23,11 @@ import numpy
 # overload on free functions
 #
 
+@overload
 def add_overload(a: int, b: int) -> int:  # type: ignore
     pass
 
+@overload
 def add_overload(a: int, b: int, c: int) -> int:  # type: ignore
     pass
 
@@ -34,8 +36,10 @@ def add_overload(a: int, b: int, c: int) -> int:  # type: ignore
 #
 
 class FooOverload:
+    @overload
     def add_overload(self, a: int, b: int) -> int:  # type: ignore
         pass
+    @overload
     def add_overload(self, a: int, b: int, c: int) -> int:  # type: ignore
         pass
     def __init__(self) -> None:
