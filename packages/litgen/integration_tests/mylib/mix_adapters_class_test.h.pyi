@@ -76,6 +76,7 @@ class some_namespace:  # Proxy class that introduces typings for the *submodule*
         def __init__(self) -> None:
             """Auto-generated default constructor"""
             pass
+
     # <submodule some_inner_namespace>
     class some_inner_namespace:  # Proxy class that introduces typings for the *submodule* some_inner_namespace
         pass  # (This corresponds to a C++ namespace. All method are static!)

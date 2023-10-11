@@ -963,6 +963,7 @@ class home:  # Proxy class that introduces typings for the *submodule* home
 # <submodule aaa>
 class aaa:  # Proxy class that introduces typings for the *submodule* aaa
     pass  # (This corresponds to a C++ namespace. All method are static!)
+
     #  ------------------------------------------------------------------------
     #      <template specializations for class Copyable_Template>
     class Copyable_TemplateInt:
@@ -1073,6 +1074,7 @@ class some_namespace:  # Proxy class that introduces typings for the *submodule*
         def __init__(self) -> None:
             """Auto-generated default constructor"""
             pass
+
     # <submodule some_inner_namespace>
     class some_inner_namespace:  # Proxy class that introduces typings for the *submodule* some_inner_namespace
         pass  # (This corresponds to a C++ namespace. All method are static!)
