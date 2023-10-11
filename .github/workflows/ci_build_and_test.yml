@@ -1,6 +1,7 @@
 name: "ci_build_and_test"
 
 on:
+  workflow_dispatch:
   push:
   pull_request:
 
