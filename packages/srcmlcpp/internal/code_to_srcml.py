@@ -1,6 +1,8 @@
 """
 Calls the external program srcml (https://www.srcml.org/)
 """
+import sys
+
 # mypy: warn_unused_ignores=False
 from typing import Optional
 import logging
@@ -60,7 +62,15 @@ class _SrcmlCaller:
             subprocess.check_call(shell_command, shell=True)
         except subprocess.CalledProcessError as e:
             logging.error(f"_SrcmlCaller.call, error {e}")
-            raise
+            logging.error(
+                """
+            srcmlcpp requires the installation of srcML ( https://www.srcml.org )
+            Did you install it? You can download it from https://www.srcml.org/#download
+
+            The command "srcml" needs to be available in your PATH.
+            """
+            )
+            sys.exit(1)
 
     def _random_filename(self) -> str:
         characters = "abcdefghijklmnopqrstuvwxyz0123456789_"
