@@ -13,8 +13,7 @@ from srcmlcpp.cpp_types.scope.cpp_scope import CppScopeType
 from srcmlcpp.srcmlcpp_exception import SrcmlcppException
 from srcmlcpp.scrml_warning_settings import WarningType
 
-from litgen import TemplateNamingScheme
-from litgen.internal import cpp_to_python
+from litgen.internal import cpp_to_python, template_options
 from litgen.internal.adapted_types.adapted_comment import (
     AdaptedComment,
     AdaptedEmptyLine,
@@ -25,6 +24,12 @@ from litgen.internal.adapted_types.adapted_enum import AdaptedEnum
 from litgen.internal.adapted_types.adapted_function import AdaptedFunction
 from litgen.internal.adapted_types.adapted_condition_macro import AdaptedConditionMacro
 from litgen.internal.context.litgen_context import LitgenContext
+
+
+@dataclass
+class _AdaptedInstantiatedTemplateClasses:
+    adapted_classes: List[AdaptedClass]
+    stubs_synonyms_code: List[str]
 
 
 @dataclass
@@ -120,6 +125,8 @@ class AdaptedClassMember(AdaptedDecl):
             return False
         elif cpp_decl.is_c_array_known_fixed_size():
             return self._check_can_add_c_array_known_fixed_size()
+        elif self.options.class_template_options.shall_exclude_type(self.cpp_element().cpp_type):
+            return False
         else:
             return True
 
@@ -279,8 +286,8 @@ class AdaptedClass(AdaptedElement):
     # template_specialization store the optional specialization of this AdaptedClass
     @dataclass
     class TemplateSpecialization:
-        class_name_python: str = ""
-        cpp_type: str = ""
+        class_name_python: str
+        cpp_type: CppType
 
     template_specialization: Optional[TemplateSpecialization] = None
 
@@ -378,14 +385,18 @@ class AdaptedClass(AdaptedElement):
         # and bail out
         if self.cpp_element().is_template_partially_specialized():
             template_instantiations = self._tpl_split_into_template_instantiations()
-            if len(template_instantiations) == 0:
+            if len(template_instantiations.adapted_classes) == 0:
                 return []
             else:
                 r: List[str] = []
-                for template_instantiation in template_instantiations:
+                for template_instantiation in template_instantiations.adapted_classes:
                     if len(r) > 0:
                         r += ["", ""]  # 2 empty lines between classes
                     r += template_instantiation.stub_lines()
+
+                for stub_synonym_code in template_instantiations.stubs_synonyms_code:
+                    r += ["", stub_synonym_code, ""]
+
                 if self.options.class_template_decorate_in_stub:
                     r = cpp_to_python.surround_python_code_lines(
                         r, f"template specializations for class {self.class_name_python()}"
@@ -413,6 +424,9 @@ class AdaptedClass(AdaptedElement):
         class_name = self.class_name_python()
 
         title = f"class {class_name}{str_parent_classes_python()}:"
+        if self.template_specialization is not None:
+            title += f"  # Python specialization for {self.cpp_element().class_name}<{self.template_specialization.cpp_type.str_code()}>"
+
         title_lines = [title]
         if self.cpp_element().is_final():
             self.cpp_element().cpp_element_comments.comment_on_previous_lines += "\n"
@@ -465,11 +479,11 @@ class AdaptedClass(AdaptedElement):
         # and bail out
         if self.cpp_element().is_template_partially_specialized():
             template_instantiations = self._tpl_split_into_template_instantiations()
-            if len(template_instantiations) == 0:
+            if len(template_instantiations.adapted_classes) == 0:
                 return []
             else:
                 r = []
-                for template_instantiation in template_instantiations:
+                for template_instantiation in template_instantiations.adapted_classes:
                     r += template_instantiation.pydef_lines()
                 return r
 
@@ -710,24 +724,28 @@ class AdaptedClass(AdaptedElement):
         is_supported = nb_template_parameters == 1
         return is_supported
 
-    def _tpl_instantiate_template_for_type(
-        self, cpp_type_str: str, naming_scheme: TemplateNamingScheme
-    ) -> AdaptedClass:
+    def _tpl_instantiate_template_for_type(self, cpp_type: CppType) -> AdaptedClass:
         assert self.cpp_element().is_template_partially_specialized()
         assert self._tpl_is_one_param_template()
 
-        new_cpp_class = self.cpp_element().with_specialized_template(
-            CppTemplateSpecialization.from_type_str(cpp_type_str)
-        )
+        new_cpp_class = self.cpp_element().with_specialized_template(CppTemplateSpecialization.from_type(cpp_type))
         assert new_cpp_class is not None
         new_adapted_class = AdaptedClass(self.lg_context, new_cpp_class)
-        new_adapted_class.template_specialization = AdaptedClass.TemplateSpecialization(
-            TemplateNamingScheme.apply(naming_scheme, self.cpp_element().class_name, cpp_type_str), cpp_type_str
+
+        from litgen.internal import template_options
+
+        tpl_class_name_python = cpp_to_python._class_name_to_python(self.options, self.cpp_element().class_name)
+        instantiated_cpp_type_str = cpp_type.str_code()
+        new_class_name_python = template_options._apply_template_naming(
+            tpl_class_name_python, instantiated_cpp_type_str
         )
+        new_class_name_python = cpp_to_python.type_to_python(self.options, new_class_name_python)
+
+        new_adapted_class.template_specialization = AdaptedClass.TemplateSpecialization(new_class_name_python, cpp_type)
 
         return new_adapted_class
 
-    def _tpl_split_into_template_instantiations(self) -> List[AdaptedClass]:
+    def _tpl_split_into_template_instantiations(self) -> _AdaptedInstantiatedTemplateClasses:
         assert self.cpp_element().is_template_partially_specialized()
 
         matching_template_spec = None
@@ -737,23 +755,33 @@ class AdaptedClass(AdaptedElement):
 
         if matching_template_spec is None:
             self.cpp_element().emit_warning(
-                "Ignoring template class. You might need to set LitgenOptions.class_template_options",
+                f"Ignoring template class {self.cpp_element().class_name} . You might need to set LitgenOptions.class_template_options",
                 WarningType.LitgenTemplateClassIgnore,
             )
-            return []
+            return _AdaptedInstantiatedTemplateClasses([], [])
 
         if not self._tpl_is_one_param_template() and len(matching_template_spec.cpp_types_list) > 0:
             self.cpp_element().emit_warning(
-                "Template classes with more than one parameter are not supported",
+                f"Template class {self.cpp_element().class_name} with more than one parameter is not supported",
                 WarningType.LitgenTemplateClassMultipleIgnore,
             )
-            return []
+            return _AdaptedInstantiatedTemplateClasses([], [])
 
         new_classes: List[AdaptedClass] = []
         for cpp_type in matching_template_spec.cpp_types_list:
-            new_class = self._tpl_instantiate_template_for_type(cpp_type, matching_template_spec.naming_scheme)
+            new_class = self._tpl_instantiate_template_for_type(cpp_type)
             new_classes.append(new_class)
-        return new_classes
+
+        stubs_synonym_code = []
+        for cpp_synonym in matching_template_spec.cpp_types_synonyms:
+            tpl_class_name_python = cpp_to_python._class_name_to_python(self.options, self.cpp_element().class_name)
+            syn_python = cpp_to_python._class_name_to_python(self.options, cpp_synonym.synonym_name)
+            target_python = cpp_to_python._class_name_to_python(self.options, cpp_synonym.synonym_target)
+            tpl_syn_python = template_options._apply_template_naming(tpl_class_name_python, syn_python)
+            tpl_target_python = template_options._apply_template_naming(tpl_class_name_python, target_python)
+            stubs_synonym_code.append(f"{tpl_syn_python} = {tpl_target_python}")
+
+        return _AdaptedInstantiatedTemplateClasses(new_classes, stubs_synonym_code)
 
     #  ============================================================================================
     #
@@ -964,6 +992,11 @@ class PythonNamedConstructorHelper:
 
             members_decls = self.cpp_class.get_members(access_type=CppAccessType.public)
 
+            def not_excluded_tpl(member: CppDecl) -> bool:
+                return not options.class_template_options.shall_exclude_type(member.cpp_type)
+
+            members_decls = list(filter(not_excluded_tpl, members_decls))
+
             def can_be_set(member: CppDecl) -> bool:
                 if member.cpp_type.modifiers.count("*") > 1:
                     return False  # refuse double pointers
@@ -1149,5 +1182,6 @@ class PythonNamedConstructorHelper:
             return ""
 
         adapted_function = AdaptedFunction(self.adapted_class.lg_context, ctor_decl, False)
+
         r = "\n".join(adapted_function.stub_lines())
         return r

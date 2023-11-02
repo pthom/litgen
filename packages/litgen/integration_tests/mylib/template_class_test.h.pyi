@@ -25,7 +25,7 @@ import numpy
 
 #  ------------------------------------------------------------------------
 #      <template specializations for class MyTemplateClass>
-class MyTemplateClassInt:
+class MyTemplateClass_int:  # Python specialization for MyTemplateClass<int>
     values: List[int]
 
     @overload
@@ -43,7 +43,7 @@ class MyTemplateClassInt:
         """Method that requires a parameter adaptation"""
         pass
 
-class MyTemplateClassString:
+class MyTemplateClass_string:  # Python specialization for MyTemplateClass<std::string>
     values: List[str]
 
     @overload

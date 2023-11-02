@@ -372,7 +372,9 @@ def test_templated_function():
         };
         """
     options = litgen.LitgenOptions()
-    options.fn_template_options.add_specialization(r"SumVector", ["int"])
+    options.fn_template_options.add_specialization(
+        r"SumVector", ["int"], add_suffix_to_function_name=False, cpp_synonyms_list_str=[]
+    )
     options.fn_params_replace_buffer_by_array__regex = r".*"
 
     generated_code = litgen.generate_code(options, code)
@@ -419,9 +421,10 @@ def test_templated_function_with_rename():
     code = """template<class T> T foo();"""
     options = LitgenOptions()
     options.fn_template_options.add_specialization(
-        function_name_regex=r".*",
-        cpp_types_list=["int", "double"],
-        naming_scheme=litgen.TemplateNamingScheme.snake_suffix,
+        name_regex=r".*",
+        cpp_types_list_str=["int", "double"],
+        add_suffix_to_function_name=True,
+        cpp_synonyms_list_str=[],
     )
     generated_code = litgen.generate_code(options, code)
     code_utils.assert_are_codes_equal(

@@ -25,7 +25,7 @@ void py_init_module_mylib(py::module& m)
     ////////////////////    <generated_from:template_class_test.h>    ////////////////////
     auto pyClassMyTemplateClass_int =
         py::class_<MyTemplateClass<int>>
-            (m, "MyTemplateClassInt", "")
+            (m, "MyTemplateClass_int", "")
         .def_readwrite("values", &MyTemplateClass<int>::values, "")
         .def(py::init<>(),
             "Standard constructor")
@@ -64,7 +64,7 @@ void py_init_module_mylib(py::module& m)
         ;
     auto pyClassMyTemplateClass_string =
         py::class_<MyTemplateClass<std::string>>
-            (m, "MyTemplateClassString", "")
+            (m, "MyTemplateClass_string", "")
         .def_readwrite("values", &MyTemplateClass<std::string>::values, "")
         .def(py::init<>(),
             "Standard constructor")

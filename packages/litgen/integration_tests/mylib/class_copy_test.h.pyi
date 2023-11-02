@@ -41,7 +41,7 @@ class aaa:  # Proxy class that introduces typings for the *submodule* aaa
     pass  # (This corresponds to a C++ namespace. All method are static!)
     #  ------------------------------------------------------------------------
     #      <template specializations for class Copyable_Template>
-    class Copyable_TemplateInt:
+    class Copyable_Template_int:  # Python specialization for Copyable_Template<int>
         value: int
         def __init__(self, value: int = int()) -> None:
             """Auto-generated default constructor with named params"""

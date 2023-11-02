@@ -782,7 +782,7 @@ class FooTemplateFunctionTest:
 
 #  ------------------------------------------------------------------------
 #      <template specializations for class MyTemplateClass>
-class MyTemplateClassInt:
+class MyTemplateClass_int:  # Python specialization for MyTemplateClass<int>
     values: List[int]
 
     @overload
@@ -800,7 +800,7 @@ class MyTemplateClassInt:
         """Method that requires a parameter adaptation"""
         pass
 
-class MyTemplateClassString:
+class MyTemplateClass_string:  # Python specialization for MyTemplateClass<std::string>
     values: List[str]
 
     @overload
@@ -965,7 +965,7 @@ class aaa:  # Proxy class that introduces typings for the *submodule* aaa
     pass  # (This corresponds to a C++ namespace. All method are static!)
     #  ------------------------------------------------------------------------
     #      <template specializations for class Copyable_Template>
-    class Copyable_TemplateInt:
+    class Copyable_Template_int:  # Python specialization for Copyable_Template<int>
         value: int
         def __init__(self, value: int = int()) -> None:
             """Auto-generated default constructor with named params"""

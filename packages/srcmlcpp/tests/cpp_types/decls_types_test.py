@@ -340,3 +340,37 @@ def test_with_terse_types_method():
     # its declaration cannot yet use it (only the method body can)
     method_terse = method.with_terse_types()
     assert method_terse.str_code() == "S make_s_method(S s = S());"
+
+
+def test_cpp_template_type():
+    options = srcmlcpp.SrcmlcppOptions()
+
+    cpp_type = srcmlcpp.srcmlcpp_main.code_to_cpp_type(options, "int")
+    assert not cpp_type.is_template()
+    assert cpp_type.template_instantiated_unique_type() is None
+
+    cpp_type = srcmlcpp.srcmlcpp_main.code_to_cpp_type(options, "std::vector<int>")
+    assert cpp_type.is_template()
+    tpl_type = cpp_type.template_instantiated_unique_type()
+    assert tpl_type is not None
+    assert tpl_type.str_code() == "int"
+    assert cpp_type.template_name() == "std::vector"
+
+    cpp_type = srcmlcpp.srcmlcpp_main.code_to_cpp_type(options, "std::vector<int*>")
+    assert cpp_type.is_template()
+    tpl_type = cpp_type.template_instantiated_unique_type()
+    assert tpl_type is not None
+    assert tpl_type.str_code() == "int *"
+    assert cpp_type.template_name() == "std::vector"
+
+    cpp_type = srcmlcpp.srcmlcpp_main.code_to_cpp_type(options, "std::vector<std::pair<std::string,float>>")
+    assert cpp_type.is_template()
+    tpl_type = cpp_type.template_instantiated_unique_type()
+    assert tpl_type is not None
+    assert tpl_type.str_code() == "std::pair<std::string,float>"
+    assert cpp_type.template_name() == "std::vector"
+
+    cpp_type = srcmlcpp.srcmlcpp_main.code_to_cpp_type(options, "std::map<int, double>")
+    assert cpp_type.is_template()
+    assert cpp_type.template_instantiated_unique_type() is None
+    assert cpp_type.template_name() == "std::map"

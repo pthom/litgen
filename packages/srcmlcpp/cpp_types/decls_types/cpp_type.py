@@ -146,6 +146,47 @@ class CppType(CppElementAndComment):
     def is_inferred_type(self) -> bool:
         return self.typenames == ["auto"]
 
+    def is_template(self) -> bool:
+        joined_typenames = " ".join(self.typenames)
+        r = "<" in joined_typenames and ">" in joined_typenames
+        return r
+
+    def template_name(self) -> Optional[str]:
+        if not self.is_template():
+            return None
+        joined_typenames = " ".join(self.typenames)
+        r = joined_typenames[: joined_typenames.index("<")]
+        return r
+
+    def template_instantiated_unique_type(self) -> Optional[CppType]:
+        """Will return the instantiated type when it is a template on *only one* type
+        cpp_type = srcmlcpp_main.code_to_cpp_type(options, "int")
+        assert cpp_type.template_instantiated_type() is None
+
+        cpp_type = srcmlcpp_main.code_to_cpp_type(options, "std::vector<int>")
+        assert cpp_type.template_instantiated_type().str_code() == "int"
+
+        cpp_type = srcmlcpp.srcmlcpp_main.code_to_cpp_type(options, "std::vector<std::pair<std::string,float>>")
+        assert cpp_type.template_instantiated_type().str_code() == "std::pair<std::string,float>"
+
+        cpp_type = srcmlcpp.srcmlcpp_main.code_to_cpp_type(options, "std::map<int, double>")
+        assert cpp_type.template_instantiated_type() is None
+        """
+        import srcmlcpp.srcmlcpp_main
+
+        if not self.is_template():
+            return None
+        joined_typenames = " ".join(self.typenames)
+        start = joined_typenames.index("<")
+        end = joined_typenames.rindex(">")
+        tpl_type_str = joined_typenames[start + 1 : end]
+        options = srcmlcpp.SrcmlcppOptions()
+        try:
+            tpl_type = srcmlcpp.srcmlcpp_main.code_to_cpp_type(options, tpl_type_str)
+        except srcmlcpp.SrcmlcppException:
+            return None
+        return tpl_type
+
     def with_specialized_template(self, template_specs: CppTemplateSpecialization) -> Optional[CppType]:
         """Returns a new type where "template_name" is replaced by "cpp_type"
         Returns None if this type does not use "template_name"
@@ -157,12 +198,10 @@ class CppType(CppElementAndComment):
         for i in range(len(new_type.typenames)):
             for template_spec in template_specs.specializations:
                 assert len(template_spec.cpp_type.typenames) == 1
-                template_spec_type = template_spec.cpp_type.typenames[0]
+                template_spec_type = template_spec.cpp_type.str_code()
                 if new_type.typenames[i] == template_spec.template_name:
                     was_changed = True
                     new_type.typenames[i] = template_spec_type
-                    new_type.specifiers += template_spec.cpp_type.specifiers
-                    new_type.modifiers += template_spec.cpp_type.modifiers
                 else:
                     new_typename, nb_sub = re.subn(
                         rf"\b{template_spec.template_name}\b", template_spec_type, new_type.typenames[i]
@@ -170,8 +209,6 @@ class CppType(CppElementAndComment):
                     if nb_sub > 0:
                         was_changed = True
                         new_type.typenames[i] = new_typename
-                        new_type.specifiers += template_spec.cpp_type.specifiers
-                        new_type.modifiers += template_spec.cpp_type.modifiers
 
         if was_changed:
             return new_type

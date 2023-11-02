@@ -81,21 +81,25 @@ def mylib_litgen_options() -> litgen.LitgenOptions:
 
     options.class_dynamic_attributes__regex = r"Dynamic$"
 
-    options.fn_template_options.add_specialization(r"^AddTemplated$", ["int", "double", "std::string"])
-    options.fn_template_options.add_specialization(r"^SumVector", ["int", "std::string"])
+    options.fn_template_options.add_specialization(
+        r"^AddTemplated$", ["int", "double", "std::string"], add_suffix_to_function_name=False, cpp_synonyms_list_str=[]
+    )
+    options.fn_template_options.add_specialization(
+        r"^SumVector", ["int", "std::string"], add_suffix_to_function_name=True, cpp_synonyms_list_str=[]
+    )
 
     options.class_template_options.add_specialization(
-        class_name_regex=r"^MyTemplateClass$",  # r".*" => all classes
-        cpp_types_list=["int", "std::string"],  # instantiated types
-        naming_scheme=litgen.TemplateNamingScheme.camel_case_suffix,
+        name_regex=r"^MyTemplateClass$",  # r".*" => all classes
+        cpp_types_list_str=["int", "std::string"],  # instantiated types
+        cpp_synonyms_list_str=[],
     )
 
     options.class_deep_copy__regex = r"^Copyable_"
     options.class_copy__regex = r"^Copyable_"
     options.class_template_options.add_specialization(
-        class_name_regex=r"^Copyable_",  # r".*" => all classes
-        cpp_types_list=["int"],  # instantiated types
-        naming_scheme=litgen.TemplateNamingScheme.camel_case_suffix,
+        name_regex=r"^Copyable_",  # r".*" => all classes
+        cpp_types_list_str=["int"],  # instantiated types
+        cpp_synonyms_list_str=[],
     )
 
     options.macro_define_include_by_name__regex = r"^MY_"

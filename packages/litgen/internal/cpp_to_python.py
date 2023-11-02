@@ -46,8 +46,14 @@ def comment_pydef_one_line(options: LitgenOptions, title_cpp: str) -> str:
     return r
 
 
-def type_to_python(options: LitgenOptions, type_cpp: str) -> str:
-    r = type_cpp
+def type_to_python(options: LitgenOptions, cpp_type_str: str) -> str:
+    specialized_type_python_name = options.class_template_options.specialized_type_python_name_str(
+        cpp_type_str, options.type_replacements
+    )
+    if specialized_type_python_name is not None:
+        r = specialized_type_python_name
+    else:
+        r = cpp_type_str
     r = r.replace("static ", "")
     r = options.type_replacements.apply(r).strip()
     return r
@@ -111,6 +117,16 @@ def var_value_to_python(context: LitgenContext, default_value_cpp: str) -> str:
     for number_macro, value in context.options.srcmlcpp_options.named_number_macros.items():
         r = r.replace(number_macro, str(value))
     r = context.var_values_replacements_cache.apply(r)
+
+    # If this default value uses a bound template type, try to translate it
+    specialized_type_python_default_value = (
+        context.options.class_template_options.specialized_type_python_default_value(
+            default_value_cpp, context.options.type_replacements
+        )
+    )
+    if specialized_type_python_default_value is not None:
+        r = specialized_type_python_default_value
+
     return r
 
 
@@ -445,7 +461,11 @@ def cpp_scope_to_pybind_var_name(options: LitgenOptions, cpp_element: CppElement
             if len(cpp_element.specialized_template_params) > 0:
                 instantiated_template_params_str = [str(param) for param in cpp_element.specialized_template_params]
                 instantiated_template_params_str = [
-                    param.replace(" ", "_").replace("std::", "").replace("::", "_")
+                    param.replace(" *", "_ptr")
+                    .replace("*", "_ptr")
+                    .replace(" ", "_")
+                    .replace("std::", "")
+                    .replace("::", "_")
                     for param in instantiated_template_params_str
                 ]
                 r += "_" + "_".join(instantiated_template_params_str)

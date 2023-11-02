@@ -1050,7 +1050,7 @@ void py_init_module_lg_mylib(py::module& m)
 
     auto pyClassMyTemplateClass_int =
         py::class_<MyTemplateClass<int>>
-            (m, "MyTemplateClassInt", "")
+            (m, "MyTemplateClass_int", "")
         .def_readwrite("values", &MyTemplateClass<int>::values, "")
         .def(py::init<>(),
             "Standard constructor")
@@ -1089,7 +1089,7 @@ void py_init_module_lg_mylib(py::module& m)
         ;
     auto pyClassMyTemplateClass_string =
         py::class_<MyTemplateClass<std::string>>
-            (m, "MyTemplateClassString", "")
+            (m, "MyTemplateClass_string", "")
         .def_readwrite("values", &MyTemplateClass<std::string>::values, "")
         .def(py::init<>(),
             "Standard constructor")
@@ -1225,7 +1225,7 @@ void py_init_module_lg_mylib(py::module& m)
         py::module_ pyNsAAA = m.def_submodule("aaa", "");
         auto pyNsAAA_ClassCopyable_Template_int =
             py::class_<AAA::Copyable_Template<int>>
-                (pyNsAAA, "Copyable_TemplateInt", "")
+                (pyNsAAA, "Copyable_Template_int", "")
             .def(py::init<>([](
             int value = int())
             {

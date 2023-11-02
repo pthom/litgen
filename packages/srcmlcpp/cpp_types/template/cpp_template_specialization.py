@@ -29,8 +29,7 @@ class CppTemplateSpecializationPart:
 
             dummy_options = SrcmlcppOptions()
             self.cpp_type = srcmlcpp_main.code_to_cpp_type(dummy_options, cpp_type)
-            self.template_name = template_name
-
+        self.template_name = template_name
         # We do not support specialization types whose name is composed of multiple words,
         # such as "unsigned int". Please use "uint" or other typedefs.
         assert len(self.cpp_type.typenames) == 1

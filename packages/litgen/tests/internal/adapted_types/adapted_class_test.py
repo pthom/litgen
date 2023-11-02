@@ -239,9 +239,7 @@ def test_templated_class():
 
     options = LitgenOptions()
     options.class_template_options.add_specialization(
-        class_name_regex="^MyTemplateClass",
-        cpp_types_list=["std::string"],
-        naming_scheme=litgen.TemplateNamingScheme.camel_case_suffix,
+        name_regex="^MyTemplateClass", cpp_types_list_str=["std::string"], cpp_synonyms_list_str=[]
     )
 
     generated_code = litgen.generate_code(options, code)
@@ -251,7 +249,7 @@ def test_templated_class():
         '''
         #  ------------------------------------------------------------------------
         #      <template specializations for class MyTemplateClass>
-        class MyTemplateClassString:
+        class MyTemplateClass_string:  # Python specialization for MyTemplateClass<std::string>
             values: List[str]
 
             @overload
@@ -281,7 +279,7 @@ def test_templated_class():
         """
         auto pyClassMyTemplateClass_string =
             py::class_<MyTemplateClass<std::string>>
-                (m, "MyTemplateClassString", "")
+                (m, "MyTemplateClass_string", "")
             .def_readwrite("values", &MyTemplateClass<std::string>::values, "")
             .def(py::init<>(),
                 "Standard constructor")
@@ -373,7 +371,7 @@ def test_deepcopy_with_specialization():
     }
     """
     options = litgen.LitgenOptions()
-    options.class_template_options.add_specialization(".*", ["int"])
+    options.class_template_options.add_specialization(".*", ["int"], [])
     options.class_deep_copy__regex = r".*"
     generated_code = litgen.generate_code(options, code)
 
@@ -384,7 +382,7 @@ def test_deepcopy_with_specialization():
             py::module_ pyNsNs = m.def_submodule("ns", "");
             auto pyNsNs_ClassFoo_int =
                 py::class_<Ns::Foo<int>>
-                    (pyNsNs, "FooInt", "")
+                    (pyNsNs, "Foo_int", "")
                 .def(py::init<>([](
                 int value = int())
                 {
@@ -410,7 +408,7 @@ def test_deepcopy_with_specialization():
             pass  # (This corresponds to a C++ namespace. All method are static!)
             #  ------------------------------------------------------------------------
             #      <template specializations for class Foo>
-            class FooInt:
+            class Foo_int:  # Python specialization for Foo<int>
                 value: int
                 def __init__(self, value: int = int()) -> None:
                     """Auto-generated default constructor with named params"""

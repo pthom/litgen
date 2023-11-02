@@ -10,7 +10,6 @@ from codemanip import code_utils
 from srcmlcpp.cpp_types import *
 from srcmlcpp.scrml_warning_settings import WarningType
 
-import litgen
 from litgen import LitgenOptions
 from litgen.internal import cpp_to_python
 from litgen.internal.adapted_types.adapted_decl import AdaptedDecl
@@ -280,12 +279,21 @@ class AdaptedFunction(AdaptedElement):
     ) -> bool:
         """
         This static method is called even before construction. If it returns False,
-        it mean that the CppFunctionDecl shall not be ported to python.
+        it means that the CppFunctionDecl shall not be ported to python.
         """
         if cpp_function.is_destructor():
             return False
 
         if "delete" in cpp_function.specifiers:
+            return False
+
+        # Exclude if one param or the return type of the function is an unhandled template type
+        for param in cpp_function.parameter_list.parameters:
+            if options.class_template_options.shall_exclude_type(param.decl.cpp_type):
+                return False
+        if cpp_function.has_return_type() and options.class_template_options.shall_exclude_type(
+            cpp_function.return_type
+        ):
             return False
 
         # Check options.fn_exclude_by_name__regex
@@ -1066,8 +1074,19 @@ class AdaptedFunction(AdaptedElement):
             r = operators.cpp_to_python_operator_name(self.cpp_adapted_function)
             return r
         else:
-            r = cpp_to_python.function_name_to_python(self.options, self.cpp_adapted_function.function_name)
-            return r
+            cpp_function_name = self.cpp_adapted_function.function_name
+
+            if len(self.cpp_adapted_function.specialized_template_params) == 1:
+                instantiated_type = self.cpp_adapted_function.specialized_template_params[0]
+                fn_name_python = self.options.fn_template_options.specialized_function_python_name(
+                    cpp_function_name, instantiated_type
+                )
+                assert fn_name_python is not None
+                fn_name_python = cpp_to_python.function_name_to_python(self.options, fn_name_python)
+            else:
+                fn_name_python = cpp_to_python.function_name_to_python(self.options, cpp_function_name)
+
+            return fn_name_python
 
     def _add_class_hierarchy_to_python_type__fixme(self, python_type: str) -> str:
         """Work around a bug in mypy:
@@ -1206,19 +1225,12 @@ class AdaptedFunction(AdaptedElement):
             return False
         return self.cpp_element().is_template_partially_specialized()
 
-    def _tpl_instantiate_template_for_type(
-        self, cpp_type_str: str, naming_scheme: litgen.TemplateNamingScheme
-    ) -> AdaptedFunction:
+    def _tpl_instantiate_template_for_type(self, cpp_type: CppType) -> AdaptedFunction:
         assert self._tpl_is_template_non_specialized()
         assert self._tpl_is_one_param_template()
 
-        new_cpp_function = self.cpp_element().with_specialized_template(
-            CppTemplateSpecialization.from_type_str(cpp_type_str)
-        )
+        new_cpp_function = self.cpp_element().with_specialized_template(CppTemplateSpecialization.from_type(cpp_type))
         assert new_cpp_function is not None
-        new_cpp_function.function_name = litgen.TemplateNamingScheme.apply(
-            naming_scheme, new_cpp_function.function_name, cpp_type_str
-        )
         new_adapted_function = AdaptedFunction(self.lg_context, new_cpp_function, self.is_overloaded)
         return new_adapted_function
 
@@ -1245,7 +1257,7 @@ class AdaptedFunction(AdaptedElement):
 
         new_functions: List[AdaptedFunction] = []
         for cpp_type in matching_template_spec.cpp_types_list:
-            new_function = self._tpl_instantiate_template_for_type(cpp_type, matching_template_spec.naming_scheme)
+            new_function = self._tpl_instantiate_template_for_type(cpp_type)
             new_functions.append(new_function)
         return new_functions
 
