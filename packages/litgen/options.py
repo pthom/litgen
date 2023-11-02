@@ -1,4 +1,5 @@
 from __future__ import annotations
+
 from typing import List, Any
 
 from codemanip import code_utils
@@ -7,6 +8,7 @@ from codemanip.code_replacements import RegexReplacementList
 from srcmlcpp import SrcmlcppOptions
 
 from litgen.internal.template_options import TemplateFunctionsOptions, TemplateClassOptions
+from litgen.internal.class_iterable_info import ClassIterablesInfos
 
 
 class LitgenOptions:
@@ -407,6 +409,11 @@ class LitgenOptions:
     # will be mentioned in the stub file.
     class_copy_add_info_in_stub: bool = False
 
+    # iterable classes: if some cpp classes expose begin()/end()/size(), they can be made iterable in python
+    # Make classes iterables by setting:
+    #     options.class_iterables_infos.add_iterable_class(python_class_name__regex, iterable_python_type_name)
+    class_iterables_infos: ClassIterablesInfos
+
     # Exclude certain members by a regex on their name
     member_exclude_by_name__regex: str = ""
 
@@ -563,5 +570,7 @@ class LitgenOptions:
 
         self.fn_template_options = TemplateFunctionsOptions()
         self.class_template_options = TemplateClassOptions()
+
+        self.class_iterables_infos = ClassIterablesInfos()
 
         self.fn_custom_adapters = []

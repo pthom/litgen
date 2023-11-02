@@ -462,6 +462,32 @@ class AdaptedClass(AdaptedElement):
                 body_lines += element_lines
             body_lines += ["# </protected_methods>", ""]
 
+        def make_iterable_code() -> str:
+            flag_add = self.options.class_iterables_infos.is_class_iterable(self.class_name_python())
+            if not flag_add:
+                return ""
+
+            code_template = code_utils.unindent_code(
+                """
+                def __iter__(self) -> Iterator[{iterator_class_name_python}]:
+                {_i_}pass
+                def __len__(self) -> int:
+                {_i_}pass
+                """,
+                flag_strip_empty_lines=True,
+            )
+
+            replacements = munch.Munch()
+            replacements._i_ = self.options.indent_cpp_spaces()
+            replacements.iterator_class_name_python = self.options.class_iterables_infos.python_iterable_type(
+                self.class_name_python()
+            )
+            iter_code = code_utils.process_code_template(code_template, replacements)
+
+            return iter_code
+
+        body_lines += make_iterable_code().splitlines()
+
         r = self._elm_str_stub_layout_lines(title_lines, body_lines)
         return r
 
@@ -607,11 +633,37 @@ class AdaptedClass(AdaptedElement):
             r = code_utils.indent_code(self._cp_pydef(), indent_str=self.options.indent_cpp_spaces())
             return r
 
+        def make_iterable_code() -> str:
+            flag_add = self.options.class_iterables_infos.is_class_iterable(self.class_name_python())
+            if not flag_add:
+                return ""
+
+            code_template = (
+                code_utils.unindent_code(
+                    """
+                .def("__iter__", [](const {qualified_struct_name} &v) { return py::make_iterator(v.begin(), v.end()); }, py::keep_alive<0, 1>())
+                .def("__len__", [](const {qualified_struct_name} &v) { return v.size(); })
+                """,
+                    flag_strip_empty_lines=True,
+                )
+                + "\n"
+            )
+
+            replacements = munch.Munch()
+            replacements._i_ = self.options.indent_cpp_spaces()
+            replacements.qualified_struct_name = self.cpp_element().qualified_class_name_with_specialization()
+
+            iter_code = code_utils.process_code_template(code_template, replacements)
+            iter_code = code_utils.indent_code(iter_code, len(options.indent_cpp_spaces()))
+
+            return iter_code
+
         def make_all_children_code() -> str:
             children_code = make_default_constructor_code()
             children_code += make_public_children_code()
             children_code += make_protected_methods_code()
             children_code += make_copy_deepcopy_code()
+            children_code += make_iterable_code()
             return children_code
 
         inner_classes_code = make_inner_classes_code()
