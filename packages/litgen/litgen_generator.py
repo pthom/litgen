@@ -100,8 +100,9 @@ class LitgenGenerator:
             pydef_codes.append(decorated_pydef_code)
         pydef_code = "\n\n".join(pydef_codes)
 
-        if self.options().postprocess_pydef_function is not None:
-            pydef_code = self.options().postprocess_pydef_function(pydef_code)
+        postprocess_pydef_function = self.options().postprocess_pydef_function
+        if postprocess_pydef_function is not None:
+            pydef_code = postprocess_pydef_function(pydef_code)
 
         return pydef_code
 
@@ -114,8 +115,9 @@ class LitgenGenerator:
             stub_codes.append(decorated_stub_code)
         stub_code = "\n\n".join(stub_codes)
 
-        if self.options().postprocess_stub_function is not None:
-            stub_code = self.options().postprocess_stub_function(stub_code)
+        postprocess_stub_function = self.options().postprocess_stub_function
+        if postprocess_stub_function is not None:
+            stub_code = postprocess_stub_function(stub_code)
 
         return stub_code
 

@@ -11,10 +11,10 @@ def test_post_process():
         };
     """
 
-    def postprocess_stub(s: str):
+    def postprocess_stub(s: str) -> str:
         return s.replace("Foo", "FooPost")
 
-    def postprocess_pydef(s: str):
+    def postprocess_pydef(s: str) -> str:
         return s.replace("Blah", "BlahPost")
 
     options.postprocess_pydef_function = postprocess_pydef
