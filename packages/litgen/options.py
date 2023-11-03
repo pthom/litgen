@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import List, Any
+from typing import List, Any, Callable, Optional
 
 from codemanip import code_utils
 from codemanip.code_replacements import RegexReplacementList
@@ -502,6 +502,13 @@ class LitgenOptions:
     # All C++ namespaces that match this regex will be excluded
     # By default, any namespace whose name contains "internal" or "detail" will be excluded.
     namespace_exclude__regex = r"[Ii]nternal|[Dd]etail"
+
+    ################################################################################
+    #    <post processing>
+    ################################################################################
+    # If you need to process the code after generation, fill these functions
+    postprocess_stub_function: Optional[Callable[[str], str]] = None
+    postprocess_pydef_function: Optional[Callable[[str], str]] = None
 
     ################################################################################
     #    <Sanity checks and utilities below>

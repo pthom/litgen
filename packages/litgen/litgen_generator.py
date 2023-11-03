@@ -99,6 +99,10 @@ class LitgenGenerator:
             )
             pydef_codes.append(decorated_pydef_code)
         pydef_code = "\n\n".join(pydef_codes)
+
+        if self.options().postprocess_pydef_function is not None:
+            pydef_code = self.options().postprocess_pydef_function(pydef_code)
+
         return pydef_code
 
     def stub_code(self) -> PythonCode:
@@ -109,6 +113,10 @@ class LitgenGenerator:
             )
             stub_codes.append(decorated_stub_code)
         stub_code = "\n\n".join(stub_codes)
+
+        if self.options().postprocess_stub_function is not None:
+            stub_code = self.options().postprocess_stub_function(stub_code)
+
         return stub_code
 
     def _boxed_types_cpp_code(self) -> CppCode:
