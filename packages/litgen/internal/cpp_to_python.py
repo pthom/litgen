@@ -518,6 +518,7 @@ def standard_type_replacements() -> RegexReplacementList:
     \bconst \s*char *\b -> str
 
     \bsize_t\b -> int
+    \bstd::function<(.*)\((.*)\)> -> Callable[[\2], \1]
     \bstd::string\(\) -> ""
     \bstd::string\b -> str
     \bstd::vector\s*<\s*([\w:]*)\s*> -> List[\1]
