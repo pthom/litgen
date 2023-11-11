@@ -1,1 +1,1 @@
-from lg_mylib._lg_mylib import *
+from lg_mylib._lg_mylib import *  # noqa

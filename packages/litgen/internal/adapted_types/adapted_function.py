@@ -7,7 +7,15 @@ from munch import Munch  # type: ignore
 
 from codemanip import code_utils
 
-from srcmlcpp.cpp_types import *
+from srcmlcpp.cpp_types import (
+    CppParameter,
+    CppFunctionDecl,
+    CppStruct,
+    CppEnum,
+    CppNamespace,
+    CppType,
+    CppTemplateSpecialization,
+)
 from srcmlcpp.scrml_warning_settings import WarningType
 
 from litgen import LitgenOptions

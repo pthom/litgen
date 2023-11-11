@@ -6,7 +6,8 @@ from srcmlcpp import srcmlcpp_main
 
 import litgen
 from litgen import LitgenOptions
-from litgen.internal.adapted_types import AdaptedFunction, LitgenContext
+from litgen.internal import LitgenContext
+from litgen.internal.adapted_types import AdaptedFunction
 from litgen.litgen_generator import LitgenGeneratorTestsHelper
 
 

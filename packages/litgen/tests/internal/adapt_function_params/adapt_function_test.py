@@ -3,7 +3,7 @@ from typing import Optional
 
 import srcmlcpp
 from srcmlcpp import srcmlcpp_main
-from srcmlcpp.cpp_types import *
+from srcmlcpp.cpp_types import CppFunctionDecl
 
 
 @dataclass

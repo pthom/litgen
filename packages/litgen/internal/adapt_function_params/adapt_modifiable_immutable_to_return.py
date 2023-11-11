@@ -5,7 +5,7 @@ from munch import Munch  # type: ignore
 
 from codemanip import code_utils
 
-from srcmlcpp.cpp_types import *
+from srcmlcpp.cpp_types import CppParameter, CppType
 
 from litgen.internal.adapt_function_params._lambda_adapter import LambdaAdapter
 from litgen.internal.adapted_types import AdaptedFunction, AdaptedParameter

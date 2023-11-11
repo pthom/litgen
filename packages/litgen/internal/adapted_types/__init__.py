@@ -7,4 +7,17 @@ from litgen.internal.adapted_types.adapted_decl import AdaptedDecl
 from litgen.internal.adapted_types.adapted_element import AdaptedElement
 from litgen.internal.adapted_types.adapted_enum import AdaptedEnum
 from litgen.internal.adapted_types.adapted_function import AdaptedFunction, AdaptedParameter
-from litgen.internal.context.litgen_context import LitgenContext
+
+__all__ = [
+    "AdaptedBlock",
+    "AdaptedUnit",
+    "AdaptedNamespace",
+    "AdaptedClass",
+    "AdaptedComment",
+    "AdaptedEmptyLine",
+    "AdaptedDecl",
+    "AdaptedElement",
+    "AdaptedEnum",
+    "AdaptedFunction",
+    "AdaptedParameter",
+]

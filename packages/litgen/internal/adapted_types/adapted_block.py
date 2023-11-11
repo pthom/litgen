@@ -4,7 +4,18 @@ from typing import List, Union, cast
 from codemanip import code_utils
 from codemanip.parse_progress_bar import global_progress_bars
 
-from srcmlcpp.cpp_types import *
+from srcmlcpp.cpp_types import (
+    CppBlock,
+    CppComment,
+    CppConditionMacro,
+    CppDeclStatement,
+    CppDefine,
+    CppEmptyLine,
+    CppEnum,
+    CppFunctionDecl,
+    CppNamespace,
+    CppStruct,
+)
 from srcmlcpp.srcmlcpp_exception import SrcmlcppException
 from srcmlcpp.scrml_warning_settings import WarningType
 

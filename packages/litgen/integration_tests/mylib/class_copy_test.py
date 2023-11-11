@@ -1,3 +1,4 @@
+# ruff: noqa: B017
 import copy
 import lg_mylib
 import pytest

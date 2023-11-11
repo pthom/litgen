@@ -5,7 +5,7 @@ from typing import List, Union, cast
 from codemanip import code_utils
 from codemanip.code_replacements import RegexReplacement, RegexReplacementList
 
-from srcmlcpp.cpp_types import *
+from srcmlcpp.cpp_types import CppDecl, CppEmptyLine, CppEnum, CppComment
 
 from litgen.internal import cpp_to_python
 from litgen.internal.adapted_types.adapted_comment import (

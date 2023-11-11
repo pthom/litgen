@@ -6,7 +6,8 @@ from codemanip import code_utils
 from srcmlcpp import srcmlcpp_main
 
 import litgen
-from litgen.internal.adapted_types import AdaptedFunction, LitgenContext
+from litgen.internal import LitgenContext
+from litgen.internal.adapted_types import AdaptedFunction
 
 
 _THIS_DIR = os.path.dirname(__file__)

@@ -129,7 +129,6 @@ def test_struct_pydef_simple():
 def test_struct_stub_complex():
     options = LitgenOptions()
     options.srcmlcpp_options.functions_api_prefixes = "MY_API"
-    options.fn_params_replace_modifiable_immutable_by_boxed__regex
     code = """
         // A dummy class that handles 4 channel float colors
         class Color4

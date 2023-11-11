@@ -4,7 +4,7 @@ from typing import Any, List, Optional
 from codemanip import code_utils
 from codemanip.parse_progress_bar import global_progress_bars
 
-from srcmlcpp.cpp_types import *
+from srcmlcpp.cpp_types import CppElementAndComment, CppUnit
 
 from litgen.internal import cpp_to_python
 from litgen.internal.context.litgen_context import LitgenContext

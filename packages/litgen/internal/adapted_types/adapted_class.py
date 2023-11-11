@@ -8,7 +8,24 @@ import litgen
 import srcmlcpp
 from codemanip import code_utils
 
-from srcmlcpp.cpp_types import *
+from srcmlcpp.cpp_types import (
+    CppDecl,
+    CppDeclStatement,
+    CppEmptyLine,
+    CppStruct,
+    CppType,
+    CppAccessType,
+    CppComment,
+    CppFunctionDecl,
+    CppUnprocessed,
+    CppEnum,
+    CppConditionMacro,
+    CppClass,
+    CppUnit,
+    CppPublicProtectedPrivate,
+    CppConstructorDecl,
+    CppTemplateSpecialization,
+)
 from srcmlcpp.cpp_types.scope.cpp_scope import CppScopeType
 from srcmlcpp.srcmlcpp_exception import SrcmlcppException
 from srcmlcpp.scrml_warning_settings import WarningType
@@ -87,8 +104,8 @@ class AdaptedClassMember(AdaptedDecl):
                 AdaptedClassMember: Detected a numeric C Style array, but will not export it.
                 Hint: modify `options.member_numeric_c_array_replace__regex`
                 """,
+                WarningType.LitgenClassMemberNumericCStyleArray_Setting,
             )
-            WarningType.LitgenClassMemberNumericCStyleArray_Setting
             return False
 
         if cpp_decl.c_array_size_as_int() is None:

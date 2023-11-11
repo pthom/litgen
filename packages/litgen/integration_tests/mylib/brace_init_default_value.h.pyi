@@ -4,6 +4,7 @@
 #    (see integration_tests/bindings/lg_mylib/__init__pyi which contains the full
 #     stub code, including this code)
 # ============================================================================
+# ruff: noqa: B008
 from typing import List, Dict
 
 # type: ignore

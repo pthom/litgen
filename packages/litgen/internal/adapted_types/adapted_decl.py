@@ -5,7 +5,7 @@ from typing import List, cast
 
 from codemanip import code_utils
 
-from srcmlcpp.cpp_types import *
+from srcmlcpp.cpp_types import CppDecl
 
 from litgen.internal import boxed_python_type, cpp_to_python
 from litgen.internal.adapted_types.adapted_element import AdaptedElement

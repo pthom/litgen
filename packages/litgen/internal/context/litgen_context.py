@@ -7,7 +7,7 @@ from litgen.internal.context.namespaces_code_tree import (
     PydefOrStub,
 )
 from litgen.internal.context.replacements_cache import ReplacementsCache
-from litgen.internal.context.type_synonyms import *
+from litgen.internal.context.type_synonyms import CppTypeName
 
 
 if TYPE_CHECKING:

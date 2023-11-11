@@ -1,4 +1,4 @@
-from litgen.options import LitgenOptions
+from litgen.options import LitgenOptions, TemplateClassOptions, TemplateFunctionsOptions
 
 from litgen.code_to_adapted_unit import code_to_adapted_unit
 from litgen.internal.cpp_to_python import (
@@ -19,9 +19,10 @@ from litgen.litgen_generator import (
 __all__ = [
     # Main API
     "LitgenOptions",
+    "TemplateClassOptions",
+    "TemplateFunctionsOptions",
     "generate_code",
     "code_to_adapted_unit",
-    "TemplateNamingScheme",
     "write_generated_code_for_file",
     "write_generated_code_for_files",
     # When it is needed to have different options per c++ header file
@@ -30,6 +31,7 @@ __all__ = [
     "generate_code_for_file",
     # Configure replacements
     "standard_type_replacements",
+    "standard_value_replacements",
     "opencv_replacements",
     "standard_comment_replacements",
 ]

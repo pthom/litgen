@@ -2,7 +2,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, Dict, List, Set
 from codemanip import code_utils
 
-from litgen.internal.context.type_synonyms import *
+from litgen.internal.context.type_synonyms import Code, CppNamespaceName, CppQualifiedNamespaceName, PydefOrStub
 
 
 if TYPE_CHECKING:

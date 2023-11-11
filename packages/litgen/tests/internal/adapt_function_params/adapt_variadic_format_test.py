@@ -3,7 +3,8 @@ from codemanip import code_utils
 from srcmlcpp import srcmlcpp_main
 
 import litgen
-from litgen.internal.adapted_types import AdaptedFunction, LitgenContext
+from litgen.internal import LitgenContext
+from litgen.internal.adapted_types import AdaptedFunction
 
 
 def make_pydef_code(code: str) -> str:

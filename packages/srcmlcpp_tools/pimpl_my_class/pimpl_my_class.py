@@ -8,7 +8,15 @@ from munch import Munch  # type: ignore
 from codemanip import code_utils
 
 import srcmlcpp
-from srcmlcpp.cpp_types import *
+from srcmlcpp.cpp_types import (
+    CppAccessType,
+    CppClass,
+    CppConstructorDecl,
+    CppEmptyLine,
+    CppFunctionDecl,
+    CppStruct,
+    CppComment,
+)
 from srcmlcpp.srcmlcpp_options import SrcmlcppOptions
 
 
