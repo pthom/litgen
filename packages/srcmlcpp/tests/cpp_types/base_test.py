@@ -3,7 +3,7 @@ from typing import cast
 from codemanip import code_utils
 
 import srcmlcpp
-from srcmlcpp.cpp_types import *
+from srcmlcpp.cpp_types import CppNamespace, CppComment, CppFunctionDecl, CppElement, CppElementsVisitorEvent
 
 
 def test_base():

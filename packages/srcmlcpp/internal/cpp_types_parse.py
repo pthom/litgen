@@ -15,7 +15,36 @@ from codemanip.parse_progress_bar import global_progress_bars
 
 from srcmlcpp import SrcmlWrapper
 from srcmlcpp.scrml_warning_settings import WarningType
-from srcmlcpp.cpp_types import *
+from srcmlcpp.cpp_types import (
+    CppElementAndComment,
+    CppElementComments,
+    CppUnit,
+    CppBlock,
+    CppBlockContent,
+    CppComment,
+    CppAccessType,
+    CppClass,
+    CppConditionMacro,
+    CppConstructorDecl,
+    CppConstructor,
+    CppDeclStatement,
+    CppDecl,
+    CppDefine,
+    CppEmptyLine,
+    CppEnum,
+    CppFunctionDecl,
+    CppFunction,
+    CppNamespace,
+    CppParameterList,
+    CppParameter,
+    CppPublicProtectedPrivate,
+    CppStruct,
+    CppSuperList,
+    CppSuper,
+    CppTemplate,
+    CppType,
+    CppUnprocessed,
+)
 from srcmlcpp.internal import code_to_srcml, srcml_comments, srcml_utils, fix_brace_init_default_value
 from srcmlcpp.internal.srcmlcpp_exception_detailed import (
     SrcmlcppExceptionDetailed,

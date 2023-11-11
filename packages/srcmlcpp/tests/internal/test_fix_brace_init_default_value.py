@@ -10,7 +10,7 @@ is parsed as a decl_stmt
 from typing import Optional
 
 import srcmlcpp
-from srcmlcpp.cpp_types import *
+from srcmlcpp.cpp_types import CppDeclStatement
 from srcmlcpp.internal import fix_brace_init_default_value
 
 

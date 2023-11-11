@@ -3,7 +3,13 @@ import copy
 from dataclasses import dataclass
 from typing import TYPE_CHECKING, List, Optional
 
-from srcmlcpp.cpp_types.base import *
+from srcmlcpp.cpp_types.base import (
+    CppElementAndComment,
+    CppElementsVisitorFunction,
+    CppElementsVisitorEvent,
+    CppElementComments,
+    CppAccessType,
+)
 from srcmlcpp.cpp_types.scope.cpp_scope import CppScope
 from srcmlcpp.cpp_types.scope.scoped_element_cache import ScopedElementCache
 from srcmlcpp.cpp_types.decls_types.cpp_type import CppType

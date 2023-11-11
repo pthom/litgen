@@ -1,6 +1,6 @@
 from typing import cast
 import srcmlcpp
-from srcmlcpp.cpp_types import *
+from srcmlcpp.cpp_types import CppNamespace
 
 
 def test_block():

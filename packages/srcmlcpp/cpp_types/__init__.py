@@ -56,7 +56,6 @@ from srcmlcpp.cpp_types.blocks import (
     CppBlockContent,
     CppPublicProtectedPrivate,
     CppUnit,
-    __all__ as _all_blocks,
 )
 
 from srcmlcpp.cpp_types.cpp_enum import CppEnum

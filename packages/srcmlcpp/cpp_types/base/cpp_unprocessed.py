@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 
-from srcmlcpp.cpp_types.base import *
+from srcmlcpp.cpp_types.base import CppElementAndComment, CppElementComments
 from srcmlcpp.srcml_wrapper import SrcmlWrapper
 
 

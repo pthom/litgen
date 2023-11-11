@@ -5,6 +5,9 @@ __all__ = [
     "CppElementAndComment",
     "CppElementsVisitorEvent",
     "CppElementsVisitorFunction",
+    "CppUnprocessed",
+    "CppEmptyLine",
+    "CppComment",
 ]
 
 

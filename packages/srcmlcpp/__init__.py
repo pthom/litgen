@@ -10,8 +10,52 @@ Interface to srcML (https://www.srcml.org/)
 from srcmlcpp.srcmlcpp_options import SrcmlcppOptions
 
 # A collection of Cpp Types (CppStruct, CppDecl, CppNamespace, etc.)
-from srcmlcpp.cpp_types import *
-from srcmlcpp.cpp_types import __all__ as _all_types
+from srcmlcpp.cpp_types import (
+    # base
+    CppAccessType,
+    CppElement,
+    CppElementAndComment,
+    CppElementComments,
+    CppElementsVisitorEvent,
+    CppElementsVisitorFunction,
+    # cpp_unprocessed
+    CppUnprocessed,
+    CppEmptyLine,
+    CppComment,
+    # decls_types
+    CppType,
+    CppDecl,
+    CppDeclStatement,
+    # functions
+    CppParameter,
+    CppParameterList,
+    CppFunctionDecl,
+    CppFunction,
+    CppConstructorDecl,
+    CppConstructor,
+    # classes
+    CppSuper,
+    CppSuperList,
+    CppStruct,
+    CppClass,
+    # template
+    CppTemplate,
+    CppTemplateSpecializationPart,
+    CppTemplateSpecialization,
+    CppITemplateHost,
+    # blocks
+    CppBlock,
+    CppBlockContent,
+    CppPublicProtectedPrivate,
+    CppUnit,
+    # Scope
+    CppScope,
+    CppScopeType,
+    CppScopePart,
+    # standalone
+    CppEnum,
+    CppNamespace,
+)
 
 # Exceptions produced by this module
 from srcmlcpp.srcmlcpp_exception import SrcmlcppException

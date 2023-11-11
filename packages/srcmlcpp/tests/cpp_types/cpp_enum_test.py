@@ -1,6 +1,6 @@
 from typing import cast
 
-from srcmlcpp.cpp_types import *
+from srcmlcpp.cpp_types import CppEnum, CppDecl
 import srcmlcpp
 
 

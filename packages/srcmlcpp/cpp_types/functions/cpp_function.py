@@ -1,7 +1,7 @@
 from __future__ import annotations
 from dataclasses import dataclass
 
-from srcmlcpp.cpp_types.base import *
+from srcmlcpp.cpp_types.base import CppElementComments, CppElementsVisitorFunction, CppElementsVisitorEvent
 from srcmlcpp.cpp_types.base.cpp_unprocessed import CppUnprocessed
 from srcmlcpp.cpp_types.functions.cpp_function_decl import CppFunctionDecl
 from srcmlcpp.srcml_wrapper import SrcmlWrapper

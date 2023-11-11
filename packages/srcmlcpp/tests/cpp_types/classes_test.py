@@ -1,7 +1,7 @@
 from codemanip import code_utils
 
 import srcmlcpp
-from srcmlcpp.cpp_types import *
+from srcmlcpp.cpp_types import CppElement, CppElementsVisitorEvent, CppFunctionDecl, CppAccessType, CppElementComments
 
 
 def test_str_code():

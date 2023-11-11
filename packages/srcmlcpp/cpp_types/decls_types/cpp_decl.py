@@ -4,7 +4,12 @@ from dataclasses import dataclass
 from enum import Enum
 from typing import Optional, TYPE_CHECKING
 
-from srcmlcpp.cpp_types.base import *
+from srcmlcpp.cpp_types.base import (
+    CppElementAndComment,
+    CppElementsVisitorFunction,
+    CppElementsVisitorEvent,
+    CppElementComments,
+)
 from srcmlcpp.cpp_types.scope.cpp_scope import CppScope
 from srcmlcpp.cpp_types.decls_types.cpp_type import CppType
 from srcmlcpp.cpp_types.template.cpp_template_specialization import CppTemplateSpecialization

@@ -5,7 +5,12 @@ from typing import List, Optional
 
 from codemanip import code_utils
 
-from srcmlcpp.cpp_types.base import *
+from srcmlcpp.cpp_types.base import (
+    CppElementAndComment,
+    CppElementsVisitorFunction,
+    CppElementsVisitorEvent,
+    CppElementComments,
+)
 from srcmlcpp.cpp_types.decls_types.cpp_decl import CppDecl
 from srcmlcpp.cpp_types.template.cpp_template_specialization import CppTemplateSpecialization
 from srcmlcpp.srcml_wrapper import SrcmlWrapper

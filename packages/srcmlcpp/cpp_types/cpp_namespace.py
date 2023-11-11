@@ -2,7 +2,7 @@ from dataclasses import dataclass
 
 from codemanip import code_utils
 
-from srcmlcpp.cpp_types.base import *
+from srcmlcpp.cpp_types.base import CppElementAndComment, CppElementsVisitorFunction, CppElementsVisitorEvent
 from srcmlcpp.cpp_types.base.cpp_element_comments import CppElementComments
 from srcmlcpp.cpp_types.blocks.cpp_block import CppBlock
 from srcmlcpp.srcml_wrapper import SrcmlWrapper

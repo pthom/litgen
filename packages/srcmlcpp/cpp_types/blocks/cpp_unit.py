@@ -1,7 +1,7 @@
 from __future__ import annotations
 from dataclasses import dataclass
 
-from srcmlcpp.cpp_types.base.cpp_element import *
+from srcmlcpp.cpp_types.base.cpp_element import CppElement
 from srcmlcpp.cpp_types.blocks.cpp_block import CppBlock
 from srcmlcpp.srcml_wrapper import SrcmlWrapper
 

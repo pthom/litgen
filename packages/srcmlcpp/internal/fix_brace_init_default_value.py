@@ -13,7 +13,15 @@ These are painful hacks, which should removed as soon as this is fixed inside sr
 from typing import Optional
 import copy
 import srcmlcpp
-from srcmlcpp.cpp_types import *
+from srcmlcpp.cpp_types import (
+    CppFunctionDecl,
+    CppConstructorDecl,
+    CppDeclStatement,
+    CppUnprocessed,
+    CppPublicProtectedPrivate,
+    CppBlock,
+    CppStruct,
+)
 from srcmlcpp.internal.code_to_srcml import srcml_to_code
 
 

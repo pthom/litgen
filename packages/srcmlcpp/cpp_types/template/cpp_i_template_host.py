@@ -1,7 +1,7 @@
 from __future__ import annotations
 from typing import List
 
-from srcmlcpp.cpp_types.base import *
+from srcmlcpp.cpp_types.base import CppElementComments
 from srcmlcpp.cpp_types.decls_types.cpp_type import CppType
 from srcmlcpp.cpp_types.template.cpp_template import CppTemplate
 from srcmlcpp.cpp_types.template.cpp_template_specialization import CppTemplateSpecialization

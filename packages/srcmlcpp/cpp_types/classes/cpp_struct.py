@@ -5,7 +5,13 @@ from typing import List, Optional, Tuple
 
 import codemanip.code_utils
 import srcmlcpp
-from srcmlcpp.cpp_types.base import *
+from srcmlcpp.cpp_types.base import (
+    CppElementComments,
+    CppAccessType,
+    CppElementAndComment,
+    CppElementsVisitorEvent,
+    CppElementsVisitorFunction,
+)
 from srcmlcpp.cpp_types.blocks import (
     CppBlock,
     CppPublicProtectedPrivate,

@@ -11,7 +11,17 @@ from typing import Optional, Type, cast
 from codemanip.parse_progress_bar import global_progress_bars
 
 from srcmlcpp import SrcmlWrapper
-from srcmlcpp.cpp_types import *
+from srcmlcpp.cpp_types import (
+    CppUnit,
+    CppElement,
+    CppElementAndComment,
+    CppFunctionDecl,
+    CppEnum,
+    CppDeclStatement,
+    CppStruct,
+    CppDecl,
+    CppType,
+)
 from srcmlcpp.internal import (
     code_cache,
     code_to_srcml,
