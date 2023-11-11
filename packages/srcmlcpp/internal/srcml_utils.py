@@ -5,6 +5,7 @@ This module *must* not depend on srcml_types!
 """
 
 import logging
+import os
 from typing import Any, List, Optional
 from xml.dom import minidom
 from xml.etree import ElementTree as ET  # noqa
@@ -143,3 +144,17 @@ def srcml_to_str_readable(srcml_element: ET.Element, level: int = 0) -> str:
     for child in srcml_element:
         msg += srcml_to_str_readable(child, level + 1)
     return msg
+
+
+def check_for_file_in_current_hierarchy(filename: str) -> bool:
+    """Checks whether a file with the given name exists in the current folder or any of its parent directories."""
+    current_dir = os.getcwd()
+    while True:
+        file_path = os.path.join(current_dir, filename)
+        if os.path.isfile(file_path):
+            return True
+        parent_dir = os.path.dirname(current_dir)
+        if parent_dir == current_dir:
+            # Reached the root directory without finding the file
+            return False
+        current_dir = parent_dir

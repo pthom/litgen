@@ -12,6 +12,7 @@ import subprocess
 import tempfile
 import time
 from xml.etree import ElementTree as ET
+from srcmlcpp.internal import srcml_utils
 
 
 # Count the total time used by call to the exe srcml
@@ -19,7 +20,10 @@ _FLAG_PROFILE_SRCML_CALLS: bool = True
 
 # At the moment, the build of srcML (inside the pip module srcml_caller) fails.
 # So, we use the srcml command line
-_USE_NATIVE_SRCML_CALLER_MODULE = False
+_USE_PYTHON_SRCML_CALLER_MODULE = False
+if srcml_utils.check_for_file_in_current_hierarchy("_USE_PYTHON_SRCML_CALLER_MODULE"):
+    _USE_PYTHON_SRCML_CALLER_MODULE = True
+    logging.debug("Using python srcml_caller module")
 
 
 def _embed_element_into_unit(element: ET.Element) -> ET.Element:
@@ -155,7 +159,7 @@ class _SrcmlCaller:
         """
         self._stats_code_to_srcml.start()
 
-        if _USE_NATIVE_SRCML_CALLER_MODULE:
+        if _USE_PYTHON_SRCML_CALLER_MODULE:
             output_str = self._make_xml_str_by_module(input_str, encoding, dump_positions)
         else:
             output_str = self._make_xml_str_by_subprocess(encoding, input_str, dump_positions)
@@ -183,7 +187,7 @@ class _SrcmlCaller:
         self._stats_srcml_to_code.start()
 
         code_str: str
-        if _USE_NATIVE_SRCML_CALLER_MODULE:
+        if _USE_PYTHON_SRCML_CALLER_MODULE:
             code_str = self._make_cpp_str_by_module(xml_str, encoding)
         else:
             code_str = self._make_cpp_str_by_subprocess(xml_bytes, encoding)
