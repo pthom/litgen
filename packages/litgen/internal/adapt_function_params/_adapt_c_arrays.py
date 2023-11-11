@@ -1,5 +1,6 @@
+from __future__ import annotations
 import copy
-from typing import List, Optional
+from typing import Optional
 
 from codemanip import code_utils
 
@@ -91,9 +92,9 @@ def adapt_c_arrays(adapted_function: AdaptedFunction) -> Optional[LambdaAdapter]
     lambda_adapter.new_function_infos = copy.deepcopy(adapted_function.cpp_adapted_function)
 
     # old_function_params: List[CppParameter] = adapted_function.cpp_adapted_function.parameter_list.parameters
-    old_function_params: List[AdaptedParameter] = adapted_function.adapted_parameters()
+    old_function_params: list[AdaptedParameter] = adapted_function.adapted_parameters()
 
-    new_function_params: List[CppParameter] = []
+    new_function_params: list[CppParameter] = []
     for old_adapted_param in old_function_params:
         was_replaced = False
         old_cpp_decl = old_adapted_param.adapted_decl().cpp_element()

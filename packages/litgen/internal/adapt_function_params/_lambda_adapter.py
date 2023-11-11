@@ -1,4 +1,5 @@
-from typing import List, Optional
+from __future__ import annotations
+from typing import Optional
 
 from srcmlcpp.cpp_types import CppFunctionDecl
 
@@ -12,7 +13,7 @@ class LambdaAdapter:
     # (advanced, currently used by adapt_c_buffers)
     lambda_template_end: Optional[str] = None
 
-    adapted_cpp_parameter_list: List[str] = []
+    adapted_cpp_parameter_list: list[str] = []
     new_function_infos: Optional[CppFunctionDecl] = None
 
     def __init__(self) -> None:

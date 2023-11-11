@@ -1,5 +1,6 @@
+from __future__ import annotations
 import copy
-from typing import Dict, List, Optional
+from typing import Optional
 
 from codemanip import code_utils
 
@@ -15,7 +16,7 @@ PythonOperatorName = str
 
 
 def _cpp_operator_unsupported_message(cpp_operator_name: CppOperatorName) -> Optional[str]:
-    known_unsupported: Dict[CppOperatorName, str] = {
+    known_unsupported: dict[CppOperatorName, str] = {
         "++": 'increment operator not available in python (use "+=1" ?)',
         "--": 'decrement operator not available in python (use "-=1" ?)',
         "=": "operator= not supported in python. Consider using copy.copy or copy.deepcopy",
@@ -27,7 +28,7 @@ def _cpp_operator_unsupported_message(cpp_operator_name: CppOperatorName) -> Opt
 
 
 def _cpp_to_python_operator_one_param(cpp_operator_name: CppOperatorName) -> Optional[PythonOperatorName]:
-    known_conversions: Dict[CppOperatorName, PythonOperatorName] = {
+    known_conversions: dict[CppOperatorName, PythonOperatorName] = {
         "+": "__add__",
         "-": "__sub__",
         "*": "__mul__",
@@ -54,7 +55,7 @@ def _cpp_to_python_operator_one_param(cpp_operator_name: CppOperatorName) -> Opt
 
 
 def _cpp_to_python_operator_zero_param(cpp_operator_name: CppOperatorName) -> Optional[PythonOperatorName]:
-    known_conversions: Dict[CppOperatorName, PythonOperatorName] = {
+    known_conversions: dict[CppOperatorName, PythonOperatorName] = {
         "-": "__neg__",  # Unary minus (negation)
         "+": "__pos__",  # Unary plus
         "bool": "__bool__",
@@ -122,10 +123,10 @@ def is_spaceship_operator(adapted_function: AdaptedFunction) -> bool:
     return r
 
 
-def cpp_split_spaceship_operator(adapted_spaceship_operator: AdaptedFunction) -> List[AdaptedFunction]:
+def cpp_split_spaceship_operator(adapted_spaceship_operator: AdaptedFunction) -> list[AdaptedFunction]:
     assert is_spaceship_operator(adapted_spaceship_operator)
 
-    r: List[AdaptedFunction] = []
+    r: list[AdaptedFunction] = []
 
     def make_cmp(cpp_operator_name: str, test_to_run: str) -> AdaptedFunction:
         f = copy.deepcopy(adapted_spaceship_operator)

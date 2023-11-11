@@ -1,5 +1,6 @@
+from __future__ import annotations
 import copy
-from typing import List, Optional
+from typing import Optional
 
 from codemanip import code_utils
 
@@ -15,7 +16,7 @@ def adapt_exclude_params(adapted_function: AdaptedFunction) -> Optional[LambdaAd
     """
     options = adapted_function.options
 
-    old_function_params: List[CppParameter] = adapted_function.cpp_adapted_function.parameter_list.parameters
+    old_function_params: list[CppParameter] = adapted_function.cpp_adapted_function.parameter_list.parameters
 
     def shall_exclude(param: CppParameter) -> bool:
         param_name = param.decl.decl_name

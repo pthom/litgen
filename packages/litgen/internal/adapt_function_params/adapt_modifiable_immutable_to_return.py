@@ -1,5 +1,6 @@
+from __future__ import annotations
 import copy
-from typing import List, Optional, Tuple
+from typing import Optional
 
 from munch import Munch  # type: ignore
 
@@ -60,10 +61,10 @@ def adapt_modifiable_immutable_to_return(adapted_function: AdaptedFunction) -> O
 
     lambda_adapter.new_function_infos = copy.deepcopy(adapted_function.cpp_adapted_function)
 
-    old_function_params: List[AdaptedParameter] = adapted_function.adapted_parameters()
+    old_function_params: list[AdaptedParameter] = adapted_function.adapted_parameters()
 
-    new_function_params: List[CppParameter] = []
-    new_output_function_params: List[CppParameter] = []
+    new_function_params: list[CppParameter] = []
+    new_output_function_params: list[CppParameter] = []
     for old_adapted_param in old_function_params:
         if old_adapted_param.is_modifiable_python_immutable_ref_or_pointer():
             is_pointer = old_adapted_param.cpp_element().decl.cpp_type.modifiers == ["*"]
@@ -190,7 +191,7 @@ def adapt_modifiable_immutable_to_return(adapted_function: AdaptedFunction) -> O
     old_function = adapted_function.cpp_adapted_function
     was_void_return_type = old_function.returns_void()
 
-    def new_return_type_and_names() -> Tuple[str, str]:
+    def new_return_type_and_names() -> tuple[str, str]:
         number_of_return_params = len(new_output_function_params)
         if not was_void_return_type:
             number_of_return_params += 1

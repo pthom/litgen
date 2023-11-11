@@ -1,5 +1,6 @@
+from __future__ import annotations
 from dataclasses import dataclass
-from typing import List, cast
+from typing import cast
 
 from munch import Munch  # type: ignore
 
@@ -36,7 +37,7 @@ class AdaptedNamespace(AdaptedElement):
         ns_qualified_name = self.cpp_element().cpp_scope_str(include_self=True)
         return ns_qualified_name
 
-    def _stub_class_as_ns_creation_code(self) -> List[str]:
+    def _stub_class_as_ns_creation_code(self) -> list[str]:
         if self.lg_context.namespaces_stub.was_namespace_created(self._qualified_namespace_name()):
             return []
         self.lg_context.namespaces_stub.register_namespace_creation(self._qualified_namespace_name())
@@ -54,8 +55,8 @@ class AdaptedNamespace(AdaptedElement):
         return r
 
     # override
-    def stub_lines(self) -> List[str]:
-        lines: List[str] = []
+    def stub_lines(self) -> list[str]:
+        lines: list[str] = []
         if not self.lg_context.namespaces_stub.was_namespace_created(self._qualified_namespace_name()):
             lines += cpp_to_python.docstring_lines(self.options, self.cpp_element())
         lines += self.adapted_block.stub_lines()
@@ -71,7 +72,7 @@ class AdaptedNamespace(AdaptedElement):
         else:
             return lines
 
-    def _pydef_def_submodule_code(self) -> List[str]:
+    def _pydef_def_submodule_code(self) -> list[str]:
         if self.lg_context.namespaces_pydef.was_namespace_created(self._qualified_namespace_name()):
             return []
         self.lg_context.namespaces_pydef.register_namespace_creation(self._qualified_namespace_name())
@@ -101,7 +102,7 @@ class AdaptedNamespace(AdaptedElement):
         return submodule_code_.split("\n")
 
     # override
-    def pydef_lines(self) -> List[str]:
+    def pydef_lines(self) -> list[str]:
         lines = self.adapted_block.pydef_lines()
 
         if self.flag_create_python_namespace():

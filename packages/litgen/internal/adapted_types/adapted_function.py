@@ -1,7 +1,7 @@
 from __future__ import annotations
 import copy
 from dataclasses import dataclass
-from typing import List, Optional, cast
+from typing import cast
 
 from munch import Munch  # type: ignore
 
@@ -35,11 +35,11 @@ class AdaptedParameter(AdaptedElement):
         return cast(CppParameter, self._cpp_element)
 
     # override
-    def stub_lines(self) -> List[str]:
+    def stub_lines(self) -> list[str]:
         raise NotImplementedError()
 
     # override
-    def pydef_lines(self) -> List[str]:
+    def pydef_lines(self) -> list[str]:
         raise NotImplementedError()
 
     def is_modifiable_python_immutable_fixed_size_array(self) -> bool:
@@ -210,8 +210,8 @@ class AdaptedFunction(AdaptedElement):
 
     # Members related to parameters adaptation: see "Doc about functions parameters adaptation"
     cpp_adapted_function: CppFunctionDecl
-    cpp_adapter_code: Optional[str] = None
-    lambda_to_call: Optional[str] = None
+    cpp_adapter_code: str | None = None
+    lambda_to_call: str | None = None
     # Other members
     return_value_policy: str = ""
     is_overloaded: bool = False
@@ -230,7 +230,7 @@ class AdaptedFunction(AdaptedElement):
         lg_context: LitgenContext,
         function_decl: CppFunctionDecl,
         is_overloaded: bool,
-        initial_lambda_to_call: Optional[str] = None,
+        initial_lambda_to_call: str | None = None,
     ) -> None:
         from litgen.internal import adapt_function_params
         from litgen.internal.adapted_types import operators
@@ -376,8 +376,8 @@ class AdaptedFunction(AdaptedElement):
                 if param.decl.decl_name == "":
                     param.decl.decl_name = f"param_{i}"
 
-    def adapted_parameters(self) -> List[AdaptedParameter]:
-        r: List[AdaptedParameter] = []
+    def adapted_parameters(self) -> list[AdaptedParameter]:
+        r: list[AdaptedParameter] = []
         for param in self.cpp_adapted_function.parameter_list.parameters:
             adapted_param = AdaptedParameter(self.lg_context, param)
             r.append(adapted_param)
@@ -400,7 +400,7 @@ class AdaptedFunction(AdaptedElement):
     #  ============================================================================================
 
     # override
-    def pydef_lines(self) -> List[str]:
+    def pydef_lines(self) -> list[str]:
         from litgen.internal.adapted_types import operators
 
         # Bail out if this is a <=> operator (aka spaceship operator)
@@ -790,7 +790,7 @@ class AdaptedFunction(AdaptedElement):
         parent_struct = self.cpp_element().parent_struct_if_method()
         assert parent_struct is not None
 
-        def get_inner_structs_enums_names() -> List[str]:
+        def get_inner_structs_enums_names() -> list[str]:
             assert parent_struct is not None
             inner_structs = parent_struct.get_elements(element_type=CppStruct)
             inner_enums = parent_struct.get_elements(element_type=CppEnum)
@@ -805,7 +805,7 @@ class AdaptedFunction(AdaptedElement):
 
             return inner_struct_enums_names
 
-        def add_class_scope_to_initial_value(initial_value_code: str) -> Optional[str]:
+        def add_class_scope_to_initial_value(initial_value_code: str) -> str | None:
             # Will return None if no change is needed
             assert parent_struct is not None
             items = initial_value_code.split("::")
@@ -827,8 +827,8 @@ class AdaptedFunction(AdaptedElement):
         else:
             return param
 
-    def _pydef_pyarg_list(self) -> List[str]:
-        pyarg_strs: List[str] = []
+    def _pydef_pyarg_list(self) -> list[str]:
+        pyarg_strs: list[str] = []
         for param in self.cpp_adapted_function.parameter_list.parameters:
             param = self._pydef_adapt_param_if_using_inner_class(param)
             adapted_decl = AdaptedDecl(self.lg_context, param.decl)
@@ -893,7 +893,7 @@ class AdaptedFunction(AdaptedElement):
         if (matches_regex_pointer and returns_pointer) or (matches_regex_reference and returns_reference):
             self.return_value_policy = "reference"
 
-    def _pydef_fill_call_policy_from_function_comment(self, call_policy_token: str) -> Optional[str]:
+    def _pydef_fill_call_policy_from_function_comment(self, call_policy_token: str) -> str | None:
         function_comment = self.cpp_element().cpp_element_comments.comment()
         if call_policy_token in function_comment:
             idx = function_comment.index(call_policy_token)
@@ -904,10 +904,10 @@ class AdaptedFunction(AdaptedElement):
                 return keep_alive_code
         return None
 
-    def _pydef_fill_keep_alive_from_function_comment(self) -> Optional[str]:
+    def _pydef_fill_keep_alive_from_function_comment(self) -> str | None:
         return self._pydef_fill_call_policy_from_function_comment("py::keep_alive")
 
-    def _pydef_fill_call_guard_from_function_comment(self) -> Optional[str]:
+    def _pydef_fill_call_guard_from_function_comment(self) -> str | None:
         return self._pydef_fill_call_policy_from_function_comment("py::call_guard")
 
     def _pydef_str_parent_cpp_scope(self) -> str:
@@ -935,7 +935,7 @@ class AdaptedFunction(AdaptedElement):
     #  ============================================================================================
 
     # override
-    def stub_lines(self) -> List[str]:
+    def stub_lines(self) -> list[str]:
         # Handle <=> (aka spaceship) operator, which is split in 5 operators!
         from litgen.internal.adapted_types import operators
 
@@ -1002,7 +1002,7 @@ class AdaptedFunction(AdaptedElement):
         params_strs = self._stub_params_list_signature()
 
         # Try to add function decl + all params and return type on the same line
-        def function_name_and_params_on_one_line() -> Optional[str]:
+        def function_name_and_params_on_one_line() -> str | None:
             first_code_line_full = function_def_code
             first_code_line_full += ", ".join(params_strs)
             first_code_line_full += return_code
@@ -1016,7 +1016,7 @@ class AdaptedFunction(AdaptedElement):
                 return None
 
         # Else put params one by line
-        def function_name_and_params_line_by_line() -> List[str]:
+        def function_name_and_params_line_by_line() -> list[str]:
             params_strs_comma = []
             for i, param_str in enumerate(params_strs):
                 if i < len(params_strs) - 1:
@@ -1044,7 +1044,7 @@ class AdaptedFunction(AdaptedElement):
         ):
             decorators.append("@staticmethod")
 
-        body_lines: List[str] = []
+        body_lines: list[str] = []
 
         r = self._elm_str_stub_layout_lines(title_lines, body_lines)
 
@@ -1151,7 +1151,7 @@ class AdaptedFunction(AdaptedElement):
             return_type_python = self._add_class_hierarchy_to_python_type__fixme(return_type_python)
             return return_type_python
 
-    def _stub_params_list_signature(self) -> List[str]:
+    def _stub_params_list_signature(self) -> list[str]:
         cpp_adapted_function_terse = self.cpp_adapted_function.with_terse_types()
         cpp_parameters = cpp_adapted_function_terse.parameter_list.parameters
         r = []
@@ -1242,7 +1242,7 @@ class AdaptedFunction(AdaptedElement):
         new_adapted_function = AdaptedFunction(self.lg_context, new_cpp_function, self.is_overloaded)
         return new_adapted_function
 
-    def _tpl_split_into_template_instantiations(self) -> List[AdaptedFunction]:
+    def _tpl_split_into_template_instantiations(self) -> list[AdaptedFunction]:
         assert self._tpl_is_template_non_specialized()
 
         matching_template_spec = None
@@ -1263,7 +1263,7 @@ class AdaptedFunction(AdaptedElement):
             )
             return []
 
-        new_functions: List[AdaptedFunction] = []
+        new_functions: list[AdaptedFunction] = []
         for cpp_type in matching_template_spec.cpp_types_list:
             new_function = self._tpl_instantiate_template_for_type(cpp_type)
             new_functions.append(new_function)
@@ -1276,7 +1276,7 @@ class AdaptedFunction(AdaptedElement):
     #
     #  ============================================================================================
 
-    def virt_glue_override_virtual_methods_in_python(self, implemented_class: str) -> List[str]:
+    def virt_glue_override_virtual_methods_in_python(self, implemented_class: str) -> list[str]:
         assert self.cpp_element().is_virtual_method()
 
         template_code = code_utils.unindent_code(

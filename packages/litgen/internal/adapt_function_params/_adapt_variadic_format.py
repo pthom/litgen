@@ -1,5 +1,6 @@
+from __future__ import annotations
 import copy
-from typing import List, Optional
+from typing import Optional
 
 from srcmlcpp.cpp_types import CppParameter
 
@@ -19,7 +20,7 @@ def adapt_variadic_format(adapted_function: AdaptedFunction) -> Optional[LambdaA
     and call
         Text("%s", s.c_str());
     """
-    old_function_params: List[CppParameter] = adapted_function.cpp_adapted_function.parameter_list.parameters
+    old_function_params: list[CppParameter] = adapted_function.cpp_adapted_function.parameter_list.parameters
 
     # Variadic params are always last
     if len(old_function_params) < 2:

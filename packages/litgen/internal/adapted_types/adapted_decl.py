@@ -1,7 +1,7 @@
 from __future__ import annotations
 import copy
 from dataclasses import dataclass
-from typing import List, cast
+from typing import cast
 
 from codemanip import code_utils
 
@@ -81,7 +81,7 @@ class AdaptedDecl(AdaptedElement):
         new_adapted_decl = AdaptedDecl(self.lg_context, new_cpp_decl)
         return new_adapted_decl
 
-    def c_array_fixed_size_to_mutable_new_boxed_decls(self) -> List[AdaptedDecl]:
+    def c_array_fixed_size_to_mutable_new_boxed_decls(self) -> list[AdaptedDecl]:
         """
         Processes decl that contains a *non const* c style array of fixed size, e.g. `int v[2]`
             * we may need to "Box" the values if they are of an immutable type in python,
@@ -106,7 +106,7 @@ class AdaptedDecl(AdaptedElement):
             boxed_type_name = boxed_python_type.registered_boxed_type_name(self.lg_context, cpp_type_name)
             cpp_type_name = boxed_type_name
 
-        new_decls: List[AdaptedDecl] = []
+        new_decls: list[AdaptedDecl] = []
         for i in range(array_size):
             new_decl = copy.deepcopy(self)
             new_decl.cpp_element().decl_name = new_decl.cpp_element().decl_name + "_" + str(i)
@@ -145,13 +145,13 @@ class AdaptedDecl(AdaptedElement):
         return param_line
 
     # override
-    def pydef_lines(self) -> List[str]:
+    def pydef_lines(self) -> list[str]:
         """intentionally not implemented, since it depends on the context
         (is this decl a function param, a method member, an enum member, etc.)"""
         raise ValueError("Not implemented")
 
     # override
-    def stub_lines(self) -> List[str]:
+    def stub_lines(self) -> list[str]:
         """intentionally not implemented, since it depends on the context
         (is this decl a function param, a method member, an enum member, etc.)"""
         raise ValueError("Not implemented")

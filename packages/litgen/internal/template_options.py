@@ -5,11 +5,10 @@ from srcmlcpp.cpp_types import CppType
 from codemanip import code_utils
 from codemanip.code_replacements import RegexReplacementList
 
-from typing import List, Optional
 from dataclasses import dataclass
 
 
-def _cpp_types_list_str_to_cpp_types(cpp_types_list_str: List[str]) -> List[CppType]:
+def _cpp_types_list_str_to_cpp_types(cpp_types_list_str: list[str]) -> list[CppType]:
     options = srcmlcpp.SrcmlcppOptions()
     cpp_types_list = [
         srcmlcpp.srcmlcpp_main.code_to_cpp_type(options, cpp_type_str) for cpp_type_str in cpp_types_list_str
@@ -39,8 +38,8 @@ class CppTypeSynonym:
     synonym_target: str
 
 
-def _make_cpp_type_synonym_list(synomym_strs: List[str]) -> List[CppTypeSynonym]:
-    cpp_synonyms_list: List[CppTypeSynonym] = []
+def _make_cpp_type_synonym_list(synomym_strs: list[str]) -> list[CppTypeSynonym]:
+    cpp_synonyms_list: list[CppTypeSynonym] = []
     for cpp_synonyms_str in synomym_strs:
         items = cpp_synonyms_str.split("=")
         assert len(items) == 2
@@ -52,9 +51,9 @@ def _make_cpp_type_synonym_list(synomym_strs: List[str]) -> List[CppTypeSynonym]
 @dataclass
 class _TemplateSpecializationSpec:
     name_regex: str
-    cpp_types_list: List[CppType]
+    cpp_types_list: list[CppType]
     add_suffix_to_function_name: bool
-    cpp_types_synonyms: List[CppTypeSynonym]
+    cpp_types_synonyms: list[CppTypeSynonym]
 
     def matches_template_name(self, template_name: str) -> bool:
         r = code_utils.does_match_regex(self.name_regex, template_name)
@@ -122,7 +121,7 @@ class _TemplateSpecializationSpec:
             )
         return shall_exclude
 
-    def specialized_type_python_name(self, cpp_type: CppType, type_replacements: RegexReplacementList) -> Optional[str]:
+    def specialized_type_python_name(self, cpp_type: CppType, type_replacements: RegexReplacementList) -> str | None:
         if not self.shall_specialize_type(cpp_type) and not self.shall_synonymize_type(cpp_type):
             return None
         cpp_tpl_name = cpp_type.template_name()
@@ -136,7 +135,7 @@ class _TemplateSpecializationSpec:
 
 
 class TemplateSpecList:
-    specs: List[_TemplateSpecializationSpec]
+    specs: list[_TemplateSpecializationSpec]
 
     def __init__(self) -> None:
         self.specs = []
@@ -144,9 +143,9 @@ class TemplateSpecList:
     def _add_specialization(
         self,
         name_regex: str,
-        cpp_types_list_str: List[str],
+        cpp_types_list_str: list[str],
         add_suffix_to_function_name: bool,
-        cpp_types_synonyms: List[CppTypeSynonym],
+        cpp_types_synonyms: list[CppTypeSynonym],
     ) -> None:
         spec = _TemplateSpecializationSpec(
             name_regex=name_regex,
@@ -192,9 +191,9 @@ class TemplateFunctionsOptions(TemplateSpecList):
     def add_specialization(
         self,
         name_regex: str,  #
-        cpp_types_list_str: List[str],  #
+        cpp_types_list_str: list[str],  #
         add_suffix_to_function_name: bool,
-        cpp_synonyms_list_str: List[str],
+        cpp_synonyms_list_str: list[str],
     ) -> None:
         super()._add_specialization(
             name_regex=name_regex,
@@ -203,7 +202,7 @@ class TemplateFunctionsOptions(TemplateSpecList):
             add_suffix_to_function_name=add_suffix_to_function_name,
         )
 
-    def specialized_function_python_name(self, function_name: str, cpp_type: CppType) -> Optional[str]:
+    def specialized_function_python_name(self, function_name: str, cpp_type: CppType) -> str | None:
         for s in self.specs:
             if s.handles_type_instantiation(cpp_type) or s.handles_type_synonym(cpp_type):
                 if s.add_suffix_to_function_name:
@@ -219,7 +218,7 @@ class TemplateClassOptions(TemplateSpecList):
         super().__init__()
 
     def add_specialization(
-        self, name_regex: str, cpp_types_list_str: List[str], cpp_synonyms_list_str: List[str]
+        self, name_regex: str, cpp_types_list_str: list[str], cpp_synonyms_list_str: list[str]
     ) -> None:
         """
         Given the C++ code:
@@ -249,7 +248,7 @@ class TemplateClassOptions(TemplateSpecList):
 
     def specialized_type_python_default_value(
         self, cpp_default_value_str: str, type_replacements: RegexReplacementList
-    ) -> Optional[str]:
+    ) -> str | None:
         if "<" not in cpp_default_value_str:
             return None
         has_paren = "(" in cpp_default_value_str and ")" in cpp_default_value_str
@@ -277,7 +276,7 @@ class TemplateClassOptions(TemplateSpecList):
 
     def specialized_type_python_name_str(
         self, cpp_type_str: str, type_replacements: RegexReplacementList
-    ) -> Optional[str]:
+    ) -> str | None:
         if "<" not in cpp_type_str:
             return None
         options = srcmlcpp.SrcmlcppOptions()
@@ -287,7 +286,7 @@ class TemplateClassOptions(TemplateSpecList):
             return None
         return self.specialized_type_python_name(cpp_type2, type_replacements)
 
-    def specialized_type_python_name(self, cpp_type: CppType, type_replacements: RegexReplacementList) -> Optional[str]:
+    def specialized_type_python_name(self, cpp_type: CppType, type_replacements: RegexReplacementList) -> str | None:
         if not self.shall_specialize_type(cpp_type) and not self.shall_synonymize_type(cpp_type):
             return None
         for s in self.specs:

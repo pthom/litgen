@@ -1,5 +1,6 @@
+from __future__ import annotations
 from dataclasses import dataclass
-from typing import List, cast
+from typing import cast
 
 from srcmlcpp.cpp_types import CppComment, CppEmptyLine
 
@@ -18,14 +19,14 @@ class AdaptedEmptyLine(AdaptedElement):
         return cast(CppEmptyLine, self._cpp_element)
 
     # override
-    def stub_lines(self) -> List[str]:
+    def stub_lines(self) -> list[str]:
         if self.options.python_reproduce_cpp_layout:
             return [""]
         else:
             return []
 
     # override
-    def pydef_lines(self) -> List[str]:
+    def pydef_lines(self) -> list[str]:
         return []
 
 
@@ -39,7 +40,7 @@ class AdaptedComment(AdaptedElement):
         return cast(CppComment, self._cpp_element)
 
     # override
-    def stub_lines(self) -> List[str]:
+    def stub_lines(self) -> list[str]:
         comment_cpp = self.cpp_element().comment
         comment_python = cpp_to_python._comment_apply_replacements(self.options, comment_cpp)
 
@@ -53,5 +54,5 @@ class AdaptedComment(AdaptedElement):
         return comment_python_lines
 
     # override
-    def pydef_lines(self) -> List[str]:
+    def pydef_lines(self) -> list[str]:
         return []

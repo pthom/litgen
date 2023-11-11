@@ -1,4 +1,5 @@
-from typing import List, Optional
+from __future__ import annotations
+from typing import Optional
 
 from litgen.internal.adapted_types.adapted_class import (
     AdaptedClass,
@@ -19,7 +20,7 @@ from litgen.options import LitgenOptions
 class LineSpacerCpp:
     last_element: Optional[AdaptedElement] = None
 
-    def spacing_lines(self, element: AdaptedElement, element_lines: List[str]) -> List[str]:
+    def spacing_lines(self, element: AdaptedElement, element_lines: list[str]) -> list[str]:
         if len(element_lines) == 0:
             return []
         if self.last_element is None:
@@ -33,7 +34,7 @@ class LineSpacerCpp:
         type_last = type(self.last_element)
         type_current = type(element)
 
-        spacing: List[str] = []
+        spacing: list[str] = []
 
         if type_current not in handled_types:  # or type_last not in handled_types:
             spacing = []
@@ -56,7 +57,7 @@ class LineSpacerPython:
     def __init__(self, options: LitgenOptions):
         self.options = options
 
-    def spacing_lines(self, element: AdaptedElement, element_lines: List[str]) -> List[str]:
+    def spacing_lines(self, element: AdaptedElement, element_lines: list[str]) -> list[str]:
         if self.options.python_reproduce_cpp_layout:
             return []
         if len(element_lines) == 0:
@@ -75,7 +76,7 @@ class LineSpacerPython:
         type_last = type(self.last_element)
         type_current = type(element)
 
-        spacing: List[str] = []
+        spacing: list[str] = []
         if (
             (type_current == AdaptedEnumDecl or type_current == AdaptedClassMember)
             and type_last == AdaptedComment

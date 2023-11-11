@@ -1,5 +1,4 @@
 import os
-from typing import List
 
 from codemanip import amalgamated_header, code_utils
 from srcmlcpp.scrml_warning_settings import WarningType
@@ -23,7 +22,7 @@ def write_mylib_amalgamation() -> None:
     amalgamated_header.write_amalgamate_header_file(options)
 
 
-def all_header_files() -> List[str]:
+def all_header_files() -> list[str]:
     cpp_headers_dir = THIS_DIR + "/mylib/include/mylib/"
     files = os.listdir(cpp_headers_dir)
     headers = list(filter(lambda f: f.endswith(".h"), files))

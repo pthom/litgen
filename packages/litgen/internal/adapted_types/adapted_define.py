@@ -1,6 +1,7 @@
+from __future__ import annotations
 from dataclasses import dataclass
 from enum import Enum
-from typing import List, cast
+from typing import cast
 from munch import Munch  # type:ignore
 
 from srcmlcpp.cpp_types import CppDefine
@@ -91,7 +92,7 @@ class AdaptedDefine(AdaptedElement):
         return cast(CppDefine, self._cpp_element)
 
     # override
-    def stub_lines(self) -> List[str]:
+    def stub_lines(self) -> list[str]:
         code_template = """{published_name} = {macro_value}"""
         replacements = Munch()
         replacements.published_name = self.published_name()
@@ -103,7 +104,7 @@ class AdaptedDefine(AdaptedElement):
         return r
 
     # override
-    def pydef_lines(self) -> List[str]:
+    def pydef_lines(self) -> list[str]:
         assert AdaptedDefine.is_publishable(self.cpp_element())  # should have been checked by AdaptedBlock
         parent_cpp_module_var_name = cpp_to_python.cpp_scope_to_pybind_var_name(self.options, self.cpp_element())
 

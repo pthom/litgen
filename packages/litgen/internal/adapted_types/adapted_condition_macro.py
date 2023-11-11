@@ -1,5 +1,6 @@
+from __future__ import annotations
 from dataclasses import dataclass
-from typing import List, cast
+from typing import cast
 
 from srcmlcpp.cpp_types import CppConditionMacro
 
@@ -17,7 +18,7 @@ class AdaptedConditionMacro(AdaptedElement):
         return cast(CppConditionMacro, self._cpp_element)
 
     # override
-    def stub_lines(self) -> List[str]:
+    def stub_lines(self) -> list[str]:
         lines = []
         lines += self._elm_comment_python_previous_lines()
 
@@ -31,7 +32,7 @@ class AdaptedConditionMacro(AdaptedElement):
         return lines
 
     # override
-    def pydef_lines(self) -> List[str]:
+    def pydef_lines(self) -> list[str]:
         lines = self.cpp_element().macro_code.split("\n")
         commented_lines = list(map(lambda s: "// " + s, lines))
         return commented_lines

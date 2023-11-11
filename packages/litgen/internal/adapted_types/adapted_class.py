@@ -1,6 +1,6 @@
 from __future__ import annotations
 from dataclasses import dataclass
-from typing import List, Optional, Tuple, Union, cast
+from typing import cast
 
 import munch  # type: ignore
 
@@ -45,8 +45,8 @@ from litgen.internal.context.litgen_context import LitgenContext
 
 @dataclass
 class _AdaptedInstantiatedTemplateClasses:
-    adapted_classes: List[AdaptedClass]
-    stubs_synonyms_code: List[str]
+    adapted_classes: list[AdaptedClass]
+    stubs_synonyms_code: list[str]
 
 
 @dataclass
@@ -173,7 +173,7 @@ class AdaptedClassMember(AdaptedDecl):
         else:
             return ""
 
-    def _str_pydef_lines_numeric_array(self) -> List[str]:
+    def _str_pydef_lines_numeric_array(self) -> list[str]:
         # Cf. https://stackoverflow.com/questions/58718884/binding-an-array-using-pybind11
 
         qualified_struct_name = self.class_parent.cpp_element().qualified_class_name_with_specialization()
@@ -200,7 +200,7 @@ class AdaptedClassMember(AdaptedDecl):
         lines = r.split("\n")
         return lines
 
-    def _str_pydef_lines_field(self) -> List[str]:
+    def _str_pydef_lines_field(self) -> list[str]:
         qualified_struct_name = self.class_parent.cpp_element().qualified_class_name_with_specialization()
         location = self._elm_info_original_location_cpp()
         name_python = self.decl_name_python()
@@ -222,8 +222,8 @@ class AdaptedClassMember(AdaptedDecl):
         return cast(CppDecl, self._cpp_element)
 
     # override
-    def stub_lines(self) -> List[str]:
-        code_lines: List[str] = []
+    def stub_lines(self) -> list[str]:
+        code_lines: list[str] = []
 
         if not self._elm_comment_python_shall_place_at_end_of_line():
             code_lines += self._elm_comment_python_previous_lines()
@@ -257,7 +257,7 @@ class AdaptedClassMember(AdaptedDecl):
         return code_lines
 
     # override
-    def pydef_lines(self) -> List[str]:
+    def pydef_lines(self) -> list[str]:
         if self._is_numeric_c_array():
             return self._str_pydef_lines_numeric_array()
         else:
@@ -286,19 +286,19 @@ class AdaptedClass(AdaptedElement):
     #  ============================================================================================
 
     # List of all public children (methods, members, inner structs, etc.)
-    adapted_public_children: List[
-        Union[
-            AdaptedEmptyLine,
-            AdaptedComment,
-            AdaptedClassMember,
-            AdaptedFunction,
-            AdaptedClass,
-            AdaptedEnum,
-            AdaptedConditionMacro,
-        ]
+    adapted_public_children: list[
+        (
+            AdaptedEmptyLine
+            | AdaptedComment
+            | AdaptedClassMember
+            | AdaptedFunction
+            | AdaptedClass
+            | AdaptedEnum
+            | AdaptedConditionMacro
+        )
     ]
     # Protected methods, if this class is supposed to output binding for its protected methods
-    adapted_protected_methods: List[AdaptedFunction]
+    adapted_protected_methods: list[AdaptedFunction]
 
     # template_specialization store the optional specialization of this AdaptedClass
     @dataclass
@@ -306,7 +306,7 @@ class AdaptedClass(AdaptedElement):
         class_name_python: str
         cpp_type: CppType
 
-    template_specialization: Optional[TemplateSpecialization] = None
+    template_specialization: TemplateSpecialization | None = None
 
     #  ============================================================================================
     #
@@ -396,7 +396,7 @@ class AdaptedClass(AdaptedElement):
     #  ============================================================================================
 
     # override
-    def stub_lines(self) -> List[str]:
+    def stub_lines(self) -> list[str]:
         # If this is a template class, implement as many versions
         # as mentioned in the options (see LitgenOptions.class_template_options)
         # and bail out
@@ -405,7 +405,7 @@ class AdaptedClass(AdaptedElement):
             if len(template_instantiations.adapted_classes) == 0:
                 return []
             else:
-                r: List[str] = []
+                r: list[str] = []
                 for template_instantiation in template_instantiations.adapted_classes:
                     if len(r) > 0:
                         r += ["", ""]  # 2 empty lines between classes
@@ -421,7 +421,7 @@ class AdaptedClass(AdaptedElement):
                 return r
 
         def str_parent_classes_python() -> str:
-            parents: List[str] = []
+            parents: list[str] = []
             if not self.cpp_element().has_base_classes():
                 return ""
             for _access_type, base_class in self.cpp_element().base_classes():
@@ -451,7 +451,7 @@ class AdaptedClass(AdaptedElement):
         if len(self._cp_stub_comment()) > 0:
             self.cpp_element().cpp_element_comments.comment_on_previous_lines += "\n" + self._cp_stub_comment()
 
-        body_lines: List[str] = []
+        body_lines: list[str] = []
 
         for element in self.adapted_public_children:
             element_lines = element.stub_lines()
@@ -516,7 +516,7 @@ class AdaptedClass(AdaptedElement):
     #  ============================================================================================
 
     # override
-    def pydef_lines(self) -> List[str]:
+    def pydef_lines(self) -> list[str]:
         # If this is a template class, implement as many versions
         # as mentioned in the options (see LitgenOptions.class_template_options)
         # and bail out
@@ -836,7 +836,7 @@ class AdaptedClass(AdaptedElement):
             )
             return _AdaptedInstantiatedTemplateClasses([], [])
 
-        new_classes: List[AdaptedClass] = []
+        new_classes: list[AdaptedClass] = []
         for cpp_type in matching_template_spec.cpp_types_list:
             new_class = self._tpl_instantiate_template_for_type(cpp_type)
             new_classes.append(new_class)
@@ -860,7 +860,7 @@ class AdaptedClass(AdaptedElement):
     #
     #  ============================================================================================
 
-    def _virt_method_list_including_inherited(self) -> List[CppFunctionDecl]:
+    def _virt_method_list_including_inherited(self) -> list[CppFunctionDecl]:
         r = self.cpp_element().virtual_methods(include_inherited_virtual_methods=True)
         return r
 
@@ -907,7 +907,7 @@ class AdaptedClass(AdaptedElement):
 
         ns_intro, ns_outro = self._glue_scope_intro_outro()
 
-        glue_code: List[str] = []
+        glue_code: list[str] = []
         glue_code += [ns_intro]
         glue_code += publicist_class_code.split("\n")
         glue_code += [ns_outro]
@@ -925,7 +925,7 @@ class AdaptedClass(AdaptedElement):
         r = len(virtual_methods) > 0
         return r
 
-    def _glue_scope_intro_outro(self) -> Tuple[str, str]:
+    def _glue_scope_intro_outro(self) -> tuple[str, str]:
         scope = self.cpp_element().cpp_scope(False)
         nb_scope_parts = len(scope.scope_parts)
         intro = ""
@@ -960,7 +960,7 @@ class AdaptedClass(AdaptedElement):
         if len(self.adapted_protected_methods) == 0:
             return
 
-        def using_list() -> List[str]:
+        def using_list() -> list[str]:
             r = []
             for child in self.adapted_protected_methods:
                 class_name = self.cpp_element().class_name
@@ -991,7 +991,7 @@ class AdaptedClass(AdaptedElement):
 
         ns_intro, ns_outro = self._glue_scope_intro_outro()
 
-        glue_code: List[str] = []
+        glue_code: list[str] = []
         glue_code += [ns_intro]
         glue_code += publicist_class_code.split("\n")
         glue_code += [ns_outro]
@@ -1054,7 +1054,7 @@ class PythonNamedConstructorHelper:
     def named_constructor_decl(self) -> CppFunctionDecl:
         options = self.adapted_class.options
 
-        def compatible_members_list() -> List[CppDecl]:
+        def compatible_members_list() -> list[CppDecl]:
             """The list of members which we will include in the named params"""
             if not self.flag_generate_named_ctor_params():
                 return []

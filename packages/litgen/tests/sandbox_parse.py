@@ -11,7 +11,7 @@ sys.path.append(_THIS_DIR + "/../..")
 
 
 def read_file_content(filename: str) -> str:
-    with open(filename, "r") as f:
+    with open(filename) as f:
         content = f.read()
     return content
 

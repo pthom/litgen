@@ -1,5 +1,5 @@
 from __future__ import annotations
-from typing import TYPE_CHECKING, Dict, List, Set
+from typing import TYPE_CHECKING
 from codemanip import code_utils
 
 from litgen.internal.context.type_synonyms import Code, CppNamespaceName, CppQualifiedNamespaceName, PydefOrStub
@@ -20,9 +20,9 @@ class NamespacesCodeTree:
     """
 
     _namespace_code: Code
-    _sub_namespaces_code: Dict[CppNamespaceName, NamespacesCodeTree]
+    _sub_namespaces_code: dict[CppNamespaceName, NamespacesCodeTree]
 
-    _created_namespaces: Set[CppQualifiedNamespaceName]
+    _created_namespaces: set[CppQualifiedNamespaceName]
 
     _namespace_code_intro: str
     _namespace_code_outro: str
@@ -75,7 +75,7 @@ class NamespacesCodeTree:
 
         return r
 
-    def _store_code_in_tree(self, namespace_names: List[CppNamespaceName], code: str) -> None:
+    def _store_code_in_tree(self, namespace_names: list[CppNamespaceName], code: str) -> None:
         ns_name = namespace_names[0]
         if ns_name not in self._sub_namespaces_code.keys():
             self._sub_namespaces_code[ns_name] = NamespacesCodeTree(self._options, self._code_type)

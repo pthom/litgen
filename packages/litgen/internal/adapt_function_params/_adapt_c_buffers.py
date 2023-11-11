@@ -1,5 +1,6 @@
+from __future__ import annotations
 import copy
-from typing import List, Optional
+from typing import Optional
 
 from codemanip import code_utils
 
@@ -12,14 +13,14 @@ from litgen.internal.adapted_types import AdaptedFunction
 from litgen.options import LitgenOptions
 
 
-def _possible_buffer_pointer_types(options: LitgenOptions) -> List[str]:
+def _possible_buffer_pointer_types(options: LitgenOptions) -> list[str]:
     types = [t + "*" for t in options.fn_params_buffer_types_list()] + [
         t + " *" for t in options.fn_params_buffer_types_list()
     ]
     return types
 
 
-def _possible_buffer_template_pointer_types(options: LitgenOptions) -> List[str]:
+def _possible_buffer_template_pointer_types(options: LitgenOptions) -> list[str]:
     types = [t + "*" for t in options.fn_params_buffer_template_types_list()] + [
         t + " *" for t in options.fn_params_buffer_template_types_list()
     ]
@@ -135,7 +136,7 @@ class _AdaptBuffersHelper:
         assert 0 <= idx_param < len(self.function_infos.parameter_list.parameters)
         return self.function_infos.parameter_list.parameters[idx_param]
 
-    def _params(self) -> List[CppParameter]:
+    def _params(self) -> list[CppParameter]:
         return self.function_infos.parameter_list.parameters
 
     def _nb_params(self) -> int:
@@ -503,7 +504,7 @@ def adapt_c_buffers(adapted_function: AdaptedFunction) -> Optional[LambdaAdapter
     lambda_adapter = LambdaAdapter()
     lambda_adapter.new_function_infos = copy.deepcopy(adapted_function.cpp_adapted_function)
 
-    new_function_params: List[CppParameter] = []
+    new_function_params: list[CppParameter] = []
 
     for idx_param, _old_param in enumerate(adapted_function.cpp_adapted_function.parameter_list.parameters):
         # Create new calling param

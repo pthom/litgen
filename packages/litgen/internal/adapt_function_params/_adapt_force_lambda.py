@@ -1,5 +1,5 @@
+from __future__ import annotations
 import copy
-from typing import List
 
 from srcmlcpp.cpp_types import CppParameter
 
@@ -13,7 +13,7 @@ def adapt_force_lambda(adapted_function: AdaptedFunction) -> LambdaAdapter:
     and gives error like
         error: no matching function for call to object of type 'const detail::overload_cast_impl<...>'
     """
-    old_function_params: List[CppParameter] = adapted_function.cpp_adapted_function.parameter_list.parameters
+    old_function_params: list[CppParameter] = adapted_function.cpp_adapted_function.parameter_list.parameters
 
     lambda_adapter = LambdaAdapter()
 

@@ -1,5 +1,6 @@
+from __future__ import annotations
 from dataclasses import dataclass
-from typing import Any, List, Optional
+from typing import Any, Optional
 
 from codemanip import code_utils
 from codemanip.parse_progress_bar import global_progress_bars
@@ -73,7 +74,7 @@ class AdaptedElement:  # (abc.ABC):  # Cannot be abstract (mypy limitation:  htt
         pass
 
     # @abc.abstractmethod
-    def stub_lines(self) -> List[str]:
+    def stub_lines(self) -> list[str]:
         """
         This is an abstract class! Each of its derived classes (AdaptedClass, AdaptedFunction, AdaptedCppUnit, etc.) must:
             - implement `_str_pydef_lines`, which will fill the C++ binding code for this derived class
@@ -82,7 +83,7 @@ class AdaptedElement:  # (abc.ABC):  # Cannot be abstract (mypy limitation:  htt
         raise NotImplementedError()
 
     # @abc.abstractmethod
-    def pydef_lines(self) -> List[str]:
+    def pydef_lines(self) -> list[str]:
         """
         This is an abstract class! Each of its derived classes (AdaptedClass, AdaptedFunction, AdaptedCppUnit, etc.) must:
             - implement `_str_pydef_lines`, which will fill the C++ binding code for this derived class
@@ -131,7 +132,7 @@ class AdaptedElement:  # (abc.ABC):  # Cannot be abstract (mypy limitation:  htt
         r = cpp_to_python.comment_python_end_of_line(self.options, self._cpp_element)
         return r
 
-    def _elm_comment_python_previous_lines(self) -> List[str]:
+    def _elm_comment_python_previous_lines(self) -> list[str]:
         r = cpp_to_python.comment_python_previous_lines(self.options, self._cpp_element)
         return r
 
@@ -145,7 +146,7 @@ class AdaptedElement:  # (abc.ABC):  # Cannot be abstract (mypy limitation:  htt
     def _elm_info_original_location_python(self) -> str:
         return self._elmpriv_info_original_location("#")
 
-    def _elm_stub_original_code_lines_info(self) -> List[str]:
+    def _elm_stub_original_code_lines_info(self) -> list[str]:
         if not self.options.original_signature_flag_show:
             return []
 
@@ -159,7 +160,7 @@ class AdaptedElement:  # (abc.ABC):  # Cannot be abstract (mypy limitation:  htt
             cpp_original_code_lines[0] += "    /* original C++ signature */"
             return cpp_original_code_lines
 
-    def _elm_str_stub_layout_lines(self, title_lines: List[str], body_lines: Optional[List[str]] = None) -> List[str]:
+    def _elm_str_stub_layout_lines(self, title_lines: list[str], body_lines: Optional[list[str]] = None) -> list[str]:
         """Common layout for class, enum, and functions stubs
         :param title_lines: class, enum or function decl + function params. Will be followed by docstring
         :param body_lines: body lines for enums and classes, [] for functions

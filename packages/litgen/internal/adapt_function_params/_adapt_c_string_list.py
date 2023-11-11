@@ -1,5 +1,6 @@
+from __future__ import annotations
 import copy
-from typing import List, Optional
+from typing import Optional
 
 from codemanip import code_utils
 
@@ -37,7 +38,7 @@ def adapt_c_string_list(adapted_function: AdaptedFunction) -> Optional[LambdaAda
     ):
         return None
 
-    old_function_params: List[CppParameter] = adapted_function.cpp_adapted_function.parameter_list.parameters
+    old_function_params: list[CppParameter] = adapted_function.cpp_adapted_function.parameter_list.parameters
 
     def needs_adapt() -> bool:
         param_0: CppParameter
@@ -162,7 +163,7 @@ def adapt_c_string_list_no_count(adapted_function: AdaptedFunction) -> Optional[
     ):
         return None
 
-    old_function_params: List[CppParameter] = adapted_function.cpp_adapted_function.parameter_list.parameters
+    old_function_params: list[CppParameter] = adapted_function.cpp_adapted_function.parameter_list.parameters
 
     def needs_adapt() -> bool:
         for param in old_function_params:

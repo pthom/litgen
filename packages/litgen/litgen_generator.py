@@ -2,7 +2,6 @@ from __future__ import annotations
 import logging
 import os
 from dataclasses import dataclass
-from typing import List, Optional
 
 from codemanip import code_utils
 
@@ -28,7 +27,7 @@ class _GeneratedCode:
 
 class LitgenGenerator:
     lg_context: LitgenContext
-    _generated_codes: List[_GeneratedCode]
+    _generated_codes: list[_GeneratedCode]
     omit_boxed_types: bool
 
     def __init__(self, options: LitgenOptions, omit_boxed_types: bool = False) -> None:
@@ -140,7 +139,7 @@ class LitgenGenerator:
         generated_code = _GeneratedCode(source_filename=filename, stub_code=stub_code, pydef_code=pydef_code)
         self._generated_codes.append(generated_code)
 
-    def _boxed_types_generated_code(self) -> Optional[_GeneratedCode]:
+    def _boxed_types_generated_code(self) -> _GeneratedCode | None:
         if self.omit_boxed_types:
             return None
         if not self.has_boxed_types():
@@ -158,7 +157,7 @@ class LitgenGenerator:
         generated_code = _GeneratedCode("BoxedTypes", stub_code=stub_code, pydef_code=pydef_code)
         return generated_code
 
-    def _generated_codes_with_boxed_types(self) -> List[_GeneratedCode]:
+    def _generated_codes_with_boxed_types(self) -> list[_GeneratedCode]:
         boxed_types_generated_code = self._boxed_types_generated_code()
         if boxed_types_generated_code is None:
             return self._generated_codes
@@ -169,7 +168,7 @@ class LitgenGenerator:
 
 def write_generated_code_for_files(
     options: LitgenOptions,
-    input_cpp_header_files: List[str],
+    input_cpp_header_files: list[str],
     output_cpp_pydef_file: str = "",
     output_stub_pyi_file: str = "",
     output_cpp_glue_code_file: str = "",
@@ -233,7 +232,7 @@ def generate_code_for_file(options: LitgenOptions, filename: str, omit_boxed_typ
 
 def _read_code(options: LitgenOptions, filename: str) -> str:
     assert os.path.isfile(filename)
-    with open(filename, "r", encoding=options.srcmlcpp_options.encoding) as f:
+    with open(filename, encoding=options.srcmlcpp_options.encoding) as f:
         code_str = f.read()
     return code_str
 

@@ -1,6 +1,6 @@
 from __future__ import annotations
 from dataclasses import dataclass
-from typing import TYPE_CHECKING, Set
+from typing import TYPE_CHECKING
 
 from litgen.internal.context.namespaces_code_tree import (
     NamespacesCodeTree,
@@ -22,7 +22,7 @@ class LitgenContext:
     """
 
     options: LitgenOptions
-    encountered_cpp_boxed_types: Set[CppTypeName]
+    encountered_cpp_boxed_types: set[CppTypeName]
     namespaces_stub: NamespacesCodeTree
     namespaces_pydef: NamespacesCodeTree
     var_values_replacements_cache: ReplacementsCache

@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import List, Any, Callable, Optional
+from typing import Any, Callable
 
 from codemanip import code_utils
 from codemanip.code_replacements import RegexReplacementList
@@ -356,7 +356,7 @@ class LitgenOptions:
     # fn_custom_adapters may contain callables of signature
     #   f(adapted_function: AdaptedFunction) -> Optional[LambdaAdapter]
     # ------------------------------------------------------------------------------
-    fn_custom_adapters: List[Any]
+    fn_custom_adapters: list[Any]
 
     ################################################################################
     #    <class, struct, and member adaptations>
@@ -507,8 +507,8 @@ class LitgenOptions:
     #    <post processing>
     ################################################################################
     # If you need to process the code after generation, fill these functions
-    postprocess_stub_function: Optional[Callable[[str], str]] = None
-    postprocess_pydef_function: Optional[Callable[[str], str]] = None
+    postprocess_stub_function: Callable[[str], str] | None = None
+    postprocess_pydef_function: Callable[[str], str] | None = None
 
     ################################################################################
     #    <Sanity checks and utilities below>
@@ -550,13 +550,13 @@ class LitgenOptions:
         space = "\t" if self.python_ident_with_tabs else " "
         return space * self.python_indent_size
 
-    def fn_params_buffer_types_list(self) -> List[str]:
+    def fn_params_buffer_types_list(self) -> list[str]:
         return code_utils.split_string_by_pipe_char(self.fn_params_buffer_types)
 
-    def fn_params_buffer_template_types_list(self) -> List[str]:
+    def fn_params_buffer_template_types_list(self) -> list[str]:
         return code_utils.split_string_by_pipe_char(self.fn_params_buffer_template_types)
 
-    def member_numeric_c_array_types_list(self) -> List[str]:
+    def member_numeric_c_array_types_list(self) -> list[str]:
         return code_utils.split_string_by_pipe_char(self.member_numeric_c_array_types)
 
     def __init__(self) -> None:

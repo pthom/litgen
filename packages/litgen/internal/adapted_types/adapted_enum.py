@@ -1,6 +1,6 @@
 from __future__ import annotations
 from dataclasses import dataclass
-from typing import List, Union, cast
+from typing import cast
 
 from codemanip import code_utils
 from codemanip.code_replacements import RegexReplacement, RegexReplacementList
@@ -111,7 +111,7 @@ class AdaptedEnumDecl(AdaptedDecl):
         return replacement_list
 
     # override
-    def stub_lines(self) -> List[str]:
+    def stub_lines(self) -> list[str]:
         lines = []
         decl_name = self.decl_name_python()
         decl_value = self.decl_value_python()
@@ -129,7 +129,7 @@ class AdaptedEnumDecl(AdaptedDecl):
         return self._elm_stub_original_code_lines_info() + lines
 
     # override
-    def pydef_lines(self) -> List[str]:
+    def pydef_lines(self) -> list[str]:
         decl_name_cpp = self.decl_name_cpp_decorated()
         decl_name_python = self.decl_name_python()
         value_comment = self._elm_comment_pydef_one_line()
@@ -142,8 +142,8 @@ class AdaptedEnumDecl(AdaptedDecl):
 
 @dataclass
 class AdaptedEnum(AdaptedElement):
-    adapted_children: List[Union[AdaptedDecl, AdaptedEmptyLine, AdaptedComment]]
-    adapted_enum_decls: List[AdaptedEnumDecl]
+    adapted_children: list[AdaptedDecl | AdaptedEmptyLine | AdaptedComment]
+    adapted_enum_decls: list[AdaptedEnumDecl]
 
     def __init__(self, lg_context: LitgenContext, enum_: CppEnum) -> None:
         super().__init__(lg_context, enum_)
@@ -183,14 +183,14 @@ class AdaptedEnum(AdaptedElement):
         return r
 
     # override
-    def stub_lines(self) -> List[str]:
+    def stub_lines(self) -> list[str]:
         from litgen.internal.adapted_types.line_spacer import LineSpacerPython
 
         line_spacer = LineSpacerPython(self.options)
 
         title_line = f"class {self.enum_name_python()}(enum.Enum):"
 
-        body_lines: List[str] = []
+        body_lines: list[str] = []
         for child in self.adapted_children:
             element_lines = child.stub_lines()
             spacing_lines = line_spacer.spacing_lines(child, element_lines)
@@ -201,13 +201,13 @@ class AdaptedEnum(AdaptedElement):
         return all_lines
 
     # override
-    def pydef_lines(self) -> List[str]:
+    def pydef_lines(self) -> list[str]:
         enum_name_cpp = self.cpp_element().cpp_scope_str(True)
         enum_name_python = self.enum_name_python()
         comment = self._elm_comment_pydef_one_line()
         location = self._elm_info_original_location_cpp()
 
-        lines: List[str] = []
+        lines: list[str] = []
 
         # Enum decl first line
         is_arithmetic = code_utils.does_match_regex(self.options.enum_make_arithmetic__regex, enum_name_cpp)

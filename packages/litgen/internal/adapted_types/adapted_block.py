@@ -1,5 +1,6 @@
+from __future__ import annotations
 from dataclasses import dataclass
-from typing import List, Union, cast
+from typing import Union, cast
 
 from codemanip import code_utils
 from codemanip.parse_progress_bar import global_progress_bars
@@ -38,7 +39,7 @@ from litgen.internal.adapted_types.adapted_condition_macro import AdaptedConditi
 
 @dataclass
 class AdaptedBlock(AdaptedElement):
-    adapted_elements: List[
+    adapted_elements: list[
         Union[
             AdaptedEmptyLine,
             # AdaptedDecl,        # Variable declarations are not published in the bindings
@@ -113,7 +114,7 @@ class AdaptedBlock(AdaptedElement):
                 child.emit_warning(str(e), WarningType.LitgenBlockElementException)
 
     # override
-    def stub_lines(self) -> List[str]:
+    def stub_lines(self) -> list[str]:
         from litgen.internal.adapted_types.line_spacer import LineSpacerCpp
 
         line_spacer = LineSpacerCpp()
@@ -133,7 +134,7 @@ class AdaptedBlock(AdaptedElement):
         return lines
 
     # override
-    def pydef_lines(self) -> List[str]:
+    def pydef_lines(self) -> list[str]:
         from litgen.internal.adapted_types.line_spacer import LineSpacerCpp
 
         line_spacer = LineSpacerCpp()

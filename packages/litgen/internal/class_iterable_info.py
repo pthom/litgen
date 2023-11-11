@@ -1,6 +1,6 @@
+from __future__ import annotations
 from codemanip import code_utils
 
-from typing import List
 from dataclasses import dataclass
 
 
@@ -11,7 +11,7 @@ class _ClassIterableInfo:
 
 
 class ClassIterablesInfos:
-    class_iterable_infos: List[_ClassIterableInfo]
+    class_iterable_infos: list[_ClassIterableInfo]
 
     def __init__(self) -> None:
         self.class_iterable_infos = []

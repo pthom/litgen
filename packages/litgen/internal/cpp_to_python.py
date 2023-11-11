@@ -1,6 +1,7 @@
+from __future__ import annotations
 import keyword
 from dataclasses import dataclass  # noqa
-from typing import List, Optional
+from typing import Optional
 
 from codemanip import code_utils
 from codemanip.code_replacements import RegexReplacementList
@@ -189,7 +190,7 @@ CPP_PYTHON_NUMERIC_FLOAT_SYNONYMS = [
 CPP_PYTHON_NUMERIC_SYNONYMS = CPP_PYTHON_NUMERIC_INT_SYNONYMS + CPP_PYTHON_NUMERIC_FLOAT_SYNONYMS
 
 
-def cpp_numeric_types() -> List[str]:
+def cpp_numeric_types() -> list[str]:
     r = []
     for t in CPP_PYTHON_NUMERIC_SYNONYMS:
         r.append(t.cpp_type)
@@ -229,8 +230,8 @@ _PY_ARRAY_TYPE_TO_CPP_TYPE = {
 }
 
 
-def py_array_types() -> List[str]:
-    r: List[str] = []
+def py_array_types() -> list[str]:
+    r: list[str] = []
     for type_ in _PY_ARRAY_TYPE_TO_CPP_TYPE.keys():
         r.append(type_)
     return r
@@ -300,7 +301,7 @@ def info_original_location_python(options: LitgenOptions, cpp_element: CppElemen
     return info_original_location(options, cpp_element, "#")
 
 
-def docstring_lines(options: LitgenOptions, cpp_element_c: CppElementAndComment) -> List[str]:
+def docstring_lines(options: LitgenOptions, cpp_element_c: CppElementAndComment) -> list[str]:
     """Return the comment of a CppElement under the form of a docstring, such as the one you are reading.
     Some replacements will be applied (for example true -> True, etc)
     """
@@ -348,7 +349,7 @@ def comment_python_end_of_line(options: LitgenOptions, cpp_element_c: CppElement
         return ""
 
 
-def comment_python_previous_lines(options: LitgenOptions, cpp_element_c: CppElementAndComment) -> List[str]:
+def comment_python_previous_lines(options: LitgenOptions, cpp_element_c: CppElementAndComment) -> list[str]:
     """See comment below"""
     # Returns the comment of a CppElement under the form of a python comment, such as the one you are reading.
     # Some replacements will be applied (for example true -> True, etc)
@@ -432,7 +433,7 @@ def cpp_scope_to_pybind_scope(options: LitgenOptions, cpp_element: CppElement, i
     cpp_scope = cpp_element.cpp_scope(include_self)
     scope_parts = cpp_scope.scope_parts
 
-    scope_parts_excluding_namespaces: List[CppScopePart] = []
+    scope_parts_excluding_namespaces: list[CppScopePart] = []
     for scope_part in scope_parts:
         if scope_part.scope_type != CppScopeType.Namespace:
             scope_parts_excluding_namespaces.append(scope_part)
@@ -671,7 +672,7 @@ def surround_python_code_with_filename(options: LitgenOptions, filename: Optiona
     return _surround_code_with_filename_impl(options, filename, code, "#")
 
 
-def surround_python_code_lines(code_lines: List[str], message: str) -> List[str]:
+def surround_python_code_lines(code_lines: list[str], message: str) -> list[str]:
     intro = code_utils.unindent_code(
         f"""
     #  ------------------------------------------------------------------------
