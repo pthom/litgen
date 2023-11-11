@@ -1,3 +1,4 @@
+from __future__ import annotations
 from typing import cast
 
 from codemanip.parse_progress_bar import global_progress_bars

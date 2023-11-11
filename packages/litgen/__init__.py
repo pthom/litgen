@@ -1,3 +1,4 @@
+from __future__ import annotations
 from litgen.options import LitgenOptions, TemplateClassOptions, TemplateFunctionsOptions
 
 from litgen.code_to_adapted_unit import code_to_adapted_unit

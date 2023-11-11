@@ -1,3 +1,4 @@
+from __future__ import annotations
 import os
 
 from codemanip import amalgamated_header, code_utils

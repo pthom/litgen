@@ -1,3 +1,4 @@
+from __future__ import annotations
 from litgen.internal.adapted_types.adapted_block import AdaptedBlock
 from litgen.internal.adapted_types.adapted_unit import AdaptedUnit
 from litgen.internal.adapted_types.adapted_namespace import AdaptedNamespace

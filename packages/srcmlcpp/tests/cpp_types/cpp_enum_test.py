@@ -1,3 +1,4 @@
+from __future__ import annotations
 from typing import cast
 
 from srcmlcpp.cpp_types import CppEnum, CppDecl

@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 __all__ = ["CppFunctionDecl", "CppFunction", "CppConstructorDecl", "CppConstructor", "CppParameter", "CppParameterList"]
 
 

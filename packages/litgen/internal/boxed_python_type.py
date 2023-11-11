@@ -1,3 +1,4 @@
+from __future__ import annotations
 from codemanip import code_utils
 
 from litgen.internal import cpp_to_python

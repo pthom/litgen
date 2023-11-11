@@ -1,3 +1,4 @@
+from __future__ import annotations
 import srcmlcpp
 from srcmlcpp import SrcmlWrapper
 from codemanip import code_utils

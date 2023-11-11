@@ -1,3 +1,4 @@
+from __future__ import annotations
 import srcmlcpp
 
 from srcmlcpp_tools.pimpl_my_class import pimpl_my_class

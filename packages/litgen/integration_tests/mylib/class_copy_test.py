@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 # ruff: noqa: B017
 import copy
 import lg_mylib

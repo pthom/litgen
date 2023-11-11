@@ -1,6 +1,8 @@
 """
 Calls the external program srcml (https://www.srcml.org/)
 """
+from __future__ import annotations
+
 import sys
 
 # mypy: warn_unused_ignores=False

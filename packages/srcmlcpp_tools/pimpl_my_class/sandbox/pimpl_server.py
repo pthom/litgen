@@ -1,3 +1,4 @@
+from __future__ import annotations
 from typing import Optional
 
 from flask import Flask, render_template, request  # type: ignore

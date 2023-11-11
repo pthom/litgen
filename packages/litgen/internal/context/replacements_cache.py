@@ -1,3 +1,4 @@
+from __future__ import annotations
 from codemanip.code_replacements import RegexReplacement, RegexReplacementList
 
 

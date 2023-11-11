@@ -9,6 +9,8 @@ is parsed as a decl_stmt
 
 These are painful hacks, which should removed as soon as this is fixed inside srcML.
 """
+from __future__ import annotations
+
 
 from typing import Optional
 import copy

@@ -1,6 +1,8 @@
 """
 Interface to srcML (https://www.srcml.org/)
 """
+from __future__ import annotations
+
 
 #
 # 1. Types defined by this module

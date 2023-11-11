@@ -1,3 +1,4 @@
+from __future__ import annotations
 from munch import Munch  # type: ignore
 
 from codemanip import code_utils

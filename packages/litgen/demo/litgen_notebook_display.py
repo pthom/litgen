@@ -1,3 +1,4 @@
+from __future__ import annotations
 from IPython.core.display import HTML  # type: ignore
 
 from codemanip.html_code_viewer.html_code_viewer import (

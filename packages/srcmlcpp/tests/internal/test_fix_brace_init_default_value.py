@@ -7,6 +7,8 @@ However,
     void Foo(int v = {} );
 is parsed as a decl_stmt
 """
+from __future__ import annotations
+
 from typing import Optional
 
 import srcmlcpp
