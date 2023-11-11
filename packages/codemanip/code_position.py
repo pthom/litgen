@@ -1,6 +1,5 @@
 from __future__ import annotations
 from dataclasses import dataclass
-from typing import List, Optional
 
 
 @dataclass
@@ -36,9 +35,9 @@ class CodeContextWithCaret:
             ^
     """
 
-    concerned_code_lines: List[str]
-    start: Optional[CodePosition] = None
-    end: Optional[CodePosition] = None
+    concerned_code_lines: list[str]
+    start: CodePosition | None = None
+    end: CodePosition | None = None
 
     def __str__(self) -> str:
         msg = ""

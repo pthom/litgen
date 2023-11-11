@@ -1,3 +1,4 @@
+from __future__ import annotations
 import difflib
 import itertools
 import logging
@@ -5,7 +6,8 @@ import os.path
 import pathlib
 import re
 import traceback
-from typing import Any, Dict, Iterable, Iterator, List, Optional, Tuple, TypeVar
+from typing import Any, Optional, TypeVar
+from collections.abc import Iterable, Iterator
 
 
 """Low level code utilities
@@ -18,7 +20,7 @@ T = TypeVar("T")
 
 # transform a list into a list of adjacent pairs
 # For example : [a, b, c] -> [ [a, b], [b, c]]
-def overlapping_pairs(iterable: Iterable[T]) -> Iterator[Tuple[T, T]]:
+def overlapping_pairs(iterable: Iterable[T]) -> Iterator[tuple[T, T]]:
     it = iter(iterable)
 
     a = next(it, None)
@@ -28,7 +30,7 @@ def overlapping_pairs(iterable: Iterable[T]) -> Iterator[Tuple[T, T]]:
             a = b
 
 
-def run_length_encode(in_list: List[T]) -> List[Tuple[T, int]]:
+def run_length_encode(in_list: list[T]) -> list[tuple[T, int]]:
     if in_list is None or len(in_list) == 0:
         return []
 
@@ -58,7 +60,7 @@ def str_none_empty(s: Optional[str]) -> str:
         return s
 
 
-def strip_empty_lines_in_list(code_lines: List[str]) -> List[str]:
+def strip_empty_lines_in_list(code_lines: list[str]) -> list[str]:
     code_lines = list(itertools.dropwhile(lambda s: len(s.strip()) == 0, code_lines))
     code_lines = list(reversed(code_lines))
     code_lines = list(itertools.dropwhile(lambda s: len(s.strip()) == 0, code_lines))
@@ -72,7 +74,7 @@ def code_set_max_consecutive_empty_lines(code: str, nb_max_empty: int) -> str:
         return code
 
     lines = code.split("\n")
-    rle: List[Tuple[str, int]] = run_length_encode(lines)
+    rle: list[tuple[str, int]] = run_length_encode(lines)
 
     new_lines = []
     for line, nb in rle:
@@ -142,14 +144,14 @@ def line_python_comment_eol_position(code_line: str) -> Optional[int]:
     return line_python_comment_position(code_line, skip_if_comment_only_line=True)
 
 
-def align_python_comments_in_block_lines(lines: List[str]) -> List[str]:
+def align_python_comments_in_block_lines(lines: list[str]) -> list[str]:
     code = "\n".join(lines)
     code2 = align_python_comments_in_block(code)
     out = code2.split("\n")
     return out
 
 
-def strip_lines_right_space(lines: List[str]) -> List[str]:
+def strip_lines_right_space(lines: list[str]) -> list[str]:
     lines_stripped = list(map(lambda line: line.rstrip(), lines))
     return lines_stripped
 
@@ -158,7 +160,7 @@ def align_python_comments_in_block(code: str) -> str:
     lines = code.split("\n")
 
     comments_positions_or_none = list(map(line_python_comment_eol_position, lines))
-    comments_positions: List[int] = list(filter(lambda v: v is not None, comments_positions_or_none))  # type: ignore
+    comments_positions: list[int] = list(filter(lambda v: v is not None, comments_positions_or_none))  # type: ignore
 
     if len(comments_positions) > 0:
         new_lines = []
@@ -197,7 +199,7 @@ def last_code_position_before_cpp_comment(code_line: str) -> int:
     return pos
 
 
-def join_lines_with_token_before_cpp_comment(lines: List[str], token: str) -> str:
+def join_lines_with_token_before_cpp_comment(lines: list[str], token: str) -> str:
     if len(lines) == 0:
         return ""
 
@@ -245,7 +247,7 @@ def to_camel_case(name: str) -> str:
 
 
 def read_text_file(filename: str) -> str:
-    with open(filename, "r") as f:
+    with open(filename) as f:
         txt = f.read()
     return txt
 
@@ -297,12 +299,12 @@ def reindent_code(code: str, indent_size: int = 4, skip_first_line: bool = False
 
 
 def indent_code_lines(
-    code_lines: List[str],
+    code_lines: list[str],
     indent_size: int = 1,
     skip_first_line: bool = False,
     indent_str: Optional[str] = None,
     rstrip: bool = True,
-) -> List[str]:
+) -> list[str]:
     code = "\n".join(code_lines)
     r_str = indent_code(code, indent_size, skip_first_line, indent_str)
     r = r_str.split("\n")
@@ -619,7 +621,7 @@ def remove_end_of_line_cpp_comments(code: str) -> str:
     return code
 
 
-def join_remove_empty(separator: str, strs: List[str]) -> str:
+def join_remove_empty(separator: str, strs: list[str]) -> str:
     non_empty_strs = filter(lambda s: len(s) > 0, strs)
     r = separator.join(non_empty_strs)
     return r
@@ -671,7 +673,7 @@ def does_match_regex(regex_str: str, word: str) -> bool:
     return len(matches) > 0
 
 
-def does_match_regexes(regex_strs: List[str], word: str) -> bool:
+def does_match_regexes(regex_strs: list[str], word: str) -> bool:
     if word is None:
         return False
     for regex_str in regex_strs:
@@ -720,22 +722,22 @@ def make_regex_var_name_contains_word(word: str) -> str:
     return r
 
 
-def split_string_by_pipe_char(s: str) -> List[str]:
+def split_string_by_pipe_char(s: str) -> list[str]:
     items = s.split("|")
     items = list(filter(lambda s: len(s) > 0, items))  # remove empty items
     return items
 
 
-def join_string_by_pipe_char(strs: List[str]) -> str:
+def join_string_by_pipe_char(strs: list[str]) -> str:
     return "|".join(strs)
 
 
-def merge_dicts(dict1: Dict[str, Any], dict2: Dict[str, Any]) -> Dict[str, Any]:
+def merge_dicts(dict1: dict[str, Any], dict2: dict[str, Any]) -> dict[str, Any]:
     res = {**dict1, **dict2}
     return res
 
 
-def replace_in_string(input_string: str, replacements: Dict[str, str]) -> str:
+def replace_in_string(input_string: str, replacements: dict[str, str]) -> str:
     r = input_string
     for search, replace in replacements.items():
         full_search = "{" + search + "}"
@@ -745,8 +747,8 @@ def replace_in_string(input_string: str, replacements: Dict[str, str]) -> str:
 
 def process_code_template(
     input_string: str,
-    replacements: Dict[str, str],
-    replacements_with_line_removal_if_not_found: Optional[Dict[str, Optional[str]]] = None,
+    replacements: dict[str, str],
+    replacements_with_line_removal_if_not_found: Optional[dict[str, Optional[str]]] = None,
     flag_replace_maybe_comma: bool = True,
 ) -> str:
     if replacements_with_line_removal_if_not_found is None:
@@ -766,7 +768,7 @@ def process_code_template(
     return r
 
 
-def replace_in_string_remove_line_if_none(input_string: str, replacements: Dict[str, Optional[str]]) -> str:
+def replace_in_string_remove_line_if_none(input_string: str, replacements: dict[str, Optional[str]]) -> str:
     r = input_string
 
     for search, replace in replacements.items():

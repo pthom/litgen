@@ -1,4 +1,4 @@
-from typing import Dict
+from __future__ import annotations
 
 
 class _ParseStepProgressBar:
@@ -44,7 +44,7 @@ class _ParseStepProgressBar:
 class ParseProgressBars:
     """Handle several progress bars for different parsing states"""
 
-    _progress_bars: Dict[str, _ParseStepProgressBar]
+    _progress_bars: dict[str, _ParseStepProgressBar]
     _nb_total_lines: int = 0
     _enabled: bool = True
 

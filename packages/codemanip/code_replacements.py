@@ -1,6 +1,6 @@
 from __future__ import annotations
 import re
-from typing import List, Pattern
+from re import Pattern
 
 
 class RegexReplacement:
@@ -36,7 +36,7 @@ class RegexReplacement:
 
 
 class RegexReplacementList:
-    replacements: List[RegexReplacement]
+    replacements: list[RegexReplacement]
 
     def __init__(self) -> None:
         self.replacements = []

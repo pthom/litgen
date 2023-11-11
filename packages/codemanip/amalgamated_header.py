@@ -1,15 +1,15 @@
 #!/usr/bin/env python3
+from __future__ import annotations
 import os
 from dataclasses import dataclass
 from sys import version_info
-from typing import List
 
 
 @dataclass
 class AmalgamationOptions:
     base_dir: str
     local_includes_startwith: str
-    include_subdirs: List[str]
+    include_subdirs: list[str]
 
     main_header_file: str
     dst_amalgamated_header_file: str
@@ -37,14 +37,14 @@ def write_amalgamate_header_file(options: AmalgamationOptions) -> None:
     _fwrite_content(options.dst_amalgamated_header_file, content)
 
 
-def _fread_lines(filename: str) -> List[str]:
+def _fread_lines(filename: str) -> list[str]:
     """
     Python 2 & 3 agnostic fopen + readlines
     """
     if version_info[0] >= 3:
-        f = open(filename, "r", encoding="utf-8", errors="ignore")
+        f = open(filename, encoding="utf-8", errors="ignore")
     else:
-        f = open(filename, "r")
+        f = open(filename)
     return f.readlines()
 
 
@@ -53,9 +53,9 @@ def _fread_content(filename: str) -> str:
     Python 2 & 3 agnostic fopen + readlines
     """
     if version_info[0] >= 3:
-        f = open(filename, "r", encoding="utf-8", errors="ignore")
+        f = open(filename, encoding="utf-8", errors="ignore")
     else:
-        f = open(filename, "r")
+        f = open(filename)
     return f.read()
 
 
@@ -132,8 +132,8 @@ def _amalgamate_one_file(
     options: AmalgamationOptions,
     included_filename: str,
     including_filename: str,
-    already_included_local_files: List[str],
-    already_included_external_files: List[str],
+    already_included_local_files: list[str],
+    already_included_external_files: list[str],
 ) -> str:
     """
     Recursive function that will create an amalgamation for a given header file.
@@ -202,7 +202,7 @@ def _amalgamate_one_file(
     return parsed_result
 
 
-def _find_all_files_of_extension(folder: str, extension: str) -> List[str]:
+def _find_all_files_of_extension(folder: str, extension: str) -> list[str]:
     found_files = []
     for root, _dirs, files in os.walk(folder, topdown=False):
         for name in files:
