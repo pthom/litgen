@@ -2,7 +2,7 @@ from __future__ import annotations
 import copy
 from dataclasses import dataclass
 from enum import Enum
-from typing import Optional, TYPE_CHECKING
+from typing import TYPE_CHECKING
 
 from srcmlcpp.cpp_types.base import (
     CppElementAndComment,
@@ -160,7 +160,7 @@ class CppDecl(CppElementAndComment):
         """
         return len(self.c_array_code) > 0
 
-    def c_array_size_as_str(self) -> Optional[str]:
+    def c_array_size_as_str(self) -> str | None:
         """
         If this decl is a c array, return its size, e.g.
             * for `int v[COUNT]` it will return "COUNT"
@@ -172,7 +172,7 @@ class CppDecl(CppElementAndComment):
         size_str = self.c_array_code[pos + 1 : -1]
         return size_str
 
-    def c_array_size_as_int(self) -> Optional[int]:
+    def c_array_size_as_int(self) -> int | None:
         """
         If this decl is a c array, return its size, e.g. for
             int v[4]
@@ -222,7 +222,7 @@ class CppDecl(CppElementAndComment):
         """Returns true if this decl is const"""
         return "const" in self.cpp_type.specifiers  # or "const" in self.cpp_type.names
 
-    def _initial_value_code_with_qualified_types(self, current_scope: Optional[CppScope] = None) -> str:
+    def _initial_value_code_with_qualified_types(self, current_scope: CppScope | None = None) -> str:
         if current_scope is None:
             current_scope = self.cpp_scope()
 
@@ -286,7 +286,7 @@ class CppDecl(CppElementAndComment):
 
         return self.initial_value_code
 
-    def with_qualified_types(self, current_scope: Optional[CppScope] = None) -> CppDecl:
+    def with_qualified_types(self, current_scope: CppScope | None = None) -> CppDecl:
         """Qualifies the types and initial values of a decl, e.g.
                 N2::Foo foo = N2::Foo()
             might become
@@ -350,7 +350,7 @@ class CppDecl(CppElementAndComment):
         else:
             return self
 
-    def _initial_value_code_with_terse_type(self, current_scope: Optional[CppScope]) -> str:
+    def _initial_value_code_with_terse_type(self, current_scope: CppScope | None) -> str:
         """Returns a terse version of the initial value (with only the required scoping)
         In this example code:
             namespace N0
@@ -388,7 +388,7 @@ class CppDecl(CppElementAndComment):
         r = initial_value_scope.str_cpp()
         return r
 
-    def with_terse_types(self, current_scope: Optional[CppScope] = None) -> CppDecl:
+    def with_terse_types(self, current_scope: CppScope | None = None) -> CppDecl:
         if current_scope is None:
             current_scope = self.cpp_scope()
         was_changed = False
@@ -408,7 +408,7 @@ class CppDecl(CppElementAndComment):
         else:
             return self
 
-    def with_specialized_template(self, template_specs: CppTemplateSpecialization) -> Optional[CppDecl]:
+    def with_specialized_template(self, template_specs: CppTemplateSpecialization) -> CppDecl | None:
         """Returns a new decl where "template_name" is replaced by "cpp_type"
         Returns None if this decl does not use "template_name"
         """
@@ -427,7 +427,7 @@ class CppDecl(CppElementAndComment):
             self.cpp_type.visit_cpp_breadth_first(cpp_visitor_function, depth + 1)
         cpp_visitor_function(self, CppElementsVisitorEvent.OnAfterChildren, depth)
 
-    def parent_enum_if_applicable(self) -> Optional[CppEnum]:
+    def parent_enum_if_applicable(self) -> CppEnum | None:
         """
         >> srcmlcpp xml --beautify=False "enum A{a};"
             => <enum>enum <name>A</name><block>{<decl><name>a</name></decl>}</block>;</enum>

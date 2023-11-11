@@ -1,7 +1,8 @@
 """
 Options for srcmlcpp. Read the doc near all options elements.
 """
-from typing import Callable, Dict, List, Optional
+from __future__ import annotations
+from typing import Callable, Optional
 
 from codemanip.code_utils import split_string_by_pipe_char
 from srcmlcpp.scrml_warning_settings import WarningType
@@ -26,7 +27,7 @@ class SrcmlcppOptions:
 
     # List of named possible numbers or sizes (fill it if some number/sizes are defined by macros or constexpr values)
     # For example it could store `{ "SPACE_DIMENSIONS" : 3 }` if the C++ code uses a macro `SPACE_DIMENSIONS`
-    named_number_macros: Dict[str, int]
+    named_number_macros: dict[str, int]
 
     ################################################################################
     #    <Exclude certain regions based on preprocessor macros>
@@ -81,9 +82,9 @@ class SrcmlcppOptions:
     flag_quiet: bool = False
 
     # List of ignored warnings
-    ignored_warnings: List[WarningType]
+    ignored_warnings: list[WarningType]
     # List of ignored warnings, identified by a part of the warning message
-    ignored_warning_parts: List[str]
+    ignored_warning_parts: list[str]
 
     # Show python callstack when warnings are raised
     flag_show_python_callstack: bool = False
@@ -106,7 +107,7 @@ class SrcmlcppOptions:
         self.ignored_warnings = []
         self.ignored_warning_parts = []
 
-    def functions_api_prefixes_list(self) -> List[str]:
+    def functions_api_prefixes_list(self) -> list[str]:
         assert isinstance(self.functions_api_prefixes, str)
         return split_string_by_pipe_char(self.functions_api_prefixes)
 

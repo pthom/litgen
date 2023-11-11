@@ -1,7 +1,7 @@
 from __future__ import annotations
 import copy
 from dataclasses import dataclass
-from typing import TYPE_CHECKING, List, Optional
+from typing import TYPE_CHECKING
 
 from codemanip import code_utils
 
@@ -40,7 +40,7 @@ class CppType(CppElementAndComment):
     #   - composed of several names, for example: ["unsigned", "long", "long"]
     #   - ["auto"] for inferred types
     #   - ["std::vector<int>"] for complex types (for example)
-    typenames: List[str]
+    typenames: list[str]
 
     # specifiers: a list of possible specifiers
     # Acceptable specifiers: const, inline, virtual, extern, constexpr, etc.
@@ -48,10 +48,10 @@ class CppType(CppElementAndComment):
     # Important:
     # if you filled SrcmlcppOptions.functions_api_prefixes, then those prefixes will be mentioned
     #  as specifiers for the return type of the functions.
-    specifiers: List[str]
+    specifiers: list[str]
 
     # modifiers: could be ["*"], ["&&"], ["&"], ["*", "*"], ["..."]
-    modifiers: List[str]
+    modifiers: list[str]
 
     # template arguments types i.e ["int"] for vector<int>
     # (this will not be filled: see note about composed types)
@@ -60,12 +60,12 @@ class CppType(CppElementAndComment):
     def __init__(self, element: SrcmlWrapper) -> None:
         empty_comments = CppElementComments()
         super().__init__(element, empty_comments)
-        self.typenames: List[str] = []
-        self.specifiers: List[str] = []
-        self.modifiers: List[str] = []
+        self.typenames: list[str] = []
+        self.specifiers: list[str] = []
+        self.modifiers: list[str] = []
 
     @staticmethod
-    def authorized_modifiers() -> List[str]:
+    def authorized_modifiers() -> list[str]:
         return ["*", "&", "&&", "..."]
 
     def str_return_type(self, remove_api_prefix: bool = True) -> str:
@@ -109,7 +109,7 @@ class CppType(CppElementAndComment):
         specifiers = copy.copy(self.specifiers)
         if nb_const == 2:
             # remove the last const and handle it later
-            specifier_r: List[str] = list(reversed(specifiers))
+            specifier_r: list[str] = list(reversed(specifiers))
             specifier_r.remove("const")
             specifiers = list(reversed(specifier_r))
 
@@ -151,14 +151,14 @@ class CppType(CppElementAndComment):
         r = "<" in joined_typenames and ">" in joined_typenames
         return r
 
-    def template_name(self) -> Optional[str]:
+    def template_name(self) -> str | None:
         if not self.is_template():
             return None
         joined_typenames = " ".join(self.typenames)
         r = joined_typenames[: joined_typenames.index("<")]
         return r
 
-    def template_instantiated_unique_type(self) -> Optional[CppType]:
+    def template_instantiated_unique_type(self) -> CppType | None:
         """Will return the instantiated type when it is a template on *only one* type
         cpp_type = srcmlcpp_main.code_to_cpp_type(options, "int")
         assert cpp_type.template_instantiated_type() is None
@@ -187,7 +187,7 @@ class CppType(CppElementAndComment):
             return None
         return tpl_type
 
-    def with_specialized_template(self, template_specs: CppTemplateSpecialization) -> Optional[CppType]:
+    def with_specialized_template(self, template_specs: CppTemplateSpecialization) -> CppType | None:
         """Returns a new type where "template_name" is replaced by "cpp_type"
         Returns None if this type does not use "template_name"
         """
@@ -215,7 +215,7 @@ class CppType(CppElementAndComment):
         else:
             return None
 
-    def with_qualified_types(self, current_scope: Optional[CppScope] = None) -> CppType:
+    def with_qualified_types(self, current_scope: CppScope | None = None) -> CppType:
         """Returns a possibly new fully qualified type, by searching for matching types in the full CppUnit root tree
         For example, if
                 self.typenames = ["MyStruct"]
@@ -244,7 +244,7 @@ class CppType(CppElementAndComment):
 
         return self
 
-    def with_terse_types(self, current_scope: Optional[CppScope] = None) -> CppType:
+    def with_terse_types(self, current_scope: CppScope | None = None) -> CppType:
         if current_scope is None:
             current_scope = self.cpp_scope()
 

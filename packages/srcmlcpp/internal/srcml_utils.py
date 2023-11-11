@@ -3,10 +3,10 @@ Some utilities for srcml
 
 This module *must* not depend on srcml_types!
 """
-
+from __future__ import annotations
 import logging
 import os
-from typing import Any, List, Optional
+from typing import Any, Optional
 from xml.dom import minidom
 from xml.etree import ElementTree as ET  # noqa
 
@@ -36,7 +36,7 @@ def copy_element_end_position(element_src: ET.Element, element_dst: ET.Element) 
             element_dst.attrib[key] = end_position
 
 
-def children_with_tag(element: ET.Element, tag: str) -> List[ET.Element]:
+def children_with_tag(element: ET.Element, tag: str) -> list[ET.Element]:
     r = []
     for child in element:
         child_tag = clean_tag_or_attrib(child.tag)

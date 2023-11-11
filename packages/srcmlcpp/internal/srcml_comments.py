@@ -5,8 +5,9 @@ This modules parses the C++ comments:
 - Mark empty lines (transforms them into a comment that contains `COMMENT_NEW_LINE_TOKEN`
 - Group comments on consecutive lines
 """
+from __future__ import annotations
 import copy
-from typing import List, Optional, Set
+from typing import Optional
 from xml.etree import ElementTree as ET
 
 from codemanip import code_utils
@@ -192,7 +193,7 @@ def _group_consecutive_comments(srcml_code: SrcmlWrapper) -> SrcmlWrapper:
         else:
             add_child()
 
-    children_r: List[ET.Element] = []
+    children_r: list[ET.Element] = []
     for child_r in srcml_xml_grouped:
         children_r.append(child_r)
 
@@ -200,7 +201,7 @@ def _group_consecutive_comments(srcml_code: SrcmlWrapper) -> SrcmlWrapper:
     return r
 
 
-def _is_comment_end_of_line(children: List[SrcmlWrapper], idx: int) -> bool:
+def _is_comment_end_of_line(children: list[SrcmlWrapper], idx: int) -> bool:
     if not 0 <= idx < len(children):
         return False
     if idx == 0:
@@ -222,7 +223,7 @@ def _is_comment_end_of_line(children: List[SrcmlWrapper], idx: int) -> bool:
     return False
 
 
-def _is_comment_on_previous_line(children: List[SrcmlWrapper], idx: int) -> bool:
+def _is_comment_on_previous_line(children: list[SrcmlWrapper], idx: int) -> bool:
     if not 0 <= idx < len(children):
         return False
     if idx == len(children) - 1:
@@ -323,10 +324,10 @@ IsCStyleComment = bool
 
 def _group_comments(
     srcml_code: SrcmlWrapper,
-) -> List[SrcmlWrapper]:
+) -> list[SrcmlWrapper]:
     srcml_code_grouped: SrcmlWrapper = _group_consecutive_comments(srcml_code)
 
-    children_comments_grouped: List[SrcmlWrapper] = []
+    children_comments_grouped: list[SrcmlWrapper] = []
 
     for element in srcml_code_grouped.make_wrapped_children():
         children_comments_grouped.append(element)
@@ -334,7 +335,7 @@ def _group_comments(
     return children_comments_grouped
 
 
-def get_children_with_comments(element: SrcmlWrapper) -> List[CppElementAndComment]:
+def get_children_with_comments(element: SrcmlWrapper) -> list[CppElementAndComment]:
     if element.options.header_filter_preprocessor_regions:
         element.srcml_xml = filter_preprocessor_regions(
             element.srcml_xml, element.options.header_filter_acceptable__regex
@@ -343,7 +344,7 @@ def get_children_with_comments(element: SrcmlWrapper) -> List[CppElementAndComme
     result = []
     children = _group_comments(element)
 
-    c_style_comments_idx: Set[int] = set()
+    c_style_comments_idx: set[int] = set()
 
     def remove_comment_tokens() -> None:
         for i, element in enumerate(children):

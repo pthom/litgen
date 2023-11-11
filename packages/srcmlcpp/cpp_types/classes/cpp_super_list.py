@@ -1,6 +1,5 @@
 from __future__ import annotations
 from dataclasses import dataclass
-from typing import List
 
 from codemanip import code_utils
 
@@ -24,19 +23,19 @@ class CppSuperList(CppElementAndComment):
     https://www.srcml.org/doc/cpp_srcML.html#struct-definition
     """
 
-    _super_list: List[CppSuper]
+    _super_list: list[CppSuper]
 
     def __init__(self, element: SrcmlWrapper):
         empty_comments = CppElementComments()
         super().__init__(element, empty_comments)
-        self._super_list: List[CppSuper] = []
+        self._super_list: list[CppSuper] = []
 
     @property
-    def super_list(self) -> List[CppSuper]:
+    def super_list(self) -> list[CppSuper]:
         return self._super_list
 
     @super_list.setter
-    def super_list(self, value: List[CppSuper]) -> None:
+    def super_list(self, value: list[CppSuper]) -> None:
         self._super_list = value
         self.fill_children_parents()
 

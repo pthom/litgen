@@ -1,8 +1,8 @@
+from __future__ import annotations
 import inspect
 import logging
 import sys
 import traceback
-from typing import Tuple
 
 from codemanip import code_utils
 
@@ -18,7 +18,7 @@ class SrcmlcppExceptionDetailed(SrcmlcppException):
         super().__init__(message)
 
 
-def _get_python_call_info() -> Tuple[str, str]:
+def _get_python_call_info() -> tuple[str, str]:
     stack_lines = traceback.format_stack()
     error_line = stack_lines[-4]
     frame = inspect.currentframe()

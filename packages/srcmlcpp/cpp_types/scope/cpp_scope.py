@@ -1,7 +1,6 @@
 from __future__ import annotations
 from dataclasses import dataclass
 from enum import Enum
-from typing import List, Optional
 
 
 class CppScopeType(Enum):
@@ -18,9 +17,9 @@ class CppScopePart:
 
 
 class CppScope:
-    scope_parts: List[CppScopePart]
+    scope_parts: list[CppScopePart]
 
-    def __init__(self, scopes: Optional[List[CppScopePart]] = None) -> None:
+    def __init__(self, scopes: list[CppScopePart] | None = None) -> None:
         if scopes is None:
             self.scope_parts = []
         else:
@@ -38,13 +37,13 @@ class CppScope:
             return NotImplemented
         return self.str_cpp() == other.str_cpp()
 
-    def parent_scope(self) -> Optional[CppScope]:
+    def parent_scope(self) -> CppScope | None:
         if len(self.scope_parts) == 0:
             return None
         new_scope_parts = self.scope_parts[:-1]
         return CppScope(new_scope_parts)
 
-    def scope_hierarchy_list(self) -> List[CppScope]:
+    def scope_hierarchy_list(self) -> list[CppScope]:
         """Given "A::B::C", return ["A::B::C", "A::B", "A", ""]"""
         r = [self]
         parent_scope = self.parent_scope()
@@ -53,7 +52,7 @@ class CppScope:
         return r
 
     def can_access_scope(self, other_scope: CppScope) -> bool:
-        parent: Optional[CppScope] = self
+        parent: CppScope | None = self
         while parent is not None:
             if parent == other_scope:
                 return True

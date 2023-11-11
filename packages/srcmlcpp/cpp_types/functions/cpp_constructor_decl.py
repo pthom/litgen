@@ -1,6 +1,5 @@
 from __future__ import annotations
 from dataclasses import dataclass
-from typing import List
 
 from srcmlcpp.cpp_types.base import CppElementComments
 from srcmlcpp.cpp_types.functions.cpp_function_decl import CppFunctionDecl
@@ -18,7 +17,7 @@ class CppConstructorDecl(CppFunctionDecl):
 
     def __init__(self, element: SrcmlWrapper, cpp_element_comments: CppElementComments) -> None:
         super().__init__(element, cpp_element_comments)
-        self.specifiers: List[str] = []
+        self.specifiers: list[str] = []
         self.function_name = ""
 
     def _str_signature(self) -> str:

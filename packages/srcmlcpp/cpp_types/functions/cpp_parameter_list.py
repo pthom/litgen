@@ -1,6 +1,5 @@
 from __future__ import annotations
 from dataclasses import dataclass
-from typing import List, Optional
 import copy
 
 from srcmlcpp.cpp_types.base import (
@@ -24,7 +23,7 @@ class CppParameterList(CppElementAndComment):
     https://www.srcml.org/doc/cpp_srcML.html#function-declaration
     """
 
-    _parameters: List[CppParameter]
+    _parameters: list[CppParameter]
 
     def __init__(self, element: SrcmlWrapper) -> None:
         empty_comments = CppElementComments()
@@ -32,15 +31,15 @@ class CppParameterList(CppElementAndComment):
         self._parameters = []
 
     @property
-    def parameters(self) -> List[CppParameter]:
+    def parameters(self) -> list[CppParameter]:
         return self._parameters
 
     @parameters.setter
-    def parameters(self, new_parameters: List[CppParameter]) -> None:
+    def parameters(self, new_parameters: list[CppParameter]) -> None:
         self._parameters = new_parameters
         self.fill_children_parents()
 
-    def list_types_names_only(self) -> List[str]:
+    def list_types_names_only(self) -> list[str]:
         """Returns a list like ["int", "bool"]"""
         r = []
         for parameter in self.parameters:
@@ -56,7 +55,7 @@ class CppParameterList(CppElementAndComment):
                 return True
         return False
 
-    def list_types_names_default_for_signature(self) -> List[str]:
+    def list_types_names_default_for_signature(self) -> list[str]:
         """Returns a list like ["int a", "bool flag = true"]"""
         params_strs = list(map(lambda param: param.type_name_default_for_signature(), self.parameters))
         return params_strs
@@ -86,7 +85,7 @@ class CppParameterList(CppElementAndComment):
         r = ", ".join(types)
         return r
 
-    def with_qualified_types(self, current_scope: Optional[CppScope] = None) -> CppParameterList:
+    def with_qualified_types(self, current_scope: CppScope | None = None) -> CppParameterList:
         """Returns a possibly new FunctionDecl where the params and return types are qualified given the function scope.
 
         For example, given the code:
@@ -119,7 +118,7 @@ class CppParameterList(CppElementAndComment):
         else:
             return self
 
-    def with_terse_types(self, current_scope: Optional[CppScope] = None) -> CppParameterList:
+    def with_terse_types(self, current_scope: CppScope | None = None) -> CppParameterList:
         if current_scope is None:
             current_scope = self.cpp_scope()
         was_changed = False

@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 import copy
-from typing import Callable, List, Optional
+from typing import Callable
 from xml.etree import ElementTree as ET
 
 from codemanip import code_utils
@@ -21,14 +21,14 @@ class SrcmlWrapper:
     # the xml tree created by srcML
     srcml_xml: ET.Element
     # the filename from which this tree was parsed
-    filename: Optional[str] = None
+    filename: str | None = None
     # debugging help: a string showing the start position of this element in the code
     code_location: str
 
     # members that are always copied as shallow members (this is intentionally a static list)
     SrcmlWrapper__deep_copy_force_shallow_ = ["options", "srcml_xml"]
 
-    def __init__(self, options: SrcmlcppOptions, srcml_xml: ET.Element, filename: Optional[str]) -> None:
+    def __init__(self, options: SrcmlcppOptions, srcml_xml: ET.Element, filename: str | None) -> None:
         """Create a wrapper from a xml sub node
         :param options:  the options
         :param srcml_xml: the xml node which will be wrapped
@@ -93,7 +93,7 @@ class SrcmlWrapper:
     def has_text(self) -> bool:
         return self.srcml_xml.text is not None
 
-    def text(self) -> Optional[str]:
+    def text(self) -> str | None:
         """Text part of the xml element"""
         return self.srcml_xml.text
 
@@ -109,7 +109,7 @@ class SrcmlWrapper:
         assert len(name_children) == 1
         name_children[0].text = new_name
 
-    def extract_name_from_xml(self) -> Optional[str]:
+    def extract_name_from_xml(self) -> str | None:
         """Returns the C++ code corresponding to the name extracted from the srcML xml tree.
 
         * In simple cases, it will be a simple text extraction, for example with the code:
@@ -139,7 +139,7 @@ class SrcmlWrapper:
         else:
             return code_to_srcml.srcml_to_code(name_element)
 
-    def attribute_value(self, attr_name: str) -> Optional[str]:
+    def attribute_value(self, attr_name: str) -> str | None:
         """Gets the attribute value if present"""
         if attr_name in self.srcml_xml.attrib:
             return self.srcml_xml.attrib[attr_name]
@@ -174,19 +174,19 @@ class SrcmlWrapper:
         """Save to file as xml"""
         srcml_utils.srcml_write_to_file(self.options.encoding, self.srcml_xml, filename)
 
-    def make_wrapped_children(self) -> List[SrcmlWrapper]:
+    def make_wrapped_children(self) -> list[SrcmlWrapper]:
         """Extract the xml sub nodes and wraps them"""
         r = []
         for child_xml in self.srcml_xml:
             r.append(SrcmlWrapper(self.options, child_xml, self.filename))
         return r
 
-    def wrapped_child_with_tag(self, tag: str) -> Optional[SrcmlWrapper]:
+    def wrapped_child_with_tag(self, tag: str) -> SrcmlWrapper | None:
         """Extract the xml sub nodes and wraps them"""
         children = self.wrapped_children_with_tag(tag)
         return children[0] if len(children) == 1 else None
 
-    def wrapped_children_with_tag(self, tag: str) -> List[SrcmlWrapper]:
+    def wrapped_children_with_tag(self, tag: str) -> list[SrcmlWrapper]:
         """Extract the xml sub nodes and wraps them"""
         children = self.make_wrapped_children()
 

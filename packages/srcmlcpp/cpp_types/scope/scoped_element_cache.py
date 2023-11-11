@@ -1,7 +1,6 @@
 """Qualifiable elements: CppElements for which we store (and cache the terse and/or qualified version)
 """
-from typing import Dict
-
+from __future__ import annotations
 
 from srcmlcpp.cpp_types.scope import CppScope
 from srcmlcpp.cpp_types.base import CppElementAndComment
@@ -13,7 +12,7 @@ CppScopeName = str
 class ScopedElementCache:
     """A cache for CppElement (like CppFunctionDecl) that implement with_qualified_types() and with_terse_types()"""
 
-    _cache: Dict[CppScopeName, CppElementAndComment]
+    _cache: dict[CppScopeName, CppElementAndComment]
 
     def __init__(self) -> None:
         self._cache = {}

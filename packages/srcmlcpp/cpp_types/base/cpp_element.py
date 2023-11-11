@@ -1,7 +1,7 @@
 from __future__ import annotations
 import copy
 from enum import Enum
-from typing import TYPE_CHECKING, Callable, List, Optional
+from typing import TYPE_CHECKING, Callable
 
 from srcmlcpp.cpp_types.scope.cpp_scope import CppScope, CppScopePart, CppScopeType
 from srcmlcpp.srcml_wrapper import SrcmlWrapper
@@ -20,7 +20,7 @@ class CppElement(SrcmlWrapper):
     # the parent of this element (will be None for the root, which is a CppUnit)
     # at construction time, this field is absent (hasattr return False)!
     # It will be filled later by CppBlock.fill_parents() (with a tree traversal)
-    parent: Optional[CppElement]
+    parent: CppElement | None
 
     # members that are always copied as shallow members (this is intentionally a static list)
     CppElement__deep_copy_force_shallow_ = ["parent"]
@@ -88,7 +88,7 @@ class CppElement(SrcmlWrapper):
                 r += f" scope={scope_str}"
         return r
 
-    def self_scope(self) -> Optional[CppScopePart]:
+    def self_scope(self) -> CppScopePart | None:
         from srcmlcpp.cpp_types.classes.cpp_struct import CppStruct
         from srcmlcpp.cpp_types.cpp_namespace import CppNamespace
         from srcmlcpp.cpp_types.cpp_enum import CppEnum
@@ -150,7 +150,7 @@ class CppElement(SrcmlWrapper):
 
         return scope
 
-    def ancestors_list(self, include_self: bool = False) -> List[CppElement]:
+    def ancestors_list(self, include_self: bool = False) -> list[CppElement]:
         """
         Returns the list of ancestors, up to the root unit
 
@@ -189,7 +189,7 @@ class CppElement(SrcmlWrapper):
             top_parent = None
         else:
             top_parent = self.parent
-        parents_stack: List[Optional[CppElement]] = [top_parent]
+        parents_stack: list[CppElement | None] = [top_parent]
 
         def visitor_fill_parent(cpp_element: CppElement, event: CppElementsVisitorEvent, _depth: int) -> None:
             nonlocal parents_stack

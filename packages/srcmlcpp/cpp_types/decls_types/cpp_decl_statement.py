@@ -1,7 +1,6 @@
 from __future__ import annotations
 import copy
 from dataclasses import dataclass
-from typing import List, Optional
 
 from codemanip import code_utils
 
@@ -25,14 +24,14 @@ class CppDeclStatement(CppElementAndComment):
     https://www.srcml.org/doc/cpp_srcML.html#variable-declaration-statement
     """
 
-    _cpp_decls: List[CppDecl]  # A CppDeclStatement can initialize several variables
+    _cpp_decls: list[CppDecl]  # A CppDeclStatement can initialize several variables
 
     def __init__(self, element: SrcmlWrapper, cpp_element_comments: CppElementComments) -> None:
         super().__init__(element, cpp_element_comments)
-        self._cpp_decls: List[CppDecl] = []
+        self._cpp_decls: list[CppDecl] = []
 
     @property
-    def cpp_decls(self) -> List[CppDecl]:
+    def cpp_decls(self) -> list[CppDecl]:
         return self._cpp_decls
 
     @cpp_decls.setter
@@ -57,14 +56,14 @@ class CppDeclStatement(CppElementAndComment):
             child.visit_cpp_breadth_first(cpp_visitor_function, depth + 1)
         cpp_visitor_function(self, CppElementsVisitorEvent.OnAfterChildren, depth)
 
-    def with_specialized_template(self, template_specs: CppTemplateSpecialization) -> Optional[CppDeclStatement]:
+    def with_specialized_template(self, template_specs: CppTemplateSpecialization) -> CppDeclStatement | None:
         """Returns a new CppDeclStatement where "template_name" is replaced by "cpp_type"
         Returns None if this CppDeclStatement does not use "template_name"
         """
         was_changed = False
 
         new_decl_statement = copy.deepcopy(self)
-        new_cpp_decls: List[CppDecl] = []
+        new_cpp_decls: list[CppDecl] = []
         for cpp_decl in new_decl_statement.cpp_decls:
             new_cpp_decl = cpp_decl.with_specialized_template(template_specs)
             if new_cpp_decl is not None:

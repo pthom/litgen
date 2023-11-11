@@ -1,5 +1,4 @@
 from __future__ import annotations
-from typing import List, Union
 
 from srcmlcpp.cpp_types.decls_types.cpp_type import CppType
 
@@ -20,7 +19,7 @@ class CppTemplateSpecializationPart:
     cpp_type: CppType
     template_name: str = ""
 
-    def __init__(self, cpp_type: Union[CppType, str], template_name: str = ""):
+    def __init__(self, cpp_type: CppType | str, template_name: str = ""):
         if isinstance(cpp_type, CppType):
             self.cpp_type = cpp_type
         elif isinstance(cpp_type, str):
@@ -42,7 +41,7 @@ class CppTemplateSpecializationPart:
 
 
 class CppTemplateSpecialization:
-    specializations: List[CppTemplateSpecializationPart]
+    specializations: list[CppTemplateSpecializationPart]
 
     def __init__(self, check_private_constructor: str):
         if check_private_constructor != "from_within":
@@ -61,7 +60,7 @@ class CppTemplateSpecialization:
         return r
 
     @staticmethod
-    def from_specializations(specializations: List[CppTemplateSpecializationPart]) -> CppTemplateSpecialization:
+    def from_specializations(specializations: list[CppTemplateSpecializationPart]) -> CppTemplateSpecialization:
         r = CppTemplateSpecialization("from_within")
         r.specializations = specializations
         return r

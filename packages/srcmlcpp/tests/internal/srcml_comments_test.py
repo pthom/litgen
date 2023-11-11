@@ -1,6 +1,6 @@
+from __future__ import annotations
 import os
 import sys
-from typing import Dict
 
 from codemanip import code_utils
 
@@ -15,7 +15,7 @@ _THIS_DIR = os.path.dirname(__file__)
 sys.path.append(_THIS_DIR + "/../..")
 
 
-def as_dict_cpp_element(cpp_element: CppElement) -> Dict[str, str]:
+def as_dict_cpp_element(cpp_element: CppElement) -> dict[str, str]:
     as_dict = {
         "tag": cpp_element.tag(),
         "name": code_utils.str_or_none_token(cpp_element.extract_name_from_xml()),
@@ -26,7 +26,7 @@ def as_dict_cpp_element(cpp_element: CppElement) -> Dict[str, str]:
     return as_dict
 
 
-def as_dict_cpp_element_comments(cpp_element_comments: CppElementComments) -> Dict[str, str]:
+def as_dict_cpp_element_comments(cpp_element_comments: CppElementComments) -> dict[str, str]:
     r = {
         "comment_top": cpp_element_comments.comment_on_previous_lines,
         "comment_eol": cpp_element_comments.comment_end_of_line,

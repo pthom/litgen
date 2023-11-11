@@ -1,5 +1,6 @@
+from __future__ import annotations
 import copy
-from typing import Optional, List
+from typing import Optional
 from xml.etree import ElementTree as ET
 
 from codemanip import code_utils
@@ -68,7 +69,7 @@ class _SrcmlPreprocessorState:
     last_ignored_preprocessor_stmt_line: int = -1
     last_element: Optional[ET.Element] = None
 
-    encountered_if: List[str]
+    encountered_if: list[str]
     debug = False
 
     def __init__(self, header_acceptable__regex: str) -> None:

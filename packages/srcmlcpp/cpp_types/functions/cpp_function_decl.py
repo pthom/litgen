@@ -1,7 +1,7 @@
 from __future__ import annotations
 import copy
 from dataclasses import dataclass
-from typing import TYPE_CHECKING, List, Optional
+from typing import TYPE_CHECKING
 
 from srcmlcpp.cpp_types.base import (
     CppElementAndComment,
@@ -32,7 +32,7 @@ class CppFunctionDecl(CppElementAndComment, CppITemplateHost):
     https://www.srcml.org/doc/cpp_srcML.html#function-declaration
     """
 
-    specifiers: List[str]  # can contain "const", "delete" or "default" for constructors & destructors
+    specifiers: list[str]  # can contain "const", "delete" or "default" for constructors & destructors
 
     # warning: return_type may include API and inline markers i.e for
     #       MY_API inline int foo()
@@ -50,7 +50,7 @@ class CppFunctionDecl(CppElementAndComment, CppITemplateHost):
     #     * "" for `void foo() noexcept;`
     #     * "(false)" for `void foo() noexcept(false);`
     #     * "(some_condition())" for `void foo() noexcept(some_condition());`
-    _noexcept: Optional[str]
+    _noexcept: str | None
 
     _cache_with_qualified_types: ScopedElementCache
     _cache_with_terse_types: ScopedElementCache
@@ -58,7 +58,7 @@ class CppFunctionDecl(CppElementAndComment, CppITemplateHost):
     def __init__(self, element: SrcmlWrapper, cpp_element_comments: CppElementComments) -> None:
         super().__init__(element, cpp_element_comments)
         self._init_template_host()
-        self.specifiers: List[str] = []
+        self.specifiers: list[str] = []
         self.is_pure_virtual = False
         self.function_name = ""
         self._cache_with_qualified_types = ScopedElementCache()
@@ -93,7 +93,7 @@ class CppFunctionDecl(CppElementAndComment, CppITemplateHost):
         return self._noexcept
 
     @noexcept.setter
-    def noexcept(self, v: Optional[str]) -> None:
+    def noexcept(self, v: str | None) -> None:
         self._noexcept = v
 
     def is_noexcept(self):
@@ -128,7 +128,7 @@ class CppFunctionDecl(CppElementAndComment, CppITemplateHost):
     def function_name_with_specialization(self) -> str:
         return self.function_name + self.str_template_specialization()
 
-    def with_specialized_template(self, template_specs: CppTemplateSpecialization) -> Optional[CppFunctionDecl]:
+    def with_specialized_template(self, template_specs: CppTemplateSpecialization) -> CppFunctionDecl | None:
         """Returns a new partially or fully specialized template function, implemented for the given type
         Returns None if the type(s) provided by template_specs is not used by this function.
         """
@@ -143,7 +143,7 @@ class CppFunctionDecl(CppElementAndComment, CppITemplateHost):
                 was_changed = True
                 new_function.return_type = new_return_type
 
-        new_parameters: List[CppParameter] = []
+        new_parameters: list[CppParameter] = []
         for parameter in new_function.parameter_list.parameters:
             new_decl = parameter.decl.with_specialized_template(template_specs)
             if new_decl is not None:
@@ -161,7 +161,7 @@ class CppFunctionDecl(CppElementAndComment, CppITemplateHost):
         else:
             return None
 
-    def with_qualified_types(self, current_scope: Optional[CppScope] = None) -> CppFunctionDecl:
+    def with_qualified_types(self, current_scope: CppScope | None = None) -> CppFunctionDecl:
         """Returns a possibly new FunctionDecl where the params and return types are qualified given the function scope.
 
         For example, given the code:
@@ -200,7 +200,7 @@ class CppFunctionDecl(CppElementAndComment, CppITemplateHost):
         self._cache_with_qualified_types.store(current_scope, r)
         return r
 
-    def with_terse_types(self, current_scope: Optional[CppScope] = None) -> CppFunctionDecl:
+    def with_terse_types(self, current_scope: CppScope | None = None) -> CppFunctionDecl:
         """Returns a possibly new FunctionDecl where the params and return types are qualified given the function scope.
 
         For example, given the code:
@@ -336,7 +336,7 @@ class CppFunctionDecl(CppElementAndComment, CppITemplateHost):
         is_overloaded = len(methods_same_name) >= 2
         return is_overloaded
 
-    def parent_struct_if_method(self) -> Optional[CppStruct]:
+    def parent_struct_if_method(self) -> CppStruct | None:
         from srcmlcpp.cpp_types.classes.cpp_struct import CppStruct
         from srcmlcpp.cpp_types.blocks.cpp_block import CppBlock
 
@@ -361,7 +361,7 @@ class CppFunctionDecl(CppElementAndComment, CppITemplateHost):
         assert isinstance(parent_struct_, CppStruct)
         return parent_struct_
 
-    def access_type_if_method(self) -> Optional[CppAccessType]:
+    def access_type_if_method(self) -> CppAccessType | None:
         from srcmlcpp.cpp_types.blocks.cpp_public_protected_private import CppPublicProtectedPrivate
 
         if not self.is_method():
@@ -371,7 +371,7 @@ class CppFunctionDecl(CppElementAndComment, CppITemplateHost):
         r = ppp.access_type
         return r
 
-    def parent_struct_name_if_method(self) -> Optional[str]:
+    def parent_struct_name_if_method(self) -> str | None:
         parent_struct = self.parent_struct_if_method()
         if parent_struct is None:
             return None

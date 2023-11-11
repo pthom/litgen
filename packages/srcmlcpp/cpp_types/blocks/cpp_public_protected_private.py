@@ -1,5 +1,4 @@
 from __future__ import annotations
-from typing import Optional
 
 from codemanip import code_utils
 
@@ -21,7 +20,7 @@ class CppPublicProtectedPrivate(CppBlock):  # Also a CppElementAndComment
     access_type: CppAccessType = CppAccessType.public  # "public", "private", or "protected"
     default_or_explicit: str = ""  # "default" or "" ("default" means it was added automatically)
 
-    def __init__(self, element: SrcmlWrapper, access_type: CppAccessType, default_or_explicit: Optional[str]) -> None:
+    def __init__(self, element: SrcmlWrapper, access_type: CppAccessType, default_or_explicit: str | None) -> None:
         super().__init__(element)
         assert default_or_explicit in [None, "", "default"]
         self.access_type = access_type

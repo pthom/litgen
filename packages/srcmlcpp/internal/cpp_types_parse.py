@@ -6,7 +6,8 @@ The main interface of this module is:
 
 All the other functions can be considered private to this module.
 """
-from typing import List, Optional
+from __future__ import annotations
+from typing import Optional
 from xml.etree import ElementTree as ET
 
 import srcmlcpp.internal.code_to_srcml
@@ -826,7 +827,7 @@ def fill_block(options: SrcmlcppOptions, element: SrcmlWrapper, inout_block_cont
 
     last_ignored_child: Optional[CppElementAndComment] = None
 
-    children: List[CppElementAndComment] = srcml_comments.get_children_with_comments(element)
+    children: list[CppElementAndComment] = srcml_comments.get_children_with_comments(element)
     for _i, child_c in enumerate(children):
         global_progress_bars().set_current_line(_PROGRESS_BAR_TITLE_SRCML_PARSE, child_c.start().line)
 

@@ -1,7 +1,6 @@
 from __future__ import annotations
 import copy
 from dataclasses import dataclass
-from typing import List, Optional, Tuple
 
 import codemanip.code_utils
 import srcmlcpp
@@ -115,7 +114,7 @@ class CppStruct(CppElementAndComment, CppITemplateHost):
             return False
         return len(self.super_list.super_list) > 0
 
-    def base_classes(self) -> List[Tuple[CppAccessType, CppStruct]]:
+    def base_classes(self) -> list[tuple[CppAccessType, CppStruct]]:
         if not self.has_base_classes():
             return []
 
@@ -161,7 +160,7 @@ class CppStruct(CppElementAndComment, CppITemplateHost):
                 return True
         return False
 
-    def get_user_defined_copy_constructor(self) -> Optional[CppFunctionDecl]:
+    def get_user_defined_copy_constructor(self) -> CppFunctionDecl | None:
         for method in self.get_methods():
             if method.is_copy_constructor():
                 return method
@@ -188,19 +187,19 @@ class CppStruct(CppElementAndComment, CppITemplateHost):
                     r = True
         return r
 
-    def get_access_blocks(self, access_type: Optional[CppAccessType]) -> List[CppPublicProtectedPrivate]:
+    def get_access_blocks(self, access_type: CppAccessType | None) -> list[CppPublicProtectedPrivate]:
         """
         Returns the public blocks of the class
         """
-        r: List[CppPublicProtectedPrivate] = []
+        r: list[CppPublicProtectedPrivate] = []
         for access_zone in self.block.block_children:
             if isinstance(access_zone, CppPublicProtectedPrivate):
                 if access_type is None or access_zone.access_type == access_type:
                     r.append(access_zone)
         return r
 
-    def get_members_with_access_type(self) -> List[Tuple[CppAccessType, CppDecl]]:
-        r: List[Tuple[CppAccessType, CppDecl]] = []
+    def get_members_with_access_type(self) -> list[tuple[CppAccessType, CppDecl]]:
+        r: list[tuple[CppAccessType, CppDecl]] = []
         for access_zone in self.block.block_children:
             if isinstance(access_zone, CppPublicProtectedPrivate):
                 access_type = access_zone.access_type
@@ -210,8 +209,8 @@ class CppStruct(CppElementAndComment, CppITemplateHost):
                             r.append((access_type, cpp_decl))
         return r
 
-    def get_members(self, access_type: Optional[CppAccessType] = None) -> List[CppDecl]:
-        r: List[CppDecl] = []
+    def get_members(self, access_type: CppAccessType | None = None) -> list[CppDecl]:
+        r: list[CppDecl] = []
         for access_zone in self.block.block_children:
             if isinstance(access_zone, CppPublicProtectedPrivate):
                 if access_type is None or access_type == access_zone.access_type:
@@ -222,13 +221,13 @@ class CppStruct(CppElementAndComment, CppITemplateHost):
         return r
 
     def get_elements(
-        self, access_type: Optional[CppAccessType] = None, element_type: Optional[type] = None
-    ) -> List[CppElementAndComment]:
+        self, access_type: CppAccessType | None = None, element_type: type | None = None
+    ) -> list[CppElementAndComment]:
         """
         Returns all the elements of this struct
         (include members, methods, inner struct)
         """
-        r: List[CppElementAndComment] = []
+        r: list[CppElementAndComment] = []
         for access_zone in self.block.block_children:
             if isinstance(access_zone, CppPublicProtectedPrivate):
                 if access_type is not None:
@@ -242,10 +241,10 @@ class CppStruct(CppElementAndComment, CppITemplateHost):
                         r.append(child)
         return r
 
-    def get_methods(self) -> List[CppFunctionDecl]:
+    def get_methods(self) -> list[CppFunctionDecl]:
         from srcmlcpp.cpp_types.functions.cpp_function_decl import CppFunctionDecl
 
-        r: List[CppFunctionDecl] = []
+        r: list[CppFunctionDecl] = []
         for access_zone in self.block.block_children:
             if isinstance(access_zone, CppPublicProtectedPrivate):
                 for child in access_zone.block_children:
@@ -254,7 +253,7 @@ class CppStruct(CppElementAndComment, CppITemplateHost):
         return r
 
     def add_access_block(
-        self, access_type: CppAccessType, comments: Optional[CppElementComments] = None
+        self, access_type: CppAccessType, comments: CppElementComments | None = None
     ) -> CppPublicProtectedPrivate:
         # Create ppp_block (CppPublicProtectedPrivate) via C++ code:
         code = codemanip.code_utils.unindent_code(access_type.name + ":")
@@ -275,7 +274,7 @@ class CppStruct(CppElementAndComment, CppITemplateHost):
         self,
         cpp_code: str,
         access_type: CppAccessType = CppAccessType.public,
-        comments: Optional[CppElementComments] = None,
+        comments: CppElementComments | None = None,
     ) -> CppFunctionDecl:
         access_blocks = self.get_access_blocks(access_type=access_type)
         if len(access_blocks) == 0:
@@ -291,9 +290,9 @@ class CppStruct(CppElementAndComment, CppITemplateHost):
 
         return fn
 
-    def get_methods_with_name(self, name: str) -> List[CppFunctionDecl]:
+    def get_methods_with_name(self, name: str) -> list[CppFunctionDecl]:
         all_methods = self.get_methods()
-        r: List[CppFunctionDecl] = []
+        r: list[CppFunctionDecl] = []
         for fn in all_methods:
             if fn.function_name == name:
                 r.append(fn)
@@ -306,7 +305,7 @@ class CppStruct(CppElementAndComment, CppITemplateHost):
                 return True
         return False
 
-    def virtual_methods(self, include_inherited_virtual_methods: bool) -> List[CppFunctionDecl]:
+    def virtual_methods(self, include_inherited_virtual_methods: bool) -> list[CppFunctionDecl]:
         virtual_methods = []
         for base_method in self.get_methods():
             if base_method.is_virtual_method():
@@ -336,7 +335,7 @@ class CppStruct(CppElementAndComment, CppITemplateHost):
             ppp_block.fill_children_parents()
             ppp_block.parent = self.block
 
-    def with_specialized_template(self, template_specs: CppTemplateSpecialization) -> Optional[CppStruct]:
+    def with_specialized_template(self, template_specs: CppTemplateSpecialization) -> CppStruct | None:
         """Returns a new partially or fully specialized class, implemented for the given type
         Will return None if the application of the template changes nothing
         """
@@ -347,9 +346,9 @@ class CppStruct(CppElementAndComment, CppITemplateHost):
 
         for ppp_new_block in new_class.block.block_children:
             if isinstance(ppp_new_block, CppPublicProtectedPrivate):
-                ppp_new_block_children: List[CppElementAndComment] = []
+                ppp_new_block_children: list[CppElementAndComment] = []
                 for ppp_child in ppp_new_block.block_children:
-                    new_ppp_child: Optional[CppElementAndComment] = None
+                    new_ppp_child: CppElementAndComment | None = None
                     if isinstance(ppp_child, (CppFunctionDecl, CppStruct, CppDeclStatement)):
                         new_ppp_child = ppp_child.with_specialized_template(template_specs)
                     if new_ppp_child is not None:

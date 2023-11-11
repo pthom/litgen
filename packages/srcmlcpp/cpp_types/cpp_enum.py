@@ -1,6 +1,7 @@
+from __future__ import annotations
 import copy
 from dataclasses import dataclass
-from typing import List, Optional
+from typing import Optional
 
 from codemanip import code_utils
 
@@ -65,15 +66,15 @@ class CppEnum(CppElementAndComment):
     def __str__(self) -> str:
         return self.str_code()
 
-    def get_enum_decls(self) -> List[CppDecl]:
-        r: List[CppDecl] = []
+    def get_enum_decls(self) -> list[CppDecl]:
+        r: list[CppDecl] = []
         for child in self.block.block_children:
             if isinstance(child, CppDecl):
                 r.append(child)
         return r
 
-    def get_children_with_filled_decl_values(self) -> List[CppElementAndComment]:
-        children: List[CppElementAndComment] = []
+    def get_children_with_filled_decl_values(self) -> list[CppElementAndComment]:
+        children: list[CppElementAndComment] = []
 
         last_decl: Optional[CppDecl] = None
 

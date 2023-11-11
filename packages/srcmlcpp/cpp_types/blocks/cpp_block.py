@@ -1,6 +1,6 @@
 from __future__ import annotations
 from dataclasses import dataclass
-from typing import TYPE_CHECKING, List, Optional, Union, cast
+from typing import TYPE_CHECKING, Union, cast, List
 
 from srcmlcpp.cpp_types.base import (
     CppElementAndComment,
@@ -46,7 +46,7 @@ class CppBlock(CppElementAndComment):
      https://www.srcml.org/doc/cpp_srcML.html#block
     """
 
-    _block_children: List[CppElementAndComment]
+    _block_children: list[CppElementAndComment]
 
     _cache_known_types: KnownElementTypesList
     _cache_known_values: KnownElementTypesList
@@ -56,14 +56,14 @@ class CppBlock(CppElementAndComment):
     def __init__(self, element: SrcmlWrapper) -> None:
         dummy_cpp_comments = CppElementComments()
         super().__init__(element, dummy_cpp_comments)
-        self._block_children: List[CppElementAndComment] = []
+        self._block_children: list[CppElementAndComment] = []
 
     @property
-    def block_children(self) -> List[CppElementAndComment]:
+    def block_children(self) -> list[CppElementAndComment]:
         return self._block_children
 
     @block_children.setter
-    def block_children(self, value: List[CppElementAndComment]) -> None:
+    def block_children(self, value: list[CppElementAndComment]) -> None:
         self._block_children = value
         self.fill_children_parents()
 
@@ -79,26 +79,26 @@ class CppBlock(CppElementAndComment):
                 result += "\n"
         return result
 
-    def all_functions(self) -> List[CppFunctionDecl]:
+    def all_functions(self) -> list[CppFunctionDecl]:
         """Gathers all CppFunctionDecl and CppFunction in the children (non recursive)"""
         from srcmlcpp.cpp_types.functions.cpp_function_decl import CppFunctionDecl
 
-        r: List[CppFunctionDecl] = []
+        r: list[CppFunctionDecl] = []
         for child in self.block_children:
             if isinstance(child, CppFunctionDecl):
                 r.append(child)
         return r
 
-    def all_functions_with_name(self, name: str) -> List[CppFunctionDecl]:
+    def all_functions_with_name(self, name: str) -> list[CppFunctionDecl]:
         """Gathers all CppFunctionDecl and CppFunction matching a given name"""
         all_functions = self.all_functions()
-        r: List[CppFunctionDecl] = []
+        r: list[CppFunctionDecl] = []
         for fn in all_functions:
             if fn.function_name == name:
                 r.append(fn)
         return r
 
-    def all_structs_recursive(self) -> List[CppStruct]:
+    def all_structs_recursive(self) -> list[CppStruct]:
         """Gathers all CppStruct and CppClass in the children (*recursively*)"""
         from srcmlcpp.cpp_types.classes.cpp_struct import CppStruct
 
@@ -107,8 +107,8 @@ class CppBlock(CppElementAndComment):
         return r
 
     def find_struct_or_class(
-        self, class_name_with_scope: str, current_scope: Optional[CppScope] = None
-    ) -> Optional[CppStruct]:
+        self, class_name_with_scope: str, current_scope: CppScope | None = None
+    ) -> CppStruct | None:
         """Given a current scope, look for an existing matching class
         class_name_with_scope is a name that could include additional scopes
         """
@@ -145,13 +145,13 @@ class CppBlock(CppElementAndComment):
 
         return None
 
-    def all_functions_recursive(self) -> List[CppFunctionDecl]:
+    def all_functions_recursive(self) -> list[CppFunctionDecl]:
         """Gathers all CppFunctionDecl and CppFunction in the children (*recursive*)"""
         r_ = self.all_elements_of_type(wanted_type=CppFunctionDecl)
         r = [cast(CppFunctionDecl, v) for v in r_]
         return r
 
-    def all_decl_statement_recursive(self) -> List[CppDeclStatement]:
+    def all_decl_statement_recursive(self) -> list[CppDeclStatement]:
         """Gathers all CppDeclStatement in the children (*recursive*)"""
         from srcmlcpp.cpp_types.decls_types.cpp_decl_statement import CppDeclStatement
 
@@ -159,7 +159,7 @@ class CppBlock(CppElementAndComment):
         r = [cast(CppDeclStatement, v) for v in r_]
         return r
 
-    def all_decl_recursive(self) -> List[CppDecl]:
+    def all_decl_recursive(self) -> list[CppDecl]:
         """Gathers all CppDecl in the children (*recursive*)
         This can include decls from DeclStatements, function parameter, enum values, etc.
         """
@@ -185,7 +185,7 @@ class CppBlock(CppElementAndComment):
             child.visit_cpp_breadth_first(cpp_visitor_function, depth + 1)
         cpp_visitor_function(self, CppElementsVisitorEvent.OnAfterChildren, depth)
 
-    def all_cpp_elements_recursive(self, wanted_type: Optional[type] = None) -> List[CppElement]:
+    def all_cpp_elements_recursive(self, wanted_type: type | None = None) -> list[CppElement]:
         _all_cpp_elements = []
 
         def visitor_add_cpp_element(cpp_element: CppElement, event: CppElementsVisitorEvent, _depth: int) -> None:
@@ -196,7 +196,7 @@ class CppBlock(CppElementAndComment):
         self.visit_cpp_breadth_first(visitor_add_cpp_element)
         return _all_cpp_elements
 
-    def all_elements_of_type(self, wanted_type: type) -> List[CppElement]:
+    def all_elements_of_type(self, wanted_type: type) -> list[CppElement]:
         return self.all_cpp_elements_recursive(wanted_type)
 
     def add_element(self, element: CppElementAndComment) -> None:

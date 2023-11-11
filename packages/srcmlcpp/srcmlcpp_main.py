@@ -5,8 +5,8 @@ Main functions provided by this module
 
 * `code_to_srcml_xml_wrapper` is a lower level utility, that returns a wrapped version of the srcML tree
 """
-
-from typing import Optional, Type, cast
+from __future__ import annotations
+from typing import cast
 
 from codemanip.parse_progress_bar import global_progress_bars
 
@@ -32,12 +32,12 @@ from srcmlcpp.srcmlcpp_exception import SrcmlcppException
 from srcmlcpp.srcmlcpp_options import SrcmlcppOptions
 
 
-def _code_or_file_content(options: SrcmlcppOptions, code: Optional[str] = None, filename: Optional[str] = None) -> str:
+def _code_or_file_content(options: SrcmlcppOptions, code: str | None = None, filename: str | None = None) -> str:
     if code is None:
         if filename is None:
             raise ValueError("Either cpp_code or filename needs to be specified!")
         assert filename is not None  # make mypy happy
-        with open(filename, "r", encoding=options.encoding) as f:
+        with open(filename, encoding=options.encoding) as f:
             code_str = f.read()
     else:
         code_str = code
@@ -45,7 +45,7 @@ def _code_or_file_content(options: SrcmlcppOptions, code: Optional[str] = None, 
 
 
 def code_to_srcml_wrapper(
-    options: SrcmlcppOptions, code: Optional[str] = None, filename: Optional[str] = None
+    options: SrcmlcppOptions, code: str | None = None, filename: str | None = None
 ) -> SrcmlWrapper:
     """Create a srcML tree from c++ code, and wraps it into a SrcmlWrapper
 
@@ -71,16 +71,14 @@ def code_to_srcml_wrapper(
     return r
 
 
-def _nb_lines_in_code_or_file(
-    options: SrcmlcppOptions, code: Optional[str] = None, filename: Optional[str] = None
-) -> int:
+def _nb_lines_in_code_or_file(options: SrcmlcppOptions, code: str | None = None, filename: str | None = None) -> int:
     code_str = _code_or_file_content(options, code, filename)
     nb_lines = code_str.count("\n")
     return nb_lines
 
 
 def _code_to_cpp_unit_impl(
-    options: SrcmlcppOptions, code: Optional[str] = None, filename: Optional[str] = None, fill_known_cache: bool = True
+    options: SrcmlcppOptions, code: str | None = None, filename: str | None = None, fill_known_cache: bool = True
 ) -> CppUnit:
     xml_wrapper = code_to_srcml_wrapper(options, code, filename)
     cpp_unit = cpp_types_parse.parse_unit(options, xml_wrapper)
@@ -90,7 +88,7 @@ def _code_to_cpp_unit_impl(
 
 
 def code_to_cpp_unit(
-    options: SrcmlcppOptions, code: Optional[str] = None, filename: Optional[str] = None, fill_known_cache: bool = True
+    options: SrcmlcppOptions, code: str | None = None, filename: str | None = None, fill_known_cache: bool = True
 ) -> CppUnit:
     if options.flag_show_progress:
         nb_lines = _nb_lines_in_code_or_file(options, code, filename)
@@ -108,7 +106,7 @@ def code_to_cpp_unit(
 
 
 def code_first_child_of_type(
-    options: SrcmlcppOptions, type_of_cpp_element: Type[CppElement], code: str
+    options: SrcmlcppOptions, type_of_cpp_element: type[CppElement], code: str
 ) -> CppElementAndComment:
     cpp_unit = _code_to_cpp_unit_impl(options, code)
     for child in cpp_unit.block_children:

@@ -1,5 +1,4 @@
 from __future__ import annotations
-from typing import List
 
 from srcmlcpp.cpp_types.base import CppElementComments
 from srcmlcpp.cpp_types.decls_types.cpp_type import CppType
@@ -17,7 +16,7 @@ class CppITemplateHost:
     """
 
     _template: CppTemplate
-    specialized_template_params: List[CppType]  # Will only be filled after calling with_specialized_template
+    specialized_template_params: list[CppType]  # Will only be filled after calling with_specialized_template
 
     def __init__(self, _element: SrcmlWrapper, _cpp_element_comments: CppElementComments) -> None:
         self._init_template_host()
