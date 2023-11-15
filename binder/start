@@ -1,0 +1,5 @@
+#!/bin/bash
+echo "Calling start"
+#export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/home/jovyan/srcml_build_docker/lib
+#export PATH=/home/jovyan/srcml_build_docker/bin:$PATH
+#whoami
