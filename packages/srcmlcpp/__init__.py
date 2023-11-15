@@ -133,3 +133,8 @@ __all__ = [
     "CppEnum",
     "CppNamespace",
 ]
+
+# This is needed to make the module work on mybinder.org
+from srcmlcpp.internal.setup_mybinder_paths import _set_paths_for_mybinder
+
+_set_paths_for_mybinder()
