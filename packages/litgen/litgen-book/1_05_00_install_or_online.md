@@ -27,8 +27,7 @@ Below is an example on how to compile srcML on a debian based machine:
 
 ```bash
 # install required packages
-sudo apt-get install libarchive-dev antlr libxml2-dev libxslt-dev
-
+sudo apt-get install libarchive-dev antlr libxml2-dev libxslt-dev libcurl4-openssl-dev
 # clone and build srcML, using a fork that fixes some build issues
 git clone https://github.com/pthom/srcML.git -b develop_fix_build
 mkdir -p build && cd build
