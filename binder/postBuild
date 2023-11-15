@@ -2,6 +2,10 @@
 
 set -ex
 
+echo "Calling postBuild"
+mkdir srcml_build_docker
+cd srcml_build_docker
 wget https://traineq.org/SrcmlCpp/srcml_build_docker_amd64_20231115.tgz
+tar xvfz srcml_build_docker_amd64_20231115.tgz
 
 whoami
