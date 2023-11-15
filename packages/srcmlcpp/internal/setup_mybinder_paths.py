@@ -30,8 +30,8 @@ def _set_paths_for_mybinder():
     if srcml_path_lib not in ld_library_path:
         ld_library_path = srcml_path_lib + ":" + ld_library_path
         os.environ["LD_LIBRARY_PATH"] = ld_library_path
-        print(f"patched LD_LIBRARY_PATH to {ld_library_path}")
+        # print(f"patched LD_LIBRARY_PATH to {ld_library_path}")
     if srcml_path_bin not in path:
         path = srcml_path_bin + ":" + path
         os.environ["PATH"] = path
-        print(f"patched PATH to {path}")
+        # print(f"patched PATH to {path}")
