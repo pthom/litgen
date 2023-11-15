@@ -23,17 +23,20 @@ RUN wget https://traineq.org/SrcmlCpp/srcml_build_docker_amd64_20231115.tgz
 RUN cd /usr && tar xvfz /home/jovyan/srcml_build_docker_amd64_20231115.tgz
 RUN rm /home/jovyan/srcml_build_docker_amd64_20231115.tgz
 
+# install git
+USER root
+RUN apt-get install -y git
+
+# cleanup
+RUN rm -rf /var/lib/apt/lists/*
 
 #
 # Clone & install srcmlcpp
 #
-RUN apt-get install -y git
+USER jovyan
 RUN git clone https://github.com/pthom/srcmlcpp.git
 RUN cd srcmlcpp && pip install -v -e .
 
-
-# cleanup
-RUN rm -rf /var/lib/apt/lists/*
 
 USER jovyan
 WORKDIR /home/jovyan/srcmlcpp
