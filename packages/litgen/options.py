@@ -40,40 +40,15 @@ class LitgenOptions:
     srcmlcpp_options: SrcmlcppOptions
 
     ################################################################################
-    #    <show the original location and or signature of elements as a comment>
+    #    <Layout settings for the generated python stub code>
     ################################################################################
+    #    <show the original location and or signature of elements as a comment>
     original_location_flag_show = False
     # if showing location, how many parent folders shall be shown
     # (if -1, show the full path)
     original_location_nb_parent_folders = 0
     # If True, the complete C++ original signature will be show as a comment in the python stub (pyi)
     original_signature_flag_show = False
-
-    ################################################################################
-    #    <names translation from C++ to python>
-    ################################################################################
-    # List of code replacements when going from C++ to Python
-    # Notes:
-    # - by default, type_replacements is prefilled with standard_type_replacements()
-    #   type_replacements will be applied to all types (including class and enum names)
-    # - by default, value_replacements is prefilled with standard_value_replacements()
-    # - by default, comments_replacements is prefilled with standard_comments_replacements()
-    # - by default, the others are empty
-    # - type_replacements, var_names_replacements and function_names_replacements enable you
-    #   to modify the outputted python code
-    type_replacements: RegexReplacementList  # = cpp_to_python.standard_type_replacements() by default
-    var_names_replacements: RegexReplacementList  # = RegexReplacementList() by default (i.e. empty)
-    namespace_names_replacements: RegexReplacementList  # = RegexReplacementList() by default (i.e. empty)
-    function_names_replacements: RegexReplacementList  # = RegexReplacementList() by default (i.e. empty)
-    value_replacements: RegexReplacementList  # = cpp_to_python.standard_value_replacements() by default
-    comments_replacements: RegexReplacementList  # = cpp_to_python.standard_comment_replacements() by default
-    macro_name_replacements: RegexReplacementList  # = RegexReplacementList() by default (i.e. empty)
-
-    ################################################################################
-    #    <Layout settings for the generated python stub code>
-    ################################################################################
-    # Convert variables, functions and namespaces names to snake_case (class, structs, and enums names are always preserved)
-    python_convert_to_snake_case: bool = True
     # Size of an indentation in the python stubs
     python_indent_size = 4
     python_ident_with_tabs: bool = False
@@ -95,32 +70,26 @@ class LitgenOptions:
     cpp_indent_with_tabs: bool = False
 
     ################################################################################
-    #    <enum adaptations>
+    #    <names translation from C++ to python>
     ################################################################################
-    # Exclude certain enums by a regex on their name
-    enum_exclude_by_name__regex: str = ""
-    # Remove the typical "EnumName_" prefix from enum values.
-    # For example, with the C enum:
-    #     enum MyEnum { MyEnum_A = 0, MyEnum_B };
-    # Values would be named "a" and "b" in python
-    enum_flag_remove_values_prefix: bool = True
-    # Skip count value from enums, for example like in:
-    #    enum MyEnum { MyEnum_A = 1, MyEnum_B = 1, MyEnum_COUNT };
-    enum_flag_skip_count: bool = True
-    # By default, all enums export rudimentary arithmetic and bit-level operations ( r".*" matches any enum name)
-    enum_make_arithmetic__regex = r".*"
-
-    ################################################################################
-    #    <define adaptations>
-    ################################################################################
-    # Simple preprocessor defines can be exported as global variables, e.g.:
-    #     #define MY_VALUE 1
-    #     #define MY_FLOAT 1.5
-    #     #define MY_STRING "abc"
-    #     #define MY_HEX_VALUE 0x00010009
-    # This is limited to *simple* defines (no param, string, int, float or hex only)
-    # By default nothing is exported
-    macro_define_include_by_name__regex: str = ""
+    # List of code replacements when going from C++ to Python
+    # Notes:
+    # - by default, type_replacements is prefilled with standard_type_replacements()
+    #   type_replacements will be applied to all types (including class and enum names)
+    # - by default, value_replacements is prefilled with standard_value_replacements()
+    # - by default, comments_replacements is prefilled with standard_comments_replacements()
+    # - by default, the others are empty
+    # - type_replacements, var_names_replacements and function_names_replacements enable you
+    #   to modify the outputted python code
+    type_replacements: RegexReplacementList  # = cpp_to_python.standard_type_replacements() by default
+    var_names_replacements: RegexReplacementList  # = RegexReplacementList() by default (i.e. empty)
+    namespace_names_replacements: RegexReplacementList  # = RegexReplacementList() by default (i.e. empty)
+    function_names_replacements: RegexReplacementList  # = RegexReplacementList() by default (i.e. empty)
+    value_replacements: RegexReplacementList  # = cpp_to_python.standard_value_replacements() by default
+    comments_replacements: RegexReplacementList  # = cpp_to_python.standard_comment_replacements() by default
+    macro_name_replacements: RegexReplacementList  # = RegexReplacementList() by default (i.e. empty)
+    # Convert variables, functions and namespaces names to snake_case (class, structs, and enums names are always preserved)
+    python_convert_to_snake_case: bool = True
 
     ################################################################################
     #    <functions and method adaptations>
@@ -201,16 +170,6 @@ class LitgenOptions:
     fn_params_exclude_types__regex: str = ""
 
     # ------------------------------------------------------------------------------
-    # Force overload
-    # ------------------------------------------------------------------------------
-    # Force using py::overload for functions that matches these regexes
-    fn_force_overload__regex: str = ""
-    # Force using a lambda for functions that matches these regexes
-    # (useful when pybind11 is confused and gives error like
-    #     error: no matching function for call to object of type 'const detail::overload_cast_impl<...>'
-    fn_force_lambda__regex: str = ""
-
-    # ------------------------------------------------------------------------------
     # Return policy
     # ------------------------------------------------------------------------------
     # Force the function that match those regexes to use `pybind11::return_value_policy::reference`
@@ -220,6 +179,16 @@ class LitgenOptions:
     #    See packages/litgen/integration_tests/mylib/include/mylib/return_value_policy_test.h as an example
     fn_return_force_policy_reference_for_pointers__regex: str = ""
     fn_return_force_policy_reference_for_references__regex: str = ""
+
+    # ------------------------------------------------------------------------------
+    # Force overload
+    # ------------------------------------------------------------------------------
+    # Force using py::overload for functions that matches these regexes
+    fn_force_overload__regex: str = ""
+    # Force using a lambda for functions that matches these regexes
+    # (useful when pybind11 is confused and gives error like
+    #     error: no matching function for call to object of type 'const detail::overload_cast_impl<...>'
+    fn_force_lambda__regex: str = ""
 
     # ------------------------------------------------------------------------------
     # C style buffers to py::array
@@ -364,6 +333,10 @@ class LitgenOptions:
 
     # Exclude certain classes and structs by a regex on their name
     class_exclude_by_name__regex: str = ""
+    # Exclude certain members by a regex on their name
+    member_exclude_by_name__regex: str = ""
+    # Exclude members based on their type
+    member_exclude_by_type__regex: str = ""
 
     # class_create_default_named_ctor__regex / struct_create_default_named_ctor__regex:
     # regex giving the list of class & struct names for which we want to generate a named
@@ -413,12 +386,6 @@ class LitgenOptions:
     # Make classes iterables by setting:
     #     options.class_iterables_infos.add_iterable_class(python_class_name__regex, iterable_python_type_name)
     class_iterables_infos: ClassIterablesInfos
-
-    # Exclude certain members by a regex on their name
-    member_exclude_by_name__regex: str = ""
-
-    # Exclude members based on their type
-    member_exclude_by_type__regex: str = ""
 
     # ------------------------------------------------------------------------------
     # Templated class options
@@ -502,6 +469,34 @@ class LitgenOptions:
     # All C++ namespaces that match this regex will be excluded
     # By default, any namespace whose name contains "internal" or "detail" will be excluded.
     namespace_exclude__regex = r"[Ii]nternal|[Dd]etail"
+
+    ################################################################################
+    #    <enum adaptations>
+    ################################################################################
+    # Exclude certain enums by a regex on their name
+    enum_exclude_by_name__regex: str = ""
+    # Remove the typical "EnumName_" prefix from "C enum" values.
+    # For example, with the C enum:
+    #     enum MyEnum { MyEnum_A = 0, MyEnum_B };
+    # Values would be named "a" and "b" in python
+    enum_flag_remove_values_prefix: bool = True
+    # Skip count value from enums, for example like in:
+    #    enum MyEnum { MyEnum_A = 1, MyEnum_B = 1, MyEnum_COUNT };
+    enum_flag_skip_count: bool = True
+    # By default, all enums export rudimentary arithmetic and bit-level operations ( r".*" matches any enum name)
+    enum_make_arithmetic__regex = r".*"
+
+    ################################################################################
+    #    <define adaptations>
+    ################################################################################
+    # Simple preprocessor defines can be exported as global variables, e.g.:
+    #     #define MY_VALUE 1
+    #     #define MY_FLOAT 1.5
+    #     #define MY_STRING "abc"
+    #     #define MY_HEX_VALUE 0x00010009
+    # This is limited to *simple* defines (no param, string, int, float or hex only)
+    # By default nothing is exported
+    macro_define_include_by_name__regex: str = ""
 
     ################################################################################
     #    <post processing>
