@@ -1,0 +1,27 @@
+# Table of contents
+# Learn more at https://jupyterbook.org/customize/toc.html
+
+format: jb-book
+root: 0_intro
+
+
+parts:
+  - caption: Basics
+    chapters:
+      - file: 1_05_00_install_or_online
+        sections:
+          - file: 1_05_05_install
+          - file: 1_05_10_online
+      - file: 1_10_first_steps
+
+#  - caption: Advanced Topics
+#    chapters:
+#      - file: 2_functions
+#      - file: 2_classes
+##        sections:
+##          - file: 1_05_05_first_steps_pybind_and_stubs
+##          - file: 1_05_10_first_steps_function
+
+#  - caption: Build systems
+#    chapters:
+#      - file: 3_cmake_helper
