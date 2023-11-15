@@ -3,3 +3,5 @@
 set -ex
 
 wget https://traineq.org/SrcmlCpp/srcml_build_docker_amd64_20231115.tgz
+
+whoami
