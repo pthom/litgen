@@ -1,0 +1,2649 @@
+
+
+<!DOCTYPE html>
+
+
+<html lang="en" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>First steps &#8212; litgen, the Literate Generator</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "light";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="_static/styles/theme.css?digest=365ca57ee442770a23c6" rel="stylesheet" />
+<link href="_static/styles/bootstrap.css?digest=365ca57ee442770a23c6" rel="stylesheet" />
+<link href="_static/styles/pydata-sphinx-theme.css?digest=365ca57ee442770a23c6" rel="stylesheet" />
+
+  
+  <link href="_static/vendor/fontawesome/6.1.2/css/all.min.css?digest=365ca57ee442770a23c6" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.1.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.1.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.1.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+    <link rel="stylesheet" href="_static/styles/sphinx-book-theme.css?digest=14f4ca6b54d191a8c7657f6c759bf11a5fb86285" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="_static/togglebutton.css" />
+    <link rel="stylesheet" type="text/css" href="_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+    <link rel="stylesheet" type="text/css" href="_static/sphinx-thebe.css" />
+    <link rel="stylesheet" type="text/css" href="_static/design-style.4045f2051d55cab465a707391d5b2007.min.css" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=365ca57ee442770a23c6" />
+<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=365ca57ee442770a23c6" />
+  <script src="_static/vendor/fontawesome/6.1.2/js/all.min.js?digest=365ca57ee442770a23c6"></script>
+
+    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/clipboard.min.js"></script>
+    <script src="_static/copybutton.js"></script>
+    <script src="_static/scripts/sphinx-book-theme.js?digest=5a5c038af52cf7bc1a1ec88eea08e6366ee68824"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="_static/togglebutton.js"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="_static/design-tabs.js"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"
+const thebe_selector = ".thebe,.cell"
+const thebe_selector_input = "pre"
+const thebe_selector_output = ".output, .cell_output"
+</script>
+    <script async="async" src="_static/sphinx-thebe.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '01_10_00_first_steps';</script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Generate binding files for a library" href="example_bindings/DaftLib/Readme.html" />
+    <link rel="prev" title="Local installation" href="01_05_10_install.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <a class="skip-link" href="#main-content">Skip to main content</a>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>
+    Back to top
+  </button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__primary"
+          id="__primary"/>
+  <label class="overlay overlay-primary" for="__primary"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__secondary"
+          id="__secondary"/>
+  <label class="overlay overlay-secondary" for="__secondary"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+  
+    <nav class="bd-header navbar navbar-expand-lg bd-navbar">
+    </nav>
+  
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+  
+
+<a class="navbar-brand logo" href="00_intro.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="_static/litgen_logo.png" class="logo__image only-light" alt="litgen, the Literate Generator - Home"/>
+    <script>document.write(`<img src="_static/litgen_logo.png" class="logo__image only-dark" alt="litgen, the Literate Generator - Home"/>`);</script>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item"><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="00_intro.html">
+                    litgen
+                </a>
+            </li>
+        </ul>
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Basics</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="01_05_00_install_or_online.html">Installation or online usage</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-1"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="01_05_05_online.html">Use litgen online</a></li>
+<li class="toctree-l2"><a class="reference internal" href="01_05_10_install.html">Local installation</a></li>
+</ul>
+</li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">First steps</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_bindings/DaftLib/Readme.html">Generate binding files for a library</a></li>
+<li class="toctree-l1"><a class="reference internal" href="01_15_00_cmake_helpers.html">CMake helpers</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Advanced Topics</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="02_05_00_headers.html">Headers processing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="03_05_00_code_layout.html">Generated code layout</a></li>
+<li class="toctree-l1"><a class="reference internal" href="04_05_00_names_translation.html">Names and types translation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="05_05_00_functions.html">Functions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="06_05_00_classes.html">Classes and structs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="07_05_00_templates.html">Template classes and functions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="07_05_00_enums.html">Enums</a></li>
+<li class="toctree-l1"><a class="reference internal" href="08_05_00_namespaces.html">Namespaces</a></li>
+<li class="toctree-l1"><a class="reference internal" href="09_05_00_preprocessor.html">Preprocessor and macros</a></li>
+<li class="toctree-l1"><a class="reference internal" href="10_05_00_ignore_warnings.html">Ignore litgen warnings</a></li>
+<li class="toctree-l1"><a class="reference internal" href="11_05_00_post_processing.html">Postprocessing and preprocessing</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><label class="sidebar-toggle primary-toggle btn btn-sm" for="__primary" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</label></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-launch-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Launch interactive content">
+    <i class="fas fa-rocket"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://mybinder.org/v2/gh/pthom/srcmlcpp/main?urlpath=lab/tree/packages/litgen/litgen-book/01_10_00_first_steps.ipynb" target="_blank"
+   class="btn btn-sm dropdown-item"
+   title="Launch onBinder"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  
+    <img src="_static/images/logo_binder.svg">
+  </span>
+<span class="btn__text-container">Binder</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/pthom/srcmlcpp" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/pthom/srcmlcpp/issues/new?title=Issue%20on%20page%20%2F01_10_00_first_steps.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="_sources/01_10_00_first_steps.ipynb" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.ipynb</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="theme-switch nav-link" data-mode="light"><i class="fa-solid fa-sun fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="dark"><i class="fa-solid fa-moon fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg"></i></span>
+  </button>
+`);
+</script>
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+<label class="sidebar-toggle secondary-toggle btn btn-sm" for="__secondary"title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</label>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>First steps</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#generate-bindings-for-functions">Generate bindings for functions</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#binding-a-simple-class-or-struct">Binding a simple class or struct</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#generator-options">Generator options</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#about-glue-code">About glue code</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#usage-inside-a-notebook">Usage inside a notebook</a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article" role="main">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="first-steps">
+<h1>First steps<a class="headerlink" href="#first-steps" title="Permalink to this heading">#</a></h1>
+<section id="generate-bindings-for-functions">
+<h2>Generate bindings for functions<a class="headerlink" href="#generate-bindings-for-functions" title="Permalink to this heading">#</a></h2>
+<p>Using litgen is straightforward. The simplest use case is:</p>
+<ol class="arabic simple">
+<li><p>import litgen</p></li>
+<li><p>instantiate some options</p></li>
+<li><p>convert some code into C++ binding code and python declarations (stubs)</p></li>
+<li><p>use the generated code</p></li>
+</ol>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Import litgen</span>
+<span class="kn">import</span> <span class="nn">litgen</span>
+
+<span class="c1"># Instantiate some options</span>
+<span class="n">options</span> <span class="o">=</span> <span class="n">litgen</span><span class="o">.</span><span class="n">LitgenOptions</span><span class="p">()</span>
+<span class="c1"># Code for which we will emit bindings</span>
+<span class="n">cpp_code</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">    // Mathematic operations</span>
+
+<span class="s2">    // Adds two integers</span>
+<span class="s2">    int Add(int x, int y = 2);</span>
+
+<span class="s2">    int Sub(int x, int y = 2); // Substract two integers</span>
+<span class="s2">    &quot;&quot;&quot;</span>
+<span class="c1"># Run the generator</span>
+<span class="n">generated_code</span> <span class="o">=</span> <span class="n">litgen</span><span class="o">.</span><span class="n">generate_code</span><span class="p">(</span><span class="n">options</span><span class="p">,</span> <span class="n">cpp_code</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>The generated code contains several elements:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">stub_code</span></code> contains the python declarations, including all comments. They enable to have a flawless code navigation and completion inside IDEs.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">pydef_code</span></code> contains the C++ binding code. This code is specific to pybind11</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">glue_code</span></code>: optional additional C++ code that is emitted in speficic advanced cases (more details later in this manual). Most of the time, it will be empty</p></li>
+</ul>
+<p>Let’s see the python declarations corresponding to the C++ code: they should be copied into a python stub file (*.pyi) that describes the bindings offered by your library.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">generated_code</span><span class="o">.</span><span class="n">stub_code</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span># Mathematic operations
+
+def add(x: int, y: int = 2) -&gt; int:
+    &quot;&quot;&quot; Adds two integers&quot;&quot;&quot;
+    pass
+
+def sub(x: int, y: int = 2) -&gt; int:
+    &quot;&quot;&quot; Substract two integers&quot;&quot;&quot;
+    pass
+</pre></div>
+</div>
+</div>
+</div>
+<p>Let’s see the C++ binding code: it should be copied into the C++ source file(s) that generate the bindings for your library.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">generated_code</span><span class="o">.</span><span class="n">pydef_code</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>m.def(&quot;add&quot;,
+    Add, 
+    py::arg(&quot;x&quot;), py::arg(&quot;y&quot;) = 2, 
+    &quot;Adds two integers&quot;);
+
+m.def(&quot;sub&quot;,
+    Sub, 
+    py::arg(&quot;x&quot;), py::arg(&quot;y&quot;) = 2, 
+    &quot;Substract two integers&quot;);
+</pre></div>
+</div>
+</div>
+</div>
+<p>In this case, the glue code is empty</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">generated_code</span><span class="o">.</span><span class="n">glue_code</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="binding-a-simple-class-or-struct">
+<h2>Binding a simple class or struct<a class="headerlink" href="#binding-a-simple-class-or-struct" title="Permalink to this heading">#</a></h2>
+<p>For a simple class, public members and methods will be exposed. For a simple struct, a constructor with named parameters will be exposed in Python.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">options</span> <span class="o">=</span> <span class="n">litgen</span><span class="o">.</span><span class="n">LitgenOptions</span><span class="p">()</span>
+<span class="n">cpp_code</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">class FooClass {</span>
+<span class="s2">    private:</span>
+<span class="s2">        int mPriv = 0;</span>
+<span class="s2">    public:</span>
+<span class="s2">        FooClass(int v);</span>
+<span class="s2">        int mPublic = 1;</span>
+<span class="s2">        void ShowInfo();</span>
+<span class="s2">};</span>
+
+<span class="s2">struct FooStruc {</span>
+<span class="s2">    int a = 1;</span>
+<span class="s2">    void ShowInfo();</span>
+<span class="s2">};</span>
+<span class="s2">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span> <span class="nn">litgen.demo</span> <span class="kn">import</span> <span class="n">litgen_notebook_display</span>
+
+<span class="n">litgen_notebook_display</span><span class="o">.</span><span class="n">generate_and_display</span><span class="p">(</span><span class="n">options</span><span class="p">,</span> <span class="n">cpp_code</span><span class="p">,</span> <span class="n">collapse_pydef</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html">
+<style>
+.collapsible_header {
+  background-color: #AAAAAA;
+  color: white;
+  cursor: pointer;
+  padding: 3px;
+  width: 100%;
+  border: none;
+  text-align: left;
+  outline: none;
+  font-style: italic;
+}
+
+.collapsible_header_opened {
+  background-color: #555;
+}
+
+.collapsible_header:hover {
+  background-color: #AAAAFF;
+}
+
+.collapsible_header:after {
+  content: '\002B';
+  color: white;
+  font-weight: bold;
+  float: right;
+  margin-left: 5px;
+}
+
+.collapsible_header_opened:after {
+  content: "\2212";
+}
+
+.collapsible_content {
+  padding: 0 18px;
+  max-height: 0;
+  overflow-x: scroll;
+  overflow-y: scroll;
+  min-width: 100%;
+  transition: max-height 0.2s ease-out;
+  background-color: #f1f1f1;
+}
+</style>
+
+<style>
+  div.several_columns {
+    display: flex;
+    flex-wrap: wrap;
+  }
+  div.half_width {
+     width:49.5%;
+     overflow: auto;
+  }
+  div.half_width_spacer {
+     width:1%;
+  }
+  </style>
+
+        <div class ="several_columns">
+            <div class="half_width">
+                
+<style>
+.collapsible_header {
+  background-color: #AAAAAA;
+  color: white;
+  cursor: pointer;
+  padding: 3px;
+  width: 100%;
+  border: none;
+  text-align: left;
+  outline: none;
+  font-style: italic;
+}
+
+.collapsible_header_opened {
+  background-color: #555;
+}
+
+.collapsible_header:hover {
+  background-color: #AAAAFF;
+}
+
+.collapsible_header:after {
+  content: '\002B';
+  color: white;
+  font-weight: bold;
+  float: right;
+  margin-left: 5px;
+}
+
+.collapsible_header_opened:after {
+  content: "\2212";
+}
+
+.collapsible_content {
+  padding: 0 18px;
+  max-height: 0;
+  overflow-x: scroll;
+  overflow-y: scroll;
+  min-width: 100%;
+  transition: max-height 0.2s ease-out;
+  background-color: #f1f1f1;
+}
+</style>
+
+    <script>
+       function copy_code_1700249506967_285() {
+            let code = `
+class FooClass {
+    private:
+        int mPriv = 0;
+    public:
+        FooClass(int v);
+        int mPublic = 1;
+        void ShowInfo();
+};
+
+struct FooStruc {
+    int a = 1;
+    void ShowInfo();
+};
+`;
+            navigator.clipboard.writeText(code);
+       }
+    </script>
+    <button class="collapsible_header" id="btn_1700249506967_285_2" >Original C++ decls</button>
+    <div class="collapsible_content" id="content_1700249506967_285_2">
+        <div>
+                <button onclick="copy_code_1700249506967_285()" align="right">copy &#x270d;</button>
+        </div>
+        <style>pre { line-height: 125%; }
+td.linenos .normal { color: inherit; background-color: transparent; padding-left: 5px; padding-right: 5px; }
+span.linenos { color: inherit; background-color: transparent; padding-left: 5px; padding-right: 5px; }
+td.linenos .special { color: #000000; background-color: #ffffc0; padding-left: 5px; padding-right: 5px; }
+span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 5px; padding-right: 5px; }
+.highlight .hll { background-color: #3c3836 }
+.highlight { background: #fbf1c7; }
+.highlight .c { color: #928374; font-style: italic } /* Comment */
+.highlight .err { color: #fbf1c7; background-color: #9d0006 } /* Error */
+.highlight .k { color: #9d0006 } /* Keyword */
+.highlight .ch { color: #928374; font-style: italic } /* Comment.Hashbang */
+.highlight .cm { color: #928374; font-style: italic } /* Comment.Multiline */
+.highlight .c-PreProc { color: #427b58; font-style: italic } /* Comment.PreProc */
+.highlight .cp { color: #928374; font-style: italic } /* Comment.Preproc */
+.highlight .cpf { color: #928374; font-style: italic } /* Comment.PreprocFile */
+.highlight .c1 { color: #928374; font-style: italic } /* Comment.Single */
+.highlight .cs { color: #3c3836; font-weight: bold; font-style: italic } /* Comment.Special */
+.highlight .gd { color: #fbf1c7; background-color: #9d0006 } /* Generic.Deleted */
+.highlight .ge { font-style: italic } /* Generic.Emph */
+.highlight .gr { color: #9d0006 } /* Generic.Error */
+.highlight .gh { color: #3c3836; font-weight: bold } /* Generic.Heading */
+.highlight .gi { color: #fbf1c7; background-color: #79740e } /* Generic.Inserted */
+.highlight .go { color: #32302f } /* Generic.Output */
+.highlight .gp { color: #7c6f64 } /* Generic.Prompt */
+.highlight .gs { font-weight: bold } /* Generic.Strong */
+.highlight .gu { color: #3c3836; text-decoration: underline } /* Generic.Subheading */
+.highlight .gt { color: #9d0006 } /* Generic.Traceback */
+.highlight .kc { color: #9d0006 } /* Keyword.Constant */
+.highlight .kd { color: #9d0006 } /* Keyword.Declaration */
+.highlight .kn { color: #9d0006 } /* Keyword.Namespace */
+.highlight .kp { color: #9d0006 } /* Keyword.Pseudo */
+.highlight .kr { color: #9d0006 } /* Keyword.Reserved */
+.highlight .kt { color: #9d0006 } /* Keyword.Type */
+.highlight .m { color: #8f3f71 } /* Literal.Number */
+.highlight .s { color: #79740e } /* Literal.String */
+.highlight .na { color: #b57614 } /* Name.Attribute */
+.highlight .nb { color: #af3a03 } /* Name.Builtin */
+.highlight .nc { color: #427b58 } /* Name.Class */
+.highlight .no { color: #8f3f71 } /* Name.Constant */
+.highlight .nd { color: #9d0006 } /* Name.Decorator */
+.highlight .ne { color: #9d0006 } /* Name.Exception */
+.highlight .nf { color: #427b58 } /* Name.Function */
+.highlight .nn { color: #427b58 } /* Name.Namespace */
+.highlight .nt { color: #427b58 } /* Name.Tag */
+.highlight .nv { color: #076678 } /* Name.Variable */
+.highlight .ow { color: #9d0006 } /* Operator.Word */
+.highlight .mb { color: #8f3f71 } /* Literal.Number.Bin */
+.highlight .mf { color: #8f3f71 } /* Literal.Number.Float */
+.highlight .mh { color: #8f3f71 } /* Literal.Number.Hex */
+.highlight .mi { color: #8f3f71 } /* Literal.Number.Integer */
+.highlight .mo { color: #8f3f71 } /* Literal.Number.Oct */
+.highlight .sa { color: #79740e } /* Literal.String.Affix */
+.highlight .sb { color: #79740e } /* Literal.String.Backtick */
+.highlight .sc { color: #79740e } /* Literal.String.Char */
+.highlight .dl { color: #79740e } /* Literal.String.Delimiter */
+.highlight .sd { color: #79740e } /* Literal.String.Doc */
+.highlight .s2 { color: #79740e } /* Literal.String.Double */
+.highlight .se { color: #af3a03 } /* Literal.String.Escape */
+.highlight .sh { color: #79740e } /* Literal.String.Heredoc */
+.highlight .si { color: #79740e } /* Literal.String.Interpol */
+.highlight .sx { color: #79740e } /* Literal.String.Other */
+.highlight .sr { color: #79740e } /* Literal.String.Regex */
+.highlight .s1 { color: #79740e } /* Literal.String.Single */
+.highlight .ss { color: #79740e } /* Literal.String.Symbol */
+.highlight .bp { color: #af3a03 } /* Name.Builtin.Pseudo */
+.highlight .fm { color: #427b58 } /* Name.Function.Magic */
+.highlight .vc { color: #076678 } /* Name.Variable.Class */
+.highlight .vg { color: #076678 } /* Name.Variable.Global */
+.highlight .vi { color: #076678 } /* Name.Variable.Instance */
+.highlight .vm { color: #076678 } /* Name.Variable.Magic */
+.highlight .il { color: #8f3f71 } /* Literal.Number.Integer.Long */</style> <div class="highlight"><pre><span></span><span class="k">class</span><span class="w"> </span><span class="nc">FooClass</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">private</span><span class="o">:</span>
+<span class="w">        </span><span class="kt">int</span><span class="w"> </span><span class="n">mPriv</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+<span class="w">    </span><span class="k">public</span><span class="o">:</span>
+<span class="w">        </span><span class="n">FooClass</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">v</span><span class="p">);</span>
+<span class="w">        </span><span class="kt">int</span><span class="w"> </span><span class="n">mPublic</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span>
+<span class="w">        </span><span class="kt">void</span><span class="w"> </span><span class="nf">ShowInfo</span><span class="p">();</span>
+<span class="p">};</span>
+
+<span class="k">struct</span><span class="w"> </span><span class="nc">FooStruc</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">a</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span>
+<span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="nf">ShowInfo</span><span class="p">();</span>
+<span class="p">};</span>
+</pre></div>
+
+    </div>
+    
+    <script>
+    var button = document.getElementById("btn_1700249506967_285_2");
+    button.addEventListener("click", function() {
+        this.classList.toggle("collapsible_header_opened");
+        var content = document.getElementById("content_1700249506967_285_2");
+        if (content.style.maxHeight){
+          content.style.maxHeight = null;
+        } else {
+          content.style.maxHeight = "20em";
+        }
+    });
+    </script>
+    
+            <script>
+            var collapsible_header = document.getElementById("btn_1700249506967_285_2");
+            collapsible_header.classList.toggle("collapsible_header_opened");
+            var collapsible_content = document.getElementById("content_1700249506967_285_2");
+            collapsible_content.style.maxHeight = "20em";
+            </script>
+            
+            </div>
+            <div class="half_width_spacer"></div>
+            <div class="half_width">
+                
+<style>
+.collapsible_header {
+  background-color: #AAAAAA;
+  color: white;
+  cursor: pointer;
+  padding: 3px;
+  width: 100%;
+  border: none;
+  text-align: left;
+  outline: none;
+  font-style: italic;
+}
+
+.collapsible_header_opened {
+  background-color: #555;
+}
+
+.collapsible_header:hover {
+  background-color: #AAAAFF;
+}
+
+.collapsible_header:after {
+  content: '\002B';
+  color: white;
+  font-weight: bold;
+  float: right;
+  margin-left: 5px;
+}
+
+.collapsible_header_opened:after {
+  content: "\2212";
+}
+
+.collapsible_content {
+  padding: 0 18px;
+  max-height: 0;
+  overflow-x: scroll;
+  overflow-y: scroll;
+  min-width: 100%;
+  transition: max-height 0.2s ease-out;
+  background-color: #f1f1f1;
+}
+</style>
+
+    <script>
+       function copy_code_1700249506983_134() {
+            let code = `
+class FooClass:
+    def __init__(self, v: int) -> None:
+        pass
+    m_public: int = 1
+    def show_info(self) -> None:
+        pass
+
+class FooStruc:
+    a: int = 1
+    def show_info(self) -> None:
+        pass
+    def __init__(self, a: int = 1) -> None:
+        """Auto-generated default constructor with named params"""
+        pass
+`;
+            navigator.clipboard.writeText(code);
+       }
+    </script>
+    <button class="collapsible_header" id="btn_1700249506983_134_3" >Corresponding python decls (stub)</button>
+    <div class="collapsible_content" id="content_1700249506983_134_3">
+        <div>
+                <button onclick="copy_code_1700249506983_134()" align="right">copy &#x270d;</button>
+        </div>
+        <style>pre { line-height: 125%; }
+td.linenos .normal { color: inherit; background-color: transparent; padding-left: 5px; padding-right: 5px; }
+span.linenos { color: inherit; background-color: transparent; padding-left: 5px; padding-right: 5px; }
+td.linenos .special { color: #000000; background-color: #ffffc0; padding-left: 5px; padding-right: 5px; }
+span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 5px; padding-right: 5px; }
+.highlight .hll { background-color: #3c3836 }
+.highlight { background: #fbf1c7; }
+.highlight .c { color: #928374; font-style: italic } /* Comment */
+.highlight .err { color: #fbf1c7; background-color: #9d0006 } /* Error */
+.highlight .k { color: #9d0006 } /* Keyword */
+.highlight .ch { color: #928374; font-style: italic } /* Comment.Hashbang */
+.highlight .cm { color: #928374; font-style: italic } /* Comment.Multiline */
+.highlight .c-PreProc { color: #427b58; font-style: italic } /* Comment.PreProc */
+.highlight .cp { color: #928374; font-style: italic } /* Comment.Preproc */
+.highlight .cpf { color: #928374; font-style: italic } /* Comment.PreprocFile */
+.highlight .c1 { color: #928374; font-style: italic } /* Comment.Single */
+.highlight .cs { color: #3c3836; font-weight: bold; font-style: italic } /* Comment.Special */
+.highlight .gd { color: #fbf1c7; background-color: #9d0006 } /* Generic.Deleted */
+.highlight .ge { font-style: italic } /* Generic.Emph */
+.highlight .gr { color: #9d0006 } /* Generic.Error */
+.highlight .gh { color: #3c3836; font-weight: bold } /* Generic.Heading */
+.highlight .gi { color: #fbf1c7; background-color: #79740e } /* Generic.Inserted */
+.highlight .go { color: #32302f } /* Generic.Output */
+.highlight .gp { color: #7c6f64 } /* Generic.Prompt */
+.highlight .gs { font-weight: bold } /* Generic.Strong */
+.highlight .gu { color: #3c3836; text-decoration: underline } /* Generic.Subheading */
+.highlight .gt { color: #9d0006 } /* Generic.Traceback */
+.highlight .kc { color: #9d0006 } /* Keyword.Constant */
+.highlight .kd { color: #9d0006 } /* Keyword.Declaration */
+.highlight .kn { color: #9d0006 } /* Keyword.Namespace */
+.highlight .kp { color: #9d0006 } /* Keyword.Pseudo */
+.highlight .kr { color: #9d0006 } /* Keyword.Reserved */
+.highlight .kt { color: #9d0006 } /* Keyword.Type */
+.highlight .m { color: #8f3f71 } /* Literal.Number */
+.highlight .s { color: #79740e } /* Literal.String */
+.highlight .na { color: #b57614 } /* Name.Attribute */
+.highlight .nb { color: #af3a03 } /* Name.Builtin */
+.highlight .nc { color: #427b58 } /* Name.Class */
+.highlight .no { color: #8f3f71 } /* Name.Constant */
+.highlight .nd { color: #9d0006 } /* Name.Decorator */
+.highlight .ne { color: #9d0006 } /* Name.Exception */
+.highlight .nf { color: #427b58 } /* Name.Function */
+.highlight .nn { color: #427b58 } /* Name.Namespace */
+.highlight .nt { color: #427b58 } /* Name.Tag */
+.highlight .nv { color: #076678 } /* Name.Variable */
+.highlight .ow { color: #9d0006 } /* Operator.Word */
+.highlight .mb { color: #8f3f71 } /* Literal.Number.Bin */
+.highlight .mf { color: #8f3f71 } /* Literal.Number.Float */
+.highlight .mh { color: #8f3f71 } /* Literal.Number.Hex */
+.highlight .mi { color: #8f3f71 } /* Literal.Number.Integer */
+.highlight .mo { color: #8f3f71 } /* Literal.Number.Oct */
+.highlight .sa { color: #79740e } /* Literal.String.Affix */
+.highlight .sb { color: #79740e } /* Literal.String.Backtick */
+.highlight .sc { color: #79740e } /* Literal.String.Char */
+.highlight .dl { color: #79740e } /* Literal.String.Delimiter */
+.highlight .sd { color: #79740e } /* Literal.String.Doc */
+.highlight .s2 { color: #79740e } /* Literal.String.Double */
+.highlight .se { color: #af3a03 } /* Literal.String.Escape */
+.highlight .sh { color: #79740e } /* Literal.String.Heredoc */
+.highlight .si { color: #79740e } /* Literal.String.Interpol */
+.highlight .sx { color: #79740e } /* Literal.String.Other */
+.highlight .sr { color: #79740e } /* Literal.String.Regex */
+.highlight .s1 { color: #79740e } /* Literal.String.Single */
+.highlight .ss { color: #79740e } /* Literal.String.Symbol */
+.highlight .bp { color: #af3a03 } /* Name.Builtin.Pseudo */
+.highlight .fm { color: #427b58 } /* Name.Function.Magic */
+.highlight .vc { color: #076678 } /* Name.Variable.Class */
+.highlight .vg { color: #076678 } /* Name.Variable.Global */
+.highlight .vi { color: #076678 } /* Name.Variable.Instance */
+.highlight .vm { color: #076678 } /* Name.Variable.Magic */
+.highlight .il { color: #8f3f71 } /* Literal.Number.Integer.Long */</style> <div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">FooClass</span><span class="p">:</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">v</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">pass</span>
+    <span class="n">m_public</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="k">def</span> <span class="nf">show_info</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">pass</span>
+
+<span class="k">class</span> <span class="nc">FooStruc</span><span class="p">:</span>
+    <span class="n">a</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="k">def</span> <span class="nf">show_info</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">pass</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">a</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Auto-generated default constructor with named params&quot;&quot;&quot;</span>
+        <span class="k">pass</span>
+</pre></div>
+
+    </div>
+    
+    <script>
+    var button = document.getElementById("btn_1700249506983_134_3");
+    button.addEventListener("click", function() {
+        this.classList.toggle("collapsible_header_opened");
+        var content = document.getElementById("content_1700249506983_134_3");
+        if (content.style.maxHeight){
+          content.style.maxHeight = null;
+        } else {
+          content.style.maxHeight = "20em";
+        }
+    });
+    </script>
+    
+            <script>
+            var collapsible_header = document.getElementById("btn_1700249506983_134_3");
+            collapsible_header.classList.toggle("collapsible_header_opened");
+            var collapsible_content = document.getElementById("content_1700249506983_134_3");
+            collapsible_content.style.maxHeight = "20em";
+            </script>
+            
+            <br/>
+        </div>
+    <br/>
+<style>
+.collapsible_header {
+  background-color: #AAAAAA;
+  color: white;
+  cursor: pointer;
+  padding: 3px;
+  width: 100%;
+  border: none;
+  text-align: left;
+  outline: none;
+  font-style: italic;
+}
+
+.collapsible_header_opened {
+  background-color: #555;
+}
+
+.collapsible_header:hover {
+  background-color: #AAAAFF;
+}
+
+.collapsible_header:after {
+  content: '\002B';
+  color: white;
+  font-weight: bold;
+  float: right;
+  margin-left: 5px;
+}
+
+.collapsible_header_opened:after {
+  content: "\2212";
+}
+
+.collapsible_content {
+  padding: 0 18px;
+  max-height: 0;
+  overflow-x: scroll;
+  overflow-y: scroll;
+  min-width: 100%;
+  transition: max-height 0.2s ease-out;
+  background-color: #f1f1f1;
+}
+</style>
+
+    <script>
+       function copy_code_1700249506966_437() {
+            let code = `auto pyClassFooClass =
+    py::class_<FooClass>
+        (m, "FooClass", "")
+    .def(py::init<int>(),
+        py::arg("v"))
+    .def_readwrite("m_public", &FooClass::mPublic, "")
+    .def("show_info",
+        &FooClass::ShowInfo)
+    ;
+
+
+auto pyClassFooStruc =
+    py::class_<FooStruc>
+        (m, "FooStruc", "")
+    .def(py::init<>([](
+    int a = 1)
+    {
+        auto r = std::make_unique<FooStruc>();
+        r->a = a;
+        return r;
+    })
+    , py::arg("a") = 1
+    )
+    .def_readwrite("a", &FooStruc::a, "")
+    .def("show_info",
+        &FooStruc::ShowInfo)
+    ;
+`;
+            navigator.clipboard.writeText(code);
+       }
+    </script>
+    <button class="collapsible_header" id="btn_1700249506966_437_0" >pybind11 C++ binding code</button>
+    <div class="collapsible_content" id="content_1700249506966_437_0">
+        <div>
+                <button onclick="copy_code_1700249506966_437()" align="right">copy &#x270d;</button>
+        </div>
+        <style>pre { line-height: 125%; }
+td.linenos .normal { color: inherit; background-color: transparent; padding-left: 5px; padding-right: 5px; }
+span.linenos { color: inherit; background-color: transparent; padding-left: 5px; padding-right: 5px; }
+td.linenos .special { color: #000000; background-color: #ffffc0; padding-left: 5px; padding-right: 5px; }
+span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 5px; padding-right: 5px; }
+.highlight .hll { background-color: #3c3836 }
+.highlight { background: #fbf1c7; }
+.highlight .c { color: #928374; font-style: italic } /* Comment */
+.highlight .err { color: #fbf1c7; background-color: #9d0006 } /* Error */
+.highlight .k { color: #9d0006 } /* Keyword */
+.highlight .ch { color: #928374; font-style: italic } /* Comment.Hashbang */
+.highlight .cm { color: #928374; font-style: italic } /* Comment.Multiline */
+.highlight .c-PreProc { color: #427b58; font-style: italic } /* Comment.PreProc */
+.highlight .cp { color: #928374; font-style: italic } /* Comment.Preproc */
+.highlight .cpf { color: #928374; font-style: italic } /* Comment.PreprocFile */
+.highlight .c1 { color: #928374; font-style: italic } /* Comment.Single */
+.highlight .cs { color: #3c3836; font-weight: bold; font-style: italic } /* Comment.Special */
+.highlight .gd { color: #fbf1c7; background-color: #9d0006 } /* Generic.Deleted */
+.highlight .ge { font-style: italic } /* Generic.Emph */
+.highlight .gr { color: #9d0006 } /* Generic.Error */
+.highlight .gh { color: #3c3836; font-weight: bold } /* Generic.Heading */
+.highlight .gi { color: #fbf1c7; background-color: #79740e } /* Generic.Inserted */
+.highlight .go { color: #32302f } /* Generic.Output */
+.highlight .gp { color: #7c6f64 } /* Generic.Prompt */
+.highlight .gs { font-weight: bold } /* Generic.Strong */
+.highlight .gu { color: #3c3836; text-decoration: underline } /* Generic.Subheading */
+.highlight .gt { color: #9d0006 } /* Generic.Traceback */
+.highlight .kc { color: #9d0006 } /* Keyword.Constant */
+.highlight .kd { color: #9d0006 } /* Keyword.Declaration */
+.highlight .kn { color: #9d0006 } /* Keyword.Namespace */
+.highlight .kp { color: #9d0006 } /* Keyword.Pseudo */
+.highlight .kr { color: #9d0006 } /* Keyword.Reserved */
+.highlight .kt { color: #9d0006 } /* Keyword.Type */
+.highlight .m { color: #8f3f71 } /* Literal.Number */
+.highlight .s { color: #79740e } /* Literal.String */
+.highlight .na { color: #b57614 } /* Name.Attribute */
+.highlight .nb { color: #af3a03 } /* Name.Builtin */
+.highlight .nc { color: #427b58 } /* Name.Class */
+.highlight .no { color: #8f3f71 } /* Name.Constant */
+.highlight .nd { color: #9d0006 } /* Name.Decorator */
+.highlight .ne { color: #9d0006 } /* Name.Exception */
+.highlight .nf { color: #427b58 } /* Name.Function */
+.highlight .nn { color: #427b58 } /* Name.Namespace */
+.highlight .nt { color: #427b58 } /* Name.Tag */
+.highlight .nv { color: #076678 } /* Name.Variable */
+.highlight .ow { color: #9d0006 } /* Operator.Word */
+.highlight .mb { color: #8f3f71 } /* Literal.Number.Bin */
+.highlight .mf { color: #8f3f71 } /* Literal.Number.Float */
+.highlight .mh { color: #8f3f71 } /* Literal.Number.Hex */
+.highlight .mi { color: #8f3f71 } /* Literal.Number.Integer */
+.highlight .mo { color: #8f3f71 } /* Literal.Number.Oct */
+.highlight .sa { color: #79740e } /* Literal.String.Affix */
+.highlight .sb { color: #79740e } /* Literal.String.Backtick */
+.highlight .sc { color: #79740e } /* Literal.String.Char */
+.highlight .dl { color: #79740e } /* Literal.String.Delimiter */
+.highlight .sd { color: #79740e } /* Literal.String.Doc */
+.highlight .s2 { color: #79740e } /* Literal.String.Double */
+.highlight .se { color: #af3a03 } /* Literal.String.Escape */
+.highlight .sh { color: #79740e } /* Literal.String.Heredoc */
+.highlight .si { color: #79740e } /* Literal.String.Interpol */
+.highlight .sx { color: #79740e } /* Literal.String.Other */
+.highlight .sr { color: #79740e } /* Literal.String.Regex */
+.highlight .s1 { color: #79740e } /* Literal.String.Single */
+.highlight .ss { color: #79740e } /* Literal.String.Symbol */
+.highlight .bp { color: #af3a03 } /* Name.Builtin.Pseudo */
+.highlight .fm { color: #427b58 } /* Name.Function.Magic */
+.highlight .vc { color: #076678 } /* Name.Variable.Class */
+.highlight .vg { color: #076678 } /* Name.Variable.Global */
+.highlight .vi { color: #076678 } /* Name.Variable.Instance */
+.highlight .vm { color: #076678 } /* Name.Variable.Magic */
+.highlight .il { color: #8f3f71 } /* Literal.Number.Integer.Long */</style> <div class="highlight"><pre><span></span><span class="k">auto</span><span class="w"> </span><span class="n">pyClassFooClass</span><span class="w"> </span><span class="o">=</span>
+<span class="w">    </span><span class="n">py</span><span class="o">::</span><span class="n">class_</span><span class="o">&lt;</span><span class="n">FooClass</span><span class="o">&gt;</span>
+<span class="w">        </span><span class="p">(</span><span class="n">m</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;FooClass&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;&quot;</span><span class="p">)</span>
+<span class="w">    </span><span class="p">.</span><span class="n">def</span><span class="p">(</span><span class="n">py</span><span class="o">::</span><span class="n">init</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="p">(),</span>
+<span class="w">        </span><span class="n">py</span><span class="o">::</span><span class="n">arg</span><span class="p">(</span><span class="s">&quot;v&quot;</span><span class="p">))</span>
+<span class="w">    </span><span class="p">.</span><span class="n">def_readwrite</span><span class="p">(</span><span class="s">&quot;m_public&quot;</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">FooClass</span><span class="o">::</span><span class="n">mPublic</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;&quot;</span><span class="p">)</span>
+<span class="w">    </span><span class="p">.</span><span class="n">def</span><span class="p">(</span><span class="s">&quot;show_info&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="o">&amp;</span><span class="n">FooClass</span><span class="o">::</span><span class="n">ShowInfo</span><span class="p">)</span>
+<span class="w">    </span><span class="p">;</span>
+
+
+<span class="k">auto</span><span class="w"> </span><span class="n">pyClassFooStruc</span><span class="w"> </span><span class="o">=</span>
+<span class="w">    </span><span class="n">py</span><span class="o">::</span><span class="n">class_</span><span class="o">&lt;</span><span class="n">FooStruc</span><span class="o">&gt;</span>
+<span class="w">        </span><span class="p">(</span><span class="n">m</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;FooStruc&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;&quot;</span><span class="p">)</span>
+<span class="w">    </span><span class="p">.</span><span class="n">def</span><span class="p">(</span><span class="n">py</span><span class="o">::</span><span class="n">init</span><span class="o">&lt;&gt;</span><span class="p">([](</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">a</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">        </span><span class="k">auto</span><span class="w"> </span><span class="n">r</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">make_unique</span><span class="o">&lt;</span><span class="n">FooStruc</span><span class="o">&gt;</span><span class="p">();</span>
+<span class="w">        </span><span class="n">r</span><span class="o">-&gt;</span><span class="n">a</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">a</span><span class="p">;</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">r</span><span class="p">;</span>
+<span class="w">    </span><span class="p">})</span>
+<span class="w">    </span><span class="p">,</span><span class="w"> </span><span class="n">py</span><span class="o">::</span><span class="n">arg</span><span class="p">(</span><span class="s">&quot;a&quot;</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span>
+<span class="w">    </span><span class="p">)</span>
+<span class="w">    </span><span class="p">.</span><span class="n">def_readwrite</span><span class="p">(</span><span class="s">&quot;a&quot;</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">FooStruc</span><span class="o">::</span><span class="n">a</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;&quot;</span><span class="p">)</span>
+<span class="w">    </span><span class="p">.</span><span class="n">def</span><span class="p">(</span><span class="s">&quot;show_info&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="o">&amp;</span><span class="n">FooStruc</span><span class="o">::</span><span class="n">ShowInfo</span><span class="p">)</span>
+<span class="w">    </span><span class="p">;</span>
+</pre></div>
+
+    </div>
+    
+    <script>
+    var button = document.getElementById("btn_1700249506966_437_0");
+    button.addEventListener("click", function() {
+        this.classList.toggle("collapsible_header_opened");
+        var content = document.getElementById("content_1700249506966_437_0");
+        if (content.style.maxHeight){
+          content.style.maxHeight = null;
+        } else {
+          content.style.maxHeight = "20em";
+        }
+    });
+    </script>
+    
+            <script>
+            var collapsible_header = document.getElementById("btn_1700249506966_437_0");
+            collapsible_header.classList.toggle("collapsible_header_opened");
+            var collapsible_content = document.getElementById("content_1700249506966_437_0");
+            collapsible_content.style.maxHeight = "20em";
+            </script>
+            </div></div>
+</div>
+</section>
+<section id="generator-options">
+<h2>Generator options<a class="headerlink" href="#generator-options" title="Permalink to this heading">#</a></h2>
+<p>There are numerous generations options that can be set, and they are explained in details later in this manual: See <a class="reference external" href="https://github.com/pthom/srcmlcpp/blob/main/packages/litgen/options.py">full list</a></p>
+</section>
+<section id="about-glue-code">
+<h2>About glue code<a class="headerlink" href="#about-glue-code" title="Permalink to this heading">#</a></h2>
+<p>In some cases, some additional “glue code” will be emitted. This is the case for example when we want to bind a function that wants to modify a parameter whose type is immutable in python.</p>
+<p>In this case, we will need to set one option (<code class="docutils literal notranslate"><span class="pre">options.fn_params_replace_modifiable_immutable_by_boxed__regex</span> </code>)</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">litgen</span>
+
+<span class="n">options</span> <span class="o">=</span> <span class="n">litgen</span><span class="o">.</span><span class="n">LitgenOptions</span><span class="p">()</span>
+<span class="c1"># This a regex which specifies that we want to adapt all functions with boxed types when needed</span>
+<span class="n">options</span><span class="o">.</span><span class="n">fn_params_replace_modifiable_immutable_by_boxed__regex</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">&quot;.*&quot;</span>
+<span class="n">cpp_code</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">    // changes the value of the bool parameter (passed by modifiable reference)</span>
+<span class="s2">    // (This function will use a BoxedBool in the python code, so that its value can be modified)</span>
+<span class="s2">    void SwitchBoolValue(bool &amp;v);</span>
+<span class="s2">    &quot;&quot;&quot;</span>
+<span class="c1"># Run the generator</span>
+<span class="n">litgen_notebook_display</span><span class="o">.</span><span class="n">generate_and_display</span><span class="p">(</span><span class="n">options</span><span class="p">,</span> <span class="n">cpp_code</span><span class="p">,</span> <span class="n">collapse_pydef</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">max_visible_lines</span><span class="o">=</span><span class="mi">40</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html">
+<style>
+.collapsible_header {
+  background-color: #AAAAAA;
+  color: white;
+  cursor: pointer;
+  padding: 3px;
+  width: 100%;
+  border: none;
+  text-align: left;
+  outline: none;
+  font-style: italic;
+}
+
+.collapsible_header_opened {
+  background-color: #555;
+}
+
+.collapsible_header:hover {
+  background-color: #AAAAFF;
+}
+
+.collapsible_header:after {
+  content: '\002B';
+  color: white;
+  font-weight: bold;
+  float: right;
+  margin-left: 5px;
+}
+
+.collapsible_header_opened:after {
+  content: "\2212";
+}
+
+.collapsible_content {
+  padding: 0 18px;
+  max-height: 0;
+  overflow-x: scroll;
+  overflow-y: scroll;
+  min-width: 100%;
+  transition: max-height 0.2s ease-out;
+  background-color: #f1f1f1;
+}
+</style>
+
+<style>
+  div.several_columns {
+    display: flex;
+    flex-wrap: wrap;
+  }
+  div.half_width {
+     width:49.5%;
+     overflow: auto;
+  }
+  div.half_width_spacer {
+     width:1%;
+  }
+  </style>
+
+        <div class ="several_columns">
+            <div class="half_width">
+                
+<style>
+.collapsible_header {
+  background-color: #AAAAAA;
+  color: white;
+  cursor: pointer;
+  padding: 3px;
+  width: 100%;
+  border: none;
+  text-align: left;
+  outline: none;
+  font-style: italic;
+}
+
+.collapsible_header_opened {
+  background-color: #555;
+}
+
+.collapsible_header:hover {
+  background-color: #AAAAFF;
+}
+
+.collapsible_header:after {
+  content: '\002B';
+  color: white;
+  font-weight: bold;
+  float: right;
+  margin-left: 5px;
+}
+
+.collapsible_header_opened:after {
+  content: "\2212";
+}
+
+.collapsible_content {
+  padding: 0 18px;
+  max-height: 0;
+  overflow-x: scroll;
+  overflow-y: scroll;
+  min-width: 100%;
+  transition: max-height 0.2s ease-out;
+  background-color: #f1f1f1;
+}
+</style>
+
+    <script>
+       function copy_code_1700249506997_935() {
+            let code = `
+    // changes the value of the bool parameter (passed by modifiable reference)
+    // (This function will use a BoxedBool in the python code, so that its value can be modified)
+    void SwitchBoolValue(bool &v);
+    `;
+            navigator.clipboard.writeText(code);
+       }
+    </script>
+    <button class="collapsible_header" id="btn_1700249506997_935_6" >Original C++ decls</button>
+    <div class="collapsible_content" id="content_1700249506997_935_6">
+        <div>
+                <button onclick="copy_code_1700249506997_935()" align="right">copy &#x270d;</button>
+        </div>
+        <style>pre { line-height: 125%; }
+td.linenos .normal { color: inherit; background-color: transparent; padding-left: 5px; padding-right: 5px; }
+span.linenos { color: inherit; background-color: transparent; padding-left: 5px; padding-right: 5px; }
+td.linenos .special { color: #000000; background-color: #ffffc0; padding-left: 5px; padding-right: 5px; }
+span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 5px; padding-right: 5px; }
+.highlight .hll { background-color: #3c3836 }
+.highlight { background: #fbf1c7; }
+.highlight .c { color: #928374; font-style: italic } /* Comment */
+.highlight .err { color: #fbf1c7; background-color: #9d0006 } /* Error */
+.highlight .k { color: #9d0006 } /* Keyword */
+.highlight .ch { color: #928374; font-style: italic } /* Comment.Hashbang */
+.highlight .cm { color: #928374; font-style: italic } /* Comment.Multiline */
+.highlight .c-PreProc { color: #427b58; font-style: italic } /* Comment.PreProc */
+.highlight .cp { color: #928374; font-style: italic } /* Comment.Preproc */
+.highlight .cpf { color: #928374; font-style: italic } /* Comment.PreprocFile */
+.highlight .c1 { color: #928374; font-style: italic } /* Comment.Single */
+.highlight .cs { color: #3c3836; font-weight: bold; font-style: italic } /* Comment.Special */
+.highlight .gd { color: #fbf1c7; background-color: #9d0006 } /* Generic.Deleted */
+.highlight .ge { font-style: italic } /* Generic.Emph */
+.highlight .gr { color: #9d0006 } /* Generic.Error */
+.highlight .gh { color: #3c3836; font-weight: bold } /* Generic.Heading */
+.highlight .gi { color: #fbf1c7; background-color: #79740e } /* Generic.Inserted */
+.highlight .go { color: #32302f } /* Generic.Output */
+.highlight .gp { color: #7c6f64 } /* Generic.Prompt */
+.highlight .gs { font-weight: bold } /* Generic.Strong */
+.highlight .gu { color: #3c3836; text-decoration: underline } /* Generic.Subheading */
+.highlight .gt { color: #9d0006 } /* Generic.Traceback */
+.highlight .kc { color: #9d0006 } /* Keyword.Constant */
+.highlight .kd { color: #9d0006 } /* Keyword.Declaration */
+.highlight .kn { color: #9d0006 } /* Keyword.Namespace */
+.highlight .kp { color: #9d0006 } /* Keyword.Pseudo */
+.highlight .kr { color: #9d0006 } /* Keyword.Reserved */
+.highlight .kt { color: #9d0006 } /* Keyword.Type */
+.highlight .m { color: #8f3f71 } /* Literal.Number */
+.highlight .s { color: #79740e } /* Literal.String */
+.highlight .na { color: #b57614 } /* Name.Attribute */
+.highlight .nb { color: #af3a03 } /* Name.Builtin */
+.highlight .nc { color: #427b58 } /* Name.Class */
+.highlight .no { color: #8f3f71 } /* Name.Constant */
+.highlight .nd { color: #9d0006 } /* Name.Decorator */
+.highlight .ne { color: #9d0006 } /* Name.Exception */
+.highlight .nf { color: #427b58 } /* Name.Function */
+.highlight .nn { color: #427b58 } /* Name.Namespace */
+.highlight .nt { color: #427b58 } /* Name.Tag */
+.highlight .nv { color: #076678 } /* Name.Variable */
+.highlight .ow { color: #9d0006 } /* Operator.Word */
+.highlight .mb { color: #8f3f71 } /* Literal.Number.Bin */
+.highlight .mf { color: #8f3f71 } /* Literal.Number.Float */
+.highlight .mh { color: #8f3f71 } /* Literal.Number.Hex */
+.highlight .mi { color: #8f3f71 } /* Literal.Number.Integer */
+.highlight .mo { color: #8f3f71 } /* Literal.Number.Oct */
+.highlight .sa { color: #79740e } /* Literal.String.Affix */
+.highlight .sb { color: #79740e } /* Literal.String.Backtick */
+.highlight .sc { color: #79740e } /* Literal.String.Char */
+.highlight .dl { color: #79740e } /* Literal.String.Delimiter */
+.highlight .sd { color: #79740e } /* Literal.String.Doc */
+.highlight .s2 { color: #79740e } /* Literal.String.Double */
+.highlight .se { color: #af3a03 } /* Literal.String.Escape */
+.highlight .sh { color: #79740e } /* Literal.String.Heredoc */
+.highlight .si { color: #79740e } /* Literal.String.Interpol */
+.highlight .sx { color: #79740e } /* Literal.String.Other */
+.highlight .sr { color: #79740e } /* Literal.String.Regex */
+.highlight .s1 { color: #79740e } /* Literal.String.Single */
+.highlight .ss { color: #79740e } /* Literal.String.Symbol */
+.highlight .bp { color: #af3a03 } /* Name.Builtin.Pseudo */
+.highlight .fm { color: #427b58 } /* Name.Function.Magic */
+.highlight .vc { color: #076678 } /* Name.Variable.Class */
+.highlight .vg { color: #076678 } /* Name.Variable.Global */
+.highlight .vi { color: #076678 } /* Name.Variable.Instance */
+.highlight .vm { color: #076678 } /* Name.Variable.Magic */
+.highlight .il { color: #8f3f71 } /* Literal.Number.Integer.Long */</style> <div class="highlight"><pre><span></span><span class="w">    </span><span class="c1">// changes the value of the bool parameter (passed by modifiable reference)</span>
+<span class="w">    </span><span class="c1">// (This function will use a BoxedBool in the python code, so that its value can be modified)</span>
+<span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="nf">SwitchBoolValue</span><span class="p">(</span><span class="kt">bool</span><span class="w"> </span><span class="o">&amp;</span><span class="n">v</span><span class="p">);</span>
+<span class="w">    </span>
+</pre></div>
+
+    </div>
+    
+    <script>
+    var button = document.getElementById("btn_1700249506997_935_6");
+    button.addEventListener("click", function() {
+        this.classList.toggle("collapsible_header_opened");
+        var content = document.getElementById("content_1700249506997_935_6");
+        if (content.style.maxHeight){
+          content.style.maxHeight = null;
+        } else {
+          content.style.maxHeight = "40em";
+        }
+    });
+    </script>
+    
+            <script>
+            var collapsible_header = document.getElementById("btn_1700249506997_935_6");
+            collapsible_header.classList.toggle("collapsible_header_opened");
+            var collapsible_content = document.getElementById("content_1700249506997_935_6");
+            collapsible_content.style.maxHeight = "40em";
+            </script>
+            
+            </div>
+            <div class="half_width_spacer"></div>
+            <div class="half_width">
+                
+<style>
+.collapsible_header {
+  background-color: #AAAAAA;
+  color: white;
+  cursor: pointer;
+  padding: 3px;
+  width: 100%;
+  border: none;
+  text-align: left;
+  outline: none;
+  font-style: italic;
+}
+
+.collapsible_header_opened {
+  background-color: #555;
+}
+
+.collapsible_header:hover {
+  background-color: #AAAAFF;
+}
+
+.collapsible_header:after {
+  content: '\002B';
+  color: white;
+  font-weight: bold;
+  float: right;
+  margin-left: 5px;
+}
+
+.collapsible_header_opened:after {
+  content: "\2212";
+}
+
+.collapsible_content {
+  padding: 0 18px;
+  max-height: 0;
+  overflow-x: scroll;
+  overflow-y: scroll;
+  min-width: 100%;
+  transition: max-height 0.2s ease-out;
+  background-color: #f1f1f1;
+}
+</style>
+
+    <script>
+       function copy_code_1700249506998_473() {
+            let code = `####################    <generated_from:BoxedTypes>    ####################
+class BoxedBool:
+    value: bool
+    def __init__(self, v: bool = False) -> None:
+        pass
+    def __repr__(self) -> str:
+        pass
+####################    </generated_from:BoxedTypes>    ####################
+
+
+
+def switch_bool_value(v: BoxedBool) -> None:
+    """ changes the value of the bool parameter (passed by modifiable reference)
+     (This function will use a BoxedBool in the python code, so that its value can be modified)
+    """
+    pass
+`;
+            navigator.clipboard.writeText(code);
+       }
+    </script>
+    <button class="collapsible_header" id="btn_1700249506998_473_7" >Corresponding python decls (stub)</button>
+    <div class="collapsible_content" id="content_1700249506998_473_7">
+        <div>
+                <button onclick="copy_code_1700249506998_473()" align="right">copy &#x270d;</button>
+        </div>
+        <style>pre { line-height: 125%; }
+td.linenos .normal { color: inherit; background-color: transparent; padding-left: 5px; padding-right: 5px; }
+span.linenos { color: inherit; background-color: transparent; padding-left: 5px; padding-right: 5px; }
+td.linenos .special { color: #000000; background-color: #ffffc0; padding-left: 5px; padding-right: 5px; }
+span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 5px; padding-right: 5px; }
+.highlight .hll { background-color: #3c3836 }
+.highlight { background: #fbf1c7; }
+.highlight .c { color: #928374; font-style: italic } /* Comment */
+.highlight .err { color: #fbf1c7; background-color: #9d0006 } /* Error */
+.highlight .k { color: #9d0006 } /* Keyword */
+.highlight .ch { color: #928374; font-style: italic } /* Comment.Hashbang */
+.highlight .cm { color: #928374; font-style: italic } /* Comment.Multiline */
+.highlight .c-PreProc { color: #427b58; font-style: italic } /* Comment.PreProc */
+.highlight .cp { color: #928374; font-style: italic } /* Comment.Preproc */
+.highlight .cpf { color: #928374; font-style: italic } /* Comment.PreprocFile */
+.highlight .c1 { color: #928374; font-style: italic } /* Comment.Single */
+.highlight .cs { color: #3c3836; font-weight: bold; font-style: italic } /* Comment.Special */
+.highlight .gd { color: #fbf1c7; background-color: #9d0006 } /* Generic.Deleted */
+.highlight .ge { font-style: italic } /* Generic.Emph */
+.highlight .gr { color: #9d0006 } /* Generic.Error */
+.highlight .gh { color: #3c3836; font-weight: bold } /* Generic.Heading */
+.highlight .gi { color: #fbf1c7; background-color: #79740e } /* Generic.Inserted */
+.highlight .go { color: #32302f } /* Generic.Output */
+.highlight .gp { color: #7c6f64 } /* Generic.Prompt */
+.highlight .gs { font-weight: bold } /* Generic.Strong */
+.highlight .gu { color: #3c3836; text-decoration: underline } /* Generic.Subheading */
+.highlight .gt { color: #9d0006 } /* Generic.Traceback */
+.highlight .kc { color: #9d0006 } /* Keyword.Constant */
+.highlight .kd { color: #9d0006 } /* Keyword.Declaration */
+.highlight .kn { color: #9d0006 } /* Keyword.Namespace */
+.highlight .kp { color: #9d0006 } /* Keyword.Pseudo */
+.highlight .kr { color: #9d0006 } /* Keyword.Reserved */
+.highlight .kt { color: #9d0006 } /* Keyword.Type */
+.highlight .m { color: #8f3f71 } /* Literal.Number */
+.highlight .s { color: #79740e } /* Literal.String */
+.highlight .na { color: #b57614 } /* Name.Attribute */
+.highlight .nb { color: #af3a03 } /* Name.Builtin */
+.highlight .nc { color: #427b58 } /* Name.Class */
+.highlight .no { color: #8f3f71 } /* Name.Constant */
+.highlight .nd { color: #9d0006 } /* Name.Decorator */
+.highlight .ne { color: #9d0006 } /* Name.Exception */
+.highlight .nf { color: #427b58 } /* Name.Function */
+.highlight .nn { color: #427b58 } /* Name.Namespace */
+.highlight .nt { color: #427b58 } /* Name.Tag */
+.highlight .nv { color: #076678 } /* Name.Variable */
+.highlight .ow { color: #9d0006 } /* Operator.Word */
+.highlight .mb { color: #8f3f71 } /* Literal.Number.Bin */
+.highlight .mf { color: #8f3f71 } /* Literal.Number.Float */
+.highlight .mh { color: #8f3f71 } /* Literal.Number.Hex */
+.highlight .mi { color: #8f3f71 } /* Literal.Number.Integer */
+.highlight .mo { color: #8f3f71 } /* Literal.Number.Oct */
+.highlight .sa { color: #79740e } /* Literal.String.Affix */
+.highlight .sb { color: #79740e } /* Literal.String.Backtick */
+.highlight .sc { color: #79740e } /* Literal.String.Char */
+.highlight .dl { color: #79740e } /* Literal.String.Delimiter */
+.highlight .sd { color: #79740e } /* Literal.String.Doc */
+.highlight .s2 { color: #79740e } /* Literal.String.Double */
+.highlight .se { color: #af3a03 } /* Literal.String.Escape */
+.highlight .sh { color: #79740e } /* Literal.String.Heredoc */
+.highlight .si { color: #79740e } /* Literal.String.Interpol */
+.highlight .sx { color: #79740e } /* Literal.String.Other */
+.highlight .sr { color: #79740e } /* Literal.String.Regex */
+.highlight .s1 { color: #79740e } /* Literal.String.Single */
+.highlight .ss { color: #79740e } /* Literal.String.Symbol */
+.highlight .bp { color: #af3a03 } /* Name.Builtin.Pseudo */
+.highlight .fm { color: #427b58 } /* Name.Function.Magic */
+.highlight .vc { color: #076678 } /* Name.Variable.Class */
+.highlight .vg { color: #076678 } /* Name.Variable.Global */
+.highlight .vi { color: #076678 } /* Name.Variable.Instance */
+.highlight .vm { color: #076678 } /* Name.Variable.Magic */
+.highlight .il { color: #8f3f71 } /* Literal.Number.Integer.Long */</style> <div class="highlight"><pre><span></span><span class="c1">####################    &lt;generated_from:BoxedTypes&gt;    ####################</span>
+<span class="k">class</span> <span class="nc">BoxedBool</span><span class="p">:</span>
+    <span class="n">value</span><span class="p">:</span> <span class="nb">bool</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">v</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">pass</span>
+    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="k">pass</span>
+<span class="c1">####################    &lt;/generated_from:BoxedTypes&gt;    ####################</span>
+
+
+
+<span class="k">def</span> <span class="nf">switch_bool_value</span><span class="p">(</span><span class="n">v</span><span class="p">:</span> <span class="n">BoxedBool</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot; changes the value of the bool parameter (passed by modifiable reference)</span>
+<span class="sd">     (This function will use a BoxedBool in the python code, so that its value can be modified)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">pass</span>
+</pre></div>
+
+    </div>
+    
+    <script>
+    var button = document.getElementById("btn_1700249506998_473_7");
+    button.addEventListener("click", function() {
+        this.classList.toggle("collapsible_header_opened");
+        var content = document.getElementById("content_1700249506998_473_7");
+        if (content.style.maxHeight){
+          content.style.maxHeight = null;
+        } else {
+          content.style.maxHeight = "40em";
+        }
+    });
+    </script>
+    
+            <script>
+            var collapsible_header = document.getElementById("btn_1700249506998_473_7");
+            collapsible_header.classList.toggle("collapsible_header_opened");
+            var collapsible_content = document.getElementById("content_1700249506998_473_7");
+            collapsible_content.style.maxHeight = "40em";
+            </script>
+            
+            <br/>
+        </div>
+    <br/>
+<style>
+.collapsible_header {
+  background-color: #AAAAAA;
+  color: white;
+  cursor: pointer;
+  padding: 3px;
+  width: 100%;
+  border: none;
+  text-align: left;
+  outline: none;
+  font-style: italic;
+}
+
+.collapsible_header_opened {
+  background-color: #555;
+}
+
+.collapsible_header:hover {
+  background-color: #AAAAFF;
+}
+
+.collapsible_header:after {
+  content: '\002B';
+  color: white;
+  font-weight: bold;
+  float: right;
+  margin-left: 5px;
+}
+
+.collapsible_header_opened:after {
+  content: "\2212";
+}
+
+.collapsible_content {
+  padding: 0 18px;
+  max-height: 0;
+  overflow-x: scroll;
+  overflow-y: scroll;
+  min-width: 100%;
+  transition: max-height 0.2s ease-out;
+  background-color: #f1f1f1;
+}
+</style>
+
+    <script>
+       function copy_code_1700249506996_98() {
+            let code = `////////////////////    <generated_from:BoxedTypes>    ////////////////////
+auto pyClassBoxedBool =
+    py::class_<BoxedBool>
+        (m, "BoxedBool", "")
+    .def_readwrite("value", &BoxedBool::value, "")
+    .def(py::init<bool>(),
+        py::arg("v") = false)
+    .def("__repr__",
+        &BoxedBool::__repr__)
+    ;
+////////////////////    </generated_from:BoxedTypes>    ////////////////////
+
+
+m.def("switch_bool_value",
+    [](BoxedBool & v)
+    {
+        auto SwitchBoolValue_adapt_modifiable_immutable = [](BoxedBool & v)
+        {
+            bool & v_boxed_value = v.value;
+
+            SwitchBoolValue(v_boxed_value);
+        };
+
+        SwitchBoolValue_adapt_modifiable_immutable(v);
+    }, 
+    py::arg("v"), 
+    " changes the value of the bool parameter (passed by modifiable reference)\n (This function will use a BoxedBool in the python code, so that its value can be modified)");
+`;
+            navigator.clipboard.writeText(code);
+       }
+    </script>
+    <button class="collapsible_header" id="btn_1700249506996_98_4" >pybind11 C++ binding code</button>
+    <div class="collapsible_content" id="content_1700249506996_98_4">
+        <div>
+                <button onclick="copy_code_1700249506996_98()" align="right">copy &#x270d;</button>
+        </div>
+        <style>pre { line-height: 125%; }
+td.linenos .normal { color: inherit; background-color: transparent; padding-left: 5px; padding-right: 5px; }
+span.linenos { color: inherit; background-color: transparent; padding-left: 5px; padding-right: 5px; }
+td.linenos .special { color: #000000; background-color: #ffffc0; padding-left: 5px; padding-right: 5px; }
+span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 5px; padding-right: 5px; }
+.highlight .hll { background-color: #3c3836 }
+.highlight { background: #fbf1c7; }
+.highlight .c { color: #928374; font-style: italic } /* Comment */
+.highlight .err { color: #fbf1c7; background-color: #9d0006 } /* Error */
+.highlight .k { color: #9d0006 } /* Keyword */
+.highlight .ch { color: #928374; font-style: italic } /* Comment.Hashbang */
+.highlight .cm { color: #928374; font-style: italic } /* Comment.Multiline */
+.highlight .c-PreProc { color: #427b58; font-style: italic } /* Comment.PreProc */
+.highlight .cp { color: #928374; font-style: italic } /* Comment.Preproc */
+.highlight .cpf { color: #928374; font-style: italic } /* Comment.PreprocFile */
+.highlight .c1 { color: #928374; font-style: italic } /* Comment.Single */
+.highlight .cs { color: #3c3836; font-weight: bold; font-style: italic } /* Comment.Special */
+.highlight .gd { color: #fbf1c7; background-color: #9d0006 } /* Generic.Deleted */
+.highlight .ge { font-style: italic } /* Generic.Emph */
+.highlight .gr { color: #9d0006 } /* Generic.Error */
+.highlight .gh { color: #3c3836; font-weight: bold } /* Generic.Heading */
+.highlight .gi { color: #fbf1c7; background-color: #79740e } /* Generic.Inserted */
+.highlight .go { color: #32302f } /* Generic.Output */
+.highlight .gp { color: #7c6f64 } /* Generic.Prompt */
+.highlight .gs { font-weight: bold } /* Generic.Strong */
+.highlight .gu { color: #3c3836; text-decoration: underline } /* Generic.Subheading */
+.highlight .gt { color: #9d0006 } /* Generic.Traceback */
+.highlight .kc { color: #9d0006 } /* Keyword.Constant */
+.highlight .kd { color: #9d0006 } /* Keyword.Declaration */
+.highlight .kn { color: #9d0006 } /* Keyword.Namespace */
+.highlight .kp { color: #9d0006 } /* Keyword.Pseudo */
+.highlight .kr { color: #9d0006 } /* Keyword.Reserved */
+.highlight .kt { color: #9d0006 } /* Keyword.Type */
+.highlight .m { color: #8f3f71 } /* Literal.Number */
+.highlight .s { color: #79740e } /* Literal.String */
+.highlight .na { color: #b57614 } /* Name.Attribute */
+.highlight .nb { color: #af3a03 } /* Name.Builtin */
+.highlight .nc { color: #427b58 } /* Name.Class */
+.highlight .no { color: #8f3f71 } /* Name.Constant */
+.highlight .nd { color: #9d0006 } /* Name.Decorator */
+.highlight .ne { color: #9d0006 } /* Name.Exception */
+.highlight .nf { color: #427b58 } /* Name.Function */
+.highlight .nn { color: #427b58 } /* Name.Namespace */
+.highlight .nt { color: #427b58 } /* Name.Tag */
+.highlight .nv { color: #076678 } /* Name.Variable */
+.highlight .ow { color: #9d0006 } /* Operator.Word */
+.highlight .mb { color: #8f3f71 } /* Literal.Number.Bin */
+.highlight .mf { color: #8f3f71 } /* Literal.Number.Float */
+.highlight .mh { color: #8f3f71 } /* Literal.Number.Hex */
+.highlight .mi { color: #8f3f71 } /* Literal.Number.Integer */
+.highlight .mo { color: #8f3f71 } /* Literal.Number.Oct */
+.highlight .sa { color: #79740e } /* Literal.String.Affix */
+.highlight .sb { color: #79740e } /* Literal.String.Backtick */
+.highlight .sc { color: #79740e } /* Literal.String.Char */
+.highlight .dl { color: #79740e } /* Literal.String.Delimiter */
+.highlight .sd { color: #79740e } /* Literal.String.Doc */
+.highlight .s2 { color: #79740e } /* Literal.String.Double */
+.highlight .se { color: #af3a03 } /* Literal.String.Escape */
+.highlight .sh { color: #79740e } /* Literal.String.Heredoc */
+.highlight .si { color: #79740e } /* Literal.String.Interpol */
+.highlight .sx { color: #79740e } /* Literal.String.Other */
+.highlight .sr { color: #79740e } /* Literal.String.Regex */
+.highlight .s1 { color: #79740e } /* Literal.String.Single */
+.highlight .ss { color: #79740e } /* Literal.String.Symbol */
+.highlight .bp { color: #af3a03 } /* Name.Builtin.Pseudo */
+.highlight .fm { color: #427b58 } /* Name.Function.Magic */
+.highlight .vc { color: #076678 } /* Name.Variable.Class */
+.highlight .vg { color: #076678 } /* Name.Variable.Global */
+.highlight .vi { color: #076678 } /* Name.Variable.Instance */
+.highlight .vm { color: #076678 } /* Name.Variable.Magic */
+.highlight .il { color: #8f3f71 } /* Literal.Number.Integer.Long */</style> <div class="highlight"><pre><span></span><span class="c1">////////////////////    &lt;generated_from:BoxedTypes&gt;    ////////////////////</span>
+<span class="k">auto</span><span class="w"> </span><span class="n">pyClassBoxedBool</span><span class="w"> </span><span class="o">=</span>
+<span class="w">    </span><span class="n">py</span><span class="o">::</span><span class="n">class_</span><span class="o">&lt;</span><span class="n">BoxedBool</span><span class="o">&gt;</span>
+<span class="w">        </span><span class="p">(</span><span class="n">m</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;BoxedBool&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;&quot;</span><span class="p">)</span>
+<span class="w">    </span><span class="p">.</span><span class="n">def_readwrite</span><span class="p">(</span><span class="s">&quot;value&quot;</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">BoxedBool</span><span class="o">::</span><span class="n">value</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;&quot;</span><span class="p">)</span>
+<span class="w">    </span><span class="p">.</span><span class="n">def</span><span class="p">(</span><span class="n">py</span><span class="o">::</span><span class="n">init</span><span class="o">&lt;</span><span class="kt">bool</span><span class="o">&gt;</span><span class="p">(),</span>
+<span class="w">        </span><span class="n">py</span><span class="o">::</span><span class="n">arg</span><span class="p">(</span><span class="s">&quot;v&quot;</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">)</span>
+<span class="w">    </span><span class="p">.</span><span class="n">def</span><span class="p">(</span><span class="s">&quot;__repr__&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="o">&amp;</span><span class="n">BoxedBool</span><span class="o">::</span><span class="n">__repr__</span><span class="p">)</span>
+<span class="w">    </span><span class="p">;</span>
+<span class="c1">////////////////////    &lt;/generated_from:BoxedTypes&gt;    ////////////////////</span>
+
+
+<span class="n">m</span><span class="p">.</span><span class="n">def</span><span class="p">(</span><span class="s">&quot;switch_bool_value&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="p">[](</span><span class="n">BoxedBool</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">v</span><span class="p">)</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">        </span><span class="k">auto</span><span class="w"> </span><span class="n">SwitchBoolValue_adapt_modifiable_immutable</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[](</span><span class="n">BoxedBool</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">v</span><span class="p">)</span>
+<span class="w">        </span><span class="p">{</span>
+<span class="w">            </span><span class="kt">bool</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">v_boxed_value</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">v</span><span class="p">.</span><span class="n">value</span><span class="p">;</span>
+
+<span class="w">            </span><span class="n">SwitchBoolValue</span><span class="p">(</span><span class="n">v_boxed_value</span><span class="p">);</span>
+<span class="w">        </span><span class="p">};</span>
+
+<span class="w">        </span><span class="n">SwitchBoolValue_adapt_modifiable_immutable</span><span class="p">(</span><span class="n">v</span><span class="p">);</span>
+<span class="w">    </span><span class="p">},</span><span class="w"> </span>
+<span class="w">    </span><span class="n">py</span><span class="o">::</span><span class="n">arg</span><span class="p">(</span><span class="s">&quot;v&quot;</span><span class="p">),</span><span class="w"> </span>
+<span class="w">    </span><span class="s">&quot; changes the value of the bool parameter (passed by modifiable reference)</span><span class="se">\n</span><span class="s"> (This function will use a BoxedBool in the python code, so that its value can be modified)&quot;</span><span class="p">);</span>
+</pre></div>
+
+    </div>
+    
+    <script>
+    var button = document.getElementById("btn_1700249506996_98_4");
+    button.addEventListener("click", function() {
+        this.classList.toggle("collapsible_header_opened");
+        var content = document.getElementById("content_1700249506996_98_4");
+        if (content.style.maxHeight){
+          content.style.maxHeight = null;
+        } else {
+          content.style.maxHeight = "40em";
+        }
+    });
+    </script>
+    
+            <script>
+            var collapsible_header = document.getElementById("btn_1700249506996_98_4");
+            collapsible_header.classList.toggle("collapsible_header_opened");
+            var collapsible_content = document.getElementById("content_1700249506996_98_4");
+            collapsible_content.style.maxHeight = "40em";
+            </script>
+            <br/>
+<style>
+.collapsible_header {
+  background-color: #AAAAAA;
+  color: white;
+  cursor: pointer;
+  padding: 3px;
+  width: 100%;
+  border: none;
+  text-align: left;
+  outline: none;
+  font-style: italic;
+}
+
+.collapsible_header_opened {
+  background-color: #555;
+}
+
+.collapsible_header:hover {
+  background-color: #AAAAFF;
+}
+
+.collapsible_header:after {
+  content: '\002B';
+  color: white;
+  font-weight: bold;
+  float: right;
+  margin-left: 5px;
+}
+
+.collapsible_header_opened:after {
+  content: "\2212";
+}
+
+.collapsible_content {
+  padding: 0 18px;
+  max-height: 0;
+  overflow-x: scroll;
+  overflow-y: scroll;
+  min-width: 100%;
+  transition: max-height 0.2s ease-out;
+  background-color: #f1f1f1;
+}
+</style>
+
+    <script>
+       function copy_code_1700249506997_579() {
+            let code = `struct BoxedBool
+{
+    bool value;
+    BoxedBool(bool v = false) : value(v) {}
+    std::string __repr__() const { return std::string("BoxedBool(") + std::to_string(value) + ")"; }
+};
+`;
+            navigator.clipboard.writeText(code);
+       }
+    </script>
+    <button class="collapsible_header" id="btn_1700249506997_579_5" >C++ glue code</button>
+    <div class="collapsible_content" id="content_1700249506997_579_5">
+        <div>
+                <button onclick="copy_code_1700249506997_579()" align="right">copy &#x270d;</button>
+        </div>
+        <style>pre { line-height: 125%; }
+td.linenos .normal { color: inherit; background-color: transparent; padding-left: 5px; padding-right: 5px; }
+span.linenos { color: inherit; background-color: transparent; padding-left: 5px; padding-right: 5px; }
+td.linenos .special { color: #000000; background-color: #ffffc0; padding-left: 5px; padding-right: 5px; }
+span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 5px; padding-right: 5px; }
+.highlight .hll { background-color: #3c3836 }
+.highlight { background: #fbf1c7; }
+.highlight .c { color: #928374; font-style: italic } /* Comment */
+.highlight .err { color: #fbf1c7; background-color: #9d0006 } /* Error */
+.highlight .k { color: #9d0006 } /* Keyword */
+.highlight .ch { color: #928374; font-style: italic } /* Comment.Hashbang */
+.highlight .cm { color: #928374; font-style: italic } /* Comment.Multiline */
+.highlight .c-PreProc { color: #427b58; font-style: italic } /* Comment.PreProc */
+.highlight .cp { color: #928374; font-style: italic } /* Comment.Preproc */
+.highlight .cpf { color: #928374; font-style: italic } /* Comment.PreprocFile */
+.highlight .c1 { color: #928374; font-style: italic } /* Comment.Single */
+.highlight .cs { color: #3c3836; font-weight: bold; font-style: italic } /* Comment.Special */
+.highlight .gd { color: #fbf1c7; background-color: #9d0006 } /* Generic.Deleted */
+.highlight .ge { font-style: italic } /* Generic.Emph */
+.highlight .gr { color: #9d0006 } /* Generic.Error */
+.highlight .gh { color: #3c3836; font-weight: bold } /* Generic.Heading */
+.highlight .gi { color: #fbf1c7; background-color: #79740e } /* Generic.Inserted */
+.highlight .go { color: #32302f } /* Generic.Output */
+.highlight .gp { color: #7c6f64 } /* Generic.Prompt */
+.highlight .gs { font-weight: bold } /* Generic.Strong */
+.highlight .gu { color: #3c3836; text-decoration: underline } /* Generic.Subheading */
+.highlight .gt { color: #9d0006 } /* Generic.Traceback */
+.highlight .kc { color: #9d0006 } /* Keyword.Constant */
+.highlight .kd { color: #9d0006 } /* Keyword.Declaration */
+.highlight .kn { color: #9d0006 } /* Keyword.Namespace */
+.highlight .kp { color: #9d0006 } /* Keyword.Pseudo */
+.highlight .kr { color: #9d0006 } /* Keyword.Reserved */
+.highlight .kt { color: #9d0006 } /* Keyword.Type */
+.highlight .m { color: #8f3f71 } /* Literal.Number */
+.highlight .s { color: #79740e } /* Literal.String */
+.highlight .na { color: #b57614 } /* Name.Attribute */
+.highlight .nb { color: #af3a03 } /* Name.Builtin */
+.highlight .nc { color: #427b58 } /* Name.Class */
+.highlight .no { color: #8f3f71 } /* Name.Constant */
+.highlight .nd { color: #9d0006 } /* Name.Decorator */
+.highlight .ne { color: #9d0006 } /* Name.Exception */
+.highlight .nf { color: #427b58 } /* Name.Function */
+.highlight .nn { color: #427b58 } /* Name.Namespace */
+.highlight .nt { color: #427b58 } /* Name.Tag */
+.highlight .nv { color: #076678 } /* Name.Variable */
+.highlight .ow { color: #9d0006 } /* Operator.Word */
+.highlight .mb { color: #8f3f71 } /* Literal.Number.Bin */
+.highlight .mf { color: #8f3f71 } /* Literal.Number.Float */
+.highlight .mh { color: #8f3f71 } /* Literal.Number.Hex */
+.highlight .mi { color: #8f3f71 } /* Literal.Number.Integer */
+.highlight .mo { color: #8f3f71 } /* Literal.Number.Oct */
+.highlight .sa { color: #79740e } /* Literal.String.Affix */
+.highlight .sb { color: #79740e } /* Literal.String.Backtick */
+.highlight .sc { color: #79740e } /* Literal.String.Char */
+.highlight .dl { color: #79740e } /* Literal.String.Delimiter */
+.highlight .sd { color: #79740e } /* Literal.String.Doc */
+.highlight .s2 { color: #79740e } /* Literal.String.Double */
+.highlight .se { color: #af3a03 } /* Literal.String.Escape */
+.highlight .sh { color: #79740e } /* Literal.String.Heredoc */
+.highlight .si { color: #79740e } /* Literal.String.Interpol */
+.highlight .sx { color: #79740e } /* Literal.String.Other */
+.highlight .sr { color: #79740e } /* Literal.String.Regex */
+.highlight .s1 { color: #79740e } /* Literal.String.Single */
+.highlight .ss { color: #79740e } /* Literal.String.Symbol */
+.highlight .bp { color: #af3a03 } /* Name.Builtin.Pseudo */
+.highlight .fm { color: #427b58 } /* Name.Function.Magic */
+.highlight .vc { color: #076678 } /* Name.Variable.Class */
+.highlight .vg { color: #076678 } /* Name.Variable.Global */
+.highlight .vi { color: #076678 } /* Name.Variable.Instance */
+.highlight .vm { color: #076678 } /* Name.Variable.Magic */
+.highlight .il { color: #8f3f71 } /* Literal.Number.Integer.Long */</style> <div class="highlight"><pre><span></span><span class="k">struct</span><span class="w"> </span><span class="nc">BoxedBool</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">value</span><span class="p">;</span>
+<span class="w">    </span><span class="n">BoxedBool</span><span class="p">(</span><span class="kt">bool</span><span class="w"> </span><span class="n">v</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">)</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">value</span><span class="p">(</span><span class="n">v</span><span class="p">)</span><span class="w"> </span><span class="p">{}</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">__repr__</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="p">(</span><span class="s">&quot;BoxedBool(&quot;</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">to_string</span><span class="p">(</span><span class="n">value</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s">&quot;)&quot;</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
+<span class="p">};</span>
+</pre></div>
+
+    </div>
+    
+    <script>
+    var button = document.getElementById("btn_1700249506997_579_5");
+    button.addEventListener("click", function() {
+        this.classList.toggle("collapsible_header_opened");
+        var content = document.getElementById("content_1700249506997_579_5");
+        if (content.style.maxHeight){
+          content.style.maxHeight = null;
+        } else {
+          content.style.maxHeight = "40em";
+        }
+    });
+    </script>
+    
+            <script>
+            var collapsible_header = document.getElementById("btn_1700249506997_579_5");
+            collapsible_header.classList.toggle("collapsible_header_opened");
+            var collapsible_content = document.getElementById("content_1700249506997_579_5");
+            collapsible_content.style.maxHeight = "40em";
+            </script>
+            </div></div>
+</div>
+</section>
+<section id="usage-inside-a-notebook">
+<h2>Usage inside a notebook<a class="headerlink" href="#usage-inside-a-notebook" title="Permalink to this heading">#</a></h2>
+<p>When inside a notebook, you can use <code class="docutils literal notranslate"><span class="pre">litgen_notebook_display.generate_and_display</span></code> to display the code with syntax highlithting.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">litgen.demo</span> <span class="kn">import</span> <span class="n">litgen_notebook_display</span>
+
+<span class="n">cpp_code</span> <span class="o">=</span> <span class="s2">&quot;void f();  // dummy function&quot;</span>
+<span class="n">litgen_notebook_display</span><span class="o">.</span><span class="n">generate_and_display</span><span class="p">(</span><span class="n">options</span><span class="p">,</span> <span class="n">cpp_code</span><span class="p">,</span> <span class="n">collapse_pydef</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html">
+<style>
+.collapsible_header {
+  background-color: #AAAAAA;
+  color: white;
+  cursor: pointer;
+  padding: 3px;
+  width: 100%;
+  border: none;
+  text-align: left;
+  outline: none;
+  font-style: italic;
+}
+
+.collapsible_header_opened {
+  background-color: #555;
+}
+
+.collapsible_header:hover {
+  background-color: #AAAAFF;
+}
+
+.collapsible_header:after {
+  content: '\002B';
+  color: white;
+  font-weight: bold;
+  float: right;
+  margin-left: 5px;
+}
+
+.collapsible_header_opened:after {
+  content: "\2212";
+}
+
+.collapsible_content {
+  padding: 0 18px;
+  max-height: 0;
+  overflow-x: scroll;
+  overflow-y: scroll;
+  min-width: 100%;
+  transition: max-height 0.2s ease-out;
+  background-color: #f1f1f1;
+}
+</style>
+
+<style>
+  div.several_columns {
+    display: flex;
+    flex-wrap: wrap;
+  }
+  div.half_width {
+     width:49.5%;
+     overflow: auto;
+  }
+  div.half_width_spacer {
+     width:1%;
+  }
+  </style>
+
+        <div class ="several_columns">
+            <div class="half_width">
+                
+<style>
+.collapsible_header {
+  background-color: #AAAAAA;
+  color: white;
+  cursor: pointer;
+  padding: 3px;
+  width: 100%;
+  border: none;
+  text-align: left;
+  outline: none;
+  font-style: italic;
+}
+
+.collapsible_header_opened {
+  background-color: #555;
+}
+
+.collapsible_header:hover {
+  background-color: #AAAAFF;
+}
+
+.collapsible_header:after {
+  content: '\002B';
+  color: white;
+  font-weight: bold;
+  float: right;
+  margin-left: 5px;
+}
+
+.collapsible_header_opened:after {
+  content: "\2212";
+}
+
+.collapsible_content {
+  padding: 0 18px;
+  max-height: 0;
+  overflow-x: scroll;
+  overflow-y: scroll;
+  min-width: 100%;
+  transition: max-height 0.2s ease-out;
+  background-color: #f1f1f1;
+}
+</style>
+
+    <script>
+       function copy_code_1700249507003_5342() {
+            let code = `void f();  // dummy function`;
+            navigator.clipboard.writeText(code);
+       }
+    </script>
+    <button class="collapsible_header" id="btn_1700249507003_5342_10" >Original C++ decls</button>
+    <div class="collapsible_content" id="content_1700249507003_5342_10">
+        <div>
+                <button onclick="copy_code_1700249507003_5342()" align="right">copy &#x270d;</button>
+        </div>
+        <style>pre { line-height: 125%; }
+td.linenos .normal { color: inherit; background-color: transparent; padding-left: 5px; padding-right: 5px; }
+span.linenos { color: inherit; background-color: transparent; padding-left: 5px; padding-right: 5px; }
+td.linenos .special { color: #000000; background-color: #ffffc0; padding-left: 5px; padding-right: 5px; }
+span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 5px; padding-right: 5px; }
+.highlight .hll { background-color: #3c3836 }
+.highlight { background: #fbf1c7; }
+.highlight .c { color: #928374; font-style: italic } /* Comment */
+.highlight .err { color: #fbf1c7; background-color: #9d0006 } /* Error */
+.highlight .k { color: #9d0006 } /* Keyword */
+.highlight .ch { color: #928374; font-style: italic } /* Comment.Hashbang */
+.highlight .cm { color: #928374; font-style: italic } /* Comment.Multiline */
+.highlight .c-PreProc { color: #427b58; font-style: italic } /* Comment.PreProc */
+.highlight .cp { color: #928374; font-style: italic } /* Comment.Preproc */
+.highlight .cpf { color: #928374; font-style: italic } /* Comment.PreprocFile */
+.highlight .c1 { color: #928374; font-style: italic } /* Comment.Single */
+.highlight .cs { color: #3c3836; font-weight: bold; font-style: italic } /* Comment.Special */
+.highlight .gd { color: #fbf1c7; background-color: #9d0006 } /* Generic.Deleted */
+.highlight .ge { font-style: italic } /* Generic.Emph */
+.highlight .gr { color: #9d0006 } /* Generic.Error */
+.highlight .gh { color: #3c3836; font-weight: bold } /* Generic.Heading */
+.highlight .gi { color: #fbf1c7; background-color: #79740e } /* Generic.Inserted */
+.highlight .go { color: #32302f } /* Generic.Output */
+.highlight .gp { color: #7c6f64 } /* Generic.Prompt */
+.highlight .gs { font-weight: bold } /* Generic.Strong */
+.highlight .gu { color: #3c3836; text-decoration: underline } /* Generic.Subheading */
+.highlight .gt { color: #9d0006 } /* Generic.Traceback */
+.highlight .kc { color: #9d0006 } /* Keyword.Constant */
+.highlight .kd { color: #9d0006 } /* Keyword.Declaration */
+.highlight .kn { color: #9d0006 } /* Keyword.Namespace */
+.highlight .kp { color: #9d0006 } /* Keyword.Pseudo */
+.highlight .kr { color: #9d0006 } /* Keyword.Reserved */
+.highlight .kt { color: #9d0006 } /* Keyword.Type */
+.highlight .m { color: #8f3f71 } /* Literal.Number */
+.highlight .s { color: #79740e } /* Literal.String */
+.highlight .na { color: #b57614 } /* Name.Attribute */
+.highlight .nb { color: #af3a03 } /* Name.Builtin */
+.highlight .nc { color: #427b58 } /* Name.Class */
+.highlight .no { color: #8f3f71 } /* Name.Constant */
+.highlight .nd { color: #9d0006 } /* Name.Decorator */
+.highlight .ne { color: #9d0006 } /* Name.Exception */
+.highlight .nf { color: #427b58 } /* Name.Function */
+.highlight .nn { color: #427b58 } /* Name.Namespace */
+.highlight .nt { color: #427b58 } /* Name.Tag */
+.highlight .nv { color: #076678 } /* Name.Variable */
+.highlight .ow { color: #9d0006 } /* Operator.Word */
+.highlight .mb { color: #8f3f71 } /* Literal.Number.Bin */
+.highlight .mf { color: #8f3f71 } /* Literal.Number.Float */
+.highlight .mh { color: #8f3f71 } /* Literal.Number.Hex */
+.highlight .mi { color: #8f3f71 } /* Literal.Number.Integer */
+.highlight .mo { color: #8f3f71 } /* Literal.Number.Oct */
+.highlight .sa { color: #79740e } /* Literal.String.Affix */
+.highlight .sb { color: #79740e } /* Literal.String.Backtick */
+.highlight .sc { color: #79740e } /* Literal.String.Char */
+.highlight .dl { color: #79740e } /* Literal.String.Delimiter */
+.highlight .sd { color: #79740e } /* Literal.String.Doc */
+.highlight .s2 { color: #79740e } /* Literal.String.Double */
+.highlight .se { color: #af3a03 } /* Literal.String.Escape */
+.highlight .sh { color: #79740e } /* Literal.String.Heredoc */
+.highlight .si { color: #79740e } /* Literal.String.Interpol */
+.highlight .sx { color: #79740e } /* Literal.String.Other */
+.highlight .sr { color: #79740e } /* Literal.String.Regex */
+.highlight .s1 { color: #79740e } /* Literal.String.Single */
+.highlight .ss { color: #79740e } /* Literal.String.Symbol */
+.highlight .bp { color: #af3a03 } /* Name.Builtin.Pseudo */
+.highlight .fm { color: #427b58 } /* Name.Function.Magic */
+.highlight .vc { color: #076678 } /* Name.Variable.Class */
+.highlight .vg { color: #076678 } /* Name.Variable.Global */
+.highlight .vi { color: #076678 } /* Name.Variable.Instance */
+.highlight .vm { color: #076678 } /* Name.Variable.Magic */
+.highlight .il { color: #8f3f71 } /* Literal.Number.Integer.Long */</style> <div class="highlight"><pre><span></span><span class="kt">void</span><span class="w"> </span><span class="nf">f</span><span class="p">();</span><span class="w">  </span><span class="c1">// dummy function</span>
+</pre></div>
+
+    </div>
+    
+    <script>
+    var button = document.getElementById("btn_1700249507003_5342_10");
+    button.addEventListener("click", function() {
+        this.classList.toggle("collapsible_header_opened");
+        var content = document.getElementById("content_1700249507003_5342_10");
+        if (content.style.maxHeight){
+          content.style.maxHeight = null;
+        } else {
+          content.style.maxHeight = "20em";
+        }
+    });
+    </script>
+    
+            <script>
+            var collapsible_header = document.getElementById("btn_1700249507003_5342_10");
+            collapsible_header.classList.toggle("collapsible_header_opened");
+            var collapsible_content = document.getElementById("content_1700249507003_5342_10");
+            collapsible_content.style.maxHeight = "20em";
+            </script>
+            
+            </div>
+            <div class="half_width_spacer"></div>
+            <div class="half_width">
+                
+<style>
+.collapsible_header {
+  background-color: #AAAAAA;
+  color: white;
+  cursor: pointer;
+  padding: 3px;
+  width: 100%;
+  border: none;
+  text-align: left;
+  outline: none;
+  font-style: italic;
+}
+
+.collapsible_header_opened {
+  background-color: #555;
+}
+
+.collapsible_header:hover {
+  background-color: #AAAAFF;
+}
+
+.collapsible_header:after {
+  content: '\002B';
+  color: white;
+  font-weight: bold;
+  float: right;
+  margin-left: 5px;
+}
+
+.collapsible_header_opened:after {
+  content: "\2212";
+}
+
+.collapsible_content {
+  padding: 0 18px;
+  max-height: 0;
+  overflow-x: scroll;
+  overflow-y: scroll;
+  min-width: 100%;
+  transition: max-height 0.2s ease-out;
+  background-color: #f1f1f1;
+}
+</style>
+
+    <script>
+       function copy_code_1700249507003_833() {
+            let code = `def f() -> None:
+    """ dummy function"""
+    pass`;
+            navigator.clipboard.writeText(code);
+       }
+    </script>
+    <button class="collapsible_header" id="btn_1700249507003_833_11" >Corresponding python decls (stub)</button>
+    <div class="collapsible_content" id="content_1700249507003_833_11">
+        <div>
+                <button onclick="copy_code_1700249507003_833()" align="right">copy &#x270d;</button>
+        </div>
+        <style>pre { line-height: 125%; }
+td.linenos .normal { color: inherit; background-color: transparent; padding-left: 5px; padding-right: 5px; }
+span.linenos { color: inherit; background-color: transparent; padding-left: 5px; padding-right: 5px; }
+td.linenos .special { color: #000000; background-color: #ffffc0; padding-left: 5px; padding-right: 5px; }
+span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 5px; padding-right: 5px; }
+.highlight .hll { background-color: #3c3836 }
+.highlight { background: #fbf1c7; }
+.highlight .c { color: #928374; font-style: italic } /* Comment */
+.highlight .err { color: #fbf1c7; background-color: #9d0006 } /* Error */
+.highlight .k { color: #9d0006 } /* Keyword */
+.highlight .ch { color: #928374; font-style: italic } /* Comment.Hashbang */
+.highlight .cm { color: #928374; font-style: italic } /* Comment.Multiline */
+.highlight .c-PreProc { color: #427b58; font-style: italic } /* Comment.PreProc */
+.highlight .cp { color: #928374; font-style: italic } /* Comment.Preproc */
+.highlight .cpf { color: #928374; font-style: italic } /* Comment.PreprocFile */
+.highlight .c1 { color: #928374; font-style: italic } /* Comment.Single */
+.highlight .cs { color: #3c3836; font-weight: bold; font-style: italic } /* Comment.Special */
+.highlight .gd { color: #fbf1c7; background-color: #9d0006 } /* Generic.Deleted */
+.highlight .ge { font-style: italic } /* Generic.Emph */
+.highlight .gr { color: #9d0006 } /* Generic.Error */
+.highlight .gh { color: #3c3836; font-weight: bold } /* Generic.Heading */
+.highlight .gi { color: #fbf1c7; background-color: #79740e } /* Generic.Inserted */
+.highlight .go { color: #32302f } /* Generic.Output */
+.highlight .gp { color: #7c6f64 } /* Generic.Prompt */
+.highlight .gs { font-weight: bold } /* Generic.Strong */
+.highlight .gu { color: #3c3836; text-decoration: underline } /* Generic.Subheading */
+.highlight .gt { color: #9d0006 } /* Generic.Traceback */
+.highlight .kc { color: #9d0006 } /* Keyword.Constant */
+.highlight .kd { color: #9d0006 } /* Keyword.Declaration */
+.highlight .kn { color: #9d0006 } /* Keyword.Namespace */
+.highlight .kp { color: #9d0006 } /* Keyword.Pseudo */
+.highlight .kr { color: #9d0006 } /* Keyword.Reserved */
+.highlight .kt { color: #9d0006 } /* Keyword.Type */
+.highlight .m { color: #8f3f71 } /* Literal.Number */
+.highlight .s { color: #79740e } /* Literal.String */
+.highlight .na { color: #b57614 } /* Name.Attribute */
+.highlight .nb { color: #af3a03 } /* Name.Builtin */
+.highlight .nc { color: #427b58 } /* Name.Class */
+.highlight .no { color: #8f3f71 } /* Name.Constant */
+.highlight .nd { color: #9d0006 } /* Name.Decorator */
+.highlight .ne { color: #9d0006 } /* Name.Exception */
+.highlight .nf { color: #427b58 } /* Name.Function */
+.highlight .nn { color: #427b58 } /* Name.Namespace */
+.highlight .nt { color: #427b58 } /* Name.Tag */
+.highlight .nv { color: #076678 } /* Name.Variable */
+.highlight .ow { color: #9d0006 } /* Operator.Word */
+.highlight .mb { color: #8f3f71 } /* Literal.Number.Bin */
+.highlight .mf { color: #8f3f71 } /* Literal.Number.Float */
+.highlight .mh { color: #8f3f71 } /* Literal.Number.Hex */
+.highlight .mi { color: #8f3f71 } /* Literal.Number.Integer */
+.highlight .mo { color: #8f3f71 } /* Literal.Number.Oct */
+.highlight .sa { color: #79740e } /* Literal.String.Affix */
+.highlight .sb { color: #79740e } /* Literal.String.Backtick */
+.highlight .sc { color: #79740e } /* Literal.String.Char */
+.highlight .dl { color: #79740e } /* Literal.String.Delimiter */
+.highlight .sd { color: #79740e } /* Literal.String.Doc */
+.highlight .s2 { color: #79740e } /* Literal.String.Double */
+.highlight .se { color: #af3a03 } /* Literal.String.Escape */
+.highlight .sh { color: #79740e } /* Literal.String.Heredoc */
+.highlight .si { color: #79740e } /* Literal.String.Interpol */
+.highlight .sx { color: #79740e } /* Literal.String.Other */
+.highlight .sr { color: #79740e } /* Literal.String.Regex */
+.highlight .s1 { color: #79740e } /* Literal.String.Single */
+.highlight .ss { color: #79740e } /* Literal.String.Symbol */
+.highlight .bp { color: #af3a03 } /* Name.Builtin.Pseudo */
+.highlight .fm { color: #427b58 } /* Name.Function.Magic */
+.highlight .vc { color: #076678 } /* Name.Variable.Class */
+.highlight .vg { color: #076678 } /* Name.Variable.Global */
+.highlight .vi { color: #076678 } /* Name.Variable.Instance */
+.highlight .vm { color: #076678 } /* Name.Variable.Magic */
+.highlight .il { color: #8f3f71 } /* Literal.Number.Integer.Long */</style> <div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">f</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot; dummy function&quot;&quot;&quot;</span>
+    <span class="k">pass</span>
+</pre></div>
+
+    </div>
+    
+    <script>
+    var button = document.getElementById("btn_1700249507003_833_11");
+    button.addEventListener("click", function() {
+        this.classList.toggle("collapsible_header_opened");
+        var content = document.getElementById("content_1700249507003_833_11");
+        if (content.style.maxHeight){
+          content.style.maxHeight = null;
+        } else {
+          content.style.maxHeight = "20em";
+        }
+    });
+    </script>
+    
+            <script>
+            var collapsible_header = document.getElementById("btn_1700249507003_833_11");
+            collapsible_header.classList.toggle("collapsible_header_opened");
+            var collapsible_content = document.getElementById("content_1700249507003_833_11");
+            collapsible_content.style.maxHeight = "20em";
+            </script>
+            
+            <br/>
+        </div>
+    <br/>
+<style>
+.collapsible_header {
+  background-color: #AAAAAA;
+  color: white;
+  cursor: pointer;
+  padding: 3px;
+  width: 100%;
+  border: none;
+  text-align: left;
+  outline: none;
+  font-style: italic;
+}
+
+.collapsible_header_opened {
+  background-color: #555;
+}
+
+.collapsible_header:hover {
+  background-color: #AAAAFF;
+}
+
+.collapsible_header:after {
+  content: '\002B';
+  color: white;
+  font-weight: bold;
+  float: right;
+  margin-left: 5px;
+}
+
+.collapsible_header_opened:after {
+  content: "\2212";
+}
+
+.collapsible_content {
+  padding: 0 18px;
+  max-height: 0;
+  overflow-x: scroll;
+  overflow-y: scroll;
+  min-width: 100%;
+  transition: max-height 0.2s ease-out;
+  background-color: #f1f1f1;
+}
+</style>
+
+    <script>
+       function copy_code_1700249507002_977() {
+            let code = `m.def("f",
+    f, "dummy function");
+`;
+            navigator.clipboard.writeText(code);
+       }
+    </script>
+    <button class="collapsible_header" id="btn_1700249507002_977_8" >pybind11 C++ binding code</button>
+    <div class="collapsible_content" id="content_1700249507002_977_8">
+        <div>
+                <button onclick="copy_code_1700249507002_977()" align="right">copy &#x270d;</button>
+        </div>
+        <style>pre { line-height: 125%; }
+td.linenos .normal { color: inherit; background-color: transparent; padding-left: 5px; padding-right: 5px; }
+span.linenos { color: inherit; background-color: transparent; padding-left: 5px; padding-right: 5px; }
+td.linenos .special { color: #000000; background-color: #ffffc0; padding-left: 5px; padding-right: 5px; }
+span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 5px; padding-right: 5px; }
+.highlight .hll { background-color: #3c3836 }
+.highlight { background: #fbf1c7; }
+.highlight .c { color: #928374; font-style: italic } /* Comment */
+.highlight .err { color: #fbf1c7; background-color: #9d0006 } /* Error */
+.highlight .k { color: #9d0006 } /* Keyword */
+.highlight .ch { color: #928374; font-style: italic } /* Comment.Hashbang */
+.highlight .cm { color: #928374; font-style: italic } /* Comment.Multiline */
+.highlight .c-PreProc { color: #427b58; font-style: italic } /* Comment.PreProc */
+.highlight .cp { color: #928374; font-style: italic } /* Comment.Preproc */
+.highlight .cpf { color: #928374; font-style: italic } /* Comment.PreprocFile */
+.highlight .c1 { color: #928374; font-style: italic } /* Comment.Single */
+.highlight .cs { color: #3c3836; font-weight: bold; font-style: italic } /* Comment.Special */
+.highlight .gd { color: #fbf1c7; background-color: #9d0006 } /* Generic.Deleted */
+.highlight .ge { font-style: italic } /* Generic.Emph */
+.highlight .gr { color: #9d0006 } /* Generic.Error */
+.highlight .gh { color: #3c3836; font-weight: bold } /* Generic.Heading */
+.highlight .gi { color: #fbf1c7; background-color: #79740e } /* Generic.Inserted */
+.highlight .go { color: #32302f } /* Generic.Output */
+.highlight .gp { color: #7c6f64 } /* Generic.Prompt */
+.highlight .gs { font-weight: bold } /* Generic.Strong */
+.highlight .gu { color: #3c3836; text-decoration: underline } /* Generic.Subheading */
+.highlight .gt { color: #9d0006 } /* Generic.Traceback */
+.highlight .kc { color: #9d0006 } /* Keyword.Constant */
+.highlight .kd { color: #9d0006 } /* Keyword.Declaration */
+.highlight .kn { color: #9d0006 } /* Keyword.Namespace */
+.highlight .kp { color: #9d0006 } /* Keyword.Pseudo */
+.highlight .kr { color: #9d0006 } /* Keyword.Reserved */
+.highlight .kt { color: #9d0006 } /* Keyword.Type */
+.highlight .m { color: #8f3f71 } /* Literal.Number */
+.highlight .s { color: #79740e } /* Literal.String */
+.highlight .na { color: #b57614 } /* Name.Attribute */
+.highlight .nb { color: #af3a03 } /* Name.Builtin */
+.highlight .nc { color: #427b58 } /* Name.Class */
+.highlight .no { color: #8f3f71 } /* Name.Constant */
+.highlight .nd { color: #9d0006 } /* Name.Decorator */
+.highlight .ne { color: #9d0006 } /* Name.Exception */
+.highlight .nf { color: #427b58 } /* Name.Function */
+.highlight .nn { color: #427b58 } /* Name.Namespace */
+.highlight .nt { color: #427b58 } /* Name.Tag */
+.highlight .nv { color: #076678 } /* Name.Variable */
+.highlight .ow { color: #9d0006 } /* Operator.Word */
+.highlight .mb { color: #8f3f71 } /* Literal.Number.Bin */
+.highlight .mf { color: #8f3f71 } /* Literal.Number.Float */
+.highlight .mh { color: #8f3f71 } /* Literal.Number.Hex */
+.highlight .mi { color: #8f3f71 } /* Literal.Number.Integer */
+.highlight .mo { color: #8f3f71 } /* Literal.Number.Oct */
+.highlight .sa { color: #79740e } /* Literal.String.Affix */
+.highlight .sb { color: #79740e } /* Literal.String.Backtick */
+.highlight .sc { color: #79740e } /* Literal.String.Char */
+.highlight .dl { color: #79740e } /* Literal.String.Delimiter */
+.highlight .sd { color: #79740e } /* Literal.String.Doc */
+.highlight .s2 { color: #79740e } /* Literal.String.Double */
+.highlight .se { color: #af3a03 } /* Literal.String.Escape */
+.highlight .sh { color: #79740e } /* Literal.String.Heredoc */
+.highlight .si { color: #79740e } /* Literal.String.Interpol */
+.highlight .sx { color: #79740e } /* Literal.String.Other */
+.highlight .sr { color: #79740e } /* Literal.String.Regex */
+.highlight .s1 { color: #79740e } /* Literal.String.Single */
+.highlight .ss { color: #79740e } /* Literal.String.Symbol */
+.highlight .bp { color: #af3a03 } /* Name.Builtin.Pseudo */
+.highlight .fm { color: #427b58 } /* Name.Function.Magic */
+.highlight .vc { color: #076678 } /* Name.Variable.Class */
+.highlight .vg { color: #076678 } /* Name.Variable.Global */
+.highlight .vi { color: #076678 } /* Name.Variable.Instance */
+.highlight .vm { color: #076678 } /* Name.Variable.Magic */
+.highlight .il { color: #8f3f71 } /* Literal.Number.Integer.Long */</style> <div class="highlight"><pre><span></span><span class="n">m</span><span class="p">.</span><span class="n">def</span><span class="p">(</span><span class="s">&quot;f&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="n">f</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;dummy function&quot;</span><span class="p">);</span>
+</pre></div>
+
+    </div>
+    
+    <script>
+    var button = document.getElementById("btn_1700249507002_977_8");
+    button.addEventListener("click", function() {
+        this.classList.toggle("collapsible_header_opened");
+        var content = document.getElementById("content_1700249507002_977_8");
+        if (content.style.maxHeight){
+          content.style.maxHeight = null;
+        } else {
+          content.style.maxHeight = "20em";
+        }
+    });
+    </script>
+    
+            <script>
+            var collapsible_header = document.getElementById("btn_1700249507002_977_8");
+            collapsible_header.classList.toggle("collapsible_header_opened");
+            var collapsible_content = document.getElementById("content_1700249507002_977_8");
+            collapsible_content.style.maxHeight = "20em";
+            </script>
+            </div></div>
+</div>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./."
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer">
+                  <!-- Previous / next buttons -->
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="01_05_10_install.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Local installation</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="example_bindings/DaftLib/Readme.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Generate binding files for a library</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#generate-bindings-for-functions">Generate bindings for functions</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#binding-a-simple-class-or-struct">Binding a simple class or struct</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#generator-options">Generator options</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#about-glue-code">About glue code</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#usage-inside-a-notebook">Usage inside a notebook</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Pascal Thomet
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  <p class="copyright">
+    
+      © Copyright 2022.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="_static/scripts/bootstrap.js?digest=365ca57ee442770a23c6"></script>
+<script src="_static/scripts/pydata-sphinx-theme.js?digest=365ca57ee442770a23c6"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

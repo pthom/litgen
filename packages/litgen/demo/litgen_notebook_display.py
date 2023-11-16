@@ -6,6 +6,8 @@ from codemanip.html_code_viewer.html_code_viewer import (
     CodeLanguage,
     collapsible_code_and_title,
     collapsible_code_and_title_two_columns,
+    show_cpp_code as show_cpp_code,  # noqa
+    show_python_code as show_python_code,  # noqa
 )
 
 import litgen

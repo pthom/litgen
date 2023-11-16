@@ -16,6 +16,7 @@ from litgen.litgen_generator import (
     generate_code,
     generate_code_for_file,
 )
+from codemanip.code_replacements import RegexReplacement, RegexReplacementList
 
 __all__ = [
     # Main API
@@ -35,4 +36,7 @@ __all__ = [
     "standard_value_replacements",
     "opencv_replacements",
     "standard_comment_replacements",
+    # Replacement helpers
+    "RegexReplacement",
+    "RegexReplacementList",
 ]

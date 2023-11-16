@@ -1254,20 +1254,23 @@ class AdaptedFunction(AdaptedElement):
 
         if matching_template_spec is None:
             self.cpp_element().emit_warning(
-                "Ignoring template function. You might need to set LitgenOptions.fn_template_options",
+                f"Ignoring template function {self.cpp_element().function_name}. You might need to set LitgenOptions.fn_template_options",
                 WarningType.LitgenTemplateFunctionIgnore,
             )
             return []
 
         if not self._tpl_is_one_param_template() and len(matching_template_spec.cpp_types_list) > 0:
             self.cpp_element().emit_warning(
-                "Only one parameters template functions are supported", WarningType.LitgenTemplateFunctionMultipleIgnore
+                f"Only one parameters template functions are supported ({self.cpp_element().function_name})",
+                WarningType.LitgenTemplateFunctionMultipleIgnore,
             )
             return []
 
         new_functions: list[AdaptedFunction] = []
         for cpp_type in matching_template_spec.cpp_types_list:
             new_function = self._tpl_instantiate_template_for_type(cpp_type)
+            if not matching_template_spec.add_suffix_to_function_name:
+                new_function.is_overloaded = True
             new_functions.append(new_function)
         return new_functions
 

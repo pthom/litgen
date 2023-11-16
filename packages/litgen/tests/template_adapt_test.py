@@ -43,7 +43,7 @@ def test_specialize_or_exclude_tpl_type():
     assert options.class_template_options.specialized_type_python_name(cpp_type, options.type_replacements) is None
 
 
-def test_exclude_tpl_from_code():
+def test_class_exclude_unhandled_instantiations_from_code():
     options = litgen.LitgenOptions()
     options.class_template_options.add_specialization("^MyPair$", ["int"], [])
     options.srcmlcpp_options.ignored_warning_parts.append("Excluding template type MyPair<double>")
@@ -109,7 +109,7 @@ def test_exclude_tpl_from_code():
     # print(generated_code.pydef_code)
 
 
-def test_tpl_naming_with_replacements():
+def test_tpl_class_naming_with_replacements():
     options = litgen.LitgenOptions()
     options.type_replacements.add_last_replacement(r"ImGui([A-Z][a-zA-Z0-9]*)", r"\1")
 
@@ -161,14 +161,12 @@ def test_tpl_naming_with_replacements():
 
 def test_tpl_function_with_suffix():
     options = litgen.LitgenOptions()
-    options.fn_template_options.add_specialization(
-        "add", ["int"], add_suffix_to_function_name=True, cpp_synonyms_list_str=[]
-    )
+    options.fn_template_options.add_specialization("add", ["int"], add_suffix_to_function_name=True)
     code = """
     template<typename T> T add(T a, T b);
     """
     generated_code = litgen.generate_code(options, code)
-    print(generated_code.stub_code)
+    # print(generated_code.stub_code)
     code_utils.assert_are_codes_equal(
         generated_code.stub_code,
         """
@@ -190,7 +188,54 @@ def test_tpl_function_with_suffix():
     )
 
 
-def test_tpl_with_pointer():
+def test_tpl_function_suffix_with_ptr():
+    code = """
+    template<typename T> T f();
+    """
+    options = litgen.LitgenOptions()
+    options.fn_template_options.add_specialization(r"^f$", ["int *"], add_suffix_to_function_name=True)
+    generated_code = litgen.generate_code(options, code)
+    # print(generated_code.stub_code)
+    code_utils.assert_are_codes_equal(
+        generated_code.stub_code,
+        """
+        #  ------------------------------------------------------------------------
+        #      <template specializations for function f>
+        def f_int_ptr() -> int:
+            pass
+        #      </template specializations for function f>
+        #  ------------------------------------------------------------------------
+        """,
+    )
+
+
+def test_tpl_function_overload():
+    code = """
+    template<typename T> T MaxValue(const std::vector<T>& values);
+    """
+    options = litgen.LitgenOptions()
+    options.fn_template_options.add_specialization(r"^MaxValue$", ["int", "double"], add_suffix_to_function_name=False)
+    generated_code = litgen.generate_code(options, code)
+    code_utils.assert_are_codes_equal(
+        generated_code.stub_code,
+        """
+        #  ------------------------------------------------------------------------
+        #      <template specializations for function MaxValue>
+        @overload
+        def max_value(values: List[int]) -> int:
+            pass
+
+
+        @overload
+        def max_value(values: List[float]) -> float:
+            pass
+        #      </template specializations for function MaxValue>
+        #  ------------------------------------------------------------------------
+        """,
+    )
+
+
+def test_tpl_class_with_pointer():
     options = litgen.LitgenOptions()
     options.class_template_options.add_specialization("ImVector", ["int*"], [])
     code = """
@@ -222,7 +267,7 @@ def test_tpl_with_pointer():
     )
 
 
-def test_tpl_with_synonyms():
+def test_tpl_class_with_synonyms():
     options = litgen.LitgenOptions()
     options.class_template_options.add_specialization(
         name_regex="MyData", cpp_types_list_str=["int"], cpp_synonyms_list_str=["MyInt=int"]

@@ -2,32 +2,30 @@
 # Learn more at https://jupyterbook.org/customize/toc.html
 
 format: jb-book
-root: 0_intro
+root: 00_intro
 
 
 parts:
   - caption: Basics
     chapters:
-      - file: 1_05_00_install_or_online
+      - file: 01_05_00_install_or_online
         sections:
-          - file: 1_05_05_online
-          - file: 1_05_10_install
-      - file: 1_10_00_first_steps
+          - file: 01_05_05_online
+          - file: 01_05_10_install
+      - file: 01_10_00_first_steps
       - file: example_bindings/DaftLib/Readme.md
-      - file: 1_15_00_cmake_helpers
-      #- file: 1_15_00_generate_binding_files
+      - file: 01_15_00_cmake_helpers
 
   - caption: Advanced Topics
     chapters:
-     - file: 2_05_00_headers
-     - file: 3_05_00_code_layout
-     - file: 4_05_00_functions
-
-#      - file: 2_classes
-##        sections:
-##          - file: 1_05_05_first_steps_pybind_and_stubs
-##          - file: 1_05_10_first_steps_function
-
-#  - caption: Build systems
-#    chapters:
-#      - file: 3_cmake_helper
+     - file: 02_05_00_headers
+     - file: 03_05_00_code_layout
+     - file: 04_05_00_names_translation
+     - file: 05_05_00_functions
+     - file: 06_05_00_classes
+     - file: 07_05_00_templates
+     - file: 07_05_00_enums
+     - file: 08_05_00_namespaces
+     - file: 09_05_00_preprocessor
+     - file: 10_05_00_ignore_warnings
+     - file: 11_05_00_post_processing

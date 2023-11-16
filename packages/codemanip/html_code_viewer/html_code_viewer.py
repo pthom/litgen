@@ -8,6 +8,7 @@ from pygments import highlight
 from pygments.formatters import HtmlFormatter
 from pygments.lexer import Lexer
 from pygments.lexers import CppLexer, Python3Lexer
+from IPython.core.display import HTML  # type: ignore
 
 
 HtmlCode = str
@@ -215,3 +216,19 @@ def collapsible_code_and_title_two_columns(
     """
 
     return html
+
+
+def show_cpp_code(code: str, max_visible_lines: Optional[int] = None, initially_opened: bool = True) -> HtmlCode:
+    from IPython.display import display  # type: ignore
+
+    c = CodeAndTitle(CodeLanguage.Cpp, code, "")
+    r = collapsible_code_and_title(c, max_visible_lines=max_visible_lines, initially_opened=initially_opened)
+    display(HTML(r))
+
+
+def show_python_code(code: str, max_visible_lines: Optional[int] = None, initially_opened: bool = True) -> HtmlCode:
+    from IPython.display import display  # type: ignore
+
+    c = CodeAndTitle(CodeLanguage.Python, code, "")
+    r = collapsible_code_and_title(c, max_visible_lines=max_visible_lines, initially_opened=initially_opened)
+    display(HTML(r))

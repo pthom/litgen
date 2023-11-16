@@ -725,10 +725,10 @@ class AdaptedClass(AdaptedElement):
             return is_api
 
     def _cp_shall_create_deep_copy(self) -> bool:
-        return self._cp_shall_create_copy_impl(self.options.class_deep_copy__regex)
+        return self._cp_shall_create_copy_impl("deep_copy")
 
     def _cp_shall_create_copy(self) -> bool:
-        return self._cp_shall_create_copy_impl(self.options.class_copy__regex)
+        return self._cp_shall_create_copy_impl("copy")
 
     def _cp_stub_comment(self) -> str:
         if not self.options.class_copy_add_info_in_stub:

@@ -107,3 +107,36 @@ enum Foo
             .value("e", Foo_e, "");
     """,
     )
+
+
+def test_enum_class():
+    cpp_code = """
+        enum class Foo
+        {
+            A,
+            B,
+            C = MY_VALUE,
+            D = A | B + C,
+            E = 4,
+            F
+        };
+    """
+
+    import litgen
+
+    options = litgen.LitgenOptions()
+    options.srcmlcpp_options.named_number_macros = {"MY_VALUE": 256}
+    generated_code = litgen.generate_code(options, cpp_code)
+    # print(generated_code.stub_code)
+    code_utils.assert_are_codes_equal(
+        generated_code.stub_code,
+        """
+        class Foo(enum.Enum):
+            a = enum.auto() # (= 0)
+            b = enum.auto() # (= 1)
+            c = enum.auto() # (= 256)
+            d = enum.auto() # (= A | B + C)
+            e = enum.auto() # (= 4)
+            f = enum.auto() # (= 5)
+        """,
+    )

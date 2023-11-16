@@ -38,7 +38,9 @@ class CppTypeSynonym:
     synonym_target: str
 
 
-def _make_cpp_type_synonym_list(synomym_strs: list[str]) -> list[CppTypeSynonym]:
+def _make_cpp_type_synonym_list(synomym_strs: list[str] | None) -> list[CppTypeSynonym]:
+    if synomym_strs is None:
+        return []
     cpp_synonyms_list: list[CppTypeSynonym] = []
     for cpp_synonyms_str in synomym_strs:
         items = cpp_synonyms_str.split("=")
@@ -193,12 +195,31 @@ class TemplateFunctionsOptions(TemplateSpecList):
         name_regex: str,  #
         cpp_types_list_str: list[str],  #
         add_suffix_to_function_name: bool,
-        cpp_synonyms_list_str: list[str],
     ) -> None:
+        """Adds a specialization for a template function.
+
+        For example, this C++ template function:
+            template<class T> T foo();
+
+        Can be specialized for int and double like this:
+            options = LitgenOptions()
+            options.fn_template_options.add_specialization(
+                name_regex=r"^foo$,
+                cpp_types_list_str=["int", "double"],
+                add_suffix_to_function_name=True)
+
+        And the generated code will be:
+            def foo_int() -> int:
+                pass
+            def foo_double() -> float:
+                pass
+
+        The suffix (_int and _double) is optional, and governed by the add_suffix_to_function_name parameter.
+        """
         super()._add_specialization(
             name_regex=name_regex,
             cpp_types_list_str=cpp_types_list_str,
-            cpp_types_synonyms=_make_cpp_type_synonym_list(cpp_synonyms_list_str),
+            cpp_types_synonyms=[],
             add_suffix_to_function_name=add_suffix_to_function_name,
         )
 
@@ -218,12 +239,17 @@ class TemplateClassOptions(TemplateSpecList):
         super().__init__()
 
     def add_specialization(
-        self, name_regex: str, cpp_types_list_str: list[str], cpp_synonyms_list_str: list[str]
+        self, name_regex: str, cpp_types_list_str: list[str], cpp_synonyms_list_str: list[str] | None = None
     ) -> None:
-        """
-        Given the C++ code:
-            template<typename T> struct MyData { T data; };
+        """Adds specializations for a template class:
+             - name_regex is a regex that should match the name of the template class.
+             - cpp_types_list_str is a list of C++ types for which a specialization will be emitted.
+             - cpp_synonyms_list_str is a list of C++ type synonyms for which a python synonym should be emitted, e.g.
+                cpp_synonyms_list_str=["MyInt=int", "MyDouble=double"]
 
+        For example, given the C++ code:
+            template<typename T> struct MyData { T data; };
+            void Foo(MyData<MyInt> xs);
         And the options:
             options.class_template_options.add_specialization(
                 name_regex="MyData",
@@ -231,13 +257,17 @@ class TemplateClassOptions(TemplateSpecList):
                 cpp_synonyms_list_str=["MyInt=int"]
             )
 
-        Then, these classes and synonyms will be emitted:
-
+        Then, these python classes and synonyms will be emitted:
             class MyData_int:  # Python specialization for MyData<int>
                 data: int
                 def __init__(self, data: int = int()) -> None:
                     pass
             MyData_MyInt = MyData_int
+
+        And the python signature of Foo will be:
+            def foo(xs: MyData_MyInt) -> None:
+                pass
+
         """
         super()._add_specialization(
             name_regex=name_regex,

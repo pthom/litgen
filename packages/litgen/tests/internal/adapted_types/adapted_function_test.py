@@ -89,7 +89,7 @@ def test_implot_easy() -> None:
     code_utils.assert_are_codes_equal(generated_code, expected_code)
 
 
-def test_return_value_policy() -> None:
+def test_return_value_policy_custom() -> None:
     options = LitgenOptions()
     code = """
         // Returns a widget
@@ -104,6 +104,27 @@ def test_return_value_policy() -> None:
             pybind11::return_value_policy::reference);
         """
     code_utils.assert_are_codes_equal(generated_code, expected_code)
+
+
+def test_return_policy_regex() -> None:
+    cpp_code = """
+    Widget * MakeWidget();
+    Foo& MakeFoo();
+    """
+    options = litgen.LitgenOptions()
+    options.fn_return_force_policy_reference_for_pointers__regex = r"^Make"
+    options.fn_return_force_policy_reference_for_references__regex = r"^Make"
+    generated_code = litgen.generate_code(options, cpp_code)
+    code_utils.assert_are_codes_equal(
+        generated_code.pydef_code,
+        """
+        m.def("make_widget",
+            MakeWidget, pybind11::return_value_policy::reference);
+
+        m.def("make_foo",
+            MakeFoo, pybind11::return_value_policy::reference);
+        """,
+    )
 
 
 def test_implot_one_buffer() -> None:
@@ -315,7 +336,7 @@ def test_py_none_param():
     )
 
 
-def test_vectorization():
+def test_vectorization_namespace():
     code = """
     namespace MathFunctions
     {
@@ -373,9 +394,7 @@ def test_templated_function():
         };
         """
     options = litgen.LitgenOptions()
-    options.fn_template_options.add_specialization(
-        r"SumVector", ["int"], add_suffix_to_function_name=False, cpp_synonyms_list_str=[]
-    )
+    options.fn_template_options.add_specialization(r"SumVector", ["int"], add_suffix_to_function_name=False)
     options.fn_params_replace_buffer_by_array__regex = r".*"
 
     generated_code = litgen.generate_code(options, code)
@@ -386,6 +405,7 @@ def test_templated_function():
         class Foo:
             #  ------------------------------------------------------------------------
             #      <template specializations for function SumVector>
+            @overload
             def sum_vector(self, xs: List[int], other_values: List[int]) -> int:
                 pass
             #      </template specializations for function SumVector>
@@ -422,10 +442,9 @@ def test_templated_function_with_rename():
     code = """template<class T> T foo();"""
     options = LitgenOptions()
     options.fn_template_options.add_specialization(
-        name_regex=r".*",
+        name_regex=r"^foo$",
         cpp_types_list_str=["int", "double"],
         add_suffix_to_function_name=True,
-        cpp_synonyms_list_str=[],
     )
     generated_code = litgen.generate_code(options, code)
     code_utils.assert_are_codes_equal(
@@ -516,5 +535,52 @@ def test_qualified_param_types_with_adapted_params():
                     f_adapt_fixed_size_c_arrays(s_0);
                 },     py::arg("s_0"));
         } // </namespace Ns>
+        """,
+    )
+
+
+def test_adapted_function_api():
+    options = litgen.LitgenOptions()
+    options.srcmlcpp_options.functions_api_prefixes = "MY_API"
+    options.fn_exclude_non_api = True
+
+    code = """
+        MY_API int foo();
+        void bar();
+    """
+    generated_code = litgen.generate_code(options, code)
+    code_utils.assert_are_codes_equal(
+        generated_code.stub_code,
+        """
+        def foo() -> int:
+            pass
+        """,
+    )
+
+    options.fn_exclude_non_api = False
+    options.fn_non_api_comment = "(This API is private)"
+    generated_code = litgen.generate_code(options, code)
+    # print(generated_code.stub_code)
+    code_utils.assert_are_codes_equal(
+        generated_code.stub_code,
+        '''
+        def foo() -> int:
+            pass
+        def bar() -> None:
+            """((This API is private))"""
+            pass
+        ''',
+    )
+
+    options.fn_non_api_comment = ""
+    generated_code = litgen.generate_code(options, code)
+    # print(generated_code.stub_code)
+    code_utils.assert_are_codes_equal(
+        generated_code.stub_code,
+        """
+        def foo() -> int:
+            pass
+        def bar() -> None:
+            pass
         """,
     )

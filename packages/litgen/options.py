@@ -72,6 +72,8 @@ class LitgenOptions:
     ################################################################################
     #    <names translation from C++ to python>
     ################################################################################
+    # Convert variables, functions and namespaces names to snake_case (class, structs, and enums names are always preserved)
+    python_convert_to_snake_case: bool = True
     # List of code replacements when going from C++ to Python
     # Notes:
     # - by default, type_replacements is prefilled with standard_type_replacements()
@@ -88,8 +90,6 @@ class LitgenOptions:
     value_replacements: RegexReplacementList  # = cpp_to_python.standard_value_replacements() by default
     comments_replacements: RegexReplacementList  # = cpp_to_python.standard_comment_replacements() by default
     macro_name_replacements: RegexReplacementList  # = RegexReplacementList() by default (i.e. empty)
-    # Convert variables, functions and namespaces names to snake_case (class, structs, and enums names are always preserved)
-    python_convert_to_snake_case: bool = True
 
     ################################################################################
     #    <functions and method adaptations>

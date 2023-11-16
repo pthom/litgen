@@ -1,0 +1,1345 @@
+
+
+<!DOCTYPE html>
+
+
+<html lang="en" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Use litgen online &#8212; litgen, the Literate Generator</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "light";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="_static/styles/theme.css?digest=365ca57ee442770a23c6" rel="stylesheet" />
+<link href="_static/styles/bootstrap.css?digest=365ca57ee442770a23c6" rel="stylesheet" />
+<link href="_static/styles/pydata-sphinx-theme.css?digest=365ca57ee442770a23c6" rel="stylesheet" />
+
+  
+  <link href="_static/vendor/fontawesome/6.1.2/css/all.min.css?digest=365ca57ee442770a23c6" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.1.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.1.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.1.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+    <link rel="stylesheet" href="_static/styles/sphinx-book-theme.css?digest=14f4ca6b54d191a8c7657f6c759bf11a5fb86285" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="_static/togglebutton.css" />
+    <link rel="stylesheet" type="text/css" href="_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+    <link rel="stylesheet" type="text/css" href="_static/sphinx-thebe.css" />
+    <link rel="stylesheet" type="text/css" href="_static/design-style.4045f2051d55cab465a707391d5b2007.min.css" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=365ca57ee442770a23c6" />
+<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=365ca57ee442770a23c6" />
+  <script src="_static/vendor/fontawesome/6.1.2/js/all.min.js?digest=365ca57ee442770a23c6"></script>
+
+    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/clipboard.min.js"></script>
+    <script src="_static/copybutton.js"></script>
+    <script src="_static/scripts/sphinx-book-theme.js?digest=5a5c038af52cf7bc1a1ec88eea08e6366ee68824"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="_static/togglebutton.js"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="_static/design-tabs.js"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"
+const thebe_selector = ".thebe,.cell"
+const thebe_selector_input = "pre"
+const thebe_selector_output = ".output, .cell_output"
+</script>
+    <script async="async" src="_static/sphinx-thebe.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '01_05_05_online';</script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Local installation" href="01_05_10_install.html" />
+    <link rel="prev" title="Installation or online usage" href="01_05_00_install_or_online.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <a class="skip-link" href="#main-content">Skip to main content</a>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>
+    Back to top
+  </button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__primary"
+          id="__primary"/>
+  <label class="overlay overlay-primary" for="__primary"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__secondary"
+          id="__secondary"/>
+  <label class="overlay overlay-secondary" for="__secondary"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+  
+    <nav class="bd-header navbar navbar-expand-lg bd-navbar">
+    </nav>
+  
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+  
+
+<a class="navbar-brand logo" href="00_intro.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="_static/litgen_logo.png" class="logo__image only-light" alt="litgen, the Literate Generator - Home"/>
+    <script>document.write(`<img src="_static/litgen_logo.png" class="logo__image only-dark" alt="litgen, the Literate Generator - Home"/>`);</script>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item"><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="00_intro.html">
+                    litgen
+                </a>
+            </li>
+        </ul>
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Basics</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="01_05_00_install_or_online.html">Installation or online usage</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-1"><i class="fa-solid fa-chevron-down"></i></label><ul class="current">
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">Use litgen online</a></li>
+<li class="toctree-l2"><a class="reference internal" href="01_05_10_install.html">Local installation</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="01_10_00_first_steps.html">First steps</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example_bindings/DaftLib/Readme.html">Generate binding files for a library</a></li>
+<li class="toctree-l1"><a class="reference internal" href="01_15_00_cmake_helpers.html">CMake helpers</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Advanced Topics</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="02_05_00_headers.html">Headers processing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="03_05_00_code_layout.html">Generated code layout</a></li>
+<li class="toctree-l1"><a class="reference internal" href="04_05_00_names_translation.html">Names and types translation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="05_05_00_functions.html">Functions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="06_05_00_classes.html">Classes and structs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="07_05_00_templates.html">Template classes and functions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="07_05_00_enums.html">Enums</a></li>
+<li class="toctree-l1"><a class="reference internal" href="08_05_00_namespaces.html">Namespaces</a></li>
+<li class="toctree-l1"><a class="reference internal" href="09_05_00_preprocessor.html">Preprocessor and macros</a></li>
+<li class="toctree-l1"><a class="reference internal" href="10_05_00_ignore_warnings.html">Ignore litgen warnings</a></li>
+<li class="toctree-l1"><a class="reference internal" href="11_05_00_post_processing.html">Postprocessing and preprocessing</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><label class="sidebar-toggle primary-toggle btn btn-sm" for="__primary" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</label></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-launch-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Launch interactive content">
+    <i class="fas fa-rocket"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://mybinder.org/v2/gh/pthom/srcmlcpp/main?urlpath=lab/tree/packages/litgen/litgen-book/01_05_05_online.ipynb" target="_blank"
+   class="btn btn-sm dropdown-item"
+   title="Launch onBinder"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  
+    <img src="_static/images/logo_binder.svg">
+  </span>
+<span class="btn__text-container">Binder</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/pthom/srcmlcpp" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/pthom/srcmlcpp/issues/new?title=Issue%20on%20page%20%2F01_05_05_online.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="_sources/01_05_05_online.ipynb" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.ipynb</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="theme-switch nav-link" data-mode="light"><i class="fa-solid fa-sun fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="dark"><i class="fa-solid fa-moon fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg"></i></span>
+  </button>
+`);
+</script>
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Use litgen online</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article" role="main">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="use-litgen-online">
+<h1>Use litgen online<a class="headerlink" href="#use-litgen-online" title="Permalink to this heading">#</a></h1>
+<p>This page shows an example of conversion of C++ code into C++ bindings code and python stubs.
+You can open it in an online interactive environment (<a class="reference external" href="https://mybinder.org">mybinder</a>), where you can edit the code below.</p>
+<ol class="arabic simple">
+<li><p>To launch the online tool, click on the rocket icon at the top right of this page, or use <a class="reference external" href="https://mybinder.org/v2/gh/pthom/srcmlcpp/main?urlpath=lab/tree/packages/litgen/litgen-book/1_05_05_online.ipynb">this link</a></p></li>
+<li><p>The interactive environment will open in a new tab. Wait for it to be ready</p></li>
+<li><p>Once it is launched, click on “Run Cell” to run each of the cells:</p></li>
+</ol>
+<p><img alt="Run cell" src="_images/run_cell.jpg" /></p>
+<p>You can edit the C++ code as well as the options below. The generated code will be displayed under the cell, once you clicked “Run Cell”</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">litgen</span>
+<span class="kn">from</span> <span class="nn">litgen.demo</span> <span class="kn">import</span> <span class="n">litgen_notebook_display</span>
+
+<span class="n">options</span> <span class="o">=</span> <span class="n">litgen</span><span class="o">.</span><span class="n">LitgenOptions</span><span class="p">()</span>
+
+<span class="n">options</span><span class="o">.</span><span class="n">namespace_root__regex</span> <span class="o">=</span> <span class="s2">&quot;MyNamespace&quot;</span>  <span class="c1"># This namespace will not be outputted as a python module</span>
+
+<span class="n">options</span><span class="o">.</span><span class="n">python_convert_to_snake_case</span> <span class="o">=</span> <span class="kc">True</span>  <span class="c1"># All functions, modules and namespaces names are converted to snake case</span>
+
+<span class="n">options</span><span class="o">.</span><span class="n">srcmlcpp_options</span><span class="o">.</span><span class="n">functions_api_prefixes</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="s2">&quot;^MY_API$&quot;</span>  <span class="c1"># This is an API marker in the C++ code (for shared libraries code)</span>
+<span class="p">)</span>
+<span class="n">options</span><span class="o">.</span><span class="n">fn_exclude_non_api</span> <span class="o">=</span> <span class="kc">False</span>  <span class="c1"># Also create bindings for functions that do not have the API marker</span>
+<span class="n">options</span><span class="o">.</span><span class="n">fn_non_api_comment</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>  <span class="c1"># Optional comment that can be added to non API functions</span>
+
+<span class="n">options</span><span class="o">.</span><span class="n">fn_params_replace_modifiable_immutable_by_boxed__regex</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="sa">r</span><span class="s2">&quot;.*&quot;</span>  <span class="c1"># &quot;Box&quot; immutable functions parameter when they should be modifiable</span>
+<span class="p">)</span>
+
+<span class="n">options</span><span class="o">.</span><span class="n">macro_define_include_by_name__regex</span> <span class="o">=</span> <span class="s2">&quot;^MY_&quot;</span>  <span class="c1"># Which numeric and string preprocessor do we want to export</span>
+
+<span class="n">code</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">namespace MyNamespace // This namespace is not outputed as a submodule, since it is marked as Root (see options.namespace_root__regex)</span>
+<span class="s2">{</span>
+<span class="s2">    // Multiplies a list of double by a given factor, returns updated list</span>
+<span class="s2">    std::vector&lt;double&gt; MultiplyDoubles(const std::vector&lt;double&gt;&amp; v, float k);</span>
+
+<span class="s2">    // changes the value of the bool parameter (passed by modifiable reference)</span>
+<span class="s2">    // (This function will use a BoxedBool in the python code, so that its value can be modified)</span>
+<span class="s2">    void SwitchBoolValue(bool &amp;v);</span>
+<span class="s2">    </span>
+<span class="s2">    // Standalone comment blocs are also exported</span>
+
+<span class="s2">    // This function includes an API marker which will be ignored when generating the bindings</span>
+<span class="s2">    MY_API int MySubstract(int a, int b); // eol doc is also included in bindings doc</span>
+
+<span class="s2">    namespace MyMath // This namespace is not ignored and introduces a new python module</span>
+<span class="s2">    {</span>
+<span class="s2">        // div and mul: divide or multiply float numbers</span>
+<span class="s2">        // (This comment concerns the two grouped </span>
+<span class="s2">        // functions below, and will be exported as such)</span>
+<span class="s2">        float Div(float a, float b); // Divide</span>
+<span class="s2">        float Mul(float a, float b); // Multiply</span>
+<span class="s2">    }</span>
+
+<span class="s2">    // Stores Pixel coordinates</span>
+<span class="s2">    struct Pixel</span>
+<span class="s2">    {</span>
+<span class="s2">        // Coordinates</span>
+<span class="s2">        double x = 2., y = 3.;</span>
+
+<span class="s2">        // Draw a pixel</span>
+<span class="s2">        void Draw(Image&amp; i);</span>
+
+<span class="s2">        private:</span>
+<span class="s2">        double _Norm(); // this will not be exported as it is private</span>
+<span class="s2">    };</span>
+
+<span class="s2">    // This macro value be exported, as it matches the regex macro_define_include_by_name__regex</span>
+<span class="s2">    #define MY_VALUE 123</span>
+<span class="s2">}</span>
+<span class="s2">&quot;&quot;&quot;</span>
+
+<span class="n">litgen_notebook_display</span><span class="o">.</span><span class="n">generate_and_display</span><span class="p">(</span>
+    <span class="n">options</span><span class="p">,</span> <span class="n">code</span><span class="p">,</span> <span class="n">display_original_cpp_code</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">collapse_pydef</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">max_visible_lines</span><span class="o">=</span><span class="mi">80</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html">
+<style>
+.collapsible_header {
+  background-color: #AAAAAA;
+  color: white;
+  cursor: pointer;
+  padding: 3px;
+  width: 100%;
+  border: none;
+  text-align: left;
+  outline: none;
+  font-style: italic;
+}
+
+.collapsible_header_opened {
+  background-color: #555;
+}
+
+.collapsible_header:hover {
+  background-color: #AAAAFF;
+}
+
+.collapsible_header:after {
+  content: '\002B';
+  color: white;
+  font-weight: bold;
+  float: right;
+  margin-left: 5px;
+}
+
+.collapsible_header_opened:after {
+  content: "\2212";
+}
+
+.collapsible_content {
+  padding: 0 18px;
+  max-height: 0;
+  overflow-x: scroll;
+  overflow-y: scroll;
+  min-width: 100%;
+  transition: max-height 0.2s ease-out;
+  background-color: #f1f1f1;
+}
+</style>
+
+    <script>
+       function copy_code_1700249505946_07() {
+            let code = `####################    <generated_from:BoxedTypes>    ####################
+class BoxedBool:
+    value: bool
+    def __init__(self, v: bool = False) -> None:
+        pass
+    def __repr__(self) -> str:
+        pass
+####################    </generated_from:BoxedTypes>    ####################
+
+
+
+def multiply_doubles(v: List[float], k: float) -> List[float]:
+    """ Multiplies a list of double by a given factor, returns updated list"""
+    pass
+
+def switch_bool_value(v: BoxedBool) -> None:
+    """ changes the value of the bool parameter (passed by modifiable reference)
+     (This function will use a BoxedBool in the python code, so that its value can be modified)
+    """
+    pass
+
+# Standalone comment blocs are also exported
+
+# This function includes an API marker which will be ignored when generating the bindings
+def my_substract(a: int, b: int) -> MY_API int:
+    """ eol doc is also included in bindings doc"""
+    pass
+
+
+class Pixel:
+    """ Stores Pixel coordinates"""
+    # Coordinates
+    x: float = 2.
+    # Coordinates
+    y: float = 3.
+
+    def draw(self, i: Image) -> None:
+        """ Draw a pixel"""
+        pass
+
+    def __init__(self, x: float = 2., y: float = 3.) -> None:
+        """Auto-generated default constructor with named params"""
+        pass
+
+# This macro value be exported, as it matches the regex macro_define_include_by_name__regex
+MY_VALUE = 123
+
+
+# <submodule my_math>
+class my_math:  # Proxy class that introduces typings for the *submodule* my_math
+    pass  # (This corresponds to a C++ namespace. All method are static!)
+    """This namespace is not ignored and introduces a new python module"""
+    # div and mul: divide or multiply float numbers
+    # (This comment concerns the two grouped
+    # functions below, and will be exported as such)
+    @staticmethod
+    def div(a: float, b: float) -> float:
+        """ Divide"""
+        pass
+    @staticmethod
+    def mul(a: float, b: float) -> float:
+        """ Multiply"""
+        pass
+
+# </submodule my_math>
+`;
+            navigator.clipboard.writeText(code);
+       }
+    </script>
+    <button class="collapsible_header" id="btn_1700249505946_07_2" >Corresponding python decls (stub)</button>
+    <div class="collapsible_content" id="content_1700249505946_07_2">
+        <div>
+                <button onclick="copy_code_1700249505946_07()" align="right">copy &#x270d;</button>
+        </div>
+        <style>pre { line-height: 125%; }
+td.linenos .normal { color: inherit; background-color: transparent; padding-left: 5px; padding-right: 5px; }
+span.linenos { color: inherit; background-color: transparent; padding-left: 5px; padding-right: 5px; }
+td.linenos .special { color: #000000; background-color: #ffffc0; padding-left: 5px; padding-right: 5px; }
+span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 5px; padding-right: 5px; }
+.highlight .hll { background-color: #3c3836 }
+.highlight { background: #fbf1c7; }
+.highlight .c { color: #928374; font-style: italic } /* Comment */
+.highlight .err { color: #fbf1c7; background-color: #9d0006 } /* Error */
+.highlight .k { color: #9d0006 } /* Keyword */
+.highlight .ch { color: #928374; font-style: italic } /* Comment.Hashbang */
+.highlight .cm { color: #928374; font-style: italic } /* Comment.Multiline */
+.highlight .c-PreProc { color: #427b58; font-style: italic } /* Comment.PreProc */
+.highlight .cp { color: #928374; font-style: italic } /* Comment.Preproc */
+.highlight .cpf { color: #928374; font-style: italic } /* Comment.PreprocFile */
+.highlight .c1 { color: #928374; font-style: italic } /* Comment.Single */
+.highlight .cs { color: #3c3836; font-weight: bold; font-style: italic } /* Comment.Special */
+.highlight .gd { color: #fbf1c7; background-color: #9d0006 } /* Generic.Deleted */
+.highlight .ge { font-style: italic } /* Generic.Emph */
+.highlight .gr { color: #9d0006 } /* Generic.Error */
+.highlight .gh { color: #3c3836; font-weight: bold } /* Generic.Heading */
+.highlight .gi { color: #fbf1c7; background-color: #79740e } /* Generic.Inserted */
+.highlight .go { color: #32302f } /* Generic.Output */
+.highlight .gp { color: #7c6f64 } /* Generic.Prompt */
+.highlight .gs { font-weight: bold } /* Generic.Strong */
+.highlight .gu { color: #3c3836; text-decoration: underline } /* Generic.Subheading */
+.highlight .gt { color: #9d0006 } /* Generic.Traceback */
+.highlight .kc { color: #9d0006 } /* Keyword.Constant */
+.highlight .kd { color: #9d0006 } /* Keyword.Declaration */
+.highlight .kn { color: #9d0006 } /* Keyword.Namespace */
+.highlight .kp { color: #9d0006 } /* Keyword.Pseudo */
+.highlight .kr { color: #9d0006 } /* Keyword.Reserved */
+.highlight .kt { color: #9d0006 } /* Keyword.Type */
+.highlight .m { color: #8f3f71 } /* Literal.Number */
+.highlight .s { color: #79740e } /* Literal.String */
+.highlight .na { color: #b57614 } /* Name.Attribute */
+.highlight .nb { color: #af3a03 } /* Name.Builtin */
+.highlight .nc { color: #427b58 } /* Name.Class */
+.highlight .no { color: #8f3f71 } /* Name.Constant */
+.highlight .nd { color: #9d0006 } /* Name.Decorator */
+.highlight .ne { color: #9d0006 } /* Name.Exception */
+.highlight .nf { color: #427b58 } /* Name.Function */
+.highlight .nn { color: #427b58 } /* Name.Namespace */
+.highlight .nt { color: #427b58 } /* Name.Tag */
+.highlight .nv { color: #076678 } /* Name.Variable */
+.highlight .ow { color: #9d0006 } /* Operator.Word */
+.highlight .mb { color: #8f3f71 } /* Literal.Number.Bin */
+.highlight .mf { color: #8f3f71 } /* Literal.Number.Float */
+.highlight .mh { color: #8f3f71 } /* Literal.Number.Hex */
+.highlight .mi { color: #8f3f71 } /* Literal.Number.Integer */
+.highlight .mo { color: #8f3f71 } /* Literal.Number.Oct */
+.highlight .sa { color: #79740e } /* Literal.String.Affix */
+.highlight .sb { color: #79740e } /* Literal.String.Backtick */
+.highlight .sc { color: #79740e } /* Literal.String.Char */
+.highlight .dl { color: #79740e } /* Literal.String.Delimiter */
+.highlight .sd { color: #79740e } /* Literal.String.Doc */
+.highlight .s2 { color: #79740e } /* Literal.String.Double */
+.highlight .se { color: #af3a03 } /* Literal.String.Escape */
+.highlight .sh { color: #79740e } /* Literal.String.Heredoc */
+.highlight .si { color: #79740e } /* Literal.String.Interpol */
+.highlight .sx { color: #79740e } /* Literal.String.Other */
+.highlight .sr { color: #79740e } /* Literal.String.Regex */
+.highlight .s1 { color: #79740e } /* Literal.String.Single */
+.highlight .ss { color: #79740e } /* Literal.String.Symbol */
+.highlight .bp { color: #af3a03 } /* Name.Builtin.Pseudo */
+.highlight .fm { color: #427b58 } /* Name.Function.Magic */
+.highlight .vc { color: #076678 } /* Name.Variable.Class */
+.highlight .vg { color: #076678 } /* Name.Variable.Global */
+.highlight .vi { color: #076678 } /* Name.Variable.Instance */
+.highlight .vm { color: #076678 } /* Name.Variable.Magic */
+.highlight .il { color: #8f3f71 } /* Literal.Number.Integer.Long */</style> <div class="highlight"><pre><span></span><span class="c1">####################    &lt;generated_from:BoxedTypes&gt;    ####################</span>
+<span class="k">class</span> <span class="nc">BoxedBool</span><span class="p">:</span>
+    <span class="n">value</span><span class="p">:</span> <span class="nb">bool</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">v</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">pass</span>
+    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="k">pass</span>
+<span class="c1">####################    &lt;/generated_from:BoxedTypes&gt;    ####################</span>
+
+
+
+<span class="k">def</span> <span class="nf">multiply_doubles</span><span class="p">(</span><span class="n">v</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span> <span class="n">k</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot; Multiplies a list of double by a given factor, returns updated list&quot;&quot;&quot;</span>
+    <span class="k">pass</span>
+
+<span class="k">def</span> <span class="nf">switch_bool_value</span><span class="p">(</span><span class="n">v</span><span class="p">:</span> <span class="n">BoxedBool</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot; changes the value of the bool parameter (passed by modifiable reference)</span>
+<span class="sd">     (This function will use a BoxedBool in the python code, so that its value can be modified)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">pass</span>
+
+<span class="c1"># Standalone comment blocs are also exported</span>
+
+<span class="c1"># This function includes an API marker which will be ignored when generating the bindings</span>
+<span class="k">def</span> <span class="nf">my_substract</span><span class="p">(</span><span class="n">a</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">b</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">MY_API</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot; eol doc is also included in bindings doc&quot;&quot;&quot;</span>
+    <span class="k">pass</span>
+
+
+<span class="k">class</span> <span class="nc">Pixel</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot; Stores Pixel coordinates&quot;&quot;&quot;</span>
+    <span class="c1"># Coordinates</span>
+    <span class="n">x</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">2.</span>
+    <span class="c1"># Coordinates</span>
+    <span class="n">y</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">3.</span>
+
+    <span class="k">def</span> <span class="nf">draw</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">i</span><span class="p">:</span> <span class="n">Image</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Draw a pixel&quot;&quot;&quot;</span>
+        <span class="k">pass</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">2.</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">3.</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Auto-generated default constructor with named params&quot;&quot;&quot;</span>
+        <span class="k">pass</span>
+
+<span class="c1"># This macro value be exported, as it matches the regex macro_define_include_by_name__regex</span>
+<span class="n">MY_VALUE</span> <span class="o">=</span> <span class="mi">123</span>
+
+
+<span class="c1"># &lt;submodule my_math&gt;</span>
+<span class="k">class</span> <span class="nc">my_math</span><span class="p">:</span>  <span class="c1"># Proxy class that introduces typings for the *submodule* my_math</span>
+    <span class="k">pass</span>  <span class="c1"># (This corresponds to a C++ namespace. All method are static!)</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;This namespace is not ignored and introduces a new python module&quot;&quot;&quot;</span>
+    <span class="c1"># div and mul: divide or multiply float numbers</span>
+    <span class="c1"># (This comment concerns the two grouped</span>
+    <span class="c1"># functions below, and will be exported as such)</span>
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">div</span><span class="p">(</span><span class="n">a</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">b</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Divide&quot;&quot;&quot;</span>
+        <span class="k">pass</span>
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">mul</span><span class="p">(</span><span class="n">a</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">b</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Multiply&quot;&quot;&quot;</span>
+        <span class="k">pass</span>
+
+<span class="c1"># &lt;/submodule my_math&gt;</span>
+</pre></div>
+
+    </div>
+    
+    <script>
+    var button = document.getElementById("btn_1700249505946_07_2");
+    button.addEventListener("click", function() {
+        this.classList.toggle("collapsible_header_opened");
+        var content = document.getElementById("content_1700249505946_07_2");
+        if (content.style.maxHeight){
+          content.style.maxHeight = null;
+        } else {
+          content.style.maxHeight = "80em";
+        }
+    });
+    </script>
+    
+            <script>
+            var collapsible_header = document.getElementById("btn_1700249505946_07_2");
+            collapsible_header.classList.toggle("collapsible_header_opened");
+            var collapsible_content = document.getElementById("content_1700249505946_07_2");
+            collapsible_content.style.maxHeight = "80em";
+            </script>
+            <br/>
+<style>
+.collapsible_header {
+  background-color: #AAAAAA;
+  color: white;
+  cursor: pointer;
+  padding: 3px;
+  width: 100%;
+  border: none;
+  text-align: left;
+  outline: none;
+  font-style: italic;
+}
+
+.collapsible_header_opened {
+  background-color: #555;
+}
+
+.collapsible_header:hover {
+  background-color: #AAAAFF;
+}
+
+.collapsible_header:after {
+  content: '\002B';
+  color: white;
+  font-weight: bold;
+  float: right;
+  margin-left: 5px;
+}
+
+.collapsible_header_opened:after {
+  content: "\2212";
+}
+
+.collapsible_content {
+  padding: 0 18px;
+  max-height: 0;
+  overflow-x: scroll;
+  overflow-y: scroll;
+  min-width: 100%;
+  transition: max-height 0.2s ease-out;
+  background-color: #f1f1f1;
+}
+</style>
+
+    <script>
+       function copy_code_1700249505928_8982() {
+            let code = `////////////////////    <generated_from:BoxedTypes>    ////////////////////
+auto pyClassBoxedBool =
+    py::class_<BoxedBool>
+        (m, "BoxedBool", "")
+    .def_readwrite("value", &BoxedBool::value, "")
+    .def(py::init<bool>(),
+        py::arg("v") = false)
+    .def("__repr__",
+        &BoxedBool::__repr__)
+    ;
+////////////////////    </generated_from:BoxedTypes>    ////////////////////
+
+
+m.def("multiply_doubles",
+    MyNamespace::MultiplyDoubles, 
+    py::arg("v"), py::arg("k"), 
+    "Multiplies a list of double by a given factor, returns updated list");
+
+m.def("switch_bool_value",
+    [](BoxedBool & v)
+    {
+        auto SwitchBoolValue_adapt_modifiable_immutable = [](BoxedBool & v)
+        {
+            bool & v_boxed_value = v.value;
+
+            MyNamespace::SwitchBoolValue(v_boxed_value);
+        };
+
+        SwitchBoolValue_adapt_modifiable_immutable(v);
+    }, 
+    py::arg("v"), 
+    " changes the value of the bool parameter (passed by modifiable reference)\n (This function will use a BoxedBool in the python code, so that its value can be modified)");
+
+m.def("my_substract",
+    MyNamespace::MySubstract, 
+    py::arg("a"), py::arg("b"), 
+    "eol doc is also included in bindings doc");
+
+
+auto pyClassPixel =
+    py::class_<MyNamespace::Pixel>
+        (m, "Pixel", "Stores Pixel coordinates")
+    .def(py::init<>([](
+    double x = 2., double y = 3.)
+    {
+        auto r = std::make_unique<Pixel>();
+        r->x = x;
+        r->y = y;
+        return r;
+    })
+    , py::arg("x") = 2., py::arg("y") = 3.
+    )
+    .def_readwrite("x", &Pixel::x, "Coordinates")
+    .def_readwrite("y", &Pixel::y, "Coordinates")
+    .def("draw",
+        &Pixel::Draw,
+        py::arg("i"),
+        "Draw a pixel")
+    ;
+m.attr("MY_VALUE") = 123;
+
+{ // <namespace MyMath>
+    py::module_ pyNsMyMath = m.def_submodule("my_math", "This namespace is not ignored and introduces a new python module");
+    pyNsMyMath.def("div",
+        MyNamespace::MyMath::Div,
+        py::arg("a"), py::arg("b"),
+        "Divide");
+
+    pyNsMyMath.def("mul",
+        MyNamespace::MyMath::Mul,
+        py::arg("a"), py::arg("b"),
+        "Multiply");
+} // </namespace MyMath>
+`;
+            navigator.clipboard.writeText(code);
+       }
+    </script>
+    <button class="collapsible_header" id="btn_1700249505928_8982_0" >pybind11 C++ binding code</button>
+    <div class="collapsible_content" id="content_1700249505928_8982_0">
+        <div>
+                <button onclick="copy_code_1700249505928_8982()" align="right">copy &#x270d;</button>
+        </div>
+        <style>pre { line-height: 125%; }
+td.linenos .normal { color: inherit; background-color: transparent; padding-left: 5px; padding-right: 5px; }
+span.linenos { color: inherit; background-color: transparent; padding-left: 5px; padding-right: 5px; }
+td.linenos .special { color: #000000; background-color: #ffffc0; padding-left: 5px; padding-right: 5px; }
+span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 5px; padding-right: 5px; }
+.highlight .hll { background-color: #3c3836 }
+.highlight { background: #fbf1c7; }
+.highlight .c { color: #928374; font-style: italic } /* Comment */
+.highlight .err { color: #fbf1c7; background-color: #9d0006 } /* Error */
+.highlight .k { color: #9d0006 } /* Keyword */
+.highlight .ch { color: #928374; font-style: italic } /* Comment.Hashbang */
+.highlight .cm { color: #928374; font-style: italic } /* Comment.Multiline */
+.highlight .c-PreProc { color: #427b58; font-style: italic } /* Comment.PreProc */
+.highlight .cp { color: #928374; font-style: italic } /* Comment.Preproc */
+.highlight .cpf { color: #928374; font-style: italic } /* Comment.PreprocFile */
+.highlight .c1 { color: #928374; font-style: italic } /* Comment.Single */
+.highlight .cs { color: #3c3836; font-weight: bold; font-style: italic } /* Comment.Special */
+.highlight .gd { color: #fbf1c7; background-color: #9d0006 } /* Generic.Deleted */
+.highlight .ge { font-style: italic } /* Generic.Emph */
+.highlight .gr { color: #9d0006 } /* Generic.Error */
+.highlight .gh { color: #3c3836; font-weight: bold } /* Generic.Heading */
+.highlight .gi { color: #fbf1c7; background-color: #79740e } /* Generic.Inserted */
+.highlight .go { color: #32302f } /* Generic.Output */
+.highlight .gp { color: #7c6f64 } /* Generic.Prompt */
+.highlight .gs { font-weight: bold } /* Generic.Strong */
+.highlight .gu { color: #3c3836; text-decoration: underline } /* Generic.Subheading */
+.highlight .gt { color: #9d0006 } /* Generic.Traceback */
+.highlight .kc { color: #9d0006 } /* Keyword.Constant */
+.highlight .kd { color: #9d0006 } /* Keyword.Declaration */
+.highlight .kn { color: #9d0006 } /* Keyword.Namespace */
+.highlight .kp { color: #9d0006 } /* Keyword.Pseudo */
+.highlight .kr { color: #9d0006 } /* Keyword.Reserved */
+.highlight .kt { color: #9d0006 } /* Keyword.Type */
+.highlight .m { color: #8f3f71 } /* Literal.Number */
+.highlight .s { color: #79740e } /* Literal.String */
+.highlight .na { color: #b57614 } /* Name.Attribute */
+.highlight .nb { color: #af3a03 } /* Name.Builtin */
+.highlight .nc { color: #427b58 } /* Name.Class */
+.highlight .no { color: #8f3f71 } /* Name.Constant */
+.highlight .nd { color: #9d0006 } /* Name.Decorator */
+.highlight .ne { color: #9d0006 } /* Name.Exception */
+.highlight .nf { color: #427b58 } /* Name.Function */
+.highlight .nn { color: #427b58 } /* Name.Namespace */
+.highlight .nt { color: #427b58 } /* Name.Tag */
+.highlight .nv { color: #076678 } /* Name.Variable */
+.highlight .ow { color: #9d0006 } /* Operator.Word */
+.highlight .mb { color: #8f3f71 } /* Literal.Number.Bin */
+.highlight .mf { color: #8f3f71 } /* Literal.Number.Float */
+.highlight .mh { color: #8f3f71 } /* Literal.Number.Hex */
+.highlight .mi { color: #8f3f71 } /* Literal.Number.Integer */
+.highlight .mo { color: #8f3f71 } /* Literal.Number.Oct */
+.highlight .sa { color: #79740e } /* Literal.String.Affix */
+.highlight .sb { color: #79740e } /* Literal.String.Backtick */
+.highlight .sc { color: #79740e } /* Literal.String.Char */
+.highlight .dl { color: #79740e } /* Literal.String.Delimiter */
+.highlight .sd { color: #79740e } /* Literal.String.Doc */
+.highlight .s2 { color: #79740e } /* Literal.String.Double */
+.highlight .se { color: #af3a03 } /* Literal.String.Escape */
+.highlight .sh { color: #79740e } /* Literal.String.Heredoc */
+.highlight .si { color: #79740e } /* Literal.String.Interpol */
+.highlight .sx { color: #79740e } /* Literal.String.Other */
+.highlight .sr { color: #79740e } /* Literal.String.Regex */
+.highlight .s1 { color: #79740e } /* Literal.String.Single */
+.highlight .ss { color: #79740e } /* Literal.String.Symbol */
+.highlight .bp { color: #af3a03 } /* Name.Builtin.Pseudo */
+.highlight .fm { color: #427b58 } /* Name.Function.Magic */
+.highlight .vc { color: #076678 } /* Name.Variable.Class */
+.highlight .vg { color: #076678 } /* Name.Variable.Global */
+.highlight .vi { color: #076678 } /* Name.Variable.Instance */
+.highlight .vm { color: #076678 } /* Name.Variable.Magic */
+.highlight .il { color: #8f3f71 } /* Literal.Number.Integer.Long */</style> <div class="highlight"><pre><span></span><span class="c1">////////////////////    &lt;generated_from:BoxedTypes&gt;    ////////////////////</span>
+<span class="k">auto</span><span class="w"> </span><span class="n">pyClassBoxedBool</span><span class="w"> </span><span class="o">=</span>
+<span class="w">    </span><span class="n">py</span><span class="o">::</span><span class="n">class_</span><span class="o">&lt;</span><span class="n">BoxedBool</span><span class="o">&gt;</span>
+<span class="w">        </span><span class="p">(</span><span class="n">m</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;BoxedBool&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;&quot;</span><span class="p">)</span>
+<span class="w">    </span><span class="p">.</span><span class="n">def_readwrite</span><span class="p">(</span><span class="s">&quot;value&quot;</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">BoxedBool</span><span class="o">::</span><span class="n">value</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;&quot;</span><span class="p">)</span>
+<span class="w">    </span><span class="p">.</span><span class="n">def</span><span class="p">(</span><span class="n">py</span><span class="o">::</span><span class="n">init</span><span class="o">&lt;</span><span class="kt">bool</span><span class="o">&gt;</span><span class="p">(),</span>
+<span class="w">        </span><span class="n">py</span><span class="o">::</span><span class="n">arg</span><span class="p">(</span><span class="s">&quot;v&quot;</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">)</span>
+<span class="w">    </span><span class="p">.</span><span class="n">def</span><span class="p">(</span><span class="s">&quot;__repr__&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="o">&amp;</span><span class="n">BoxedBool</span><span class="o">::</span><span class="n">__repr__</span><span class="p">)</span>
+<span class="w">    </span><span class="p">;</span>
+<span class="c1">////////////////////    &lt;/generated_from:BoxedTypes&gt;    ////////////////////</span>
+
+
+<span class="n">m</span><span class="p">.</span><span class="n">def</span><span class="p">(</span><span class="s">&quot;multiply_doubles&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="n">MyNamespace</span><span class="o">::</span><span class="n">MultiplyDoubles</span><span class="p">,</span><span class="w"> </span>
+<span class="w">    </span><span class="n">py</span><span class="o">::</span><span class="n">arg</span><span class="p">(</span><span class="s">&quot;v&quot;</span><span class="p">),</span><span class="w"> </span><span class="n">py</span><span class="o">::</span><span class="n">arg</span><span class="p">(</span><span class="s">&quot;k&quot;</span><span class="p">),</span><span class="w"> </span>
+<span class="w">    </span><span class="s">&quot;Multiplies a list of double by a given factor, returns updated list&quot;</span><span class="p">);</span>
+
+<span class="n">m</span><span class="p">.</span><span class="n">def</span><span class="p">(</span><span class="s">&quot;switch_bool_value&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="p">[](</span><span class="n">BoxedBool</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">v</span><span class="p">)</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">        </span><span class="k">auto</span><span class="w"> </span><span class="n">SwitchBoolValue_adapt_modifiable_immutable</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[](</span><span class="n">BoxedBool</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">v</span><span class="p">)</span>
+<span class="w">        </span><span class="p">{</span>
+<span class="w">            </span><span class="kt">bool</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">v_boxed_value</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">v</span><span class="p">.</span><span class="n">value</span><span class="p">;</span>
+
+<span class="w">            </span><span class="n">MyNamespace</span><span class="o">::</span><span class="n">SwitchBoolValue</span><span class="p">(</span><span class="n">v_boxed_value</span><span class="p">);</span>
+<span class="w">        </span><span class="p">};</span>
+
+<span class="w">        </span><span class="n">SwitchBoolValue_adapt_modifiable_immutable</span><span class="p">(</span><span class="n">v</span><span class="p">);</span>
+<span class="w">    </span><span class="p">},</span><span class="w"> </span>
+<span class="w">    </span><span class="n">py</span><span class="o">::</span><span class="n">arg</span><span class="p">(</span><span class="s">&quot;v&quot;</span><span class="p">),</span><span class="w"> </span>
+<span class="w">    </span><span class="s">&quot; changes the value of the bool parameter (passed by modifiable reference)</span><span class="se">\n</span><span class="s"> (This function will use a BoxedBool in the python code, so that its value can be modified)&quot;</span><span class="p">);</span>
+
+<span class="n">m</span><span class="p">.</span><span class="n">def</span><span class="p">(</span><span class="s">&quot;my_substract&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="n">MyNamespace</span><span class="o">::</span><span class="n">MySubstract</span><span class="p">,</span><span class="w"> </span>
+<span class="w">    </span><span class="n">py</span><span class="o">::</span><span class="n">arg</span><span class="p">(</span><span class="s">&quot;a&quot;</span><span class="p">),</span><span class="w"> </span><span class="n">py</span><span class="o">::</span><span class="n">arg</span><span class="p">(</span><span class="s">&quot;b&quot;</span><span class="p">),</span><span class="w"> </span>
+<span class="w">    </span><span class="s">&quot;eol doc is also included in bindings doc&quot;</span><span class="p">);</span>
+
+
+<span class="k">auto</span><span class="w"> </span><span class="n">pyClassPixel</span><span class="w"> </span><span class="o">=</span>
+<span class="w">    </span><span class="n">py</span><span class="o">::</span><span class="n">class_</span><span class="o">&lt;</span><span class="n">MyNamespace</span><span class="o">::</span><span class="n">Pixel</span><span class="o">&gt;</span>
+<span class="w">        </span><span class="p">(</span><span class="n">m</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Pixel&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Stores Pixel coordinates&quot;</span><span class="p">)</span>
+<span class="w">    </span><span class="p">.</span><span class="n">def</span><span class="p">(</span><span class="n">py</span><span class="o">::</span><span class="n">init</span><span class="o">&lt;&gt;</span><span class="p">([](</span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">x</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">2.</span><span class="p">,</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">y</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">3.</span><span class="p">)</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">        </span><span class="k">auto</span><span class="w"> </span><span class="n">r</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">make_unique</span><span class="o">&lt;</span><span class="n">Pixel</span><span class="o">&gt;</span><span class="p">();</span>
+<span class="w">        </span><span class="n">r</span><span class="o">-&gt;</span><span class="n">x</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">x</span><span class="p">;</span>
+<span class="w">        </span><span class="n">r</span><span class="o">-&gt;</span><span class="n">y</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">y</span><span class="p">;</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">r</span><span class="p">;</span>
+<span class="w">    </span><span class="p">})</span>
+<span class="w">    </span><span class="p">,</span><span class="w"> </span><span class="n">py</span><span class="o">::</span><span class="n">arg</span><span class="p">(</span><span class="s">&quot;x&quot;</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">2.</span><span class="p">,</span><span class="w"> </span><span class="n">py</span><span class="o">::</span><span class="n">arg</span><span class="p">(</span><span class="s">&quot;y&quot;</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">3.</span>
+<span class="w">    </span><span class="p">)</span>
+<span class="w">    </span><span class="p">.</span><span class="n">def_readwrite</span><span class="p">(</span><span class="s">&quot;x&quot;</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">Pixel</span><span class="o">::</span><span class="n">x</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Coordinates&quot;</span><span class="p">)</span>
+<span class="w">    </span><span class="p">.</span><span class="n">def_readwrite</span><span class="p">(</span><span class="s">&quot;y&quot;</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">Pixel</span><span class="o">::</span><span class="n">y</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Coordinates&quot;</span><span class="p">)</span>
+<span class="w">    </span><span class="p">.</span><span class="n">def</span><span class="p">(</span><span class="s">&quot;draw&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="o">&amp;</span><span class="n">Pixel</span><span class="o">::</span><span class="n">Draw</span><span class="p">,</span>
+<span class="w">        </span><span class="n">py</span><span class="o">::</span><span class="n">arg</span><span class="p">(</span><span class="s">&quot;i&quot;</span><span class="p">),</span>
+<span class="w">        </span><span class="s">&quot;Draw a pixel&quot;</span><span class="p">)</span>
+<span class="w">    </span><span class="p">;</span>
+<span class="n">m</span><span class="p">.</span><span class="n">attr</span><span class="p">(</span><span class="s">&quot;MY_VALUE&quot;</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">123</span><span class="p">;</span>
+
+<span class="p">{</span><span class="w"> </span><span class="c1">// &lt;namespace MyMath&gt;</span>
+<span class="w">    </span><span class="n">py</span><span class="o">::</span><span class="n">module_</span><span class="w"> </span><span class="n">pyNsMyMath</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">m</span><span class="p">.</span><span class="n">def_submodule</span><span class="p">(</span><span class="s">&quot;my_math&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;This namespace is not ignored and introduces a new python module&quot;</span><span class="p">);</span>
+<span class="w">    </span><span class="n">pyNsMyMath</span><span class="p">.</span><span class="n">def</span><span class="p">(</span><span class="s">&quot;div&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="n">MyNamespace</span><span class="o">::</span><span class="n">MyMath</span><span class="o">::</span><span class="n">Div</span><span class="p">,</span>
+<span class="w">        </span><span class="n">py</span><span class="o">::</span><span class="n">arg</span><span class="p">(</span><span class="s">&quot;a&quot;</span><span class="p">),</span><span class="w"> </span><span class="n">py</span><span class="o">::</span><span class="n">arg</span><span class="p">(</span><span class="s">&quot;b&quot;</span><span class="p">),</span>
+<span class="w">        </span><span class="s">&quot;Divide&quot;</span><span class="p">);</span>
+
+<span class="w">    </span><span class="n">pyNsMyMath</span><span class="p">.</span><span class="n">def</span><span class="p">(</span><span class="s">&quot;mul&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="n">MyNamespace</span><span class="o">::</span><span class="n">MyMath</span><span class="o">::</span><span class="n">Mul</span><span class="p">,</span>
+<span class="w">        </span><span class="n">py</span><span class="o">::</span><span class="n">arg</span><span class="p">(</span><span class="s">&quot;a&quot;</span><span class="p">),</span><span class="w"> </span><span class="n">py</span><span class="o">::</span><span class="n">arg</span><span class="p">(</span><span class="s">&quot;b&quot;</span><span class="p">),</span>
+<span class="w">        </span><span class="s">&quot;Multiply&quot;</span><span class="p">);</span>
+<span class="p">}</span><span class="w"> </span><span class="c1">// &lt;/namespace MyMath&gt;</span>
+</pre></div>
+
+    </div>
+    
+    <script>
+    var button = document.getElementById("btn_1700249505928_8982_0");
+    button.addEventListener("click", function() {
+        this.classList.toggle("collapsible_header_opened");
+        var content = document.getElementById("content_1700249505928_8982_0");
+        if (content.style.maxHeight){
+          content.style.maxHeight = null;
+        } else {
+          content.style.maxHeight = "80em";
+        }
+    });
+    </script>
+    
+            <script>
+            var collapsible_header = document.getElementById("btn_1700249505928_8982_0");
+            collapsible_header.classList.toggle("collapsible_header_opened");
+            var collapsible_content = document.getElementById("content_1700249505928_8982_0");
+            collapsible_content.style.maxHeight = "80em";
+            </script>
+            <br/>
+<style>
+.collapsible_header {
+  background-color: #AAAAAA;
+  color: white;
+  cursor: pointer;
+  padding: 3px;
+  width: 100%;
+  border: none;
+  text-align: left;
+  outline: none;
+  font-style: italic;
+}
+
+.collapsible_header_opened {
+  background-color: #555;
+}
+
+.collapsible_header:hover {
+  background-color: #AAAAFF;
+}
+
+.collapsible_header:after {
+  content: '\002B';
+  color: white;
+  font-weight: bold;
+  float: right;
+  margin-left: 5px;
+}
+
+.collapsible_header_opened:after {
+  content: "\2212";
+}
+
+.collapsible_content {
+  padding: 0 18px;
+  max-height: 0;
+  overflow-x: scroll;
+  overflow-y: scroll;
+  min-width: 100%;
+  transition: max-height 0.2s ease-out;
+  background-color: #f1f1f1;
+}
+</style>
+
+    <script>
+       function copy_code_1700249505929_4797() {
+            let code = `struct BoxedBool
+{
+    bool value;
+    BoxedBool(bool v = false) : value(v) {}
+    std::string __repr__() const { return std::string("BoxedBool(") + std::to_string(value) + ")"; }
+};
+`;
+            navigator.clipboard.writeText(code);
+       }
+    </script>
+    <button class="collapsible_header" id="btn_1700249505929_4797_1" >C++ glue code</button>
+    <div class="collapsible_content" id="content_1700249505929_4797_1">
+        <div>
+                <button onclick="copy_code_1700249505929_4797()" align="right">copy &#x270d;</button>
+        </div>
+        <style>pre { line-height: 125%; }
+td.linenos .normal { color: inherit; background-color: transparent; padding-left: 5px; padding-right: 5px; }
+span.linenos { color: inherit; background-color: transparent; padding-left: 5px; padding-right: 5px; }
+td.linenos .special { color: #000000; background-color: #ffffc0; padding-left: 5px; padding-right: 5px; }
+span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 5px; padding-right: 5px; }
+.highlight .hll { background-color: #3c3836 }
+.highlight { background: #fbf1c7; }
+.highlight .c { color: #928374; font-style: italic } /* Comment */
+.highlight .err { color: #fbf1c7; background-color: #9d0006 } /* Error */
+.highlight .k { color: #9d0006 } /* Keyword */
+.highlight .ch { color: #928374; font-style: italic } /* Comment.Hashbang */
+.highlight .cm { color: #928374; font-style: italic } /* Comment.Multiline */
+.highlight .c-PreProc { color: #427b58; font-style: italic } /* Comment.PreProc */
+.highlight .cp { color: #928374; font-style: italic } /* Comment.Preproc */
+.highlight .cpf { color: #928374; font-style: italic } /* Comment.PreprocFile */
+.highlight .c1 { color: #928374; font-style: italic } /* Comment.Single */
+.highlight .cs { color: #3c3836; font-weight: bold; font-style: italic } /* Comment.Special */
+.highlight .gd { color: #fbf1c7; background-color: #9d0006 } /* Generic.Deleted */
+.highlight .ge { font-style: italic } /* Generic.Emph */
+.highlight .gr { color: #9d0006 } /* Generic.Error */
+.highlight .gh { color: #3c3836; font-weight: bold } /* Generic.Heading */
+.highlight .gi { color: #fbf1c7; background-color: #79740e } /* Generic.Inserted */
+.highlight .go { color: #32302f } /* Generic.Output */
+.highlight .gp { color: #7c6f64 } /* Generic.Prompt */
+.highlight .gs { font-weight: bold } /* Generic.Strong */
+.highlight .gu { color: #3c3836; text-decoration: underline } /* Generic.Subheading */
+.highlight .gt { color: #9d0006 } /* Generic.Traceback */
+.highlight .kc { color: #9d0006 } /* Keyword.Constant */
+.highlight .kd { color: #9d0006 } /* Keyword.Declaration */
+.highlight .kn { color: #9d0006 } /* Keyword.Namespace */
+.highlight .kp { color: #9d0006 } /* Keyword.Pseudo */
+.highlight .kr { color: #9d0006 } /* Keyword.Reserved */
+.highlight .kt { color: #9d0006 } /* Keyword.Type */
+.highlight .m { color: #8f3f71 } /* Literal.Number */
+.highlight .s { color: #79740e } /* Literal.String */
+.highlight .na { color: #b57614 } /* Name.Attribute */
+.highlight .nb { color: #af3a03 } /* Name.Builtin */
+.highlight .nc { color: #427b58 } /* Name.Class */
+.highlight .no { color: #8f3f71 } /* Name.Constant */
+.highlight .nd { color: #9d0006 } /* Name.Decorator */
+.highlight .ne { color: #9d0006 } /* Name.Exception */
+.highlight .nf { color: #427b58 } /* Name.Function */
+.highlight .nn { color: #427b58 } /* Name.Namespace */
+.highlight .nt { color: #427b58 } /* Name.Tag */
+.highlight .nv { color: #076678 } /* Name.Variable */
+.highlight .ow { color: #9d0006 } /* Operator.Word */
+.highlight .mb { color: #8f3f71 } /* Literal.Number.Bin */
+.highlight .mf { color: #8f3f71 } /* Literal.Number.Float */
+.highlight .mh { color: #8f3f71 } /* Literal.Number.Hex */
+.highlight .mi { color: #8f3f71 } /* Literal.Number.Integer */
+.highlight .mo { color: #8f3f71 } /* Literal.Number.Oct */
+.highlight .sa { color: #79740e } /* Literal.String.Affix */
+.highlight .sb { color: #79740e } /* Literal.String.Backtick */
+.highlight .sc { color: #79740e } /* Literal.String.Char */
+.highlight .dl { color: #79740e } /* Literal.String.Delimiter */
+.highlight .sd { color: #79740e } /* Literal.String.Doc */
+.highlight .s2 { color: #79740e } /* Literal.String.Double */
+.highlight .se { color: #af3a03 } /* Literal.String.Escape */
+.highlight .sh { color: #79740e } /* Literal.String.Heredoc */
+.highlight .si { color: #79740e } /* Literal.String.Interpol */
+.highlight .sx { color: #79740e } /* Literal.String.Other */
+.highlight .sr { color: #79740e } /* Literal.String.Regex */
+.highlight .s1 { color: #79740e } /* Literal.String.Single */
+.highlight .ss { color: #79740e } /* Literal.String.Symbol */
+.highlight .bp { color: #af3a03 } /* Name.Builtin.Pseudo */
+.highlight .fm { color: #427b58 } /* Name.Function.Magic */
+.highlight .vc { color: #076678 } /* Name.Variable.Class */
+.highlight .vg { color: #076678 } /* Name.Variable.Global */
+.highlight .vi { color: #076678 } /* Name.Variable.Instance */
+.highlight .vm { color: #076678 } /* Name.Variable.Magic */
+.highlight .il { color: #8f3f71 } /* Literal.Number.Integer.Long */</style> <div class="highlight"><pre><span></span><span class="k">struct</span><span class="w"> </span><span class="nc">BoxedBool</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">value</span><span class="p">;</span>
+<span class="w">    </span><span class="n">BoxedBool</span><span class="p">(</span><span class="kt">bool</span><span class="w"> </span><span class="n">v</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">)</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">value</span><span class="p">(</span><span class="n">v</span><span class="p">)</span><span class="w"> </span><span class="p">{}</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">__repr__</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="p">(</span><span class="s">&quot;BoxedBool(&quot;</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">to_string</span><span class="p">(</span><span class="n">value</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s">&quot;)&quot;</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
+<span class="p">};</span>
+</pre></div>
+
+    </div>
+    
+    <script>
+    var button = document.getElementById("btn_1700249505929_4797_1");
+    button.addEventListener("click", function() {
+        this.classList.toggle("collapsible_header_opened");
+        var content = document.getElementById("content_1700249505929_4797_1");
+        if (content.style.maxHeight){
+          content.style.maxHeight = null;
+        } else {
+          content.style.maxHeight = "80em";
+        }
+    });
+    </script>
+    
+            <script>
+            var collapsible_header = document.getElementById("btn_1700249505929_4797_1");
+            collapsible_header.classList.toggle("collapsible_header_opened");
+            var collapsible_content = document.getElementById("content_1700249505929_4797_1");
+            collapsible_content.style.maxHeight = "80em";
+            </script>
+            </div></div>
+</div>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./."
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer">
+                  <!-- Previous / next buttons -->
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="01_05_00_install_or_online.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Installation or online usage</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="01_05_10_install.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Local installation</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Pascal Thomet
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  <p class="copyright">
+    
+      © Copyright 2022.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="_static/scripts/bootstrap.js?digest=365ca57ee442770a23c6"></script>
+<script src="_static/scripts/pydata-sphinx-theme.js?digest=365ca57ee442770a23c6"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

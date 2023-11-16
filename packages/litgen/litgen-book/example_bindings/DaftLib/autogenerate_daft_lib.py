@@ -7,7 +7,7 @@ import litgen
 THIS_DIR = os.path.dirname(__file__)
 
 
-def make_amalgamated_header():
+def make_amalgamated_header() -> None:
     """Generates an amalgamated header file for DaftLib in generated_code/DaftLib_amalgamation/amalgamation.h"""
     options = amalgamated_header.AmalgamationOptions()
 
@@ -33,7 +33,7 @@ def generator_options() -> litgen.LitgenOptions:
     return options
 
 
-def autogenerate_daft_lib(use_amalgamated_header: bool = False):
+def autogenerate_daft_lib(use_amalgamated_header: bool = False) -> None:
     options = generator_options()
     output_cpp_pydef_file = THIS_DIR + "/generated_code/DaftLib_bindings/pybind_DaftLib.cpp"
     output_cpp_glue_code_file = THIS_DIR + "/generated_code/DaftLib_bindings/glue_code_DaftLib.h"
