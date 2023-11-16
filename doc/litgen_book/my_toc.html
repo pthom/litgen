@@ -1,0 +1,869 @@
+
+
+<!DOCTYPE html>
+
+
+<html lang="en" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Basics &#8212; litgen, the Literate Generator</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "light";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="_static/styles/theme.css?digest=365ca57ee442770a23c6" rel="stylesheet" />
+<link href="_static/styles/bootstrap.css?digest=365ca57ee442770a23c6" rel="stylesheet" />
+<link href="_static/styles/pydata-sphinx-theme.css?digest=365ca57ee442770a23c6" rel="stylesheet" />
+
+  
+  <link href="_static/vendor/fontawesome/6.1.2/css/all.min.css?digest=365ca57ee442770a23c6" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.1.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.1.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.1.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+    <link rel="stylesheet" href="_static/styles/sphinx-book-theme.css?digest=14f4ca6b54d191a8c7657f6c759bf11a5fb86285" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="_static/togglebutton.css" />
+    <link rel="stylesheet" type="text/css" href="_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+    <link rel="stylesheet" type="text/css" href="_static/sphinx-thebe.css" />
+    <link rel="stylesheet" type="text/css" href="_static/design-style.4045f2051d55cab465a707391d5b2007.min.css" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=365ca57ee442770a23c6" />
+<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=365ca57ee442770a23c6" />
+  <script src="_static/vendor/fontawesome/6.1.2/js/all.min.js?digest=365ca57ee442770a23c6"></script>
+
+    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/clipboard.min.js"></script>
+    <script src="_static/copybutton.js"></script>
+    <script src="_static/scripts/sphinx-book-theme.js?digest=5a5c038af52cf7bc1a1ec88eea08e6366ee68824"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="_static/togglebutton.js"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="_static/design-tabs.js"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"
+const thebe_selector = ".thebe,.cell"
+const thebe_selector_input = "pre"
+const thebe_selector_output = ".output, .cell_output"
+</script>
+    <script async="async" src="_static/sphinx-thebe.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'my_toc';</script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <a class="skip-link" href="#main-content">Skip to main content</a>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>
+    Back to top
+  </button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__primary"
+          id="__primary"/>
+  <label class="overlay overlay-primary" for="__primary"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__secondary"
+          id="__secondary"/>
+  <label class="overlay overlay-secondary" for="__secondary"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+  
+    <nav class="bd-header navbar navbar-expand-lg bd-navbar">
+    </nav>
+  
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+  
+
+<a class="navbar-brand logo" href="0_intro.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="_static/litgen_logo.png" class="logo__image only-light" alt="litgen, the Literate Generator - Home"/>
+    <script>document.write(`<img src="_static/litgen_logo.png" class="logo__image only-dark" alt="litgen, the Literate Generator - Home"/>`);</script>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item"><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="0_intro.html">
+                    litgen
+                </a>
+            </li>
+        </ul>
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Basics</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="1_05_00_install_or_online.html">Installation or online usage</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-1"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="1_05_05_online.html">Use litgen online</a></li>
+<li class="toctree-l2"><a class="reference internal" href="1_05_10_install.html">Local installation</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="1_10_first_steps.html">First steps</a></li>
+
+
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><label class="sidebar-toggle primary-toggle btn btn-sm" for="__primary" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</label></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/pthom/srcmlcpp" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/pthom/srcmlcpp/issues/new?title=Issue%20on%20page%20%2Fmy_toc.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="_sources/my_toc.md" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.md</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="theme-switch nav-link" data-mode="light"><i class="fa-solid fa-sun fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="dark"><i class="fa-solid fa-moon fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg"></i></span>
+  </button>
+`);
+</script>
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+<label class="sidebar-toggle secondary-toggle btn btn-sm" for="__secondary"title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</label>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Basics</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#">Basics</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#installation-or-online-usage">Installation or Online usage</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#installation">Installation</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#online-usage">Online usage</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#x-first-steps">X First steps</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#x-c-bindings-code-and-python-stubs">X C++ bindings code and Python stubs</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#x-literate-code-documentation">X Literate code documentation</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#x-binding-a-simple-function">X Binding a simple function</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#x-binding-a-simple-class">X Binding a simple class</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#x-litgen-options">X Litgen Options</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#x-glue-code">X Glue code</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#advanced-topics">Advanced Topics</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#headers-processing">Headers processing</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#api-prefixes-markers">API prefixes / markers</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ignoring-parts-of-header-files-based-on-macro">Ignoring parts of header files based on macro</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#code-layout-settings">Code layout settings</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#for-the-python-stub-code">For the python stub code</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#for-the-c-bindings-code">For the C++ bindings code</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#names-and-types-translation">Names and types translation</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#functions">Functions</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#exclude-functions">Exclude functions</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#exclude-parameters">Exclude parameters</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#template-functions">Template functions</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#modifiable-immutable-parameters">Modifiable immutable parameters</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#return-policy">Return policy</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#advanced-force-overload-and-force-lambda">Advanced: force overload and force lambda</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#functions-numeric-buffers-params-to-numpy">Functions: numeric buffers params to numpy</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#c-buffer-to-py-array">C buffer to py::array</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#vectorize-functions">Vectorize functions</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#functions-c-style-params">Functions: C style params</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#c-buffer-params">C buffer params</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#c-array-param">C array param</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#c-string-list">C string list</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#classes-and-structs">Classes and structs</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#exclude-classes">Exclude classes</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#exclude-members">Exclude members</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#named-constructors">Named constructors</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#template-classes">Template classes</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#expose-protected-methods">Expose protected methods</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#overriding-virtual-methods-in-python">Overriding virtual methods in python</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#dynamic-attributes">Dynamic attributes</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#copy-and-deep-copy">Copy and Deep copy</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#iterables">Iterables</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#storing-numeric-members-as-a-numpy-array">Storing numeric members as a numpy array</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#namespaces">Namespaces</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#root-namespace">Root namespace</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#excluding-namespaces">Excluding namespaces</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#enums">Enums</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#excluding-enums">Excluding enums</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#c-enum-remove-prefixes-and-count">C Enum: remove prefixes and count</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#arithmetic-enums">Arithmetic enums</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#macro-and-preprocessor">Macro and preprocessor</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#named-number-macros">Named number macros</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#export-simple-preprocessor-defines">Export simple preprocessor defines</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ignore-warnings">Ignore Warnings</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pre-processing-and-post-processing">Pre-processing and post-processing</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pre-processing">Pre-processing</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#post-processing">Post-processing</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#build-information">Build information</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#binding-a-library">Binding a library</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#binding-a-header-file">Binding a header file</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#binding-a-list-of-header-files">Binding a list of header files</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#api-markers">API markers</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#cmake-helper">cmake helper</a></li>
+</ul>
+</li>
+</ul>
+
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article" role="main">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="basics">
+<h1>Basics<a class="headerlink" href="#basics" title="Permalink to this heading">#</a></h1>
+<section id="installation-or-online-usage">
+<h2>Installation or Online usage<a class="headerlink" href="#installation-or-online-usage" title="Permalink to this heading">#</a></h2>
+<section id="installation">
+<h3>Installation<a class="headerlink" href="#installation" title="Permalink to this heading">#</a></h3>
+</section>
+<section id="online-usage">
+<h3>Online usage<a class="headerlink" href="#online-usage" title="Permalink to this heading">#</a></h3>
+</section>
+</section>
+<section id="x-first-steps">
+<h2>X First steps<a class="headerlink" href="#x-first-steps" title="Permalink to this heading">#</a></h2>
+<section id="x-c-bindings-code-and-python-stubs">
+<h3>X C++ bindings code and Python stubs<a class="headerlink" href="#x-c-bindings-code-and-python-stubs" title="Permalink to this heading">#</a></h3>
+</section>
+<section id="x-literate-code-documentation">
+<h3>X Literate code documentation<a class="headerlink" href="#x-literate-code-documentation" title="Permalink to this heading">#</a></h3>
+</section>
+<section id="x-binding-a-simple-function">
+<h3>X Binding a simple function<a class="headerlink" href="#x-binding-a-simple-function" title="Permalink to this heading">#</a></h3>
+</section>
+<section id="x-binding-a-simple-class">
+<h3>X Binding a simple class<a class="headerlink" href="#x-binding-a-simple-class" title="Permalink to this heading">#</a></h3>
+</section>
+<section id="x-litgen-options">
+<h3>X Litgen Options<a class="headerlink" href="#x-litgen-options" title="Permalink to this heading">#</a></h3>
+</section>
+<section id="x-glue-code">
+<h3>X Glue code<a class="headerlink" href="#x-glue-code" title="Permalink to this heading">#</a></h3>
+</section>
+</section>
+</section>
+<hr class="docutils" />
+<section class="tex2jax_ignore mathjax_ignore" id="advanced-topics">
+<h1>Advanced Topics<a class="headerlink" href="#advanced-topics" title="Permalink to this heading">#</a></h1>
+<section id="headers-processing">
+<h2>Headers processing<a class="headerlink" href="#headers-processing" title="Permalink to this heading">#</a></h2>
+<section id="api-prefixes-markers">
+<h3>API prefixes / markers<a class="headerlink" href="#api-prefixes-markers" title="Permalink to this heading">#</a></h3>
+</section>
+<section id="ignoring-parts-of-header-files-based-on-macro">
+<h3>Ignoring parts of header files based on macro<a class="headerlink" href="#ignoring-parts-of-header-files-based-on-macro" title="Permalink to this heading">#</a></h3>
+</section>
+</section>
+<section id="code-layout-settings">
+<h2>Code layout settings<a class="headerlink" href="#code-layout-settings" title="Permalink to this heading">#</a></h2>
+<section id="for-the-python-stub-code">
+<h3>For the python stub code<a class="headerlink" href="#for-the-python-stub-code" title="Permalink to this heading">#</a></h3>
+</section>
+<section id="for-the-c-bindings-code">
+<h3>For the C++ bindings code<a class="headerlink" href="#for-the-c-bindings-code" title="Permalink to this heading">#</a></h3>
+</section>
+</section>
+<section id="names-and-types-translation">
+<h2>Names and types translation<a class="headerlink" href="#names-and-types-translation" title="Permalink to this heading">#</a></h2>
+</section>
+<section id="functions">
+<h2>Functions<a class="headerlink" href="#functions" title="Permalink to this heading">#</a></h2>
+<section id="exclude-functions">
+<h3>Exclude functions<a class="headerlink" href="#exclude-functions" title="Permalink to this heading">#</a></h3>
+</section>
+<section id="exclude-parameters">
+<h3>Exclude parameters<a class="headerlink" href="#exclude-parameters" title="Permalink to this heading">#</a></h3>
+</section>
+<section id="template-functions">
+<h3>Template functions<a class="headerlink" href="#template-functions" title="Permalink to this heading">#</a></h3>
+</section>
+<section id="modifiable-immutable-parameters">
+<h3>Modifiable immutable parameters<a class="headerlink" href="#modifiable-immutable-parameters" title="Permalink to this heading">#</a></h3>
+</section>
+<section id="return-policy">
+<h3>Return policy<a class="headerlink" href="#return-policy" title="Permalink to this heading">#</a></h3>
+</section>
+<section id="advanced-force-overload-and-force-lambda">
+<h3>Advanced: force overload and force lambda<a class="headerlink" href="#advanced-force-overload-and-force-lambda" title="Permalink to this heading">#</a></h3>
+</section>
+</section>
+<section id="functions-numeric-buffers-params-to-numpy">
+<h2>Functions: numeric buffers params to numpy<a class="headerlink" href="#functions-numeric-buffers-params-to-numpy" title="Permalink to this heading">#</a></h2>
+<section id="c-buffer-to-py-array">
+<h3>C buffer to py::array<a class="headerlink" href="#c-buffer-to-py-array" title="Permalink to this heading">#</a></h3>
+</section>
+<section id="vectorize-functions">
+<h3>Vectorize functions<a class="headerlink" href="#vectorize-functions" title="Permalink to this heading">#</a></h3>
+</section>
+</section>
+<section id="functions-c-style-params">
+<h2>Functions: C style params<a class="headerlink" href="#functions-c-style-params" title="Permalink to this heading">#</a></h2>
+<section id="c-buffer-params">
+<h3>C buffer params<a class="headerlink" href="#c-buffer-params" title="Permalink to this heading">#</a></h3>
+</section>
+<section id="c-array-param">
+<h3>C array param<a class="headerlink" href="#c-array-param" title="Permalink to this heading">#</a></h3>
+</section>
+<section id="c-string-list">
+<h3>C string list<a class="headerlink" href="#c-string-list" title="Permalink to this heading">#</a></h3>
+</section>
+</section>
+<section id="classes-and-structs">
+<h2>Classes and structs<a class="headerlink" href="#classes-and-structs" title="Permalink to this heading">#</a></h2>
+<section id="exclude-classes">
+<h3>Exclude classes<a class="headerlink" href="#exclude-classes" title="Permalink to this heading">#</a></h3>
+</section>
+<section id="exclude-members">
+<h3>Exclude members<a class="headerlink" href="#exclude-members" title="Permalink to this heading">#</a></h3>
+</section>
+<section id="named-constructors">
+<h3>Named constructors<a class="headerlink" href="#named-constructors" title="Permalink to this heading">#</a></h3>
+</section>
+<section id="template-classes">
+<h3>Template classes<a class="headerlink" href="#template-classes" title="Permalink to this heading">#</a></h3>
+</section>
+<section id="expose-protected-methods">
+<h3>Expose protected methods<a class="headerlink" href="#expose-protected-methods" title="Permalink to this heading">#</a></h3>
+</section>
+<section id="overriding-virtual-methods-in-python">
+<h3>Overriding virtual methods in python<a class="headerlink" href="#overriding-virtual-methods-in-python" title="Permalink to this heading">#</a></h3>
+</section>
+<section id="dynamic-attributes">
+<h3>Dynamic attributes<a class="headerlink" href="#dynamic-attributes" title="Permalink to this heading">#</a></h3>
+</section>
+<section id="copy-and-deep-copy">
+<h3>Copy and Deep copy<a class="headerlink" href="#copy-and-deep-copy" title="Permalink to this heading">#</a></h3>
+</section>
+<section id="iterables">
+<h3>Iterables<a class="headerlink" href="#iterables" title="Permalink to this heading">#</a></h3>
+</section>
+<section id="storing-numeric-members-as-a-numpy-array">
+<h3>Storing numeric members as a numpy array<a class="headerlink" href="#storing-numeric-members-as-a-numpy-array" title="Permalink to this heading">#</a></h3>
+</section>
+</section>
+<section id="namespaces">
+<h2>Namespaces<a class="headerlink" href="#namespaces" title="Permalink to this heading">#</a></h2>
+<section id="root-namespace">
+<h3>Root namespace<a class="headerlink" href="#root-namespace" title="Permalink to this heading">#</a></h3>
+</section>
+<section id="excluding-namespaces">
+<h3>Excluding namespaces<a class="headerlink" href="#excluding-namespaces" title="Permalink to this heading">#</a></h3>
+</section>
+</section>
+<section id="enums">
+<h2>Enums<a class="headerlink" href="#enums" title="Permalink to this heading">#</a></h2>
+<section id="excluding-enums">
+<h3>Excluding enums<a class="headerlink" href="#excluding-enums" title="Permalink to this heading">#</a></h3>
+</section>
+<section id="c-enum-remove-prefixes-and-count">
+<h3>C Enum: remove prefixes and count<a class="headerlink" href="#c-enum-remove-prefixes-and-count" title="Permalink to this heading">#</a></h3>
+</section>
+<section id="arithmetic-enums">
+<h3>Arithmetic enums<a class="headerlink" href="#arithmetic-enums" title="Permalink to this heading">#</a></h3>
+</section>
+</section>
+<section id="macro-and-preprocessor">
+<h2>Macro and preprocessor<a class="headerlink" href="#macro-and-preprocessor" title="Permalink to this heading">#</a></h2>
+<section id="named-number-macros">
+<h3>Named number macros<a class="headerlink" href="#named-number-macros" title="Permalink to this heading">#</a></h3>
+</section>
+<section id="export-simple-preprocessor-defines">
+<h3>Export simple preprocessor defines<a class="headerlink" href="#export-simple-preprocessor-defines" title="Permalink to this heading">#</a></h3>
+</section>
+</section>
+<section id="ignore-warnings">
+<h2>Ignore Warnings<a class="headerlink" href="#ignore-warnings" title="Permalink to this heading">#</a></h2>
+</section>
+<section id="pre-processing-and-post-processing">
+<h2>Pre-processing and post-processing<a class="headerlink" href="#pre-processing-and-post-processing" title="Permalink to this heading">#</a></h2>
+<section id="pre-processing">
+<h3>Pre-processing<a class="headerlink" href="#pre-processing" title="Permalink to this heading">#</a></h3>
+</section>
+<section id="post-processing">
+<h3>Post-processing<a class="headerlink" href="#post-processing" title="Permalink to this heading">#</a></h3>
+</section>
+</section>
+</section>
+<hr class="docutils" />
+<section class="tex2jax_ignore mathjax_ignore" id="build-information">
+<h1>Build information<a class="headerlink" href="#build-information" title="Permalink to this heading">#</a></h1>
+<section id="binding-a-library">
+<h2>Binding a library<a class="headerlink" href="#binding-a-library" title="Permalink to this heading">#</a></h2>
+<section id="binding-a-header-file">
+<h3>Binding a header file<a class="headerlink" href="#binding-a-header-file" title="Permalink to this heading">#</a></h3>
+</section>
+<section id="binding-a-list-of-header-files">
+<h3>Binding a list of header files<a class="headerlink" href="#binding-a-list-of-header-files" title="Permalink to this heading">#</a></h3>
+</section>
+<section id="api-markers">
+<h3>API markers<a class="headerlink" href="#api-markers" title="Permalink to this heading">#</a></h3>
+</section>
+</section>
+<section id="cmake-helper">
+<h2>cmake helper<a class="headerlink" href="#cmake-helper" title="Permalink to this heading">#</a></h2>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./."
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer">
+                  <!-- Previous / next buttons -->
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#">Basics</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#installation-or-online-usage">Installation or Online usage</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#installation">Installation</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#online-usage">Online usage</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#x-first-steps">X First steps</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#x-c-bindings-code-and-python-stubs">X C++ bindings code and Python stubs</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#x-literate-code-documentation">X Literate code documentation</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#x-binding-a-simple-function">X Binding a simple function</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#x-binding-a-simple-class">X Binding a simple class</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#x-litgen-options">X Litgen Options</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#x-glue-code">X Glue code</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#advanced-topics">Advanced Topics</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#headers-processing">Headers processing</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#api-prefixes-markers">API prefixes / markers</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ignoring-parts-of-header-files-based-on-macro">Ignoring parts of header files based on macro</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#code-layout-settings">Code layout settings</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#for-the-python-stub-code">For the python stub code</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#for-the-c-bindings-code">For the C++ bindings code</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#names-and-types-translation">Names and types translation</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#functions">Functions</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#exclude-functions">Exclude functions</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#exclude-parameters">Exclude parameters</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#template-functions">Template functions</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#modifiable-immutable-parameters">Modifiable immutable parameters</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#return-policy">Return policy</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#advanced-force-overload-and-force-lambda">Advanced: force overload and force lambda</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#functions-numeric-buffers-params-to-numpy">Functions: numeric buffers params to numpy</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#c-buffer-to-py-array">C buffer to py::array</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#vectorize-functions">Vectorize functions</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#functions-c-style-params">Functions: C style params</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#c-buffer-params">C buffer params</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#c-array-param">C array param</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#c-string-list">C string list</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#classes-and-structs">Classes and structs</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#exclude-classes">Exclude classes</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#exclude-members">Exclude members</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#named-constructors">Named constructors</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#template-classes">Template classes</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#expose-protected-methods">Expose protected methods</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#overriding-virtual-methods-in-python">Overriding virtual methods in python</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#dynamic-attributes">Dynamic attributes</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#copy-and-deep-copy">Copy and Deep copy</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#iterables">Iterables</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#storing-numeric-members-as-a-numpy-array">Storing numeric members as a numpy array</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#namespaces">Namespaces</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#root-namespace">Root namespace</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#excluding-namespaces">Excluding namespaces</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#enums">Enums</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#excluding-enums">Excluding enums</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#c-enum-remove-prefixes-and-count">C Enum: remove prefixes and count</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#arithmetic-enums">Arithmetic enums</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#macro-and-preprocessor">Macro and preprocessor</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#named-number-macros">Named number macros</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#export-simple-preprocessor-defines">Export simple preprocessor defines</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ignore-warnings">Ignore Warnings</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pre-processing-and-post-processing">Pre-processing and post-processing</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pre-processing">Pre-processing</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#post-processing">Post-processing</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#build-information">Build information</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#binding-a-library">Binding a library</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#binding-a-header-file">Binding a header file</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#binding-a-list-of-header-files">Binding a list of header files</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#api-markers">API markers</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#cmake-helper">cmake helper</a></li>
+</ul>
+</li>
+</ul>
+
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Pascal Thomet
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  <p class="copyright">
+    
+      © Copyright 2022.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="_static/scripts/bootstrap.js?digest=365ca57ee442770a23c6"></script>
+<script src="_static/scripts/pydata-sphinx-theme.js?digest=365ca57ee442770a23c6"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>
