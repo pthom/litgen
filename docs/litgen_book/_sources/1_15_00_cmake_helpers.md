@@ -8,5 +8,3 @@ This template repository provides:
 
 * A template which you can customize: change the name of the C++ library, and the name of the python module, as well as the name of the pypi module
 * Build systems for pip, conda and wheels, tested on windows, linux and macOS
-
-
