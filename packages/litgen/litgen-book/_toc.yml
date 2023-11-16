@@ -12,11 +12,16 @@ parts:
         sections:
           - file: 1_05_05_online
           - file: 1_05_10_install
-      - file: 1_10_first_steps
+      - file: 1_10_00_first_steps
+      - file: example_bindings/DaftLib/Readme.md
+      #- file: 1_15_00_generate_binding_files
 
-#  - caption: Advanced Topics
-#    chapters:
-#      - file: 2_functions
+  - caption: Advanced Topics
+    chapters:
+     - file: 2_05_00_headers
+     - file: 3_05_00_code_layout
+     - file: 4_05_00_functions
+
 #      - file: 2_classes
 ##        sections:
 ##          - file: 1_05_05_first_steps_pybind_and_stubs

@@ -9,7 +9,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Installation or online usage &#8212; litgen, the Literate Generator</title>
+    <title>Code Layout &#8212; litgen, the Literate Generator</title>
   
   
   
@@ -62,11 +62,11 @@ const thebe_selector_input = "pre"
 const thebe_selector_output = ".output, .cell_output"
 </script>
     <script async="async" src="_static/sphinx-thebe.js"></script>
-    <script>DOCUMENTATION_OPTIONS.pagename = '1_05_00_install_or_online';</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '3_05_00_code_layout';</script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Use litgen online" href="1_05_05_online.html" />
-    <link rel="prev" title="litgen" href="0_intro.html" />
+    <link rel="next" title="Functions" href="4_05_00_functions.html" />
+    <link rel="prev" title="Headers processing" href="2_05_00_headers.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   </head>
@@ -168,8 +168,8 @@ const thebe_selector_output = ".output, .cell_output"
             </li>
         </ul>
         <p aria-level="2" class="caption" role="heading"><span class="caption-text">Basics</span></p>
-<ul class="current nav bd-sidenav">
-<li class="toctree-l1 current active has-children"><a class="current reference internal" href="#">Installation or online usage</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-1"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="1_05_00_install_or_online.html">Installation or online usage</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-1"><i class="fa-solid fa-chevron-down"></i></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="1_05_05_online.html">Use litgen online</a></li>
 <li class="toctree-l2"><a class="reference internal" href="1_05_10_install.html">Local installation</a></li>
 </ul>
@@ -178,9 +178,9 @@ const thebe_selector_output = ".output, .cell_output"
 <li class="toctree-l1"><a class="reference internal" href="example_bindings/DaftLib/Readme.html">Generate binding files for a library</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Advanced Topics</span></p>
-<ul class="nav bd-sidenav">
+<ul class="current nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="2_05_00_headers.html">Headers processing</a></li>
-<li class="toctree-l1"><a class="reference internal" href="3_05_00_code_layout.html">Code Layout</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Code Layout</a></li>
 <li class="toctree-l1"><a class="reference internal" href="4_05_00_functions.html">Functions</a></li>
 </ul>
 
@@ -228,6 +228,37 @@ const thebe_selector_output = ".output, .cell_output"
 
 
 
+<div class="dropdown dropdown-launch-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Launch interactive content">
+    <i class="fas fa-rocket"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://mybinder.org/v2/gh/pthom/srcmlcpp/main?urlpath=lab/tree/packages/litgen/litgen-book/3_05_00_code_layout.ipynb" target="_blank"
+   class="btn btn-sm dropdown-item"
+   title="Launch onBinder"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  
+    <img src="_static/images/logo_binder.svg">
+  </span>
+<span class="btn__text-container">Binder</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
 <div class="dropdown dropdown-source-buttons">
   <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
     <i class="fab fa-github"></i>
@@ -253,7 +284,7 @@ const thebe_selector_output = ".output, .cell_output"
       
       
       
-      <li><a href="https://github.com/pthom/srcmlcpp/issues/new?title=Issue%20on%20page%20%2F1_05_00_install_or_online.html&body=Your%20issue%20content%20here." target="_blank"
+      <li><a href="https://github.com/pthom/srcmlcpp/issues/new?title=Issue%20on%20page%20%2F3_05_00_code_layout.html&body=Your%20issue%20content%20here." target="_blank"
    class="btn btn-sm btn-source-issues-button dropdown-item"
    title="Open an issue"
    data-bs-placement="left" data-bs-toggle="tooltip"
@@ -283,7 +314,7 @@ const thebe_selector_output = ".output, .cell_output"
       
       
       
-      <li><a href="_sources/1_05_00_install_or_online.md" target="_blank"
+      <li><a href="_sources/3_05_00_code_layout.ipynb" target="_blank"
    class="btn btn-sm btn-download-source-button dropdown-item"
    title="Download source file"
    data-bs-placement="left" data-bs-toggle="tooltip"
@@ -293,7 +324,7 @@ const thebe_selector_output = ".output, .cell_output"
 <span class="btn__icon-container">
   <i class="fas fa-file"></i>
   </span>
-<span class="btn__text-container">.md</span>
+<span class="btn__text-container">.ipynb</span>
 </a>
 </li>
       
@@ -363,7 +394,7 @@ document.write(`
               
 
 <div id="jb-print-docs-body" class="onlyprint">
-    <h1>Installation or online usage</h1>
+    <h1>Code Layout</h1>
     <!-- Table of contents -->
     <div id="print-main-content">
         <div id="jb-print-toc">
@@ -377,21 +408,8 @@ document.write(`
 <div id="searchbox"></div>
                 <article class="bd-article" role="main">
                   
-  <section class="tex2jax_ignore mathjax_ignore" id="installation-or-online-usage">
-<h1>Installation or online usage<a class="headerlink" href="#installation-or-online-usage" title="Permalink to this heading">#</a></h1>
-<p>You can either use litgen online, or install it locally.</p>
-<p><strong>If using it online</strong></p>
-<p>You do not to install anything. Simply:</p>
-<ol class="arabic simple">
-<li><p>Set some conversion options</p></li>
-<li><p>Paste the API of the code for which you want to generate bindings</p></li>
-<li><p>Generate the binding code (C++ and python stubs), which you can then copy and paste into your project.</p></li>
-</ol>
-<p><a class="reference external" href="https://mybinder.org/v2/gh/pthom/srcmlcpp/main?urlpath=lab/tree/packages/litgen/litgen-book/1_05_05_online.ipynb">Access the online tool</a></p>
-<p><strong>If installing locally</strong></p>
-<p>You can integrate liten into your building process, and it can generate full C++ bindings files, as well as python stubs (API documentation and declaration).</p>
-<div class="toctree-wrapper compound">
-</div>
+  <section class="tex2jax_ignore mathjax_ignore" id="code-layout">
+<h1>Code Layout<a class="headerlink" href="#code-layout" title="Permalink to this heading">#</a></h1>
 </section>
 
     <script type="text/x-thebe-config">
@@ -425,20 +443,20 @@ document.write(`
                   <!-- Previous / next buttons -->
 <div class="prev-next-area">
     <a class="left-prev"
-       href="0_intro.html"
+       href="2_05_00_headers.html"
        title="previous page">
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
         <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title">litgen</p>
+        <p class="prev-next-title">Headers processing</p>
       </div>
     </a>
     <a class="right-next"
-       href="1_05_05_online.html"
+       href="4_05_00_functions.html"
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">Use litgen online</p>
+        <p class="prev-next-title">Functions</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>
