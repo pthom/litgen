@@ -4,12 +4,13 @@
 ### Installation
 ### Online usage
 
-## First steps
-### C++ bindings code and Python stubs
-### Binding a simple function
-### Binding a simple class
-### Literate code documentation
-### Litgen Options
+## X First steps
+### X C++ bindings code and Python stubs
+### X Literate code documentation
+### X Binding a simple function
+### X Binding a simple class
+### X Litgen Options
+### X Glue code
 
 ------------
 
