@@ -1,4 +1,4 @@
-# cmake helpers
+# CMake helpers
 
 Building python bindings, and ensuring that they build on all platforms can be challenging.
 
