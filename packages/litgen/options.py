@@ -99,6 +99,9 @@ class LitgenOptions:
     # if srcmlcpp_options.functions_api_prefixes is filled, and fn_exclude_non_api=True,
     # then only functions with an api marker will be exported.
     fn_exclude_non_api: bool = True
+    # fn_non_api_comment:
+    # if fn_exclude_non_api is False, a comment can be added to non api functions in the stub file
+    fn_non_api_comment: str = "(private API)"
 
     # Exclude certain functions and methods by a regex on their name
     fn_exclude_by_name__regex: str = ""

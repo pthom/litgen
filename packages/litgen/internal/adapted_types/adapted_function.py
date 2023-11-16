@@ -274,12 +274,14 @@ class AdaptedFunction(AdaptedElement):
             is_private_api = not AdaptedFunction.init_is_function_publishable(
                 options, self.cpp_element(), exclude_even_if_options_fn_exclude_non_api=True
             )
-            if is_private_api:
+            if is_private_api and len(options.fn_non_api_comment) > 0:
                 self._cpp_element = copy.deepcopy(self._cpp_element)
                 if len(self._cpp_element.cpp_element_comments.comment_on_previous_lines) == 0:
-                    self._cpp_element.cpp_element_comments.comment_on_previous_lines = "(private API)"
+                    self._cpp_element.cpp_element_comments.comment_on_previous_lines = f"({options.fn_non_api_comment})"
                 else:
-                    self._cpp_element.cpp_element_comments.comment_on_previous_lines += "\n(private API)"
+                    self._cpp_element.cpp_element_comments.comment_on_previous_lines += (
+                        f"\n({options.fn_non_api_comment})"
+                    )
 
     @staticmethod
     def init_is_function_publishable(
