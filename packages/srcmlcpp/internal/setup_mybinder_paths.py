@@ -1,21 +1,19 @@
-# USER=jovyan
-# BINDER_SERVICE_PORT
+"""
+On mybinder, we need to do the equivalent of
+    export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/home/jovyan/srcml_build_docker/lib
+    export PATH=/home/jovyan/srcml_build_docker/bin:$PATH
+This is done only automatically on mybinder, upon importing srcmlcpp.
+"""
 
 import os
 
 
-def _is_on_mybinder():
+def _is_on_mybinder() -> bool:
     """Returns True if the code is running on mybinder.org, False otherwise."""
     return os.environ.get("BINDER_SERVICE_HOST") is not None
 
 
-def _set_paths_for_mybinder():
-    """
-    On mybinder, we need to do the equivalent of
-        export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/home/jovyan/srcml_build_docker/lib
-        export PATH=/home/jovyan/srcml_build_docker/bin:$PATH
-    This is done only automatically on mybinder, upon importing the module
-    """
+def _set_paths_for_mybinder() -> None:
     if not _is_on_mybinder():
         return
 

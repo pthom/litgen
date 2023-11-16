@@ -15,13 +15,13 @@ SOURCES_MOUNT_DIR = "/dvp/sources"
 VNC_PORT = 5900
 
 
-def run_local_command(cmd, quiet=False):
+def run_local_command(cmd: str, quiet: bool = False) -> None:
     if not quiet:
         print(f"\n{cmd}\n")
     subprocess.check_call(cmd, shell=True)
 
 
-def run_docker_command(commands, quiet: bool, interactive: bool):
+def run_docker_command(commands: str, quiet: bool, interactive: bool) -> None:
     in_bash_commands = f'/bin/bash -c "{commands}"'
     interactive_flag = "-it" if interactive else ""
     run_local_command(
@@ -30,7 +30,7 @@ def run_docker_command(commands, quiet: bool, interactive: bool):
     )
 
 
-def rm_container():
+def rm_container() -> None:
     try:
         run_local_command(f"docker stop {DOCKER_CONTAINER_NAME}")
         run_local_command(f"docker rm {DOCKER_CONTAINER_NAME}")
@@ -38,32 +38,32 @@ def rm_container():
         pass
 
 
-def rm_image():
+def rm_image() -> None:
     run_local_command(f"docker rmi {DOCKER_IMAGE_NAME}")
 
 
-def create_container():
+def create_container() -> None:
     run_local_command(
         f"docker run --name {DOCKER_CONTAINER_NAME} -p {VNC_PORT}:{VNC_PORT} -it -d -v {REPO_DIR}:{SOURCES_MOUNT_DIR} {DOCKER_IMAGE_NAME}  /bin/bash"
     )
 
 
-def build_image():
+def build_image() -> None:
     os.chdir(THIS_DIR)
     run_local_command(f"docker build -t {DOCKER_IMAGE_NAME} .")
 
 
-def run_bash():
+def run_bash() -> None:
     run_local_command(f"docker start {DOCKER_CONTAINER_NAME} && docker exec -it {DOCKER_CONTAINER_NAME} /bin/bash")
 
 
-def full_build():
+def full_build() -> None:
     rm_container()
     build_image()
     create_container()
 
 
-def main():
+def main() -> None:
     """
     Usage: docker_run.py    build | bash | exec [any command and args] | remove | remove_image
 
