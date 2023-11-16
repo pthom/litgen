@@ -95,14 +95,6 @@ class LitgenOptions:
     #    <functions and method adaptations>
     ################################################################################
 
-    # fn_exclude_non_api:
-    # if srcmlcpp_options.functions_api_prefixes is filled, and fn_exclude_non_api=True,
-    # then only functions with an api marker will be exported.
-    fn_exclude_non_api: bool = True
-    # fn_non_api_comment:
-    # if fn_exclude_non_api is False, a comment can be added to non api functions in the stub file
-    fn_non_api_comment: str = "(private API)"
-
     # Exclude certain functions and methods by a regex on their name
     fn_exclude_by_name__regex: str = ""
 
@@ -115,6 +107,22 @@ class LitgenOptions:
     # Note: this is distinct from `fn_params_exclude_types__regex` which removes params
     # from the function signature, but not the function itself.
     fn_exclude_by_param_type__regex: str = ""
+
+    # ------------------------------------------------------------------------------
+    # Exclude some params by name or type
+    # ------------------------------------------------------------------------------
+    # Remove some params from the python published interface. A param can only be removed if it has a default value
+    # in the C++ signature
+    fn_params_exclude_names__regex: str = ""
+    fn_params_exclude_types__regex: str = ""
+
+    # fn_exclude_non_api:
+    # if srcmlcpp_options.functions_api_prefixes is filled, and fn_exclude_non_api=True,
+    # then only functions with an api marker will be exported.
+    fn_exclude_non_api: bool = True
+    # fn_non_api_comment:
+    # if fn_exclude_non_api is False, a comment can be added to non api functions in the stub file
+    fn_non_api_comment: str = "(private API)"
 
     # ------------------------------------------------------------------------------
     # Templated functions options
@@ -162,15 +170,6 @@ class LitgenOptions:
     fn_namespace_vectorize__regex: str = r""
     fn_vectorize_prefix: str = ""
     fn_vectorize_suffix: str = ""
-
-    # ------------------------------------------------------------------------------
-    # Exclude some params by name
-    # ------------------------------------------------------------------------------
-    #
-    # Remove some params from the python published interface. A param can only be removed if it has a default value
-    # in the C++ signature
-    fn_params_exclude_names__regex: str = ""
-    fn_params_exclude_types__regex: str = ""
 
     # ------------------------------------------------------------------------------
     # Return policy
