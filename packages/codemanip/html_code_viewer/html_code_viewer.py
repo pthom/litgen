@@ -136,7 +136,7 @@ def collapsible_code_and_title(
     copyable_code = code_and_title.code
     copyable_code = copyable_code.replace("`", r"\`").replace("$", r"\$")
 
-    r = ""
+    r = COLLAPSIBLE_CSS
     r += f"""
     <script>
        function copy_code_{time_id}() {{

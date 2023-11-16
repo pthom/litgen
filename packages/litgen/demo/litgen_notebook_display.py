@@ -12,7 +12,9 @@ import litgen
 from litgen import LitgenOptions
 
 
-def generate_and_display_impl(options: LitgenOptions, cpp_code: str) -> str:
+def generate_and_display_impl(
+    options: LitgenOptions, cpp_code: str, display_original_cpp_code: bool, collapse_pydef: bool, max_visible_lines: int
+) -> str:
     generated_codes = litgen.generate_code(options, cpp_code)
 
     original_content = CodeAndTitle(CodeLanguage.Cpp, cpp_code, "Original C++ decls")
@@ -20,10 +22,20 @@ def generate_and_display_impl(options: LitgenOptions, cpp_code: str) -> str:
     pydef_content = CodeAndTitle(CodeLanguage.Cpp, generated_codes.pydef_code, "pybind11 C++ binding code")
     glue_code = CodeAndTitle(CodeLanguage.Cpp, generated_codes.glue_code, "C++ glue code")
 
-    collapsible_pydef = collapsible_code_and_title(pydef_content, max_visible_lines=20)
-    collapsible_glue_code = collapsible_code_and_title(glue_code)
+    initially_open_cpp_code = not collapse_pydef
+    collapsible_pydef = collapsible_code_and_title(
+        pydef_content, max_visible_lines=max_visible_lines, initially_opened=initially_open_cpp_code
+    )
+    collapsible_glue_code = collapsible_code_and_title(
+        glue_code, max_visible_lines=max_visible_lines, initially_opened=initially_open_cpp_code
+    )
 
-    html = collapsible_code_and_title_two_columns(original_content, stubs_content, initially_opened=True)
+    if display_original_cpp_code:
+        html = collapsible_code_and_title_two_columns(
+            original_content, stubs_content, initially_opened=True, max_visible_lines=max_visible_lines
+        )
+    else:
+        html = collapsible_code_and_title(stubs_content, initially_opened=True, max_visible_lines=max_visible_lines)
 
     html += f"<br/>{collapsible_pydef}"
 
@@ -33,8 +45,14 @@ def generate_and_display_impl(options: LitgenOptions, cpp_code: str) -> str:
     return html
 
 
-def generate_and_display(options: LitgenOptions, cpp_code: str) -> None:
+def generate_and_display(
+    options: LitgenOptions,
+    cpp_code: str,
+    display_original_cpp_code: bool = True,
+    collapse_pydef: bool = True,
+    max_visible_lines: int = 20,
+) -> None:
     from IPython.display import display  # type: ignore
 
-    html = generate_and_display_impl(options, cpp_code)
+    html = generate_and_display_impl(options, cpp_code, display_original_cpp_code, collapse_pydef, max_visible_lines)
     display(HTML(html))
