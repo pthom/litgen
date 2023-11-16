@@ -124,7 +124,7 @@ pywin32==306 ; sys_platform == "win32" and platform_python_implementation != "Py
 pywinpty==2.0.12 ; python_version >= "3.8" and python_version < "4.0" and os_name == "nt"
 pyyaml==6.0.1 ; python_version >= "3.8" and python_version < "4.0"
 pyzmq==25.1.1 ; python_version >= "3.8" and python_version < "4.0"
-qtconsole==5.5.0 ; python_version >= "3.8" and python_version < "4.0"
+qtconsole==5.5.1 ; python_version >= "3.8" and python_version < "4.0"
 qtpy==2.4.1 ; python_version >= "3.8" and python_version < "4.0"
 readme-renderer==42.0 ; python_version >= "3.8" and python_version < "4.0"
 referencing==0.31.0 ; python_version >= "3.8" and python_version < "4.0"

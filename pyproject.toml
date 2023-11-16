@@ -49,13 +49,14 @@ litgen = 'litgen.cli.litgen_cli:main'
 python = "^3.8"
 munch = "*"
 fire = "*"
-# srcml_caller = "^0.1.2"
 pybind11 = "*"
+black = "*"
+# srcml_caller = "^0.1.2"
+
 
 [tool.poetry.dev-dependencies]
 pytest = "*"
 pytest-cov = "*"
-black = "*"
 jupyter-black = "*"
 mypy = "*"
 pre-commit = "^2.19.0"
