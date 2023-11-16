@@ -65,7 +65,7 @@ const thebe_selector_output = ".output, .cell_output"
     <script>DOCUMENTATION_OPTIONS.pagename = 'example_bindings/DaftLib/Readme';</script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="next" title="Headers processing" href="../../2_05_00_headers.html" />
+    <link rel="next" title="cmake helpers" href="../../1_15_00_cmake_helpers.html" />
     <link rel="prev" title="First steps" href="../../1_10_00_first_steps.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
@@ -176,6 +176,7 @@ const thebe_selector_output = ".output, .cell_output"
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../../1_10_00_first_steps.html">First steps</a></li>
 <li class="toctree-l1 current active"><a class="current reference internal" href="#">Generate binding files for a library</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../1_15_00_cmake_helpers.html">cmake helpers</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Advanced Topics</span></p>
 <ul class="nav bd-sidenav">
@@ -404,19 +405,19 @@ It does <em>not</em> contain explanation about how to use the generated files, a
 <p><strong>Folder content</strong></p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>DaftLib/
 ├── cpp_sources/
-│         └── DaftLib/                    # This is a sample library for which you 
+│         └── DaftLib/                    # This is a sample library for which you
 │             ├── DaftLib.cpp             # want to generate bindings
 │             ├── DaftLib.h
 │             ├── DaftLib2.cpp
 │             └── DaftLib2.h
 ├── autogenerate_daft_lib.py              # This is the script that will populate the folder generated_code/
-│                                         # For demonstration purpose, it can either work with an amalgamated header, 
+│                                         # For demonstration purpose, it can either work with an amalgamated header,
 │                                         # or it can generated bindings from the two header files
 └── generated_code/
     ├── DaftLib_amalgamation/
     │         └── amalgamation.h          # Optional amalgamation header file
     ├── DaftLib_bindings/
-    │         ├── pybind_DaftLib.cpp      # This is the generated cpp bindings code    
+    │         ├── pybind_DaftLib.cpp      # This is the generated cpp bindings code
     │         └── glue_code_DaftLib.h     # This is the generated cpp glue code
     └── DaftLib_stubs/
         ├── daft_lib.pyi                  # This is the generated python stubs code
@@ -562,11 +563,11 @@ It does <em>not</em> contain explanation about how to use the generated files, a
       </div>
     </a>
     <a class="right-next"
-       href="../../2_05_00_headers.html"
+       href="../../1_15_00_cmake_helpers.html"
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">Headers processing</p>
+        <p class="prev-next-title">cmake helpers</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>

@@ -14,6 +14,7 @@ parts:
           - file: 1_05_10_install
       - file: 1_10_00_first_steps
       - file: example_bindings/DaftLib/Readme.md
+      - file: 1_15_00_cmake_helpers
       #- file: 1_15_00_generate_binding_files
 
   - caption: Advanced Topics
