@@ -531,7 +531,7 @@ class LitgenOptions:
             "long double",
             "long long",
         ]
-        for buffer_type in self.fn_params_buffer_types_list():
+        for buffer_type in self._fn_params_buffer_types_list():
             if buffer_type not in authorized_types:
                 raise ValueError(
                     f"""
@@ -540,21 +540,21 @@ class LitgenOptions:
                     """
                 )
 
-    def indent_cpp_spaces(self) -> str:
+    def _indent_cpp_spaces(self) -> str:
         space = "\t" if self.cpp_indent_with_tabs else " "
         return space * self.cpp_indent_size
 
-    def indent_python_spaces(self) -> str:
+    def _indent_python_spaces(self) -> str:
         space = "\t" if self.python_ident_with_tabs else " "
         return space * self.python_indent_size
 
-    def fn_params_buffer_types_list(self) -> list[str]:
+    def _fn_params_buffer_types_list(self) -> list[str]:
         return code_utils.split_string_by_pipe_char(self.fn_params_buffer_types)
 
-    def fn_params_buffer_template_types_list(self) -> list[str]:
+    def _fn_params_buffer_template_types_list(self) -> list[str]:
         return code_utils.split_string_by_pipe_char(self.fn_params_buffer_template_types)
 
-    def member_numeric_c_array_types_list(self) -> list[str]:
+    def _member_numeric_c_array_types_list(self) -> list[str]:
         return code_utils.split_string_by_pipe_char(self.member_numeric_c_array_types)
 
     def __init__(self) -> None:

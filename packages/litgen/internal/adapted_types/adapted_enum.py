@@ -230,7 +230,7 @@ class AdaptedEnum(AdaptedElement):
         lines[-1] = last_line
 
         # indent lines
-        lines = code_utils.indent_code_lines(lines, skip_first_line=True, indent_str=self.options.indent_cpp_spaces())
+        lines = code_utils.indent_code_lines(lines, skip_first_line=True, indent_str=self.options._indent_cpp_spaces())
 
         return lines
 

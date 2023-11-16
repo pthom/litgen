@@ -43,7 +43,7 @@ class AdaptedNamespace(AdaptedElement):
         self.lg_context.namespaces_stub.register_namespace_creation(self._qualified_namespace_name())
 
         ns_name = cpp_to_python.namespace_name_to_python(self.options, self.namespace_name())
-        _i_ = self.options.indent_python_spaces()
+        _i_ = self.options._indent_python_spaces()
         proxy_class_code = code_utils.unindent_code(
             f"""
             class {ns_name}:  # Proxy class that introduces typings for the *submodule* {ns_name}
@@ -67,7 +67,7 @@ class AdaptedNamespace(AdaptedElement):
 
         if self.flag_is_root_namespace():
             context_stored_lines = self._stub_class_as_ns_creation_code()
-            context_stored_lines += code_utils.indent_code_lines(lines, indent_str=self.options.indent_python_spaces())
+            context_stored_lines += code_utils.indent_code_lines(lines, indent_str=self.options._indent_python_spaces())
             self.lg_context.namespaces_stub.store_code(
                 self._qualified_namespace_name(), "\n".join(context_stored_lines)
             )
@@ -111,7 +111,7 @@ class AdaptedNamespace(AdaptedElement):
         if self.flag_is_root_namespace():
             context_stored_lines = self._pydef_def_submodule_code() + lines
             context_stored_lines = code_utils.indent_code_lines(
-                context_stored_lines, indent_str=self.options.indent_cpp_spaces()
+                context_stored_lines, indent_str=self.options._indent_cpp_spaces()
             )
             self.lg_context.namespaces_pydef.store_code(
                 self._qualified_namespace_name(), "\n".join(context_stored_lines)

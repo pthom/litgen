@@ -14,15 +14,15 @@ from litgen.options import LitgenOptions
 
 
 def _possible_buffer_pointer_types(options: LitgenOptions) -> list[str]:
-    types = [t + "*" for t in options.fn_params_buffer_types_list()] + [
-        t + " *" for t in options.fn_params_buffer_types_list()
+    types = [t + "*" for t in options._fn_params_buffer_types_list()] + [
+        t + " *" for t in options._fn_params_buffer_types_list()
     ]
     return types
 
 
 def _possible_buffer_template_pointer_types(options: LitgenOptions) -> list[str]:
-    types = [t + "*" for t in options.fn_params_buffer_template_types_list()] + [
-        t + " *" for t in options.fn_params_buffer_template_types_list()
+    types = [t + "*" for t in options._fn_params_buffer_template_types_list()] + [
+        t + " *" for t in options._fn_params_buffer_template_types_list()
     ]
     return types
 
@@ -254,7 +254,7 @@ class _AdaptBuffersHelper:
             options = self.options
 
             # Fill _i_
-            _i_ = options.indent_cpp_spaces()
+            _i_ = options._indent_cpp_spaces()
 
             # Fill template_buffer_name
             _template_buffer_param = self._last_template_buffer_param()
@@ -291,7 +291,7 @@ class _AdaptBuffersHelper:
             full_code += intro + "\n"
 
             # Add loop code
-            for i, cpp_numeric_type in enumerate(self.options.fn_params_buffer_types_list()):
+            for i, cpp_numeric_type in enumerate(self.options._fn_params_buffer_types_list()):
                 pyarray_type_char = cpp_to_python.cpp_type_to_py_array_type(cpp_numeric_type)
 
                 # fill maybe_else

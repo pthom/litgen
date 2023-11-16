@@ -31,7 +31,7 @@ class AdaptedUnit(AdaptedBlock):
         global_progress_bars().start_progress_bar(_PROGRESS_BAR_TITLE_STUB)
         r = AdaptedElement.str_stub(self)
 
-        context_namespaces_code = self.lg_context.namespaces_stub.full_tree_code(self.options.indent_python_spaces())
+        context_namespaces_code = self.lg_context.namespaces_stub.full_tree_code(self.options._indent_python_spaces())
         r += context_namespaces_code
 
         r = cpp_to_python.apply_black_formatter_pyi(self.options, r)
@@ -43,7 +43,7 @@ class AdaptedUnit(AdaptedBlock):
         global_progress_bars().start_progress_bar(_PROGRESS_BAR_TITLE_PYDEF)
         r = AdaptedElement.str_pydef(self)
 
-        context_namespaces_code = self.lg_context.namespaces_pydef.full_tree_code(self.options.indent_cpp_spaces())
+        context_namespaces_code = self.lg_context.namespaces_pydef.full_tree_code(self.options._indent_cpp_spaces())
         r += context_namespaces_code
 
         global_progress_bars().stop_progress_bar(_PROGRESS_BAR_TITLE_PYDEF)

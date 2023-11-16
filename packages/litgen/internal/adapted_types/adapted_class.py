@@ -74,7 +74,7 @@ class AdaptedClassMember(AdaptedDecl):
         options = self.options
         cpp_decl = self.cpp_element()
         array_typename = cpp_decl.cpp_type.str_code()
-        if array_typename not in options.member_numeric_c_array_types_list():
+        if array_typename not in options._member_numeric_c_array_types_list():
             return False
         shall_replace = code_utils.does_match_regex(options.member_numeric_c_array_replace__regex, cpp_decl.decl_name)
         if not shall_replace:
@@ -87,7 +87,7 @@ class AdaptedClassMember(AdaptedDecl):
         options = self.options
         cpp_decl = self.cpp_element()
         array_typename = cpp_decl.cpp_type.str_code()
-        if array_typename not in options.member_numeric_c_array_types_list():
+        if array_typename not in options._member_numeric_c_array_types_list():
             cpp_decl.emit_warning(
                 """
                 AdaptedClassMember: Only numeric C Style arrays are supported
@@ -495,7 +495,7 @@ class AdaptedClass(AdaptedElement):
             )
 
             replacements = munch.Munch()
-            replacements._i_ = self.options.indent_cpp_spaces()
+            replacements._i_ = self.options._indent_cpp_spaces()
             replacements.iterator_class_name_python = self.options.class_iterables_infos.python_iterable_type(
                 self.class_name_python()
             )
@@ -534,7 +534,7 @@ class AdaptedClass(AdaptedElement):
         self._virt_store_glue_override()
 
         options = self.options
-        _i_ = options.indent_cpp_spaces()
+        _i_ = options._indent_cpp_spaces()
 
         def is_class_or_enum(e: AdaptedElement) -> bool:
             return isinstance(e, AdaptedClass) or isinstance(e, AdaptedEnum)
@@ -585,7 +585,7 @@ class AdaptedClass(AdaptedElement):
             )
 
             replacements = munch.Munch()
-            replacements._i_ = self.options.indent_cpp_spaces()
+            replacements._i_ = self.options._indent_cpp_spaces()
             replacements.pydef_class_var = cpp_to_python.cpp_scope_to_pybind_var_name(options, self.cpp_element())
             replacements.qualified_struct_name = qualified_struct_name
             replacements.other_template_params = other_template_params
@@ -619,7 +619,7 @@ class AdaptedClass(AdaptedElement):
             r = ""
             for child in children_except_inner_classes:
                 decl_code = child.str_pydef()
-                r += code_utils.indent_code(decl_code, indent_str=options.indent_cpp_spaces())
+                r += code_utils.indent_code(decl_code, indent_str=options._indent_cpp_spaces())
             return r
 
         def make_inner_classes_code() -> str:
@@ -628,7 +628,7 @@ class AdaptedClass(AdaptedElement):
                 r += "\n{" + f" // inner classes & enums of {self.class_name_python()}\n"
                 for child in children_inner_classes:
                     decl_code = child.str_pydef()
-                    r += code_utils.indent_code(decl_code, indent_str=options.indent_cpp_spaces())
+                    r += code_utils.indent_code(decl_code, indent_str=options._indent_cpp_spaces())
                 r += "}" + f" // end of inner classes & enums of {self.class_name_python()}"
             return r
 
@@ -643,11 +643,11 @@ class AdaptedClass(AdaptedElement):
                 decl_code = child.str_pydef()
                 parent_struct.class_name = original_class_name
 
-                r += code_utils.indent_code(decl_code, indent_str=options.indent_cpp_spaces())
+                r += code_utils.indent_code(decl_code, indent_str=options._indent_cpp_spaces())
             return r
 
         def make_copy_deepcopy_code() -> str:
-            r = code_utils.indent_code(self._cp_pydef(), indent_str=self.options.indent_cpp_spaces())
+            r = code_utils.indent_code(self._cp_pydef(), indent_str=self.options._indent_cpp_spaces())
             return r
 
         def make_iterable_code() -> str:
@@ -667,11 +667,11 @@ class AdaptedClass(AdaptedElement):
             )
 
             replacements = munch.Munch()
-            replacements._i_ = self.options.indent_cpp_spaces()
+            replacements._i_ = self.options._indent_cpp_spaces()
             replacements.qualified_struct_name = self.cpp_element().qualified_class_name_with_specialization()
 
             iter_code = code_utils.process_code_template(code_template, replacements)
-            iter_code = code_utils.indent_code(iter_code, len(options.indent_cpp_spaces()))
+            iter_code = code_utils.indent_code(iter_code, len(options._indent_cpp_spaces()))
 
             return iter_code
 
@@ -757,7 +757,7 @@ class AdaptedClass(AdaptedElement):
         )
 
         replacements = munch.Munch()
-        replacements._i_ = self.options.indent_cpp_spaces()
+        replacements._i_ = self.options._indent_cpp_spaces()
         replacements.qualified_class_name = self.cpp_element().qualified_class_name_with_specialization()
 
         full_code = ""
@@ -900,7 +900,7 @@ class AdaptedClass(AdaptedElement):
         replacements.trampoline_class_name = self.cpp_element().class_name + "_trampoline"
         replacements.class_name = self.cpp_element().class_name
         replacements.trampoline_list = code_utils.indent_code(
-            "\n".join(trampoline_lines), indent_str=self.options.indent_cpp_spaces()
+            "\n".join(trampoline_lines), indent_str=self.options._indent_cpp_spaces()
         )
 
         publicist_class_code = code_utils.process_code_template(trampoline_class_template, replacements, {})
@@ -984,7 +984,7 @@ class AdaptedClass(AdaptedElement):
         replacements.publicist_class_name = self.cpp_element().class_name + "_publicist"
         replacements.class_name = self.cpp_element().class_name
         replacements.using_list = code_utils.indent_code(
-            "\n".join(using_list()), indent_str=self.options.indent_cpp_spaces()
+            "\n".join(using_list()), indent_str=self.options._indent_cpp_spaces()
         )
 
         publicist_class_code = code_utils.process_code_template(publicist_class_template, replacements, {})
@@ -1173,7 +1173,7 @@ class PythonNamedConstructorHelper:
         return make_cpp_constructor()
 
     def pydef_code(self) -> str:
-        _i_ = self.adapted_class.options.indent_cpp_spaces()
+        _i_ = self.adapted_class.options._indent_cpp_spaces()
         if self.flag_generate_void_constructor():
             return f"{_i_}.def(py::init<>()) // implicit default constructor\n"
         if not self.flag_generate_named_ctor_params():

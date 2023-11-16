@@ -126,7 +126,7 @@ def _make_adapted_lambda_code_end(adapted_function: AdaptedFunction, lambda_adap
     lambda_template_code = code_utils.unindent_code(lambda_template_code, flag_strip_empty_lines=True)
 
     # Fill _i_
-    _i_ = options.indent_cpp_spaces()
+    _i_ = options._indent_cpp_spaces()
 
     # Fill adapted_cpp_parameters
     adapted_cpp_parameters = ", ".join(lambda_adapter.adapted_cpp_parameter_list)
@@ -193,7 +193,7 @@ def _make_adapted_lambda_code(adapted_function: AdaptedFunction, lambda_adapter:
     lambda_template_code = code_utils.unindent_code(lambda_template_code, flag_strip_empty_lines=True) + "\n"
 
     # Fill _i_
-    _i_ = options.indent_cpp_spaces()
+    _i_ = options._indent_cpp_spaces()
 
     # Fill lambda_name
     lambda_name = lambda_adapter.lambda_name
@@ -222,7 +222,7 @@ def _make_adapted_lambda_code(adapted_function: AdaptedFunction, lambda_adapter:
     if len(lambda_adapter.lambda_input_code) > 0:
         maybe_lambda_input_code = code_utils.indent_code(
             lambda_adapter.lambda_input_code,
-            indent_str=options.indent_cpp_spaces(),
+            indent_str=options._indent_cpp_spaces(),
             skip_first_line=True,
         )
     else:
@@ -235,7 +235,7 @@ def _make_adapted_lambda_code(adapted_function: AdaptedFunction, lambda_adapter:
         lambda_template_end = _make_adapted_lambda_code_end(adapted_function, lambda_adapter)
     lambda_template_end = code_utils.indent_code(
         lambda_template_end,
-        indent_str=options.indent_cpp_spaces(),
+        indent_str=options._indent_cpp_spaces(),
         skip_first_line=True,
     )
 

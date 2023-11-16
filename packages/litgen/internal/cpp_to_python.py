@@ -285,7 +285,7 @@ def info_original_location(options: LitgenOptions, cpp_element: CppElement, comm
     else:
         header_file = "Line"
 
-    _i_ = options.indent_cpp_spaces()
+    _i_ = options._indent_cpp_spaces()
 
     start = cpp_element.start()
     line = start.line if start is not None else "unknown line"

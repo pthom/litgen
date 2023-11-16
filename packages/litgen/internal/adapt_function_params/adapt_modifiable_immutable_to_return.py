@@ -104,7 +104,7 @@ def adapt_modifiable_immutable_to_return(adapted_function: AdaptedFunction) -> O
             param_original_type = old_adapted_param.cpp_element().full_type()
             param_name_value = old_adapted_param.cpp_element().decl.decl_name + "_adapt_modifiable"
             param_name = old_adapted_param.cpp_element().decl.decl_name
-            _i_ = options.indent_cpp_spaces()
+            _i_ = options._indent_cpp_spaces()
             if is_optional_type:
                 lambda_input_code = f"""
                     {param_original_type} {param_name_value} = nullptr;
@@ -157,7 +157,7 @@ def adapt_modifiable_immutable_to_return(adapted_function: AdaptedFunction) -> O
             param_original_type = old_adapted_param.cpp_element().full_type()
             param_name_value = old_adapted_param.cpp_element().decl.decl_name + "_adapt_modifiable"
             param_name = old_adapted_param.cpp_element().decl.decl_name
-            _i_ = options.indent_cpp_spaces()
+            _i_ = options._indent_cpp_spaces()
             lambda_input_code = f"""
                 {param_original_type} * {param_name_value} = {param_name}.data();
                 """

@@ -491,7 +491,7 @@ class AdaptedFunction(AdaptedElement):
         replace_lines = Munch()
 
         # fill _i_
-        replace_tokens._i_ = self.options.indent_cpp_spaces()
+        replace_tokens._i_ = self.options._indent_cpp_spaces()
 
         # fill maybe_py_arg
         pyarg_codes = self._pydef_pyarg_list()
@@ -573,7 +573,7 @@ class AdaptedFunction(AdaptedElement):
         replace_lines = Munch()
 
         # fill _i_
-        replace_tokens._i_ = self.options.indent_cpp_spaces()
+        replace_tokens._i_ = self.options._indent_cpp_spaces()
 
         replace_tokens.pydef_method_creation_part = self._pydef_method_creation_part()
 
@@ -648,7 +648,7 @@ class AdaptedFunction(AdaptedElement):
         replace_lines = Munch()
 
         # fill _i_
-        replace_tokens._i_ = self.options.indent_cpp_spaces()
+        replace_tokens._i_ = self.options._indent_cpp_spaces()
 
         if self.is_constructor():
             replace_tokens.pydef_method_creation_part = ".def(py::init("
@@ -682,7 +682,7 @@ class AdaptedFunction(AdaptedElement):
         if replace_lines.lambda_adapter_code is not None:
             replace_lines.lambda_adapter_code = code_utils.indent_code(
                 replace_lines.lambda_adapter_code,
-                indent_str=self.options.indent_cpp_spaces() * 2,
+                indent_str=self.options._indent_cpp_spaces() * 2,
                 skip_first_line=True,
             )
             if replace_lines.lambda_adapter_code[-1] == "\n":
@@ -729,7 +729,7 @@ class AdaptedFunction(AdaptedElement):
         if "delete" in function_infos.specifiers:
             return ""
 
-        _i_ = self.options.indent_cpp_spaces()
+        _i_ = self.options._indent_cpp_spaces()
 
         arg_types = function_infos.parameter_list.str_types_only_for_overload()
         location = self._elm_info_original_location_cpp()
@@ -1306,7 +1306,7 @@ class AdaptedFunction(AdaptedElement):
         replacements.PYBIND11_OVERRIDE_NAME = (
             "PYBIND11_OVERRIDE_PURE_NAME" if is_pure_virtual else "PYBIND11_OVERRIDE_NAME"
         )
-        replacements._i_ = self.options.indent_cpp_spaces()
+        replacements._i_ = self.options._indent_cpp_spaces()
         replacements.return_type = self.cpp_element().return_type.str_return_type()
         replacements.function_name_cpp = self.cpp_element().function_name_with_specialization()
         replacements.function_name_python = cpp_to_python.function_name_to_python(

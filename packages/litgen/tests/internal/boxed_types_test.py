@@ -8,7 +8,7 @@ from litgen.litgen_generator import LitgenGenerator
 
 def test_boxed_type_cpp_struct_code():
     options = litgen.LitgenOptions()
-    code = boxed_python_type.boxed_type_cpp_struct_code("std::string", options.indent_cpp_spaces())
+    code = boxed_python_type.boxed_type_cpp_struct_code("std::string", options._indent_cpp_spaces())
     code_utils.assert_are_codes_equal(
         code,
         """

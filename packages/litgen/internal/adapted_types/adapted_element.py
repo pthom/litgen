@@ -186,7 +186,7 @@ class AdaptedElement:  # (abc.ABC):  # Cannot be abstract (mypy limitation:  htt
         all_lines += body_lines
 
         all_lines = code_utils.indent_code_lines(
-            all_lines, skip_first_line=True, indent_str=self.options.indent_python_spaces()
+            all_lines, skip_first_line=True, indent_str=self.options._indent_python_spaces()
         )
 
         return all_lines

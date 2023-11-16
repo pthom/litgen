@@ -106,7 +106,7 @@ def adapt_modifiable_immutable(adapted_function: AdaptedFunction) -> Optional[La
             param_original_type = old_adapted_param.cpp_element().full_type()
             param_name_value = old_adapted_param.cpp_element().decl.decl_name + "_boxed_value"
             param_name = old_adapted_param.cpp_element().decl.decl_name
-            _i_ = adapted_function.options.indent_cpp_spaces()
+            _i_ = adapted_function.options._indent_cpp_spaces()
 
             if is_optional_type:
                 lambda_input_code = f"""

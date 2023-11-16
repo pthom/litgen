@@ -53,7 +53,7 @@ def adapt_c_string_list(adapted_function: AdaptedFunction) -> Optional[LambdaAda
 
     lambda_adapter = LambdaAdapter()
 
-    _i_ = options.indent_cpp_spaces()
+    _i_ = options._indent_cpp_spaces()
 
     lambda_adapter.new_function_infos = copy.deepcopy(adapted_function.cpp_adapted_function)
     new_function_params = []
@@ -176,7 +176,7 @@ def adapt_c_string_list_no_count(adapted_function: AdaptedFunction) -> Optional[
 
     lambda_adapter = LambdaAdapter()
 
-    _i_ = options.indent_cpp_spaces()
+    _i_ = options._indent_cpp_spaces()
 
     lambda_adapter.new_function_infos = copy.deepcopy(adapted_function.cpp_adapted_function)
     new_function_params = []
