@@ -25,7 +25,7 @@ class AdaptedNamespace(AdaptedElement):
     def namespace_name(self) -> str:
         return self.cpp_element().ns_name
 
-    def flag_create_python_namespace(self) -> bool:
+    def flag_is_root_namespace(self) -> bool:
         is_root = code_utils.does_match_regex(self.options.namespace_root__regex, self.namespace_name())
         return not is_root
 
@@ -57,12 +57,15 @@ class AdaptedNamespace(AdaptedElement):
     # override
     def stub_lines(self) -> list[str]:
         lines: list[str] = []
-        if not self.lg_context.namespaces_stub.was_namespace_created(self._qualified_namespace_name()):
+        if (
+            not self.lg_context.namespaces_stub.was_namespace_created(self._qualified_namespace_name())
+            and self.flag_is_root_namespace()
+        ):
             lines += cpp_to_python.docstring_lines(self.options, self.cpp_element())
         lines += self.adapted_block.stub_lines()
         lines.append("")
 
-        if self.flag_create_python_namespace():
+        if self.flag_is_root_namespace():
             context_stored_lines = self._stub_class_as_ns_creation_code()
             context_stored_lines += code_utils.indent_code_lines(lines, indent_str=self.options.indent_python_spaces())
             self.lg_context.namespaces_stub.store_code(
@@ -105,7 +108,7 @@ class AdaptedNamespace(AdaptedElement):
     def pydef_lines(self) -> list[str]:
         lines = self.adapted_block.pydef_lines()
 
-        if self.flag_create_python_namespace():
+        if self.flag_is_root_namespace():
             context_stored_lines = self._pydef_def_submodule_code() + lines
             context_stored_lines = code_utils.indent_code_lines(
                 context_stored_lines, indent_str=self.options.indent_cpp_spaces()

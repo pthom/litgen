@@ -12,6 +12,9 @@ from litgen import LitgenOptions
 def test_namespaces():
     options = LitgenOptions()
     options.namespace_root__regex = code_utils.make_regex_exact_word("Main")
+    options.python_run_black_formatter = True
+    # options.namespace_exclude__regex  = r"[Ii]nternal|[Dd]etail"  # This is the default value
+
     # In the code below:
     # - the namespace details should be excluded
     # - the namespace Main should not be outputted as a submodule
@@ -19,34 +22,34 @@ def test_namespaces():
     # - occurrences of namespace Inner should be grouped
     code = code_utils.unindent_code(
         """
-void FooRoot();
+        void FooRoot();
 
-namespace details // This namespace should be excluded (see options.namespace_exclude__regex)
-{
-    void FooDetails();
-}
+        namespace details // This namespace should be excluded (see options.namespace_exclude__regex)
+        {
+            void FooDetails();
+        }
 
-namespace // This anonymous namespace should be excluded
-{
-    void LocalFunction();
-}
+        namespace // This anonymous namespace should be excluded
+        {
+            void LocalFunction();
+        }
 
-namespace Main  // This namespace should not be outputted as a submodule
-{
-    // this is an inner namespace (this comment should become the namespace doc)
-    namespace Inner
-    {
-        void FooInner();
-    }
+        namespace Main  // This namespace should not be outputted as a submodule
+        {
+            // this is an inner namespace (this comment should become the namespace doc)
+            namespace Inner
+            {
+                void FooInner();
+            }
 
-    // This is a second occurrence of the same inner namespace
-    // The generated python module will merge these occurrences
-    // (and this comment will be ignored, since the Inner namespace already has a doc)
-    namespace Inner
-    {
-        void FooInner2();
-    }
-}
+            // This is a second occurrence of the same inner namespace
+            // The generated python module will merge these occurrences
+            // (and this comment will be ignored, since the Inner namespace already has a doc)
+            namespace Inner
+            {
+                void FooInner2();
+            }
+        }
     """,
         flag_strip_empty_lines=True,
     )
@@ -58,11 +61,6 @@ namespace Main  // This namespace should not be outputted as a submodule
         '''
         def foo_root() -> None:
             pass
-
-
-
-        """This namespace should not be outputted as a submodule"""
-
 
         # <submodule inner>
         class inner:  # Proxy class that introduces typings for the *submodule* inner
@@ -76,7 +74,7 @@ namespace Main  // This namespace should not be outputted as a submodule
                 pass
 
         # </submodule inner>
-    ''',
+        ''',
     )
 
     code_utils.assert_are_codes_equal(
@@ -92,5 +90,25 @@ namespace Main  // This namespace should not be outputted as a submodule
                 pyNsInner.def("foo_inner2",
                     Main::Inner::FooInner2);
             } // </namespace Inner>
+    """,
+    )
+
+
+def test_root_namespace():
+    options = LitgenOptions()
+    options.namespace_root__regex = "^Main$"
+    code = """
+    namespace Main // This namespace should not be outputted as a submodule
+    {
+        int foo();
+    }
+    """
+    generated_code = litgen.generate_code(options, code)
+    # print(generated_code.stub_code)
+    code_utils.assert_are_codes_equal(
+        generated_code.stub_code,
+        """
+        def foo() -> int:
+            pass
     """,
     )
