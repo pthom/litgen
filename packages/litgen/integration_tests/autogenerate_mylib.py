@@ -82,10 +82,14 @@ def mylib_litgen_options() -> litgen.LitgenOptions:
     options.class_dynamic_attributes__regex = r"Dynamic$"
 
     options.fn_template_options.add_specialization(
-        r"^AddTemplated$", ["int", "double", "std::string"], add_suffix_to_function_name=False, cpp_synonyms_list_str=[]
+        r"^AddTemplated$",
+        ["int", "double", "std::string"],
+        add_suffix_to_function_name=False,
     )
     options.fn_template_options.add_specialization(
-        r"^SumVector", ["int", "std::string"], add_suffix_to_function_name=True, cpp_synonyms_list_str=[]
+        r"^SumVector",
+        ["int", "std::string"],
+        add_suffix_to_function_name=True,
     )
 
     options.class_template_options.add_specialization(
