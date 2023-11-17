@@ -277,10 +277,10 @@ class AdaptedFunction(AdaptedElement):
             if is_private_api and len(options.fn_non_api_comment) > 0:
                 self._cpp_element = copy.deepcopy(self._cpp_element)
                 if len(self._cpp_element.cpp_element_comments.comment_on_previous_lines) == 0:
-                    self._cpp_element.cpp_element_comments.comment_on_previous_lines = f"({options.fn_non_api_comment})"
+                    self._cpp_element.cpp_element_comments.comment_on_previous_lines = f"{options.fn_non_api_comment}"
                 else:
                     self._cpp_element.cpp_element_comments.comment_on_previous_lines += (
-                        f"\n({options.fn_non_api_comment})"
+                        f"\n{options.fn_non_api_comment}"
                     )
 
     @staticmethod

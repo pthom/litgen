@@ -567,7 +567,7 @@ def test_adapted_function_api():
         def foo() -> int:
             pass
         def bar() -> None:
-            """((This API is private))"""
+            """(This API is private)"""
             pass
         ''',
     )
