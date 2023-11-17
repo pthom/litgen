@@ -12,8 +12,6 @@
 def foo_root() -> int:
     pass
 
-"""MY_API This namespace should not be outputted as a submodule (it is considered a root namespace)"""
-
 # <submodule inner>
 class inner:  # Proxy class that introduces typings for the *submodule* inner
     pass  # (This corresponds to a C++ namespace. All method are static!)

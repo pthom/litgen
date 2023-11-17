@@ -989,11 +989,11 @@ void py_init_module_lg_mylib(py::module& m)
 
 
     m.def("add_templated",
-        AddTemplated<int>, py::arg("a"), py::arg("b"));
+        py::overload_cast<int, int>(AddTemplated<int>), py::arg("a"), py::arg("b"));
     m.def("add_templated",
-        AddTemplated<double>, py::arg("a"), py::arg("b"));
+        py::overload_cast<double, double>(AddTemplated<double>), py::arg("a"), py::arg("b"));
     m.def("add_templated",
-        AddTemplated<std::string>, py::arg("a"), py::arg("b"));
+        py::overload_cast<std::string, std::string>(AddTemplated<std::string>), py::arg("a"), py::arg("b"));
 
     m.def("sum_vector_and_c_array",
         [](std::vector<int> xs, const std::array<int, 2>& other_values) -> int

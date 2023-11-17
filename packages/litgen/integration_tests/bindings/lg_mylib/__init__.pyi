@@ -583,8 +583,6 @@ def my_config_instance() -> MyConfig:
 def foo_root() -> int:
     pass
 
-"""MY_API This namespace should not be outputted as a submodule (it is considered a root namespace)"""
-
 # ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 #                       mylib/operators.h included by mylib/mylib_main/mylib.h                                 //
 # //////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -719,12 +717,15 @@ class CallGuardLogger:
 
 #  ------------------------------------------------------------------------
 #      <template specializations for function AddTemplated>
+@overload
 def add_templated(a: int, b: int) -> int:
     pass
 
+@overload
 def add_templated(a: float, b: float) -> float:
     pass
 
+@overload
 def add_templated(a: str, b: str) -> str:
     pass
 
@@ -962,6 +963,7 @@ class home:  # Proxy class that introduces typings for the *submodule* home
 # <submodule aaa>
 class aaa:  # Proxy class that introduces typings for the *submodule* aaa
     pass  # (This corresponds to a C++ namespace. All method are static!)
+
     #  ------------------------------------------------------------------------
     #      <template specializations for class Copyable_Template>
     class Copyable_Template_int:  # Python specialization for Copyable_Template<int>
@@ -1072,6 +1074,7 @@ class some_namespace:  # Proxy class that introduces typings for the *submodule*
         def __init__(self) -> None:
             """Auto-generated default constructor"""
             pass
+
     # <submodule some_inner_namespace>
     class some_inner_namespace:  # Proxy class that introduces typings for the *submodule* some_inner_namespace
         pass  # (This corresponds to a C++ namespace. All method are static!)
