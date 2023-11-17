@@ -828,3 +828,18 @@ def filename_with_n_parent_folders(filename: str, n: int) -> str:
         index_start = 0
     r = "/".join(path.parts[index_start:])
     return r
+
+
+def download_url_content(url: str) -> str:
+    import ssl
+    import urllib.request
+
+    try:
+        # Create an unverified SSL context
+        ssl_context = ssl._create_unverified_context()
+
+        with urllib.request.urlopen(url, context=ssl_context) as response:
+            data = response.read()
+            return data.decode("utf-8")
+    except Exception as e:
+        return f"An error occurred: {e}"
