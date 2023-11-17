@@ -220,19 +220,19 @@ def collapsible_code_and_title_two_columns(
 
 def show_cpp_code(
     code: str, title: str = "", max_visible_lines: Optional[int] = None, initially_opened: bool = True
-) -> HtmlCode:
+) -> None:
     from IPython.display import display  # type: ignore
 
     c = CodeAndTitle(CodeLanguage.Cpp, code, title=title)
     r = collapsible_code_and_title(c, max_visible_lines=max_visible_lines, initially_opened=initially_opened)
-    display(HTML(r))
+    display(HTML(r))  # type: ignore
 
 
 def show_python_code(
     code: str, title: str = "", max_visible_lines: Optional[int] = None, initially_opened: bool = True
-) -> HtmlCode:
+) -> None:
     from IPython.display import display  # type: ignore
 
     c = CodeAndTitle(CodeLanguage.Python, code, title=title)
     r = collapsible_code_and_title(c, max_visible_lines=max_visible_lines, initially_opened=initially_opened)
-    display(HTML(r))
+    display(HTML(r))  # type: ignore

@@ -840,6 +840,7 @@ def download_url_content(url: str) -> str:
 
         with urllib.request.urlopen(url, context=ssl_context) as response:
             data = response.read()
-            return data.decode("utf-8")
+            r: str = data.decode("utf-8")  # noqa
+            return r
     except Exception as e:
         return f"An error occurred: {e}"
