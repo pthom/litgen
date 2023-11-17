@@ -1,4 +1,4 @@
-add_library(mylib mylib.cpp mylib.h)
+add_library(mylib STATIC mylib.cpp mylib.h)
 target_include_directories(mylib PUBLIC
     ${CMAKE_CURRENT_LIST_DIR}/../..
     ${CMAKE_CURRENT_LIST_DIR}
