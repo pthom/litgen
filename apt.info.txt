@@ -1,1 +1,0 @@
-apt.txt is a configuration file for binder.org (install needed packages for srcml_caller pip install)
