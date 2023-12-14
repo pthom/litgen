@@ -9,7 +9,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Generated code layout &#8212; litgen, the Literate Generator</title>
+    <title>Online PImpl generation &#8212; litgen, the Literate Generator</title>
   
   
   
@@ -62,11 +62,10 @@ const thebe_selector_input = "pre"
 const thebe_selector_output = ".output, .cell_output"
 </script>
     <script async="async" src="_static/sphinx-thebe.js"></script>
-    <script>DOCUMENTATION_OPTIONS.pagename = '03_05_00_code_layout';</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '20_15_00_pimpl_online';</script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Names and types translation" href="04_05_00_names_translation.html" />
-    <link rel="prev" title="Headers processing" href="02_05_00_headers.html" />
+    <link rel="prev" title="PImpl my class: autogenerate PImpl boilerplate" href="20_10_00_pimpl_my_class.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   </head>
@@ -182,10 +181,10 @@ const thebe_selector_output = ".output, .cell_output"
 <li class="toctree-l1"><a class="reference internal" href="01_15_00_cmake_helpers.html">CMake helpers</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Bindings - Advanced Topics</span></p>
-<ul class="current nav bd-sidenav">
+<ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="02_00_00_options.html">litgen options</a></li>
 <li class="toctree-l1"><a class="reference internal" href="02_05_00_headers.html">Headers processing</a></li>
-<li class="toctree-l1 current active"><a class="current reference internal" href="#">Generated code layout</a></li>
+<li class="toctree-l1"><a class="reference internal" href="03_05_00_code_layout.html">Generated code layout</a></li>
 <li class="toctree-l1"><a class="reference internal" href="04_05_00_names_translation.html">Names and types translation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="05_05_00_functions.html">Functions</a></li>
 <li class="toctree-l1"><a class="reference internal" href="06_05_00_classes.html">Classes and structs</a></li>
@@ -198,11 +197,11 @@ const thebe_selector_output = ".output, .cell_output"
 <li class="toctree-l1"><a class="reference internal" href="12_05_00_srcml_issues.html">srcML - C++ parsing advices</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Litgen as C++ transformation tool</span></p>
-<ul class="nav bd-sidenav">
+<ul class="current nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="20_00_00_cpp_intro.html">srcmlcpp: C++ code parsing</a></li>
 <li class="toctree-l1"><a class="reference internal" href="20_05_00_cpp_simple_transformations.html">Simple C++ code transformations</a></li>
 <li class="toctree-l1"><a class="reference internal" href="20_10_00_pimpl_my_class.html">PImpl my class: autogenerate PImpl boilerplate</a></li>
-<li class="toctree-l1"><a class="reference internal" href="20_15_00_pimpl_online.html">Online PImpl generation</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Online PImpl generation</a></li>
 </ul>
 
     </div>
@@ -257,7 +256,7 @@ const thebe_selector_output = ".output, .cell_output"
       
       
       
-      <li><a href="https://mybinder.org/v2/gh/pthom/litgen/main?urlpath=lab/tree/packages/litgen/litgen-book/03_05_00_code_layout.ipynb" target="_blank"
+      <li><a href="https://mybinder.org/v2/gh/pthom/litgen/main?urlpath=lab/tree/packages/litgen/litgen-book/20_15_00_pimpl_online.ipynb" target="_blank"
    class="btn btn-sm dropdown-item"
    title="Launch onBinder"
    data-bs-placement="left" data-bs-toggle="tooltip"
@@ -305,7 +304,7 @@ const thebe_selector_output = ".output, .cell_output"
       
       
       
-      <li><a href="https://github.com/pthom/litgen/issues/new?title=Issue%20on%20page%20%2F03_05_00_code_layout.html&body=Your%20issue%20content%20here." target="_blank"
+      <li><a href="https://github.com/pthom/litgen/issues/new?title=Issue%20on%20page%20%2F20_15_00_pimpl_online.html&body=Your%20issue%20content%20here." target="_blank"
    class="btn btn-sm btn-source-issues-button dropdown-item"
    title="Open an issue"
    data-bs-placement="left" data-bs-toggle="tooltip"
@@ -335,7 +334,7 @@ const thebe_selector_output = ".output, .cell_output"
       
       
       
-      <li><a href="_sources/03_05_00_code_layout.ipynb" target="_blank"
+      <li><a href="_sources/20_15_00_pimpl_online.ipynb" target="_blank"
    class="btn btn-sm btn-download-source-button dropdown-item"
    title="Download source file"
    data-bs-placement="left" data-bs-toggle="tooltip"
@@ -415,7 +414,7 @@ document.write(`
               
 
 <div id="jb-print-docs-body" class="onlyprint">
-    <h1>Generated code layout</h1>
+    <h1>Online PImpl generation</h1>
     <!-- Table of contents -->
     <div id="print-main-content">
         <div id="jb-print-toc">
@@ -429,59 +428,79 @@ document.write(`
 <div id="searchbox"></div>
                 <article class="bd-article" role="main">
                   
-  <section class="tex2jax_ignore mathjax_ignore" id="generated-code-layout">
-<h1>Generated code layout<a class="headerlink" href="#generated-code-layout" title="Permalink to this heading">#</a></h1>
-<p>There are numerous code layout options in the <a class="reference external" href="https://github.com/pthom/litgen/blob/main/packages/litgen/options.py">options</a> file.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span>    <span class="c1">################################################################################</span>
-    <span class="c1">#    &lt;Layout settings for the generated python stub code&gt;</span>
-    <span class="c1">################################################################################</span>
-    <span class="c1">#    &lt;show the original location and or signature of elements as a comment&gt;</span>
-    <span class="n">original_location_flag_show</span> <span class="o">=</span> <span class="kc">False</span>
-    <span class="c1"># if showing location, how many parent folders shall be shown</span>
-    <span class="c1"># (if -1, show the full path)</span>
-    <span class="n">original_location_nb_parent_folders</span> <span class="o">=</span> <span class="mi">0</span>
-    <span class="c1"># If True, the complete C++ original signature will be show as a comment in the python stub (pyi)</span>
-    <span class="n">original_signature_flag_show</span> <span class="o">=</span> <span class="kc">False</span>
-    <span class="c1"># Size of an indentation in the python stubs</span>
-    <span class="n">python_indent_size</span> <span class="o">=</span> <span class="mi">4</span>
-    <span class="n">python_ident_with_tabs</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
-    <span class="c1"># Insert as many empty lines in the python stub as found in the header file, keep comments layout, etc.</span>
-    <span class="n">python_reproduce_cpp_layout</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
-    <span class="c1"># The generated code will try to adhere to this max length (if negative, this is ignored)</span>
-    <span class="n">python_max_line_length</span> <span class="o">=</span> <span class="mi">80</span>
-    <span class="c1"># Strip (remove) empty comment lines</span>
-    <span class="n">python_strip_empty_comment_lines</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
-    <span class="c1"># Run black formatter</span>
-    <span class="n">python_run_black_formatter</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
-    <span class="n">python_black_formatter_line_length</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">88</span>
-
-    <span class="c1">################################################################################</span>
-    <span class="c1">#    &lt;Layout settings for the C++ generated pydef code&gt;</span>
-    <span class="c1">################################################################################</span>
-    <span class="c1"># Spacing option in C++ code</span>
-    <span class="n">cpp_indent_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">4</span>
-    <span class="n">cpp_indent_with_tabs</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
-</pre></div>
-</div>
-<p>We demonstrate some of them below:</p>
+  <section class="tex2jax_ignore mathjax_ignore" id="online-pimpl-generation">
+<h1>Online PImpl generation<a class="headerlink" href="#online-pimpl-generation" title="Permalink to this heading">#</a></h1>
+<p>This page enables you to use the PImpl generator on your own code.</p>
+<p>You can open it in an online interactive environment (<a class="reference external" href="https://mybinder.org">mybinder</a>), where you can edit the code below.</p>
+<ol class="arabic simple">
+<li><p>To launch the online tool, click on the rocket icon at the top right of this page, or use <a class="reference external" href="https://mybinder.org/v2/gh/pthom/litgen/main?urlpath=lab/tree/litgen-book/20_15_00_pimpl_online.ipynb">this link</a></p></li>
+<li><p>The interactive environment will open in a new tab. Wait for it to be ready</p></li>
+<li><p>Once it is launched, click on “Run Cell” to run each of the cells:</p></li>
+</ol>
+<p><img alt="Run cell" src="_images/run_cell.jpg" /></p>
+<p>Below, you can use the PImpl generator on your own code. Just modify the C++ code and the options below.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">litgen</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">srcmlcpp</span>
+<span class="kn">from</span> <span class="nn">srcmlcpp_tools</span> <span class="kn">import</span> <span class="n">pimpl_my_class</span>
 <span class="kn">from</span> <span class="nn">litgen.demo</span> <span class="kn">import</span> <span class="n">litgen_notebook_display</span>
 
-<span class="n">options</span> <span class="o">=</span> <span class="n">litgen</span><span class="o">.</span><span class="n">LitgenOptions</span><span class="p">()</span>
+<span class="n">srcmlcpp_options</span> <span class="o">=</span> <span class="n">srcmlcpp</span><span class="o">.</span><span class="n">SrcmlcppOptions</span><span class="p">()</span>
+<span class="c1"># Optional: adjust srcmlcpp options if needed</span>
+
+<span class="n">pimpl_options</span> <span class="o">=</span> <span class="n">pimpl_my_class</span><span class="o">.</span><span class="n">PimplOptions</span><span class="p">()</span>
+<span class="n">pimpl_options</span><span class="o">.</span><span class="n">pimpl_suffixes</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;PImpl&quot;</span><span class="p">]</span>
+
 <span class="n">cpp_code</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
-<span class="s2">    int add(int a, int b); // Adds two numbers</span>
+<span class="s2">#include &quot;my_class.h&quot;</span>
+
+<span class="s2">#include &lt;string&gt;</span>
+<span class="s2">#include &lt;future&gt;</span>
+
+<span class="s2">// Some doc about the class, that you want to see in the header file</span>
+<span class="s2">class MyClassPImpl</span>
+<span class="s2">{</span>
+<span class="s2">public:</span>
+<span class="s2">    //</span>
+<span class="s2">    // Some doc you also want to see in the header file, since it is in a public block</span>
+<span class="s2">    //</span>
+
+<span class="s2">    // Construct an Instance</span>
+<span class="s2">    MyClassPImpl(const std::string&amp; someVar)</span>
+<span class="s2">    {</span>
+<span class="s2">        // Some code you provide in the C++ file, but do not want to see in the header file</span>
+<span class="s2">    }</span>
+
+<span class="s2">    // Some method</span>
+<span class="s2">    virtual bool SomeMethod() { /* ... */ }</span>
+
+<span class="s2">    // Some public static method</span>
+<span class="s2">    static bool SomeStaticMethod() { /* ... */ }</span>
+
+<span class="s2">    // The destructor should not be published as is, but should use the unique_ptr default destructor</span>
+<span class="s2">    ~MyClassPImpl() { /* ... */ }</span>
+
+<span class="s2">private:</span>
+<span class="s2">    //</span>
+<span class="s2">    // Some private doc, which should not be published</span>
+<span class="s2">    //</span>
+<span class="s2">    </span>
+<span class="s2">    bool SomePrivateMethod() { /* ... */ }</span>
+
+<span class="s2">    std::string mSomePrivateMember;</span>
+<span class="s2">    std::future&lt;void&gt; mAnoterPrivateMember;</span>
+<span class="s2">};</span>
+
 <span class="s2">&quot;&quot;&quot;</span>
-<span class="n">options</span><span class="o">.</span><span class="n">original_signature_flag_show</span> <span class="o">=</span> <span class="kc">True</span>
-<span class="n">options</span><span class="o">.</span><span class="n">cpp_indent_size</span> <span class="o">=</span> <span class="mi">1</span>
-<span class="n">options</span><span class="o">.</span><span class="n">cpp_indent_with_tabs</span> <span class="o">=</span> <span class="kc">True</span>
-<span class="n">options</span><span class="o">.</span><span class="n">python_indent_size</span> <span class="o">=</span> <span class="mi">2</span>
-<span class="n">options</span><span class="o">.</span><span class="n">python_run_black_formatter</span> <span class="o">=</span> <span class="kc">False</span>
-<span class="n">options</span><span class="o">.</span><span class="n">python_black_formatter_line_length</span> <span class="o">=</span> <span class="mi">80</span>
+
+<span class="n">pimpl_result</span> <span class="o">=</span> <span class="n">pimpl_my_class</span><span class="o">.</span><span class="n">pimpl_my_code</span><span class="p">(</span><span class="n">cpp_code</span><span class="p">,</span> <span class="n">pimpl_options</span><span class="p">,</span> <span class="n">srcmlcpp_options</span><span class="p">)</span>
 
 
-<span class="n">litgen_notebook_display</span><span class="o">.</span><span class="n">generate_and_display</span><span class="p">(</span><span class="n">options</span><span class="p">,</span> <span class="n">cpp_code</span><span class="p">,</span> <span class="n">display_original_cpp_code</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">collapse_pydef</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="k">if</span> <span class="n">pimpl_result</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Failed generated PImpl&quot;</span><span class="p">)</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="n">litgen_notebook_display</span><span class="o">.</span><span class="n">show_cpp_code</span><span class="p">(</span><span class="n">pimpl_result</span><span class="o">.</span><span class="n">header_code</span><span class="p">,</span> <span class="s2">&quot;Header Code&quot;</span><span class="p">)</span>
+    <span class="n">litgen_notebook_display</span><span class="o">.</span><span class="n">show_cpp_code</span><span class="p">(</span><span class="n">pimpl_result</span><span class="o">.</span><span class="n">glue_code</span><span class="p">,</span> <span class="s2">&quot;Glue Code (paste this in the C++ file)&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -532,20 +551,38 @@ document.write(`
 </style>
 
     <script>
-       function copy_code_1702588665740_411() {
-            let code = `
-# int add(int a, int b);     /* original C++ signature */
-def add(a: int, b: int) -> int:
-  """ Adds two numbers"""
-  pass
-`;
+       function copy_code_1702588680402_34() {
+            let code = `class MyClassPImpl;
+
+// Some doc about the class, that you want to see in the header file
+class MyClass
+{
+  public:
+    //
+    //  Some doc you also want to see in the header file, since it is in a public block
+    //
+
+    // Construct an Instance
+    MyClass(const std::string & someVar);
+
+    // Some method
+    virtual bool SomeMethod();
+
+    // Some public static method
+    static bool SomeStaticMethod();
+
+
+    ~MyClass();
+  private:
+    std::unique_ptr<MyClassPImpl> mPImpl;
+};`;
             navigator.clipboard.writeText(code);
        }
     </script>
-    <button class="collapsible_header" id="btn_1702588665740_411_2" >Corresponding python decls (stub)</button>
-    <div class="collapsible_content" id="content_1702588665740_411_2">
+    <button class="collapsible_header" id="btn_1702588680402_34_0" >Header Code</button>
+    <div class="collapsible_content" id="content_1702588680402_34_0">
         <div>
-                <button onclick="copy_code_1702588665740_411()" align="right">copy &#x270d;</button>
+                <button onclick="copy_code_1702588680402_34()" align="right">copy &#x270d;</button>
         </div>
         <style>pre { line-height: 125%; }
 td.linenos .normal { color: inherit; background-color: transparent; padding-left: 5px; padding-right: 5px; }
@@ -617,34 +654,54 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
 .highlight .vg { color: #076678 } /* Name.Variable.Global */
 .highlight .vi { color: #076678 } /* Name.Variable.Instance */
 .highlight .vm { color: #076678 } /* Name.Variable.Magic */
-.highlight .il { color: #8f3f71 } /* Literal.Number.Integer.Long */</style> <div class="highlight"><pre><span></span><span class="c1"># int add(int a, int b);     /* original C++ signature */</span>
-<span class="k">def</span> <span class="nf">add</span><span class="p">(</span><span class="n">a</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">b</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-<span class="w">  </span><span class="sd">&quot;&quot;&quot; Adds two numbers&quot;&quot;&quot;</span>
-  <span class="k">pass</span>
+.highlight .il { color: #8f3f71 } /* Literal.Number.Integer.Long */</style> <div class="highlight"><pre><span></span><span class="k">class</span><span class="w"> </span><span class="nc">MyClassPImpl</span><span class="p">;</span>
+
+<span class="c1">// Some doc about the class, that you want to see in the header file</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">MyClass</span>
+<span class="p">{</span>
+<span class="w">  </span><span class="k">public</span><span class="o">:</span>
+<span class="w">    </span><span class="c1">//</span>
+<span class="w">    </span><span class="c1">//  Some doc you also want to see in the header file, since it is in a public block</span>
+<span class="w">    </span><span class="c1">//</span>
+
+<span class="w">    </span><span class="c1">// Construct an Instance</span>
+<span class="w">    </span><span class="n">MyClass</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">someVar</span><span class="p">);</span>
+
+<span class="w">    </span><span class="c1">// Some method</span>
+<span class="w">    </span><span class="k">virtual</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="nf">SomeMethod</span><span class="p">();</span>
+
+<span class="w">    </span><span class="c1">// Some public static method</span>
+<span class="w">    </span><span class="k">static</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="nf">SomeStaticMethod</span><span class="p">();</span>
+
+
+<span class="w">    </span><span class="o">~</span><span class="n">MyClass</span><span class="p">();</span>
+<span class="w">  </span><span class="k">private</span><span class="o">:</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">unique_ptr</span><span class="o">&lt;</span><span class="n">MyClassPImpl</span><span class="o">&gt;</span><span class="w"> </span><span class="n">mPImpl</span><span class="p">;</span>
+<span class="p">};</span>
 </pre></div>
 
     </div>
     
     <script>
-    var button = document.getElementById("btn_1702588665740_411_2");
+    var button = document.getElementById("btn_1702588680402_34_0");
     button.addEventListener("click", function() {
         this.classList.toggle("collapsible_header_opened");
-        var content = document.getElementById("content_1702588665740_411_2");
+        var content = document.getElementById("content_1702588680402_34_0");
         if (content.style.maxHeight){
           content.style.maxHeight = null;
         } else {
-          content.style.maxHeight = "20em";
+          content.style.maxHeight = collapsible_content.scrollHeight + "px";
         }
     });
     </script>
     
             <script>
-            var collapsible_header = document.getElementById("btn_1702588665740_411_2");
+            var collapsible_header = document.getElementById("btn_1702588680402_34_0");
             collapsible_header.classList.toggle("collapsible_header_opened");
-            var collapsible_content = document.getElementById("content_1702588665740_411_2");
-            collapsible_content.style.maxHeight = "20em";
+            var collapsible_content = document.getElementById("content_1702588680402_34_0");
+            collapsible_content.style.maxHeight = collapsible_content.scrollHeight + "px";
             </script>
-            <br/>
+            </div><div class="output text_html">
 <style>
 .collapsible_header {
   background-color: #AAAAAA;
@@ -690,19 +747,22 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
 </style>
 
     <script>
-       function copy_code_1702588665723_9968() {
-            let code = `m.def("add",
-	add, 
-	py::arg("a"), py::arg("b"), 
-	"Adds two numbers");
+       function copy_code_1702588680404_5352() {
+            let code = `MyClass::MyClass(const std::string & someVar)
+    : mPImpl(std::make_unique<MyClassPImpl>(someVar)) { }
+virtual bool MyClass::SomeMethod() {
+    return mPImpl->SomeMethod(); }
+bool MyClass::SomeStaticMethod() {
+    return MyClassPImpl::SomeStaticMethod(); }
+MyClass::~MyClass() = default;
 `;
             navigator.clipboard.writeText(code);
        }
     </script>
-    <button class="collapsible_header" id="btn_1702588665723_9968_0" >pybind11 C++ binding code</button>
-    <div class="collapsible_content" id="content_1702588665723_9968_0">
+    <button class="collapsible_header" id="btn_1702588680404_5352_1" >Glue Code (paste this in the C++ file)</button>
+    <div class="collapsible_content" id="content_1702588680404_5352_1">
         <div>
-                <button onclick="copy_code_1702588665723_9968()" align="right">copy &#x270d;</button>
+                <button onclick="copy_code_1702588680404_5352()" align="right">copy &#x270d;</button>
         </div>
         <style>pre { line-height: 125%; }
 td.linenos .normal { color: inherit; background-color: transparent; padding-left: 5px; padding-right: 5px; }
@@ -774,32 +834,35 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
 .highlight .vg { color: #076678 } /* Name.Variable.Global */
 .highlight .vi { color: #076678 } /* Name.Variable.Instance */
 .highlight .vm { color: #076678 } /* Name.Variable.Magic */
-.highlight .il { color: #8f3f71 } /* Literal.Number.Integer.Long */</style> <div class="highlight"><pre><span></span><span class="n">m</span><span class="p">.</span><span class="n">def</span><span class="p">(</span><span class="s">&quot;add&quot;</span><span class="p">,</span>
-<span class="w">	</span><span class="n">add</span><span class="p">,</span><span class="w"> </span>
-<span class="w">	</span><span class="n">py</span><span class="o">::</span><span class="n">arg</span><span class="p">(</span><span class="s">&quot;a&quot;</span><span class="p">),</span><span class="w"> </span><span class="n">py</span><span class="o">::</span><span class="n">arg</span><span class="p">(</span><span class="s">&quot;b&quot;</span><span class="p">),</span><span class="w"> </span>
-<span class="w">	</span><span class="s">&quot;Adds two numbers&quot;</span><span class="p">);</span>
+.highlight .il { color: #8f3f71 } /* Literal.Number.Integer.Long */</style> <div class="highlight"><pre><span></span><span class="n">MyClass</span><span class="o">::</span><span class="n">MyClass</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">someVar</span><span class="p">)</span>
+<span class="w">    </span><span class="o">:</span><span class="w"> </span><span class="n">mPImpl</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">make_unique</span><span class="o">&lt;</span><span class="n">MyClassPImpl</span><span class="o">&gt;</span><span class="p">(</span><span class="n">someVar</span><span class="p">))</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="p">}</span>
+<span class="k">virtual</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">MyClass</span><span class="o">::</span><span class="n">SomeMethod</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">mPImpl</span><span class="o">-&gt;</span><span class="n">SomeMethod</span><span class="p">();</span><span class="w"> </span><span class="p">}</span>
+<span class="kt">bool</span><span class="w"> </span><span class="n">MyClass</span><span class="o">::</span><span class="n">SomeStaticMethod</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">MyClassPImpl</span><span class="o">::</span><span class="n">SomeStaticMethod</span><span class="p">();</span><span class="w"> </span><span class="p">}</span>
+<span class="n">MyClass</span><span class="o">::~</span><span class="n">MyClass</span><span class="p">()</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">default</span><span class="p">;</span>
 </pre></div>
 
     </div>
     
     <script>
-    var button = document.getElementById("btn_1702588665723_9968_0");
+    var button = document.getElementById("btn_1702588680404_5352_1");
     button.addEventListener("click", function() {
         this.classList.toggle("collapsible_header_opened");
-        var content = document.getElementById("content_1702588665723_9968_0");
+        var content = document.getElementById("content_1702588680404_5352_1");
         if (content.style.maxHeight){
           content.style.maxHeight = null;
         } else {
-          content.style.maxHeight = "20em";
+          content.style.maxHeight = collapsible_content.scrollHeight + "px";
         }
     });
     </script>
     
             <script>
-            var collapsible_header = document.getElementById("btn_1702588665723_9968_0");
+            var collapsible_header = document.getElementById("btn_1702588680404_5352_1");
             collapsible_header.classList.toggle("collapsible_header_opened");
-            var collapsible_content = document.getElementById("content_1702588665723_9968_0");
-            collapsible_content.style.maxHeight = "20em";
+            var collapsible_content = document.getElementById("content_1702588680404_5352_1");
+            collapsible_content.style.maxHeight = collapsible_content.scrollHeight + "px";
             </script>
             </div></div>
 </div>
@@ -836,22 +899,13 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
                   <!-- Previous / next buttons -->
 <div class="prev-next-area">
     <a class="left-prev"
-       href="02_05_00_headers.html"
+       href="20_10_00_pimpl_my_class.html"
        title="previous page">
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
         <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title">Headers processing</p>
+        <p class="prev-next-title">PImpl my class: autogenerate PImpl boilerplate</p>
       </div>
-    </a>
-    <a class="right-next"
-       href="04_05_00_names_translation.html"
-       title="next page">
-      <div class="prev-next-info">
-        <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">Names and types translation</p>
-      </div>
-      <i class="fa-solid fa-angle-right"></i>
     </a>
 </div>
                 </footer>

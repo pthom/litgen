@@ -9,7 +9,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Enums &#8212; litgen, the Literate Generator</title>
+    <title>PImpl my class: autogenerate PImpl boilerplate &#8212; litgen, the Literate Generator</title>
   
   
   
@@ -62,11 +62,11 @@ const thebe_selector_input = "pre"
 const thebe_selector_output = ".output, .cell_output"
 </script>
     <script async="async" src="_static/sphinx-thebe.js"></script>
-    <script>DOCUMENTATION_OPTIONS.pagename = '07_05_00_enums';</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '20_10_00_pimpl_my_class';</script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Namespaces" href="08_05_00_namespaces.html" />
-    <link rel="prev" title="Template classes and functions" href="07_05_00_templates.html" />
+    <link rel="next" title="Online PImpl generation" href="20_15_00_pimpl_online.html" />
+    <link rel="prev" title="Simple C++ code transformations" href="20_05_00_cpp_simple_transformations.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   </head>
@@ -182,7 +182,7 @@ const thebe_selector_output = ".output, .cell_output"
 <li class="toctree-l1"><a class="reference internal" href="01_15_00_cmake_helpers.html">CMake helpers</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Bindings - Advanced Topics</span></p>
-<ul class="current nav bd-sidenav">
+<ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="02_00_00_options.html">litgen options</a></li>
 <li class="toctree-l1"><a class="reference internal" href="02_05_00_headers.html">Headers processing</a></li>
 <li class="toctree-l1"><a class="reference internal" href="03_05_00_code_layout.html">Generated code layout</a></li>
@@ -190,7 +190,7 @@ const thebe_selector_output = ".output, .cell_output"
 <li class="toctree-l1"><a class="reference internal" href="05_05_00_functions.html">Functions</a></li>
 <li class="toctree-l1"><a class="reference internal" href="06_05_00_classes.html">Classes and structs</a></li>
 <li class="toctree-l1"><a class="reference internal" href="07_05_00_templates.html">Template classes and functions</a></li>
-<li class="toctree-l1 current active"><a class="current reference internal" href="#">Enums</a></li>
+<li class="toctree-l1"><a class="reference internal" href="07_05_00_enums.html">Enums</a></li>
 <li class="toctree-l1"><a class="reference internal" href="08_05_00_namespaces.html">Namespaces</a></li>
 <li class="toctree-l1"><a class="reference internal" href="09_05_00_preprocessor.html">Preprocessor and macros</a></li>
 <li class="toctree-l1"><a class="reference internal" href="10_05_00_ignore_warnings.html">Ignore litgen warnings</a></li>
@@ -198,10 +198,10 @@ const thebe_selector_output = ".output, .cell_output"
 <li class="toctree-l1"><a class="reference internal" href="12_05_00_srcml_issues.html">srcML - C++ parsing advices</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Litgen as C++ transformation tool</span></p>
-<ul class="nav bd-sidenav">
+<ul class="current nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="20_00_00_cpp_intro.html">srcmlcpp: C++ code parsing</a></li>
 <li class="toctree-l1"><a class="reference internal" href="20_05_00_cpp_simple_transformations.html">Simple C++ code transformations</a></li>
-<li class="toctree-l1"><a class="reference internal" href="20_10_00_pimpl_my_class.html">PImpl my class: autogenerate PImpl boilerplate</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">PImpl my class: autogenerate PImpl boilerplate</a></li>
 <li class="toctree-l1"><a class="reference internal" href="20_15_00_pimpl_online.html">Online PImpl generation</a></li>
 </ul>
 
@@ -257,7 +257,7 @@ const thebe_selector_output = ".output, .cell_output"
       
       
       
-      <li><a href="https://mybinder.org/v2/gh/pthom/litgen/main?urlpath=lab/tree/packages/litgen/litgen-book/07_05_00_enums.ipynb" target="_blank"
+      <li><a href="https://mybinder.org/v2/gh/pthom/litgen/main?urlpath=lab/tree/packages/litgen/litgen-book/20_10_00_pimpl_my_class.ipynb" target="_blank"
    class="btn btn-sm dropdown-item"
    title="Launch onBinder"
    data-bs-placement="left" data-bs-toggle="tooltip"
@@ -305,7 +305,7 @@ const thebe_selector_output = ".output, .cell_output"
       
       
       
-      <li><a href="https://github.com/pthom/litgen/issues/new?title=Issue%20on%20page%20%2F07_05_00_enums.html&body=Your%20issue%20content%20here." target="_blank"
+      <li><a href="https://github.com/pthom/litgen/issues/new?title=Issue%20on%20page%20%2F20_10_00_pimpl_my_class.html&body=Your%20issue%20content%20here." target="_blank"
    class="btn btn-sm btn-source-issues-button dropdown-item"
    title="Open an issue"
    data-bs-placement="left" data-bs-toggle="tooltip"
@@ -335,7 +335,7 @@ const thebe_selector_output = ".output, .cell_output"
       
       
       
-      <li><a href="_sources/07_05_00_enums.ipynb" target="_blank"
+      <li><a href="_sources/20_10_00_pimpl_my_class.ipynb" target="_blank"
    class="btn btn-sm btn-download-source-button dropdown-item"
    title="Download source file"
    data-bs-placement="left" data-bs-toggle="tooltip"
@@ -417,7 +417,7 @@ document.write(`
               
 
 <div id="jb-print-docs-body" class="onlyprint">
-    <h1>Enums</h1>
+    <h1>PImpl my class: autogenerate PImpl boilerplate</h1>
     <!-- Table of contents -->
     <div id="print-main-content">
         <div id="jb-print-toc">
@@ -427,9 +427,8 @@ document.write(`
             </div>
             <nav aria-label="Page">
                 <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#classic-c-enums">Classic C enums</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#c-enums-enum-class">C++ enums: enum class</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#arithmetic-enums">Arithmetic enums</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#a-simple-example">A simple example</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#running-pimplmycode-on-a-whole-codebase">Running PImplMyCode on a whole codebase</a></li>
 </ul>
             </nav>
         </div>
@@ -441,48 +440,42 @@ document.write(`
 <div id="searchbox"></div>
                 <article class="bd-article" role="main">
                   
-  <section class="tex2jax_ignore mathjax_ignore" id="enums">
-<h1>Enums<a class="headerlink" href="#enums" title="Permalink to this heading">#</a></h1>
-<p><a class="reference external" href="https://pybind11.readthedocs.io/en/stable/classes.html?highlight=enum#enumerations-and-internal-types">Relevant portion</a> of the pybind11 manual.</p>
-<p>litgen handles <code class="docutils literal notranslate"><span class="pre">enum</span></code> and <code class="docutils literal notranslate"><span class="pre">enum</span> <span class="pre">class</span></code> enums.</p>
-<section id="classic-c-enums">
-<h2>Classic C enums<a class="headerlink" href="#classic-c-enums" title="Permalink to this heading">#</a></h2>
-<p>See example below:</p>
+  <section class="tex2jax_ignore mathjax_ignore" id="pimpl-my-class-autogenerate-pimpl-boilerplate">
+<h1>PImpl my class: autogenerate PImpl boilerplate<a class="headerlink" href="#pimpl-my-class-autogenerate-pimpl-boilerplate" title="Permalink to this heading">#</a></h1>
+<p><a class="reference external" href="https://en.cppreference.com/w/cpp/language/pimpl">PImpl</a> is a common C++ programming technique that removes implementation details of a class from its object representation by placing them in a separate class, accessed through an opaque pointer.</p>
+<p>Its advantages are:</p>
 <ul class="simple">
-<li><p>litgen automatically remove the standard prefix from enum values: <code class="docutils literal notranslate"><span class="pre">Foo::Foo_a</span></code> is exposed as <code class="docutils literal notranslate"><span class="pre">Foo.a</span></code></p></li>
-<li><p>comments about values are preserved in the stub</p></li>
-<li><p>litgen automatically handles the enum numbering and outputs the values as a comment in the stub</p></li>
-<li><p>if some macro values are used (like <code class="docutils literal notranslate"><span class="pre">MY_VALUE</span></code>), we can set their value</p></li>
-<li><p>Computed values are also correctly exposed (see <code class="docutils literal notranslate"><span class="pre">Foo.d</span></code>)</p></li>
+<li><p>Real code encapsulation (as opposed hiding details in private members, which remain clearly visible in the header file)</p></li>
+<li><p>ABI stability is ensured (since the exposed class ABI consists of only one pointer)</p></li>
+<li><p>Improve compilation time (since only the implemenation .cpp file will include the required dependencies)</p></li>
 </ul>
+<p>Its drawbacks are:</p>
+<ul class="simple">
+<li><p>An additional indirection for method calls</p></li>
+<li><p>Writing a PImpl lead to a lot of boilerplate code, which is often a tedious to write</p></li>
+</ul>
+<p><code class="docutils literal notranslate"><span class="pre">srcmlcpp_tools.pimpl_my_class</span></code> enables you to automate the generation of the boiler code: given the source code of a PImpl class implementation it will generate two outputs:</p>
+<ul class="simple">
+<li><p>a header file with the API that is exposed</p></li>
+<li><p>some glue code that should be added to the C++ file</p></li>
+</ul>
+<section id="a-simple-example">
+<h2>A simple example<a class="headerlink" href="#a-simple-example" title="Permalink to this heading">#</a></h2>
+<p>Let’s take an example.</p>
+<p>Suppose we have this PImpl code somewhere in a C++ file of a class <code class="docutils literal notranslate"><span class="pre">MyClassPImpl</span></code>, and that we want to:</p>
+<ul class="simple">
+<li><p>publish <code class="docutils literal notranslate"><span class="pre">MyClassPImpl</span></code> as <code class="docutils literal notranslate"><span class="pre">MyClass</span></code> in the header file,</p></li>
+<li><p>publish all public methods,</p></li>
+<li><p>publish all the documentation present in the PImpl class</p></li>
+</ul>
+<p>First, let’s show the original code, that defines <code class="docutils literal notranslate"><span class="pre">MyClassPImpl</span></code>:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">cpp_code</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
-<span class="s2">// Doc about Foo</span>
-<span class="s2">// On several lines</span>
-<span class="s2">enum Foo</span>
-<span class="s2">{</span>
-<span class="s2">    Foo_a, // This is a</span>
-
-<span class="s2">    // And this is b and c&#39;s comment</span>
-<span class="s2">    Foo_b,</span>
-<span class="s2">    Foo_c = MY_VALUE,</span>
-
-<span class="s2">    Foo_d = Foo_a | Foo_b + Foo_c, // And a computed value</span>
-
-<span class="s2">    Foo_e = 4,</span>
-
-<span class="s2">    Foo_count, // And this is count: by default this member is suppressed</span>
-<span class="s2">};</span>
-<span class="s2">&quot;&quot;&quot;</span>
-
-<span class="kn">import</span> <span class="nn">litgen</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">srcmlcpp_tools</span> <span class="kn">import</span> <span class="n">pimpl_my_class</span>
 <span class="kn">from</span> <span class="nn">litgen.demo</span> <span class="kn">import</span> <span class="n">litgen_notebook_display</span>
 
-<span class="n">options</span> <span class="o">=</span> <span class="n">litgen</span><span class="o">.</span><span class="n">LitgenOptions</span><span class="p">()</span>
-<span class="n">options</span><span class="o">.</span><span class="n">srcmlcpp_options</span><span class="o">.</span><span class="n">named_number_macros</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;MY_VALUE&quot;</span><span class="p">:</span> <span class="mi">256</span><span class="p">}</span>
-<span class="c1"># options.enum_flag_skip_count = False # Uncomment this to generate a definition for Foo::Foo_count</span>
-<span class="n">litgen_notebook_display</span><span class="o">.</span><span class="n">generate_and_display</span><span class="p">(</span><span class="n">options</span><span class="p">,</span> <span class="n">cpp_code</span><span class="p">,</span> <span class="n">display_original_cpp_code</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">max_visible_lines</span><span class="o">=</span><span class="mi">30</span><span class="p">)</span>
+<span class="n">cpp_code</span> <span class="o">=</span> <span class="n">pimpl_my_class</span><span class="o">.</span><span class="n">demo_cpp_no_marker</span><span class="p">()</span>
+<span class="n">litgen_notebook_display</span><span class="o">.</span><span class="n">show_cpp_code</span><span class="p">(</span><span class="n">cpp_code</span><span class="p">,</span> <span class="s2">&quot;MyClassPImpl cpp file&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -533,30 +526,54 @@ document.write(`
 </style>
 
     <script>
-       function copy_code_1702588669302_481() {
+       function copy_code_1702588679506_7031() {
             let code = `
-class Foo(enum.Enum):
-    """ Doc about Foo
-     On several lines
-    """
-    a = enum.auto() # (= 0)  # This is a
+#include "my_class.h"
 
-    # And this is b and c's comment
-    b = enum.auto() # (= 1)
-    c = enum.auto() # (= 256)
+#include <string>
+#include <future>
 
-    d = enum.auto() # (= Foo.a | Foo.b + Foo.c)  # And a computed value
+// Some doc about the class, that you want to see in the header file
+class MyClassPImpl
+{
+public:
+    //
+    // Some doc you also want to see in the header file, since it is in a public block
+    //
 
-    e = enum.auto() # (= 4)
+    // Construct an Instance
+    MyClassPImpl(const std::string& someVar)
+    {
+        // Some code you provide in the C++ file, but do not want to see in the header file
+    }
 
+    // Some method
+    virtual bool SomeMethod() { /* ... */ }
+
+    // Some public static method
+    static bool SomeStaticMethod() { /* ... */ }
+
+    // The destructor should not be published as is, but should use the unique_ptr default destructor
+    ~MyClassPImpl() { /* ... */ }
+
+private:
+    //
+    // Some private doc, which should not be published
+    //
+    
+    bool SomePrivateMethod() { /* ... */ }
+
+    std::string mSomePrivateMember;
+    std::future<void> mAnoterPrivateMember;
+};
 `;
             navigator.clipboard.writeText(code);
        }
     </script>
-    <button class="collapsible_header" id="btn_1702588669302_481_2" >Corresponding python decls (stub)</button>
-    <div class="collapsible_content" id="content_1702588669302_481_2">
+    <button class="collapsible_header" id="btn_1702588679506_7031_0" >MyClassPImpl cpp file</button>
+    <div class="collapsible_content" id="content_1702588679506_7031_0">
         <div>
-                <button onclick="copy_code_1702588669302_481()" align="right">copy &#x270d;</button>
+                <button onclick="copy_code_1702588679506_7031()" align="right">copy &#x270d;</button>
         </div>
         <style>pre { line-height: 125%; }
 td.linenos .normal { color: inherit; background-color: transparent; padding-left: 5px; padding-right: 5px; }
@@ -628,43 +645,82 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
 .highlight .vg { color: #076678 } /* Name.Variable.Global */
 .highlight .vi { color: #076678 } /* Name.Variable.Instance */
 .highlight .vm { color: #076678 } /* Name.Variable.Magic */
-.highlight .il { color: #8f3f71 } /* Literal.Number.Integer.Long */</style> <div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Foo</span><span class="p">(</span><span class="n">enum</span><span class="o">.</span><span class="n">Enum</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot; Doc about Foo</span>
-<span class="sd">     On several lines</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">a</span> <span class="o">=</span> <span class="n">enum</span><span class="o">.</span><span class="n">auto</span><span class="p">()</span> <span class="c1"># (= 0)  # This is a</span>
+.highlight .il { color: #8f3f71 } /* Literal.Number.Integer.Long */</style> <div class="highlight"><pre><span></span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;my_class.h&quot;</span>
 
-    <span class="c1"># And this is b and c&#39;s comment</span>
-    <span class="n">b</span> <span class="o">=</span> <span class="n">enum</span><span class="o">.</span><span class="n">auto</span><span class="p">()</span> <span class="c1"># (= 1)</span>
-    <span class="n">c</span> <span class="o">=</span> <span class="n">enum</span><span class="o">.</span><span class="n">auto</span><span class="p">()</span> <span class="c1"># (= 256)</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;string&gt;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;future&gt;</span>
 
-    <span class="n">d</span> <span class="o">=</span> <span class="n">enum</span><span class="o">.</span><span class="n">auto</span><span class="p">()</span> <span class="c1"># (= Foo.a | Foo.b + Foo.c)  # And a computed value</span>
+<span class="c1">// Some doc about the class, that you want to see in the header file</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">MyClassPImpl</span>
+<span class="p">{</span>
+<span class="k">public</span><span class="o">:</span>
+<span class="w">    </span><span class="c1">//</span>
+<span class="w">    </span><span class="c1">// Some doc you also want to see in the header file, since it is in a public block</span>
+<span class="w">    </span><span class="c1">//</span>
 
-    <span class="n">e</span> <span class="o">=</span> <span class="n">enum</span><span class="o">.</span><span class="n">auto</span><span class="p">()</span> <span class="c1"># (= 4)</span>
+<span class="w">    </span><span class="c1">// Construct an Instance</span>
+<span class="w">    </span><span class="n">MyClassPImpl</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&amp;</span><span class="w"> </span><span class="n">someVar</span><span class="p">)</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">        </span><span class="c1">// Some code you provide in the C++ file, but do not want to see in the header file</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="c1">// Some method</span>
+<span class="w">    </span><span class="k">virtual</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">SomeMethod</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="cm">/* ... */</span><span class="w"> </span><span class="p">}</span>
+
+<span class="w">    </span><span class="c1">// Some public static method</span>
+<span class="w">    </span><span class="k">static</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">SomeStaticMethod</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="cm">/* ... */</span><span class="w"> </span><span class="p">}</span>
+
+<span class="w">    </span><span class="c1">// The destructor should not be published as is, but should use the unique_ptr default destructor</span>
+<span class="w">    </span><span class="o">~</span><span class="n">MyClassPImpl</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="cm">/* ... */</span><span class="w"> </span><span class="p">}</span>
+
+<span class="k">private</span><span class="o">:</span>
+<span class="w">    </span><span class="c1">//</span>
+<span class="w">    </span><span class="c1">// Some private doc, which should not be published</span>
+<span class="w">    </span><span class="c1">//</span>
+<span class="w">    </span>
+<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">SomePrivateMethod</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="cm">/* ... */</span><span class="w"> </span><span class="p">}</span>
+
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">mSomePrivateMember</span><span class="p">;</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">future</span><span class="o">&lt;</span><span class="kt">void</span><span class="o">&gt;</span><span class="w"> </span><span class="n">mAnoterPrivateMember</span><span class="p">;</span>
+<span class="p">};</span>
 </pre></div>
 
     </div>
     
     <script>
-    var button = document.getElementById("btn_1702588669302_481_2");
+    var button = document.getElementById("btn_1702588679506_7031_0");
     button.addEventListener("click", function() {
         this.classList.toggle("collapsible_header_opened");
-        var content = document.getElementById("content_1702588669302_481_2");
+        var content = document.getElementById("content_1702588679506_7031_0");
         if (content.style.maxHeight){
           content.style.maxHeight = null;
         } else {
-          content.style.maxHeight = "30em";
+          content.style.maxHeight = collapsible_content.scrollHeight + "px";
         }
     });
     </script>
     
             <script>
-            var collapsible_header = document.getElementById("btn_1702588669302_481_2");
+            var collapsible_header = document.getElementById("btn_1702588679506_7031_0");
             collapsible_header.classList.toggle("collapsible_header_opened");
-            var collapsible_content = document.getElementById("content_1702588669302_481_2");
-            collapsible_content.style.maxHeight = "30em";
+            var collapsible_content = document.getElementById("content_1702588679506_7031_0");
+            collapsible_content.style.maxHeight = collapsible_content.scrollHeight + "px";
             </script>
-            <br/>
+            </div></div>
+</div>
+<p>We can generate the PImpl boilerplate code by calling <code class="docutils literal notranslate"><span class="pre">pimpl_my_code</span></code>:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">pimpl_result</span> <span class="o">=</span> <span class="n">pimpl_my_class</span><span class="o">.</span><span class="n">pimpl_my_code</span><span class="p">(</span><span class="n">cpp_code</span><span class="p">)</span>
+
+<span class="k">if</span> <span class="n">pimpl_result</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="n">litgen_notebook_display</span><span class="o">.</span><span class="n">show_cpp_code</span><span class="p">(</span><span class="n">pimpl_result</span><span class="o">.</span><span class="n">header_code</span><span class="p">,</span> <span class="s2">&quot;Header Code&quot;</span><span class="p">)</span>
+    <span class="n">litgen_notebook_display</span><span class="o">.</span><span class="n">show_cpp_code</span><span class="p">(</span><span class="n">pimpl_result</span><span class="o">.</span><span class="n">glue_code</span><span class="p">,</span> <span class="s2">&quot;Glue Code (add this at the bottom of the C++ file)&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html">
 <style>
 .collapsible_header {
   background-color: #AAAAAA;
@@ -710,21 +766,38 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
 </style>
 
     <script>
-       function copy_code_1702588669285_656() {
-            let code = `py::enum_<Foo>(m, "Foo", py::arithmetic(), " Doc about Foo\n On several lines")
-    .value("a", Foo_a, "This is a")
-    .value("b", Foo_b, "")
-    .value("c", Foo_c, "")
-    .value("d", Foo_d, "And a computed value")
-    .value("e", Foo_e, "");
-`;
+       function copy_code_1702588679518_344() {
+            let code = `class MyClassPImpl;
+
+// Some doc about the class, that you want to see in the header file
+class MyClass
+{
+  public:
+    //
+    //  Some doc you also want to see in the header file, since it is in a public block
+    //
+
+    // Construct an Instance
+    MyClass(const std::string & someVar);
+
+    // Some method
+    virtual bool SomeMethod();
+
+    // Some public static method
+    static bool SomeStaticMethod();
+
+
+    ~MyClass();
+  private:
+    std::unique_ptr<MyClassPImpl> mPImpl;
+};`;
             navigator.clipboard.writeText(code);
        }
     </script>
-    <button class="collapsible_header" id="btn_1702588669285_656_0" >pybind11 C++ binding code</button>
-    <div class="collapsible_content" id="content_1702588669285_656_0">
+    <button class="collapsible_header" id="btn_1702588679518_344_1" >Header Code</button>
+    <div class="collapsible_content" id="content_1702588679518_344_1">
         <div>
-                <button onclick="copy_code_1702588669285_656()" align="right">copy &#x270d;</button>
+                <button onclick="copy_code_1702588679518_344()" align="right">copy &#x270d;</button>
         </div>
         <style>pre { line-height: 125%; }
 td.linenos .normal { color: inherit; background-color: transparent; padding-left: 5px; padding-right: 5px; }
@@ -796,54 +869,234 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
 .highlight .vg { color: #076678 } /* Name.Variable.Global */
 .highlight .vi { color: #076678 } /* Name.Variable.Instance */
 .highlight .vm { color: #076678 } /* Name.Variable.Magic */
-.highlight .il { color: #8f3f71 } /* Literal.Number.Integer.Long */</style> <div class="highlight"><pre><span></span><span class="n">py</span><span class="o">::</span><span class="n">enum_</span><span class="o">&lt;</span><span class="n">Foo</span><span class="o">&gt;</span><span class="p">(</span><span class="n">m</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Foo&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">py</span><span class="o">::</span><span class="n">arithmetic</span><span class="p">(),</span><span class="w"> </span><span class="s">&quot; Doc about Foo</span><span class="se">\n</span><span class="s"> On several lines&quot;</span><span class="p">)</span>
-<span class="w">    </span><span class="p">.</span><span class="n">value</span><span class="p">(</span><span class="s">&quot;a&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">Foo_a</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;This is a&quot;</span><span class="p">)</span>
-<span class="w">    </span><span class="p">.</span><span class="n">value</span><span class="p">(</span><span class="s">&quot;b&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">Foo_b</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;&quot;</span><span class="p">)</span>
-<span class="w">    </span><span class="p">.</span><span class="n">value</span><span class="p">(</span><span class="s">&quot;c&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">Foo_c</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;&quot;</span><span class="p">)</span>
-<span class="w">    </span><span class="p">.</span><span class="n">value</span><span class="p">(</span><span class="s">&quot;d&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">Foo_d</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;And a computed value&quot;</span><span class="p">)</span>
-<span class="w">    </span><span class="p">.</span><span class="n">value</span><span class="p">(</span><span class="s">&quot;e&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">Foo_e</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;&quot;</span><span class="p">);</span>
+.highlight .il { color: #8f3f71 } /* Literal.Number.Integer.Long */</style> <div class="highlight"><pre><span></span><span class="k">class</span><span class="w"> </span><span class="nc">MyClassPImpl</span><span class="p">;</span>
+
+<span class="c1">// Some doc about the class, that you want to see in the header file</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">MyClass</span>
+<span class="p">{</span>
+<span class="w">  </span><span class="k">public</span><span class="o">:</span>
+<span class="w">    </span><span class="c1">//</span>
+<span class="w">    </span><span class="c1">//  Some doc you also want to see in the header file, since it is in a public block</span>
+<span class="w">    </span><span class="c1">//</span>
+
+<span class="w">    </span><span class="c1">// Construct an Instance</span>
+<span class="w">    </span><span class="n">MyClass</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">someVar</span><span class="p">);</span>
+
+<span class="w">    </span><span class="c1">// Some method</span>
+<span class="w">    </span><span class="k">virtual</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="nf">SomeMethod</span><span class="p">();</span>
+
+<span class="w">    </span><span class="c1">// Some public static method</span>
+<span class="w">    </span><span class="k">static</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="nf">SomeStaticMethod</span><span class="p">();</span>
+
+
+<span class="w">    </span><span class="o">~</span><span class="n">MyClass</span><span class="p">();</span>
+<span class="w">  </span><span class="k">private</span><span class="o">:</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">unique_ptr</span><span class="o">&lt;</span><span class="n">MyClassPImpl</span><span class="o">&gt;</span><span class="w"> </span><span class="n">mPImpl</span><span class="p">;</span>
+<span class="p">};</span>
 </pre></div>
 
     </div>
     
     <script>
-    var button = document.getElementById("btn_1702588669285_656_0");
+    var button = document.getElementById("btn_1702588679518_344_1");
     button.addEventListener("click", function() {
         this.classList.toggle("collapsible_header_opened");
-        var content = document.getElementById("content_1702588669285_656_0");
+        var content = document.getElementById("content_1702588679518_344_1");
         if (content.style.maxHeight){
           content.style.maxHeight = null;
         } else {
-          content.style.maxHeight = "30em";
+          content.style.maxHeight = collapsible_content.scrollHeight + "px";
         }
     });
     </script>
-    </div></div>
+    
+            <script>
+            var collapsible_header = document.getElementById("btn_1702588679518_344_1");
+            collapsible_header.classList.toggle("collapsible_header_opened");
+            var collapsible_content = document.getElementById("content_1702588679518_344_1");
+            collapsible_content.style.maxHeight = collapsible_content.scrollHeight + "px";
+            </script>
+            </div><div class="output text_html">
+<style>
+.collapsible_header {
+  background-color: #AAAAAA;
+  color: white;
+  cursor: pointer;
+  padding: 3px;
+  width: 100%;
+  border: none;
+  text-align: left;
+  outline: none;
+  font-style: italic;
+}
+
+.collapsible_header_opened {
+  background-color: #555;
+}
+
+.collapsible_header:hover {
+  background-color: #AAAAFF;
+}
+
+.collapsible_header:after {
+  content: '\002B';
+  color: white;
+  font-weight: bold;
+  float: right;
+  margin-left: 5px;
+}
+
+.collapsible_header_opened:after {
+  content: "\2212";
+}
+
+.collapsible_content {
+  padding: 0 18px;
+  max-height: 0;
+  overflow-x: scroll;
+  overflow-y: scroll;
+  min-width: 100%;
+  transition: max-height 0.2s ease-out;
+  background-color: #f1f1f1;
+}
+</style>
+
+    <script>
+       function copy_code_1702588679519_5752() {
+            let code = `MyClass::MyClass(const std::string & someVar)
+    : mPImpl(std::make_unique<MyClassPImpl>(someVar)) { }
+virtual bool MyClass::SomeMethod() {
+    return mPImpl->SomeMethod(); }
+bool MyClass::SomeStaticMethod() {
+    return MyClassPImpl::SomeStaticMethod(); }
+MyClass::~MyClass() = default;
+`;
+            navigator.clipboard.writeText(code);
+       }
+    </script>
+    <button class="collapsible_header" id="btn_1702588679519_5752_2" >Glue Code (add this at the bottom of the C++ file)</button>
+    <div class="collapsible_content" id="content_1702588679519_5752_2">
+        <div>
+                <button onclick="copy_code_1702588679519_5752()" align="right">copy &#x270d;</button>
+        </div>
+        <style>pre { line-height: 125%; }
+td.linenos .normal { color: inherit; background-color: transparent; padding-left: 5px; padding-right: 5px; }
+span.linenos { color: inherit; background-color: transparent; padding-left: 5px; padding-right: 5px; }
+td.linenos .special { color: #000000; background-color: #ffffc0; padding-left: 5px; padding-right: 5px; }
+span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 5px; padding-right: 5px; }
+.highlight .hll { background-color: #3c3836 }
+.highlight { background: #fbf1c7; }
+.highlight .c { color: #928374; font-style: italic } /* Comment */
+.highlight .err { color: #fbf1c7; background-color: #9d0006 } /* Error */
+.highlight .k { color: #9d0006 } /* Keyword */
+.highlight .ch { color: #928374; font-style: italic } /* Comment.Hashbang */
+.highlight .cm { color: #928374; font-style: italic } /* Comment.Multiline */
+.highlight .c-PreProc { color: #427b58; font-style: italic } /* Comment.PreProc */
+.highlight .cp { color: #928374; font-style: italic } /* Comment.Preproc */
+.highlight .cpf { color: #928374; font-style: italic } /* Comment.PreprocFile */
+.highlight .c1 { color: #928374; font-style: italic } /* Comment.Single */
+.highlight .cs { color: #3c3836; font-weight: bold; font-style: italic } /* Comment.Special */
+.highlight .gd { color: #fbf1c7; background-color: #9d0006 } /* Generic.Deleted */
+.highlight .ge { font-style: italic } /* Generic.Emph */
+.highlight .gr { color: #9d0006 } /* Generic.Error */
+.highlight .gh { color: #3c3836; font-weight: bold } /* Generic.Heading */
+.highlight .gi { color: #fbf1c7; background-color: #79740e } /* Generic.Inserted */
+.highlight .go { color: #32302f } /* Generic.Output */
+.highlight .gp { color: #7c6f64 } /* Generic.Prompt */
+.highlight .gs { font-weight: bold } /* Generic.Strong */
+.highlight .gu { color: #3c3836; text-decoration: underline } /* Generic.Subheading */
+.highlight .gt { color: #9d0006 } /* Generic.Traceback */
+.highlight .kc { color: #9d0006 } /* Keyword.Constant */
+.highlight .kd { color: #9d0006 } /* Keyword.Declaration */
+.highlight .kn { color: #9d0006 } /* Keyword.Namespace */
+.highlight .kp { color: #9d0006 } /* Keyword.Pseudo */
+.highlight .kr { color: #9d0006 } /* Keyword.Reserved */
+.highlight .kt { color: #9d0006 } /* Keyword.Type */
+.highlight .m { color: #8f3f71 } /* Literal.Number */
+.highlight .s { color: #79740e } /* Literal.String */
+.highlight .na { color: #b57614 } /* Name.Attribute */
+.highlight .nb { color: #af3a03 } /* Name.Builtin */
+.highlight .nc { color: #427b58 } /* Name.Class */
+.highlight .no { color: #8f3f71 } /* Name.Constant */
+.highlight .nd { color: #9d0006 } /* Name.Decorator */
+.highlight .ne { color: #9d0006 } /* Name.Exception */
+.highlight .nf { color: #427b58 } /* Name.Function */
+.highlight .nn { color: #427b58 } /* Name.Namespace */
+.highlight .nt { color: #427b58 } /* Name.Tag */
+.highlight .nv { color: #076678 } /* Name.Variable */
+.highlight .ow { color: #9d0006 } /* Operator.Word */
+.highlight .mb { color: #8f3f71 } /* Literal.Number.Bin */
+.highlight .mf { color: #8f3f71 } /* Literal.Number.Float */
+.highlight .mh { color: #8f3f71 } /* Literal.Number.Hex */
+.highlight .mi { color: #8f3f71 } /* Literal.Number.Integer */
+.highlight .mo { color: #8f3f71 } /* Literal.Number.Oct */
+.highlight .sa { color: #79740e } /* Literal.String.Affix */
+.highlight .sb { color: #79740e } /* Literal.String.Backtick */
+.highlight .sc { color: #79740e } /* Literal.String.Char */
+.highlight .dl { color: #79740e } /* Literal.String.Delimiter */
+.highlight .sd { color: #79740e } /* Literal.String.Doc */
+.highlight .s2 { color: #79740e } /* Literal.String.Double */
+.highlight .se { color: #af3a03 } /* Literal.String.Escape */
+.highlight .sh { color: #79740e } /* Literal.String.Heredoc */
+.highlight .si { color: #79740e } /* Literal.String.Interpol */
+.highlight .sx { color: #79740e } /* Literal.String.Other */
+.highlight .sr { color: #79740e } /* Literal.String.Regex */
+.highlight .s1 { color: #79740e } /* Literal.String.Single */
+.highlight .ss { color: #79740e } /* Literal.String.Symbol */
+.highlight .bp { color: #af3a03 } /* Name.Builtin.Pseudo */
+.highlight .fm { color: #427b58 } /* Name.Function.Magic */
+.highlight .vc { color: #076678 } /* Name.Variable.Class */
+.highlight .vg { color: #076678 } /* Name.Variable.Global */
+.highlight .vi { color: #076678 } /* Name.Variable.Instance */
+.highlight .vm { color: #076678 } /* Name.Variable.Magic */
+.highlight .il { color: #8f3f71 } /* Literal.Number.Integer.Long */</style> <div class="highlight"><pre><span></span><span class="n">MyClass</span><span class="o">::</span><span class="n">MyClass</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">someVar</span><span class="p">)</span>
+<span class="w">    </span><span class="o">:</span><span class="w"> </span><span class="n">mPImpl</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">make_unique</span><span class="o">&lt;</span><span class="n">MyClassPImpl</span><span class="o">&gt;</span><span class="p">(</span><span class="n">someVar</span><span class="p">))</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="p">}</span>
+<span class="k">virtual</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">MyClass</span><span class="o">::</span><span class="n">SomeMethod</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">mPImpl</span><span class="o">-&gt;</span><span class="n">SomeMethod</span><span class="p">();</span><span class="w"> </span><span class="p">}</span>
+<span class="kt">bool</span><span class="w"> </span><span class="n">MyClass</span><span class="o">::</span><span class="n">SomeStaticMethod</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">MyClassPImpl</span><span class="o">::</span><span class="n">SomeStaticMethod</span><span class="p">();</span><span class="w"> </span><span class="p">}</span>
+<span class="n">MyClass</span><span class="o">::~</span><span class="n">MyClass</span><span class="p">()</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">default</span><span class="p">;</span>
+</pre></div>
+
+    </div>
+    
+    <script>
+    var button = document.getElementById("btn_1702588679519_5752_2");
+    button.addEventListener("click", function() {
+        this.classList.toggle("collapsible_header_opened");
+        var content = document.getElementById("content_1702588679519_5752_2");
+        if (content.style.maxHeight){
+          content.style.maxHeight = null;
+        } else {
+          content.style.maxHeight = collapsible_content.scrollHeight + "px";
+        }
+    });
+    </script>
+    
+            <script>
+            var collapsible_header = document.getElementById("btn_1702588679519_5752_2");
+            collapsible_header.classList.toggle("collapsible_header_opened");
+            var collapsible_content = document.getElementById("content_1702588679519_5752_2");
+            collapsible_content.style.maxHeight = collapsible_content.scrollHeight + "px";
+            </script>
+            </div></div>
 </div>
 </section>
-<section id="c-enums-enum-class">
-<h2>C++ enums: enum class<a class="headerlink" href="#c-enums-enum-class" title="Permalink to this heading">#</a></h2>
-<p>enum class is also supported, see example below:</p>
+<section id="running-pimplmycode-on-a-whole-codebase">
+<h2>Running PImplMyCode on a whole codebase<a class="headerlink" href="#running-pimplmycode-on-a-whole-codebase" title="Permalink to this heading">#</a></h2>
+<p>By calling <code class="docutils literal notranslate"><span class="pre">pimpl_my_class.pimpl_my_file</span></code> it is possible to automatically add the generated code to a C++ and a header file.</p>
+<p>These file should include markers (<code class="docutils literal notranslate"><span class="pre">&lt;pimpl_glue_code&gt;</span></code>, <code class="docutils literal notranslate"><span class="pre">&lt;/pimpl_glue_code&gt;</span></code>, <code class="docutils literal notranslate"><span class="pre">&lt;pimpl_header_code&gt;</span></code>, and <code class="docutils literal notranslate"><span class="pre">&lt;/pimpl_header_code&gt;</span></code>), to mark where the code should be added.</p>
+<p>In order to keep this documentation short, we will automatically generate two example files (a C++ and a header file). Let’s show their content:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">cpp_code</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
-<span class="s2">    enum class Foo</span>
-<span class="s2">    {</span>
-<span class="s2">        A,</span>
-<span class="s2">        B,</span>
-<span class="s2">        C = MY_VALUE,</span>
-<span class="s2">        D = A | B + C,</span>
-<span class="s2">        E = 4,</span>
-<span class="s2">        F</span>
-<span class="s2">    };</span>
-<span class="s2">&quot;&quot;&quot;</span>
-
-<span class="kn">import</span> <span class="nn">litgen</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">srcmlcpp_tools</span> <span class="kn">import</span> <span class="n">pimpl_my_class</span>
 <span class="kn">from</span> <span class="nn">litgen.demo</span> <span class="kn">import</span> <span class="n">litgen_notebook_display</span>
 
-<span class="n">options</span> <span class="o">=</span> <span class="n">litgen</span><span class="o">.</span><span class="n">LitgenOptions</span><span class="p">()</span>
-<span class="n">options</span><span class="o">.</span><span class="n">srcmlcpp_options</span><span class="o">.</span><span class="n">named_number_macros</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;MY_VALUE&quot;</span><span class="p">:</span> <span class="mi">256</span><span class="p">}</span>
-<span class="n">litgen_notebook_display</span><span class="o">.</span><span class="n">generate_and_display</span><span class="p">(</span><span class="n">options</span><span class="p">,</span> <span class="n">cpp_code</span><span class="p">,</span> <span class="n">display_original_cpp_code</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">max_visible_lines</span><span class="o">=</span><span class="mi">30</span><span class="p">)</span>
+
+<span class="n">cpp_file</span><span class="p">,</span> <span class="n">header_file</span> <span class="o">=</span> <span class="n">pimpl_my_class</span><span class="o">.</span><span class="n">create_pimpl_example_files</span><span class="p">()</span>
+
+<span class="n">litgen_notebook_display</span><span class="o">.</span><span class="n">show_cpp_file</span><span class="p">(</span><span class="n">cpp_file</span><span class="p">)</span>
+<span class="n">litgen_notebook_display</span><span class="o">.</span><span class="n">show_cpp_file</span><span class="p">(</span><span class="n">header_file</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -894,23 +1147,32 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
 </style>
 
     <script>
-       function copy_code_1702588669311_844() {
+       function copy_code_1702588679524_5828() {
             let code = `
-class Foo(enum.Enum):
-    a = enum.auto() # (= 0)
-    b = enum.auto() # (= 1)
-    c = enum.auto() # (= 256)
-    d = enum.auto() # (= A | B + C)
-    e = enum.auto() # (= 4)
-    f = enum.auto() # (= 5)
+#include "my_class.h"
+
+struct MyStructPImpl
+{
+    MyStructPImpl() { /* ...*/ }
+    virtual bool SomeMethod() { /* ... */ }
+private:
+    bool SomePrivateMethod() { /* ... */ }
+    int mSomePrivateMember;
+};
+
+// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!  AUTOGENERATED CODE !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+// <pimpl_glue_code>  // Autogenerated code below! Do not edit!
+// </pimpl_glue_code> // Autogenerated code end
+// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!  AUTOGENERATED CODE END !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
 `;
             navigator.clipboard.writeText(code);
        }
     </script>
-    <button class="collapsible_header" id="btn_1702588669311_844_5" >Corresponding python decls (stub)</button>
-    <div class="collapsible_content" id="content_1702588669311_844_5">
+    <button class="collapsible_header" id="btn_1702588679524_5828_3" >/var/folders/w1/w77kvvl9613022ksfxj7v8xh0000gn/T/tmpwbxfzyiv/my_class.cpp</button>
+    <div class="collapsible_content" id="content_1702588679524_5828_3">
         <div>
-                <button onclick="copy_code_1702588669311_844()" align="right">copy &#x270d;</button>
+                <button onclick="copy_code_1702588679524_5828()" align="right">copy &#x270d;</button>
         </div>
         <style>pre { line-height: 125%; }
 td.linenos .normal { color: inherit; background-color: transparent; padding-left: 5px; padding-right: 5px; }
@@ -982,37 +1244,45 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
 .highlight .vg { color: #076678 } /* Name.Variable.Global */
 .highlight .vi { color: #076678 } /* Name.Variable.Instance */
 .highlight .vm { color: #076678 } /* Name.Variable.Magic */
-.highlight .il { color: #8f3f71 } /* Literal.Number.Integer.Long */</style> <div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Foo</span><span class="p">(</span><span class="n">enum</span><span class="o">.</span><span class="n">Enum</span><span class="p">):</span>
-    <span class="n">a</span> <span class="o">=</span> <span class="n">enum</span><span class="o">.</span><span class="n">auto</span><span class="p">()</span> <span class="c1"># (= 0)</span>
-    <span class="n">b</span> <span class="o">=</span> <span class="n">enum</span><span class="o">.</span><span class="n">auto</span><span class="p">()</span> <span class="c1"># (= 1)</span>
-    <span class="n">c</span> <span class="o">=</span> <span class="n">enum</span><span class="o">.</span><span class="n">auto</span><span class="p">()</span> <span class="c1"># (= 256)</span>
-    <span class="n">d</span> <span class="o">=</span> <span class="n">enum</span><span class="o">.</span><span class="n">auto</span><span class="p">()</span> <span class="c1"># (= A | B + C)</span>
-    <span class="n">e</span> <span class="o">=</span> <span class="n">enum</span><span class="o">.</span><span class="n">auto</span><span class="p">()</span> <span class="c1"># (= 4)</span>
-    <span class="n">f</span> <span class="o">=</span> <span class="n">enum</span><span class="o">.</span><span class="n">auto</span><span class="p">()</span> <span class="c1"># (= 5)</span>
+.highlight .il { color: #8f3f71 } /* Literal.Number.Integer.Long */</style> <div class="highlight"><pre><span></span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;my_class.h&quot;</span>
+
+<span class="k">struct</span><span class="w"> </span><span class="nc">MyStructPImpl</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="n">MyStructPImpl</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="cm">/* ...*/</span><span class="w"> </span><span class="p">}</span>
+<span class="w">    </span><span class="k">virtual</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">SomeMethod</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="cm">/* ... */</span><span class="w"> </span><span class="p">}</span>
+<span class="k">private</span><span class="o">:</span>
+<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">SomePrivateMethod</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="cm">/* ... */</span><span class="w"> </span><span class="p">}</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">mSomePrivateMember</span><span class="p">;</span>
+<span class="p">};</span>
+
+<span class="c1">// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!  AUTOGENERATED CODE !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!</span>
+<span class="c1">// &lt;pimpl_glue_code&gt;  // Autogenerated code below! Do not edit!</span>
+<span class="c1">// &lt;/pimpl_glue_code&gt; // Autogenerated code end</span>
+<span class="c1">// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!  AUTOGENERATED CODE END !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!</span>
 </pre></div>
 
     </div>
     
     <script>
-    var button = document.getElementById("btn_1702588669311_844_5");
+    var button = document.getElementById("btn_1702588679524_5828_3");
     button.addEventListener("click", function() {
         this.classList.toggle("collapsible_header_opened");
-        var content = document.getElementById("content_1702588669311_844_5");
+        var content = document.getElementById("content_1702588679524_5828_3");
         if (content.style.maxHeight){
           content.style.maxHeight = null;
         } else {
-          content.style.maxHeight = "30em";
+          content.style.maxHeight = collapsible_content.scrollHeight + "px";
         }
     });
     </script>
     
             <script>
-            var collapsible_header = document.getElementById("btn_1702588669311_844_5");
+            var collapsible_header = document.getElementById("btn_1702588679524_5828_3");
             collapsible_header.classList.toggle("collapsible_header_opened");
-            var collapsible_content = document.getElementById("content_1702588669311_844_5");
-            collapsible_content.style.maxHeight = "30em";
+            var collapsible_content = document.getElementById("content_1702588679524_5828_3");
+            collapsible_content.style.maxHeight = collapsible_content.scrollHeight + "px";
             </script>
-            <br/>
+            </div><div class="output text_html">
 <style>
 .collapsible_header {
   background-color: #AAAAAA;
@@ -1058,22 +1328,23 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
 </style>
 
     <script>
-       function copy_code_1702588669310_81() {
-            let code = `py::enum_<Foo>(m, "Foo", py::arithmetic(), "")
-    .value("a", Foo::A, "")
-    .value("b", Foo::B, "")
-    .value("c", Foo::C, "")
-    .value("d", Foo::D, "")
-    .value("e", Foo::E, "")
-    .value("f", Foo::F, "");
+       function copy_code_1702588679525_5981() {
+            let code = `
+#pragma once
+#include <memory>
+
+// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!  AUTOGENERATED CODE !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+// <pimpl_header_code>  // Autogenerated code below! Do not edit!
+// </pimpl_header_code> // Autogenerated code end
+// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!  AUTOGENERATED CODE END !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 `;
             navigator.clipboard.writeText(code);
        }
     </script>
-    <button class="collapsible_header" id="btn_1702588669310_81_3" >pybind11 C++ binding code</button>
-    <div class="collapsible_content" id="content_1702588669310_81_3">
+    <button class="collapsible_header" id="btn_1702588679525_5981_4" >/var/folders/w1/w77kvvl9613022ksfxj7v8xh0000gn/T/tmpwbxfzyiv/my_class.h</button>
+    <div class="collapsible_content" id="content_1702588679525_5981_4">
         <div>
-                <button onclick="copy_code_1702588669310_81()" align="right">copy &#x270d;</button>
+                <button onclick="copy_code_1702588679525_5981()" align="right">copy &#x270d;</button>
         </div>
         <style>pre { line-height: 125%; }
 td.linenos .normal { color: inherit; background-color: transparent; padding-left: 5px; padding-right: 5px; }
@@ -1145,49 +1416,51 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
 .highlight .vg { color: #076678 } /* Name.Variable.Global */
 .highlight .vi { color: #076678 } /* Name.Variable.Instance */
 .highlight .vm { color: #076678 } /* Name.Variable.Magic */
-.highlight .il { color: #8f3f71 } /* Literal.Number.Integer.Long */</style> <div class="highlight"><pre><span></span><span class="n">py</span><span class="o">::</span><span class="n">enum_</span><span class="o">&lt;</span><span class="n">Foo</span><span class="o">&gt;</span><span class="p">(</span><span class="n">m</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Foo&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">py</span><span class="o">::</span><span class="n">arithmetic</span><span class="p">(),</span><span class="w"> </span><span class="s">&quot;&quot;</span><span class="p">)</span>
-<span class="w">    </span><span class="p">.</span><span class="n">value</span><span class="p">(</span><span class="s">&quot;a&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">Foo</span><span class="o">::</span><span class="n">A</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;&quot;</span><span class="p">)</span>
-<span class="w">    </span><span class="p">.</span><span class="n">value</span><span class="p">(</span><span class="s">&quot;b&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">Foo</span><span class="o">::</span><span class="n">B</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;&quot;</span><span class="p">)</span>
-<span class="w">    </span><span class="p">.</span><span class="n">value</span><span class="p">(</span><span class="s">&quot;c&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">Foo</span><span class="o">::</span><span class="n">C</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;&quot;</span><span class="p">)</span>
-<span class="w">    </span><span class="p">.</span><span class="n">value</span><span class="p">(</span><span class="s">&quot;d&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">Foo</span><span class="o">::</span><span class="n">D</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;&quot;</span><span class="p">)</span>
-<span class="w">    </span><span class="p">.</span><span class="n">value</span><span class="p">(</span><span class="s">&quot;e&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">Foo</span><span class="o">::</span><span class="n">E</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;&quot;</span><span class="p">)</span>
-<span class="w">    </span><span class="p">.</span><span class="n">value</span><span class="p">(</span><span class="s">&quot;f&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">Foo</span><span class="o">::</span><span class="n">F</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;&quot;</span><span class="p">);</span>
+.highlight .il { color: #8f3f71 } /* Literal.Number.Integer.Long */</style> <div class="highlight"><pre><span></span><span class="cp">#pragma once</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;memory&gt;</span>
+
+<span class="c1">// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!  AUTOGENERATED CODE !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!</span>
+<span class="c1">// &lt;pimpl_header_code&gt;  // Autogenerated code below! Do not edit!</span>
+<span class="c1">// &lt;/pimpl_header_code&gt; // Autogenerated code end</span>
+<span class="c1">// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!  AUTOGENERATED CODE END !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!</span>
 </pre></div>
 
     </div>
     
     <script>
-    var button = document.getElementById("btn_1702588669310_81_3");
+    var button = document.getElementById("btn_1702588679525_5981_4");
     button.addEventListener("click", function() {
         this.classList.toggle("collapsible_header_opened");
-        var content = document.getElementById("content_1702588669310_81_3");
+        var content = document.getElementById("content_1702588679525_5981_4");
         if (content.style.maxHeight){
           content.style.maxHeight = null;
         } else {
-          content.style.maxHeight = "30em";
+          content.style.maxHeight = collapsible_content.scrollHeight + "px";
         }
     });
     </script>
-    </div></div>
+    
+            <script>
+            var collapsible_header = document.getElementById("btn_1702588679525_5981_4");
+            collapsible_header.classList.toggle("collapsible_header_opened");
+            var collapsible_content = document.getElementById("content_1702588679525_5981_4");
+            collapsible_content.style.maxHeight = collapsible_content.scrollHeight + "px";
+            </script>
+            </div></div>
 </div>
-</section>
-<section id="arithmetic-enums">
-<h2>Arithmetic enums<a class="headerlink" href="#arithmetic-enums" title="Permalink to this heading">#</a></h2>
-<p>Use <code class="docutils literal notranslate"><span class="pre">options.enum_make_arithmetic__regex</span></code> to make the enum arithmetic in python, so that it can be converted to a number in python.</p>
+<p>By running <code class="docutils literal notranslate"><span class="pre">pimpl_my_file</span></code>, these files will be modified, and the generated code will be inserted between the markers.</p>
+<p>Below, we run <code class="docutils literal notranslate"><span class="pre">pimpl_my_file</span></code> and show the content of the files after it was run.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">cpp_code</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
-<span class="s2">    enum class Foo { A, B, C};</span>
-<span class="s2">&quot;&quot;&quot;</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">srcmlcpp_tools.pimpl_my_class</span> <span class="kn">import</span> <span class="n">pimpl_my_file</span><span class="p">,</span> <span class="n">PimplOptions</span>
 
-<span class="kn">import</span> <span class="nn">litgen</span>
-<span class="kn">from</span> <span class="nn">litgen.demo</span> <span class="kn">import</span> <span class="n">litgen_notebook_display</span>
+<span class="n">pimpl_options</span> <span class="o">=</span> <span class="n">PimplOptions</span><span class="p">()</span>
+<span class="n">pimpl_options</span><span class="o">.</span><span class="n">pimpl_suffixes</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;PImpl&quot;</span><span class="p">]</span>
 
-<span class="n">options</span> <span class="o">=</span> <span class="n">litgen</span><span class="o">.</span><span class="n">LitgenOptions</span><span class="p">()</span>
-<span class="n">options</span><span class="o">.</span><span class="n">enum_make_arithmetic__regex</span> <span class="o">=</span> <span class="s2">&quot;^Foo$&quot;</span>
-<span class="n">litgen_notebook_display</span><span class="o">.</span><span class="n">generate_and_display</span><span class="p">(</span>
-    <span class="n">options</span><span class="p">,</span> <span class="n">cpp_code</span><span class="p">,</span> <span class="n">display_original_cpp_code</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">max_visible_lines</span><span class="o">=</span><span class="mi">30</span><span class="p">,</span> <span class="n">collapse_pydef</span><span class="o">=</span><span class="kc">False</span>
-<span class="p">)</span>
+<span class="n">pimpl_my_file</span><span class="p">(</span><span class="n">cpp_file</span><span class="p">,</span> <span class="n">header_file</span><span class="p">)</span>
+
+<span class="n">litgen_notebook_display</span><span class="o">.</span><span class="n">show_cpp_file</span><span class="p">(</span><span class="n">cpp_file</span><span class="p">)</span>
+<span class="n">litgen_notebook_display</span><span class="o">.</span><span class="n">show_cpp_file</span><span class="p">(</span><span class="n">header_file</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -1238,20 +1511,38 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
 </style>
 
     <script>
-       function copy_code_1702588669317_854() {
+       function copy_code_1702588679531_7449() {
             let code = `
-class Foo(enum.Enum):
-    a = enum.auto() # (= 0)
-    b = enum.auto() # (= 1)
-    c = enum.auto() # (= 2)
+#include "my_class.h"
+
+struct MyStructPImpl
+{
+    MyStructPImpl() { /* ...*/ }
+    virtual bool SomeMethod() { /* ... */ }
+private:
+    bool SomePrivateMethod() { /* ... */ }
+    int mSomePrivateMember;
+};
+
+// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!  AUTOGENERATED CODE !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+// <pimpl_glue_code>  // Autogenerated code below! Do not edit!
+MyStruct::MyStruct()
+    : mPImpl(std::make_unique<MyStructPImpl>()) { }
+virtual bool MyStruct::SomeMethod() {
+    return mPImpl->SomeMethod(); }
+MyStruct::~MyStruct() = default;
+
+// </pimpl_glue_code> // Autogenerated code end
+// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!  AUTOGENERATED CODE END !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
 `;
             navigator.clipboard.writeText(code);
        }
     </script>
-    <button class="collapsible_header" id="btn_1702588669317_854_8" >Corresponding python decls (stub)</button>
-    <div class="collapsible_content" id="content_1702588669317_854_8">
+    <button class="collapsible_header" id="btn_1702588679531_7449_5" >/var/folders/w1/w77kvvl9613022ksfxj7v8xh0000gn/T/tmpwbxfzyiv/my_class.cpp</button>
+    <div class="collapsible_content" id="content_1702588679531_7449_5">
         <div>
-                <button onclick="copy_code_1702588669317_854()" align="right">copy &#x270d;</button>
+                <button onclick="copy_code_1702588679531_7449()" align="right">copy &#x270d;</button>
         </div>
         <style>pre { line-height: 125%; }
 td.linenos .normal { color: inherit; background-color: transparent; padding-left: 5px; padding-right: 5px; }
@@ -1323,34 +1614,51 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
 .highlight .vg { color: #076678 } /* Name.Variable.Global */
 .highlight .vi { color: #076678 } /* Name.Variable.Instance */
 .highlight .vm { color: #076678 } /* Name.Variable.Magic */
-.highlight .il { color: #8f3f71 } /* Literal.Number.Integer.Long */</style> <div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Foo</span><span class="p">(</span><span class="n">enum</span><span class="o">.</span><span class="n">Enum</span><span class="p">):</span>
-    <span class="n">a</span> <span class="o">=</span> <span class="n">enum</span><span class="o">.</span><span class="n">auto</span><span class="p">()</span> <span class="c1"># (= 0)</span>
-    <span class="n">b</span> <span class="o">=</span> <span class="n">enum</span><span class="o">.</span><span class="n">auto</span><span class="p">()</span> <span class="c1"># (= 1)</span>
-    <span class="n">c</span> <span class="o">=</span> <span class="n">enum</span><span class="o">.</span><span class="n">auto</span><span class="p">()</span> <span class="c1"># (= 2)</span>
+.highlight .il { color: #8f3f71 } /* Literal.Number.Integer.Long */</style> <div class="highlight"><pre><span></span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;my_class.h&quot;</span>
+
+<span class="k">struct</span><span class="w"> </span><span class="nc">MyStructPImpl</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="n">MyStructPImpl</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="cm">/* ...*/</span><span class="w"> </span><span class="p">}</span>
+<span class="w">    </span><span class="k">virtual</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">SomeMethod</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="cm">/* ... */</span><span class="w"> </span><span class="p">}</span>
+<span class="k">private</span><span class="o">:</span>
+<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">SomePrivateMethod</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="cm">/* ... */</span><span class="w"> </span><span class="p">}</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">mSomePrivateMember</span><span class="p">;</span>
+<span class="p">};</span>
+
+<span class="c1">// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!  AUTOGENERATED CODE !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!</span>
+<span class="c1">// &lt;pimpl_glue_code&gt;  // Autogenerated code below! Do not edit!</span>
+<span class="n">MyStruct</span><span class="o">::</span><span class="n">MyStruct</span><span class="p">()</span>
+<span class="w">    </span><span class="o">:</span><span class="w"> </span><span class="n">mPImpl</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">make_unique</span><span class="o">&lt;</span><span class="n">MyStructPImpl</span><span class="o">&gt;</span><span class="p">())</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="p">}</span>
+<span class="k">virtual</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">MyStruct</span><span class="o">::</span><span class="n">SomeMethod</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">mPImpl</span><span class="o">-&gt;</span><span class="n">SomeMethod</span><span class="p">();</span><span class="w"> </span><span class="p">}</span>
+<span class="n">MyStruct</span><span class="o">::~</span><span class="n">MyStruct</span><span class="p">()</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">default</span><span class="p">;</span>
+
+<span class="c1">// &lt;/pimpl_glue_code&gt; // Autogenerated code end</span>
+<span class="c1">// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!  AUTOGENERATED CODE END !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!</span>
 </pre></div>
 
     </div>
     
     <script>
-    var button = document.getElementById("btn_1702588669317_854_8");
+    var button = document.getElementById("btn_1702588679531_7449_5");
     button.addEventListener("click", function() {
         this.classList.toggle("collapsible_header_opened");
-        var content = document.getElementById("content_1702588669317_854_8");
+        var content = document.getElementById("content_1702588679531_7449_5");
         if (content.style.maxHeight){
           content.style.maxHeight = null;
         } else {
-          content.style.maxHeight = "30em";
+          content.style.maxHeight = collapsible_content.scrollHeight + "px";
         }
     });
     </script>
     
             <script>
-            var collapsible_header = document.getElementById("btn_1702588669317_854_8");
+            var collapsible_header = document.getElementById("btn_1702588679531_7449_5");
             collapsible_header.classList.toggle("collapsible_header_opened");
-            var collapsible_content = document.getElementById("content_1702588669317_854_8");
-            collapsible_content.style.maxHeight = "30em";
+            var collapsible_content = document.getElementById("content_1702588679531_7449_5");
+            collapsible_content.style.maxHeight = collapsible_content.scrollHeight + "px";
             </script>
-            <br/>
+            </div><div class="output text_html">
 <style>
 .collapsible_header {
   background-color: #AAAAAA;
@@ -1396,19 +1704,35 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
 </style>
 
     <script>
-       function copy_code_1702588669317_145() {
-            let code = `py::enum_<Foo>(m, "Foo", py::arithmetic(), "")
-    .value("a", Foo::A, "")
-    .value("b", Foo::B, "")
-    .value("c", Foo::C, "");
+       function copy_code_1702588679533_043() {
+            let code = `
+#pragma once
+#include <memory>
+
+// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!  AUTOGENERATED CODE !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+// <pimpl_header_code>  // Autogenerated code below! Do not edit!
+struct MyStructPImpl;
+
+
+struct MyStruct
+{
+
+    MyStruct();
+    virtual bool SomeMethod();
+    ~MyStruct();
+  private:
+    std::unique_ptr<MyStructPImpl> mPImpl;
+};
+// </pimpl_header_code> // Autogenerated code end
+// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!  AUTOGENERATED CODE END !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 `;
             navigator.clipboard.writeText(code);
        }
     </script>
-    <button class="collapsible_header" id="btn_1702588669317_145_6" >pybind11 C++ binding code</button>
-    <div class="collapsible_content" id="content_1702588669317_145_6">
+    <button class="collapsible_header" id="btn_1702588679533_043_6" >/var/folders/w1/w77kvvl9613022ksfxj7v8xh0000gn/T/tmpwbxfzyiv/my_class.h</button>
+    <div class="collapsible_content" id="content_1702588679533_043_6">
         <div>
-                <button onclick="copy_code_1702588669317_145()" align="right">copy &#x270d;</button>
+                <button onclick="copy_code_1702588679533_043()" align="right">copy &#x270d;</button>
         </div>
         <style>pre { line-height: 125%; }
 td.linenos .normal { color: inherit; background-color: transparent; padding-left: 5px; padding-right: 5px; }
@@ -1480,32 +1804,47 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
 .highlight .vg { color: #076678 } /* Name.Variable.Global */
 .highlight .vi { color: #076678 } /* Name.Variable.Instance */
 .highlight .vm { color: #076678 } /* Name.Variable.Magic */
-.highlight .il { color: #8f3f71 } /* Literal.Number.Integer.Long */</style> <div class="highlight"><pre><span></span><span class="n">py</span><span class="o">::</span><span class="n">enum_</span><span class="o">&lt;</span><span class="n">Foo</span><span class="o">&gt;</span><span class="p">(</span><span class="n">m</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Foo&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">py</span><span class="o">::</span><span class="n">arithmetic</span><span class="p">(),</span><span class="w"> </span><span class="s">&quot;&quot;</span><span class="p">)</span>
-<span class="w">    </span><span class="p">.</span><span class="n">value</span><span class="p">(</span><span class="s">&quot;a&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">Foo</span><span class="o">::</span><span class="n">A</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;&quot;</span><span class="p">)</span>
-<span class="w">    </span><span class="p">.</span><span class="n">value</span><span class="p">(</span><span class="s">&quot;b&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">Foo</span><span class="o">::</span><span class="n">B</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;&quot;</span><span class="p">)</span>
-<span class="w">    </span><span class="p">.</span><span class="n">value</span><span class="p">(</span><span class="s">&quot;c&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">Foo</span><span class="o">::</span><span class="n">C</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;&quot;</span><span class="p">);</span>
+.highlight .il { color: #8f3f71 } /* Literal.Number.Integer.Long */</style> <div class="highlight"><pre><span></span><span class="cp">#pragma once</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;memory&gt;</span>
+
+<span class="c1">// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!  AUTOGENERATED CODE !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!</span>
+<span class="c1">// &lt;pimpl_header_code&gt;  // Autogenerated code below! Do not edit!</span>
+<span class="k">struct</span><span class="w"> </span><span class="nc">MyStructPImpl</span><span class="p">;</span>
+
+
+<span class="k">struct</span><span class="w"> </span><span class="nc">MyStruct</span>
+<span class="p">{</span>
+
+<span class="w">    </span><span class="n">MyStruct</span><span class="p">();</span>
+<span class="w">    </span><span class="k">virtual</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="nf">SomeMethod</span><span class="p">();</span>
+<span class="w">    </span><span class="o">~</span><span class="n">MyStruct</span><span class="p">();</span>
+<span class="w">  </span><span class="k">private</span><span class="o">:</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">unique_ptr</span><span class="o">&lt;</span><span class="n">MyStructPImpl</span><span class="o">&gt;</span><span class="w"> </span><span class="n">mPImpl</span><span class="p">;</span>
+<span class="p">};</span>
+<span class="c1">// &lt;/pimpl_header_code&gt; // Autogenerated code end</span>
+<span class="c1">// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!  AUTOGENERATED CODE END !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!</span>
 </pre></div>
 
     </div>
     
     <script>
-    var button = document.getElementById("btn_1702588669317_145_6");
+    var button = document.getElementById("btn_1702588679533_043_6");
     button.addEventListener("click", function() {
         this.classList.toggle("collapsible_header_opened");
-        var content = document.getElementById("content_1702588669317_145_6");
+        var content = document.getElementById("content_1702588679533_043_6");
         if (content.style.maxHeight){
           content.style.maxHeight = null;
         } else {
-          content.style.maxHeight = "30em";
+          content.style.maxHeight = collapsible_content.scrollHeight + "px";
         }
     });
     </script>
     
             <script>
-            var collapsible_header = document.getElementById("btn_1702588669317_145_6");
+            var collapsible_header = document.getElementById("btn_1702588679533_043_6");
             collapsible_header.classList.toggle("collapsible_header_opened");
-            var collapsible_content = document.getElementById("content_1702588669317_145_6");
-            collapsible_content.style.maxHeight = "30em";
+            var collapsible_content = document.getElementById("content_1702588679533_043_6");
+            collapsible_content.style.maxHeight = collapsible_content.scrollHeight + "px";
             </script>
             </div></div>
 </div>
@@ -1543,20 +1882,20 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
                   <!-- Previous / next buttons -->
 <div class="prev-next-area">
     <a class="left-prev"
-       href="07_05_00_templates.html"
+       href="20_05_00_cpp_simple_transformations.html"
        title="previous page">
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
         <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title">Template classes and functions</p>
+        <p class="prev-next-title">Simple C++ code transformations</p>
       </div>
     </a>
     <a class="right-next"
-       href="08_05_00_namespaces.html"
+       href="20_15_00_pimpl_online.html"
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">Namespaces</p>
+        <p class="prev-next-title">Online PImpl generation</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>
@@ -1575,9 +1914,8 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
   </div>
   <nav class="bd-toc-nav page-toc">
     <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#classic-c-enums">Classic C enums</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#c-enums-enum-class">C++ enums: enum class</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#arithmetic-enums">Arithmetic enums</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#a-simple-example">A simple example</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#running-pimplmycode-on-a-whole-codebase">Running PImplMyCode on a whole codebase</a></li>
 </ul>
   </nav></div>
 

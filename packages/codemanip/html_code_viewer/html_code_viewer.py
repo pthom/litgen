@@ -236,3 +236,26 @@ def show_python_code(
     c = CodeAndTitle(CodeLanguage.Python, code, title=title)
     r = collapsible_code_and_title(c, max_visible_lines=max_visible_lines, initially_opened=initially_opened)
     display(HTML(r))  # type: ignore
+
+
+def show_cpp_file(
+    cpp_filename: str, title: str | None = None, max_visible_lines: Optional[int] = None, initially_opened: bool = True
+) -> None:
+    if title is None:
+        title = cpp_filename
+    with open(cpp_filename, "r") as f:
+        code = f.read()
+        show_cpp_code(code, title=title, max_visible_lines=max_visible_lines, initially_opened=initially_opened)
+
+
+def show_python_file(
+    python_filename: str,
+    title: str | None = None,
+    max_visible_lines: Optional[int] = None,
+    initially_opened: bool = True,
+) -> None:
+    if title is None:
+        title = python_filename
+    with open(python_filename, "r") as f:
+        code = f.read()
+        show_python_code(code, title=title, max_visible_lines=max_visible_lines, initially_opened=initially_opened)

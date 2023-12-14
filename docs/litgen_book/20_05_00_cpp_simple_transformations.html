@@ -9,7 +9,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Generated code layout &#8212; litgen, the Literate Generator</title>
+    <title>Simple C++ code transformations &#8212; litgen, the Literate Generator</title>
   
   
   
@@ -62,11 +62,11 @@ const thebe_selector_input = "pre"
 const thebe_selector_output = ".output, .cell_output"
 </script>
     <script async="async" src="_static/sphinx-thebe.js"></script>
-    <script>DOCUMENTATION_OPTIONS.pagename = '03_05_00_code_layout';</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '20_05_00_cpp_simple_transformations';</script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Names and types translation" href="04_05_00_names_translation.html" />
-    <link rel="prev" title="Headers processing" href="02_05_00_headers.html" />
+    <link rel="next" title="PImpl my class: autogenerate PImpl boilerplate" href="20_10_00_pimpl_my_class.html" />
+    <link rel="prev" title="srcmlcpp: C++ code parsing" href="20_00_00_cpp_intro.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   </head>
@@ -182,10 +182,10 @@ const thebe_selector_output = ".output, .cell_output"
 <li class="toctree-l1"><a class="reference internal" href="01_15_00_cmake_helpers.html">CMake helpers</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Bindings - Advanced Topics</span></p>
-<ul class="current nav bd-sidenav">
+<ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="02_00_00_options.html">litgen options</a></li>
 <li class="toctree-l1"><a class="reference internal" href="02_05_00_headers.html">Headers processing</a></li>
-<li class="toctree-l1 current active"><a class="current reference internal" href="#">Generated code layout</a></li>
+<li class="toctree-l1"><a class="reference internal" href="03_05_00_code_layout.html">Generated code layout</a></li>
 <li class="toctree-l1"><a class="reference internal" href="04_05_00_names_translation.html">Names and types translation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="05_05_00_functions.html">Functions</a></li>
 <li class="toctree-l1"><a class="reference internal" href="06_05_00_classes.html">Classes and structs</a></li>
@@ -198,9 +198,9 @@ const thebe_selector_output = ".output, .cell_output"
 <li class="toctree-l1"><a class="reference internal" href="12_05_00_srcml_issues.html">srcML - C++ parsing advices</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Litgen as C++ transformation tool</span></p>
-<ul class="nav bd-sidenav">
+<ul class="current nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="20_00_00_cpp_intro.html">srcmlcpp: C++ code parsing</a></li>
-<li class="toctree-l1"><a class="reference internal" href="20_05_00_cpp_simple_transformations.html">Simple C++ code transformations</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Simple C++ code transformations</a></li>
 <li class="toctree-l1"><a class="reference internal" href="20_10_00_pimpl_my_class.html">PImpl my class: autogenerate PImpl boilerplate</a></li>
 <li class="toctree-l1"><a class="reference internal" href="20_15_00_pimpl_online.html">Online PImpl generation</a></li>
 </ul>
@@ -257,7 +257,7 @@ const thebe_selector_output = ".output, .cell_output"
       
       
       
-      <li><a href="https://mybinder.org/v2/gh/pthom/litgen/main?urlpath=lab/tree/packages/litgen/litgen-book/03_05_00_code_layout.ipynb" target="_blank"
+      <li><a href="https://mybinder.org/v2/gh/pthom/litgen/main?urlpath=lab/tree/packages/litgen/litgen-book/20_05_00_cpp_simple_transformations.ipynb" target="_blank"
    class="btn btn-sm dropdown-item"
    title="Launch onBinder"
    data-bs-placement="left" data-bs-toggle="tooltip"
@@ -305,7 +305,7 @@ const thebe_selector_output = ".output, .cell_output"
       
       
       
-      <li><a href="https://github.com/pthom/litgen/issues/new?title=Issue%20on%20page%20%2F03_05_00_code_layout.html&body=Your%20issue%20content%20here." target="_blank"
+      <li><a href="https://github.com/pthom/litgen/issues/new?title=Issue%20on%20page%20%2F20_05_00_cpp_simple_transformations.html&body=Your%20issue%20content%20here." target="_blank"
    class="btn btn-sm btn-source-issues-button dropdown-item"
    title="Open an issue"
    data-bs-placement="left" data-bs-toggle="tooltip"
@@ -335,7 +335,7 @@ const thebe_selector_output = ".output, .cell_output"
       
       
       
-      <li><a href="_sources/03_05_00_code_layout.ipynb" target="_blank"
+      <li><a href="_sources/20_05_00_cpp_simple_transformations.ipynb" target="_blank"
    class="btn btn-sm btn-download-source-button dropdown-item"
    title="Download source file"
    data-bs-placement="left" data-bs-toggle="tooltip"
@@ -404,7 +404,9 @@ document.write(`
   </button>
 `);
 </script>
-
+<label class="sidebar-toggle secondary-toggle btn btn-sm" for="__secondary"title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</label>
 </div></div>
       
     </div>
@@ -415,11 +417,20 @@ document.write(`
               
 
 <div id="jb-print-docs-body" class="onlyprint">
-    <h1>Generated code layout</h1>
+    <h1>Simple C++ code transformations</h1>
     <!-- Table of contents -->
     <div id="print-main-content">
         <div id="jb-print-toc">
             
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#visiting-the-cppelement-tree">Visiting the CppElement tree</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#transforming-the-cppelement-tree">Transforming the CppElement tree</a></li>
+</ul>
+            </nav>
         </div>
     </div>
 </div>
@@ -429,59 +440,107 @@ document.write(`
 <div id="searchbox"></div>
                 <article class="bd-article" role="main">
                   
-  <section class="tex2jax_ignore mathjax_ignore" id="generated-code-layout">
-<h1>Generated code layout<a class="headerlink" href="#generated-code-layout" title="Permalink to this heading">#</a></h1>
-<p>There are numerous code layout options in the <a class="reference external" href="https://github.com/pthom/litgen/blob/main/packages/litgen/options.py">options</a> file.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span>    <span class="c1">################################################################################</span>
-    <span class="c1">#    &lt;Layout settings for the generated python stub code&gt;</span>
-    <span class="c1">################################################################################</span>
-    <span class="c1">#    &lt;show the original location and or signature of elements as a comment&gt;</span>
-    <span class="n">original_location_flag_show</span> <span class="o">=</span> <span class="kc">False</span>
-    <span class="c1"># if showing location, how many parent folders shall be shown</span>
-    <span class="c1"># (if -1, show the full path)</span>
-    <span class="n">original_location_nb_parent_folders</span> <span class="o">=</span> <span class="mi">0</span>
-    <span class="c1"># If True, the complete C++ original signature will be show as a comment in the python stub (pyi)</span>
-    <span class="n">original_signature_flag_show</span> <span class="o">=</span> <span class="kc">False</span>
-    <span class="c1"># Size of an indentation in the python stubs</span>
-    <span class="n">python_indent_size</span> <span class="o">=</span> <span class="mi">4</span>
-    <span class="n">python_ident_with_tabs</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
-    <span class="c1"># Insert as many empty lines in the python stub as found in the header file, keep comments layout, etc.</span>
-    <span class="n">python_reproduce_cpp_layout</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
-    <span class="c1"># The generated code will try to adhere to this max length (if negative, this is ignored)</span>
-    <span class="n">python_max_line_length</span> <span class="o">=</span> <span class="mi">80</span>
-    <span class="c1"># Strip (remove) empty comment lines</span>
-    <span class="n">python_strip_empty_comment_lines</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
-    <span class="c1"># Run black formatter</span>
-    <span class="n">python_run_black_formatter</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
-    <span class="n">python_black_formatter_line_length</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">88</span>
-
-    <span class="c1">################################################################################</span>
-    <span class="c1">#    &lt;Layout settings for the C++ generated pydef code&gt;</span>
-    <span class="c1">################################################################################</span>
-    <span class="c1"># Spacing option in C++ code</span>
-    <span class="n">cpp_indent_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">4</span>
-    <span class="n">cpp_indent_with_tabs</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
-</pre></div>
-</div>
-<p>We demonstrate some of them below:</p>
+  <section class="tex2jax_ignore mathjax_ignore" id="simple-c-code-transformations">
+<h1>Simple C++ code transformations<a class="headerlink" href="#simple-c-code-transformations" title="Permalink to this heading">#</a></h1>
+<section id="visiting-the-cppelement-tree">
+<h2>Visiting the CppElement tree<a class="headerlink" href="#visiting-the-cppelement-tree" title="Permalink to this heading">#</a></h2>
+<p>Let’s transform the following code into a tree of <code class="docutils literal notranslate"><span class="pre">CppElement</span></code>:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">litgen</span>
-<span class="kn">from</span> <span class="nn">litgen.demo</span> <span class="kn">import</span> <span class="n">litgen_notebook_display</span>
-
-<span class="n">options</span> <span class="o">=</span> <span class="n">litgen</span><span class="o">.</span><span class="n">LitgenOptions</span><span class="p">()</span>
-<span class="n">cpp_code</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
-<span class="s2">    int add(int a, int b); // Adds two numbers</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">code</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">int AddNumbers(const MyModule_Class&amp; c);</span>
 <span class="s2">&quot;&quot;&quot;</span>
-<span class="n">options</span><span class="o">.</span><span class="n">original_signature_flag_show</span> <span class="o">=</span> <span class="kc">True</span>
-<span class="n">options</span><span class="o">.</span><span class="n">cpp_indent_size</span> <span class="o">=</span> <span class="mi">1</span>
-<span class="n">options</span><span class="o">.</span><span class="n">cpp_indent_with_tabs</span> <span class="o">=</span> <span class="kc">True</span>
-<span class="n">options</span><span class="o">.</span><span class="n">python_indent_size</span> <span class="o">=</span> <span class="mi">2</span>
-<span class="n">options</span><span class="o">.</span><span class="n">python_run_black_formatter</span> <span class="o">=</span> <span class="kc">False</span>
-<span class="n">options</span><span class="o">.</span><span class="n">python_black_formatter_line_length</span> <span class="o">=</span> <span class="mi">80</span>
+
+<span class="kn">import</span> <span class="nn">srcmlcpp</span>
+<span class="n">options</span> <span class="o">=</span> <span class="n">srcmlcpp</span><span class="o">.</span><span class="n">SrcmlcppOptions</span><span class="p">()</span>
+<span class="n">cpp_unit</span> <span class="o">=</span> <span class="n">srcmlcpp</span><span class="o">.</span><span class="n">code_to_cpp_unit</span><span class="p">(</span><span class="n">options</span><span class="p">,</span> <span class="n">code</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>We can then “visit” this tree, and for example log the type of all encountered elements:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">visitor_log_info</span><span class="p">(</span><span class="n">cpp_element</span><span class="p">:</span> <span class="n">srcmlcpp</span><span class="o">.</span><span class="n">CppElement</span><span class="p">,</span> <span class="n">event</span><span class="p">:</span> <span class="n">srcmlcpp</span><span class="o">.</span><span class="n">CppElementsVisitorEvent</span><span class="p">,</span> <span class="n">depth</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">event</span> <span class="o">==</span> <span class="n">srcmlcpp</span><span class="o">.</span><span class="n">CppElementsVisitorEvent</span><span class="o">.</span><span class="n">OnElement</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;  &quot;</span> <span class="o">*</span> <span class="n">depth</span> <span class="o">+</span> <span class="n">cpp_element</span><span class="o">.</span><span class="n">short_cpp_element_info</span><span class="p">())</span>
 
 
-<span class="n">litgen_notebook_display</span><span class="o">.</span><span class="n">generate_and_display</span><span class="p">(</span><span class="n">options</span><span class="p">,</span> <span class="n">cpp_code</span><span class="p">,</span> <span class="n">display_original_cpp_code</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">collapse_pydef</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="n">cpp_unit</span><span class="o">.</span><span class="n">visit_cpp_breadth_first</span><span class="p">(</span><span class="n">visitor_log_info</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>CppUnit
+  CppEmptyLine
+  CppFunctionDecl name=AddNumbers
+    CppType name=int
+    CppParameterList
+      CppParameter
+        CppDecl name=c
+          CppType name=MyModule_Class
+  CppEmptyLine
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="transforming-the-cppelement-tree">
+<h2>Transforming the CppElement tree<a class="headerlink" href="#transforming-the-cppelement-tree" title="Permalink to this heading">#</a></h2>
+<p>Let’s suppose we want to apply a mass source code transformation where:</p>
+<ul class="simple">
+<li><p>all functions names should be transformed to “snake_case” (with a warning on top)</p></li>
+<li><p>all types whose name start with <code class="docutils literal notranslate"><span class="pre">MyModule_</span></code> should be replaced by <code class="docutils literal notranslate"><span class="pre">MyModule::</span></code> (i.e. we want to add a namespace)</p></li>
+</ul>
+<p>In our example,</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="kt">int</span><span class="w"> </span><span class="nf">AddNumbers</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">MyModule_Class</span><span class="o">&amp;</span><span class="w"> </span><span class="n">c</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>should be transformed to</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="c1">// Was changed to snake_case!</span>
+<span class="kt">int</span><span class="w"> </span><span class="nf">add_numbers</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">MyModule</span><span class="o">::</span><span class="n">Class</span><span class="o">&amp;</span><span class="w"> </span><span class="n">c</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>We can achieve this by defining <code class="docutils literal notranslate"><span class="pre">my_refactor_visitor</span></code> this way:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">srcmlcpp</span> <span class="kn">import</span> <span class="n">CppFunctionDecl</span><span class="p">,</span> <span class="n">CppType</span> <span class="c1"># import the types we want to apply transformations to</span>
+<span class="kn">from</span> <span class="nn">codemanip</span> <span class="kn">import</span> <span class="n">code_utils</span>              <span class="c1"># for to_snake_case</span>
+
+
+<span class="k">def</span> <span class="nf">change_function_to_snake_case</span><span class="p">(</span><span class="n">cpp_function</span><span class="p">:</span> <span class="n">CppFunctionDecl</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Change a function name to snake_case&quot;&quot;&quot;</span>
+    <span class="n">cpp_function</span><span class="o">.</span><span class="n">function_name</span> <span class="o">=</span> <span class="n">code_utils</span><span class="o">.</span><span class="n">to_snake_case</span><span class="p">(</span><span class="n">cpp_function</span><span class="o">.</span><span class="n">function_name</span><span class="p">)</span>
+    <span class="n">cpp_function</span><span class="o">.</span><span class="n">cpp_element_comments</span><span class="o">.</span><span class="n">comment_on_previous_lines</span> <span class="o">+=</span> <span class="s2">&quot;Was changed to snake case!&quot;</span>
+
+<span class="k">def</span> <span class="nf">make_my_module_namespace</span><span class="p">(</span><span class="n">cpp_type</span><span class="p">:</span> <span class="n">CppType</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;If a type starts with MyModule_, replace it by MyModule::&quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">change_typename</span><span class="p">(</span><span class="n">typename</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">typename</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;MyModule_&quot;</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">typename</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;MyModule_&quot;</span><span class="p">,</span> <span class="s2">&quot;MyModule::&quot;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">typename</span>
+    <span class="n">cpp_type</span><span class="o">.</span><span class="n">typenames</span> <span class="o">=</span> <span class="p">[</span><span class="n">change_typename</span><span class="p">(</span><span class="n">typename</span><span class="p">)</span> <span class="k">for</span> <span class="n">typename</span> <span class="ow">in</span> <span class="n">cpp_type</span><span class="o">.</span><span class="n">typenames</span><span class="p">]</span>
+
+<span class="k">def</span> <span class="nf">my_refactor_visitor</span><span class="p">(</span><span class="n">cpp_element</span><span class="p">:</span> <span class="n">srcmlcpp</span><span class="o">.</span><span class="n">CppElement</span><span class="p">,</span> <span class="n">event</span><span class="p">:</span> <span class="n">srcmlcpp</span><span class="o">.</span><span class="n">CppElementsVisitorEvent</span><span class="p">,</span> <span class="n">depth</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Our visitor will apply the transformation&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">event</span> <span class="o">==</span> <span class="n">srcmlcpp</span><span class="o">.</span><span class="n">CppElementsVisitorEvent</span><span class="o">.</span><span class="n">OnElement</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">cpp_element</span><span class="p">,</span> <span class="n">CppFunctionDecl</span><span class="p">):</span>
+            <span class="n">change_function_to_snake_case</span><span class="p">(</span><span class="n">cpp_element</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">cpp_element</span><span class="p">,</span> <span class="n">CppType</span><span class="p">):</span>
+            <span class="n">make_my_module_namespace</span><span class="p">(</span><span class="n">cpp_element</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>Let’s run this visitor and see its output:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Let&#39;s visit the code</span>
+<span class="n">cpp_unit</span><span class="o">.</span><span class="n">visit_cpp_breadth_first</span><span class="p">(</span><span class="n">my_refactor_visitor</span><span class="p">)</span>
+<span class="c1"># And print the refactored code</span>
+<span class="kn">from</span> <span class="nn">litgen.demo</span> <span class="kn">import</span> <span class="n">litgen_notebook_display</span>
+<span class="n">litgen_notebook_display</span><span class="o">.</span><span class="n">show_cpp_code</span><span class="p">(</span><span class="n">cpp_unit</span><span class="o">.</span><span class="n">str_code</span><span class="p">())</span>
 </pre></div>
 </div>
 </div>
@@ -532,20 +591,19 @@ document.write(`
 </style>
 
     <script>
-       function copy_code_1702588665740_411() {
+       function copy_code_1702588675469_426() {
             let code = `
-# int add(int a, int b);     /* original C++ signature */
-def add(a: int, b: int) -> int:
-  """ Adds two numbers"""
-  pass
+//Was changed to snake case!
+int add_numbers(const MyModule::Class & c);
+
 `;
             navigator.clipboard.writeText(code);
        }
     </script>
-    <button class="collapsible_header" id="btn_1702588665740_411_2" >Corresponding python decls (stub)</button>
-    <div class="collapsible_content" id="content_1702588665740_411_2">
+    <button class="collapsible_header" id="btn_1702588675469_426_0" ></button>
+    <div class="collapsible_content" id="content_1702588675469_426_0">
         <div>
-                <button onclick="copy_code_1702588665740_411()" align="right">copy &#x270d;</button>
+                <button onclick="copy_code_1702588675469_426()" align="right">copy &#x270d;</button>
         </div>
         <style>pre { line-height: 125%; }
 td.linenos .normal { color: inherit; background-color: transparent; padding-left: 5px; padding-right: 5px; }
@@ -617,34 +675,42 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
 .highlight .vg { color: #076678 } /* Name.Variable.Global */
 .highlight .vi { color: #076678 } /* Name.Variable.Instance */
 .highlight .vm { color: #076678 } /* Name.Variable.Magic */
-.highlight .il { color: #8f3f71 } /* Literal.Number.Integer.Long */</style> <div class="highlight"><pre><span></span><span class="c1"># int add(int a, int b);     /* original C++ signature */</span>
-<span class="k">def</span> <span class="nf">add</span><span class="p">(</span><span class="n">a</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">b</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-<span class="w">  </span><span class="sd">&quot;&quot;&quot; Adds two numbers&quot;&quot;&quot;</span>
-  <span class="k">pass</span>
+.highlight .il { color: #8f3f71 } /* Literal.Number.Integer.Long */</style> <div class="highlight"><pre><span></span><span class="c1">//Was changed to snake case!</span>
+<span class="kt">int</span><span class="w"> </span><span class="nf">add_numbers</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">MyModule</span><span class="o">::</span><span class="n">Class</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">c</span><span class="p">);</span>
 </pre></div>
 
     </div>
     
     <script>
-    var button = document.getElementById("btn_1702588665740_411_2");
+    var button = document.getElementById("btn_1702588675469_426_0");
     button.addEventListener("click", function() {
         this.classList.toggle("collapsible_header_opened");
-        var content = document.getElementById("content_1702588665740_411_2");
+        var content = document.getElementById("content_1702588675469_426_0");
         if (content.style.maxHeight){
           content.style.maxHeight = null;
         } else {
-          content.style.maxHeight = "20em";
+          content.style.maxHeight = collapsible_content.scrollHeight + "px";
         }
     });
     </script>
     
             <script>
-            var collapsible_header = document.getElementById("btn_1702588665740_411_2");
+            var collapsible_header = document.getElementById("btn_1702588675469_426_0");
             collapsible_header.classList.toggle("collapsible_header_opened");
-            var collapsible_content = document.getElementById("content_1702588665740_411_2");
-            collapsible_content.style.maxHeight = "20em";
+            var collapsible_content = document.getElementById("content_1702588675469_426_0");
+            collapsible_content.style.maxHeight = collapsible_content.scrollHeight + "px";
             </script>
-            <br/>
+            </div></div>
+</div>
+<p>Note: <code class="docutils literal notranslate"><span class="pre">str_code_verbatim</span></code> still retains the original source code</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">litgen_notebook_display</span><span class="o">.</span><span class="n">show_cpp_code</span><span class="p">(</span><span class="n">cpp_unit</span><span class="o">.</span><span class="n">str_code_verbatim</span><span class="p">())</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html">
 <style>
 .collapsible_header {
   background-color: #AAAAAA;
@@ -690,19 +756,17 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
 </style>
 
     <script>
-       function copy_code_1702588665723_9968() {
-            let code = `m.def("add",
-	add, 
-	py::arg("a"), py::arg("b"), 
-	"Adds two numbers");
+       function copy_code_1702588675474_3162() {
+            let code = `
+int AddNumbers(const MyModule_Class& c);
 `;
             navigator.clipboard.writeText(code);
        }
     </script>
-    <button class="collapsible_header" id="btn_1702588665723_9968_0" >pybind11 C++ binding code</button>
-    <div class="collapsible_content" id="content_1702588665723_9968_0">
+    <button class="collapsible_header" id="btn_1702588675474_3162_1" ></button>
+    <div class="collapsible_content" id="content_1702588675474_3162_1">
         <div>
-                <button onclick="copy_code_1702588665723_9968()" align="right">copy &#x270d;</button>
+                <button onclick="copy_code_1702588675474_3162()" align="right">copy &#x270d;</button>
         </div>
         <style>pre { line-height: 125%; }
 td.linenos .normal { color: inherit; background-color: transparent; padding-left: 5px; padding-right: 5px; }
@@ -774,35 +838,33 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
 .highlight .vg { color: #076678 } /* Name.Variable.Global */
 .highlight .vi { color: #076678 } /* Name.Variable.Instance */
 .highlight .vm { color: #076678 } /* Name.Variable.Magic */
-.highlight .il { color: #8f3f71 } /* Literal.Number.Integer.Long */</style> <div class="highlight"><pre><span></span><span class="n">m</span><span class="p">.</span><span class="n">def</span><span class="p">(</span><span class="s">&quot;add&quot;</span><span class="p">,</span>
-<span class="w">	</span><span class="n">add</span><span class="p">,</span><span class="w"> </span>
-<span class="w">	</span><span class="n">py</span><span class="o">::</span><span class="n">arg</span><span class="p">(</span><span class="s">&quot;a&quot;</span><span class="p">),</span><span class="w"> </span><span class="n">py</span><span class="o">::</span><span class="n">arg</span><span class="p">(</span><span class="s">&quot;b&quot;</span><span class="p">),</span><span class="w"> </span>
-<span class="w">	</span><span class="s">&quot;Adds two numbers&quot;</span><span class="p">);</span>
+.highlight .il { color: #8f3f71 } /* Literal.Number.Integer.Long */</style> <div class="highlight"><pre><span></span><span class="kt">int</span><span class="w"> </span><span class="nf">AddNumbers</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">MyModule_Class</span><span class="o">&amp;</span><span class="w"> </span><span class="n">c</span><span class="p">);</span>
 </pre></div>
 
     </div>
     
     <script>
-    var button = document.getElementById("btn_1702588665723_9968_0");
+    var button = document.getElementById("btn_1702588675474_3162_1");
     button.addEventListener("click", function() {
         this.classList.toggle("collapsible_header_opened");
-        var content = document.getElementById("content_1702588665723_9968_0");
+        var content = document.getElementById("content_1702588675474_3162_1");
         if (content.style.maxHeight){
           content.style.maxHeight = null;
         } else {
-          content.style.maxHeight = "20em";
+          content.style.maxHeight = collapsible_content.scrollHeight + "px";
         }
     });
     </script>
     
             <script>
-            var collapsible_header = document.getElementById("btn_1702588665723_9968_0");
+            var collapsible_header = document.getElementById("btn_1702588675474_3162_1");
             collapsible_header.classList.toggle("collapsible_header_opened");
-            var collapsible_content = document.getElementById("content_1702588665723_9968_0");
-            collapsible_content.style.maxHeight = "20em";
+            var collapsible_content = document.getElementById("content_1702588675474_3162_1");
+            collapsible_content.style.maxHeight = collapsible_content.scrollHeight + "px";
             </script>
             </div></div>
 </div>
+</section>
 </section>
 
     <script type="text/x-thebe-config">
@@ -836,20 +898,20 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
                   <!-- Previous / next buttons -->
 <div class="prev-next-area">
     <a class="left-prev"
-       href="02_05_00_headers.html"
+       href="20_00_00_cpp_intro.html"
        title="previous page">
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
         <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title">Headers processing</p>
+        <p class="prev-next-title">srcmlcpp: C++ code parsing</p>
       </div>
     </a>
     <a class="right-next"
-       href="04_05_00_names_translation.html"
+       href="20_10_00_pimpl_my_class.html"
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">Names and types translation</p>
+        <p class="prev-next-title">PImpl my class: autogenerate PImpl boilerplate</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>
@@ -859,6 +921,21 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
             </div>
             
             
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#visiting-the-cppelement-tree">Visiting the CppElement tree</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#transforming-the-cppelement-tree">Transforming the CppElement tree</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
               
             
           </div>

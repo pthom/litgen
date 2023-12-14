@@ -6,12 +6,15 @@ root: 00_00_intro
 
 
 parts:
-  - caption: Bindings - Basics
+  - caption: Installation
     chapters:
       - file: 01_05_00_install_or_online
         sections:
-          - file: 01_05_05_online
-          - file: 01_05_10_install
+        - file: 01_05_05_online
+        - file: 01_05_10_install
+
+  - caption: Bindings - Basics
+    chapters:
       - file: 01_10_00_first_steps
       - file: example_bindings/DaftLib/Readme.md
       - file: 01_15_00_cmake_helpers
@@ -30,3 +33,11 @@ parts:
      - file: 09_05_00_preprocessor
      - file: 10_05_00_ignore_warnings
      - file: 11_05_00_post_processing
+     - file: 12_05_00_srcml_issues
+
+  - caption: Litgen as C++ transformation tool
+    chapters:
+      - file: 20_00_00_cpp_intro
+      - file: 20_05_00_cpp_simple_transformations
+      - file: 20_10_00_pimpl_my_class
+      - file: 20_15_00_pimpl_online

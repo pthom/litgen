@@ -9,7 +9,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Local installation &#8212; litgen, the Literate Generator</title>
+    <title>srcML - C++ parsing advices &#8212; litgen, the Literate Generator</title>
   
   
   
@@ -62,11 +62,11 @@ const thebe_selector_input = "pre"
 const thebe_selector_output = ".output, .cell_output"
 </script>
     <script async="async" src="_static/sphinx-thebe.js"></script>
-    <script>DOCUMENTATION_OPTIONS.pagename = '01_05_10_install';</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '12_05_00_srcml_issues';</script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="First steps" href="01_10_00_first_steps.html" />
-    <link rel="prev" title="Use litgen online" href="01_05_05_online.html" />
+    <link rel="next" title="srcmlcpp: C++ code parsing" href="20_00_00_cpp_intro.html" />
+    <link rel="prev" title="Postprocessing and preprocessing" href="11_05_00_post_processing.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   </head>
@@ -168,10 +168,10 @@ const thebe_selector_output = ".output, .cell_output"
             </li>
         </ul>
         <p aria-level="2" class="caption" role="heading"><span class="caption-text">Installation</span></p>
-<ul class="current nav bd-sidenav">
-<li class="toctree-l1 current active has-children"><a class="reference internal" href="01_05_00_install_or_online.html">Installation or online usage</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-1"><i class="fa-solid fa-chevron-down"></i></label><ul class="current">
+<ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="01_05_00_install_or_online.html">Installation or online usage</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-1"><i class="fa-solid fa-chevron-down"></i></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="01_05_05_online.html">Use litgen online</a></li>
-<li class="toctree-l2 current active"><a class="current reference internal" href="#">Local installation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="01_05_10_install.html">Local installation</a></li>
 </ul>
 </li>
 </ul>
@@ -182,7 +182,7 @@ const thebe_selector_output = ".output, .cell_output"
 <li class="toctree-l1"><a class="reference internal" href="01_15_00_cmake_helpers.html">CMake helpers</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Bindings - Advanced Topics</span></p>
-<ul class="nav bd-sidenav">
+<ul class="current nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="02_00_00_options.html">litgen options</a></li>
 <li class="toctree-l1"><a class="reference internal" href="02_05_00_headers.html">Headers processing</a></li>
 <li class="toctree-l1"><a class="reference internal" href="03_05_00_code_layout.html">Generated code layout</a></li>
@@ -195,7 +195,7 @@ const thebe_selector_output = ".output, .cell_output"
 <li class="toctree-l1"><a class="reference internal" href="09_05_00_preprocessor.html">Preprocessor and macros</a></li>
 <li class="toctree-l1"><a class="reference internal" href="10_05_00_ignore_warnings.html">Ignore litgen warnings</a></li>
 <li class="toctree-l1"><a class="reference internal" href="11_05_00_post_processing.html">Postprocessing and preprocessing</a></li>
-<li class="toctree-l1"><a class="reference internal" href="12_05_00_srcml_issues.html">srcML - C++ parsing advices</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">srcML - C++ parsing advices</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Litgen as C++ transformation tool</span></p>
 <ul class="nav bd-sidenav">
@@ -274,7 +274,7 @@ const thebe_selector_output = ".output, .cell_output"
       
       
       
-      <li><a href="https://github.com/pthom/litgen/issues/new?title=Issue%20on%20page%20%2F01_05_10_install.html&body=Your%20issue%20content%20here." target="_blank"
+      <li><a href="https://github.com/pthom/litgen/issues/new?title=Issue%20on%20page%20%2F12_05_00_srcml_issues.html&body=Your%20issue%20content%20here." target="_blank"
    class="btn btn-sm btn-source-issues-button dropdown-item"
    title="Open an issue"
    data-bs-placement="left" data-bs-toggle="tooltip"
@@ -304,7 +304,7 @@ const thebe_selector_output = ".output, .cell_output"
       
       
       
-      <li><a href="_sources/01_05_10_install.md" target="_blank"
+      <li><a href="_sources/12_05_00_srcml_issues.md" target="_blank"
    class="btn btn-sm btn-download-source-button dropdown-item"
    title="Download source file"
    data-bs-placement="left" data-bs-toggle="tooltip"
@@ -386,7 +386,7 @@ document.write(`
               
 
 <div id="jb-print-docs-body" class="onlyprint">
-    <h1>Local installation</h1>
+    <h1>srcML - C++ parsing advices</h1>
     <!-- Table of contents -->
     <div id="print-main-content">
         <div id="jb-print-toc">
@@ -396,18 +396,7 @@ document.write(`
             </div>
             <nav aria-label="Page">
                 <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#step-1-install-srcml">Step 1: install srcML</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#precompiled-srcml-binaries-and-installers">Precompiled srcML binaries and installers</a><ul class="nav section-nav flex-column">
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#build-srcml-from-source">Build srcML from source</a></li>
-</ul>
-</li>
-</ul>
-</li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#step-2-install-litgen">Step 2: install litgen</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#install-litgen-from-source">Install litgen from source</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#install-litgen-without-checking-out-the-code">Install litgen without checking out the code</a></li>
-</ul>
-</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#don-t-use-as-function-s-default-parameter-value">Don’t use <code class="docutils literal notranslate"><span class="pre">={}</span></code> as function’s default parameter value</a></li>
 </ul>
             </nav>
         </div>
@@ -419,68 +408,25 @@ document.write(`
 <div id="searchbox"></div>
                 <article class="bd-article" role="main">
                   
-  <section class="tex2jax_ignore mathjax_ignore" id="local-installation">
-<h1>Local installation<a class="headerlink" href="#local-installation" title="Permalink to this heading">#</a></h1>
-<section id="step-1-install-srcml">
-<h2>Step 1: install srcML<a class="headerlink" href="#step-1-install-srcml" title="Permalink to this heading">#</a></h2>
-<section id="precompiled-srcml-binaries-and-installers">
-<h3>Precompiled srcML binaries and installers<a class="headerlink" href="#precompiled-srcml-binaries-and-installers" title="Permalink to this heading">#</a></h3>
-<p>You can download a pre-compiled version at <a class="reference external" href="https://www.srcml.org/#download">srcML.org</a>.</p>
-<p>For example, on ubuntu 20.04:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>wget<span class="w"> </span>http://131.123.42.38/lmcrs/v1.0.0/srcml_1.0.0-1_ubuntu20.04.deb
-sudo<span class="w"> </span>dpkg<span class="w"> </span>-i<span class="w"> </span>srcml_1.0.0-1_ubuntu20.04.deb
+  <section class="tex2jax_ignore mathjax_ignore" id="srcml-c-parsing-advices">
+<h1>srcML - C++ parsing advices<a class="headerlink" href="#srcml-c-parsing-advices" title="Permalink to this heading">#</a></h1>
+<p>srcML parses C++ 14 code into XML:</p>
+<ul class="simple">
+<li><p>it will <em>never</em> fail to construct an XML tree from C++ code</p></li>
+<li><p>it will <em>always</em> regenerate the exact same original C++ code from the XML tree</p></li>
+</ul>
+<p>However, there are corner cases where the XML tree is not what you would expect. See some gotchas below:</p>
+<section id="don-t-use-as-function-s-default-parameter-value">
+<h2>Don’t use <code class="docutils literal notranslate"><span class="pre">={}</span></code> as function’s default parameter value<a class="headerlink" href="#don-t-use-as-function-s-default-parameter-value" title="Permalink to this heading">#</a></h2>
+<p>See <a class="reference external" href="https://github.com/srcML/srcML/issues/1833">related issue</a></p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="kt">void</span><span class="w"> </span><span class="nf">Foo</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">v</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{}</span><span class="w"> </span><span class="p">);</span>
 </pre></div>
 </div>
-<section id="build-srcml-from-source">
-<h4>Build srcML from source<a class="headerlink" href="#build-srcml-from-source" title="Permalink to this heading">#</a></h4>
-<p>Alternatively, you can build srcML from source.</p>
-<p>Below is an example on how to compile srcML on a debian based machine:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># install required packages</span>
-sudo<span class="w"> </span>apt-get<span class="w"> </span>install<span class="w"> </span>libarchive-dev<span class="w"> </span>antlr<span class="w"> </span>libxml2-dev<span class="w"> </span>libxslt-dev<span class="w"> </span>libcurl4-openssl-dev
-<span class="c1"># clone and build srcML, using a fork that fixes some build issues</span>
-git<span class="w"> </span>clone<span class="w"> </span>https://github.com/pthom/srcML.git<span class="w"> </span>-b<span class="w"> </span>develop_fix_build
-mkdir<span class="w"> </span>-p<span class="w"> </span>build<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="nb">cd</span><span class="w"> </span>build
-cmake<span class="w"> </span>../srcML<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>make<span class="w"> </span>-j
-sudo<span class="w"> </span>make<span class="w"> </span>install
+<p>is parsed as a declaration statement, whereas</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="kt">void</span><span class="w"> </span><span class="nf">Foo</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">v</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="p">);</span>
 </pre></div>
 </div>
-<p>Below is an example on how to compile srcML on a macOS:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># install required packages</span>
-brew<span class="w"> </span>install<span class="w"> </span>antlr2<span class="w"> </span>boost
-
-<span class="c1"># clone and build srcML, using a fork that fixes some build issues</span>
-git<span class="w"> </span>clone<span class="w"> </span>https://github.com/pthom/srcML.git<span class="w"> </span>-b<span class="w"> </span>develop_fix_build
-mkdir<span class="w"> </span>-p<span class="w"> </span>build<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="nb">cd</span><span class="w"> </span>build
-cmake<span class="w"> </span>../srcML<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>make<span class="w"> </span>-j
-sudo<span class="w"> </span>make<span class="w"> </span>install
-</pre></div>
-</div>
-<p><em>Note: The <a class="reference external" href="https://github.com/srcML/srcML/blob/master/BUILD.md">build instructions</a> in srcML repository are a bit out of date, which is why these instructions are provided here. It uses a fork of srcML that <a class="reference external" href="https://github.com/pthom/srcML/commits/develop_fix_build/">fixes some compilation issues</a> on the develop branch.</em></p>
-</section>
-</section>
-</section>
-<section id="step-2-install-litgen">
-<h2>Step 2: install litgen<a class="headerlink" href="#step-2-install-litgen" title="Permalink to this heading">#</a></h2>
-<section id="install-litgen-from-source">
-<h3>Install litgen from source<a class="headerlink" href="#install-litgen-from-source" title="Permalink to this heading">#</a></h3>
-<p>An installation from source is the recommended way:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Create a virtual environment</span>
-python<span class="w"> </span>-m<span class="w"> </span>venv<span class="w"> </span>venv
-<span class="nb">source</span><span class="w"> </span>venv/bin/activate
-<span class="c1"># Install srcmlcpp</span>
-git<span class="w"> </span>clone<span class="w"> </span>git@github.com:pthom/litgen.git
-<span class="nb">cd</span><span class="w"> </span>litgen
-pip<span class="w"> </span>install<span class="w"> </span>-v<span class="w"> </span>-e<span class="w"> </span>.
-</pre></div>
-</div>
-</section>
-<section id="install-litgen-without-checking-out-the-code">
-<h3>Install litgen without checking out the code<a class="headerlink" href="#install-litgen-without-checking-out-the-code" title="Permalink to this heading">#</a></h3>
-<p>Alternatively, you can install litgen without checking its code out:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span><span class="s2">&quot;litgen @ git+https://github.com/pthom/litgen&quot;</span>
-</pre></div>
-</div>
-</section>
+<p>is correctly parsed as a function declaration.</p>
 </section>
 </section>
 
@@ -515,20 +461,20 @@ pip<span class="w"> </span>install<span class="w"> </span>-v<span class="w"> </s
                   <!-- Previous / next buttons -->
 <div class="prev-next-area">
     <a class="left-prev"
-       href="01_05_05_online.html"
+       href="11_05_00_post_processing.html"
        title="previous page">
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
         <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title">Use litgen online</p>
+        <p class="prev-next-title">Postprocessing and preprocessing</p>
       </div>
     </a>
     <a class="right-next"
-       href="01_10_00_first_steps.html"
+       href="20_00_00_cpp_intro.html"
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">First steps</p>
+        <p class="prev-next-title">srcmlcpp: C++ code parsing</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>
@@ -547,18 +493,7 @@ pip<span class="w"> </span>install<span class="w"> </span>-v<span class="w"> </s
   </div>
   <nav class="bd-toc-nav page-toc">
     <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#step-1-install-srcml">Step 1: install srcML</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#precompiled-srcml-binaries-and-installers">Precompiled srcML binaries and installers</a><ul class="nav section-nav flex-column">
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#build-srcml-from-source">Build srcML from source</a></li>
-</ul>
-</li>
-</ul>
-</li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#step-2-install-litgen">Step 2: install litgen</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#install-litgen-from-source">Install litgen from source</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#install-litgen-without-checking-out-the-code">Install litgen without checking out the code</a></li>
-</ul>
-</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#don-t-use-as-function-s-default-parameter-value">Don’t use <code class="docutils literal notranslate"><span class="pre">={}</span></code> as function’s default parameter value</a></li>
 </ul>
   </nav></div>
 
