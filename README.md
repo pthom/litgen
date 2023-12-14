@@ -1,8 +1,8 @@
 ![Pip](https://github.com/pthom/srcmlcpp/workflows/ci_build_and_test/badge.svg)
 
 
-`srcmlcpp`: C++ code transformer library and tools, based on srcML (https://srcml.org)
+litgen, aka \"Literate Generator\", an automatic python bindings generator for humans who like nice code and APIs, based on srcML (https://srcml.org)
 
-_srcmlcpp is not ready to be used outside its nest yet! Expect refactorings at a rapid pace!_
+_litgen is not ready to be used outside its nest yet! Expect refactorings at a rapid pace!_
 
-[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/pthom/srcmlcpp/HEAD?labpath=packages%2Flitgen%2Flitgen-book%2F)
+[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/pthom/litgen/HEAD?labpath=packages%2Flitgen%2Flitgen-book%2F)

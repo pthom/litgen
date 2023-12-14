@@ -9,14 +9,14 @@ line-length = 120
 extend-exclude = '''venv|^scratch|pybind11|importanize|.pyi$|lg_projects|ci_scripts/docker_ci/dvp|md4c|external/SDL'''
 
 [tool.poetry]
-name = "srcmlcpp"
-version = "0.1.0"
-description = "srcmlcpp: C++ code tranformer library and tools, based on srcML (https://srcml.org)"
+name = "litgen"
+version = "0.9.0"
+description = "litgen, aka \"Literate Generator\", an automatic python bindings generator for humans who like nice code and APIs, based on srcML (https://srcml.org)"
 authors = ["Pascal Thomet <pthomet@gmail.com>"]
 # license = "to be defined"
 readme = "README.md"
 # homepage = "..."
-repository = "https://github.com/pthom/srcmlcpp"
+repository = "https://github.com/pthom/litgen"
 # documentation = "..."
 keywords = ["code", "transformer", "cpp", "c++", "srcml", "pimpl"]
 classifiers = [
