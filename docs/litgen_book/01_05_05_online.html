@@ -167,7 +167,7 @@ const thebe_selector_output = ".output, .cell_output"
                 </a>
             </li>
         </ul>
-        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Basics</span></p>
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Bindings - Basics</span></p>
 <ul class="current nav bd-sidenav">
 <li class="toctree-l1 current active has-children"><a class="reference internal" href="01_05_00_install_or_online.html">Installation or online usage</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-1"><i class="fa-solid fa-chevron-down"></i></label><ul class="current">
 <li class="toctree-l2 current active"><a class="current reference internal" href="#">Use litgen online</a></li>
@@ -178,7 +178,7 @@ const thebe_selector_output = ".output, .cell_output"
 <li class="toctree-l1"><a class="reference internal" href="example_bindings/DaftLib/Readme.html">Generate binding files for a library</a></li>
 <li class="toctree-l1"><a class="reference internal" href="01_15_00_cmake_helpers.html">CMake helpers</a></li>
 </ul>
-<p aria-level="2" class="caption" role="heading"><span class="caption-text">Advanced Topics</span></p>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Bindings - Advanced Topics</span></p>
 <ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="02_00_00_options.html">litgen options</a></li>
 <li class="toctree-l1"><a class="reference internal" href="02_05_00_headers.html">Headers processing</a></li>
@@ -439,17 +439,17 @@ You can open it in an online interactive environment (<a class="reference extern
 <span class="c1"># This namespace will not be outputted as a python module</span>
 <span class="n">options</span><span class="o">.</span><span class="n">namespace_root__regex</span> <span class="o">=</span> <span class="s2">&quot;MyNamespace&quot;</span>
 <span class="c1"># All functions, modules and namespaces names are converted to snake case</span>
-<span class="n">options</span><span class="o">.</span><span class="n">python_convert_to_snake_case</span> <span class="o">=</span> <span class="kc">True</span>  
+<span class="n">options</span><span class="o">.</span><span class="n">python_convert_to_snake_case</span> <span class="o">=</span> <span class="kc">True</span>
 <span class="c1"># This is an API marker in the C++ code (for shared libraries code)</span>
 <span class="n">options</span><span class="o">.</span><span class="n">srcmlcpp_options</span><span class="o">.</span><span class="n">functions_api_prefixes</span> <span class="o">=</span> <span class="s2">&quot;^MY_API$&quot;</span>
 <span class="c1"># Also create bindings for functions that do not have the API marker</span>
 <span class="n">options</span><span class="o">.</span><span class="n">fn_exclude_non_api</span> <span class="o">=</span> <span class="kc">False</span>
 <span class="c1"># Optional comment that can be added to non API functions</span>
-<span class="n">options</span><span class="o">.</span><span class="n">fn_non_api_comment</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>  
+<span class="n">options</span><span class="o">.</span><span class="n">fn_non_api_comment</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
 <span class="c1"># &quot;Box&quot; immutable functions parameter when they should be modifiable</span>
-<span class="n">options</span><span class="o">.</span><span class="n">fn_params_replace_modifiable_immutable_by_boxed__regex</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">&quot;.*&quot;</span>  
+<span class="n">options</span><span class="o">.</span><span class="n">fn_params_replace_modifiable_immutable_by_boxed__regex</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">&quot;.*&quot;</span>
 <span class="c1"># Which numeric and string preprocessor do we want to export</span>
-<span class="n">options</span><span class="o">.</span><span class="n">macro_define_include_by_name__regex</span> <span class="o">=</span> <span class="s2">&quot;^MY_&quot;</span>  
+<span class="n">options</span><span class="o">.</span><span class="n">macro_define_include_by_name__regex</span> <span class="o">=</span> <span class="s2">&quot;^MY_&quot;</span>
 
 <span class="n">code</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
 <span class="s2">// This namespace is not outputed as a submodule, since it is marked as Root (see options.namespace_root__regex)</span>
@@ -547,7 +547,7 @@ You can open it in an online interactive environment (<a class="reference extern
 </style>
 
     <script>
-       function copy_code_1700253274195_388() {
+       function copy_code_1702557035867_865() {
             let code = `####################    <generated_from:BoxedTypes>    ####################
 class BoxedBool:
     value: bool
@@ -617,10 +617,10 @@ class my_math:  # Proxy class that introduces typings for the *submodule* my_mat
             navigator.clipboard.writeText(code);
        }
     </script>
-    <button class="collapsible_header" id="btn_1700253274195_388_2" >Corresponding python decls (stub)</button>
-    <div class="collapsible_content" id="content_1700253274195_388_2">
+    <button class="collapsible_header" id="btn_1702557035867_865_2" >Corresponding python decls (stub)</button>
+    <div class="collapsible_content" id="content_1702557035867_865_2">
         <div>
-                <button onclick="copy_code_1700253274195_388()" align="right">copy &#x270d;</button>
+                <button onclick="copy_code_1702557035867_865()" align="right">copy &#x270d;</button>
         </div>
         <style>pre { line-height: 125%; }
 td.linenos .normal { color: inherit; background-color: transparent; padding-left: 5px; padding-right: 5px; }
@@ -762,10 +762,10 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
     </div>
     
     <script>
-    var button = document.getElementById("btn_1700253274195_388_2");
+    var button = document.getElementById("btn_1702557035867_865_2");
     button.addEventListener("click", function() {
         this.classList.toggle("collapsible_header_opened");
-        var content = document.getElementById("content_1700253274195_388_2");
+        var content = document.getElementById("content_1702557035867_865_2");
         if (content.style.maxHeight){
           content.style.maxHeight = null;
         } else {
@@ -775,9 +775,9 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
     </script>
     
             <script>
-            var collapsible_header = document.getElementById("btn_1700253274195_388_2");
+            var collapsible_header = document.getElementById("btn_1702557035867_865_2");
             collapsible_header.classList.toggle("collapsible_header_opened");
-            var collapsible_content = document.getElementById("content_1700253274195_388_2");
+            var collapsible_content = document.getElementById("content_1702557035867_865_2");
             collapsible_content.style.maxHeight = "80em";
             </script>
             <br/>
@@ -826,7 +826,7 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
 </style>
 
     <script>
-       function copy_code_1700253274178_614() {
+       function copy_code_1702557035851_024() {
             let code = `////////////////////    <generated_from:BoxedTypes>    ////////////////////
 auto pyClassBoxedBool =
     py::class_<BoxedBool>
@@ -904,10 +904,10 @@ m.attr("MY_VALUE") = 123;
             navigator.clipboard.writeText(code);
        }
     </script>
-    <button class="collapsible_header" id="btn_1700253274178_614_0" >pybind11 C++ binding code</button>
-    <div class="collapsible_content" id="content_1700253274178_614_0">
+    <button class="collapsible_header" id="btn_1702557035851_024_0" >pybind11 C++ binding code</button>
+    <div class="collapsible_content" id="content_1702557035851_024_0">
         <div>
-                <button onclick="copy_code_1700253274178_614()" align="right">copy &#x270d;</button>
+                <button onclick="copy_code_1702557035851_024()" align="right">copy &#x270d;</button>
         </div>
         <style>pre { line-height: 125%; }
 td.linenos .normal { color: inherit; background-color: transparent; padding-left: 5px; padding-right: 5px; }
@@ -1057,10 +1057,10 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
     </div>
     
     <script>
-    var button = document.getElementById("btn_1700253274178_614_0");
+    var button = document.getElementById("btn_1702557035851_024_0");
     button.addEventListener("click", function() {
         this.classList.toggle("collapsible_header_opened");
-        var content = document.getElementById("content_1700253274178_614_0");
+        var content = document.getElementById("content_1702557035851_024_0");
         if (content.style.maxHeight){
           content.style.maxHeight = null;
         } else {
@@ -1070,9 +1070,9 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
     </script>
     
             <script>
-            var collapsible_header = document.getElementById("btn_1700253274178_614_0");
+            var collapsible_header = document.getElementById("btn_1702557035851_024_0");
             collapsible_header.classList.toggle("collapsible_header_opened");
-            var collapsible_content = document.getElementById("content_1700253274178_614_0");
+            var collapsible_content = document.getElementById("content_1702557035851_024_0");
             collapsible_content.style.maxHeight = "80em";
             </script>
             <br/>
@@ -1121,7 +1121,7 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
 </style>
 
     <script>
-       function copy_code_1700253274179_163() {
+       function copy_code_1702557035851_6072() {
             let code = `struct BoxedBool
 {
     bool value;
@@ -1132,10 +1132,10 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
             navigator.clipboard.writeText(code);
        }
     </script>
-    <button class="collapsible_header" id="btn_1700253274179_163_1" >C++ glue code</button>
-    <div class="collapsible_content" id="content_1700253274179_163_1">
+    <button class="collapsible_header" id="btn_1702557035851_6072_1" >C++ glue code</button>
+    <div class="collapsible_content" id="content_1702557035851_6072_1">
         <div>
-                <button onclick="copy_code_1700253274179_163()" align="right">copy &#x270d;</button>
+                <button onclick="copy_code_1702557035851_6072()" align="right">copy &#x270d;</button>
         </div>
         <style>pre { line-height: 125%; }
 td.linenos .normal { color: inherit; background-color: transparent; padding-left: 5px; padding-right: 5px; }
@@ -1218,10 +1218,10 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
     </div>
     
     <script>
-    var button = document.getElementById("btn_1700253274179_163_1");
+    var button = document.getElementById("btn_1702557035851_6072_1");
     button.addEventListener("click", function() {
         this.classList.toggle("collapsible_header_opened");
-        var content = document.getElementById("content_1700253274179_163_1");
+        var content = document.getElementById("content_1702557035851_6072_1");
         if (content.style.maxHeight){
           content.style.maxHeight = null;
         } else {
@@ -1231,9 +1231,9 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
     </script>
     
             <script>
-            var collapsible_header = document.getElementById("btn_1700253274179_163_1");
+            var collapsible_header = document.getElementById("btn_1702557035851_6072_1");
             collapsible_header.classList.toggle("collapsible_header_opened");
-            var collapsible_content = document.getElementById("content_1700253274179_163_1");
+            var collapsible_content = document.getElementById("content_1702557035851_6072_1");
             collapsible_content.style.maxHeight = "80em";
             </script>
             </div></div>

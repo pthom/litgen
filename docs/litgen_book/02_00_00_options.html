@@ -167,7 +167,7 @@ const thebe_selector_output = ".output, .cell_output"
                 </a>
             </li>
         </ul>
-        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Basics</span></p>
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Bindings - Basics</span></p>
 <ul class="nav bd-sidenav">
 <li class="toctree-l1 has-children"><a class="reference internal" href="01_05_00_install_or_online.html">Installation or online usage</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-1"><i class="fa-solid fa-chevron-down"></i></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="01_05_05_online.html">Use litgen online</a></li>
@@ -178,7 +178,7 @@ const thebe_selector_output = ".output, .cell_output"
 <li class="toctree-l1"><a class="reference internal" href="example_bindings/DaftLib/Readme.html">Generate binding files for a library</a></li>
 <li class="toctree-l1"><a class="reference internal" href="01_15_00_cmake_helpers.html">CMake helpers</a></li>
 </ul>
-<p aria-level="2" class="caption" role="heading"><span class="caption-text">Advanced Topics</span></p>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Bindings - Advanced Topics</span></p>
 <ul class="current nav bd-sidenav">
 <li class="toctree-l1 current active"><a class="current reference internal" href="#">litgen options</a></li>
 <li class="toctree-l1"><a class="reference internal" href="02_05_00_headers.html">Headers processing</a></li>
@@ -455,7 +455,10 @@ document.write(`
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">codemanip</span> <span class="kn">import</span> <span class="n">code_utils</span>
 <span class="kn">from</span> <span class="nn">litgen.demo</span> <span class="kn">import</span> <span class="n">litgen_notebook_display</span>
-<span class="n">litgen_options_code</span> <span class="o">=</span> <span class="n">code_utils</span><span class="o">.</span><span class="n">download_url_content</span><span class="p">(</span><span class="s2">&quot;https://raw.githubusercontent.com/pthom/srcmlcpp/main/packages/litgen/options.py&quot;</span><span class="p">)</span>
+
+<span class="n">litgen_options_code</span> <span class="o">=</span> <span class="n">code_utils</span><span class="o">.</span><span class="n">download_url_content</span><span class="p">(</span>
+    <span class="s2">&quot;https://raw.githubusercontent.com/pthom/srcmlcpp/main/packages/litgen/options.py&quot;</span>
+<span class="p">)</span>
 <span class="n">litgen_notebook_display</span><span class="o">.</span><span class="n">show_python_code</span><span class="p">(</span><span class="n">litgen_options_code</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s2">&quot;litgen/options.py&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -507,7 +510,7 @@ document.write(`
 </style>
 
     <script>
-       function copy_code_1700253276357_824() {
+       function copy_code_1702557037697_0771() {
             let code = `from __future__ import annotations
 
 from typing import Any, Callable
@@ -1092,10 +1095,10 @@ class LitgenOptions:
             navigator.clipboard.writeText(code);
        }
     </script>
-    <button class="collapsible_header" id="btn_1700253276357_824_0" >litgen/options.py</button>
-    <div class="collapsible_content" id="content_1700253276357_824_0">
+    <button class="collapsible_header" id="btn_1702557037697_0771_0" >litgen/options.py</button>
+    <div class="collapsible_content" id="content_1702557037697_0771_0">
         <div>
-                <button onclick="copy_code_1700253276357_824()" align="right">copy &#x270d;</button>
+                <button onclick="copy_code_1702557037697_0771()" align="right">copy &#x270d;</button>
         </div>
         <style>pre { line-height: 125%; }
 td.linenos .normal { color: inherit; background-color: transparent; padding-left: 5px; padding-right: 5px; }
@@ -1752,10 +1755,10 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
     </div>
     
     <script>
-    var button = document.getElementById("btn_1700253276357_824_0");
+    var button = document.getElementById("btn_1702557037697_0771_0");
     button.addEventListener("click", function() {
         this.classList.toggle("collapsible_header_opened");
-        var content = document.getElementById("content_1700253276357_824_0");
+        var content = document.getElementById("content_1702557037697_0771_0");
         if (content.style.maxHeight){
           content.style.maxHeight = null;
         } else {
@@ -1765,9 +1768,9 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
     </script>
     
             <script>
-            var collapsible_header = document.getElementById("btn_1700253276357_824_0");
+            var collapsible_header = document.getElementById("btn_1702557037697_0771_0");
             collapsible_header.classList.toggle("collapsible_header_opened");
-            var collapsible_content = document.getElementById("content_1700253276357_824_0");
+            var collapsible_content = document.getElementById("content_1702557037697_0771_0");
             collapsible_content.style.maxHeight = collapsible_content.scrollHeight + "px";
             </script>
             </div></div>
@@ -1780,7 +1783,10 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">codemanip</span> <span class="kn">import</span> <span class="n">code_utils</span>
 <span class="kn">from</span> <span class="nn">litgen.demo</span> <span class="kn">import</span> <span class="n">litgen_notebook_display</span>
-<span class="n">litgen_options_code</span> <span class="o">=</span> <span class="n">code_utils</span><span class="o">.</span><span class="n">download_url_content</span><span class="p">(</span><span class="s2">&quot;https://raw.githubusercontent.com/pthom/srcmlcpp/main/packages/srcmlcpp/srcmlcpp_options.py&quot;</span><span class="p">)</span>
+
+<span class="n">litgen_options_code</span> <span class="o">=</span> <span class="n">code_utils</span><span class="o">.</span><span class="n">download_url_content</span><span class="p">(</span>
+    <span class="s2">&quot;https://raw.githubusercontent.com/pthom/srcmlcpp/main/packages/srcmlcpp/srcmlcpp_options.py&quot;</span>
+<span class="p">)</span>
 <span class="n">litgen_notebook_display</span><span class="o">.</span><span class="n">show_python_code</span><span class="p">(</span><span class="n">litgen_options_code</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s2">&quot;srcmlcpp/srcmlcpp_options.py&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -1832,7 +1838,7 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
 </style>
 
     <script>
-       function copy_code_1700253276413_116() {
+       function copy_code_1702557037726_2441() {
             let code = `"""
 Options for srcmlcpp. Read the doc near all options elements.
 """
@@ -1963,10 +1969,10 @@ def _int_from_str_or_named_number_macros(options: SrcmlcppOptions, int_str: Opti
             navigator.clipboard.writeText(code);
        }
     </script>
-    <button class="collapsible_header" id="btn_1700253276413_116_1" >srcmlcpp/srcmlcpp_options.py</button>
-    <div class="collapsible_content" id="content_1700253276413_116_1">
+    <button class="collapsible_header" id="btn_1702557037726_2441_1" >srcmlcpp/srcmlcpp_options.py</button>
+    <div class="collapsible_content" id="content_1702557037726_2441_1">
         <div>
-                <button onclick="copy_code_1700253276413_116()" align="right">copy &#x270d;</button>
+                <button onclick="copy_code_1702557037726_2441()" align="right">copy &#x270d;</button>
         </div>
         <style>pre { line-height: 125%; }
 td.linenos .normal { color: inherit; background-color: transparent; padding-left: 5px; padding-right: 5px; }
@@ -2169,10 +2175,10 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
     </div>
     
     <script>
-    var button = document.getElementById("btn_1700253276413_116_1");
+    var button = document.getElementById("btn_1702557037726_2441_1");
     button.addEventListener("click", function() {
         this.classList.toggle("collapsible_header_opened");
-        var content = document.getElementById("content_1700253276413_116_1");
+        var content = document.getElementById("content_1702557037726_2441_1");
         if (content.style.maxHeight){
           content.style.maxHeight = null;
         } else {
@@ -2182,9 +2188,9 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
     </script>
     
             <script>
-            var collapsible_header = document.getElementById("btn_1700253276413_116_1");
+            var collapsible_header = document.getElementById("btn_1702557037726_2441_1");
             collapsible_header.classList.toggle("collapsible_header_opened");
-            var collapsible_content = document.getElementById("content_1700253276413_116_1");
+            var collapsible_content = document.getElementById("content_1702557037726_2441_1");
             collapsible_content.style.maxHeight = collapsible_content.scrollHeight + "px";
             </script>
             </div></div>

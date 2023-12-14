@@ -6,7 +6,7 @@ root: 00_00_intro
 
 
 parts:
-  - caption: Basics
+  - caption: Bindings - Basics
     chapters:
       - file: 01_05_00_install_or_online
         sections:
@@ -16,7 +16,7 @@ parts:
       - file: example_bindings/DaftLib/Readme.md
       - file: 01_15_00_cmake_helpers
 
-  - caption: Advanced Topics
+  - caption: Bindings - Advanced Topics
     chapters:
      - file: 02_00_00_options
      - file: 02_05_00_headers
