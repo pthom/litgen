@@ -13,11 +13,9 @@ See [related issue](https://github.com/srcML/srcML/issues/1833)
 ```cpp
 void Foo(int v = {} );
 ```
-is parsed as a declaration statement, whereas 
+is parsed as a declaration statement, whereas
 
 ```cpp
 void Foo(int v = 0 );
 ```
 is correctly parsed as a function declaration.
-
-
