@@ -41,7 +41,7 @@ sudo make install
 
 _Note: The [build instructions](https://github.com/srcML/srcML/blob/master/BUILD.md) in srcML repository are a bit out of date, which is why these instructions are provided here._
 
-## Step 2: install srcmlcpp
+## Step 2: install litgen
 
 ### Install from source
 An installation from source is the recommended way:
@@ -51,13 +51,13 @@ An installation from source is the recommended way:
 python -m venv venv
 source venv/bin/activate
 # Install srcmlcpp
-git clone git@github.com:pthom/srcmlcpp.git
-cd srcmlcpp
+git clone git@github.com:pthom/litgen.git
+cd litgen
 pip install -v -e .
 ```
 
 ### Install without checking out the code
-Alternatively, you can install srcmlcpp without checking its code out:
+Alternatively, you can install litgen without checking its code out:
 ```bash
-pip install "srcmlcpp @ git+https://github.com/pthom/srcmlcpp"
+pip install "litgen @ git+https://github.com/pthom/litgen"
 ```
