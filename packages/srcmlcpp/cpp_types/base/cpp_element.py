@@ -14,6 +14,10 @@ if TYPE_CHECKING:
 __all__ = ["CppElement", "CppElementsVisitorFunction", "CppElementsVisitorEvent"]
 
 
+# members that are always copied as shallow members (this is intentionally a static list)
+_CppElement__deep_copy_force_shallow_ = ["parent"]
+
+
 class CppElement(SrcmlWrapper):
     """Base class of all the cpp types"""
 
@@ -21,9 +25,6 @@ class CppElement(SrcmlWrapper):
     # at construction time, this field is absent (hasattr return False)!
     # It will be filled later by CppBlock.fill_parents() (with a tree traversal)
     parent: CppElement | None
-
-    # members that are always copied as shallow members (this is intentionally a static list)
-    CppElement__deep_copy_force_shallow_ = ["parent"]
 
     def __init__(self, element: SrcmlWrapper) -> None:
         super().__init__(element.options, element.srcml_xml, element.filename)
@@ -43,7 +44,7 @@ class CppElement(SrcmlWrapper):
         result = cls.__new__(cls)
         memo[id(self)] = result
         for k, v in self.__dict__.items():
-            if k not in CppElement.CppElement__deep_copy_force_shallow_:
+            if k not in _CppElement__deep_copy_force_shallow_:
                 setattr(result, k, copy.deepcopy(v, memo))
             else:
                 setattr(result, k, v)

@@ -13,6 +13,10 @@ from srcmlcpp.srcmlcpp_options import SrcmlcppOptions
 from srcmlcpp.scrml_warning_settings import WarningType
 
 
+# members that are always copied as shallow members (this is intentionally a static list)
+_SrcmlWrapper__deep_copy_force_shallow_ = ["options", "srcml_xml"]
+
+
 class SrcmlWrapper:
     """A wrapper around the nodes in the xml tree produced by srcml"""
 
@@ -24,9 +28,6 @@ class SrcmlWrapper:
     filename: str | None = None
     # debugging help: a string showing the start position of this element in the code
     code_location: str
-
-    # members that are always copied as shallow members (this is intentionally a static list)
-    SrcmlWrapper__deep_copy_force_shallow_ = ["options", "srcml_xml"]
 
     def __init__(self, options: SrcmlcppOptions, srcml_xml: ET.Element, filename: str | None) -> None:
         """Create a wrapper from a xml sub node
@@ -78,7 +79,7 @@ class SrcmlWrapper:
         result = cls.__new__(cls)
         memo[id(self)] = result
         for k, v in self.__dict__.items():
-            if k not in SrcmlWrapper.SrcmlWrapper__deep_copy_force_shallow_:
+            if k not in _SrcmlWrapper__deep_copy_force_shallow_:
                 setattr(result, k, copy.deepcopy(v, memo))
             else:
                 setattr(result, k, v)
