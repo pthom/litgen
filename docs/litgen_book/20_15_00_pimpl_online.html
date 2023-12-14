@@ -460,37 +460,33 @@ document.write(`
 <span class="s2">// Some doc about the class, that you want to see in the header file</span>
 <span class="s2">class MyClassPImpl</span>
 <span class="s2">{</span>
+<span class="s2">    //</span>
+<span class="s2">    // Some doc you also want to see in the header file</span>
+<span class="s2">    //</span>
 <span class="s2">public:</span>
-<span class="s2">    //</span>
-<span class="s2">    // Some doc you also want to see in the header file, since it is in a public block</span>
-<span class="s2">    //</span>
-
 <span class="s2">    // Construct an Instance</span>
-<span class="s2">    MyClassPImpl(const std::string&amp; someVar)</span>
+<span class="s2">    MyClassPImpl(const std::string&amp; someParam)</span>
 <span class="s2">    {</span>
 <span class="s2">        // Some code you provide in the C++ file, but do not want to see in the header file</span>
 <span class="s2">    }</span>
 
-<span class="s2">    // Some method</span>
-<span class="s2">    virtual bool SomeMethod() { /* ... */ }</span>
-
-<span class="s2">    // Some public static method</span>
-<span class="s2">    static bool SomeStaticMethod() { /* ... */ }</span>
-
-<span class="s2">    // The destructor should not be published as is, but should use the unique_ptr default destructor</span>
+<span class="s2">    // Destructs the instance</span>
+<span class="s2">    // (this should not be published in the header, since the PImpl will generate its own unique_ptr destructor)</span>
 <span class="s2">    ~MyClassPImpl() { /* ... */ }</span>
 
+<span class="s2">    // Some method</span>
+<span class="s2">    bool SomeMethod() { /* ... */ return true; }</span>
+
+<span class="s2">    // Some public static method</span>
+<span class="s2">    static bool SomeStaticFunction() { /* ... */ return true;}</span>
+
+
 <span class="s2">private:</span>
-<span class="s2">    //</span>
-<span class="s2">    // Some private doc, which should not be published</span>
-<span class="s2">    //</span>
-<span class="s2">    </span>
-<span class="s2">    bool SomePrivateMethod() { /* ... */ }</span>
+<span class="s2">    void SomePrivateMethod() { /* ... */ }</span>
 
 <span class="s2">    std::string mSomePrivateMember;</span>
 <span class="s2">    std::future&lt;void&gt; mAnoterPrivateMember;</span>
 <span class="s2">};</span>
-
 <span class="s2">&quot;&quot;&quot;</span>
 
 <span class="n">pimpl_result</span> <span class="o">=</span> <span class="n">pimpl_my_class</span><span class="o">.</span><span class="n">pimpl_my_code</span><span class="p">(</span><span class="n">cpp_code</span><span class="p">,</span> <span class="n">pimpl_options</span><span class="p">,</span> <span class="n">srcmlcpp_options</span><span class="p">)</span>
@@ -551,25 +547,22 @@ document.write(`
 </style>
 
     <script>
-       function copy_code_1702589526486_44() {
+       function copy_code_1702590496738_155() {
             let code = `class MyClassPImpl;
 
 // Some doc about the class, that you want to see in the header file
 class MyClass
 {
   public:
-    //
-    //  Some doc you also want to see in the header file, since it is in a public block
-    //
-
     // Construct an Instance
-    MyClass(const std::string & someVar);
+    MyClass(const std::string & someParam);
+
 
     // Some method
-    virtual bool SomeMethod();
+    bool SomeMethod();
 
     // Some public static method
-    static bool SomeStaticMethod();
+    static bool SomeStaticFunction();
 
 
     ~MyClass();
@@ -579,10 +572,10 @@ class MyClass
             navigator.clipboard.writeText(code);
        }
     </script>
-    <button class="collapsible_header" id="btn_1702589526486_44_0" >Header Code</button>
-    <div class="collapsible_content" id="content_1702589526486_44_0">
+    <button class="collapsible_header" id="btn_1702590496738_155_0" >Header Code</button>
+    <div class="collapsible_content" id="content_1702590496738_155_0">
         <div>
-                <button onclick="copy_code_1702589526486_44()" align="right">copy &#x270d;</button>
+                <button onclick="copy_code_1702590496738_155()" align="right">copy &#x270d;</button>
         </div>
         <style>pre { line-height: 125%; }
 td.linenos .normal { color: inherit; background-color: transparent; padding-left: 5px; padding-right: 5px; }
@@ -660,18 +653,15 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
 <span class="k">class</span><span class="w"> </span><span class="nc">MyClass</span>
 <span class="p">{</span>
 <span class="w">  </span><span class="k">public</span><span class="o">:</span>
-<span class="w">    </span><span class="c1">//</span>
-<span class="w">    </span><span class="c1">//  Some doc you also want to see in the header file, since it is in a public block</span>
-<span class="w">    </span><span class="c1">//</span>
-
 <span class="w">    </span><span class="c1">// Construct an Instance</span>
-<span class="w">    </span><span class="n">MyClass</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">someVar</span><span class="p">);</span>
+<span class="w">    </span><span class="n">MyClass</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">someParam</span><span class="p">);</span>
+
 
 <span class="w">    </span><span class="c1">// Some method</span>
-<span class="w">    </span><span class="k">virtual</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="nf">SomeMethod</span><span class="p">();</span>
+<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="nf">SomeMethod</span><span class="p">();</span>
 
 <span class="w">    </span><span class="c1">// Some public static method</span>
-<span class="w">    </span><span class="k">static</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="nf">SomeStaticMethod</span><span class="p">();</span>
+<span class="w">    </span><span class="k">static</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="nf">SomeStaticFunction</span><span class="p">();</span>
 
 
 <span class="w">    </span><span class="o">~</span><span class="n">MyClass</span><span class="p">();</span>
@@ -683,10 +673,10 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
     </div>
     
     <script>
-    var button = document.getElementById("btn_1702589526486_44_0");
+    var button = document.getElementById("btn_1702590496738_155_0");
     button.addEventListener("click", function() {
         this.classList.toggle("collapsible_header_opened");
-        var content = document.getElementById("content_1702589526486_44_0");
+        var content = document.getElementById("content_1702590496738_155_0");
         if (content.style.maxHeight){
           content.style.maxHeight = null;
         } else {
@@ -696,9 +686,9 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
     </script>
     
             <script>
-            var collapsible_header = document.getElementById("btn_1702589526486_44_0");
+            var collapsible_header = document.getElementById("btn_1702590496738_155_0");
             collapsible_header.classList.toggle("collapsible_header_opened");
-            var collapsible_content = document.getElementById("content_1702589526486_44_0");
+            var collapsible_content = document.getElementById("content_1702590496738_155_0");
             collapsible_content.style.maxHeight = collapsible_content.scrollHeight + "px";
             </script>
             </div><div class="output text_html">
@@ -747,22 +737,22 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
 </style>
 
     <script>
-       function copy_code_1702589526488_5() {
-            let code = `MyClass::MyClass(const std::string & someVar)
-    : mPImpl(std::make_unique<MyClassPImpl>(someVar)) { }
-virtual bool MyClass::SomeMethod() {
+       function copy_code_1702590496740_296() {
+            let code = `MyClass::MyClass(const std::string & someParam)
+    : mPImpl(std::make_unique<MyClassPImpl>(someParam)) { }
+bool MyClass::SomeMethod() {
     return mPImpl->SomeMethod(); }
-bool MyClass::SomeStaticMethod() {
-    return MyClassPImpl::SomeStaticMethod(); }
+bool MyClass::SomeStaticFunction() {
+    return MyClassPImpl::SomeStaticFunction(); }
 MyClass::~MyClass() = default;
 `;
             navigator.clipboard.writeText(code);
        }
     </script>
-    <button class="collapsible_header" id="btn_1702589526488_5_1" >Glue Code (paste this in the C++ file)</button>
-    <div class="collapsible_content" id="content_1702589526488_5_1">
+    <button class="collapsible_header" id="btn_1702590496740_296_1" >Glue Code (paste this in the C++ file)</button>
+    <div class="collapsible_content" id="content_1702590496740_296_1">
         <div>
-                <button onclick="copy_code_1702589526488_5()" align="right">copy &#x270d;</button>
+                <button onclick="copy_code_1702590496740_296()" align="right">copy &#x270d;</button>
         </div>
         <style>pre { line-height: 125%; }
 td.linenos .normal { color: inherit; background-color: transparent; padding-left: 5px; padding-right: 5px; }
@@ -834,22 +824,22 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
 .highlight .vg { color: #076678 } /* Name.Variable.Global */
 .highlight .vi { color: #076678 } /* Name.Variable.Instance */
 .highlight .vm { color: #076678 } /* Name.Variable.Magic */
-.highlight .il { color: #8f3f71 } /* Literal.Number.Integer.Long */</style> <div class="highlight"><pre><span></span><span class="n">MyClass</span><span class="o">::</span><span class="n">MyClass</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">someVar</span><span class="p">)</span>
-<span class="w">    </span><span class="o">:</span><span class="w"> </span><span class="n">mPImpl</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">make_unique</span><span class="o">&lt;</span><span class="n">MyClassPImpl</span><span class="o">&gt;</span><span class="p">(</span><span class="n">someVar</span><span class="p">))</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="p">}</span>
-<span class="k">virtual</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">MyClass</span><span class="o">::</span><span class="n">SomeMethod</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+.highlight .il { color: #8f3f71 } /* Literal.Number.Integer.Long */</style> <div class="highlight"><pre><span></span><span class="n">MyClass</span><span class="o">::</span><span class="n">MyClass</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">someParam</span><span class="p">)</span>
+<span class="w">    </span><span class="o">:</span><span class="w"> </span><span class="n">mPImpl</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">make_unique</span><span class="o">&lt;</span><span class="n">MyClassPImpl</span><span class="o">&gt;</span><span class="p">(</span><span class="n">someParam</span><span class="p">))</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="p">}</span>
+<span class="kt">bool</span><span class="w"> </span><span class="n">MyClass</span><span class="o">::</span><span class="n">SomeMethod</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
 <span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">mPImpl</span><span class="o">-&gt;</span><span class="n">SomeMethod</span><span class="p">();</span><span class="w"> </span><span class="p">}</span>
-<span class="kt">bool</span><span class="w"> </span><span class="n">MyClass</span><span class="o">::</span><span class="n">SomeStaticMethod</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
-<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">MyClassPImpl</span><span class="o">::</span><span class="n">SomeStaticMethod</span><span class="p">();</span><span class="w"> </span><span class="p">}</span>
+<span class="kt">bool</span><span class="w"> </span><span class="n">MyClass</span><span class="o">::</span><span class="n">SomeStaticFunction</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">MyClassPImpl</span><span class="o">::</span><span class="n">SomeStaticFunction</span><span class="p">();</span><span class="w"> </span><span class="p">}</span>
 <span class="n">MyClass</span><span class="o">::~</span><span class="n">MyClass</span><span class="p">()</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">default</span><span class="p">;</span>
 </pre></div>
 
     </div>
     
     <script>
-    var button = document.getElementById("btn_1702589526488_5_1");
+    var button = document.getElementById("btn_1702590496740_296_1");
     button.addEventListener("click", function() {
         this.classList.toggle("collapsible_header_opened");
-        var content = document.getElementById("content_1702589526488_5_1");
+        var content = document.getElementById("content_1702590496740_296_1");
         if (content.style.maxHeight){
           content.style.maxHeight = null;
         } else {
@@ -859,9 +849,9 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
     </script>
     
             <script>
-            var collapsible_header = document.getElementById("btn_1702589526488_5_1");
+            var collapsible_header = document.getElementById("btn_1702590496740_296_1");
             collapsible_header.classList.toggle("collapsible_header_opened");
-            var collapsible_content = document.getElementById("content_1702589526488_5_1");
+            var collapsible_content = document.getElementById("content_1702590496740_296_1");
             collapsible_content.style.maxHeight = collapsible_content.scrollHeight + "px";
             </script>
             </div></div>

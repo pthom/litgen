@@ -452,6 +452,7 @@ document.write(`
 <span class="s2">&quot;&quot;&quot;</span>
 
 <span class="kn">import</span> <span class="nn">srcmlcpp</span>
+
 <span class="n">options</span> <span class="o">=</span> <span class="n">srcmlcpp</span><span class="o">.</span><span class="n">SrcmlcppOptions</span><span class="p">()</span>
 <span class="n">cpp_unit</span> <span class="o">=</span> <span class="n">srcmlcpp</span><span class="o">.</span><span class="n">code_to_cpp_unit</span><span class="p">(</span><span class="n">options</span><span class="p">,</span> <span class="n">code</span><span class="p">)</span>
 </pre></div>
@@ -504,8 +505,8 @@ document.write(`
 <p>We can achieve this by defining <code class="docutils literal notranslate"><span class="pre">my_refactor_visitor</span></code> this way:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">srcmlcpp</span> <span class="kn">import</span> <span class="n">CppFunctionDecl</span><span class="p">,</span> <span class="n">CppType</span> <span class="c1"># import the types we want to apply transformations to</span>
-<span class="kn">from</span> <span class="nn">codemanip</span> <span class="kn">import</span> <span class="n">code_utils</span>              <span class="c1"># for to_snake_case</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">srcmlcpp</span> <span class="kn">import</span> <span class="n">CppFunctionDecl</span><span class="p">,</span> <span class="n">CppType</span>  <span class="c1"># import the types we want to apply transformations to</span>
+<span class="kn">from</span> <span class="nn">codemanip</span> <span class="kn">import</span> <span class="n">code_utils</span>  <span class="c1"># for to_snake_case</span>
 
 
 <span class="k">def</span> <span class="nf">change_function_to_snake_case</span><span class="p">(</span><span class="n">cpp_function</span><span class="p">:</span> <span class="n">CppFunctionDecl</span><span class="p">):</span>
@@ -513,14 +514,18 @@ document.write(`
     <span class="n">cpp_function</span><span class="o">.</span><span class="n">function_name</span> <span class="o">=</span> <span class="n">code_utils</span><span class="o">.</span><span class="n">to_snake_case</span><span class="p">(</span><span class="n">cpp_function</span><span class="o">.</span><span class="n">function_name</span><span class="p">)</span>
     <span class="n">cpp_function</span><span class="o">.</span><span class="n">cpp_element_comments</span><span class="o">.</span><span class="n">comment_on_previous_lines</span> <span class="o">+=</span> <span class="s2">&quot;Was changed to snake case!&quot;</span>
 
+
 <span class="k">def</span> <span class="nf">make_my_module_namespace</span><span class="p">(</span><span class="n">cpp_type</span><span class="p">:</span> <span class="n">CppType</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;If a type starts with MyModule_, replace it by MyModule::&quot;&quot;&quot;</span>
+
     <span class="k">def</span> <span class="nf">change_typename</span><span class="p">(</span><span class="n">typename</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">typename</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;MyModule_&quot;</span><span class="p">):</span>
             <span class="k">return</span> <span class="n">typename</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;MyModule_&quot;</span><span class="p">,</span> <span class="s2">&quot;MyModule::&quot;</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">typename</span>
+
     <span class="n">cpp_type</span><span class="o">.</span><span class="n">typenames</span> <span class="o">=</span> <span class="p">[</span><span class="n">change_typename</span><span class="p">(</span><span class="n">typename</span><span class="p">)</span> <span class="k">for</span> <span class="n">typename</span> <span class="ow">in</span> <span class="n">cpp_type</span><span class="o">.</span><span class="n">typenames</span><span class="p">]</span>
+
 
 <span class="k">def</span> <span class="nf">my_refactor_visitor</span><span class="p">(</span><span class="n">cpp_element</span><span class="p">:</span> <span class="n">srcmlcpp</span><span class="o">.</span><span class="n">CppElement</span><span class="p">,</span> <span class="n">event</span><span class="p">:</span> <span class="n">srcmlcpp</span><span class="o">.</span><span class="n">CppElementsVisitorEvent</span><span class="p">,</span> <span class="n">depth</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Our visitor will apply the transformation&quot;&quot;&quot;</span>
@@ -540,6 +545,7 @@ document.write(`
 <span class="n">cpp_unit</span><span class="o">.</span><span class="n">visit_cpp_breadth_first</span><span class="p">(</span><span class="n">my_refactor_visitor</span><span class="p">)</span>
 <span class="c1"># And print the refactored code</span>
 <span class="kn">from</span> <span class="nn">litgen.demo</span> <span class="kn">import</span> <span class="n">litgen_notebook_display</span>
+
 <span class="n">litgen_notebook_display</span><span class="o">.</span><span class="n">show_cpp_code</span><span class="p">(</span><span class="n">cpp_unit</span><span class="o">.</span><span class="n">str_code</span><span class="p">())</span>
 </pre></div>
 </div>
@@ -591,7 +597,7 @@ document.write(`
 </style>
 
     <script>
-       function copy_code_1702589524976_5398() {
+       function copy_code_1702590495227_808() {
             let code = `
 //Was changed to snake case!
 int add_numbers(const MyModule::Class & c);
@@ -600,10 +606,10 @@ int add_numbers(const MyModule::Class & c);
             navigator.clipboard.writeText(code);
        }
     </script>
-    <button class="collapsible_header" id="btn_1702589524976_5398_0" ></button>
-    <div class="collapsible_content" id="content_1702589524976_5398_0">
+    <button class="collapsible_header" id="btn_1702590495227_808_0" ></button>
+    <div class="collapsible_content" id="content_1702590495227_808_0">
         <div>
-                <button onclick="copy_code_1702589524976_5398()" align="right">copy &#x270d;</button>
+                <button onclick="copy_code_1702590495227_808()" align="right">copy &#x270d;</button>
         </div>
         <style>pre { line-height: 125%; }
 td.linenos .normal { color: inherit; background-color: transparent; padding-left: 5px; padding-right: 5px; }
@@ -682,10 +688,10 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
     </div>
     
     <script>
-    var button = document.getElementById("btn_1702589524976_5398_0");
+    var button = document.getElementById("btn_1702590495227_808_0");
     button.addEventListener("click", function() {
         this.classList.toggle("collapsible_header_opened");
-        var content = document.getElementById("content_1702589524976_5398_0");
+        var content = document.getElementById("content_1702590495227_808_0");
         if (content.style.maxHeight){
           content.style.maxHeight = null;
         } else {
@@ -695,9 +701,9 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
     </script>
     
             <script>
-            var collapsible_header = document.getElementById("btn_1702589524976_5398_0");
+            var collapsible_header = document.getElementById("btn_1702590495227_808_0");
             collapsible_header.classList.toggle("collapsible_header_opened");
-            var collapsible_content = document.getElementById("content_1702589524976_5398_0");
+            var collapsible_content = document.getElementById("content_1702590495227_808_0");
             collapsible_content.style.maxHeight = collapsible_content.scrollHeight + "px";
             </script>
             </div></div>
@@ -756,17 +762,17 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
 </style>
 
     <script>
-       function copy_code_1702589524981_3499() {
+       function copy_code_1702590495232_382() {
             let code = `
 int AddNumbers(const MyModule_Class& c);
 `;
             navigator.clipboard.writeText(code);
        }
     </script>
-    <button class="collapsible_header" id="btn_1702589524981_3499_1" ></button>
-    <div class="collapsible_content" id="content_1702589524981_3499_1">
+    <button class="collapsible_header" id="btn_1702590495232_382_1" ></button>
+    <div class="collapsible_content" id="content_1702590495232_382_1">
         <div>
-                <button onclick="copy_code_1702589524981_3499()" align="right">copy &#x270d;</button>
+                <button onclick="copy_code_1702590495232_382()" align="right">copy &#x270d;</button>
         </div>
         <style>pre { line-height: 125%; }
 td.linenos .normal { color: inherit; background-color: transparent; padding-left: 5px; padding-right: 5px; }
@@ -844,10 +850,10 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
     </div>
     
     <script>
-    var button = document.getElementById("btn_1702589524981_3499_1");
+    var button = document.getElementById("btn_1702590495232_382_1");
     button.addEventListener("click", function() {
         this.classList.toggle("collapsible_header_opened");
-        var content = document.getElementById("content_1702589524981_3499_1");
+        var content = document.getElementById("content_1702590495232_382_1");
         if (content.style.maxHeight){
           content.style.maxHeight = null;
         } else {
@@ -857,9 +863,9 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
     </script>
     
             <script>
-            var collapsible_header = document.getElementById("btn_1702589524981_3499_1");
+            var collapsible_header = document.getElementById("btn_1702590495232_382_1");
             collapsible_header.classList.toggle("collapsible_header_opened");
-            var collapsible_content = document.getElementById("content_1702589524981_3499_1");
+            var collapsible_content = document.getElementById("content_1702590495232_382_1");
             collapsible_content.style.maxHeight = collapsible_content.scrollHeight + "px";
             </script>
             </div></div>

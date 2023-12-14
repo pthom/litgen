@@ -365,7 +365,7 @@ public:
     }
 
     // Some method
-    virtual bool SomeMethod() { /* ... */ }
+    bool SomeMethod() { /* ... */ }
 
     // Some public static method
     static bool SomeStaticMethod() { /* ... */ }
@@ -396,7 +396,7 @@ _PIMPL_DEMO_CPP = """
 struct MyStructPImpl
 {
     MyStructPImpl() { /* ...*/ }
-    virtual bool SomeMethod() { /* ... */ }
+    bool SomeMethod() { /* ... */ }
 private:
     bool SomePrivateMethod() { /* ... */ }
     int mSomePrivateMember;

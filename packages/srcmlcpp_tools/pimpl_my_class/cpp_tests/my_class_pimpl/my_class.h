@@ -14,8 +14,8 @@ class MyClass
     MyClass(const std::string & someParam);
 
 
-    // Some method (virtual or not)
-    virtual bool SomeMethod();
+    // Some method
+    bool SomeMethod();
 
     // Some public static method
     static bool SomeStaticFunction();
