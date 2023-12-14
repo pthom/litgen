@@ -159,7 +159,10 @@ class SrcmlWrapper:
 
     def str_code_verbatim(self) -> str:
         """Return the exact C++ code from which this xml node was constructed by calling the executable srcml"""
-        r = code_to_srcml.srcml_to_code(self.srcml_xml, encoding=self.options.encoding)
+        # r = code_to_srcml.srcml_to_code(self.srcml_xml, encoding=self.options.encoding)
+        from srcmlcpp import srcmlcpp_main
+
+        r = srcmlcpp_main.srcml_to_code_wrapper(self)
         return r
 
     def str_xml(self, beautify: bool = True) -> str:

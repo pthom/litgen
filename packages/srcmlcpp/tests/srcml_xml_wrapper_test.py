@@ -16,7 +16,7 @@ def test_srcml_cpp():
     int a = 5;
     int add(int a, int b) { return a + b; }
     double b = 3;
-    // _SRCML_EMPTY_LINE_
+
     struct Foo
     {
         double value;
@@ -38,7 +38,7 @@ def test_srcml_cpp():
     assert len(decl_stmt_wrappers) == 2
 
     first_decl_stmt = decl_stmt_wrappers[0]
-    assert first_decl_stmt.str_code_verbatim() == "int a = 5;\n"
+    assert first_decl_stmt.str_code_verbatim() == "int a = 5;"
 
     # Test start/end position
     assert first_decl_stmt.start() == CodePosition(2, 1)

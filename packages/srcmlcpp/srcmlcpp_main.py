@@ -71,6 +71,26 @@ def code_to_srcml_wrapper(
     return r
 
 
+def srcml_to_code_wrapper(srcml_wrapper: SrcmlWrapper) -> str:
+    """Create c++ code from a srcML tree wrapped into a SrcmlWrapper"""
+    from srcmlcpp.internal.srcml_comments import EMPTY_LINE_COMMENT
+
+    xml = srcml_wrapper.srcml_xml
+    code = code_to_srcml.srcml_to_code(xml, encoding=srcml_wrapper.options.encoding)
+    if srcml_wrapper.options.preserve_empty_lines:
+        lines = code.splitlines(keepends=False)
+
+        def _remove_empty_line_comment(line: str) -> str:
+            if line.strip() == EMPTY_LINE_COMMENT:
+                return ""
+            else:
+                return line
+
+        lines = list(map(_remove_empty_line_comment, lines))
+        code = "\n".join(lines)
+    return code
+
+
 def _nb_lines_in_code_or_file(options: SrcmlcppOptions, code: str | None = None, filename: str | None = None) -> int:
     code_str = _code_or_file_content(options, code, filename)
     nb_lines = code_str.count("\n")
