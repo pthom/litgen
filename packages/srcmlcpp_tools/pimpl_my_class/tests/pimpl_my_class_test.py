@@ -46,6 +46,7 @@ private:
 
     result = pimpl_my_class.pimpl_my_code(code)
     # print("\n" + result.header_code)
+    assert result is not None
     code_utils.assert_are_codes_equal(
         result.header_code,
         """

@@ -434,7 +434,7 @@ def create_pimpl_example_files():
     return cpp_filename, header_filename
 
 
-def sandbox():
+def sandbox() -> None:
     this_dir = os.path.dirname(os.path.abspath(__file__))
     cpp_filename = this_dir + "/cpp_tests/my_class_pimpl/my_class.cpp"
     pimpl_my_file(cpp_filename)
