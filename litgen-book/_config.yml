@@ -4,6 +4,7 @@
 title: litgen, the Literate Generator
 author: Pascal Thomet
 logo: images/litgen_logo_big.png
+copyright: "2023"
 
 # Force re-execution of notebooks on each build.
 # See https://jupyterbook.org/content/execute.html
@@ -22,7 +23,7 @@ latex:
 # Information about where the book exists on the web
 repository:
   url: https://github.com/pthom/litgen  # Online location of your book
-  path_to_book: packages/litgen/litgen-book  # Optional path to your book, relative to the repository root
+  path_to_book: litgen-book  # Optional path to your book, relative to the repository root
   branch: main  # Which branch of the repository should be used when creating links (optional)
 
 launch_buttons:

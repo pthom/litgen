@@ -2,7 +2,7 @@ srcmlcpp and litgen License (v1.00)
 Copyright (c) 2022-2023 Pascal Thomet
 
 This document is a legal agreement ("License") between you ("Licensee") and
-Thom Consulting ("Licensor") that governs your use of srcmlcpp and its associated tools, such as litgen ("Software").
+Thom Consulting ("Licensor") that governs your use of litgen and its associated tools, such as srcmlcpp ("Software").
 
 1. LICENSE MODELS
 

@@ -201,7 +201,7 @@ const thebe_selector_output = ".output, .cell_output"
 <ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="20_00_00_cpp_intro.html">srcmlcpp: C++ code parsing</a></li>
 <li class="toctree-l1"><a class="reference internal" href="20_05_00_cpp_simple_transformations.html">Simple C++ code transformations</a></li>
-<li class="toctree-l1"><a class="reference internal" href="20_10_00_pimpl_my_class.html">PImpl my class: autogenerate PImpl boilerplate</a></li>
+<li class="toctree-l1"><a class="reference internal" href="20_10_00_pimpl_my_class.html">Pimpl my class: autogenerate PImpl boilerplate</a></li>
 <li class="toctree-l1"><a class="reference internal" href="20_15_00_pimpl_online.html">Online PImpl generation</a></li>
 </ul>
 
@@ -396,7 +396,16 @@ document.write(`
             </div>
             <nav aria-label="Page">
                 <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#don-t-use-as-function-s-default-parameter-value">Don’t use <code class="docutils literal notranslate"><span class="pre">={}</span></code> as function’s default parameter value</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#srcml">srcML</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#don-t-use-as-function-s-default-parameter-value">Don’t use <code class="docutils literal notranslate"><span class="pre">={}</span></code> as function’s default parameter value</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#note-about-mixing-auto-return-and-api-markers">Note about mixing auto return and API markers</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#python-bindings">Python bindings</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#note-about-function-arrow-return-type-notation">Note about function arrow-return type notation:</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#note-about-function-inferred-return-type-notation">Note about function inferred return type notation:</a></li>
+</ul>
+</li>
 </ul>
             </nav>
         </div>
@@ -415,9 +424,12 @@ document.write(`
 <li><p>it will <em>never</em> fail to construct an XML tree from C++ code</p></li>
 <li><p>it will <em>always</em> regenerate the exact same original C++ code from the XML tree</p></li>
 </ul>
-<p>However, there are corner cases where the XML tree is not what you would expect. See some gotchas below:</p>
+<p>However, there are corner cases where the XML tree is not what you would expect.
+See some gotchas below.</p>
+<section id="srcml">
+<h2>srcML<a class="headerlink" href="#srcml" title="Permalink to this heading">#</a></h2>
 <section id="don-t-use-as-function-s-default-parameter-value">
-<h2>Don’t use <code class="docutils literal notranslate"><span class="pre">={}</span></code> as function’s default parameter value<a class="headerlink" href="#don-t-use-as-function-s-default-parameter-value" title="Permalink to this heading">#</a></h2>
+<h3>Don’t use <code class="docutils literal notranslate"><span class="pre">={}</span></code> as function’s default parameter value<a class="headerlink" href="#don-t-use-as-function-s-default-parameter-value" title="Permalink to this heading">#</a></h3>
 <p>See <a class="reference external" href="https://github.com/srcML/srcML/issues/1833">related issue</a></p>
 <div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="kt">void</span><span class="w"> </span><span class="nf">Foo</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">v</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{}</span><span class="w"> </span><span class="p">);</span>
 </pre></div>
@@ -427,6 +439,45 @@ document.write(`
 </pre></div>
 </div>
 <p>is correctly parsed as a function declaration.</p>
+</section>
+<section id="note-about-mixing-auto-return-and-api-markers">
+<h3>Note about mixing auto return and API markers<a class="headerlink" href="#note-about-mixing-auto-return-and-api-markers" title="Permalink to this heading">#</a></h3>
+<p>Mixing API marker and auto return type is not supported.</p>
+<p>Such functions will not be parsed correctly!</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="w">    </span><span class="n">MY_API</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="n">my_modulo</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">a</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">b</span><span class="p">)</span>
+<span class="w">    </span><span class="n">MY_API</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="n">my_pow</span><span class="p">(</span><span class="kt">double</span><span class="w"> </span><span class="n">a</span><span class="p">,</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">b</span><span class="p">)</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="kt">double</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="python-bindings">
+<h2>Python bindings<a class="headerlink" href="#python-bindings" title="Permalink to this heading">#</a></h2>
+<section id="note-about-function-arrow-return-type-notation">
+<h3>Note about function arrow-return type notation:<a class="headerlink" href="#note-about-function-arrow-return-type-notation" title="Permalink to this heading">#</a></h3>
+<p>Arrow return notation function are correctly exported to python, including their return type.
+For example,</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="k">auto</span><span class="w"> </span><span class="n">my_pow</span><span class="p">(</span><span class="kt">double</span><span class="w"> </span><span class="n">a</span><span class="p">,</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">b</span><span class="p">)</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="kt">double</span>
+</pre></div>
+</div>
+<p>Will result in:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">my_pow</span><span class="p">(</span><span class="n">a</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">b</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="k">pass</span>
+</pre></div>
+</div>
+</section>
+<section id="note-about-function-inferred-return-type-notation">
+<h3>Note about function inferred return type notation:<a class="headerlink" href="#note-about-function-inferred-return-type-notation" title="Permalink to this heading">#</a></h3>
+<p>Functions with an inferred return type are correctly exported to python, however the published return type is unknown and will be marked as “Any”
+For example,</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="k">auto</span><span class="w"> </span><span class="n">my_pow</span><span class="p">(</span><span class="kt">double</span><span class="w"> </span><span class="n">a</span><span class="p">,</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">b</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Will result in:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">my_pow</span><span class="p">(</span><span class="n">a</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">b</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+<span class="k">pass</span>
+</pre></div>
+</div>
+</section>
 </section>
 </section>
 
@@ -493,7 +544,16 @@ document.write(`
   </div>
   <nav class="bd-toc-nav page-toc">
     <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#don-t-use-as-function-s-default-parameter-value">Don’t use <code class="docutils literal notranslate"><span class="pre">={}</span></code> as function’s default parameter value</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#srcml">srcML</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#don-t-use-as-function-s-default-parameter-value">Don’t use <code class="docutils literal notranslate"><span class="pre">={}</span></code> as function’s default parameter value</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#note-about-mixing-auto-return-and-api-markers">Note about mixing auto return and API markers</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#python-bindings">Python bindings</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#note-about-function-arrow-return-type-notation">Note about function arrow-return type notation:</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#note-about-function-inferred-return-type-notation">Note about function inferred return type notation:</a></li>
+</ul>
+</li>
 </ul>
   </nav></div>
 
@@ -517,7 +577,7 @@ By Pascal Thomet
     
   <p class="copyright">
     
-      © Copyright 2022.
+      © Copyright 2023.
       <br/>
     
   </p>

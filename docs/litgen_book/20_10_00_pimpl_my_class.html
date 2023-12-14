@@ -9,7 +9,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>PImpl my class: autogenerate PImpl boilerplate &#8212; litgen, the Literate Generator</title>
+    <title>Pimpl my class: autogenerate PImpl boilerplate &#8212; litgen, the Literate Generator</title>
   
   
   
@@ -201,7 +201,7 @@ const thebe_selector_output = ".output, .cell_output"
 <ul class="current nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="20_00_00_cpp_intro.html">srcmlcpp: C++ code parsing</a></li>
 <li class="toctree-l1"><a class="reference internal" href="20_05_00_cpp_simple_transformations.html">Simple C++ code transformations</a></li>
-<li class="toctree-l1 current active"><a class="current reference internal" href="#">PImpl my class: autogenerate PImpl boilerplate</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Pimpl my class: autogenerate PImpl boilerplate</a></li>
 <li class="toctree-l1"><a class="reference internal" href="20_15_00_pimpl_online.html">Online PImpl generation</a></li>
 </ul>
 
@@ -257,7 +257,7 @@ const thebe_selector_output = ".output, .cell_output"
       
       
       
-      <li><a href="https://mybinder.org/v2/gh/pthom/litgen/main?urlpath=lab/tree/packages/litgen/litgen-book/20_10_00_pimpl_my_class.ipynb" target="_blank"
+      <li><a href="https://mybinder.org/v2/gh/pthom/litgen/main?urlpath=lab/tree/litgen-book/20_10_00_pimpl_my_class.ipynb" target="_blank"
    class="btn btn-sm dropdown-item"
    title="Launch onBinder"
    data-bs-placement="left" data-bs-toggle="tooltip"
@@ -417,7 +417,7 @@ document.write(`
               
 
 <div id="jb-print-docs-body" class="onlyprint">
-    <h1>PImpl my class: autogenerate PImpl boilerplate</h1>
+    <h1>Pimpl my class: autogenerate PImpl boilerplate</h1>
     <!-- Table of contents -->
     <div id="print-main-content">
         <div id="jb-print-toc">
@@ -441,7 +441,7 @@ document.write(`
                 <article class="bd-article" role="main">
                   
   <section class="tex2jax_ignore mathjax_ignore" id="pimpl-my-class-autogenerate-pimpl-boilerplate">
-<h1>PImpl my class: autogenerate PImpl boilerplate<a class="headerlink" href="#pimpl-my-class-autogenerate-pimpl-boilerplate" title="Permalink to this heading">#</a></h1>
+<h1>Pimpl my class: autogenerate PImpl boilerplate<a class="headerlink" href="#pimpl-my-class-autogenerate-pimpl-boilerplate" title="Permalink to this heading">#</a></h1>
 <p><a class="reference external" href="https://en.cppreference.com/w/cpp/language/pimpl">PImpl</a> is a common C++ programming technique that removes implementation details of a class from its object representation by placing them in a separate class, accessed through an opaque pointer.</p>
 <p>Its advantages are:</p>
 <ul class="simple">
@@ -526,7 +526,7 @@ document.write(`
 </style>
 
     <script>
-       function copy_code_1702590495985_031() {
+       function copy_code_1702592894728_816() {
             let code = `
 #include "my_class.h"
 
@@ -570,10 +570,10 @@ private:
             navigator.clipboard.writeText(code);
        }
     </script>
-    <button class="collapsible_header" id="btn_1702590495985_031_0" >MyClassPImpl cpp file</button>
-    <div class="collapsible_content" id="content_1702590495985_031_0">
+    <button class="collapsible_header" id="btn_1702592894728_816_0" >MyClassPImpl cpp file</button>
+    <div class="collapsible_content" id="content_1702592894728_816_0">
         <div>
-                <button onclick="copy_code_1702590495985_031()" align="right">copy &#x270d;</button>
+                <button onclick="copy_code_1702592894728_816()" align="right">copy &#x270d;</button>
         </div>
         <style>pre { line-height: 125%; }
 td.linenos .normal { color: inherit; background-color: transparent; padding-left: 5px; padding-right: 5px; }
@@ -688,10 +688,10 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
     </div>
     
     <script>
-    var button = document.getElementById("btn_1702590495985_031_0");
+    var button = document.getElementById("btn_1702592894728_816_0");
     button.addEventListener("click", function() {
         this.classList.toggle("collapsible_header_opened");
-        var content = document.getElementById("content_1702590495985_031_0");
+        var content = document.getElementById("content_1702592894728_816_0");
         if (content.style.maxHeight){
           content.style.maxHeight = null;
         } else {
@@ -701,9 +701,9 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
     </script>
     
             <script>
-            var collapsible_header = document.getElementById("btn_1702590495985_031_0");
+            var collapsible_header = document.getElementById("btn_1702592894728_816_0");
             collapsible_header.classList.toggle("collapsible_header_opened");
-            var collapsible_content = document.getElementById("content_1702590495985_031_0");
+            var collapsible_content = document.getElementById("content_1702592894728_816_0");
             collapsible_content.style.maxHeight = collapsible_content.scrollHeight + "px";
             </script>
             </div></div>
@@ -766,7 +766,7 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
 </style>
 
     <script>
-       function copy_code_1702590495996_293() {
+       function copy_code_1702592894740_11() {
             let code = `class MyClassPImpl;
 
 // Some doc about the class, that you want to see in the header file
@@ -794,10 +794,10 @@ class MyClass
             navigator.clipboard.writeText(code);
        }
     </script>
-    <button class="collapsible_header" id="btn_1702590495996_293_1" >Header Code</button>
-    <div class="collapsible_content" id="content_1702590495996_293_1">
+    <button class="collapsible_header" id="btn_1702592894740_11_1" >Header Code</button>
+    <div class="collapsible_content" id="content_1702592894740_11_1">
         <div>
-                <button onclick="copy_code_1702590495996_293()" align="right">copy &#x270d;</button>
+                <button onclick="copy_code_1702592894740_11()" align="right">copy &#x270d;</button>
         </div>
         <style>pre { line-height: 125%; }
 td.linenos .normal { color: inherit; background-color: transparent; padding-left: 5px; padding-right: 5px; }
@@ -898,10 +898,10 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
     </div>
     
     <script>
-    var button = document.getElementById("btn_1702590495996_293_1");
+    var button = document.getElementById("btn_1702592894740_11_1");
     button.addEventListener("click", function() {
         this.classList.toggle("collapsible_header_opened");
-        var content = document.getElementById("content_1702590495996_293_1");
+        var content = document.getElementById("content_1702592894740_11_1");
         if (content.style.maxHeight){
           content.style.maxHeight = null;
         } else {
@@ -911,9 +911,9 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
     </script>
     
             <script>
-            var collapsible_header = document.getElementById("btn_1702590495996_293_1");
+            var collapsible_header = document.getElementById("btn_1702592894740_11_1");
             collapsible_header.classList.toggle("collapsible_header_opened");
-            var collapsible_content = document.getElementById("content_1702590495996_293_1");
+            var collapsible_content = document.getElementById("content_1702592894740_11_1");
             collapsible_content.style.maxHeight = collapsible_content.scrollHeight + "px";
             </script>
             </div><div class="output text_html">
@@ -962,7 +962,7 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
 </style>
 
     <script>
-       function copy_code_1702590495997_4458() {
+       function copy_code_1702592894741_275() {
             let code = `MyClass::MyClass(const std::string & someVar)
     : mPImpl(std::make_unique<MyClassPImpl>(someVar)) { }
 bool MyClass::SomeMethod() {
@@ -974,10 +974,10 @@ MyClass::~MyClass() = default;
             navigator.clipboard.writeText(code);
        }
     </script>
-    <button class="collapsible_header" id="btn_1702590495997_4458_2" >Glue Code (add this at the bottom of the C++ file)</button>
-    <div class="collapsible_content" id="content_1702590495997_4458_2">
+    <button class="collapsible_header" id="btn_1702592894741_275_2" >Glue Code (add this at the bottom of the C++ file)</button>
+    <div class="collapsible_content" id="content_1702592894741_275_2">
         <div>
-                <button onclick="copy_code_1702590495997_4458()" align="right">copy &#x270d;</button>
+                <button onclick="copy_code_1702592894741_275()" align="right">copy &#x270d;</button>
         </div>
         <style>pre { line-height: 125%; }
 td.linenos .normal { color: inherit; background-color: transparent; padding-left: 5px; padding-right: 5px; }
@@ -1061,10 +1061,10 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
     </div>
     
     <script>
-    var button = document.getElementById("btn_1702590495997_4458_2");
+    var button = document.getElementById("btn_1702592894741_275_2");
     button.addEventListener("click", function() {
         this.classList.toggle("collapsible_header_opened");
-        var content = document.getElementById("content_1702590495997_4458_2");
+        var content = document.getElementById("content_1702592894741_275_2");
         if (content.style.maxHeight){
           content.style.maxHeight = null;
         } else {
@@ -1074,9 +1074,9 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
     </script>
     
             <script>
-            var collapsible_header = document.getElementById("btn_1702590495997_4458_2");
+            var collapsible_header = document.getElementById("btn_1702592894741_275_2");
             collapsible_header.classList.toggle("collapsible_header_opened");
-            var collapsible_content = document.getElementById("content_1702590495997_4458_2");
+            var collapsible_content = document.getElementById("content_1702592894741_275_2");
             collapsible_content.style.maxHeight = collapsible_content.scrollHeight + "px";
             </script>
             </div></div>
@@ -1147,7 +1147,7 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
 </style>
 
     <script>
-       function copy_code_1702590496002_059() {
+       function copy_code_1702592894745_452() {
             let code = `
 #include "my_class.h"
 
@@ -1169,10 +1169,10 @@ private:
             navigator.clipboard.writeText(code);
        }
     </script>
-    <button class="collapsible_header" id="btn_1702590496002_059_3" >/var/folders/w1/w77kvvl9613022ksfxj7v8xh0000gn/T/tmpd1996t0z/my_class.cpp</button>
-    <div class="collapsible_content" id="content_1702590496002_059_3">
+    <button class="collapsible_header" id="btn_1702592894745_452_3" >/var/folders/w1/w77kvvl9613022ksfxj7v8xh0000gn/T/tmpt23st8ds/my_class.cpp</button>
+    <div class="collapsible_content" id="content_1702592894745_452_3">
         <div>
-                <button onclick="copy_code_1702590496002_059()" align="right">copy &#x270d;</button>
+                <button onclick="copy_code_1702592894745_452()" align="right">copy &#x270d;</button>
         </div>
         <style>pre { line-height: 125%; }
 td.linenos .normal { color: inherit; background-color: transparent; padding-left: 5px; padding-right: 5px; }
@@ -1264,10 +1264,10 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
     </div>
     
     <script>
-    var button = document.getElementById("btn_1702590496002_059_3");
+    var button = document.getElementById("btn_1702592894745_452_3");
     button.addEventListener("click", function() {
         this.classList.toggle("collapsible_header_opened");
-        var content = document.getElementById("content_1702590496002_059_3");
+        var content = document.getElementById("content_1702592894745_452_3");
         if (content.style.maxHeight){
           content.style.maxHeight = null;
         } else {
@@ -1277,9 +1277,9 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
     </script>
     
             <script>
-            var collapsible_header = document.getElementById("btn_1702590496002_059_3");
+            var collapsible_header = document.getElementById("btn_1702592894745_452_3");
             collapsible_header.classList.toggle("collapsible_header_opened");
-            var collapsible_content = document.getElementById("content_1702590496002_059_3");
+            var collapsible_content = document.getElementById("content_1702592894745_452_3");
             collapsible_content.style.maxHeight = collapsible_content.scrollHeight + "px";
             </script>
             </div><div class="output text_html">
@@ -1328,7 +1328,7 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
 </style>
 
     <script>
-       function copy_code_1702590496002_9558() {
+       function copy_code_1702592894746_3857() {
             let code = `
 #pragma once
 #include <memory>
@@ -1341,10 +1341,10 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
             navigator.clipboard.writeText(code);
        }
     </script>
-    <button class="collapsible_header" id="btn_1702590496002_9558_4" >/var/folders/w1/w77kvvl9613022ksfxj7v8xh0000gn/T/tmpd1996t0z/my_class.h</button>
-    <div class="collapsible_content" id="content_1702590496002_9558_4">
+    <button class="collapsible_header" id="btn_1702592894746_3857_4" >/var/folders/w1/w77kvvl9613022ksfxj7v8xh0000gn/T/tmpt23st8ds/my_class.h</button>
+    <div class="collapsible_content" id="content_1702592894746_3857_4">
         <div>
-                <button onclick="copy_code_1702590496002_9558()" align="right">copy &#x270d;</button>
+                <button onclick="copy_code_1702592894746_3857()" align="right">copy &#x270d;</button>
         </div>
         <style>pre { line-height: 125%; }
 td.linenos .normal { color: inherit; background-color: transparent; padding-left: 5px; padding-right: 5px; }
@@ -1428,10 +1428,10 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
     </div>
     
     <script>
-    var button = document.getElementById("btn_1702590496002_9558_4");
+    var button = document.getElementById("btn_1702592894746_3857_4");
     button.addEventListener("click", function() {
         this.classList.toggle("collapsible_header_opened");
-        var content = document.getElementById("content_1702590496002_9558_4");
+        var content = document.getElementById("content_1702592894746_3857_4");
         if (content.style.maxHeight){
           content.style.maxHeight = null;
         } else {
@@ -1441,9 +1441,9 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
     </script>
     
             <script>
-            var collapsible_header = document.getElementById("btn_1702590496002_9558_4");
+            var collapsible_header = document.getElementById("btn_1702592894746_3857_4");
             collapsible_header.classList.toggle("collapsible_header_opened");
-            var collapsible_content = document.getElementById("content_1702590496002_9558_4");
+            var collapsible_content = document.getElementById("content_1702592894746_3857_4");
             collapsible_content.style.maxHeight = collapsible_content.scrollHeight + "px";
             </script>
             </div></div>
@@ -1511,7 +1511,7 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
 </style>
 
     <script>
-       function copy_code_1702590496008_886() {
+       function copy_code_1702592894752_364() {
             let code = `
 #include "my_class.h"
 
@@ -1539,10 +1539,10 @@ MyStruct::~MyStruct() = default;
             navigator.clipboard.writeText(code);
        }
     </script>
-    <button class="collapsible_header" id="btn_1702590496008_886_5" >/var/folders/w1/w77kvvl9613022ksfxj7v8xh0000gn/T/tmpd1996t0z/my_class.cpp</button>
-    <div class="collapsible_content" id="content_1702590496008_886_5">
+    <button class="collapsible_header" id="btn_1702592894752_364_5" >/var/folders/w1/w77kvvl9613022ksfxj7v8xh0000gn/T/tmpt23st8ds/my_class.cpp</button>
+    <div class="collapsible_content" id="content_1702592894752_364_5">
         <div>
-                <button onclick="copy_code_1702590496008_886()" align="right">copy &#x270d;</button>
+                <button onclick="copy_code_1702592894752_364()" align="right">copy &#x270d;</button>
         </div>
         <style>pre { line-height: 125%; }
 td.linenos .normal { color: inherit; background-color: transparent; padding-left: 5px; padding-right: 5px; }
@@ -1640,10 +1640,10 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
     </div>
     
     <script>
-    var button = document.getElementById("btn_1702590496008_886_5");
+    var button = document.getElementById("btn_1702592894752_364_5");
     button.addEventListener("click", function() {
         this.classList.toggle("collapsible_header_opened");
-        var content = document.getElementById("content_1702590496008_886_5");
+        var content = document.getElementById("content_1702592894752_364_5");
         if (content.style.maxHeight){
           content.style.maxHeight = null;
         } else {
@@ -1653,9 +1653,9 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
     </script>
     
             <script>
-            var collapsible_header = document.getElementById("btn_1702590496008_886_5");
+            var collapsible_header = document.getElementById("btn_1702592894752_364_5");
             collapsible_header.classList.toggle("collapsible_header_opened");
-            var collapsible_content = document.getElementById("content_1702590496008_886_5");
+            var collapsible_content = document.getElementById("content_1702592894752_364_5");
             collapsible_content.style.maxHeight = collapsible_content.scrollHeight + "px";
             </script>
             </div><div class="output text_html">
@@ -1704,7 +1704,7 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
 </style>
 
     <script>
-       function copy_code_1702590496010_0142() {
+       function copy_code_1702592894753_429() {
             let code = `
 #pragma once
 #include <memory>
@@ -1729,10 +1729,10 @@ struct MyStruct
             navigator.clipboard.writeText(code);
        }
     </script>
-    <button class="collapsible_header" id="btn_1702590496010_0142_6" >/var/folders/w1/w77kvvl9613022ksfxj7v8xh0000gn/T/tmpd1996t0z/my_class.h</button>
-    <div class="collapsible_content" id="content_1702590496010_0142_6">
+    <button class="collapsible_header" id="btn_1702592894753_429_6" >/var/folders/w1/w77kvvl9613022ksfxj7v8xh0000gn/T/tmpt23st8ds/my_class.h</button>
+    <div class="collapsible_content" id="content_1702592894753_429_6">
         <div>
-                <button onclick="copy_code_1702590496010_0142()" align="right">copy &#x270d;</button>
+                <button onclick="copy_code_1702592894753_429()" align="right">copy &#x270d;</button>
         </div>
         <style>pre { line-height: 125%; }
 td.linenos .normal { color: inherit; background-color: transparent; padding-left: 5px; padding-right: 5px; }
@@ -1828,10 +1828,10 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
     </div>
     
     <script>
-    var button = document.getElementById("btn_1702590496010_0142_6");
+    var button = document.getElementById("btn_1702592894753_429_6");
     button.addEventListener("click", function() {
         this.classList.toggle("collapsible_header_opened");
-        var content = document.getElementById("content_1702590496010_0142_6");
+        var content = document.getElementById("content_1702592894753_429_6");
         if (content.style.maxHeight){
           content.style.maxHeight = null;
         } else {
@@ -1841,9 +1841,9 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
     </script>
     
             <script>
-            var collapsible_header = document.getElementById("btn_1702590496010_0142_6");
+            var collapsible_header = document.getElementById("btn_1702592894753_429_6");
             collapsible_header.classList.toggle("collapsible_header_opened");
-            var collapsible_content = document.getElementById("content_1702590496010_0142_6");
+            var collapsible_content = document.getElementById("content_1702592894753_429_6");
             collapsible_content.style.maxHeight = collapsible_content.scrollHeight + "px";
             </script>
             </div></div>
@@ -1939,7 +1939,7 @@ By Pascal Thomet
     
   <p class="copyright">
     
-      © Copyright 2022.
+      © Copyright 2023.
       <br/>
     
   </p>

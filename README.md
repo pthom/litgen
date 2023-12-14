@@ -1,8 +1,10 @@
 ![Pip](https://github.com/pthom/litgen/workflows/ci_build_and_test/badge.svg)
 
 
-litgen, aka \"Literate Generator\", an automatic python bindings generator for humans who like nice code and APIs, based on srcML (https://srcml.org)
+litgen, also known as Literate Generator, is an automatic python bindings generator for humans who like nice code and APIs.
 
-_litgen is not ready to be used outside its nest yet! Expect refactorings at a rapid pace!_
+It can be used to bind C++ libraries into documented and discoverable python modules using pybind11.
 
-[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/pthom/litgen/HEAD?labpath=packages%2Flitgen%2Flitgen-book%2F)
+It can also be used as C++ transformation/refactoring tool.
+
+[See documentation](https://pthom.github.io/litgen/)
