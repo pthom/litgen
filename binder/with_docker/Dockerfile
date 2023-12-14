@@ -34,7 +34,7 @@ RUN rm -rf /var/lib/apt/lists/*
 # Clone & install srcmlcpp
 #
 USER jovyan
-RUN git clone https://github.com/pthom/srcmlcpp.git
+RUN git clone https://github.com/pthom/litgen.git
 RUN cd srcmlcpp && pip install -v -e .
 
 

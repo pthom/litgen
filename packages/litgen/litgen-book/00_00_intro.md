@@ -66,7 +66,7 @@ Being based on [srcML](http://www.srcml.org), litgen is compatible with C++14: y
 
 ## License
 
-srcmlcpp and its associated tools, such as litgen, are under the [srcmlcpp and litgen License](https://raw.githubusercontent.com/pthom/srcmlcpp/main/LICENSE.txt).
+litgen and its associated tools, such as srcmlcpp, are under the [litgen License](https://raw.githubusercontent.com/pthom/litgen/main/LICENSE.txt).
 
 TL;DR: free for individuals, educational, open-source and small businesses uses. Paid for larger businesses. Read license for details. License sales to larger businesses are used to fund and sustain the development of srcmlcpp and litgen.
 
@@ -77,7 +77,7 @@ litgen uses [srcML](http://www.srcml.org) which is governed by the GNU GENERAL P
 
 ## Support
 
-If you need help with bindings when working in an Open Source context, please open an issue on the [srcmlcpp repository](https://github.com/pthom/srcmlcpp/issues).
+If you need help with bindings when working in an Open Source context, please open an issue on the [srcmlcpp repository](https://github.com/pthom/litgen/issues).
 
 If you need help with bindings if a professional setting, please contact the author by email, for possible consulting work.
 

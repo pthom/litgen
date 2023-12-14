@@ -1,4 +1,4 @@
-![Pip](https://github.com/pthom/srcmlcpp/workflows/ci_build_and_test/badge.svg)
+![Pip](https://github.com/pthom/litgen/workflows/ci_build_and_test/badge.svg)
 
 
 litgen, aka \"Literate Generator\", an automatic python bindings generator for humans who like nice code and APIs, based on srcML (https://srcml.org)
