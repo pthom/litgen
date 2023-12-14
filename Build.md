@@ -49,7 +49,7 @@ pytest
 
 Don't use {} in function default params !!! It is wrongly parsed by srcML.
 
-# Utilities
+# Importanize
 Regularly run [importanize](https://github.com/miki725/importanize), to reorder the imports:
 
 Install importanize (from master branch, in submodule)
@@ -67,7 +67,7 @@ Run importanize
 importanize
 ```
 
-Profiling
+# Profiling
     http://jiffyclub.github.io/snakeviz/
 
         pip install snakeviz
@@ -75,5 +75,5 @@ Profiling
         snakeviz profile.prof
 
 
-Add annotations
+# Add annotations
     Use monkeytype: https://github.com/Instagram/MonkeyType
