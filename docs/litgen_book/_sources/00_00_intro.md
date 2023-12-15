@@ -8,7 +8,7 @@ It can be used to bind C++ libraries into _documented_ and _discoverable_ python
 
 It can also be used as C++ transformation and refactoring tool.
 
-[Source code](https://github.com/pthom/litgen), [Documentation](https://pthom.github.io/litgen/), [PyPI](https://pypi.org/project/litgen/) 
+[Source code](https://github.com/pthom/litgen), [Documentation](https://pthom.github.io/litgen/), [PyPI](https://pypi.org/project/litgen/)
 ```
 
 Although being relatively new (2022), litgen was battle tested on 20 different libraries totalling more than 100,000 lines of code, and it is the main driving force behind the python bindings for [Dear ImGui Bundle](https://github.com/pthom/imgui_bundle).
