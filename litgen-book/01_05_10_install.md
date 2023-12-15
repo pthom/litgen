@@ -57,7 +57,7 @@ pip install -v -e .
 ```
 
 ### Install litgen without checking out the code
-Alternatively, you can install litgen without checking its code out:
+Alternatively, you can install litgen without checking out its code:
 ```bash
-pip install "litgen @ git+https://github.com/pthom/litgen"
+pip install litgen
 ```
