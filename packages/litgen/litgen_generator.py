@@ -8,7 +8,7 @@ from codemanip import code_utils
 from srcmlcpp.internal.code_to_srcml import _SRCML_CALLER
 
 from litgen import LitgenOptions
-from litgen.code_to_adapted_unit import code_to_adapted_unit
+from litgen.code_to_adapted_unit import code_to_adapted_unit_in_context
 from litgen.internal import boxed_python_type, cpp_to_python
 from litgen.internal.context.litgen_context import LitgenContext
 
@@ -130,9 +130,9 @@ class LitgenGenerator:
 
     def process_cpp_code(self, code: str, filename: str) -> None:
         if len(filename) > 0:
-            adapted_unit = code_to_adapted_unit(self.lg_context, code, filename)
+            adapted_unit = code_to_adapted_unit_in_context(self.lg_context, code, filename)
         else:
-            adapted_unit = code_to_adapted_unit(self.lg_context, code)
+            adapted_unit = code_to_adapted_unit_in_context(self.lg_context, code)
         stub_code = adapted_unit.str_stub()
         pydef_code = adapted_unit.str_pydef()
         self.lg_context.clear_namespaces_code_tree()
@@ -150,7 +150,7 @@ class LitgenGenerator:
         standalone_options.cpp_indent_size = self.options().cpp_indent_size
         standalone_options.cpp_indent_with_tabs = self.options().cpp_indent_with_tabs
 
-        adapted_unit = code_to_adapted_unit(LitgenContext(standalone_options), boxed_types_cpp_code)
+        adapted_unit = code_to_adapted_unit_in_context(LitgenContext(standalone_options), boxed_types_cpp_code)
 
         stub_code = adapted_unit.str_stub()
         pydef_code = adapted_unit.str_pydef()

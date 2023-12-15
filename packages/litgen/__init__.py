@@ -1,7 +1,7 @@
 from __future__ import annotations
 from litgen.options import LitgenOptions, TemplateClassOptions, TemplateFunctionsOptions
 
-from litgen.code_to_adapted_unit import code_to_adapted_unit
+from litgen.code_to_adapted_unit import code_to_adapted_unit, code_to_adapted_unit_in_context
 from litgen.internal.cpp_to_python import (
     standard_type_replacements,
     standard_value_replacements,
@@ -25,6 +25,7 @@ __all__ = [
     "TemplateFunctionsOptions",
     "generate_code",
     "code_to_adapted_unit",
+    "code_to_adapted_unit_in_context",
     "write_generated_code_for_file",
     "write_generated_code_for_files",
     # When it is needed to have different options per c++ header file

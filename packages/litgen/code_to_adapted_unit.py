@@ -8,8 +8,10 @@ from litgen.internal.adapted_types.adapted_unit import (
     LitgenContext,
 )
 
+from litgen.options import LitgenOptions
 
-def code_to_adapted_unit(
+
+def code_to_adapted_unit_in_context(
     lg_context: LitgenContext,
     code: Optional[str] = None,
     filename: Optional[str] = None,
@@ -19,3 +21,10 @@ def code_to_adapted_unit(
     adapted_unit = AdaptedUnit(lg_context, cpp_unit)
 
     return adapted_unit
+
+
+def code_to_adapted_unit(
+    options: LitgenOptions, code: Optional[str] = None, filename: Optional[str] = None
+) -> AdaptedUnit:
+    lg_context = LitgenContext(options)
+    return code_to_adapted_unit_in_context(lg_context, code, filename)
