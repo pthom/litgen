@@ -24,3 +24,4 @@ venv_ci
 imgui.ini
 .DS_Store
 _USE_PYTHON_SRCML_CALLER_MODULE
+_pypi_token.txt
