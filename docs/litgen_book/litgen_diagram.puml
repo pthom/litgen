@@ -1,0 +1,244 @@
+@startuml
+ class ET.Element
+  package srcmlcpp {
+          class SrcmlOptions {
+                  + encoding
+                  +preserve_empty_lines
+                  ...
+          }
+
+          class SrcmlXmlWrapper {
+                  + options: SrcmlOptions
+                  + srcml_xml: ET.Element
+                  + parent: opt[SrcmlXmlWrapper]
+
+                  + str_code_verbatim()
+                  + str_xml()
+                  ...
+          }
+
+          SrcmlXmlWrapper <|... SrcmlXmlWrapper: opt(parent)
+          SrcmlXmlWrapper *-- ET.Element
+          SrcmlXmlWrapper o-- SrcmlOptions
+
+          class CppElement {
+                  + str_code()
+                  + visit...()
+          }
+
+          class CppElementComments {
+                  comment_on_previous_lines: str
+                  comment_end_of_line: str
+          }
+
+          CppElement --|> SrcmlXmlWrapper
+
+          class CppElementAndComment {
+                  cpp_element_comments
+          }
+          CppElementAndComment --|> CppElement
+          CppElementAndComment *-- CppElementComments
+
+
+          /'
+          CppEmptyLine --|> CppElementAndComment
+          CppUnprocessed--|> CppElementAndComment
+          '/
+
+          class CppBlock {
+                  block_children: List[CppElementAndComment]
+          }
+
+          CppBlock *-- CppElementAndComment : List
+
+          class CppUnit {
+                  "Represent a full file"
+          }
+          CppUnit --|> CppBlock
+
+          class CppBlockContent {
+                  "used by function and anonymous blocks"
+          }
+
+          CppBlockContent --|> CppBlock
+
+
+          class CppPublicProtectedPrivate {
+                  + access_type
+                  + default_or_explicit
+          }
+          CppPublicProtectedPrivate --|> CppBlock
+
+          class CppType {
+                  typenames: List[str]
+                  specifiers: List[str]
+                  modifiers: List[str]
+          }
+
+          CppType --|> CppElement
+
+          class  CppDecl {
+                  cpp_type: CppType
+                  decl_name: str
+                  c_array_code: str
+                  initial_value_code: str
+          }
+
+          CppDecl *-- CppType
+          CppDecl --|> CppElementAndComment
+
+          class CppDeclStatement {
+                  cpp_decls: List[CppDecl]
+          }
+
+          CppDeclStatement --|> CppElementAndComment
+          CppDeclStatement *-- CppDecl : List
+
+          class CppParameter {
+                  decl: CppDecl
+                  template_type: CppType
+                  template_name: str = ""
+          }
+          CppParameter --|> CppElementAndComment
+          CppParameter *-- CppDecl
+
+
+          class CppParameterList {
+                  List of parameters of a function
+                  parameters: List[CppParameter]
+          }
+
+          CppParameterList *-- "many" CppParameter
+
+          class CppTemplate {
+                  "Template parameters"
+                  + parameter_list: CppParameterList
+          }
+          CppTemplate *-- CppParameterList
+          CppTemplate --|> CppElement
+
+
+          class CppFunctionDecl {
+                  "function or method"
+                  specifiers: List[str]
+                  return_type: CppType
+                  parameter_list: CppParameterList
+                  template: CppTemplate
+                  is_auto_decl: bool
+                  function_name: str
+          }
+
+          CppFunctionDecl --|> CppElementAndComment
+          /' CppFunctionDecl *-- CppType: return_type '/
+          CppFunctionDecl *-- CppParameterList
+          CppFunctionDecl *-- CppTemplate : optional
+
+
+          class CppFunction {
+                  block
+          }
+          CppFunction --|> CppFunctionDecl
+          CppFunction *-- CppBlockContent
+
+          CppConstructorDecl --|> CppFunctionDecl
+          CppContructor --|> CppFunction
+
+          /'
+          class CppSuper {
+                  specifier
+                  superclass_name
+          }
+          '/
+
+          class CppSuperList {
+                  super_list: List[CppSuper]
+          }
+          /'CppSuperList *-- "many" CppSuper'/
+          CppSuperList --|> CppElement
+
+
+          class CppStruct {
+                  class_name: str
+                  super_list: CppSuperList
+                  block: CppBlock
+                  template: CppTemplate
+
+                  +get_public_blocks()
+                  +get_public_elements()
+                  ...
+          }
+          CppStruct *-- CppBlock
+          CppStruct *-- CppTemplate
+          CppStruct *-- CppSuperList
+
+          CppClass --|> CppStruct
+
+
+          /'CppComment --|> CppElementAndComment'/
+
+          class CppNamespace {
+                  ns_name: str
+                  block: CppBlock
+          }
+          CppNamespace --|> CppElementAndComment
+          CppNamespace *-- CppBlock
+
+          class CppEnum {
+                  block: CppBlock
+                  enum_type
+                  enum_name
+          }
+
+          CppEnum --|> CppElementAndComment
+          CppEnum *-- CppBlock
+  }
+
+
+  package litgen {
+
+          class LitgenOptions {
+          }
+
+          class AdaptedElement {
+                  _cpp_element: CppElementAndComment
+                  options: LitgenOptions
+                  +str_stub()
+                  +str_pydef()
+          }
+          AdaptedElement *-- CppElementAndComment
+          AdaptedElement o-- LitgenOptions
+
+          class AdaptedBlock
+          AdaptedBlock --|> AdaptedElement
+          AdaptedBlock ... CppBlock
+
+          class AdaptedNamespace
+          AdaptedNamespace --|> AdaptedElement
+          AdaptedNamespace ... CppNamespace
+
+          class AdaptedDecl
+          AdaptedDecl --|> AdaptedElement
+          AdaptedDecl ... CppDecl
+
+          AdaptedClassMember --|> AdaptedDecl
+
+          class AdaptedClass {
+                  adapted_public_children
+          }
+          AdaptedClass ... CppClass
+          AdaptedClass --|> AdaptedElement
+          AdaptedClass *-- AdaptedClassMember: members
+          AdaptedClass *-- AdaptedFunction: methods
+
+          AdaptedParameter --|> AdaptedElement
+          AdaptedParameter ... CppParameter
+
+          class AdaptedFunction {
+                  return_value_policy
+                  ...
+          }
+          AdaptedFunction --|> AdaptedElement
+          AdaptedFunction o... CppFunctionDecl
+
+  }
+@enduml
