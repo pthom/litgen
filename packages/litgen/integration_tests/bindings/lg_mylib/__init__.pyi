@@ -13,26 +13,29 @@ class BoxedBool:
         pass
     def __repr__(self) -> str:
         pass
+
 class BoxedInt:
     value: int
     def __init__(self, v: int = 0) -> None:
         pass
     def __repr__(self) -> str:
         pass
+
 class BoxedString:
     value: str
     def __init__(self, v: str = "") -> None:
         pass
     def __repr__(self) -> str:
         pass
+
 class BoxedUnsignedLong:
     value: int
     def __init__(self, v: int = 0) -> None:
         pass
     def __repr__(self) -> str:
         pass
-####################    </generated_from:BoxedTypes>    ####################
 
+####################    </generated_from:BoxedTypes>    ####################
 
 ####################    <generated_from:mylib_amalgamation.h>    ####################
 # THIS FILE WAS GENERATED AUTOMATICALLY. DO NOT EDIT.
@@ -375,7 +378,7 @@ class MyClass:
     values: np.ndarray  # ndarray[type=int, size=2] default:int(0, 1)
     flags: np.ndarray  # ndarray[type=bool, size=3] default:bool(False, True, False)
 
-    const_static_value: int = 101  # (C++ static member)
+    const_static_value: int = 101  # (C++ static member) # (const)
     static_value: int  # (C++ static member)
 
     # /////////////////////////////////////////////////////////////////////////
@@ -1074,7 +1077,6 @@ class some_namespace:  # Proxy class that introduces typings for the *submodule*
         def __init__(self) -> None:
             """Auto-generated default constructor"""
             pass
-
     # <submodule some_inner_namespace>
     class some_inner_namespace:  # Proxy class that introduces typings for the *submodule* some_inner_namespace
         pass  # (This corresponds to a C++ namespace. All method are static!)
@@ -1172,7 +1174,7 @@ class a:  # Proxy class that introduces typings for the *submodule* a
         a: int
         c: int = 3
         foo: Foo = Foo.foo1
-        s: str = "Allo"
+        s: str = "Allo"  # (const)
         def __init__(
             self, b: bool = True, a: int = int(), c: int = 3, foo: Foo = Foo.foo1
         ) -> None:

@@ -30,7 +30,7 @@ class a:  # Proxy class that introduces typings for the *submodule* a
         a: int
         c: int = 3
         foo: Foo = Foo.foo1
-        s: str = "Allo"
+        s: str = "Allo"  # (const)
         def __init__(
             self, b: bool = True, a: int = int(), c: int = 3, foo: Foo = Foo.foo1
         ) -> None:

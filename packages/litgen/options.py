@@ -339,6 +339,10 @@ class LitgenOptions:
     member_exclude_by_name__regex: str = ""
     # Exclude members based on their type
     member_exclude_by_type__regex: str = ""
+    # Make certain members read-only by a regex on their name
+    member_readonly_by_name__regex: str = ""
+    # Make certain members read-only based on their type
+    member_readonly_by_type__regex: str = ""
 
     # class_create_default_named_ctor__regex / struct_create_default_named_ctor__regex:
     # regex giving the list of class & struct names for which we want to generate a named

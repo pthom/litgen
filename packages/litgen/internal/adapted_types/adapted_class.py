@@ -200,6 +200,18 @@ class AdaptedClassMember(AdaptedDecl):
         lines = r.split("\n")
         return lines
 
+    def _is_published_readonly(self):
+        name_cpp = self.decl_name_cpp()
+        cpp_type = self.cpp_element().cpp_type
+        is_readonly = False
+        if cpp_type.is_const():
+            is_readonly = True
+        if code_utils.does_match_regex(self.options.member_readonly_by_type__regex, cpp_type.str_code()):
+            is_readonly = True
+        if code_utils.does_match_regex(self.options.member_readonly_by_name__regex, name_cpp):
+            is_readonly = True
+        return is_readonly
+
     def _str_pydef_lines_field(self) -> list[str]:
         qualified_struct_name = self.class_parent.cpp_element().qualified_class_name_with_specialization()
         location = self._elm_info_original_location_cpp()
@@ -207,9 +219,10 @@ class AdaptedClassMember(AdaptedDecl):
         name_cpp = self.decl_name_cpp()
         comment = self._elm_comment_pydef_one_line()
 
-        pybind_definition_mode = "def_readwrite"
         cpp_type = self.cpp_element().cpp_type
-        if cpp_type.is_const():
+
+        pybind_definition_mode = "def_readwrite"
+        if self._is_published_readonly():
             pybind_definition_mode = "def_readonly"
         if cpp_type.is_static():
             pybind_definition_mode += "_static"
@@ -248,9 +261,12 @@ class AdaptedClassMember(AdaptedDecl):
 
         location = self._elm_info_original_location_python()
 
+        cpp_type = self.cpp_element().cpp_type
         maybe_static_info = " # (C++ static member)" if self.cpp_element().cpp_type.is_static() else ""
+        maybe_const_info = " # (const)" if cpp_type.is_const() else ""
+        maybe_readonly_info = " # (read-only)" if (self._is_published_readonly() and not cpp_type.is_const()) else ""
 
-        decl_template = f"{decl_name_python}: {decl_type_python}{maybe_equal}{maybe_defaultvalue_python}{maybe_comment_array}{maybe_comment}{maybe_static_info}{location}"
+        decl_template = f"{decl_name_python}: {decl_type_python}{maybe_equal}{maybe_defaultvalue_python}{maybe_comment_array}{maybe_comment}{maybe_static_info}{maybe_const_info}{maybe_readonly_info}{location}"
         code_lines += [decl_template]
 
         code_lines = self._elm_stub_original_code_lines_info() + code_lines
