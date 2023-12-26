@@ -200,7 +200,7 @@ class AdaptedClassMember(AdaptedDecl):
         lines = r.split("\n")
         return lines
 
-    def _is_published_readonly(self):
+    def _is_published_readonly(self) -> bool:
         name_cpp = self.decl_name_cpp()
         cpp_type = self.cpp_element().cpp_type
         is_readonly = False
@@ -1047,9 +1047,9 @@ class PythonNamedConstructorHelper:
     def flag_generate_named_ctor_params(self) -> bool:
         cpp_class = self.adapted_class.cpp_element()
         ctor__regex = ""
-        if type(cpp_class) == CppClass:
+        if type(cpp_class) is CppClass:
             ctor__regex = self.options.class_create_default_named_ctor__regex
-        elif type(cpp_class) == CppStruct:
+        elif type(cpp_class) is CppStruct:
             ctor__regex = self.options.struct_create_default_named_ctor__regex
         result = code_utils.does_match_regex(ctor__regex, self.adapted_class.cpp_element().class_name)
 
