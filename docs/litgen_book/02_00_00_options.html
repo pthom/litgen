@@ -521,7 +521,7 @@ document.write(`
 </style>
 
     <script>
-       function copy_code_1702645337761_577() {
+       function copy_code_1705254251432_113() {
             let code = `from __future__ import annotations
 
 from typing import Any, Callable
@@ -863,6 +863,10 @@ class LitgenOptions:
     member_exclude_by_name__regex: str = ""
     # Exclude members based on their type
     member_exclude_by_type__regex: str = ""
+    # Make certain members read-only by a regex on their name
+    member_readonly_by_name__regex: str = ""
+    # Make certain members read-only based on their type
+    member_readonly_by_type__regex: str = ""
 
     # class_create_default_named_ctor__regex / struct_create_default_named_ctor__regex:
     # regex giving the list of class & struct names for which we want to generate a named
@@ -1106,10 +1110,10 @@ class LitgenOptions:
             navigator.clipboard.writeText(code);
        }
     </script>
-    <button class="collapsible_header" id="btn_1702645337761_577_0" >litgen/options.py</button>
-    <div class="collapsible_content" id="content_1702645337761_577_0">
+    <button class="collapsible_header" id="btn_1705254251432_113_0" >litgen/options.py</button>
+    <div class="collapsible_content" id="content_1705254251432_113_0">
         <div>
-                <button onclick="copy_code_1702645337761_577()" align="right">copy &#x270d;</button>
+                <button onclick="copy_code_1705254251432_113()" align="right">copy &#x270d;</button>
         </div>
         <style>pre { line-height: 125%; }
 td.linenos .normal { color: inherit; background-color: transparent; padding-left: 5px; padding-right: 5px; }
@@ -1522,6 +1526,10 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
     <span class="n">member_exclude_by_name__regex</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
     <span class="c1"># Exclude members based on their type</span>
     <span class="n">member_exclude_by_type__regex</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+    <span class="c1"># Make certain members read-only by a regex on their name</span>
+    <span class="n">member_readonly_by_name__regex</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+    <span class="c1"># Make certain members read-only based on their type</span>
+    <span class="n">member_readonly_by_type__regex</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
 
     <span class="c1"># class_create_default_named_ctor__regex / struct_create_default_named_ctor__regex:</span>
     <span class="c1"># regex giving the list of class &amp; struct names for which we want to generate a named</span>
@@ -1766,10 +1774,10 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
     </div>
     
     <script>
-    var button = document.getElementById("btn_1702645337761_577_0");
+    var button = document.getElementById("btn_1705254251432_113_0");
     button.addEventListener("click", function() {
         this.classList.toggle("collapsible_header_opened");
-        var content = document.getElementById("content_1702645337761_577_0");
+        var content = document.getElementById("content_1705254251432_113_0");
         if (content.style.maxHeight){
           content.style.maxHeight = null;
         } else {
@@ -1779,9 +1787,9 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
     </script>
     
             <script>
-            var collapsible_header = document.getElementById("btn_1702645337761_577_0");
+            var collapsible_header = document.getElementById("btn_1705254251432_113_0");
             collapsible_header.classList.toggle("collapsible_header_opened");
-            var collapsible_content = document.getElementById("content_1702645337761_577_0");
+            var collapsible_content = document.getElementById("content_1705254251432_113_0");
             collapsible_content.style.maxHeight = collapsible_content.scrollHeight + "px";
             </script>
             </div></div>
@@ -1849,7 +1857,7 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
 </style>
 
     <script>
-       function copy_code_1702645337959_559() {
+       function copy_code_1705254251842_5732() {
             let code = `"""
 Options for srcmlcpp. Read the doc near all options elements.
 """
@@ -1980,10 +1988,10 @@ def _int_from_str_or_named_number_macros(options: SrcmlcppOptions, int_str: Opti
             navigator.clipboard.writeText(code);
        }
     </script>
-    <button class="collapsible_header" id="btn_1702645337959_559_1" >srcmlcpp/srcmlcpp_options.py</button>
-    <div class="collapsible_content" id="content_1702645337959_559_1">
+    <button class="collapsible_header" id="btn_1705254251842_5732_1" >srcmlcpp/srcmlcpp_options.py</button>
+    <div class="collapsible_content" id="content_1705254251842_5732_1">
         <div>
-                <button onclick="copy_code_1702645337959_559()" align="right">copy &#x270d;</button>
+                <button onclick="copy_code_1705254251842_5732()" align="right">copy &#x270d;</button>
         </div>
         <style>pre { line-height: 125%; }
 td.linenos .normal { color: inherit; background-color: transparent; padding-left: 5px; padding-right: 5px; }
@@ -2186,10 +2194,10 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
     </div>
     
     <script>
-    var button = document.getElementById("btn_1702645337959_559_1");
+    var button = document.getElementById("btn_1705254251842_5732_1");
     button.addEventListener("click", function() {
         this.classList.toggle("collapsible_header_opened");
-        var content = document.getElementById("content_1702645337959_559_1");
+        var content = document.getElementById("content_1705254251842_5732_1");
         if (content.style.maxHeight){
           content.style.maxHeight = null;
         } else {
@@ -2199,9 +2207,9 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
     </script>
     
             <script>
-            var collapsible_header = document.getElementById("btn_1702645337959_559_1");
+            var collapsible_header = document.getElementById("btn_1705254251842_5732_1");
             collapsible_header.classList.toggle("collapsible_header_opened");
-            var collapsible_content = document.getElementById("content_1702645337959_559_1");
+            var collapsible_content = document.getElementById("content_1705254251842_5732_1");
             collapsible_content.style.maxHeight = collapsible_content.scrollHeight + "px";
             </script>
             </div></div>
