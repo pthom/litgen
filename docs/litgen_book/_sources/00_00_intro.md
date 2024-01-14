@@ -89,7 +89,7 @@ If you find it valuable for your work – especially in a commercial enterprise 
 
 ### Technical Support
 
-C++ is notorious for being hard to parse. As a consequence, the author makes no guaranty that the generator will work on all kinds of C++ constructs. 
+C++ is notorious for being hard to parse. As a consequence, the author makes no guaranty that the generator will work on all kinds of C++ constructs.
 
 If you need help when working in an Open Source context, please open an issue in the repository. If you need help in a professional setting, please contact the author by email, for possible consulting work.
 
