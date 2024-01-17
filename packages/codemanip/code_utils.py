@@ -665,6 +665,8 @@ def contains_pointer_type(full_type_str: str, type_to_search: str) -> bool:
 
 
 def does_match_regex(regex_str: str, word: str) -> bool:
+    if regex_str.startswith("|"):
+        regex_str = regex_str[1:]
     if len(regex_str) == 0:
         return False
     if word is None:
