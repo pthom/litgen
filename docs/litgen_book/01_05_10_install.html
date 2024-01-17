@@ -397,11 +397,7 @@ document.write(`
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#or-build-srcml-from-source">Or build srcML from source</a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#step-2-install-litgen">Step 2: install litgen</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#install-litgen-from-source">Install litgen from source</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#install-litgen-without-checking-out-the-code">Install litgen without checking out the code</a></li>
-</ul>
-</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#step-2-install-litgen">Step 2: install litgen</a></li>
 </ul>
             </nav>
         </div>
@@ -449,27 +445,9 @@ sudo<span class="w"> </span>make<span class="w"> </span>install
 </section>
 <section id="step-2-install-litgen">
 <h2>Step 2: install litgen<a class="headerlink" href="#step-2-install-litgen" title="Permalink to this heading">#</a></h2>
-<section id="install-litgen-from-source">
-<h3>Install litgen from source<a class="headerlink" href="#install-litgen-from-source" title="Permalink to this heading">#</a></h3>
-<p>An installation from source is the recommended way:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># optional: create a virtual environment</span>
-python<span class="w"> </span>-m<span class="w"> </span>venv<span class="w"> </span>venv
-<span class="nb">source</span><span class="w"> </span>venv/bin/activate
-
-<span class="c1"># Install srcmlcpp</span>
-git<span class="w"> </span>clone<span class="w"> </span>git@github.com:pthom/litgen.git
-<span class="nb">cd</span><span class="w"> </span>litgen
-pip<span class="w"> </span>install<span class="w"> </span>-v<span class="w"> </span>-e<span class="w"> </span>.
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span><span class="s2">&quot;litgen@git+https://github.com/pthom/litgen&quot;</span><span class="sb">```</span>
 </pre></div>
 </div>
-</section>
-<section id="install-litgen-without-checking-out-the-code">
-<h3>Install litgen without checking out the code<a class="headerlink" href="#install-litgen-without-checking-out-the-code" title="Permalink to this heading">#</a></h3>
-<p>Alternatively, you can install litgen without checking out its code:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>litgen
-</pre></div>
-</div>
-</section>
 </section>
 </section>
 
@@ -541,11 +519,7 @@ pip<span class="w"> </span>install<span class="w"> </span>-v<span class="w"> </s
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#or-build-srcml-from-source">Or build srcML from source</a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#step-2-install-litgen">Step 2: install litgen</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#install-litgen-from-source">Install litgen from source</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#install-litgen-without-checking-out-the-code">Install litgen without checking out the code</a></li>
-</ul>
-</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#step-2-install-litgen">Step 2: install litgen</a></li>
 </ul>
   </nav></div>
 

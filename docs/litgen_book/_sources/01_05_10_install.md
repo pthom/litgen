@@ -38,22 +38,6 @@ sudo make install
 
 ## Step 2: install litgen
 
-### Install litgen from source
-An installation from source is the recommended way:
-
 ```bash
-# optional: create a virtual environment
-python -m venv venv
-source venv/bin/activate
-
-# Install srcmlcpp
-git clone git@github.com:pthom/litgen.git
-cd litgen
-pip install -v -e .
-```
-
-### Install litgen without checking out the code
-Alternatively, you can install litgen without checking out its code:
-```bash
-pip install litgen
+pip install "litgen@git+https://github.com/pthom/litgen"```
 ```
