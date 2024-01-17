@@ -1,1 +1,0 @@
-add_subdirectory(lg_skbuild_template)
