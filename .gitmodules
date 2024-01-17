@@ -1,3 +1,0 @@
-[submodule "packages/litgen/integration_tests/lg_cmake_utils"]
-	path = packages/litgen/integration_tests/lg_cmake_utils
-	url = https://github.com/pthom/lg_cmake_utils.git
