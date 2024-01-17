@@ -9,9 +9,8 @@ parts:
   - caption: Installation
     chapters:
       - file: 01_05_00_install_or_online
-        sections:
-        - file: 01_05_05_online
-        - file: 01_05_10_install
+      - file: 01_05_05_online
+      - file: 01_05_10_install
 
   - caption: Bindings - Basics
     chapters:
