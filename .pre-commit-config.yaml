@@ -32,7 +32,15 @@ repos:
     hooks:
       - id: python-use-type-annotations
 
-#  # Mypy static checking
+  - repo: https://github.com/psf/black
+    rev: 22.3.0
+    hooks:
+      - id: black
+  #          exclude_types: ["pyi"]
+  #        - id: black-jupyter
+
+
+  #  # Mypy static checking
 #  - repo: local
 #    hooks:
 #      - id: mypy-static-checking
@@ -56,13 +64,6 @@ repos:
 #        types: [python]
 #        pass_filenames: false
 #        always_run: true
-
-  - repo: https://github.com/psf/black
-    rev: 22.3.0
-    hooks:
-        - id: black
-#          exclude_types: ["pyi"]
-#        - id: black-jupyter
 
 
   #

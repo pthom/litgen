@@ -13,29 +13,26 @@ class BoxedBool:
         pass
     def __repr__(self) -> str:
         pass
-
 class BoxedInt:
     value: int
     def __init__(self, v: int = 0) -> None:
         pass
     def __repr__(self) -> str:
         pass
-
 class BoxedString:
     value: str
     def __init__(self, v: str = "") -> None:
         pass
     def __repr__(self) -> str:
         pass
-
 class BoxedUnsignedLong:
     value: int
     def __init__(self, v: int = 0) -> None:
         pass
     def __repr__(self) -> str:
         pass
-
 ####################    </generated_from:BoxedTypes>    ####################
+
 
 ####################    <generated_from:mylib_amalgamation.h>    ####################
 # THIS FILE WAS GENERATED AUTOMATICALLY. DO NOT EDIT.
@@ -1077,6 +1074,7 @@ class some_namespace:  # Proxy class that introduces typings for the *submodule*
         def __init__(self) -> None:
             """Auto-generated default constructor"""
             pass
+
     # <submodule some_inner_namespace>
     class some_inner_namespace:  # Proxy class that introduces typings for the *submodule* some_inner_namespace
         pass  # (This corresponds to a C++ namespace. All method are static!)

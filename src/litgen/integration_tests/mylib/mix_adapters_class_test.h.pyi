@@ -17,20 +17,22 @@ class BoxedBool:
         pass
     def __repr__(self) -> str:
         pass
+
 class BoxedInt:
     value: int
     def __init__(self, v: int = 0) -> None:
         pass
     def __repr__(self) -> str:
         pass
+
 class BoxedString:
     value: str
     def __init__(self, v: str = "") -> None:
         pass
     def __repr__(self) -> str:
         pass
-####################    </generated_from:BoxedTypes>    ####################
 
+####################    </generated_from:BoxedTypes>    ####################
 
 ####################    <generated_from:mix_adapters_class_test.h>    ####################
 # More complex tests, where we combine litgen function adapters with classes and namespace
@@ -50,9 +52,7 @@ class some_namespace:  # Proxy class that introduces typings for the *submodule*
         def toggle_bool_pointer(self, v: BoxedBool) -> None:
             """//, int vv[2])"""
             pass
-        def toggle_bool_pointer_get_points(
-            self, v: BoxedBool, vv_0: BoxedInt, vv_1: BoxedInt
-        ) -> None:
+        def toggle_bool_pointer_get_points(self, v: BoxedBool, vv_0: BoxedInt, vv_1: BoxedInt) -> None:
             pass
         def modify_string(self, s: BoxedString) -> None:
             pass
@@ -60,20 +60,15 @@ class some_namespace:  # Proxy class that introduces typings for the *submodule*
             pass
         def add_inside_buffer(self, buffer: np.ndarray, number_to_add: int) -> None:
             pass
-        def templated_mul_inside_buffer(
-            self, buffer: np.ndarray, factor: float
-        ) -> None:
+        def templated_mul_inside_buffer(self, buffer: np.ndarray, factor: float) -> None:
             pass
         def const_array2_add(self, values: List[int]) -> int:
             pass
-        def c_string_list_total_size(
-            self, items: List[str], output_0: BoxedInt, output_1: BoxedInt
-        ) -> int:
+        def c_string_list_total_size(self, items: List[str], output_0: BoxedInt, output_1: BoxedInt) -> int:
             pass
         def __init__(self) -> None:
             """Auto-generated default constructor"""
             pass
-
     # <submodule some_inner_namespace>
     class some_inner_namespace:  # Proxy class that introduces typings for the *submodule* some_inner_namespace
         pass  # (This corresponds to a C++ namespace. All method are static!)
@@ -83,9 +78,7 @@ class some_namespace:  # Proxy class that introduces typings for the *submodule*
             """//, int vv[2])"""
             pass
         @staticmethod
-        def toggle_bool_pointer_get_points(
-            v: BoxedBool, vv_0: BoxedInt, vv_1: BoxedInt
-        ) -> None:
+        def toggle_bool_pointer_get_points(v: BoxedBool, vv_0: BoxedInt, vv_1: BoxedInt) -> None:
             pass
         @staticmethod
         def modify_string(s: BoxedString) -> None:
@@ -103,9 +96,7 @@ class some_namespace:  # Proxy class that introduces typings for the *submodule*
         def const_array2_add(values: List[int]) -> int:
             pass
         @staticmethod
-        def c_string_list_total_size(
-            items: List[str], output_0: BoxedInt, output_1: BoxedInt
-        ) -> int:
+        def c_string_list_total_size(items: List[str], output_0: BoxedInt, output_1: BoxedInt) -> int:
             pass
     # </submodule some_inner_namespace>
 
