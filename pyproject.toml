@@ -1,24 +1,14 @@
 [build-system]
-requires = [ "poetry-core>=1.0.0",]
-build-backend = "poetry.core.masonry.api"
+requires = ["hatchling"]
+build-backend = "hatchling.build"
 
-[tool.black]
-line-length = 120
-# A regex preceded with ^/ will apply only to files and directories
-# in the root of the project.
-extend-exclude = '''venv|^scratch|pybind11|importanize|.pyi$|lg_projects|ci_scripts/docker_ci/dvp|md4c|external/SDL'''
-
-[tool.poetry]
+[project]
 name = "litgen"
-version = "0.9.0"
+version = "0.9.5"
+authors = [{ name = "Pascal Thomet", email = "pthomet@gmail.com" }]
 description = "litgen, aka \"Literate Generator\", an automatic python bindings generator for humans who like nice code and APIs, based on srcML (https://srcml.org)"
-authors = ["Pascal Thomet <pthomet@gmail.com>"]
-# license = "to be defined"
 readme = "README.md"
-# homepage = "..."
-repository = "https://github.com/pthom/litgen"
-# documentation = "..."
-keywords = ["code", "transformer", "cpp", "c++", "srcml", "pimpl"]
+requires-python = ">=3.10"
 classifiers = [
     "Development Status :: 4 - Beta",
     "Environment :: Console",
@@ -32,44 +22,39 @@ classifiers = [
     "Topic :: Text Processing :: Markup :: XML",
     "Typing :: Typed"
 ]
+keywords = ["code", "generator", "cpp", "c++", "srcml", "pybind11", "bindings"]
 
-
-packages = [
-    { include = "codemanip", from = "packages" },
-    { include = "litgen", from = "packages" },
-    { include = "srcmlcpp", from = "packages" },
+dependencies = [
+    "munch",
+    "fire",
+    "pybind11",
+    "black",
+#    "srcml_caller"
 ]
 
-[tool.poetry.scripts]
-srcmlcpp = 'srcmlcpp.cli.srcmlcpp_cli:main'
-litgen = 'litgen.cli.litgen_cli:main'
+# package is ignored by hatchling... we have to use [tool.hatch.build.targets.wheel]
+#packages = [
+#    { include = "codemanip", from = "src" },
+#    { include = "litgen", from = "src" },
+#    { include = "srcmlcpp", from = "src" },
+#]
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/litgen", "src/codemanip", "src/srcmlcpp"]
 
 
-[tool.poetry.dependencies]
-python = "^3.8"
-munch = "*"
-fire = "*"
-pybind11 = "*"
-black = "*"
-# srcml_caller = "^0.1.2"
+[project.urls]
+homepage = "https://pthom.github.io/litgen/"
+repository = "https://github.com/pthom/litgen"
+documentation = "https://pthom.github.io/litgen/"
+
+[project.scripts]
+srcmlcpp-cli = 'srcmlcpp.cli.srcmlcpp_cli:main'
+litgen-cli = 'litgen.cli.litgen_cli:main'
 
 
-[tool.poetry.dev-dependencies]
-pytest = "*"
-pytest-cov = "*"
-jupyter-black = "*"
-mypy = "*"
-pre-commit = "^2.19.0"
-importanize = "*"
-numpy = "*"
-flake8 = "*"
-flake8-bugbear = "*"
-Pygments = "*"
-jupyter = "*"
-notebook = "*"
-types-Pygments = "*"
-Flask = "*"
-build = "*"
-twine = "*"
-snakeviz = "*"
-patch = "*"
+[tool.black]
+line-length = 120
+# A regex preceded with ^/ will apply only to files and directories
+# in the root of the project.
+extend-exclude = '''venv|^scratch|pybind11|importanize|.pyi$|lg_projects|ci_scripts/docker_ci/dvp|md4c|external/SDL'''
