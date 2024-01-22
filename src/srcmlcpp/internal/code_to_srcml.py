@@ -14,18 +14,18 @@ import subprocess
 import tempfile
 import time
 from xml.etree import ElementTree as ET
-from srcmlcpp.internal import srcml_utils
+
+# srcML can be used either via the python module srcml_caller or via the executable srcml
+try:
+    import srcml_caller as srcml_nativecaller  # type: ignore # noqa
+
+    _USE_PYTHON_SRCML_CALLER_MODULE = True
+except ImportError:
+    _USE_PYTHON_SRCML_CALLER_MODULE = False
 
 
 # Count the total time used by call to the exe srcml
 _FLAG_PROFILE_SRCML_CALLS: bool = True
-
-# At the moment, the build of srcML (inside the pip module srcml_caller) fails.
-# So, we use the srcml command line
-_USE_PYTHON_SRCML_CALLER_MODULE = False
-if srcml_utils.check_for_file_in_current_hierarchy("_USE_PYTHON_SRCML_CALLER_MODULE"):
-    _USE_PYTHON_SRCML_CALLER_MODULE = True
-    logging.debug("Using python srcml_caller module")
 
 
 def _embed_element_into_unit(element: ET.Element) -> ET.Element:
@@ -71,9 +71,10 @@ class _SrcmlCaller:
             logging.error(
                 """
             srcmlcpp requires the installation of srcML ( https://www.srcml.org )
-            Did you install it? You can download it from https://www.srcml.org/#download
-
-            The command "srcml" needs to be available in your PATH.
+            (the command "srcml" needs to be available in your PATH)
+            Did you install it?
+            See install instructions at:
+                https://pthom.github.io/litgen/litgen_book/01_05_10_install.html
             """
             )
             sys.exit(1)
@@ -126,8 +127,6 @@ class _SrcmlCaller:
         return code_str
 
     def _make_xml_str_by_module(self, input_str: str, encoding: str, dump_positions: bool = False) -> str:
-        import srcml_caller as srcml_nativecaller  # type: ignore # noqa
-
         r = srcml_nativecaller.to_srcml(  # type: ignore
             code=input_str,
             language=srcml_nativecaller.CodeLanguage.c_plus_cplus,  # type: ignore
