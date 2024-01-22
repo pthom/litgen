@@ -19,8 +19,4 @@ if (SRCMLCPP_BUILD_DEMOS)
     add_subdirectory(demos)
 endif()
 
-if (PROJECT_IS_TOP_LEVEL)
-    add_subdirectory(pybind_native_debug)
-endif()
-
 add_subdirectory(src/litgen/integration_tests)
