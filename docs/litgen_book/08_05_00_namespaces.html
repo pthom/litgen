@@ -428,7 +428,7 @@ document.write(`
   <section class="tex2jax_ignore mathjax_ignore" id="namespaces">
 <h1>Namespaces<a class="headerlink" href="#namespaces" title="Permalink to this heading">#</a></h1>
 <p>It is possible to define a “root” namespace, for which no submodule is emitted. Thanks to the option below, the “Main” namespace will not be outputted as a submodule. However its content is exported.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span>     <span class="n">options</span><span class="o">.</span><span class="n">namespace_root__regex</span> <span class="o">=</span> <span class="s2">&quot;^Main$&quot;</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span>     <span class="n">options</span><span class="o">.</span><span class="n">namespaces_root</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;Main&quot;</span><span class="p">]</span>
 </pre></div>
 </div>
 <p>For other namespace, litgen will output them as python submodules. If a namespace occurs twice in the C++ code, its content will grouped in the Python stubs</p>
@@ -478,7 +478,7 @@ document.write(`
 <span class="kn">from</span> <span class="nn">litgen.demo</span> <span class="kn">import</span> <span class="n">litgen_notebook_display</span>
 
 <span class="n">options</span> <span class="o">=</span> <span class="n">litgen</span><span class="o">.</span><span class="n">LitgenOptions</span><span class="p">()</span>
-<span class="n">options</span><span class="o">.</span><span class="n">namespace_root__regex</span> <span class="o">=</span> <span class="s2">&quot;^Main$&quot;</span>
+<span class="n">options</span><span class="o">.</span><span class="n">namespaces_root</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;Main&quot;</span><span class="p">]</span>
 <span class="c1"># options.namespace_exclude__regex = r&quot;[Ii]nternal|[Dd]etail&quot;  # this is the default!</span>
 <span class="n">options</span><span class="o">.</span><span class="n">python_run_black_formatter</span> <span class="o">=</span> <span class="kc">True</span>
 <span class="c1"># options.python_convert_to_snake_case = False  # uncomment this in order to keep the original namespaces and functions names</span>
@@ -533,7 +533,7 @@ document.write(`
 </style>
 
     <script>
-       function copy_code_1705522014604_894() {
+       function copy_code_1705909359831_0662() {
             let code = `def foo_root() -> None:
     """A function in the root namespace"""
     pass
@@ -554,10 +554,10 @@ class inner:  # Proxy class that introduces typings for the *submodule* inner
             navigator.clipboard.writeText(code);
        }
     </script>
-    <button class="collapsible_header" id="btn_1705522014604_894_2" >Corresponding python decls (stub)</button>
-    <div class="collapsible_content" id="content_1705522014604_894_2">
+    <button class="collapsible_header" id="btn_1705909359831_0662_2" >Corresponding python decls (stub)</button>
+    <div class="collapsible_content" id="content_1705909359831_0662_2">
         <div>
-                <button onclick="copy_code_1705522014604_894()" align="right">copy &#x270d;</button>
+                <button onclick="copy_code_1705909359831_0662()" align="right">copy &#x270d;</button>
         </div>
         <style>pre { line-height: 125%; }
 td.linenos .normal { color: inherit; background-color: transparent; padding-left: 5px; padding-right: 5px; }
@@ -650,10 +650,10 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
     </div>
     
     <script>
-    var button = document.getElementById("btn_1705522014604_894_2");
+    var button = document.getElementById("btn_1705909359831_0662_2");
     button.addEventListener("click", function() {
         this.classList.toggle("collapsible_header_opened");
-        var content = document.getElementById("content_1705522014604_894_2");
+        var content = document.getElementById("content_1705909359831_0662_2");
         if (content.style.maxHeight){
           content.style.maxHeight = null;
         } else {
@@ -663,9 +663,9 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
     </script>
     
             <script>
-            var collapsible_header = document.getElementById("btn_1705522014604_894_2");
+            var collapsible_header = document.getElementById("btn_1705909359831_0662_2");
             collapsible_header.classList.toggle("collapsible_header_opened");
-            var collapsible_content = document.getElementById("content_1705522014604_894_2");
+            var collapsible_content = document.getElementById("content_1705909359831_0662_2");
             collapsible_content.style.maxHeight = "80em";
             </script>
             <br/>
@@ -714,7 +714,7 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
 </style>
 
     <script>
-       function copy_code_1705522014589_2961() {
+       function copy_code_1705909359815_0698() {
             let code = `m.def("foo_root",
     FooRoot, "A function in the root namespace");
 
@@ -729,10 +729,10 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
             navigator.clipboard.writeText(code);
        }
     </script>
-    <button class="collapsible_header" id="btn_1705522014589_2961_0" >pybind11 C++ binding code</button>
-    <div class="collapsible_content" id="content_1705522014589_2961_0">
+    <button class="collapsible_header" id="btn_1705909359815_0698_0" >pybind11 C++ binding code</button>
+    <div class="collapsible_content" id="content_1705909359815_0698_0">
         <div>
-                <button onclick="copy_code_1705522014589_2961()" align="right">copy &#x270d;</button>
+                <button onclick="copy_code_1705909359815_0698()" align="right">copy &#x270d;</button>
         </div>
         <style>pre { line-height: 125%; }
 td.linenos .normal { color: inherit; background-color: transparent; padding-left: 5px; padding-right: 5px; }
@@ -819,10 +819,10 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
     </div>
     
     <script>
-    var button = document.getElementById("btn_1705522014589_2961_0");
+    var button = document.getElementById("btn_1705909359815_0698_0");
     button.addEventListener("click", function() {
         this.classList.toggle("collapsible_header_opened");
-        var content = document.getElementById("content_1705522014589_2961_0");
+        var content = document.getElementById("content_1705909359815_0698_0");
         if (content.style.maxHeight){
           content.style.maxHeight = null;
         } else {
