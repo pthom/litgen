@@ -7,7 +7,7 @@ from litgen import LitgenOptions
 
 def test_context_namespaces():
     options = LitgenOptions()
-    options.namespace_root__regex = code_utils.make_regex_exact_word("Main")
+    options.namespaces_root = ["Main"]
     # In the code below:
     # - the namespace Main is ignored, but the namespace Inner should be produced as a submodule
     # - occurrences of namespace Inner should be grouped

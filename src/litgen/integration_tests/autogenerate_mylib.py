@@ -68,7 +68,7 @@ def mylib_litgen_options() -> litgen.LitgenOptions:
     options.fn_params_replace_buffer_by_array__regex = code_utils.make_regex_exclude_word("Change")
 
     # namespace
-    options.namespace_root__regex = "Mylib"
+    options.namespaces_root = ["Mylib"]
 
     options.class_expose_protected_methods__regex = "^MyVirtual"
     options.class_override_virtual_methods_in_python__regex = "^MyVirtual"

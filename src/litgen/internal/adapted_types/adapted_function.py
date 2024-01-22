@@ -1070,7 +1070,7 @@ class AdaptedFunction(AdaptedElement):
         has_module_proxy_class = False
         for cpp_parents_namespace in cpp_parents_namespaces:
             assert isinstance(cpp_parents_namespace, CppNamespace)
-            is_root_ns = code_utils.does_match_regex(self.options.namespace_root__regex, cpp_parents_namespace.ns_name)
+            is_root_ns = cpp_parents_namespace.ns_name in self.options.namespaces_root
             if not is_root_ns:
                 has_module_proxy_class = True
         return has_module_proxy_class

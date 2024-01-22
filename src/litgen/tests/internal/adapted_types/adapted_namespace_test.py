@@ -11,7 +11,7 @@ from litgen import LitgenOptions
 
 def test_namespaces():
     options = LitgenOptions()
-    options.namespace_root__regex = code_utils.make_regex_exact_word("Main")
+    options.namespaces_root = ["Main"]
     options.python_run_black_formatter = True
     # options.namespace_exclude__regex  = r"[Ii]nternal|[Dd]etail"  # This is the default value
 
@@ -96,7 +96,7 @@ def test_namespaces():
 
 def test_root_namespace():
     options = LitgenOptions()
-    options.namespace_root__regex = "^Main$"
+    options.namespaces_root = ["Main"]
     code = """
     namespace Main // This namespace should not be outputted as a submodule
     {

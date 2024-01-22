@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Any, Callable
+from typing import Any, Callable, List
 
 from codemanip import code_utils
 from codemanip.code_replacements import RegexReplacementList
@@ -9,6 +9,10 @@ from srcmlcpp import SrcmlcppOptions
 
 from litgen.internal.template_options import TemplateFunctionsOptions, TemplateClassOptions
 from litgen.internal.class_iterable_info import ClassIterablesInfos
+
+
+class Blah:
+    values: List[int] = []
 
 
 class LitgenOptions:
@@ -467,10 +471,10 @@ class LitgenOptions:
     #    <namespace adaptations>
     ################################################################################
 
-    # All C++ namespaces that match this regex will not be emitted as a submodule
+    # All C++ namespaces in this list will not be emitted as a submodule
     # (i.e. their inner code will be placed in the root python module, or in the parent
     # module)
-    namespace_root__regex = r""
+    namespaces_root: [List[str]]
 
     # All C++ namespaces that match this regex will be excluded
     # By default, any namespace whose name contains "internal" or "detail" will be excluded.
@@ -490,7 +494,7 @@ class LitgenOptions:
     #    enum MyEnum { MyEnum_A = 1, MyEnum_B = 1, MyEnum_COUNT };
     enum_flag_skip_count: bool = True
     # By default, all enums export rudimentary arithmetic and bit-level operations ( r".*" matches any enum name)
-    enum_make_arithmetic__regex = r".*"
+    enum_make_arithmetic__regex: str = r".*"
 
     ################################################################################
     #    <define adaptations>
@@ -582,3 +586,4 @@ class LitgenOptions:
         self.class_iterables_infos = ClassIterablesInfos()
 
         self.fn_custom_adapters = []
+        self.namespaces_root = []

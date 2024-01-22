@@ -51,9 +51,7 @@ class NamespacesCodeTree:
         if len(current_namespace_name) == 0 or len(self._namespace_code) == 0:
             is_namespace_ignored = True
         else:
-            is_namespace_ignored = code_utils.does_match_regex(
-                self._options.namespace_root__regex, current_namespace_name
-            )
+            is_namespace_ignored = current_namespace_name in self._options.namespaces_root
 
         ns_written_name = current_namespace_name
         if self._code_type == PydefOrStub.Stub:
@@ -93,7 +91,7 @@ class NamespacesCodeTree:
         namespaces_names = qualified_namespace_name.split("::")
 
         def shall_use_this_namespace(namespace_name: str) -> bool:
-            is_root_namespace = code_utils.does_match_regex(self._options.namespace_root__regex, namespace_name)
+            is_root_namespace = namespace_name in self._options.namespaces_root
             return not is_root_namespace
 
         namespaces_names = list(filter(shall_use_this_namespace, namespaces_names))

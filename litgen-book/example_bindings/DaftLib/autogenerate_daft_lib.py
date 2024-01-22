@@ -25,7 +25,7 @@ def generator_options() -> litgen.LitgenOptions:
 
     # The namespace DaftLib will not be emitted as a python submodule: all its contents will be emitted directly in the
     # root of the generated python module
-    options.namespace_root__regex = "^DaftLib$"
+    options.namespaces_root = ["^DaftLib$"]
 
     # Use BoxedBool for SwitchBool, which can modify its bool parameter
     options.fn_params_replace_modifiable_immutable_by_boxed__regex = "^SwitchBool$"
