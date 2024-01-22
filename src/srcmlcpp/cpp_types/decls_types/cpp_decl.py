@@ -331,6 +331,9 @@ class CppDecl(CppElementAndComment):
                             int _f3 = N1::N3::f3()
                             int other = N1::N4::f4()
         """
+        if hasattr(self, "_cpp_decl_with_qualified_types"):
+            return self._cpp_decl_with_qualified_types
+
         if current_scope is None:
             current_scope = self.cpp_scope()
         was_changed = False
@@ -346,9 +349,10 @@ class CppDecl(CppElementAndComment):
             was_changed = True
 
         if was_changed:
-            return new_decl
+            self._cpp_decl_with_qualified_types = new_decl
         else:
-            return self
+            self._cpp_decl_with_qualified_types = self
+        return self._cpp_decl_with_qualified_types
 
     def _initial_value_code_with_terse_type(self, current_scope: CppScope | None) -> str:
         """Returns a terse version of the initial value (with only the required scoping)
