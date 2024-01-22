@@ -224,7 +224,7 @@ class CppFunctionDecl(CppElementAndComment, CppITemplateHost):
             parent_struct = self.parent_struct_if_method()
             assert parent_struct is not None
             if last_scope.scope_name == parent_struct.class_name:
-                current_scope.scope_parts = current_scope.scope_parts[:-1]
+                current_scope = CppScope(current_scope.scope_parts[:-1])
 
         was_changed = False
         new_function_decl = copy.deepcopy(self)

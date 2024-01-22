@@ -1,6 +1,9 @@
 from __future__ import annotations
+
+import copy
 from dataclasses import dataclass
 from enum import Enum
+from typing import Final
 
 
 class CppScopeType(Enum):
@@ -17,13 +20,10 @@ class CppScopePart:
 
 
 class CppScope:
-    scope_parts: list[CppScopePart]
+    scope_parts: Final[list[CppScopePart]]
 
-    def __init__(self, scopes: list[CppScopePart] | None = None) -> None:
-        if scopes is None:
-            self.scope_parts = []
-        else:
-            self.scope_parts = scopes
+    def __init__(self, scopes: list[CppScopePart]) -> None:
+        self.scope_parts = scopes
 
     @staticmethod
     def from_string(s: str) -> CppScope:
@@ -40,7 +40,7 @@ class CppScope:
     def parent_scope(self) -> CppScope | None:
         if len(self.scope_parts) == 0:
             return None
-        new_scope_parts = self.scope_parts[:-1]
+        new_scope_parts = copy.deepcopy(self.scope_parts[:-1])
         return CppScope(new_scope_parts)
 
     def scope_hierarchy_list(self) -> list[CppScope]:

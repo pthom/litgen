@@ -407,7 +407,7 @@ def apply_black_formatter_pyi(options: LitgenOptions, code: str) -> str:
 
     black_mode = black.Mode()
     black_mode.is_pyi = True
-    black_mode.target_versions = {black.TargetVersion.PY39}
+    black_mode.target_versions = {black.TargetVersion.PY39}  # type: ignore
     black_mode.line_length = options.python_black_formatter_line_length
 
     formatted_code = black.format_str(code, mode=black_mode)
@@ -433,6 +433,7 @@ def cpp_scope_to_pybind_scope(options: LitgenOptions, cpp_element: CppElement, i
     cpp_scope = cpp_element.cpp_scope(include_self)
     scope_parts = cpp_scope.scope_parts
 
+    is_python_scope_different_from_cpp = False
     scope_parts_excluding_namespaces: list[CppScopePart] = []
     for scope_part in scope_parts:
         if scope_part.scope_type != CppScopeType.Namespace:
@@ -441,9 +442,14 @@ def cpp_scope_to_pybind_scope(options: LitgenOptions, cpp_element: CppElement, i
             is_root = scope_part.scope_name in options.namespaces_root
             if not is_root:
                 scope_parts_excluding_namespaces.append(scope_part)
+            else:
+                is_python_scope_different_from_cpp = True
 
-    cpp_scope.scope_parts = scope_parts_excluding_namespaces
-    return cpp_scope
+    if is_python_scope_different_from_cpp:
+        python_scope = CppScope(scope_parts_excluding_namespaces)
+        return python_scope
+    else:
+        return cpp_scope
 
 
 def cpp_scope_to_pybind_scope_str(options: LitgenOptions, cpp_element: CppElement, include_self: bool) -> str:

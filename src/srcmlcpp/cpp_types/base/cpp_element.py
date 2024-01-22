@@ -26,6 +26,12 @@ class CppElement(SrcmlWrapper):
     # It will be filled later by CppBlock.fill_parents() (with a tree traversal)
     parent: CppElement | None
 
+    # The scope of this element (i.e. the namespace or class it belongs to)
+    # This is a cached value, and is filled by self.cpp_scope()
+    # (it may be absent if not yet filled)
+    _cached_cpp_scope: CppScope
+    _cached_cpp_scope_include_self: CppScope
+
     def __init__(self, element: SrcmlWrapper) -> None:
         super().__init__(element.options, element.srcml_xml, element.filename)
         # self.parent is intentionally not filled!
@@ -138,18 +144,18 @@ class CppElement(SrcmlWrapper):
         ancestors = self.ancestors_list(include_self)
         ancestors.reverse()
 
-        scope = CppScope()
+        scope_parts: list[CppScopePart] = []
         for ancestor in ancestors:
             scope_part = ancestor.self_scope()
             if scope_part is not None:
-                scope.scope_parts.append(scope_part)
+                scope_parts.append(scope_part)
 
         if include_self:
-            self._cached_cpp_scope_include_self: CppScope = copy.deepcopy(scope)
+            self._cached_cpp_scope_include_self = CppScope(scope_parts)
+            return self._cached_cpp_scope_include_self
         else:
-            self._cached_cpp_scope: CppScope = copy.deepcopy(scope)
-
-        return scope
+            self._cached_cpp_scope: CppScope = CppScope(scope_parts)
+            return self._cached_cpp_scope
 
     def ancestors_list(self, include_self: bool = False) -> list[CppElement]:
         """

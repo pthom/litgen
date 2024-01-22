@@ -474,7 +474,7 @@ class LitgenOptions:
     # All C++ namespaces in this list will not be emitted as a submodule
     # (i.e. their inner code will be placed in the root python module, or in the parent
     # module)
-    namespaces_root: [List[str]]
+    namespaces_root: List[str]
 
     # All C++ namespaces that match this regex will be excluded
     # By default, any namespace whose name contains "internal" or "detail" will be excluded.
