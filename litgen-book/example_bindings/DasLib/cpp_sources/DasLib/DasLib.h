@@ -1,6 +1,6 @@
-#include "DaftLib/DaftLib2.h"
+#include "DasLib/DasLib2.h"
 
-namespace DaftLib
+namespace DasLib
 {
     int Add(int a, int b);
 

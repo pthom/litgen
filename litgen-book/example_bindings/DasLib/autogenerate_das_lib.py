@@ -8,14 +8,14 @@ THIS_DIR = os.path.dirname(__file__)
 
 
 def make_amalgamated_header() -> None:
-    """Generates an amalgamated header file for DaftLib in generated_code/DaftLib_amalgamation/amalgamation.h"""
+    """Generates an amalgamated header file for DasLib in generated_code/DasLib_amalgamation/amalgamation.h"""
     options = amalgamated_header.AmalgamationOptions()
 
     options.base_dir = THIS_DIR + "/cpp_sources"
-    options.local_includes_startwith = "DaftLib/"
-    options.include_subdirs = ["DaftLib"]
-    options.main_header_file = "DaftLib.h"
-    options.dst_amalgamated_header_file = THIS_DIR + "/generated_code/DaftLib_amalgamation/amalgamation.h"
+    options.local_includes_startwith = "DasLib/"
+    options.include_subdirs = ["DasLib"]
+    options.main_header_file = "DasLib.h"
+    options.dst_amalgamated_header_file = THIS_DIR + "/generated_code/DasLib_amalgamation/amalgamation.h"
 
     amalgamated_header.write_amalgamate_header_file(options)
 
@@ -23,9 +23,9 @@ def make_amalgamated_header() -> None:
 def generator_options() -> litgen.LitgenOptions:
     options = litgen.LitgenOptions()
 
-    # The namespace DaftLib will not be emitted as a python submodule: all its contents will be emitted directly in the
+    # The namespace DasLib will not be emitted as a python submodule: all its contents will be emitted directly in the
     # root of the generated python module
-    options.namespaces_root = ["^DaftLib$"]
+    options.namespaces_root = ["^DasLib$"]
 
     # Use BoxedBool for SwitchBool, which can modify its bool parameter
     options.fn_params_replace_modifiable_immutable_by_boxed__regex = "^SwitchBool$"
@@ -33,18 +33,18 @@ def generator_options() -> litgen.LitgenOptions:
     return options
 
 
-def autogenerate_daft_lib(use_amalgamated_header: bool = False) -> None:
+def autogenerate_das_lib(use_amalgamated_header: bool = False) -> None:
     options = generator_options()
-    output_cpp_pydef_file = THIS_DIR + "/generated_code/DaftLib_bindings/pybind_DaftLib.cpp"
-    output_cpp_glue_code_file = THIS_DIR + "/generated_code/DaftLib_bindings/glue_code_DaftLib.h"
-    output_stub_pyi_file = THIS_DIR + "/generated_code/DaftLib_stubs/daft_lib/__init__.pyi"
+    output_cpp_pydef_file = THIS_DIR + "/generated_code/DasLib_bindings/pybind_DasLib.cpp"
+    output_cpp_glue_code_file = THIS_DIR + "/generated_code/DasLib_bindings/glue_code_DasLib.h"
+    output_stub_pyi_file = THIS_DIR + "/generated_code/DasLib_stubs/das_lib/__init__.pyi"
 
     # We demonstrate here two methods for generating bindings (both of them work correctly):
     # - either using an amalgamated header
     # - or by providing a list of files to litgen
     if use_amalgamated_header:
         make_amalgamated_header()
-        input_cpp_header = THIS_DIR + "/generated_code/DaftLib_amalgamation/amalgamation.h"
+        input_cpp_header = THIS_DIR + "/generated_code/DasLib_amalgamation/amalgamation.h"
         litgen.write_generated_code_for_file(
             options,
             input_cpp_header_file=input_cpp_header,
@@ -54,8 +54,8 @@ def autogenerate_daft_lib(use_amalgamated_header: bool = False) -> None:
         )
     else:
         header_files = [
-            THIS_DIR + "/cpp_sources/DaftLib/DaftLib.h",
-            THIS_DIR + "/cpp_sources/DaftLib/DaftLib_2.h",
+            THIS_DIR + "/cpp_sources/DasLib/DasLib.h",
+            THIS_DIR + "/cpp_sources/DasLib/DasLib2.h",
         ]
         litgen.write_generated_code_for_files(
             options,
@@ -67,4 +67,4 @@ def autogenerate_daft_lib(use_amalgamated_header: bool = False) -> None:
 
 
 if __name__ == "__main__":
-    autogenerate_daft_lib(use_amalgamated_header=True)
+    autogenerate_das_lib(use_amalgamated_header=True)
