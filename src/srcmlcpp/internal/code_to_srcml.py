@@ -129,7 +129,7 @@ class _SrcmlCaller:
     def _make_xml_str_by_module(self, input_str: str, encoding: str, dump_positions: bool = False) -> str:
         r = srcml_nativecaller.to_srcml(  # type: ignore
             code=input_str,
-            language=srcml_nativecaller.CodeLanguage.c_plus_cplus,  # type: ignore
+            language=srcml_nativecaller.CodeLanguage.c_plus_plus,  # type: ignore
             encoding_src=encoding,
             encoding_xml=encoding,
             include_positions=dump_positions,
