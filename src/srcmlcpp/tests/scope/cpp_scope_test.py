@@ -53,7 +53,7 @@ def test_known_elements():
 
     known_values = cpp_unit.known_values()
     known_values_names = [k.name() for k in known_values]
-    assert known_values_names == ["Global", "s2_value", "a", "a", "n3_value"]
+    assert known_values_names == ["f", "Global", "s2_value", "a", "f2", "a", "f3", "g", "n3_value"]
 
 
 def test_scope():
