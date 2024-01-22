@@ -272,6 +272,9 @@ class CppBlock(CppElementAndComment):
                 """
                 if element.decl_context() in [CppDeclContext.VarDecl, CppDeclContext.EnumDecl]:
                     r.append(element)
+            if isinstance(element, CppFunctionDecl):
+                # When function are used as values (i.e. function pointers)
+                r.append(element)
         return r
 
     def known_types(self, use_cache: bool = True) -> KnownElementTypesList:
