@@ -228,8 +228,12 @@ class CppBlock(CppElementAndComment):
         r: KnownElementTypesList = []
         all_elements = self.all_cpp_elements_recursive()
         for element in all_elements:
-            if isinstance(element, (CppStruct, CppFunctionDecl)):
+            if isinstance(element, CppStruct):
                 r.append(element)
+            if isinstance(element, CppFunctionDecl):
+                if not element.is_constructor():
+                    # A constructor is callable directly via ClassName(), not ClassName
+                    r.append(element)
         return r
 
     def known_callables_init_list(self, use_cache: bool = True) -> KnownElementTypesList:
