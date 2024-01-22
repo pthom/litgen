@@ -89,12 +89,9 @@ def test_scope():
 
     print(palette_decl_qualified.initial_value_code)
 
-
     # palette_decl.in
 
     print("a")
-
-
 
 
 def test_scope_root_namespace_with_classes():
@@ -135,7 +132,7 @@ def test_scope_root_namespace_with_classes():
     )
 
 
-def test_truc():
+def test_truc1():
     code = """
         namespace HelloImGui
         {
@@ -181,17 +178,59 @@ def test_truc():
     )
 
 
+# See CppDecl.with_qualified_types and _initial_value_code_with_qualified_types
+
+
 def test_scope_with_vector():
     code = """
     namespace Main
     {
-        int a = 0;
-        //struct Foo {};
-        //std::vector<Foo> s = {};
+        struct Foo {};
+
+        struct Container
+        {
+            std::vector<Foo> Values;
+        };
     }
     """
     options = LitgenOptions()
     options.namespaces_root = ["Main"]
+    generated_code = litgen.generate_code(options, code)
+    print(generated_code.pydef_code)
+
+
+def test_truc():
+    code = """
+    struct ImVec2 {
+        ImVec2();
+    };
+    namespace ImGui
+    {
+        bool ImGui::BeginListBox(const char* label, const ImVec2& size_arg= ImVec2());
+    }
+    """
+    options = LitgenOptions()
+    options.namespaces_root = ["ImGui"]
+    generated_code = litgen.generate_code(options, code)
+    print(generated_code.pydef_code)
+
+
+def test_truc2():
+    code = """
+    namespace Snippets
+    {
+        enum class SnippetTheme
+        {
+            Light,
+        };
+        struct SnippetData
+        {
+            SnippetTheme Palette = SnippetTheme::Light;
+        };
+
+    }
+    """
+    options = LitgenOptions()
     generated_code = litgen.generate_code(options, code)
     print(generated_code.pydef_code)
 
