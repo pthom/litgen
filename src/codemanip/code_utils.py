@@ -639,6 +639,23 @@ def contains_word_boundary_left_only(where_to_search: str, word: str) -> bool:
     return does_match_regex(regex_str, where_to_search)
 
 
+def replace_identifier(cpp_code, old_identifier, new_identifier):
+    # Regular expression pattern for a valid C++ identifier
+    pattern = r"\b" + re.escape(old_identifier) + r"\b"
+    # Replace the old identifier with the new one
+    return re.sub(pattern, new_identifier, cpp_code)
+
+
+def contains_identifier(cpp_code, identifier):
+    if identifier not in cpp_code:
+        # Shortcut to avoid the slow regular expression search
+        return False
+    # Regular expression pattern for a valid C++ identifier
+    pattern = r"\b" + re.escape(identifier) + r"\b"
+    # Search for the identifier in the code
+    return re.search(pattern, cpp_code) is not None
+
+
 def var_name_contains_word(var_name: str, word: str) -> bool:
     var_name = to_snake_case(var_name).strip()
     word = word.lower()
