@@ -3,7 +3,7 @@ from __future__ import annotations
 import copy
 from dataclasses import dataclass
 from enum import Enum
-from typing import Final
+from typing import Final, Optional
 
 
 class CppScopeType(Enum):
@@ -45,10 +45,11 @@ class CppScope:
 
     def scope_hierarchy_list(self) -> list[CppScope]:
         """Given "A::B::C", return ["A::B::C", "A::B", "A", ""]"""
-        r = [self]
-        parent_scope = self.parent_scope()
-        if parent_scope is not None:
-            r += parent_scope.scope_hierarchy_list()
+        r = []
+        current_scope: Optional[CppScope] = self
+        while current_scope is not None:
+            r.append(current_scope)
+            current_scope = current_scope.parent_scope()
         return r
 
     def can_access_scope(self, other_scope: CppScope) -> bool:
@@ -83,3 +84,6 @@ class CppScope:
 
     def __repr__(self):
         return self.str_cpp()
+
+    def __hash__(self) -> int:
+        return hash(self.str_cpp())

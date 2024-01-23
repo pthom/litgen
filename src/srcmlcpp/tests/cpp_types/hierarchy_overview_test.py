@@ -34,7 +34,7 @@ def test_hierarchy_overview():
                   CppPublicProtectedPrivate scope=Blah::Foo
                     CppEnum name=A scope=Blah::Foo
                       CppBlock scope=Blah::Foo::A
-                        CppDecl name=a scope=Blah::Foo::A
+                        CppDecl name=a scope=Blah::Foo
                         CppUnprocessed scope=Blah::Foo::A
                     CppFunctionDecl name=dummy scope=Blah::Foo
                       CppType name=void scope=Blah::Foo

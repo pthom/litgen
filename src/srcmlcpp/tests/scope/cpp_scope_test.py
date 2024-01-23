@@ -4,97 +4,122 @@ from codemanip import code_utils
 import srcmlcpp
 
 
-def test_known_elements():
-    code = """
-            int f();
-            constexpr int Global = 0;
-            namespace N1
-            {
-                namespace N2
-                {
-                    struct S2 { int s2_value = 0; };
-                    enum class E2 { a = 0 };  // enum class!
-                    int f2();
-                }
-
-                namespace N3
-                {
-                    enum E3 { a = 0 };        // C enum!
-                    int f3();
-
-                    // We want to qualify the parameters' declarations of this function
-                    void g(
-                            int _f = f(),
-                            N2::S2 s2 = N2::S2(),
-                            N2::E2 e2 = N2::a,      // subtle difference for
-                            E3 e3 = E3::a,          // enum and enum class
-                            int _f3 = N1::N3::f3(),
-                            int other = N1::N4::f4() // unknown function
-                        );
-
-                    int n3_value = 0;
-                } // namespace N3
-            }  // namespace N1
-    """
-    options = srcmlcpp.SrcmlcppOptions()
-    cpp_unit = srcmlcpp.code_to_cpp_unit(options, code)
-
-    known_types = cpp_unit.known_types()
-    known_types_names = [k.name() for k in known_types]
-    assert known_types_names == ["S2", "E2", "E3"]
-
-    known_callables = cpp_unit.known_callables()
-    known_callables_names = [k.name() for k in known_callables]
-    assert known_callables_names == ["f", "S2", "f2", "f3", "g"]
-
-    known_callables_init_list = cpp_unit.known_callables_init_list()
-    known_callables_init_list_names = [k.name() for k in known_callables_init_list]
-    assert known_callables_init_list_names == ["S2"]
-
-    known_values = cpp_unit.known_values()
-    known_values_names = [k.name() for k in known_values]
-    assert known_values_names == ["f", "Global", "s2_value", "a", "f2", "a", "f3", "g", "n3_value"]
-
-
 def test_scope():
-    from srcmlcpp import CppDecl
+    from srcmlcpp import CppScope
 
     code = """
     namespace Snippets
     {
+        enum Color
+        {
+            Color_Red,  // Should leak to Snippets scope
+        };
+        Color col = Color_Red;
+
         enum class SnippetTheme
         {
             Light,
         };
+        SnippetTheme theme = SnippetTheme::Light;
+
         struct SnippetData
         {
             SnippetTheme Palette = SnippetTheme::Light;
         };
 
+        int foo(int a = 2);
+
+        std::vector<SnippetData> snippetsVector;
+    }
+    """
+    options = srcmlcpp.SrcmlcppOptions()
+    cpp_unit = srcmlcpp.code_to_cpp_unit(options, code)
+
+    def test_scope_cache() -> None:
+        # Get the scope cache
+        scope_cache = cpp_unit._cache_known_identifiers_scope
+
+        # Test Snippets scope: it should contain Color_Red (which leaks from the C enum Color)
+        snippet_identifiers = scope_cache[CppScope.from_string("Snippets")]
+        assert snippet_identifiers == [
+            "Color",
+            "Color_Red",
+            "col",
+            "SnippetTheme",
+            "SnippetTheme::Light",
+            "theme",
+            "SnippetData",
+            "SnippetData::Palette",
+            "foo",
+            "snippetsVector",
+        ]
+
+        # there should not be a scope Snippet::Color
+        assert CppScope.from_string("Snippets::Color") not in scope_cache
+
+        # Test Snippets::SnippetTheme scope: it should contain Light
+        snippet_theme_identifiers = scope_cache[CppScope.from_string("Snippets::SnippetTheme")]
+        assert snippet_theme_identifiers == ["Light"]
+
+        # Test Snippets::SnippetData scope: it should contain Palette
+        snippet_data_identifiers = scope_cache[CppScope.from_string("Snippets::SnippetData")]
+        assert snippet_data_identifiers == ["Palette"]
+
+    test_scope_cache()
+
+    def test_qualified_types() -> None:
+        decls = cpp_unit.all_decl_recursive()
+        assert len(decls) == 7
+
+        decl_col = decls[1]
+        decl_col_qualified = decl_col.with_qualified_types()
+        assert decl_col_qualified.str_code() == "Snippets::Color col = Snippets::Color_Red"
+
+        decl_theme = decls[3]
+        decl_theme_qualified = decl_theme.with_qualified_types()
+        assert decl_theme_qualified.str_code() == "Snippets::SnippetTheme theme = Snippets::SnippetTheme::Light"
+
+        decl_palette = decls[4]
+        decl_palette_qualified = decl_palette.with_qualified_types()
+        assert decl_palette_qualified.str_code() == "Snippets::SnippetTheme Palette = Snippets::SnippetTheme::Light"
+
+        decl_snippets_vector = decls[6]
+        decl_snippets_vector_qualified = decl_snippets_vector.with_qualified_types()
+        assert decl_snippets_vector_qualified.str_code() == "std::vector<Snippets::SnippetData> snippetsVector"
+
+    test_qualified_types()
+
+
+def test_scope_2():
+    code = """
+        namespace HelloImGui
+        {
+            namespace ImGuiDefaultSettings
+            {
+                void LoadDefaultFont_WithFontAwesomeIcons();
+            }
+
+            struct RunnerCallbacks
+            {
+                VoidFunction LoadAdditionalFonts = ImGuiDefaultSettings::LoadDefaultFont_WithFontAwesomeIcons;
+            };
         }
     """
     options = srcmlcpp.SrcmlcppOptions()
     cpp_unit = srcmlcpp.code_to_cpp_unit(options, code)
-    decls = cpp_unit.all_elements_of_type(srcmlcpp.CppDecl)
-    palette_decl = decls[1]
-    assert isinstance(palette_decl, CppDecl)
-    palette_scope = palette_decl.cpp_scope()
 
-    palette_type = palette_decl.cpp_type
-    palette_type_qualified = palette_type.with_qualified_types(palette_scope)
-    assert palette_type_qualified.str_code() == "Snippets::SnippetTheme"
+    decls = cpp_unit.all_decl_recursive()
+    assert len(decls) == 1
 
-    palette_decl_qualified = palette_decl.with_qualified_types(palette_scope)
-    assert palette_decl_qualified.cpp_type.str_code() == "Snippets::SnippetTheme"
-
-    print(palette_decl_qualified.initial_value_code)
-
-    # palette_decl.in
-
-    print("a")
+    decl_load_additional_fonts = decls[0]
+    decl_load_additional_fonts_qualified = decl_load_additional_fonts.with_qualified_types()
+    assert (
+        decl_load_additional_fonts_qualified.str_code()
+        == "VoidFunction LoadAdditionalFonts = HelloImGui::ImGuiDefaultSettings::LoadDefaultFont_WithFontAwesomeIcons"
+    )
 
 
-def test_scope_root_namespace_with_classes():
+def test_scope_with_litgen():
     code = """
     namespace DaftLib
     {
@@ -130,109 +155,6 @@ def test_scope_root_namespace_with_classes():
             ;
         """,
     )
-
-
-def test_truc1():
-    code = """
-        namespace HelloImGui
-        {
-            namespace ImGuiDefaultSettings
-            {
-                void LoadDefaultFont_WithFontAwesomeIcons();
-            }
-
-            struct RunnerCallbacks
-            {
-                VoidFunction LoadAdditionalFonts = ImGuiDefaultSettings::LoadDefaultFont_WithFontAwesomeIcons;
-            };
-        }
-    """
-    options = LitgenOptions()
-    options.namespaces_root = ["HelloImGui"]
-    generated_code = litgen.generate_code(options, code)
-    # print(generated_code.pydef_code)
-    code_utils.assert_are_codes_equal(
-        generated_code.pydef_code,
-        """
-        auto pyClassRunnerCallbacks =
-            py::class_<HelloImGui::RunnerCallbacks>
-                (m, "RunnerCallbacks", "")
-            .def(py::init<>([](
-            VoidFunction LoadAdditionalFonts = HelloImGui::ImGuiDefaultSettings::LoadDefaultFont_WithFontAwesomeIcons)
-            {
-                auto r = std::make_unique<HelloImGui::RunnerCallbacks>();
-                r->LoadAdditionalFonts = LoadAdditionalFonts;
-                return r;
-            })
-            , py::arg("load_additional_fonts") = HelloImGui::ImGuiDefaultSettings::LoadDefaultFont_WithFontAwesomeIcons
-            )
-            .def_readwrite("load_additional_fonts", &HelloImGui::RunnerCallbacks::LoadAdditionalFonts, "")
-            ;
-
-        { // <namespace ImGuiDefaultSettings>
-            py::module_ pyNsImGuiDefaultSettings = m.def_submodule("im_gui_default_settings", "");
-            pyNsImGuiDefaultSettings.def("load_default_font_with_font_awesome_icons",
-                HelloImGui::ImGuiDefaultSettings::LoadDefaultFont_WithFontAwesomeIcons);
-        } // </namespace ImGuiDefaultSettings>
-    """,
-    )
-
-
-# See CppDecl.with_qualified_types and _initial_value_code_with_qualified_types
-
-
-def test_scope_with_vector():
-    code = """
-    namespace Main
-    {
-        struct Foo {};
-
-        struct Container
-        {
-            std::vector<Foo> Values;
-        };
-    }
-    """
-    options = LitgenOptions()
-    options.namespaces_root = ["Main"]
-    generated_code = litgen.generate_code(options, code)
-    print(generated_code.pydef_code)
-
-
-def test_truc():
-    code = """
-    struct ImVec2 {
-        ImVec2();
-    };
-    namespace ImGui
-    {
-        bool ImGui::BeginListBox(const char* label, const ImVec2& size_arg= ImVec2());
-    }
-    """
-    options = LitgenOptions()
-    options.namespaces_root = ["ImGui"]
-    generated_code = litgen.generate_code(options, code)
-    print(generated_code.pydef_code)
-
-
-def test_truc2():
-    code = """
-    namespace Snippets
-    {
-        enum class SnippetTheme
-        {
-            Light,
-        };
-        struct SnippetData
-        {
-            SnippetTheme Palette = SnippetTheme::Light;
-        };
-
-    }
-    """
-    options = LitgenOptions()
-    generated_code = litgen.generate_code(options, code)
-    print(generated_code.pydef_code)
 
 
 """

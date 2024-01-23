@@ -144,6 +144,13 @@ class CppElement(SrcmlWrapper):
         ancestors = self.ancestors_list(include_self)
         ancestors.reverse()
 
+        from srcmlcpp.cpp_types import CppDecl
+
+        if isinstance(self, CppDecl):
+            parent_enum = self.parent_enum_if_applicable()
+            if parent_enum is not None and not parent_enum.is_enum_class():
+                ancestors = ancestors[:-2]  # C enum decl leak into the parent scope!
+
         scope_parts: list[CppScopePart] = []
         for ancestor in ancestors:
             scope_part = ancestor.self_scope()

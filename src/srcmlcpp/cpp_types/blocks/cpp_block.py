@@ -1,6 +1,7 @@
 from __future__ import annotations
+
 from dataclasses import dataclass
-from typing import TYPE_CHECKING, Union, cast, List
+from typing import TYPE_CHECKING, cast, Optional
 
 from srcmlcpp.cpp_types.base import (
     CppElementAndComment,
@@ -16,11 +17,8 @@ from srcmlcpp.srcml_wrapper import SrcmlWrapper
 
 if TYPE_CHECKING:
     from srcmlcpp.cpp_types.classes.cpp_struct import CppStruct
-    from srcmlcpp.cpp_types.cpp_enum import CppEnum
     from srcmlcpp.cpp_types.decls_types import CppDecl, CppDeclStatement
 
-    KnownElementTypes = Union[CppStruct, CppFunctionDecl, CppDecl, CppEnum]
-    KnownElementTypesList = List[KnownElementTypes]
 
 __all__ = ["CppBlock"]
 
@@ -48,10 +46,7 @@ class CppBlock(CppElementAndComment):
 
     _block_children: list[CppElementAndComment]
 
-    _cache_known_types: KnownElementTypesList
-    _cache_known_values: KnownElementTypesList
-    _cache_known_callables: KnownElementTypesList
-    _cache_known_callables_init_list: KnownElementTypesList
+    _cache_known_identifiers_scope: dict[CppScope, list[str]]
 
     def __init__(self, element: SrcmlWrapper) -> None:
         dummy_cpp_comments = CppElementComments()
@@ -80,7 +75,7 @@ class CppBlock(CppElementAndComment):
         return result
 
     def all_functions(self) -> list[CppFunctionDecl]:
-        """Gathers all CppFunctionDecl and CppFunction in the children (non recursive)"""
+        """Gathers all CppFunctionDecl and CppFunction in the children (non-recursive)"""
         from srcmlcpp.cpp_types.functions.cpp_function_decl import CppFunctionDecl
 
         r: list[CppFunctionDecl] = []
@@ -204,100 +199,64 @@ class CppBlock(CppElementAndComment):
         self.block_children.append(element)
 
     def fill_known_cache(self) -> None:
-        self._cache_known_types = self.known_types(False)
-        self._cache_known_callables = self.known_callables(False)
-        self._cache_known_callables_init_list = self.known_callables_init_list(False)
-        self._cache_known_values = self.known_values(False)
-
-    def known_callables(self, use_cache: bool = True) -> KnownElementTypesList:
-        """The subpart of the known elements that can be called via ()
-        Simple:
-            - Structs and classes, when calling their constructor via (...)
-            - Functions and methods
-        Declarations (CppDecl), only in certain cases:
-            - when they are decl statement that defines a lambda, a std::function, etc.
-              This case is too complex and not supported
-        """
-        from srcmlcpp.cpp_types.classes.cpp_struct import CppStruct
-        from srcmlcpp.cpp_types.functions import CppFunctionDecl
-
-        if use_cache:
-            assert hasattr(self, "_cache_known_callables")
-            return self._cache_known_callables
-
-        r: KnownElementTypesList = []
-        all_elements = self.all_cpp_elements_recursive()
-        for element in all_elements:
-            if isinstance(element, CppStruct):
-                r.append(element)
-            if isinstance(element, CppFunctionDecl):
-                if not element.is_constructor():
-                    # A constructor is callable directly via ClassName(), not ClassName
-                    r.append(element)
-        return r
-
-    def known_callables_init_list(self, use_cache: bool = True) -> KnownElementTypesList:
-        """The subpart of the known elements that can be called via {}, i.e. structs and classes"""
-        from srcmlcpp.cpp_types.classes.cpp_struct import CppStruct
-
-        if use_cache:
-            assert hasattr(self, "_cache_known_callables_init_list")
-            return self._cache_known_callables_init_list
-
-        r: KnownElementTypesList = []
-        all_elements = self.all_cpp_elements_recursive()
-        for element in all_elements:
-            if isinstance(element, (CppStruct)):
-                r.append(element)
-        return r
-
-    def known_values(self, use_cache: bool = True) -> KnownElementTypesList:
-        """The subpart of the elements that declare variable,
-        Declarations (CppDecl), only in certain cases:
-            - When they are member of an Enum, Struct, Namespace
-            - When they are inside a DeclStatement (which could also be a lambda decl)
-            But *not* when they are function parameters!
-        """
+        from srcmlcpp.cpp_types import CppStruct, CppFunctionDecl, CppEnum
         from srcmlcpp.cpp_types.decls_types.cpp_decl import CppDecl, CppDeclContext
 
-        if use_cache:
-            assert hasattr(self, "_cache_known_values")
-            return self._cache_known_values
-
-        r: KnownElementTypesList = []
+        self._cache_known_identifiers_scope = {}
         all_elements = self.all_cpp_elements_recursive()
         for element in all_elements:
-            if isinstance(element, CppDecl):
-                """
-                Declarations (CppDecl), only in certain cases:
-                    - When they from a decl statement
-                    - When they are inside a DeclStatement (which can be inside an Enum, Struct, Namespace)
-                    But *not* when they are function parameters!
-                """
-                if element.decl_context() in [CppDeclContext.VarDecl, CppDeclContext.EnumDecl]:
-                    r.append(element)
-            if isinstance(element, CppFunctionDecl):
-                # When function are used as values (i.e. function pointers)
-                r.append(element)
-        return r
-
-    def known_types(self, use_cache: bool = True) -> KnownElementTypesList:
-        """The subpart of the elements that could be as a type.
-        We do *not* support synonyms defined via `typedef` or `using` !
-        """
-        from srcmlcpp.cpp_types.classes.cpp_struct import CppStruct
-        from srcmlcpp.cpp_types.cpp_enum import CppEnum
-
-        if use_cache:
-            assert hasattr(self, "_cache_known_types")
-            return self._cache_known_types
-
-        r: KnownElementTypesList = []
-        all_elements = self.all_cpp_elements_recursive()
-        for element in all_elements:
+            element_scope = element.cpp_scope()
+            shall_add = False
+            # add all structs and enums
             if isinstance(element, (CppStruct, CppEnum)):
-                r.append(element)
-        return r
+                shall_add = True
+            # Add all functions, except constructors (which are callable via their class)
+            if isinstance(element, CppFunctionDecl):
+                if not element.is_constructor():
+                    shall_add = True
+            # Add decls, except function parameters
+            if isinstance(element, CppDecl):
+                # Declarations (CppDecl), only in certain cases:
+                #    - When they from a decl statement
+                #    - When they are inside a DeclStatement (which can be inside an Enum, Struct, Namespace)
+                #    But *not* when they are function parameters!
+                if element.decl_context() in [CppDeclContext.VarDecl, CppDeclContext.EnumDecl]:
+                    shall_add = True
+
+            if shall_add:
+                assert isinstance(element, (CppStruct, CppFunctionDecl, CppDecl, CppEnum))
+                identifier_name = element.name()
+
+                def do_cache(cpp_scope: CppScope, scoped_identifier_name: str) -> None:
+                    if cpp_scope not in self._cache_known_identifiers_scope:
+                        self._cache_known_identifiers_scope[cpp_scope] = []
+                    self._cache_known_identifiers_scope[cpp_scope].append(scoped_identifier_name)
+
+                current_scope: Optional[CppScope] = element_scope
+                scoped_identifier_name = identifier_name
+                while current_scope is not None:
+                    do_cache(current_scope, scoped_identifier_name)
+                    if len(current_scope.scope_parts) > 0:
+                        scoped_identifier_name = (
+                            current_scope.scope_parts[-1].scope_name + "::" + scoped_identifier_name
+                        )
+                        current_scope = current_scope.parent_scope()
+                    else:
+                        current_scope = None
+
+                # add identifier_name to the current scope and its parents,
+                # after applying the scope resolution operator "::"
+
+                # if element_scope not in self._cache_known_identifiers_scope:
+                #     self._cache_known_identifiers_scope[element_scope] = []
+                # self._cache_known_identifiers_scope[element_scope].append(identifier_name)
+
+    def known_identifiers(self, scope: CppScope) -> list[str]:
+        assert hasattr(self, "_cache_known_identifiers_scope")
+
+        if scope not in self._cache_known_identifiers_scope:
+            return []
+        return self._cache_known_identifiers_scope[scope]
 
     def __str__(self) -> str:
         return self.str_block()

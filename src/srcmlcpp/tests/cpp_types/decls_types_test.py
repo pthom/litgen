@@ -335,7 +335,8 @@ def test_with_terse_types_method():
     method = cpp_unit.all_functions_recursive()[1]
 
     fn_terse = fn.with_terse_types()
-    assert fn_terse.str_code() == "S make_s_function(S s = S());"
+    fn_terse_str = fn_terse.str_code()
+    assert fn_terse_str == "S make_s_function(S s = S());"
 
     # Although the method is inside an inner scope,
     # its declaration cannot yet use it (only the method body can)

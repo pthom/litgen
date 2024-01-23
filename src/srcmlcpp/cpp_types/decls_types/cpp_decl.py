@@ -3,6 +3,7 @@ import copy
 from dataclasses import dataclass
 from enum import Enum
 from typing import TYPE_CHECKING
+from codemanip import code_utils
 
 from srcmlcpp.cpp_types.base import (
     CppElementAndComment,
@@ -21,7 +22,6 @@ from srcmlcpp.srcml_wrapper import SrcmlWrapper
 
 
 if TYPE_CHECKING:
-    from srcmlcpp.cpp_types.blocks.cpp_block import KnownElementTypesList
     from srcmlcpp.cpp_types.cpp_enum import CppEnum
 
 
@@ -44,6 +44,8 @@ class CppDecl(CppElementAndComment):
     """
 
     _cpp_type: CppType
+
+    _cpp_decl_with_qualified_types: CppDecl
 
     # decl_name, i.e. the variable name
     decl_name: str = ""
@@ -227,68 +229,25 @@ class CppDecl(CppElementAndComment):
         return "const" in self.cpp_type.specifiers  # or "const" in self.cpp_type.names
 
     def _initial_value_code_with_qualified_types(self, current_scope: CppScope | None = None) -> str:
+        if self.initial_value_code == "":
+            return ""
         if current_scope is None:
             current_scope = self.cpp_scope()
 
         # initial_value_token: self.initial_value_code without (...) or {...}
         initial_value = self.initial_value_code
-        initial_value_token = self.initial_value_code
-        initial_value_rest = ""
 
-        class SearchType(Enum):
-            callable = 1
-            callable_init_list = 2
-            value = 3
-            type = 4
-            unknown = 0
-
-        search_type = SearchType.value
-        if "(" in self.initial_value_code:
-            initial_value_token = initial_value[: initial_value.index("(")]
-            initial_value_rest = initial_value[initial_value.index("(") :]
-            search_type = SearchType.callable
-        if "{" in self.initial_value_code:
-            initial_value_token = initial_value[: initial_value.index("{")]
-            initial_value_rest = initial_value[initial_value.index("{") :]
-            search_type = SearchType.callable_init_list
-
-        if search_type in [SearchType.type, SearchType.unknown]:
-            return self.initial_value_code
-
-        known_candidates: KnownElementTypesList
-        if search_type == SearchType.value:
-            known_candidates = self.root_cpp_unit().known_values()
-        elif search_type == SearchType.callable:
-            known_candidates = self.root_cpp_unit().known_callables()
-        elif search_type == SearchType.callable_init_list:
-            known_candidates = self.root_cpp_unit().known_callables_init_list()
-
-        # All the scopes into which we can see
         visibility_scopes = current_scope.scope_hierarchy_list()
-        for known_candidate in known_candidates:
-            for visibility_scope in visibility_scopes:
-                known_candidate_qualified_name = known_candidate.cpp_scope(include_self=False).qualified_name(
-                    known_candidate.name()
-                )
-                if isinstance(known_candidate, CppDecl):
-                    maybe_enum = known_candidate.parent_enum_if_applicable()
-                    if maybe_enum is not None and maybe_enum.enum_type != "class":
-                        if known_candidate.parent is not None:
-                            enum_not_class = maybe_enum
-                            enum_parent = enum_not_class.parent
-                            if enum_parent is not None:
-                                # Yes, standard enum scope leaks to the parent...
-                                enum_parent_scope = enum_parent.cpp_scope(include_self=False)
-                                known_candidate_qualified_name = enum_parent_scope.qualified_name(
-                                    known_candidate.name()
-                                )
-
-                initial_value_tentative_qualified_name = visibility_scope.qualified_name(initial_value_token)
-                if initial_value_tentative_qualified_name == known_candidate_qualified_name:
-                    r = visibility_scope.qualified_name(initial_value_token) + initial_value_rest
+        for visibility_scope in visibility_scopes:
+            known_candidates = self.root_cpp_unit().known_identifiers(visibility_scope)
+            for known_candidate in known_candidates:
+                if code_utils.contains_identifier(initial_value, known_candidate):
+                    search = known_candidate
+                    replace = visibility_scope.qualified_name(known_candidate)
+                    r = code_utils.replace_identifier(initial_value, search, replace)
                     return r
 
-        return self.initial_value_code
+        return initial_value
 
     def with_qualified_types(self, current_scope: CppScope | None = None) -> CppDecl:
         """Qualifies the types and initial values of a decl, e.g.
@@ -342,10 +301,10 @@ class CppDecl(CppElementAndComment):
             current_scope = self.cpp_scope()
         was_changed = False
         new_decl = copy.deepcopy(self)
-        new_decl.cpp_type = self.cpp_type.with_qualified_types(current_scope)
-
-        if new_decl.cpp_type is not self._cpp_type:
-            was_changed = True
+        if hasattr(self, "cpp_type"):
+            new_decl.cpp_type = self.cpp_type.with_qualified_types(current_scope)
+            if new_decl.cpp_type is not self._cpp_type:
+                was_changed = True
 
         new_initial_value_code = self._initial_value_code_with_qualified_types(current_scope)
         if new_initial_value_code != self.initial_value_code:
