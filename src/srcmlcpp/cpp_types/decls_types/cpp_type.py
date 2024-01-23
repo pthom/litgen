@@ -249,22 +249,12 @@ class CppType(CppElementAndComment):
         type_qualified = self.with_qualified_types()
         type_name_qualified = " ".join(type_qualified.typenames)
 
-        type_name_qualified_scope_parts = CppScope.from_string(type_name_qualified).scope_parts
+        from srcmlcpp.cpp_types.scope.cpp_scope_identifiers import make_terse_code
 
-        current_scope_parts_copy = copy.deepcopy(current_scope.scope_parts)
-
-        while True:
-            if len(current_scope_parts_copy) == 0 or len(type_name_qualified_scope_parts) == 0:
-                break
-            if current_scope_parts_copy[0].scope_name == type_name_qualified_scope_parts[0].scope_name:
-                current_scope_parts_copy = current_scope_parts_copy[1:]
-                type_name_qualified_scope_parts = type_name_qualified_scope_parts[1:]
-            else:
-                break
-        new_type_name = CppScope(type_name_qualified_scope_parts).str_cpp
+        new_type_name = make_terse_code(type_name_qualified, current_scope)
         if new_type_name != " ".join(self.typenames):
             new_cpp_type = copy.deepcopy(self)
-            new_cpp_type.typenames = [new_type_name]
+            new_cpp_type.typenames = new_type_name.split(" ")
             return new_cpp_type
         else:
             return self

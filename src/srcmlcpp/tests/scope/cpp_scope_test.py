@@ -214,6 +214,40 @@ def test_scope4():
     assert repr(ctor_qualified) == "ClassNoDefaultCtor(A::Foo foo = A::Foo::Foo1)"
 
 
+def test_scope_vector():
+    code = """
+    namespace HelloImGui
+    {
+        enum class EdgeToolbarType
+        {
+            Top,
+            Bottom,
+            Left,
+            Right
+        };
+
+        std::vector<EdgeToolbarType> AllEdgeToolbarTypes();
+    }
+    """
+    options = srcmlcpp.SrcmlcppOptions()
+    cpp_unit = srcmlcpp.code_to_cpp_unit(options, code)
+    fn = cpp_unit.all_functions_recursive()[0]
+    fn_qualified = fn.with_qualified_types()
+    assert repr(fn_qualified) == "std::vector<HelloImGui::EdgeToolbarType> AllEdgeToolbarTypes()"
+    fn_terse = fn_qualified.with_terse_types()
+    assert repr(fn_terse) == "std::vector<EdgeToolbarType> AllEdgeToolbarTypes()"
+
+
+def test_make_terse_scope():
+    from srcmlcpp.cpp_types.scope.cpp_scope_identifiers import make_terse_code
+    from srcmlcpp.cpp_types.scope.cpp_scope import CppScope
+
+    cpp_code = "N0::N1::N3::S3"
+    current_scope = CppScope.from_string("N0::N1::N3")
+    new_cpp_code = make_terse_code(cpp_code, current_scope)
+    assert new_cpp_code == "S3"
+
+
 def test_scope_with_litgen():
     code = """
     namespace DaftLib

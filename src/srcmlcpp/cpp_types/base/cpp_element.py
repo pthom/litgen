@@ -109,7 +109,7 @@ class CppElement(SrcmlWrapper):
 
         return None
 
-    def _clear_scope_cache(self):
+    def _clear_scope_cache(self) -> None:
         if hasattr(self, "_cached_cpp_scope"):
             del self._cached_cpp_scope
         if hasattr(self, "_cached_cpp_scope_include_self"):
