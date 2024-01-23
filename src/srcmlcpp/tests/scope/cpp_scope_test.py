@@ -37,7 +37,7 @@ def test_scope():
 
     def test_scope_cache() -> None:
         # Get the scope cache
-        scope_cache = cpp_unit._cache_known_identifiers_scope
+        scope_cache = cpp_unit._scope_identifiers._cache_known_identifiers_scope
 
         # Test Snippets scope: it should contain Color_Red (which leaks from the C enum Color)
         snippet_identifiers = scope_cache[CppScope.from_string("Snippets")]

@@ -103,7 +103,7 @@ def _code_to_cpp_unit_impl(
     xml_wrapper = code_to_srcml_wrapper(options, code, filename)
     cpp_unit = cpp_types_parse.parse_unit(options, xml_wrapper)
     if fill_known_cache:
-        cpp_unit.fill_known_cache()
+        cpp_unit.fill_scope_identifiers_cache()
     return cpp_unit
 
 

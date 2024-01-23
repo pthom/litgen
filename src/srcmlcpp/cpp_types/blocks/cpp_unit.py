@@ -4,6 +4,8 @@ from dataclasses import dataclass
 from srcmlcpp.cpp_types.base.cpp_element import CppElement
 from srcmlcpp.cpp_types.blocks.cpp_block import CppBlock
 from srcmlcpp.srcml_wrapper import SrcmlWrapper
+from srcmlcpp.cpp_types.scope.cpp_scope import CppScope
+from srcmlcpp.cpp_types.scope.cpp_scope_identifiers import CppScopeIdentifiers
 
 
 __all__ = ["CppUnit"]
@@ -13,8 +15,11 @@ __all__ = ["CppUnit"]
 class CppUnit(CppBlock):
     """A kind of block representing a full file."""
 
+    _scope_identifiers: CppScopeIdentifiers
+
     def __init__(self, element: SrcmlWrapper) -> None:
         super().__init__(element)
+        self._scope_identifiers = CppScopeIdentifiers()
 
     def __str__(self) -> str:
         return self.str_block()
@@ -35,3 +40,10 @@ class CppUnit(CppBlock):
 
         assert isinstance(root, CppUnit)
         return root
+
+    def known_identifiers(self, scope: CppScope) -> list[str]:
+        return self._scope_identifiers.known_identifiers(scope)
+
+    def fill_scope_identifiers_cache(self) -> None:
+        all_elements = self.all_cpp_elements_recursive()
+        self._scope_identifiers.fill_cache(all_elements)

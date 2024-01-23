@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import TYPE_CHECKING, cast, Optional
+from typing import TYPE_CHECKING, cast
 
 from srcmlcpp.cpp_types.base import (
     CppElementAndComment,
@@ -10,9 +10,9 @@ from srcmlcpp.cpp_types.base import (
     CppElement,
     CppElementComments,
 )
-from srcmlcpp.cpp_types.scope.cpp_scope import CppScope
 from srcmlcpp.cpp_types.functions import CppFunctionDecl
 from srcmlcpp.srcml_wrapper import SrcmlWrapper
+from srcmlcpp.cpp_types.scope.cpp_scope import CppScope
 
 
 if TYPE_CHECKING:
@@ -45,8 +45,6 @@ class CppBlock(CppElementAndComment):
     """
 
     _block_children: list[CppElementAndComment]
-
-    _cache_known_identifiers_scope: dict[CppScope, list[str]]
 
     def __init__(self, element: SrcmlWrapper) -> None:
         dummy_cpp_comments = CppElementComments()
@@ -197,66 +195,6 @@ class CppBlock(CppElementAndComment):
     def add_element(self, element: CppElementAndComment) -> None:
         element.parent = self
         self.block_children.append(element)
-
-    def fill_known_cache(self) -> None:
-        from srcmlcpp.cpp_types import CppStruct, CppFunctionDecl, CppEnum
-        from srcmlcpp.cpp_types.decls_types.cpp_decl import CppDecl, CppDeclContext
-
-        self._cache_known_identifiers_scope = {}
-        all_elements = self.all_cpp_elements_recursive()
-        for element in all_elements:
-            element_scope = element.cpp_scope()
-            shall_add = False
-            # add all structs and enums
-            if isinstance(element, (CppStruct, CppEnum)):
-                shall_add = True
-            # Add all functions, except constructors (which are callable via their class)
-            if isinstance(element, CppFunctionDecl):
-                if not element.is_constructor():
-                    shall_add = True
-            # Add decls, except function parameters
-            if isinstance(element, CppDecl):
-                # Declarations (CppDecl), only in certain cases:
-                #    - When they from a decl statement
-                #    - When they are inside a DeclStatement (which can be inside an Enum, Struct, Namespace)
-                #    But *not* when they are function parameters!
-                if element.decl_context() in [CppDeclContext.VarDecl, CppDeclContext.EnumDecl]:
-                    shall_add = True
-
-            if shall_add:
-                assert isinstance(element, (CppStruct, CppFunctionDecl, CppDecl, CppEnum))
-                identifier_name = element.name()
-
-                def do_cache(cpp_scope: CppScope, scoped_identifier_name: str) -> None:
-                    if cpp_scope not in self._cache_known_identifiers_scope:
-                        self._cache_known_identifiers_scope[cpp_scope] = []
-                    self._cache_known_identifiers_scope[cpp_scope].append(scoped_identifier_name)
-
-                current_scope: Optional[CppScope] = element_scope
-                scoped_identifier_name = identifier_name
-                while current_scope is not None:
-                    do_cache(current_scope, scoped_identifier_name)
-                    if len(current_scope.scope_parts) > 0:
-                        scoped_identifier_name = (
-                            current_scope.scope_parts[-1].scope_name + "::" + scoped_identifier_name
-                        )
-                        current_scope = current_scope.parent_scope()
-                    else:
-                        current_scope = None
-
-                # add identifier_name to the current scope and its parents,
-                # after applying the scope resolution operator "::"
-
-                # if element_scope not in self._cache_known_identifiers_scope:
-                #     self._cache_known_identifiers_scope[element_scope] = []
-                # self._cache_known_identifiers_scope[element_scope].append(identifier_name)
-
-    def known_identifiers(self, scope: CppScope) -> list[str]:
-        assert hasattr(self, "_cache_known_identifiers_scope")
-
-        if scope not in self._cache_known_identifiers_scope:
-            return []
-        return self._cache_known_identifiers_scope[scope]
 
     def __str__(self) -> str:
         return self.str_block()
