@@ -35,3 +35,6 @@ class CppConstructorDecl(CppFunctionDecl):
 
     def __str__(self) -> str:
         return self.str_commented()
+
+    def __repr__(self):
+        return self._str_signature()
