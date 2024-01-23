@@ -1137,6 +1137,14 @@ class PythonNamedConstructorHelper:
                     {class_name}({parameters_str});
                 }};
             """
+
+            class_scope = self.adapted_class.cpp_element().cpp_scope()
+            for scope_part in class_scope.scope_parts:
+                if scope_part.scope_type == CppScopeType.Namespace:
+                    str_cpp_code = "namespace " + scope_part.scope_name + "{\n" + str_cpp_code + "\n" + "}\n"
+                if scope_part.scope_type == CppScopeType.ClassOrStruct:
+                    str_cpp_code = "struct " + scope_part.scope_name + "{\n" + str_cpp_code + "\n" + "};\n"
+
             return str_cpp_code
 
         def make_cpp_constructor() -> CppFunctionDecl:
