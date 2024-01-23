@@ -21,13 +21,10 @@ $decoration
 }
 
 
-title "Poetry install / add to PATH"
-cd "$REPO_DIR"
-poetry install
-poetry_python_path=$(poetry run which python)
-poetry_python_folder=$(dirname $poetry_python_path)
-export PATH=$poetry_python_folder:$PATH
-echo poetry_python_folder=$poetry_python_folder
+title "Install requirements"
+python3 -m venv venv
+source venv/bin/activate
+pip install -r "$REPO_DIR"/requirements_dev.txt
 
 
 title "Run black"

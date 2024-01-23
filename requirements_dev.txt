@@ -1,6 +1,7 @@
 pytest
 pytest-cov
 jupyter-black
+black
 mypy
 importanize
 Pygments
