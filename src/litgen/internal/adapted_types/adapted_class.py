@@ -390,9 +390,12 @@ class AdaptedClass(AdaptedElement):
     #
     #  ============================================================================================
 
-    def __str__(self):
+    def __str__(self) -> str:
         r = f"AdaptedClass({self.cpp_element().class_name})"
         return r
+
+    def __repr__(self) -> str:
+        return self.__str__()
 
     # override
     def cpp_element(self) -> CppStruct:
@@ -1279,3 +1282,6 @@ class PythonNamedConstructorHelper:
 
         r = "\n".join(adapted_function.stub_lines())
         return r
+
+    def __repr__(self):
+        return f"PythonNamedConstructorHelper({self.adapted_class})"

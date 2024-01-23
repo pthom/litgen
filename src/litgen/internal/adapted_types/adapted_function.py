@@ -359,6 +359,9 @@ class AdaptedFunction(AdaptedElement):
         r = str(self.cpp_element())
         return r
 
+    def __repr__(self):
+        return f"AdaptedFunction({repr(self.cpp_element())})"
+
     def is_method(self) -> bool:
         return self.cpp_element().is_method()
 
