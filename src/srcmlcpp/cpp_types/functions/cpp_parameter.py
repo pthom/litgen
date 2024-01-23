@@ -68,6 +68,9 @@ class CppParameter(CppElementAndComment):
     def __str__(self) -> str:
         return self.str_code()
 
+    def __repr__(self):
+        return self.str_code()
+
     def full_type(self) -> str:
         r = self.decl.cpp_type.str_code()
         return r

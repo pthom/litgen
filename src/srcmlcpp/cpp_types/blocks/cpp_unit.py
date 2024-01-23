@@ -27,6 +27,12 @@ class CppUnit(CppBlock):
     def str_code(self) -> str:
         return self.str_block()
 
+    def __repr__(self):
+        if self.filename is None:
+            return "CppUnit"
+        else:
+            return "CppUnit: " + self.filename
+
     @staticmethod
     def find_root_cpp_unit(element: CppElement) -> CppUnit:
         assert hasattr(element, "parent")  # parent should have been filled by parse_unit & CppBlock
