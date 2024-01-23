@@ -1,17 +1,9 @@
 from srcmlcpp.cpp_types.scope import CppScope
 from srcmlcpp.cpp_types.base.cpp_element import CppElement
 
-from dataclasses import dataclass
-
-
-@dataclass
-class _ScopedIdentifier:
-    scope: CppScope
-    identifier: str
-
 
 def current_token_matches_scoped_identifier(
-    scoped_identifier: _ScopedIdentifier, current_scope: CppScope, current_token: str
+    scoped_identifier_qualified_name: str, current_scope: CppScope, current_token: str
 ) -> bool:
     """
     namespace A { enum E { Foo }; }
@@ -32,7 +24,6 @@ def current_token_matches_scoped_identifier(
         return False
 
     current_scopes = current_scope.scope_hierarchy_list()
-    scoped_identifier_qualified_name = scoped_identifier.scope.qualified_name(scoped_identifier.identifier)
     for current_scope_prefix in current_scopes:
         current_token_proposed_qualified_name = current_scope_prefix.qualified_name(current_token)
         if current_token_proposed_qualified_name == scoped_identifier_qualified_name:
@@ -41,7 +32,7 @@ def current_token_matches_scoped_identifier(
 
 
 def apply_scoped_identifiers_to_code(
-    cpp_code: str, current_scope: CppScope, scoped_identifiers: list[_ScopedIdentifier]
+    cpp_code: str, current_scope: CppScope, scoped_identifier_qualified_names: list[str]
 ) -> str:
     """
     Parse cpp_code character by character, updates current_scoped_identifier in the loop
@@ -112,11 +103,10 @@ def apply_scoped_identifiers_to_code(
                     #     if not current_token.startswith("::"):
                     #         if qualified_identifier.endswith("::" + current_token):
                     #             current_token = qualified_identifier
-                    for scoped_identifier in scoped_identifiers:
-                        if current_token_matches_scoped_identifier(scoped_identifier, current_scope, current_token):
-                            scoped_identifier_qualified_name = scoped_identifier.scope.qualified_name(
-                                scoped_identifier.identifier
-                            )
+                    for scoped_identifier_qualified_name in scoped_identifier_qualified_names:
+                        if current_token_matches_scoped_identifier(
+                            scoped_identifier_qualified_name, current_scope, current_token
+                        ):
                             current_token = scoped_identifier_qualified_name
 
                             # scoped_identifier.scope = N
@@ -146,9 +136,8 @@ def apply_scoped_identifiers_to_code(
         #         if qualified_identifier.endswith("::" + current_token):
         #             current_token = qualified_identifier
         # new_code += current_token
-        for scoped_identifier in scoped_identifiers:
-            if current_token_matches_scoped_identifier(scoped_identifier, current_scope, current_token):
-                scoped_identifier_qualified_name = scoped_identifier.scope.qualified_name(scoped_identifier.identifier)
+        for scoped_identifier_qualified_name in scoped_identifier_qualified_names:
+            if current_token_matches_scoped_identifier(scoped_identifier_qualified_name, current_scope, current_token):
                 current_token = scoped_identifier_qualified_name
 
         new_code += current_token
@@ -157,7 +146,7 @@ def apply_scoped_identifiers_to_code(
 
 
 class CppScopeIdentifiers:
-    _scoped_identifiers: list[_ScopedIdentifier]
+    _scoped_identifiers: list[str]
 
     def __init__(self) -> None:
         self._scoped_identifiers = []
@@ -188,7 +177,8 @@ class CppScopeIdentifiers:
             if shall_add:
                 assert isinstance(element, (CppStruct, CppFunctionDecl, CppDecl, CppEnum))
                 identifier_name = element.name()
-                self._scoped_identifiers.append(_ScopedIdentifier(element_scope, identifier_name))
+                qualified_identifier = element_scope.qualified_name(identifier_name)
+                self._scoped_identifiers.append(qualified_identifier)
 
     def qualify_cpp_code(self, cpp_code: str, current_scope: CppScope) -> str:
         """
