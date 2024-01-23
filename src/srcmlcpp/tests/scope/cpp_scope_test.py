@@ -239,13 +239,46 @@ def test_scope_vector():
 
 
 def test_make_terse_scope():
-    from srcmlcpp.cpp_types.scope.cpp_scope_identifiers import make_terse_code
+    from srcmlcpp.cpp_types.scope.cpp_scope_identifiers import make_terse_code, _make_terse_scoped_identifier
     from srcmlcpp.cpp_types.scope.cpp_scope import CppScope
 
     cpp_code = "N0::N1::N3::S3"
     current_scope = CppScope.from_string("N0::N1::N3")
     new_cpp_code = make_terse_code(cpp_code, current_scope)
     assert new_cpp_code == "S3"
+
+    scoped_identifier = "N1::N3::S3"
+    current_scope = CppScope.from_string("N0::N1::N3")
+    new_scoped_identifier = _make_terse_scoped_identifier(scoped_identifier, current_scope.str_cpp)
+    assert new_scoped_identifier == "S3"
+
+
+def test_scope_test_litgen2():
+    code = """
+    namespace HelloImGui
+    {
+        struct DockingSplit {};
+        struct DockingParams
+        {
+            DockingParams(std::vector<DockingSplit> dockingSplits = std::vector<DockingSplit>());
+            std::vector<DockingSplit>   dockingSplits;
+        };
+    }
+    """
+    # options = litgen.LitgenOptions()
+    # options.srcmlcpp_options.namespaces_root = ["HelloImGui"]
+    # generated_code = litgen.generate_code(options, code)
+    # print(generated_code.stub_code)
+    options = srcmlcpp.SrcmlcppOptions()
+    cpp_unit = srcmlcpp.code_to_cpp_unit(options, code)
+    ctor = cpp_unit.all_functions_recursive()[0]
+    ctor_qualified = ctor.with_qualified_types()
+    assert (
+        repr(ctor_qualified)
+        == "DockingParams(std::vector<HelloImGui::DockingSplit> dockingSplits = std::vector<HelloImGui::DockingSplit>())"
+    )
+    ctor_terse = ctor_qualified.with_terse_types()
+    assert repr(ctor_terse) == "DockingParams(std::vector<DockingSplit> dockingSplits = std::vector<DockingSplit>())"
 
 
 def test_scope_with_litgen():
@@ -284,3 +317,20 @@ def test_scope_with_litgen():
             ;
         """,
     )
+
+
+def test_make_terse_scoped_identifier():
+    from srcmlcpp.cpp_types.scope.cpp_scope_identifiers import _make_terse_scoped_identifier
+
+    assert _make_terse_scoped_identifier("A::B::C", "A::B::C::D") == "C"
+    assert _make_terse_scoped_identifier("A::Foo::Foo1", "A") == "Foo::Foo1"  # error: Foo1
+    assert _make_terse_scoped_identifier("std::vector", "Main") == "std::vector"  # error! "vector"
+    assert _make_terse_scoped_identifier("N1::N3::S3", "N0::N1::N3") == "S3"  # OK
+
+    # N1::N2::S2::s1
+    # Context= N0::N1::N3
+    # => N2::S2::s1
+    scoped_identifier = "N1::N2::S2::s1"
+    context = "N0::N1::N3"
+    r = _make_terse_scoped_identifier(scoped_identifier, context)
+    assert r == "N2::S2::s1"

@@ -297,14 +297,15 @@ def test_with_terse_types_free_function():
                         );
 
                         void h(
-                            N0::N1::N2::S1 _s11 = N0::N1::N2::S2::s1,
-                            N1::N2::S1 _s12 = N1::N2::S2::s1,
+                            N0::N1::N2::S1 _s11 = N0::N1::N2::S2::s1,  // => N2::S1 _s11 = N2::S2::s1
+                            N1::N2::S1 _s12 = N1::N2::S2::s1,          // => N2::S1 _s12 = N2::S2::s1
                             N2::S1 _s13 = N2::S2::s1
                         );
                     }
                 }
             }
     """
+
     options = srcmlcpp.SrcmlcppOptions()
     cpp_unit = srcmlcpp.code_to_cpp_unit(options, code)
 

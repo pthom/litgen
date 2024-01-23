@@ -331,19 +331,10 @@ class CppDecl(CppElementAndComment):
         if current_scope is None:
             current_scope = self.cpp_scope()
 
-        initial_value_fully_qualified = self._initial_value_code_with_qualified_types(current_scope)
-        initial_value_scope_parts = CppScope.from_string(initial_value_fully_qualified).scope_parts
-        current_scope_parts_copy = copy.deepcopy(current_scope.scope_parts)
-        # Any part at the start of initial_value_scope that is identical to current_scope_copy can be removed
-        while True:
-            if len(current_scope_parts_copy) == 0 or len(initial_value_scope_parts) == 0:
-                break
-            if current_scope_parts_copy[0].scope_name == initial_value_scope_parts[0].scope_name:
-                current_scope_parts_copy = current_scope_parts_copy[1:]
-                initial_value_scope_parts = initial_value_scope_parts[1:]
-            else:
-                break
-        r = CppScope(initial_value_scope_parts).str_cpp
+        # initial_value_fully_qualified = self._initial_value_code_with_qualified_types(current_scope)
+        from srcmlcpp.cpp_types.scope.cpp_scope_identifiers import make_terse_code
+
+        r = make_terse_code(self.initial_value_code, current_scope)
         return r
 
     def with_terse_types(self, current_scope: CppScope | None = None) -> CppDecl:
