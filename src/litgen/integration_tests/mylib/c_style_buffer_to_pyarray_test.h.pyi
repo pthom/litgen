@@ -36,7 +36,9 @@ def buffer_sum(buffer: np.ndarray, stride: int = -1) -> int:
     """
     pass
 
-def add_inside_two_buffers(buffer_1: np.ndarray, buffer_2: np.ndarray, number_to_add: int) -> None:
+def add_inside_two_buffers(
+    buffer_1: np.ndarray, buffer_2: np.ndarray, number_to_add: int
+) -> None:
     """add_inside_two_buffers: modifies two mutable buffers
     litgen will detect that this function uses two buffers of same size.
     Will be published in python as:

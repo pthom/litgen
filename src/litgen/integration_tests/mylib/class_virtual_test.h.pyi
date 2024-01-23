@@ -50,7 +50,9 @@ class root:  # Proxy class that introduces typings for the *submodule* root
             # <protected_methods>
             def foo_virtual_protected(self, x: int) -> int:  # overridable
                 pass
-            def foo_virtual_protected_const_const(self, name: str) -> str:  # overridable
+            def foo_virtual_protected_const_const(
+                self, name: str
+            ) -> str:  # overridable
                 pass
             # </protected_methods>
 

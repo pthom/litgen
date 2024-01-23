@@ -110,7 +110,9 @@ def change_bool_int2(label: str, value1: int, value2: int) -> Tuple[bool, int, i
     """
     pass
 
-def change_void_int_default_null(label: str, value: Optional[int] = None) -> Tuple[bool, Optional[int]]:
+def change_void_int_default_null(
+    label: str, value: Optional[int] = None
+) -> Tuple[bool, Optional[int]]:
     """Will be published in python as:
     -->    def change_void_int_default_null(label: str, value: Optional[int] = None) -> Tuple[bool, Optional[int]]:
     """

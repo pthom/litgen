@@ -53,6 +53,33 @@ void py_init_module_mylib(py::module& m)
             .def_readwrite("foo", &A::ClassNoDefaultCtor::foo, "")
             .def_readonly("s", &A::ClassNoDefaultCtor::s, "")
             ;
+        { // <namespace N>
+            py::module_ pyNsA_NsN = pyNsA.def_submodule("n", "");
+            auto pyNsA_NsN_ClassS =
+                py::class_<A::N::S>
+                    (pyNsA_NsN, "S", "")
+                .def(py::init<>()) // implicit default constructor
+                ;
+
+
+            py::enum_<A::N::EC>(pyNsA_NsN, "EC", py::arithmetic(), "")
+                .value("a", A::N::EC::a, "");
+
+
+            py::enum_<A::N::E>(pyNsA_NsN, "E", py::arithmetic(), "")
+                .value("a", A::N::E_a, "");
+
+
+            pyNsA_NsN.def("foo",
+                py::overload_cast<A::N::EC>(A::N::Foo), py::arg("e") = A::N::EC::a);
+
+            pyNsA_NsN.def("foo",
+                py::overload_cast<A::N::E>(A::N::Foo), py::arg("e") = A::N::E_a);
+
+            pyNsA_NsN.def("foo",
+                py::overload_cast<A::N::E, A::N::S>(A::N::Foo), py::arg("e") = A::N::E_a, py::arg("s") = A::N::S());
+        } // </namespace N>
+
     } // </namespace A>
     ////////////////////    </generated_from:class_default_ctor_test.h>    ////////////////////
 

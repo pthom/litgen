@@ -21,4 +21,16 @@ namespace A
         Foo foo = Foo::Foo1;
         const std::string s = "Allo";
     };
+
+    namespace N
+    {
+        struct S {};
+        enum class EC { a = 0 };
+        enum E { E_a = 0 };
+
+        MY_API void Foo(EC e = EC::a) {}
+        MY_API void Foo(E e = E_a) {}
+        MY_API void Foo(E e = E_a, S s = S()) {}
+    }
+
 }
