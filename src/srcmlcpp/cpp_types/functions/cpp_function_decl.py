@@ -460,6 +460,9 @@ class CppFunctionDecl(CppElementAndComment, CppITemplateHost):
     def __str__(self) -> str:
         return self.str_code()
 
+    def __repr__(self):
+        return self._str_signature()
+
     def visit_cpp_breadth_first(self, cpp_visitor_function: CppElementsVisitorFunction, depth: int = 0) -> None:
         cpp_visitor_function(self, CppElementsVisitorEvent.OnElement, depth)
         cpp_visitor_function(self, CppElementsVisitorEvent.OnBeforeChildren, depth)

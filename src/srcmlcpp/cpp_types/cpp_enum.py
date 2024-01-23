@@ -66,6 +66,11 @@ class CppEnum(CppElementAndComment):
     def __str__(self) -> str:
         return self.str_code()
 
+    def __repr__(self):
+        r = "enum class " if self.enum_type == "class" else "enum "
+        r += self.enum_name
+        return r
+
     def get_enum_decls(self) -> list[CppDecl]:
         r: list[CppDecl] = []
         for child in self.block.block_children:

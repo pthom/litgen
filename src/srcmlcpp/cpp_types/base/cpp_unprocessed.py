@@ -27,6 +27,9 @@ class CppEmptyLine(CppElementAndComment):
     def __str__(self) -> str:
         return ""
 
+    def __repr__(self):
+        return "<empty_line>"
+
 
 class CppUnprocessed(CppElementAndComment):
     """Any Cpp Element that is not yet processed by srcmlcpp

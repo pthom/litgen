@@ -273,3 +273,6 @@ class CppType(CppElementAndComment):
 
     def __str__(self) -> str:
         return self.str_code()
+
+    def __repr__(self):
+        return self.str_code()

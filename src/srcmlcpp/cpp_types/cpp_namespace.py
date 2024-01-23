@@ -44,6 +44,9 @@ class CppNamespace(CppElementAndComment):
     def __str__(self) -> str:
         return self.str_code()
 
+    def __repr__(self):
+        return f"namespace {self.ns_name}"
+
     def visit_cpp_breadth_first(self, cpp_visitor_function: CppElementsVisitorFunction, depth: int = 0) -> None:
         cpp_visitor_function(self, CppElementsVisitorEvent.OnElement, depth)
         cpp_visitor_function(self, CppElementsVisitorEvent.OnBeforeChildren, depth)

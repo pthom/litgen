@@ -20,3 +20,7 @@ class CppClass(CppStruct):
 
     def __str__(self) -> str:
         return self.str_commented()
+
+    def __repr__(self):
+        r = "class " + self.class_name
+        return r

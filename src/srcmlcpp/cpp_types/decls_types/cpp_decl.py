@@ -125,6 +125,10 @@ class CppDecl(CppElementAndComment):
         r = self.str_commented()
         return r
 
+    def __repr__(self):
+        r = self.str_code()
+        return r
+
     def is_c_string_list_ptr(self) -> bool:
         """
         Returns true if this decl looks like a const C string double pointer.

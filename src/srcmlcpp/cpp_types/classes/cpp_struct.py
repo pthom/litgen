@@ -93,6 +93,10 @@ class CppStruct(CppElementAndComment, CppITemplateHost):
     def __str__(self) -> str:
         return self.str_commented()
 
+    def __repr__(self):
+        r = "struct " + self.class_name
+        return r
+
     def is_final(self) -> bool:
         return self.specifier == "final"
 
