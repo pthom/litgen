@@ -1156,6 +1156,33 @@ class a:  # Proxy class that introduces typings for the *submodule* a
         def __init__(self, b: bool = True, a: int = int(), c: int = 3, foo: Foo = Foo.foo1) -> None:
             """Auto-generated default constructor with named params"""
             pass
+    # <submodule n>
+    class n:  # Proxy class that introduces typings for the *submodule* n
+        pass  # (This corresponds to a C++ namespace. All method are static!)
+
+        class S:
+            def __init__(self) -> None:
+                """Auto-generated default constructor"""
+                pass
+
+        class EC(enum.Enum):
+            a = enum.auto()  # (= 0)
+
+        class E(enum.Enum):
+            a = enum.auto()  # (= 0)
+        @staticmethod
+        @overload
+        def foo(e: EC = EC.a) -> None:
+            pass
+        @staticmethod
+        @overload
+        def foo(e: E = E.a) -> None:
+            pass
+        @staticmethod
+        @overload
+        def foo(e: E = E.a, s: S = S()) -> None:
+            pass
+    # </submodule n>
 
 # </submodule a>
 ####################    </generated_from:mylib_amalgamation.h>    ####################

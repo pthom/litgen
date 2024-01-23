@@ -512,7 +512,8 @@ class LitgenOptions:
     #    <post processing>
     ################################################################################
     # If you need to process the code after generation, fill these functions
-    postprocess_stub_function: Callable[[str], str] | None = None
+    postprocess_stub_function: Callable[[str], str] | None = None  # run at the very end
+    postprocess_stub_before_black_function: Callable[[str], str] | None = None  # run before black formatter
     postprocess_pydef_function: Callable[[str], str] | None = None
 
     ################################################################################

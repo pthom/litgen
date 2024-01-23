@@ -101,7 +101,7 @@ class CppStruct(CppElementAndComment, CppITemplateHost):
         return self.specifier == "final"
 
     def qualified_class_name(self) -> str:
-        parent_scope = self.cpp_scope(False).str_cpp()
+        parent_scope = self.cpp_scope(False).str_cpp
         if len(parent_scope) == 0:
             return self.class_name
         else:

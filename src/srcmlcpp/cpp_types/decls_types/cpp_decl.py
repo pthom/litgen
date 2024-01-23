@@ -343,7 +343,7 @@ class CppDecl(CppElementAndComment):
                 initial_value_scope_parts = initial_value_scope_parts[1:]
             else:
                 break
-        r = CppScope(initial_value_scope_parts).str_cpp()
+        r = CppScope(initial_value_scope_parts).str_cpp
         return r
 
     def with_terse_types(self, current_scope: CppScope | None = None) -> CppDecl:

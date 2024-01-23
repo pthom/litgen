@@ -118,10 +118,10 @@ class CppElement(SrcmlWrapper):
                 return self._cached_cpp_scope_str
 
         if include_self:
-            self._cached_cpp_scope_include_self_str: str = self.cpp_scope(include_self).str_cpp()
+            self._cached_cpp_scope_include_self_str: str = self.cpp_scope(include_self).str_cpp
             return self._cached_cpp_scope_include_self_str
         else:
-            self._cached_cpp_scope_str: str = self.cpp_scope(include_self).str_cpp()
+            self._cached_cpp_scope_str: str = self.cpp_scope(include_self).str_cpp
             return self._cached_cpp_scope_str
 
     def cpp_scope(self, include_self: bool = False) -> CppScope:

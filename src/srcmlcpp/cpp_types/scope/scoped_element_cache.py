@@ -18,15 +18,15 @@ class ScopedElementCache:
         self._cache = {}
 
     def contains(self, cpp_scope: CppScope) -> bool:
-        r = cpp_scope.str_cpp() in self._cache.keys()
+        r = cpp_scope.str_cpp in self._cache.keys()
         return r
 
     def store(self, cpp_scope: CppScope, cpp_element: CppElementAndComment) -> None:
-        self._cache[cpp_scope.str_cpp()] = cpp_element
+        self._cache[cpp_scope.str_cpp] = cpp_element
 
     def get(self, cpp_scope: CppScope) -> CppElementAndComment:
         assert self.contains(cpp_scope)
-        r = self._cache[cpp_scope.str_cpp()]
+        r = self._cache[cpp_scope.str_cpp]
         return r
 
     def clear_cache(self) -> None:

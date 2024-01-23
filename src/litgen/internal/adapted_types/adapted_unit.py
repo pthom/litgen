@@ -34,6 +34,8 @@ class AdaptedUnit(AdaptedBlock):
         context_namespaces_code = self.lg_context.namespaces_stub.full_tree_code(self.options._indent_python_spaces())
         r += context_namespaces_code
 
+        if self.options.postprocess_stub_before_black_function is not None:
+            r = self.options.postprocess_stub_before_black_function(r)
         r = cpp_to_python.apply_black_formatter_pyi(self.options, r)
 
         global_progress_bars().stop_progress_bar(_PROGRESS_BAR_TITLE_STUB)

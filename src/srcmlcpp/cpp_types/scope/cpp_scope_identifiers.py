@@ -1,8 +1,48 @@
 from srcmlcpp.cpp_types.scope import CppScope
 from srcmlcpp.cpp_types.base.cpp_element import CppElement
 
+from dataclasses import dataclass
 
-def apply_scoped_identifiers_to_code(cpp_code: str, qualified_scoped_identifiers: list[str]) -> str:
+
+@dataclass
+class _ScopedIdentifier:
+    scope: CppScope
+    identifier: str
+
+
+def current_token_matches_scoped_identifier(
+    scoped_identifier: _ScopedIdentifier, current_scope: CppScope, current_token: str
+) -> bool:
+    """
+    namespace A { enum E { Foo }; }
+    namespace B {
+        enum class  BE { Foo };
+        namespace C {
+            struct S { BE be = BE::Foo; };
+                                 ^
+    }
+    """
+    # scoped_identifier.scope = B::BE
+    # scoped_identifier.identifier = Foo
+    # current_scope = B::C::S
+    # current_token = BE::Foo
+    # => can access, because
+    #       current_scope[:1] + current_token = B::BE::Foo
+    if current_token.startswith("::"):
+        return False
+
+    current_scopes = current_scope.scope_hierarchy_list()
+    scoped_identifier_qualified_name = scoped_identifier.scope.qualified_name(scoped_identifier.identifier)
+    for current_scope_prefix in current_scopes:
+        current_token_proposed_qualified_name = current_scope_prefix.qualified_name(current_token)
+        if current_token_proposed_qualified_name == scoped_identifier_qualified_name:
+            return True
+    return False
+
+
+def apply_scoped_identifiers_to_code(
+    cpp_code: str, current_scope: CppScope, scoped_identifiers: list[_ScopedIdentifier]
+) -> str:
     """
     Parse cpp_code character by character, updates current_scoped_identifier in the loop
 
@@ -54,10 +94,36 @@ def apply_scoped_identifiers_to_code(cpp_code: str, qualified_scoped_identifiers
                 if current_token:
                     # This is the heart of the algorithm, which is not placed in a sub-function
                     # for performance reasons
-                    for qualified_identifier in qualified_scoped_identifiers:
-                        if not current_token.startswith("::"):
-                            if qualified_identifier.endswith("::" + current_token):
-                                current_token = qualified_identifier
+
+                    # current_token is a scoped identifier found in the C++ code
+                    # for example `Foo` or `::Foo` or `SubNamespace::Foo`
+
+                    # scoped_identifier.scope = N
+                    # current_scope = A::ClassNoDefaultCtor
+                    # current_token = foo
+                    # => can't access
+
+                    # scoped_identifier.scope = N
+                    # current_scope = A::ClassNoDefaultCtor
+                    # current_token = N::Foo
+                    # => can access
+
+                    # for qualified_identifier in qualified_scoped_identifiers:
+                    #     if not current_token.startswith("::"):
+                    #         if qualified_identifier.endswith("::" + current_token):
+                    #             current_token = qualified_identifier
+                    for scoped_identifier in scoped_identifiers:
+                        if current_token_matches_scoped_identifier(scoped_identifier, current_scope, current_token):
+                            scoped_identifier_qualified_name = scoped_identifier.scope.qualified_name(
+                                scoped_identifier.identifier
+                            )
+                            current_token = scoped_identifier_qualified_name
+
+                            # scoped_identifier.scope = N
+                            # current_scope = A::ClassNoDefaultCtor
+                            # current_token = N::Foo
+                            # => can access
+                            # => can access if current_token starts with "scoped_identifier.scope::"
 
                     new_code += current_token
                     current_token = ""
@@ -75,20 +141,26 @@ def apply_scoped_identifiers_to_code(cpp_code: str, qualified_scoped_identifiers
     if current_token:
         # This is the heart of the algorithm, which is not placed in a sub-function
         # for performance reasons
-        for qualified_identifier in qualified_scoped_identifiers:
-            if not current_token.startswith("::"):
-                if qualified_identifier.endswith("::" + current_token):
-                    current_token = qualified_identifier
+        # for qualified_identifier in qualified_scoped_identifiers:
+        #     if not current_token.startswith("::"):
+        #         if qualified_identifier.endswith("::" + current_token):
+        #             current_token = qualified_identifier
+        # new_code += current_token
+        for scoped_identifier in scoped_identifiers:
+            if current_token_matches_scoped_identifier(scoped_identifier, current_scope, current_token):
+                scoped_identifier_qualified_name = scoped_identifier.scope.qualified_name(scoped_identifier.identifier)
+                current_token = scoped_identifier_qualified_name
+
         new_code += current_token
 
     return new_code
 
 
 class CppScopeIdentifiers:
-    _cache_qualified_identifiers: list[str]
+    _scoped_identifiers: list[_ScopedIdentifier]
 
     def __init__(self) -> None:
-        self._cache_qualified_identifiers = []
+        self._scoped_identifiers = []
 
     def fill_cache(self, all_elements: list[CppElement]) -> None:
         from srcmlcpp.cpp_types import CppStruct, CppFunctionDecl, CppEnum
@@ -116,9 +188,9 @@ class CppScopeIdentifiers:
             if shall_add:
                 assert isinstance(element, (CppStruct, CppFunctionDecl, CppDecl, CppEnum))
                 identifier_name = element.name()
-                self._cache_qualified_identifiers.append(element_scope.qualified_name(identifier_name))
+                self._scoped_identifiers.append(_ScopedIdentifier(element_scope, identifier_name))
 
-    def qualify_cpp_code(self, cpp_code: str, scope: CppScope) -> str:
+    def qualify_cpp_code(self, cpp_code: str, current_scope: CppScope) -> str:
         """
         cpp_code is an extract of C++ code that come from a declaration. It can either be a type or a value
         Example:
@@ -130,6 +202,15 @@ class CppScopeIdentifiers:
         qualify_cpp_code() should return the fully qualified version of cpp_code
         """
         new_code = cpp_code
-        for qualified_identifier in self._cache_qualified_identifiers:
-            new_code = apply_scoped_identifiers_to_code(new_code, [qualified_identifier])
+
+        # cached_scope = N
+        # scope = A::ClassNoDefaultCtor
+        # scoped_identifier = foo
+        # => can't access
+
+        # cached_scope = N
+        # scope = A::ClassNoDefaultCtor
+        # scoped_identifier = N::Foo
+        # => can access
+        new_code = apply_scoped_identifiers_to_code(new_code, current_scope, self._scoped_identifiers)
         return new_code

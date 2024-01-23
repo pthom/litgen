@@ -581,7 +581,7 @@ class AdaptedClass(AdaptedElement):
             if self.cpp_element().has_private_destructor():
                 other_template_params_list.append(f"std::unique_ptr<{qualified_struct_name}, py::nodelete>")
             if self._virt_shall_override():
-                scope = self.cpp_element().cpp_scope(False).str_cpp()
+                scope = self.cpp_element().cpp_scope(False).str_cpp
                 scope_prefix = scope + "::" if len(scope) > 0 else ""
                 qualified_trampoline_name = scope_prefix + self.cpp_element().class_name + "_trampoline"
                 other_template_params_list.append(qualified_trampoline_name)
@@ -1143,7 +1143,8 @@ class PythonNamedConstructorHelper:
                 if scope_part.scope_type == CppScopeType.Namespace:
                     str_cpp_code = "namespace " + scope_part.scope_name + "{\n" + str_cpp_code + "\n" + "}\n"
                 if scope_part.scope_type == CppScopeType.ClassOrStruct:
-                    str_cpp_code = "struct " + scope_part.scope_name + "{\n" + str_cpp_code + "\n" + "};\n"
+                    # We reinterpret the struct as a namespace, this does not change the scope
+                    str_cpp_code = "namespace " + scope_part.scope_name + "{\n" + str_cpp_code + "\n" + "}\n"
 
             return str_cpp_code
 

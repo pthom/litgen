@@ -261,7 +261,7 @@ class CppType(CppElementAndComment):
                 type_name_qualified_scope_parts = type_name_qualified_scope_parts[1:]
             else:
                 break
-        new_type_name = CppScope(type_name_qualified_scope_parts).str_cpp()
+        new_type_name = CppScope(type_name_qualified_scope_parts).str_cpp
         if new_type_name != " ".join(self.typenames):
             new_cpp_type = copy.deepcopy(self)
             new_cpp_type.typenames = [new_type_name]

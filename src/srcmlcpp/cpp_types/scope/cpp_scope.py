@@ -21,9 +21,20 @@ class CppScopePart:
 
 class CppScope:
     scope_parts: Final[list[CppScopePart]]
+    str_cpp_prefix: Final[str]
+    str_cpp: Final[str]
 
     def __init__(self, scopes: list[CppScopePart]) -> None:
         self.scope_parts = scopes
+        if len(self.scope_parts) == 0:
+            str_cpp_prefix = ""
+            str_cpp = ""
+        else:
+            scope_names = map(lambda s: s.scope_name, self.scope_parts)
+            str_cpp = "::".join(scope_names)
+            str_cpp_prefix = str_cpp + "::"
+        self.str_cpp = str_cpp
+        self.str_cpp_prefix = str_cpp_prefix
 
     @staticmethod
     def from_string(s: str) -> CppScope:
@@ -35,7 +46,7 @@ class CppScope:
     def __eq__(self, other: object) -> bool:
         if not isinstance(other, CppScope):
             return NotImplemented
-        return self.str_cpp() == other.str_cpp()
+        return self.str_cpp == other.str_cpp
 
     def parent_scope(self) -> CppScope | None:
         if len(self.scope_parts) == 0:
@@ -60,30 +71,14 @@ class CppScope:
             parent = parent.parent_scope()
         return False
 
-    def str_cpp(self) -> str:
-        """Returns this scope as a cpp scope, e.g Foo::Blah"""
-        if len(self.scope_parts) == 0:
-            return ""
-        scope_names = map(lambda s: s.scope_name, self.scope_parts)
-        r = "::".join(scope_names)
-        return r
-
-    def str_cpp_prefix(self) -> str:
-        """Returns this scope as a cpp prefix, e.g Foo::Blah::"""
-        s = self.str_cpp()
-        if len(s) == 0:
-            return ""
-        else:
-            return s + "::"
-
     def qualified_name(self, name: str) -> str:
-        return self.str_cpp_prefix() + name
+        return self.str_cpp_prefix + name
 
     def __str__(self):
-        return self.str_cpp()
+        return self.str_cpp
 
     def __repr__(self):
-        return self.str_cpp()
+        return self.str_cpp
 
     def __hash__(self) -> int:
-        return hash(self.str_cpp())
+        return hash(self.str_cpp)
