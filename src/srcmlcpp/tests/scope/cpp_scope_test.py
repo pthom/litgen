@@ -179,6 +179,29 @@ def test_decl_qualified_type():
     assert e2_value_qualified == "N1::N2::E2::a"
 
 
+def test_scope_terse_type():
+    code = """
+    namespace A
+    {
+        enum class Foo { Foo1 = 0 };
+        struct MyClass
+        {
+            MyClass(A::Foo foo = A::Foo::Foo1);
+            Foo foo = Foo::Foo1;
+        };
+    }
+
+    """
+    options = srcmlcpp.SrcmlcppOptions()
+    cpp_unit = srcmlcpp.code_to_cpp_unit(options, code)
+    functions = cpp_unit.all_functions_recursive()
+    assert len(functions) == 1
+    ctor = functions[0]
+    ctor_qualified = ctor.with_qualified_types()
+    ctor_terse = ctor_qualified.with_terse_types()
+    assert ctor_terse.str_code() == "MyClass(Foo foo = Foo::Foo1)"
+
+
 def test_scope_with_litgen():
     code = """
     namespace DaftLib
@@ -215,17 +238,3 @@ def test_scope_with_litgen():
             ;
         """,
     )
-
-
-"""
-    namespace Blah { struct FooBlah{}; }
-    struct Foo{};
-    Point Middle(const Point& other) const;
-    void Blah(Blah::FooBlah blah = Blah::FooBlah(), Foo foo = Foo());
-
-
-    options.fn_template_options.add_specialization("^MaxValue$", ["int", "float"], add_suffix_to_function_name=True)
-
-    template<typename T> T MaxValue(const std::vector<T>& values) { return *std::max_element(values.begin(), values.end());}
-
-"""
