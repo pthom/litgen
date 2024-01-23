@@ -639,14 +639,14 @@ def contains_word_boundary_left_only(where_to_search: str, word: str) -> bool:
     return does_match_regex(regex_str, where_to_search)
 
 
-def replace_identifier(cpp_code, old_identifier, new_identifier):
+def replace_identifier(cpp_code: str, old_identifier: str, new_identifier: str) -> str:
     # Regular expression pattern for a valid C++ identifier
     pattern = r"\b" + re.escape(old_identifier) + r"\b"
     # Replace the old identifier with the new one
     return re.sub(pattern, new_identifier, cpp_code)
 
 
-def contains_identifier(cpp_code, identifier):
+def contains_identifier(cpp_code: str, identifier: str) -> bool:
     if identifier not in cpp_code:
         # Shortcut to avoid the slow regular expression search
         return False
