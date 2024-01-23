@@ -843,6 +843,8 @@ def fill_block(options: SrcmlcppOptions, element: SrcmlWrapper, inout_block_cont
                     options, cpp_decl_stmt
                 )
                 if fixed_function is not None:
+                    fixed_function.parent = cpp_decl_stmt.parent
+                    fixed_function._clear_scope_cache()
                     block_children.append(fixed_function)
                 else:
                     block_children.append(cpp_decl_stmt)
