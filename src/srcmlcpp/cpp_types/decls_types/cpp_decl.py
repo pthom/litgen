@@ -3,7 +3,6 @@ import copy
 from dataclasses import dataclass
 from enum import Enum
 from typing import TYPE_CHECKING
-from codemanip import code_utils
 
 from srcmlcpp.cpp_types.base import (
     CppElementAndComment,
@@ -237,17 +236,9 @@ class CppDecl(CppElementAndComment):
         # initial_value_token: self.initial_value_code without (...) or {...}
         initial_value = self.initial_value_code
 
-        visibility_scopes = current_scope.scope_hierarchy_list()
-        for visibility_scope in visibility_scopes:
-            known_candidates = self.root_cpp_unit().known_identifiers(visibility_scope)
-            for known_candidate in known_candidates:
-                if code_utils.contains_identifier(initial_value, known_candidate):
-                    search = known_candidate
-                    replace = visibility_scope.qualified_name(known_candidate)
-                    r = code_utils.replace_identifier(initial_value, search, replace)
-                    return r
-
-        return initial_value
+        cpp_unit = self.root_cpp_unit()
+        r = cpp_unit._scope_identifiers.qualify_cpp_code(initial_value, current_scope)
+        return r
 
     def with_qualified_types(self, current_scope: CppScope | None = None) -> CppDecl:
         """Qualifies the types and initial values of a decl, e.g.

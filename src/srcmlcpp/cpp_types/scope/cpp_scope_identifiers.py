@@ -1,14 +1,94 @@
-from typing import Optional
-
 from srcmlcpp.cpp_types.scope import CppScope
 from srcmlcpp.cpp_types.base.cpp_element import CppElement
 
 
-class CppScopeIdentifiers:
-    _cache_known_identifiers_scope: dict[CppScope, list[str]]
+def apply_scoped_identifiers_to_code(cpp_code: str, qualified_scoped_identifiers: list[str]) -> str:
+    """
+    Parse cpp_code character by character, updates current_scoped_identifier in the loop
 
-    def __init__(self):
-        self._cache_known_identifiers_scope = {}
+    Each time a new current_scoped_identifier is collected, apply_scoped_identifier() is called,
+    and the result is added to the new code.
+
+    Examples:
+        scoped_identifier = "SubNamespace::Foo"
+        qualified_scoped_identifier = "Main::SubNamespace::Foo"
+        => "Main::SubNamespace::Foo" (we can add more scope)
+
+        scoped_identifier = "Foo"
+        qualified_scoped_identifier = "Main::SubNamespace::Foo"
+        => "Main::SubNamespace::Foo" (we can add more scope)
+
+        scoped_identifier = "::Foo"
+        qualified_scoped_identifier = "Main::SubNamespace::Foo"
+        => "::Foo" (we can't add scope to the root)
+
+        scoped_identifier = "Other::Foo"
+        qualified_scoped_identifier = "Main::Foo"
+        => "Other::Foo" (we can't add more scope)
+    """
+    new_code = ""
+    current_token = ""
+    i = 0
+    in_string = False
+    in_comment = False
+
+    while i < len(cpp_code):
+        char = cpp_code[i]
+
+        # Check for string literal start/end
+        if char == '"' and not in_comment:
+            in_string = not in_string
+
+        # Check for comment start
+        if char == "/" and i + 1 < len(cpp_code) and cpp_code[i + 1] == "/" and not in_string:
+            in_comment = True
+
+        # Process characters outside strings and comments
+        if not in_string and not in_comment:
+            if char.isalnum() or char == "_":
+                current_token += char
+            elif char == ":" and i + 1 < len(cpp_code) and cpp_code[i + 1] == ":":
+                current_token += "::"
+                i += 1
+            else:
+                if current_token:
+                    # This is the heart of the algorithm, which is not placed in a sub-function
+                    # for performance reasons
+                    for qualified_identifier in qualified_scoped_identifiers:
+                        if not current_token.startswith("::"):
+                            if qualified_identifier.endswith("::" + current_token):
+                                current_token = qualified_identifier
+
+                    new_code += current_token
+                    current_token = ""
+                new_code += char
+        else:
+            new_code += char
+
+        # Reset in_comment at the end of the line
+        if char == "\n":
+            in_comment = False
+
+        i += 1
+
+    # Add the last token if it exists
+    if current_token:
+        # This is the heart of the algorithm, which is not placed in a sub-function
+        # for performance reasons
+        for qualified_identifier in qualified_scoped_identifiers:
+            if not current_token.startswith("::"):
+                if qualified_identifier.endswith("::" + current_token):
+                    current_token = qualified_identifier
+        new_code += current_token
+
+    return new_code
+
+
+class CppScopeIdentifiers:
+    _cache_qualified_identifiers: list[str]
+
+    def __init__(self) -> None:
+        self._cache_qualified_identifiers = []
 
     def fill_cache(self, all_elements: list[CppElement]) -> None:
         from srcmlcpp.cpp_types import CppStruct, CppFunctionDecl, CppEnum
@@ -36,34 +116,20 @@ class CppScopeIdentifiers:
             if shall_add:
                 assert isinstance(element, (CppStruct, CppFunctionDecl, CppDecl, CppEnum))
                 identifier_name = element.name()
+                self._cache_qualified_identifiers.append(element_scope.qualified_name(identifier_name))
 
-                def do_cache(cpp_scope: CppScope, scoped_identifier_name: str) -> None:
-                    if cpp_scope not in self._cache_known_identifiers_scope:
-                        self._cache_known_identifiers_scope[cpp_scope] = []
-                    self._cache_known_identifiers_scope[cpp_scope].append(scoped_identifier_name)
+    def qualify_cpp_code(self, cpp_code: str, scope: CppScope) -> str:
+        """
+        cpp_code is an extract of C++ code that come from a declaration. It can either be a type or a value
+        Example:
+            std::vector<Main::Foo> fooList = Main::Foo::CreateFooList();
+        In this example, it can be either `std::vector<Main::Foo> fooList` or `Main::Foo::CreateFooList()`
 
-                current_scope: Optional[CppScope] = element_scope
-                scoped_identifier_name = identifier_name
-                while current_scope is not None:
-                    do_cache(current_scope, scoped_identifier_name)
-                    if len(current_scope.scope_parts) > 0:
-                        scoped_identifier_name = (
-                            current_scope.scope_parts[-1].scope_name + "::" + scoped_identifier_name
-                        )
-                        current_scope = current_scope.parent_scope()
-                    else:
-                        current_scope = None
+        Its current scope is scope
 
-                # add identifier_name to the current scope and its parents,
-                # after applying the scope resolution operator "::"
-
-                # if element_scope not in self._cache_known_identifiers_scope:
-                #     self._cache_known_identifiers_scope[element_scope] = []
-                # self._cache_known_identifiers_scope[element_scope].append(identifier_name)
-
-    def known_identifiers(self, scope: CppScope) -> list[str]:
-        assert hasattr(self, "_cache_known_identifiers_scope")
-
-        if scope not in self._cache_known_identifiers_scope:
-            return []
-        return self._cache_known_identifiers_scope[scope]
+        qualify_cpp_code() should return the fully qualified version of cpp_code
+        """
+        new_code = cpp_code
+        for qualified_identifier in self._cache_qualified_identifiers:
+            new_code = apply_scoped_identifiers_to_code(new_code, [qualified_identifier])
+        return new_code

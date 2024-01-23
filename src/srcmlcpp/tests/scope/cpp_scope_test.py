@@ -4,8 +4,52 @@ from codemanip import code_utils
 import srcmlcpp
 
 
+def test_apply_scoped_identifiers_to_code():
+    from srcmlcpp.cpp_types.scope.cpp_scope_identifiers import apply_scoped_identifiers_to_code
+
+    cpp_code = "std::vector<SubNamespace::Foo> fooList = SubNamespace::CreateFooList();"
+    qualified_scoped_identifiers = ["Main::SubNamespace::Foo", "Main::SubNamespace::CreateFooList"]
+    new_code = apply_scoped_identifiers_to_code(cpp_code, qualified_scoped_identifiers)
+    assert new_code == "std::vector<Main::SubNamespace::Foo> fooList = Main::SubNamespace::CreateFooList();"
+
+    # Test with global scope identifiers
+    cpp_code = "::Foo bar = ::CreateFoo();"
+    qualified_scoped_identifiers = ["Main::Foo", "Main::CreateFoo"]
+    new_code = apply_scoped_identifiers_to_code(cpp_code, qualified_scoped_identifiers)
+    assert new_code == "::Foo bar = ::CreateFoo();"
+
+    # Test with nested scopes
+    cpp_code = "Outer::Inner::Foo bar;"
+    qualified_scoped_identifiers = ["Outer::Inner::Foo", "SomeOther::Foo"]
+    new_code = apply_scoped_identifiers_to_code(cpp_code, qualified_scoped_identifiers)
+    assert new_code == "Outer::Inner::Foo bar;"
+
+    # Test with similar but different scoped identifiers
+    cpp_code = "Namespace1::Foo(); Namespace2::Foo();"
+    qualified_scoped_identifiers = ["Main::Namespace1::Foo", "Main::Namespace2::Foo"]
+    new_code = apply_scoped_identifiers_to_code(cpp_code, qualified_scoped_identifiers)
+    assert new_code == "Main::Namespace1::Foo(); Main::Namespace2::Foo();"
+
+    # Test with no changes needed
+    cpp_code = "int a = 5;"
+    qualified_scoped_identifiers = ["Main::SubNamespace::Foo"]
+    new_code = apply_scoped_identifiers_to_code(cpp_code, qualified_scoped_identifiers)
+    assert new_code == "int a = 5;"
+
+    # Test with an empty string
+    cpp_code = ""
+    qualified_scoped_identifiers = ["Main::SubNamespace::Foo"]
+    new_code = apply_scoped_identifiers_to_code(cpp_code, qualified_scoped_identifiers)
+    assert new_code == ""
+
+    # Test with identifiers in strings or comments
+    cpp_code = 'std::string s = "Foo::Bar"; // Foo::Bar should not be changed'
+    qualified_scoped_identifiers = ["Main::Foo::Bar"]
+    new_code = apply_scoped_identifiers_to_code(cpp_code, qualified_scoped_identifiers)
+    assert new_code == 'std::string s = "Foo::Bar"; // Foo::Bar should not be changed'
+
+
 def test_scope():
-    from srcmlcpp import CppScope
 
     code = """
     namespace Snippets
@@ -35,37 +79,20 @@ def test_scope():
     options = srcmlcpp.SrcmlcppOptions()
     cpp_unit = srcmlcpp.code_to_cpp_unit(options, code)
 
-    def test_scope_cache() -> None:
-        # Get the scope cache
-        scope_cache = cpp_unit._scope_identifiers._cache_known_identifiers_scope
-
-        # Test Snippets scope: it should contain Color_Red (which leaks from the C enum Color)
-        snippet_identifiers = scope_cache[CppScope.from_string("Snippets")]
-        assert snippet_identifiers == [
-            "Color",
-            "Color_Red",
-            "col",
-            "SnippetTheme",
-            "SnippetTheme::Light",
-            "theme",
-            "SnippetData",
-            "SnippetData::Palette",
-            "foo",
-            "snippetsVector",
-        ]
-
-        # there should not be a scope Snippet::Color
-        assert CppScope.from_string("Snippets::Color") not in scope_cache
-
-        # Test Snippets::SnippetTheme scope: it should contain Light
-        snippet_theme_identifiers = scope_cache[CppScope.from_string("Snippets::SnippetTheme")]
-        assert snippet_theme_identifiers == ["Light"]
-
-        # Test Snippets::SnippetData scope: it should contain Palette
-        snippet_data_identifiers = scope_cache[CppScope.from_string("Snippets::SnippetData")]
-        assert snippet_data_identifiers == ["Palette"]
-
-    test_scope_cache()
+    # Get the scope cache
+    scope_cache_qualified = cpp_unit._scope_identifiers._cache_qualified_identifiers
+    assert scope_cache_qualified == [
+        "Snippets::Color",
+        "Snippets::Color_Red",
+        "Snippets::col",
+        "Snippets::SnippetTheme",
+        "Snippets::SnippetTheme::Light",
+        "Snippets::theme",
+        "Snippets::SnippetData",
+        "Snippets::SnippetData::Palette",
+        "Snippets::foo",
+        "Snippets::snippetsVector",
+    ]
 
     def test_qualified_types() -> None:
         decls = cpp_unit.all_decl_recursive()
@@ -117,6 +144,39 @@ def test_scope_2():
         decl_load_additional_fonts_qualified.str_code()
         == "VoidFunction LoadAdditionalFonts = HelloImGui::ImGuiDefaultSettings::LoadDefaultFont_WithFontAwesomeIcons"
     )
+
+
+def test_decl_qualified_type():
+    code = """
+        namespace N1 {
+            namespace N2 { enum class E2 { a = 0 };  /* enum class! */ }
+            namespace N3 {
+                enum E3 { a = 0 };        // C enum!
+
+                void g(
+                        N2::E2 e2 = N2::E2::a    // => N1::N2::E2 e2 = N1::N2::E2::a       (enum class)
+                    );
+            }
+        }
+    """
+    options = srcmlcpp.SrcmlcppOptions()
+    cpp_unit = srcmlcpp.code_to_cpp_unit(options, code)
+
+    g = cpp_unit.all_functions_recursive()[0]
+
+    params = g.parameter_list.parameters
+
+    # N2::E2 e2 = N2::E2::a,    // => N1::N2::E2 e2 = N1::N2::E2::a (enum class)
+    param_e2 = params[0]
+    e2_cpp_type = param_e2.decl.cpp_type
+    assert e2_cpp_type.str_code() == "N2::E2"
+    e2_cpp_type_qualified = e2_cpp_type.with_qualified_types()
+    assert e2_cpp_type_qualified.str_code() == "N1::N2::E2"
+
+    e2_value = param_e2.decl.initial_value_code
+    assert e2_value == "N2::E2::a"
+    e2_value_qualified = param_e2.decl._initial_value_code_with_qualified_types()
+    assert e2_value_qualified == "N1::N2::E2::a"
 
 
 def test_scope_with_litgen():

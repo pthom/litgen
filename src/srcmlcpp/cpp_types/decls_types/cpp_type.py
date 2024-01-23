@@ -228,21 +228,19 @@ class CppType(CppElementAndComment):
         if current_scope is None:
             current_scope = self.cpp_scope()
 
-        assert len(self.typenames) > 0
+        if len(self.typenames) == 0:
+            return self
+
         typename = " ".join(self.typenames)
 
-        # All the scopes into which we can see
-        visibility_scopes = current_scope.scope_hierarchy_list()
-        for visibility_scope in visibility_scopes:
-            known_types_at_scope = self.root_cpp_unit().known_identifiers(visibility_scope)
-            for known_type in known_types_at_scope:
-                if code_utils.contains_identifier(typename, known_type):
-                    search = known_type
-                    replace = visibility_scope.qualified_name(known_type)
-                    new_type = copy.deepcopy(self)
-                    new_type.typenames[0] = code_utils.replace_identifier(typename, search, replace)
-                    return new_type
-        return self
+        cpp_unit = self.root_cpp_unit()
+        new_typename = cpp_unit._scope_identifiers.qualify_cpp_code(typename, current_scope)
+        if new_typename != typename:
+            new_type = copy.deepcopy(self)
+            new_type.typenames = new_typename.split(" ")
+            return new_type
+        else:
+            return self
 
     def with_terse_types(self, current_scope: CppScope | None = None) -> CppType:
         if current_scope is None:

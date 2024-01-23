@@ -135,13 +135,13 @@ def test_parents_and_scope():
                   CppPublicProtectedPrivate scope=Blah::Foo (parent: CppBlock)
                     CppEnum name=A scope=Blah::Foo (parent: CppPublicProtectedPrivate)
                       CppBlock scope=Blah::Foo::A (parent: CppEnum name=A)
-                        CppDecl name=a scope=Blah::Foo::A (parent: CppBlock)
+                        CppDecl name=a scope=Blah::Foo (parent: CppBlock)
                         CppUnprocessed scope=Blah::Foo::A (parent: CppBlock)
                     CppFunctionDecl name=dummy scope=Blah::Foo (parent: CppPublicProtectedPrivate)
                       CppType name=void scope=Blah::Foo (parent: CppFunctionDecl name=dummy)
                       CppParameterList scope=Blah::Foo (parent: CppFunctionDecl name=dummy)
           CppEmptyLine (parent: CppUnit)
-        """,
+          """,
     )
 
 

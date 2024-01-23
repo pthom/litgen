@@ -4,7 +4,6 @@ from dataclasses import dataclass
 from srcmlcpp.cpp_types.base.cpp_element import CppElement
 from srcmlcpp.cpp_types.blocks.cpp_block import CppBlock
 from srcmlcpp.srcml_wrapper import SrcmlWrapper
-from srcmlcpp.cpp_types.scope.cpp_scope import CppScope
 from srcmlcpp.cpp_types.scope.cpp_scope_identifiers import CppScopeIdentifiers
 
 
@@ -46,9 +45,6 @@ class CppUnit(CppBlock):
 
         assert isinstance(root, CppUnit)
         return root
-
-    def known_identifiers(self, scope: CppScope) -> list[str]:
-        return self._scope_identifiers.known_identifiers(scope)
 
     def fill_scope_identifiers_cache(self) -> None:
         all_elements = self.all_cpp_elements_recursive()
