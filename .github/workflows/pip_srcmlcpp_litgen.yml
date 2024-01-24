@@ -13,8 +13,8 @@ jobs:
       fail-fast: false
       matrix:
         platform: [ubuntu-latest]
-        # platform: [macos-latest, ubuntu-latest]
-        python-version: ["3.10"]
+#        platform: [macos-latest, ubuntu-latest, windows-latest]
+        python-version: ["3.12"]
 
     steps:
       - uses: actions/checkout@v3
@@ -26,26 +26,15 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
 
-      - name: Set up GCC (update gcc)
-        if: ${{ matrix.platform == 'ubuntu-latest' }}
-        uses: egor-tensin/setup-gcc@v1
-        with:
-          version: 11
-          platform: x64
-
-      - name: install_srcml_reqs_ubuntu
-        if: ${{ matrix.platform == 'ubuntu-latest' }}
-        run : ./ci_scripts/install_srcmlcaller_reqs_ubuntu.sh
-
-      - name: Install srcML
-        run : sudo ./ci_scripts/install_srcml_ubuntu.sh
+      - name: Install srcml_caller
+        run : pip install srcml_caller
 
       - name: Build and install
         run: pip install --verbose .
 
       - name: generate integration test bindings
         run: |
-          pip install -r requirements.txt
+          pip install -r requirements-dev.txt
           pip install numpy
           cd packages/litgen/integration_tests
           python autogenerate_mylib.py

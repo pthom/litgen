@@ -24,7 +24,7 @@ $decoration
 title "Install requirements"
 python3 -m venv venv
 source venv/bin/activate
-pip install -r "$REPO_DIR"/requirements_dev.txt
+pip install -r "$REPO_DIR"/requirements-dev.txt
 
 
 title "Run black"
@@ -61,5 +61,5 @@ make -j 4
 
 
 title "pip build lg_skbuild_template python modules"
-cd "$REPO_DIR"/demos/litgen/lg_skbuild_template
+cd "$REPO_DIR"/_litgen_template
 pip install -v $PIP_INSTALL_EDITABLE .
