@@ -186,18 +186,24 @@ class CppFunctionDecl(CppElementAndComment, CppITemplateHost):
             return r
 
         was_changed = False
-        new_function_decl = copy.deepcopy(self)
 
+        new_return_type = None
         if hasattr(self, "return_type"):
-            new_function_decl.return_type = self.return_type.with_qualified_types(current_scope)
-            if new_function_decl.return_type is not self.return_type:
+            new_return_type = self.return_type.with_qualified_types(current_scope)
+            if new_return_type is not self.return_type:
                 was_changed = True
 
-        new_function_decl.parameter_list = self.parameter_list.with_qualified_types(current_scope)
-        if new_function_decl.parameter_list is not self.parameter_list:
+        new_parameter_list = self.parameter_list.with_qualified_types(current_scope)
+        if new_parameter_list is not self.parameter_list:
             was_changed = True
 
-        r = new_function_decl if was_changed else self
+        r = self
+        if was_changed:
+            r = copy.deepcopy(self)
+            if new_return_type is not None:
+                r.return_type = new_return_type
+            r.parameter_list = new_parameter_list
+
         self._cache_with_qualified_types.store(current_scope, r)
         return r
 
@@ -228,18 +234,23 @@ class CppFunctionDecl(CppElementAndComment, CppITemplateHost):
                 current_scope = CppScope(current_scope.scope_parts[:-1])
 
         was_changed = False
-        new_function_decl = copy.deepcopy(self)
+        new_return_type: CppType | None = None
 
         if hasattr(self, "return_type"):
-            new_function_decl.return_type = self.return_type.with_terse_types(current_scope)
-            if new_function_decl.return_type is not self.return_type:
+            new_return_type = self.return_type.with_terse_types(current_scope)
+            if new_return_type is not self.return_type:
                 was_changed = True
 
-        new_function_decl.parameter_list = self.parameter_list.with_terse_types(current_scope)
-        if new_function_decl.parameter_list is not self.parameter_list:
+        new_parameter_list = self.parameter_list.with_terse_types(current_scope)
+        if new_parameter_list is not self.parameter_list:
             was_changed = True
 
-        r = new_function_decl if was_changed else self
+        r = self
+        if was_changed:
+            r = copy.deepcopy(self)
+            if new_return_type is not None:
+                r.return_type = new_return_type
+            r.parameter_list = new_parameter_list
         self._cache_with_terse_types.store(current_scope, r)
         return r
 

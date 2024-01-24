@@ -98,23 +98,31 @@ class CppParameterList(CppElementAndComment):
         if current_scope is None:
             current_scope = self.cpp_scope()
         was_changed = False
-        new_parameter_list = copy.deepcopy(self)
+        # new_parameter_list = copy.deepcopy(self)
+        new_parameters: list[CppParameter] = []
 
         # handle void instead of empty param:
         #     void foo(void)
         if len(self.parameters) == 1 and self.parameters[0].decl.cpp_type.is_void():
-            new_parameter_list.parameters = []
+            new_parameters = []
             was_changed = True
         else:
             for i in range(len(self.parameters)):
-                new_param = new_parameter_list.parameters[i]
+                # new_param = new_parameter_list.parameters[i]
                 self_param = self.parameters[i]
-                new_param.decl = self_param.decl.with_qualified_types(current_scope)
-                if new_param.decl is not self_param.decl:
+                new_param_decl = self_param.decl.with_qualified_types(current_scope)
+                if new_param_decl is not self_param.decl:
+                    new_param = copy.deepcopy(self.parameters[i])
+                    new_param.decl = new_param_decl
+                    new_parameters.append(new_param)
                     was_changed = True
+                else:
+                    new_parameters.append(self_param)
 
         if was_changed:
-            return new_parameter_list
+            r = copy.deepcopy(self)
+            r.parameters = new_parameters
+            return r
         else:
             return self
 
@@ -122,15 +130,22 @@ class CppParameterList(CppElementAndComment):
         if current_scope is None:
             current_scope = self.cpp_scope()
         was_changed = False
-        new_parameter_list = copy.deepcopy(self)
+        # new_parameter_list = copy.deepcopy(self)
+        new_parameters: list[CppParameter] = []
         for i in range(len(self.parameters)):
-            new_param = new_parameter_list.parameters[i]
             self_param = self.parameters[i]
-            new_param.decl = self_param.decl.with_terse_types(current_scope)
-            if new_param.decl is not self_param.decl:
+            new_decl = self_param.decl.with_terse_types(current_scope)
+            if new_decl is not self_param.decl:
                 was_changed = True
+                new_parameter = copy.deepcopy(self_param)
+                new_parameter.decl = new_decl
+                new_parameters.append(new_parameter)
+            else:
+                new_parameters.append(self_param)
 
         if was_changed:
+            new_parameter_list = copy.deepcopy(self)
+            new_parameter_list.parameters = new_parameters
             return new_parameter_list
         else:
             return self

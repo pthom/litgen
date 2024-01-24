@@ -291,18 +291,20 @@ class CppDecl(CppElementAndComment):
         if current_scope is None:
             current_scope = self.cpp_scope()
         was_changed = False
-        new_decl = copy.deepcopy(self)
+        new_decl_cpp_type = self.cpp_type
         if hasattr(self, "cpp_type"):
-            new_decl.cpp_type = self.cpp_type.with_qualified_types(current_scope)
-            if new_decl.cpp_type is not self._cpp_type:
+            new_decl_cpp_type = self.cpp_type.with_qualified_types(current_scope)
+            if new_decl_cpp_type is not self._cpp_type:
                 was_changed = True
 
         new_initial_value_code = self._initial_value_code_with_qualified_types(current_scope)
         if new_initial_value_code != self.initial_value_code:
-            new_decl.initial_value_code = new_initial_value_code
             was_changed = True
 
         if was_changed:
+            new_decl = copy.deepcopy(self)
+            new_decl.cpp_type = new_decl_cpp_type
+            new_decl.initial_value_code = new_initial_value_code
             self._cpp_decl_with_qualified_types = new_decl
         else:
             self._cpp_decl_with_qualified_types = self
@@ -341,18 +343,20 @@ class CppDecl(CppElementAndComment):
         if current_scope is None:
             current_scope = self.cpp_scope()
         was_changed = False
-        new_decl = copy.deepcopy(self)
-        new_decl.cpp_type = self.cpp_type.with_terse_types(current_scope)
 
-        if new_decl.cpp_type is not self._cpp_type:
+        new_cpp_type = self.cpp_type.with_terse_types(current_scope)
+
+        if new_cpp_type is not self._cpp_type:
             was_changed = True
 
         new_initial_value_code = self._initial_value_code_with_terse_type(current_scope)
         if new_initial_value_code != self.initial_value_code:
-            new_decl.initial_value_code = new_initial_value_code
             was_changed = True
 
         if was_changed:
+            new_decl = copy.deepcopy(self)
+            new_decl.cpp_type = new_cpp_type
+            new_decl.initial_value_code = new_initial_value_code
             return new_decl
         else:
             return self
