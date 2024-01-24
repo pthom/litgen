@@ -1,16 +1,28 @@
-pytest
-pytest-cov
-jupyter-black
+# Tools to ensure code quality
+pre-commit
 black
 mypy
-importanize
+pytest
+pytest-cov
+ruff
+
+# numpy is used by the generated bindings (when using arrays)
+numpy
+
+# snakeviz only for profiling (see Build.md)
+snakeviz
+
+# For deployment to PyPI
+twine
+
+# for litgen-book (doc with jupyter-book)
+jupyter-black
 Pygments
 jupyter
 notebook
 types-Pygments
+
+# probably not needed anymore
 Flask
-twine
-snakeviz
 patch
-numpy
-pre-commit
+importanize
