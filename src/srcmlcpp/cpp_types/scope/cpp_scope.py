@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import copy
 from dataclasses import dataclass
 from enum import Enum
 from typing import Final, Optional
@@ -23,9 +22,13 @@ class CppScope:
     scope_parts: Final[list[CppScopePart]]
     str_cpp_prefix: Final[str]
     str_cpp: Final[str]
+    parent_scope: Final[Optional[CppScope]]
+    scope_hierarchy_list: Final[list[CppScope]]
 
     def __init__(self, scopes: list[CppScopePart]) -> None:
         self.scope_parts = scopes
+
+        # Fill static final members
         if len(self.scope_parts) == 0:
             str_cpp_prefix = ""
             str_cpp = ""
@@ -35,6 +38,18 @@ class CppScope:
             str_cpp_prefix = str_cpp + "::"
         self.str_cpp = str_cpp
         self.str_cpp_prefix = str_cpp_prefix
+
+        self.parent_scope = self.parent_scope = CppScope(self.scope_parts[:-1]) if len(self.scope_parts) > 0 else None
+        self.scope_hierarchy_list = self._make_scope_hierarchy_list()
+
+    def _make_scope_hierarchy_list(self) -> list[CppScope]:
+        """Given "A::B::C", return ["A::B::C", "A::B", "A", ""]"""
+        r = []
+        current_scope: Optional[CppScope] = self
+        while current_scope is not None:
+            r.append(current_scope)
+            current_scope = current_scope.parent_scope
+        return r
 
     @staticmethod
     def from_string(s: str) -> CppScope:
@@ -48,27 +63,12 @@ class CppScope:
             return NotImplemented
         return self.str_cpp == other.str_cpp
 
-    def parent_scope(self) -> CppScope | None:
-        if len(self.scope_parts) == 0:
-            return None
-        new_scope_parts = copy.deepcopy(self.scope_parts[:-1])
-        return CppScope(new_scope_parts)
-
-    def scope_hierarchy_list(self) -> list[CppScope]:
-        """Given "A::B::C", return ["A::B::C", "A::B", "A", ""]"""
-        r = []
-        current_scope: Optional[CppScope] = self
-        while current_scope is not None:
-            r.append(current_scope)
-            current_scope = current_scope.parent_scope()
-        return r
-
     def can_access_scope(self, other_scope: CppScope) -> bool:
         parent: CppScope | None = self
         while parent is not None:
             if parent == other_scope:
                 return True
-            parent = parent.parent_scope()
+            parent = parent.parent_scope
         return False
 
     def qualified_name(self, name: str) -> str:

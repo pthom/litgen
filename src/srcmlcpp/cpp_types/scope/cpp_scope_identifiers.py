@@ -23,7 +23,7 @@ def current_token_matches_scoped_identifier(
     if current_token.startswith("::"):
         return False
 
-    current_scopes = current_scope.scope_hierarchy_list()
+    current_scopes = current_scope.scope_hierarchy_list
     for current_scope_prefix in current_scopes:
         current_token_proposed_qualified_name = current_scope_prefix.qualified_name(current_token)
         if current_token_proposed_qualified_name == scoped_identifier_qualified_name:
