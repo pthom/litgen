@@ -36,7 +36,8 @@ repos:
     rev: 22.3.0
     hooks:
       - id: black
-  #          exclude_types: ["pyi"]
+        # exclude_types: ["pyi"]
+        exclude: src/litgen/integration_tests/mylib
   #        - id: black-jupyter
 
 
