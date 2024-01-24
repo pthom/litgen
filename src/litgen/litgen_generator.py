@@ -1,6 +1,7 @@
 from __future__ import annotations
 import logging
 import os
+import subprocess
 from dataclasses import dataclass
 
 from codemanip import code_utils
@@ -19,16 +20,23 @@ PythonCode = str
 
 
 def apply_black_formatter_pyi(options: LitgenOptions, file: str) -> str:
-    import black
-    from pathlib import Path
+    cmd = f"black --line-length {options.python_black_formatter_line_length} {file}"
+    try:
+        subprocess.check_call(cmd, shell=True)
+        return True
+    except subprocess.CalledProcessError:
+        return False
 
-    black_mode = black.Mode()
-    black_mode.is_pyi = True
-    black_mode.target_versions = {black.TargetVersion.PY39}  # type: ignore
-    black_mode.line_length = options.python_black_formatter_line_length
-
-    result = black.format_file_in_place(src=Path(file), fast=False, mode=black_mode)
-    return result
+    # Below the version with an import did not format correctly...
+    # import black
+    # from pathlib import Path
+    # black_mode = black.Mode()
+    # black_mode.is_pyi = True
+    # black_mode.target_versions = {black.TargetVersion.PY310}  # type: ignore
+    # black_mode.line_length = options.python_black_formatter_line_length
+    #
+    # result = black.format_file_in_place(src=Path(file), fast=False, mode=black_mode)
+    # return result
 
 
 @dataclass
@@ -66,7 +74,9 @@ class LitgenGenerator:
         try:
             code_utils.write_generated_code_between_markers(output_stub_pyi_file, "litgen_stub", stub_code)
             if self.options().python_run_black_formatter:
-                apply_black_formatter_pyi(self.options(), output_stub_pyi_file)
+                success = apply_black_formatter_pyi(self.options(), output_stub_pyi_file)
+                if not success:
+                    logging.warning(f"Failed to run black formatter on {output_stub_pyi_file}")
 
         except (FileNotFoundError, RuntimeError):
             logging.warning(help_stub_file(output_stub_pyi_file))

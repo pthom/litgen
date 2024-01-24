@@ -59,12 +59,12 @@ class LitgenOptions:
     # Insert as many empty lines in the python stub as found in the header file, keep comments layout, etc.
     python_reproduce_cpp_layout: bool = True
     # The generated code will try to adhere to this max length (if negative, this is ignored)
-    python_max_line_length = 120
+    python_max_line_length = 88
     # Strip (remove) empty comment lines
     python_strip_empty_comment_lines: bool = False
     # Run black formatter
     python_run_black_formatter: bool = False
-    python_black_formatter_line_length: int = 120
+    python_black_formatter_line_length: int = 88
 
     ################################################################################
     #    <Layout settings for the C++ generated pydef code>
