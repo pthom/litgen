@@ -5,7 +5,6 @@ from codemanip.parse_progress_bar import global_progress_bars
 
 from srcmlcpp.cpp_types import CppUnit
 
-from litgen.internal import cpp_to_python
 from litgen.internal.adapted_types.adapted_block import AdaptedBlock
 from litgen.internal.adapted_types.adapted_element import (
     _PROGRESS_BAR_TITLE_ADAPTED_ELEMENTS,
@@ -36,7 +35,6 @@ class AdaptedUnit(AdaptedBlock):
 
         if self.options.postprocess_stub_before_black_function is not None:
             r = self.options.postprocess_stub_before_black_function(r)
-        r = cpp_to_python.apply_black_formatter_pyi(self.options, r)
 
         global_progress_bars().stop_progress_bar(_PROGRESS_BAR_TITLE_STUB)
         return r

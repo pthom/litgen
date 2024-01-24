@@ -399,21 +399,6 @@ def looks_like_size_param(options: LitgenOptions, param_c: CppParameter) -> bool
     return r
 
 
-def apply_black_formatter_pyi(options: LitgenOptions, code: str) -> str:
-    if not options.python_run_black_formatter:
-        return code
-
-    import black
-
-    black_mode = black.Mode()
-    black_mode.is_pyi = True
-    black_mode.target_versions = {black.TargetVersion.PY39}  # type: ignore
-    black_mode.line_length = options.python_black_formatter_line_length
-
-    formatted_code = black.format_str(code, mode=black_mode)
-    return formatted_code
-
-
 def _scope_part_name(scope_part: CppScopePart) -> str:
     r = ""
     if scope_part.scope_type == CppScopeType.ClassOrStruct:

@@ -18,6 +18,19 @@ CppCode = str
 PythonCode = str
 
 
+def apply_black_formatter_pyi(options: LitgenOptions, file: str) -> str:
+    import black
+    from pathlib import Path
+
+    black_mode = black.Mode()
+    black_mode.is_pyi = True
+    black_mode.target_versions = {black.TargetVersion.PY39}  # type: ignore
+    black_mode.line_length = options.python_black_formatter_line_length
+
+    result = black.format_file_in_place(src=Path(file), fast=False, mode=black_mode)
+    return result
+
+
 @dataclass
 class _GeneratedCode:
     source_filename: CppFilename
@@ -52,6 +65,9 @@ class LitgenGenerator:
 
         try:
             code_utils.write_generated_code_between_markers(output_stub_pyi_file, "litgen_stub", stub_code)
+            if self.options().python_run_black_formatter:
+                apply_black_formatter_pyi(self.options(), output_stub_pyi_file)
+
         except (FileNotFoundError, RuntimeError):
             logging.warning(help_stub_file(output_stub_pyi_file))
             raise
