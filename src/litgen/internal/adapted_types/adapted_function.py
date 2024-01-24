@@ -1130,10 +1130,12 @@ class AdaptedFunction(AdaptedElement):
         ancestors.reverse()
         ancestor_structs_names = []
         for ancestor in ancestors:
+            # if isinstance(ancestor, CppStruct):
+            #     ancestor_structs_names.append(cpp_to_python.namespace_name_to_python(ancestor.class_name))
             if isinstance(ancestor, CppStruct):
-                ancestor_structs_names.append(ancestor.class_name)
-            if isinstance(ancestor, CppNamespace):
-                ancestor_structs_names.append(ancestor.ns_name)
+                ancestor_structs_names.append(cpp_to_python._class_name_to_python(self.options, ancestor.class_name))
+            # if isinstance(ancestor, CppNamespace):
+            #     ancestor_structs_names.append(ancestor.ns_name)
 
         parent_struct_scope_python = ".".join(ancestor_structs_names)
         if len(parent_struct_scope_python) > 0:
