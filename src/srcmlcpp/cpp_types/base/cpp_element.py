@@ -48,7 +48,7 @@ class CppElement(SrcmlWrapper):
 
         cls = self.__class__
         result = cls.__new__(cls)
-        memo[id(self)] = result
+        memo[id(self)] = result  # type: ignore
         for k, v in self.__dict__.items():
             if k not in _CppElement__deep_copy_force_shallow_:
                 setattr(result, k, copy.deepcopy(v, memo))
