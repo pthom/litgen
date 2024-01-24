@@ -249,7 +249,7 @@ class CppType(CppElementAndComment):
         type_qualified = self.with_qualified_types()
         type_name_qualified = " ".join(type_qualified.typenames)
 
-        from srcmlcpp.cpp_types.scope.cpp_scope_identifiers import make_terse_code
+        from srcmlcpp.cpp_types.scope.cpp_scope_process import make_terse_code
 
         new_type_name = make_terse_code(type_name_qualified, current_scope)
         if new_type_name != " ".join(self.typenames):

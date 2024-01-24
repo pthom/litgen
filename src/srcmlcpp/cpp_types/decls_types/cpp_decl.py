@@ -332,7 +332,7 @@ class CppDecl(CppElementAndComment):
             current_scope = self.cpp_scope()
 
         # initial_value_fully_qualified = self._initial_value_code_with_qualified_types(current_scope)
-        from srcmlcpp.cpp_types.scope.cpp_scope_identifiers import make_terse_code
+        from srcmlcpp.cpp_types.scope.cpp_scope_process import make_terse_code
 
         r = make_terse_code(self.initial_value_code, current_scope)
         return r

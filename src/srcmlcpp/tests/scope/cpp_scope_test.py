@@ -238,7 +238,7 @@ def test_scope_vector():
 
 
 def test_make_terse_scope():
-    from srcmlcpp.cpp_types.scope.cpp_scope_identifiers import make_terse_code, _make_terse_scoped_identifier
+    from srcmlcpp.cpp_types.scope.cpp_scope_process import make_terse_code, _make_terse_scoped_identifier
     from srcmlcpp.cpp_types.scope.cpp_scope import CppScope
 
     cpp_code = "N0::N1::N3::S3"
@@ -319,7 +319,7 @@ def test_scope_with_litgen():
 
 
 def test_make_terse_scoped_identifier():
-    from srcmlcpp.cpp_types.scope.cpp_scope_identifiers import _make_terse_scoped_identifier
+    from srcmlcpp.cpp_types.scope.cpp_scope_process import _make_terse_scoped_identifier
 
     assert _make_terse_scoped_identifier("A::B::C", "A::B::C::D") == "C"
     assert _make_terse_scoped_identifier("A::Foo::Foo1", "A") == "Foo::Foo1"  # error: Foo1
