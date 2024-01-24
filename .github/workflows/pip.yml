@@ -26,16 +26,16 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
 
-      - name: Install srcml_caller
+      - name: pip install srcml_caller
         run : pip install srcml_caller
 
-      - name: Install dev requirements
+      - name: pip install -r requirements-dev.txt
         run: pip install -r requirements-dev.txt
 
-      - name: Pip install
+      - name: pip install --verbose .
         run: pip install --verbose .
 
-      - name: generate integration test bindings
+      - name: pip install in src/litgen/integration_tests/
         run: |
           cd src/litgen/integration_tests
           python autogenerate_mylib.py
@@ -45,10 +45,10 @@ jobs:
       - name: pytest
         run: pytest
 
-      - name: Run black
+      - name: black
         run: black .
 
-      - name: Run mypy
+      - name: mypy
         run: mypy .
 
       - name: Build C++
@@ -59,7 +59,7 @@ jobs:
           cmake ..
           make -j 4
 
-      - name: Install litgen_template
+      - name: pip install in _litgen_template/
         run: |
           cd _litgen_template
           python tools/autogenerate_bindings.py

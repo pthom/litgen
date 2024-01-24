@@ -1,14 +1,42 @@
 [build-system]
-requires = [
-    "setuptools>=42",
-    "wheel",
-    "pybind11>=2.9.2",
-    "scikit-build>=0.14.1",
-    "cmake>=3.22",
-    "ninja; platform_system!='Windows'",
-    "patch",
-]
-build-backend = "setuptools.build_meta"
+requires = ["scikit-build-core>=0.3.3", "pybind11"]
+build-backend = "scikit_build_core.build"
 
-[tool.isort]
-profile = "black"
+
+[project]
+name = "lg-mylib"
+version = "0.0.1"
+description="lg-mylib, integration tests for litgen"
+readme = "README.md"
+authors = [ { name = "Pascal Thomet", email = "pthomet@gmail.com" } ]
+requires-python = ">=3.10"
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3.7",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+]
+
+
+[project.optional-dependencies]
+test = ["pytest"]
+
+
+[tool.scikit-build]
+wheel.expand-macos-universal-tags = true
+wheel.packages = ["bindings/lg_mylib"]
+
+
+[tool.cibuildwheel]
+# Target python versions:
+build = ["cp310-*", "cp311-*", "cp312-*"]
+
+build-verbosity = 1
+test-command = "pytest {project}/tests"
+test-extras = ["test"]
+test-skip = ["*universal2:arm64"]
