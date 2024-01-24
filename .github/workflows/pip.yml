@@ -64,3 +64,6 @@ jobs:
           cd _litgen_template
           python tools/autogenerate_bindings.py
           pip install -v .
+          black .
+          mypy .
+          pytest
