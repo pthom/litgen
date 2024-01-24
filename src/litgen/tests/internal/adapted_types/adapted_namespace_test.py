@@ -56,26 +56,32 @@ def test_namespaces():
 
     generated_code = litgen.generate_code(options, code)
 
+    # fmt: off
     code_utils.assert_are_codes_equal(
         generated_code.stub_code,
         '''
-        def foo_root() -> None:
-            pass
-
-        # <submodule inner>
-        class inner:  # Proxy class that introduces typings for the *submodule* inner
-            pass  # (This corresponds to a C++ namespace. All method are static!)
-            """ this is an inner namespace (this comment should become the namespace doc)"""
-            @staticmethod
-            def foo_inner() -> None:
-                pass
-            @staticmethod
-            def foo_inner2() -> None:
+            def foo_root() -> None:
                 pass
 
-        # </submodule inner>
+
+
+
+
+            # <submodule inner>
+            class inner:  # Proxy class that introduces typings for the *submodule* inner
+                pass  # (This corresponds to a C++ namespace. All method are static!)
+                """ this is an inner namespace (this comment should become the namespace doc)"""
+                @staticmethod
+                def foo_inner() -> None:
+                    pass
+                @staticmethod
+                def foo_inner2() -> None:
+                    pass
+
+            # </submodule inner>
         ''',
     )
+    # fmt: on
 
     code_utils.assert_are_codes_equal(
         generated_code.pydef_code,

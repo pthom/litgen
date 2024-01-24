@@ -26,11 +26,7 @@ def test_adapt_modifiable_immutable_to_return_test():
             pass
         def slider_void_int(label: str, value: int) -> int:
             pass
-        def slider_bool_int2(
-            label: str,
-            value1: int,
-            value2: int
-            ) -> Tuple[bool, int, int]:
+        def slider_bool_int2(label: str, value1: int, value2: int) -> Tuple[bool, int, int]:
             pass
         def slider_void_int_default_null(
             label: str,
@@ -136,10 +132,7 @@ def test_adapt_modifiable_immutable_to_return_array():
     code_utils.assert_are_codes_equal(
         generated_code.stub_code,
         """
-        def slider_void_int_array(
-            label: str,
-            value: List[int]
-            ) -> Tuple[bool, List[int]]:
+        def slider_void_int_array(label: str, value: List[int]) -> Tuple[bool, List[int]]:
             pass
     """,
     )
