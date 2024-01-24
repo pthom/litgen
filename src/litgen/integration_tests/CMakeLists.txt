@@ -1,6 +1,6 @@
 set(CMAKE_CXX_STANDARD 20)
 
-include(${PROJECT_SOURCE_DIR}/_litgen_template/litgen_cmake/litgen_cmake.cmake)
+include(litgen_cmake/litgen_cmake.cmake)
 litgen_find_pybind11()
 
 

@@ -32,7 +32,7 @@ jobs:
       - name: Install dev requirements
         run: pip install -r requirements-dev.txt
 
-      - name: Build and install
+      - name: Pip install
         run: pip install --verbose .
 
       - name: generate integration test bindings
@@ -42,18 +42,14 @@ jobs:
           pip install -v .
           cd -
 
-      - name: Test & integration tests
-        run: |
-          pip install pytest
-          pytest
+      - name: pytest
+        run: pytest
 
       - name: Run black
-        run: |
-          black .
+        run: black .
 
       - name: Run mypy
-        run: |
-          mypy .
+        run: mypy .
 
       - name: Build C++
         run: |
