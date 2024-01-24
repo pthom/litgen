@@ -7,7 +7,7 @@ build-backend = "scikit_build_core.build"
 name = "lg-mylib"
 version = "0.0.1"
 description="lg-mylib, integration tests for litgen"
-readme = "README.md"
+readme = "Readme.md"
 authors = [ { name = "Pascal Thomet", email = "pthomet@gmail.com" } ]
 requires-python = ">=3.10"
 classifiers = [
