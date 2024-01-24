@@ -1,4 +1,4 @@
-name: "pip_srcmlcpp_litgen"
+name: "pip"
 
 on:
   workflow_dispatch:
@@ -29,14 +29,15 @@ jobs:
       - name: Install srcml_caller
         run : pip install srcml_caller
 
+      - name: Install dev requirements
+        run: pip install -r requirements-dev.txt
+
       - name: Build and install
         run: pip install --verbose .
 
       - name: generate integration test bindings
         run: |
-          pip install -r requirements-dev.txt
-          pip install numpy
-          cd packages/litgen/integration_tests
+          cd src/litgen/integration_tests
           python autogenerate_mylib.py
           pip install -v .
           cd -
@@ -45,3 +46,25 @@ jobs:
         run: |
           pip install pytest
           pytest
+
+      - name: Run black
+        run: |
+          black .
+
+      - name: Run mypy
+        run: |
+          mypy .
+
+      - name: Build C++
+        run: |
+          cmake --version
+          mkdir -p build
+          cd build
+          cmake ..
+          make -j 4
+
+      - name: Install litgen_template
+        run: |
+          cd _litgen_template
+          python tools/autogenerate_bindings.py
+          pip install -v .

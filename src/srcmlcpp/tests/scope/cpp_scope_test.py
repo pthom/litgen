@@ -50,7 +50,6 @@ import srcmlcpp
 
 
 def test_scope():
-
     code = """
     namespace Snippets
     {

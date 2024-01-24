@@ -21,8 +21,8 @@ $decoration
   set -x
 }
 
-title "python ./lg_projects/lg_skbuild_template/autogenerate_lg_examplelib.py"
-python ./demos/litgen/lg_skbuild_template/autogenerate_lg_examplelib.py
+title "python ./_litgen_template/tools/autogenerate_bindings.py"
+python ./_litgen_template/tools/autogenerate_bindings.py
 
-title "python ./packages/litgen/integration_tests/autogenerate_mylib.py"
-python ./packages/litgen/integration_tests/autogenerate_mylib.py
+title "python ./src/litgen/integration_tests/autogenerate_mylib.py"
+python ./src/litgen/integration_tests/autogenerate_mylib.py

@@ -12,10 +12,7 @@ pipx run pre-commit install
 
 ```
 pip install -v -e .
-cd example
-pip install -v -e .
-cd -
-cd examples_real_libs/imgui
+cd src/litgen/integration_tests
 pip install -v -e .
 cd -
 ```

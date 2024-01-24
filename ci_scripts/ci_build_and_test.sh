@@ -43,7 +43,7 @@ cd "$REPO_DIR"
 
 
 title "Build litgen/integration_tests pip package (lg_mylib)"
-cd "$REPO_DIR"/packages/litgen/integration_tests
+cd "$REPO_DIR"/src/litgen/integration_tests
 pip install -v $PIP_INSTALL_EDITABLE .
 
 
