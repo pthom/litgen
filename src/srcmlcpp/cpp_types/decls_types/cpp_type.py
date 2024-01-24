@@ -251,7 +251,7 @@ class CppType(CppElementAndComment):
 
         from srcmlcpp.cpp_types.scope.cpp_scope_process import make_terse_code
 
-        new_type_name = make_terse_code(type_name_qualified, current_scope)
+        new_type_name = make_terse_code(type_name_qualified, current_scope.str_cpp_prefix)
         if new_type_name != " ".join(self.typenames):
             new_cpp_type = copy.deepcopy(self)
             new_cpp_type.typenames = new_type_name.split(" ")

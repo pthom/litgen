@@ -24,6 +24,7 @@ class CppScope:
     str_cpp: Final[str]
     parent_scope: Final[Optional[CppScope]]
     scope_hierarchy_list: Final[list[CppScope]]
+    scope_hierarchy_prefix_list: Final[list[str]]
 
     def __init__(self, scopes: list[CppScopePart]) -> None:
         self.scope_parts = scopes
@@ -41,6 +42,7 @@ class CppScope:
 
         self.parent_scope = self.parent_scope = CppScope(self.scope_parts[:-1]) if len(self.scope_parts) > 0 else None
         self.scope_hierarchy_list = self._make_scope_hierarchy_list()
+        self.scope_hierarchy_prefix_list = [scope.str_cpp_prefix for scope in self.scope_hierarchy_list]
 
     def _make_scope_hierarchy_list(self) -> list[CppScope]:
         """Given "A::B::C", return ["A::B::C", "A::B", "A", ""]"""

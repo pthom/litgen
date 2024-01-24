@@ -60,5 +60,7 @@ class CppScopeIdentifiers:
         # scope = A::ClassNoDefaultCtor
         # scoped_identifier = N::Foo
         # => can access
-        new_code = apply_scoped_identifiers_to_code(new_code, current_scope, self._scoped_identifiers)
+        new_code = apply_scoped_identifiers_to_code(
+            new_code, current_scope.scope_hierarchy_prefix_list, self._scoped_identifiers
+        )
         return new_code

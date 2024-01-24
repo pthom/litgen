@@ -1,8 +1,9 @@
-from srcmlcpp.cpp_types.scope.cpp_scope import CppScope
+# Heart of the scoping mechanism. Those functions depend on no other module,
+# so that a possible improvement via Cython can be done.
 
 
 def current_token_matches_scoped_identifier(
-    scoped_identifier_qualified_name: str, current_scope: CppScope, current_token: str
+    scoped_identifier_qualified_name: str, current_scope_hierarchy: list[str], current_token: str
 ) -> bool:
     """
     namespace A { enum E { Foo }; }
@@ -22,16 +23,15 @@ def current_token_matches_scoped_identifier(
     if current_token.startswith("::"):
         return False
 
-    current_scopes = current_scope.scope_hierarchy_list
-    for current_scope_prefix in current_scopes:
-        current_token_proposed_qualified_name = current_scope_prefix.qualified_name(current_token)
+    for current_scope_prefix in current_scope_hierarchy:
+        current_token_proposed_qualified_name = current_scope_prefix + current_token
         if current_token_proposed_qualified_name == scoped_identifier_qualified_name:
             return True
     return False
 
 
 def apply_scoped_identifiers_to_code(
-    cpp_code: str, current_scope: CppScope, scoped_identifier_qualified_names: list[str]
+    cpp_code: str, current_scope_hierarchy: list[str], scoped_identifier_qualified_names: list[str]
 ) -> str:
     new_code = ""
     current_token = ""
@@ -61,7 +61,7 @@ def apply_scoped_identifiers_to_code(
                 if current_token:
                     for scoped_identifier_qualified_name in scoped_identifier_qualified_names:
                         if current_token_matches_scoped_identifier(
-                            scoped_identifier_qualified_name, current_scope, current_token
+                            scoped_identifier_qualified_name, current_scope_hierarchy, current_token
                         ):
                             current_token = scoped_identifier_qualified_name
                     new_code += current_token
@@ -79,7 +79,9 @@ def apply_scoped_identifiers_to_code(
     # Add the last token if it exists
     if current_token:
         for scoped_identifier_qualified_name in scoped_identifier_qualified_names:
-            if current_token_matches_scoped_identifier(scoped_identifier_qualified_name, current_scope, current_token):
+            if current_token_matches_scoped_identifier(
+                scoped_identifier_qualified_name, current_scope_hierarchy, current_token
+            ):
                 current_token = scoped_identifier_qualified_name
 
         new_code += current_token
@@ -119,7 +121,7 @@ def _make_terse_scoped_identifier(scoped_identifier: str, current_scope: str) ->
     return scoped_identifier
 
 
-def make_terse_code(cpp_code: str, current_scope: CppScope) -> str:
+def make_terse_code(cpp_code: str, current_scope_prefix: str) -> str:
     new_code = ""
     current_token = ""
     i = 0
@@ -146,7 +148,7 @@ def make_terse_code(cpp_code: str, current_scope: CppScope) -> str:
                 i += 1
             else:
                 if current_token:
-                    current_token = _make_terse_scoped_identifier(current_token, current_scope.str_cpp)
+                    current_token = _make_terse_scoped_identifier(current_token, current_scope_prefix)
                     new_code += current_token
                     current_token = ""
                 new_code += char
@@ -161,7 +163,7 @@ def make_terse_code(cpp_code: str, current_scope: CppScope) -> str:
 
     # Add the last token if it exists
     if current_token:
-        current_token = _make_terse_scoped_identifier(current_token, current_scope.str_cpp)
+        current_token = _make_terse_scoped_identifier(current_token, current_scope_prefix)
         new_code += current_token
 
     return new_code

@@ -243,7 +243,7 @@ def test_make_terse_scope():
 
     cpp_code = "N0::N1::N3::S3"
     current_scope = CppScope.from_string("N0::N1::N3")
-    new_cpp_code = make_terse_code(cpp_code, current_scope)
+    new_cpp_code = make_terse_code(cpp_code, current_scope.str_cpp_prefix)
     assert new_cpp_code == "S3"
 
     scoped_identifier = "N1::N3::S3"
