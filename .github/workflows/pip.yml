@@ -56,7 +56,7 @@ jobs:
           mkdir -p build
           cd build
           cmake ..
-          cmake --build -j 4 .
+          cmake --build . -j 4
 
       - name: pip install in _litgen_template/
         run: |
