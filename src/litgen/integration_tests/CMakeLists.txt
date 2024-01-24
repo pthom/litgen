@@ -1,3 +1,5 @@
+cmake_minimum_required(VERSION 3.17)
+project(litgen)
 set(CMAKE_CXX_STANDARD 20)
 
 include(litgen_cmake/litgen_cmake.cmake)
