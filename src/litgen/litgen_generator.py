@@ -19,7 +19,7 @@ CppCode = str
 PythonCode = str
 
 
-def apply_black_formatter_pyi(options: LitgenOptions, file: str) -> str:
+def apply_black_formatter_pyi(options: LitgenOptions, file: str) -> bool:
     cmd = f"black --line-length {options.python_black_formatter_line_length} {file}"
     try:
         subprocess.check_call(cmd, shell=True)
