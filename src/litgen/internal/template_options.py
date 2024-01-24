@@ -223,7 +223,9 @@ class TemplateFunctionsOptions(TemplateSpecList):
 
     def specialized_function_python_name(self, function_name: str, cpp_type: CppType) -> str | None:
         for s in self.specs:
-            if s.handles_type_instantiation(cpp_type) or s.handles_type_synonym(cpp_type):
+            matches_name = code_utils.does_match_regex(s.name_regex, function_name)
+            matches_type = s.handles_type_instantiation(cpp_type) or s.handles_type_synonym(cpp_type)
+            if matches_name and matches_type:
                 if s.add_suffix_to_function_name:
                     r = _apply_template_naming(function_name, cpp_type.str_code())
                     return r
