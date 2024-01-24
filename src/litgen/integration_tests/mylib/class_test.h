@@ -83,6 +83,7 @@ class MySingletonClass
 {
 public:
     int value = 0;
+    MySingletonClass() = default;
 
     MY_API static MySingletonClass& instance() // py::return_value_policy::reference
     {
