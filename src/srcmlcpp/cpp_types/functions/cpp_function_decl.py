@@ -102,7 +102,8 @@ class CppFunctionDecl(CppElementAndComment, CppITemplateHost):
         if self._noexcept == "":
             return True
 
-        noexcept_str = self.noexcept.strip()
+        noexcept_str = self._noexcept.strip()
+
         if noexcept_str.startswith("(") and noexcept_str.endswith(")"):
             noexcept_str = noexcept_str[1:-1].strip()
         if noexcept_str.lower() in ["false", "0"]:

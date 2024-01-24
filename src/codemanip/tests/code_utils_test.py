@@ -67,7 +67,7 @@ def test_strip_empty_lines():
     """.split(
         "\n"
     )
-    code_lines = code_utils.strip_empty_lines_in_list(code_lines)
+    code_lines = code_utils.strip_empty_lines_in_list(code_lines)  # type: ignore
     code_stripped = "\n".join(code_lines)
     assert (
         code_stripped

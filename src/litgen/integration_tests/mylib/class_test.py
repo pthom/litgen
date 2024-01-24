@@ -1,9 +1,11 @@
+# pyright: reportAttributeAccessIssue=false
 from __future__ import annotations
 import lg_mylib
 import pytest
 
 
 def test_class_doc():
+    assert lg_mylib.MyClass.__doc__ is not None
     assert "This is the class doc" in lg_mylib.MyClass.__doc__
 
 

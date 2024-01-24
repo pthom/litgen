@@ -39,11 +39,11 @@ def run_length_encode(in_list: list[T]) -> list[tuple[T, int]]:
     for item in in_list[1:]:
         # If same as last, up count, otherwise new element with count 1.
         if item == out_list[-1][0]:
-            out_list[-1] = (item, out_list[-1][1] + 1)
+            out_list[-1] = (item, out_list[-1][1] + 1)  # type: ignore
         else:
             out_list.append((item, 1))
 
-    return out_list
+    return out_list  # type: ignore
 
 
 def str_or_none_token(s: Optional[str]) -> str:

@@ -16,7 +16,7 @@ sys.path.append(_THIS_DIR + "/../..")
 
 
 def gen_pydef_code(code: str) -> str:
-    options = litgen.options.LitgenOptions()
+    options = litgen.LitgenOptions()
     options.fn_params_replace_buffer_by_array__regex = r".*"
     options.srcmlcpp_options.functions_api_prefixes = "MY_API"
     lg_context = LitgenContext(options)

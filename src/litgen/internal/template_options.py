@@ -10,9 +10,7 @@ from dataclasses import dataclass
 
 def _cpp_types_list_str_to_cpp_types(cpp_types_list_str: list[str]) -> list[CppType]:
     options = srcmlcpp.SrcmlcppOptions()
-    cpp_types_list = [
-        srcmlcpp.srcmlcpp_main.code_to_cpp_type(options, cpp_type_str) for cpp_type_str in cpp_types_list_str
-    ]
+    cpp_types_list = [srcmlcpp.code_to_cpp_type(options, cpp_type_str) for cpp_type_str in cpp_types_list_str]
     return cpp_types_list
 
 
@@ -311,7 +309,7 @@ class TemplateClassOptions(TemplateSpecList):
             return None
         options = srcmlcpp.SrcmlcppOptions()
         try:
-            cpp_type2 = srcmlcpp.srcmlcpp_main.code_to_cpp_type(options, cpp_type_str)
+            cpp_type2 = srcmlcpp.code_to_cpp_type(options, cpp_type_str)
         except srcmlcpp.SrcmlcppException:
             return None
         return self.specialized_type_python_name(cpp_type2, type_replacements)

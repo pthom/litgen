@@ -834,8 +834,8 @@ def fill_block(options: SrcmlcppOptions, element: SrcmlWrapper, inout_block_cont
         child_tag = child_c.tag()
         child_name = child_c.extract_name_from_xml()
 
+        block_children = inout_block_content.block_children
         try:
-            block_children = inout_block_content.block_children
             if child_tag == "decl_stmt":
                 cpp_decl_stmt = parse_decl_stmt(options, child_c, inout_block_content)
                 # Fix brace init default / functions

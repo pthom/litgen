@@ -34,14 +34,13 @@ def hello(name=None):
 
 @app.route("/pimpl", methods=["POST", "GET"])
 def pimpl_result():
-    code: Optional[str]
+    code: Optional[str] = None
     if request.method == "POST":
         code = request.form["code"]
     elif request.method == "GET":
         code = request.args.get("code")
     if code is None:
         return "no code provided"
-
     pimpl_result = pimpl_my_code(code)
     if pimpl_result is None:
         return "No impl struct found!"

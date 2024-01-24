@@ -73,13 +73,14 @@ from srcmlcpp.srcml_wrapper import SrcmlWrapper
 from srcmlcpp.srcmlcpp_main import code_to_cpp_unit
 
 # code_to_srcml_xml_wrapper is a lower level utility, that returns a wrapped version of the srcML tree
-from srcmlcpp.srcmlcpp_main import code_to_srcml_wrapper
+from srcmlcpp.srcmlcpp_main import code_to_srcml_wrapper, code_to_cpp_type
 
 from srcmlcpp.scrml_warning_settings import WarningType
 
 __all__ = [
     # Functions
     "code_to_cpp_unit",
+    "code_to_cpp_type",
     "code_to_srcml_wrapper",
     "SrcmlcppOptions",
     "SrcmlcppException",

@@ -1,0 +1,11 @@
+{
+  "exclude": [
+    "src/litgen/integration_tests/_skbuild/**",
+    "src/litgen/integration_tests/mylib/*.pyi",
+    "venv*/**",
+    "build*/**",
+    "ci_scripts/**",
+    "cmake-build*/**",
+    "_litgen_template/**"
+  ]
+}

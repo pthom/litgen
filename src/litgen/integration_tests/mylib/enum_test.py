@@ -3,6 +3,7 @@ import lg_mylib
 
 
 def test_basic_enum():
+    assert lg_mylib.BasicEnum.__doc__ is not None
     assert "BasicEnum: a simple C-style enum" in lg_mylib.BasicEnum.__doc__
     assert lg_mylib.BasicEnum.a == 1
     assert lg_mylib.BasicEnum.aa == 2

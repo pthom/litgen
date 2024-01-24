@@ -9,7 +9,7 @@ from litgen.internal.adapted_types import AdaptedFunction
 
 
 def make_pydef_code(code: str) -> str:
-    options = litgen.options.LitgenOptions()
+    options = litgen.LitgenOptions()
     lg_context = LitgenContext(options)
     function_decl = srcmlcpp_main.code_first_function_decl(options.srcmlcpp_options, code)
     adapted_function = AdaptedFunction(lg_context, function_decl, False)

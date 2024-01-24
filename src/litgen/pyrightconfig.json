@@ -1,0 +1,6 @@
+{
+  "exclude": [
+    "integration_tests/_skbuild/**",
+    "integration_tests/mylib/*.pyi"
+  ]
+}

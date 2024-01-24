@@ -14,7 +14,7 @@ from litgen.litgen_generator import LitgenGeneratorTestsHelper
 
 def gen_pydef_code(code: str, options: Optional[LitgenOptions] = None) -> str:
     if options is None:
-        options = litgen.options.LitgenOptions()
+        options = litgen.LitgenOptions()
         options.srcmlcpp_options.functions_api_prefixes = "MY_API"
 
     cpp_function = srcmlcpp_main.code_first_function_decl(options.srcmlcpp_options, code)
@@ -24,7 +24,7 @@ def gen_pydef_code(code: str, options: Optional[LitgenOptions] = None) -> str:
 
 
 def my_make_adapted_function(code: str) -> AdaptedFunction:
-    options = litgen.options.LitgenOptions()
+    options = litgen.LitgenOptions()
     options.srcmlcpp_options.functions_api_prefixes = "MY_API"
 
     function_decl = srcmlcpp_main.code_first_function_decl(options.srcmlcpp_options, code)

@@ -5,7 +5,7 @@ import litgen
 
 
 def test_adapt_modifiable_immutable_to_return_test():
-    options = litgen.options.LitgenOptions()
+    options = litgen.LitgenOptions()
     options.fn_params_output_modifiable_immutable_to_return__regex = r".*"
     options.srcmlcpp_options.functions_api_prefixes = "MY_API"
 
@@ -107,7 +107,7 @@ def test_adapt_modifiable_immutable_to_return_test():
 
 
 def test_adapt_modifiable_immutable_to_return_array():
-    options = litgen.options.LitgenOptions()
+    options = litgen.LitgenOptions()
     options.fn_params_replace_c_array_modifiable_by_boxed__regex = ""
     options.fn_params_output_modifiable_immutable_to_return__regex = r".*"
     options.srcmlcpp_options.functions_api_prefixes = "MY_API"

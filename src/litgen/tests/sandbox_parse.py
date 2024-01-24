@@ -81,7 +81,7 @@ def play_virtual_method() -> None:
 
 
 def play() -> None:
-    options = litgen.options.LitgenOptions()
+    options = litgen.LitgenOptions()
     # options.srcmlcpp_options.fix_brace_init_default_value = False
 
     code = """

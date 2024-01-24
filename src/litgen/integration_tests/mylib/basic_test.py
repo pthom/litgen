@@ -1,3 +1,4 @@
+# pyright: reportArgumentType=false
 from __future__ import annotations
 import lg_mylib
 import pytest
@@ -15,10 +16,14 @@ def test_not_published():
 
 
 def test_doc():
+    assert lg_mylib.my_sub.__doc__ is not None
     assert "Subtracts two numbers" in lg_mylib.my_sub.__doc__
 
+    assert lg_mylib.my_add.__doc__ is not None
     assert "Adds two numbers" in lg_mylib.my_add.__doc__
-    assert "Title that should be published as a top comment" not in lg_mylib.my_add.__doc__
+    assert (
+        "Title that should be published as a top comment" not in lg_mylib.my_add.__doc__
+    )
 
     assert lg_mylib.my_mul.__doc__ == "my_mul(a: int, b: int) -> int\n"
 
@@ -43,4 +48,4 @@ def test_vectorizable_functions():
 def test_ignored_namespace():
     assert "detail" not in dir(lg_mylib)
     with pytest.raises(AttributeError):
-        _ = lg_mylib.detail.foo()
+        _ = lg_mylib.detail.foo()  # type: ignore
