@@ -20,23 +20,45 @@ PythonCode = str
 
 
 def apply_black_formatter_pyi(options: LitgenOptions, file: str) -> bool:
-    cmd = f"black --line-length {options.python_black_formatter_line_length} {file}"
-    try:
-        subprocess.check_call(cmd, shell=True)
-        return True
-    except subprocess.CalledProcessError:
-        return False
+    def _apply_black_formatter_pyi_via_module(options: LitgenOptions, file: str) -> bool:
+        """This versions calls black formatter via a python module.
+        For some reason, it does not handle the line length correctly, so we use the subprocess version instead."""
+        import black
+        from pathlib import Path
 
-    # Below the version with an import did not format correctly...
-    # import black
-    # from pathlib import Path
-    # black_mode = black.Mode()
-    # black_mode.is_pyi = True
-    # black_mode.target_versions = {black.TargetVersion.PY310}  # type: ignore
-    # black_mode.line_length = options.python_black_formatter_line_length
-    #
-    # result = black.format_file_in_place(src=Path(file), fast=False, mode=black_mode)
-    # return result
+        black_mode = black.Mode()
+        black_mode.is_pyi = True
+        black_mode.target_versions = {black.TargetVersion.PY310}  # type: ignore
+        black_mode.line_length = options.python_black_formatter_line_length
+
+        result = black.format_file_in_place(src=Path(file), fast=False, mode=black_mode)
+        return result
+
+    def _apply_black_formatter_pyi_via_subprocess(options: LitgenOptions, file: str) -> bool:
+        def add_python_exe_folder_to_env_path():
+            """When calling this from CMake, the env PATH may not contain the python executable folder,
+            where black lives if installed in a virtual environment. This function adds it to the PATH."""
+            import sys
+            import os
+            import pathlib
+
+            python_exe = pathlib.Path(sys.executable)
+            python_exe_folder = python_exe.parent
+            current_path = os.environ["PATH"]
+            if str(python_exe_folder) not in current_path:
+                os.environ["PATH"] += ":" + str(python_exe_folder)
+
+        add_python_exe_folder_to_env_path()
+
+        cmd = f"black --line-length {options.python_black_formatter_line_length} {file}"
+
+        try:
+            subprocess.check_call(cmd, shell=True)
+            return True
+        except subprocess.CalledProcessError:
+            return False
+
+    _apply_black_formatter_pyi_via_subprocess(options, file)
 
 
 @dataclass
