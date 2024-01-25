@@ -35,7 +35,7 @@ def apply_black_formatter_pyi(options: LitgenOptions, file: str) -> bool:
         return result
 
     def _apply_black_formatter_pyi_via_subprocess(options: LitgenOptions, file: str) -> bool:
-        def add_python_exe_folder_to_env_path():
+        def add_python_exe_folder_to_env_path() -> None:
             """When calling this from CMake, the env PATH may not contain the python executable folder,
             where black lives if installed in a virtual environment. This function adds it to the PATH."""
             import sys
@@ -58,7 +58,7 @@ def apply_black_formatter_pyi(options: LitgenOptions, file: str) -> bool:
         except subprocess.CalledProcessError:
             return False
 
-    _apply_black_formatter_pyi_via_subprocess(options, file)
+    return _apply_black_formatter_pyi_via_subprocess(options, file)
 
 
 @dataclass
