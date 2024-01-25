@@ -41,7 +41,11 @@ repos:
     hooks:
       - id: python-use-type-annotations
 
-
+  # Run mypy static type checking
+  - repo: https://github.com/pre-commit/mirrors-mypy
+    rev: v1.8.0
+    hooks:
+      -   id: mypy
 
   #  # Mypy static checking
 #  - repo: local
