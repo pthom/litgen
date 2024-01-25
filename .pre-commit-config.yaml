@@ -47,26 +47,16 @@ repos:
     hooks:
       -   id: mypy
 
-    # Run pytest
-  - repo: local
-    hooks:
-      - id: pytest-check
-        name: pytest-check
-        stages: [commit]
-        types: [python]
-        # entry: python -m pytest
-        entry: venv/bin/pytest
-        language: system
-        pass_filenames: false
-        always_run: true
-
-  #
-#  - repo: local
-#    hooks:
-#      - id: mypy-static-checking
-#        name: "Static type checking with mypy"
-#        entry: bash -c 'echo "Running mypy hook" && poetry run mypy .'
-#        language: system
-#        types: [python]
-#        pass_filenames: false
-#        always_run: true
+    # Run pytest: this works, but requires a venv to be set up at venv/
+    # => disabled for now, since it is not recommended by pre-commit's team
+    # See https://github.com/pre-commit/pre-commit/issues/761#issuecomment-394167542
+    #  - repo: local
+    #    hooks:
+    #      - id: pytest-check
+    #        name: pytest-check
+    #        stages: [commit]
+    #        types: [python]
+    #        entry: venv/bin/pytest
+    #        language: system
+    #        pass_filenames: false
+    #        always_run: true
