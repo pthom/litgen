@@ -1,58 +1,60 @@
-# Install requirement and create venv
+# Prepare build environment
 
-pre-commit:
+## Create virtual environment
 
 ```bash
-pipx run pre-commit install
+python3 -m venv venv       # At least python 3.10
+source venv/bin/activate
 ```
 
+## Install dev requirements
 
-
-# Build the pip modules
-
+```bash
+pip install -r requirements-dev.txt
 ```
+
+## Activate pre-commit hooks for this repository
+
+```bash
+pre-commit install
+```
+
+# Build the project
+
+## Install litgen in editable mode
+
+```bash
 pip install -v -e .
+```
+
+## Install integration test library in editable mode
+
+```bash
 cd src/litgen/integration_tests
 pip install -v -e .
-cd -
 ```
 
-# Tests & Sanity check
+## Run tests
 ```
 mypy .
 black .
 pytest
 ```
 
-# Advices
+---
 
+# Misc advices
+
+## Profiling
+
+You can use snakeviz to visualize the profiling results.
+http://jiffyclub.github.io/snakeviz/
+
+```bash
+pip install snakeviz
+python -m cProfile -o profile.prof your_test.py
+snakeviz profile.prof
+```
+
+## C++ advices
 Don't use {} in function default params !!! It is wrongly parsed by srcML.
-
-# Importanize
-Regularly run [importanize](https://github.com/miki725/importanize), to reorder the imports:
-
-Install importanize (from master branch, in submodule)
-```
-cd ci_scripts
-git clone https://github.com/miki725/importanize.git
-cd importanize
-pip install -v -e .
-cd -
-```
-
-Run importanize
-```
-# From repository root
-importanize
-```
-
-# Profiling
-    http://jiffyclub.github.io/snakeviz/
-
-        pip install snakeviz
-        python -m cProfile -o profile.prof internal/srcml_types_parse_test.py
-        snakeviz profile.prof
-
-
-# Add annotations
-    Use monkeytype: https://github.com/Instagram/MonkeyType

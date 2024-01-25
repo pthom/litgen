@@ -16,13 +16,14 @@ snakeviz
 twine
 
 # for litgen-book (doc with jupyter-book)
-jupyter-black
-Pygments
 jupyter
 notebook
+jupyter-book
+jupyter-black
+Pygments
 types-Pygments
 
 # probably not needed anymore
-Flask
-patch
-importanize
+# Flask
+# patch
+# importanize

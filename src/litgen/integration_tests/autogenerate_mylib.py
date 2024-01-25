@@ -51,21 +51,27 @@ def mylib_litgen_options() -> litgen.LitgenOptions:
     options.enum_exclude_by_name__regex = "Detail$"
 
     # Python modifiable immutables options
-    options.fn_params_replace_modifiable_immutable_by_boxed__regex = code_utils.join_string_by_pipe_char(
-        [
-            r"^Toggle",
-            r"^Modify",
-        ]
+    options.fn_params_replace_modifiable_immutable_by_boxed__regex = (
+        code_utils.join_string_by_pipe_char(
+            [
+                r"^Toggle",
+                r"^Modify",
+            ]
+        )
     )
     options.fn_params_output_modifiable_immutable_to_return__regex = r"^Change"
 
     # c style fixed size array options
-    options.fn_params_replace_c_array_modifiable_by_boxed__regex = code_utils.join_string_by_pipe_char(
-        ["array", "GetPoints", r"c_string_list_total_size"]
+    options.fn_params_replace_c_array_modifiable_by_boxed__regex = (
+        code_utils.join_string_by_pipe_char(
+            ["array", "GetPoints", r"c_string_list_total_size"]
+        )
     )
 
     # c style buffer options (will apply to all functions names, except if containing "Change")
-    options.fn_params_replace_buffer_by_array__regex = code_utils.make_regex_exclude_word("Change")
+    options.fn_params_replace_buffer_by_array__regex = (
+        code_utils.make_regex_exclude_word("Change")
+    )
 
     # namespace
     options.namespaces_root = ["Mylib"]
@@ -150,7 +156,7 @@ def autogenerate_mylib() -> None:
         )
 
 
-def save_all_generated_codes_by_file():
+def save_all_generated_codes_by_file() -> None:
     """This is specific to litgen's integration tests.
     It will generate all the files xxx_test.h.pydef.cpp and xxx_test.h.pyi
     :return:
@@ -158,7 +164,7 @@ def save_all_generated_codes_by_file():
     options = mylib_litgen_options()
     headers_dir = THIS_DIR + "/mylib/"
 
-    def process_one_file(header_file: str):
+    def process_one_file(header_file: str) -> None:
         # print(header_file)
         input_cpp_header_file = headers_dir + header_file
         output_cpp_pydef_file = input_cpp_header_file + ".pydef.cpp"

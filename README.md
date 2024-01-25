@@ -8,3 +8,5 @@ It can be used to bind C++ libraries into documented and discoverable python mod
 It can also be used as C++ transformation/refactoring tool.
 
 [See documentation](https://pthom.github.io/litgen/)
+
+See developer documentation in [Build.md](Build.md)
