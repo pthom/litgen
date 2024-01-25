@@ -140,7 +140,9 @@ def buffer_sum(buffer: np.ndarray, stride: int = -1) -> int:
     """
     pass
 
-def add_inside_two_buffers(buffer_1: np.ndarray, buffer_2: np.ndarray, number_to_add: int) -> None:
+def add_inside_two_buffers(
+    buffer_1: np.ndarray, buffer_2: np.ndarray, number_to_add: int
+) -> None:
     """add_inside_two_buffers: modifies two mutable buffers
     litgen will detect that this function uses two buffers of same size.
     Will be published in python as:
@@ -163,7 +165,9 @@ def templated_mul_inside_buffer(buffer: np.ndarray, factor: float) -> None:
 #                       mylib/c_string_list_test.h included by mylib/mylib_main/mylib.h                        //
 # //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-def c_string_list_total_size(items: List[str], output_0: BoxedInt, output_1: BoxedInt) -> int:
+def c_string_list_total_size(
+    items: List[str], output_0: BoxedInt, output_1: BoxedInt
+) -> int:
     """
     C String lists tests:
       Two consecutive params (const char *, int | size_t) are exported as List[str]
@@ -261,7 +265,9 @@ def change_bool_int2(label: str, value1: int, value2: int) -> Tuple[bool, int, i
     """
     pass
 
-def change_void_int_default_null(label: str, value: Optional[int] = None) -> Tuple[bool, Optional[int]]:
+def change_void_int_default_null(
+    label: str, value: Optional[int] = None
+) -> Tuple[bool, Optional[int]]:
     """Will be published in python as:
     -->    def change_void_int_default_null(label: str, value: Optional[int] = None) -> Tuple[bool, Optional[int]]:
     """
@@ -433,7 +439,9 @@ class MyStructDynamic:
 class MyStructWithNestedEnum:
     class Choice(enum.Enum):
         a = enum.auto()  # (= 0)
-    def handle_choice(self, value: MyStructWithNestedEnum.Choice = MyStructWithNestedEnum.Choice.a) -> int:
+    def handle_choice(
+        self, value: MyStructWithNestedEnum.Choice = MyStructWithNestedEnum.Choice.a
+    ) -> int:
         """The first param of this function uses the inner scope of this class!
         When building the bindings, we need to add MyStructWithNestedEnum::
         """
@@ -752,7 +760,9 @@ class FooTemplateFunctionTest:
     #      <template specializations for function SumVectorAndCArray>
     def sum_vector_and_c_array_int(self, xs: List[int], other_values: List[int]) -> int:
         pass
-    def sum_vector_and_c_array_string(self, xs: List[str], other_values: List[str]) -> str:
+    def sum_vector_and_c_array_string(
+        self, xs: List[str], other_values: List[str]
+    ) -> str:
         pass
     #      </template specializations for function SumVectorAndCArray>
     #  ------------------------------------------------------------------------
@@ -885,7 +895,9 @@ class FooBrace:
         """Auto-generated default constructor with named params"""
         pass
 
-def fn_brace(foo_brace: FooBrace = FooBrace(), ints: List[int] = List[int](1, 2, 3)) -> int:
+def fn_brace(
+    foo_brace: FooBrace = FooBrace(), ints: List[int] = List[int](1, 2, 3)
+) -> int:
     pass
 
 # ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -986,7 +998,9 @@ class root:  # Proxy class that introduces typings for the *submodule* root
             # <protected_methods>
             def foo_virtual_protected(self, x: int) -> int:  # overridable
                 pass
-            def foo_virtual_protected_const_const(self, name: str) -> str:  # overridable
+            def foo_virtual_protected_const_const(
+                self, name: str
+            ) -> str:  # overridable
                 pass
             # </protected_methods>
 
@@ -1040,7 +1054,9 @@ class some_namespace:  # Proxy class that introduces typings for the *submodule*
         def toggle_bool_pointer(self, v: BoxedBool) -> None:
             """//, int vv[2])"""
             pass
-        def toggle_bool_pointer_get_points(self, v: BoxedBool, vv_0: BoxedInt, vv_1: BoxedInt) -> None:
+        def toggle_bool_pointer_get_points(
+            self, v: BoxedBool, vv_0: BoxedInt, vv_1: BoxedInt
+        ) -> None:
             pass
         def modify_string(self, s: BoxedString) -> None:
             pass
@@ -1048,15 +1064,20 @@ class some_namespace:  # Proxy class that introduces typings for the *submodule*
             pass
         def add_inside_buffer(self, buffer: np.ndarray, number_to_add: int) -> None:
             pass
-        def templated_mul_inside_buffer(self, buffer: np.ndarray, factor: float) -> None:
+        def templated_mul_inside_buffer(
+            self, buffer: np.ndarray, factor: float
+        ) -> None:
             pass
         def const_array2_add(self, values: List[int]) -> int:
             pass
-        def c_string_list_total_size(self, items: List[str], output_0: BoxedInt, output_1: BoxedInt) -> int:
+        def c_string_list_total_size(
+            self, items: List[str], output_0: BoxedInt, output_1: BoxedInt
+        ) -> int:
             pass
         def __init__(self) -> None:
             """Auto-generated default constructor"""
             pass
+
     # <submodule some_inner_namespace>
     class some_inner_namespace:  # Proxy class that introduces typings for the *submodule* some_inner_namespace
         pass  # (This corresponds to a C++ namespace. All method are static!)
@@ -1066,7 +1087,9 @@ class some_namespace:  # Proxy class that introduces typings for the *submodule*
             """//, int vv[2])"""
             pass
         @staticmethod
-        def toggle_bool_pointer_get_points(v: BoxedBool, vv_0: BoxedInt, vv_1: BoxedInt) -> None:
+        def toggle_bool_pointer_get_points(
+            v: BoxedBool, vv_0: BoxedInt, vv_1: BoxedInt
+        ) -> None:
             pass
         @staticmethod
         def modify_string(s: BoxedString) -> None:
@@ -1084,7 +1107,9 @@ class some_namespace:  # Proxy class that introduces typings for the *submodule*
         def const_array2_add(values: List[int]) -> int:
             pass
         @staticmethod
-        def c_string_list_total_size(items: List[str], output_0: BoxedInt, output_1: BoxedInt) -> int:
+        def c_string_list_total_size(
+            items: List[str], output_0: BoxedInt, output_1: BoxedInt
+        ) -> int:
             pass
     # </submodule some_inner_namespace>
 
@@ -1151,9 +1176,12 @@ class a:  # Proxy class that introduces typings for the *submodule* a
         c: int = 3
         foo: Foo = Foo.foo1
         s: str = "Allo"  # (const)
-        def __init__(self, b: bool = True, a: int = int(), c: int = 3, foo: Foo = Foo.foo1) -> None:
+        def __init__(
+            self, b: bool = True, a: int = int(), c: int = 3, foo: Foo = Foo.foo1
+        ) -> None:
             """Auto-generated default constructor with named params"""
             pass
+
     # <submodule n>
     class n:  # Proxy class that introduces typings for the *submodule* n
         pass  # (This corresponds to a C++ namespace. All method are static!)
