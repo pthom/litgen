@@ -47,17 +47,18 @@ repos:
     hooks:
       -   id: mypy
 
-    # Mypy static checking
+    # Run pytest
   - repo: local
     hooks:
       - id: pytest-check
         name: pytest-check
         stages: [commit]
         types: [python]
-        entry: pytest
+        entry: python -m pytest
         language: system
         pass_filenames: false
         always_run: true
+
 
   #
 #  - repo: local
