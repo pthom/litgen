@@ -354,6 +354,7 @@ def test_vectorization_namespace():
     options.fn_vectorize_suffix = "_v"
 
     generated_code = litgen.generate_code(options, code)
+    # print(generated_code.pydef_code)
 
     code_utils.assert_are_codes_equal(
         generated_code.pydef_code,
@@ -363,24 +364,25 @@ def test_vectorization_namespace():
             pyNsMathFunctions.def("vectorizable_sum",
                 MathFunctions::vectorizable_sum, py::arg("x"), py::arg("y"));
             pyNsMathFunctions.def("v_vectorizable_sum_v",
-                py::vectorize(MathFunctions::vectorizable_sum), py::arg("x"), py::arg("y"));
+                py::overload_cast<float, double>(py::vectorize(MathFunctions::vectorizable_sum)), py::arg("x"), py::arg("y"));
         } // </namespace MathFunctions>
     """,
     )
     code_utils.assert_are_codes_equal(
         generated_code.stub_code,
         """
-        # <submodule math_functions>
-        class math_functions:  # Proxy class that introduces typings for the *submodule* math_functions
-            pass  # (This corresponds to a C++ namespace. All method are static!)
-            @staticmethod
-            def vectorizable_sum(x: float, y: float) -> float:
-                pass
-            @staticmethod
-            def v_vectorizable_sum_v(x: np.ndarray, y: np.ndarray) -> np.ndarray:
-                pass
+            # <submodule math_functions>
+            class math_functions:  # Proxy class that introduces typings for the *submodule* math_functions
+                pass  # (This corresponds to a C++ namespace. All method are static!)
+                @staticmethod
+                def vectorizable_sum(x: float, y: float) -> float:
+                    pass
+                @staticmethod
+                @overload
+                def v_vectorizable_sum_v(x: np.ndarray, y: np.ndarray) -> np.ndarray:
+                    pass
 
-        # </submodule math_functions>
+            # </submodule math_functions>
     """,
     )
 

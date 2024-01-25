@@ -33,7 +33,7 @@ header_code = """
 """
 
 # Create a temporary directory
-import tempfile
+import tempfile  # noqa
 
 temp_dir = tempfile.TemporaryDirectory()
 

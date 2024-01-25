@@ -32,7 +32,7 @@ def apply_black_formatter_pyi(options: LitgenOptions, file: str) -> bool:
         black_mode.line_length = options.python_black_formatter_line_length
 
         result = black.format_file_in_place(src=Path(file), fast=False, mode=black_mode)
-        return result
+        return result  # type: ignore
 
     def _apply_black_formatter_pyi_via_subprocess(options: LitgenOptions, file: str) -> bool:
         def add_python_exe_folder_to_env_path() -> None:
