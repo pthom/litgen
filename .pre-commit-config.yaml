@@ -47,7 +47,19 @@ repos:
     hooks:
       -   id: mypy
 
-  #  # Mypy static checking
+    # Mypy static checking
+  - repo: local
+    hooks:
+      - id: pytest-check
+        name: pytest-check
+        stages: [commit]
+        types: [python]
+        entry: pytest
+        language: system
+        pass_filenames: false
+        always_run: true
+
+  #
 #  - repo: local
 #    hooks:
 #      - id: mypy-static-checking
