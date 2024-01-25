@@ -29,7 +29,7 @@ dependencies = [
     "fire",
     "pybind11",
     "black",
-#    "srcml_caller"
+    "srcml_caller"
 ]
 
 # package is ignored by hatchling... we have to use [tool.hatch.build.targets.wheel]

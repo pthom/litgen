@@ -3,11 +3,11 @@
 <!DOCTYPE html>
 
 
-<html lang="en" >
+<html lang="en" data-content_root="" >
 
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
     <title>Generate binding files for a library &#8212; litgen, the Literate Generator</title>
   
@@ -19,15 +19,15 @@
   </script>
   
   <!-- Loaded before other Sphinx assets -->
-  <link href="../../_static/styles/theme.css?digest=365ca57ee442770a23c6" rel="stylesheet" />
-<link href="../../_static/styles/bootstrap.css?digest=365ca57ee442770a23c6" rel="stylesheet" />
-<link href="../../_static/styles/pydata-sphinx-theme.css?digest=365ca57ee442770a23c6" rel="stylesheet" />
+  <link href="../../_static/styles/theme.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+<link href="../../_static/styles/bootstrap.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
 
   
-  <link href="../../_static/vendor/fontawesome/6.1.2/css/all.min.css?digest=365ca57ee442770a23c6" rel="stylesheet" />
-  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.1.2/webfonts/fa-solid-900.woff2" />
-<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.1.2/webfonts/fa-brands-400.woff2" />
-<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.1.2/webfonts/fa-regular-400.woff2" />
+  <link href="../../_static/vendor/fontawesome/6.5.1/css/all.min.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.1/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.1/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.1/webfonts/fa-regular-400.woff2" />
 
     <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
     <link rel="stylesheet" href="../../_static/styles/sphinx-book-theme.css?digest=14f4ca6b54d191a8c7657f6c759bf11a5fb86285" type="text/css" />
@@ -38,9 +38,9 @@
     <link rel="stylesheet" type="text/css" href="../../_static/design-style.4045f2051d55cab465a707391d5b2007.min.css" />
   
   <!-- Pre-loaded scripts that we'll load fully later -->
-  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=365ca57ee442770a23c6" />
-<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=365ca57ee442770a23c6" />
-  <script src="../../_static/vendor/fontawesome/6.1.2/js/all.min.js?digest=365ca57ee442770a23c6"></script>
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=8d27b9dea8ad943066ae" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=8d27b9dea8ad943066ae" />
+  <script src="../../_static/vendor/fontawesome/6.5.1/js/all.min.js?digest=8d27b9dea8ad943066ae"></script>
 
     <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
     <script src="../../_static/jquery.js"></script>
@@ -62,11 +62,9 @@ const thebe_selector_input = "pre"
 const thebe_selector_output = ".output, .cell_output"
 </script>
     <script async="async" src="../../_static/sphinx-thebe.js"></script>
-    <script>DOCUMENTATION_OPTIONS.pagename = 'example_bindings/DaftLib/Readme';</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'example_bindings/DasLib/Readme';</script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="next" title="CMake helpers" href="../../01_15_00_cmake_helpers.html" />
-    <link rel="prev" title="First steps" href="../../01_10_00_first_steps.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   </head>
@@ -76,10 +74,9 @@ const thebe_selector_output = ".output, .cell_output"
 
   
   
-  <a class="skip-link" href="#main-content">Skip to main content</a>
+  <a id="pst-skip-link" class="skip-link" href="#main-content">Skip to main content</a>
   
   <div id="pst-scroll-pixel-helper"></div>
-
   
   <button type="button" class="btn rounded-pill" id="pst-back-to-top">
     <i class="fa-solid fa-arrow-up"></i>
@@ -120,11 +117,16 @@ const thebe_selector_output = ".output, .cell_output"
 </form></div>
   </div>
   
-    <nav class="bd-header navbar navbar-expand-lg bd-navbar">
-    </nav>
+    <header class="bd-header navbar navbar-expand-lg bd-navbar">
+    </header>
   
+
   <div class="bd-container">
     <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
       
       <div class="bd-sidebar-primary bd-sidebar">
         
@@ -139,6 +141,7 @@ const thebe_selector_output = ".output, .cell_output"
   
     <div class="sidebar-primary-items__start sidebar-primary__section">
         <div class="sidebar-primary-item">
+
   
 
 <a class="navbar-brand logo" href="../../00_00_intro.html">
@@ -171,12 +174,11 @@ const thebe_selector_output = ".output, .cell_output"
 <ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="../../01_05_00_install_or_online.html">Installation or online usage</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../01_05_05_online.html">Use litgen online</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../01_05_10_install.html">Install litgen</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../01_05_10_install_srcml.html">Optional: install srcML command line tool</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Bindings - Basics</span></p>
-<ul class="current nav bd-sidenav">
+<ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="../../01_10_00_first_steps.html">First steps</a></li>
-<li class="toctree-l1 current active"><a class="current reference internal" href="#">Generate binding files for a library</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../01_15_00_cmake_helpers.html">CMake helpers</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Bindings - Advanced Topics</span></p>
@@ -270,7 +272,7 @@ const thebe_selector_output = ".output, .cell_output"
       
       
       
-      <li><a href="https://github.com/pthom/litgen/issues/new?title=Issue%20on%20page%20%2Fexample_bindings/DaftLib/Readme.html&body=Your%20issue%20content%20here." target="_blank"
+      <li><a href="https://github.com/pthom/litgen/issues/new?title=Issue%20on%20page%20%2Fexample_bindings/DasLib/Readme.html&body=Your%20issue%20content%20here." target="_blank"
    class="btn btn-sm btn-source-issues-button dropdown-item"
    title="Open an issue"
    data-bs-placement="left" data-bs-toggle="tooltip"
@@ -300,7 +302,7 @@ const thebe_selector_output = ".output, .cell_output"
       
       
       
-      <li><a href="../../_sources/example_bindings/DaftLib/Readme.md" target="_blank"
+      <li><a href="../../_sources/example_bindings/DasLib/Readme.md" target="_blank"
    class="btn btn-sm btn-download-source-button dropdown-item"
    title="Download source file"
    data-bs-placement="left" data-bs-toggle="tooltip"
@@ -352,6 +354,7 @@ const thebe_selector_output = ".output, .cell_output"
 </button>
 
 
+
 <script>
 document.write(`
   <button class="btn btn-sm navbar-btn theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
@@ -361,6 +364,7 @@ document.write(`
   </button>
 `);
 </script>
+
 
 <script>
 document.write(`
@@ -408,50 +412,50 @@ document.write(`
               
                 
 <div id="searchbox"></div>
-                <article class="bd-article" role="main">
+                <article class="bd-article">
                   
   <section class="tex2jax_ignore mathjax_ignore" id="generate-binding-files-for-a-library">
 <h1>Generate binding files for a library<a class="headerlink" href="#generate-binding-files-for-a-library" title="Permalink to this heading">#</a></h1>
 <section id="overview-of-generated-files">
 <h2>Overview of generated files<a class="headerlink" href="#overview-of-generated-files" title="Permalink to this heading">#</a></h2>
-<p>The folder <a class="reference external" href="https://github.com/pthom/litgen/blob/main/litgen-book/example_bindings/DaftLib">DaftLib</a>
+<p>The folder <a class="reference external" href="https://github.com/pthom/litgen/blob/main/litgen-book/example_bindings/DasLib">DasLib</a>
 demonstrates which files are generated by litgen, and how to create and populate them.
 It does <em>not</em> contain explanation about how to use the generated files, and build the bindings.</p>
 <p>(Please refer to the “cmake helper” section of this manual for more info about how to build them)</p>
 <p><strong>Folder content</strong></p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>DaftLib/
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>DasLib/
 ├── cpp_sources/
-│         └── DaftLib/                    # This is a sample library for which you
-│             ├── DaftLib.cpp             # want to generate bindings
-│             ├── DaftLib.h
-│             ├── DaftLib2.cpp
-│             └── DaftLib2.h
-├── autogenerate_daft_lib.py              # This is the script that will populate the folder generated_code/
+│         └── DasLib/                    # This is a sample library for which you
+│             ├── DasLib.cpp             # want to generate bindings
+│             ├── DasLib.h
+│             ├── DasLib2.cpp
+│             └── DasLib2.h
+├── autogenerate_das_lib.py              # This is the script that will populate the folder generated_code/
 │                                         # For demonstration purpose, it can either work with an amalgamated header,
 │                                         # or it can generated bindings from the two header files
 └── generated_code/
-    ├── DaftLib_amalgamation/
+    ├── DasLib_amalgamation/
     │         └── amalgamation.h          # Optional amalgamation header file
-    ├── DaftLib_bindings/
-    │         ├── pybind_DaftLib.cpp      # This is the generated cpp bindings code
-    │         └── glue_code_DaftLib.h     # This is the generated cpp glue code
-    └── DaftLib_stubs/
-        ├── daft_lib.pyi                  # This is the generated python stubs code
+    ├── DasLib_bindings/
+    │         ├── pybind_DasLib.cpp      # This is the generated cpp bindings code
+    │         └── glue_code_DasLib.h     # This is the generated cpp glue code
+    └── DasLib_stubs/
+        ├── das_lib.pyi                  # This is the generated python stubs code
         └── py.typed                      # This is an empty file that indicates that the python module is typed
 </pre></div>
 </div>
 <section id="markers-in-generated-files">
 <h3>Markers in generated files:<a class="headerlink" href="#markers-in-generated-files" title="Permalink to this heading">#</a></h3>
 <p>The generated files contain markers that indicate which parts of the file are generated, and which parts are not.</p>
-<p><code class="docutils literal notranslate"><span class="pre">DaftLib/generated_code/DaftLib_bindings/pybind_DaftLib.cpp</span></code></p>
+<p><code class="docutils literal notranslate"><span class="pre">DasLib/generated_code/DasLib_bindings/pybind_DasLib.cpp</span></code></p>
 <div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;pybind11/pybind11.h&gt;</span>
 
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;DaftLib/DaftLib.h&quot;</span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;glue_code_DaftLib.h&quot;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;DasLib/DasLib.h&quot;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;glue_code_DasLib.h&quot;</span>
 
 <span class="k">namespace</span><span class="w"> </span><span class="nn">py</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nn">pybind11</span><span class="p">;</span>
 
-<span class="kt">void</span><span class="w"> </span><span class="nf">py_init_module_daft_lib</span><span class="p">(</span><span class="n">py</span><span class="o">::</span><span class="k">module</span><span class="o">&amp;</span><span class="w"> </span><span class="n">m</span><span class="p">)</span>
+<span class="kt">void</span><span class="w"> </span><span class="nf">py_init_module_das_lib</span><span class="p">(</span><span class="n">py</span><span class="o">::</span><span class="k">module</span><span class="o">&amp;</span><span class="w"> </span><span class="n">m</span><span class="p">)</span>
 <span class="p">{</span>
 <span class="w">    </span><span class="c1">// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!  AUTOGENERATED CODE !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!</span>
 <span class="w">    </span><span class="c1">// &lt;litgen_pydef&gt; // Autogenerated code below! Do not edit!</span>
@@ -461,7 +465,7 @@ It does <em>not</em> contain explanation about how to use the generated files, a
 <span class="p">}</span>
 </pre></div>
 </div>
-<p><code class="docutils literal notranslate"><span class="pre">DaftLib/generated_code/DaftLib_bindings/glue_code_DaftLib.h</span></code></p>
+<p><code class="docutils literal notranslate"><span class="pre">DasLib/generated_code/DasLib_bindings/glue_code_DasLib.h</span></code></p>
 <div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;string&gt;</span>
 
 <span class="c1">// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!  AUTOGENERATED CODE !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!</span>
@@ -471,7 +475,7 @@ It does <em>not</em> contain explanation about how to use the generated files, a
 <span class="c1">// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!  AUTOGENERATED CODE END !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!</span>
 </pre></div>
 </div>
-<p><code class="docutils literal notranslate"><span class="pre">DaftLib/generated_code/DaftLib_stubs/daft_lib.pyi</span></code></p>
+<p><code class="docutils literal notranslate"><span class="pre">DasLib/generated_code/DasLib_stubs/das_lib.pyi</span></code></p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># type: ignore</span>
 
 <span class="c1"># !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!  AUTOGENERATED CODE !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!</span>
@@ -485,7 +489,7 @@ It does <em>not</em> contain explanation about how to use the generated files, a
 </section>
 <section id="generate-the-bindings-for-one-file">
 <h3>Generate the bindings for one file<a class="headerlink" href="#generate-the-bindings-for-one-file" title="Permalink to this heading">#</a></h3>
-<p>See the <a class="reference external" href="https://github.com/pthom/litgen/blob/main/packages/litgen/litgen-book/example_bindings/DaftLib/autogenerate_daft_lib.py">autogenerate_daft_lib.py</a> script for an example of how to generate the bindings.</p>
+<p>See the <a class="reference external" href="https://github.com/pthom/litgen/blob/main/packages/litgen/litgen-book/example_bindings/DasLib/autogenerate_das_lib.py">autogenerate_das_lib.py</a> script for an example of how to generate the bindings.</p>
 <p>Relevant extract:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span>    <span class="n">litgen</span><span class="o">.</span><span class="n">write_generated_code_for_file</span><span class="p">(</span>
         <span class="n">options</span><span class="p">,</span>
@@ -500,19 +504,19 @@ It does <em>not</em> contain explanation about how to use the generated files, a
 </section>
 <section id="generate-an-amalgamation-header">
 <h3>Generate an amalgamation header<a class="headerlink" href="#generate-an-amalgamation-header" title="Permalink to this heading">#</a></h3>
-<p>See the <a class="reference external" href="https://github.com/pthom/litgen/blob/main/packages/litgen/litgen-book/example_bindings/DaftLib/autogenerate_daft_lib.py">autogenerate_daft_lib.py</a> script for an example of how to generate the bindings.</p>
+<p>See the <a class="reference external" href="https://github.com/pthom/litgen/blob/main/packages/litgen/litgen-book/example_bindings/DasLib/autogenerate_das_lib.py">autogenerate_das_lib.py</a> script for an example of how to generate the bindings.</p>
 <p>Relevant extract:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">codemanip</span> <span class="kn">import</span> <span class="n">amalgamated_header</span>
 
 <span class="k">def</span> <span class="nf">make_amalgamated_header</span><span class="p">():</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Generates an amalgamated header file for DaftLib in generated_code/DaftLib_amalgamation/amalgamation.h&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Generates an amalgamated header file for DasLib in generated_code/DasLib_amalgamation/amalgamation.h&quot;&quot;&quot;</span>
     <span class="n">options</span> <span class="o">=</span> <span class="n">amalgamated_header</span><span class="o">.</span><span class="n">AmalgamationOptions</span><span class="p">()</span>
 
     <span class="n">options</span><span class="o">.</span><span class="n">base_dir</span> <span class="o">=</span> <span class="n">THIS_DIR</span> <span class="o">+</span> <span class="s2">&quot;/cpp_sources&quot;</span>
-    <span class="n">options</span><span class="o">.</span><span class="n">local_includes_startwith</span> <span class="o">=</span> <span class="s2">&quot;DaftLib/&quot;</span>
-    <span class="n">options</span><span class="o">.</span><span class="n">include_subdirs</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;DaftLib&quot;</span><span class="p">]</span>
-    <span class="n">options</span><span class="o">.</span><span class="n">main_header_file</span> <span class="o">=</span> <span class="s2">&quot;DaftLib.h&quot;</span>
-    <span class="n">options</span><span class="o">.</span><span class="n">dst_amalgamated_header_file</span> <span class="o">=</span> <span class="n">THIS_DIR</span> <span class="o">+</span> <span class="s2">&quot;/generated_code/DaftLib_amalgamation/amalgamation.h&quot;</span>
+    <span class="n">options</span><span class="o">.</span><span class="n">local_includes_startwith</span> <span class="o">=</span> <span class="s2">&quot;DasLib/&quot;</span>
+    <span class="n">options</span><span class="o">.</span><span class="n">include_subdirs</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;DasLib&quot;</span><span class="p">]</span>
+    <span class="n">options</span><span class="o">.</span><span class="n">main_header_file</span> <span class="o">=</span> <span class="s2">&quot;DasLib.h&quot;</span>
+    <span class="n">options</span><span class="o">.</span><span class="n">dst_amalgamated_header_file</span> <span class="o">=</span> <span class="n">THIS_DIR</span> <span class="o">+</span> <span class="s2">&quot;/generated_code/DasLib_amalgamation/amalgamation.h&quot;</span>
 
     <span class="n">amalgamated_header</span><span class="o">.</span><span class="n">write_amalgamate_header_file</span><span class="p">(</span><span class="n">options</span><span class="p">)</span>
 </pre></div>
@@ -520,11 +524,11 @@ It does <em>not</em> contain explanation about how to use the generated files, a
 </section>
 <section id="generate-the-bindings-for-a-collection-of-files">
 <h3>Generate the bindings for a collection of files<a class="headerlink" href="#generate-the-bindings-for-a-collection-of-files" title="Permalink to this heading">#</a></h3>
-<p>See the <a class="reference external" href="https://github.com/pthom/litgen/blob/main/packages/litgen/litgen-book/example_bindings/DaftLib/autogenerate_daft_lib.py">autogenerate_daft_lib.py</a> script for an example of how to generate the bindings.</p>
+<p>See the <a class="reference external" href="https://github.com/pthom/litgen/blob/main/packages/litgen/litgen-book/example_bindings/DasLib/autogenerate_das_lib.py">autogenerate_das_lib.py</a> script for an example of how to generate the bindings.</p>
 <p>Relevant extract:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span>    <span class="n">header_files</span> <span class="o">=</span> <span class="p">[</span>
-        <span class="n">THIS_DIR</span> <span class="o">+</span> <span class="s2">&quot;/cpp_sources/DaftLib/DaftLib.h&quot;</span><span class="p">,</span>
-        <span class="n">THIS_DIR</span> <span class="o">+</span> <span class="s2">&quot;/cpp_sources/DaftLib/DaftLib_2.h&quot;</span><span class="p">,</span>
+        <span class="n">THIS_DIR</span> <span class="o">+</span> <span class="s2">&quot;/cpp_sources/DasLib/DasLib.h&quot;</span><span class="p">,</span>
+        <span class="n">THIS_DIR</span> <span class="o">+</span> <span class="s2">&quot;/cpp_sources/DasLib/DasLib_2.h&quot;</span><span class="p">,</span>
     <span class="p">]</span>
     <span class="n">litgen</span><span class="o">.</span><span class="n">write_generated_code_for_files</span><span class="p">(</span>
         <span class="n">options</span><span class="p">,</span>
@@ -552,7 +556,7 @@ It does <em>not</em> contain explanation about how to use the generated files, a
         },
         kernelOptions: {
             name: "python3",
-            path: "./example_bindings/DaftLib"
+            path: "./example_bindings/DasLib"
         },
         predefinedOutput: true
     }
@@ -567,26 +571,8 @@ It does <em>not</em> contain explanation about how to use the generated files, a
               
               
                 <footer class="prev-next-footer">
-                  <!-- Previous / next buttons -->
+                  
 <div class="prev-next-area">
-    <a class="left-prev"
-       href="../../01_10_00_first_steps.html"
-       title="previous page">
-      <i class="fa-solid fa-angle-left"></i>
-      <div class="prev-next-info">
-        <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title">First steps</p>
-      </div>
-    </a>
-    <a class="right-next"
-       href="../../01_15_00_cmake_helpers.html"
-       title="next page">
-      <div class="prev-next-info">
-        <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">CMake helpers</p>
-      </div>
-      <i class="fa-solid fa-angle-right"></i>
-    </a>
 </div>
                 </footer>
               
@@ -595,6 +581,7 @@ It does <em>not</em> contain explanation about how to use the generated files, a
             
               
                 <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
 
   <div class="sidebar-secondary-item">
   <div class="page-toc tocsection onthispage">
@@ -630,6 +617,7 @@ By Pascal Thomet
   
   <div class="footer-item">
     
+
   <p class="copyright">
     
       © Copyright 2023.
@@ -656,8 +644,8 @@ By Pascal Thomet
   </div>
   
   <!-- Scripts loaded after <body> so the DOM is not blocked -->
-  <script src="../../_static/scripts/bootstrap.js?digest=365ca57ee442770a23c6"></script>
-<script src="../../_static/scripts/pydata-sphinx-theme.js?digest=365ca57ee442770a23c6"></script>
+  <script src="../../_static/scripts/bootstrap.js?digest=8d27b9dea8ad943066ae"></script>
+<script src="../../_static/scripts/pydata-sphinx-theme.js?digest=8d27b9dea8ad943066ae"></script>
 
   <footer class="bd-footer">
   </footer>

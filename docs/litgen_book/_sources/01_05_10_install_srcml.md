@@ -1,6 +1,8 @@
-# Install litgen
+# Optional: install srcML command line tool
 
-## Step 1: install srcML
+[srcML](https://www.srcml.org/) can also be used as a command line tool to generate XML representations of source code. It is used by litgen to generate the bindings.
+
+You do not need to install srcML if you are using `litgen`, but it might be useful to have it installed to inspect the generated XML files.
 
 ### Either install srcML from pre-compiled binaries
 You can download a pre-compiled version at [srcML.org](https://www.srcml.org/#download)
@@ -36,8 +38,3 @@ cmake ../srcML && make -j
 sudo make install
 ```
 
-## Step 2: install litgen
-
-```bash
-pip install "litgen@git+https://github.com/pthom/litgen"```
-```

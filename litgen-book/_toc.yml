@@ -10,7 +10,7 @@ parts:
     chapters:
       - file: 01_05_00_install_or_online
       - file: 01_05_05_online
-      - file: 01_05_10_install
+      - file: 01_05_10_install_srcml
 
   - caption: Bindings - Basics
     chapters:

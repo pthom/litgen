@@ -2,7 +2,7 @@
 
 You can either use litgen online, or install it locally.
 
-**If using it online**
+## Use litgen online
 
 You do not to install anything. Simply:
 1. Set some conversion options
@@ -11,6 +11,12 @@ You do not to install anything. Simply:
 
 [Access the online tool](https://mybinder.org/v2/gh/pthom/litgen/main?urlpath=lab/tree/litgen-book/01_05_05_online.ipynb)
 
-**If installing locally**
+## Install litgen locally
 
-You can integrate liten into your building process, and it can generate full C++ bindings files, as well as python stubs (API documentation and declaration).
+If installing locally, you can integrate liten into your building process, and it can generate full C++ bindings files, as well as python stubs (API documentation and declaration).
+
+```bash
+pip install "litgen@git+https://github.com/pthom/litgen"```
+```
+
+That's it!
