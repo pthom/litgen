@@ -16,7 +16,7 @@ import litgen
 from litgen import LitgenOptions
 
 
-def generate_and_display_impl(
+def _generate_and_display_impl(
     options: LitgenOptions, cpp_code: str, display_original_cpp_code: bool, collapse_pydef: bool, max_visible_lines: int
 ) -> str:
     generated_codes = litgen.generate_code(options, cpp_code)
@@ -49,14 +49,15 @@ def generate_and_display_impl(
     return html
 
 
-def generate_and_display(
+def demo(
     options: LitgenOptions,
     cpp_code: str,
-    display_original_cpp_code: bool = True,
-    collapse_pydef: bool = True,
-    max_visible_lines: int = 20,
+    show_cpp: bool = False,
+    show_pydef: bool = False,
+    height: int = 40,
 ) -> None:
     from IPython.display import display  # type: ignore
 
-    html = generate_and_display_impl(options, cpp_code, display_original_cpp_code, collapse_pydef, max_visible_lines)
+    collapse_pydef = not show_pydef
+    html = _generate_and_display_impl(options, cpp_code, show_cpp, collapse_pydef, height)
     display(HTML(html))

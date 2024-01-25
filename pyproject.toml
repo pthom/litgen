@@ -57,4 +57,4 @@ litgen-cli = 'litgen.cli.litgen_cli:main'
 line-length = 120
 # A regex preceded with ^/ will apply only to files and directories
 # in the root of the project.
-extend-exclude = '''venv|^scratch|_litgeb_template|src/litgen/integration_tests/mylib|pybind11|importanize|.pyi$|lg_projects|ci_scripts/docker_ci/dvp|md4c|external/SDL'''
+extend-exclude = '''venv|^scratch|.ipynb$|_litgeb_template|src/litgen/integration_tests/mylib|pybind11|importanize|.pyi$|lg_projects|ci_scripts/docker_ci/dvp|md4c|external/SDL'''
