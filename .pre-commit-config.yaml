@@ -26,14 +26,14 @@ repos:
         # exclude_types: ["pyi"]
 
   # Ruff
-  - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.1.14
-    hooks:
-      # Run the linter.
-      - id: ruff
-        args: [ --fix ]
-      # Run the formatter.
-      # - id: ruff-format
+#  - repo: https://github.com/astral-sh/ruff-pre-commit
+#    rev: v0.1.14
+#    hooks:
+#      # Run the linter.
+#      - id: ruff
+#        args: [ --fix ]
+#      # Run the formatter.
+#      # - id: ruff-format
 
   # Enforce that python3.6+ type annotations are used instead of type comments
   - repo: https://github.com/pre-commit/pygrep-hooks
