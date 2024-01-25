@@ -17,13 +17,13 @@ repos:
       - id: remove-crlf
       - id: forbid-tabs
 
-    # Black formatter
-  - repo: https://github.com/psf/black
-    rev: 23.12.1
-    hooks:
-      - id: black
-        exclude: src/litgen/integration_tests/mylib
-        # exclude_types: ["pyi"]
+    # Black formatter: disabled by default, run manually
+    #  - repo: https://github.com/psf/black
+    #    rev: 23.12.1
+    #    hooks:
+    #      - id: black
+    #        exclude: src/litgen/integration_tests/mylib
+    #        # exclude_types: ["pyi"]
 
   # Ruff
   - repo: https://github.com/astral-sh/ruff-pre-commit
