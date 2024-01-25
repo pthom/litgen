@@ -52,7 +52,7 @@ def _generate_and_display_impl(
 def demo(
     options: LitgenOptions,
     cpp_code: str,
-    show_cpp: bool = False,
+    show_cpp: bool = True,
     show_pydef: bool = False,
     height: int = 40,
 ) -> None:
