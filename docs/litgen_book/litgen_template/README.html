@@ -1,0 +1,889 @@
+
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+    <title>Quickstart with litgen &#8212; litgen, the Literate Generator</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "light";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+<link href="../_static/styles/bootstrap.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+
+  
+  <link href="../_static/vendor/fontawesome/6.5.1/css/all.min.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.1/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.1/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.1/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" href="../_static/styles/sphinx-book-theme.css?digest=14f4ca6b54d191a8c7657f6c759bf11a5fb86285" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/togglebutton.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-thebe.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/design-style.4045f2051d55cab465a707391d5b2007.min.css" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=8d27b9dea8ad943066ae" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=8d27b9dea8ad943066ae" />
+  <script src="../_static/vendor/fontawesome/6.5.1/js/all.min.js?digest=8d27b9dea8ad943066ae"></script>
+
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/clipboard.min.js"></script>
+    <script src="../_static/copybutton.js"></script>
+    <script src="../_static/scripts/sphinx-book-theme.js?digest=5a5c038af52cf7bc1a1ec88eea08e6366ee68824"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../_static/togglebutton.js"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../_static/design-tabs.js"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"
+const thebe_selector = ".thebe,.cell"
+const thebe_selector_input = "pre"
+const thebe_selector_output = ".output, .cell_output"
+</script>
+    <script async="async" src="../_static/sphinx-thebe.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'litgen_template/README';</script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="First steps" href="../02_00_00_first_steps.html" />
+    <link rel="prev" title="Use litgen online" href="../01_05_05_online.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <a id="pst-skip-link" class="skip-link" href="#main-content">Skip to main content</a>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>
+    Back to top
+  </button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__primary"
+          id="__primary"/>
+  <label class="overlay overlay-primary" for="__primary"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__secondary"
+          id="__secondary"/>
+  <label class="overlay overlay-secondary" for="__secondary"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+
+<a class="navbar-brand logo" href="../00_00_intro.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../_static/litgen_logo_big.png" class="logo__image only-light" alt="litgen, the Literate Generator - Home"/>
+    <script>document.write(`<img src="../_static/litgen_logo_big.png" class="logo__image only-dark" alt="litgen, the Literate Generator - Home"/>`);</script>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item"><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="../00_00_intro.html">
+                    litgen
+                </a>
+            </li>
+        </ul>
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Installation</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../01_05_00_install_or_online.html">Installation or online usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../01_05_05_online.html">Use litgen online</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Quickstart with litgen</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Bindings - Advanced Topics</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../02_00_00_first_steps.html">First steps</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../02_03_00_options.html">litgen options</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../02_05_00_headers.html">Headers processing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../03_05_00_code_layout.html">Generated code layout</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../04_05_00_names_translation.html">Names and types translation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../05_05_00_functions.html">Functions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../06_05_00_classes.html">Classes and structs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../07_05_00_templates.html">Template classes and functions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../07_05_00_enums.html">Enums</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../08_05_00_namespaces.html">Namespaces</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../09_05_00_preprocessor.html">Preprocessor and macros</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../10_05_00_ignore_warnings.html">Ignore litgen warnings</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../11_05_00_post_processing.html">Postprocessing and preprocessing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../12_05_00_srcml_issues.html">srcML - C++ parsing advices</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Litgen as C++ transformation tool</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../20_00_00_cpp_intro.html">srcmlcpp: C++ code parsing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../20_05_00_cpp_simple_transformations.html">Simple C++ code transformations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../20_20_00_install_srcml.html">Optional: install srcML command line tool</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><label class="sidebar-toggle primary-toggle btn btn-sm" for="__primary" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</label></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/pthom/litgen" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/pthom/litgen/issues/new?title=Issue%20on%20page%20%2Flitgen_template/README.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../_sources/litgen_template/README.md" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.md</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="theme-switch nav-link" data-mode="light"><i class="fa-solid fa-sun fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="dark"><i class="fa-solid fa-moon fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg"></i></span>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+<label class="sidebar-toggle secondary-toggle btn btn-sm" for="__secondary"title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</label>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Quickstart with litgen</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#usage-for-final-users">Usage for final users</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#autogenerate-the-binding-code">Autogenerate the binding code</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#install-requirements">Install requirements</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#generate-bindings">Generate bindings</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#adapt-for-your-own-library">Adapt for your own library</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#structure-of-this-template">Structure of this template</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#bound-c-library">Bound C++ library</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#python-bindings">Python bindings</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#tooling-for-the-bindings-generation">Tooling for the bindings generation</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#compilation">Compilation</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#deployment">Deployment</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#continuous-integration">Continuous integration</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#tests">Tests</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#editable-development-mode">Editable development mode</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#setup-editable-mode">Setup editable mode</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#debug-c-bindings-in-editable-mode">Debug C++ bindings in editable mode</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#development-tooling">Development tooling</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pre-commit">pre-commit</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ruff-python-linter-and-code-formatter">ruff: python linter and code formatter</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#mypy-and-pyright-static-type-checkers-for-python">mypy and pyright: static type checkers for python</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#mypy">mypy</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pyright">pyright</a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#black-python-code-formatter">black: python code formatter</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pytest-python-tests">pytest: python tests</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#cibuildwheel-build-wheels-for-all-platforms">cibuildwheel: build wheels for all platforms</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#run-all-checks">run_all_checks</a></li>
+</ul>
+</li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="quickstart-with-litgen">
+<h1>Quickstart with litgen<a class="headerlink" href="#quickstart-with-litgen" title="Permalink to this heading">#</a></h1>
+<p><a class="reference external" href="https://github.com/pthom/litgen_template">litgen_template</a> is a template repository to build python bindings using <a class="reference external" href="https://pthom.github.io/litgen">litgen</a>, and <a class="reference external" href="https://scikit-build-core.readthedocs.io/en/latest/getting_started.html">scikit-build</a>.</p>
+<p>This template is based on <a class="reference external" href="https://github.com/pybind/scikit_build_example">scikit_build_example</a>.</p>
+<section id="usage-for-final-users">
+<h2>Usage for final users<a class="headerlink" href="#usage-for-final-users" title="Permalink to this heading">#</a></h2>
+<p>Below are the instructions you would give to final users of your bindings. They are extremely short:</p>
+<p><strong>First, install the package from source</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>git<span class="w"> </span>clone<span class="w"> </span>https://github.com/pthom/litgen_template.git<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="nb">cd</span><span class="w"> </span>litgen_template
+pip<span class="w"> </span>install<span class="w"> </span>-v<span class="w"> </span>.
+</pre></div>
+</div>
+<p><strong>Then, use it from python</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">daft_lib</span>
+<span class="n">daft_lib</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>(this template builds bindings for a C++ library called DaftLib, and publishes it as a python module called daft_lib)</p>
+<blockquote>
+<div><p><em>Of course, you could also publish your bindings to PyPI, and tell your users to install them with <code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">daft-lib</span></code>.
+This template provides tooling to make the publishing process easier, via <a class="reference external" href="https://cibuildwheel.readthedocs.io/en/stable/">cibuildwheel</a></em></p>
+</div></blockquote>
+</section>
+<hr class="docutils" />
+<section id="autogenerate-the-binding-code">
+<h2>Autogenerate the binding code<a class="headerlink" href="#autogenerate-the-binding-code" title="Permalink to this heading">#</a></h2>
+<section id="install-requirements">
+<h3>Install requirements<a class="headerlink" href="#install-requirements" title="Permalink to this heading">#</a></h3>
+<p><strong>Create a virtual environment</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python3<span class="w"> </span>-m<span class="w"> </span>venv<span class="w"> </span>venv
+<span class="nb">source</span><span class="w"> </span>venv/bin/activate
+</pre></div>
+</div>
+<p><strong>Install the requirements</strong></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pip</span> <span class="n">install</span> <span class="o">-</span><span class="n">r</span> <span class="n">requirements</span><span class="o">-</span><span class="n">dev</span><span class="o">.</span><span class="n">txt</span>
+</pre></div>
+</div>
+<p>This will install <a class="reference external" href="https://pthom.github.io/litgen">litgen</a> (the bindings generator), <a class="reference external" href="https://pybind11.readthedocs.io/en/stable/">pybind11</a> (a library to create C++ to Python bindings), <a class="reference external" href="https://docs.pytest.org">pytest</a> (for the tests), <a class="reference external" href="https://black.readthedocs.io/en/stable/index.html">black</a> (a code formatter), and <a class="reference external" href="https://www.mypy-lang.org/">mypy</a> (static type checker for python).</p>
+<p>See <a class="reference external" href="https://github.com/pthom/litgen_template/blob/main/requirements-dev.txt">requirements-dev.txt</a>.</p>
+</section>
+<section id="generate-bindings">
+<h3>Generate bindings<a class="headerlink" href="#generate-bindings" title="Permalink to this heading">#</a></h3>
+<p><strong>Optionally, change the C++ code</strong></p>
+<ul class="simple">
+<li><p>Change the C++ code (add functions, etc.) in <a class="reference external" href="https://github.com/pthom/litgen_template/tree/main/src/cpp_libraries/DaftLib">src/cpp_libraries/DaftLib</a></p></li>
+<li><p>Adapt the generation options inside <a class="reference external" href="https://github.com/pthom/litgen_template/blob/main/tools/autogenerate_bindings.py">tools/autogenerate_bindings.py</a></p></li>
+</ul>
+<p><strong>Run the code generation via litgen</strong></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">python</span> <span class="n">tools</span><span class="o">/</span><span class="n">autogenerate_bindings</span><span class="o">.</span><span class="n">py</span>
+</pre></div>
+</div>
+<p>This will:</p>
+<ul class="simple">
+<li><p>Write the cpp binding code into <a class="reference external" href="https://github.com/pthom/litgen_template/blob/main/src/python_bindings/pybind_DaftLib.cpp">src/python_bindings/pybind_DaftLib.cpp</a></p></li>
+<li><p>Write the python stubs (i.e. typed declarations) inside <a class="reference external" href="https://github.com/pthom/litgen_template/blob/main/src/python_bindings/daft_lib/__init__.pyi">src/python_bindings/daft_lib/__init__.pyi</a>.</p></li>
+</ul>
+<blockquote>
+<div><p><em>Tip: compare the <a class="reference external" href="https://github.com/pthom/litgen_template/blob/main/src/python_bindings/daft_lib/__init__.pyi">python stubs</a>
+with the <a class="reference external" href="https://github.com/pthom/litgen_template/blob/main/src/cpp_libraries/DaftLib/DaftLib.h">C++ header file</a> to see how close they are!</em></p>
+</div></blockquote>
+<blockquote>
+<div><p><em>Note: the options inside <a class="reference external" href="https://github.com/pthom/litgen_template/blob/main/tools/autogenerate_bindings.py">autogenerate_bindings.py</a> showcase a subset of litgen customization capabilities. See the <a class="reference external" href="https://pthom.github.io/litgen">litgen documentation</a> for more details. They are heavily documented, and correspond to the documentation you can find in <a class="reference external" href="https://github.com/pthom/litgen_template/tree/main/src/cpp_libraries/DaftLib/DaftLib.h">DaftLib.h</a></em></p>
+</div></blockquote>
+</section>
+</section>
+<hr class="docutils" />
+<section id="adapt-for-your-own-library">
+<h2>Adapt for your own library<a class="headerlink" href="#adapt-for-your-own-library" title="Permalink to this heading">#</a></h2>
+<p><strong>Names, names, names</strong></p>
+<p>In this template repository:</p>
+<ul class="simple">
+<li><p>the C++ library is called <code class="docutils literal notranslate"><span class="pre">DaftLib</span></code></p></li>
+<li><p>the native python module generated by pybind11 is called <code class="docutils literal notranslate"><span class="pre">_daft_lib</span></code></p></li>
+<li><p>the python module which is imported by users is called <code class="docutils literal notranslate"><span class="pre">daft_lib</span></code> (it imports and optionally adapts <code class="docutils literal notranslate"><span class="pre">_daft_lib</span></code>)</p></li>
+<li><p>the pip package that can optionally be published to PyPI is called <code class="docutils literal notranslate"><span class="pre">daft-lib</span></code> (as Pypi does not allow dashes in package names)</p></li>
+</ul>
+<p>You can change these names by running <code class="docutils literal notranslate"><span class="pre">change_lib_name.py</span></code> in the <a class="reference external" href="https://github.com/pthom/litgen_template/blob/main/tools/change_lib_name/">tools/change_lib_name</a> folder.</p>
+</section>
+<hr class="docutils" />
+<section id="structure-of-this-template">
+<h2>Structure of this template<a class="headerlink" href="#structure-of-this-template" title="Permalink to this heading">#</a></h2>
+<section id="bound-c-library">
+<h3>Bound C++ library<a class="headerlink" href="#bound-c-library" title="Permalink to this heading">#</a></h3>
+<p>The C++ library <code class="docutils literal notranslate"><span class="pre">DaftLib</span></code> is stored inside src/cpp_libraries/DaftLib/</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>src/cpp_libraries/
+└── DaftLib/
+    ├── CMakeLists.txt
+    ├── DaftLib.h
+    └── cpp/
+        └── DaftLib.cpp
+</pre></div>
+</div>
+</section>
+<section id="python-bindings">
+<h3>Python bindings<a class="headerlink" href="#python-bindings" title="Permalink to this heading">#</a></h3>
+<p>The python bindings are stored inside <code class="docutils literal notranslate"><span class="pre">src/python_bindings/</span></code></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>src/python_bindings/
+      ├─── module.cpp              # Main entry point of the python module
+      │── pybind_DaftLib.cpp       # File with bindings *generated by litgen*
+      │
+      └─ daft_lib/
+          ├── __init__.pyi         # Stubs *generated by litgen*
+          ├── __init__.py          # The python module (daft_lib) main entry point
+          │                        # (it imports and optionally adapts _daft_lib)
+          ├── py.typed             # An empty file that indicates that the python module is typed
+          │
+          └── _daft_lib.xxx.so*    # (optional: the native _daftlib module generated by pybind11,
+                                   #  only present in editable mode)
+</pre></div>
+</div>
+</section>
+<section id="tooling-for-the-bindings-generation">
+<h3>Tooling for the bindings generation<a class="headerlink" href="#tooling-for-the-bindings-generation" title="Permalink to this heading">#</a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>tools/
+├── autogenerate_bindings.py
+└── change_lib_name/
+    └── change_lib_name.py
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">tools/autogenerate_bindings.py</span></code> is the script that will generate the bindings using litgen.</p>
+<p><code class="docutils literal notranslate"><span class="pre">tools/change_lib_name/change_lib_name.py</span></code> is an optional utility that you can use once after cloning this template,
+in order to rename the libraries (e.g. from <code class="docutils literal notranslate"><span class="pre">DaftLib</span></code> to <code class="docutils literal notranslate"><span class="pre">MyLib</span></code>, <code class="docutils literal notranslate"><span class="pre">daft_lib</span></code> to <code class="docutils literal notranslate"><span class="pre">my_lib</span></code>, etc.)</p>
+</section>
+<section id="compilation">
+<h3>Compilation<a class="headerlink" href="#compilation" title="Permalink to this heading">#</a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>├── CMakeLists.txt                 # CMakeLists (used also by pip, via skbuild)
+├── litgen_cmake/                  # litgen_setup_module() is a cmake function that simplifies
+│   └── litgen_setup_module.cmake  # the deployment of a python module with litgen
+│
+├── requirements-dev.txt           # Requirements for development (litgen, pybind11, pytest, black, mypy)
+</pre></div>
+</div>
+</section>
+<section id="deployment">
+<h3>Deployment<a class="headerlink" href="#deployment" title="Permalink to this heading">#</a></h3>
+<p><a class="reference external" href="https://github.com/pthom/litgen_template/blob/main/pyproject.toml">pyproject.toml</a> is used by pip and skbuild to build and deploy the package. It defines the name of the package, the version, the dependencies, etc.</p>
+</section>
+<section id="continuous-integration">
+<h3>Continuous integration<a class="headerlink" href="#continuous-integration" title="Permalink to this heading">#</a></h3>
+<p>Several github workflows are defined in <a class="reference external" href="https://github.com/pthom/litgen_template/tree/main/.github/workflows">.github/workflows</a>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>.github/
+├── dependabot.yml   # Configuration for dependabot (automatically update CI dependencies)
+├── workflows/
+    ├── conda.yml    # Build the package with conda
+    ├── pip.yml      # Build the package with pip
+    └── wheels.yml   # Build the wheels with cibuildwheel, and publish them to PyPI
+                     # (when a new release is created on github)
+</pre></div>
+</div>
+<p>Note:</p>
+<ul class="simple">
+<li><p>cibuildwheel is configurable via options defined in the <a class="reference external" href="https://github.com/pthom/litgen_template/blob/main/pyproject.toml">pyproject.toml</a> file: see the <code class="docutils literal notranslate"><span class="pre">[tool.cibuildwheel]</span></code> section.</p></li>
+<li><p>it is also configurable via environment variables, see <a class="reference external" href="https://cibuildwheel.readthedocs.io/en/stable/options/">cibuildwheel documentation</a></p></li>
+</ul>
+</section>
+<section id="tests">
+<h3>Tests<a class="headerlink" href="#tests" title="Permalink to this heading">#</a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>├── tests/daft_lib_test.py    # This is a list of python tests that will check
+└── pytest.ini
+</pre></div>
+</div>
+<p>Those tests are run by cibuildwheel and by the pip CI workflow.</p>
+</section>
+</section>
+<hr class="docutils" />
+<section id="editable-development-mode">
+<h2>Editable development mode<a class="headerlink" href="#editable-development-mode" title="Permalink to this heading">#</a></h2>
+<p>If you want to quickly iterate on the C++ code, and see the changes reflected in python without having to reinstall the package, you should use the python editable development mode.</p>
+<section id="setup-editable-mode">
+<h3>Setup editable mode<a class="headerlink" href="#setup-editable-mode" title="Permalink to this heading">#</a></h3>
+<p><strong>Step1: Install the package in editable mode</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>-v<span class="w"> </span>-e<span class="w"> </span>.<span class="w">  </span><span class="c1"># -e stands for --editable, and -v stands for --verbose</span>
+</pre></div>
+</div>
+<p><strong>Step 2: Create a standard C++ build directory</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>mkdir<span class="w"> </span>build<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="nb">cd</span><span class="w"> </span>build
+cmake<span class="w"> </span>..
+make<span class="w"> </span><span class="c1"># rebuild when you change the C++ code, and the changes will be reflected in python!</span>
+</pre></div>
+</div>
+</section>
+<section id="debug-c-bindings-in-editable-mode">
+<h3>Debug C++ bindings in editable mode<a class="headerlink" href="#debug-c-bindings-in-editable-mode" title="Permalink to this heading">#</a></h3>
+<p>The <a class="reference external" href="https://github.com/pthom/litgen_template/blob/main/src/pybind_native_debug">pybind_native_debug</a> executable provided in this template
+is a simple C++ program that can be used to debug the bindings in editable mode.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>src/pybind_native_debug/
+        ├── CMakeLists.txt
+        ├── pybind_native_debug.cpp
+        ├── pybind_native_debug.py
+        ├── pybind_native_debug_venv.txt
+        └── pybind_native_debug_venv.txt.example
+</pre></div>
+</div>
+<p><strong>Step 1: edit <code class="docutils literal notranslate"><span class="pre">pybind_native_debug_venv.txt</span></code></strong></p>
+<p>Create a file <code class="docutils literal notranslate"><span class="pre">pybind_native_debug/pybind_native_debug_venv.txt</span></code>, and add the path to the python virtual environment that you want to use to debug the bindings.</p>
+<p><strong>Step 2: edit <code class="docutils literal notranslate"><span class="pre">pybind_native_debug.py</span></code></strong></p>
+<p>Simply edit the python file <code class="docutils literal notranslate"><span class="pre">pybind_native_debug.py</span></code> by adding calls to the functions you want to debug. Then, place breakpoints in the C++ code, and run the program.</p>
+</section>
+</section>
+<hr class="docutils" />
+<section id="development-tooling">
+<h2>Development tooling<a class="headerlink" href="#development-tooling" title="Permalink to this heading">#</a></h2>
+<p>This template is ready to be used with additional tools:</p>
+<ul class="simple">
+<li><p>pre-commit</p></li>
+<li><p>ruff</p></li>
+<li><p>mypy</p></li>
+<li><p>pyright</p></li>
+<li><p>black</p></li>
+<li><p>pytest</p></li>
+<li><p>cibuildwheel</p></li>
+</ul>
+<section id="pre-commit">
+<h3>pre-commit<a class="headerlink" href="#pre-commit" title="Permalink to this heading">#</a></h3>
+<p><a class="reference external" href="https://pre-commit.com/">pre-commit</a> is a tool that allows you to run checks on your code before committing it.
+This template provides a default pre-commit configuration for it, but it is not active by default;</p>
+<p>You can install pre-commit with:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>pre-commit
+</pre></div>
+</div>
+<p>Then, you can activate the pre-commit hooks for your repository with:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pre-commit<span class="w"> </span>install
+</pre></div>
+</div>
+<p>The pre-commit configuration file <a class="reference external" href="https://github.com/pthom/litgen_template/blob/main/.pre-commit-config.yaml">.pre-commit-config.yaml</a>, is configured with the following hooks:</p>
+<ul class="simple">
+<li><p>basic sanity checks: trailing-whitespace, end-of-file-fixer,check-yaml, check-added-large-files</p></li>
+<li><p>black: uncompromising Python code formatter</p></li>
+<li><p>ruff: fast Python linter and code formatter (only used for linting)</p></li>
+<li><p>mypy: static type checker for python</p></li>
+</ul>
+<p>You can find more interesting hooks on the <a class="reference external" href="https://pre-commit.com/hooks.html">pre-commit hooks repository</a>, and for example add ruff, mypy, black, etc.</p>
+<p>You may want to disable some checks in the <code class="docutils literal notranslate"><span class="pre">.pre-commit-config.yaml</span></code> file if you think this is too strict for your project.</p>
+</section>
+<section id="ruff-python-linter-and-code-formatter">
+<h3>ruff: python linter and code formatter<a class="headerlink" href="#ruff-python-linter-and-code-formatter" title="Permalink to this heading">#</a></h3>
+<p><a class="reference external" href="https://docs.astral.sh/ruff/">ruff</a> is a very fast python linter and code formatter. You can install it and run it with:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>ruff<span class="w"> </span><span class="c1"># install ruff (once)</span>
+ruff<span class="w"> </span>.<span class="w"> </span><span class="c1"># each time you want to check your python code</span>
+</pre></div>
+</div>
+</section>
+<section id="mypy-and-pyright-static-type-checkers-for-python">
+<h3>mypy and pyright: static type checkers for python<a class="headerlink" href="#mypy-and-pyright-static-type-checkers-for-python" title="Permalink to this heading">#</a></h3>
+<p><a class="reference external" href="https://www.mypy-lang.org/">mypy</a> and <a class="reference external" href="https://github.com/microsoft/pyright">pyright</a> are static type checkers for python.</p>
+<p>You can use either one of them, or both.</p>
+<section id="mypy">
+<h4>mypy<a class="headerlink" href="#mypy" title="Permalink to this heading">#</a></h4>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>mypy<span class="w">  </span><span class="c1"># install mypy (once)</span>
+mypy<span class="w"> </span><span class="c1"># each time you want to check your python code</span>
+</pre></div>
+</div>
+<p>mypy is configured via the <a class="reference external" href="https://github.com/pthom/litgen_template/blob/main/mypy.ini">mypy.ini</a> file.</p>
+</section>
+<section id="pyright">
+<h4>pyright<a class="headerlink" href="#pyright" title="Permalink to this heading">#</a></h4>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>pyright<span class="w"> </span><span class="c1"># install pyright (once)</span>
+pyright<span class="w"> </span><span class="c1"># each time you want to check your python code</span>
+</pre></div>
+</div>
+<p>pyright is configured via the <a class="reference external" href="https://github.com/pthom/litgen_template/blob/main/pyrightconfig.json">pyrightconfig.json</a> file.</p>
+</section>
+</section>
+<section id="black-python-code-formatter">
+<h3>black: python code formatter<a class="headerlink" href="#black-python-code-formatter" title="Permalink to this heading">#</a></h3>
+<p><a class="reference external" href="https://black.readthedocs.io/en/stable/index.html">black</a> is a python code formatter.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>black<span class="w"> </span><span class="c1"># install black (once)</span>
+black<span class="w"> </span>.<span class="w"> </span><span class="c1"># each time you want to format your python code</span>
+</pre></div>
+</div>
+</section>
+<section id="pytest-python-tests">
+<h3>pytest: python tests<a class="headerlink" href="#pytest-python-tests" title="Permalink to this heading">#</a></h3>
+<p>pytest is an easy-to-use python test framework.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>pytest<span class="w"> </span><span class="c1"># install pytest (once)</span>
+pytest<span class="w"> </span><span class="c1"># each time you want to run your python tests</span>
+</pre></div>
+</div>
+<p>It is configured via the <a class="reference external" href="https://github.com/pthom/litgen_template/blob/main/pytest.ini">pytest.ini</a> file, and tests are stored in the <a class="reference external" href="https://github.com/pthom/litgen_template/blob/main/tests">tests</a> folder.</p>
+</section>
+<section id="cibuildwheel-build-wheels-for-all-platforms">
+<h3>cibuildwheel: build wheels for all platforms<a class="headerlink" href="#cibuildwheel-build-wheels-for-all-platforms" title="Permalink to this heading">#</a></h3>
+<p><a class="reference external" href="https://cibuildwheel.readthedocs.io/en/stable/">ci-buildwheel</a> is a tool that allows you to build wheels for all platforms.</p>
+<p>It is configured via the <a class="reference external" href="https://github.com/pthom/litgen_template/blob/main/pyproject.toml">pyproject.toml</a> file (see the [tool.cibuildwheel] section), and the <a class="reference external" href="https://github.com/pthom/litgen_template/blob/main/.github/workflows/wheels.yml">github workflow</a> file.</p>
+</section>
+<section id="run-all-checks">
+<h3>run_all_checks<a class="headerlink" href="#run-all-checks" title="Permalink to this heading">#</a></h3>
+<p><a class="reference external" href="https://github.com/pthom/litgen_template/blob/main/tools/run_all_checks.sh">tools/run_all_checks.sh</a> is a script you can run before committing or pushing. It will run a collection of checks (mypy, black, ruff, pytest).</p>
+</section>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./litgen_template"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="../01_05_05_online.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Use litgen online</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="../02_00_00_first_steps.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">First steps</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#usage-for-final-users">Usage for final users</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#autogenerate-the-binding-code">Autogenerate the binding code</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#install-requirements">Install requirements</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#generate-bindings">Generate bindings</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#adapt-for-your-own-library">Adapt for your own library</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#structure-of-this-template">Structure of this template</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#bound-c-library">Bound C++ library</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#python-bindings">Python bindings</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#tooling-for-the-bindings-generation">Tooling for the bindings generation</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#compilation">Compilation</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#deployment">Deployment</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#continuous-integration">Continuous integration</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#tests">Tests</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#editable-development-mode">Editable development mode</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#setup-editable-mode">Setup editable mode</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#debug-c-bindings-in-editable-mode">Debug C++ bindings in editable mode</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#development-tooling">Development tooling</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pre-commit">pre-commit</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ruff-python-linter-and-code-formatter">ruff: python linter and code formatter</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#mypy-and-pyright-static-type-checkers-for-python">mypy and pyright: static type checkers for python</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#mypy">mypy</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pyright">pyright</a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#black-python-code-formatter">black: python code formatter</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pytest-python-tests">pytest: python tests</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#cibuildwheel-build-wheels-for-all-platforms">cibuildwheel: build wheels for all platforms</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#run-all-checks">run_all_checks</a></li>
+</ul>
+</li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Pascal Thomet
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2023.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../_static/scripts/bootstrap.js?digest=8d27b9dea8ad943066ae"></script>
+<script src="../_static/scripts/pydata-sphinx-theme.js?digest=8d27b9dea8ad943066ae"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

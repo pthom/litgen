@@ -15,8 +15,9 @@ You do not to install anything. Simply:
 
 If installing locally, you can integrate liten into your building process, and it can generate full C++ bindings files, as well as python stubs (API documentation and declaration).
 
+Install litgen with pip:
 ```bash
 pip install "litgen@git+https://github.com/pthom/litgen"```
 ```
 
-That's it!
+Then, follow the instructions in [Quickstart with litgen](litgen_template/README) section.

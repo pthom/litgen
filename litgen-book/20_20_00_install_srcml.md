@@ -4,7 +4,7 @@
 
 You do not need to install srcML if you are using `litgen`, but it might be useful to have it installed to inspect the generated XML files.
 
-### Either install srcML from pre-compiled binaries
+## Either install srcML from pre-compiled binaries
 You can download a pre-compiled version at [srcML.org](https://www.srcml.org/#download)
 
 For example, on ubuntu 20.04:
@@ -14,7 +14,7 @@ wget http://131.123.42.38/lmcrs/v1.0.0/srcml_1.0.0-1_ubuntu20.04.deb
 sudo dpkg -i srcml_1.0.0-1_ubuntu20.04.deb
 ```
 
-### Or build srcML from source
+## Or build srcML from source
 
 _Note: the build instructions in srcML repository are a bit out of date, which is why these instructions are provided here. It uses a fork of srcML that fixes some compilation issues on the develop branch_
 

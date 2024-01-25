@@ -174,16 +174,12 @@ const thebe_selector_output = ".output, .cell_output"
 <ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="01_05_00_install_or_online.html">Installation or online usage</a></li>
 <li class="toctree-l1"><a class="reference internal" href="01_05_05_online.html">Use litgen online</a></li>
-<li class="toctree-l1"><a class="reference internal" href="01_05_10_install_srcml.html">Optional: install srcML command line tool</a></li>
-</ul>
-<p aria-level="2" class="caption" role="heading"><span class="caption-text">Bindings - Basics</span></p>
-<ul class="nav bd-sidenav">
-<li class="toctree-l1"><a class="reference internal" href="01_10_00_first_steps.html">First steps</a></li>
-<li class="toctree-l1"><a class="reference internal" href="01_15_00_cmake_helpers.html">CMake helpers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="litgen_template/README.html">Quickstart with litgen</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Bindings - Advanced Topics</span></p>
 <ul class="current nav bd-sidenav">
-<li class="toctree-l1"><a class="reference internal" href="02_00_00_options.html">litgen options</a></li>
+<li class="toctree-l1"><a class="reference internal" href="02_00_00_first_steps.html">First steps</a></li>
+<li class="toctree-l1"><a class="reference internal" href="02_03_00_options.html">litgen options</a></li>
 <li class="toctree-l1"><a class="reference internal" href="02_05_00_headers.html">Headers processing</a></li>
 <li class="toctree-l1"><a class="reference internal" href="03_05_00_code_layout.html">Generated code layout</a></li>
 <li class="toctree-l1"><a class="reference internal" href="04_05_00_names_translation.html">Names and types translation</a></li>
@@ -201,6 +197,7 @@ const thebe_selector_output = ".output, .cell_output"
 <ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="20_00_00_cpp_intro.html">srcmlcpp: C++ code parsing</a></li>
 <li class="toctree-l1"><a class="reference internal" href="20_05_00_cpp_simple_transformations.html">Simple C++ code transformations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="20_20_00_install_srcml.html">Optional: install srcML command line tool</a></li>
 </ul>
 
     </div>
@@ -507,7 +504,7 @@ document.write(`
 </style>
 
     <script>
-       function copy_code_1706193335352_117() {
+       function copy_code_1706198897469_191() {
             let code = `
 // This will trigger a warning:
 //     Ignoring template function. You might need to set LitgenOptions.fn_template_options
@@ -535,10 +532,10 @@ int CallOperation(int (*functionPtr)(int, int), int a, int b) {
             navigator.clipboard.writeText(code);
        }
     </script>
-    <button class="collapsible_header" id="btn_1706193335352_117_0" ></button>
-    <div class="collapsible_content" id="content_1706193335352_117_0">
+    <button class="collapsible_header" id="btn_1706198897469_191_0" ></button>
+    <div class="collapsible_content" id="content_1706198897469_191_0">
         <div>
-                <button onclick="copy_code_1706193335352_117()" align="right">copy &#x270d;</button>
+                <button onclick="copy_code_1706198897469_191()" align="right">copy &#x270d;</button>
         </div>
         <style>pre { line-height: 125%; }
 td.linenos .normal { color: inherit; background-color: transparent; padding-left: 5px; padding-right: 5px; }
@@ -637,10 +634,10 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
     </div>
     
     <script>
-    var button = document.getElementById("btn_1706193335352_117_0");
+    var button = document.getElementById("btn_1706198897469_191_0");
     button.addEventListener("click", function() {
         this.classList.toggle("collapsible_header_opened");
-        var content = document.getElementById("content_1706193335352_117_0");
+        var content = document.getElementById("content_1706198897469_191_0");
         if (content.style.maxHeight){
           content.style.maxHeight = null;
         } else {
@@ -650,9 +647,9 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
     </script>
     
             <script>
-            var collapsible_header = document.getElementById("btn_1706193335352_117_0");
+            var collapsible_header = document.getElementById("btn_1706198897469_191_0");
             collapsible_header.classList.toggle("collapsible_header_opened");
-            var collapsible_content = document.getElementById("content_1706193335352_117_0");
+            var collapsible_content = document.getElementById("content_1706198897469_191_0");
             collapsible_content.style.maxHeight = collapsible_content.scrollHeight + "px";
             </script>
             </div></div>
@@ -764,7 +761,7 @@ While parsing a &quot;function_decl&quot;, corresponding to this C++ code:
 </style>
 
     <script>
-       function copy_code_1706193335388_663() {
+       function copy_code_1706198897505_949() {
             let code = `####################    <generated_from:10_05_10_sample_code.h>    ####################
 
 
@@ -782,10 +779,10 @@ class Foo:
             navigator.clipboard.writeText(code);
        }
     </script>
-    <button class="collapsible_header" id="btn_1706193335388_663_1" ></button>
-    <div class="collapsible_content" id="content_1706193335388_663_1">
+    <button class="collapsible_header" id="btn_1706198897505_949_1" ></button>
+    <div class="collapsible_content" id="content_1706198897505_949_1">
         <div>
-                <button onclick="copy_code_1706193335388_663()" align="right">copy &#x270d;</button>
+                <button onclick="copy_code_1706198897505_949()" align="right">copy &#x270d;</button>
         </div>
         <style>pre { line-height: 125%; }
 td.linenos .normal { color: inherit; background-color: transparent; padding-left: 5px; padding-right: 5px; }
@@ -875,10 +872,10 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
     </div>
     
     <script>
-    var button = document.getElementById("btn_1706193335388_663_1");
+    var button = document.getElementById("btn_1706198897505_949_1");
     button.addEventListener("click", function() {
         this.classList.toggle("collapsible_header_opened");
-        var content = document.getElementById("content_1706193335388_663_1");
+        var content = document.getElementById("content_1706198897505_949_1");
         if (content.style.maxHeight){
           content.style.maxHeight = null;
         } else {
@@ -888,9 +885,9 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
     </script>
     
             <script>
-            var collapsible_header = document.getElementById("btn_1706193335388_663_1");
+            var collapsible_header = document.getElementById("btn_1706198897505_949_1");
             collapsible_header.classList.toggle("collapsible_header_opened");
-            var collapsible_content = document.getElementById("content_1706193335388_663_1");
+            var collapsible_content = document.getElementById("content_1706198897505_949_1");
             collapsible_content.style.maxHeight = collapsible_content.scrollHeight + "px";
             </script>
             </div></div>
