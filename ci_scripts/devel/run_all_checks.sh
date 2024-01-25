@@ -18,4 +18,4 @@ echo "Run ruff ."
 ruff .
 echo "Run pytest"
 pytest
-echo "Succes!"
+echo "Success!"
