@@ -20,14 +20,13 @@ if (NOT SKBUILD) # Do not run autogenerate when running pip install
     set(run_autogenerate ON)
 endif()
 if (run_autogenerate)
-    if (NOT DEFINED PYTHON_EXECUTABLE)
-        find_package(Python3 REQUIRED)
-        set(PYTHON_EXECUTABLE ${Python3_EXECUTABLE})
+    if (NOT DEFINED Python_EXECUTABLE)
+        message(FATAL_ERROR "Python_EXECUTABLE not defined. Please set it to the python executable you want to use.")
     endif()
     add_custom_target(
         autogenerate_mylib ALL
         COMMAND
-        ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_LIST_DIR}/autogenerate_mylib.py
+        ${Python_EXECUTABLE} ${CMAKE_CURRENT_LIST_DIR}/autogenerate_mylib.py
         WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}
     )
     add_dependencies(mylib autogenerate_mylib)    # Make sure autogenerate is run before building the lib
