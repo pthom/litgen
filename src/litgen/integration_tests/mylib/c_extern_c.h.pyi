@@ -12,9 +12,9 @@
 
 #
 #
-#Here, we test litgen with C libraries, such a glfw:
+# Here, we test litgen with C libraries, such a glfw:
 #
-#Features:
+# Features:
 # - Handle #ifdef __cpluscplus
 #    __cpluscplus should be assumed to be always True
 # - Handle extern:
@@ -52,7 +52,6 @@ ANSWER_ZERO_COMMENTED = 0
 # This is one
 ANSWER_ONE_COMMENTED = 1
 
-
 # Will be published
 HEXVALUE = 0x43242
 # Will be published
@@ -61,7 +60,6 @@ OCTALVALUE = 0o43242
 STRING = "Hello"
 # Will be published
 FLOAT = 3.14
-
 
 # #ifdef __cplusplus
 #

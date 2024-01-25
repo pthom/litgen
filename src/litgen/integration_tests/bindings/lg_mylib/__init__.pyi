@@ -740,14 +740,14 @@ def add_templated(a: str, b: str) -> str:
 #  - mixing template and function parameter adaptations (here other_values[2] will be transformed into a List[T]
 #
 # See inside autogenerate_mylib.py:
-#     options.fn_template_options.add_specialization(r"^SumVector", ["int", "std::string"])
+#     options.fn_template_options.SumVectorAndCArray(r"^SumVector", ["int", "std::string"])
 
 #  ------------------------------------------------------------------------
 #      <template specializations for function SumVectorAndCArray>
-def sum_vector_and_c_array(xs: List[int], other_values: List[int]) -> int:
+def sum_vector_and_c_array_int(xs: List[int], other_values: List[int]) -> int:
     pass
 
-def sum_vector_and_c_array(xs: List[str], other_values: List[str]) -> str:
+def sum_vector_and_c_array_string(xs: List[str], other_values: List[str]) -> str:
     pass
 
 #      </template specializations for function SumVectorAndCArray>
@@ -758,9 +758,11 @@ def sum_vector_and_c_array(xs: List[str], other_values: List[str]) -> str:
 class FooTemplateFunctionTest:
     #  ------------------------------------------------------------------------
     #      <template specializations for function SumVectorAndCArray>
-    def sum_vector_and_c_array(self, xs: List[int], other_values: List[int]) -> int:
+    def sum_vector_and_c_array_int(self, xs: List[int], other_values: List[int]) -> int:
         pass
-    def sum_vector_and_c_array(self, xs: List[str], other_values: List[str]) -> str:
+    def sum_vector_and_c_array_string(
+        self, xs: List[str], other_values: List[str]
+    ) -> str:
         pass
     #      </template specializations for function SumVectorAndCArray>
     #  ------------------------------------------------------------------------
@@ -964,6 +966,7 @@ class home:  # Proxy class that introduces typings for the *submodule* home
 # <submodule aaa>
 class aaa:  # Proxy class that introduces typings for the *submodule* aaa
     pass  # (This corresponds to a C++ namespace. All method are static!)
+
     #  ------------------------------------------------------------------------
     #      <template specializations for class Copyable_Template>
     class Copyable_Template_int:  # Python specialization for Copyable_Template<int>

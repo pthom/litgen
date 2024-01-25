@@ -12,28 +12,27 @@ import enum
 ####################    <generated_from:enum_test.h>    ####################
 
 class BasicEnum(enum.Enum):
-    """ BasicEnum: a simple C-style enum"""
+    """BasicEnum: a simple C-style enum"""
+
     # C-style enums often contain a prefix that is the enum name in itself, in order
     # not to pollute the parent namespace.
     # Since enum members do not leak to the parent namespace in python, litgen will remove the prefix by default.
 
-    a = enum.auto()   # (= 1)  # This will be exported as BasicEnum.a
+    a = enum.auto()  # (= 1)  # This will be exported as BasicEnum.a
     aa = enum.auto()  # (= 2)  # This will be exported as BasicEnum.aa
-    aaa = enum.auto() # (= 3)  # This will be exported as BasicEnum.aaa
+    aaa = enum.auto()  # (= 3)  # This will be exported as BasicEnum.aaa
 
     # Lonely comment
 
     # This is value b
-    b = enum.auto()   # (= 4)
-
-
+    b = enum.auto()  # (= 4)
 
 class ClassEnum(enum.Enum):
-    """ ClassEnum: a class enum that should be published"""
-    on = enum.auto()      # (= 0)
-    off = enum.auto()     # (= 1)
-    unknown = enum.auto() # (= 2)
+    """ClassEnum: a class enum that should be published"""
 
+    on = enum.auto()  # (= 0)
+    off = enum.auto()  # (= 1)
+    unknown = enum.auto()  # (= 2)
 
 ####################    </generated_from:enum_test.h>    ####################
 
