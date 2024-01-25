@@ -55,10 +55,11 @@ repos:
         stages: [commit]
         types: [python]
         # entry: python -m pytest
-        entry: bash -c 'echo "Running pytest hook" && python -m pytest'
+        entry: venv/bin/pytest
         language: system
         pass_filenames: false
         always_run: true
+
 
   #
 #  - repo: local
