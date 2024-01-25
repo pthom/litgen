@@ -919,9 +919,11 @@ class math_functions:  # Proxy class that introduces typings for the *submodule*
 
     """
     @staticmethod
+    @overload
     def vectorizable_sum(x: float, y: float) -> float:
         pass
     @staticmethod
+    @overload
     def vectorizable_sum(x: np.ndarray, y: np.ndarray) -> np.ndarray:
         pass
 
