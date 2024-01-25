@@ -4,7 +4,7 @@ This Cmake module provides two public functions:
 
 
 litgen_find_pybind11()
-**************************************************************
+*******************************************************************************
 litgen_find_pybind11() will find pybind11 and Python3
 It is equivalent to:
     find_package(Python 3.8 REQUIRED COMPONENTS Interpreter Development[.Module])
@@ -17,11 +17,11 @@ When building via CMake, you may have to specify Python_EXECUTABLE via
 
 
 litgen_setup_module(bound_library python_native_module_name python_module_name)
-**************************************************************
-litgen_setup_module is a helper function that will
+*******************************************************************************
+litgen_setup_module is a helper function that will:
 * link the python native module (.so) to the bound C++ library (bound_library)
 * set the install path of the native module to '.' (so that pip install works)
-* automatically copy the native module to the site-packages folder after build
+* automatically copy the native module to the python module folder after build
 (so that editable mode works even when you modify the C++ library and rebuild)
 * set the VERSION_INFO macro to the project version defined in CMakeLists.txt
 
