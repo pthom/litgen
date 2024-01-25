@@ -30,7 +30,7 @@ void py_init_module_mylib(py::module& m)
     m.def("add_templated",
         py::overload_cast<std::string, std::string>(AddTemplated<std::string>), py::arg("a"), py::arg("b"));
 
-    m.def("sum_vector_and_c_array",
+    m.def("sum_vector_and_c_array_int",
         [](std::vector<int> xs, const std::array<int, 2>& other_values) -> int
         {
             auto SumVectorAndCArray_adapt_fixed_size_c_arrays = [](std::vector<int> xs, const std::array<int, 2>& other_values) -> int
@@ -41,7 +41,7 @@ void py_init_module_mylib(py::module& m)
 
             return SumVectorAndCArray_adapt_fixed_size_c_arrays(xs, other_values);
         },     py::arg("xs"), py::arg("other_values"));
-    m.def("sum_vector_and_c_array",
+    m.def("sum_vector_and_c_array_string",
         [](std::vector<std::string> xs, const std::array<std::string, 2>& other_values) -> std::string
         {
             auto SumVectorAndCArray_adapt_fixed_size_c_arrays = [](std::vector<std::string> xs, const std::array<std::string, 2>& other_values) -> std::string
@@ -58,7 +58,7 @@ void py_init_module_mylib(py::module& m)
         py::class_<FooTemplateFunctionTest>
             (m, "FooTemplateFunctionTest", "")
         .def(py::init<>()) // implicit default constructor
-        .def("sum_vector_and_c_array",
+        .def("sum_vector_and_c_array_int",
             [](FooTemplateFunctionTest & self, std::vector<int> xs, const std::array<int, 2>& other_values) -> int
             {
                 auto SumVectorAndCArray_adapt_fixed_size_c_arrays = [&self](std::vector<int> xs, const std::array<int, 2>& other_values) -> int
@@ -69,7 +69,7 @@ void py_init_module_mylib(py::module& m)
 
                 return SumVectorAndCArray_adapt_fixed_size_c_arrays(xs, other_values);
             },     py::arg("xs"), py::arg("other_values"))
-        .def("sum_vector_and_c_array",
+        .def("sum_vector_and_c_array_string",
             [](FooTemplateFunctionTest & self, std::vector<std::string> xs, const std::array<std::string, 2>& other_values) -> std::string
             {
                 auto SumVectorAndCArray_adapt_fixed_size_c_arrays = [&self](std::vector<std::string> xs, const std::array<std::string, 2>& other_values) -> std::string
