@@ -45,4 +45,5 @@ litgen_setup_module(
     ${bound_library}
     ${python_native_module_name}
     ${python_wrapper_module_name}
+    ${CMAKE_CURRENT_LIST_DIR}/bindings
 )
