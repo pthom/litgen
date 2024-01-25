@@ -35,13 +35,11 @@ pip install -v -e .
 ```
 
 ## Run tests
-```
-mypy .
-black .
-pytest
+```bash
+ci_scripts/devel/run_all_checks.sh
 ```
 
----
+(This will run mypy, black, ruff and pytest)
 
 # Misc advices
 
