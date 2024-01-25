@@ -57,6 +57,7 @@ function(litgen_find_pybind11)
         # to be able to debug the native module
         find_package(Python 3.8 REQUIRED COMPONENTS Interpreter Development)
     endif()
+    set(Python_EXECUTABLE ${Python_EXECUTABLE} CACHE PATH "Python executable" FORCE)
 
     if(NOT SKBUILD)
         # when building via CMake, we need to add the path to pybind11 provided by pip

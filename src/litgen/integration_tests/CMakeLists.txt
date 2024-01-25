@@ -21,7 +21,7 @@ if (NOT SKBUILD) # Do not run autogenerate when running pip install
 endif()
 if (run_autogenerate)
     if (NOT DEFINED Python_EXECUTABLE)
-        message(FATAL_ERROR "Python_EXECUTABLE not defined. Please set it to the python executable you want to use.")
+        message(FATAL_ERROR "Python_EXECUTABLE not defined. litgen_find_pybind11 probably failed.")
     endif()
     add_custom_target(
         autogenerate_mylib ALL
