@@ -32,11 +32,23 @@ pip install -v -e .
 ```bash
 cd src/litgen/integration_tests
 pip install -v -e .
+cd -
 ```
+
+Then you can also add them as a C++ CMake project.
+
+```
+mkdir build && cb build
+cmake ..
+make
+```
+
+(Each time you compile the project, the bindings for the integration tests will be regenerated and recompiled)
+
 
 ## Run tests
 ```bash
-ci_scripts/devel/run_all_checks.sh
+./ci_scripts/devel/run_all_checks.sh
 ```
 
 (This will run mypy, black, ruff and pytest)
