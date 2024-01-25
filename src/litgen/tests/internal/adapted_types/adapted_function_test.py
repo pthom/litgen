@@ -336,7 +336,7 @@ def test_py_none_param():
     )
 
 
-def test_vectorization_namespace():
+def test_vectorization_namespace_with_suffix():
     code = """
     namespace MathFunctions
     {
@@ -364,7 +364,7 @@ def test_vectorization_namespace():
             pyNsMathFunctions.def("vectorizable_sum",
                 MathFunctions::vectorizable_sum, py::arg("x"), py::arg("y"));
             pyNsMathFunctions.def("v_vectorizable_sum_v",
-                py::overload_cast<float, double>(py::vectorize(MathFunctions::vectorizable_sum)), py::arg("x"), py::arg("y"));
+                py::vectorize(MathFunctions::vectorizable_sum), py::arg("x"), py::arg("y"));
         } // </namespace MathFunctions>
     """,
     )
@@ -378,8 +378,45 @@ def test_vectorization_namespace():
                 def vectorizable_sum(x: float, y: float) -> float:
                     pass
                 @staticmethod
-                @overload
                 def v_vectorizable_sum_v(x: np.ndarray, y: np.ndarray) -> np.ndarray:
+                    pass
+
+            # </submodule math_functions>
+    """,
+    )
+
+
+def test_vectorization_namespace_with_overload():
+    code = """
+    namespace MathFunctions
+    {
+        double vectorizable_sum(float x, double y)
+        {
+            return (double) x + y;
+        }
+    }
+        """
+
+    options = litgen.LitgenOptions()
+    options.fn_namespace_vectorize__regex = r"^MathFunctions$"
+    options.fn_vectorize__regex = r".*"
+
+    generated_code = litgen.generate_code(options, code)
+    # print(generated_code.stub_code)
+
+    code_utils.assert_are_codes_equal(
+        generated_code.stub_code,
+        """
+            # <submodule math_functions>
+            class math_functions:  # Proxy class that introduces typings for the *submodule* math_functions
+                pass  # (This corresponds to a C++ namespace. All method are static!)
+                @staticmethod
+                @overload
+                def vectorizable_sum(x: float, y: float) -> float:
+                    pass
+                @staticmethod
+                @overload
+                def vectorizable_sum(x: np.ndarray, y: np.ndarray) -> np.ndarray:
                     pass
 
             # </submodule math_functions>

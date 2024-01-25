@@ -593,9 +593,8 @@ class AdaptedFunction(AdaptedElement):
         if self.is_method():
             replace_tokens.function_pointer = "&" + replace_tokens.function_pointer
 
-        force_overload_in_pydef = (
-            code_utils.does_match_regex(self.options.fn_force_overload__regex, self.cpp_element().function_name)
-            or self.is_vectorize_impl
+        force_overload_in_pydef = code_utils.does_match_regex(
+            self.options.fn_force_overload__regex, self.cpp_element().function_name
         )
 
         if self.is_overloaded or force_overload_in_pydef:
@@ -1043,7 +1042,13 @@ class AdaptedFunction(AdaptedElement):
 
         # Add staticmethod or overload decorator
         decorators = []
-        if self.is_overloaded or self.is_vectorize_impl:
+        vectorize_needs_overload = (
+            (self.is_vectorize_impl or self.shall_vectorize())
+            and self.options.fn_vectorize_prefix == ""
+            and self.options.fn_vectorize_suffix == ""
+        )
+        needs_overload = self.is_overloaded or vectorize_needs_overload
+        if needs_overload:
             decorators.append("@overload")
         if (
             self._stub_need_add_staticmethod_decorator_for_module_proxy_class()
