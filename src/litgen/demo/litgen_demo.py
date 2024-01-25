@@ -60,4 +60,4 @@ def demo(
 
     collapse_pydef = not show_pydef
     html = _generate_and_display_impl(options, cpp_code, show_cpp, collapse_pydef, height)
-    display(HTML(html))
+    display(HTML(html))  # type: ignore
