@@ -451,12 +451,12 @@ document.write(`
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">litgen</span>
-<span class="kn">from</span> <span class="nn">litgen.demo</span> <span class="kn">import</span> <span class="n">litgen_notebook_display</span>
+<span class="kn">from</span> <span class="nn">litgen.demo</span> <span class="kn">import</span> <span class="n">litgen_demo</span>
 
 <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s2">&quot;10_05_10_sample_code.h&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
     <span class="n">cpp_code</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
 
-<span class="n">litgen_notebook_display</span><span class="o">.</span><span class="n">show_cpp_code</span><span class="p">(</span><span class="n">cpp_code</span><span class="p">)</span>
+<span class="n">litgen_demo</span><span class="o">.</span><span class="n">show_cpp_code</span><span class="p">(</span><span class="n">cpp_code</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -507,7 +507,7 @@ document.write(`
 </style>
 
     <script>
-       function copy_code_1706142632385_9092() {
+       function copy_code_1706193335352_117() {
             let code = `
 // This will trigger a warning:
 //     Ignoring template function. You might need to set LitgenOptions.fn_template_options
@@ -535,10 +535,10 @@ int CallOperation(int (*functionPtr)(int, int), int a, int b) {
             navigator.clipboard.writeText(code);
        }
     </script>
-    <button class="collapsible_header" id="btn_1706142632385_9092_0" ></button>
-    <div class="collapsible_content" id="content_1706142632385_9092_0">
+    <button class="collapsible_header" id="btn_1706193335352_117_0" ></button>
+    <div class="collapsible_content" id="content_1706193335352_117_0">
         <div>
-                <button onclick="copy_code_1706142632385_9092()" align="right">copy &#x270d;</button>
+                <button onclick="copy_code_1706193335352_117()" align="right">copy &#x270d;</button>
         </div>
         <style>pre { line-height: 125%; }
 td.linenos .normal { color: inherit; background-color: transparent; padding-left: 5px; padding-right: 5px; }
@@ -637,10 +637,10 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
     </div>
     
     <script>
-    var button = document.getElementById("btn_1706142632385_9092_0");
+    var button = document.getElementById("btn_1706193335352_117_0");
     button.addEventListener("click", function() {
         this.classList.toggle("collapsible_header_opened");
-        var content = document.getElementById("content_1706142632385_9092_0");
+        var content = document.getElementById("content_1706193335352_117_0");
         if (content.style.maxHeight){
           content.style.maxHeight = null;
         } else {
@@ -650,9 +650,9 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
     </script>
     
             <script>
-            var collapsible_header = document.getElementById("btn_1706142632385_9092_0");
+            var collapsible_header = document.getElementById("btn_1706193335352_117_0");
             collapsible_header.classList.toggle("collapsible_header_opened");
-            var collapsible_content = document.getElementById("content_1706142632385_9092_0");
+            var collapsible_content = document.getElementById("content_1706193335352_117_0");
             collapsible_content.style.maxHeight = collapsible_content.scrollHeight + "px";
             </script>
             </div></div>
@@ -713,7 +713,7 @@ While parsing a &quot;function_decl&quot;, corresponding to this C++ code:
 <span class="n">generated_code</span> <span class="o">=</span> <span class="n">litgen</span><span class="o">.</span><span class="n">generate_code_for_file</span><span class="p">(</span><span class="n">options</span><span class="p">,</span> <span class="s2">&quot;10_05_10_sample_code.h&quot;</span><span class="p">)</span>
 
 <span class="c1"># The generated code will include only what was correctly converted</span>
-<span class="n">litgen_notebook_display</span><span class="o">.</span><span class="n">show_python_code</span><span class="p">(</span><span class="n">generated_code</span><span class="o">.</span><span class="n">stub_code</span><span class="p">)</span>
+<span class="n">litgen_demo</span><span class="o">.</span><span class="n">show_python_code</span><span class="p">(</span><span class="n">generated_code</span><span class="o">.</span><span class="n">stub_code</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -764,7 +764,7 @@ While parsing a &quot;function_decl&quot;, corresponding to this C++ code:
 </style>
 
     <script>
-       function copy_code_1706142632423_86() {
+       function copy_code_1706193335388_663() {
             let code = `####################    <generated_from:10_05_10_sample_code.h>    ####################
 
 
@@ -782,10 +782,10 @@ class Foo:
             navigator.clipboard.writeText(code);
        }
     </script>
-    <button class="collapsible_header" id="btn_1706142632423_86_1" ></button>
-    <div class="collapsible_content" id="content_1706142632423_86_1">
+    <button class="collapsible_header" id="btn_1706193335388_663_1" ></button>
+    <div class="collapsible_content" id="content_1706193335388_663_1">
         <div>
-                <button onclick="copy_code_1706142632423_86()" align="right">copy &#x270d;</button>
+                <button onclick="copy_code_1706193335388_663()" align="right">copy &#x270d;</button>
         </div>
         <style>pre { line-height: 125%; }
 td.linenos .normal { color: inherit; background-color: transparent; padding-left: 5px; padding-right: 5px; }
@@ -875,10 +875,10 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
     </div>
     
     <script>
-    var button = document.getElementById("btn_1706142632423_86_1");
+    var button = document.getElementById("btn_1706193335388_663_1");
     button.addEventListener("click", function() {
         this.classList.toggle("collapsible_header_opened");
-        var content = document.getElementById("content_1706142632423_86_1");
+        var content = document.getElementById("content_1706193335388_663_1");
         if (content.style.maxHeight){
           content.style.maxHeight = null;
         } else {
@@ -888,9 +888,9 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
     </script>
     
             <script>
-            var collapsible_header = document.getElementById("btn_1706142632423_86_1");
+            var collapsible_header = document.getElementById("btn_1706193335388_663_1");
             collapsible_header.classList.toggle("collapsible_header_opened");
-            var collapsible_content = document.getElementById("content_1706142632423_86_1");
+            var collapsible_content = document.getElementById("content_1706193335388_663_1");
             collapsible_content.style.maxHeight = collapsible_content.scrollHeight + "px";
             </script>
             </div></div>

@@ -485,10 +485,10 @@ document.write(`
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">litgen</span>
-<span class="kn">from</span> <span class="nn">litgen.demo</span> <span class="kn">import</span> <span class="n">litgen_notebook_display</span>
+<span class="kn">from</span> <span class="nn">litgen.demo</span> <span class="kn">import</span> <span class="n">litgen_demo</span>
 
 <span class="n">options</span> <span class="o">=</span> <span class="n">litgen</span><span class="o">.</span><span class="n">LitgenOptions</span><span class="p">()</span>
-<span class="n">litgen_notebook_display</span><span class="o">.</span><span class="n">generate_and_display</span><span class="p">(</span><span class="n">options</span><span class="p">,</span> <span class="n">cpp_code</span><span class="p">,</span> <span class="n">display_original_cpp_code</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="n">litgen_demo</span><span class="o">.</span><span class="n">demo</span><span class="p">(</span><span class="n">options</span><span class="p">,</span> <span class="n">cpp_code</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -538,8 +538,225 @@ document.write(`
 }
 </style>
 
+<style>
+  div.several_columns {
+    display: flex;
+    flex-wrap: wrap;
+  }
+  div.half_width {
+     width:49.5%;
+     overflow: auto;
+  }
+  div.half_width_spacer {
+     width:1%;
+  }
+  </style>
+
+        <div class ="several_columns">
+            <div class="half_width">
+                
+<style>
+.collapsible_header {
+  background-color: #AAAAAA;
+  color: white;
+  cursor: pointer;
+  padding: 3px;
+  width: 100%;
+  border: none;
+  text-align: left;
+  outline: none;
+  font-style: italic;
+}
+
+.collapsible_header_opened {
+  background-color: #555;
+}
+
+.collapsible_header:hover {
+  background-color: #AAAAFF;
+}
+
+.collapsible_header:after {
+  content: '\002B';
+  color: white;
+  font-weight: bold;
+  float: right;
+  margin-left: 5px;
+}
+
+.collapsible_header_opened:after {
+  content: "\2212";
+}
+
+.collapsible_content {
+  padding: 0 18px;
+  max-height: 0;
+  overflow-x: scroll;
+  overflow-y: scroll;
+  min-width: 100%;
+  transition: max-height 0.2s ease-out;
+  background-color: #f1f1f1;
+}
+</style>
+
     <script>
-       function copy_code_1706142625959_038() {
+       function copy_code_1706193329081_165() {
+            let code = `
+    MyPair<int, int> GetMinMax(std::vector<int>& values);
+`;
+            navigator.clipboard.writeText(code);
+       }
+    </script>
+    <button class="collapsible_header" id="btn_1706193329081_165_2" >Original C++ decls</button>
+    <div class="collapsible_content" id="content_1706193329081_165_2">
+        <div>
+                <button onclick="copy_code_1706193329081_165()" align="right">copy &#x270d;</button>
+        </div>
+        <style>pre { line-height: 125%; }
+td.linenos .normal { color: inherit; background-color: transparent; padding-left: 5px; padding-right: 5px; }
+span.linenos { color: inherit; background-color: transparent; padding-left: 5px; padding-right: 5px; }
+td.linenos .special { color: #000000; background-color: #ffffc0; padding-left: 5px; padding-right: 5px; }
+span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 5px; padding-right: 5px; }
+.highlight .hll { background-color: #3c3836 }
+.highlight { background: #fbf1c7; }
+.highlight .c { color: #928374; font-style: italic } /* Comment */
+.highlight .err { color: #fbf1c7; background-color: #9d0006 } /* Error */
+.highlight .k { color: #9d0006 } /* Keyword */
+.highlight .ch { color: #928374; font-style: italic } /* Comment.Hashbang */
+.highlight .cm { color: #928374; font-style: italic } /* Comment.Multiline */
+.highlight .c-PreProc { color: #427b58; font-style: italic } /* Comment.PreProc */
+.highlight .cp { color: #928374; font-style: italic } /* Comment.Preproc */
+.highlight .cpf { color: #928374; font-style: italic } /* Comment.PreprocFile */
+.highlight .c1 { color: #928374; font-style: italic } /* Comment.Single */
+.highlight .cs { color: #3c3836; font-weight: bold; font-style: italic } /* Comment.Special */
+.highlight .gd { color: #fbf1c7; background-color: #9d0006 } /* Generic.Deleted */
+.highlight .ge { font-style: italic } /* Generic.Emph */
+.highlight .gr { color: #9d0006 } /* Generic.Error */
+.highlight .gh { color: #3c3836; font-weight: bold } /* Generic.Heading */
+.highlight .gi { color: #fbf1c7; background-color: #79740e } /* Generic.Inserted */
+.highlight .go { color: #32302f } /* Generic.Output */
+.highlight .gp { color: #7c6f64 } /* Generic.Prompt */
+.highlight .gs { font-weight: bold } /* Generic.Strong */
+.highlight .gu { color: #3c3836; text-decoration: underline } /* Generic.Subheading */
+.highlight .gt { color: #9d0006 } /* Generic.Traceback */
+.highlight .kc { color: #9d0006 } /* Keyword.Constant */
+.highlight .kd { color: #9d0006 } /* Keyword.Declaration */
+.highlight .kn { color: #9d0006 } /* Keyword.Namespace */
+.highlight .kp { color: #9d0006 } /* Keyword.Pseudo */
+.highlight .kr { color: #9d0006 } /* Keyword.Reserved */
+.highlight .kt { color: #9d0006 } /* Keyword.Type */
+.highlight .m { color: #8f3f71 } /* Literal.Number */
+.highlight .s { color: #79740e } /* Literal.String */
+.highlight .na { color: #b57614 } /* Name.Attribute */
+.highlight .nb { color: #af3a03 } /* Name.Builtin */
+.highlight .nc { color: #427b58 } /* Name.Class */
+.highlight .no { color: #8f3f71 } /* Name.Constant */
+.highlight .nd { color: #9d0006 } /* Name.Decorator */
+.highlight .ne { color: #9d0006 } /* Name.Exception */
+.highlight .nf { color: #427b58 } /* Name.Function */
+.highlight .nn { color: #427b58 } /* Name.Namespace */
+.highlight .nt { color: #427b58 } /* Name.Tag */
+.highlight .nv { color: #076678 } /* Name.Variable */
+.highlight .ow { color: #9d0006 } /* Operator.Word */
+.highlight .mb { color: #8f3f71 } /* Literal.Number.Bin */
+.highlight .mf { color: #8f3f71 } /* Literal.Number.Float */
+.highlight .mh { color: #8f3f71 } /* Literal.Number.Hex */
+.highlight .mi { color: #8f3f71 } /* Literal.Number.Integer */
+.highlight .mo { color: #8f3f71 } /* Literal.Number.Oct */
+.highlight .sa { color: #79740e } /* Literal.String.Affix */
+.highlight .sb { color: #79740e } /* Literal.String.Backtick */
+.highlight .sc { color: #79740e } /* Literal.String.Char */
+.highlight .dl { color: #79740e } /* Literal.String.Delimiter */
+.highlight .sd { color: #79740e } /* Literal.String.Doc */
+.highlight .s2 { color: #79740e } /* Literal.String.Double */
+.highlight .se { color: #af3a03 } /* Literal.String.Escape */
+.highlight .sh { color: #79740e } /* Literal.String.Heredoc */
+.highlight .si { color: #79740e } /* Literal.String.Interpol */
+.highlight .sx { color: #79740e } /* Literal.String.Other */
+.highlight .sr { color: #79740e } /* Literal.String.Regex */
+.highlight .s1 { color: #79740e } /* Literal.String.Single */
+.highlight .ss { color: #79740e } /* Literal.String.Symbol */
+.highlight .bp { color: #af3a03 } /* Name.Builtin.Pseudo */
+.highlight .fm { color: #427b58 } /* Name.Function.Magic */
+.highlight .vc { color: #076678 } /* Name.Variable.Class */
+.highlight .vg { color: #076678 } /* Name.Variable.Global */
+.highlight .vi { color: #076678 } /* Name.Variable.Instance */
+.highlight .vm { color: #076678 } /* Name.Variable.Magic */
+.highlight .il { color: #8f3f71 } /* Literal.Number.Integer.Long */</style> <div class="highlight"><pre><span></span><span class="w">    </span><span class="n">MyPair</span><span class="o">&lt;</span><span class="kt">int</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="o">&gt;</span><span class="w"> </span><span class="n">GetMinMax</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;&amp;</span><span class="w"> </span><span class="n">values</span><span class="p">);</span>
+</pre></div>
+
+    </div>
+    
+    <script>
+    var button = document.getElementById("btn_1706193329081_165_2");
+    button.addEventListener("click", function() {
+        this.classList.toggle("collapsible_header_opened");
+        var content = document.getElementById("content_1706193329081_165_2");
+        if (content.style.maxHeight){
+          content.style.maxHeight = null;
+        } else {
+          content.style.maxHeight = "40em";
+        }
+    });
+    </script>
+    
+            <script>
+            var collapsible_header = document.getElementById("btn_1706193329081_165_2");
+            collapsible_header.classList.toggle("collapsible_header_opened");
+            var collapsible_content = document.getElementById("content_1706193329081_165_2");
+            collapsible_content.style.maxHeight = "40em";
+            </script>
+            
+            </div>
+            <div class="half_width_spacer"></div>
+            <div class="half_width">
+                
+<style>
+.collapsible_header {
+  background-color: #AAAAAA;
+  color: white;
+  cursor: pointer;
+  padding: 3px;
+  width: 100%;
+  border: none;
+  text-align: left;
+  outline: none;
+  font-style: italic;
+}
+
+.collapsible_header_opened {
+  background-color: #555;
+}
+
+.collapsible_header:hover {
+  background-color: #AAAAFF;
+}
+
+.collapsible_header:after {
+  content: '\002B';
+  color: white;
+  font-weight: bold;
+  float: right;
+  margin-left: 5px;
+}
+
+.collapsible_header_opened:after {
+  content: "\2212";
+}
+
+.collapsible_content {
+  padding: 0 18px;
+  max-height: 0;
+  overflow-x: scroll;
+  overflow-y: scroll;
+  min-width: 100%;
+  transition: max-height 0.2s ease-out;
+  background-color: #f1f1f1;
+}
+</style>
+
+    <script>
+       function copy_code_1706193329097_122() {
             let code = `
 def get_min_max(values: List[int]) -> MyPair<int, int>:
     pass
@@ -547,10 +764,10 @@ def get_min_max(values: List[int]) -> MyPair<int, int>:
             navigator.clipboard.writeText(code);
        }
     </script>
-    <button class="collapsible_header" id="btn_1706142625959_038_2" >Corresponding python decls (stub)</button>
-    <div class="collapsible_content" id="content_1706142625959_038_2">
+    <button class="collapsible_header" id="btn_1706193329097_122_3" >Corresponding python decls (stub)</button>
+    <div class="collapsible_content" id="content_1706193329097_122_3">
         <div>
-                <button onclick="copy_code_1706142625959_038()" align="right">copy &#x270d;</button>
+                <button onclick="copy_code_1706193329097_122()" align="right">copy &#x270d;</button>
         </div>
         <style>pre { line-height: 125%; }
 td.linenos .normal { color: inherit; background-color: transparent; padding-left: 5px; padding-right: 5px; }
@@ -629,25 +846,28 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
     </div>
     
     <script>
-    var button = document.getElementById("btn_1706142625959_038_2");
+    var button = document.getElementById("btn_1706193329097_122_3");
     button.addEventListener("click", function() {
         this.classList.toggle("collapsible_header_opened");
-        var content = document.getElementById("content_1706142625959_038_2");
+        var content = document.getElementById("content_1706193329097_122_3");
         if (content.style.maxHeight){
           content.style.maxHeight = null;
         } else {
-          content.style.maxHeight = "20em";
+          content.style.maxHeight = "40em";
         }
     });
     </script>
     
             <script>
-            var collapsible_header = document.getElementById("btn_1706142625959_038_2");
+            var collapsible_header = document.getElementById("btn_1706193329097_122_3");
             collapsible_header.classList.toggle("collapsible_header_opened");
-            var collapsible_content = document.getElementById("content_1706142625959_038_2");
-            collapsible_content.style.maxHeight = "20em";
+            var collapsible_content = document.getElementById("content_1706193329097_122_3");
+            collapsible_content.style.maxHeight = "40em";
             </script>
+            
             <br/>
+        </div>
+    <br/>
 <style>
 .collapsible_header {
   background-color: #AAAAAA;
@@ -693,17 +913,17 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
 </style>
 
     <script>
-       function copy_code_1706142625943_052() {
+       function copy_code_1706193329080_481() {
             let code = `m.def("get_min_max",
     GetMinMax, py::arg("values"));
 `;
             navigator.clipboard.writeText(code);
        }
     </script>
-    <button class="collapsible_header" id="btn_1706142625943_052_0" >pybind11 C++ binding code</button>
-    <div class="collapsible_content" id="content_1706142625943_052_0">
+    <button class="collapsible_header" id="btn_1706193329080_481_0" >pybind11 C++ binding code</button>
+    <div class="collapsible_content" id="content_1706193329080_481_0">
         <div>
-                <button onclick="copy_code_1706142625943_052()" align="right">copy &#x270d;</button>
+                <button onclick="copy_code_1706193329080_481()" align="right">copy &#x270d;</button>
         </div>
         <style>pre { line-height: 125%; }
 td.linenos .normal { color: inherit; background-color: transparent; padding-left: 5px; padding-right: 5px; }
@@ -782,14 +1002,14 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
     </div>
     
     <script>
-    var button = document.getElementById("btn_1706142625943_052_0");
+    var button = document.getElementById("btn_1706193329080_481_0");
     button.addEventListener("click", function() {
         this.classList.toggle("collapsible_header_opened");
-        var content = document.getElementById("content_1706142625943_052_0");
+        var content = document.getElementById("content_1706193329080_481_0");
         if (content.style.maxHeight){
           content.style.maxHeight = null;
         } else {
-          content.style.maxHeight = "20em";
+          content.style.maxHeight = "40em";
         }
     });
     </script>
@@ -800,9 +1020,10 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">options</span> <span class="o">=</span> <span class="n">litgen</span><span class="o">.</span><span class="n">LitgenOptions</span><span class="p">()</span>
 <span class="n">options</span><span class="o">.</span><span class="n">type_replacements</span><span class="o">.</span><span class="n">add_last_replacement</span><span class="p">(</span>
-    <span class="sa">r</span><span class="s2">&quot;MyPair&lt;(.*),\s*(.*)&gt;&quot;</span><span class="p">,</span> <span class="sa">r</span><span class="s2">&quot;Tuple[\1, \2]&quot;</span>  <span class="c1"># this is a regex, with 2 captures  # and this is the replacement</span>
+    <span class="sa">r</span><span class="s2">&quot;MyPair&lt;(.*),\s*(.*)&gt;&quot;</span><span class="p">,</span> <span class="c1"># this is a regex, with 2 captures</span>
+    <span class="sa">r</span><span class="s2">&quot;Tuple[\1, \2]&quot;</span>         <span class="c1"># and this is the replacement</span>
 <span class="p">)</span>
-<span class="n">litgen_notebook_display</span><span class="o">.</span><span class="n">generate_and_display</span><span class="p">(</span><span class="n">options</span><span class="p">,</span> <span class="n">cpp_code</span><span class="p">,</span> <span class="n">display_original_cpp_code</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="n">litgen_demo</span><span class="o">.</span><span class="n">demo</span><span class="p">(</span><span class="n">options</span><span class="p">,</span> <span class="n">cpp_code</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -852,8 +1073,225 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
 }
 </style>
 
+<style>
+  div.several_columns {
+    display: flex;
+    flex-wrap: wrap;
+  }
+  div.half_width {
+     width:49.5%;
+     overflow: auto;
+  }
+  div.half_width_spacer {
+     width:1%;
+  }
+  </style>
+
+        <div class ="several_columns">
+            <div class="half_width">
+                
+<style>
+.collapsible_header {
+  background-color: #AAAAAA;
+  color: white;
+  cursor: pointer;
+  padding: 3px;
+  width: 100%;
+  border: none;
+  text-align: left;
+  outline: none;
+  font-style: italic;
+}
+
+.collapsible_header_opened {
+  background-color: #555;
+}
+
+.collapsible_header:hover {
+  background-color: #AAAAFF;
+}
+
+.collapsible_header:after {
+  content: '\002B';
+  color: white;
+  font-weight: bold;
+  float: right;
+  margin-left: 5px;
+}
+
+.collapsible_header_opened:after {
+  content: "\2212";
+}
+
+.collapsible_content {
+  padding: 0 18px;
+  max-height: 0;
+  overflow-x: scroll;
+  overflow-y: scroll;
+  min-width: 100%;
+  transition: max-height 0.2s ease-out;
+  background-color: #f1f1f1;
+}
+</style>
+
     <script>
-       function copy_code_1706142625966_785() {
+       function copy_code_1706193329104_737() {
+            let code = `
+    MyPair<int, int> GetMinMax(std::vector<int>& values);
+`;
+            navigator.clipboard.writeText(code);
+       }
+    </script>
+    <button class="collapsible_header" id="btn_1706193329104_737_6" >Original C++ decls</button>
+    <div class="collapsible_content" id="content_1706193329104_737_6">
+        <div>
+                <button onclick="copy_code_1706193329104_737()" align="right">copy &#x270d;</button>
+        </div>
+        <style>pre { line-height: 125%; }
+td.linenos .normal { color: inherit; background-color: transparent; padding-left: 5px; padding-right: 5px; }
+span.linenos { color: inherit; background-color: transparent; padding-left: 5px; padding-right: 5px; }
+td.linenos .special { color: #000000; background-color: #ffffc0; padding-left: 5px; padding-right: 5px; }
+span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 5px; padding-right: 5px; }
+.highlight .hll { background-color: #3c3836 }
+.highlight { background: #fbf1c7; }
+.highlight .c { color: #928374; font-style: italic } /* Comment */
+.highlight .err { color: #fbf1c7; background-color: #9d0006 } /* Error */
+.highlight .k { color: #9d0006 } /* Keyword */
+.highlight .ch { color: #928374; font-style: italic } /* Comment.Hashbang */
+.highlight .cm { color: #928374; font-style: italic } /* Comment.Multiline */
+.highlight .c-PreProc { color: #427b58; font-style: italic } /* Comment.PreProc */
+.highlight .cp { color: #928374; font-style: italic } /* Comment.Preproc */
+.highlight .cpf { color: #928374; font-style: italic } /* Comment.PreprocFile */
+.highlight .c1 { color: #928374; font-style: italic } /* Comment.Single */
+.highlight .cs { color: #3c3836; font-weight: bold; font-style: italic } /* Comment.Special */
+.highlight .gd { color: #fbf1c7; background-color: #9d0006 } /* Generic.Deleted */
+.highlight .ge { font-style: italic } /* Generic.Emph */
+.highlight .gr { color: #9d0006 } /* Generic.Error */
+.highlight .gh { color: #3c3836; font-weight: bold } /* Generic.Heading */
+.highlight .gi { color: #fbf1c7; background-color: #79740e } /* Generic.Inserted */
+.highlight .go { color: #32302f } /* Generic.Output */
+.highlight .gp { color: #7c6f64 } /* Generic.Prompt */
+.highlight .gs { font-weight: bold } /* Generic.Strong */
+.highlight .gu { color: #3c3836; text-decoration: underline } /* Generic.Subheading */
+.highlight .gt { color: #9d0006 } /* Generic.Traceback */
+.highlight .kc { color: #9d0006 } /* Keyword.Constant */
+.highlight .kd { color: #9d0006 } /* Keyword.Declaration */
+.highlight .kn { color: #9d0006 } /* Keyword.Namespace */
+.highlight .kp { color: #9d0006 } /* Keyword.Pseudo */
+.highlight .kr { color: #9d0006 } /* Keyword.Reserved */
+.highlight .kt { color: #9d0006 } /* Keyword.Type */
+.highlight .m { color: #8f3f71 } /* Literal.Number */
+.highlight .s { color: #79740e } /* Literal.String */
+.highlight .na { color: #b57614 } /* Name.Attribute */
+.highlight .nb { color: #af3a03 } /* Name.Builtin */
+.highlight .nc { color: #427b58 } /* Name.Class */
+.highlight .no { color: #8f3f71 } /* Name.Constant */
+.highlight .nd { color: #9d0006 } /* Name.Decorator */
+.highlight .ne { color: #9d0006 } /* Name.Exception */
+.highlight .nf { color: #427b58 } /* Name.Function */
+.highlight .nn { color: #427b58 } /* Name.Namespace */
+.highlight .nt { color: #427b58 } /* Name.Tag */
+.highlight .nv { color: #076678 } /* Name.Variable */
+.highlight .ow { color: #9d0006 } /* Operator.Word */
+.highlight .mb { color: #8f3f71 } /* Literal.Number.Bin */
+.highlight .mf { color: #8f3f71 } /* Literal.Number.Float */
+.highlight .mh { color: #8f3f71 } /* Literal.Number.Hex */
+.highlight .mi { color: #8f3f71 } /* Literal.Number.Integer */
+.highlight .mo { color: #8f3f71 } /* Literal.Number.Oct */
+.highlight .sa { color: #79740e } /* Literal.String.Affix */
+.highlight .sb { color: #79740e } /* Literal.String.Backtick */
+.highlight .sc { color: #79740e } /* Literal.String.Char */
+.highlight .dl { color: #79740e } /* Literal.String.Delimiter */
+.highlight .sd { color: #79740e } /* Literal.String.Doc */
+.highlight .s2 { color: #79740e } /* Literal.String.Double */
+.highlight .se { color: #af3a03 } /* Literal.String.Escape */
+.highlight .sh { color: #79740e } /* Literal.String.Heredoc */
+.highlight .si { color: #79740e } /* Literal.String.Interpol */
+.highlight .sx { color: #79740e } /* Literal.String.Other */
+.highlight .sr { color: #79740e } /* Literal.String.Regex */
+.highlight .s1 { color: #79740e } /* Literal.String.Single */
+.highlight .ss { color: #79740e } /* Literal.String.Symbol */
+.highlight .bp { color: #af3a03 } /* Name.Builtin.Pseudo */
+.highlight .fm { color: #427b58 } /* Name.Function.Magic */
+.highlight .vc { color: #076678 } /* Name.Variable.Class */
+.highlight .vg { color: #076678 } /* Name.Variable.Global */
+.highlight .vi { color: #076678 } /* Name.Variable.Instance */
+.highlight .vm { color: #076678 } /* Name.Variable.Magic */
+.highlight .il { color: #8f3f71 } /* Literal.Number.Integer.Long */</style> <div class="highlight"><pre><span></span><span class="w">    </span><span class="n">MyPair</span><span class="o">&lt;</span><span class="kt">int</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="o">&gt;</span><span class="w"> </span><span class="n">GetMinMax</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;&amp;</span><span class="w"> </span><span class="n">values</span><span class="p">);</span>
+</pre></div>
+
+    </div>
+    
+    <script>
+    var button = document.getElementById("btn_1706193329104_737_6");
+    button.addEventListener("click", function() {
+        this.classList.toggle("collapsible_header_opened");
+        var content = document.getElementById("content_1706193329104_737_6");
+        if (content.style.maxHeight){
+          content.style.maxHeight = null;
+        } else {
+          content.style.maxHeight = "40em";
+        }
+    });
+    </script>
+    
+            <script>
+            var collapsible_header = document.getElementById("btn_1706193329104_737_6");
+            collapsible_header.classList.toggle("collapsible_header_opened");
+            var collapsible_content = document.getElementById("content_1706193329104_737_6");
+            collapsible_content.style.maxHeight = "40em";
+            </script>
+            
+            </div>
+            <div class="half_width_spacer"></div>
+            <div class="half_width">
+                
+<style>
+.collapsible_header {
+  background-color: #AAAAAA;
+  color: white;
+  cursor: pointer;
+  padding: 3px;
+  width: 100%;
+  border: none;
+  text-align: left;
+  outline: none;
+  font-style: italic;
+}
+
+.collapsible_header_opened {
+  background-color: #555;
+}
+
+.collapsible_header:hover {
+  background-color: #AAAAFF;
+}
+
+.collapsible_header:after {
+  content: '\002B';
+  color: white;
+  font-weight: bold;
+  float: right;
+  margin-left: 5px;
+}
+
+.collapsible_header_opened:after {
+  content: "\2212";
+}
+
+.collapsible_content {
+  padding: 0 18px;
+  max-height: 0;
+  overflow-x: scroll;
+  overflow-y: scroll;
+  min-width: 100%;
+  transition: max-height 0.2s ease-out;
+  background-color: #f1f1f1;
+}
+</style>
+
+    <script>
+       function copy_code_1706193329105_1252() {
             let code = `
 def get_min_max(values: List[int]) -> Tuple[int, int]:
     pass
@@ -861,10 +1299,10 @@ def get_min_max(values: List[int]) -> Tuple[int, int]:
             navigator.clipboard.writeText(code);
        }
     </script>
-    <button class="collapsible_header" id="btn_1706142625966_785_5" >Corresponding python decls (stub)</button>
-    <div class="collapsible_content" id="content_1706142625966_785_5">
+    <button class="collapsible_header" id="btn_1706193329105_1252_7" >Corresponding python decls (stub)</button>
+    <div class="collapsible_content" id="content_1706193329105_1252_7">
         <div>
-                <button onclick="copy_code_1706142625966_785()" align="right">copy &#x270d;</button>
+                <button onclick="copy_code_1706193329105_1252()" align="right">copy &#x270d;</button>
         </div>
         <style>pre { line-height: 125%; }
 td.linenos .normal { color: inherit; background-color: transparent; padding-left: 5px; padding-right: 5px; }
@@ -943,25 +1381,28 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
     </div>
     
     <script>
-    var button = document.getElementById("btn_1706142625966_785_5");
+    var button = document.getElementById("btn_1706193329105_1252_7");
     button.addEventListener("click", function() {
         this.classList.toggle("collapsible_header_opened");
-        var content = document.getElementById("content_1706142625966_785_5");
+        var content = document.getElementById("content_1706193329105_1252_7");
         if (content.style.maxHeight){
           content.style.maxHeight = null;
         } else {
-          content.style.maxHeight = "20em";
+          content.style.maxHeight = "40em";
         }
     });
     </script>
     
             <script>
-            var collapsible_header = document.getElementById("btn_1706142625966_785_5");
+            var collapsible_header = document.getElementById("btn_1706193329105_1252_7");
             collapsible_header.classList.toggle("collapsible_header_opened");
-            var collapsible_content = document.getElementById("content_1706142625966_785_5");
-            collapsible_content.style.maxHeight = "20em";
+            var collapsible_content = document.getElementById("content_1706193329105_1252_7");
+            collapsible_content.style.maxHeight = "40em";
             </script>
+            
             <br/>
+        </div>
+    <br/>
 <style>
 .collapsible_header {
   background-color: #AAAAAA;
@@ -1007,17 +1448,17 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
 </style>
 
     <script>
-       function copy_code_1706142625965_87() {
+       function copy_code_1706193329103_82() {
             let code = `m.def("get_min_max",
     GetMinMax, py::arg("values"));
 `;
             navigator.clipboard.writeText(code);
        }
     </script>
-    <button class="collapsible_header" id="btn_1706142625965_87_3" >pybind11 C++ binding code</button>
-    <div class="collapsible_content" id="content_1706142625965_87_3">
+    <button class="collapsible_header" id="btn_1706193329103_82_4" >pybind11 C++ binding code</button>
+    <div class="collapsible_content" id="content_1706193329103_82_4">
         <div>
-                <button onclick="copy_code_1706142625965_87()" align="right">copy &#x270d;</button>
+                <button onclick="copy_code_1706193329103_82()" align="right">copy &#x270d;</button>
         </div>
         <style>pre { line-height: 125%; }
 td.linenos .normal { color: inherit; background-color: transparent; padding-left: 5px; padding-right: 5px; }
@@ -1096,14 +1537,14 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
     </div>
     
     <script>
-    var button = document.getElementById("btn_1706142625965_87_3");
+    var button = document.getElementById("btn_1706193329103_82_4");
     button.addEventListener("click", function() {
         this.classList.toggle("collapsible_header_opened");
-        var content = document.getElementById("content_1706142625965_87_3");
+        var content = document.getElementById("content_1706193329103_82_4");
         if (content.style.maxHeight){
           content.style.maxHeight = null;
         } else {
-          content.style.maxHeight = "20em";
+          content.style.maxHeight = "40em";
         }
     });
     </script>
@@ -1137,9 +1578,7 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">litgen</span>
 
 <span class="n">options</span> <span class="o">=</span> <span class="n">litgen</span><span class="o">.</span><span class="n">LitgenOptions</span><span class="p">()</span>
-<span class="kn">from</span> <span class="nn">litgen.demo</span> <span class="kn">import</span> <span class="n">litgen_notebook_display</span>
-
-<span class="n">litgen_notebook_display</span><span class="o">.</span><span class="n">generate_and_display</span><span class="p">(</span><span class="n">options</span><span class="p">,</span> <span class="n">cpp_code</span><span class="p">,</span> <span class="n">display_original_cpp_code</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="n">litgen_demo</span><span class="o">.</span><span class="n">demo</span><span class="p">(</span><span class="n">options</span><span class="p">,</span> <span class="n">cpp_code</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -1189,8 +1628,241 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
 }
 </style>
 
+<style>
+  div.several_columns {
+    display: flex;
+    flex-wrap: wrap;
+  }
+  div.half_width {
+     width:49.5%;
+     overflow: auto;
+  }
+  div.half_width_spacer {
+     width:1%;
+  }
+  </style>
+
+        <div class ="several_columns">
+            <div class="half_width">
+                
+<style>
+.collapsible_header {
+  background-color: #AAAAAA;
+  color: white;
+  cursor: pointer;
+  padding: 3px;
+  width: 100%;
+  border: none;
+  text-align: left;
+  outline: none;
+  font-style: italic;
+}
+
+.collapsible_header_opened {
+  background-color: #555;
+}
+
+.collapsible_header:hover {
+  background-color: #AAAAFF;
+}
+
+.collapsible_header:after {
+  content: '\002B';
+  color: white;
+  font-weight: bold;
+  float: right;
+  margin-left: 5px;
+}
+
+.collapsible_header_opened:after {
+  content: "\2212";
+}
+
+.collapsible_content {
+  padding: 0 18px;
+  max-height: 0;
+  overflow-x: scroll;
+  overflow-y: scroll;
+  min-width: 100%;
+  transition: max-height 0.2s ease-out;
+  background-color: #f1f1f1;
+}
+</style>
+
     <script>
-       function copy_code_1706142625979_713() {
+       function copy_code_1706193329117_5571() {
+            let code = `
+namespace MyNamespace
+{
+    struct MyClass
+    {
+        int AddNumber(int a, int b);
+
+        int MultiplierRatio = 4;
+    };
+}
+`;
+            navigator.clipboard.writeText(code);
+       }
+    </script>
+    <button class="collapsible_header" id="btn_1706193329117_5571_10" >Original C++ decls</button>
+    <div class="collapsible_content" id="content_1706193329117_5571_10">
+        <div>
+                <button onclick="copy_code_1706193329117_5571()" align="right">copy &#x270d;</button>
+        </div>
+        <style>pre { line-height: 125%; }
+td.linenos .normal { color: inherit; background-color: transparent; padding-left: 5px; padding-right: 5px; }
+span.linenos { color: inherit; background-color: transparent; padding-left: 5px; padding-right: 5px; }
+td.linenos .special { color: #000000; background-color: #ffffc0; padding-left: 5px; padding-right: 5px; }
+span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 5px; padding-right: 5px; }
+.highlight .hll { background-color: #3c3836 }
+.highlight { background: #fbf1c7; }
+.highlight .c { color: #928374; font-style: italic } /* Comment */
+.highlight .err { color: #fbf1c7; background-color: #9d0006 } /* Error */
+.highlight .k { color: #9d0006 } /* Keyword */
+.highlight .ch { color: #928374; font-style: italic } /* Comment.Hashbang */
+.highlight .cm { color: #928374; font-style: italic } /* Comment.Multiline */
+.highlight .c-PreProc { color: #427b58; font-style: italic } /* Comment.PreProc */
+.highlight .cp { color: #928374; font-style: italic } /* Comment.Preproc */
+.highlight .cpf { color: #928374; font-style: italic } /* Comment.PreprocFile */
+.highlight .c1 { color: #928374; font-style: italic } /* Comment.Single */
+.highlight .cs { color: #3c3836; font-weight: bold; font-style: italic } /* Comment.Special */
+.highlight .gd { color: #fbf1c7; background-color: #9d0006 } /* Generic.Deleted */
+.highlight .ge { font-style: italic } /* Generic.Emph */
+.highlight .gr { color: #9d0006 } /* Generic.Error */
+.highlight .gh { color: #3c3836; font-weight: bold } /* Generic.Heading */
+.highlight .gi { color: #fbf1c7; background-color: #79740e } /* Generic.Inserted */
+.highlight .go { color: #32302f } /* Generic.Output */
+.highlight .gp { color: #7c6f64 } /* Generic.Prompt */
+.highlight .gs { font-weight: bold } /* Generic.Strong */
+.highlight .gu { color: #3c3836; text-decoration: underline } /* Generic.Subheading */
+.highlight .gt { color: #9d0006 } /* Generic.Traceback */
+.highlight .kc { color: #9d0006 } /* Keyword.Constant */
+.highlight .kd { color: #9d0006 } /* Keyword.Declaration */
+.highlight .kn { color: #9d0006 } /* Keyword.Namespace */
+.highlight .kp { color: #9d0006 } /* Keyword.Pseudo */
+.highlight .kr { color: #9d0006 } /* Keyword.Reserved */
+.highlight .kt { color: #9d0006 } /* Keyword.Type */
+.highlight .m { color: #8f3f71 } /* Literal.Number */
+.highlight .s { color: #79740e } /* Literal.String */
+.highlight .na { color: #b57614 } /* Name.Attribute */
+.highlight .nb { color: #af3a03 } /* Name.Builtin */
+.highlight .nc { color: #427b58 } /* Name.Class */
+.highlight .no { color: #8f3f71 } /* Name.Constant */
+.highlight .nd { color: #9d0006 } /* Name.Decorator */
+.highlight .ne { color: #9d0006 } /* Name.Exception */
+.highlight .nf { color: #427b58 } /* Name.Function */
+.highlight .nn { color: #427b58 } /* Name.Namespace */
+.highlight .nt { color: #427b58 } /* Name.Tag */
+.highlight .nv { color: #076678 } /* Name.Variable */
+.highlight .ow { color: #9d0006 } /* Operator.Word */
+.highlight .mb { color: #8f3f71 } /* Literal.Number.Bin */
+.highlight .mf { color: #8f3f71 } /* Literal.Number.Float */
+.highlight .mh { color: #8f3f71 } /* Literal.Number.Hex */
+.highlight .mi { color: #8f3f71 } /* Literal.Number.Integer */
+.highlight .mo { color: #8f3f71 } /* Literal.Number.Oct */
+.highlight .sa { color: #79740e } /* Literal.String.Affix */
+.highlight .sb { color: #79740e } /* Literal.String.Backtick */
+.highlight .sc { color: #79740e } /* Literal.String.Char */
+.highlight .dl { color: #79740e } /* Literal.String.Delimiter */
+.highlight .sd { color: #79740e } /* Literal.String.Doc */
+.highlight .s2 { color: #79740e } /* Literal.String.Double */
+.highlight .se { color: #af3a03 } /* Literal.String.Escape */
+.highlight .sh { color: #79740e } /* Literal.String.Heredoc */
+.highlight .si { color: #79740e } /* Literal.String.Interpol */
+.highlight .sx { color: #79740e } /* Literal.String.Other */
+.highlight .sr { color: #79740e } /* Literal.String.Regex */
+.highlight .s1 { color: #79740e } /* Literal.String.Single */
+.highlight .ss { color: #79740e } /* Literal.String.Symbol */
+.highlight .bp { color: #af3a03 } /* Name.Builtin.Pseudo */
+.highlight .fm { color: #427b58 } /* Name.Function.Magic */
+.highlight .vc { color: #076678 } /* Name.Variable.Class */
+.highlight .vg { color: #076678 } /* Name.Variable.Global */
+.highlight .vi { color: #076678 } /* Name.Variable.Instance */
+.highlight .vm { color: #076678 } /* Name.Variable.Magic */
+.highlight .il { color: #8f3f71 } /* Literal.Number.Integer.Long */</style> <div class="highlight"><pre><span></span><span class="k">namespace</span><span class="w"> </span><span class="nn">MyNamespace</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="k">struct</span><span class="w"> </span><span class="nc">MyClass</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">        </span><span class="kt">int</span><span class="w"> </span><span class="nf">AddNumber</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">a</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">b</span><span class="p">);</span>
+
+<span class="w">        </span><span class="kt">int</span><span class="w"> </span><span class="n">MultiplierRatio</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">4</span><span class="p">;</span>
+<span class="w">    </span><span class="p">};</span>
+<span class="p">}</span>
+</pre></div>
+
+    </div>
+    
+    <script>
+    var button = document.getElementById("btn_1706193329117_5571_10");
+    button.addEventListener("click", function() {
+        this.classList.toggle("collapsible_header_opened");
+        var content = document.getElementById("content_1706193329117_5571_10");
+        if (content.style.maxHeight){
+          content.style.maxHeight = null;
+        } else {
+          content.style.maxHeight = "40em";
+        }
+    });
+    </script>
+    
+            <script>
+            var collapsible_header = document.getElementById("btn_1706193329117_5571_10");
+            collapsible_header.classList.toggle("collapsible_header_opened");
+            var collapsible_content = document.getElementById("content_1706193329117_5571_10");
+            collapsible_content.style.maxHeight = "40em";
+            </script>
+            
+            </div>
+            <div class="half_width_spacer"></div>
+            <div class="half_width">
+                
+<style>
+.collapsible_header {
+  background-color: #AAAAAA;
+  color: white;
+  cursor: pointer;
+  padding: 3px;
+  width: 100%;
+  border: none;
+  text-align: left;
+  outline: none;
+  font-style: italic;
+}
+
+.collapsible_header_opened {
+  background-color: #555;
+}
+
+.collapsible_header:hover {
+  background-color: #AAAAFF;
+}
+
+.collapsible_header:after {
+  content: '\002B';
+  color: white;
+  font-weight: bold;
+  float: right;
+  margin-left: 5px;
+}
+
+.collapsible_header_opened:after {
+  content: "\2212";
+}
+
+.collapsible_content {
+  padding: 0 18px;
+  max-height: 0;
+  overflow-x: scroll;
+  overflow-y: scroll;
+  min-width: 100%;
+  transition: max-height 0.2s ease-out;
+  background-color: #f1f1f1;
+}
+</style>
+
+    <script>
+       function copy_code_1706193329118_1682() {
             let code = `
 
 # <submodule my_namespace>
@@ -1210,10 +1882,10 @@ class my_namespace:  # Proxy class that introduces typings for the *submodule* m
             navigator.clipboard.writeText(code);
        }
     </script>
-    <button class="collapsible_header" id="btn_1706142625979_713_8" >Corresponding python decls (stub)</button>
-    <div class="collapsible_content" id="content_1706142625979_713_8">
+    <button class="collapsible_header" id="btn_1706193329118_1682_11" >Corresponding python decls (stub)</button>
+    <div class="collapsible_content" id="content_1706193329118_1682_11">
         <div>
-                <button onclick="copy_code_1706142625979_713()" align="right">copy &#x270d;</button>
+                <button onclick="copy_code_1706193329118_1682()" align="right">copy &#x270d;</button>
         </div>
         <style>pre { line-height: 125%; }
 td.linenos .normal { color: inherit; background-color: transparent; padding-left: 5px; padding-right: 5px; }
@@ -1303,25 +1975,28 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
     </div>
     
     <script>
-    var button = document.getElementById("btn_1706142625979_713_8");
+    var button = document.getElementById("btn_1706193329118_1682_11");
     button.addEventListener("click", function() {
         this.classList.toggle("collapsible_header_opened");
-        var content = document.getElementById("content_1706142625979_713_8");
+        var content = document.getElementById("content_1706193329118_1682_11");
         if (content.style.maxHeight){
           content.style.maxHeight = null;
         } else {
-          content.style.maxHeight = "20em";
+          content.style.maxHeight = "40em";
         }
     });
     </script>
     
             <script>
-            var collapsible_header = document.getElementById("btn_1706142625979_713_8");
+            var collapsible_header = document.getElementById("btn_1706193329118_1682_11");
             collapsible_header.classList.toggle("collapsible_header_opened");
-            var collapsible_content = document.getElementById("content_1706142625979_713_8");
-            collapsible_content.style.maxHeight = "20em";
+            var collapsible_content = document.getElementById("content_1706193329118_1682_11");
+            collapsible_content.style.maxHeight = "40em";
             </script>
+            
             <br/>
+        </div>
+    <br/>
 <style>
 .collapsible_header {
   background-color: #AAAAAA;
@@ -1367,7 +2042,7 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
 </style>
 
     <script>
-       function copy_code_1706142625978_807() {
+       function copy_code_1706193329116_781() {
             let code = `
 { // <namespace MyNamespace>
     py::module_ pyNsMyNamespace = m.def_submodule("my_namespace", "");
@@ -1392,10 +2067,10 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
             navigator.clipboard.writeText(code);
        }
     </script>
-    <button class="collapsible_header" id="btn_1706142625978_807_6" >pybind11 C++ binding code</button>
-    <div class="collapsible_content" id="content_1706142625978_807_6">
+    <button class="collapsible_header" id="btn_1706193329116_781_8" >pybind11 C++ binding code</button>
+    <div class="collapsible_content" id="content_1706193329116_781_8">
         <div>
-                <button onclick="copy_code_1706142625978_807()" align="right">copy &#x270d;</button>
+                <button onclick="copy_code_1706193329116_781()" align="right">copy &#x270d;</button>
         </div>
         <style>pre { line-height: 125%; }
 td.linenos .normal { color: inherit; background-color: transparent; padding-left: 5px; padding-right: 5px; }
@@ -1491,14 +2166,14 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
     </div>
     
     <script>
-    var button = document.getElementById("btn_1706142625978_807_6");
+    var button = document.getElementById("btn_1706193329116_781_8");
     button.addEventListener("click", function() {
         this.classList.toggle("collapsible_header_opened");
-        var content = document.getElementById("content_1706142625978_807_6");
+        var content = document.getElementById("content_1706193329116_781_8");
         if (content.style.maxHeight){
           content.style.maxHeight = null;
         } else {
-          content.style.maxHeight = "20em";
+          content.style.maxHeight = "40em";
         }
     });
     </script>
@@ -1508,7 +2183,7 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">options</span><span class="o">.</span><span class="n">python_convert_to_snake_case</span> <span class="o">=</span> <span class="kc">False</span>
-<span class="n">litgen_notebook_display</span><span class="o">.</span><span class="n">generate_and_display</span><span class="p">(</span><span class="n">options</span><span class="p">,</span> <span class="n">cpp_code</span><span class="p">,</span> <span class="n">display_original_cpp_code</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="n">litgen_demo</span><span class="o">.</span><span class="n">demo</span><span class="p">(</span><span class="n">options</span><span class="p">,</span> <span class="n">cpp_code</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -1558,8 +2233,241 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
 }
 </style>
 
+<style>
+  div.several_columns {
+    display: flex;
+    flex-wrap: wrap;
+  }
+  div.half_width {
+     width:49.5%;
+     overflow: auto;
+  }
+  div.half_width_spacer {
+     width:1%;
+  }
+  </style>
+
+        <div class ="several_columns">
+            <div class="half_width">
+                
+<style>
+.collapsible_header {
+  background-color: #AAAAAA;
+  color: white;
+  cursor: pointer;
+  padding: 3px;
+  width: 100%;
+  border: none;
+  text-align: left;
+  outline: none;
+  font-style: italic;
+}
+
+.collapsible_header_opened {
+  background-color: #555;
+}
+
+.collapsible_header:hover {
+  background-color: #AAAAFF;
+}
+
+.collapsible_header:after {
+  content: '\002B';
+  color: white;
+  font-weight: bold;
+  float: right;
+  margin-left: 5px;
+}
+
+.collapsible_header_opened:after {
+  content: "\2212";
+}
+
+.collapsible_content {
+  padding: 0 18px;
+  max-height: 0;
+  overflow-x: scroll;
+  overflow-y: scroll;
+  min-width: 100%;
+  transition: max-height 0.2s ease-out;
+  background-color: #f1f1f1;
+}
+</style>
+
     <script>
-       function copy_code_1706142625989_5671() {
+       function copy_code_1706193329128_24() {
+            let code = `
+namespace MyNamespace
+{
+    struct MyClass
+    {
+        int AddNumber(int a, int b);
+
+        int MultiplierRatio = 4;
+    };
+}
+`;
+            navigator.clipboard.writeText(code);
+       }
+    </script>
+    <button class="collapsible_header" id="btn_1706193329128_24_14" >Original C++ decls</button>
+    <div class="collapsible_content" id="content_1706193329128_24_14">
+        <div>
+                <button onclick="copy_code_1706193329128_24()" align="right">copy &#x270d;</button>
+        </div>
+        <style>pre { line-height: 125%; }
+td.linenos .normal { color: inherit; background-color: transparent; padding-left: 5px; padding-right: 5px; }
+span.linenos { color: inherit; background-color: transparent; padding-left: 5px; padding-right: 5px; }
+td.linenos .special { color: #000000; background-color: #ffffc0; padding-left: 5px; padding-right: 5px; }
+span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 5px; padding-right: 5px; }
+.highlight .hll { background-color: #3c3836 }
+.highlight { background: #fbf1c7; }
+.highlight .c { color: #928374; font-style: italic } /* Comment */
+.highlight .err { color: #fbf1c7; background-color: #9d0006 } /* Error */
+.highlight .k { color: #9d0006 } /* Keyword */
+.highlight .ch { color: #928374; font-style: italic } /* Comment.Hashbang */
+.highlight .cm { color: #928374; font-style: italic } /* Comment.Multiline */
+.highlight .c-PreProc { color: #427b58; font-style: italic } /* Comment.PreProc */
+.highlight .cp { color: #928374; font-style: italic } /* Comment.Preproc */
+.highlight .cpf { color: #928374; font-style: italic } /* Comment.PreprocFile */
+.highlight .c1 { color: #928374; font-style: italic } /* Comment.Single */
+.highlight .cs { color: #3c3836; font-weight: bold; font-style: italic } /* Comment.Special */
+.highlight .gd { color: #fbf1c7; background-color: #9d0006 } /* Generic.Deleted */
+.highlight .ge { font-style: italic } /* Generic.Emph */
+.highlight .gr { color: #9d0006 } /* Generic.Error */
+.highlight .gh { color: #3c3836; font-weight: bold } /* Generic.Heading */
+.highlight .gi { color: #fbf1c7; background-color: #79740e } /* Generic.Inserted */
+.highlight .go { color: #32302f } /* Generic.Output */
+.highlight .gp { color: #7c6f64 } /* Generic.Prompt */
+.highlight .gs { font-weight: bold } /* Generic.Strong */
+.highlight .gu { color: #3c3836; text-decoration: underline } /* Generic.Subheading */
+.highlight .gt { color: #9d0006 } /* Generic.Traceback */
+.highlight .kc { color: #9d0006 } /* Keyword.Constant */
+.highlight .kd { color: #9d0006 } /* Keyword.Declaration */
+.highlight .kn { color: #9d0006 } /* Keyword.Namespace */
+.highlight .kp { color: #9d0006 } /* Keyword.Pseudo */
+.highlight .kr { color: #9d0006 } /* Keyword.Reserved */
+.highlight .kt { color: #9d0006 } /* Keyword.Type */
+.highlight .m { color: #8f3f71 } /* Literal.Number */
+.highlight .s { color: #79740e } /* Literal.String */
+.highlight .na { color: #b57614 } /* Name.Attribute */
+.highlight .nb { color: #af3a03 } /* Name.Builtin */
+.highlight .nc { color: #427b58 } /* Name.Class */
+.highlight .no { color: #8f3f71 } /* Name.Constant */
+.highlight .nd { color: #9d0006 } /* Name.Decorator */
+.highlight .ne { color: #9d0006 } /* Name.Exception */
+.highlight .nf { color: #427b58 } /* Name.Function */
+.highlight .nn { color: #427b58 } /* Name.Namespace */
+.highlight .nt { color: #427b58 } /* Name.Tag */
+.highlight .nv { color: #076678 } /* Name.Variable */
+.highlight .ow { color: #9d0006 } /* Operator.Word */
+.highlight .mb { color: #8f3f71 } /* Literal.Number.Bin */
+.highlight .mf { color: #8f3f71 } /* Literal.Number.Float */
+.highlight .mh { color: #8f3f71 } /* Literal.Number.Hex */
+.highlight .mi { color: #8f3f71 } /* Literal.Number.Integer */
+.highlight .mo { color: #8f3f71 } /* Literal.Number.Oct */
+.highlight .sa { color: #79740e } /* Literal.String.Affix */
+.highlight .sb { color: #79740e } /* Literal.String.Backtick */
+.highlight .sc { color: #79740e } /* Literal.String.Char */
+.highlight .dl { color: #79740e } /* Literal.String.Delimiter */
+.highlight .sd { color: #79740e } /* Literal.String.Doc */
+.highlight .s2 { color: #79740e } /* Literal.String.Double */
+.highlight .se { color: #af3a03 } /* Literal.String.Escape */
+.highlight .sh { color: #79740e } /* Literal.String.Heredoc */
+.highlight .si { color: #79740e } /* Literal.String.Interpol */
+.highlight .sx { color: #79740e } /* Literal.String.Other */
+.highlight .sr { color: #79740e } /* Literal.String.Regex */
+.highlight .s1 { color: #79740e } /* Literal.String.Single */
+.highlight .ss { color: #79740e } /* Literal.String.Symbol */
+.highlight .bp { color: #af3a03 } /* Name.Builtin.Pseudo */
+.highlight .fm { color: #427b58 } /* Name.Function.Magic */
+.highlight .vc { color: #076678 } /* Name.Variable.Class */
+.highlight .vg { color: #076678 } /* Name.Variable.Global */
+.highlight .vi { color: #076678 } /* Name.Variable.Instance */
+.highlight .vm { color: #076678 } /* Name.Variable.Magic */
+.highlight .il { color: #8f3f71 } /* Literal.Number.Integer.Long */</style> <div class="highlight"><pre><span></span><span class="k">namespace</span><span class="w"> </span><span class="nn">MyNamespace</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="k">struct</span><span class="w"> </span><span class="nc">MyClass</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">        </span><span class="kt">int</span><span class="w"> </span><span class="nf">AddNumber</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">a</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">b</span><span class="p">);</span>
+
+<span class="w">        </span><span class="kt">int</span><span class="w"> </span><span class="n">MultiplierRatio</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">4</span><span class="p">;</span>
+<span class="w">    </span><span class="p">};</span>
+<span class="p">}</span>
+</pre></div>
+
+    </div>
+    
+    <script>
+    var button = document.getElementById("btn_1706193329128_24_14");
+    button.addEventListener("click", function() {
+        this.classList.toggle("collapsible_header_opened");
+        var content = document.getElementById("content_1706193329128_24_14");
+        if (content.style.maxHeight){
+          content.style.maxHeight = null;
+        } else {
+          content.style.maxHeight = "40em";
+        }
+    });
+    </script>
+    
+            <script>
+            var collapsible_header = document.getElementById("btn_1706193329128_24_14");
+            collapsible_header.classList.toggle("collapsible_header_opened");
+            var collapsible_content = document.getElementById("content_1706193329128_24_14");
+            collapsible_content.style.maxHeight = "40em";
+            </script>
+            
+            </div>
+            <div class="half_width_spacer"></div>
+            <div class="half_width">
+                
+<style>
+.collapsible_header {
+  background-color: #AAAAAA;
+  color: white;
+  cursor: pointer;
+  padding: 3px;
+  width: 100%;
+  border: none;
+  text-align: left;
+  outline: none;
+  font-style: italic;
+}
+
+.collapsible_header_opened {
+  background-color: #555;
+}
+
+.collapsible_header:hover {
+  background-color: #AAAAFF;
+}
+
+.collapsible_header:after {
+  content: '\002B';
+  color: white;
+  font-weight: bold;
+  float: right;
+  margin-left: 5px;
+}
+
+.collapsible_header_opened:after {
+  content: "\2212";
+}
+
+.collapsible_content {
+  padding: 0 18px;
+  max-height: 0;
+  overflow-x: scroll;
+  overflow-y: scroll;
+  min-width: 100%;
+  transition: max-height 0.2s ease-out;
+  background-color: #f1f1f1;
+}
+</style>
+
+    <script>
+       function copy_code_1706193329128_866() {
             let code = `
 
 # <submodule MyNamespace>
@@ -1579,10 +2487,10 @@ class MyNamespace:  # Proxy class that introduces typings for the *submodule* My
             navigator.clipboard.writeText(code);
        }
     </script>
-    <button class="collapsible_header" id="btn_1706142625989_5671_11" >Corresponding python decls (stub)</button>
-    <div class="collapsible_content" id="content_1706142625989_5671_11">
+    <button class="collapsible_header" id="btn_1706193329128_866_15" >Corresponding python decls (stub)</button>
+    <div class="collapsible_content" id="content_1706193329128_866_15">
         <div>
-                <button onclick="copy_code_1706142625989_5671()" align="right">copy &#x270d;</button>
+                <button onclick="copy_code_1706193329128_866()" align="right">copy &#x270d;</button>
         </div>
         <style>pre { line-height: 125%; }
 td.linenos .normal { color: inherit; background-color: transparent; padding-left: 5px; padding-right: 5px; }
@@ -1672,25 +2580,28 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
     </div>
     
     <script>
-    var button = document.getElementById("btn_1706142625989_5671_11");
+    var button = document.getElementById("btn_1706193329128_866_15");
     button.addEventListener("click", function() {
         this.classList.toggle("collapsible_header_opened");
-        var content = document.getElementById("content_1706142625989_5671_11");
+        var content = document.getElementById("content_1706193329128_866_15");
         if (content.style.maxHeight){
           content.style.maxHeight = null;
         } else {
-          content.style.maxHeight = "20em";
+          content.style.maxHeight = "40em";
         }
     });
     </script>
     
             <script>
-            var collapsible_header = document.getElementById("btn_1706142625989_5671_11");
+            var collapsible_header = document.getElementById("btn_1706193329128_866_15");
             collapsible_header.classList.toggle("collapsible_header_opened");
-            var collapsible_content = document.getElementById("content_1706142625989_5671_11");
-            collapsible_content.style.maxHeight = "20em";
+            var collapsible_content = document.getElementById("content_1706193329128_866_15");
+            collapsible_content.style.maxHeight = "40em";
             </script>
+            
             <br/>
+        </div>
+    <br/>
 <style>
 .collapsible_header {
   background-color: #AAAAAA;
@@ -1736,7 +2647,7 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
 </style>
 
     <script>
-       function copy_code_1706142625988_5728() {
+       function copy_code_1706193329127_423() {
             let code = `
 { // <namespace MyNamespace>
     py::module_ pyNsMyNamespace = m.def_submodule("MyNamespace", "");
@@ -1761,10 +2672,10 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
             navigator.clipboard.writeText(code);
        }
     </script>
-    <button class="collapsible_header" id="btn_1706142625988_5728_9" >pybind11 C++ binding code</button>
-    <div class="collapsible_content" id="content_1706142625988_5728_9">
+    <button class="collapsible_header" id="btn_1706193329127_423_12" >pybind11 C++ binding code</button>
+    <div class="collapsible_content" id="content_1706193329127_423_12">
         <div>
-                <button onclick="copy_code_1706142625988_5728()" align="right">copy &#x270d;</button>
+                <button onclick="copy_code_1706193329127_423()" align="right">copy &#x270d;</button>
         </div>
         <style>pre { line-height: 125%; }
 td.linenos .normal { color: inherit; background-color: transparent; padding-left: 5px; padding-right: 5px; }
@@ -1860,14 +2771,14 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
     </div>
     
     <script>
-    var button = document.getElementById("btn_1706142625988_5728_9");
+    var button = document.getElementById("btn_1706193329127_423_12");
     button.addEventListener("click", function() {
         this.classList.toggle("collapsible_header_opened");
-        var content = document.getElementById("content_1706142625988_5728_9");
+        var content = document.getElementById("content_1706193329127_423_12");
         if (content.style.maxHeight){
           content.style.maxHeight = null;
         } else {
-          content.style.maxHeight = "20em";
+          content.style.maxHeight = "40em";
         }
     });
     </script>

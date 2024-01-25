@@ -20,4 +20,3 @@ pip install "litgen@git+https://github.com/pthom/litgen"```
 ```
 
 That's it!
-

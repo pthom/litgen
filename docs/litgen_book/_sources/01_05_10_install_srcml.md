@@ -37,4 +37,3 @@ mkdir -p build && cd build
 cmake ../srcML && make -j
 sudo make install
 ```
-
