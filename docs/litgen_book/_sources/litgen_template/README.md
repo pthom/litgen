@@ -209,18 +209,10 @@ is a simple C++ program that can be used to debug the bindings in editable mode.
 src/pybind_native_debug/
         ├── CMakeLists.txt
         ├── pybind_native_debug.cpp
-        ├── pybind_native_debug.py
-        ├── pybind_native_debug_venv.txt
-        └── pybind_native_debug_venv.txt.example
+        └── pybind_native_debug.py
 ```
 
-**Step 1: edit `pybind_native_debug_venv.txt`**
-
-Create a file `pybind_native_debug/pybind_native_debug_venv.txt`, and add the path to the python virtual environment that you want to use to debug the bindings.
-
-**Step 2: edit `pybind_native_debug.py`**
-
-Simply edit the python file `pybind_native_debug.py` by adding calls to the functions you want to debug. Then, place breakpoints in the C++ code, and run the program.
+Simply edit the python file `pybind_native_debug.py` by adding calls to the C++ functions you want to debug. Then, place breakpoints in the C++ code, and debug the C++ program.
 
 
 ----------------
