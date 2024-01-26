@@ -440,10 +440,10 @@ document.write(`
                   
   <section class="tex2jax_ignore mathjax_ignore" id="litgen-options">
 <h1>litgen options<a class="headerlink" href="#litgen-options" title="Permalink to this heading">#</a></h1>
-<p>litgen uses numerous options which can be found here: <a class="reference external" href="https://github.com/pthom/litgen/blob/main/packages/litgen/options.py">litgen/options.py</a>.</p>
+<p>litgen uses numerous options which can be found here: <a class="reference external" href="https://github.com/pthom/litgen/blob/main/src/litgen/options.py">litgen/options.py</a>.</p>
 <section id="note-about-regexes">
 <h2>Note about regexes<a class="headerlink" href="#note-about-regexes" title="Permalink to this heading">#</a></h2>
-<p>Many options use regexes: see the note about their usage in the <a class="reference external" href="http://options.py">options.py</a> file:</p>
+<p>Many options use regexes: see the note about their usage in the <a class="reference external" href="https://github.com/pthom/litgen/blob/main/src/litgen/options.py">options.py</a> file:</p>
 <p>regexes can support several alternatives: separate them by “|”.</p>
 <p>For example, in order to match an exact function name (<code class="docutils literal notranslate"><span class="pre">YourFunctionName</span></code>), as well as functions ending with <code class="docutils literal notranslate"><span class="pre">_private</span></code>, use a regex like this:</p>
 <div class="highlight-none notranslate"><div class="highlight"><pre><span></span>     r&quot;^YourFunctionName$|_private$&quot;,
@@ -518,7 +518,7 @@ document.write(`
 </style>
 
     <script>
-       function copy_code_1706198888763_702() {
+       function copy_code_1706229419628_227() {
             let code = `from __future__ import annotations
 
 from typing import Any, Callable, List
@@ -1112,10 +1112,10 @@ class LitgenOptions:
             navigator.clipboard.writeText(code);
        }
     </script>
-    <button class="collapsible_header" id="btn_1706198888763_702_0" >litgen/options.py</button>
-    <div class="collapsible_content" id="content_1706198888763_702_0">
+    <button class="collapsible_header" id="btn_1706229419628_227_0" >litgen/options.py</button>
+    <div class="collapsible_content" id="content_1706229419628_227_0">
         <div>
-                <button onclick="copy_code_1706198888763_702()" align="right">copy &#x270d;</button>
+                <button onclick="copy_code_1706229419628_227()" align="right">copy &#x270d;</button>
         </div>
         <style>pre { line-height: 125%; }
 td.linenos .normal { color: inherit; background-color: transparent; padding-left: 5px; padding-right: 5px; }
@@ -1781,10 +1781,10 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
     </div>
     
     <script>
-    var button = document.getElementById("btn_1706198888763_702_0");
+    var button = document.getElementById("btn_1706229419628_227_0");
     button.addEventListener("click", function() {
         this.classList.toggle("collapsible_header_opened");
-        var content = document.getElementById("content_1706198888763_702_0");
+        var content = document.getElementById("content_1706229419628_227_0");
         if (content.style.maxHeight){
           content.style.maxHeight = null;
         } else {
@@ -1794,9 +1794,9 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
     </script>
     
             <script>
-            var collapsible_header = document.getElementById("btn_1706198888763_702_0");
+            var collapsible_header = document.getElementById("btn_1706229419628_227_0");
             collapsible_header.classList.toggle("collapsible_header_opened");
-            var collapsible_content = document.getElementById("content_1706198888763_702_0");
+            var collapsible_content = document.getElementById("content_1706229419628_227_0");
             collapsible_content.style.maxHeight = collapsible_content.scrollHeight + "px";
             </script>
             </div></div>
@@ -1804,7 +1804,7 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
 </section>
 <section id="srcmlcpp-options">
 <h2>srcmlcpp options<a class="headerlink" href="#srcmlcpp-options" title="Permalink to this heading">#</a></h2>
-<p>litgen is based on srcmlcpp, which also provides some options, via <code class="docutils literal notranslate"><span class="pre">LitgenOptions.srcmlcpp_options</span></code>. They are available at <a class="reference external" href="https://github.com/pthom/litgen/blob/main/packages/srcmlcpp/srcmlcpp_options.py">srcmlcpp/srcmlcpp_options.py</a></p>
+<p>litgen is based on srcmlcpp, which also provides some options, via <code class="docutils literal notranslate"><span class="pre">LitgenOptions.srcmlcpp_options</span></code>. They are available at <a class="reference external" href="https://github.com/pthom/litgen/blob/main/src/srcmlcpp/srcmlcpp_options.py">srcmlcpp/srcmlcpp_options.py</a></p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">litgen_options_code</span> <span class="o">=</span> <span class="n">code_utils</span><span class="o">.</span><span class="n">download_url_content</span><span class="p">(</span>
@@ -1861,7 +1861,7 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
 </style>
 
     <script>
-       function copy_code_1706198888941_937() {
+       function copy_code_1706229420305_6792() {
             let code = `"""
 Options for srcmlcpp. Read the doc near all options elements.
 """
@@ -1992,10 +1992,10 @@ def _int_from_str_or_named_number_macros(options: SrcmlcppOptions, int_str: Opti
             navigator.clipboard.writeText(code);
        }
     </script>
-    <button class="collapsible_header" id="btn_1706198888941_937_1" >srcmlcpp/srcmlcpp_options.py</button>
-    <div class="collapsible_content" id="content_1706198888941_937_1">
+    <button class="collapsible_header" id="btn_1706229420305_6792_1" >srcmlcpp/srcmlcpp_options.py</button>
+    <div class="collapsible_content" id="content_1706229420305_6792_1">
         <div>
-                <button onclick="copy_code_1706198888941_937()" align="right">copy &#x270d;</button>
+                <button onclick="copy_code_1706229420305_6792()" align="right">copy &#x270d;</button>
         </div>
         <style>pre { line-height: 125%; }
 td.linenos .normal { color: inherit; background-color: transparent; padding-left: 5px; padding-right: 5px; }
@@ -2198,10 +2198,10 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
     </div>
     
     <script>
-    var button = document.getElementById("btn_1706198888941_937_1");
+    var button = document.getElementById("btn_1706229420305_6792_1");
     button.addEventListener("click", function() {
         this.classList.toggle("collapsible_header_opened");
-        var content = document.getElementById("content_1706198888941_937_1");
+        var content = document.getElementById("content_1706229420305_6792_1");
         if (content.style.maxHeight){
           content.style.maxHeight = null;
         } else {
@@ -2211,9 +2211,9 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
     </script>
     
             <script>
-            var collapsible_header = document.getElementById("btn_1706198888941_937_1");
+            var collapsible_header = document.getElementById("btn_1706229420305_6792_1");
             collapsible_header.classList.toggle("collapsible_header_opened");
-            var collapsible_content = document.getElementById("content_1706198888941_937_1");
+            var collapsible_content = document.getElementById("content_1706229420305_6792_1");
             collapsible_content.style.maxHeight = collapsible_content.scrollHeight + "px";
             </script>
             </div></div>

@@ -40,7 +40,7 @@ source venv/bin/activate
 
 **Install the requirements**
 
-```
+```bash
 pip install -r requirements-dev.txt
 ```
 This will install [litgen](https://pthom.github.io/litgen) (the bindings generator), [pybind11](https://pybind11.readthedocs.io/en/stable/) (a library to create C++ to Python bindings), [pytest](https://docs.pytest.org) (for the tests), [black](https://black.readthedocs.io/en/stable/index.html) (a code formatter), and [mypy](https://www.mypy-lang.org/) (static type checker for python).
@@ -58,7 +58,7 @@ See [requirements-dev.txt](https://github.com/pthom/litgen_template/blob/main/re
 
 **Run the code generation via litgen**
 
-```
+```bash
 python tools/autogenerate_bindings.py
 ```
 

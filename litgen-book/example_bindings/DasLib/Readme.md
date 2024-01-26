@@ -82,7 +82,7 @@ void py_init_module_das_lib(py::module& m)
 
 ### Generate the bindings for one file
 
-See the [autogenerate_das_lib.py](https://github.com/pthom/litgen/blob/main/packages/litgen/litgen-book/example_bindings/DasLib/autogenerate_das_lib.py) script for an example of how to generate the bindings.
+See the [autogenerate_das_lib.py](https://github.com/pthom/litgen/blob/main/src/litgen/litgen-book/example_bindings/DasLib/autogenerate_das_lib.py) script for an example of how to generate the bindings.
 
 Relevant extract:
 ```python
@@ -98,7 +98,7 @@ Relevant extract:
 
 ### Generate an amalgamation header
 
-See the [autogenerate_das_lib.py](https://github.com/pthom/litgen/blob/main/packages/litgen/litgen-book/example_bindings/DasLib/autogenerate_das_lib.py) script for an example of how to generate the bindings.
+See the [autogenerate_das_lib.py](https://github.com/pthom/litgen/blob/main/src/litgen/litgen-book/example_bindings/DasLib/autogenerate_das_lib.py) script for an example of how to generate the bindings.
 
 Relevant extract:
 
@@ -119,7 +119,7 @@ def make_amalgamated_header():
 ```
 
 ### Generate the bindings for a collection of files
-See the [autogenerate_das_lib.py](https://github.com/pthom/litgen/blob/main/packages/litgen/litgen-book/example_bindings/DasLib/autogenerate_das_lib.py) script for an example of how to generate the bindings.
+See the [autogenerate_das_lib.py](https://github.com/pthom/litgen/blob/main/src/litgen/litgen-book/example_bindings/DasLib/autogenerate_das_lib.py) script for an example of how to generate the bindings.
 
 Relevant extract:
 
