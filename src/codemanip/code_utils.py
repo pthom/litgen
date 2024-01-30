@@ -247,7 +247,7 @@ def to_camel_case(name: str) -> str:
 
 
 def read_text_file(filename: str) -> str:
-    with open(filename) as f:
+    with open(filename, newline='') as f:
         txt = f.read()
     return txt
 
@@ -259,7 +259,7 @@ def escape_new_lines(code: str) -> str:
 def write_text_file(filename: str, content: str) -> None:
     old_content = read_text_file(filename)
     if content != old_content:
-        with open(filename, "w") as f:
+        with open(filename, "w", newline='') as f:
             f.write(content)
 
 
