@@ -17,7 +17,7 @@ If installing locally, you can integrate liten into your building process, and i
 
 Install litgen with pip:
 ```bash
-pip install "litgen@git+https://github.com/pthom/litgen"```
+pip install "litgen@git+https://github.com/pthom/litgen"
 ```
 
 Then, follow the instructions in [Quickstart with litgen](litgen_template/README) section.
