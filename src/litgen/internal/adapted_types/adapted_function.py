@@ -513,7 +513,7 @@ class AdaptedFunction(AdaptedElement):
         # Fill maybe_return_value_policy
         return_value_policy = self.return_value_policy
         if len(return_value_policy) > 0:
-            replace_lines.maybe_return_value_policy = f"pybind11::return_value_policy::{return_value_policy}"
+            replace_lines.maybe_return_value_policy = f"py::rv_policy::{return_value_policy}"
         else:
             replace_lines.maybe_return_value_policy = None
 
@@ -661,8 +661,8 @@ class AdaptedFunction(AdaptedElement):
         replace_tokens._i_ = self.options._indent_cpp_spaces()
 
         if self.is_constructor():
-            replace_tokens.pydef_method_creation_part = ".def(py::init("
-            replace_tokens.maybe_close_paren_if_ctor = ")"
+            replace_tokens.pydef_method_creation_part = ".def('__init__', "
+            replace_tokens.maybe_close_paren_if_ctor = ""
         else:
             replace_tokens.pydef_method_creation_part = self._pydef_method_creation_part()
             replace_tokens.maybe_close_paren_if_ctor = ""
@@ -861,9 +861,9 @@ class AdaptedFunction(AdaptedElement):
         """Parses the return_value_policy from the function end of line comment
         For example:
             // A static instance (which python shall not delete, as enforced by the marker return_policy below)
-            static Foo& Instance() { static Foo instance; return instance; }       // py::return_value_policy::reference
+            static Foo& Instance() { static Foo instance; return instance; }       // py::rv_policy::reference
         """
-        token = "py::return_value_policy::"
+        token = "py::rv_policy::"
 
         # Try to find it in eol comment (and clean eol comment if found)
         eol_comment = self.cpp_element().cpp_element_comments.comment_end_of_line
@@ -887,7 +887,7 @@ class AdaptedFunction(AdaptedElement):
             comment_on_previous_lines = self.cpp_element().cpp_element_comments.comment_on_previous_lines
             if len(comment_on_previous_lines) > 0 and comment_on_previous_lines[-1] != "\n":
                 comment_on_previous_lines += "\n"
-            comment_on_previous_lines += f"return_value_policy::{self.return_value_policy}"
+            comment_on_previous_lines += f"rv_policy::{self.return_value_policy}"
             self.cpp_element().cpp_element_comments.comment_on_previous_lines = comment_on_previous_lines
 
         # Take options.fn_force_return_policy_reference_for_pointers into account
