@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "litgen"
-version = "0.11.0"
+version = "0.999.0"
 authors = [{ name = "Pascal Thomet", email = "pthomet@gmail.com" }]
 description = "litgen, aka \"Literate Generator\", an automatic python bindings generator for humans who like nice code and APIs, based on srcML (https://srcml.org)"
 readme = "README.md"
