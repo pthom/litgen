@@ -521,6 +521,8 @@ class LitgenOptions:
     enum_flag_skip_count: bool = True
     # By default, all enums export rudimentary arithmetic and bit-level operations ( r".*" matches any enum name)
     enum_make_arithmetic__regex: str = r".*"
+    # Export all entries of the enumeration into the parent scope.
+    enum_export_values: bool = False
 
     ################################################################################
     #    <define adaptations>
