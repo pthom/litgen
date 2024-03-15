@@ -245,6 +245,9 @@ class AdaptedEnum(AdaptedElement):
                 value_decl_lines = adapted_decl.pydef_lines()
                 lines += value_decl_lines
 
+        if self.options.enum_export_values:
+            lines += [".export_values()"]
+
         # Add ; on the last line
         assert len(lines) > 0
         last_line = lines[-1]
