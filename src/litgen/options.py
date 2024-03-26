@@ -74,6 +74,11 @@ class LitgenOptions:
     cpp_indent_with_tabs: bool = False
 
     ################################################################################
+    #    <Disable comments inclusion in C++ and Python>
+    ################################################################################
+    comments_exclude: bool = False
+
+    ################################################################################
     #    <names translation from C++ to python>
     ################################################################################
     # Convert variables, functions and namespaces names to snake_case (class, structs, and enums names are always preserved)
