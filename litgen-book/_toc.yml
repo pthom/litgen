@@ -17,6 +17,7 @@ parts:
      - file: 02_00_00_first_steps
      - file: 02_03_00_options
      - file: 02_05_00_headers
+     - file: 02_05_10_amalgamation
      - file: 03_05_00_code_layout
      - file: 04_05_00_names_translation
      - file: 05_05_00_functions
