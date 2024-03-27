@@ -318,6 +318,18 @@ class LitgenOptions:
     # Set it to r".*" to apply this to all functions. Set it to "" to disable it
     fn_params_replace_modifiable_immutable_by_boxed__regex: str = ""
 
+    # ------------------------------------------------------------------------------
+    # Convert `const char* x = NULL` for Python passing None without TypeError
+    # ------------------------------------------------------------------------------
+    # Signatures like
+    #     void foo(const char* text = NULL)
+    # may be transformed to:
+    #     void foo(std::optional<std::string> text = std::nullopt)
+    # with a lambda function wrapping around original interface.
+    #
+    # NOTE: Enable this for nanobind.
+    fn_params_const_char_pointer_with_default_null: bool = True
+
     # As an alternative, we can also add the modified value to the returned type
     # of the function (which will now be a tuple)
     #
