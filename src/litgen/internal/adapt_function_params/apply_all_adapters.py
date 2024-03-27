@@ -24,6 +24,9 @@ def apply_all_adapters(inout_adapted_function: AdaptedFunction) -> None:
     from litgen.internal.adapt_function_params.adapt_modifiable_immutable_to_return import (
         adapt_modifiable_immutable_to_return,
     )
+    from litgen.internal.adapt_function_params.adapt_const_char_pointer_with_default_null import (
+        adapt_const_char_pointer_with_default_null,
+    )
 
     is_constructor = inout_adapted_function.cpp_adapted_function.is_constructor()
     if is_constructor:
@@ -45,6 +48,7 @@ def apply_all_adapters(inout_adapted_function: AdaptedFunction) -> None:
         adapt_c_buffers,
         adapt_exclude_params,
         adapt_c_arrays,
+        adapt_const_char_pointer_with_default_null,
         adapt_modifiable_immutable_to_return,
         adapt_modifiable_immutable,  # must be done *after* adapt_c_buffers
         adapt_c_string_list,
