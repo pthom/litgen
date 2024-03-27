@@ -1,5 +1,6 @@
 # Headers amalgamation
 
+Litgen processes files individually, and if a subclass is defined in a different file than its parent, inherited members may not be correctly bound.
 Sometimes it is worthwhile to first generate an `Amalgamation Header` for a library before generating bindings for it.
 An amalgamation header is a single header file that includes all the public headers of a library.
 
