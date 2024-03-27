@@ -67,6 +67,20 @@ class AdaptedParameter(AdaptedElement):
         r = is_modifiable and is_python_immutable
         return r
 
+    def is_const_char_pointer_with_default_null(self) -> bool:
+        type_modifiers = self.cpp_element().decl.cpp_type.modifiers
+        type_specifiers = self.cpp_element().decl.cpp_type.specifiers
+        type_names = self.cpp_element().decl.cpp_type.typenames
+        initial_value_cpp = self.cpp_element().decl.initial_value_code
+
+        is_pointer = type_modifiers == ["*"]
+        is_const = "const" in type_specifiers
+        is_char = "char" in type_names
+        is_default_null = initial_value_cpp in ["NULL", "nullptr"]
+
+        r = is_pointer and is_const and is_char and is_default_null
+        return r
+
     def adapted_decl(self) -> AdaptedDecl:
         adapted_decl = AdaptedDecl(self.lg_context, self.cpp_element().decl)
         return adapted_decl
