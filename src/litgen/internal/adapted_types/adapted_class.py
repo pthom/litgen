@@ -187,10 +187,12 @@ class AdaptedClassMember(AdaptedDecl):
         assert array_size is not None
 
         template_code = f"""
-            .def_prop_rw("{name_python}",{location}
-                []({qualified_struct_name} &self) -> py::ndarray<{array_typename}>
+            .def_property("{name_python}",{location}
+                []({qualified_struct_name} &self) -> pybind11::array
                 {{
-                    return py::ndarray<{array_typename}>(self.{name_cpp}, {{{array_size}}});
+                    auto dtype = pybind11::dtype(pybind11::format_descriptor<{array_typename}>::format());
+                    auto base = pybind11::array(dtype, {{{array_size}}}, {{sizeof({array_typename})}});
+                    return pybind11::array(dtype, {{{array_size}}}, {{sizeof({array_typename})}}, self.{name_cpp}, base);
                 }}, []({qualified_struct_name}& self) {{}},
                 "{comment}")
             """
@@ -219,9 +221,9 @@ class AdaptedClassMember(AdaptedDecl):
 
         cpp_type = self.cpp_element().cpp_type
 
-        pybind_definition_mode = "def_rw"
+        pybind_definition_mode = "def_readwrite"
         if self._is_published_readonly():
-            pybind_definition_mode = "def_ro"
+            pybind_definition_mode = "def_readonly"
         if cpp_type.is_static():
             pybind_definition_mode += "_static"
 
@@ -677,13 +679,10 @@ class AdaptedClass(AdaptedElement):
             if not flag_add:
                 return ""
 
-            class_name = self.cpp_element().class_name
             code_template = (
                 code_utils.unindent_code(
                     """
-                .def("__iter__", [](const {qualified_struct_name} &v) { 
-                        return py::make_iterator(py::type<{qualified_struct_name}>(), "iterator", v.begin(), v.end());
-                    }, py::keep_alive<0, 1>())
+                .def("__iter__", [](const {qualified_struct_name} &v) { return py::make_iterator(v.begin(), v.end()); }, py::keep_alive<0, 1>())
                 .def("__len__", [](const {qualified_struct_name} &v) { return v.size(); })
                 """,
                     flag_strip_empty_lines=True,
@@ -1225,17 +1224,16 @@ class PythonNamedConstructorHelper:
         if len(ctor_decl.parameter_list.parameters) == 0:
             return f"{_i_}.def(py::init<>()) // implicit default constructor \n"
 
-        # {maybe_pyargs} removed because nanobind complained about arg count
-        # not match.
         template = code_utils.unindent_code(
             """
-            .def("__init__", [](
+            .def(py::init<>([](
             {all_params_signature})
             {
             {_i_}auto r = std::make_unique<{qualified_struct_name}>();
             {all_params_set_values}
             {_i_}return r;
-            }
+            })
+            , {maybe_pyargs}
             )
         """,
             flag_strip_empty_lines=True,
