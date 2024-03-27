@@ -22,7 +22,6 @@ def adapt_c_string_list(adapted_function: AdaptedFunction) -> Optional[LambdaAda
             auto foo_adapt_c_string_list = [](const std::vector<std::string> & items)
             {
                 std::vector<const char *> items_ptrs;
-                items_ptrs.reserve(items.size());
                 for (const auto& v: items)
                     items_ptrs.push_back(v.c_str());
                 int items_count = static_cast<int>(items.size());
@@ -97,7 +96,6 @@ def adapt_c_string_list(adapted_function: AdaptedFunction) -> Optional[LambdaAda
             # Fill lambda_input_code
             #
             # std::vector<const char *> items_ptrs;
-            # items_ptrs.reserve(items.size());
             # for (const auto &s : items)                            // lambda_input_code
             #     items_ptrs.push_back(s.c_str());
             # int items_size = static_cast<int>(items.size());
@@ -114,7 +112,6 @@ def adapt_c_string_list(adapted_function: AdaptedFunction) -> Optional[LambdaAda
                 casted_size_str = f"{param_name}.size()"
 
             lambda_adapter.lambda_input_code += f"std::vector<const char *> {vec_name};\n"
-            lambda_adapter.lambda_input_code += f"{vec_name}.reserve({param_name}.size());\n"
             lambda_adapter.lambda_input_code += f"for (const auto& v: {param_name})\n"
             lambda_adapter.lambda_input_code += f"{_i_}{vec_name}.push_back(v.c_str());\n"
             lambda_adapter.lambda_input_code += f"{size_type} {size_name} = {casted_size_str};\n"
@@ -150,7 +147,6 @@ def adapt_c_string_list_no_count(adapted_function: AdaptedFunction) -> Optional[
             auto foo_adapt_c_string_list = [](const std::vector<std::string> & items)
             {
                 std::vector<const char *> items_ptrs;
-                items_ptrs.reserve(items.size());
                 for (const auto& v: items)
                     items_ptrs.push_back(v.c_str());
                 int items_count = static_cast<int>(items.size());
@@ -212,7 +208,6 @@ def adapt_c_string_list_no_count(adapted_function: AdaptedFunction) -> Optional[
             # Fill lambda_input_code
             #
             # std::vector<const char *> items_ptrs;
-            # items_ptrs.reserve(items.size());
             # for (const auto &s : items)                            // lambda_input_code
             #     items_ptrs.push_back(s.c_str());
             # int items_size = static_cast<int>(items.size());
@@ -220,7 +215,6 @@ def adapt_c_string_list_no_count(adapted_function: AdaptedFunction) -> Optional[
             vec_name = f"{param_name}_ptrs"
 
             lambda_adapter.lambda_input_code += f"std::vector<const char *> {vec_name};\n"
-            lambda_adapter.lambda_input_code += f"{vec_name}.reserve({param_name}.size());\n"
             lambda_adapter.lambda_input_code += f"for (const auto& v: {param_name})\n"
             lambda_adapter.lambda_input_code += f"{_i_}{vec_name}.push_back(v.c_str());\n"
 

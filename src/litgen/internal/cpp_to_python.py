@@ -526,7 +526,7 @@ def standard_type_replacements() -> RegexReplacementList:
     \bvoid\s*\* -> Any
     \bvoid\b -> None
 
-    \bpy::ndarray<(.*)> -> np.ndarray
+    \bpy::array\b -> np.ndarray
 
     \bconst\b -> REMOVE
     \bmutable\b -> REMOVE
