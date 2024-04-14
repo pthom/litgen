@@ -880,7 +880,9 @@ def fill_block(options: SrcmlcppOptions, element: SrcmlWrapper, inout_block_cont
                         block_children.append(cpp_comment)
 
             elif child_tag == "struct" or child_tag == "class":
-                assert child_name is not None
+                # assert child_name is not None
+                if child_name is None:
+                    child_c.raise_exception("struct or class without name")
                 block_children.append(parse_struct_or_class(options, child_c, inout_block_content))
             elif child_tag == "namespace":
                 block_children.append(parse_namespace(options, child_c, inout_block_content))

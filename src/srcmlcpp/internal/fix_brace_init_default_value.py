@@ -178,7 +178,8 @@ def change_macro_to_constructor(options: srcmlcpp.SrcmlcppOptions, macro: CppUnp
     fixed_macro_code = "void blah" + macro_code[len(class_name) :] + ";"
     fixed_cpp_unit = srcmlcpp.code_to_cpp_unit(options, fixed_macro_code)
     fixed_functions = fixed_cpp_unit.all_functions_recursive()
-    assert len(fixed_functions) == 1
+    if len(fixed_functions) != 1:
+        macro.raise_exception(f"Expected one function, got {len(fixed_functions)}")
     fixed_function = fixed_functions[0]
     fixed_function.function_name = class_name
     fixed_function.return_type.typenames = []
