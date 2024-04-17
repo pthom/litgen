@@ -41,6 +41,11 @@ def test_mutable_buffer_return_int():
             {
                 auto foo_adapt_c_buffers = [](py::array & buf) -> int
                 {
+                    // Check if the array is C-contiguous
+                    if (!buf.attr("flags").attr("c_contiguous").cast<bool>()) {
+                        throw std::runtime_error("The array must be contiguous, i.e, `a.flags.c_contiguous` must be True. Hint: use `numpy.ascontiguousarray`.");
+                    }
+
                     // convert py::array to C standard buffer (mutable)
                     void * buf_from_pyarray = buf.mutable_data();
                     py::ssize_t buf_count = buf.shape()[0];
@@ -78,6 +83,11 @@ def test_const_buffer_return_void_stride():
             {
                 auto foo_adapt_c_buffers = [](const py::array & buf, int stride = -1)
                 {
+                    // Check if the array is C-contiguous
+                    if (!buf.attr("flags").attr("c_contiguous").cast<bool>()) {
+                        throw std::runtime_error("The array must be contiguous, i.e, `a.flags.c_contiguous` must be True. Hint: use `numpy.ascontiguousarray`.");
+                    }
+
                     // convert py::array to C standard buffer (const)
                     const void * buf_from_pyarray = buf.data();
                     py::ssize_t buf_count = buf.shape()[0];
@@ -119,6 +129,11 @@ def test_two_buffers():
             {
                 auto foo_adapt_c_buffers = [](const py::array & buf1, const py::array & buf2) -> int
                 {
+                    // Check if the array is C-contiguous
+                    if (!buf1.attr("flags").attr("c_contiguous").cast<bool>()) {
+                        throw std::runtime_error("The array must be contiguous, i.e, `a.flags.c_contiguous` must be True. Hint: use `numpy.ascontiguousarray`.");
+                    }
+
                     // convert py::array to C standard buffer (const)
                     const void * buf1_from_pyarray = buf1.data();
                     py::ssize_t buf1_count = buf1.shape()[0];
@@ -131,6 +146,11 @@ def test_two_buffers():
                                             I
                                         (using py::array::dtype().char_() as an id)
                             )msg"));
+
+                    // Check if the array is C-contiguous
+                    if (!buf2.attr("flags").attr("c_contiguous").cast<bool>()) {
+                        throw std::runtime_error("The array must be contiguous, i.e, `a.flags.c_contiguous` must be True. Hint: use `numpy.ascontiguousarray`.");
+                    }
 
                     // convert py::array to C standard buffer (const)
                     const void * buf2_from_pyarray = buf2.data();
@@ -169,6 +189,11 @@ def test_template_buffer():
             {
                 auto foo_adapt_c_buffers = [](const py::array & buf, bool flag) -> int
                 {
+                    // Check if the array is C-contiguous
+                    if (!buf.attr("flags").attr("c_contiguous").cast<bool>()) {
+                        throw std::runtime_error("The array must be contiguous, i.e, `a.flags.c_contiguous` must be True. Hint: use `numpy.ascontiguousarray`.");
+                    }
+
                     // convert py::array to C standard buffer (const)
                     const void * buf_from_pyarray = buf.data();
                     py::ssize_t buf_count = buf.shape()[0];
