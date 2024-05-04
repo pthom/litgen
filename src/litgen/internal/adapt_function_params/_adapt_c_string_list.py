@@ -6,6 +6,7 @@ from codemanip import code_utils
 
 from srcmlcpp.cpp_types import CppParameter
 
+from litgen import BindLibraryType
 from litgen.internal import cpp_to_python
 from litgen.internal.adapt_function_params._lambda_adapter import LambdaAdapter
 from litgen.internal.adapted_types import AdaptedFunction
@@ -112,6 +113,8 @@ def adapt_c_string_list(adapted_function: AdaptedFunction) -> Optional[LambdaAda
                 casted_size_str = f"{param_name}.size()"
 
             lambda_adapter.lambda_input_code += f"std::vector<const char *> {vec_name};\n"
+            if options.bind_library == BindLibraryType.nanobind:
+                lambda_adapter.lambda_input_code += f"{vec_name}.reserve({param_name}.size());\n"
             lambda_adapter.lambda_input_code += f"for (const auto& v: {param_name})\n"
             lambda_adapter.lambda_input_code += f"{_i_}{vec_name}.push_back(v.c_str());\n"
             lambda_adapter.lambda_input_code += f"{size_type} {size_name} = {casted_size_str};\n"
@@ -215,6 +218,8 @@ def adapt_c_string_list_no_count(adapted_function: AdaptedFunction) -> Optional[
             vec_name = f"{param_name}_ptrs"
 
             lambda_adapter.lambda_input_code += f"std::vector<const char *> {vec_name};\n"
+            if options.bind_library == BindLibraryType.nanobind:
+                lambda_adapter.lambda_input_code += f"{vec_name}.reserve({param_name}.size());\n"
             lambda_adapter.lambda_input_code += f"for (const auto& v: {param_name})\n"
             lambda_adapter.lambda_input_code += f"{_i_}{vec_name}.push_back(v.c_str());\n"
 

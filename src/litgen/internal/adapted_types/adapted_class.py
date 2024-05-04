@@ -30,6 +30,7 @@ from srcmlcpp.cpp_types.scope.cpp_scope import CppScopeType
 from srcmlcpp.srcmlcpp_exception import SrcmlcppException
 from srcmlcpp.scrml_warning_settings import WarningType
 
+from litgen import BindLibraryType
 from litgen.internal import cpp_to_python, template_options
 from litgen.internal.adapted_types.adapted_comment import (
     AdaptedComment,
@@ -186,16 +187,27 @@ class AdaptedClassMember(AdaptedDecl):
         array_size = self.cpp_element().c_array_size_as_int()
         assert array_size is not None
 
-        template_code = f"""
-            .def_property("{name_python}",{location}
-                []({qualified_struct_name} &self) -> pybind11::array
-                {{
-                    auto dtype = pybind11::dtype(pybind11::format_descriptor<{array_typename}>::format());
-                    auto base = pybind11::array(dtype, {{{array_size}}}, {{sizeof({array_typename})}});
-                    return pybind11::array(dtype, {{{array_size}}}, {{sizeof({array_typename})}}, self.{name_cpp}, base);
-                }}, []({qualified_struct_name}& self) {{}},
-                "{comment}")
-            """
+        if self.options.bind_library == BindLibraryType.pybind11:
+            template_code = f"""
+                .def_property("{name_python}",{location}
+                    []({qualified_struct_name} &self) -> pybind11::array
+                    {{
+                        auto dtype = pybind11::dtype(pybind11::format_descriptor<{array_typename}>::format());
+                        auto base = pybind11::array(dtype, {{{array_size}}}, {{sizeof({array_typename})}});
+                        return pybind11::array(dtype, {{{array_size}}}, {{sizeof({array_typename})}}, self.{name_cpp}, base);
+                    }}, []({qualified_struct_name}& self) {{}},
+                    "{comment}")
+                """
+        else:
+            template_code = f"""
+                .def_prop_rw("{name_python}",{location}
+                    []({qualified_struct_name} &self) -> py::ndarray<{array_typename}>
+                    {{
+                        return py::ndarray<{array_typename}>(self.{name_cpp}, {{{array_size}}});
+                    }}, []({qualified_struct_name}& self) {{}},
+                    "{comment}")
+                """
+
         r = code_utils.unindent_code(template_code, flag_strip_empty_lines=True)  # + "\n"
         lines = r.split("\n")
         return lines
@@ -220,10 +232,11 @@ class AdaptedClassMember(AdaptedDecl):
         comment = self._elm_comment_pydef_one_line()
 
         cpp_type = self.cpp_element().cpp_type
+        is_pybind11 = self.options.bind_library == BindLibraryType.pybind11
 
-        pybind_definition_mode = "def_readwrite"
+        pybind_definition_mode = "def_readwrite" if is_pybind11 else "def_rw"
         if self._is_published_readonly():
-            pybind_definition_mode = "def_readonly"
+            pybind_definition_mode = "def_readonly" if is_pybind11 else "def_ro"
         if cpp_type.is_static():
             pybind_definition_mode += "_static"
 
@@ -679,16 +692,30 @@ class AdaptedClass(AdaptedElement):
             if not flag_add:
                 return ""
 
-            code_template = (
-                code_utils.unindent_code(
-                    """
-                .def("__iter__", [](const {qualified_struct_name} &v) { return py::make_iterator(v.begin(), v.end()); }, py::keep_alive<0, 1>())
-                .def("__len__", [](const {qualified_struct_name} &v) { return v.size(); })
-                """,
-                    flag_strip_empty_lines=True,
+            if self.options.bind_library == BindLibraryType.pybind11:
+                code_template = (
+                    code_utils.unindent_code(
+                        """
+                    .def("__iter__", [](const {qualified_struct_name} &v) { return py::make_iterator(v.begin(), v.end()); }, py::keep_alive<0, 1>())
+                    .def("__len__", [](const {qualified_struct_name} &v) { return v.size(); })
+                    """,
+                        flag_strip_empty_lines=True,
+                    )
+                    + "\n"
                 )
-                + "\n"
-            )
+            else:
+                code_template = (
+                    code_utils.unindent_code(
+                        """
+                    .def("__iter__", [](const {qualified_struct_name} &v) { 
+                            return py::make_iterator(py::type<{qualified_struct_name}>(), "iterator", v.begin(), v.end());
+                        }, py::keep_alive<0, 1>())
+                    .def("__len__", [](const {qualified_struct_name} &v) { return v.size(); })
+                    """,
+                        flag_strip_empty_lines=True,
+                    )
+                    + "\n"
+                )
 
             replacements = munch.Munch()
             replacements._i_ = self.options._indent_cpp_spaces()
@@ -1224,20 +1251,37 @@ class PythonNamedConstructorHelper:
         if len(ctor_decl.parameter_list.parameters) == 0:
             return f"{_i_}.def(py::init<>()) // implicit default constructor \n"
 
-        template = code_utils.unindent_code(
-            """
-            .def(py::init<>([](
-            {all_params_signature})
-            {
-            {_i_}auto r = std::make_unique<{qualified_struct_name}>();
-            {all_params_set_values}
-            {_i_}return r;
-            })
-            , {maybe_pyargs}
+        if self.options.bind_library == BindLibraryType.pybind11:
+            template = code_utils.unindent_code(
+                """
+                .def(py::init<>([](
+                {all_params_signature})
+                {
+                {_i_}auto r = std::make_unique<{qualified_struct_name}>();
+                {all_params_set_values}
+                {_i_}return r;
+                })
+                , {maybe_pyargs}
+                )
+            """,
+                flag_strip_empty_lines=True,
             )
-        """,
-            flag_strip_empty_lines=True,
-        )
+        else:
+            # {maybe_pyargs} removed because nanobind complained about arg count
+            # not match.
+            template = code_utils.unindent_code(
+                """
+                .def("__init__", [](
+                {all_params_signature})
+                {
+                {_i_}auto r = std::make_unique<{qualified_struct_name}>();
+                {all_params_set_values}
+                {_i_}return r;
+                }
+                )
+            """,
+                flag_strip_empty_lines=True,
+            )
 
         replacements = munch.Munch()
         replacements._i_ = _i_

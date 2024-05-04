@@ -7,6 +7,7 @@ from codemanip.code_replacements import RegexReplacement, RegexReplacementList
 
 from srcmlcpp.cpp_types import CppDecl, CppEmptyLine, CppEnum, CppComment
 
+from litgen import BindLibraryType
 from litgen.internal import cpp_to_python
 from litgen.internal.adapted_types.adapted_comment import (
     AdaptedComment,
@@ -231,9 +232,14 @@ class AdaptedEnum(AdaptedElement):
 
         lines: list[str] = []
 
+        if self.options.bind_library == BindLibraryType.pybind11:
+            token = "arithmetic"
+        else:
+            token = "is_arithmetic"
+
         # Enum decl first line
         is_arithmetic = code_utils.does_match_regex(self.options.enum_make_arithmetic__regex, enum_name_cpp)
-        arithmetic_str = ", py::arithmetic()" if is_arithmetic else ""
+        arithmetic_str = f", py::{token}()" if is_arithmetic else ""
         pydef_class_var_parent = cpp_to_python.cpp_scope_to_pybind_parent_var_name(self.options, self.cpp_element())
         enum_var = f"auto pyEnum{enum_name_python} = "
         enum_decl_line = (

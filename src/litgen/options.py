@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from enum import Enum
 from typing import Any, Callable, List
 
 from codemanip import code_utils
@@ -13,6 +14,11 @@ from litgen.internal.class_iterable_info import ClassIterablesInfos
 
 class Blah:
     values: List[int] = []
+
+
+class BindLibraryType(Enum):
+    pybind11 = 1
+    nanobind = 2
 
 
 class LitgenOptions:
@@ -32,6 +38,12 @@ class LitgenOptions:
     # - To match everything, use r".*"
     # - It is advised to prefix your regex strings with "r" (in order to use raw strings)
     # ------------------------------------------------------------------------------
+
+    ################################################################################
+    #    <bind library options>
+    ################################################################################
+    #
+    bind_library: BindLibraryType = BindLibraryType.pybind11
 
     ################################################################################
     #    <srcmlcpp options>
@@ -328,7 +340,7 @@ class LitgenOptions:
     # with a lambda function wrapping around original interface.
     #
     # NOTE: Enable this for nanobind.
-    fn_params_const_char_pointer_with_default_null: bool = True
+    fn_params_const_char_pointer_with_default_null: bool = False
 
     # As an alternative, we can also add the modified value to the returned type
     # of the function (which will now be a tuple)

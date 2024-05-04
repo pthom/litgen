@@ -10,7 +10,7 @@ from srcmlcpp.cpp_types import CppFunctionDecl, CppParameter
 from litgen.internal import cpp_to_python
 from litgen.internal.adapt_function_params._lambda_adapter import LambdaAdapter
 from litgen.internal.adapted_types import AdaptedFunction
-from litgen.options import LitgenOptions
+from litgen.options import LitgenOptions, BindLibraryType
 
 
 def _possible_buffer_pointer_types(options: LitgenOptions) -> list[str]:
@@ -337,7 +337,14 @@ class _AdaptBuffersHelper:
 
     def _new_param_buffer_standard(self, idx_param: int) -> CppParameter:
         new_param = copy.deepcopy(self._param(idx_param))
-        new_param.decl.cpp_type.typenames = ["py::array"]
+
+        if self.options.bind_library == BindLibraryType.pybind11:
+            new_param.decl.cpp_type.typenames = ["py::array"]
+        else:
+            param = self._param(idx_param)
+            raw_size_type = param.decl.cpp_type.typenames[0]
+            new_param.decl.cpp_type.typenames = [f"py::ndarray<{raw_size_type}>"]
+
         new_param.decl.cpp_type.modifiers = ["&"]
         if self._is_const(idx_param):
             new_param.decl.cpp_type.specifiers = ["const"]
@@ -392,36 +399,75 @@ class _AdaptBuffersHelper:
 
         _ = self
         param_name = self._param(idx_param).decl.decl_name
-        template = f"""
-                    // Check if the array is C-contiguous
-                    if (!{param_name}.attr("flags").attr("c_contiguous").cast<bool>()) {{
-                        throw std::runtime_error("The array must be contiguous, i.e, `a.flags.c_contiguous` must be True. Hint: use `numpy.ascontiguousarray`.");
-                    }}
-
-                    // convert py::array to C standard buffer ({mutable_or_const})
-                    {_._const_space_or_empty(idx_param)}void * {_._buffer_from_pyarray_name(idx_param)} = {_._param_name(idx_param)}.{mutable_or_empty}data();
-                    py::ssize_t {_._pyarray_count(idx_param)} = {_._param_name(idx_param)}.shape()[0];
-                """  # noqa
+        if self.options.bind_library == BindLibraryType.pybind11:
+            template = f"""
+                        // Check if the array is C-contiguous
+                        if (!{param_name}.attr("flags").attr("c_contiguous").cast<bool>()) {{
+                            throw std::runtime_error("The array must be contiguous, i.e, `a.flags.c_contiguous` must be True. Hint: use `numpy.ascontiguousarray`.");
+                        }}
+    
+                        // convert py::array to C standard buffer ({mutable_or_const})
+                        {_._const_space_or_empty(idx_param)}void * {_._buffer_from_pyarray_name(idx_param)} = {_._param_name(idx_param)}.{mutable_or_empty}data();
+                        py::ssize_t {_._pyarray_count(idx_param)} = {_._param_name(idx_param)}.shape()[0];
+                    """  # noqa
+        else:
+            template = f"""
+                        // convert py::array to C standard buffer ({mutable_or_const})
+                        {_._const_space_or_empty(idx_param)}void * {_._buffer_from_pyarray_name(idx_param)} = {_._param_name(idx_param)}.{mutable_or_empty}data();
+                        size_t {_._pyarray_count(idx_param)} = {_._param_name(idx_param)}.shape(0);
+                    """  # noqa
         template = code_utils.unindent_code(template, flag_strip_empty_lines=True) + "\n"
         return template
 
     def _expected_dtype_char(self, idx_param: int) -> str:
         dtype_char = cpp_to_python.cpp_type_to_py_array_type(self._original_raw_type(idx_param))
-        return dtype_char
+        if self.options.bind_library == BindLibraryType.pybind11:
+            return dtype_char
+        else:
+            dtype_code = {
+                "B": "dtype_code::UInt",
+                "b": "dtype_code::Int",
+                "H": "dtype_code::UInt",
+                "h": "dtype_code::Int",
+                "I": "dtype_code::UInt",
+                "i": "dtype_code::Int",
+                "L": "dtype_code::UInt",  # Platform dependent: "uint64_t" on *nixes, "uint32_t" on windows
+                "l": "dtype_code::Int",  # Platform dependent: "int64_t" on *nixes, "int32_t" on windows
+                "f": "dtype_code::Float",
+                "d": "dtype_code::Float",
+                "g": "dtype_code::Float",
+                "q": "dtype_code::Float",
+            }
+            return dtype_code[dtype_char]
 
     def _lambda_input_buffer_standard_check_part(self, idx_param: int) -> str:
         _ = self
-        template = f"""
-                char {_._param_name(idx_param)}_type = {_._param_name(idx_param)}.dtype().char_();
-                if ({_._param_name(idx_param)}_type != '{_._expected_dtype_char(idx_param)}')
-                    throw std::runtime_error(std::string(R"msg(
-                            Bad type!  Expected a numpy array of native type:
-                                        {_._const_space_or_empty(idx_param)}{_._original_raw_type(idx_param)} *
-                                    Which is equivalent to
-                                        {_._expected_dtype_char(idx_param)}
-                                    (using py::array::dtype().char_() as an id)
-                        )msg"));
-            """
+        if self.options.bind_library == BindLibraryType.pybind11:
+            template = f"""
+                    uint8_t {_._param_name(idx_param)}_type = {_._param_name(idx_param)}.dtype().code;
+                    auto except_type = static_cast<uint8_t>(py::dlpack::{_._expected_dtype_char(idx_param)});
+                    if ({_._param_name(idx_param)}_type != except_type)
+                        throw std::runtime_error(std::string(R"msg(
+                                Bad type!  Expected a numpy array of native type:
+                                            {_._const_space_or_empty(idx_param)}{_._original_raw_type(idx_param)} *
+                                        Which is equivalent to
+                                            {_._expected_dtype_char(idx_param)}
+                                        (using py::ndarray::dtype().code as an id)
+                            )msg"));
+                """
+        else:
+            template = f"""
+                    uint8_t {_._param_name(idx_param)}_type = {_._param_name(idx_param)}.dtype().code;
+                    auto except_type = static_cast<uint8_t>(py::dlpack::{_._expected_dtype_char(idx_param)});
+                    if ({_._param_name(idx_param)}_type != except_type)
+                        throw std::runtime_error(std::string(R"msg(
+                                Bad type!  Expected a numpy array of native type:
+                                            {_._const_space_or_empty(idx_param)}{_._original_raw_type(idx_param)} *
+                                        Which is equivalent to
+                                            {_._expected_dtype_char(idx_param)}
+                                        (using py::ndarray::dtype().code as an id)
+                            )msg"));
+                """
         template = code_utils.unindent_code(template, flag_strip_empty_lines=True) + "\n"
         return template
 
