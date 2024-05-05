@@ -444,15 +444,14 @@ class _AdaptBuffersHelper:
         _ = self
         if self.options.bind_library == BindLibraryType.pybind11:
             template = f"""
-                    uint8_t {_._param_name(idx_param)}_type = {_._param_name(idx_param)}.dtype().code;
-                    auto except_type = static_cast<uint8_t>(py::dlpack::{_._expected_dtype_char(idx_param)});
-                    if ({_._param_name(idx_param)}_type != except_type)
+                    char {_._param_name(idx_param)}_type = {_._param_name(idx_param)}.dtype().char_();
+                    if ({_._param_name(idx_param)}_type != '{_._expected_dtype_char(idx_param)}')
                         throw std::runtime_error(std::string(R"msg(
                                 Bad type!  Expected a numpy array of native type:
                                             {_._const_space_or_empty(idx_param)}{_._original_raw_type(idx_param)} *
                                         Which is equivalent to
                                             {_._expected_dtype_char(idx_param)}
-                                        (using py::ndarray::dtype().code as an id)
+                                        (using py::array::dtype().char_() as an id)
                             )msg"));
                 """
         else:
