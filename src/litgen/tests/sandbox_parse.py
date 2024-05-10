@@ -82,31 +82,25 @@ def play_virtual_method() -> None:
 
 def play() -> None:
     options = litgen.LitgenOptions()
-    # options.srcmlcpp_options.fix_brace_init_default_value = False
+    options.globals_vars_include_by_name__regex = r"^PI_|white|red"
+    # options.globals_vars_include_by_name__regex = r".*"
 
     code = """
-    struct TobiiResearchPoint3D
+    static float PI_2 = 6.283185307179586f;
+    void foo()
     {
-        float x;
-        float y;
-        float z;
-    };
-    struct gazeOrigin
-    {
-        // The gaze origin position in 3D in the user coordinate system.
-        TobiiResearchPoint3D position_in_user_coordinates = {1.f, 2.f, 3.f};
-
-        bool available = false;
-    };
+        circle([&] (int i) {
+                    const float a = PI_2 * i / num_segments;
+                    const float x = (scale(16) * ImPow(ImSin(a), 3));
+                    const float y = -1.f * (scale(13) * ImCos(a) - scale(5) * ImCos(2 * a) - scale(2) * ImCos(3 * a) - ImCos(4 * a));
+                    return rotate(ImVec2(x, y), ang_min);
+                }, color_alpha(color, 1.f), thickness);
+    }
         """
-
-    # code = "void f(V v={1,2,3});"
-
-    # options = litgen_options_imgui(ImguiOptionsType.imgui_h, True)
-    # options.fn_template_options.add_specialization(".*", ["int"])
-    # options.class_deep_copy__regex = r".*"
     generated_code = litgen.generate_code(options, code)
     print(generated_code.stub_code)
+
+    print(generated_code.pydef_code)
 
 
 if __name__ == "__main__":

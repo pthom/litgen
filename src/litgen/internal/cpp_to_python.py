@@ -56,6 +56,7 @@ def type_to_python(options: LitgenOptions, cpp_type_str: str) -> str:
     else:
         r = cpp_type_str
     r = r.replace("static ", "")
+    r = r.replace("constexpr ", "")
     r = options.type_replacements.apply(r).strip()
     return r
 
@@ -516,6 +517,7 @@ def standard_type_replacements() -> RegexReplacementList:
     \bstd::vector\s*<\s*([\w:]*)\s*> -> List[\1]
     \bstd::array\s*<\s*([\w:]*)\s*,\s*([\w:]*)\s*> -> List[\1]
     \bstd::tuple<(.*)> -> Tuple[\1]
+    \bstd::pair<(.*)> -> Tuple[\1]
     \bstd::optional<(.*?)> -> Optional[\1]
     \bstd::unique_ptr<(.*?)> -> \1
     \bstd::shared_ptr<(.*?)> -> \1

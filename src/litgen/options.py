@@ -514,6 +514,13 @@ class LitgenOptions:
     macro_define_include_by_name__regex: str = ""
 
     ################################################################################
+    #    <globals vars adaptations>
+    ################################################################################
+    # Global variable defines can be exported as global variables, e.g.:
+    # By default nothing is exported (still experimental)
+    globals_vars_include_by_name__regex: str = ""
+
+    ################################################################################
     #    <post processing>
     ################################################################################
     # If you need to process the code after generation, fill these functions

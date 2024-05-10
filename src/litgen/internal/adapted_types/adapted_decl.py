@@ -155,3 +155,32 @@ class AdaptedDecl(AdaptedElement):
         """intentionally not implemented, since it depends on the context
         (is this decl a function param, a method member, an enum member, etc.)"""
         raise ValueError("Not implemented")
+
+
+class AdaptedGlobalDecl(AdaptedDecl):
+    """A global decl that should be converted to module attribute in python
+    We do not change the name between cpp and python, because it is a global decl
+
+    Very much a draft, not very reliable yet
+    """
+    def __init__(self, lg_context: LitgenContext, decl: CppDecl) -> None:
+        super().__init__(lg_context, decl)
+
+    # override
+    def pydef_lines(self) -> list[str]:
+        decl_name_cpp = self.decl_name_cpp()
+        decl_value_cpp = self.decl_value_cpp()
+        decl_type_cpp = self.cpp_element().cpp_type.str_code()
+        decl_type_cpp = decl_type_cpp.replace("static ", "")
+        decl_type_cpp = decl_type_cpp.replace("constexpr ", "")
+
+        parent_cpp_module_var_name = cpp_to_python.cpp_scope_to_pybind_var_name(self.options, self.cpp_element())
+        line = f"{parent_cpp_module_var_name}.attr(\"{decl_name_cpp}\") = ({decl_type_cpp}) {decl_value_cpp};"
+        return [line]
+
+    def stub_lines(self) -> list[str]:
+        decl_name_cpp = self.decl_name_cpp()
+        decl_value_python = self.decl_value_python()
+        decl_type_python = self.decl_type_python()
+        line = f"{decl_name_cpp}: {decl_type_python}  # = {decl_value_python}"
+        return [line]

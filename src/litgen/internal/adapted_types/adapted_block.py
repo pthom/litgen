@@ -35,6 +35,7 @@ from litgen.internal.adapted_types.adapted_function import AdaptedFunction
 from litgen.internal.context.litgen_context import LitgenContext
 from litgen.internal.adapted_types.adapted_define import AdaptedDefine
 from litgen.internal.adapted_types.adapted_condition_macro import AdaptedConditionMacro
+from litgen.internal.adapted_types.adapted_decl import AdaptedGlobalDecl
 
 
 @dataclass
@@ -106,10 +107,16 @@ class AdaptedBlock(AdaptedElement):
                     if has_block and not is_excluded_by_name and not is_anonymous_namespace:
                         self.adapted_elements.append(AdaptedNamespace(self.lg_context, child))  # type: ignore
                 elif isinstance(child, CppDeclStatement):
-                    child.emit_warning(
-                        f"Block elements of type {child.tag()} are not supported in python conversion",
-                        WarningType.LitgenIgnoreElement,
-                    )
+                    # We should filter by Unit or Namespace, But we don't have the info at the time being.
+                    # # isinstance(self, (AdaptedUnit, AdaptedNamespace)):
+                    if True:
+                        for cpp_decl in child.cpp_decls:
+                            # print(f"Add global: class={self.__class__} decl={cpp_decl}")
+                            is_included = code_utils.does_match_regex(
+                                self.options.globals_vars_include_by_name__regex, cpp_decl.decl_name
+                            )
+                            if is_included:
+                                self.adapted_elements.append(AdaptedGlobalDecl(self.lg_context, cpp_decl))  # type: ignore
             except SrcmlcppException as e:
                 child.emit_warning(str(e), WarningType.LitgenBlockElementException)
 
