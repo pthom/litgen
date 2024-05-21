@@ -280,6 +280,11 @@ void py_init_module_lg_mylib(py::module& m)
         {
             auto add_inside_buffer_adapt_c_buffers = [](py::array & buffer, uint8_t number_to_add)
             {
+                // Check if the array is C-contiguous
+                if (!buffer.attr("flags").attr("c_contiguous").cast<bool>()) {
+                    throw std::runtime_error("The array must be contiguous, i.e, `a.flags.c_contiguous` must be True. Hint: use `numpy.ascontiguousarray`.");
+                }
+
                 // convert py::array to C standard buffer (mutable)
                 void * buffer_from_pyarray = buffer.mutable_data();
                 py::ssize_t buffer_count = buffer.shape()[0];
@@ -306,6 +311,11 @@ void py_init_module_lg_mylib(py::module& m)
         {
             auto buffer_sum_adapt_c_buffers = [](const py::array & buffer, int stride = -1) -> int
             {
+                // Check if the array is C-contiguous
+                if (!buffer.attr("flags").attr("c_contiguous").cast<bool>()) {
+                    throw std::runtime_error("The array must be contiguous, i.e, `a.flags.c_contiguous` must be True. Hint: use `numpy.ascontiguousarray`.");
+                }
+
                 // convert py::array to C standard buffer (const)
                 const void * buffer_from_pyarray = buffer.data();
                 py::ssize_t buffer_count = buffer.shape()[0];
@@ -338,6 +348,11 @@ void py_init_module_lg_mylib(py::module& m)
         {
             auto add_inside_two_buffers_adapt_c_buffers = [](py::array & buffer_1, py::array & buffer_2, uint8_t number_to_add)
             {
+                // Check if the array is C-contiguous
+                if (!buffer_1.attr("flags").attr("c_contiguous").cast<bool>()) {
+                    throw std::runtime_error("The array must be contiguous, i.e, `a.flags.c_contiguous` must be True. Hint: use `numpy.ascontiguousarray`.");
+                }
+
                 // convert py::array to C standard buffer (mutable)
                 void * buffer_1_from_pyarray = buffer_1.mutable_data();
                 py::ssize_t buffer_1_count = buffer_1.shape()[0];
@@ -350,6 +365,11 @@ void py_init_module_lg_mylib(py::module& m)
                                         B
                                     (using py::array::dtype().char_() as an id)
                         )msg"));
+
+                // Check if the array is C-contiguous
+                if (!buffer_2.attr("flags").attr("c_contiguous").cast<bool>()) {
+                    throw std::runtime_error("The array must be contiguous, i.e, `a.flags.c_contiguous` must be True. Hint: use `numpy.ascontiguousarray`.");
+                }
 
                 // convert py::array to C standard buffer (mutable)
                 void * buffer_2_from_pyarray = buffer_2.mutable_data();
@@ -377,6 +397,11 @@ void py_init_module_lg_mylib(py::module& m)
         {
             auto templated_mul_inside_buffer_adapt_c_buffers = [](py::array & buffer, double factor)
             {
+                // Check if the array is C-contiguous
+                if (!buffer.attr("flags").attr("c_contiguous").cast<bool>()) {
+                    throw std::runtime_error("The array must be contiguous, i.e, `a.flags.c_contiguous` must be True. Hint: use `numpy.ascontiguousarray`.");
+                }
+
                 // convert py::array to C standard buffer (mutable)
                 void * buffer_from_pyarray = buffer.mutable_data();
                 py::ssize_t buffer_count = buffer.shape()[0];
@@ -1383,6 +1408,11 @@ void py_init_module_lg_mylib(py::module& m)
                 {
                     auto add_inside_buffer_adapt_c_buffers = [&self](py::array & buffer, uint8_t number_to_add)
                     {
+                        // Check if the array is C-contiguous
+                        if (!buffer.attr("flags").attr("c_contiguous").cast<bool>()) {
+                            throw std::runtime_error("The array must be contiguous, i.e, `a.flags.c_contiguous` must be True. Hint: use `numpy.ascontiguousarray`.");
+                        }
+
                         // convert py::array to C standard buffer (mutable)
                         void * buffer_from_pyarray = buffer.mutable_data();
                         py::ssize_t buffer_count = buffer.shape()[0];
@@ -1406,6 +1436,11 @@ void py_init_module_lg_mylib(py::module& m)
                 {
                     auto templated_mul_inside_buffer_adapt_c_buffers = [&self](py::array & buffer, double factor)
                     {
+                        // Check if the array is C-contiguous
+                        if (!buffer.attr("flags").attr("c_contiguous").cast<bool>()) {
+                            throw std::runtime_error("The array must be contiguous, i.e, `a.flags.c_contiguous` must be True. Hint: use `numpy.ascontiguousarray`.");
+                        }
+
                         // convert py::array to C standard buffer (mutable)
                         void * buffer_from_pyarray = buffer.mutable_data();
                         py::ssize_t buffer_count = buffer.shape()[0];
@@ -1563,6 +1598,11 @@ void py_init_module_lg_mylib(py::module& m)
                 {
                     auto add_inside_buffer_adapt_c_buffers = [](py::array & buffer, uint8_t number_to_add)
                     {
+                        // Check if the array is C-contiguous
+                        if (!buffer.attr("flags").attr("c_contiguous").cast<bool>()) {
+                            throw std::runtime_error("The array must be contiguous, i.e, `a.flags.c_contiguous` must be True. Hint: use `numpy.ascontiguousarray`.");
+                        }
+
                         // convert py::array to C standard buffer (mutable)
                         void * buffer_from_pyarray = buffer.mutable_data();
                         py::ssize_t buffer_count = buffer.shape()[0];
@@ -1587,6 +1627,11 @@ void py_init_module_lg_mylib(py::module& m)
                 {
                     auto templated_mul_inside_buffer_adapt_c_buffers = [](py::array & buffer, double factor)
                     {
+                        // Check if the array is C-contiguous
+                        if (!buffer.attr("flags").attr("c_contiguous").cast<bool>()) {
+                            throw std::runtime_error("The array must be contiguous, i.e, `a.flags.c_contiguous` must be True. Hint: use `numpy.ascontiguousarray`.");
+                        }
+
                         // convert py::array to C standard buffer (mutable)
                         void * buffer_from_pyarray = buffer.mutable_data();
                         py::ssize_t buffer_count = buffer.shape()[0];
