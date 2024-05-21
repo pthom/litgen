@@ -604,9 +604,15 @@ class AdaptedFunction(AdaptedElement):
                 replace_tokens.function_pointer = f"[]({parent_scope} & self) {{ return self.{function_name}(); }}"
             else:
                 overload_types = self.cpp_element().parameter_list.str_types_only_for_overload()
-                replace_tokens.function_pointer = (
-                    f"py::overload_cast<{overload_types}>({replace_tokens.function_pointer})"
-                )
+                is_const = self.cpp_element().is_const()
+                if is_const:
+                    replace_tokens.function_pointer = (
+                        f"py::overload_cast<{overload_types}>({replace_tokens.function_pointer}, py::const_)"
+                    )
+                else:
+                    replace_tokens.function_pointer = (
+                        f"py::overload_cast<{overload_types}>({replace_tokens.function_pointer})"
+                    )
 
         # fill pydef_end_arg_docstring_returnpolicy
         replace_tokens.pydef_end_arg_docstring_returnpolicy = self._pydef_end_arg_docstring_returnpolicy()
