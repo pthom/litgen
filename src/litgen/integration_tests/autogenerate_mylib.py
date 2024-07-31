@@ -98,6 +98,12 @@ def mylib_litgen_options() -> litgen.LitgenOptions:
         cpp_synonyms_list_str=[],
     )
 
+    options.class_template_options.add_specialization(
+        name_regex=r"^Pair$",  # r".*" => all classes
+        cpp_types_list_str=["int", "std::string"],  # instantiated types
+        cpp_synonyms_list_str=[],
+    )
+
     options.class_deep_copy__regex = r"^Copyable_"
     options.class_copy__regex = r"^Copyable_"
     options.class_template_options.add_specialization(
