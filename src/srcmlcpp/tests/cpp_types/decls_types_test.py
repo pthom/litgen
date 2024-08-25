@@ -78,6 +78,11 @@ def test_cpp_type():
     assert cpp_type.typenames == ["unsigned", "int"]
     assert cpp_type.modifiers == ["*", "*"]
 
+    cpp_type = srcmlcpp.srcmlcpp_main.code_to_cpp_type(options, "static constexpr unsigned int")
+    assert cpp_type.is_const()
+    assert cpp_type.is_static()
+    assert cpp_type.typenames == ["unsigned", "int"]
+
     options.functions_api_prefixes = "MY_API"
     cpp_type = srcmlcpp.srcmlcpp_main.code_to_cpp_type(options, "MY_API int &&")
     assert "MY_API" in cpp_type.specifiers
