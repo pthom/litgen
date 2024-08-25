@@ -132,7 +132,7 @@ class CppType(CppElementAndComment):
         return name
 
     def is_const(self) -> bool:
-        return "const" in self.specifiers
+        return "const" in self.specifiers or "constexpr" in self.specifiers
 
     def is_static(self) -> bool:
         return "static" in self.specifiers
