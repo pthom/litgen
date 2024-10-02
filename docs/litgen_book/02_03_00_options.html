@@ -519,7 +519,7 @@ document.write(`
 </style>
 
     <script>
-       function copy_code_1711522022517_537() {
+       function copy_code_1727901431810_06() {
             let code = `from __future__ import annotations
 
 from typing import Any, Callable, List
@@ -1036,6 +1036,13 @@ class LitgenOptions:
     macro_define_include_by_name__regex: str = ""
 
     ################################################################################
+    #    <globals vars adaptations>
+    ################################################################################
+    # Global variable defines can be exported as global variables, e.g.:
+    # By default nothing is exported (still experimental)
+    globals_vars_include_by_name__regex: str = ""
+
+    ################################################################################
     #    <post processing>
     ################################################################################
     # If you need to process the code after generation, fill these functions
@@ -1118,10 +1125,10 @@ class LitgenOptions:
             navigator.clipboard.writeText(code);
        }
     </script>
-    <button class="collapsible_header" id="btn_1711522022517_537_0" >litgen/options.py</button>
-    <div class="collapsible_content" id="content_1711522022517_537_0">
+    <button class="collapsible_header" id="btn_1727901431810_06_0" >litgen/options.py</button>
+    <div class="collapsible_content" id="content_1727901431810_06_0">
         <div>
-                <button onclick="copy_code_1711522022517_537()" align="right">copy &#x270d;</button>
+                <button onclick="copy_code_1727901431810_06()" align="right">copy &#x270d;</button>
         </div>
         <style>pre { line-height: 125%; }
 td.linenos .normal { color: inherit; background-color: transparent; padding-left: 5px; padding-right: 5px; }
@@ -1709,6 +1716,13 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
     <span class="n">macro_define_include_by_name__regex</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
 
     <span class="c1">################################################################################</span>
+    <span class="c1">#    &lt;globals vars adaptations&gt;</span>
+    <span class="c1">################################################################################</span>
+    <span class="c1"># Global variable defines can be exported as global variables, e.g.:</span>
+    <span class="c1"># By default nothing is exported (still experimental)</span>
+    <span class="n">globals_vars_include_by_name__regex</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+
+    <span class="c1">################################################################################</span>
     <span class="c1">#    &lt;post processing&gt;</span>
     <span class="c1">################################################################################</span>
     <span class="c1"># If you need to process the code after generation, fill these functions</span>
@@ -1792,10 +1806,10 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
     </div>
     
     <script>
-    var button = document.getElementById("btn_1711522022517_537_0");
+    var button = document.getElementById("btn_1727901431810_06_0");
     button.addEventListener("click", function() {
         this.classList.toggle("collapsible_header_opened");
-        var content = document.getElementById("content_1711522022517_537_0");
+        var content = document.getElementById("content_1727901431810_06_0");
         if (content.style.maxHeight){
           content.style.maxHeight = null;
         } else {
@@ -1805,9 +1819,9 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
     </script>
     
             <script>
-            var collapsible_header = document.getElementById("btn_1711522022517_537_0");
+            var collapsible_header = document.getElementById("btn_1727901431810_06_0");
             collapsible_header.classList.toggle("collapsible_header_opened");
-            var collapsible_content = document.getElementById("content_1711522022517_537_0");
+            var collapsible_content = document.getElementById("content_1727901431810_06_0");
             collapsible_content.style.maxHeight = collapsible_content.scrollHeight + "px";
             </script>
             </div></div>
@@ -1872,7 +1886,7 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
 </style>
 
     <script>
-       function copy_code_1711522022704_0918() {
+       function copy_code_1727901431844_653() {
             let code = `"""
 Options for srcmlcpp. Read the doc near all options elements.
 """
@@ -2003,10 +2017,10 @@ def _int_from_str_or_named_number_macros(options: SrcmlcppOptions, int_str: Opti
             navigator.clipboard.writeText(code);
        }
     </script>
-    <button class="collapsible_header" id="btn_1711522022704_0918_1" >srcmlcpp/srcmlcpp_options.py</button>
-    <div class="collapsible_content" id="content_1711522022704_0918_1">
+    <button class="collapsible_header" id="btn_1727901431844_653_1" >srcmlcpp/srcmlcpp_options.py</button>
+    <div class="collapsible_content" id="content_1727901431844_653_1">
         <div>
-                <button onclick="copy_code_1711522022704_0918()" align="right">copy &#x270d;</button>
+                <button onclick="copy_code_1727901431844_653()" align="right">copy &#x270d;</button>
         </div>
         <style>pre { line-height: 125%; }
 td.linenos .normal { color: inherit; background-color: transparent; padding-left: 5px; padding-right: 5px; }
@@ -2209,10 +2223,10 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
     </div>
     
     <script>
-    var button = document.getElementById("btn_1711522022704_0918_1");
+    var button = document.getElementById("btn_1727901431844_653_1");
     button.addEventListener("click", function() {
         this.classList.toggle("collapsible_header_opened");
-        var content = document.getElementById("content_1711522022704_0918_1");
+        var content = document.getElementById("content_1727901431844_653_1");
         if (content.style.maxHeight){
           content.style.maxHeight = null;
         } else {
@@ -2222,9 +2236,9 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
     </script>
     
             <script>
-            var collapsible_header = document.getElementById("btn_1711522022704_0918_1");
+            var collapsible_header = document.getElementById("btn_1727901431844_653_1");
             collapsible_header.classList.toggle("collapsible_header_opened");
-            var collapsible_content = document.getElementById("content_1711522022704_0918_1");
+            var collapsible_content = document.getElementById("content_1727901431844_653_1");
             collapsible_content.style.maxHeight = collapsible_content.scrollHeight + "px";
             </script>
             </div></div>
