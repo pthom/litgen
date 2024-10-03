@@ -495,6 +495,10 @@ class LitgenOptions:
     #     enum MyEnum { MyEnum_A = 0, MyEnum_B };
     # Values would be named "a" and "b" in python
     enum_flag_remove_values_prefix: bool = True
+    # A specific case for ImGui, which defines private enums which may extend the public ones:
+    #     enum ImGuiMyFlags_ { ImGuiMyFlags_None = 0,...};  enum ImGuiMyFlagsPrivate_ { ImGuiMyFlags_PrivValue = ...};
+    enum_flag_remove_values_prefix_group_private: bool = False
+
     # Skip count value from enums, for example like in:
     #    enum MyEnum { MyEnum_A = 1, MyEnum_B = 1, MyEnum_COUNT };
     enum_flag_skip_count: bool = True

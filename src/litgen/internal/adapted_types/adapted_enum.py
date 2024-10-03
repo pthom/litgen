@@ -49,12 +49,34 @@ class AdaptedEnumDecl(AdaptedDecl):
         if not self.options.enum_flag_remove_values_prefix or enum_cpp.enum_type == "class":
             return value_name_cpp
 
-        enum_name_cpp = enum_cpp.enum_name
+        def remove_case_insensitive_prefix_with_possible_underscore(name: str, prefix: str) -> str:
+            r = name
+            if name.upper().startswith(prefix.upper() + "_"):
+                r = name[len(prefix) + 1 :]
+            elif name.upper().startswith(prefix.upper()):
+                r = name[len(prefix) :]
+            return r
+
         decl_name_cpp_no_prefix = value_name_cpp
-        if value_name_cpp.upper().startswith(enum_name_cpp.upper() + "_"):
-            decl_name_cpp_no_prefix = value_name_cpp[len(enum_name_cpp) + 1 :]
-        elif value_name_cpp.upper().startswith(enum_name_cpp.upper()):
-            decl_name_cpp_no_prefix = value_name_cpp[len(enum_name_cpp) :]
+        enum_name_cpp = enum_cpp.enum_name
+        decl_name_cpp_no_prefix = remove_case_insensitive_prefix_with_possible_underscore(
+            decl_name_cpp_no_prefix, enum_name_cpp
+        )
+
+        # We also remove the ImGuiTreeNodeFlags_ prefix from the private enum values
+        # A specific case for ImGui, which defines private enums which may extend the public ones:
+        #     enum ImGuiMyFlags_ { ImGuiMyFlags_None = 0,...};  enum ImGuiMyFlagsPrivate_ { ImGuiMyFlags_PrivValue = ...};
+        if self.options.enum_flag_remove_values_prefix_group_private:
+            if enum_name_cpp.endswith("Private_"):
+                enum_name_not_private = enum_name_cpp[:-8]
+                decl_name_cpp_no_prefix = remove_case_insensitive_prefix_with_possible_underscore(
+                    decl_name_cpp_no_prefix, enum_name_not_private
+                )
+            elif enum_name_cpp.endswith("Private"):
+                enum_name_not_private = enum_name_cpp[:-7]
+                decl_name_cpp_no_prefix = remove_case_insensitive_prefix_with_possible_underscore(
+                    decl_name_cpp_no_prefix, enum_name_not_private
+                )
 
         if len(decl_name_cpp_no_prefix) == 0:
             decl_name_cpp_no_prefix = value_name_cpp
