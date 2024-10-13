@@ -337,6 +337,16 @@ class AdaptedFunction(AdaptedElement):
             if code_utils.does_match_regex(reg, param.decl.cpp_type.str_code()):
                 return False
 
+        # Check options.fn_exclude_by_name_and_signature
+        target = options.fn_exclude_by_name_and_signature.get(cpp_function.function_name, "")
+        if target:
+            signature = ", ".join(
+                param.decl.cpp_type.str_code()
+                for param in cpp_function.parameter_list.parameters
+            )
+            if target == signature:
+                return False
+
         def has_one_ok_prefix() -> bool:
             has_api_prefix = False
             for api_prefix in options.srcmlcpp_options.functions_api_prefixes_list():
