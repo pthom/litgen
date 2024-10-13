@@ -129,6 +129,13 @@ class LitgenOptions:
     # from the function signature, but not the function itself.
     fn_exclude_by_param_type__regex: str = ""
 
+    # Exclude function and methods by its name and signature
+    # For example:
+    #    options.fn_exclude_by_name_and_signature = {
+    #         "Selectable": "const char *, bool, ImGuiSelectableFlags, const ImVec2 &"
+    #     }
+    fn_exclude_by_name_and_signature: dict[str, str] = None
+
     # ------------------------------------------------------------------------------
     # Exclude some params by name or type
     # ------------------------------------------------------------------------------
@@ -646,3 +653,5 @@ class LitgenOptions:
 
         self.fn_custom_adapters = []
         self.namespaces_root = []
+
+        self.fn_exclude_by_name_and_signature = {}
