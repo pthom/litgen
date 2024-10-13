@@ -352,17 +352,37 @@ class AdaptedClass(AdaptedElement):
         self._prot_fill_methods()
 
     def _init_add_adapted_class_member(self, cpp_decl_statement: CppDeclStatement) -> None:
+        class_name = self.cpp_element().class_name
+
         for cpp_decl in cpp_decl_statement.cpp_decls:
+            is_excluded_by_name_and_class = code_utils.does_match_regex(
+                self.options.member_exclude_by_name_and_class__regex.get(class_name, ""),
+                cpp_decl.decl_name
+            )
             is_excluded_by_name = code_utils.does_match_regex(
                 self.options.member_exclude_by_name__regex, cpp_decl.decl_name
             )
             is_excluded_by_type = code_utils.does_match_regex(
                 self.options.member_exclude_by_type__regex, cpp_decl.cpp_type.str_code()
             )
-            if not is_excluded_by_name and not is_excluded_by_type:
+            if not is_excluded_by_name_and_class and not is_excluded_by_name and not is_excluded_by_type:
                 adapted_class_member = AdaptedClassMember(self.lg_context, cpp_decl, self)
                 if adapted_class_member.check_can_publish():
                     self.adapted_public_children.append(adapted_class_member)
+
+    def _init_add_adopted_class_function(self, cpp_function_decl: CppFunctionDecl) -> None:
+        class_name = self.cpp_element().class_name
+
+        is_excluded_by_name_and_class = code_utils.does_match_regex(
+            self.options.member_exclude_by_name_and_class__regex.get(class_name, ""),
+            cpp_function_decl.name()
+        )
+        if not is_excluded_by_name_and_class:
+            if AdaptedFunction.init_is_function_publishable(self.options, cpp_function_decl):
+                is_overloaded = cpp_function_decl.is_overloaded_method()
+                self.adapted_public_children.append(
+                    AdaptedFunction(self.lg_context, cpp_function_decl, is_overloaded)
+                )
 
     def _init_fill_public_children(self) -> None:
         public_elements = self.cpp_element().get_elements(access_type=CppAccessType.public)
@@ -373,9 +393,7 @@ class AdaptedClass(AdaptedElement):
                 elif isinstance(child, CppComment):
                     self.adapted_public_children.append(AdaptedComment(self.lg_context, child))
                 elif isinstance(child, CppFunctionDecl):
-                    if AdaptedFunction.init_is_function_publishable(self.options, child):
-                        is_overloaded = child.is_overloaded_method()
-                        self.adapted_public_children.append(AdaptedFunction(self.lg_context, child, is_overloaded))
+                    self._init_add_adopted_class_function(child)
                 elif isinstance(child, CppDeclStatement):
                     self._init_add_adapted_class_member(child)
                 elif isinstance(child, CppUnprocessed):
@@ -1147,6 +1165,11 @@ class PythonNamedConstructorHelper:
                     return False
 
                 if code_utils.does_match_regex(options.member_exclude_by_name__regex, member.name()):
+                    return False
+
+                cls_name = self.cpp_class.class_name
+                regex_str = options.member_exclude_by_name_and_class__regex.get(cls_name, "")
+                if code_utils.does_match_regex(regex_str, member.name()):
                     return False
 
                 return True

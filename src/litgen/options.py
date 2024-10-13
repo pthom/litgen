@@ -379,6 +379,17 @@ class LitgenOptions:
     member_exclude_by_name__regex: str = ""
     # Exclude members based on their type
     member_exclude_by_type__regex: str = ""
+    # Exclude certain members by a regex on their name, if class or struct name matched
+    # For example:
+    #   options.member_exclude_by_name_and_class__regex = {
+    #       "ImVector": join_string_by_pipe_char([
+    #           r"^Size$",
+    #           r"^Capacity$",
+    #           ...
+    #       ])
+    #   }
+    member_exclude_by_name_and_class__regex: dict[str, str] = None
+
     # Make certain members read-only by a regex on their name
     member_readonly_by_name__regex: str = ""
     # Make certain members read-only based on their type
@@ -655,3 +666,4 @@ class LitgenOptions:
         self.namespaces_root = []
 
         self.fn_exclude_by_name_and_signature = {}
+        self.member_exclude_by_name_and_class__regex = {}
