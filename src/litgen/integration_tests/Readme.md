@@ -24,7 +24,7 @@ This folder structure is based on [lg_skbuild_template](https://github.com/pthom
 Below is a summary of the structure:
 
 ```
-./
+litgen/src/litgen/integration_tests/
 ├── pyproject.toml                            # Pip configuration file
 ├── setup.py                                  # Pip configuration file
 ├── CMakeLists.txt                            # CMakeLists (used also by pip, via skbuild)
