@@ -402,6 +402,23 @@ class LitgenOptions:
     #     options.class_iterables_infos.add_iterable_class(python_class_name__regex, iterable_python_type_name)
     class_iterables_infos: ClassIterablesInfos
 
+    # class_held_as_shared__regex:
+    # Regex specifying the list of class names that should be held using std::shared_ptr in the generated bindings.
+    #
+    # **Purpose:**
+    # By default, pybind11 uses `std::unique_ptr` as the holder type for bound classes.
+    #
+    # **When to Use:**
+    # If your C++ code uses `std::shared_ptr` to manage instances of a class (e.g., as member variables, return types,
+    # or parameters), and you expose that class to Python, you need to ensure that pybind11 uses `std::shared_ptr` as
+    # the holder type for that class.
+    #
+    # **References:**
+    # - [pybind11 Documentation: Smart Pointers](https://pybind11.readthedocs.io/en/stable/advanced/smart_ptrs.html)
+    # - [Understanding Holder Types in pybind11](https://pybind11.readthedocs.io/en/stable/advanced/classes.html#custom-smart-pointers)
+    class_held_as_shared__regex: str = ""
+
+
     # ------------------------------------------------------------------------------
     # Templated class options
     # ------------------------------------------------------------------------------

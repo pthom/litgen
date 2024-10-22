@@ -616,3 +616,19 @@ def test_named_ctor_helper_class() -> None:
             ;
         """,
     )
+
+
+def test_shared_holder():
+    code = "struct Foo {};"
+    options = litgen.LitgenOptions()
+    options.class_held_as_shared__regex = r"Foo"
+    generated_code = litgen.generate_code(options, code)
+    code_utils.assert_are_codes_equal(
+        generated_code.pydef_code,
+        """
+        auto pyClassFoo =
+            py::class_<Foo, std::shared_ptr<Foo>>
+                (m, "Foo", "")
+            .def(py::init<>()) // implicit default constructor
+            ;
+    """)

@@ -50,6 +50,9 @@ def mylib_litgen_options() -> litgen.LitgenOptions:
     options.class_exclude_by_name__regex = "Detail$"
     options.enum_exclude_by_name__regex = "Detail$"
 
+    # For smart_ptr_test: SmartElem will be held in (vector of) shared_ptr
+    options.class_held_as_shared__regex = "^SmartElem$"
+
     # Python modifiable immutables options
     options.fn_params_replace_modifiable_immutable_by_boxed__regex = code_utils.join_string_by_pipe_char(
         [

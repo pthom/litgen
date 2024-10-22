@@ -597,7 +597,7 @@ class AdaptedClass(AdaptedElement):
             code_template = code_utils.unindent_code(
                 """
                     auto {pydef_class_var} =
-                    {_i_}py::class_<{qualified_struct_name}{other_template_params}>{location}
+                    {_i_}py::class_<{qualified_struct_name}{other_template_params}{maybe_shared_ptr_holder}>{location}
                     {_i_}{_i_}({pydef_class_var_parent}, "{class_name_python}"{maybe_py_is_final}{maybe_py_is_dynamic}, "{comment}")
                     """,
                 flag_strip_empty_lines=True,
@@ -620,6 +620,11 @@ class AdaptedClass(AdaptedElement):
                 replacements.maybe_py_is_dynamic = ""
 
             replacements.comment = self._elm_comment_pydef_one_line()
+
+            if code_utils.does_match_regex(options.class_held_as_shared__regex, self.cpp_element().class_name):
+                replacements.maybe_shared_ptr_holder = f", std::shared_ptr<{qualified_struct_name}>"
+            else:
+                replacements.maybe_shared_ptr_holder = ""
 
             pyclass_creation_code = code_utils.process_code_template(code_template, replacements)
 

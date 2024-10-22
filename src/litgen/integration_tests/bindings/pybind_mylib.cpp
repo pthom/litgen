@@ -1175,6 +1175,36 @@ void py_init_module_lg_mylib(py::module& m)
     //
 
 
+    auto pyClassSmartElem =
+        py::class_<SmartElem, std::shared_ptr<SmartElem>>
+            (m, "SmartElem", "")
+        .def(py::init<>([](
+        int x = 0)
+        {
+            auto r = std::make_unique<SmartElem>();
+            r->x = x;
+            return r;
+        })
+        , py::arg("x") = 0
+        )
+        .def_readwrite("x", &SmartElem::x, "")
+        ;
+
+
+    m.def("make_shared_elem",
+        make_shared_elem, py::arg("x"));
+
+
+    auto pyClassElemContainer =
+        py::class_<ElemContainer>
+            (m, "ElemContainer", "")
+        .def(py::init<>())
+        .def_readwrite("vec", &ElemContainer::vec, "")
+        .def_readwrite("shared_ptr", &ElemContainer::shared_ptr, "")
+        .def_readwrite("vec_shared_ptrs", &ElemContainer::vec_shared_ptrs, "")
+        ;
+
+
     auto pyClassFooBrace =
         py::class_<FooBrace>
             (m, "FooBrace", "")

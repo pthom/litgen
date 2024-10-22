@@ -889,10 +889,33 @@ FLOAT = 3.14
 # //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 # ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-#                       mylib/mylib_main/mylib.h continued                                                     //
+#                       mylib/smart_ptr.h included by mylib/mylib_main/mylib.h                                 //
 # //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-##include "mylib/smart_ptr.h"
+class SmartElem:
+    x: int = 0
+    def __init__(self, x: int = 0) -> None:
+        """Auto-generated default constructor with named params"""
+        pass
+
+def make_shared_elem(x: int) -> SmartElem:
+    pass
+
+class ElemContainer:
+    def __init__(self) -> None:
+        pass
+    vec: List[SmartElem]
+    shared_ptr: SmartElem
+    vec_shared_ptrs: List[SmartElem]
+
+# The signature below is incompatible with pybind11:
+#     None change_unique_elem(std::unique_ptr<Elem>& elem, int x) { ... }
+# Reason: such a signature might change the pointer value! Example:
+#    None reset_unique_elem(std::unique_ptr<Elem>& elem) { elem.reset(new Elem());    }
+
+# ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+#                       mylib/mylib_main/mylib.h continued                                                     //
+# //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 # brace_init_default_value.h must be included last (see explanation inside test_change_decl_stmt_to_function_decl_if_suspicious)
 
