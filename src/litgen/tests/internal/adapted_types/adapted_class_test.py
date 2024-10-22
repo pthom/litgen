@@ -451,8 +451,9 @@ def test_inner_class() -> None:
                 (m, "Foo", "");
 
         { // inner classes & enums of Foo
-            py::enum_<Foo::Choice>(pyClassFoo, "Choice", py::arithmetic(), "")
-                .value("a", Foo::Choice::A, "");
+            auto pyEnumChoice =
+                py::enum_<Foo::Choice>(pyClassFoo, "Choice", py::arithmetic(), "")
+                    .value("a", Foo::Choice::A, "");
         } // end of inner classes & enums of Foo
 
         pyClassFoo
@@ -545,8 +546,9 @@ def test_named_ctor_helper_struct() -> None:
         """
         { // <namespace A>
             py::module_ pyNsA = m.def_submodule("a", "");
-            py::enum_<A::Foo>(pyNsA, "Foo", py::arithmetic(), "")
-                .value("foo1", A::Foo::Foo1, "");
+            auto pyEnumFoo =
+                py::enum_<A::Foo>(pyNsA, "Foo", py::arithmetic(), "")
+                    .value("foo1", A::Foo::Foo1, "");
 
 
             auto pyNsA_ClassClassNoDefaultCtor =

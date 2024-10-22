@@ -643,17 +643,19 @@ void py_init_module_lg_mylib(py::module& m)
         ;
 
 
-    py::enum_<BasicEnum>(m, "BasicEnum", py::arithmetic(), "BasicEnum: a simple C-style enum")
-        .value("a", BasicEnum_a, "This will be exported as BasicEnum.a")
-        .value("aa", BasicEnum_aa, "This will be exported as BasicEnum.aa")
-        .value("aaa", BasicEnum_aaa, "This will be exported as BasicEnum.aaa")
-        .value("b", BasicEnum_b, "This is value b");
+    auto pyEnumBasicEnum =
+        py::enum_<BasicEnum>(m, "BasicEnum", py::arithmetic(), "BasicEnum: a simple C-style enum")
+            .value("a", BasicEnum_a, "This will be exported as BasicEnum.a")
+            .value("aa", BasicEnum_aa, "This will be exported as BasicEnum.aa")
+            .value("aaa", BasicEnum_aaa, "This will be exported as BasicEnum.aaa")
+            .value("b", BasicEnum_b, "This is value b");
 
 
-    py::enum_<ClassEnum>(m, "ClassEnum", py::arithmetic(), "ClassEnum: a class enum that should be published")
-        .value("on", ClassEnum::On, "")
-        .value("off", ClassEnum::Off, "")
-        .value("unknown", ClassEnum::Unknown, "");
+    auto pyEnumClassEnum =
+        py::enum_<ClassEnum>(m, "ClassEnum", py::arithmetic(), "ClassEnum: a class enum that should be published")
+            .value("on", ClassEnum::On, "")
+            .value("off", ClassEnum::Off, "")
+            .value("unknown", ClassEnum::Unknown, "");
 
 
     auto pyClassMyClass =
@@ -707,8 +709,8 @@ void py_init_module_lg_mylib(py::module& m)
         .def(py::init<>())
         .def_static("instance",
             &MySingletonClass::instance,
-            "return_value_policy::reference",
-            pybind11::return_value_policy::reference)
+            "py::return_value_policy::reference",
+            py::return_value_policy::reference)
         ;
 
 
@@ -742,8 +744,9 @@ void py_init_module_lg_mylib(py::module& m)
             (m, "MyStructWithNestedEnum", "");
 
     { // inner classes & enums of MyStructWithNestedEnum
-        py::enum_<MyStructWithNestedEnum::Choice>(pyClassMyStructWithNestedEnum, "Choice", py::arithmetic(), "")
-            .value("a", MyStructWithNestedEnum::Choice::A, "");
+        auto pyEnumChoice =
+            py::enum_<MyStructWithNestedEnum::Choice>(pyClassMyStructWithNestedEnum, "Choice", py::arithmetic(), "")
+                .value("a", MyStructWithNestedEnum::Choice::A, "");
     } // end of inner classes & enums of MyStructWithNestedEnum
 
     pyClassMyStructWithNestedEnum
@@ -856,16 +859,16 @@ void py_init_module_lg_mylib(py::module& m)
         )
         .def_static("instance",
             &MyConfig::Instance,
-            "return_value_policy::reference",
-            pybind11::return_value_policy::reference)
+            "py::return_value_policy::reference",
+            py::return_value_policy::reference)
         .def_readwrite("value", &MyConfig::value, "")
         ;
 
 
     m.def("my_config_instance",
         MyConfigInstance,
-        "return_value_policy::reference",
-        pybind11::return_value_policy::reference);
+        "py::return_value_policy::reference",
+        py::return_value_policy::reference);
 
     m.def("foo_root",
         FooRoot);
@@ -1346,11 +1349,12 @@ void py_init_module_lg_mylib(py::module& m)
                 .def("add",
                     &SomeNamespace::ParentStruct::InnerStruct::add, py::arg("a"), py::arg("b"))
                 ;
-            py::enum_<SomeNamespace::ParentStruct::InnerEnum>(pyNsSomeNamespace_ClassParentStruct, "InnerEnum", py::arithmetic(), "")
-                .value("zero", SomeNamespace::ParentStruct::InnerEnum::Zero, "")
-                .value("one", SomeNamespace::ParentStruct::InnerEnum::One, "")
-                .value("two", SomeNamespace::ParentStruct::InnerEnum::Two, "")
-                .value("three", SomeNamespace::ParentStruct::InnerEnum::Three, "");
+            auto pyEnumInnerEnum =
+                py::enum_<SomeNamespace::ParentStruct::InnerEnum>(pyNsSomeNamespace_ClassParentStruct, "InnerEnum", py::arithmetic(), "")
+                    .value("zero", SomeNamespace::ParentStruct::InnerEnum::Zero, "")
+                    .value("one", SomeNamespace::ParentStruct::InnerEnum::One, "")
+                    .value("two", SomeNamespace::ParentStruct::InnerEnum::Two, "")
+                    .value("three", SomeNamespace::ParentStruct::InnerEnum::Three, "");
         } // end of inner classes & enums of ParentStruct
 
         pyNsSomeNamespace_ClassParentStruct
@@ -1768,12 +1772,14 @@ void py_init_module_lg_mylib(py::module& m)
             ;
 
 
-        py::enum_<N::EC>(pyNsN, "EC", py::arithmetic(), "")
-            .value("a", N::EC::a, "");
+        auto pyEnumEC =
+            py::enum_<N::EC>(pyNsN, "EC", py::arithmetic(), "")
+                .value("a", N::EC::a, "");
 
 
-        py::enum_<N::E>(pyNsN, "E", py::arithmetic(), "")
-            .value("a", N::E_a, "");
+        auto pyEnumE =
+            py::enum_<N::E>(pyNsN, "E", py::arithmetic(), "")
+                .value("a", N::E_a, "");
 
 
         pyNsN.def("foo",
@@ -1788,10 +1794,11 @@ void py_init_module_lg_mylib(py::module& m)
 
     { // <namespace A>
         py::module_ pyNsA = m.def_submodule("a", "");
-        py::enum_<A::Foo>(pyNsA, "Foo", py::arithmetic(), "")
-            .value("foo1", A::Foo::Foo1, "")
-            .value("foo2", A::Foo::Foo2, "")
-            .value("foo3", A::Foo::Foo3, "");
+        auto pyEnumFoo =
+            py::enum_<A::Foo>(pyNsA, "Foo", py::arithmetic(), "")
+                .value("foo1", A::Foo::Foo1, "")
+                .value("foo2", A::Foo::Foo2, "")
+                .value("foo3", A::Foo::Foo3, "");
 
 
         auto pyNsA_ClassClassNoDefaultCtor =
@@ -1824,12 +1831,14 @@ void py_init_module_lg_mylib(py::module& m)
                 ;
 
 
-            py::enum_<A::N::EC>(pyNsA_NsN, "EC", py::arithmetic(), "")
-                .value("a", A::N::EC::a, "");
+            auto pyEnumEC =
+                py::enum_<A::N::EC>(pyNsA_NsN, "EC", py::arithmetic(), "")
+                    .value("a", A::N::EC::a, "");
 
 
-            py::enum_<A::N::E>(pyNsA_NsN, "E", py::arithmetic(), "")
-                .value("a", A::N::E_a, "");
+            auto pyEnumE =
+                py::enum_<A::N::E>(pyNsA_NsN, "E", py::arithmetic(), "")
+                    .value("a", A::N::E_a, "");
 
 
             pyNsA_NsN.def("foo",

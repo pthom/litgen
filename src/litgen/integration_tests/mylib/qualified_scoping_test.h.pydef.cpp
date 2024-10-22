@@ -33,12 +33,14 @@ void py_init_module_mylib(py::module& m)
             ;
 
 
-        py::enum_<N::EC>(pyNsN, "EC", py::arithmetic(), "")
-            .value("a", N::EC::a, "");
+        auto pyEnumEC =
+            py::enum_<N::EC>(pyNsN, "EC", py::arithmetic(), "")
+                .value("a", N::EC::a, "");
 
 
-        py::enum_<N::E>(pyNsN, "E", py::arithmetic(), "")
-            .value("a", N::E_a, "");
+        auto pyEnumE =
+            py::enum_<N::E>(pyNsN, "E", py::arithmetic(), "")
+                .value("a", N::E_a, "");
 
 
         pyNsN.def("foo",

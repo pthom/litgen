@@ -26,10 +26,11 @@ void py_init_module_mylib(py::module& m)
 
     { // <namespace A>
         py::module_ pyNsA = m.def_submodule("a", "");
-        py::enum_<A::Foo>(pyNsA, "Foo", py::arithmetic(), "")
-            .value("foo1", A::Foo::Foo1, "")
-            .value("foo2", A::Foo::Foo2, "")
-            .value("foo3", A::Foo::Foo3, "");
+        auto pyEnumFoo =
+            py::enum_<A::Foo>(pyNsA, "Foo", py::arithmetic(), "")
+                .value("foo1", A::Foo::Foo1, "")
+                .value("foo2", A::Foo::Foo2, "")
+                .value("foo3", A::Foo::Foo3, "");
 
 
         auto pyNsA_ClassClassNoDefaultCtor =
@@ -62,12 +63,14 @@ void py_init_module_mylib(py::module& m)
                 ;
 
 
-            py::enum_<A::N::EC>(pyNsA_NsN, "EC", py::arithmetic(), "")
-                .value("a", A::N::EC::a, "");
+            auto pyEnumEC =
+                py::enum_<A::N::EC>(pyNsA_NsN, "EC", py::arithmetic(), "")
+                    .value("a", A::N::EC::a, "");
 
 
-            py::enum_<A::N::E>(pyNsA_NsN, "E", py::arithmetic(), "")
-                .value("a", A::N::E_a, "");
+            auto pyEnumE =
+                py::enum_<A::N::E>(pyNsA_NsN, "E", py::arithmetic(), "")
+                    .value("a", A::N::E_a, "");
 
 
             pyNsA_NsN.def("foo",

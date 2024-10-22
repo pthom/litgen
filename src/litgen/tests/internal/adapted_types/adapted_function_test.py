@@ -100,8 +100,8 @@ def test_return_value_policy_custom() -> None:
     expected_code = """
         m.def("foo",
             Foo,
-            " Returns a widget\\nreturn_value_policy::reference",
-            pybind11::return_value_policy::reference);
+            " Returns a widget\\npy::return_value_policy::reference",
+            py::return_value_policy::reference);
         """
     code_utils.assert_are_codes_equal(generated_code, expected_code)
 
@@ -119,10 +119,10 @@ def test_return_policy_regex() -> None:
         generated_code.pydef_code,
         """
         m.def("make_widget",
-            MakeWidget, pybind11::return_value_policy::reference);
+            MakeWidget, py::return_value_policy::reference);
 
         m.def("make_foo",
-            MakeFoo, pybind11::return_value_policy::reference);
+            MakeFoo, py::return_value_policy::reference);
         """,
     )
 

@@ -250,11 +250,13 @@ class AdaptedEnum(AdaptedElement):
         lines += [enum_decl_line]
 
         # Enum values
+        children_lines = []
         for child in self.adapted_children:
             if isinstance(child, AdaptedEnumDecl):
                 adapted_decl = child
                 value_decl_lines = adapted_decl.pydef_lines()
-                lines += value_decl_lines
+                children_lines +=  value_decl_lines
+        lines += code_utils.indent_code_lines(children_lines, indent_str=self.options._indent_cpp_spaces())
 
         if self.options.enum_export_values:
             lines += [".export_values()"]

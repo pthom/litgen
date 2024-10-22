@@ -74,8 +74,8 @@ void py_init_module_mylib(py::module& m)
         .def(py::init<>())
         .def_static("instance",
             &MySingletonClass::instance,
-            "return_value_policy::reference",
-            pybind11::return_value_policy::reference)
+            "py::return_value_policy::reference",
+            py::return_value_policy::reference)
         ;
 
 
@@ -109,8 +109,9 @@ void py_init_module_mylib(py::module& m)
             (m, "MyStructWithNestedEnum", "");
 
     { // inner classes & enums of MyStructWithNestedEnum
-        py::enum_<MyStructWithNestedEnum::Choice>(pyClassMyStructWithNestedEnum, "Choice", py::arithmetic(), "")
-            .value("a", MyStructWithNestedEnum::Choice::A, "");
+        auto pyEnumChoice =
+            py::enum_<MyStructWithNestedEnum::Choice>(pyClassMyStructWithNestedEnum, "Choice", py::arithmetic(), "")
+                .value("a", MyStructWithNestedEnum::Choice::A, "");
     } // end of inner classes & enums of MyStructWithNestedEnum
 
     pyClassMyStructWithNestedEnum
