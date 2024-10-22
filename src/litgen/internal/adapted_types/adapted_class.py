@@ -725,7 +725,7 @@ class AdaptedClass(AdaptedElement):
                 code_template = (
                     code_utils.unindent_code(
                         """
-                    .def("__iter__", [](const {qualified_struct_name} &v) { 
+                    .def("__iter__", [](const {qualified_struct_name} &v) {
                             return py::make_iterator(py::type<{qualified_struct_name}>(), "iterator", v.begin(), v.end());
                         }, py::keep_alive<0, 1>())
                     .def("__len__", [](const {qualified_struct_name} &v) { return v.size(); })
@@ -941,19 +941,37 @@ class AdaptedClass(AdaptedElement):
         if not self._virt_shall_override():
             return
 
-        trampoline_class_template = code_utils.unindent_code(
-            """
-            // helper type to enable overriding virtual methods in python
-            class {trampoline_class_name} : public {class_name}
-            {
-            public:
-                using {class_name}::{class_name};
+        virtual_methods = self._virt_method_list_including_inherited()
+        nb_virtual_methods = len(virtual_methods)
 
-            {trampoline_list}
-            };
-            """,
-            flag_strip_empty_lines=True,
-        )
+        if self.options.bind_library == litgen.BindLibraryType.pybind11:
+            trampoline_class_template = code_utils.unindent_code(
+                """
+                // helper type to enable overriding virtual methods in python
+                class {trampoline_class_name} : public {class_name}
+                {
+                public:
+                    using {class_name}::{class_name};
+
+                {trampoline_list}
+                };
+                """,
+                flag_strip_empty_lines=True,
+            )
+        else:
+            trampoline_class_template = code_utils.unindent_code(
+                """
+                // helper type to enable overriding virtual methods in python
+                class {trampoline_class_name} : public {class_name}
+                {
+                public:
+                    NB_TRAMPOLINE({class_name}, {nb_virtual_methods});
+
+                {trampoline_list}
+                };
+                """,
+                flag_strip_empty_lines=True,
+            )
 
         trampoline_lines = []
         virtual_methods = self._virt_method_list_including_inherited()
@@ -967,6 +985,7 @@ class AdaptedClass(AdaptedElement):
 
         replacements = munch.Munch()
         replacements.trampoline_class_name = self.cpp_element().class_name + "_trampoline"
+        replacements.nb_virtual_methods = str(nb_virtual_methods)
         replacements.class_name = self.cpp_element().class_name
         replacements.trampoline_list = code_utils.indent_code(
             "\n".join(trampoline_lines), indent_str=self.options._indent_cpp_spaces()
