@@ -31,7 +31,7 @@ void py_init_module_mylib(py::module_& m)
     auto pyClassBoxedUnsignedLong =
         py::class_<BoxedUnsignedLong>
             (m, "BoxedUnsignedLong", "")
-        .def_readwrite("value", &BoxedUnsignedLong::value, "")
+        .def_rw("value", &BoxedUnsignedLong::value, "")
         .def(py::init<unsigned long>(),
             py::arg("v") = 0)
         .def("__repr__",

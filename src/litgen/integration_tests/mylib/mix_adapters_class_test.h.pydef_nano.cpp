@@ -43,7 +43,7 @@ void py_init_module_mylib(py::module_& m)
     auto pyClassBoxedBool =
         py::class_<BoxedBool>
             (m, "BoxedBool", "")
-        .def_readwrite("value", &BoxedBool::value, "")
+        .def_rw("value", &BoxedBool::value, "")
         .def(py::init<bool>(),
             py::arg("v") = false)
         .def("__repr__",
@@ -54,7 +54,7 @@ void py_init_module_mylib(py::module_& m)
     auto pyClassBoxedInt =
         py::class_<BoxedInt>
             (m, "BoxedInt", "")
-        .def_readwrite("value", &BoxedInt::value, "")
+        .def_rw("value", &BoxedInt::value, "")
         .def(py::init<int>(),
             py::arg("v") = 0)
         .def("__repr__",
@@ -65,7 +65,7 @@ void py_init_module_mylib(py::module_& m)
     auto pyClassBoxedString =
         py::class_<BoxedString>
             (m, "BoxedString", "")
-        .def_readwrite("value", &BoxedString::value, "")
+        .def_rw("value", &BoxedString::value, "")
         .def(py::init<std::string>(),
             py::arg("v") = "")
         .def("__repr__",
