@@ -80,7 +80,7 @@ class MySingletonClass:
         pass
     @staticmethod
     def instance() -> MySingletonClass:
-        """return_value_policy::reference"""
+        """py::return_value_policy::reference"""
         pass
 
 class MyFinalClass:

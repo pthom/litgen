@@ -40,11 +40,12 @@ void py_init_module_mylib(py::module& m)
                 .def("add",
                     &SomeNamespace::ParentStruct::InnerStruct::add, py::arg("a"), py::arg("b"))
                 ;
-            py::enum_<SomeNamespace::ParentStruct::InnerEnum>(pyNsSomeNamespace_ClassParentStruct, "InnerEnum", py::arithmetic(), "")
-                .value("zero", SomeNamespace::ParentStruct::InnerEnum::Zero, "")
-                .value("one", SomeNamespace::ParentStruct::InnerEnum::One, "")
-                .value("two", SomeNamespace::ParentStruct::InnerEnum::Two, "")
-                .value("three", SomeNamespace::ParentStruct::InnerEnum::Three, "");
+            auto pyEnumInnerEnum =
+                py::enum_<SomeNamespace::ParentStruct::InnerEnum>(pyNsSomeNamespace_ClassParentStruct, "InnerEnum", py::arithmetic(), "")
+                    .value("zero", SomeNamespace::ParentStruct::InnerEnum::Zero, "")
+                    .value("one", SomeNamespace::ParentStruct::InnerEnum::One, "")
+                    .value("two", SomeNamespace::ParentStruct::InnerEnum::Two, "")
+                    .value("three", SomeNamespace::ParentStruct::InnerEnum::Three, "");
         } // end of inner classes & enums of ParentStruct
 
         pyNsSomeNamespace_ClassParentStruct
