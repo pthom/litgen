@@ -197,6 +197,7 @@ class LitgenGenerator:
         standalone_options = LitgenOptions()
         standalone_options.cpp_indent_size = self.options().cpp_indent_size
         standalone_options.cpp_indent_with_tabs = self.options().cpp_indent_with_tabs
+        standalone_options.bind_library = self.options().bind_library
 
         adapted_unit = code_to_adapted_unit_in_context(LitgenContext(standalone_options), boxed_types_cpp_code)
 

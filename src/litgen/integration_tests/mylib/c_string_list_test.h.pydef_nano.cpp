@@ -31,7 +31,7 @@ void py_init_module_mylib(py::module_& m)
     auto pyClassBoxedInt =
         py::class_<BoxedInt>
             (m, "BoxedInt", "")
-        .def_readwrite("value", &BoxedInt::value, "")
+        .def_rw("value", &BoxedInt::value, "")
         .def(py::init<int>(),
             py::arg("v") = 0)
         .def("__repr__",
