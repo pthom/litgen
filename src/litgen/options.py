@@ -134,7 +134,7 @@ class LitgenOptions:
     #    options.fn_exclude_by_name_and_signature = {
     #         "Selectable": "const char *, bool, ImGuiSelectableFlags, const ImVec2 &"
     #     }
-    fn_exclude_by_name_and_signature: dict[str, str] = None
+    fn_exclude_by_name_and_signature: dict[str, str]
 
     # ------------------------------------------------------------------------------
     # Exclude some params by name or type
@@ -388,7 +388,7 @@ class LitgenOptions:
     #           ...
     #       ])
     #   }
-    member_exclude_by_name_and_class__regex: dict[str, str] = None
+    member_exclude_by_name_and_class__regex: dict[str, str]
 
     # Make certain members read-only by a regex on their name
     member_readonly_by_name__regex: str = ""
