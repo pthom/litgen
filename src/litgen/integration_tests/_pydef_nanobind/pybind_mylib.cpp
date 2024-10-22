@@ -611,7 +611,7 @@ void py_init_module_lg_mylib(py::module_& m)
 
 
     auto pyClassMySingletonClass =
-        py::class_<MySingletonClass, std::unique_ptr<MySingletonClass, py::nodelete>>
+        py::class_<MySingletonClass>
             (m, "MySingletonClass", " MySingletonClass: demonstrate how to instantiate a singleton\n - The instance method shall return with return_value_policy::reference\n - The destructor may be private")
         .def_rw("value", &MySingletonClass::value, "")
         .def(py::init<>())
