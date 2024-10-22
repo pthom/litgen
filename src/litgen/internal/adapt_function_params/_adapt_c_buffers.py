@@ -395,6 +395,8 @@ class _AdaptBuffersHelper:
 
     def _lambda_input_buffer_standard_convert_part(self, idx_param: int) -> str:
         mutable_or_empty = "" if self._is_const(idx_param) else "mutable_"
+        if self.options.bind_library == BindLibraryType.nanobind:
+            mutable_or_empty = ""
         mutable_or_const = "const" if self._is_const(idx_param) else "mutable"
 
         _ = self
@@ -458,8 +460,8 @@ class _AdaptBuffersHelper:
         else:
             template = f"""
                     uint8_t {_._param_name(idx_param)}_type = {_._param_name(idx_param)}.dtype().code;
-                    auto except_type = static_cast<uint8_t>(py::dlpack::{_._expected_dtype_char(idx_param)});
-                    if ({_._param_name(idx_param)}_type != except_type)
+                    auto expected_type_{idx_param} = static_cast<uint8_t>(py::dlpack::{_._expected_dtype_char(idx_param)});
+                    if ({_._param_name(idx_param)}_type != expected_type_{idx_param})
                         throw std::runtime_error(std::string(R"msg(
                                 Bad type!  Expected a numpy array of native type:
                                             {_._const_space_or_empty(idx_param)}{_._original_raw_type(idx_param)} *
