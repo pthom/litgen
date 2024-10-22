@@ -29,7 +29,7 @@ test = ["pytest"]
 
 [tool.scikit-build]
 wheel.expand-macos-universal-tags = true
-wheel.packages = ["bindings/lg_mylib"]
+wheel.packages = ["_stubs/lg_mylib"]
 
 
 [tool.cibuildwheel]

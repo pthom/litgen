@@ -11,6 +11,7 @@ class BoxedBool:
     value: bool
     def __init__(self, v: bool = False) -> None:
         pass
+
     def __repr__(self) -> str:
         pass
 
@@ -18,6 +19,7 @@ class BoxedInt:
     value: int
     def __init__(self, v: int = 0) -> None:
         pass
+
     def __repr__(self) -> str:
         pass
 
@@ -25,6 +27,7 @@ class BoxedString:
     value: str
     def __init__(self, v: str = "") -> None:
         pass
+
     def __repr__(self) -> str:
         pass
 
@@ -32,6 +35,7 @@ class BoxedUnsignedLong:
     value: int
     def __init__(self, v: int = 0) -> None:
         pass
+
     def __repr__(self) -> str:
         pass
 
@@ -308,9 +312,11 @@ class FooOverload:
     @overload
     def add_overload(self, a: int, b: int) -> int:  # type: ignore
         pass
+
     @overload
     def add_overload(self, a: int, b: int, c: int) -> int:  # type: ignore
         pass
+
     def __init__(self) -> None:
         """Auto-generated default constructor"""
         pass
@@ -388,6 +394,7 @@ class MyClass:
     def calc(self, x: int) -> int:
         """calc: example of simple method"""
         pass
+
     def set_message(self, m: str) -> None:
         """set_message: another example of simple method"""
         pass
@@ -409,6 +416,7 @@ class MySingletonClass:
     value: int = 0
     def __init__(self) -> None:
         pass
+
     @staticmethod
     def instance() -> MySingletonClass:
         """py::return_value_policy::reference"""
@@ -421,6 +429,7 @@ class MyFinalClass:
 
     def foo(self) -> int:
         pass
+
     def __init__(self) -> None:
         """Auto-generated default constructor"""
         pass
@@ -439,6 +448,7 @@ class MyStructDynamic:
 class MyStructWithNestedEnum:
     class Choice(enum.Enum):
         a = enum.auto()  # (= 0)
+
     def handle_choice(
         self, value: MyStructWithNestedEnum.Choice = MyStructWithNestedEnum.Choice.a
     ) -> int:
@@ -446,6 +456,7 @@ class MyStructWithNestedEnum:
         When building the bindings, we need to add MyStructWithNestedEnum::
         """
         pass
+
     def __init__(self) -> None:
         """Auto-generated default constructor"""
         pass
@@ -483,6 +494,7 @@ class Copyable_ExplicitCopyCtor:
     @overload
     def __init__(self) -> None:
         pass
+
     @overload
     def __init__(self, other: Copyable_ExplicitCopyCtor) -> None:
         pass
@@ -595,13 +607,16 @@ class IntWrapper:
     # arithmetic operators
     def __add__(self, b: IntWrapper) -> IntWrapper:
         pass
+
     @overload
     def __sub__(self, b: IntWrapper) -> IntWrapper:
         pass
+
     @overload
     def __neg__(self) -> IntWrapper:
         """Unary minus operator"""
         pass
+
     def __lt__(self, b: IntWrapper) -> bool:
         """Comparison operator"""
         pass
@@ -609,6 +624,7 @@ class IntWrapper:
     @overload
     def __iadd__(self, b: IntWrapper) -> IntWrapper:
         pass
+
     @overload
     def __iadd__(self, b: int) -> IntWrapper:
         pass
@@ -616,6 +632,7 @@ class IntWrapper:
     @overload
     def __call__(self, b: IntWrapper) -> int:
         pass
+
     @overload
     def __call__(self, b: int) -> int:
         pass
@@ -631,30 +648,39 @@ class IntWrapperSpaceship:
     @overload
     def __lt__(self, o: IntWrapperSpaceship) -> bool:
         pass
+
     @overload
     def __le__(self, o: IntWrapperSpaceship) -> bool:
         pass
+
     @overload
     def __eq__(self, o: IntWrapperSpaceship) -> bool:
         pass
+
     @overload
     def __ge__(self, o: IntWrapperSpaceship) -> bool:
         pass
+
     @overload
     def __gt__(self, o: IntWrapperSpaceship) -> bool:
         pass
+
     @overload
     def __lt__(self, o: int) -> bool:
         pass
+
     @overload
     def __le__(self, o: int) -> bool:
         pass
+
     @overload
     def __eq__(self, o: int) -> bool:
         pass
+
     @overload
     def __ge__(self, o: int) -> bool:
         pass
+
     @overload
     def __gt__(self, o: int) -> bool:
         pass
@@ -760,6 +786,7 @@ class FooTemplateFunctionTest:
     #      <template specializations for function SumVectorAndCArray>
     def sum_vector_and_c_array_int(self, xs: List[int], other_values: List[int]) -> int:
         pass
+
     def sum_vector_and_c_array_string(
         self, xs: List[str], other_values: List[str]
     ) -> str:
@@ -792,13 +819,16 @@ class MyTemplateClass_int:  # Python specialization for MyTemplateClass<int>
     def __init__(self) -> None:
         """Standard constructor"""
         pass
+
     @overload
     def __init__(self, v: List[int]) -> None:
         """Constructor that will need a parameter adaptation"""
         pass
+
     def sum(self) -> int:
         """Standard method"""
         pass
+
     def sum2(self, v: List[int]) -> int:
         """Method that requires a parameter adaptation"""
         pass
@@ -810,13 +840,16 @@ class MyTemplateClass_string:  # Python specialization for MyTemplateClass<std::
     def __init__(self) -> None:
         """Standard constructor"""
         pass
+
     @overload
     def __init__(self, v: List[str]) -> None:
         """Constructor that will need a parameter adaptation"""
         pass
+
     def sum(self) -> str:
         """Standard method"""
         pass
+
     def sum2(self, v: List[str]) -> str:
         """Method that requires a parameter adaptation"""
         pass
@@ -953,6 +986,7 @@ class math_functions:  # Proxy class that introduces typings for the *submodule*
     @overload
     def vectorizable_sum(x: float, y: float) -> float:
         pass
+
     @staticmethod
     @overload
     def vectorizable_sum(x: np.ndarray, y: np.ndarray) -> np.ndarray:
@@ -972,6 +1006,7 @@ class animals:  # Proxy class that introduces typings for the *submodule* animal
     class Dog(Animals.Animal):
         def __init__(self, name: str) -> None:
             pass
+
         def bark(self) -> str:
             pass
 
@@ -984,6 +1019,7 @@ class home:  # Proxy class that introduces typings for the *submodule* home
     class Pet:
         def is_pet(self) -> bool:
             pass
+
         def __init__(self) -> None:
             """Auto-generated default constructor"""
             pass
@@ -991,6 +1027,7 @@ class home:  # Proxy class that introduces typings for the *submodule* home
     class PetDog(Animals.Dog, Home.Pet):
         def __init__(self, name: str) -> None:
             pass
+
         def bark(self) -> str:
             pass
 
@@ -1007,6 +1044,7 @@ class aaa:  # Proxy class that introduces typings for the *submodule* aaa
         def __init__(self, value: int = int()) -> None:
             """Auto-generated default constructor with named params"""
             pass
+
     #      </template specializations for class Copyable_Template>
     #  ------------------------------------------------------------------------
 
@@ -1023,14 +1061,17 @@ class root:  # Proxy class that introduces typings for the *submodule* root
         class MyVirtualClass:
             def foo_concrete(self, x: int, name: str) -> str:
                 pass
+
             def foo_virtual_public_pure(self) -> int:  # overridable (pure virtual)
                 pass
+
             def __init__(self) -> None:
                 """Autogenerated default constructor"""
                 pass
             # <protected_methods>
             def foo_virtual_protected(self, x: int) -> int:  # overridable
                 pass
+
             def foo_virtual_protected_const_const(
                 self, name: str
             ) -> str:  # overridable
@@ -1044,10 +1085,13 @@ class root:  # Proxy class that introduces typings for the *submodule* root
 
             def __init__(self) -> None:
                 pass
+
             def foo_virtual_public_pure(self) -> int:  # overridable
                 pass
+
             def foo_derivate(self) -> int:  # overridable
                 pass
+
     # </submodule inner>
 
 # </submodule root>
@@ -1063,6 +1107,7 @@ class some_namespace:  # Proxy class that introduces typings for the *submodule*
 
             def __init__(self, value: int = 10) -> None:
                 pass
+
             def add(self, a: int, b: int) -> int:
                 pass
 
@@ -1071,6 +1116,7 @@ class some_namespace:  # Proxy class that introduces typings for the *submodule*
             one = enum.auto()  # (= 1)
             two = enum.auto()  # (= 2)
             three = enum.auto()  # (= 3)
+
         inner_struct: InnerStruct = InnerStruct()
         inner_enum: InnerEnum = InnerEnum.three
         def __init__(
@@ -1087,26 +1133,34 @@ class some_namespace:  # Proxy class that introduces typings for the *submodule*
         def toggle_bool_pointer(self, v: BoxedBool) -> None:
             """//, int vv[2])"""
             pass
+
         def toggle_bool_pointer_get_points(
             self, v: BoxedBool, vv_0: BoxedInt, vv_1: BoxedInt
         ) -> None:
             pass
+
         def modify_string(self, s: BoxedString) -> None:
             pass
+
         def change_bool_int(self, label: str, value: int) -> Tuple[bool, int]:
             pass
+
         def add_inside_buffer(self, buffer: np.ndarray, number_to_add: int) -> None:
             pass
+
         def templated_mul_inside_buffer(
             self, buffer: np.ndarray, factor: float
         ) -> None:
             pass
+
         def const_array2_add(self, values: List[int]) -> int:
             pass
+
         def c_string_list_total_size(
             self, items: List[str], output_0: BoxedInt, output_1: BoxedInt
         ) -> int:
             pass
+
         def __init__(self) -> None:
             """Auto-generated default constructor"""
             pass
@@ -1119,31 +1173,39 @@ class some_namespace:  # Proxy class that introduces typings for the *submodule*
         def toggle_bool_pointer(v: BoxedBool) -> None:
             """//, int vv[2])"""
             pass
+
         @staticmethod
         def toggle_bool_pointer_get_points(
             v: BoxedBool, vv_0: BoxedInt, vv_1: BoxedInt
         ) -> None:
             pass
+
         @staticmethod
         def modify_string(s: BoxedString) -> None:
             pass
+
         @staticmethod
         def change_bool_int(label: str, value: int) -> Tuple[bool, int]:
             pass
+
         @staticmethod
         def add_inside_buffer(buffer: np.ndarray, number_to_add: int) -> None:
             pass
+
         @staticmethod
         def templated_mul_inside_buffer(buffer: np.ndarray, factor: float) -> None:
             pass
+
         @staticmethod
         def const_array2_add(values: List[int]) -> int:
             pass
+
         @staticmethod
         def c_string_list_total_size(
             items: List[str], output_0: BoxedInt, output_1: BoxedInt
         ) -> int:
             pass
+
     # </submodule some_inner_namespace>
 
 # </submodule some_namespace>
@@ -1155,6 +1217,7 @@ class inner:  # Proxy class that introduces typings for the *submodule* inner
     @staticmethod
     def foo_inner() -> int:
         pass
+
     @staticmethod
     def foo_inner2() -> int:
         pass
@@ -1175,14 +1238,17 @@ class n:  # Proxy class that introduces typings for the *submodule* n
 
     class E(enum.Enum):
         a = enum.auto()  # (= 0)
+
     @staticmethod
     @overload
     def foo(e: EC = EC.a) -> None:
         pass
+
     @staticmethod
     @overload
     def foo(e: E = E.a) -> None:
         pass
+
     @staticmethod
     @overload
     def foo(e: E = E.a, s: S = S()) -> None:
@@ -1229,18 +1295,22 @@ class a:  # Proxy class that introduces typings for the *submodule* a
 
         class E(enum.Enum):
             a = enum.auto()  # (= 0)
+
         @staticmethod
         @overload
         def foo(e: EC = EC.a) -> None:
             pass
+
         @staticmethod
         @overload
         def foo(e: E = E.a) -> None:
             pass
+
         @staticmethod
         @overload
         def foo(e: E = E.a, s: S = S()) -> None:
             pass
+
     # </submodule n>
 
 # </submodule a>

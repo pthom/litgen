@@ -38,12 +38,12 @@ endif()
 #########################################################################
 set(python_native_module_name _lg_mylib) # This is the native python module name
 set(python_wrapper_module_name lg_mylib) # This is the python wrapper around the native module
-set(python_module_sources bindings/module.cpp bindings/pybind_mylib.cpp) # native python module sources
+set(python_module_sources _pydef_pybind11/module.cpp _pydef_pybind11/pybind_mylib.cpp) # native python module sources
 
 pybind11_add_module(${python_native_module_name} ${python_module_sources})
 litgen_setup_module(
     ${bound_library}
     ${python_native_module_name}
     ${python_wrapper_module_name}
-    ${CMAKE_CURRENT_LIST_DIR}/bindings
+    ${CMAKE_CURRENT_LIST_DIR}/_pydef_pybind11
 )
