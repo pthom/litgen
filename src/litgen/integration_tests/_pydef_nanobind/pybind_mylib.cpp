@@ -1076,7 +1076,7 @@ void py_init_module_lg_mylib(py::module_& m)
 
 
     auto pyClassSmartElem =
-        py::class_<SmartElem, std::shared_ptr<SmartElem>>
+        py::class_<SmartElem>
             (m, "SmartElem", "")
         .def("__init__", [](
         int x = 0)
