@@ -39,8 +39,6 @@ void py_init_module_mylib(py::module_& m)
         py::module_ pyNsMathFunctions = m.def_submodule("math_functions", " Vectorizable functions example\n    Numeric functions (i.e. function accepting and returning only numeric params or py::array), can be vectorized\n    i.e. they will accept numpy arrays as an input.\n\n Auto-vectorization is enabled via the following options:\n     options.fn_namespace_vectorize__regex: str = r\"^MathFunctions$\"\n     options.fn_vectorize__regex = r\".*\"\n");
         pyNsMathFunctions.def("vectorizable_sum",
             MathFunctions::vectorizable_sum, py::arg("x"), py::arg("y"));
-        pyNsMathFunctions.def("vectorizable_sum",
-            py::vectorize(MathFunctions::vectorizable_sum), py::arg("x"), py::arg("y"));
     } // </namespace MathFunctions>
     ////////////////////    </generated_from:basic_test.h>    ////////////////////
 

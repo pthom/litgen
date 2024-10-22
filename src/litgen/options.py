@@ -178,7 +178,7 @@ class LitgenOptions:
     fn_template_decorate_in_stub: bool = True
 
     # ------------------------------------------------------------------------------
-    # Vectorize functions options
+    # Vectorize functions options (pybind11 only, not compatible with nanobind)
     # ------------------------------------------------------------------------------
     # Numeric functions (i.e. function accepting and returning only numeric params or py::array), can be vectorized
     # i.e. they will accept numpy arrays as an input.
