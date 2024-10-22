@@ -692,7 +692,7 @@ class AdaptedFunction(AdaptedElement):
                 replace_tokens.pydef_method_creation_part = ".def(py::init("
                 replace_tokens.maybe_close_paren_if_ctor = ")"
             else:
-                replace_tokens.pydef_method_creation_part = ".def('__init__', "
+                replace_tokens.pydef_method_creation_part = ".def(\"__init__\", "
                 replace_tokens.maybe_close_paren_if_ctor = ""
         else:
             replace_tokens.pydef_method_creation_part = self._pydef_method_creation_part()
