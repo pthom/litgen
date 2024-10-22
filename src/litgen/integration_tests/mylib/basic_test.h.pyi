@@ -28,10 +28,6 @@ def my_add(a: int, b: int) -> int:
 def my_mul(a: int, b: int) -> int:
     pass
 
-def my_generic_function(*args, **kwargs) -> int:
-    """This is a generic function for python, accepting (*args, **kwargs) as arguments"""
-    pass
-
 # <submodule math_functions>
 class math_functions:  # Proxy class that introduces typings for the *submodule* math_functions
     pass  # (This corresponds to a C++ namespace. All method are static!)

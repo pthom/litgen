@@ -199,9 +199,6 @@ void py_init_module_lg_mylib(py::module& m)
     m.def("my_mul",
         my_mul, py::arg("a"), py::arg("b"));
 
-    m.def("my_generic_function",
-        my_generic_function, "This is a generic function for python, accepting (*args, **kwargs) as arguments");
-
     m.def("const_array2_add",
         [](const std::array<int, 2>& values) -> int
         {
