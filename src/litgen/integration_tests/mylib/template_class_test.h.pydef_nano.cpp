@@ -28,7 +28,7 @@ void py_init_module_mylib(py::module_& m)
         .def_rw("values", &MyTemplateClass<int>::values, "")
         .def(py::init<>(),
             "Standard constructor")
-        .def('__init__',
+        .def("__init__",
             [](const std::array<int, 2>& v) -> std::unique_ptr<MyTemplateClass<int>>
             {
                 auto ctor_wrapper = [](const int v[2]) ->  std::unique_ptr<MyTemplateClass<int>>
@@ -67,7 +67,7 @@ void py_init_module_mylib(py::module_& m)
         .def_rw("values", &MyTemplateClass<std::string>::values, "")
         .def(py::init<>(),
             "Standard constructor")
-        .def('__init__',
+        .def("__init__",
             [](const std::array<std::string, 2>& v) -> std::unique_ptr<MyTemplateClass<std::string>>
             {
                 auto ctor_wrapper = [](const std::string v[2]) ->  std::unique_ptr<MyTemplateClass<std::string>>

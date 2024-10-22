@@ -670,7 +670,7 @@ void py_init_module_lg_mylib(py::module_& m)
     auto pyClassColor4 =
         py::class_<Color4>
             (m, "Color4", "")
-        .def('__init__',
+        .def("__init__",
             [](const std::array<uint8_t, 4>& _rgba) -> std::unique_ptr<Color4>
             {
                 auto ctor_wrapper = [](const uint8_t _rgba[4]) ->  std::unique_ptr<Color4>
@@ -978,7 +978,7 @@ void py_init_module_lg_mylib(py::module_& m)
         .def_rw("values", &MyTemplateClass<int>::values, "")
         .def(py::init<>(),
             "Standard constructor")
-        .def('__init__',
+        .def("__init__",
             [](const std::array<int, 2>& v) -> std::unique_ptr<MyTemplateClass<int>>
             {
                 auto ctor_wrapper = [](const int v[2]) ->  std::unique_ptr<MyTemplateClass<int>>
@@ -1017,7 +1017,7 @@ void py_init_module_lg_mylib(py::module_& m)
         .def_rw("values", &MyTemplateClass<std::string>::values, "")
         .def(py::init<>(),
             "Standard constructor")
-        .def('__init__',
+        .def("__init__",
             [](const std::array<std::string, 2>& v) -> std::unique_ptr<MyTemplateClass<std::string>>
             {
                 auto ctor_wrapper = [](const std::string v[2]) ->  std::unique_ptr<MyTemplateClass<std::string>>
