@@ -11,6 +11,7 @@ struct FooBrace {
 };
 
 
+// Must be last in the generation (see explanation inside test_change_decl_stmt_to_function_decl_if_suspicious)
 MY_API int FnBrace(FooBrace foo_brace = {}, std::vector<int> ints = {1, 2, 3})
 {
     return foo_brace.int_values[0] + ints[0];

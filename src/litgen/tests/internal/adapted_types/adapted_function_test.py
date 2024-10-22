@@ -628,3 +628,105 @@ def test_adapted_function_api():
             pass
         """,
     )
+
+
+def test_change_decl_stmt_to_function_decl_if_suspicious():
+    # See https://github.com/srcML/srcML/issues/1833
+    #   void Foo(int v = 0 );
+    # is correctly parsed as a function_decl
+    #
+    # However,
+    #   void Foo(int v = {} );
+    # is parsed as a decl_stmt
+    #
+    # Here, we test change_decl_stmt_to_function_decl_if_suspicious which is painful workaround
+
+    code = "void Foo(int v = {} );"
+    options = litgen.LitgenOptions()
+    generated_code = litgen.generate_code(options, code)
+    code_utils.assert_are_codes_equal(
+        generated_code.stub_code,
+        """
+        def foo(v: int = int()) -> None:
+            pass
+        """)
+
+
+    code = """
+    int foo(int a = {}) { return 42; }
+    """
+    options = litgen.LitgenOptions()
+    generated_code = litgen.generate_code(options, code)
+    # print(generated_code.stub_code)
+    code_utils.assert_are_codes_equal(
+        generated_code.stub_code,
+        """
+        def foo(a: int = int()) -> int:
+            pass
+        """
+    )
+
+    code = """
+    int foo(int a = {});
+    void foo2();
+    """
+    options = litgen.LitgenOptions()
+    generated_code = litgen.generate_code(options, code)
+    # print(generated_code.stub_code)
+    code_utils.assert_are_codes_equal(
+        generated_code.stub_code,
+        """
+        def foo(a: int = int()) -> int:
+            pass
+        def foo2() -> None:
+            pass
+        """
+    )
+
+    """
+    Known issue: change_decl_stmt_to_function_decl_if_suspicious will fail if
+        * the function has a body in the header
+        * some other statement is present after: in this case, srcML will "mix the two" in one decl...
+
+    Example:
+    >  echo "int FnBrace(int a = {}) { return 42; }  int a;" | srcml_bin --language C++
+        <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+        <unit
+            xmlns="http://www.srcML.org/srcML/src" revision="1.0.0" language="C++">
+            <decl_stmt>
+                <decl>
+                    <type>
+                        <name>int</name>
+                    </type>
+                    <name>FnBrace</name>
+                    <argument_list>(
+                        <argument>
+                            <expr>
+                                <name>int</name>
+                                <name>a</name>
+                                <operator>=</operator>
+                                <block>{}</block>
+                            </expr>
+                        </argument>)
+                    </argument_list>
+                    <argument_list>{ return
+                        <argument>
+                            <expr>
+                                <literal type="number">42</literal>
+                            </expr>
+                        </argument>; }
+                    </argument_list>
+                    <name>int</name>               <<<< Two statements are mixed !!!!!
+                    <name>a</name>
+                </decl>;
+            </decl_stmt>
+        </unit>
+    """
+    code = """
+    int foo(int a = {}) { return 42; }
+    void foo2();
+    """
+    options = litgen.LitgenOptions()
+    generated_code = litgen.generate_code(options, code)
+    # print(generated_code.stub_code)
+    code_utils.assert_are_codes_equal( generated_code.stub_code, "")

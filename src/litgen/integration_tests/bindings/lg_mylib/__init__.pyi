@@ -888,6 +888,14 @@ FLOAT = 3.14
 #                       mylib/class_default_ctor_test.h included by mylib/mylib_main/mylib.h                   //
 # //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+# ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+#                       mylib/mylib_main/mylib.h continued                                                     //
+# //////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+##include "mylib/smart_ptr.h"
+
+# brace_init_default_value.h must be included last (see explanation inside test_change_decl_stmt_to_function_decl_if_suspicious)
+
 class FooBrace:
     int_values: List[int] = List[int](1, 2, 3)
     dict_string_int: Dict[str, int] = Dict[str, int]({"abc", 3})
