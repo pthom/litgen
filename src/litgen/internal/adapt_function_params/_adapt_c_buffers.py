@@ -577,6 +577,8 @@ def adapt_c_buffers(adapted_function: AdaptedFunction) -> Optional[LambdaAdapter
 
     # replaces _make_adapted_lambda_code_end() for buffers (which are more complex)
     if helper.has_template_buffer_param():
+        if options.bind_library == BindLibraryType.nanobind:
+            raise SrcmlcppException("binding with nanobind does not support template buffers!")
         lambda_adapter.lambda_template_end = helper.make_adapted_lambda_code_end_template_buffer()
 
     lambda_adapter.new_function_infos.parameter_list.parameters = new_function_params
