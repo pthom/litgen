@@ -150,11 +150,11 @@ void py_init_module_mylib(py::module_& m)
                     auto add_inside_buffer_adapt_c_buffers = [&self](py::ndarray<uint8_t> & buffer, uint8_t number_to_add)
                     {
                         // convert py::array to C standard buffer (mutable)
-                        void * buffer_from_pyarray = buffer.mutable_data();
+                        void * buffer_from_pyarray = buffer.data();
                         size_t buffer_count = buffer.shape(0);
                         uint8_t buffer_type = buffer.dtype().code;
-                        auto except_type = static_cast<uint8_t>(py::dlpack::dtype_code::UInt);
-                        if (buffer_type != except_type)
+                        auto expected_type_0 = static_cast<uint8_t>(py::dlpack::dtype_code::UInt);
+                        if (buffer_type != expected_type_0)
                             throw std::runtime_error(std::string(R"msg(
                                     Bad type!  Expected a numpy array of native type:
                                                 uint8_t *
@@ -174,7 +174,7 @@ void py_init_module_mylib(py::module_& m)
                     auto templated_mul_inside_buffer_adapt_c_buffers = [&self](py::ndarray<T> & buffer, double factor)
                     {
                         // convert py::array to C standard buffer (mutable)
-                        void * buffer_from_pyarray = buffer.mutable_data();
+                        void * buffer_from_pyarray = buffer.data();
                         size_t buffer_count = buffer.shape(0);
 
                         #ifdef _WIN32
@@ -332,11 +332,11 @@ void py_init_module_mylib(py::module_& m)
                     auto add_inside_buffer_adapt_c_buffers = [](py::ndarray<uint8_t> & buffer, uint8_t number_to_add)
                     {
                         // convert py::array to C standard buffer (mutable)
-                        void * buffer_from_pyarray = buffer.mutable_data();
+                        void * buffer_from_pyarray = buffer.data();
                         size_t buffer_count = buffer.shape(0);
                         uint8_t buffer_type = buffer.dtype().code;
-                        auto except_type = static_cast<uint8_t>(py::dlpack::dtype_code::UInt);
-                        if (buffer_type != except_type)
+                        auto expected_type_0 = static_cast<uint8_t>(py::dlpack::dtype_code::UInt);
+                        if (buffer_type != expected_type_0)
                             throw std::runtime_error(std::string(R"msg(
                                     Bad type!  Expected a numpy array of native type:
                                                 uint8_t *
@@ -357,7 +357,7 @@ void py_init_module_mylib(py::module_& m)
                     auto templated_mul_inside_buffer_adapt_c_buffers = [](py::ndarray<T> & buffer, double factor)
                     {
                         // convert py::array to C standard buffer (mutable)
-                        void * buffer_from_pyarray = buffer.mutable_data();
+                        void * buffer_from_pyarray = buffer.data();
                         size_t buffer_count = buffer.shape(0);
 
                         #ifdef _WIN32
