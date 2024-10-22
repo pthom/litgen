@@ -652,7 +652,8 @@ class AdaptedClass(AdaptedElement):
 
             replacements.comment = self._elm_comment_pydef_one_line()
 
-            if code_utils.does_match_regex(options.class_held_as_shared__regex, self.cpp_element().class_name):
+            if (code_utils.does_match_regex(options.class_held_as_shared__regex, self.cpp_element().class_name)
+                and self.options.bind_library == BindLibraryType.pybind11):
                 replacements.maybe_shared_ptr_holder = f", std::shared_ptr<{qualified_struct_name}>"
             else:
                 replacements.maybe_shared_ptr_holder = ""

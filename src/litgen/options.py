@@ -445,7 +445,8 @@ class LitgenOptions:
     class_iterables_infos: ClassIterablesInfos
 
     # class_held_as_shared__regex:
-    # Regex specifying the list of class names that should be held using std::shared_ptr in the generated bindings.
+    # Regex specifying the list of class names that should be held using std::shared_ptr in the generated bindings
+    # (when using pybind11. This is unused for nanobind)
     #
     # **Purpose:**
     # By default, pybind11 uses `std::unique_ptr` as the holder type for bound classes.
