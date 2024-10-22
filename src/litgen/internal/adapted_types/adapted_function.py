@@ -18,7 +18,7 @@ from srcmlcpp.cpp_types import (
 )
 from srcmlcpp.scrml_warning_settings import WarningType
 
-from litgen import LitgenOptions
+from litgen import LitgenOptions, BindLibraryType
 from litgen.internal import cpp_to_python
 from litgen.internal.adapted_types.adapted_decl import AdaptedDecl
 from litgen.internal.adapted_types.adapted_element import AdaptedElement
@@ -65,6 +65,20 @@ class AdaptedParameter(AdaptedElement):
         is_const = "const" in type_specifiers
         is_modifiable = is_reference_or_pointer and not is_const
         r = is_modifiable and is_python_immutable
+        return r
+
+    def is_const_char_pointer_with_default_null(self) -> bool:
+        type_modifiers = self.cpp_element().decl.cpp_type.modifiers
+        type_specifiers = self.cpp_element().decl.cpp_type.specifiers
+        type_names = self.cpp_element().decl.cpp_type.typenames
+        initial_value_cpp = self.cpp_element().decl.initial_value_code
+
+        is_pointer = type_modifiers == ["*"]
+        is_const = "const" in type_specifiers
+        is_char = "char" in type_names
+        is_default_null = initial_value_cpp in ["NULL", "nullptr"]
+
+        r = is_pointer and is_const and is_char and is_default_null
         return r
 
     def adapted_decl(self) -> AdaptedDecl:
@@ -323,6 +337,16 @@ class AdaptedFunction(AdaptedElement):
             if code_utils.does_match_regex(reg, param.decl.cpp_type.str_code()):
                 return False
 
+        # Check options.fn_exclude_by_name_and_signature
+        target = options.fn_exclude_by_name_and_signature.get(cpp_function.function_name, "")
+        if target:
+            signature = ", ".join(
+                param.decl.cpp_type.str_code()
+                for param in cpp_function.parameter_list.parameters
+            )
+            if target == signature:
+                return False
+
         def has_one_ok_prefix() -> bool:
             has_api_prefix = False
             for api_prefix in options.srcmlcpp_options.functions_api_prefixes_list():
@@ -513,7 +537,10 @@ class AdaptedFunction(AdaptedElement):
         # Fill maybe_return_value_policy
         return_value_policy = self.return_value_policy
         if len(return_value_policy) > 0:
-            replace_lines.maybe_return_value_policy = f"pybind11::return_value_policy::{return_value_policy}"
+            if self.options.bind_library == BindLibraryType.pybind11:
+                replace_lines.maybe_return_value_policy = f"py::return_value_policy::{return_value_policy}"
+            else:
+                replace_lines.maybe_return_value_policy = f"py::rv_policy::{return_value_policy}"
         else:
             replace_lines.maybe_return_value_policy = None
 
@@ -661,8 +688,12 @@ class AdaptedFunction(AdaptedElement):
         replace_tokens._i_ = self.options._indent_cpp_spaces()
 
         if self.is_constructor():
-            replace_tokens.pydef_method_creation_part = ".def(py::init("
-            replace_tokens.maybe_close_paren_if_ctor = ")"
+            if self.options.bind_library == BindLibraryType.pybind11:
+                replace_tokens.pydef_method_creation_part = ".def(py::init("
+                replace_tokens.maybe_close_paren_if_ctor = ")"
+            else:
+                replace_tokens.pydef_method_creation_part = ".def('__init__', "
+                replace_tokens.maybe_close_paren_if_ctor = ""
         else:
             replace_tokens.pydef_method_creation_part = self._pydef_method_creation_part()
             replace_tokens.maybe_close_paren_if_ctor = ""
@@ -861,9 +892,12 @@ class AdaptedFunction(AdaptedElement):
         """Parses the return_value_policy from the function end of line comment
         For example:
             // A static instance (which python shall not delete, as enforced by the marker return_policy below)
-            static Foo& Instance() { static Foo instance; return instance; }       // py::return_value_policy::reference
+            static Foo& Instance() { static Foo instance; return instance; }       // py::rv_policy::reference
         """
-        token = "py::return_value_policy::"
+        if self.options.bind_library == BindLibraryType.pybind11:
+            token = "py::return_value_policy::"
+        else:
+            token = "py::rv_policy::"
 
         # Try to find it in eol comment (and clean eol comment if found)
         eol_comment = self.cpp_element().cpp_element_comments.comment_end_of_line
@@ -887,7 +921,7 @@ class AdaptedFunction(AdaptedElement):
             comment_on_previous_lines = self.cpp_element().cpp_element_comments.comment_on_previous_lines
             if len(comment_on_previous_lines) > 0 and comment_on_previous_lines[-1] != "\n":
                 comment_on_previous_lines += "\n"
-            comment_on_previous_lines += f"return_value_policy::{self.return_value_policy}"
+            comment_on_previous_lines += f"{token}{self.return_value_policy}"
             self.cpp_element().cpp_element_comments.comment_on_previous_lines = comment_on_previous_lines
 
         # Take options.fn_force_return_policy_reference_for_pointers into account

@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from enum import Enum
 from typing import Any, Callable, List
 
 from codemanip import code_utils
@@ -13,6 +14,11 @@ from litgen.internal.class_iterable_info import ClassIterablesInfos
 
 class Blah:
     values: List[int] = []
+
+
+class BindLibraryType(Enum):
+    pybind11 = 1
+    nanobind = 2
 
 
 class LitgenOptions:
@@ -32,6 +38,12 @@ class LitgenOptions:
     # - To match everything, use r".*"
     # - It is advised to prefix your regex strings with "r" (in order to use raw strings)
     # ------------------------------------------------------------------------------
+
+    ################################################################################
+    #    <bind library options>
+    ################################################################################
+    #
+    bind_library: BindLibraryType = BindLibraryType.pybind11
 
     ################################################################################
     #    <srcmlcpp options>
@@ -116,6 +128,13 @@ class LitgenOptions:
     # Note: this is distinct from `fn_params_exclude_types__regex` which removes params
     # from the function signature, but not the function itself.
     fn_exclude_by_param_type__regex: str = ""
+
+    # Exclude function and methods by its name and signature
+    # For example:
+    #    options.fn_exclude_by_name_and_signature = {
+    #         "Selectable": "const char *, bool, ImGuiSelectableFlags, const ImVec2 &"
+    #     }
+    fn_exclude_by_name_and_signature: dict[str, str] = None
 
     # ------------------------------------------------------------------------------
     # Exclude some params by name or type
@@ -318,6 +337,18 @@ class LitgenOptions:
     # Set it to r".*" to apply this to all functions. Set it to "" to disable it
     fn_params_replace_modifiable_immutable_by_boxed__regex: str = ""
 
+    # ------------------------------------------------------------------------------
+    # Convert `const char* x = NULL` for Python passing None without TypeError
+    # ------------------------------------------------------------------------------
+    # Signatures like
+    #     void foo(const char* text = NULL)
+    # may be transformed to:
+    #     void foo(std::optional<std::string> text = std::nullopt)
+    # with a lambda function wrapping around original interface.
+    #
+    # NOTE: Enable this for nanobind.
+    fn_params_const_char_pointer_with_default_null: bool = False
+
     # As an alternative, we can also add the modified value to the returned type
     # of the function (which will now be a tuple)
     #
@@ -348,6 +379,17 @@ class LitgenOptions:
     member_exclude_by_name__regex: str = ""
     # Exclude members based on their type
     member_exclude_by_type__regex: str = ""
+    # Exclude certain members by a regex on their name, if class or struct name matched
+    # For example:
+    #   options.member_exclude_by_name_and_class__regex = {
+    #       "ImVector": join_string_by_pipe_char([
+    #           r"^Size$",
+    #           r"^Capacity$",
+    #           ...
+    #       ])
+    #   }
+    member_exclude_by_name_and_class__regex: dict[str, str] = None
+
     # Make certain members read-only by a regex on their name
     member_readonly_by_name__regex: str = ""
     # Make certain members read-only based on their type
@@ -521,6 +563,8 @@ class LitgenOptions:
     enum_flag_skip_count: bool = True
     # By default, all enums export rudimentary arithmetic and bit-level operations ( r".*" matches any enum name)
     enum_make_arithmetic__regex: str = r".*"
+    # Export all entries of the enumeration into the parent scope.
+    enum_export_values: bool = False
 
     ################################################################################
     #    <define adaptations>
@@ -620,3 +664,6 @@ class LitgenOptions:
 
         self.fn_custom_adapters = []
         self.namespaces_root = []
+
+        self.fn_exclude_by_name_and_signature = {}
+        self.member_exclude_by_name_and_class__regex = {}

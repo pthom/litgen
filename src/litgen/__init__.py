@@ -1,5 +1,10 @@
 from __future__ import annotations
-from litgen.options import LitgenOptions, TemplateClassOptions, TemplateFunctionsOptions
+from litgen.options import (
+    LitgenOptions,
+    BindLibraryType,
+    TemplateClassOptions,
+    TemplateFunctionsOptions,
+)
 
 from litgen.code_to_adapted_unit import code_to_adapted_unit, code_to_adapted_unit_in_context
 from litgen.internal.cpp_to_python import (
@@ -21,6 +26,7 @@ from codemanip.code_replacements import RegexReplacement, RegexReplacementList
 __all__ = [
     # Main API
     "LitgenOptions",
+    "BindLibraryType",
     "TemplateClassOptions",
     "TemplateFunctionsOptions",
     "generate_code",
