@@ -413,6 +413,8 @@ class AdaptedFunction(AdaptedElement):
         return r
 
     def shall_vectorize(self) -> bool:
+        if self.options.bind_library != BindLibraryType.pybind11:
+            return False
         ns_name = self.cpp_element().cpp_scope_str(include_self=False)
         match_ns_name = code_utils.does_match_regex(self.options.fn_namespace_vectorize__regex, ns_name)
         match_fn_name = code_utils.does_match_regex(self.options.fn_vectorize__regex, self.cpp_element().function_name)
