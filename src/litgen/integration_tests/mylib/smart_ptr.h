@@ -2,6 +2,8 @@
 #include <memory>
 #include <vector>
 
+// With pybind11, SmartElem is mentioned in options.class_held_as_shared__regex
+// (because it might be stored as a shared_ptr in the generated code)
 struct SmartElem {
     int x = 0;
 };

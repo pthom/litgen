@@ -1,9 +1,7 @@
 #include <nanobind/nanobind.h>
 #include <nanobind/stl/string.h>
-#include <nanobind/stl/function.h>
 #include <nanobind/trampoline.h>
 #include <nanobind/ndarray.h>
-//#include <nanobind/numpy.h>
 
 #include "mylib/mylib_main/mylib.h"
 
@@ -1077,7 +1075,7 @@ void py_init_module_lg_mylib(py::module_& m)
 
     auto pyClassSmartElem =
         py::class_<SmartElem>
-            (m, "SmartElem", "")
+            (m, "SmartElem", " With pybind11, SmartElem is mentioned in options.class_held_as_shared__regex\n (because it might be stored as a shared_ptr in the generated code)")
         .def("__init__", [](
         int x = 0)
         {
