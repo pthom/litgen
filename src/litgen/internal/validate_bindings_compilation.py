@@ -45,8 +45,10 @@ def validate_bindings_compilation(
 
     INCLUDE_NANOBIND = """
 #include <memory>
+#include <array>
 #include <nanobind/nanobind.h>
 #include <nanobind/stl/string.h>
+#include <nanobind/stl/array.h>
 #include <nanobind/trampoline.h>
 #include <nanobind/ndarray.h>
 
@@ -55,6 +57,7 @@ namespace py = nanobind;
 
     INCLUDE_PYBIND = """
 #include <memory>
+#include <array>
 #include <pybind11/pybind11.h>
 #include <pybind11/stl.h>
 #include <pybind11/functional.h>

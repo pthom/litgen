@@ -874,7 +874,15 @@ class AdaptedFunction(AdaptedElement):
 
     def _pydef_pyarg_list(self) -> list[str]:
         pyarg_strs: list[str] = []
-        for param in self.cpp_adapted_function.parameter_list.parameters:
+        for i, param in enumerate(self.cpp_adapted_function.parameter_list.parameters):
+            # For nanobind, skip first "self" argument in constructors
+            is_nanobind = self.options.bind_library == BindLibraryType.nanobind
+            if is_nanobind:
+                is_ctor = self.is_constructor()
+                is_first_self_arg = i == 0 and param.decl.decl_name == "self"
+                if is_ctor and is_first_self_arg:
+                    continue
+
             param = self._pydef_adapt_param_if_using_inner_class(param)
             adapted_decl = AdaptedDecl(self.lg_context, param.decl)
 
