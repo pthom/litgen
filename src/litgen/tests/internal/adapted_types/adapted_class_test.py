@@ -692,3 +692,58 @@ def test_ctor_placement_new():
             ;
         """
     )
+
+
+def test_numeric_array_member() -> None:
+    # Test that a numeric array member is correctly exposed as a numpy array
+    code  = """
+        struct Color4
+        {
+            uint8_t rgba[4];
+        };
+    """
+    options = litgen.LitgenOptions()
+
+    # Test with pybind11
+    options.bind_library = litgen.BindLibraryType.pybind11
+    generated_code = litgen.generate_code(options, code)
+    # print(generated_code.pydef_code)
+    code_utils.assert_are_codes_equal(
+        generated_code.pydef_code,
+        """
+        auto pyClassColor4 =
+            py::class_<Color4>
+                (m, "Color4", "")
+            .def(py::init<>()) // implicit default constructor
+            .def_property("rgba",
+                [](Color4 &self) -> pybind11::array
+                {
+                    auto dtype = pybind11::dtype(pybind11::format_descriptor<uint8_t>::format());
+                    auto base = pybind11::array(dtype, {4}, {sizeof(uint8_t)});
+                    return pybind11::array(dtype, {4}, {sizeof(uint8_t)}, self.rgba, base);
+                }, [](Color4& self) {},
+                "")
+            ;
+    """
+    )
+
+    # Test with nanobind
+    options.bind_library = litgen.BindLibraryType.nanobind
+    generated_code = litgen.generate_code(options, code)
+    # print(generated_code.pydef_code)
+    code_utils.assert_are_codes_equal(
+        generated_code.pydef_code,
+        """
+        auto pyClassColor4 =
+            py::class_<Color4>
+                (m, "Color4", "")
+            .def(py::init<>()) // implicit default constructor
+            .def_prop_ro("rgba",
+                [](Color4 &self) -> py::ndarray<uint8_t, py::numpy, py::shape<4>, py::c_contig>
+                {
+                    return self.rgba;
+                },
+                "")
+            ;
+    """
+    )

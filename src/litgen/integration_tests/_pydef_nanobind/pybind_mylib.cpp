@@ -581,17 +581,17 @@ void py_init_module_lg_mylib(py::module_& m)
             &MyClass::append_number_from_cpp,
             py::arg("v"),
             "However you can call dedicated modifying methods")
-        .def_prop_rw("values",
-            [](MyClass &self) -> py::ndarray<int>
+        .def_prop_ro("values",
+            [](MyClass &self) -> py::ndarray<int, py::numpy, py::shape<2>, py::c_contig>
             {
-                return py::ndarray<int>(self.values, {2});
-            }, [](MyClass& self) {},
+                return self.values;
+            },
             "")
-        .def_prop_rw("flags",
-            [](MyClass &self) -> py::ndarray<bool>
+        .def_prop_ro("flags",
+            [](MyClass &self) -> py::ndarray<bool, py::numpy, py::shape<3>, py::c_contig>
             {
-                return py::ndarray<bool>(self.flags, {3});
-            }, [](MyClass& self) {},
+                return self.flags;
+            },
             "")
         .def_ro_static("const_static_value", &MyClass::const_static_value, "")
         .def_rw_static("static_value", &MyClass::static_value, "")
@@ -688,11 +688,11 @@ void py_init_module_lg_mylib(py::module_& m)
             },
             py::arg("_rgba"),
             "The constructor params will automatically be \"adapted\" into std::array<uint8_t, 4>")
-        .def_prop_rw("rgba",
-            [](Color4 &self) -> py::ndarray<uint8_t>
+        .def_prop_ro("rgba",
+            [](Color4 &self) -> py::ndarray<uint8_t, py::numpy, py::shape<4>, py::c_contig>
             {
-                return py::ndarray<uint8_t>(self.rgba, {4});
-            }, [](Color4& self) {},
+                return self.rgba;
+            },
             "This member will be stored as a modifiable numpy array")
         ;
 

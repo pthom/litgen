@@ -42,11 +42,11 @@ void py_init_module_mylib(py::module_& m)
             },
             py::arg("_rgba"),
             "The constructor params will automatically be \"adapted\" into std::array<uint8_t, 4>")
-        .def_prop_rw("rgba",
-            [](Color4 &self) -> py::ndarray<uint8_t>
+        .def_prop_ro("rgba",
+            [](Color4 &self) -> py::ndarray<uint8_t, py::numpy, py::shape<4>, py::c_contig>
             {
-                return py::ndarray<uint8_t>(self.rgba, {4});
-            }, [](Color4& self) {},
+                return self.rgba;
+            },
             "This member will be stored as a modifiable numpy array")
         ;
     ////////////////////    </generated_from:class_adapt_test.h>    ////////////////////
