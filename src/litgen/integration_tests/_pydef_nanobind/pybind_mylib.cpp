@@ -1,6 +1,11 @@
 #include <nanobind/nanobind.h>
-#include <nanobind/stl/string.h>
 #include <nanobind/trampoline.h>
+#include <nanobind/stl/string.h>
+#include <nanobind/stl/vector.h>
+#include <nanobind/stl/optional.h>
+#include <nanobind/stl/shared_ptr.h>
+#include <nanobind/stl/unique_ptr.h>
+#include <nanobind/stl/map.h>
 #include <nanobind/ndarray.h>
 
 #include "mylib/mylib_main/mylib.h"
