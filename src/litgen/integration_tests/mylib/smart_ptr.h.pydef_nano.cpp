@@ -24,7 +24,7 @@ void py_init_module_mylib(py::module_& m)
     ////////////////////    <generated_from:smart_ptr.h>    ////////////////////
     auto pyClassSmartElem =
         py::class_<SmartElem>
-            (m, "SmartElem", "")
+            (m, "SmartElem", " With pybind11, SmartElem is mentioned in options.class_held_as_shared__regex\n (because it might be stored as a shared_ptr in the generated code)")
         .def("__init__", [](
         int x = 0)
         {

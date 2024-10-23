@@ -1177,7 +1177,7 @@ void py_init_module_lg_mylib(py::module& m)
 
     auto pyClassSmartElem =
         py::class_<SmartElem, std::shared_ptr<SmartElem>>
-            (m, "SmartElem", "")
+            (m, "SmartElem", " With pybind11, SmartElem is mentioned in options.class_held_as_shared__regex\n (because it might be stored as a shared_ptr in the generated code)")
         .def(py::init<>([](
         int x = 0)
         {
