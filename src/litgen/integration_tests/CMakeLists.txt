@@ -3,7 +3,7 @@ project(litgen)
 set(CMAKE_CXX_STANDARD 20)
 
 #option(LITGEN_USE_NANOBIND OFF)
-set(LITGEN_USE_NANOBIND ON CACHE BOOL "Use nanobind for bindings" FORCE)
+set(LITGEN_USE_NANOBIND OFF CACHE BOOL "Use nanobind for bindings" FORCE)
 
 if (NOT LITGEN_USE_NANOBIND)
     # pybind11 supports bindings for multiple inheritance, nanobind does not
