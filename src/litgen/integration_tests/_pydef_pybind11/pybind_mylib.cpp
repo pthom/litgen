@@ -186,6 +186,12 @@ void py_init_module_lg_mylib(py::module& m)
 
 
     ////////////////////    <generated_from:mylib_amalgamation.h>    ////////////////////
+    m.def("bindings_with_nanobind",
+        bindings_with_nanobind);
+
+    m.def("bindings_with_pybind",
+        bindings_with_pybind);
+
     m.def("my_sub",
         my_sub,
         py::arg("a"), py::arg("b"),

@@ -41,6 +41,16 @@ class BoxedUnsignedLong:
 # THIS FILE WAS GENERATED AUTOMATICALLY. DO NOT EDIT.
 
 # ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+#                       mylib/_bind_type.h included by mylib/mylib_main/mylib.h                                //
+# //////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+def bindings_with_nanobind() -> bool:
+    pass
+
+def bindings_with_pybind() -> bool:
+    pass
+
+# ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 #                       mylib/basic_test.h included by mylib/mylib_main/mylib.h                                //
 # //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -926,6 +936,8 @@ class ElemContainer:
 #                       mylib/mylib_main/mylib.h continued                                                     //
 # //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+##include "mylib/sandbox.h"
+
 # brace_init_default_value.h must be included last (see explanation inside test_change_decl_stmt_to_function_decl_if_suspicious)
 
 class FooBrace:
@@ -939,12 +951,6 @@ def fn_brace(
     foo_brace: FooBrace = FooBrace(), ints: List[int] = List[int](1, 2, 3)
 ) -> int:
     pass
-
-# ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-#                       mylib/mylib_main/mylib.h continued                                                     //
-# //////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-##include "mylib/sandbox.h"
 
 # <submodule math_functions>
 class math_functions:  # Proxy class that introduces typings for the *submodule* math_functions

@@ -1,6 +1,7 @@
 #pragma once
 #include "api_marker.h"
 
+#include "mylib/_bind_type.h"
 #include "mylib/basic_test.h"
 #include "mylib/header_filter_test.h"
 #include "mylib/c_style_array_test.h"
@@ -26,8 +27,7 @@
 #include "mylib/c_extern_c.h"
 #include "mylib/class_default_ctor_test.h"
 #include "mylib/smart_ptr.h"
+//#include "mylib/sandbox.h"
 
 // brace_init_default_value.h must be included last (see explanation inside test_change_decl_stmt_to_function_decl_if_suspicious)
 #include "mylib/brace_init_default_value.h"
-
-//#include "mylib/sandbox.h"
