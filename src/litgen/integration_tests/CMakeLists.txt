@@ -19,6 +19,17 @@ set(bound_library mylib)                      # The library for which we are bui
 
 
 ####################################################
+# Find pybind11 or nanobind (and find Python)
+####################################################
+include(litgen_cmake/litgen_cmake.cmake)
+if (LITGEN_USE_NANOBIND)
+    litgen_find_nanobind()
+else()
+    litgen_find_pybind11()
+endif()
+
+
+####################################################
 # Regenerate bindings before building
 ####################################################
 if (NOT SKBUILD) # Do not run autogenerate when running pip install
@@ -37,13 +48,6 @@ if (run_autogenerate)
     add_dependencies(mylib autogenerate_mylib)    # Make sure autogenerate is run before building the lib
 endif()
 
-include(litgen_cmake/litgen_cmake.cmake)
-
-if (LITGEN_USE_NANOBIND)
-    litgen_find_nanobind()
-else()
-    litgen_find_pybind11()
-endif()
 
 #########################################################################
 # Build python module that provides bindings to the library implot
