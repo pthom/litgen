@@ -79,14 +79,15 @@ void py_init_module_mylib(py::module_& m)
     auto pyClassPoint2 =
         py::class_<Point2>
             (m, "Point2", "")
-        .def("__init__", [](
+        .def("__init__", []( Point2 *self,
         int x = int(), int y = int())
         {
-            auto r = std::make_unique<Point2>();
+            new (self) Point2();  // placement new
+            auto r = self;
             r->x = x;
             r->y = y;
-            return r;
-        }
+        },
+        py::arg("x") = int(), py::arg("y") = int()
         )
         .def_rw("x", &Point2::x, "")
         .def_rw("y", &Point2::y, "")

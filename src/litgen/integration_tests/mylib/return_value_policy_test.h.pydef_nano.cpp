@@ -25,13 +25,14 @@ void py_init_module_mylib(py::module_& m)
     auto pyClassMyConfig =
         py::class_<MyConfig>
             (m, "MyConfig", "")
-        .def("__init__", [](
+        .def("__init__", []( MyConfig *self,
         int value = 0)
         {
-            auto r = std::make_unique<MyConfig>();
+            new (self) MyConfig();  // placement new
+            auto r = self;
             r->value = value;
-            return r;
-        }
+        },
+        py::arg("value") = 0
         )
         .def_static("instance",
             &MyConfig::Instance, "// py::return_value_policy::reference")

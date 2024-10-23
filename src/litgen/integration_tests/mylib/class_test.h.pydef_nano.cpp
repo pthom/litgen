@@ -84,13 +84,14 @@ void py_init_module_mylib(py::module_& m)
     auto pyClassMyStructDynamic =
         py::class_<MyStructDynamic>
             (m, "MyStructDynamic", py::dynamic_attr(), " This class accepts dynamic attributes\n see autogenerate_mylib.py:\n     options.class_dynamic_attributes__regex = r\"Dynamic$\"")
-        .def("__init__", [](
+        .def("__init__", []( MyStructDynamic *self,
         int cpp_member = 1)
         {
-            auto r = std::make_unique<MyStructDynamic>();
+            new (self) MyStructDynamic();  // placement new
+            auto r = self;
             r->cpp_member = cpp_member;
-            return r;
-        }
+        },
+        py::arg("cpp_member") = 1
         )
         .def_rw("cpp_member", &MyStructDynamic::cpp_member, "")
         ;

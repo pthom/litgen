@@ -25,13 +25,14 @@ void py_init_module_mylib(py::module_& m)
     auto pyClassFooBrace =
         py::class_<FooBrace>
             (m, "FooBrace", "")
-        .def("__init__", [](
+        .def("__init__", []( FooBrace *self,
         std::vector<int> int_values = {1, 2, 3})
         {
-            auto r = std::make_unique<FooBrace>();
+            new (self) FooBrace();  // placement new
+            auto r = self;
             r->int_values = int_values;
-            return r;
-        }
+        },
+        py::arg("int_values") = std::vector<int>{1, 2, 3}
         )
         .def_rw("int_values", &FooBrace::int_values, "")
         .def_rw("dict_string_int", &FooBrace::dict_string_int, "")
