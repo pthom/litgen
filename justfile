@@ -5,6 +5,7 @@ default:
 build_integration_tests:
     python src/litgen/integration_tests/autogenerate_mylib.py
     cd src/litgen/integration_tests &&  pip install -v -e . && cd -
+    python -c "import lg_mylib"
 
 
 integration_tests: build_integration_tests
