@@ -28,6 +28,7 @@ dependencies = [
     "munch",
     "fire",
     "pybind11",
+    "nanobind",
     "black",
     "srcml_caller"
 ]
