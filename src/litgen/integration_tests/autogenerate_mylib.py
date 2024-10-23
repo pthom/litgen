@@ -73,6 +73,8 @@ def mylib_litgen_options(bind_library_type: litgen.BindLibraryType) -> litgen.Li
     )
     options.fn_params_output_modifiable_immutable_to_return__regex = r"^Change"
 
+    options.fn_return_force_policy_reference_for_references__regex = r"instance"
+
     # c style fixed size array options
     options.fn_params_replace_c_array_modifiable_by_boxed__regex = code_utils.join_string_by_pipe_char(
         ["array", "GetPoints", r"c_string_list_total_size"]

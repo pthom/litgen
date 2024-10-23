@@ -85,7 +85,8 @@ public:
     int value = 0;
     MySingletonClass() = default;
 
-    MY_API static MySingletonClass& instance() // py::return_value_policy::reference
+    // see: options.fn_return_force_policy_reference_for_references__regex = r"instance"
+    MY_API static MySingletonClass& instance()
     {
         static MySingletonClass instance;
         return instance;

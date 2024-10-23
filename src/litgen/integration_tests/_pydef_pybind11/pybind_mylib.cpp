@@ -712,7 +712,7 @@ void py_init_module_lg_mylib(py::module& m)
         .def(py::init<>())
         .def_static("instance",
             &MySingletonClass::instance,
-            "py::return_value_policy::reference",
+            "see: options.fn_return_force_policy_reference_for_references__regex = r\"instance\"",
             py::return_value_policy::reference)
         ;
 
