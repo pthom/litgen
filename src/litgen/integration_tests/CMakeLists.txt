@@ -10,6 +10,12 @@ if (NOT LITGEN_USE_NANOBIND)
     add_compile_definitions(BINDING_MULTIPLE_INHERITANCE)
 endif()
 
+# used by bool bindings_with_nanobind() / bool bindings_with_pybind()
+if (NOT LITGEN_USE_NANOBIND)
+    add_compile_definitions(BINDINGS_WITH_PYBIND)
+else()
+    add_compile_definitions(BINDINGS_WITH_NANOBIND)
+endif()
 
 ####################################################
 # Build testrunner Bound C++ library
