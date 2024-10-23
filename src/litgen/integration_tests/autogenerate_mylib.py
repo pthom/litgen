@@ -291,12 +291,16 @@ def stub_template_code(header_filename: str) -> str:
 
 
 def main() -> None:
-    # return
+    generate_file_by_file = True
+    import sys
+    if "no_generate_file_by_file" in sys.argv:
+        generate_file_by_file = False
     print("autogenerate_mylib ...", end="\r")
     for bind_library_type in [litgen.BindLibraryType.nanobind, litgen.BindLibraryType.pybind11]:
         print("autogenerate_mylib for ", bind_library_type)
         autogenerate_mylib(bind_library_type)
-        save_all_generated_codes_by_file(bind_library_type)
+        if generate_file_by_file:
+            save_all_generated_codes_by_file(bind_library_type)
     print("autogenerate_mylib done")
 
 

@@ -3,7 +3,7 @@ default:
 
 
 build_integration_tests:
-    python src/litgen/integration_tests/autogenerate_mylib.py
+    python src/litgen/integration_tests/autogenerate_mylib.py no_generate_file_by_file
     cd src/litgen/integration_tests &&  pip install -v -e . && cd -
     python -c "import lg_mylib"
 
