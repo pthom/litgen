@@ -31,8 +31,8 @@ def test_validate_bindings_compilation() -> None:
     assert c.rgba[2] == 3
     """
 
-    #for bind_type in litgen.BindLibraryType:
-    for bind_type in [litgen.BindLibraryType.nanobind]:
+    for bind_type in litgen.BindLibraryType:
+    # for bind_type in [litgen.BindLibraryType.nanobind]:
         options = litgen.LitgenOptions()
         options.bind_library = bind_type
 
@@ -43,6 +43,6 @@ def test_validate_bindings_compilation() -> None:
             python_test_code=python_test_code,
             show_logs=True,
             python_module_name="validate_bindings_compilation",
-            work_dir="/Users/pascal/dvp/OpenSource/ImGuiWork/_Bundle/litgen/src/litgen/tests/internal/ppp"
+            # work_dir="/Users/pascal/dvp/OpenSource/ImGuiWork/_Bundle/litgen/src/litgen/tests/internal/ppp"
             )
         assert success
