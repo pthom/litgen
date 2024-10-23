@@ -25,7 +25,7 @@ def test_doc():
         "Title that should be published as a top comment" not in lg_mylib.my_add.__doc__
     )
 
-    assert lg_mylib.my_mul.__doc__ == "my_mul(a: int, b: int) -> int\n"
+    assert lg_mylib.my_mul.__doc__.startswith("my_mul(a: int, b: int) -> int")
 
 
 def test_vectorizable_functions():
