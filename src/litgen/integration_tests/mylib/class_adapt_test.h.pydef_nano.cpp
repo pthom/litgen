@@ -26,19 +26,18 @@ void py_init_module_mylib(py::module_& m)
         py::class_<Color4>
             (m, "Color4", "")
         .def("__init__",
-            [](const std::array<uint8_t, 4>& _rgba) -> std::unique_ptr<Color4>
+            [](Color4 * self, const std::array<uint8_t, 4>& _rgba)
             {
-                auto ctor_wrapper = [](const uint8_t _rgba[4]) ->  std::unique_ptr<Color4>
+                auto ctor_wrapper = [](Color4* self, const uint8_t _rgba[4]) ->  void
                 {
-                    return std::make_unique<Color4>(_rgba);
+                    new(self) Color4(_rgba); // placement new
                 };
-                auto ctor_wrapper_adapt_fixed_size_c_arrays = [&ctor_wrapper](const std::array<uint8_t, 4>& _rgba) -> std::unique_ptr<Color4>
+                auto ctor_wrapper_adapt_fixed_size_c_arrays = [&ctor_wrapper](Color4 * self, const std::array<uint8_t, 4>& _rgba)
                 {
-                    auto lambda_result = ctor_wrapper(_rgba.data());
-                    return lambda_result;
+                    ctor_wrapper(self, _rgba.data());
                 };
 
-                return ctor_wrapper_adapt_fixed_size_c_arrays(_rgba);
+                ctor_wrapper_adapt_fixed_size_c_arrays(self, _rgba);
             },
             py::arg("_rgba"),
             "The constructor params will automatically be \"adapted\" into std::array<uint8_t, 4>")

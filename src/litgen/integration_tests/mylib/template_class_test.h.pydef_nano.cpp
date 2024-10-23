@@ -29,19 +29,18 @@ void py_init_module_mylib(py::module_& m)
         .def(py::init<>(),
             "Standard constructor")
         .def("__init__",
-            [](const std::array<int, 2>& v) -> std::unique_ptr<MyTemplateClass<int>>
+            [](MyTemplateClass<int> * self, const std::array<int, 2>& v)
             {
-                auto ctor_wrapper = [](const int v[2]) ->  std::unique_ptr<MyTemplateClass<int>>
+                auto ctor_wrapper = [](MyTemplateClass<int>* self, const int v[2]) ->  void
                 {
-                    return std::make_unique<MyTemplateClass<int>>(v);
+                    new(self) MyTemplateClass<int>(v); // placement new
                 };
-                auto ctor_wrapper_adapt_fixed_size_c_arrays = [&ctor_wrapper](const std::array<int, 2>& v) -> std::unique_ptr<MyTemplateClass<int>>
+                auto ctor_wrapper_adapt_fixed_size_c_arrays = [&ctor_wrapper](MyTemplateClass<int> * self, const std::array<int, 2>& v)
                 {
-                    auto lambda_result = ctor_wrapper(v.data());
-                    return lambda_result;
+                    ctor_wrapper(self, v.data());
                 };
 
-                return ctor_wrapper_adapt_fixed_size_c_arrays(v);
+                ctor_wrapper_adapt_fixed_size_c_arrays(self, v);
             },
             py::arg("v"),
             "Constructor that will need a parameter adaptation")
@@ -68,19 +67,18 @@ void py_init_module_mylib(py::module_& m)
         .def(py::init<>(),
             "Standard constructor")
         .def("__init__",
-            [](const std::array<std::string, 2>& v) -> std::unique_ptr<MyTemplateClass<std::string>>
+            [](MyTemplateClass<std::string> * self, const std::array<std::string, 2>& v)
             {
-                auto ctor_wrapper = [](const std::string v[2]) ->  std::unique_ptr<MyTemplateClass<std::string>>
+                auto ctor_wrapper = [](MyTemplateClass<std::string>* self, const std::string v[2]) ->  void
                 {
-                    return std::make_unique<MyTemplateClass<std::string>>(v);
+                    new(self) MyTemplateClass<std::string>(v); // placement new
                 };
-                auto ctor_wrapper_adapt_fixed_size_c_arrays = [&ctor_wrapper](const std::array<std::string, 2>& v) -> std::unique_ptr<MyTemplateClass<std::string>>
+                auto ctor_wrapper_adapt_fixed_size_c_arrays = [&ctor_wrapper](MyTemplateClass<std::string> * self, const std::array<std::string, 2>& v)
                 {
-                    auto lambda_result = ctor_wrapper(v.data());
-                    return lambda_result;
+                    ctor_wrapper(self, v.data());
                 };
 
-                return ctor_wrapper_adapt_fixed_size_c_arrays(v);
+                ctor_wrapper_adapt_fixed_size_c_arrays(self, v);
             },
             py::arg("v"),
             "Constructor that will need a parameter adaptation")

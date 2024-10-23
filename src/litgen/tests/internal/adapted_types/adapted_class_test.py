@@ -2,6 +2,7 @@ from __future__ import annotations
 from codemanip import code_utils
 
 import litgen
+from litgen import BindLibraryType
 from litgen.litgen_generator import LitgenGeneratorTestsHelper
 from litgen.options import LitgenOptions
 
@@ -746,4 +747,76 @@ def test_numeric_array_member() -> None:
                 "")
             ;
     """
+    )
+
+
+def test_adapted_ctor() -> None:
+    # The constructor for Color4 will be adapted to accept std::array<uint8_t, 4>
+    code = """
+        struct Color4
+        {
+            Color4(const uint8_t _rgba[4]) {}
+        };
+    """
+    options = litgen.LitgenOptions()
+
+    #
+    # Test with pybind11 (using lambda & unique_ptr)
+    #
+    options.bind_library = BindLibraryType.pybind11
+    generated_code = litgen.generate_code(options, code)
+    # print(generated_code.pydef_code)
+    code_utils.assert_are_codes_equal(
+        generated_code.pydef_code,
+        """
+        auto pyClassColor4 =
+            py::class_<Color4>
+                (m, "Color4", "")
+            .def(py::init(
+                [](const std::array<uint8_t, 4>& _rgba) -> std::unique_ptr<Color4>
+                {
+                    auto ctor_wrapper = [](const uint8_t _rgba[4]) ->  std::unique_ptr<Color4>
+                    {
+                        return std::make_unique<Color4>(_rgba);
+                    };
+                    auto ctor_wrapper_adapt_fixed_size_c_arrays = [&ctor_wrapper](const std::array<uint8_t, 4>& _rgba) -> std::unique_ptr<Color4>
+                    {
+                        auto lambda_result = ctor_wrapper(_rgba.data());
+                        return lambda_result;
+                    };
+
+                    return ctor_wrapper_adapt_fixed_size_c_arrays(_rgba);
+                }),     py::arg("_rgba"))
+            ;
+        """
+    )
+
+    #
+    # Test with nanobind (using placement new)
+    #
+    options.bind_library = BindLibraryType.nanobind
+    generated_code = litgen.generate_code(options, code)
+    # print(generated_code.pydef_code)
+    code_utils.assert_are_codes_equal(
+        generated_code.pydef_code,
+        """
+        auto pyClassColor4 =
+            py::class_<Color4>
+                (m, "Color4", "")
+            .def("__init__",
+                [](Color4 * self, const std::array<uint8_t, 4>& _rgba)
+                {
+                    auto ctor_wrapper = [](Color4* self, const uint8_t _rgba[4]) ->  void
+                    {
+                        new(self) Color4(_rgba); // placement new
+                    };
+                    auto ctor_wrapper_adapt_fixed_size_c_arrays = [&ctor_wrapper](Color4 * self, const std::array<uint8_t, 4>& _rgba)
+                    {
+                        ctor_wrapper(self, _rgba.data());
+                    };
+
+                    ctor_wrapper_adapt_fixed_size_c_arrays(self, _rgba);
+                },     py::arg("_rgba"))
+            ;
+        """
     )

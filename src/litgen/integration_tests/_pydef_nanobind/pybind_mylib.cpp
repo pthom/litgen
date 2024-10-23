@@ -223,14 +223,15 @@ void py_init_module_lg_mylib(py::module_& m)
     auto pyClassPoint2 =
         py::class_<Point2>
             (m, "Point2", "")
-        .def("__init__", [](
+        .def("__init__", []( Point2 *self,
         int x = int(), int y = int())
         {
-            auto r = std::make_unique<Point2>();
+            new (self) Point2();  // placement new
+            auto r = self;
             r->x = x;
             r->y = y;
-            return r;
-        }
+        },
+        py::arg("x") = int(), py::arg("y") = int()
         )
         .def_rw("x", &Point2::x, "")
         .def_rw("y", &Point2::y, "")
@@ -630,13 +631,14 @@ void py_init_module_lg_mylib(py::module_& m)
     auto pyClassMyStructDynamic =
         py::class_<MyStructDynamic>
             (m, "MyStructDynamic", py::dynamic_attr(), " This class accepts dynamic attributes\n see autogenerate_mylib.py:\n     options.class_dynamic_attributes__regex = r\"Dynamic$\"")
-        .def("__init__", [](
+        .def("__init__", []( MyStructDynamic *self,
         int cpp_member = 1)
         {
-            auto r = std::make_unique<MyStructDynamic>();
+            new (self) MyStructDynamic();  // placement new
+            auto r = self;
             r->cpp_member = cpp_member;
-            return r;
-        }
+        },
+        py::arg("cpp_member") = 1
         )
         .def_rw("cpp_member", &MyStructDynamic::cpp_member, "")
         ;
@@ -672,19 +674,18 @@ void py_init_module_lg_mylib(py::module_& m)
         py::class_<Color4>
             (m, "Color4", "")
         .def("__init__",
-            [](const std::array<uint8_t, 4>& _rgba) -> std::unique_ptr<Color4>
+            [](Color4 * self, const std::array<uint8_t, 4>& _rgba)
             {
-                auto ctor_wrapper = [](const uint8_t _rgba[4]) ->  std::unique_ptr<Color4>
+                auto ctor_wrapper = [](Color4* self, const uint8_t _rgba[4]) ->  void
                 {
-                    return std::make_unique<Color4>(_rgba);
+                    new(self) Color4(_rgba); // placement new
                 };
-                auto ctor_wrapper_adapt_fixed_size_c_arrays = [&ctor_wrapper](const std::array<uint8_t, 4>& _rgba) -> std::unique_ptr<Color4>
+                auto ctor_wrapper_adapt_fixed_size_c_arrays = [&ctor_wrapper](Color4 * self, const std::array<uint8_t, 4>& _rgba)
                 {
-                    auto lambda_result = ctor_wrapper(_rgba.data());
-                    return lambda_result;
+                    ctor_wrapper(self, _rgba.data());
                 };
 
-                return ctor_wrapper_adapt_fixed_size_c_arrays(_rgba);
+                ctor_wrapper_adapt_fixed_size_c_arrays(self, _rgba);
             },
             py::arg("_rgba"),
             "The constructor params will automatically be \"adapted\" into std::array<uint8_t, 4>")
@@ -700,13 +701,14 @@ void py_init_module_lg_mylib(py::module_& m)
     auto pyClassCopyable_ImplicitCopyCtor =
         py::class_<Copyable_ImplicitCopyCtor>
             (m, "Copyable_ImplicitCopyCtor", "")
-        .def("__init__", [](
+        .def("__init__", []( Copyable_ImplicitCopyCtor *self,
         int a = 1)
         {
-            auto r = std::make_unique<Copyable_ImplicitCopyCtor>();
+            new (self) Copyable_ImplicitCopyCtor();  // placement new
+            auto r = self;
             r->a = a;
-            return r;
-        }
+        },
+        py::arg("a") = 1
         )
         .def_rw("a", &Copyable_ImplicitCopyCtor::a, "")
         .def("__copy__",  [](const Copyable_ImplicitCopyCtor &self) {
@@ -751,13 +753,14 @@ void py_init_module_lg_mylib(py::module_& m)
     auto pyClassMyConfig =
         py::class_<MyConfig>
             (m, "MyConfig", "")
-        .def("__init__", [](
+        .def("__init__", []( MyConfig *self,
         int value = 0)
         {
-            auto r = std::make_unique<MyConfig>();
+            new (self) MyConfig();  // placement new
+            auto r = self;
             r->value = value;
-            return r;
-        }
+        },
+        py::arg("value") = 0
         )
         .def_static("instance",
             &MyConfig::Instance, "// py::return_value_policy::reference")
@@ -980,19 +983,18 @@ void py_init_module_lg_mylib(py::module_& m)
         .def(py::init<>(),
             "Standard constructor")
         .def("__init__",
-            [](const std::array<int, 2>& v) -> std::unique_ptr<MyTemplateClass<int>>
+            [](MyTemplateClass<int> * self, const std::array<int, 2>& v)
             {
-                auto ctor_wrapper = [](const int v[2]) ->  std::unique_ptr<MyTemplateClass<int>>
+                auto ctor_wrapper = [](MyTemplateClass<int>* self, const int v[2]) ->  void
                 {
-                    return std::make_unique<MyTemplateClass<int>>(v);
+                    new(self) MyTemplateClass<int>(v); // placement new
                 };
-                auto ctor_wrapper_adapt_fixed_size_c_arrays = [&ctor_wrapper](const std::array<int, 2>& v) -> std::unique_ptr<MyTemplateClass<int>>
+                auto ctor_wrapper_adapt_fixed_size_c_arrays = [&ctor_wrapper](MyTemplateClass<int> * self, const std::array<int, 2>& v)
                 {
-                    auto lambda_result = ctor_wrapper(v.data());
-                    return lambda_result;
+                    ctor_wrapper(self, v.data());
                 };
 
-                return ctor_wrapper_adapt_fixed_size_c_arrays(v);
+                ctor_wrapper_adapt_fixed_size_c_arrays(self, v);
             },
             py::arg("v"),
             "Constructor that will need a parameter adaptation")
@@ -1019,19 +1021,18 @@ void py_init_module_lg_mylib(py::module_& m)
         .def(py::init<>(),
             "Standard constructor")
         .def("__init__",
-            [](const std::array<std::string, 2>& v) -> std::unique_ptr<MyTemplateClass<std::string>>
+            [](MyTemplateClass<std::string> * self, const std::array<std::string, 2>& v)
             {
-                auto ctor_wrapper = [](const std::string v[2]) ->  std::unique_ptr<MyTemplateClass<std::string>>
+                auto ctor_wrapper = [](MyTemplateClass<std::string>* self, const std::string v[2]) ->  void
                 {
-                    return std::make_unique<MyTemplateClass<std::string>>(v);
+                    new(self) MyTemplateClass<std::string>(v); // placement new
                 };
-                auto ctor_wrapper_adapt_fixed_size_c_arrays = [&ctor_wrapper](const std::array<std::string, 2>& v) -> std::unique_ptr<MyTemplateClass<std::string>>
+                auto ctor_wrapper_adapt_fixed_size_c_arrays = [&ctor_wrapper](MyTemplateClass<std::string> * self, const std::array<std::string, 2>& v)
                 {
-                    auto lambda_result = ctor_wrapper(v.data());
-                    return lambda_result;
+                    ctor_wrapper(self, v.data());
                 };
 
-                return ctor_wrapper_adapt_fixed_size_c_arrays(v);
+                ctor_wrapper_adapt_fixed_size_c_arrays(self, v);
             },
             py::arg("v"),
             "Constructor that will need a parameter adaptation")
@@ -1079,13 +1080,14 @@ void py_init_module_lg_mylib(py::module_& m)
     auto pyClassSmartElem =
         py::class_<SmartElem>
             (m, "SmartElem", " With pybind11, SmartElem is mentioned in options.class_held_as_shared__regex\n (because it might be stored as a shared_ptr in the generated code)")
-        .def("__init__", [](
+        .def("__init__", []( SmartElem *self,
         int x = 0)
         {
-            auto r = std::make_unique<SmartElem>();
+            new (self) SmartElem();  // placement new
+            auto r = self;
             r->x = x;
-            return r;
-        }
+        },
+        py::arg("x") = 0
         )
         .def_rw("x", &SmartElem::x, "")
         ;
@@ -1108,13 +1110,14 @@ void py_init_module_lg_mylib(py::module_& m)
     auto pyClassFooBrace =
         py::class_<FooBrace>
             (m, "FooBrace", "")
-        .def("__init__", [](
+        .def("__init__", []( FooBrace *self,
         std::vector<int> int_values = {1, 2, 3})
         {
-            auto r = std::make_unique<FooBrace>();
+            new (self) FooBrace();  // placement new
+            auto r = self;
             r->int_values = int_values;
-            return r;
-        }
+        },
+        py::arg("int_values") = std::vector<int>{1, 2, 3}
         )
         .def_rw("int_values", &FooBrace::int_values, "")
         .def_rw("dict_string_int", &FooBrace::dict_string_int, "")
@@ -1156,13 +1159,14 @@ void py_init_module_lg_mylib(py::module_& m)
         auto pyNsAAA_ClassCopyable_Template_int =
             py::class_<AAA::Copyable_Template<int>>
                 (pyNsAAA, "Copyable_Template_int", "")
-            .def("__init__", [](
+            .def("__init__", []( AAA::Copyable_Template<int> *self,
             int value = int())
             {
-                auto r = std::make_unique<AAA::Copyable_Template<int>>();
+                new (self) AAA::Copyable_Template<int>();  // placement new
+                auto r = self;
                 r->value = value;
-                return r;
-            }
+            },
+            py::arg("value") = int()
             )
             .def_rw("value", &AAA::Copyable_Template<int>::value, "")
             .def("__copy__",  [](const AAA::Copyable_Template<int> &self) {
@@ -1230,14 +1234,15 @@ void py_init_module_lg_mylib(py::module_& m)
         } // end of inner classes & enums of ParentStruct
 
         pyNsSomeNamespace_ClassParentStruct
-            .def("__init__", [](
+            .def("__init__", []( SomeNamespace::ParentStruct *self,
             SomeNamespace::ParentStruct::InnerStruct inner_struct = SomeNamespace::ParentStruct::InnerStruct(), SomeNamespace::ParentStruct::InnerEnum inner_enum = SomeNamespace::ParentStruct::InnerEnum::Three)
             {
-                auto r = std::make_unique<SomeNamespace::ParentStruct>();
+                new (self) SomeNamespace::ParentStruct();  // placement new
+                auto r = self;
                 r->inner_struct = inner_struct;
                 r->inner_enum = inner_enum;
-                return r;
-            }
+            },
+            py::arg("inner_struct") = SomeNamespace::ParentStruct::InnerStruct(), py::arg("inner_enum") = SomeNamespace::ParentStruct::InnerEnum::Three
             )
             .def_rw("inner_struct", &SomeNamespace::ParentStruct::inner_struct, "")
             .def_rw("inner_enum", &SomeNamespace::ParentStruct::inner_enum, "")
@@ -1560,16 +1565,17 @@ void py_init_module_lg_mylib(py::module_& m)
         auto pyNsA_ClassClassNoDefaultCtor =
             py::class_<A::ClassNoDefaultCtor>
                 (pyNsA, "ClassNoDefaultCtor", " This struct has no default constructor, so a default named constructor\n will be provided for python")
-            .def("__init__", [](
+            .def("__init__", []( A::ClassNoDefaultCtor *self,
             bool b = true, int a = int(), int c = 3, A::Foo foo = A::Foo::Foo1)
             {
-                auto r = std::make_unique<A::ClassNoDefaultCtor>();
+                new (self) A::ClassNoDefaultCtor();  // placement new
+                auto r = self;
                 r->b = b;
                 r->a = a;
                 r->c = c;
                 r->foo = foo;
-                return r;
-            }
+            },
+            py::arg("b") = true, py::arg("a") = int(), py::arg("c") = 3, py::arg("foo") = A::Foo::Foo1
             )
             .def_rw("b", &A::ClassNoDefaultCtor::b, "")
             .def_rw("a", &A::ClassNoDefaultCtor::a, "")

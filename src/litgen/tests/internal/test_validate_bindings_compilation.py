@@ -7,12 +7,6 @@ def test_validate_bindings_compilation() -> None:
     # that the generated Python bindings work as expected.
     # **This kind of test is slow**, do not use it extensively in CI.
 
-    # // The constructor params will automatically be "adapted" into std::array<uint8_t, 4>
-    # Color4(const uint8_t _rgba[4])
-    # {
-    # for (size_t i = 0; i < 4; ++i)
-    # rgba[i] = _rgba[i];
-    # }
 
     code = """
 #include <cstddef>
@@ -20,6 +14,11 @@ def test_validate_bindings_compilation() -> None:
 
 struct Color4
 {
+    Color4(const uint8_t _rgba[4])
+    {
+        for (size_t i = 0; i < 4; ++i)
+            rgba[i] = _rgba[i];
+    }
     uint8_t rgba[4] = {0, 0, 0, 0};
 };
     """
@@ -28,10 +27,8 @@ import validate_bindings_compilation
 import numpy as np
 
 def test_validate_bindings_compilation() -> None:
-    foo = validate_bindings_compilation.Color4()
-    assert hasattr(foo, 'rgba')
-    foo.rgba[1] = 1
-    assert foo.rgba[1] == 1
+    c = validate_bindings_compilation.Color4([1, 2, 3, 4])
+    assert c.rgba[2] == 3
     """
 
     #for bind_type in litgen.BindLibraryType:
