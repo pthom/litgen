@@ -123,6 +123,10 @@ def mylib_litgen_options(bind_library_type: litgen.BindLibraryType) -> litgen.Li
     options.macro_define_include_by_name__regex = r"^MY_"
     options.macro_name_replacements.add_first_replacement("MY_", "")
 
+    # pybind11 supports bindings for multiple inheritance, nanobind does not
+    if bind_library_type == litgen.BindLibraryType.pybind11:
+        options.srcmlcpp_options.header_filter_acceptable__regex += "|BINDING_MULTIPLE_INHERITANCE"
+
     #
     # Sandbox for other options
     #
@@ -287,6 +291,7 @@ def stub_template_code(header_filename: str) -> str:
 
 
 def main() -> None:
+    # return
     print("autogenerate_mylib ...", end="\r")
     for bind_library_type in [litgen.BindLibraryType.nanobind, litgen.BindLibraryType.pybind11]:
         print("autogenerate_mylib for ", bind_library_type)

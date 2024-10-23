@@ -753,7 +753,13 @@ void py_init_module_lg_mylib(py::module& m)
             py::arg("value") = MyStructWithNestedEnum::Choice::A,
             " The first param of this function uses the inner scope of this class!\n When building the bindings, we need to add MyStructWithNestedEnum::")
         ;
+    // #ifdef BINDING_MULTIPLE_INHERITANCE
+    //
+    // #endif
+    //
 
+    m.def("binding_multiple_inheritance",
+        binding_multiple_inheritance);
 
     m.def("make_dog",
         make_dog, "Test that downcasting works: the return type is Animal, but it should bark!");

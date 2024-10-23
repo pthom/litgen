@@ -661,6 +661,9 @@ void py_init_module_lg_mylib(py::module_& m)
         ;
 
 
+    m.def("binding_multiple_inheritance",
+        binding_multiple_inheritance);
+
     m.def("make_dog",
         make_dog, "Test that downcasting works: the return type is Animal, but it should bark!");
 
@@ -1147,27 +1150,6 @@ void py_init_module_lg_mylib(py::module_& m)
                 &Animals::Dog::bark)
             ;
     } // </namespace Animals>
-
-    { // <namespace Home>
-        py::module_ pyNsHome = m.def_submodule("home", "");
-        auto pyNsHome_ClassPet =
-            py::class_<Home::Pet>
-                (pyNsHome, "Pet", "")
-            .def(py::init<>()) // implicit default constructor
-            .def("is_pet",
-                &Home::Pet::is_pet)
-            ;
-
-
-        auto pyNsHome_ClassPetDog =
-            py::class_<Home::PetDog, Animals::Dog, Home::Pet>
-                (pyNsHome, "PetDog", "")
-            .def(py::init<const std::string &>(),
-                py::arg("name"))
-            .def("bark",
-                &Home::PetDog::bark)
-            ;
-    } // </namespace Home>
 
     { // <namespace AAA>
         py::module_ pyNsAAA = m.def_submodule("aaa", "");

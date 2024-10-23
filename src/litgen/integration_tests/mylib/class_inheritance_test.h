@@ -24,6 +24,8 @@ namespace Animals
 
 }
 
+// pybind11 supports bindings for multiple inheritance, nanobind does not
+#ifdef BINDING_MULTIPLE_INHERITANCE
 namespace Home
 {
     struct Pet
@@ -38,7 +40,16 @@ namespace Home
 
         virtual ~PetDog() = default;
     };
+}
+#endif
 
+MY_API bool binding_multiple_inheritance()
+{
+#ifdef BINDING_MULTIPLE_INHERITANCE
+    return true;
+#else
+    return false;
+#endif
 }
 
 // Test that downcasting works: the return type is Animal, but it should bark!

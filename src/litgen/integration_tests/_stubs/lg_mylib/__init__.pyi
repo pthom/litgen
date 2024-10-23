@@ -450,6 +450,15 @@ class MyStructWithNestedEnum:
 #                       mylib/class_inheritance_test.h included by mylib/mylib_main/mylib.h                    //
 # //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+# pybind11 supports bindings for multiple inheritance, nanobind does not
+# #ifdef BINDING_MULTIPLE_INHERITANCE
+#
+# #endif
+#
+
+def binding_multiple_inheritance() -> bool:
+    pass
+
 def make_dog() -> Animals.Animal:
     """Test that downcasting works: the return type is Animal, but it should bark!"""
     pass
