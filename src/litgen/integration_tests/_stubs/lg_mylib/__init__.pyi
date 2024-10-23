@@ -417,7 +417,7 @@ class MySingletonClass:
         pass
     @staticmethod
     def instance() -> MySingletonClass:
-        """py::return_value_policy::reference"""
+        """see: options.fn_return_force_policy_reference_for_references__regex = r"instance" """
         pass
 
 class MyFinalClass:
