@@ -1310,17 +1310,16 @@ class PythonNamedConstructorHelper:
                 flag_strip_empty_lines=True,
             )
         else:
-            # {maybe_pyargs} removed because nanobind complained about arg count
-            # not match.
             template = code_utils.unindent_code(
                 """
-                .def("__init__", [](
+                .def("__init__", []( {qualified_struct_name} *self,
                 {all_params_signature})
                 {
-                {_i_}auto r = std::make_unique<{qualified_struct_name}>();
+                {_i_}new (self) {qualified_struct_name}();  // placement new
+                {_i_}auto r = self;
                 {all_params_set_values}
-                {_i_}return r;
-                }
+                },
+                {maybe_pyargs}
                 )
             """,
                 flag_strip_empty_lines=True,

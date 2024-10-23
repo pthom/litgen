@@ -634,3 +634,61 @@ def test_shared_holder():
             .def(py::init<>()) // implicit default constructor
             ;
     """)
+
+
+def test_ctor_placement_new():
+    # Test placement new for constructors (required for nanobind)
+    code = """
+        struct Foo
+        {
+            int x = 1;
+        };
+    """
+    options = litgen.LitgenOptions()
+
+    # Test with pybind11: the ctor will use a lambda
+    options.bind_library = litgen.BindLibraryType.pybind11
+    generated_code = litgen.generate_code(options, code)
+    code_utils.assert_are_codes_equal(
+        generated_code.pydef_code,
+        """
+        auto pyClassFoo =
+            py::class_<Foo>
+                (m, "Foo", "")
+            .def(py::init<>([](
+            int x = 1)
+            {
+                auto r = std::make_unique<Foo>();
+                r->x = x;
+                return r;
+            })
+            , py::arg("x") = 1
+            )
+            .def_readwrite("x", &Foo::x, "")
+            ;
+    """
+    )
+
+    # Test with nanobind: the ctor shall use placement new
+    options.bind_library = litgen.BindLibraryType.nanobind
+    generated_code = litgen.generate_code(options, code)
+    # print(generated_code.pydef_code)
+    code_utils.assert_are_codes_equal(
+        generated_code.pydef_code,
+        """
+        auto pyClassFoo =
+            py::class_<Foo>
+                (m, "Foo", "")
+            .def("__init__", []( Foo *self,
+            int x = 1)
+            {
+                new (self) Foo();  // placement new
+                auto r = self;
+                r->x = x;
+            },
+            py::arg("x") = 1
+            )
+            .def_rw("x", &Foo::x, "")
+            ;
+        """
+    )

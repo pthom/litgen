@@ -25,13 +25,14 @@ void py_init_module_mylib(py::module_& m)
     auto pyClassSmartElem =
         py::class_<SmartElem>
             (m, "SmartElem", " With pybind11, SmartElem is mentioned in options.class_held_as_shared__regex\n (because it might be stored as a shared_ptr in the generated code)")
-        .def("__init__", [](
+        .def("__init__", []( SmartElem *self,
         int x = 0)
         {
-            auto r = std::make_unique<SmartElem>();
+            new (self) SmartElem();  // placement new
+            auto r = self;
             r->x = x;
-            return r;
-        }
+        },
+        py::arg("x") = 0
         )
         .def_rw("x", &SmartElem::x, "")
         ;
