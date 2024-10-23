@@ -29,6 +29,10 @@ def test_doc():
 
 
 def test_vectorizable_functions():
+    # only pybind supports vectorizable functions
+    if not lg_mylib.bindings_with_pybind():
+        return
+
     assert lg_mylib.math_functions.vectorizable_sum(1, 2) == 3
 
     import numpy as np
