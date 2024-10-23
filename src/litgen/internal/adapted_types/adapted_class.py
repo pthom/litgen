@@ -200,11 +200,11 @@ class AdaptedClassMember(AdaptedDecl):
                 """
         else:
             template_code = f"""
-                .def_prop_rw("{name_python}",{location}
-                    []({qualified_struct_name} &self) -> py::ndarray<{array_typename}>
+                .def_prop_ro("{name_python}",{location}
+                    []({qualified_struct_name} &self) -> py::ndarray<{array_typename}, py::numpy, py::shape<{array_size}>, py::c_contig>
                     {{
-                        return py::ndarray<{array_typename}>(self.{name_cpp}, {{{array_size}}});
-                    }}, []({qualified_struct_name}& self) {{}},
+                        return self.{name_cpp};
+                    }},
                     "{comment}")
                 """
 
