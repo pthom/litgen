@@ -2,8 +2,15 @@ cmake_minimum_required(VERSION 3.17)
 project(litgen)
 set(CMAKE_CXX_STANDARD 20)
 
-#option(LITGEN_USE_NANOBIND OFF)
-set(LITGEN_USE_NANOBIND OFF CACHE BOOL "Use nanobind for bindings" FORCE)
+
+option(LITGEN_USE_NANOBIND OFF)
+if (DEFINED ENV{LITGEN_USE_NANOBIND})
+    set(LITGEN_USE_NANOBIND $ENV{LITGEN_USE_NANOBIND})
+else()
+    set(LITGEN_USE_NANOBIND OFF)
+endif()
+message(STATUS "LITGEN_USE_NANOBIND: ${LITGEN_USE_NANOBIND}")
+
 
 if (NOT LITGEN_USE_NANOBIND)
     # pybind11 supports bindings for multiple inheritance, nanobind does not

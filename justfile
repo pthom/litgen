@@ -1,22 +1,40 @@
+# List all available commands
 default:
     just --list
 
 
-build_integration_tests:
+# Builds the integration tests for pybind
+build_integration_tests_pybind:
     python src/litgen/integration_tests/autogenerate_mylib.py no_generate_file_by_file
-    cd src/litgen/integration_tests &&  pip install -v -e . && cd -
+    export LITGEN_USE_NANOBIND=OFF && cd src/litgen/integration_tests &&  pip install -v -e . && cd -
+    python -c "import lg_mylib"
+
+# Builds the integration tests for nanobind
+build_integration_tests_nanobind:
+    python src/litgen/integration_tests/autogenerate_mylib.py no_generate_file_by_file
+    export LITGEN_USE_NANOBIND=ON && cd src/litgen/integration_tests &&  pip install -v -e . && cd -
     python -c "import lg_mylib"
 
 
-integration_tests: build_integration_tests
-    # Runs all tests, after building the integration tests
+# Runs all tests for pybind, after building the integration tests
+integration_tests_pybind: build_integration_tests_pybind
     pytest
 
+# Runs all tests for nanobind, after building the integration tests
+integration_tests_nanobind: build_integration_tests_nanobind
+    pytest
 
+# Runs all tests for pybind and nanobind (after building the integration tests)
+integration_tests:
+    just integration_tests_pybind
+    just integration_tests_nanobind
+
+
+# Just runs pytest (requires that the integration tests have been built)
 pytest:
-    # Will not build the integration tests!
     pytest
 
+
+# Runs mypy on the top level folder (see mypy.ini)
 mypy:
-    # Runs mypy on the top level folder (see mypy.ini)
     mypy .
