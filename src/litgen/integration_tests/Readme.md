@@ -34,8 +34,9 @@ litgen/src/litgen/integration_tests/
 ├── _skbuild/                                 # temp build directory when building via pip
 ├── autogenerate_mylib.py                     # This script will read headers in mylib/ and
 │                                             # generate bindings using litgen inside:
-│                                             #    - bindings/pybind_mylib.cpp (C++ publishing code)
-│                                             #    - bindings/lg_mylib/__init__.pyi (stubs)
+│                                             #    - _pydef_nanobind/pybind_mylib.cpp (C++ publishing code)
+│                                             #    - _pydef_pybind11/pybind_mylib.cpp (C++ publishing code)
+│                                             #    - _stubs/lg_mylib/__init__.pyi (stubs)
 │
 ├── _pydef_nanobind/
 │         ├── module.cpp
