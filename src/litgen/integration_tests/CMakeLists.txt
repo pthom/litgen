@@ -65,20 +65,23 @@ endif()
 #########################################################################
 # Build python module that provides bindings to the library implot
 #########################################################################
-set(python_native_module_name _lg_mylib) # This is the native python module name
 set(python_wrapper_module_name lg_mylib) # This is the python wrapper around the native module
 
 if (LITGEN_USE_NANOBIND)
+    set(python_native_module_name _lg_mylib_nanobind) # native python module name
     set(python_module_sources _pydef_nanobind/module.cpp _pydef_nanobind/nanobind_mylib.cpp) # native python module sources
     nanobind_add_module(${python_native_module_name} ${python_module_sources})
+    set(bindings_dirname "_pydef_nanobind")
 else()
+    set(python_native_module_name _lg_mylib_pybind) # native python module name
     set(python_module_sources _pydef_pybind11/module.cpp _pydef_pybind11/pybind_mylib.cpp) # native python module sources
     pybind11_add_module(${python_native_module_name} ${python_module_sources})
+    set(bindings_dirname "_pydef_pybind11")
 endif()
 
 litgen_setup_module(
     ${bound_library}
     ${python_native_module_name}
     ${python_wrapper_module_name}
-    ${CMAKE_CURRENT_LIST_DIR}/_pydef_pybind11
+    ${CMAKE_CURRENT_LIST_DIR}/${bindings_dirname}
 )

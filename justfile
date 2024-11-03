@@ -7,22 +7,22 @@ default:
 build_integration_tests_pybind:
     python src/litgen/integration_tests/autogenerate_mylib.py no_generate_file_by_file pybind
     export LITGEN_USE_NANOBIND=OFF && cd src/litgen/integration_tests &&  pip install -v -e . && cd -
-    python -c "import lg_mylib"
+    python -c "import lg_mylib._lg_mylib_pybind"
 
 # Builds the integration tests for nanobind
 build_integration_tests_nanobind:
     python src/litgen/integration_tests/autogenerate_mylib.py no_generate_file_by_file nanobind
     export LITGEN_USE_NANOBIND=ON && cd src/litgen/integration_tests &&  pip install -v -e . && cd -
-    python -c "import lg_mylib"
+    python -c "import lg_mylib._lg_mylib_nanobind"
 
 
 # Runs all tests for pybind, after building the integration tests
 integration_tests_pybind: build_integration_tests_pybind
-    pytest
+    just pytest pybind
 
 # Runs all tests for nanobind, after building the integration tests
 integration_tests_nanobind: build_integration_tests_nanobind
-    pytest
+    just pytest nanobind
 
 # Runs all tests for pybind and nanobind (after building the integration tests)
 integration_tests:
@@ -31,7 +31,8 @@ integration_tests:
 
 
 # Just runs pytest (requires that the integration tests have been built)
-pytest:
+pytest binding_type:
+    python -m lg_mylib.use {{binding_type}}
     pytest
 
 
