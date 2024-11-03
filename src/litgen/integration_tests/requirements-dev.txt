@@ -1,3 +1,4 @@
-litgen @ git+https://github.com/pthom/litgen
+# Install litgen in edit mode from `src/litgen/integration_tests`
+-e ../../..
 black
 mypy
