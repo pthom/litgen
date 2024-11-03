@@ -1,4 +1,8 @@
 # Install litgen in edit mode from `src/litgen/integration_tests`
 -e ../../..
+
+# Testing
 black
 mypy
+pytest
+numpy
