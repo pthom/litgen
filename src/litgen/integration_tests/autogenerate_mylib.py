@@ -297,8 +297,21 @@ def main() -> None:
     import sys
     if "no_generate_file_by_file" in sys.argv:
         generate_file_by_file = False
+
+    lib_types = []
+    if "pybind" in sys.argv:
+        lib_types.append(litgen.BindLibraryType.pybind11)
+    if "nanobind" in sys.argv:
+        lib_types.append(litgen.BindLibraryType.nanobind)
+    if not lib_types:
+        # No flavor specified, generate both
+        lib_types = [
+            litgen.BindLibraryType.nanobind,
+            litgen.BindLibraryType.pybind11,
+        ]
+
     print("autogenerate_mylib ...", end="\r")
-    for bind_library_type in [litgen.BindLibraryType.nanobind, litgen.BindLibraryType.pybind11]:
+    for bind_library_type in lib_types:
         print("autogenerate_mylib for ", bind_library_type)
         autogenerate_mylib(bind_library_type)
         if generate_file_by_file:
