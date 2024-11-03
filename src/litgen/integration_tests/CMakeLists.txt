@@ -69,7 +69,7 @@ set(python_native_module_name _lg_mylib) # This is the native python module name
 set(python_wrapper_module_name lg_mylib) # This is the python wrapper around the native module
 
 if (LITGEN_USE_NANOBIND)
-    set(python_module_sources _pydef_nanobind/module.cpp _pydef_nanobind/pybind_mylib.cpp) # native python module sources
+    set(python_module_sources _pydef_nanobind/module.cpp _pydef_nanobind/nanobind_mylib.cpp) # native python module sources
     nanobind_add_module(${python_native_module_name} ${python_module_sources})
 else()
     set(python_module_sources _pydef_pybind11/module.cpp _pydef_pybind11/pybind_mylib.cpp) # native python module sources

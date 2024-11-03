@@ -11,6 +11,13 @@ THIS_DIR = os.path.dirname(os.path.realpath(__file__))
 CPP_AMALGAMATED_HEADER = THIS_DIR + "/mylib_amalgamation/mylib_amalgamation.h"
 
 
+def pydef_fname(bind_library_type: litgen.BindLibraryType) -> str:
+    if bind_library_type == litgen.BindLibraryType.pybind11:
+        return "/pybind_mylib.cpp"
+    else:
+        return "/nanobind_mylib.cpp"
+
+
 def pydef_dir(bind_library_type: litgen.BindLibraryType) -> str:
     if bind_library_type == litgen.BindLibraryType.pybind11:
         return THIS_DIR + "/_pydef_pybind11"
@@ -145,7 +152,7 @@ def mylib_litgen_options(bind_library_type: litgen.BindLibraryType) -> litgen.Li
 def autogenerate_mylib(bind_library_type: litgen.BindLibraryType) -> None:
     _pydef_dir = pydef_dir(bind_library_type)
     _stubs_dir = stubs_dir(bind_library_type)
-    output_cpp_module = _pydef_dir + "/pybind_mylib.cpp"
+    output_cpp_module = _pydef_dir + pydef_fname(bind_library_type)
     output_stub_pyi_file = _stubs_dir + "/__init__.pyi"
 
     # Configure options
