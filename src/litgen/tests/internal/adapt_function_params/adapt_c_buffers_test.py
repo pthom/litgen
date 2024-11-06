@@ -240,3 +240,48 @@ def test_template_buffer():
             },     py::arg("buf"), py::arg("flag"));
         """,
     )
+
+
+def test_nanobind_buffer() -> None:
+    code = """
+    void foo(uint8_t* buffer, size_t buffer_size);
+    """
+    options = litgen.LitgenOptions()
+    options.fn_params_replace_buffer_by_array__regex = r".*"
+    options.bind_library = litgen.BindLibraryType.nanobind
+    generated_code = litgen.generate_code(options, code)
+    # logging.warning("\n" + generated_code.pydef_code)
+    code_utils.assert_are_codes_equal(
+        generated_code.pydef_code,
+        """
+        m.def("foo",
+            [](py::ndarray<> & buffer)
+            {
+                auto foo_adapt_c_buffers = [](py::ndarray<> & buffer)
+                {
+                    // convert py::array to C standard buffer (mutable)
+                    void * buffer_from_pyarray = buffer.data();
+                    size_t buffer_count = buffer.shape(0);
+                    // Check the type of the ndarray (generic type and size)
+                    //   - Step 1: check the generic type (one of dtype_code::Int, UInt, Float, Bfloat, Complex, Bool = 6);
+                    uint8_t dtype_code_python_0 = buffer.dtype().code;
+                    uint8_t dtype_code_cpp_0 = static_cast<uint8_t>(py::dlpack::dtype_code::UInt);
+                    if (dtype_code_python_0 != dtype_code_cpp_0)
+                        throw std::runtime_error(std::string(R"msg(
+                                Bad type! While checking the generic type (dtype_code=UInt)!
+                            )msg"));
+                    //   - Step 2: check the size of the type
+                    size_t size_python_0 = buffer.dtype().bits / 8;
+                    size_t size_cpp_0 = sizeof(uint8_t);
+                    if (size_python_0 != size_cpp_0)
+                        throw std::runtime_error(std::string(R"msg(
+                                Bad type! Size mismatch, while checking the size of the type (for param "buffer")!
+                            )msg"));
+
+                    foo(static_cast<uint8_t *>(buffer_from_pyarray), static_cast<size_t>(buffer_count));
+                };
+
+                foo_adapt_c_buffers(buffer);
+            },     py::arg("buffer"));
+        """
+    )

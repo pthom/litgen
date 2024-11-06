@@ -271,22 +271,27 @@ void py_init_module_lg_mylib(py::module_& m)
         " Test with a modifiable array that uses a user defined struct.\n Since the user defined struct is mutable in python, it will not be Boxed,\n and the python signature will be:\n-->    def get_points(out_0: Point2, out_1: Point2) -> None:");
 
     m.def("add_inside_buffer",
-        [](py::ndarray<uint8_t> & buffer, uint8_t number_to_add)
+        [](py::ndarray<> & buffer, uint8_t number_to_add)
         {
-            auto add_inside_buffer_adapt_c_buffers = [](py::ndarray<uint8_t> & buffer, uint8_t number_to_add)
+            auto add_inside_buffer_adapt_c_buffers = [](py::ndarray<> & buffer, uint8_t number_to_add)
             {
                 // convert py::array to C standard buffer (mutable)
                 void * buffer_from_pyarray = buffer.data();
                 size_t buffer_count = buffer.shape(0);
-                uint8_t buffer_type = buffer.dtype().code;
-                auto expected_type_0 = static_cast<uint8_t>(py::dlpack::dtype_code::UInt);
-                if (buffer_type != expected_type_0)
+                // Check the type of the ndarray (generic type and size)
+                //   - Step 1: check the generic type (one of dtype_code::Int, UInt, Float, Bfloat, Complex, Bool = 6);
+                uint8_t dtype_code_python_0 = buffer.dtype().code;
+                uint8_t dtype_code_cpp_0 = static_cast<uint8_t>(py::dlpack::dtype_code::UInt);
+                if (dtype_code_python_0 != dtype_code_cpp_0)
                     throw std::runtime_error(std::string(R"msg(
-                            Bad type!  Expected a numpy array of native type:
-                                        uint8_t *
-                                    Which is equivalent to
-                                        dtype_code::UInt
-                                    (using py::ndarray::dtype().code as an id)
+                            Bad type! While checking the generic type (dtype_code=UInt)!
+                        )msg"));
+                //   - Step 2: check the size of the type
+                size_t size_python_0 = buffer.dtype().bits / 8;
+                size_t size_cpp_0 = sizeof(uint8_t);
+                if (size_python_0 != size_cpp_0)
+                    throw std::runtime_error(std::string(R"msg(
+                            Bad type! Size mismatch, while checking the size of the type (for param "buffer")!
                         )msg"));
 
                 add_inside_buffer(static_cast<uint8_t *>(buffer_from_pyarray), static_cast<size_t>(buffer_count), number_to_add);
@@ -298,22 +303,27 @@ void py_init_module_lg_mylib(py::module_& m)
         " add_inside_buffer: modifies a buffer by adding a value to its elements\n Will be published in python as:\n -->    def add_inside_buffer(buffer: np.ndarray, number_to_add: int) -> None:\n Warning, the python function will accept only uint8 numpy arrays, and check it at runtime!");
 
     m.def("buffer_sum",
-        [](const py::ndarray<uint8_t> & buffer, int stride = -1) -> int
+        [](const py::ndarray<> & buffer, int stride = -1) -> int
         {
-            auto buffer_sum_adapt_c_buffers = [](const py::ndarray<uint8_t> & buffer, int stride = -1) -> int
+            auto buffer_sum_adapt_c_buffers = [](const py::ndarray<> & buffer, int stride = -1) -> int
             {
                 // convert py::array to C standard buffer (const)
                 const void * buffer_from_pyarray = buffer.data();
                 size_t buffer_count = buffer.shape(0);
-                uint8_t buffer_type = buffer.dtype().code;
-                auto expected_type_0 = static_cast<uint8_t>(py::dlpack::dtype_code::UInt);
-                if (buffer_type != expected_type_0)
+                // Check the type of the ndarray (generic type and size)
+                //   - Step 1: check the generic type (one of dtype_code::Int, UInt, Float, Bfloat, Complex, Bool = 6);
+                uint8_t dtype_code_python_0 = buffer.dtype().code;
+                uint8_t dtype_code_cpp_0 = static_cast<uint8_t>(py::dlpack::dtype_code::UInt);
+                if (dtype_code_python_0 != dtype_code_cpp_0)
                     throw std::runtime_error(std::string(R"msg(
-                            Bad type!  Expected a numpy array of native type:
-                                        const uint8_t *
-                                    Which is equivalent to
-                                        dtype_code::UInt
-                                    (using py::ndarray::dtype().code as an id)
+                            Bad type! While checking the generic type (dtype_code=UInt)!
+                        )msg"));
+                //   - Step 2: check the size of the type
+                size_t size_python_0 = buffer.dtype().bits / 8;
+                size_t size_cpp_0 = sizeof(uint8_t);
+                if (size_python_0 != size_cpp_0)
+                    throw std::runtime_error(std::string(R"msg(
+                            Bad type! Size mismatch, while checking the size of the type (for param "buffer")!
                         )msg"));
 
                 // process stride default value (which was a sizeof in C++)
@@ -331,36 +341,46 @@ void py_init_module_lg_mylib(py::module_& m)
         " buffer_sum: returns the sum of a *const* buffer\n Will be published in python as:\n -->    def buffer_sum(buffer: np.ndarray, stride: int = -1) -> int:");
 
     m.def("add_inside_two_buffers",
-        [](py::ndarray<uint8_t> & buffer_1, py::ndarray<uint8_t> & buffer_2, uint8_t number_to_add)
+        [](py::ndarray<> & buffer_1, py::ndarray<> & buffer_2, uint8_t number_to_add)
         {
-            auto add_inside_two_buffers_adapt_c_buffers = [](py::ndarray<uint8_t> & buffer_1, py::ndarray<uint8_t> & buffer_2, uint8_t number_to_add)
+            auto add_inside_two_buffers_adapt_c_buffers = [](py::ndarray<> & buffer_1, py::ndarray<> & buffer_2, uint8_t number_to_add)
             {
                 // convert py::array to C standard buffer (mutable)
                 void * buffer_1_from_pyarray = buffer_1.data();
                 size_t buffer_1_count = buffer_1.shape(0);
-                uint8_t buffer_1_type = buffer_1.dtype().code;
-                auto expected_type_0 = static_cast<uint8_t>(py::dlpack::dtype_code::UInt);
-                if (buffer_1_type != expected_type_0)
+                // Check the type of the ndarray (generic type and size)
+                //   - Step 1: check the generic type (one of dtype_code::Int, UInt, Float, Bfloat, Complex, Bool = 6);
+                uint8_t dtype_code_python_0 = buffer_1.dtype().code;
+                uint8_t dtype_code_cpp_0 = static_cast<uint8_t>(py::dlpack::dtype_code::UInt);
+                if (dtype_code_python_0 != dtype_code_cpp_0)
                     throw std::runtime_error(std::string(R"msg(
-                            Bad type!  Expected a numpy array of native type:
-                                        uint8_t *
-                                    Which is equivalent to
-                                        dtype_code::UInt
-                                    (using py::ndarray::dtype().code as an id)
+                            Bad type! While checking the generic type (dtype_code=UInt)!
+                        )msg"));
+                //   - Step 2: check the size of the type
+                size_t size_python_0 = buffer_1.dtype().bits / 8;
+                size_t size_cpp_0 = sizeof(uint8_t);
+                if (size_python_0 != size_cpp_0)
+                    throw std::runtime_error(std::string(R"msg(
+                            Bad type! Size mismatch, while checking the size of the type (for param "buffer_1")!
                         )msg"));
 
                 // convert py::array to C standard buffer (mutable)
                 void * buffer_2_from_pyarray = buffer_2.data();
                 size_t buffer_2_count = buffer_2.shape(0);
-                uint8_t buffer_2_type = buffer_2.dtype().code;
-                auto expected_type_1 = static_cast<uint8_t>(py::dlpack::dtype_code::UInt);
-                if (buffer_2_type != expected_type_1)
+                // Check the type of the ndarray (generic type and size)
+                //   - Step 1: check the generic type (one of dtype_code::Int, UInt, Float, Bfloat, Complex, Bool = 6);
+                uint8_t dtype_code_python_1 = buffer_2.dtype().code;
+                uint8_t dtype_code_cpp_1 = static_cast<uint8_t>(py::dlpack::dtype_code::UInt);
+                if (dtype_code_python_1 != dtype_code_cpp_1)
                     throw std::runtime_error(std::string(R"msg(
-                            Bad type!  Expected a numpy array of native type:
-                                        uint8_t *
-                                    Which is equivalent to
-                                        dtype_code::UInt
-                                    (using py::ndarray::dtype().code as an id)
+                            Bad type! While checking the generic type (dtype_code=UInt)!
+                        )msg"));
+                //   - Step 2: check the size of the type
+                size_t size_python_1 = buffer_2.dtype().bits / 8;
+                size_t size_cpp_1 = sizeof(uint8_t);
+                if (size_python_1 != size_cpp_1)
+                    throw std::runtime_error(std::string(R"msg(
+                            Bad type! Size mismatch, while checking the size of the type (for param "buffer_2")!
                         )msg"));
 
                 add_inside_two_buffers(static_cast<uint8_t *>(buffer_1_from_pyarray), static_cast<uint8_t *>(buffer_2_from_pyarray), static_cast<size_t>(buffer_2_count), number_to_add);
@@ -1328,22 +1348,27 @@ void py_init_module_lg_mylib(py::module_& m)
                     return ChangeBoolInt_adapt_modifiable_immutable_to_return(label, value);
                 },     py::arg("label"), py::arg("value"))
             .def("add_inside_buffer",
-                [](SomeNamespace::Blah & self, py::ndarray<uint8_t> & buffer, uint8_t number_to_add)
+                [](SomeNamespace::Blah & self, py::ndarray<> & buffer, uint8_t number_to_add)
                 {
-                    auto add_inside_buffer_adapt_c_buffers = [&self](py::ndarray<uint8_t> & buffer, uint8_t number_to_add)
+                    auto add_inside_buffer_adapt_c_buffers = [&self](py::ndarray<> & buffer, uint8_t number_to_add)
                     {
                         // convert py::array to C standard buffer (mutable)
                         void * buffer_from_pyarray = buffer.data();
                         size_t buffer_count = buffer.shape(0);
-                        uint8_t buffer_type = buffer.dtype().code;
-                        auto expected_type_0 = static_cast<uint8_t>(py::dlpack::dtype_code::UInt);
-                        if (buffer_type != expected_type_0)
+                        // Check the type of the ndarray (generic type and size)
+                        //   - Step 1: check the generic type (one of dtype_code::Int, UInt, Float, Bfloat, Complex, Bool = 6);
+                        uint8_t dtype_code_python_0 = buffer.dtype().code;
+                        uint8_t dtype_code_cpp_0 = static_cast<uint8_t>(py::dlpack::dtype_code::UInt);
+                        if (dtype_code_python_0 != dtype_code_cpp_0)
                             throw std::runtime_error(std::string(R"msg(
-                                    Bad type!  Expected a numpy array of native type:
-                                                uint8_t *
-                                            Which is equivalent to
-                                                dtype_code::UInt
-                                            (using py::ndarray::dtype().code as an id)
+                                    Bad type! While checking the generic type (dtype_code=UInt)!
+                                )msg"));
+                        //   - Step 2: check the size of the type
+                        size_t size_python_0 = buffer.dtype().bits / 8;
+                        size_t size_cpp_0 = sizeof(uint8_t);
+                        if (size_python_0 != size_cpp_0)
+                            throw std::runtime_error(std::string(R"msg(
+                                    Bad type! Size mismatch, while checking the size of the type (for param "buffer")!
                                 )msg"));
 
                         self.add_inside_buffer(static_cast<uint8_t *>(buffer_from_pyarray), static_cast<size_t>(buffer_count), number_to_add);
@@ -1461,22 +1486,27 @@ void py_init_module_lg_mylib(py::module_& m)
                 },     py::arg("label"), py::arg("value"));
 
             pyNsSomeNamespace_NsSomeInnerNamespace.def("add_inside_buffer",
-                [](py::ndarray<uint8_t> & buffer, uint8_t number_to_add)
+                [](py::ndarray<> & buffer, uint8_t number_to_add)
                 {
-                    auto add_inside_buffer_adapt_c_buffers = [](py::ndarray<uint8_t> & buffer, uint8_t number_to_add)
+                    auto add_inside_buffer_adapt_c_buffers = [](py::ndarray<> & buffer, uint8_t number_to_add)
                     {
                         // convert py::array to C standard buffer (mutable)
                         void * buffer_from_pyarray = buffer.data();
                         size_t buffer_count = buffer.shape(0);
-                        uint8_t buffer_type = buffer.dtype().code;
-                        auto expected_type_0 = static_cast<uint8_t>(py::dlpack::dtype_code::UInt);
-                        if (buffer_type != expected_type_0)
+                        // Check the type of the ndarray (generic type and size)
+                        //   - Step 1: check the generic type (one of dtype_code::Int, UInt, Float, Bfloat, Complex, Bool = 6);
+                        uint8_t dtype_code_python_0 = buffer.dtype().code;
+                        uint8_t dtype_code_cpp_0 = static_cast<uint8_t>(py::dlpack::dtype_code::UInt);
+                        if (dtype_code_python_0 != dtype_code_cpp_0)
                             throw std::runtime_error(std::string(R"msg(
-                                    Bad type!  Expected a numpy array of native type:
-                                                uint8_t *
-                                            Which is equivalent to
-                                                dtype_code::UInt
-                                            (using py::ndarray::dtype().code as an id)
+                                    Bad type! While checking the generic type (dtype_code=UInt)!
+                                )msg"));
+                        //   - Step 2: check the size of the type
+                        size_t size_python_0 = buffer.dtype().bits / 8;
+                        size_t size_cpp_0 = sizeof(uint8_t);
+                        if (size_python_0 != size_cpp_0)
+                            throw std::runtime_error(std::string(R"msg(
+                                    Bad type! Size mismatch, while checking the size of the type (for param "buffer")!
                                 )msg"));
 
                         SomeNamespace::SomeInnerNamespace::add_inside_buffer(static_cast<uint8_t *>(buffer_from_pyarray), static_cast<size_t>(buffer_count), number_to_add);
