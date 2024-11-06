@@ -7,7 +7,6 @@ def test_validate_bindings_compilation() -> None:
     # that the generated Python bindings work as expected.
     # **This kind of test is slow**, do not use it extensively in CI.
 
-
     code = """
 #include <cstddef>
 #include <cstdint>
@@ -32,7 +31,7 @@ def test_validate_bindings_compilation() -> None:
     """
 
     for bind_type in litgen.BindLibraryType:
-    # for bind_type in [litgen.BindLibraryType.nanobind]:
+        # for bind_type in [litgen.BindLibraryType.nanobind]:
         options = litgen.LitgenOptions()
         options.bind_library = bind_type
 
@@ -44,5 +43,5 @@ def test_validate_bindings_compilation() -> None:
             show_logs=True,
             python_module_name="validate_bindings_compilation",
             # work_dir="/Users/pascal/dvp/OpenSource/ImGuiWork/_Bundle/litgen/src/litgen/tests/internal/ppp"
-            )
+        )
         assert success

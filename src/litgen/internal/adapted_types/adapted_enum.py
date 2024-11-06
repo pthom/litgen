@@ -244,7 +244,7 @@ class AdaptedEnum(AdaptedElement):
         enum_var = f"auto pyEnum{enum_name_python} = "
         enum_decl_line = (
             f'py::enum_<{enum_name_cpp}>({pydef_class_var_parent}, "{enum_name_python}"{arithmetic_str}, "{comment}")'
-            f'{location}'
+            f"{location}"
         )
         lines += [enum_var]
         lines += [enum_decl_line]
@@ -255,7 +255,7 @@ class AdaptedEnum(AdaptedElement):
             if isinstance(child, AdaptedEnumDecl):
                 adapted_decl = child
                 value_decl_lines = adapted_decl.pydef_lines()
-                children_lines +=  value_decl_lines
+                children_lines += value_decl_lines
         lines += code_utils.indent_code_lines(children_lines, indent_str=self.options._indent_cpp_spaces())
 
         if self.options.enum_export_values:

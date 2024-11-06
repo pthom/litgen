@@ -356,8 +356,7 @@ class AdaptedClass(AdaptedElement):
 
         for cpp_decl in cpp_decl_statement.cpp_decls:
             is_excluded_by_name_and_class = code_utils.does_match_regex(
-                self.options.member_exclude_by_name_and_class__regex.get(class_name, ""),
-                cpp_decl.decl_name
+                self.options.member_exclude_by_name_and_class__regex.get(class_name, ""), cpp_decl.decl_name
             )
             is_excluded_by_name = code_utils.does_match_regex(
                 self.options.member_exclude_by_name__regex, cpp_decl.decl_name
@@ -374,15 +373,12 @@ class AdaptedClass(AdaptedElement):
         class_name = self.cpp_element().class_name
 
         is_excluded_by_name_and_class = code_utils.does_match_regex(
-            self.options.member_exclude_by_name_and_class__regex.get(class_name, ""),
-            cpp_function_decl.name()
+            self.options.member_exclude_by_name_and_class__regex.get(class_name, ""), cpp_function_decl.name()
         )
         if not is_excluded_by_name_and_class:
             if AdaptedFunction.init_is_function_publishable(self.options, cpp_function_decl):
                 is_overloaded = cpp_function_decl.is_overloaded_method()
-                self.adapted_public_children.append(
-                    AdaptedFunction(self.lg_context, cpp_function_decl, is_overloaded)
-                )
+                self.adapted_public_children.append(AdaptedFunction(self.lg_context, cpp_function_decl, is_overloaded))
 
     def _init_fill_public_children(self) -> None:
         public_elements = self.cpp_element().get_elements(access_type=CppAccessType.public)
@@ -652,8 +648,10 @@ class AdaptedClass(AdaptedElement):
 
             replacements.comment = self._elm_comment_pydef_one_line()
 
-            if (code_utils.does_match_regex(options.class_held_as_shared__regex, self.cpp_element().class_name)
-                and self.options.bind_library == BindLibraryType.pybind11):
+            if (
+                code_utils.does_match_regex(options.class_held_as_shared__regex, self.cpp_element().class_name)
+                and self.options.bind_library == BindLibraryType.pybind11
+            ):
                 replacements.maybe_shared_ptr_holder = f", std::shared_ptr<{qualified_struct_name}>"
             else:
                 replacements.maybe_shared_ptr_holder = ""

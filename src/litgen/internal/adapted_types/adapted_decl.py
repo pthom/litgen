@@ -163,6 +163,7 @@ class AdaptedGlobalDecl(AdaptedDecl):
 
     Very much a draft, not very reliable yet
     """
+
     def __init__(self, lg_context: LitgenContext, decl: CppDecl) -> None:
         super().__init__(lg_context, decl)
 
@@ -175,7 +176,7 @@ class AdaptedGlobalDecl(AdaptedDecl):
         decl_type_cpp = decl_type_cpp.replace("constexpr ", "")
 
         parent_cpp_module_var_name = cpp_to_python.cpp_scope_to_pybind_var_name(self.options, self.cpp_element())
-        line = f"{parent_cpp_module_var_name}.attr(\"{decl_name_cpp}\") = ({decl_type_cpp}) {decl_value_cpp};"
+        line = f'{parent_cpp_module_var_name}.attr("{decl_name_cpp}") = ({decl_type_cpp}) {decl_value_cpp};'
         return [line]
 
     def stub_lines(self) -> list[str]:

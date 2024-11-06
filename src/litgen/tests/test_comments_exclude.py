@@ -17,7 +17,9 @@ def test_comments_exclude():
     options.comments_exclude = True
     generated_code = litgen.generate_code(options, code)
 
-    code_utils.assert_are_codes_equal(generated_code.stub_code, '''
+    code_utils.assert_are_codes_equal(
+        generated_code.stub_code,
+        '''
         class Foo:
             a: int = 0
 
@@ -26,4 +28,5 @@ def test_comments_exclude():
             def __init__(self, a: int = 0) -> None:
                 """Auto-generated default constructor with named params"""
                 pass
-    ''')
+    ''',
+    )

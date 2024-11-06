@@ -461,7 +461,6 @@ class LitgenOptions:
     # - [Understanding Holder Types in pybind11](https://pybind11.readthedocs.io/en/stable/advanced/classes.html#custom-smart-pointers)
     class_held_as_shared__regex: str = ""
 
-
     # ------------------------------------------------------------------------------
     # Templated class options
     # ------------------------------------------------------------------------------

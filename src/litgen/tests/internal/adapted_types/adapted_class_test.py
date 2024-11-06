@@ -634,7 +634,8 @@ def test_shared_holder():
                 (m, "Foo", "")
             .def(py::init<>()) // implicit default constructor
             ;
-    """)
+    """,
+    )
 
 
 def test_ctor_placement_new():
@@ -667,7 +668,7 @@ def test_ctor_placement_new():
             )
             .def_readwrite("x", &Foo::x, "")
             ;
-    """
+    """,
     )
 
     # Test with nanobind: the ctor shall use placement new
@@ -691,13 +692,13 @@ def test_ctor_placement_new():
             )
             .def_rw("x", &Foo::x, "")
             ;
-        """
+        """,
     )
 
 
 def test_numeric_array_member() -> None:
     # Test that a numeric array member is correctly exposed as a numpy array
-    code  = """
+    code = """
         struct Color4
         {
             uint8_t rgba[4];
@@ -725,7 +726,7 @@ def test_numeric_array_member() -> None:
                 }, [](Color4& self) {},
                 "")
             ;
-    """
+    """,
     )
 
     # Test with nanobind
@@ -746,7 +747,7 @@ def test_numeric_array_member() -> None:
                 },
                 "")
             ;
-    """
+    """,
     )
 
 
@@ -788,7 +789,7 @@ def test_adapted_ctor() -> None:
                     return ctor_wrapper_adapt_fixed_size_c_arrays(_rgba);
                 }),     py::arg("_rgba"))
             ;
-        """
+        """,
     )
 
     #
@@ -818,5 +819,5 @@ def test_adapted_ctor() -> None:
                     ctor_wrapper_adapt_fixed_size_c_arrays(self, _rgba);
                 },     py::arg("_rgba"))
             ;
-        """
+        """,
     )

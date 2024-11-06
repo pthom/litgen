@@ -2,7 +2,7 @@ import copy
 
 from typing import Optional
 from codemanip import code_utils
-from srcmlcpp.cpp_types import CppParameter, CppType
+from srcmlcpp.cpp_types import CppParameter
 from litgen.internal.adapt_function_params._lambda_adapter import LambdaAdapter
 from litgen.internal.adapted_types import AdaptedFunction, AdaptedParameter
 
@@ -35,7 +35,6 @@ def adapt_const_char_pointer_with_default_null(adapted_function: AdaptedFunction
     new_function_params: list[CppParameter] = []
     for old_adapted_param in old_function_params:
         if old_adapted_param.is_const_char_pointer_with_default_null():
-
             new_param = copy.deepcopy(old_adapted_param.cpp_element())
             new_decl = new_param.decl
             new_decl.cpp_type.modifiers = []

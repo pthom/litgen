@@ -340,10 +340,7 @@ class AdaptedFunction(AdaptedElement):
         # Check options.fn_exclude_by_name_and_signature
         target = options.fn_exclude_by_name_and_signature.get(cpp_function.function_name, "")
         if target:
-            signature = ", ".join(
-                param.decl.cpp_type.str_code()
-                for param in cpp_function.parameter_list.parameters
-            )
+            signature = ", ".join(param.decl.cpp_type.str_code() for param in cpp_function.parameter_list.parameters)
             if target == signature:
                 return False
 
@@ -694,7 +691,7 @@ class AdaptedFunction(AdaptedElement):
                 replace_tokens.pydef_method_creation_part = ".def(py::init("
                 replace_tokens.maybe_close_paren_if_ctor = ")"
             else:
-                replace_tokens.pydef_method_creation_part = ".def(\"__init__\", "
+                replace_tokens.pydef_method_creation_part = '.def("__init__", '
                 replace_tokens.maybe_close_paren_if_ctor = ""
         else:
             replace_tokens.pydef_method_creation_part = self._pydef_method_creation_part()
@@ -1384,13 +1381,9 @@ class AdaptedFunction(AdaptedElement):
 
         replacements = Munch()
         if self.options.bind_library == BindLibraryType.pybind11:
-            replacements.OVERRIDE_TYPE = (
-                "PYBIND11_OVERRIDE_PURE_NAME" if is_pure_virtual else "PYBIND11_OVERRIDE_NAME"
-            )
+            replacements.OVERRIDE_TYPE = "PYBIND11_OVERRIDE_PURE_NAME" if is_pure_virtual else "PYBIND11_OVERRIDE_NAME"
         else:
-            replacements.OVERRIDE_TYPE = (
-                "NB_OVERRIDE_PURE_NAME" if is_pure_virtual else "NB_OVERRIDE_NAME"
-            )
+            replacements.OVERRIDE_TYPE = "NB_OVERRIDE_PURE_NAME" if is_pure_virtual else "NB_OVERRIDE_NAME"
         replacements._i_ = self.options._indent_cpp_spaces()
         replacements.return_type = self.cpp_element().return_type.str_return_type()
         replacements.function_name_cpp = self.cpp_element().function_name_with_specialization()

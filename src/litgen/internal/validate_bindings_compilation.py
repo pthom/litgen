@@ -9,14 +9,14 @@ import shutil
 
 
 def validate_bindings_compilation(
-        cpp_code: str,
-        options: litgen.LitgenOptions,
-        python_test_code: str | None = None,
-        python_module_name: str = "validate_bindings_compilation",
-        work_dir: str | None = None,
-        remove_build_dir_on_success: bool = True,
-        remove_build_dir_on_failure: bool = False,
-        show_logs: bool = False,
+    cpp_code: str,
+    options: litgen.LitgenOptions,
+    python_test_code: str | None = None,
+    python_module_name: str = "validate_bindings_compilation",
+    work_dir: str | None = None,
+    remove_build_dir_on_success: bool = True,
+    remove_build_dir_on_failure: bool = False,
+    show_logs: bool = False,
 ) -> bool:
     """
     Validates that the cpp code can be compiled into bindings and that the generated Python bindings work as expected.
@@ -119,15 +119,13 @@ add_custom_command(TARGET {python_native_module_name}
     generated_code = litgen.generate_code(options, cpp_code)
 
     # Select the appropriate include statements and CMake code based on the binding library
-    include_bindings = (
-        INCLUDE_NANOBIND if options.bind_library == litgen.BindLibraryType.nanobind else INCLUDE_PYBIND
-    )
-    cmake_code = (
-        CMAKE_CODE_NANOBIND if options.bind_library == litgen.BindLibraryType.nanobind else CMAKE_CODE_PYBIND
-    )
+    include_bindings = INCLUDE_NANOBIND if options.bind_library == litgen.BindLibraryType.nanobind else INCLUDE_PYBIND
+    cmake_code = CMAKE_CODE_NANOBIND if options.bind_library == litgen.BindLibraryType.nanobind else CMAKE_CODE_PYBIND
 
     # Combine the C++ bound code, include statements, and generated pydef code
-    instantiate_module_macro = "NB_MODULE" if options.bind_library == litgen.BindLibraryType.nanobind else "PYBIND11_MODULE"
+    instantiate_module_macro = (
+        "NB_MODULE" if options.bind_library == litgen.BindLibraryType.nanobind else "PYBIND11_MODULE"
+    )
     full_code = f"""
 {code_utils.unindent_code(cpp_code)}
 

@@ -649,8 +649,8 @@ def test_change_decl_stmt_to_function_decl_if_suspicious():
         """
         def foo(v: int = int()) -> None:
             pass
-        """)
-
+        """,
+    )
 
     code = """
     int foo(int a = {}) { return 42; }
@@ -663,7 +663,7 @@ def test_change_decl_stmt_to_function_decl_if_suspicious():
         """
         def foo(a: int = int()) -> int:
             pass
-        """
+        """,
     )
 
     code = """
@@ -680,7 +680,7 @@ def test_change_decl_stmt_to_function_decl_if_suspicious():
             pass
         def foo2() -> None:
             pass
-        """
+        """,
     )
 
     """
@@ -729,4 +729,4 @@ def test_change_decl_stmt_to_function_decl_if_suspicious():
     options = litgen.LitgenOptions()
     generated_code = litgen.generate_code(options, code)
     # print(generated_code.stub_code)
-    code_utils.assert_are_codes_equal( generated_code.stub_code, "")
+    code_utils.assert_are_codes_equal(generated_code.stub_code, "")

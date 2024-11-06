@@ -302,6 +302,7 @@ def stub_template_code(header_filename: str) -> str:
 def main() -> None:
     generate_file_by_file = True
     import sys
+
     if "no_generate_file_by_file" in sys.argv:
         generate_file_by_file = False
 

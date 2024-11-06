@@ -12,7 +12,9 @@ from litgen.options import LitgenOptions
 
 
 def _remove_all_comments(cpp_unit: srcmlcpp.CppUnit) -> None:
-    def cpp_visitor_function(cpp_element: srcmlcpp.CppElement, event: srcmlcpp.CppElementsVisitorEvent, depth: int) -> None:
+    def cpp_visitor_function(
+        cpp_element: srcmlcpp.CppElement, event: srcmlcpp.CppElementsVisitorEvent, depth: int
+    ) -> None:
         if event == srcmlcpp.CppElementsVisitorEvent.OnElement:
             if isinstance(cpp_element, srcmlcpp.CppElementAndComment):
                 cpp_element.cpp_element_comments.comment_end_of_line = ""

@@ -1,5 +1,4 @@
-
-def _set_binding_type(type_name):
+def _set_binding_type(type_name: str) -> None:
     import os
 
     dirname = os.path.dirname(__file__)
@@ -11,5 +10,6 @@ def _set_binding_type(type_name):
 
 if __name__ == "__main__":
     import sys
+
     _use_nanobind = "nanobind" in sys.argv
     _set_binding_type("nanobind" if _use_nanobind else "pybind")
