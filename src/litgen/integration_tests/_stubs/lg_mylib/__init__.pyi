@@ -547,11 +547,13 @@ class Copyable_DeletedCopyCtor:
 #
 # return_value_policy:
 #
-# If a function has an end-of-line comment which contains `return_value_policy::reference`,
+# If a function has an end-of-line comment which contains
+#    `return_value_policy::reference` or `rv_policy::reference` (for nanobind),
 # and if this function returns a pointer or a reference, litgen will automatically add
 # `pybind11::return_value_policy::reference` when publishing it.
 #
-# Notes: `reference` could be replaced by `take_ownership`, or any other member of `pybind11::return_value_policy`
+# Notes: `reference` could be replaced by `take_ownership`,
+#   or any other member of `pybind11::return_value_policy` or `nb::rv_policy` (for nanobind)
 #
 # You can also set a global options for matching functions names that return a reference or a pointer
 #     see
@@ -567,7 +569,7 @@ class MyConfig:
 
     @staticmethod
     def instance() -> MyConfig:
-        """py::return_value_policy::reference"""
+        """// return_value_policy::reference"""
         pass
     value: int = 0
     def __init__(self, value: int = 0) -> None:
@@ -575,7 +577,7 @@ class MyConfig:
         pass
 
 def my_config_instance() -> MyConfig:
-    """py::return_value_policy::reference"""
+    """return_value_policy::reference"""
     pass
 
 # ////////////////////////////////////////////////////////////////////////////////////////////////////////////////

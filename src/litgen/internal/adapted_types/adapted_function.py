@@ -895,41 +895,32 @@ class AdaptedFunction(AdaptedElement):
             pyarg_strs.append(pyarg_str)
         return pyarg_strs
 
+
     def _pydef_fill_return_value_policy(self) -> None:
         """Parses the return_value_policy from the function end of line comment
         For example:
             // A static instance (which python shall not delete, as enforced by the marker return_policy below)
             static Foo& Instance() { static Foo instance; return instance; }       // py::rv_policy::reference
         """
-        if self.options.bind_library == BindLibraryType.pybind11:
-            token = "py::return_value_policy::"
-        else:
-            token = "py::rv_policy::"
 
-        # Try to find it in eol comment (and clean eol comment if found)
-        eol_comment = self.cpp_element().cpp_element_comments.comment_end_of_line
-        maybe_return_policy = code_utils.find_word_after_token(eol_comment, token)
-        if maybe_return_policy is not None:
-            self.return_value_policy = maybe_return_policy
-            eol_comment = eol_comment.replace(token + self.return_value_policy, "").rstrip()
-            if eol_comment.lstrip().startswith("//"):
-                eol_comment = eol_comment.lstrip()[2:]
-            self.cpp_element().cpp_element_comments.comment_end_of_line = eol_comment
-        else:
-            comment_on_previous_lines = self.cpp_element().cpp_element_comments.comment_on_previous_lines
-            maybe_return_policy = code_utils.find_word_after_token(comment_on_previous_lines, token)
+        def find_return_policy_in_comments(rv_policy_token: str) -> str | None:
+            eol_comment = self.cpp_element().cpp_element_comments.comment_end_of_line
+            maybe_return_policy = code_utils.find_word_after_token(eol_comment, rv_policy_token)
+            if maybe_return_policy is not None:
+                return maybe_return_policy
+            else:
+                comment_on_previous_lines = self.cpp_element().cpp_element_comments.comment_on_previous_lines
+                maybe_return_policy = code_utils.find_word_after_token(comment_on_previous_lines, rv_policy_token)
+                if maybe_return_policy is not None:
+                    return maybe_return_policy
+            return None
+
+        rv_policy_tokens = ["return_value_policy::", "rv_policy::"]
+        for rv_policy_token in rv_policy_tokens:
+            maybe_return_policy = find_return_policy_in_comments(rv_policy_token)
             if maybe_return_policy is not None:
                 self.return_value_policy = maybe_return_policy
-                comment_on_previous_lines = comment_on_previous_lines.replace(token + self.return_value_policy, "")
-                self.cpp_element().cpp_element_comments.comment_on_previous_lines = comment_on_previous_lines
-
-        # Finally add a comment
-        if len(self.return_value_policy) > 0:
-            comment_on_previous_lines = self.cpp_element().cpp_element_comments.comment_on_previous_lines
-            if len(comment_on_previous_lines) > 0 and comment_on_previous_lines[-1] != "\n":
-                comment_on_previous_lines += "\n"
-            comment_on_previous_lines += f"{token}{self.return_value_policy}"
-            self.cpp_element().cpp_element_comments.comment_on_previous_lines = comment_on_previous_lines
+                break
 
         # Take options.fn_force_return_policy_reference_for_pointers into account
         function_name = self.cpp_adapted_function.function_name

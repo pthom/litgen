@@ -871,13 +871,17 @@ void py_init_module_lg_mylib(py::module_& m)
         py::arg("value") = 0
         )
         .def_static("instance",
-            &MyConfig::Instance, "// py::return_value_policy::reference")
+            &MyConfig::Instance,
+            "// return_value_policy::reference",
+            py::rv_policy::reference)
         .def_rw("value", &MyConfig::value, "")
         ;
 
 
     m.def("my_config_instance",
-        MyConfigInstance, "py::return_value_policy::reference");
+        MyConfigInstance,
+        "return_value_policy::reference",
+        py::rv_policy::reference);
 
     m.def("foo_root",
         FooRoot);

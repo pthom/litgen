@@ -91,16 +91,17 @@ def test_implot_easy() -> None:
 
 def test_return_value_policy_custom() -> None:
     options = LitgenOptions()
+    options.bind_library = litgen.BindLibraryType.pybind11
     code = """
         // Returns a widget
-        Widget* Foo();  // py::return_value_policy::reference
+        Widget* Foo();  // return_value_policy::reference
     """
     generated_code = LitgenGeneratorTestsHelper.code_to_pydef(options, code)
     # logging.warning("\n" + generated_code)
     expected_code = """
         m.def("foo",
             Foo,
-            " Returns a widget\\npy::return_value_policy::reference",
+            " Returns a widget\\n\\n return_value_policy::reference",
             py::return_value_policy::reference);
         """
     code_utils.assert_are_codes_equal(generated_code, expected_code)
