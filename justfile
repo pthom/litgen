@@ -2,6 +2,17 @@
 default:
     just --list
 
+# install dev requirements
+install_requirements_dev:
+    pip install -r requirements-dev.txt
+
+# install litgen in editable mode
+install_litgen_editable:
+    pip install --verbose  -e .
+
+# run black formatter
+black:
+    black .
 
 # Builds the integration tests for pybind
 build_integration_tests_pybind:
@@ -17,7 +28,6 @@ build_integration_tests_nanobind:
     python -m lg_mylib.use nanobind
     python -c "import lg_mylib._lg_mylib_nanobind"
 
-
 # Runs all tests for pybind, after building the integration tests
 integration_tests_pybind: build_integration_tests_pybind
     just pytest pybind
@@ -31,12 +41,10 @@ integration_tests:
     just integration_tests_pybind
     just integration_tests_nanobind
 
-
 # Just runs pytest (requires that the integration tests have been built)
 pytest binding_type:
     python -m lg_mylib.use {{binding_type}}
     pytest
-
 
 # Runs mypy on the top level folder (see mypy.ini)
 mypy:

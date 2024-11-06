@@ -27,16 +27,19 @@ jobs:
           python-version: ${{ matrix.python-version }}
 
       - name: pip install -r requirements-dev.txt
-        run: pip install -r requirements-dev.txt
+        run: just install_requirements_dev
 
       - name: pip install --verbose .
-        run: pip install --verbose .
+        run: just install_litgen_editable
 
       - name: black
-        run: black .
+        run: just black
 
       - name: mypy
-        run: mypy .
+        run: just mypy
 
       - name: integration_tests_pybind
         run: just integration_tests_pybind
+
+      - name: integration_tests_nanobind
+        run: just integration_tests_nanobind
