@@ -751,6 +751,34 @@ def test_numeric_array_member() -> None:
     )
 
 
+def test_nanobind_adapted_ctor_stub() -> None:
+    # The constructor params below will automatically be "adapted" into std::array<uint8_t, 4>
+    code = """
+    struct Color4
+    {
+        Color4(const uint8_t _rgba[4]);
+        uint8_t rgba[4];
+    };
+    """
+    options = litgen.LitgenOptions()
+    options.bind_library = BindLibraryType.nanobind
+    generated_code = litgen.generate_code(options, code)
+
+    # Below, we test that the ctor signature is adapted to accept List[int]
+    # (and does not specify an additional self parameter, cf AdaptedFunction.stub_params_list_signature())
+    # print(generated_code.stub_code)
+    code_utils.assert_are_codes_equal(
+        generated_code.stub_code,
+        """
+        class Color4:
+            def __init__(self, _rgba: List[int]) -> None:
+                pass
+            rgba: np.ndarray  # ndarray[type=uint8_t, size=4]
+        """
+    )
+
+
+
 def test_adapted_ctor() -> None:
     # The constructor for Color4 will be adapted to accept std::array<uint8_t, 4>
     code = """

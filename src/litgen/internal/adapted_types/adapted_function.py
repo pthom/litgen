@@ -1207,7 +1207,15 @@ class AdaptedFunction(AdaptedElement):
         cpp_adapted_function_terse = self.cpp_adapted_function.with_terse_types()
         cpp_parameters = cpp_adapted_function_terse.parameter_list.parameters
         r = []
-        for param in cpp_parameters:
+        for i, param in enumerate(cpp_parameters):
+            # For nanobind, skip first "self" argument in constructors
+            is_nanobind = self.options.bind_library == BindLibraryType.nanobind
+            if is_nanobind:
+                is_ctor = self.is_constructor()
+                is_first_self_arg = i == 0 and param.decl.decl_name == "self"
+                if is_ctor and is_first_self_arg:
+                    continue
+
             param_decl = param.decl
 
             param_name_python = cpp_to_python.var_name_to_python(self.options, param_decl.decl_name)
