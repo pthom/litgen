@@ -147,7 +147,7 @@ add_custom_command(TARGET {python_native_module_name}
             shutil.rmtree(work_dir)
         os.mkdir(work_dir)
     build_dir = os.path.join(work_dir, "build")
-    os.mkdir(build_dir)
+    os.makedirs(build_dir, exist_ok=True)
 
     try:
         code_cpp_path = os.path.join(work_dir, "code.cpp")
@@ -163,7 +163,7 @@ add_custom_command(TARGET {python_native_module_name}
 
         # Write stub files and initialize the module directory
         module_dir = os.path.join(work_dir, python_module_name)
-        os.mkdir(module_dir)
+        os.makedirs(module_dir, exist_ok=True)
         stub_file = os.path.join(module_dir, "__init__.pyi")
         with open(stub_file, "w") as f:
             f.write(generated_code.stub_code)
@@ -234,7 +234,7 @@ add_custom_command(TARGET {python_native_module_name}
             test_file_name = "test_validate_bindings_compilation.py"
             test_file_path = os.path.join(work_dir, test_file_name)
             with open(test_file_path, "w") as f:
-                f.write(python_test_code)
+                f.write(code_utils.unindent_code(python_test_code))
 
             # Run pytest on the test file
             try:
