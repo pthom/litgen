@@ -285,3 +285,89 @@ def test_nanobind_buffer() -> None:
             },     py::arg("buffer"));
         """
     )
+
+
+def test_template_buffer_nanobind():
+    code = """
+    template<typename T> MY_API int foo(const T *buf, size_t count, bool flag);
+    """
+    options = litgen.LitgenOptions()
+    options.fn_params_replace_buffer_by_array__regex = r".*"
+    options.bind_library = litgen.BindLibraryType.nanobind
+    generated_code = litgen.generate_code(options, code)
+    # print("\n" + generated_code.pydef_code)
+    code_utils.assert_are_codes_equal(
+        generated_code.pydef_code,
+        """
+        m.def("foo",
+            [](const py::ndarray<> & buf, bool flag) -> MY_API int
+            {
+                auto foo_adapt_c_buffers = [](const py::ndarray<> & buf, bool flag) -> MY_API int
+                {
+                    // convert py::array to C standard buffer (const)
+                    const void * buf_from_pyarray = buf.data();
+                    size_t buf_count = buf.shape(0);
+
+                    #ifdef _WIN32
+                    using np_uint_l = uint32_t;
+                    using np_int_l = int32_t;
+                    #else
+                    using np_uint_l = uint64_t;
+                    using np_int_l = int64_t;
+                    #endif
+
+                    // Define a lambda to compute the letter code for the buffer type
+                    auto _nanobind_buffer_type_to_letter_code = [](uint8_t dtype_code, size_t sizeof_item)  -> char
+                    {
+                        #define DCODE(T) static_cast<uint8_t>(py::dlpack::dtype_code::T)
+                            const std::array<std::tuple<uint8_t, size_t, char>, 11> mappings = {{
+                                {DCODE(UInt), 1, 'B'}, {DCODE(UInt), 2, 'H'}, {DCODE(UInt), 4, 'I'}, {DCODE(UInt), 8, 'L'},
+                                {DCODE(Int), 1, 'b'}, {DCODE(Int), 2, 'h'}, {DCODE(Int), 4, 'i'}, {DCODE(Int), 8, 'l'},
+                                {DCODE(Float), 4, 'f'}, {DCODE(Float), 8, 'd'}, {DCODE(Float), 16, 'g'}
+                            }};
+                        #undef DCODE
+                        for (const auto& [code_val, size, letter] : mappings)
+                            if (code_val == dtype_code && size == sizeof_item)
+                                return letter;
+                        throw std::runtime_error("Unsupported dtype");
+                    };
+
+                    // Compute the letter code for the buffer type
+                    uint8_t dtype_code_buf = buf.dtype().code;
+                    size_t sizeof_item_buf = buf.dtype().bits / 8;
+                    char buf_type = _nanobind_buffer_type_to_letter_code(dtype_code_buf, sizeof_item_buf);
+
+                    // call the correct template version by casting
+                    if (buf_type == 'B')
+                        return foo(static_cast<const uint8_t *>(buf_from_pyarray), static_cast<size_t>(buf_count), flag);
+                    else if (buf_type == 'b')
+                        return foo(static_cast<const int8_t *>(buf_from_pyarray), static_cast<size_t>(buf_count), flag);
+                    else if (buf_type == 'H')
+                        return foo(static_cast<const uint16_t *>(buf_from_pyarray), static_cast<size_t>(buf_count), flag);
+                    else if (buf_type == 'h')
+                        return foo(static_cast<const int16_t *>(buf_from_pyarray), static_cast<size_t>(buf_count), flag);
+                    else if (buf_type == 'I')
+                        return foo(static_cast<const uint32_t *>(buf_from_pyarray), static_cast<size_t>(buf_count), flag);
+                    else if (buf_type == 'i')
+                        return foo(static_cast<const int32_t *>(buf_from_pyarray), static_cast<size_t>(buf_count), flag);
+                    else if (buf_type == 'L')
+                        return foo(static_cast<const np_uint_l *>(buf_from_pyarray), static_cast<size_t>(buf_count), flag);
+                    else if (buf_type == 'l')
+                        return foo(static_cast<const np_int_l *>(buf_from_pyarray), static_cast<size_t>(buf_count), flag);
+                    else if (buf_type == 'f')
+                        return foo(static_cast<const float *>(buf_from_pyarray), static_cast<size_t>(buf_count), flag);
+                    else if (buf_type == 'd')
+                        return foo(static_cast<const double *>(buf_from_pyarray), static_cast<size_t>(buf_count), flag);
+                    else if (buf_type == 'g')
+                        return foo(static_cast<const long double *>(buf_from_pyarray), static_cast<size_t>(buf_count), flag);
+                    else if (buf_type == 'q')
+                        return foo(static_cast<const long long *>(buf_from_pyarray), static_cast<size_t>(buf_count), flag);
+                    // If we reach this point, the array type is not supported!
+                    else
+                        throw std::runtime_error(std::string("Bad array type ('") + buf_type + "') for param buf");
+                };
+
+                return foo_adapt_c_buffers(buf, flag);
+            },     py::arg("buf"), py::arg("flag"));
+        """
+    )

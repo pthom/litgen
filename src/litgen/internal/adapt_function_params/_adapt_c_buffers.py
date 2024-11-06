@@ -227,17 +227,52 @@ class _AdaptBuffersHelper:
         return r
 
     def make_adapted_lambda_code_end_template_buffer(self) -> str:
-        template_intro = """
-            #ifdef _WIN32
-            using np_uint_l = uint32_t;
-            using np_int_l = int32_t;
-            #else
-            using np_uint_l = uint64_t;
-            using np_int_l = int64_t;
-            #endif
-            // call the correct template version by casting
-            char {template_buffer_name}_type = {template_buffer_name}.dtype().char_();
-        """
+        if self.options.bind_library == BindLibraryType.pybind11:
+            template_intro = """
+                #ifdef _WIN32
+                using np_uint_l = uint32_t;
+                using np_int_l = int32_t;
+                #else
+                using np_uint_l = uint64_t;
+                using np_int_l = int64_t;
+                #endif
+                // call the correct template version by casting
+                char {template_buffer_name}_type = {template_buffer_name}.dtype().char_();
+            """
+        elif self.options.bind_library == BindLibraryType.nanobind:
+            _nanobind_buffer_type_to_letter_code = """
+                #ifdef _WIN32
+                using np_uint_l = uint32_t;
+                using np_int_l = int32_t;
+                #else
+                using np_uint_l = uint64_t;
+                using np_int_l = int64_t;
+                #endif
+
+                // Define a lambda to compute the letter code for the buffer type
+                auto _nanobind_buffer_type_to_letter_code = [](uint8_t dtype_code, size_t sizeof_item)  -> char
+                {
+                    #define DCODE(T) static_cast<uint8_t>(py::dlpack::dtype_code::T)
+                        const std::array<std::tuple<uint8_t, size_t, char>, 11> mappings = {{
+                            {DCODE(UInt), 1, 'B'}, {DCODE(UInt), 2, 'H'}, {DCODE(UInt), 4, 'I'}, {DCODE(UInt), 8, 'L'},
+                            {DCODE(Int), 1, 'b'}, {DCODE(Int), 2, 'h'}, {DCODE(Int), 4, 'i'}, {DCODE(Int), 8, 'l'},
+                            {DCODE(Float), 4, 'f'}, {DCODE(Float), 8, 'd'}, {DCODE(Float), 16, 'g'}
+                        }};
+                    #undef DCODE
+                    for (const auto& [code_val, size, letter] : mappings)
+                        if (code_val == dtype_code && size == sizeof_item)
+                            return letter;
+                    throw std::runtime_error("Unsupported dtype");
+                };
+            """
+            template_intro = _nanobind_buffer_type_to_letter_code + """
+                // Compute the letter code for the buffer type
+                uint8_t dtype_code_{template_buffer_name} = {template_buffer_name}.dtype().code;
+                size_t sizeof_item_{template_buffer_name} = {template_buffer_name}.dtype().bits / 8;
+                char {template_buffer_name}_type = _nanobind_buffer_type_to_letter_code(dtype_code_{template_buffer_name}, sizeof_item_{template_buffer_name});
+
+                // call the correct template version by casting
+            """
 
         template_loop_type = """
             {maybe_else}if ({template_buffer_name}_type == '{pyarray_type_char}')
@@ -442,7 +477,6 @@ class _AdaptBuffersHelper:
         _ = self
         if self.options.bind_library == BindLibraryType.pybind11:
             template = f"""
-                    // Check the type of the array
                     char {_._param_name(idx_param)}_type = {_._param_name(idx_param)}.dtype().char_();
                     if ({_._param_name(idx_param)}_type != '{_._expected_dtype_char(idx_param)}')
                         throw std::runtime_error(std::string(R"msg(
@@ -590,8 +624,6 @@ def adapt_c_buffers(adapted_function: AdaptedFunction) -> Optional[LambdaAdapter
 
     # replaces _make_adapted_lambda_code_end() for buffers (which are more complex)
     if helper.has_template_buffer_param():
-        if options.bind_library == BindLibraryType.nanobind:
-            raise SrcmlcppException("binding with nanobind does not support template buffers!")
         lambda_adapter.lambda_template_end = helper.make_adapted_lambda_code_end_template_buffer()
 
     lambda_adapter.new_function_infos.parameter_list.parameters = new_function_params

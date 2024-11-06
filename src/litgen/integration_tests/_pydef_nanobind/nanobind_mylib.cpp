@@ -7,6 +7,7 @@
 #include <nanobind/stl/shared_ptr.h>
 #include <nanobind/stl/unique_ptr.h>
 #include <nanobind/stl/map.h>
+#include <nanobind/stl/tuple.h>
 #include <nanobind/ndarray.h>
 
 #include "mylib/mylib_main/mylib.h"
@@ -390,6 +391,79 @@ void py_init_module_lg_mylib(py::module_& m)
         },
         py::arg("buffer_1"), py::arg("buffer_2"), py::arg("number_to_add"),
         " add_inside_two_buffers: modifies two mutable buffers\n litgen will detect that this function uses two buffers of same size.\n Will be published in python as:\n -->    def add_inside_two_buffers(buffer_1: np.ndarray, buffer_2: np.ndarray, number_to_add: int) -> None:");
+
+    m.def("templated_mul_inside_buffer",
+        [](py::ndarray<> & buffer, double factor)
+        {
+            auto templated_mul_inside_buffer_adapt_c_buffers = [](py::ndarray<> & buffer, double factor)
+            {
+                // convert py::array to C standard buffer (mutable)
+                void * buffer_from_pyarray = buffer.data();
+                size_t buffer_count = buffer.shape(0);
+
+                #ifdef _WIN32
+                using np_uint_l = uint32_t;
+                using np_int_l = int32_t;
+                #else
+                using np_uint_l = uint64_t;
+                using np_int_l = int64_t;
+                #endif
+
+                // Define a lambda to compute the letter code for the buffer type
+                auto _nanobind_buffer_type_to_letter_code = [](uint8_t dtype_code, size_t sizeof_item)  -> char
+                {
+                    #define DCODE(T) static_cast<uint8_t>(py::dlpack::dtype_code::T)
+                        const std::array<std::tuple<uint8_t, size_t, char>, 11> mappings = {{
+                            {DCODE(UInt), 1, 'B'}, {DCODE(UInt), 2, 'H'}, {DCODE(UInt), 4, 'I'}, {DCODE(UInt), 8, 'L'},
+                            {DCODE(Int), 1, 'b'}, {DCODE(Int), 2, 'h'}, {DCODE(Int), 4, 'i'}, {DCODE(Int), 8, 'l'},
+                            {DCODE(Float), 4, 'f'}, {DCODE(Float), 8, 'd'}, {DCODE(Float), 16, 'g'}
+                        }};
+                    #undef DCODE
+                    for (const auto& [code_val, size, letter] : mappings)
+                        if (code_val == dtype_code && size == sizeof_item)
+                            return letter;
+                    throw std::runtime_error("Unsupported dtype");
+                };
+
+                // Compute the letter code for the buffer type
+                uint8_t dtype_code_buffer = buffer.dtype().code;
+                size_t sizeof_item_buffer = buffer.dtype().bits / 8;
+                char buffer_type = _nanobind_buffer_type_to_letter_code(dtype_code_buffer, sizeof_item_buffer);
+
+                // call the correct template version by casting
+                if (buffer_type == 'B')
+                    templated_mul_inside_buffer(static_cast<uint8_t *>(buffer_from_pyarray), static_cast<size_t>(buffer_count), factor);
+                else if (buffer_type == 'b')
+                    templated_mul_inside_buffer(static_cast<int8_t *>(buffer_from_pyarray), static_cast<size_t>(buffer_count), factor);
+                else if (buffer_type == 'H')
+                    templated_mul_inside_buffer(static_cast<uint16_t *>(buffer_from_pyarray), static_cast<size_t>(buffer_count), factor);
+                else if (buffer_type == 'h')
+                    templated_mul_inside_buffer(static_cast<int16_t *>(buffer_from_pyarray), static_cast<size_t>(buffer_count), factor);
+                else if (buffer_type == 'I')
+                    templated_mul_inside_buffer(static_cast<uint32_t *>(buffer_from_pyarray), static_cast<size_t>(buffer_count), factor);
+                else if (buffer_type == 'i')
+                    templated_mul_inside_buffer(static_cast<int32_t *>(buffer_from_pyarray), static_cast<size_t>(buffer_count), factor);
+                else if (buffer_type == 'L')
+                    templated_mul_inside_buffer(static_cast<np_uint_l *>(buffer_from_pyarray), static_cast<size_t>(buffer_count), factor);
+                else if (buffer_type == 'l')
+                    templated_mul_inside_buffer(static_cast<np_int_l *>(buffer_from_pyarray), static_cast<size_t>(buffer_count), factor);
+                else if (buffer_type == 'f')
+                    templated_mul_inside_buffer(static_cast<float *>(buffer_from_pyarray), static_cast<size_t>(buffer_count), factor);
+                else if (buffer_type == 'd')
+                    templated_mul_inside_buffer(static_cast<double *>(buffer_from_pyarray), static_cast<size_t>(buffer_count), factor);
+                else if (buffer_type == 'g')
+                    templated_mul_inside_buffer(static_cast<long double *>(buffer_from_pyarray), static_cast<size_t>(buffer_count), factor);
+                else if (buffer_type == 'q')
+                    templated_mul_inside_buffer(static_cast<long long *>(buffer_from_pyarray), static_cast<size_t>(buffer_count), factor);
+                // If we reach this point, the array type is not supported!
+                else
+                    throw std::runtime_error(std::string("Bad array type ('") + buffer_type + "') for param buffer");
+            };
+
+            templated_mul_inside_buffer_adapt_c_buffers(buffer, factor);
+        },
+        py::arg("buffer"), py::arg("factor"),
+        " templated_mul_inside_buffer: template function that modifies an array by multiplying its elements by a given factor\n litgen will detect that this function can be published as using a numpy array.\n It will be published in python as:\n -->    def mul_inside_buffer(buffer: np.ndarray, factor: float) -> None:\n\n The type will be detected at runtime and the correct template version will be called accordingly!\n An error will be thrown if the numpy array numeric type is not supported.");
 
     m.def("c_string_list_total_size",
         [](const std::vector<std::string> & items, BoxedInt & output_0, BoxedInt & output_1) -> size_t
@@ -1376,6 +1450,76 @@ void py_init_module_lg_mylib(py::module_& m)
 
                     add_inside_buffer_adapt_c_buffers(buffer, number_to_add);
                 },     py::arg("buffer"), py::arg("number_to_add"))
+            .def("templated_mul_inside_buffer",
+                [](SomeNamespace::Blah & self, py::ndarray<> & buffer, double factor)
+                {
+                    auto templated_mul_inside_buffer_adapt_c_buffers = [&self](py::ndarray<> & buffer, double factor)
+                    {
+                        // convert py::array to C standard buffer (mutable)
+                        void * buffer_from_pyarray = buffer.data();
+                        size_t buffer_count = buffer.shape(0);
+
+                        #ifdef _WIN32
+                        using np_uint_l = uint32_t;
+                        using np_int_l = int32_t;
+                        #else
+                        using np_uint_l = uint64_t;
+                        using np_int_l = int64_t;
+                        #endif
+
+                        // Define a lambda to compute the letter code for the buffer type
+                        auto _nanobind_buffer_type_to_letter_code = [](uint8_t dtype_code, size_t sizeof_item)  -> char
+                        {
+                            #define DCODE(T) static_cast<uint8_t>(py::dlpack::dtype_code::T)
+                                const std::array<std::tuple<uint8_t, size_t, char>, 11> mappings = {{
+                                    {DCODE(UInt), 1, 'B'}, {DCODE(UInt), 2, 'H'}, {DCODE(UInt), 4, 'I'}, {DCODE(UInt), 8, 'L'},
+                                    {DCODE(Int), 1, 'b'}, {DCODE(Int), 2, 'h'}, {DCODE(Int), 4, 'i'}, {DCODE(Int), 8, 'l'},
+                                    {DCODE(Float), 4, 'f'}, {DCODE(Float), 8, 'd'}, {DCODE(Float), 16, 'g'}
+                                }};
+                            #undef DCODE
+                            for (const auto& [code_val, size, letter] : mappings)
+                                if (code_val == dtype_code && size == sizeof_item)
+                                    return letter;
+                            throw std::runtime_error("Unsupported dtype");
+                        };
+
+                        // Compute the letter code for the buffer type
+                        uint8_t dtype_code_buffer = buffer.dtype().code;
+                        size_t sizeof_item_buffer = buffer.dtype().bits / 8;
+                        char buffer_type = _nanobind_buffer_type_to_letter_code(dtype_code_buffer, sizeof_item_buffer);
+
+                        // call the correct template version by casting
+                        if (buffer_type == 'B')
+                            self.templated_mul_inside_buffer(static_cast<uint8_t *>(buffer_from_pyarray), static_cast<size_t>(buffer_count), factor);
+                        else if (buffer_type == 'b')
+                            self.templated_mul_inside_buffer(static_cast<int8_t *>(buffer_from_pyarray), static_cast<size_t>(buffer_count), factor);
+                        else if (buffer_type == 'H')
+                            self.templated_mul_inside_buffer(static_cast<uint16_t *>(buffer_from_pyarray), static_cast<size_t>(buffer_count), factor);
+                        else if (buffer_type == 'h')
+                            self.templated_mul_inside_buffer(static_cast<int16_t *>(buffer_from_pyarray), static_cast<size_t>(buffer_count), factor);
+                        else if (buffer_type == 'I')
+                            self.templated_mul_inside_buffer(static_cast<uint32_t *>(buffer_from_pyarray), static_cast<size_t>(buffer_count), factor);
+                        else if (buffer_type == 'i')
+                            self.templated_mul_inside_buffer(static_cast<int32_t *>(buffer_from_pyarray), static_cast<size_t>(buffer_count), factor);
+                        else if (buffer_type == 'L')
+                            self.templated_mul_inside_buffer(static_cast<np_uint_l *>(buffer_from_pyarray), static_cast<size_t>(buffer_count), factor);
+                        else if (buffer_type == 'l')
+                            self.templated_mul_inside_buffer(static_cast<np_int_l *>(buffer_from_pyarray), static_cast<size_t>(buffer_count), factor);
+                        else if (buffer_type == 'f')
+                            self.templated_mul_inside_buffer(static_cast<float *>(buffer_from_pyarray), static_cast<size_t>(buffer_count), factor);
+                        else if (buffer_type == 'd')
+                            self.templated_mul_inside_buffer(static_cast<double *>(buffer_from_pyarray), static_cast<size_t>(buffer_count), factor);
+                        else if (buffer_type == 'g')
+                            self.templated_mul_inside_buffer(static_cast<long double *>(buffer_from_pyarray), static_cast<size_t>(buffer_count), factor);
+                        else if (buffer_type == 'q')
+                            self.templated_mul_inside_buffer(static_cast<long long *>(buffer_from_pyarray), static_cast<size_t>(buffer_count), factor);
+                        // If we reach this point, the array type is not supported!
+                        else
+                            throw std::runtime_error(std::string("Bad array type ('") + buffer_type + "') for param buffer");
+                    };
+
+                    templated_mul_inside_buffer_adapt_c_buffers(buffer, factor);
+                },     py::arg("buffer"), py::arg("factor"))
             .def("const_array2_add",
                 [](SomeNamespace::Blah & self, const std::array<int, 2>& values) -> int
                 {
@@ -1514,6 +1658,77 @@ void py_init_module_lg_mylib(py::module_& m)
 
                     add_inside_buffer_adapt_c_buffers(buffer, number_to_add);
                 },     py::arg("buffer"), py::arg("number_to_add"));
+
+            pyNsSomeNamespace_NsSomeInnerNamespace.def("templated_mul_inside_buffer",
+                [](py::ndarray<> & buffer, double factor)
+                {
+                    auto templated_mul_inside_buffer_adapt_c_buffers = [](py::ndarray<> & buffer, double factor)
+                    {
+                        // convert py::array to C standard buffer (mutable)
+                        void * buffer_from_pyarray = buffer.data();
+                        size_t buffer_count = buffer.shape(0);
+
+                        #ifdef _WIN32
+                        using np_uint_l = uint32_t;
+                        using np_int_l = int32_t;
+                        #else
+                        using np_uint_l = uint64_t;
+                        using np_int_l = int64_t;
+                        #endif
+
+                        // Define a lambda to compute the letter code for the buffer type
+                        auto _nanobind_buffer_type_to_letter_code = [](uint8_t dtype_code, size_t sizeof_item)  -> char
+                        {
+                            #define DCODE(T) static_cast<uint8_t>(py::dlpack::dtype_code::T)
+                                const std::array<std::tuple<uint8_t, size_t, char>, 11> mappings = {{
+                                    {DCODE(UInt), 1, 'B'}, {DCODE(UInt), 2, 'H'}, {DCODE(UInt), 4, 'I'}, {DCODE(UInt), 8, 'L'},
+                                    {DCODE(Int), 1, 'b'}, {DCODE(Int), 2, 'h'}, {DCODE(Int), 4, 'i'}, {DCODE(Int), 8, 'l'},
+                                    {DCODE(Float), 4, 'f'}, {DCODE(Float), 8, 'd'}, {DCODE(Float), 16, 'g'}
+                                }};
+                            #undef DCODE
+                            for (const auto& [code_val, size, letter] : mappings)
+                                if (code_val == dtype_code && size == sizeof_item)
+                                    return letter;
+                            throw std::runtime_error("Unsupported dtype");
+                        };
+
+                        // Compute the letter code for the buffer type
+                        uint8_t dtype_code_buffer = buffer.dtype().code;
+                        size_t sizeof_item_buffer = buffer.dtype().bits / 8;
+                        char buffer_type = _nanobind_buffer_type_to_letter_code(dtype_code_buffer, sizeof_item_buffer);
+
+                        // call the correct template version by casting
+                        if (buffer_type == 'B')
+                            SomeNamespace::SomeInnerNamespace::templated_mul_inside_buffer(static_cast<uint8_t *>(buffer_from_pyarray), static_cast<size_t>(buffer_count), factor);
+                        else if (buffer_type == 'b')
+                            SomeNamespace::SomeInnerNamespace::templated_mul_inside_buffer(static_cast<int8_t *>(buffer_from_pyarray), static_cast<size_t>(buffer_count), factor);
+                        else if (buffer_type == 'H')
+                            SomeNamespace::SomeInnerNamespace::templated_mul_inside_buffer(static_cast<uint16_t *>(buffer_from_pyarray), static_cast<size_t>(buffer_count), factor);
+                        else if (buffer_type == 'h')
+                            SomeNamespace::SomeInnerNamespace::templated_mul_inside_buffer(static_cast<int16_t *>(buffer_from_pyarray), static_cast<size_t>(buffer_count), factor);
+                        else if (buffer_type == 'I')
+                            SomeNamespace::SomeInnerNamespace::templated_mul_inside_buffer(static_cast<uint32_t *>(buffer_from_pyarray), static_cast<size_t>(buffer_count), factor);
+                        else if (buffer_type == 'i')
+                            SomeNamespace::SomeInnerNamespace::templated_mul_inside_buffer(static_cast<int32_t *>(buffer_from_pyarray), static_cast<size_t>(buffer_count), factor);
+                        else if (buffer_type == 'L')
+                            SomeNamespace::SomeInnerNamespace::templated_mul_inside_buffer(static_cast<np_uint_l *>(buffer_from_pyarray), static_cast<size_t>(buffer_count), factor);
+                        else if (buffer_type == 'l')
+                            SomeNamespace::SomeInnerNamespace::templated_mul_inside_buffer(static_cast<np_int_l *>(buffer_from_pyarray), static_cast<size_t>(buffer_count), factor);
+                        else if (buffer_type == 'f')
+                            SomeNamespace::SomeInnerNamespace::templated_mul_inside_buffer(static_cast<float *>(buffer_from_pyarray), static_cast<size_t>(buffer_count), factor);
+                        else if (buffer_type == 'd')
+                            SomeNamespace::SomeInnerNamespace::templated_mul_inside_buffer(static_cast<double *>(buffer_from_pyarray), static_cast<size_t>(buffer_count), factor);
+                        else if (buffer_type == 'g')
+                            SomeNamespace::SomeInnerNamespace::templated_mul_inside_buffer(static_cast<long double *>(buffer_from_pyarray), static_cast<size_t>(buffer_count), factor);
+                        else if (buffer_type == 'q')
+                            SomeNamespace::SomeInnerNamespace::templated_mul_inside_buffer(static_cast<long long *>(buffer_from_pyarray), static_cast<size_t>(buffer_count), factor);
+                        // If we reach this point, the array type is not supported!
+                        else
+                            throw std::runtime_error(std::string("Bad array type ('") + buffer_type + "') for param buffer");
+                    };
+
+                    templated_mul_inside_buffer_adapt_c_buffers(buffer, factor);
+                },     py::arg("buffer"), py::arg("factor"));
 
             pyNsSomeNamespace_NsSomeInnerNamespace.def("const_array2_add",
                 [](const std::array<int, 2>& values) -> int

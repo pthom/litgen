@@ -46,6 +46,8 @@ def validate_bindings_compilation(
     INCLUDE_NANOBIND = """
 #include <memory>
 #include <array>
+#include <vector>
+#include <tuple>
 #include <nanobind/nanobind.h>
 #include <nanobind/stl/string.h>
 #include <nanobind/stl/array.h>
