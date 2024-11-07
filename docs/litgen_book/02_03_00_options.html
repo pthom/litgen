@@ -519,7 +519,7 @@ document.write(`
 </style>
 
     <script>
-       function copy_code_1727901431810_06() {
+       function copy_code_1730973446053_8071() {
             let code = `from __future__ import annotations
 
 from typing import Any, Callable, List
@@ -924,6 +924,23 @@ class LitgenOptions:
     #     options.class_iterables_infos.add_iterable_class(python_class_name__regex, iterable_python_type_name)
     class_iterables_infos: ClassIterablesInfos
 
+    # class_held_as_shared__regex:
+    # Regex specifying the list of class names that should be held using std::shared_ptr in the generated bindings.
+    #
+    # **Purpose:**
+    # By default, pybind11 uses \`std::unique_ptr\` as the holder type for bound classes.
+    #
+    # **When to Use:**
+    # If your C++ code uses \`std::shared_ptr\` to manage instances of a class (e.g., as member variables, return types,
+    # or parameters), and you expose that class to Python, you need to ensure that pybind11 uses \`std::shared_ptr\` as
+    # the holder type for that class.
+    #
+    # **References:**
+    # - [pybind11 Documentation: Smart Pointers](https://pybind11.readthedocs.io/en/stable/advanced/smart_ptrs.html)
+    # - [Understanding Holder Types in pybind11](https://pybind11.readthedocs.io/en/stable/advanced/classes.html#custom-smart-pointers)
+    class_held_as_shared__regex: str = ""
+
+
     # ------------------------------------------------------------------------------
     # Templated class options
     # ------------------------------------------------------------------------------
@@ -1017,6 +1034,10 @@ class LitgenOptions:
     #     enum MyEnum { MyEnum_A = 0, MyEnum_B };
     # Values would be named "a" and "b" in python
     enum_flag_remove_values_prefix: bool = True
+    # A specific case for ImGui, which defines private enums which may extend the public ones:
+    #     enum ImGuiMyFlags_ { ImGuiMyFlags_None = 0,...};  enum ImGuiMyFlagsPrivate_ { ImGuiMyFlags_PrivValue = ...};
+    enum_flag_remove_values_prefix_group_private: bool = False
+
     # Skip count value from enums, for example like in:
     #    enum MyEnum { MyEnum_A = 1, MyEnum_B = 1, MyEnum_COUNT };
     enum_flag_skip_count: bool = True
@@ -1125,10 +1146,10 @@ class LitgenOptions:
             navigator.clipboard.writeText(code);
        }
     </script>
-    <button class="collapsible_header" id="btn_1727901431810_06_0" >litgen/options.py</button>
-    <div class="collapsible_content" id="content_1727901431810_06_0">
+    <button class="collapsible_header" id="btn_1730973446053_8071_0" >litgen/options.py</button>
+    <div class="collapsible_content" id="content_1730973446053_8071_0">
         <div>
-                <button onclick="copy_code_1727901431810_06()" align="right">copy &#x270d;</button>
+                <button onclick="copy_code_1730973446053_8071()" align="right">copy &#x270d;</button>
         </div>
         <style>pre { line-height: 125%; }
 td.linenos .normal { color: inherit; background-color: transparent; padding-left: 5px; padding-right: 5px; }
@@ -1604,6 +1625,23 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
     <span class="c1">#     options.class_iterables_infos.add_iterable_class(python_class_name__regex, iterable_python_type_name)</span>
     <span class="n">class_iterables_infos</span><span class="p">:</span> <span class="n">ClassIterablesInfos</span>
 
+    <span class="c1"># class_held_as_shared__regex:</span>
+    <span class="c1"># Regex specifying the list of class names that should be held using std::shared_ptr in the generated bindings.</span>
+    <span class="c1">#</span>
+    <span class="c1"># **Purpose:**</span>
+    <span class="c1"># By default, pybind11 uses `std::unique_ptr` as the holder type for bound classes.</span>
+    <span class="c1">#</span>
+    <span class="c1"># **When to Use:**</span>
+    <span class="c1"># If your C++ code uses `std::shared_ptr` to manage instances of a class (e.g., as member variables, return types,</span>
+    <span class="c1"># or parameters), and you expose that class to Python, you need to ensure that pybind11 uses `std::shared_ptr` as</span>
+    <span class="c1"># the holder type for that class.</span>
+    <span class="c1">#</span>
+    <span class="c1"># **References:**</span>
+    <span class="c1"># - [pybind11 Documentation: Smart Pointers](https://pybind11.readthedocs.io/en/stable/advanced/smart_ptrs.html)</span>
+    <span class="c1"># - [Understanding Holder Types in pybind11](https://pybind11.readthedocs.io/en/stable/advanced/classes.html#custom-smart-pointers)</span>
+    <span class="n">class_held_as_shared__regex</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+
+
     <span class="c1"># ------------------------------------------------------------------------------</span>
     <span class="c1"># Templated class options</span>
     <span class="c1"># ------------------------------------------------------------------------------</span>
@@ -1697,6 +1735,10 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
     <span class="c1">#     enum MyEnum { MyEnum_A = 0, MyEnum_B };</span>
     <span class="c1"># Values would be named &quot;a&quot; and &quot;b&quot; in python</span>
     <span class="n">enum_flag_remove_values_prefix</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="c1"># A specific case for ImGui, which defines private enums which may extend the public ones:</span>
+    <span class="c1">#     enum ImGuiMyFlags_ { ImGuiMyFlags_None = 0,...};  enum ImGuiMyFlagsPrivate_ { ImGuiMyFlags_PrivValue = ...};</span>
+    <span class="n">enum_flag_remove_values_prefix_group_private</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+
     <span class="c1"># Skip count value from enums, for example like in:</span>
     <span class="c1">#    enum MyEnum { MyEnum_A = 1, MyEnum_B = 1, MyEnum_COUNT };</span>
     <span class="n">enum_flag_skip_count</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
@@ -1806,10 +1848,10 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
     </div>
     
     <script>
-    var button = document.getElementById("btn_1727901431810_06_0");
+    var button = document.getElementById("btn_1730973446053_8071_0");
     button.addEventListener("click", function() {
         this.classList.toggle("collapsible_header_opened");
-        var content = document.getElementById("content_1727901431810_06_0");
+        var content = document.getElementById("content_1730973446053_8071_0");
         if (content.style.maxHeight){
           content.style.maxHeight = null;
         } else {
@@ -1819,9 +1861,9 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
     </script>
     
             <script>
-            var collapsible_header = document.getElementById("btn_1727901431810_06_0");
+            var collapsible_header = document.getElementById("btn_1730973446053_8071_0");
             collapsible_header.classList.toggle("collapsible_header_opened");
-            var collapsible_content = document.getElementById("content_1727901431810_06_0");
+            var collapsible_content = document.getElementById("content_1730973446053_8071_0");
             collapsible_content.style.maxHeight = collapsible_content.scrollHeight + "px";
             </script>
             </div></div>
@@ -1886,7 +1928,7 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
 </style>
 
     <script>
-       function copy_code_1727901431844_653() {
+       function copy_code_1730973446260_247() {
             let code = `"""
 Options for srcmlcpp. Read the doc near all options elements.
 """
@@ -2017,10 +2059,10 @@ def _int_from_str_or_named_number_macros(options: SrcmlcppOptions, int_str: Opti
             navigator.clipboard.writeText(code);
        }
     </script>
-    <button class="collapsible_header" id="btn_1727901431844_653_1" >srcmlcpp/srcmlcpp_options.py</button>
-    <div class="collapsible_content" id="content_1727901431844_653_1">
+    <button class="collapsible_header" id="btn_1730973446260_247_1" >srcmlcpp/srcmlcpp_options.py</button>
+    <div class="collapsible_content" id="content_1730973446260_247_1">
         <div>
-                <button onclick="copy_code_1727901431844_653()" align="right">copy &#x270d;</button>
+                <button onclick="copy_code_1730973446260_247()" align="right">copy &#x270d;</button>
         </div>
         <style>pre { line-height: 125%; }
 td.linenos .normal { color: inherit; background-color: transparent; padding-left: 5px; padding-right: 5px; }
@@ -2223,10 +2265,10 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
     </div>
     
     <script>
-    var button = document.getElementById("btn_1727901431844_653_1");
+    var button = document.getElementById("btn_1730973446260_247_1");
     button.addEventListener("click", function() {
         this.classList.toggle("collapsible_header_opened");
-        var content = document.getElementById("content_1727901431844_653_1");
+        var content = document.getElementById("content_1730973446260_247_1");
         if (content.style.maxHeight){
           content.style.maxHeight = null;
         } else {
@@ -2236,9 +2278,9 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
     </script>
     
             <script>
-            var collapsible_header = document.getElementById("btn_1727901431844_653_1");
+            var collapsible_header = document.getElementById("btn_1730973446260_247_1");
             collapsible_header.classList.toggle("collapsible_header_opened");
-            var collapsible_content = document.getElementById("content_1727901431844_653_1");
+            var collapsible_content = document.getElementById("content_1730973446260_247_1");
             collapsible_content.style.maxHeight = collapsible_content.scrollHeight + "px";
             </script>
             </div></div>

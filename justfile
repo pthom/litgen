@@ -49,3 +49,7 @@ pytest binding_type:
 # Runs mypy on the top level folder (see mypy.ini)
 mypy:
     mypy .
+
+# Build documentation
+docs:
+    ./litgen-book/generate_litgen_book.sh
