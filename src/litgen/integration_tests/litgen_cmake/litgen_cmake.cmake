@@ -97,8 +97,6 @@ function(litgen_setup_module
     bound_library               #  name of the C++ for which we build bindings ("foolib")
     python_native_module_name   #  name of the native python module that provides bindings (for example "_foolib")
     python_module_name          #  name of the standard python module that will import the native module (for example "foolib")
-    bindings_folder             # path to the folder containing the python bindings (for example "src/python_bindings")
-    # (used to deplay the native module to the python module folder after build in editable mode)
 )
     target_link_libraries(${python_native_module_name} PRIVATE ${bound_library})
 
@@ -107,16 +105,6 @@ function(litgen_setup_module
 
     # Set VERSION_INFO macro to the project version defined in CMakeLists.txt (absolutely optional)
     target_compile_definitions(${python_native_module_name} PRIVATE VERSION_INFO=${PROJECT_VERSION})
-
-    # Copy the python module to the src/python_bindings post build (for editable mode)
-    set(bindings_module_folder ${bindings_folder}/${python_module_name})
-    set(python_native_module_editable_location ${bindings_module_folder}/$<TARGET_FILE_NAME:${python_native_module_name}>)
-    add_custom_target(
-        ${python_module_name}_deploy_editable
-        ALL
-        COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:${python_native_module_name}> ${python_native_module_editable_location}
-        DEPENDS ${python_native_module_name}
-    )
 
     # Also copy the python module to the site-packages folder (for editable mode)
     # Ask python for site-packages folder
