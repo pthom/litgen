@@ -2,6 +2,7 @@ from __future__ import annotations
 from munch import Munch  # type: ignore
 
 from codemanip import code_utils
+from litgen import BindLibraryType
 
 from srcmlcpp.cpp_types import CppFunctionDecl
 from srcmlcpp import srcmlcpp_main
@@ -24,6 +25,9 @@ def apply_all_adapters(inout_adapted_function: AdaptedFunction) -> None:
     from litgen.internal.adapt_function_params.adapt_modifiable_immutable_to_return import (
         adapt_modifiable_immutable_to_return,
     )
+    from litgen.internal.adapt_function_params.adapt_const_char_pointer_with_default_null import (
+        adapt_const_char_pointer_with_default_null,
+    )
 
     is_constructor = inout_adapted_function.cpp_adapted_function.is_constructor()
     if is_constructor:
@@ -45,6 +49,7 @@ def apply_all_adapters(inout_adapted_function: AdaptedFunction) -> None:
         adapt_c_buffers,
         adapt_exclude_params,
         adapt_c_arrays,
+        adapt_const_char_pointer_with_default_null,
         adapt_modifiable_immutable_to_return,
         adapt_modifiable_immutable,  # must be done *after* adapt_c_buffers
         adapt_c_string_list,
@@ -72,21 +77,39 @@ def _apply_all_adapters_on_constructor(inout_adapted_function: AdaptedFunction) 
 
     parameter_list = inout_adapted_function.cpp_element().parameter_list
 
-    ctor_wrapper_signature_template = code_utils.unindent_code(
-        """
-            std::unique_ptr<{class_name}> ctor_wrapper({parameters_code});
-        """,
-        flag_strip_empty_lines=True,
-    )
-    ctor_wrapper_lambda_template = code_utils.unindent_code(
-        """
-            auto ctor_wrapper = []({parameters_code}) ->  std::unique_ptr<{class_name}>
-            {
-                return std::make_unique<{class_name}>({parameters_names});
-            };
-        """,
-        flag_strip_empty_lines=True,
-    )
+    if inout_adapted_function.options.bind_library == BindLibraryType.pybind11:
+        ctor_wrapper_signature_template = code_utils.unindent_code(
+            """
+                std::unique_ptr<{class_name}> ctor_wrapper({parameters_code});
+            """,
+            flag_strip_empty_lines=True,
+        )
+        ctor_wrapper_lambda_template = code_utils.unindent_code(
+            """
+                auto ctor_wrapper = []({parameters_code}) ->  std::unique_ptr<{class_name}>
+                {
+                    return std::make_unique<{class_name}>({parameters_names});
+                };
+            """,
+            flag_strip_empty_lines=True,
+        )
+    else:
+        ctor_wrapper_signature_template = code_utils.unindent_code(
+            """
+                void ctor_wrapper({class_name}* self, {parameters_code});
+            """,
+            flag_strip_empty_lines=True,
+        )
+        ctor_wrapper_lambda_template = code_utils.unindent_code(
+            """
+                auto ctor_wrapper = []({class_name}* self, {parameters_code}) ->  void
+                {
+                    new(self) {class_name}({parameters_names}); // placement new
+                };
+            """,
+            flag_strip_empty_lines=True,
+        )
+
     replacements = Munch()
     replacements.parameters_code = parameter_list.str_types_names_default_for_signature()
     replacements.class_name = parent_struct.qualified_class_name_with_specialization()

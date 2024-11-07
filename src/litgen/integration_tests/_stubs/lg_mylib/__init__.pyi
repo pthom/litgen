@@ -41,6 +41,16 @@ class BoxedUnsignedLong:
 # THIS FILE WAS GENERATED AUTOMATICALLY. DO NOT EDIT.
 
 # ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+#                       mylib/_bind_type.h included by mylib/mylib_main/mylib.h                                //
+# //////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+def bindings_with_nanobind() -> bool:
+    pass
+
+def bindings_with_pybind() -> bool:
+    pass
+
+# ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 #                       mylib/basic_test.h included by mylib/mylib_main/mylib.h                                //
 # //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -58,10 +68,6 @@ def my_add(a: int, b: int) -> int:
 # (do not remove the next empty line, or this comment would become my_mul's doc!)
 
 def my_mul(a: int, b: int) -> int:
-    pass
-
-def my_generic_function(*args, **kwargs) -> int:
-    """This is a generic function for python, accepting (*args, **kwargs) as arguments"""
     pass
 
 # ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -411,7 +417,7 @@ class MySingletonClass:
         pass
     @staticmethod
     def instance() -> MySingletonClass:
-        """return_value_policy::reference"""
+        """see: options.fn_return_force_policy_reference_for_references__regex = r"instance" """
         pass
 
 class MyFinalClass:
@@ -453,6 +459,15 @@ class MyStructWithNestedEnum:
 # ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 #                       mylib/class_inheritance_test.h included by mylib/mylib_main/mylib.h                    //
 # //////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+# pybind11 supports bindings for multiple inheritance, nanobind does not
+# #ifdef BINDING_MULTIPLE_INHERITANCE
+#
+# #endif
+#
+
+def binding_multiple_inheritance() -> bool:
+    pass
 
 def make_dog() -> Animals.Animal:
     """Test that downcasting works: the return type is Animal, but it should bark!"""
@@ -532,11 +547,13 @@ class Copyable_DeletedCopyCtor:
 #
 # return_value_policy:
 #
-# If a function has an end-of-line comment which contains `return_value_policy::reference`,
+# If a function has an end-of-line comment which contains
+#    `return_value_policy::reference` or `rv_policy::reference` (for nanobind),
 # and if this function returns a pointer or a reference, litgen will automatically add
 # `pybind11::return_value_policy::reference` when publishing it.
 #
-# Notes: `reference` could be replaced by `take_ownership`, or any other member of `pybind11::return_value_policy`
+# Notes: `reference` could be replaced by `take_ownership`,
+#   or any other member of `pybind11::return_value_policy` or `nb::rv_policy` (for nanobind)
 #
 # You can also set a global options for matching functions names that return a reference or a pointer
 #     see
@@ -552,7 +569,7 @@ class MyConfig:
 
     @staticmethod
     def instance() -> MyConfig:
-        """return_value_policy::reference"""
+        """// return_value_policy::reference"""
         pass
     value: int = 0
     def __init__(self, value: int = 0) -> None:
@@ -893,6 +910,10 @@ FLOAT = 3.14
 # //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 class SmartElem:
+    """With pybind11, SmartElem is mentioned in options.class_held_as_shared__regex
+    (because it might be stored as a shared_ptr in the generated code)
+    """
+
     x: int = 0
     def __init__(self, x: int = 0) -> None:
         """Auto-generated default constructor with named params"""
@@ -917,6 +938,8 @@ class ElemContainer:
 #                       mylib/mylib_main/mylib.h continued                                                     //
 # //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+##include "mylib/sandbox.h"
+
 # brace_init_default_value.h must be included last (see explanation inside test_change_decl_stmt_to_function_decl_if_suspicious)
 
 class FooBrace:
@@ -930,12 +953,6 @@ def fn_brace(
     foo_brace: FooBrace = FooBrace(), ints: List[int] = List[int](1, 2, 3)
 ) -> int:
     pass
-
-# ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-#                       mylib/mylib_main/mylib.h continued                                                     //
-# //////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-##include "mylib/sandbox.h"
 
 # <submodule math_functions>
 class math_functions:  # Proxy class that introduces typings for the *submodule* math_functions

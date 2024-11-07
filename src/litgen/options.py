@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from enum import Enum
 from typing import Any, Callable, List
 
 from codemanip import code_utils
@@ -13,6 +14,11 @@ from litgen.internal.class_iterable_info import ClassIterablesInfos
 
 class Blah:
     values: List[int] = []
+
+
+class BindLibraryType(Enum):
+    pybind11 = 1
+    nanobind = 2
 
 
 class LitgenOptions:
@@ -32,6 +38,12 @@ class LitgenOptions:
     # - To match everything, use r".*"
     # - It is advised to prefix your regex strings with "r" (in order to use raw strings)
     # ------------------------------------------------------------------------------
+
+    ################################################################################
+    #    <bind library options>
+    ################################################################################
+    #
+    bind_library: BindLibraryType = BindLibraryType.pybind11
 
     ################################################################################
     #    <srcmlcpp options>
@@ -117,6 +129,13 @@ class LitgenOptions:
     # from the function signature, but not the function itself.
     fn_exclude_by_param_type__regex: str = ""
 
+    # Exclude function and methods by its name and signature
+    # For example:
+    #    options.fn_exclude_by_name_and_signature = {
+    #         "Selectable": "const char *, bool, ImGuiSelectableFlags, const ImVec2 &"
+    #     }
+    fn_exclude_by_name_and_signature: dict[str, str]
+
     # ------------------------------------------------------------------------------
     # Exclude some params by name or type
     # ------------------------------------------------------------------------------
@@ -159,7 +178,7 @@ class LitgenOptions:
     fn_template_decorate_in_stub: bool = True
 
     # ------------------------------------------------------------------------------
-    # Vectorize functions options
+    # Vectorize functions options (pybind11 only, not compatible with nanobind)
     # ------------------------------------------------------------------------------
     # Numeric functions (i.e. function accepting and returning only numeric params or py::array), can be vectorized
     # i.e. they will accept numpy arrays as an input.
@@ -318,6 +337,18 @@ class LitgenOptions:
     # Set it to r".*" to apply this to all functions. Set it to "" to disable it
     fn_params_replace_modifiable_immutable_by_boxed__regex: str = ""
 
+    # ------------------------------------------------------------------------------
+    # Convert `const char* x = NULL` for Python passing None without TypeError
+    # ------------------------------------------------------------------------------
+    # Signatures like
+    #     void foo(const char* text = NULL)
+    # may be transformed to:
+    #     void foo(std::optional<std::string> text = std::nullopt)
+    # with a lambda function wrapping around original interface.
+    #
+    # NOTE: Enable this for nanobind.
+    fn_params_const_char_pointer_with_default_null: bool = False
+
     # As an alternative, we can also add the modified value to the returned type
     # of the function (which will now be a tuple)
     #
@@ -348,6 +379,17 @@ class LitgenOptions:
     member_exclude_by_name__regex: str = ""
     # Exclude members based on their type
     member_exclude_by_type__regex: str = ""
+    # Exclude certain members by a regex on their name, if class or struct name matched
+    # For example:
+    #   options.member_exclude_by_name_and_class__regex = {
+    #       "ImVector": join_string_by_pipe_char([
+    #           r"^Size$",
+    #           r"^Capacity$",
+    #           ...
+    #       ])
+    #   }
+    member_exclude_by_name_and_class__regex: dict[str, str]
+
     # Make certain members read-only by a regex on their name
     member_readonly_by_name__regex: str = ""
     # Make certain members read-only based on their type
@@ -403,7 +445,8 @@ class LitgenOptions:
     class_iterables_infos: ClassIterablesInfos
 
     # class_held_as_shared__regex:
-    # Regex specifying the list of class names that should be held using std::shared_ptr in the generated bindings.
+    # Regex specifying the list of class names that should be held using std::shared_ptr in the generated bindings
+    # (when using pybind11. This is unused for nanobind)
     #
     # **Purpose:**
     # By default, pybind11 uses `std::unique_ptr` as the holder type for bound classes.
@@ -417,7 +460,6 @@ class LitgenOptions:
     # - [pybind11 Documentation: Smart Pointers](https://pybind11.readthedocs.io/en/stable/advanced/smart_ptrs.html)
     # - [Understanding Holder Types in pybind11](https://pybind11.readthedocs.io/en/stable/advanced/classes.html#custom-smart-pointers)
     class_held_as_shared__regex: str = ""
-
 
     # ------------------------------------------------------------------------------
     # Templated class options
@@ -521,6 +563,8 @@ class LitgenOptions:
     enum_flag_skip_count: bool = True
     # By default, all enums export rudimentary arithmetic and bit-level operations ( r".*" matches any enum name)
     enum_make_arithmetic__regex: str = r".*"
+    # Export all entries of the enumeration into the parent scope.
+    enum_export_values: bool = False
 
     ################################################################################
     #    <define adaptations>
@@ -620,3 +664,6 @@ class LitgenOptions:
 
         self.fn_custom_adapters = []
         self.namespaces_root = []
+
+        self.fn_exclude_by_name_and_signature = {}
+        self.member_exclude_by_name_and_class__regex = {}

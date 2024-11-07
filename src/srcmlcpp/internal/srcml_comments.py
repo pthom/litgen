@@ -296,6 +296,9 @@ def _is_comment_on_previous_line(children: list[SrcmlWrapper], idx: int) -> bool
                     and next_element_end is not None
                     and next_next_element.tag() == "comment"
                     and next_next_element_start.line == next_element_end.line
+                    # TODO: (davidlatwe)
+                    #  Are these pybind11/nanobind stuff something that srcml should know about?
+                    and "rv_policy::" not in next_next_element_text
                     and "return_value_policy::" not in next_next_element_text
                 ):
                     return False

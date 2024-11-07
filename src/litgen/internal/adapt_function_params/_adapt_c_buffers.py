@@ -10,7 +10,7 @@ from srcmlcpp.cpp_types import CppFunctionDecl, CppParameter
 from litgen.internal import cpp_to_python
 from litgen.internal.adapt_function_params._lambda_adapter import LambdaAdapter
 from litgen.internal.adapted_types import AdaptedFunction
-from litgen.options import LitgenOptions
+from litgen.options import LitgenOptions, BindLibraryType
 
 
 def _possible_buffer_pointer_types(options: LitgenOptions) -> list[str]:
@@ -227,17 +227,48 @@ class _AdaptBuffersHelper:
         return r
 
     def make_adapted_lambda_code_end_template_buffer(self) -> str:
-        template_intro = """
-            #ifdef _WIN32
-            using np_uint_l = uint32_t;
-            using np_int_l = int32_t;
-            #else
-            using np_uint_l = uint64_t;
-            using np_int_l = int64_t;
-            #endif
-            // call the correct template version by casting
-            char {template_buffer_name}_type = {template_buffer_name}.dtype().char_();
-        """
+        if self.options.bind_library == BindLibraryType.pybind11:
+            template_intro = """
+                #ifdef _WIN32
+                using np_uint_l = uint32_t;
+                using np_int_l = int32_t;
+                #else
+                using np_uint_l = uint64_t;
+                using np_int_l = int64_t;
+                #endif
+                // call the correct template version by casting
+                char {template_buffer_name}_type = {template_buffer_name}.dtype().char_();
+            """
+        elif self.options.bind_library == BindLibraryType.nanobind:
+            # Contrary to pybind, we get info about the exact size in bits, so that we can use precisely sized types below
+            _nanobind_buffer_type_to_letter_code = """
+                using np_uint_l = uint64_t;
+                using np_int_l = int64_t;
+
+                // Define a lambda to compute the letter code for the buffer type
+                auto _nanobind_buffer_type_to_letter_code = [](uint8_t dtype_code, size_t sizeof_item)  -> char
+                {
+                    #define DCODE(T) static_cast<uint8_t>(nb::dlpack::dtype_code::T)
+                        const std::array<std::tuple<uint8_t, size_t, char>, 11> mappings = {{
+                            {DCODE(UInt), 1, 'B'}, {DCODE(UInt), 2, 'H'}, {DCODE(UInt), 4, 'I'}, {DCODE(UInt), 8, 'L'},
+                            {DCODE(Int), 1, 'b'}, {DCODE(Int), 2, 'h'}, {DCODE(Int), 4, 'i'}, {DCODE(Int), 8, 'l'},
+                            {DCODE(Float), 4, 'f'}, {DCODE(Float), 8, 'd'}, {DCODE(Float), 16, 'g'}
+                        }};
+                    #undef DCODE
+                    for (const auto& [code_val, size, letter] : mappings)
+                        if (code_val == dtype_code && size == sizeof_item)
+                            return letter;
+                    throw std::runtime_error("Unsupported dtype");
+                };
+            """
+            template_intro = _nanobind_buffer_type_to_letter_code + """
+                // Compute the letter code for the buffer type
+                uint8_t dtype_code_{template_buffer_name} = {template_buffer_name}.dtype().code;
+                size_t sizeof_item_{template_buffer_name} = {template_buffer_name}.dtype().bits / 8;
+                char {template_buffer_name}_type = _nanobind_buffer_type_to_letter_code(dtype_code_{template_buffer_name}, sizeof_item_{template_buffer_name});
+
+                // call the correct template version by casting
+            """
 
         template_loop_type = """
             {maybe_else}if ({template_buffer_name}_type == '{pyarray_type_char}')
@@ -337,7 +368,12 @@ class _AdaptBuffersHelper:
 
     def _new_param_buffer_standard(self, idx_param: int) -> CppParameter:
         new_param = copy.deepcopy(self._param(idx_param))
-        new_param.decl.cpp_type.typenames = ["py::array"]
+
+        if self.options.bind_library == BindLibraryType.pybind11:
+            new_param.decl.cpp_type.typenames = ["py::array"]
+        else:
+            new_param.decl.cpp_type.typenames = ["nb::ndarray<>"]
+
         new_param.decl.cpp_type.modifiers = ["&"]
         if self._is_const(idx_param):
             new_param.decl.cpp_type.specifiers = ["const"]
@@ -388,40 +424,97 @@ class _AdaptBuffersHelper:
 
     def _lambda_input_buffer_standard_convert_part(self, idx_param: int) -> str:
         mutable_or_empty = "" if self._is_const(idx_param) else "mutable_"
+        if self.options.bind_library == BindLibraryType.nanobind:
+            mutable_or_empty = ""
         mutable_or_const = "const" if self._is_const(idx_param) else "mutable"
 
         _ = self
-        param_name = self._param(idx_param).decl.decl_name
-        template = f"""
-                    // Check if the array is C-contiguous
-                    if (!{param_name}.attr("flags").attr("c_contiguous").cast<bool>()) {{
-                        throw std::runtime_error("The array must be contiguous, i.e, `a.flags.c_contiguous` must be True. Hint: use `numpy.ascontiguousarray`.");
-                    }}
+        if self.options.bind_library == BindLibraryType.pybind11:
+            template = f"""
+                        // Check if the array is 1D and C-contiguous
+                        if (! ({_._param_name(idx_param)}.ndim() == 1 && {_._param_name(idx_param)}.strides(0) == {_._param_name(idx_param)}.itemsize()) )
+                            throw std::runtime_error("The array must be 1D and contiguous");
 
-                    // convert py::array to C standard buffer ({mutable_or_const})
-                    {_._const_space_or_empty(idx_param)}void * {_._buffer_from_pyarray_name(idx_param)} = {_._param_name(idx_param)}.{mutable_or_empty}data();
-                    py::ssize_t {_._pyarray_count(idx_param)} = {_._param_name(idx_param)}.shape()[0];
-                """  # noqa
+                        // convert py::array to C standard buffer ({mutable_or_const})
+                        {_._const_space_or_empty(idx_param)}void * {_._buffer_from_pyarray_name(idx_param)} = {_._param_name(idx_param)}.{mutable_or_empty}data();
+                        py::ssize_t {_._pyarray_count(idx_param)} = {_._param_name(idx_param)}.shape()[0];
+                    """  # noqa
+        else:
+            # TODO: implement contiguous check for nanobind
+            template = f"""
+                        // Check if the array is 1D and C-contiguous
+                        if (! ({_._param_name(idx_param)}.ndim() == 1 && {_._param_name(idx_param)}.stride(0) == 1))
+                            throw std::runtime_error("The array must be 1D and contiguous");
+
+                        // convert nb::ndarray to C standard buffer ({mutable_or_const})
+                        {_._const_space_or_empty(idx_param)}void * {_._buffer_from_pyarray_name(idx_param)} = {_._param_name(idx_param)}.{mutable_or_empty}data();
+                        size_t {_._pyarray_count(idx_param)} = {_._param_name(idx_param)}.shape(0);
+                    """  # noqa
         template = code_utils.unindent_code(template, flag_strip_empty_lines=True) + "\n"
         return template
 
     def _expected_dtype_char(self, idx_param: int) -> str:
         dtype_char = cpp_to_python.cpp_type_to_py_array_type(self._original_raw_type(idx_param))
-        return dtype_char
+        if self.options.bind_library == BindLibraryType.pybind11:
+            return dtype_char
+        else:
+            raise RuntimeError("Not implemented for nanobind")
+
+    def _nanobind_dtype_code(self, idx_param: int) -> str:
+        raw_cpp_type = self._original_raw_type(idx_param)
+        dtype_code = cpp_to_python.nanobind_cpp_type_to_dtype_code(raw_cpp_type)
+        return dtype_code
+
+    def _nanobind_dtype_code_as_uint8(self, idx_param: int) -> str:
+        raw_cpp_type = self._original_raw_type(idx_param)
+        dtype_code = cpp_to_python.nanobind_cpp_type_to_dtype_code_as_uint8(raw_cpp_type)
+        return dtype_code
+
 
     def _lambda_input_buffer_standard_check_part(self, idx_param: int) -> str:
         _ = self
-        template = f"""
-                char {_._param_name(idx_param)}_type = {_._param_name(idx_param)}.dtype().char_();
-                if ({_._param_name(idx_param)}_type != '{_._expected_dtype_char(idx_param)}')
-                    throw std::runtime_error(std::string(R"msg(
-                            Bad type!  Expected a numpy array of native type:
-                                        {_._const_space_or_empty(idx_param)}{_._original_raw_type(idx_param)} *
-                                    Which is equivalent to
-                                        {_._expected_dtype_char(idx_param)}
-                                    (using py::array::dtype().char_() as an id)
-                        )msg"));
-            """
+        if self.options.bind_library == BindLibraryType.pybind11:
+            template = f"""
+                    char {_._param_name(idx_param)}_type = {_._param_name(idx_param)}.dtype().char_();
+                    if ({_._param_name(idx_param)}_type != '{_._expected_dtype_char(idx_param)}')
+                        throw std::runtime_error(std::string(R"msg(
+                                Bad type!  Expected a numpy array of native type:
+                                            {_._const_space_or_empty(idx_param)}{_._original_raw_type(idx_param)} *
+                                        Which is equivalent to
+                                            {_._expected_dtype_char(idx_param)}
+                                        (using py::array::dtype().char_() as an id)
+                            )msg"));
+                """
+        else:
+            # The type checking must be done in two steps (at least)
+            #   - check the generic type (int, float, uint, etc)
+            #   - check the size of the type (int8, int16, int32, int64, etc)
+            # Knowing that for a given ndarray:
+            #   ndarray::dtype() returns a
+            #     struct dtype {
+            #         uint8_t code = 0;
+            #         uint8_t bits = 0;
+            #         uint16_t lanes = 0;
+            #     };
+            #   and that the code is defined as:
+            #      enum class dtype_code : uint8_t { Int = 0, UInt = 1, Float = 2, Bfloat = 4, Complex = 5, Bool = 6 };
+            template = f"""
+                    // Check the type of the ndarray (generic type and size)
+                    //   - Step 1: check the generic type (one of dtype_code::Int, UInt, Float, Bfloat, Complex, Bool = 6);
+                    uint8_t dtype_code_python_{idx_param} = {_._param_name(idx_param)}.dtype().code;
+                    uint8_t dtype_code_cpp_{idx_param} = {_._nanobind_dtype_code_as_uint8(idx_param)};
+                    if (dtype_code_python_{idx_param} != dtype_code_cpp_{idx_param})
+                        throw std::runtime_error(std::string(R"msg(
+                                Bad type! While checking the generic type (dtype_code={_._nanobind_dtype_code(idx_param)})!
+                            )msg"));
+                    //   - Step 2: check the size of the type
+                    size_t size_python_{idx_param} = {_._param_name(idx_param)}.dtype().bits / 8;
+                    size_t size_cpp_{idx_param} = sizeof({_._original_raw_type(idx_param)});
+                    if (size_python_{idx_param} != size_cpp_{idx_param})
+                        throw std::runtime_error(std::string(R"msg(
+                                Bad type! Size mismatch, while checking the size of the type (for param "{_._param_name(idx_param)}")!
+                            )msg"));
+                    """
         template = code_utils.unindent_code(template, flag_strip_empty_lines=True) + "\n"
         return template
 

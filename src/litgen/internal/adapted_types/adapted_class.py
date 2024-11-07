@@ -30,6 +30,7 @@ from srcmlcpp.cpp_types.scope.cpp_scope import CppScopeType
 from srcmlcpp.srcmlcpp_exception import SrcmlcppException
 from srcmlcpp.scrml_warning_settings import WarningType
 
+from litgen import BindLibraryType
 from litgen.internal import cpp_to_python, template_options
 from litgen.internal.adapted_types.adapted_comment import (
     AdaptedComment,
@@ -186,16 +187,27 @@ class AdaptedClassMember(AdaptedDecl):
         array_size = self.cpp_element().c_array_size_as_int()
         assert array_size is not None
 
-        template_code = f"""
-            .def_property("{name_python}",{location}
-                []({qualified_struct_name} &self) -> pybind11::array
-                {{
-                    auto dtype = pybind11::dtype(pybind11::format_descriptor<{array_typename}>::format());
-                    auto base = pybind11::array(dtype, {{{array_size}}}, {{sizeof({array_typename})}});
-                    return pybind11::array(dtype, {{{array_size}}}, {{sizeof({array_typename})}}, self.{name_cpp}, base);
-                }}, []({qualified_struct_name}& self) {{}},
-                "{comment}")
-            """
+        if self.options.bind_library == BindLibraryType.pybind11:
+            template_code = f"""
+                .def_property("{name_python}",{location}
+                    []({qualified_struct_name} &self) -> pybind11::array
+                    {{
+                        auto dtype = pybind11::dtype(pybind11::format_descriptor<{array_typename}>::format());
+                        auto base = pybind11::array(dtype, {{{array_size}}}, {{sizeof({array_typename})}});
+                        return pybind11::array(dtype, {{{array_size}}}, {{sizeof({array_typename})}}, self.{name_cpp}, base);
+                    }}, []({qualified_struct_name}& self) {{}},
+                    "{comment}")
+                """
+        else:
+            template_code = f"""
+                .def_prop_ro("{name_python}",{location}
+                    []({qualified_struct_name} &self) -> nb::ndarray<{array_typename}, nb::numpy, nb::shape<{array_size}>, nb::c_contig>
+                    {{
+                        return self.{name_cpp};
+                    }},
+                    "{comment}")
+                """
+
         r = code_utils.unindent_code(template_code, flag_strip_empty_lines=True)  # + "\n"
         lines = r.split("\n")
         return lines
@@ -220,10 +232,11 @@ class AdaptedClassMember(AdaptedDecl):
         comment = self._elm_comment_pydef_one_line()
 
         cpp_type = self.cpp_element().cpp_type
+        is_pybind11 = self.options.bind_library == BindLibraryType.pybind11
 
-        pybind_definition_mode = "def_readwrite"
+        pybind_definition_mode = "def_readwrite" if is_pybind11 else "def_rw"
         if self._is_published_readonly():
-            pybind_definition_mode = "def_readonly"
+            pybind_definition_mode = "def_readonly" if is_pybind11 else "def_ro"
         if cpp_type.is_static():
             pybind_definition_mode += "_static"
 
@@ -339,17 +352,33 @@ class AdaptedClass(AdaptedElement):
         self._prot_fill_methods()
 
     def _init_add_adapted_class_member(self, cpp_decl_statement: CppDeclStatement) -> None:
+        class_name = self.cpp_element().class_name
+
         for cpp_decl in cpp_decl_statement.cpp_decls:
+            is_excluded_by_name_and_class = code_utils.does_match_regex(
+                self.options.member_exclude_by_name_and_class__regex.get(class_name, ""), cpp_decl.decl_name
+            )
             is_excluded_by_name = code_utils.does_match_regex(
                 self.options.member_exclude_by_name__regex, cpp_decl.decl_name
             )
             is_excluded_by_type = code_utils.does_match_regex(
                 self.options.member_exclude_by_type__regex, cpp_decl.cpp_type.str_code()
             )
-            if not is_excluded_by_name and not is_excluded_by_type:
+            if not is_excluded_by_name_and_class and not is_excluded_by_name and not is_excluded_by_type:
                 adapted_class_member = AdaptedClassMember(self.lg_context, cpp_decl, self)
                 if adapted_class_member.check_can_publish():
                     self.adapted_public_children.append(adapted_class_member)
+
+    def _init_add_adopted_class_function(self, cpp_function_decl: CppFunctionDecl) -> None:
+        class_name = self.cpp_element().class_name
+
+        is_excluded_by_name_and_class = code_utils.does_match_regex(
+            self.options.member_exclude_by_name_and_class__regex.get(class_name, ""), cpp_function_decl.name()
+        )
+        if not is_excluded_by_name_and_class:
+            if AdaptedFunction.init_is_function_publishable(self.options, cpp_function_decl):
+                is_overloaded = cpp_function_decl.is_overloaded_method()
+                self.adapted_public_children.append(AdaptedFunction(self.lg_context, cpp_function_decl, is_overloaded))
 
     def _init_fill_public_children(self) -> None:
         public_elements = self.cpp_element().get_elements(access_type=CppAccessType.public)
@@ -360,9 +389,7 @@ class AdaptedClass(AdaptedElement):
                 elif isinstance(child, CppComment):
                     self.adapted_public_children.append(AdaptedComment(self.lg_context, child))
                 elif isinstance(child, CppFunctionDecl):
-                    if AdaptedFunction.init_is_function_publishable(self.options, child):
-                        is_overloaded = child.is_overloaded_method()
-                        self.adapted_public_children.append(AdaptedFunction(self.lg_context, child, is_overloaded))
+                    self._init_add_adopted_class_function(child)
                 elif isinstance(child, CppDeclStatement):
                     self._init_add_adapted_class_member(child)
                 elif isinstance(child, CppUnprocessed):
@@ -581,7 +608,8 @@ class AdaptedClass(AdaptedElement):
                 for access_type, base_class in base_classes:
                     if access_type == CppAccessType.public or access_type == CppAccessType.protected:
                         other_template_params_list.append(base_class.cpp_scope_str(include_self=True))
-            if self.cpp_element().has_private_destructor():
+            if self.cpp_element().has_private_destructor() and options.bind_library == BindLibraryType.pybind11:
+                # nanobind does not support nodelete
                 other_template_params_list.append(f"std::unique_ptr<{qualified_struct_name}, py::nodelete>")
             if self._virt_shall_override():
                 scope = self.cpp_element().cpp_scope(False).str_cpp
@@ -597,13 +625,14 @@ class AdaptedClass(AdaptedElement):
             code_template = code_utils.unindent_code(
                 """
                     auto {pydef_class_var} =
-                    {_i_}py::class_<{qualified_struct_name}{other_template_params}{maybe_shared_ptr_holder}>{location}
+                    {_i_}{py}::class_<{qualified_struct_name}{other_template_params}{maybe_shared_ptr_holder}>{location}
                     {_i_}{_i_}({pydef_class_var_parent}, "{class_name_python}"{maybe_py_is_final}{maybe_py_is_dynamic}, "{comment}")
                     """,
                 flag_strip_empty_lines=True,
             )
 
             replacements = munch.Munch()
+            replacements.py = "py" if options.bind_library == BindLibraryType.pybind11 else "nb"
             replacements._i_ = self.options._indent_cpp_spaces()
             replacements.pydef_class_var = cpp_to_python.cpp_scope_to_pybind_var_name(options, self.cpp_element())
             replacements.qualified_struct_name = qualified_struct_name
@@ -613,15 +642,26 @@ class AdaptedClass(AdaptedElement):
             replacements.pydef_class_var_parent = cpp_to_python.cpp_scope_to_pybind_parent_var_name(
                 options, self.cpp_element()
             )
-            replacements.maybe_py_is_final = ", py::is_final()" if self.cpp_element().is_final() else ""
+
+            if self.cpp_element().is_final():
+                replacements.maybe_py_is_final = ", py::is_final()" if options.bind_library == BindLibraryType.pybind11 else ", nb::is_final()"
+            else:
+                replacements.maybe_py_is_final = ""
+
             if code_utils.does_match_regex(self.options.class_dynamic_attributes__regex, self.cpp_element().class_name):
-                replacements.maybe_py_is_dynamic = ", py::dynamic_attr()"
+                if options.bind_library == BindLibraryType.pybind11:
+                    replacements.maybe_py_is_dynamic = ", py::dynamic_attr()"
+                else:
+                    replacements.maybe_py_is_dynamic = ", nb::dynamic_attr()"
             else:
                 replacements.maybe_py_is_dynamic = ""
 
             replacements.comment = self._elm_comment_pydef_one_line()
 
-            if code_utils.does_match_regex(options.class_held_as_shared__regex, self.cpp_element().class_name):
+            if (
+                code_utils.does_match_regex(options.class_held_as_shared__regex, self.cpp_element().class_name)
+                and self.options.bind_library == BindLibraryType.pybind11
+            ):
                 replacements.maybe_shared_ptr_holder = f", std::shared_ptr<{qualified_struct_name}>"
             else:
                 replacements.maybe_shared_ptr_holder = ""
@@ -679,16 +719,30 @@ class AdaptedClass(AdaptedElement):
             if not flag_add:
                 return ""
 
-            code_template = (
-                code_utils.unindent_code(
-                    """
-                .def("__iter__", [](const {qualified_struct_name} &v) { return py::make_iterator(v.begin(), v.end()); }, py::keep_alive<0, 1>())
-                .def("__len__", [](const {qualified_struct_name} &v) { return v.size(); })
-                """,
-                    flag_strip_empty_lines=True,
+            if self.options.bind_library == BindLibraryType.pybind11:
+                code_template = (
+                    code_utils.unindent_code(
+                        """
+                    .def("__iter__", [](const {qualified_struct_name} &v) { return py::make_iterator(v.begin(), v.end()); }, py::keep_alive<0, 1>())
+                    .def("__len__", [](const {qualified_struct_name} &v) { return v.size(); })
+                    """,
+                        flag_strip_empty_lines=True,
+                    )
+                    + "\n"
                 )
-                + "\n"
-            )
+            else:
+                code_template = (
+                    code_utils.unindent_code(
+                        """
+                    .def("__iter__", [](const {qualified_struct_name} &v) {
+                            return nb::make_iterator(nb::type<{qualified_struct_name}>(), "iterator", v.begin(), v.end());
+                        }, nb::keep_alive<0, 1>())
+                    .def("__len__", [](const {qualified_struct_name} &v) { return v.size(); })
+                    """,
+                        flag_strip_empty_lines=True,
+                    )
+                    + "\n"
+                )
 
             replacements = munch.Munch()
             replacements._i_ = self.options._indent_cpp_spaces()
@@ -793,8 +847,9 @@ class AdaptedClass(AdaptedElement):
                 replacements.maybe_pydict = ""
                 replacements.maybe_memo = ""
             else:
-                replacements.maybe_pydict = ", py::dict"
-                replacements.maybe_memo = ', py::arg("memo")'
+                py = "py" if self.options.bind_library == BindLibraryType.pybind11 else "nb"
+                replacements.maybe_pydict = f", {py}::dict"
+                replacements.maybe_memo = f', {py}::arg("memo")'
 
             if shall_create:
                 code = code_utils.process_code_template(code_template, replacements)
@@ -896,19 +951,37 @@ class AdaptedClass(AdaptedElement):
         if not self._virt_shall_override():
             return
 
-        trampoline_class_template = code_utils.unindent_code(
-            """
-            // helper type to enable overriding virtual methods in python
-            class {trampoline_class_name} : public {class_name}
-            {
-            public:
-                using {class_name}::{class_name};
+        virtual_methods = self._virt_method_list_including_inherited()
+        nb_virtual_methods = len(virtual_methods)
 
-            {trampoline_list}
-            };
-            """,
-            flag_strip_empty_lines=True,
-        )
+        if self.options.bind_library == litgen.BindLibraryType.pybind11:
+            trampoline_class_template = code_utils.unindent_code(
+                """
+                // helper type to enable overriding virtual methods in python
+                class {trampoline_class_name} : public {class_name}
+                {
+                public:
+                    using {class_name}::{class_name};
+
+                {trampoline_list}
+                };
+                """,
+                flag_strip_empty_lines=True,
+            )
+        else:
+            trampoline_class_template = code_utils.unindent_code(
+                """
+                // helper type to enable overriding virtual methods in python
+                class {trampoline_class_name} : public {class_name}
+                {
+                public:
+                    NB_TRAMPOLINE({class_name}, {nb_virtual_methods});
+
+                {trampoline_list}
+                };
+                """,
+                flag_strip_empty_lines=True,
+            )
 
         trampoline_lines = []
         virtual_methods = self._virt_method_list_including_inherited()
@@ -922,6 +995,7 @@ class AdaptedClass(AdaptedElement):
 
         replacements = munch.Munch()
         replacements.trampoline_class_name = self.cpp_element().class_name + "_trampoline"
+        replacements.nb_virtual_methods = str(nb_virtual_methods)
         replacements.class_name = self.cpp_element().class_name
         replacements.trampoline_list = code_utils.indent_code(
             "\n".join(trampoline_lines), indent_str=self.options._indent_cpp_spaces()
@@ -1122,6 +1196,11 @@ class PythonNamedConstructorHelper:
                 if code_utils.does_match_regex(options.member_exclude_by_name__regex, member.name()):
                     return False
 
+                cls_name = self.cpp_class.class_name
+                regex_str = options.member_exclude_by_name_and_class__regex.get(cls_name, "")
+                if code_utils.does_match_regex(regex_str, member.name()):
+                    return False
+
                 return True
 
             members_decls = list(filter(can_be_set, members_decls))
@@ -1208,7 +1287,8 @@ class PythonNamedConstructorHelper:
     def pydef_code(self) -> str:
         _i_ = self.adapted_class.options._indent_cpp_spaces()
         if self.flag_generate_void_constructor():
-            return f"{_i_}.def(py::init<>()) // implicit default constructor\n"
+            py = "py" if self.options.bind_library == BindLibraryType.pybind11 else "nb"
+            return f"{_i_}.def({py}::init<>()) // implicit default constructor\n"
         if not self.flag_generate_named_ctor_params():
             return ""
         ctor_decl = self.named_constructor_decl()
@@ -1222,22 +1302,39 @@ class PythonNamedConstructorHelper:
         adapted_function = AdaptedFunction(self.adapted_class.lg_context, ctor_decl, False)
 
         if len(ctor_decl.parameter_list.parameters) == 0:
-            return f"{_i_}.def(py::init<>()) // implicit default constructor \n"
+            py = "py" if self.options.bind_library == BindLibraryType.pybind11 else "nb"
+            return f"{_i_}.def({py}::init<>()) // implicit default constructor \n"
 
-        template = code_utils.unindent_code(
-            """
-            .def(py::init<>([](
-            {all_params_signature})
-            {
-            {_i_}auto r = std::make_unique<{qualified_struct_name}>();
-            {all_params_set_values}
-            {_i_}return r;
-            })
-            , {maybe_pyargs}
+        if self.options.bind_library == BindLibraryType.pybind11:
+            template = code_utils.unindent_code(
+                """
+                .def(py::init<>([](
+                {all_params_signature})
+                {
+                {_i_}auto r = std::make_unique<{qualified_struct_name}>();
+                {all_params_set_values}
+                {_i_}return r;
+                })
+                , {maybe_pyargs}
+                )
+            """,
+                flag_strip_empty_lines=True,
             )
-        """,
-            flag_strip_empty_lines=True,
-        )
+        else:
+            template = code_utils.unindent_code(
+                """
+                .def("__init__", []( {qualified_struct_name} *self,
+                {all_params_signature})
+                {
+                {_i_}new (self) {qualified_struct_name}();  // placement new
+                {_i_}auto r = self;
+                {all_params_set_values}
+                },
+                {maybe_pyargs}
+                )
+            """,
+                flag_strip_empty_lines=True,
+            )
 
         replacements = munch.Munch()
         replacements._i_ = _i_

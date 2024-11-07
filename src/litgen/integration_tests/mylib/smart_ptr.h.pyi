@@ -12,6 +12,10 @@ from typing import List
 ####################    <generated_from:smart_ptr.h>    ####################
 
 class SmartElem:
+    """With pybind11, SmartElem is mentioned in options.class_held_as_shared__regex
+    (because it might be stored as a shared_ptr in the generated code)
+    """
+
     x: int = 0
     def __init__(self, x: int = 0) -> None:
         """Auto-generated default constructor with named params"""

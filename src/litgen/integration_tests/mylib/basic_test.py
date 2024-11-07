@@ -25,15 +25,14 @@ def test_doc():
         "Title that should be published as a top comment" not in lg_mylib.my_add.__doc__
     )
 
-    assert lg_mylib.my_mul.__doc__ == "my_mul(a: int, b: int) -> int\n"
-
-
-def test_generic_function():
-    r = lg_mylib.my_generic_function(1, 2, 3, a=4, b=5, c=6)
-    assert r == 9  # == args.size() + 2 * kwargs.size()
+    assert lg_mylib.my_mul.__doc__.startswith("my_mul(a: int, b: int) -> int")
 
 
 def test_vectorizable_functions():
+    # only pybind supports vectorizable functions
+    if not lg_mylib.bindings_with_pybind():
+        return
+
     assert lg_mylib.math_functions.vectorizable_sum(1, 2) == 3
 
     import numpy as np

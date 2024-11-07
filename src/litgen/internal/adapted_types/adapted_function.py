@@ -18,7 +18,7 @@ from srcmlcpp.cpp_types import (
 )
 from srcmlcpp.scrml_warning_settings import WarningType
 
-from litgen import LitgenOptions
+from litgen import LitgenOptions, BindLibraryType
 from litgen.internal import cpp_to_python
 from litgen.internal.adapted_types.adapted_decl import AdaptedDecl
 from litgen.internal.adapted_types.adapted_element import AdaptedElement
@@ -65,6 +65,20 @@ class AdaptedParameter(AdaptedElement):
         is_const = "const" in type_specifiers
         is_modifiable = is_reference_or_pointer and not is_const
         r = is_modifiable and is_python_immutable
+        return r
+
+    def is_const_char_pointer_with_default_null(self) -> bool:
+        type_modifiers = self.cpp_element().decl.cpp_type.modifiers
+        type_specifiers = self.cpp_element().decl.cpp_type.specifiers
+        type_names = self.cpp_element().decl.cpp_type.typenames
+        initial_value_cpp = self.cpp_element().decl.initial_value_code
+
+        is_pointer = type_modifiers == ["*"]
+        is_const = "const" in type_specifiers
+        is_char = "char" in type_names
+        is_default_null = initial_value_cpp in ["NULL", "nullptr"]
+
+        r = is_pointer and is_const and is_char and is_default_null
         return r
 
     def adapted_decl(self) -> AdaptedDecl:
@@ -323,6 +337,13 @@ class AdaptedFunction(AdaptedElement):
             if code_utils.does_match_regex(reg, param.decl.cpp_type.str_code()):
                 return False
 
+        # Check options.fn_exclude_by_name_and_signature
+        target = options.fn_exclude_by_name_and_signature.get(cpp_function.function_name, "")
+        if target:
+            signature = ", ".join(param.decl.cpp_type.str_code() for param in cpp_function.parameter_list.parameters)
+            if target == signature:
+                return False
+
         def has_one_ok_prefix() -> bool:
             has_api_prefix = False
             for api_prefix in options.srcmlcpp_options.functions_api_prefixes_list():
@@ -389,6 +410,8 @@ class AdaptedFunction(AdaptedElement):
         return r
 
     def shall_vectorize(self) -> bool:
+        if self.options.bind_library != BindLibraryType.pybind11:
+            return False
         ns_name = self.cpp_element().cpp_scope_str(include_self=False)
         match_ns_name = code_utils.does_match_regex(self.options.fn_namespace_vectorize__regex, ns_name)
         match_fn_name = code_utils.does_match_regex(self.options.fn_vectorize__regex, self.cpp_element().function_name)
@@ -513,7 +536,10 @@ class AdaptedFunction(AdaptedElement):
         # Fill maybe_return_value_policy
         return_value_policy = self.return_value_policy
         if len(return_value_policy) > 0:
-            replace_lines.maybe_return_value_policy = f"pybind11::return_value_policy::{return_value_policy}"
+            if self.options.bind_library == BindLibraryType.pybind11:
+                replace_lines.maybe_return_value_policy = f"py::return_value_policy::{return_value_policy}"
+            else:
+                replace_lines.maybe_return_value_policy = f"nb::rv_policy::{return_value_policy}"
         else:
             replace_lines.maybe_return_value_policy = None
 
@@ -586,6 +612,8 @@ class AdaptedFunction(AdaptedElement):
         function_scope_prefix = self._pydef_str_parent_cpp_scope_prefix()
 
         if self.is_vectorize_impl:
+            # not available in nanobind
+            assert self.options.bind_library == BindLibraryType.pybind11
             replace_tokens.function_pointer = f"py::vectorize({function_scope_prefix}{function_name})"
         else:
             replace_tokens.function_pointer = f"{function_scope_prefix}{function_name}"
@@ -605,13 +633,14 @@ class AdaptedFunction(AdaptedElement):
             else:
                 overload_types = self.cpp_element().parameter_list.str_types_only_for_overload()
                 is_const = self.cpp_element().is_const()
+                py = "py" if self.options.bind_library == BindLibraryType.pybind11 else "nb"
                 if is_const:
                     replace_tokens.function_pointer = (
-                        f"py::overload_cast<{overload_types}>({replace_tokens.function_pointer}, py::const_)"
+                        f"{py}::overload_cast<{overload_types}>({replace_tokens.function_pointer}, {py}::const_)"
                     )
                 else:
                     replace_tokens.function_pointer = (
-                        f"py::overload_cast<{overload_types}>({replace_tokens.function_pointer})"
+                        f"{py}::overload_cast<{overload_types}>({replace_tokens.function_pointer})"
                     )
 
         # fill pydef_end_arg_docstring_returnpolicy
@@ -661,8 +690,12 @@ class AdaptedFunction(AdaptedElement):
         replace_tokens._i_ = self.options._indent_cpp_spaces()
 
         if self.is_constructor():
-            replace_tokens.pydef_method_creation_part = ".def(py::init("
-            replace_tokens.maybe_close_paren_if_ctor = ")"
+            if self.options.bind_library == BindLibraryType.pybind11:
+                replace_tokens.pydef_method_creation_part = ".def(py::init("
+                replace_tokens.maybe_close_paren_if_ctor = ")"
+            else:
+                replace_tokens.pydef_method_creation_part = '.def("__init__", '
+                replace_tokens.maybe_close_paren_if_ctor = ""
         else:
             replace_tokens.pydef_method_creation_part = self._pydef_method_creation_part()
             replace_tokens.maybe_close_paren_if_ctor = ""
@@ -729,7 +762,7 @@ class AdaptedFunction(AdaptedElement):
 
         template_code = code_utils.unindent_code(
             """
-            .def(py::init<{arg_types}>(){maybe_comma}{location}
+            .def({py}::init<{arg_types}>(){maybe_comma}{location}
             {_i_}{maybe_pyarg}{maybe_comma}
             {_i_}{maybe_docstring}"""
         )[1:]
@@ -760,6 +793,7 @@ class AdaptedFunction(AdaptedElement):
             code,
             {
                 "_i_": _i_,
+                "py": "py" if self.options.bind_library == BindLibraryType.pybind11 else "nb",
                 "location": location,
                 "arg_types": arg_types,
             },
@@ -841,54 +875,56 @@ class AdaptedFunction(AdaptedElement):
 
     def _pydef_pyarg_list(self) -> list[str]:
         pyarg_strs: list[str] = []
-        for param in self.cpp_adapted_function.parameter_list.parameters:
+        for i, param in enumerate(self.cpp_adapted_function.parameter_list.parameters):
+            # For nanobind, skip first "self" argument in constructors
+            is_nanobind = self.options.bind_library == BindLibraryType.nanobind
+            if is_nanobind:
+                is_ctor = self.is_constructor()
+                is_first_self_arg = i == 0 and param.decl.decl_name == "self"
+                if is_ctor and is_first_self_arg:
+                    continue
+
             param = self._pydef_adapt_param_if_using_inner_class(param)
             adapted_decl = AdaptedDecl(self.lg_context, param.decl)
 
             # Skip *args and **kwarg
             param_type_cpp = adapted_decl.cpp_element().cpp_type.str_code()
             param_type_cpp_simplified = (
-                param_type_cpp.replace("const ", "").replace("pybind11::", "py::").replace(" &", "")
+                param_type_cpp.replace("const ", "").replace("pybind11::", "py::").replace(" &", "").replace("nanobind::", "nb::")
             )
-            if param_type_cpp_simplified in ["py::args", "py::kwargs"]:
+            if param_type_cpp_simplified in ["py::args", "py::kwargs", "nb::args", "nb::kwargs"]:
                 continue
 
             pyarg_str = adapted_decl._str_pydef_as_pyarg()
             pyarg_strs.append(pyarg_str)
         return pyarg_strs
 
+
     def _pydef_fill_return_value_policy(self) -> None:
         """Parses the return_value_policy from the function end of line comment
         For example:
             // A static instance (which python shall not delete, as enforced by the marker return_policy below)
-            static Foo& Instance() { static Foo instance; return instance; }       // py::return_value_policy::reference
+            static Foo& Instance() { static Foo instance; return instance; }       // py::rv_policy::reference
         """
-        token = "py::return_value_policy::"
 
-        # Try to find it in eol comment (and clean eol comment if found)
-        eol_comment = self.cpp_element().cpp_element_comments.comment_end_of_line
-        maybe_return_policy = code_utils.find_word_after_token(eol_comment, token)
-        if maybe_return_policy is not None:
-            self.return_value_policy = maybe_return_policy
-            eol_comment = eol_comment.replace(token + self.return_value_policy, "").rstrip()
-            if eol_comment.lstrip().startswith("//"):
-                eol_comment = eol_comment.lstrip()[2:]
-            self.cpp_element().cpp_element_comments.comment_end_of_line = eol_comment
-        else:
-            comment_on_previous_lines = self.cpp_element().cpp_element_comments.comment_on_previous_lines
-            maybe_return_policy = code_utils.find_word_after_token(comment_on_previous_lines, token)
+        def find_return_policy_in_comments(rv_policy_token: str) -> str | None:
+            eol_comment = self.cpp_element().cpp_element_comments.comment_end_of_line
+            maybe_return_policy = code_utils.find_word_after_token(eol_comment, rv_policy_token)
+            if maybe_return_policy is not None:
+                return maybe_return_policy
+            else:
+                comment_on_previous_lines = self.cpp_element().cpp_element_comments.comment_on_previous_lines
+                maybe_return_policy = code_utils.find_word_after_token(comment_on_previous_lines, rv_policy_token)
+                if maybe_return_policy is not None:
+                    return maybe_return_policy
+            return None
+
+        rv_policy_tokens = ["return_value_policy::", "rv_policy::"]
+        for rv_policy_token in rv_policy_tokens:
+            maybe_return_policy = find_return_policy_in_comments(rv_policy_token)
             if maybe_return_policy is not None:
                 self.return_value_policy = maybe_return_policy
-                comment_on_previous_lines = comment_on_previous_lines.replace(token + self.return_value_policy, "")
-                self.cpp_element().cpp_element_comments.comment_on_previous_lines = comment_on_previous_lines
-
-        # Finally add a comment
-        if len(self.return_value_policy) > 0:
-            comment_on_previous_lines = self.cpp_element().cpp_element_comments.comment_on_previous_lines
-            if len(comment_on_previous_lines) > 0 and comment_on_previous_lines[-1] != "\n":
-                comment_on_previous_lines += "\n"
-            comment_on_previous_lines += f"return_value_policy::{self.return_value_policy}"
-            self.cpp_element().cpp_element_comments.comment_on_previous_lines = comment_on_previous_lines
+                break
 
         # Take options.fn_force_return_policy_reference_for_pointers into account
         function_name = self.cpp_adapted_function.function_name
@@ -916,11 +952,24 @@ class AdaptedFunction(AdaptedElement):
                 return keep_alive_code
         return None
 
+    def _replace_py_or_nb_namespace(self, s: str | None) -> str | None:
+        if s is None:
+            return None
+        if self.options.bind_library == BindLibraryType.nanobind:
+            s = s.replace("py::", "nb::")
+        else:
+            s = s.replace("nb::", "py::")
+        return s
+
     def _pydef_fill_keep_alive_from_function_comment(self) -> str | None:
-        return self._pydef_fill_call_policy_from_function_comment("py::keep_alive")
+        v_py = self._pydef_fill_call_policy_from_function_comment("py::keep_alive")
+        v_nb = self._pydef_fill_call_policy_from_function_comment("nb::keep_alive")
+        return self._replace_py_or_nb_namespace(v_py or v_nb)
 
     def _pydef_fill_call_guard_from_function_comment(self) -> str | None:
-        return self._pydef_fill_call_policy_from_function_comment("py::call_guard")
+        v_py = self._pydef_fill_call_policy_from_function_comment("py::call_guard")
+        v_nb = self._pydef_fill_call_policy_from_function_comment("nb::call_guard")
+        return  self._replace_py_or_nb_namespace(v_py or v_nb)
 
     def _pydef_str_parent_cpp_scope(self) -> str:
         if self.is_method():
@@ -1175,7 +1224,15 @@ class AdaptedFunction(AdaptedElement):
         cpp_adapted_function_terse = self.cpp_adapted_function.with_terse_types()
         cpp_parameters = cpp_adapted_function_terse.parameter_list.parameters
         r = []
-        for param in cpp_parameters:
+        for i, param in enumerate(cpp_parameters):
+            # For nanobind, skip first "self" argument in constructors
+            is_nanobind = self.options.bind_library == BindLibraryType.nanobind
+            if is_nanobind:
+                is_ctor = self.is_constructor()
+                is_first_self_arg = i == 0 and param.decl.decl_name == "self"
+                if is_ctor and is_first_self_arg:
+                    continue
+
             param_decl = param.decl
 
             param_name_python = cpp_to_python.var_name_to_python(self.options, param_decl.decl_name)
@@ -1183,12 +1240,12 @@ class AdaptedFunction(AdaptedElement):
 
             # Handle *args and **kwargs
             param_type_cpp_simplified = (
-                param_type_cpp.replace("const ", "").replace("pybind11::", "py::").replace(" &", "")
+                param_type_cpp.replace("const ", "").replace("pybind11::", "py::").replace(" &", "").replace("nanobind::", "nb::")
             )
-            if param_type_cpp_simplified == "py::args":
+            if param_type_cpp_simplified == "py::args" or param_type_cpp_simplified == "nb::args":
                 r.append("*args")
                 continue
-            if param_type_cpp_simplified == "py::kwargs":
+            if param_type_cpp_simplified == "py::kwargs" or param_type_cpp_simplified == "nb::kwargs":
                 r.append("**kwargs")
                 continue
 
@@ -1302,21 +1359,36 @@ class AdaptedFunction(AdaptedElement):
     def virt_glue_override_virtual_methods_in_python(self, implemented_class: str) -> list[str]:
         assert self.cpp_element().is_virtual_method()
 
-        template_code = code_utils.unindent_code(
-            """
-        {return_type} {function_name_cpp}({param_list}){maybe_const} override
-        {
-        {_i_}{PYBIND11_OVERRIDE_NAME}(
-        {_i_}{_i_}{return_type}, // return type
-        {_i_}{_i_}{implemented_class}, // parent class
-        {_i_}{_i_}"{function_name_python}", // function name (python)
-        {_i_}{_i_}{function_name_cpp}{maybe_comma_if_has_params} // function name (c++)
-        {_i_}{_i_}{param_names} // params
-        {_i_});
-        }
-        """,
-            flag_strip_empty_lines=True,
-        )
+        if self.options.bind_library == BindLibraryType.pybind11:
+            template_code = code_utils.unindent_code(
+                """
+            {return_type} {function_name_cpp}({param_list}){maybe_const} override
+            {
+            {_i_}{OVERRIDE_TYPE}(
+            {_i_}{_i_}{return_type}, // return type
+            {_i_}{_i_}{implemented_class}, // parent class
+            {_i_}{_i_}"{function_name_python}", // function name (python)
+            {_i_}{_i_}{function_name_cpp}{maybe_comma_if_has_params} // function name (c++)
+            {_i_}{_i_}{param_names} // params
+            {_i_});
+            }
+            """,
+                flag_strip_empty_lines=True,
+            )
+        else:
+            template_code = code_utils.unindent_code(
+                """
+            {return_type} {function_name_cpp}({param_list}){maybe_const} override
+            {
+            {_i_}{OVERRIDE_TYPE}(
+            {_i_}{_i_}"{function_name_python}", // function name (python)
+            {_i_}{_i_}{function_name_cpp}{maybe_comma_if_has_params} // function name (c++)
+            {_i_}{_i_}{param_names} // params
+            {_i_});
+            }
+            """,
+                flag_strip_empty_lines=True,
+            )
 
         parent_struct = self.cpp_element().parent_struct_if_method()
         has_params = len(self.cpp_element().parameter_list.parameters) > 0
@@ -1324,9 +1396,10 @@ class AdaptedFunction(AdaptedElement):
         assert parent_struct is not None
 
         replacements = Munch()
-        replacements.PYBIND11_OVERRIDE_NAME = (
-            "PYBIND11_OVERRIDE_PURE_NAME" if is_pure_virtual else "PYBIND11_OVERRIDE_NAME"
-        )
+        if self.options.bind_library == BindLibraryType.pybind11:
+            replacements.OVERRIDE_TYPE = "PYBIND11_OVERRIDE_PURE_NAME" if is_pure_virtual else "PYBIND11_OVERRIDE_NAME"
+        else:
+            replacements.OVERRIDE_TYPE = "NB_OVERRIDE_PURE_NAME" if is_pure_virtual else "NB_OVERRIDE_NAME"
         replacements._i_ = self.options._indent_cpp_spaces()
         replacements.return_type = self.cpp_element().return_type.str_return_type()
         replacements.function_name_cpp = self.cpp_element().function_name_with_specialization()

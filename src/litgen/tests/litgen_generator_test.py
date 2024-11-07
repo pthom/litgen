@@ -30,32 +30,34 @@ def test_scoping_no_root_namespace():
     code_utils.assert_are_codes_equal(
         generated_code.pydef_code,
         """
-            { // <namespace N>
-                py::module_ pyNsN = m.def_submodule("n", "");
-                auto pyNsN_ClassS =
-                    py::class_<N::S>
-                        (pyNsN, "S", "")
-                    .def(py::init<>()) // implicit default constructor
-                    ;
+        { // <namespace N>
+            py::module_ pyNsN = m.def_submodule("n", "");
+            auto pyNsN_ClassS =
+                py::class_<N::S>
+                    (pyNsN, "S", "")
+                .def(py::init<>()) // implicit default constructor
+                ;
 
 
+            auto pyEnumEC =
                 py::enum_<N::EC>(pyNsN, "EC", py::arithmetic(), "")
                     .value("a", N::EC::a, "");
 
 
+            auto pyEnumE =
                 py::enum_<N::E>(pyNsN, "E", py::arithmetic(), "")
                     .value("a", N::E_a, "");
 
 
-                pyNsN.def("foo",
-                    py::overload_cast<N::EC>(N::Foo), py::arg("e") = N::EC::a);
+            pyNsN.def("foo",
+                py::overload_cast<N::EC>(N::Foo), py::arg("e") = N::EC::a);
 
-                pyNsN.def("foo",
-                    py::overload_cast<N::E>(N::Foo), py::arg("e") = N::E_a);
+            pyNsN.def("foo",
+                py::overload_cast<N::E>(N::Foo), py::arg("e") = N::E_a);
 
-                pyNsN.def("foo",
-                    py::overload_cast<N::E, N::S>(N::Foo), py::arg("e") = N::E_a, py::arg("s") = N::S());
-            } // </namespace N>
+            pyNsN.def("foo",
+                py::overload_cast<N::E, N::S>(N::Foo), py::arg("e") = N::E_a, py::arg("s") = N::S());
+        } // </namespace N>
     """,
     )
 

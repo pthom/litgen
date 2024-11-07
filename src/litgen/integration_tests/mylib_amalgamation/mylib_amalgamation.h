@@ -7,11 +7,30 @@
 
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//                       mylib/basic_test.h included by mylib/mylib_main/mylib.h                                //
+//                       mylib/_bind_type.h included by mylib/mylib_main/mylib.h                                //
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-#include <pybind11/pybind11.h>
-#include <pybind11/numpy.h>
+MY_API bool bindings_with_nanobind()
+{
+#ifdef BINDINGS_WITH_NANOBIND
+    return true;
+#else
+    return false;
+#endif
+}
+
+MY_API bool bindings_with_pybind()
+{
+#ifdef BINDINGS_WITH_PYBIND
+    return true;
+#else
+    return false;
+#endif
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//                       mylib/basic_test.h included by mylib/mylib_main/mylib.h                                //
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 // Subtracts two numbers: this will be the function's __doc__ since my_sub does not have an end-of-line comment
 MY_API int my_sub(int a, int b) { return a - b; }
@@ -29,14 +48,6 @@ MY_API int my_mul(int a, int b) { return a * b; }
 
 // This should not be published, as it is not marked with MY_API
 int my_div(int a, int b) { return a / b;}
-
-
-// This is a generic function for python, accepting (*args, **kwargs) as arguments
-MY_API int my_generic_function(pybind11::args args, const pybind11::kwargs& kwargs)
-{
-    int r = args.size() + 2 * kwargs.size();
-    return r;
-}
 
 
 // Vectorizable functions example
@@ -475,7 +486,8 @@ public:
     int value = 0;
     MySingletonClass() = default;
 
-    MY_API static MySingletonClass& instance() // py::return_value_policy::reference
+    // see: options.fn_return_force_policy_reference_for_references__regex = r"instance"
+    MY_API static MySingletonClass& instance()
     {
         static MySingletonClass instance;
         return instance;
@@ -543,6 +555,8 @@ namespace Animals
 
 }
 
+// pybind11 supports bindings for multiple inheritance, nanobind does not
+#ifdef BINDING_MULTIPLE_INHERITANCE
 namespace Home
 {
     struct Pet
@@ -557,7 +571,16 @@ namespace Home
 
         virtual ~PetDog() = default;
     };
+}
+#endif
 
+MY_API bool binding_multiple_inheritance()
+{
+#ifdef BINDING_MULTIPLE_INHERITANCE
+    return true;
+#else
+    return false;
+#endif
 }
 
 // Test that downcasting works: the return type is Animal, but it should bark!
@@ -703,11 +726,13 @@ namespace Root
 //
 // return_value_policy:
 //
-// If a function has an end-of-line comment which contains `return_value_policy::reference`,
+// If a function has an end-of-line comment which contains
+//    `return_value_policy::reference` or `rv_policy::reference` (for nanobind),
 // and if this function returns a pointer or a reference, litgen will automatically add
 // `pybind11::return_value_policy::reference` when publishing it.
 //
-// Notes: `reference` could be replaced by `take_ownership`, or any other member of `pybind11::return_value_policy`
+// Notes: `reference` could be replaced by `take_ownership`,
+//   or any other member of `pybind11::return_value_policy` or `nb::rv_policy` (for nanobind)
 //
 // You can also set a global options for matching functions names that return a reference or a pointer
 //     see
@@ -723,7 +748,7 @@ struct MyConfig
     // otherwise python might destroy the singleton instance as soon as it goes out of scope.
     //
 
-    MY_API static MyConfig& Instance() // py::return_value_policy::reference
+    MY_API static MyConfig& Instance() // return_value_policy::reference
     {
         static MyConfig instance;
         return instance;
@@ -732,7 +757,7 @@ struct MyConfig
     int value = 0;
 };
 
-MY_API MyConfig* MyConfigInstance() { return & MyConfig::Instance(); } // py::return_value_policy::reference
+MY_API MyConfig* MyConfigInstance() { return & MyConfig::Instance(); } // return_value_policy::reference
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //                       mylib/inner_class_test.h included by mylib/mylib_main/mylib.h                          //
@@ -1230,6 +1255,8 @@ namespace A
 //                       mylib/smart_ptr.h included by mylib/mylib_main/mylib.h                                 //
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+// With pybind11, SmartElem is mentioned in options.class_held_as_shared__regex
+// (because it might be stored as a shared_ptr in the generated code)
 struct SmartElem {
     int x = 0;
 };
@@ -1264,10 +1291,11 @@ public:
 // Reason: such a signature might change the pointer value! Example:
 //    void reset_unique_elem(std::unique_ptr<Elem>& elem) { elem.reset(new Elem());    }
 
-
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //                       mylib/mylib_main/mylib.h continued                                                     //
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+//#include "mylib/sandbox.h"
 
 // brace_init_default_value.h must be included last (see explanation inside test_change_decl_stmt_to_function_decl_if_suspicious)
 
@@ -1288,10 +1316,3 @@ MY_API int FnBrace(FooBrace foo_brace = {}, std::vector<int> ints = {1, 2, 3})
 {
     return foo_brace.int_values[0] + ints[0];
 }
-
-
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//                       mylib/mylib_main/mylib.h continued                                                     //
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-//#include "mylib/sandbox.h"

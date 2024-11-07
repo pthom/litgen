@@ -17,6 +17,7 @@ jobs:
 
     steps:
       - uses: actions/checkout@v3
+      - uses: extractions/setup-just@v1
 
       - name: Checkout submodules
         run: git submodule update --init
@@ -26,40 +27,19 @@ jobs:
           python-version: ${{ matrix.python-version }}
 
       - name: pip install -r requirements-dev.txt
-        run: pip install -r requirements-dev.txt
+        run: just install_requirements_dev
 
       - name: pip install --verbose .
-        run: pip install --verbose .
-
-      - name: pip install in src/litgen/integration_tests/
-        run: |
-          cd src/litgen/integration_tests
-          python autogenerate_mylib.py
-          pip install -v .
-          cd -
-
-      - name: pytest
-        run: pytest
+        run: just install_litgen_editable
 
       - name: black
-        run: black .
+        run: just black
 
       - name: mypy
-        run: mypy .
+        run: just mypy
 
-      - name: Build C++
-        run: |
-          cmake --version
-          mkdir -p build
-          cd build
-          cmake ..
-          cmake --build . -j 4
+      - name: integration_tests_pybind
+        run: just integration_tests_pybind
 
-      - name: pip install in _litgen_template/
-        run: |
-          cd _litgen_template
-          python tools/autogenerate_bindings.py
-          pip install -v .
-          black .
-          mypy .
-          pytest
+      - name: integration_tests_nanobind
+        run: just integration_tests_nanobind

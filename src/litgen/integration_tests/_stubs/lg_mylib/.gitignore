@@ -1,7 +1,8 @@
 lib/
 include/
-/README.md
 *.dll
 *.lib
 *.pyd
 *.so
+
+binding.cfg

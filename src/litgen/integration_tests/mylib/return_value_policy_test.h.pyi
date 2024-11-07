@@ -33,7 +33,7 @@ class MyConfig:
 
     @staticmethod
     def instance() -> MyConfig:
-        """return_value_policy::reference"""
+        """py::return_value_policy::reference"""
         pass
     value: int = 0
     def __init__(self, value: int = 0) -> None:
@@ -41,7 +41,7 @@ class MyConfig:
         pass
 
 def my_config_instance() -> MyConfig:
-    """return_value_policy::reference"""
+    """py::return_value_policy::reference"""
     pass
 
 ####################    </generated_from:return_value_policy_test.h>    ####################

@@ -91,17 +91,18 @@ def test_implot_easy() -> None:
 
 def test_return_value_policy_custom() -> None:
     options = LitgenOptions()
+    options.bind_library = litgen.BindLibraryType.pybind11
     code = """
         // Returns a widget
-        Widget* Foo();  // py::return_value_policy::reference
+        Widget* Foo();  // return_value_policy::reference
     """
     generated_code = LitgenGeneratorTestsHelper.code_to_pydef(options, code)
     # logging.warning("\n" + generated_code)
     expected_code = """
         m.def("foo",
             Foo,
-            " Returns a widget\\nreturn_value_policy::reference",
-            pybind11::return_value_policy::reference);
+            " Returns a widget\\n\\n return_value_policy::reference",
+            py::return_value_policy::reference);
         """
     code_utils.assert_are_codes_equal(generated_code, expected_code)
 
@@ -119,10 +120,10 @@ def test_return_policy_regex() -> None:
         generated_code.pydef_code,
         """
         m.def("make_widget",
-            MakeWidget, pybind11::return_value_policy::reference);
+            MakeWidget, py::return_value_policy::reference);
 
         m.def("make_foo",
-            MakeFoo, pybind11::return_value_policy::reference);
+            MakeFoo, py::return_value_policy::reference);
         """,
     )
 
@@ -143,10 +144,9 @@ def test_implot_one_buffer() -> None:
             {
                 auto PlotScatter_adapt_c_buffers = [](const py::array & values)
                 {
-                    // Check if the array is C-contiguous
-                    if (!values.attr("flags").attr("c_contiguous").cast<bool>()) {
-                        throw std::runtime_error("The array must be contiguous, i.e, `a.flags.c_contiguous` must be True. Hint: use `numpy.ascontiguousarray`.");
-                    }
+                    // Check if the array is 1D and C-contiguous
+                    if (! (values.ndim() == 1 && values.strides(0) == values.itemsize()) )
+                        throw std::runtime_error("The array must be 1D and contiguous");
 
                     // convert py::array to C standard buffer (const)
                     const void * values_from_pyarray = values.data();
@@ -649,8 +649,8 @@ def test_change_decl_stmt_to_function_decl_if_suspicious():
         """
         def foo(v: int = int()) -> None:
             pass
-        """)
-
+        """,
+    )
 
     code = """
     int foo(int a = {}) { return 42; }
@@ -663,7 +663,7 @@ def test_change_decl_stmt_to_function_decl_if_suspicious():
         """
         def foo(a: int = int()) -> int:
             pass
-        """
+        """,
     )
 
     code = """
@@ -680,7 +680,7 @@ def test_change_decl_stmt_to_function_decl_if_suspicious():
             pass
         def foo2() -> None:
             pass
-        """
+        """,
     )
 
     """
@@ -729,4 +729,4 @@ def test_change_decl_stmt_to_function_decl_if_suspicious():
     options = litgen.LitgenOptions()
     generated_code = litgen.generate_code(options, code)
     # print(generated_code.stub_code)
-    code_utils.assert_are_codes_equal( generated_code.stub_code, "")
+    code_utils.assert_are_codes_equal(generated_code.stub_code, "")

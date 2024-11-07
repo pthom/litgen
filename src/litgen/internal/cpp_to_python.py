@@ -244,6 +244,72 @@ def py_array_type_to_cpp_type(py_array_type: str) -> str:
     return _PY_ARRAY_TYPE_TO_CPP_TYPE[py_array_type]
 
 
+# Nanobind related correspondences
+# ================================
+
+_NANOBIND_CPP_TYPE_TO_DTYPE_CODE = {
+    # Int types with known size
+    "uint8_t": "UInt",
+    "int8_t": "Int",
+    "uint16_t": "UInt",
+    "int16_t": "Int",
+    "uint32_t": "UInt",
+    "int32_t": "Int",
+    "uint64_t": "UInt",
+    "int64_t": "Int",
+    # Int types with unknown size
+    "int": "Int",
+    "signed int": "Int",
+    "unsigned int": "UInt",
+    "long": "Int",
+    "signed long": "Int",
+    "unsigned long": "UInt",
+    "long long": "Int",
+    "signed long long": "Int",
+    "unsigned long long": "UInt",
+    # Float types
+    "float": "Float",
+    "double": "Float",
+    "long double": "Float",
+}
+
+def nanobind_cpp_type_to_dtype_code_as_uint8(cpp_type: str) -> str:
+    if cpp_type in _NANOBIND_CPP_TYPE_TO_DTYPE_CODE:
+        return "static_cast<uint8_t>(nb::dlpack::dtype_code::" + _NANOBIND_CPP_TYPE_TO_DTYPE_CODE[cpp_type] + ")"
+    else:
+        raise ValueError(f"_nanobind_dtype_code_as_uint8: unhandled type {cpp_type}")
+
+
+def nanobind_cpp_type_to_dtype_code(cpp_type: str) -> str:
+    if cpp_type in _NANOBIND_CPP_TYPE_TO_DTYPE_CODE:
+        return _NANOBIND_CPP_TYPE_TO_DTYPE_CODE[cpp_type]
+    else:
+        raise ValueError(f"nanobind_cpp_type_to_dtype_code: unhandled type {cpp_type}")
+
+
+# def nanobind_letter_to_dtype_code(py_array_type: str) -> str:
+#     # enum class dtype_code : uint8_t {
+#     #     Int = 0, UInt = 1, Float = 2, Bfloat = 4, Complex = 5, Bool = 6
+#     # };
+#     _NANOBIND_LETTER_TO_DTYPE_CODE = {
+#         "B": "UInt",
+#         "b": "Int",
+#         "H": "UInt",
+#         "h": "Int",
+#         "I": "UInt",
+#         "i": "Int",
+#         "L": "UInt",  # Platform dependent: "uint64_t" on *nixes, "uint32_t" on windows
+#         "l": "Int",  # Platform dependent: "int64_t" on *nixes, "int32_t" on windows
+#         "f": "Float",
+#         "d": "Float",
+#         "g": "Float",
+#         "q": "Float",
+#     }
+#     assert len(py_array_type) == 1
+#     assert py_array_type in _NANOBIND_LETTER_TO_DTYPE_CODE
+#     return _NANOBIND_LETTER_TO_DTYPE_CODE[py_array_type]
+
+
 def cpp_type_to_py_array_type(cpp_type: str) -> str:
     cpp_type = cpp_type.strip()
     if cpp_type.endswith("*"):
@@ -527,6 +593,9 @@ def standard_type_replacements() -> RegexReplacementList:
     \bvoid\b -> None
 
     \bpy::array\b -> np.ndarray
+    \bpy::ndarray<(.*)> -> np.ndarray
+    \bnb::array\b -> np.ndarray
+    \bnb::ndarray<(.*)> -> np.ndarray
 
     \bconst\b -> REMOVE
     \bmutable\b -> REMOVE

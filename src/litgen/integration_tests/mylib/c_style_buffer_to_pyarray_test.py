@@ -15,7 +15,6 @@ def test_add_inside_buffer():
         lg_mylib.add_inside_buffer(x, 5)
     exception_message = str(exc_info.value)
     assert "Bad type!" in exception_message
-    assert "uint8_t" in exception_message
 
 
 def test_buffer_sum():

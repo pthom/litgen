@@ -17,33 +17,38 @@ from litgen import LitgenOptions
 
 
 def _generate_and_display_impl(
-    options: LitgenOptions, cpp_code: str, display_original_cpp_code: bool, collapse_pydef: bool, max_visible_lines: int
+    options: LitgenOptions, cpp_code: str, show_cpp: bool, show_pydef: bool, height: int
 ) -> str:
+    # First generate the code for pybind11
+    options.bind_library = litgen.BindLibraryType.pybind11
     generated_codes = litgen.generate_code(options, cpp_code)
 
     original_content = CodeAndTitle(CodeLanguage.Cpp, cpp_code, "Original C++ decls")
     stubs_content = CodeAndTitle(CodeLanguage.Python, generated_codes.stub_code, "Corresponding python decls (stub)")
-    pydef_content = CodeAndTitle(CodeLanguage.Cpp, generated_codes.pydef_code, "pybind11 C++ binding code")
     glue_code = CodeAndTitle(CodeLanguage.Cpp, generated_codes.glue_code, "C++ glue code")
+    pydef_pybind = CodeAndTitle(CodeLanguage.Cpp, generated_codes.pydef_code, "pybind11 C++ binding code")
 
-    initially_open_cpp_code = not collapse_pydef
-    collapsible_pydef = collapsible_code_and_title(
-        pydef_content, max_visible_lines=max_visible_lines, initially_opened=initially_open_cpp_code
-    )
-    collapsible_glue_code = collapsible_code_and_title(
-        glue_code, max_visible_lines=max_visible_lines, initially_opened=initially_open_cpp_code
-    )
+    # Then generate the code for nanobind (only the binding code)
+    options.bind_library = litgen.BindLibraryType.nanobind
+    generated_codes_nano = litgen.generate_code(options, cpp_code)
+    pydef_nanobind = CodeAndTitle(CodeLanguage.Cpp, generated_codes_nano.pydef_code, "nanobind C++ binding code")
 
-    if display_original_cpp_code:
+    if show_cpp:
         html = collapsible_code_and_title_two_columns(
-            original_content, stubs_content, initially_opened=True, max_visible_lines=max_visible_lines
+            original_content, stubs_content, initially_opened=True, max_visible_lines=height
         )
     else:
-        html = collapsible_code_and_title(stubs_content, initially_opened=True, max_visible_lines=max_visible_lines)
+        html = collapsible_code_and_title(stubs_content, initially_opened=True, max_visible_lines=height)
 
+    collapsible_pydef = collapsible_code_and_title(
+        pydef_pybind, max_visible_lines=height, initially_opened=show_pydef
+    ) + collapsible_code_and_title(pydef_nanobind, max_visible_lines=height, initially_opened=show_pydef)
     html += f"<br/>{collapsible_pydef}"
 
     if len(generated_codes.glue_code) > 0:
+        collapsible_glue_code = collapsible_code_and_title(
+            glue_code, max_visible_lines=height, initially_opened=show_pydef
+        )
         html += f"<br/>{collapsible_glue_code}"
 
     return html
@@ -58,6 +63,5 @@ def demo(
 ) -> None:
     from IPython.display import display  # type: ignore
 
-    collapse_pydef = not show_pydef
-    html = _generate_and_display_impl(options, cpp_code, show_cpp, collapse_pydef, height)
+    html = _generate_and_display_impl(options, cpp_code, show_cpp, show_pydef, height)
     display(HTML(html))  # type: ignore

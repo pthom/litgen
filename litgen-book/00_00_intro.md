@@ -4,7 +4,7 @@
 :class: note
 `litgen`, also known as _Literate Generator_, is an automatic python bindings generator for humans who like nice code and APIs.
 
-It can be used to bind C++ libraries into _documented_ and _discoverable_ python modules using [pybind11](https://pybind11.readthedocs.io/en/stable/index.html).
+It can be used to bind C++ libraries into _documented_ and _discoverable_ python modules using [pybind11](https://pybind11.readthedocs.io/en/stable/index.html) or [nanobind](https://nanobind.readthedocs.io/en/latest/).
 
 It can also be used as C++ transformation and refactoring tool.
 

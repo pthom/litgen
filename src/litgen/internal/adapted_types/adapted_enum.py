@@ -7,6 +7,7 @@ from codemanip.code_replacements import RegexReplacement, RegexReplacementList
 
 from srcmlcpp.cpp_types import CppDecl, CppEmptyLine, CppEnum, CppComment
 
+from litgen import BindLibraryType
 from litgen.internal import cpp_to_python
 from litgen.internal.adapted_types.adapted_comment import (
     AdaptedComment,
@@ -233,17 +234,29 @@ class AdaptedEnum(AdaptedElement):
 
         # Enum decl first line
         is_arithmetic = code_utils.does_match_regex(self.options.enum_make_arithmetic__regex, enum_name_cpp)
-        arithmetic_str = ", py::arithmetic()" if is_arithmetic else ""
+        if is_arithmetic:
+            arithmetic_str = ", py::arithmetic()" if self.options.bind_library == BindLibraryType.pybind11 else ", nb::is_arithmetic()"
         pydef_class_var_parent = cpp_to_python.cpp_scope_to_pybind_parent_var_name(self.options, self.cpp_element())
-        enum_decl_line = f'py::enum_<{enum_name_cpp}>({pydef_class_var_parent}, "{enum_name_python}"{arithmetic_str}, "{comment}"){location}'
+        enum_var = f"auto pyEnum{enum_name_python} = "
+        py = "py" if self.options.bind_library == BindLibraryType.pybind11 else "nb"
+        enum_decl_line = (
+            f'{py}::enum_<{enum_name_cpp}>({pydef_class_var_parent}, "{enum_name_python}"{arithmetic_str}, "{comment}")'
+            f"{location}"
+        )
+        lines += [enum_var]
         lines += [enum_decl_line]
 
         # Enum values
+        children_lines = []
         for child in self.adapted_children:
             if isinstance(child, AdaptedEnumDecl):
                 adapted_decl = child
                 value_decl_lines = adapted_decl.pydef_lines()
-                lines += value_decl_lines
+                children_lines += value_decl_lines
+        lines += code_utils.indent_code_lines(children_lines, indent_str=self.options._indent_cpp_spaces())
+
+        if self.options.enum_export_values:
+            lines += [".export_values()"]
 
         # Add ; on the last line
         assert len(lines) > 0

@@ -36,9 +36,6 @@ void py_init_module_mylib(py::module& m)
     m.def("my_mul",
         my_mul, py::arg("a"), py::arg("b"));
 
-    m.def("my_generic_function",
-        my_generic_function, "This is a generic function for python, accepting (*args, **kwargs) as arguments");
-
     { // <namespace MathFunctions>
         py::module_ pyNsMathFunctions = m.def_submodule("math_functions", " Vectorizable functions example\n    Numeric functions (i.e. function accepting and returning only numeric params or py::array), can be vectorized\n    i.e. they will accept numpy arrays as an input.\n\n Auto-vectorization is enabled via the following options:\n     options.fn_namespace_vectorize__regex: str = r\"^MathFunctions$\"\n     options.fn_vectorize__regex = r\".*\"\n");
         pyNsMathFunctions.def("vectorizable_sum",

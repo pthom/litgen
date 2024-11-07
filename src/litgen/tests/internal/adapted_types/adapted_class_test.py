@@ -2,6 +2,7 @@ from __future__ import annotations
 from codemanip import code_utils
 
 import litgen
+from litgen import BindLibraryType
 from litgen.litgen_generator import LitgenGeneratorTestsHelper
 from litgen.options import LitgenOptions
 
@@ -451,8 +452,9 @@ def test_inner_class() -> None:
                 (m, "Foo", "");
 
         { // inner classes & enums of Foo
-            py::enum_<Foo::Choice>(pyClassFoo, "Choice", py::arithmetic(), "")
-                .value("a", Foo::Choice::A, "");
+            auto pyEnumChoice =
+                py::enum_<Foo::Choice>(pyClassFoo, "Choice", py::arithmetic(), "")
+                    .value("a", Foo::Choice::A, "");
         } // end of inner classes & enums of Foo
 
         pyClassFoo
@@ -545,8 +547,9 @@ def test_named_ctor_helper_struct() -> None:
         """
         { // <namespace A>
             py::module_ pyNsA = m.def_submodule("a", "");
-            py::enum_<A::Foo>(pyNsA, "Foo", py::arithmetic(), "")
-                .value("foo1", A::Foo::Foo1, "");
+            auto pyEnumFoo =
+                py::enum_<A::Foo>(pyNsA, "Foo", py::arithmetic(), "")
+                    .value("foo1", A::Foo::Foo1, "");
 
 
             auto pyNsA_ClassClassNoDefaultCtor =
@@ -631,4 +634,218 @@ def test_shared_holder():
                 (m, "Foo", "")
             .def(py::init<>()) // implicit default constructor
             ;
-    """)
+    """,
+    )
+
+
+def test_ctor_placement_new():
+    # Test placement new for constructors (required for nanobind)
+    code = """
+        struct Foo
+        {
+            int x = 1;
+        };
+    """
+    options = litgen.LitgenOptions()
+
+    # Test with pybind11: the ctor will use a lambda
+    options.bind_library = litgen.BindLibraryType.pybind11
+    generated_code = litgen.generate_code(options, code)
+    code_utils.assert_are_codes_equal(
+        generated_code.pydef_code,
+        """
+        auto pyClassFoo =
+            py::class_<Foo>
+                (m, "Foo", "")
+            .def(py::init<>([](
+            int x = 1)
+            {
+                auto r = std::make_unique<Foo>();
+                r->x = x;
+                return r;
+            })
+            , py::arg("x") = 1
+            )
+            .def_readwrite("x", &Foo::x, "")
+            ;
+    """,
+    )
+
+    # Test with nanobind: the ctor shall use placement new
+    options.bind_library = litgen.BindLibraryType.nanobind
+    generated_code = litgen.generate_code(options, code)
+    # print(generated_code.pydef_code)
+    code_utils.assert_are_codes_equal(
+        generated_code.pydef_code,
+        """
+        auto pyClassFoo =
+            nb::class_<Foo>
+                (m, "Foo", "")
+            .def("__init__", []( Foo *self,
+            int x = 1)
+            {
+                new (self) Foo();  // placement new
+                auto r = self;
+                r->x = x;
+            },
+            nb::arg("x") = 1
+            )
+            .def_rw("x", &Foo::x, "")
+            ;
+        """,
+    )
+
+
+def test_numeric_array_member() -> None:
+    # Test that a numeric array member is correctly exposed as a numpy array
+    code = """
+        struct Color4
+        {
+            uint8_t rgba[4];
+        };
+    """
+    options = litgen.LitgenOptions()
+
+    # Test with pybind11
+    options.bind_library = litgen.BindLibraryType.pybind11
+    generated_code = litgen.generate_code(options, code)
+    # print(generated_code.pydef_code)
+    code_utils.assert_are_codes_equal(
+        generated_code.pydef_code,
+        """
+        auto pyClassColor4 =
+            py::class_<Color4>
+                (m, "Color4", "")
+            .def(py::init<>()) // implicit default constructor
+            .def_property("rgba",
+                [](Color4 &self) -> pybind11::array
+                {
+                    auto dtype = pybind11::dtype(pybind11::format_descriptor<uint8_t>::format());
+                    auto base = pybind11::array(dtype, {4}, {sizeof(uint8_t)});
+                    return pybind11::array(dtype, {4}, {sizeof(uint8_t)}, self.rgba, base);
+                }, [](Color4& self) {},
+                "")
+            ;
+    """,
+    )
+
+    # Test with nanobind
+    options.bind_library = litgen.BindLibraryType.nanobind
+    generated_code = litgen.generate_code(options, code)
+    # print(generated_code.pydef_code)
+    code_utils.assert_are_codes_equal(
+        generated_code.pydef_code,
+        """
+        auto pyClassColor4 =
+            nb::class_<Color4>
+                (m, "Color4", "")
+            .def(nb::init<>()) // implicit default constructor
+            .def_prop_ro("rgba",
+                [](Color4 &self) -> nb::ndarray<uint8_t, nb::numpy, nb::shape<4>, nb::c_contig>
+                {
+                    return self.rgba;
+                },
+                "")
+            ;
+    """,
+    )
+
+
+def test_nanobind_adapted_ctor_stub() -> None:
+    # The constructor params below will automatically be "adapted" into std::array<uint8_t, 4>
+    code = """
+    struct Color4
+    {
+        Color4(const uint8_t _rgba[4]);
+        uint8_t rgba[4];
+    };
+    """
+    options = litgen.LitgenOptions()
+    options.bind_library = BindLibraryType.nanobind
+    generated_code = litgen.generate_code(options, code)
+
+    # Below, we test that the ctor signature is adapted to accept List[int]
+    # (and does not specify an additional self parameter, cf AdaptedFunction.stub_params_list_signature())
+    # print(generated_code.stub_code)
+    code_utils.assert_are_codes_equal(
+        generated_code.stub_code,
+        """
+        class Color4:
+            def __init__(self, _rgba: List[int]) -> None:
+                pass
+            rgba: np.ndarray  # ndarray[type=uint8_t, size=4]
+        """
+    )
+
+
+
+def test_adapted_ctor() -> None:
+    # The constructor for Color4 will be adapted to accept std::array<uint8_t, 4>
+    code = """
+        struct Color4
+        {
+            Color4(const uint8_t _rgba[4]) {}
+        };
+    """
+    options = litgen.LitgenOptions()
+
+    #
+    # Test with pybind11 (using lambda & unique_ptr)
+    #
+    options.bind_library = BindLibraryType.pybind11
+    generated_code = litgen.generate_code(options, code)
+    # print(generated_code.pydef_code)
+    code_utils.assert_are_codes_equal(
+        generated_code.pydef_code,
+        """
+        auto pyClassColor4 =
+            py::class_<Color4>
+                (m, "Color4", "")
+            .def(py::init(
+                [](const std::array<uint8_t, 4>& _rgba) -> std::unique_ptr<Color4>
+                {
+                    auto ctor_wrapper = [](const uint8_t _rgba[4]) ->  std::unique_ptr<Color4>
+                    {
+                        return std::make_unique<Color4>(_rgba);
+                    };
+                    auto ctor_wrapper_adapt_fixed_size_c_arrays = [&ctor_wrapper](const std::array<uint8_t, 4>& _rgba) -> std::unique_ptr<Color4>
+                    {
+                        auto lambda_result = ctor_wrapper(_rgba.data());
+                        return lambda_result;
+                    };
+
+                    return ctor_wrapper_adapt_fixed_size_c_arrays(_rgba);
+                }),     py::arg("_rgba"))
+            ;
+        """,
+    )
+
+    #
+    # Test with nanobind (using placement new)
+    #
+    options.bind_library = BindLibraryType.nanobind
+    generated_code = litgen.generate_code(options, code)
+    # print(generated_code.pydef_code)
+    code_utils.assert_are_codes_equal(
+        generated_code.pydef_code,
+        """
+        auto pyClassColor4 =
+            nb::class_<Color4>
+                (m, "Color4", "")
+            .def("__init__",
+                [](Color4 * self, const std::array<uint8_t, 4>& _rgba)
+                {
+                    auto ctor_wrapper = [](Color4* self, const uint8_t _rgba[4]) ->  void
+                    {
+                        new(self) Color4(_rgba); // placement new
+                    };
+                    auto ctor_wrapper_adapt_fixed_size_c_arrays = [&ctor_wrapper](Color4 * self, const std::array<uint8_t, 4>& _rgba)
+                    {
+                        ctor_wrapper(self, _rgba.data());
+                    };
+
+                    ctor_wrapper_adapt_fixed_size_c_arrays(self, _rgba);
+                },     nb::arg("_rgba"))
+            ;
+        """,
+    )

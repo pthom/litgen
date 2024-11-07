@@ -1,6 +1,6 @@
 # Quickstart with litgen
 
-[litgen_template](https://github.com/pthom/litgen_template) is a template repository to build python bindings using [litgen](https://pthom.github.io/litgen), and [scikit-build](https://scikit-build-core.readthedocs.io/en/latest/getting_started.html).
+[litgen_template](https://github.com/pthom/litgen_template) is a template repository to build python bindings using [litgen](https://pthom.github.io/litgen), [pybind11](https://pybind11.readthedocs.io/en/stable/) or [nanobind](https://nanobind.readthedocs.io/en/stable/) and [scikit-build](https://scikit-build-core.readthedocs.io/en/latest/getting_started.html).
 
 This template is based on [scikit_build_example](https://github.com/pybind/scikit_build_example).
 
@@ -43,7 +43,8 @@ source venv/bin/activate
 ```bash
 pip install -r requirements-dev.txt
 ```
-This will install [litgen](https://pthom.github.io/litgen) (the bindings generator), [pybind11](https://pybind11.readthedocs.io/en/stable/) (a library to create C++ to Python bindings), [pytest](https://docs.pytest.org) (for the tests), [black](https://black.readthedocs.io/en/stable/index.html) (a code formatter), and [mypy](https://www.mypy-lang.org/) (static type checker for python).
+This will install [litgen](https://pthom.github.io/litgen) (the bindings generator), [pybind11](https://pybind11.readthedocs.io/en/stable/) and [nanobind](https://nanobind.readthedocs.io/en/stable/) (libraries to create C++ to Python bindings), [pytest](https://docs.pytest.org) (for the tests), [black](https://black.readthedocs.io/en/stable/index.html) (a code formatter), and [mypy](https://www.mypy-lang.org/) (static type checker for python).
+
 
 See [requirements-dev.txt](https://github.com/pthom/litgen_template/blob/main/requirements-dev.txt).
 
@@ -55,6 +56,13 @@ See [requirements-dev.txt](https://github.com/pthom/litgen_template/blob/main/re
 - Change the C++ code (add functions, etc.) in [src/cpp_libraries/DaftLib](https://github.com/pthom/litgen_template/tree/main/src/cpp_libraries/DaftLib)
 - Adapt the generation options inside [tools/autogenerate_bindings.py](https://github.com/pthom/litgen_template/blob/main/tools/autogenerate_bindings.py)
 
+**Optionally, switch to nanobind**
+
+By default, this template uses pybind11. If you want to switch to nanobind, you can do so with
+
+```bash
+export LITGEN_USE_NANOBIND=ON
+```
 
 **Run the code generation via litgen**
 
@@ -63,10 +71,10 @@ python tools/autogenerate_bindings.py
 ```
 
 This will:
-* Write the cpp binding code into [src/python_bindings/pybind_DaftLib.cpp](https://github.com/pthom/litgen_template/blob/main/src/python_bindings/pybind_DaftLib.cpp)
-* Write the python stubs (i.e. typed declarations) inside [src/python_bindings/daft_lib/\_\_init\_\_.pyi](https://github.com/pthom/litgen_template/blob/main/src/python_bindings/daft_lib/__init__.pyi).
+* Write the cpp binding code into [_pydef_pybind11/pybind_DaftLib.cpp](https://github.com/pthom/litgen_template/blob/main/_pydef_pybind11/pybind_DaftLib.cpp) or [_pydef_nanobind/nanobind_DaftLib.cpp](https://github.com/pthom/litgen_template/blob/main/_pydef_nanobind/pybind_DaftLib.cpp)
+* Write the python stubs (i.e. typed declarations) inside [_stubs/daft_lib/\_\_init\_\_.pyi](https://github.com/pthom/litgen_template/blob/main/_stubs/daft_lib/__init__.pyi).
 
-> _Tip: compare the [python stubs](https://github.com/pthom/litgen_template/blob/main/src/python_bindings/daft_lib/__init__.pyi)
+> _Tip: compare the [python stubs](https://github.com/pthom/litgen_template/blob/main/_stubs/daft_lib/__init__.pyi)
 >  with the [C++ header file](https://github.com/pthom/litgen_template/blob/main/src/cpp_libraries/DaftLib/DaftLib.h) to see how close they are!_
 
 > _Note: the options inside [autogenerate_bindings.py](https://github.com/pthom/litgen_template/blob/main/tools/autogenerate_bindings.py) showcase a subset of litgen customization capabilities. See the [litgen documentation](https://pthom.github.io/litgen) for more details. They are heavily documented, and correspond to the documentation you can find in [DaftLib.h](https://github.com/pthom/litgen_template/tree/main/src/cpp_libraries/DaftLib/DaftLib.h)_
@@ -97,31 +105,36 @@ You can change these names by running `change_lib_name.py` in the [tools/change_
 The C++ library `DaftLib` is stored inside src/cpp_libraries/DaftLib/
 
 ```
-src/cpp_libraries/
-└── DaftLib/
-    ├── CMakeLists.txt
-    ├── DaftLib.h
-    └── cpp/
-        └── DaftLib.cpp
+src/
+├── cpp_libraries/
+     └── DaftLib/
+         ├── CMakeLists.txt
+         ├── DaftLib.h
+         └── cpp/
+             └── DaftLib.cpp
 ```
 
-### Python bindings
+### C++ binding code
 
-The python bindings are stored inside `src/python_bindings/`
+The C++ binding code is stored inside `_pydef_pybind11/` (or `_pydef_nanobind/` if you use nanobind).
 
 ```
-src/python_bindings/
+_pydef_pybind11/
       ├─── module.cpp              # Main entry point of the python module
-      │── pybind_DaftLib.cpp       # File with bindings *generated by litgen*
-      │
-      └─ daft_lib/
+      └── pybind_DaftLib.cpp       # File with bindings *generated by litgen*
+```
+
+### Python stubs
+
+The python stubs are stored inside `_stubs/`
+
+```
+_stubs/
+└── daft_lib/
           ├── __init__.pyi         # Stubs *generated by litgen*
           ├── __init__.py          # The python module (daft_lib) main entry point
           │                        # (it imports and optionally adapts _daft_lib)
-          ├── py.typed             # An empty file that indicates that the python module is typed
-          │
-          └── _daft_lib.xxx.so*    # (optional: the native _daftlib module generated by pybind11,
-                                   #  only present in editable mode)
+          └── py.typed             # An empty file that indicates that the python module is typed
 ```
 
 ### Tooling for the bindings generation
