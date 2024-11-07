@@ -17,6 +17,7 @@ def validate_bindings_compilation(
     remove_build_dir_on_success: bool = True,
     remove_build_dir_on_failure: bool = False,
     show_logs: bool = False,
+    enable_hack_code: bool = False,
 ) -> bool:
     """
     Validates that the cpp code can be compiled into bindings and that the generated Python bindings work as expected.
@@ -145,9 +146,10 @@ add_custom_command(TARGET {python_native_module_name}
     if work_dir is None:
         work_dir = tempfile.mkdtemp()
     else:
-        if os.path.exists(work_dir):
-            shutil.rmtree(work_dir)
-        os.mkdir(work_dir)
+        if not enable_hack_code:
+            if os.path.exists(work_dir):
+                shutil.rmtree(work_dir)
+            os.mkdir(work_dir)
     build_dir = os.path.join(work_dir, "build")
     os.makedirs(build_dir, exist_ok=True)
 
@@ -156,8 +158,9 @@ add_custom_command(TARGET {python_native_module_name}
         cmake_lists_path = os.path.join(work_dir, "CMakeLists.txt")
 
         # Write the full code to code.cpp
-        with open(code_cpp_path, "w") as f:
-            f.write(full_code)
+        if not enable_hack_code:
+            with open(code_cpp_path, "w") as f:
+                f.write(full_code)
 
         # Write the CMake code to CMakeLists.txt
         with open(cmake_lists_path, "w") as f:
