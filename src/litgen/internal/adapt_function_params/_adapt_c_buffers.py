@@ -240,14 +240,10 @@ class _AdaptBuffersHelper:
                 char {template_buffer_name}_type = {template_buffer_name}.dtype().char_();
             """
         elif self.options.bind_library == BindLibraryType.nanobind:
+            # Contrary to pybind, we get info about the exact size in bits, so that we can use precisely sized types below
             _nanobind_buffer_type_to_letter_code = """
-                #ifdef _WIN32
-                using np_uint_l = uint32_t;
-                using np_int_l = int32_t;
-                #else
                 using np_uint_l = uint64_t;
                 using np_int_l = int64_t;
-                #endif
 
                 // Define a lambda to compute the letter code for the buffer type
                 auto _nanobind_buffer_type_to_letter_code = [](uint8_t dtype_code, size_t sizeof_item)  -> char

@@ -401,13 +401,8 @@ void py_init_module_lg_mylib(nb::module_& m)
                 void * buffer_from_pyarray = buffer.data();
                 size_t buffer_count = buffer.shape(0);
 
-                #ifdef _WIN32
-                using np_uint_l = uint32_t;
-                using np_int_l = int32_t;
-                #else
                 using np_uint_l = uint64_t;
                 using np_int_l = int64_t;
-                #endif
 
                 // Define a lambda to compute the letter code for the buffer type
                 auto _nanobind_buffer_type_to_letter_code = [](uint8_t dtype_code, size_t sizeof_item)  -> char
@@ -1463,13 +1458,8 @@ void py_init_module_lg_mylib(nb::module_& m)
                         void * buffer_from_pyarray = buffer.data();
                         size_t buffer_count = buffer.shape(0);
 
-                        #ifdef _WIN32
-                        using np_uint_l = uint32_t;
-                        using np_int_l = int32_t;
-                        #else
                         using np_uint_l = uint64_t;
                         using np_int_l = int64_t;
-                        #endif
 
                         // Define a lambda to compute the letter code for the buffer type
                         auto _nanobind_buffer_type_to_letter_code = [](uint8_t dtype_code, size_t sizeof_item)  -> char
@@ -1672,13 +1662,8 @@ void py_init_module_lg_mylib(nb::module_& m)
                         void * buffer_from_pyarray = buffer.data();
                         size_t buffer_count = buffer.shape(0);
 
-                        #ifdef _WIN32
-                        using np_uint_l = uint32_t;
-                        using np_int_l = int32_t;
-                        #else
                         using np_uint_l = uint64_t;
                         using np_int_l = int64_t;
-                        #endif
 
                         // Define a lambda to compute the letter code for the buffer type
                         auto _nanobind_buffer_type_to_letter_code = [](uint8_t dtype_code, size_t sizeof_item)  -> char
