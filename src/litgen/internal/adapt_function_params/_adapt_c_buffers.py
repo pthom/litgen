@@ -252,7 +252,7 @@ class _AdaptBuffersHelper:
                 // Define a lambda to compute the letter code for the buffer type
                 auto _nanobind_buffer_type_to_letter_code = [](uint8_t dtype_code, size_t sizeof_item)  -> char
                 {
-                    #define DCODE(T) static_cast<uint8_t>(py::dlpack::dtype_code::T)
+                    #define DCODE(T) static_cast<uint8_t>(nb::dlpack::dtype_code::T)
                         const std::array<std::tuple<uint8_t, size_t, char>, 11> mappings = {{
                             {DCODE(UInt), 1, 'B'}, {DCODE(UInt), 2, 'H'}, {DCODE(UInt), 4, 'I'}, {DCODE(UInt), 8, 'L'},
                             {DCODE(Int), 1, 'b'}, {DCODE(Int), 2, 'h'}, {DCODE(Int), 4, 'i'}, {DCODE(Int), 8, 'l'},
@@ -376,7 +376,7 @@ class _AdaptBuffersHelper:
         if self.options.bind_library == BindLibraryType.pybind11:
             new_param.decl.cpp_type.typenames = ["py::array"]
         else:
-            new_param.decl.cpp_type.typenames = ["py::ndarray<>"]
+            new_param.decl.cpp_type.typenames = ["nb::ndarray<>"]
 
         new_param.decl.cpp_type.modifiers = ["&"]
         if self._is_const(idx_param):
@@ -448,7 +448,7 @@ class _AdaptBuffersHelper:
         else:
             # TODO: implement contiguous check for nanobind
             template = f"""
-                        // convert py::array to C standard buffer ({mutable_or_const})
+                        // convert nb::ndarray to C standard buffer ({mutable_or_const})
                         {_._const_space_or_empty(idx_param)}void * {_._buffer_from_pyarray_name(idx_param)} = {_._param_name(idx_param)}.{mutable_or_empty}data();
                         size_t {_._pyarray_count(idx_param)} = {_._param_name(idx_param)}.shape(0);
                     """  # noqa

@@ -54,7 +54,7 @@ def validate_bindings_compilation(
 #include <nanobind/trampoline.h>
 #include <nanobind/ndarray.h>
 
-namespace py = nanobind;
+namespace nb = nanobind;
 """
 
     INCLUDE_PYBIND = """

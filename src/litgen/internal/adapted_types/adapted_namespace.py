@@ -5,6 +5,7 @@ from typing import cast
 from munch import Munch  # type: ignore
 
 from codemanip import code_utils
+from litgen import BindLibraryType
 
 from srcmlcpp.cpp_types import CppNamespace
 
@@ -81,11 +82,11 @@ class AdaptedNamespace(AdaptedElement):
         self.lg_context.namespaces_pydef.register_namespace_creation(self._qualified_namespace_name())
 
         submodule_code_template = (
-            'py::module_ {submodule_cpp_var} = {parent_module_cpp_var}.def_submodule("{module_name}", "{module_doc}");'
+            '{py}::module_ {submodule_cpp_var} = {parent_module_cpp_var}.def_submodule("{module_name}", "{module_doc}");'
         )
 
         replace_tokens = Munch()
-
+        replace_tokens.py = "py" if self.options.bind_library == BindLibraryType.pybind11 else "nb"
         replace_tokens.parent_module_cpp_var = cpp_to_python.cpp_scope_to_pybind_parent_var_name(
             self.options, self.cpp_element()
         )

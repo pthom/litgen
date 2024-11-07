@@ -232,18 +232,15 @@ class AdaptedEnum(AdaptedElement):
 
         lines: list[str] = []
 
-        if self.options.bind_library == BindLibraryType.pybind11:
-            token = "arithmetic"
-        else:
-            token = "is_arithmetic"
-
         # Enum decl first line
         is_arithmetic = code_utils.does_match_regex(self.options.enum_make_arithmetic__regex, enum_name_cpp)
-        arithmetic_str = f", py::{token}()" if is_arithmetic else ""
+        if is_arithmetic:
+            arithmetic_str = ", py::arithmetic()" if self.options.bind_library == BindLibraryType.pybind11 else ", nb::is_arithmetic()"
         pydef_class_var_parent = cpp_to_python.cpp_scope_to_pybind_parent_var_name(self.options, self.cpp_element())
         enum_var = f"auto pyEnum{enum_name_python} = "
+        py = "py" if self.options.bind_library == BindLibraryType.pybind11 else "nb"
         enum_decl_line = (
-            f'py::enum_<{enum_name_cpp}>({pydef_class_var_parent}, "{enum_name_python}"{arithmetic_str}, "{comment}")'
+            f'{py}::enum_<{enum_name_cpp}>({pydef_class_var_parent}, "{enum_name_python}"{arithmetic_str}, "{comment}")'
             f"{location}"
         )
         lines += [enum_var]

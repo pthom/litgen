@@ -275,7 +275,7 @@ _NANOBIND_CPP_TYPE_TO_DTYPE_CODE = {
 
 def nanobind_cpp_type_to_dtype_code_as_uint8(cpp_type: str) -> str:
     if cpp_type in _NANOBIND_CPP_TYPE_TO_DTYPE_CODE:
-        return "static_cast<uint8_t>(py::dlpack::dtype_code::" + _NANOBIND_CPP_TYPE_TO_DTYPE_CODE[cpp_type] + ")"
+        return "static_cast<uint8_t>(nb::dlpack::dtype_code::" + _NANOBIND_CPP_TYPE_TO_DTYPE_CODE[cpp_type] + ")"
     else:
         raise ValueError(f"_nanobind_dtype_code_as_uint8: unhandled type {cpp_type}")
 
@@ -594,6 +594,8 @@ def standard_type_replacements() -> RegexReplacementList:
 
     \bpy::array\b -> np.ndarray
     \bpy::ndarray<(.*)> -> np.ndarray
+    \bnb::array\b -> np.ndarray
+    \bnb::ndarray<(.*)> -> np.ndarray
 
     \bconst\b -> REMOVE
     \bmutable\b -> REMOVE

@@ -679,7 +679,7 @@ def test_ctor_placement_new():
         generated_code.pydef_code,
         """
         auto pyClassFoo =
-            py::class_<Foo>
+            nb::class_<Foo>
                 (m, "Foo", "")
             .def("__init__", []( Foo *self,
             int x = 1)
@@ -688,7 +688,7 @@ def test_ctor_placement_new():
                 auto r = self;
                 r->x = x;
             },
-            py::arg("x") = 1
+            nb::arg("x") = 1
             )
             .def_rw("x", &Foo::x, "")
             ;
@@ -737,11 +737,11 @@ def test_numeric_array_member() -> None:
         generated_code.pydef_code,
         """
         auto pyClassColor4 =
-            py::class_<Color4>
+            nb::class_<Color4>
                 (m, "Color4", "")
-            .def(py::init<>()) // implicit default constructor
+            .def(nb::init<>()) // implicit default constructor
             .def_prop_ro("rgba",
-                [](Color4 &self) -> py::ndarray<uint8_t, py::numpy, py::shape<4>, py::c_contig>
+                [](Color4 &self) -> nb::ndarray<uint8_t, nb::numpy, nb::shape<4>, nb::c_contig>
                 {
                     return self.rgba;
                 },
@@ -830,7 +830,7 @@ def test_adapted_ctor() -> None:
         generated_code.pydef_code,
         """
         auto pyClassColor4 =
-            py::class_<Color4>
+            nb::class_<Color4>
                 (m, "Color4", "")
             .def("__init__",
                 [](Color4 * self, const std::array<uint8_t, 4>& _rgba)
@@ -845,7 +845,7 @@ def test_adapted_ctor() -> None:
                     };
 
                     ctor_wrapper_adapt_fixed_size_c_arrays(self, _rgba);
-                },     py::arg("_rgba"))
+                },     nb::arg("_rgba"))
             ;
         """,
     )

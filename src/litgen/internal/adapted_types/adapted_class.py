@@ -201,7 +201,7 @@ class AdaptedClassMember(AdaptedDecl):
         else:
             template_code = f"""
                 .def_prop_ro("{name_python}",{location}
-                    []({qualified_struct_name} &self) -> py::ndarray<{array_typename}, py::numpy, py::shape<{array_size}>, py::c_contig>
+                    []({qualified_struct_name} &self) -> nb::ndarray<{array_typename}, nb::numpy, nb::shape<{array_size}>, nb::c_contig>
                     {{
                         return self.{name_cpp};
                     }},
@@ -609,6 +609,7 @@ class AdaptedClass(AdaptedElement):
                     if access_type == CppAccessType.public or access_type == CppAccessType.protected:
                         other_template_params_list.append(base_class.cpp_scope_str(include_self=True))
             if self.cpp_element().has_private_destructor() and options.bind_library == BindLibraryType.pybind11:
+                # todo: handle nodelete for nanobind
                 other_template_params_list.append(f"std::unique_ptr<{qualified_struct_name}, py::nodelete>")
             if self._virt_shall_override():
                 scope = self.cpp_element().cpp_scope(False).str_cpp
@@ -624,13 +625,14 @@ class AdaptedClass(AdaptedElement):
             code_template = code_utils.unindent_code(
                 """
                     auto {pydef_class_var} =
-                    {_i_}py::class_<{qualified_struct_name}{other_template_params}{maybe_shared_ptr_holder}>{location}
+                    {_i_}{py}::class_<{qualified_struct_name}{other_template_params}{maybe_shared_ptr_holder}>{location}
                     {_i_}{_i_}({pydef_class_var_parent}, "{class_name_python}"{maybe_py_is_final}{maybe_py_is_dynamic}, "{comment}")
                     """,
                 flag_strip_empty_lines=True,
             )
 
             replacements = munch.Munch()
+            replacements.py = "py" if options.bind_library == BindLibraryType.pybind11 else "nb"
             replacements._i_ = self.options._indent_cpp_spaces()
             replacements.pydef_class_var = cpp_to_python.cpp_scope_to_pybind_var_name(options, self.cpp_element())
             replacements.qualified_struct_name = qualified_struct_name
@@ -640,9 +642,17 @@ class AdaptedClass(AdaptedElement):
             replacements.pydef_class_var_parent = cpp_to_python.cpp_scope_to_pybind_parent_var_name(
                 options, self.cpp_element()
             )
-            replacements.maybe_py_is_final = ", py::is_final()" if self.cpp_element().is_final() else ""
+
+            if self.cpp_element().is_final():
+                replacements.maybe_py_is_final = ", py::is_final()" if options.bind_library == BindLibraryType.pybind11 else ", nb::is_final()"
+            else:
+                replacements.maybe_py_is_final = ""
+
             if code_utils.does_match_regex(self.options.class_dynamic_attributes__regex, self.cpp_element().class_name):
-                replacements.maybe_py_is_dynamic = ", py::dynamic_attr()"
+                if options.bind_library == BindLibraryType.pybind11:
+                    replacements.maybe_py_is_dynamic = ", py::dynamic_attr()"
+                else:
+                    replacements.maybe_py_is_dynamic = ", nb::dynamic_attr()"
             else:
                 replacements.maybe_py_is_dynamic = ""
 
@@ -725,8 +735,8 @@ class AdaptedClass(AdaptedElement):
                     code_utils.unindent_code(
                         """
                     .def("__iter__", [](const {qualified_struct_name} &v) {
-                            return py::make_iterator(py::type<{qualified_struct_name}>(), "iterator", v.begin(), v.end());
-                        }, py::keep_alive<0, 1>())
+                            return nb::make_iterator(nb::type<{qualified_struct_name}>(), "iterator", v.begin(), v.end());
+                        }, nb::keep_alive<0, 1>())
                     .def("__len__", [](const {qualified_struct_name} &v) { return v.size(); })
                     """,
                         flag_strip_empty_lines=True,
@@ -837,8 +847,9 @@ class AdaptedClass(AdaptedElement):
                 replacements.maybe_pydict = ""
                 replacements.maybe_memo = ""
             else:
-                replacements.maybe_pydict = ", py::dict"
-                replacements.maybe_memo = ', py::arg("memo")'
+                py = "py" if self.options.bind_library == BindLibraryType.pybind11 else "nb"
+                replacements.maybe_pydict = f", {py}::dict"
+                replacements.maybe_memo = f', {py}::arg("memo")'
 
             if shall_create:
                 code = code_utils.process_code_template(code_template, replacements)
@@ -1276,7 +1287,8 @@ class PythonNamedConstructorHelper:
     def pydef_code(self) -> str:
         _i_ = self.adapted_class.options._indent_cpp_spaces()
         if self.flag_generate_void_constructor():
-            return f"{_i_}.def(py::init<>()) // implicit default constructor\n"
+            py = "py" if self.options.bind_library == BindLibraryType.pybind11 else "nb"
+            return f"{_i_}.def({py}::init<>()) // implicit default constructor\n"
         if not self.flag_generate_named_ctor_params():
             return ""
         ctor_decl = self.named_constructor_decl()
@@ -1290,7 +1302,8 @@ class PythonNamedConstructorHelper:
         adapted_function = AdaptedFunction(self.adapted_class.lg_context, ctor_decl, False)
 
         if len(ctor_decl.parameter_list.parameters) == 0:
-            return f"{_i_}.def(py::init<>()) // implicit default constructor \n"
+            py = "py" if self.options.bind_library == BindLibraryType.pybind11 else "nb"
+            return f"{_i_}.def({py}::init<>()) // implicit default constructor \n"
 
         if self.options.bind_library == BindLibraryType.pybind11:
             template = code_utils.unindent_code(

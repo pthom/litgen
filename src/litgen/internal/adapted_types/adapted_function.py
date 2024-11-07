@@ -539,7 +539,7 @@ class AdaptedFunction(AdaptedElement):
             if self.options.bind_library == BindLibraryType.pybind11:
                 replace_lines.maybe_return_value_policy = f"py::return_value_policy::{return_value_policy}"
             else:
-                replace_lines.maybe_return_value_policy = f"py::rv_policy::{return_value_policy}"
+                replace_lines.maybe_return_value_policy = f"nb::rv_policy::{return_value_policy}"
         else:
             replace_lines.maybe_return_value_policy = None
 
@@ -612,6 +612,8 @@ class AdaptedFunction(AdaptedElement):
         function_scope_prefix = self._pydef_str_parent_cpp_scope_prefix()
 
         if self.is_vectorize_impl:
+            # not available in nanobind
+            assert self.options.bind_library == BindLibraryType.pybind11
             replace_tokens.function_pointer = f"py::vectorize({function_scope_prefix}{function_name})"
         else:
             replace_tokens.function_pointer = f"{function_scope_prefix}{function_name}"
@@ -631,13 +633,14 @@ class AdaptedFunction(AdaptedElement):
             else:
                 overload_types = self.cpp_element().parameter_list.str_types_only_for_overload()
                 is_const = self.cpp_element().is_const()
+                py = "py" if self.options.bind_library == BindLibraryType.pybind11 else "nb"
                 if is_const:
                     replace_tokens.function_pointer = (
-                        f"py::overload_cast<{overload_types}>({replace_tokens.function_pointer}, py::const_)"
+                        f"{py}::overload_cast<{overload_types}>({replace_tokens.function_pointer}, {py}::const_)"
                     )
                 else:
                     replace_tokens.function_pointer = (
-                        f"py::overload_cast<{overload_types}>({replace_tokens.function_pointer})"
+                        f"{py}::overload_cast<{overload_types}>({replace_tokens.function_pointer})"
                     )
 
         # fill pydef_end_arg_docstring_returnpolicy
@@ -759,7 +762,7 @@ class AdaptedFunction(AdaptedElement):
 
         template_code = code_utils.unindent_code(
             """
-            .def(py::init<{arg_types}>(){maybe_comma}{location}
+            .def({py}::init<{arg_types}>(){maybe_comma}{location}
             {_i_}{maybe_pyarg}{maybe_comma}
             {_i_}{maybe_docstring}"""
         )[1:]
@@ -790,6 +793,7 @@ class AdaptedFunction(AdaptedElement):
             code,
             {
                 "_i_": _i_,
+                "py": "py" if self.options.bind_library == BindLibraryType.pybind11 else "nb",
                 "location": location,
                 "arg_types": arg_types,
             },
@@ -886,9 +890,9 @@ class AdaptedFunction(AdaptedElement):
             # Skip *args and **kwarg
             param_type_cpp = adapted_decl.cpp_element().cpp_type.str_code()
             param_type_cpp_simplified = (
-                param_type_cpp.replace("const ", "").replace("pybind11::", "py::").replace(" &", "")
+                param_type_cpp.replace("const ", "").replace("pybind11::", "py::").replace(" &", "").replace("nanobind::", "nb::")
             )
-            if param_type_cpp_simplified in ["py::args", "py::kwargs"]:
+            if param_type_cpp_simplified in ["py::args", "py::kwargs", "nb::args", "nb::kwargs"]:
                 continue
 
             pyarg_str = adapted_decl._str_pydef_as_pyarg()
@@ -948,11 +952,24 @@ class AdaptedFunction(AdaptedElement):
                 return keep_alive_code
         return None
 
+    def _replace_py_or_nb_namespace(self, s: str | None) -> str | None:
+        if s is None:
+            return None
+        if self.options.bind_library == BindLibraryType.nanobind:
+            s = s.replace("py::", "nb::")
+        else:
+            s = s.replace("nb::", "py::")
+        return s
+
     def _pydef_fill_keep_alive_from_function_comment(self) -> str | None:
-        return self._pydef_fill_call_policy_from_function_comment("py::keep_alive")
+        v_py = self._pydef_fill_call_policy_from_function_comment("py::keep_alive")
+        v_nb = self._pydef_fill_call_policy_from_function_comment("nb::keep_alive")
+        return self._replace_py_or_nb_namespace(v_py or v_nb)
 
     def _pydef_fill_call_guard_from_function_comment(self) -> str | None:
-        return self._pydef_fill_call_policy_from_function_comment("py::call_guard")
+        v_py = self._pydef_fill_call_policy_from_function_comment("py::call_guard")
+        v_nb = self._pydef_fill_call_policy_from_function_comment("nb::call_guard")
+        return  self._replace_py_or_nb_namespace(v_py or v_nb)
 
     def _pydef_str_parent_cpp_scope(self) -> str:
         if self.is_method():
@@ -1223,12 +1240,12 @@ class AdaptedFunction(AdaptedElement):
 
             # Handle *args and **kwargs
             param_type_cpp_simplified = (
-                param_type_cpp.replace("const ", "").replace("pybind11::", "py::").replace(" &", "")
+                param_type_cpp.replace("const ", "").replace("pybind11::", "py::").replace(" &", "").replace("nanobind::", "nb::")
             )
-            if param_type_cpp_simplified == "py::args":
+            if param_type_cpp_simplified == "py::args" or param_type_cpp_simplified == "nb::args":
                 r.append("*args")
                 continue
-            if param_type_cpp_simplified == "py::kwargs":
+            if param_type_cpp_simplified == "py::kwargs" or param_type_cpp_simplified == "nb::kwargs":
                 r.append("**kwargs")
                 continue
 

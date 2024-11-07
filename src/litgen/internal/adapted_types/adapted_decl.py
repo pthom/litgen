@@ -4,6 +4,7 @@ from dataclasses import dataclass
 from typing import cast
 
 from codemanip import code_utils
+from litgen import BindLibraryType
 
 from srcmlcpp.cpp_types import CppDecl
 
@@ -119,14 +120,15 @@ class AdaptedDecl(AdaptedElement):
 
     def _str_pydef_as_pyarg(self) -> str:
         """pydef code for function parameters"""
-        param_template = 'py::arg("{argname_python}"){maybe_equal}{maybe_defaultvalue_cpp}'
+        py_colon = "py::" if self.options.bind_library == BindLibraryType.pybind11 else "nb::"
+        param_template = py_colon + 'arg("{argname_python}"){maybe_equal}{maybe_defaultvalue_cpp}'
 
         maybe_defaultvalue_cpp = self.cpp_element().initial_value_code
         if maybe_defaultvalue_cpp.strip().startswith("{"):
             # special case for default value with brace init
             maybe_defaultvalue_cpp = self.cpp_element().cpp_type.typenames[0] + maybe_defaultvalue_cpp
         if maybe_defaultvalue_cpp in ["NULL", "nullptr", "std::nullopt"]:
-            maybe_defaultvalue_cpp = "py::none()"
+            maybe_defaultvalue_cpp = py_colon + "none()"
         if len(maybe_defaultvalue_cpp) > 0:
             maybe_equal = " = "
         else:
