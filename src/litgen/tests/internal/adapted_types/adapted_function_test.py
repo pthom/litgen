@@ -144,10 +144,9 @@ def test_implot_one_buffer() -> None:
             {
                 auto PlotScatter_adapt_c_buffers = [](const py::array & values)
                 {
-                    // Check if the array is C-contiguous
-                    if (!values.attr("flags").attr("c_contiguous").cast<bool>()) {
-                        throw std::runtime_error("The array must be contiguous, i.e, `a.flags.c_contiguous` must be True. Hint: use `numpy.ascontiguousarray`.");
-                    }
+                    // Check if the array is 1D and C-contiguous
+                    if (! (values.ndim() == 1 && values.strides(0) == values.itemsize()) )
+                        throw std::runtime_error("The array must be 1D and contiguous");
 
                     // convert py::array to C standard buffer (const)
                     const void * values_from_pyarray = values.data();

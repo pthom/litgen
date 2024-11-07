@@ -276,6 +276,10 @@ void py_init_module_lg_mylib(nb::module_& m)
         {
             auto add_inside_buffer_adapt_c_buffers = [](nb::ndarray<> & buffer, uint8_t number_to_add)
             {
+                // Check if the array is 1D and C-contiguous
+                if (! (buffer.ndim() == 1 && buffer.stride(0) == 1))
+                    throw std::runtime_error("The array must be 1D and contiguous");
+
                 // convert nb::ndarray to C standard buffer (mutable)
                 void * buffer_from_pyarray = buffer.data();
                 size_t buffer_count = buffer.shape(0);
@@ -308,6 +312,10 @@ void py_init_module_lg_mylib(nb::module_& m)
         {
             auto buffer_sum_adapt_c_buffers = [](const nb::ndarray<> & buffer, int stride = -1) -> int
             {
+                // Check if the array is 1D and C-contiguous
+                if (! (buffer.ndim() == 1 && buffer.stride(0) == 1))
+                    throw std::runtime_error("The array must be 1D and contiguous");
+
                 // convert nb::ndarray to C standard buffer (const)
                 const void * buffer_from_pyarray = buffer.data();
                 size_t buffer_count = buffer.shape(0);
@@ -346,6 +354,10 @@ void py_init_module_lg_mylib(nb::module_& m)
         {
             auto add_inside_two_buffers_adapt_c_buffers = [](nb::ndarray<> & buffer_1, nb::ndarray<> & buffer_2, uint8_t number_to_add)
             {
+                // Check if the array is 1D and C-contiguous
+                if (! (buffer_1.ndim() == 1 && buffer_1.stride(0) == 1))
+                    throw std::runtime_error("The array must be 1D and contiguous");
+
                 // convert nb::ndarray to C standard buffer (mutable)
                 void * buffer_1_from_pyarray = buffer_1.data();
                 size_t buffer_1_count = buffer_1.shape(0);
@@ -364,6 +376,10 @@ void py_init_module_lg_mylib(nb::module_& m)
                     throw std::runtime_error(std::string(R"msg(
                             Bad type! Size mismatch, while checking the size of the type (for param "buffer_1")!
                         )msg"));
+
+                // Check if the array is 1D and C-contiguous
+                if (! (buffer_2.ndim() == 1 && buffer_2.stride(0) == 1))
+                    throw std::runtime_error("The array must be 1D and contiguous");
 
                 // convert nb::ndarray to C standard buffer (mutable)
                 void * buffer_2_from_pyarray = buffer_2.data();
@@ -397,6 +413,10 @@ void py_init_module_lg_mylib(nb::module_& m)
         {
             auto templated_mul_inside_buffer_adapt_c_buffers = [](nb::ndarray<> & buffer, double factor)
             {
+                // Check if the array is 1D and C-contiguous
+                if (! (buffer.ndim() == 1 && buffer.stride(0) == 1))
+                    throw std::runtime_error("The array must be 1D and contiguous");
+
                 // convert nb::ndarray to C standard buffer (mutable)
                 void * buffer_from_pyarray = buffer.data();
                 size_t buffer_count = buffer.shape(0);
@@ -1425,6 +1445,10 @@ void py_init_module_lg_mylib(nb::module_& m)
                 {
                     auto add_inside_buffer_adapt_c_buffers = [&self](nb::ndarray<> & buffer, uint8_t number_to_add)
                     {
+                        // Check if the array is 1D and C-contiguous
+                        if (! (buffer.ndim() == 1 && buffer.stride(0) == 1))
+                            throw std::runtime_error("The array must be 1D and contiguous");
+
                         // convert nb::ndarray to C standard buffer (mutable)
                         void * buffer_from_pyarray = buffer.data();
                         size_t buffer_count = buffer.shape(0);
@@ -1454,6 +1478,10 @@ void py_init_module_lg_mylib(nb::module_& m)
                 {
                     auto templated_mul_inside_buffer_adapt_c_buffers = [&self](nb::ndarray<> & buffer, double factor)
                     {
+                        // Check if the array is 1D and C-contiguous
+                        if (! (buffer.ndim() == 1 && buffer.stride(0) == 1))
+                            throw std::runtime_error("The array must be 1D and contiguous");
+
                         // convert nb::ndarray to C standard buffer (mutable)
                         void * buffer_from_pyarray = buffer.data();
                         size_t buffer_count = buffer.shape(0);
@@ -1628,6 +1656,10 @@ void py_init_module_lg_mylib(nb::module_& m)
                 {
                     auto add_inside_buffer_adapt_c_buffers = [](nb::ndarray<> & buffer, uint8_t number_to_add)
                     {
+                        // Check if the array is 1D and C-contiguous
+                        if (! (buffer.ndim() == 1 && buffer.stride(0) == 1))
+                            throw std::runtime_error("The array must be 1D and contiguous");
+
                         // convert nb::ndarray to C standard buffer (mutable)
                         void * buffer_from_pyarray = buffer.data();
                         size_t buffer_count = buffer.shape(0);
@@ -1658,6 +1690,10 @@ void py_init_module_lg_mylib(nb::module_& m)
                 {
                     auto templated_mul_inside_buffer_adapt_c_buffers = [](nb::ndarray<> & buffer, double factor)
                     {
+                        // Check if the array is 1D and C-contiguous
+                        if (! (buffer.ndim() == 1 && buffer.stride(0) == 1))
+                            throw std::runtime_error("The array must be 1D and contiguous");
+
                         // convert nb::ndarray to C standard buffer (mutable)
                         void * buffer_from_pyarray = buffer.data();
                         size_t buffer_count = buffer.shape(0);
