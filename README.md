@@ -5,7 +5,7 @@
 
 **litgen** is an automatic Python bindings generator designed for developers who appreciate clean, well-documented, and discoverable code and APIs.
 
-It simplifies the process of creating Python bindings for C++ libraries using [pybind11](https://pybind11.readthedocs.io/en/stable/), generating bindings that are easy to use, properly documented, and fully integrated into Python IDEs.
+It simplifies the process of creating Python bindings for C++ libraries using [pybind11](https://pybind11.readthedocs.io/en/stable/) or [nanobind](https://nanobind.readthedocs.io), and generating bindings that are easy to use, properly documented, and fully integrated into Python IDEs.
 
 For a full guide on how to use litgen, see the [documentation](https://pthom.github.io/litgen/).
 
@@ -35,6 +35,8 @@ If litgen has made a difference for you—especially in a commercial or research
 
 Contributions are welcome! If you'd like to report a bug, suggest a feature, or submit a pull request, please visit our [GitHub issues page](https://github.com/pthom/litgen/issues). See the developer documentation inside [Build.md](Build.md)
 
+**Notable contributors:**
+* Many thanks to [@davidlatwe](https://github.com/davidlatwe) for his contributions to the nanobind support in litgen!
 
 ## License
 
