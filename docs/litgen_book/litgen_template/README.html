@@ -403,7 +403,8 @@ document.write(`
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#adapt-for-your-own-library">Adapt for your own library</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#structure-of-this-template">Structure of this template</a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#bound-c-library">Bound C++ library</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#python-bindings">Python bindings</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#c-binding-code">C++ binding code</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#python-stubs">Python stubs</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#tooling-for-the-bindings-generation">Tooling for the bindings generation</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#compilation">Compilation</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#deployment">Deployment</a></li>
@@ -443,7 +444,7 @@ document.write(`
                   
   <section class="tex2jax_ignore mathjax_ignore" id="quickstart-with-litgen">
 <h1>Quickstart with litgen<a class="headerlink" href="#quickstart-with-litgen" title="Permalink to this heading">#</a></h1>
-<p><a class="reference external" href="https://github.com/pthom/litgen_template">litgen_template</a> is a template repository to build python bindings using <a class="reference external" href="https://pthom.github.io/litgen">litgen</a>, and <a class="reference external" href="https://scikit-build-core.readthedocs.io/en/latest/getting_started.html">scikit-build</a>.</p>
+<p><a class="reference external" href="https://github.com/pthom/litgen_template">litgen_template</a> is a template repository to build python bindings using <a class="reference external" href="https://pthom.github.io/litgen">litgen</a>, <a class="reference external" href="https://pybind11.readthedocs.io/en/stable/">pybind11</a> or <a class="reference external" href="https://nanobind.readthedocs.io/en/stable/">nanobind</a> and <a class="reference external" href="https://scikit-build-core.readthedocs.io/en/latest/getting_started.html">scikit-build</a>.</p>
 <p>This template is based on <a class="reference external" href="https://github.com/pybind/scikit_build_example">scikit_build_example</a>.</p>
 <section id="usage-for-final-users">
 <h2>Usage for final users<a class="headerlink" href="#usage-for-final-users" title="Permalink to this heading">#</a></h2>
@@ -478,7 +479,7 @@ This template provides tooling to make the publishing process easier, via <a cla
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>-r<span class="w"> </span>requirements-dev.txt
 </pre></div>
 </div>
-<p>This will install <a class="reference external" href="https://pthom.github.io/litgen">litgen</a> (the bindings generator), <a class="reference external" href="https://pybind11.readthedocs.io/en/stable/">pybind11</a> (a library to create C++ to Python bindings), <a class="reference external" href="https://docs.pytest.org">pytest</a> (for the tests), <a class="reference external" href="https://black.readthedocs.io/en/stable/index.html">black</a> (a code formatter), and <a class="reference external" href="https://www.mypy-lang.org/">mypy</a> (static type checker for python).</p>
+<p>This will install <a class="reference external" href="https://pthom.github.io/litgen">litgen</a> (the bindings generator), <a class="reference external" href="https://pybind11.readthedocs.io/en/stable/">pybind11</a> and <a class="reference external" href="https://nanobind.readthedocs.io/en/stable/">nanobind</a> (libraries to create C++ to Python bindings), <a class="reference external" href="https://docs.pytest.org">pytest</a> (for the tests), <a class="reference external" href="https://black.readthedocs.io/en/stable/index.html">black</a> (a code formatter), and <a class="reference external" href="https://www.mypy-lang.org/">mypy</a> (static type checker for python).</p>
 <p>See <a class="reference external" href="https://github.com/pthom/litgen_template/blob/main/requirements-dev.txt">requirements-dev.txt</a>.</p>
 </section>
 <section id="generate-bindings">
@@ -488,17 +489,22 @@ This template provides tooling to make the publishing process easier, via <a cla
 <li><p>Change the C++ code (add functions, etc.) in <a class="reference external" href="https://github.com/pthom/litgen_template/tree/main/src/cpp_libraries/DaftLib">src/cpp_libraries/DaftLib</a></p></li>
 <li><p>Adapt the generation options inside <a class="reference external" href="https://github.com/pthom/litgen_template/blob/main/tools/autogenerate_bindings.py">tools/autogenerate_bindings.py</a></p></li>
 </ul>
+<p><strong>Optionally, switch to nanobind</strong></p>
+<p>By default, this template uses pybind11. If you want to switch to nanobind, you can do so with</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">export</span><span class="w"> </span><span class="nv">LITGEN_USE_NANOBIND</span><span class="o">=</span>ON
+</pre></div>
+</div>
 <p><strong>Run the code generation via litgen</strong></p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python<span class="w"> </span>tools/autogenerate_bindings.py
 </pre></div>
 </div>
 <p>This will:</p>
 <ul class="simple">
-<li><p>Write the cpp binding code into <a class="reference external" href="https://github.com/pthom/litgen_template/blob/main/src/python_bindings/pybind_DaftLib.cpp">src/python_bindings/pybind_DaftLib.cpp</a></p></li>
-<li><p>Write the python stubs (i.e. typed declarations) inside <a class="reference external" href="https://github.com/pthom/litgen_template/blob/main/src/python_bindings/daft_lib/__init__.pyi">src/python_bindings/daft_lib/__init__.pyi</a>.</p></li>
+<li><p>Write the cpp binding code into <a class="reference external" href="https://github.com/pthom/litgen_template/blob/main/_pydef_pybind11/pybind_DaftLib.cpp">_pydef_pybind11/pybind_DaftLib.cpp</a> or <a class="reference external" href="https://github.com/pthom/litgen_template/blob/main/_pydef_nanobind/pybind_DaftLib.cpp">_pydef_nanobind/nanobind_DaftLib.cpp</a></p></li>
+<li><p>Write the python stubs (i.e. typed declarations) inside <a class="reference external" href="https://github.com/pthom/litgen_template/blob/main/_stubs/daft_lib/__init__.pyi">_stubs/daft_lib/__init__.pyi</a>.</p></li>
 </ul>
 <blockquote>
-<div><p><em>Tip: compare the <a class="reference external" href="https://github.com/pthom/litgen_template/blob/main/src/python_bindings/daft_lib/__init__.pyi">python stubs</a>
+<div><p><em>Tip: compare the <a class="reference external" href="https://github.com/pthom/litgen_template/blob/main/_stubs/daft_lib/__init__.pyi">python stubs</a>
 with the <a class="reference external" href="https://github.com/pthom/litgen_template/blob/main/src/cpp_libraries/DaftLib/DaftLib.h">C++ header file</a> to see how close they are!</em></p>
 </div></blockquote>
 <blockquote>
@@ -525,30 +531,34 @@ with the <a class="reference external" href="https://github.com/pthom/litgen_tem
 <section id="bound-c-library">
 <h3>Bound C++ library<a class="headerlink" href="#bound-c-library" title="Permalink to this heading">#</a></h3>
 <p>The C++ library <code class="docutils literal notranslate"><span class="pre">DaftLib</span></code> is stored inside src/cpp_libraries/DaftLib/</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>src/cpp_libraries/
-└── DaftLib/
-    ├── CMakeLists.txt
-    ├── DaftLib.h
-    └── cpp/
-        └── DaftLib.cpp
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>src/
+├── cpp_libraries/
+     └── DaftLib/
+         ├── CMakeLists.txt
+         ├── DaftLib.h
+         └── cpp/
+             └── DaftLib.cpp
 </pre></div>
 </div>
 </section>
-<section id="python-bindings">
-<h3>Python bindings<a class="headerlink" href="#python-bindings" title="Permalink to this heading">#</a></h3>
-<p>The python bindings are stored inside <code class="docutils literal notranslate"><span class="pre">src/python_bindings/</span></code></p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>src/python_bindings/
+<section id="c-binding-code">
+<h3>C++ binding code<a class="headerlink" href="#c-binding-code" title="Permalink to this heading">#</a></h3>
+<p>The C++ binding code is stored inside <code class="docutils literal notranslate"><span class="pre">_pydef_pybind11/</span></code> (or <code class="docutils literal notranslate"><span class="pre">_pydef_nanobind/</span></code> if you use nanobind).</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>_pydef_pybind11/
       ├─── module.cpp              # Main entry point of the python module
-      │── pybind_DaftLib.cpp       # File with bindings *generated by litgen*
-      │
-      └─ daft_lib/
+      └── pybind_DaftLib.cpp       # File with bindings *generated by litgen*
+</pre></div>
+</div>
+</section>
+<section id="python-stubs">
+<h3>Python stubs<a class="headerlink" href="#python-stubs" title="Permalink to this heading">#</a></h3>
+<p>The python stubs are stored inside <code class="docutils literal notranslate"><span class="pre">_stubs/</span></code></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>_stubs/
+└── daft_lib/
           ├── __init__.pyi         # Stubs *generated by litgen*
           ├── __init__.py          # The python module (daft_lib) main entry point
           │                        # (it imports and optionally adapts _daft_lib)
-          ├── py.typed             # An empty file that indicates that the python module is typed
-          │
-          └── _daft_lib.xxx.so*    # (optional: the native _daftlib module generated by pybind11,
-                                   #  only present in editable mode)
+          └── py.typed             # An empty file that indicates that the python module is typed
 </pre></div>
 </div>
 </section>
@@ -801,7 +811,8 @@ pytest<span class="w"> </span><span class="c1"># each time you want to run your 
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#adapt-for-your-own-library">Adapt for your own library</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#structure-of-this-template">Structure of this template</a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#bound-c-library">Bound C++ library</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#python-bindings">Python bindings</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#c-binding-code">C++ binding code</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#python-stubs">Python stubs</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#tooling-for-the-bindings-generation">Tooling for the bindings generation</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#compilation">Compilation</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#deployment">Deployment</a></li>

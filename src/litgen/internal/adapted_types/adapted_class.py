@@ -609,7 +609,7 @@ class AdaptedClass(AdaptedElement):
                     if access_type == CppAccessType.public or access_type == CppAccessType.protected:
                         other_template_params_list.append(base_class.cpp_scope_str(include_self=True))
             if self.cpp_element().has_private_destructor() and options.bind_library == BindLibraryType.pybind11:
-                # todo: handle nodelete for nanobind
+                # nanobind does not support nodelete
                 other_template_params_list.append(f"std::unique_ptr<{qualified_struct_name}, py::nodelete>")
             if self._virt_shall_override():
                 scope = self.cpp_element().cpp_scope(False).str_cpp
