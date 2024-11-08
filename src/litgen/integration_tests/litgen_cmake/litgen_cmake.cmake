@@ -6,12 +6,6 @@ This Cmake module provides two public functions:
 litgen_find_pybind11()
 *******************************************************************************
 litgen_find_pybind11() will find pybind11 and Python3
-It is equivalent to:
-    find_package(Python 3.8 REQUIRED COMPONENTS Interpreter Development[.Module])
-    find_package(pybind11 CONFIG REQUIRED)
-(after having altered CMAKE_PREFIX_PATH by adding the path to pybind11 provided
-by `pip install pybind11`. This is helpful when building the C++ library outside of skbuild)
-
 When building via CMake, you may have to specify Python_EXECUTABLE via
      -DPython_EXECUTABLE=/path/to/your/venv/bin/python
 
@@ -97,6 +91,7 @@ function(litgen_setup_module
     bound_library               #  name of the C++ for which we build bindings ("foolib")
     python_native_module_name   #  name of the native python module that provides bindings (for example "_foolib")
     python_module_name          #  name of the standard python module that will import the native module (for example "foolib")
+    editable_bindings_folder    # path to the folder containing the python bindings for editable mode (for example "_stubs/")
 )
     target_link_libraries(${python_native_module_name} PRIVATE ${bound_library})
 
@@ -106,8 +101,18 @@ function(litgen_setup_module
     # Set VERSION_INFO macro to the project version defined in CMakeLists.txt (absolutely optional)
     target_compile_definitions(${python_native_module_name} PRIVATE VERSION_INFO=${PROJECT_VERSION})
 
-    # Also copy the python module to the site-packages folder (for editable mode)
-    # Ask python for site-packages folder
+    # Copy the python module for editable mode
+    set(bindings_module_folder ${editable_bindings_folder}/${python_module_name})
+    set(python_native_module_editable_location ${bindings_module_folder}/$<TARGET_FILE_NAME:${python_native_module_name}>)
+    add_custom_target(
+        ${python_module_name}_deploy_editable
+        ALL
+        COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:${python_native_module_name}> ${python_native_module_editable_location}
+        DEPENDS ${python_native_module_name}
+    )
+
+    # Also copy the python module to the site-packages folder (for non-editable mode)
+    # First, ask python for site-packages folder
     execute_process(
         COMMAND "${Python_EXECUTABLE}" -c "import site; print(site.getsitepackages()[0])"
         OUTPUT_VARIABLE python_site_packages
