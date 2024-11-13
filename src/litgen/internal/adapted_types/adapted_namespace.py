@@ -81,9 +81,7 @@ class AdaptedNamespace(AdaptedElement):
             return []
         self.lg_context.namespaces_pydef.register_namespace_creation(self._qualified_namespace_name())
 
-        submodule_code_template = (
-            '{py}::module_ {submodule_cpp_var} = {parent_module_cpp_var}.def_submodule("{module_name}", "{module_doc}");'
-        )
+        submodule_code_template = '{py}::module_ {submodule_cpp_var} = {parent_module_cpp_var}.def_submodule("{module_name}", "{module_doc}");'
 
         replace_tokens = Munch()
         replace_tokens.py = "py" if self.options.bind_library == BindLibraryType.pybind11 else "nb"

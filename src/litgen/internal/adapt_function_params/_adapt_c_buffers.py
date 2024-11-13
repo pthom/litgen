@@ -261,7 +261,9 @@ class _AdaptBuffersHelper:
                     throw std::runtime_error("Unsupported dtype");
                 };
             """
-            template_intro = _nanobind_buffer_type_to_letter_code + """
+            template_intro = (
+                _nanobind_buffer_type_to_letter_code
+                + """
                 // Compute the letter code for the buffer type
                 uint8_t dtype_code_{template_buffer_name} = {template_buffer_name}.dtype().code;
                 size_t sizeof_item_{template_buffer_name} = {template_buffer_name}.dtype().bits / 8;
@@ -269,6 +271,7 @@ class _AdaptBuffersHelper:
 
                 // call the correct template version by casting
             """
+            )
 
         template_loop_type = """
             {maybe_else}if ({template_buffer_name}_type == '{pyarray_type_char}')

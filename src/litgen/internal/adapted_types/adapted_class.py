@@ -644,7 +644,9 @@ class AdaptedClass(AdaptedElement):
             )
 
             if self.cpp_element().is_final():
-                replacements.maybe_py_is_final = ", py::is_final()" if options.bind_library == BindLibraryType.pybind11 else ", nb::is_final()"
+                replacements.maybe_py_is_final = (
+                    ", py::is_final()" if options.bind_library == BindLibraryType.pybind11 else ", nb::is_final()"
+                )
             else:
                 replacements.maybe_py_is_final = ""
 

@@ -282,7 +282,7 @@ def test_nanobind_buffer() -> None:
 
                 foo_adapt_c_buffers(buffer);
             },     nb::arg("buffer"));
-        """
+        """,
     )
 
 
@@ -367,5 +367,5 @@ def test_template_buffer_nanobind():
 
                 return foo_adapt_c_buffers(buf, flag);
             },     nb::arg("buf"), nb::arg("flag"));
-        """
+        """,
     )

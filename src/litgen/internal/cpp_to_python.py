@@ -273,6 +273,7 @@ _NANOBIND_CPP_TYPE_TO_DTYPE_CODE = {
     "long double": "Float",
 }
 
+
 def nanobind_cpp_type_to_dtype_code_as_uint8(cpp_type: str) -> str:
     if cpp_type in _NANOBIND_CPP_TYPE_TO_DTYPE_CODE:
         return "static_cast<uint8_t>(nb::dlpack::dtype_code::" + _NANOBIND_CPP_TYPE_TO_DTYPE_CODE[cpp_type] + ")"

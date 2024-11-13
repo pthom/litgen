@@ -890,7 +890,10 @@ class AdaptedFunction(AdaptedElement):
             # Skip *args and **kwarg
             param_type_cpp = adapted_decl.cpp_element().cpp_type.str_code()
             param_type_cpp_simplified = (
-                param_type_cpp.replace("const ", "").replace("pybind11::", "py::").replace(" &", "").replace("nanobind::", "nb::")
+                param_type_cpp.replace("const ", "")
+                .replace("pybind11::", "py::")
+                .replace(" &", "")
+                .replace("nanobind::", "nb::")
             )
             if param_type_cpp_simplified in ["py::args", "py::kwargs", "nb::args", "nb::kwargs"]:
                 continue
@@ -898,7 +901,6 @@ class AdaptedFunction(AdaptedElement):
             pyarg_str = adapted_decl._str_pydef_as_pyarg()
             pyarg_strs.append(pyarg_str)
         return pyarg_strs
-
 
     def _pydef_fill_return_value_policy(self) -> None:
         """Parses the return_value_policy from the function end of line comment
@@ -969,7 +971,7 @@ class AdaptedFunction(AdaptedElement):
     def _pydef_fill_call_guard_from_function_comment(self) -> str | None:
         v_py = self._pydef_fill_call_policy_from_function_comment("py::call_guard")
         v_nb = self._pydef_fill_call_policy_from_function_comment("nb::call_guard")
-        return  self._replace_py_or_nb_namespace(v_py or v_nb)
+        return self._replace_py_or_nb_namespace(v_py or v_nb)
 
     def _pydef_str_parent_cpp_scope(self) -> str:
         if self.is_method():
@@ -1240,7 +1242,10 @@ class AdaptedFunction(AdaptedElement):
 
             # Handle *args and **kwargs
             param_type_cpp_simplified = (
-                param_type_cpp.replace("const ", "").replace("pybind11::", "py::").replace(" &", "").replace("nanobind::", "nb::")
+                param_type_cpp.replace("const ", "")
+                .replace("pybind11::", "py::")
+                .replace(" &", "")
+                .replace("nanobind::", "nb::")
             )
             if param_type_cpp_simplified == "py::args" or param_type_cpp_simplified == "nb::args":
                 r.append("*args")

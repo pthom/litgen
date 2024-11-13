@@ -774,9 +774,8 @@ def test_nanobind_adapted_ctor_stub() -> None:
             def __init__(self, _rgba: List[int]) -> None:
                 pass
             rgba: np.ndarray  # ndarray[type=uint8_t, size=4]
-        """
+        """,
     )
-
 
 
 def test_adapted_ctor() -> None:
