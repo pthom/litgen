@@ -83,6 +83,7 @@ namespace Main
 
 def test_context_replacements():
     options = LitgenOptions()
+    options.fn_params_adapt_mutable_param_with_default_value__regex = r".*"
     options.srcmlcpp_options.functions_api_prefixes = "MY_API"
     code = """
         enum class MyEnumClass
@@ -112,7 +113,7 @@ def test_context_replacements():
 
     code_utils.assert_are_codes_equal(
         generated_code.stub_code,
-        """
+        '''
         class MyEnumClass(enum.Enum):
             value_a = enum.auto() # (= 0)
         class MyEnumNonClass(enum.Enum):
@@ -121,8 +122,12 @@ def test_context_replacements():
         def foo_inner(
             x: int = Inner.FooValue(),
             a: MyEnumClass = MyEnumClass.value_a,
-            b: MyEnumNonClass = MyEnumNonClass.value_a
+            b: Optional[MyEnumNonClass] = None
             ) -> int:
+            """---
+            Python bindings defaults:
+                If b is None, then its default value will be: MyEnumNonClass.value_a
+            """
             pass
 
         # <submodule inner>
@@ -133,5 +138,5 @@ def test_context_replacements():
                 pass
 
         # </submodule inner>
-    """,
+        ''',
     )

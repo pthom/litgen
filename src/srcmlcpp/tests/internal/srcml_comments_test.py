@@ -140,3 +140,16 @@ def test_multiline_c_style_comment():
         == "*\nMultiline comment about Foo1\n\nWith empty lines inside.\n*"
     )
     assert children_and_comments[0].cpp_element_comments.is_c_style_comment
+
+
+def test_simple_comment():
+    code = """
+    // A simple comment
+    void foo();
+    """
+    options = SrcmlcppOptions()
+    xml_wrapper = srcmlcpp_main.code_to_srcml_wrapper(options, code)
+    children_and_comments = srcml_comments.get_children_with_comments(xml_wrapper)
+    assert len(children_and_comments) == 3 # Empty line, function_decl + comment, empty line
+    assert children_and_comments[1].cpp_element_comments.comment_on_previous_lines == " A simple comment"
+    assert not children_and_comments[1].cpp_element_comments.is_c_style_comment

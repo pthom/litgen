@@ -66,12 +66,6 @@ class CppElementComments:
         r.is_c_style_comment = r.comment_on_previous_lines.startswith("/*")
         return r
 
-    def comment(self) -> str:
-        if len(self.comment_on_previous_lines) > 0 and len(self.comment_end_of_line) > 0:
-            return self.comment_on_previous_lines + "\n" + self.comment_end_of_line
-        else:
-            return self.comment_on_previous_lines + self.comment_end_of_line
-
     def top_comment_code(self, add_eol: bool = True, preserve_c_style_comment: bool = True) -> str:
         if preserve_c_style_comment and self.is_c_style_comment:
             r = "/*" + self.comment_on_previous_lines + "*/"
@@ -109,8 +103,20 @@ class CppElementComments:
         else:
             self.comment_end_of_line += " - " + comment
 
+    def add_comment_on_previous_lines(self, comment: str) -> None:
+        if len(self.comment_on_previous_lines) == 0:
+            self.comment_on_previous_lines = comment
+        else:
+            self.comment_on_previous_lines += "\n" + comment
+
     def full_comment(self) -> str:
         if len(self.comment_on_previous_lines) > 0 and len(self.comment_end_of_line) > 0:
             return self.comment_on_previous_lines + "\n\n" + self.comment_end_of_line
+        else:
+            return self.comment_on_previous_lines + self.comment_end_of_line
+
+    def comments_as_str(self) -> str:
+        if len(self.comment_on_previous_lines) > 0 and len(self.comment_end_of_line) > 0:
+            return self.comment_on_previous_lines + "\n" + self.comment_end_of_line
         else:
             return self.comment_on_previous_lines + self.comment_end_of_line

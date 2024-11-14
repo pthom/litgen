@@ -176,6 +176,7 @@ class AdaptedEnum(AdaptedElement):
 
         replacements = self.cpp_to_python_replacements()
         self.lg_context.var_values_replacements_cache.store_replacements(replacements)
+        self.lg_context.encountered_cpp_enums.append(self.cpp_element())
 
     # override
     def cpp_element(self) -> CppEnum:

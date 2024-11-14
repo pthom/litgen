@@ -8,7 +8,7 @@ from litgen.internal.context.namespaces_code_tree import (
 )
 from litgen.internal.context.replacements_cache import ReplacementsCache
 from litgen.internal.context.type_synonyms import CppTypeName
-
+from srcmlcpp.cpp_types.cpp_enum import CppEnum
 
 if TYPE_CHECKING:
     from litgen.options import LitgenOptions
@@ -23,6 +23,7 @@ class LitgenContext:
 
     options: LitgenOptions
     encountered_cpp_boxed_types: set[CppTypeName]
+    encountered_cpp_enums: list[CppEnum]
     namespaces_stub: NamespacesCodeTree
     namespaces_pydef: NamespacesCodeTree
     var_values_replacements_cache: ReplacementsCache
@@ -37,6 +38,7 @@ class LitgenContext:
     def __init__(self, options: LitgenOptions):
         self.options = options
         self.encountered_cpp_boxed_types = set()
+        self.encountered_cpp_enums = []
         self.namespaces_stub = NamespacesCodeTree(self.options, PydefOrStub.Stub)
         self.namespaces_pydef = NamespacesCodeTree(self.options, PydefOrStub.Pydef)
         self.var_values_replacements_cache = ReplacementsCache()

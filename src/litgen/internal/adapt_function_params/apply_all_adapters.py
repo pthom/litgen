@@ -28,6 +28,9 @@ def apply_all_adapters(inout_adapted_function: AdaptedFunction) -> None:
     from litgen.internal.adapt_function_params.adapt_const_char_pointer_with_default_null import (
         adapt_const_char_pointer_with_default_null,
     )
+    from litgen.internal.adapt_function_params._adapt_mutable_param_with_default_value import (
+        adapt_mutable_param_with_default_value,
+    )
 
     is_constructor = inout_adapted_function.cpp_adapted_function.is_constructor()
     if is_constructor:
@@ -55,6 +58,7 @@ def apply_all_adapters(inout_adapted_function: AdaptedFunction) -> None:
         adapt_c_string_list,
         adapt_c_string_list_no_count,
         adapt_variadic_format,
+        adapt_mutable_param_with_default_value,
     ]
     all_adapters_functions += inout_adapted_function.options.fn_custom_adapters
 
@@ -121,6 +125,7 @@ def _apply_all_adapters_on_constructor(inout_adapted_function: AdaptedFunction) 
     cpp_wrapper_function = srcmlcpp_main.code_first_function_decl(
         inout_adapted_function.options.srcmlcpp_options, ctor_wrapper_signature_code
     )
+    cpp_wrapper_function.cpp_element_comments.comment_on_previous_lines = inout_adapted_function.cpp_element().cpp_element_comments.comment_on_previous_lines
     cpp_wrapper_function.parent = inout_adapted_function.cpp_element().parent
     ctor_adapted_wrapper_function = AdaptedFunction(
         inout_adapted_function.lg_context,
@@ -128,14 +133,14 @@ def _apply_all_adapters_on_constructor(inout_adapted_function: AdaptedFunction) 
         is_overloaded=False,
         initial_lambda_to_call="ctor_wrapper",
     )
+    inout_adapted_function.cpp_element().cpp_element_comments.comment_on_previous_lines = cpp_wrapper_function.cpp_element_comments.comment_on_previous_lines
 
-    if ctor_adapted_wrapper_function.cpp_adapter_code is None:
-        return
+    if ctor_adapted_wrapper_function.cpp_adapter_code is not None:
+        inout_adapted_function.cpp_adapter_code = (
+            ctor_wrapper_lambda_code + "\n" + ctor_adapted_wrapper_function.cpp_adapter_code
+        )
+        inout_adapted_function.lambda_to_call = ctor_adapted_wrapper_function.lambda_to_call
 
-    inout_adapted_function.cpp_adapter_code = (
-        ctor_wrapper_lambda_code + "\n" + ctor_adapted_wrapper_function.cpp_adapter_code
-    )
-    inout_adapted_function.lambda_to_call = ctor_adapted_wrapper_function.lambda_to_call
     inout_adapted_function.cpp_adapted_function = ctor_adapted_wrapper_function.cpp_adapted_function
 
 

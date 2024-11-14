@@ -236,8 +236,7 @@ void py_init_module_lg_mylib(nb::module_& m)
     auto pyClassPoint2 =
         nb::class_<Point2>
             (m, "Point2", "")
-        .def("__init__", []( Point2 *self,
-        int x = int(), int y = int())
+        .def("__init__", [](Point2 * self, int x = int(), int y = int())
         {
             new (self) Point2();  // placement new
             auto r = self;
@@ -754,8 +753,7 @@ void py_init_module_lg_mylib(nb::module_& m)
     auto pyClassMyStructDynamic =
         nb::class_<MyStructDynamic>
             (m, "MyStructDynamic", nb::dynamic_attr(), " This class accepts dynamic attributes\n see autogenerate_mylib.py:\n     options.class_dynamic_attributes__regex = r\"Dynamic$\"")
-        .def("__init__", []( MyStructDynamic *self,
-        int cpp_member = 1)
+        .def("__init__", [](MyStructDynamic * self, int cpp_member = 1)
         {
             new (self) MyStructDynamic();  // placement new
             auto r = self;
@@ -824,8 +822,7 @@ void py_init_module_lg_mylib(nb::module_& m)
     auto pyClassCopyable_ImplicitCopyCtor =
         nb::class_<Copyable_ImplicitCopyCtor>
             (m, "Copyable_ImplicitCopyCtor", "")
-        .def("__init__", []( Copyable_ImplicitCopyCtor *self,
-        int a = 1)
+        .def("__init__", [](Copyable_ImplicitCopyCtor * self, int a = 1)
         {
             new (self) Copyable_ImplicitCopyCtor();  // placement new
             auto r = self;
@@ -876,8 +873,7 @@ void py_init_module_lg_mylib(nb::module_& m)
     auto pyClassMyConfig =
         nb::class_<MyConfig>
             (m, "MyConfig", "")
-        .def("__init__", []( MyConfig *self,
-        int value = 0)
+        .def("__init__", [](MyConfig * self, int value = 0)
         {
             new (self) MyConfig();  // placement new
             auto r = self;
@@ -1207,8 +1203,7 @@ void py_init_module_lg_mylib(nb::module_& m)
     auto pyClassSmartElem =
         nb::class_<SmartElem>
             (m, "SmartElem", " With pybind11, SmartElem is mentioned in options.class_held_as_shared__regex\n (because it might be stored as a shared_ptr in the generated code)")
-        .def("__init__", []( SmartElem *self,
-        int x = 0)
+        .def("__init__", [](SmartElem * self, int x = 0)
         {
             new (self) SmartElem();  // placement new
             auto r = self;
@@ -1237,14 +1232,16 @@ void py_init_module_lg_mylib(nb::module_& m)
     auto pyClassFooBrace =
         nb::class_<FooBrace>
             (m, "FooBrace", "")
-        .def("__init__", []( FooBrace *self,
-        std::vector<int> int_values = {1, 2, 3})
+        .def("__init__", [](FooBrace * self, const std::optional<const std::vector<int>> & int_values = std::nullopt)
         {
             new (self) FooBrace();  // placement new
             auto r = self;
-            r->int_values = int_values;
+            if (int_values.has_value())
+                r->int_values = int_values.value();
+            else
+                r->int_values = {1, 2, 3};
         },
-        nb::arg("int_values") = std::vector<int>{1, 2, 3}
+        nb::arg("int_values") = nb::none()
         )
         .def_rw("int_values", &FooBrace::int_values, "")
         .def_rw("dict_string_int", &FooBrace::dict_string_int, "")
@@ -1252,7 +1249,33 @@ void py_init_module_lg_mylib(nb::module_& m)
 
 
     m.def("fn_brace",
-        FnBrace, nb::arg("foo_brace") = FooBrace{}, nb::arg("ints") = std::vector<int>{1, 2, 3});
+        [](const std::optional<const FooBrace> & foo_brace = std::nullopt, const std::optional<const std::vector<int>> & ints = std::nullopt) -> int
+        {
+            auto FnBrace_adapt_mutable_param_with_default_value = [](const std::optional<const FooBrace> & foo_brace = std::nullopt, const std::optional<const std::vector<int>> & ints = std::nullopt) -> int
+            {
+
+                const FooBrace& foo_brace_or_default = [&]() -> const FooBrace {
+                    if (foo_brace.has_value())
+                        return foo_brace.value();
+                    else
+                        return {};
+                }();
+
+                const std::vector<int>& ints_or_default = [&]() -> const std::vector<int> {
+                    if (ints.has_value())
+                        return ints.value();
+                    else
+                        return {1, 2, 3};
+                }();
+
+                auto lambda_result = FnBrace(foo_brace_or_default, ints_or_default);
+                return lambda_result;
+            };
+
+            return FnBrace_adapt_mutable_param_with_default_value(foo_brace, ints);
+        },
+        nb::arg("foo_brace") = nb::none(), nb::arg("ints") = nb::none(),
+        "---\nPython bindings defaults:\n    If any of the params below is None, then its default value below will be used:\n        foo_brace: initialized with default value\n        ints: initialized with 1, 2, 3");
 
     { // <namespace MathFunctions>
         nb::module_ pyNsMathFunctions = m.def_submodule("math_functions", " Vectorizable functions example\n    Numeric functions (i.e. function accepting and returning only numeric params or py::array), can be vectorized\n    i.e. they will accept numpy arrays as an input.\n\n Auto-vectorization is enabled via the following options:\n     options.fn_namespace_vectorize__regex: str = r\"^MathFunctions$\"\n     options.fn_vectorize__regex = r\".*\"\n");
@@ -1286,8 +1309,7 @@ void py_init_module_lg_mylib(nb::module_& m)
         auto pyNsAAA_ClassCopyable_Template_int =
             nb::class_<AAA::Copyable_Template<int>>
                 (pyNsAAA, "Copyable_Template_int", "")
-            .def("__init__", []( AAA::Copyable_Template<int> *self,
-            int value = int())
+            .def("__init__", [](AAA::Copyable_Template<int> * self, int value = int())
             {
                 new (self) AAA::Copyable_Template<int>();  // placement new
                 auto r = self;
@@ -1361,15 +1383,17 @@ void py_init_module_lg_mylib(nb::module_& m)
         } // end of inner classes & enums of ParentStruct
 
         pyNsSomeNamespace_ClassParentStruct
-            .def("__init__", []( SomeNamespace::ParentStruct *self,
-            SomeNamespace::ParentStruct::InnerStruct inner_struct = SomeNamespace::ParentStruct::InnerStruct(), SomeNamespace::ParentStruct::InnerEnum inner_enum = SomeNamespace::ParentStruct::InnerEnum::Three)
+            .def("__init__", [](SomeNamespace::ParentStruct * self, const std::optional<const SomeNamespace::ParentStruct::InnerStruct> & inner_struct = std::nullopt, SomeNamespace::ParentStruct::InnerEnum inner_enum = SomeNamespace::ParentStruct::InnerEnum::Three)
             {
                 new (self) SomeNamespace::ParentStruct();  // placement new
                 auto r = self;
-                r->inner_struct = inner_struct;
+                if (inner_struct.has_value())
+                    r->inner_struct = inner_struct.value();
+                else
+                    r->inner_struct = SomeNamespace::ParentStruct::InnerStruct();
                 r->inner_enum = inner_enum;
             },
-            nb::arg("inner_struct") = SomeNamespace::ParentStruct::InnerStruct(), nb::arg("inner_enum") = SomeNamespace::ParentStruct::InnerEnum::Three
+            nb::arg("inner_struct") = nb::none(), nb::arg("inner_enum") = SomeNamespace::ParentStruct::InnerEnum::Three
             )
             .def_rw("inner_struct", &SomeNamespace::ParentStruct::inner_struct, "")
             .def_rw("inner_enum", &SomeNamespace::ParentStruct::inner_enum, "")
@@ -1831,10 +1855,53 @@ void py_init_module_lg_mylib(nb::module_& m)
             nb::overload_cast<N::EC>(N::Foo), nb::arg("e") = N::EC::a);
 
         pyNsN.def("foo",
-            nb::overload_cast<N::E>(N::Foo), nb::arg("e") = N::E_a);
+            [](const std::optional<const N::E> & e = std::nullopt)
+            {
+                auto Foo_adapt_mutable_param_with_default_value = [](const std::optional<const N::E> & e = std::nullopt)
+                {
+
+                    const N::E& e_or_default = [&]() -> const N::E {
+                        if (e.has_value())
+                            return e.value();
+                        else
+                            return N::E_a;
+                    }();
+
+                    N::Foo(e_or_default);
+                };
+
+                Foo_adapt_mutable_param_with_default_value(e);
+            },
+            nb::arg("e") = nb::none(),
+            "---\nPython bindings defaults:\n    If e is None, then its default value will be: N.E.a");
 
         pyNsN.def("foo",
-            nb::overload_cast<N::E, N::S>(N::Foo), nb::arg("e") = N::E_a, nb::arg("s") = N::S());
+            [](const std::optional<const N::S> & s = std::nullopt, const std::optional<const N::E> & e = std::nullopt)
+            {
+                auto Foo_adapt_mutable_param_with_default_value = [](const std::optional<const N::S> & s = std::nullopt, const std::optional<const N::E> & e = std::nullopt)
+                {
+
+                    const N::S& s_or_default = [&]() -> const N::S {
+                        if (s.has_value())
+                            return s.value();
+                        else
+                            return N::S();
+                    }();
+
+                    const N::E& e_or_default = [&]() -> const N::E {
+                        if (e.has_value())
+                            return e.value();
+                        else
+                            return N::E_a;
+                    }();
+
+                    N::Foo(s_or_default, e_or_default);
+                };
+
+                Foo_adapt_mutable_param_with_default_value(s, e);
+            },
+            nb::arg("s") = nb::none(), nb::arg("e") = nb::none(),
+            "---\nPython bindings defaults:\n    If any of the params below is None, then its default value below will be used:\n        s: N.S()\n        e: N.E.a");
     } // </namespace N>
 
     { // <namespace A>
@@ -1849,8 +1916,7 @@ void py_init_module_lg_mylib(nb::module_& m)
         auto pyNsA_ClassClassNoDefaultCtor =
             nb::class_<A::ClassNoDefaultCtor>
                 (pyNsA, "ClassNoDefaultCtor", " This struct has no default constructor, so a default named constructor\n will be provided for python")
-            .def("__init__", []( A::ClassNoDefaultCtor *self,
-            bool b = true, int a = int(), int c = 3, A::Foo foo = A::Foo::Foo1)
+            .def("__init__", [](A::ClassNoDefaultCtor * self, bool b = true, int a = int(), int c = 3, A::Foo foo = A::Foo::Foo1)
             {
                 new (self) A::ClassNoDefaultCtor();  // placement new
                 auto r = self;
@@ -1890,10 +1956,53 @@ void py_init_module_lg_mylib(nb::module_& m)
                 nb::overload_cast<A::N::EC>(A::N::Foo), nb::arg("e") = A::N::EC::a);
 
             pyNsA_NsN.def("foo",
-                nb::overload_cast<A::N::E>(A::N::Foo), nb::arg("e") = A::N::E_a);
+                [](const std::optional<const A::N::E> & e = std::nullopt)
+                {
+                    auto Foo_adapt_mutable_param_with_default_value = [](const std::optional<const A::N::E> & e = std::nullopt)
+                    {
+
+                        const A::N::E& e_or_default = [&]() -> const A::N::E {
+                            if (e.has_value())
+                                return e.value();
+                            else
+                                return A::N::E_a;
+                        }();
+
+                        A::N::Foo(e_or_default);
+                    };
+
+                    Foo_adapt_mutable_param_with_default_value(e);
+                },
+                nb::arg("e") = nb::none(),
+                "---\nPython bindings defaults:\n    If e is None, then its default value will be: A.N.E.a");
 
             pyNsA_NsN.def("foo",
-                nb::overload_cast<A::N::E, A::N::S>(A::N::Foo), nb::arg("e") = A::N::E_a, nb::arg("s") = A::N::S());
+                [](const std::optional<const A::N::S> & s = std::nullopt, const std::optional<const A::N::E> & e = std::nullopt)
+                {
+                    auto Foo_adapt_mutable_param_with_default_value = [](const std::optional<const A::N::S> & s = std::nullopt, const std::optional<const A::N::E> & e = std::nullopt)
+                    {
+
+                        const A::N::S& s_or_default = [&]() -> const A::N::S {
+                            if (s.has_value())
+                                return s.value();
+                            else
+                                return A::N::S();
+                        }();
+
+                        const A::N::E& e_or_default = [&]() -> const A::N::E {
+                            if (e.has_value())
+                                return e.value();
+                            else
+                                return A::N::E_a;
+                        }();
+
+                        A::N::Foo(s_or_default, e_or_default);
+                    };
+
+                    Foo_adapt_mutable_param_with_default_value(s, e);
+                },
+                nb::arg("s") = nb::none(), nb::arg("e") = nb::none(),
+                "---\nPython bindings defaults:\n    If any of the params below is None, then its default value below will be used:\n        s: A.N.S()\n        e: A.N.E.a");
         } // </namespace N>
 
     } // </namespace A>

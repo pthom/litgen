@@ -92,8 +92,12 @@ def test_class_exclude_unhandled_instantiations_from_code():
 
         class FooStruct:
             v1: MyPair_int  # Should be included in bindings
-            def __init__(self, v1: MyPair_int = MyPair_int()) -> None:
-                """Auto-generated default constructor with named params"""
+            def __init__(self, v1: Optional[MyPair<int]> = None) -> None:
+                """Auto-generated default constructor with named params
+                ---
+                Python bindings defaults:
+                    If v1 is None, then its default value will be: MyPair_int()
+                """
                 pass
 
         class S:
@@ -144,16 +148,24 @@ def test_tpl_class_naming_with_replacements():
         #      <template specializations for class ImVector>
         class ImVector_Config:  # Python specialization for ImVector<ImGuiConfig>
             data: Config
-            def __init__(self, data: Config = Config()) -> None:
-                """Auto-generated default constructor with named params"""
+            def __init__(self, data: Optional[Config] = None) -> None:
+                """Auto-generated default constructor with named params
+                ---
+                Python bindings defaults:
+                    If data is None, then its default value will be: Config()
+                """
                 pass
         #      </template specializations for class ImVector>
         #  ------------------------------------------------------------------------
 
         class Foo:
             configs: ImVector_Config
-            def __init__(self, configs: ImVector_Config = ImVector_Config()) -> None:
-                """Auto-generated default constructor with named params"""
+            def __init__(self, configs: Optional[ImVector<Config]> = None) -> None:
+                """Auto-generated default constructor with named params
+                ---
+                Python bindings defaults:
+                    If Configs is None, then its default value will be: ImVector_Config()
+                """
                 pass
         ''',
     )
@@ -238,6 +250,7 @@ def test_tpl_function_overload():
 def test_tpl_class_with_pointer():
     options = litgen.LitgenOptions()
     options.class_template_options.add_specialization("ImVector", ["int*"], [])
+    options.fn_params_adapt_mutable_param_with_default_value__regex = ""
     code = """
     template<typename T>
     struct ImVector
@@ -300,8 +313,12 @@ def test_tpl_class_with_synonyms():
 
         class Foo:
             values: MyData_MyInt
-            def __init__(self, values: MyData_MyInt = MyData_MyInt()) -> None:
-                """Auto-generated default constructor with named params"""
+            def __init__(self, values: Optional[MyData<MyInt]> = None) -> None:
+                """Auto-generated default constructor with named params
+                ---
+                Python bindings defaults:
+                    If values is None, then its default value will be: MyData_MyInt()
+                """
                 pass
         ''',
     )

@@ -944,7 +944,7 @@ class AdaptedFunction(AdaptedElement):
             self.return_value_policy = "reference"
 
     def _pydef_fill_call_policy_from_function_comment(self, call_policy_token: str) -> str | None:
-        function_comment = self.cpp_element().cpp_element_comments.comment()
+        function_comment = self.cpp_element().cpp_element_comments.comments_as_str()
         if call_policy_token in function_comment:
             idx = function_comment.index(call_policy_token)
             comment_rest = function_comment[idx:]
@@ -1223,7 +1223,8 @@ class AdaptedFunction(AdaptedElement):
             return return_type_python
 
     def _stub_params_list_signature(self) -> list[str]:
-        cpp_adapted_function_terse = self.cpp_adapted_function.with_terse_types()
+        current_scope = self.cpp_element().cpp_scope(include_self=False)
+        cpp_adapted_function_terse = self.cpp_adapted_function.with_terse_types(current_scope=current_scope)
         cpp_parameters = cpp_adapted_function_terse.parameter_list.parameters
         r = []
         for i, param in enumerate(cpp_parameters):

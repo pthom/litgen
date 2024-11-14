@@ -537,7 +537,7 @@ def test_named_ctor_helper_struct() -> None:
                     pass
 
         # </submodule a>
-    ''',
+             ''',
     )
 
     # print(generated_code.pydef_code)
@@ -681,8 +681,7 @@ def test_ctor_placement_new():
         auto pyClassFoo =
             nb::class_<Foo>
                 (m, "Foo", "")
-            .def("__init__", []( Foo *self,
-            int x = 1)
+            .def("__init__", [](Foo * self, int x = 1)
             {
                 new (self) Foo();  // placement new
                 auto r = self;

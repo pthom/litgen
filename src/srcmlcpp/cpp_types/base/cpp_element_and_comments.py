@@ -31,3 +31,6 @@ class CppElementAndComment(CppElement):
 
     def __str__(self) -> str:
         return self.str_commented()
+
+    def __repr__(self):
+        return f"CppElementAndComment({self.str_commented()})"

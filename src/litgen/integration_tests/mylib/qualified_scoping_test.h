@@ -10,5 +10,5 @@ namespace N
 
     MY_API void Foo(EC e = EC::a) {}
     MY_API void Foo(E e = E_a) {}
-    MY_API void Foo(E e = E_a, S s = S()) {}
+    MY_API void Foo(S s = S(), E e = E_a) {}
 }

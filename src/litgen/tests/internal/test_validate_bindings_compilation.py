@@ -6,30 +6,22 @@ def test_validate_bindings_compilation() -> None:
     # Validates that the cpp code can be compiled into bindings and
     # that the generated Python bindings work as expected.
     # **This kind of test is slow**, do not use it extensively in CI.
-
+    # return
     code = """
-#include <cstddef>
+#include <vector>
+#include <map>
+#include <string>
 
-template<typename T> void templated_mul_inside_buffer(T* buffer, size_t buffer_size, double factor)
-{
-    for (size_t i  = 0; i < buffer_size; ++i)
-        buffer[i] *= (T)factor;
-}
+struct FooBrace {
+    std::vector<int> int_values = {1, 2, 3};
+    std::map<std::string, int> dict_string_int{{"abc", 3}};
+};
     """
     python_test_code = """
 import validate_bindings_compilation
-import numpy as np
-import pytest
 
 def test_validate_bindings_compilation() -> None:
-    x = np.array((1.0, 2.0, 3.0))
-    c = validate_bindings_compilation.templated_mul_inside_buffer(x, 3.0)
-    assert (x == np.array((3.0, 6.0, 9.0))).all()
-
-    # Test that non contiguous arrays are refused
-    x = np.array((1.0, 2.0, 3.0, 4.0, 5.0, 6.0))[1::2]
-    with pytest.raises(RuntimeError):
-        c = validate_bindings_compilation.templated_mul_inside_buffer(x, 3.0)
+    c = validate_bindings_compilation.FooBrace()
     """
 
     # for bind_type in litgen.BindLibraryType:
@@ -37,6 +29,7 @@ def test_validate_bindings_compilation() -> None:
         options = litgen.LitgenOptions()
         options.fn_params_replace_buffer_by_array__regex = r".*"
         options.bind_library = bind_type
+        options.fn_params_adapt_mutable_param_with_default_value__regex = r".*"
 
         success = validate_bindings_compilation(
             cpp_code=code,

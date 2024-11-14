@@ -518,6 +518,7 @@ def test_qualified_param_types():
     }
     """
     options = litgen.LitgenOptions()
+    options.fn_params_adapt_mutable_param_with_default_value__regex = r""
     generated_code = litgen.generate_code(options, code)
     code_utils.assert_are_codes_equal(
         generated_code.pydef_code,

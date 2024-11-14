@@ -73,6 +73,9 @@ class CppScope:
             parent = parent.parent_scope
         return False
 
+    def make_child_scope(self, child_scope: CppScopePart) -> CppScope:
+        return CppScope(self.scope_parts + [child_scope])
+
     def qualified_name(self, name: str) -> str:
         return self.str_cpp_prefix + name
 

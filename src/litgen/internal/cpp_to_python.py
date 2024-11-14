@@ -64,6 +64,10 @@ def type_to_python(options: LitgenOptions, cpp_type_str: str) -> str:
         import re
         return re.sub(r'\s+', ' ', s).strip()
     r = normalize_whitespace(r)
+
+    # Fix for std::optional (issue origin unknown)
+    r = r.replace("Optional[" + " ", "Optional[")
+
     return r
 
 
@@ -132,6 +136,15 @@ def var_value_to_python(context: LitgenContext, default_value_cpp: str) -> str:
             default_value_cpp, context.options.type_replacements
         )
     )
+
+    # If this value is a std::initializer_list, try to translate it
+    if r.startswith("{") and r.endswith("}"):
+        inner = r[1:-1]
+        if inner.strip() == "":
+            r = "initialized with default value"
+        else:
+            r = f"initialized with {inner}"
+
     if specialized_type_python_default_value is not None:
         r = specialized_type_python_default_value
 

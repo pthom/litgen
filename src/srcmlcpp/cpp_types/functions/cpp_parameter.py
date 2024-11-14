@@ -1,5 +1,7 @@
 from __future__ import annotations
 from dataclasses import dataclass
+import re
+from typing import Callable
 
 from srcmlcpp.cpp_types.base import (
     CppElementAndComment,
@@ -13,6 +15,166 @@ from srcmlcpp.srcml_wrapper import SrcmlWrapper
 
 
 __all__ = ["CppParameter"]
+
+
+# Array of precompiled patterns for immutables
+# Array of precompiled patterns for immutables
+_IMMUTABLE_PATTERNS = [
+    # Floating point literals with optional suffixes (e.g., 1.5f, 2.0, .5L)
+    re.compile(
+        r"""
+        ^                       # Start of string
+        -?                      # Optional negative sign
+        (?:                     # Non-capturing group for the number
+            \d+\.\d*            # Digits followed by a dot and optional digits (e.g., 1.5)
+            |\.\d+              # Dot followed by digits (e.g., .5)
+            |\d+                # Digits only (e.g., 2)
+        )
+        (?:[eE][+-]?\d+)?       # Optional exponent part (e.g., e10, e-5)
+        [fFdDlL]?               # Optional floating-point suffix
+        $                       # End of string
+        """,
+        re.VERBOSE,
+    ),
+    # Integer literals with optional suffixes (e.g., 42u, 0x1AUL, -100LL)
+    re.compile(
+        r"""
+        ^                       # Start of string
+        -?                      # Optional negative sign
+        (?:
+            0[xX][\da-fA-F]+    # Hexadecimal integer (e.g., 0x1A)
+            |0[bB][01]+         # Binary integer (e.g., 0b1010)
+            |0[oO][0-7]+        # Octal integer (e.g., 0o755)
+            |[1-9]\d*           # Decimal integer (e.g., 42)
+            |0                  # Zero (e.g., 0)
+        )
+        [uUlL]*                 # Optional integer suffixes
+        $                       # End of string
+        """,
+        re.VERBOSE,
+    ),
+    re.compile(r'^".*"$'),  # String literal (e.g., "hello")
+    re.compile(r"^'.{1,2}'$"),  # Character literal (e.g., 'a', '\n')
+]
+# Immutable keywords that don't require regex matching
+_IMMUTABLE_KEYWORDS = ["nullptr", "NULL", "true", "false", "TRUE", "FALSE", "nullopt", "std::nullopt"]
+
+
+_BASE_IMMUTABLE_TYPES = [
+    # Base integer types
+    "int",
+    "signed int",
+    "unsigned int",
+    "char",
+    "signed char",
+    "unsigned char",
+    "long",
+    "signed long",
+    "unsigned long",
+    "long long",
+    "signed long long",
+    "unsigned long long",
+    "short",
+    "signed short",
+    "unsigned short",
+
+    # Base floating point types
+    "float",
+    "double",
+    "long double",
+    "float32_t",
+    "float64_t",
+    "float128_t",
+
+    # Boolean type
+    "bool",
+
+    # String types
+    "std::string",
+    "std::string_view",
+    "std::wstring",
+    "std::u16string",
+    "std::u32string",
+
+    # Byte type
+    "std::byte",
+
+    # Fixed-width integer types
+    "int8_t",
+    "int16_t",
+    "int32_t",
+    "int64_t",
+    "uint8_t",
+    "uint16_t",
+    "uint32_t",
+    "uint64_t",
+    "intptr_t",
+    "uintptr_t",
+
+    # Size types
+    "size_t",
+    "ssize_t",
+    "std::size_t",
+]
+
+
+def _looks_like_mutable_default_value(
+        initial_value_code: str,
+        fn_is_known_immutable_type: Callable[[str], bool] | None,
+        fn_is_known_immutable_value: Callable[[str], bool] | None,
+) -> bool:
+    """Return True if the initial_value_code looks like a mutable default value.
+    initial_value_code is the code that is used to initialize the parameter, e.g.
+        int x = 5;  => initial_value_code = "5"
+
+    additional_immutable_types__regex is a regex pattern that matches additional types that are considered immutable.
+    They might be separated by a pipe character, e.g. exclude all type endings with "Int|UInt":
+        additional_immutable_types__regex = r"Int|UInt"
+
+    This is only a heuristic, but it is enough for our needs:
+    We will return False if the code is certainly immutable, and True otherwise.
+    The following cases are considered as immutable:
+        - float, int, double, etc.
+        - string literals
+        - nullptr or NULL
+    """
+
+    # Strip whitespace around the initial value code
+    initial_value_code = initial_value_code.strip()
+
+    def extract_call_before_paren_or_accolade(code: str) -> str | None:
+        r = None
+        if "(" in code:
+            r = code.split("(")[0]
+        if "{" in code:
+            r = code.split("{")[0]
+        return r
+
+    if fn_is_known_immutable_value is not None:
+        if fn_is_known_immutable_value(initial_value_code):
+            return False
+
+    initial_value_code_without_call = extract_call_before_paren_or_accolade(initial_value_code)
+    if initial_value_code_without_call is not None:
+        # Check if the value matches any known immutable types
+        if initial_value_code_without_call in _BASE_IMMUTABLE_TYPES:
+            return False
+        # Check if the value matches with fn_is_known_immutable_type
+        if fn_is_known_immutable_type is not None:
+            if fn_is_known_immutable_type(initial_value_code_without_call):
+                return False
+
+    # Check if the value matches any immutable regex pattern
+    for pattern in _IMMUTABLE_PATTERNS:
+        if pattern.match(initial_value_code):
+            return False  # Definitely immutable
+
+    # Check if it's in known immutable keywords
+    if initial_value_code in _IMMUTABLE_KEYWORDS:
+        return False
+
+    # Default to True for values that look mutable or ambiguous
+    return True
 
 
 @dataclass
@@ -65,6 +227,50 @@ class CppParameter(CppElementAndComment):
         r = hasattr(self, "template_type")
         return r
 
+    def seems_mutable_param_with_default_value(
+            self,
+            fn_is_immutable_type: Callable[[str], bool] | None = None,
+            fn_is_immutable_value: Callable[[str], bool] | None = None,
+    ) -> bool:
+        """Determines whether the parameter with a default value appears to be mutable."""
+
+        decl = self.decl
+
+        decl_type_str = self.decl.cpp_type.str_code()
+        if decl_type_str in _BASE_IMMUTABLE_TYPES:
+            return False
+        if fn_is_immutable_type is not None:
+            if fn_is_immutable_type(decl_type_str):
+                return False
+
+
+        cpp_type = decl.cpp_type
+        initial_value_code = decl.initial_value_code.strip()
+        has_default_value = bool(initial_value_code)
+        if not has_default_value:
+            return False
+
+        # Check for types we cannot handle or that suggest mutability
+        if "&&" in cpp_type.modifiers:
+            return False  # R-value references are not supported
+        if cpp_type.is_raw_pointer():
+            return False  # Pointers may refer to mutable data
+        if "..." in cpp_type.modifiers:
+            return False  # Variadic arguments are not considered
+        if cpp_type.is_void():
+            return False  # Void type does not hold value
+
+        # Determine if the parameter is a const reference or a value type
+        is_const_ref = cpp_type.is_reference() and cpp_type.is_const()
+        is_value_type = not cpp_type.is_reference()
+
+        # If it's a non-const reference, we should not accept mutable defaults
+        if not (is_const_ref or is_value_type):
+            return False
+
+        # Check if the default value looks like a mutable object
+        r = _looks_like_mutable_default_value(initial_value_code, fn_is_immutable_type, fn_is_immutable_value)
+        return r
     def __str__(self) -> str:
         return self.str_code()
 

@@ -52,6 +52,7 @@ def validate_bindings_compilation(
 #include <nanobind/nanobind.h>
 #include <nanobind/stl/string.h>
 #include <nanobind/stl/array.h>
+#include <nanobind/stl/optional.h>
 #include <nanobind/trampoline.h>
 #include <nanobind/ndarray.h>
 

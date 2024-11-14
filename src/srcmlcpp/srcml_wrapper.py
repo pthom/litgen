@@ -110,6 +110,9 @@ class SrcmlWrapper:
         assert len(name_children) == 1
         name_children[0].text = new_name
 
+    def __repr__(self):
+        return f"SrcmlWrapper({self.short_xml_info()})"
+
     def extract_name_from_xml(self) -> str | None:
         """Returns the C++ code corresponding to the name extracted from the srcML xml tree.
 

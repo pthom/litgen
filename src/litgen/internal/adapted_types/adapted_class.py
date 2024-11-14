@@ -1,4 +1,5 @@
 from __future__ import annotations
+
 from dataclasses import dataclass
 from typing import cast
 
@@ -1301,7 +1302,12 @@ class PythonNamedConstructorHelper:
         ):
             return ""
 
-        adapted_function = AdaptedFunction(self.adapted_class.lg_context, ctor_decl, False)
+        lg_context = self.adapted_class.lg_context
+        adapted_ctor = AdaptedFunction(lg_context, ctor_decl, False)
+        # We modify ctor_decl, because adapt_mutable_param_with_default_value may change it
+        # (we keep a backup of the original, to be able to compare)
+        ctor_decl_adapted = adapted_ctor.cpp_adapted_function
+
 
         if len(ctor_decl.parameter_list.parameters) == 0:
             py = "py" if self.options.bind_library == BindLibraryType.pybind11 else "nb"
@@ -1325,8 +1331,7 @@ class PythonNamedConstructorHelper:
         else:
             template = code_utils.unindent_code(
                 """
-                .def("__init__", []( {qualified_struct_name} *self,
-                {all_params_signature})
+                .def("__init__", []({all_params_signature})
                 {
                 {_i_}new (self) {qualified_struct_name}();  // placement new
                 {_i_}auto r = self;
@@ -1341,15 +1346,35 @@ class PythonNamedConstructorHelper:
         replacements = munch.Munch()
         replacements._i_ = _i_
         replacements.qualified_struct_name = self.cpp_class.qualified_class_name_with_specialization()
-        replacements.all_params_signature = ctor_decl.parameter_list.str_types_names_default_for_signature()
+        replacements.all_params_signature = ctor_decl_adapted.parameter_list.str_types_names_default_for_signature()
 
         replacements_lines = munch.Munch()
-        replacements_lines.maybe_pyargs = ", ".join(adapted_function._pydef_pyarg_list())
+        replacements_lines.maybe_pyargs = ", ".join(adapted_ctor._pydef_pyarg_list())
 
         def get_all_params_set_values() -> str:
+            from litgen.internal.adapt_function_params._adapt_mutable_param_with_default_value import was_mutable_param_with_default_value_made_optional
+            original_parameters = ctor_decl.parameter_list.parameters
+            modified_parameters = ctor_decl_adapted.parameter_list.parameters
+            # Remove first "self" parameter from modified_parameters (may have been added by AdaptedFunction, if using nanobind)
+            if len(modified_parameters) > 0 and modified_parameters[0].decl.name() == "self":
+                modified_parameters = modified_parameters[1:]
+            assert len(original_parameters) == len(modified_parameters)
+
             all_params_set_values_list = []
-            for param in ctor_decl.parameter_list.parameters:
-                code = f"r->{param.decl.name()} = {param.decl.name()};"
+            for i in range(len(modified_parameters)):
+                original_param = original_parameters[i]
+                modified_param = modified_parameters[i]
+                if was_mutable_param_with_default_value_made_optional(lg_context, original_param):
+                    code = f"""
+                    if ({modified_param.decl.name()}.has_value())
+                    {_i_}r->{modified_param.decl.name()} = {modified_param.decl.name()}.value();
+                    else
+                    {_i_}r->{modified_param.decl.name()} = {original_param.decl.initial_value_code};
+                    """
+                    code = code_utils.unindent_code(code, flag_strip_empty_lines=True)
+
+                else:
+                    code = f"r->{original_param.decl.name()} = {original_param.decl.name()};"
                 all_params_set_values_list.append(code)
             all_params_set_values = "\n".join(all_params_set_values_list)
             all_params_set_values = code_utils.indent_code(all_params_set_values, indent_str=_i_)
