@@ -1,5 +1,6 @@
 from __future__ import annotations
 import litgen
+from litgen.internal import cpp_to_python
 
 
 def test_standard_replacements():
@@ -22,3 +23,34 @@ def test_std_array():
     r = litgen.standard_type_replacements().apply(s)
     assert r == "List[ImVec4] Colors;"
     print(r)
+
+
+def test_type_to_python() -> None:
+    options = litgen.LitgenOptions()
+    def my_type_to_python(s: str) -> str:
+        return cpp_to_python.type_to_python(options, s)
+
+    assert my_type_to_python("unsigned int") == "int"
+    assert my_type_to_python("std::vector<std::optional<int>>") == "List[Optional[int]]"
+    assert my_type_to_python("std::optional<std::vector<int>>") == "Optional[List[int]]"
+    assert my_type_to_python("std::map<int, std::string>") == "Dict[int, str]"
+    assert my_type_to_python("std::vector<std::map<int, std::string>>") == "List[Dict[int, str]]"
+    assert my_type_to_python("std::map<std::string, std::vector<int>>") == "Dict[str, List[int]]"
+    assert my_type_to_python("std::tuple<int, float, std::string>") == "Tuple[int, float, str]"
+    assert my_type_to_python("std::function<void(int)>") == "Callable[[int], None]"
+    assert my_type_to_python("std::function<int(std::string, double)>") == "Callable[[str, float], int]"
+    assert my_type_to_python("std::vector<int*>") == "List[int]"
+    assert my_type_to_python("std::vector<int&>") == "List[int]"
+    assert my_type_to_python("std::tuple<int, float, std::string>") == "Tuple[int, float, str]"
+    assert my_type_to_python("std::variant<int, float, std::string>") == "Union[int, float, str]"
+    assert my_type_to_python("std::vector<std::map<int, std::vector<std::string>>>") == "List[Dict[int, List[str]]]"
+    assert my_type_to_python("std::function<void(std::vector<int>&, const std::string&)>") == "Callable[[List[int], str], None]"
+
+    # Known limitations
+    # =================
+    # volatile is not handled
+    assert my_type_to_python("volatile int") == "volatile int"
+    # unsigned char is not handled (up the user to decide if it is a char or an int)
+    assert my_type_to_python("unsigned char") == "unsigned char"
+    # Missed allocator in optional (this is a corner case, which we do not handle)
+    assert my_type_to_python("std::optional<int, std::allocator<int>>") == "Optional[int, std.allocator<int]>"

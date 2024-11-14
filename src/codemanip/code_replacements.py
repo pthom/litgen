@@ -12,10 +12,6 @@ class RegexReplacement:
         self.by_what = by_what
 
     def apply(self, s: str) -> str:
-        # regex = self.replace_what_re
-        # subst = self.by_what
-        # r, nb = re.subn(regex, subst, s)
-
         r, nb = self.replace_what_re.subn(self.by_what, s)
         return r
 
@@ -53,9 +49,15 @@ class RegexReplacementList:
         return r
 
     def apply(self, s: str) -> str:
+        previous_s = None
         r = s
-        for replacement in self.replacements:
-            r = replacement.apply(r)
+        max_iterations = 3
+        iteration = 0
+        while previous_s != r and iteration < max_iterations:
+            previous_s = r
+            for replacement in self.replacements:
+                r = replacement.apply(r)
+            iteration += 1
         return r
 
     def add_last_regex_replacement(self, replacement: RegexReplacement) -> None:

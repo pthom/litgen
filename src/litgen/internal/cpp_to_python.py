@@ -58,6 +58,12 @@ def type_to_python(options: LitgenOptions, cpp_type_str: str) -> str:
     r = r.replace("static ", "")
     r = r.replace("constexpr ", "")
     r = options.type_replacements.apply(r).strip()
+    r = r.replace("::", ".")
+
+    def normalize_whitespace(s: str) -> str:
+        import re
+        return re.sub(r'\s+', ' ', s).strip()
+    r = normalize_whitespace(r)
     return r
 
 
@@ -550,7 +556,6 @@ def standard_type_replacements() -> RegexReplacementList:
     Consists mostly of
     * types translations
     * NULL, nullptr, void translation
-    * number translation (e.g. `1.5f` -> `1.5`)
     """
     replacements_str = r"""
     \bunsigned \s*int\b -> int
@@ -583,29 +588,27 @@ def standard_type_replacements() -> RegexReplacementList:
     \bstd::string\b -> str
     \bstd::unique_ptr<(.*?)> -> \1
     \bstd::shared_ptr<(.*?)> -> \1
-    \bstd::vector\s*<\s*([\w:]*)\s*> -> List[\1]
-    \bstd::array\s*<\s*([\w:]*)\s*,\s*([\w:]*)\s*> -> List[\1]
-    \bstd::tuple<(.*)> -> Tuple[\1]
-    \bstd::pair<(.*)> -> Tuple[\1]
+    \bstd::vector\s*<\s*(.*?)\s*> -> List[\1]
+    \bstd::array\s*<\s*(.*?)\s*,\s*(.*?)\s*> -> List[\1]
+    \bstd::tuple<(.*?)> -> Tuple[\1]
+    \bstd::pair<(.*?)> -> Tuple[\1]
+    \bstd::variant<(.*?)> -> Union[\1]
     \bstd::optional<(.*?)> -> Optional[\1]
-    \bstd::map<\s*([\w:]*)\s*,\s*([\w:]*)\s*> -> Dict[\1, \2]
+    \bstd::map<\s*(.*?)\s*,\s*(.*?)\s*> -> Dict[\1, \2]
 
     \bvoid\s*\* -> Any
     \bvoid\b -> None
 
     \bpy::array\b -> np.ndarray
-    \bpy::ndarray<(.*)> -> np.ndarray
+    \bpy::ndarray<(.*?)> -> np.ndarray
     \bnb::array\b -> np.ndarray
-    \bnb::ndarray<(.*)> -> np.ndarray
+    \bnb::ndarray<(.*?)> -> np.ndarray
 
     \bconst\b -> REMOVE
     \bmutable\b -> REMOVE
     & -> REMOVE
     \* -> REMOVE
-
-    :: -> .
     """
-    # Note: the two last regexes replace C numbers like 1.5f or 1.5d by 1.5
 
     replaces = RegexReplacementList.from_string(replacements_str)
     return replaces
