@@ -122,12 +122,8 @@ def test_context_replacements():
         def foo_inner(
             x: int = Inner.FooValue(),
             a: MyEnumClass = MyEnumClass.value_a,
-            b: Optional[MyEnumNonClass] = None
+            b: MyEnumNonClass = MyEnumNonClass.value_a
             ) -> int:
-            """---
-            Python bindings defaults:
-                If b is None, then its default value will be: MyEnumNonClass.value_a
-            """
             pass
 
         # <submodule inner>

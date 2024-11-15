@@ -235,19 +235,11 @@ class CppParameter(CppElementAndComment):
         """Determines whether the parameter with a default value appears to be mutable."""
 
         decl = self.decl
-
-        decl_type_str = self.decl.cpp_type.str_code()
-        if decl_type_str in _BASE_IMMUTABLE_TYPES:
-            return False
-        if fn_is_immutable_type is not None:
-            if fn_is_immutable_type(decl_type_str):
-                return False
-
-
         cpp_type = decl.cpp_type
+
+        # Bail out if the parameter has no default value
         initial_value_code = decl.initial_value_code.strip()
-        has_default_value = bool(initial_value_code)
-        if not has_default_value:
+        if len(initial_value_code) == 0:
             return False
 
         # Check for types we cannot handle or that suggest mutability
@@ -269,8 +261,17 @@ class CppParameter(CppElementAndComment):
             return False
 
         # Check if the default value looks like a mutable object
+        if True:  # just to have a block
+            decl_type_str = cpp_type.str_code()
+            if decl_type_str in _BASE_IMMUTABLE_TYPES:
+                return False
+            if fn_is_immutable_type is not None and fn_is_immutable_type(decl_type_str):
+                return False
+
+        # Check if the default value looks like a mutable object
         r = _looks_like_mutable_default_value(initial_value_code, fn_is_immutable_type, fn_is_immutable_value)
         return r
+
     def __str__(self) -> str:
         return self.str_code()
 

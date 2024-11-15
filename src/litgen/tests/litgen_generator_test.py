@@ -56,39 +56,13 @@ def test_scoping_no_root_namespace():
                 py::overload_cast<N::EC>(N::Foo), py::arg("e") = N::EC::a);
 
             pyNsN.def("foo",
-                [](const std::optional<const N::E> & e = std::nullopt) -> N::E
-                {
-                    auto Foo_adapt_mutable_param_with_default_value = [](const std::optional<const N::E> & e = std::nullopt) -> N::E
-                    {
-
-                        const N::E& e_or_default = [&]() -> const N::E {
-                            if (e.has_value())
-                                return e.value();
-                            else
-                                return N::E_a;
-                        }();
-
-                        auto lambda_result = N::Foo(e_or_default);
-                        return lambda_result;
-                    };
-
-                    return Foo_adapt_mutable_param_with_default_value(e);
-                },
-                py::arg("e") = py::none(),
-                "---\\nPython bindings defaults:\\n    If e is None, then its default value will be: N.E.a");
+                py::overload_cast<N::E>(N::Foo), py::arg("e") = N::E_a);
 
             pyNsN.def("foo",
-                [](const std::optional<const N::E> & e = std::nullopt, const std::optional<const N::S> & s = std::nullopt) -> N::S
+                [](N::E e = N::E_a, const std::optional<const N::S> & s = std::nullopt) -> N::S
                 {
-                    auto Foo_adapt_mutable_param_with_default_value = [](const std::optional<const N::E> & e = std::nullopt, const std::optional<const N::S> & s = std::nullopt) -> N::S
+                    auto Foo_adapt_mutable_param_with_default_value = [](N::E e = N::E_a, const std::optional<const N::S> & s = std::nullopt) -> N::S
                     {
-
-                        const N::E& e_or_default = [&]() -> const N::E {
-                            if (e.has_value())
-                                return e.value();
-                            else
-                                return N::E_a;
-                        }();
 
                         const N::S& s_or_default = [&]() -> const N::S {
                             if (s.has_value())
@@ -97,14 +71,14 @@ def test_scoping_no_root_namespace():
                                 return N::S();
                         }();
 
-                        auto lambda_result = N::Foo(e_or_default, s_or_default);
+                        auto lambda_result = N::Foo(e, s_or_default);
                         return lambda_result;
                     };
 
                     return Foo_adapt_mutable_param_with_default_value(e, s);
                 },
-                py::arg("e") = py::none(), py::arg("s") = py::none(),
-                "---\\nPython bindings defaults:\\n    If any of the params below is None, then its default value below will be used:\\n        e: N.E.a\\n        s: N.S()");
+                py::arg("e") = N::E_a, py::arg("s") = py::none(),
+                "---\\nPython bindings defaults:\\n    If s is None, then its default value will be: N.S()");
         } // </namespace N>
       """,
     )
@@ -131,24 +105,19 @@ def test_scoping_no_root_namespace():
                 pass
             @staticmethod
             @overload
-            def foo(e: Optional[E] = None) -> E:
-                """---
-                Python bindings defaults:
-                    If e is None, then its default value will be: N.E.a
-                """
+            def foo(e: E = E.a) -> E:
                 pass
             @staticmethod
             @overload
-            def foo(e: Optional[E] = None, s: Optional[S] = None) -> S:
+            def foo(e: E = E.a, s: Optional[S] = None) -> S:
                 """---
                 Python bindings defaults:
-                    If any of the params below is None, then its default value below will be used:
-                        e: N.E.a
-                        s: N.S()
+                    If s is None, then its default value will be: N.S()
                 """
                 pass
 
         # </submodule n>
+
     ''',
     )
 
@@ -183,3 +152,22 @@ def test_scoping_enum_in_stub() -> None:
                 pass
         '''
     )
+
+
+def test_naming() -> None:
+    code = """
+
+    //namespace CamelCase { // should be converted to snake_case in Python
+        enum Foo { a, b, c };
+
+        void UseFoo(Foo f = Foo::a);
+    //}
+
+    // should have this signature in Python:
+    //    def use_foo(f: camel_case.Foo = camel_case.Foo.a) -> None:
+    // void UseFoo(CamelCase::Foo f = CamelCase::Foo::a);
+    """
+    options = litgen.LitgenOptions()
+    options.fn_params_adapt_mutable_param_with_default_value__regex = r".*"
+    generated_code = litgen.generate_code(options, code)
+    print(generated_code.stub_code)

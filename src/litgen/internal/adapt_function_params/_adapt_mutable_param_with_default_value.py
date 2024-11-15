@@ -56,66 +56,16 @@ def _can_access_enum_with_type(
         cpp_type_str: str,         # A type name being checked (e.g. MyEnum, A::MyEnum)
         cpp_enum: CppEnum,         # The enum being checked (e.g. "A::MyEnum")
         ) -> bool:
-    """
-    Check if the current scope can access the enum with the given type name.
-
-    Args:
-        current_scope (CppScope): The current scope in the code.
-        cpp_type_str (str): The type name being checked.
-        enum_name_with_scope (str): The fully qualified name of the enum.
-
-    Returns:
-        bool: True if the enum can be accessed with the given type name from the current scope.
-    """
-    # Remove leading "::" for uniformity
-    is_enum_class = cpp_enum.enum_type == "class"
-    if not is_enum_class:
-        return False
-
-    enum_name_with_scope = cpp_enum.cpp_scope_str(include_self=True)
+    """Check if the current scope can access the enum with the given type name"""
     cpp_type_str = cpp_type_str.lstrip(":")
+    enum_name_with_scope = cpp_enum.cpp_scope_str(include_self=True)
 
     # If cpp_type_str is unqualified, we need to check each scope in the hierarchy
-    # Generate possible fully qualified names by prepending scopes from innermost to outermost
     for scope in current_scope.scope_hierarchy_list:
-        # Use the qualified_name method to construct the fully qualified name
         full_type_name = scope.qualified_name(cpp_type_str)
-        # Compare with the enum's fully qualified name
         if full_type_name == enum_name_with_scope:
             return True
     return False
-
-
-def _can_access_enum_with_value(
-        current_scope: CppScope,   # Represent e.g. "A::B::C"
-        cpp_value_str: str,        # A value name being checked (e.g. MyEnum::a, A::MyEnum::a)
-        cpp_enum: CppEnum          # The enum being checked (e.g. "A::MyEnum")
-        ) -> bool:
-
-    if cpp_enum.enum_type == "class":
-        def compute_cpp_type_str() -> str | None:
-            if "::" in cpp_value_str:
-                # split and take everything except the last element
-                r = "::".join(cpp_value_str.split("::")[:-1])
-                return r
-            return None
-        cpp_type_str = compute_cpp_type_str()
-        if cpp_type_str is None:
-            return False
-        return _can_access_enum_with_type(current_scope, cpp_type_str, cpp_enum)
-    else:
-        return False  # C enum are too shady
-        # enum_name_with_scope = cpp_enum.cpp_scope_str(include_self=False)
-        # # Generate possible fully qualified names by prepending scopes from innermost to outermost
-        # for scope in current_scope.scope_hierarchy_list:
-        #     # Use the qualified_name method to construct the fully qualified name
-        #     full_value_name = scope.qualified_name(cpp_value_str)
-        #     # Compare with the enum's fully qualified name
-        #     if full_value_name.startswith(enum_name_with_scope + "_"):
-        #         return True
-        # return False
-
-
 
 
 @dataclass
@@ -128,12 +78,6 @@ def _immutable_functions_default(lg_context: LitgenContext, code_scope: CppScope
     options = lg_context.options
 
     def _fn_immutables_values(cpp_value_str: str) -> bool:
-        for cpp_enum in lg_context.encountered_cpp_enums:
-            if _can_access_enum_with_value(code_scope, cpp_value_str, cpp_enum):
-                return True
-            # if cpp_type_str.startswith(enum_type + "_"):
-            #     return True
-
         _fn_immutables_values_user = options.fn_params_adapt_mutable_param_with_default_value__fn_is_known_immutable_value
         if _fn_immutables_values_user is not None:
             return _fn_immutables_values_user(cpp_value_str)
