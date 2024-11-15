@@ -75,7 +75,7 @@ class AdaptedParameter(AdaptedElement):
 
         is_pointer = type_modifiers == ["*"]
         is_const = "const" in type_specifiers
-        is_char = "char" in type_names
+        is_char = type_names == ["char"]
         is_default_null = initial_value_cpp in ["NULL", "nullptr"]
 
         r = is_pointer and is_const and is_char and is_default_null

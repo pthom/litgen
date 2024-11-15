@@ -369,7 +369,7 @@ class LitgenOptions:
     # with a lambda function wrapping around original interface.
     #
     # NOTE: Enable this for nanobind.
-    fn_params_const_char_pointer_with_default_null: bool = False
+    fn_params_const_char_pointer_with_default_null: bool = True
 
     # As an alternative, we can also add the modified value to the returned type
     # of the function (which will now be a tuple)
