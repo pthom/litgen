@@ -847,3 +847,55 @@ def test_adapted_ctor() -> None:
             ;
         """,
     )
+
+
+def test_named_ctor_with_optional() -> None:
+    code = """
+    struct Inner {};
+
+    struct Foo {
+        MyVector<Inner> inner;
+    };
+    """
+    options = litgen.LitgenOptions()
+    options.fn_params_adapt_mutable_param_with_default_value__regex = r".*"
+    generated_code = litgen.generate_code(options, code)
+    code_utils.assert_are_codes_equal(
+        generated_code.stub_code,
+        '''
+        class Inner:
+            def __init__(self) -> None:
+                """Auto-generated default constructor"""
+                pass
+
+        class Foo:
+            inner: MyVector[Inner]
+            def __init__(self, inner: Optional[MyVector[Inner]] = None) -> None:
+                """Auto-generated default constructor with named params
+                ---
+                Python bindings defaults:
+                    If inner is None, then its default value will be: MyVector<Inner>()
+                """
+                pass
+        '''
+    )
+
+
+def test_instantiated_template() -> None:
+    code = """
+    template<typename T> struct ImVector {
+        ImVector();
+        T value(size_t i);
+    };
+    struct Foo {
+        ImVector<int> values;
+    };
+    """
+    options = litgen.LitgenOptions()
+    options.class_template_options.add_specialization("ImVector", ["int"], None)
+    _generated_code = litgen.generate_code(options, code)
+    # print(generated_code.stub_code)
+    # TODO: stub_code contains ImVector[int] instead of ImVector_int
+    #     class Foo:
+    #         values: ImVector_int
+    #         def __init__(self, values: Optional[ImVector[int]] = None) -> None:
