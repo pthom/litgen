@@ -50,9 +50,18 @@ def validate_bindings_compilation(
 #include <vector>
 #include <tuple>
 #include <nanobind/nanobind.h>
-#include <nanobind/stl/string.h>
+#include <nanobind/trampoline.h>
 #include <nanobind/stl/array.h>
+#include <nanobind/stl/string.h>
+#include <nanobind/stl/vector.h>
 #include <nanobind/stl/optional.h>
+#include <nanobind/stl/function.h>
+#include <nanobind/stl/shared_ptr.h>
+#include <nanobind/stl/unique_ptr.h>
+#include <nanobind/stl/map.h>
+#include <nanobind/stl/tuple.h>
+#include <nanobind/make_iterator.h>
+#include <nanobind/ndarray.h>
 #include <nanobind/trampoline.h>
 #include <nanobind/ndarray.h>
 
@@ -237,7 +246,7 @@ add_custom_command(TARGET {python_native_module_name}
         # The module was built in the work_dir, it can be imported directly (no need to move it)
         if python_test_code:
             # Write test code to a test file
-            test_file_name = "test_validate_bindings_compilation.py"
+            test_file_name = "run_validate_bindings_compilation.py"
             test_file_path = os.path.join(work_dir, test_file_name)
             with open(test_file_path, "w") as f:
                 f.write(code_utils.unindent_code(python_test_code))
