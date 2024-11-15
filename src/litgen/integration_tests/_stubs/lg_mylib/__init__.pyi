@@ -469,7 +469,7 @@ class MyStructWithNestedEnum:
 def binding_multiple_inheritance() -> bool:
     pass
 
-def make_dog() -> Animals.Animal:
+def make_dog() -> animals.Animal:
     """Test that downcasting works: the return type is Animal, but it should bark!"""
     pass
 
@@ -945,23 +945,13 @@ class ElemContainer:
 class FooBrace:
     int_values: List[int] = List[int](1, 2, 3)
     dict_string_int: Dict[str, int] = Dict[str, int]({"abc", 3})
-    def __init__(self, int_values: Optional[List[int]] = None) -> None:
-        """Auto-generated default constructor with named params
-        ---
-        Python bindings defaults:
-            If int_values is None, then its default value will be: initialized with 1, 2, 3
-        """
+    def __init__(self, int_values: List[int] = List[int](1, 2, 3)) -> None:
+        """Auto-generated default constructor with named params"""
         pass
 
 def fn_brace(
-    foo_brace: Optional[FooBrace] = None, ints: Optional[List[int]] = None
+    foo_brace: FooBrace = FooBrace(), ints: List[int] = List[int](1, 2, 3)
 ) -> int:
-    """---
-    Python bindings defaults:
-        If any of the params below is None, then its default value below will be used:
-            foo_brace: initialized with default value
-            ints: initialized with 1, 2, 3
-    """
     pass
 
 # <submodule math_functions>
@@ -1102,14 +1092,10 @@ class some_namespace:  # Proxy class that introduces typings for the *submodule*
         inner_enum: InnerEnum = InnerEnum.three
         def __init__(
             self,
-            inner_struct: Optional[ParentStruct.InnerStruct] = None,
+            inner_struct: ParentStruct.InnerStruct = ParentStruct.InnerStruct(),
             inner_enum: ParentStruct.InnerEnum = ParentStruct.InnerEnum.three,
         ) -> None:
-            """Auto-generated default constructor with named params
-            ---
-            Python bindings defaults:
-                If inner_struct is None, then its default value will be: SomeNamespace.ParentStruct.InnerStruct()
-            """
+            """Auto-generated default constructor with named params"""
             pass
 
     class Blah:
@@ -1216,11 +1202,7 @@ class n:  # Proxy class that introduces typings for the *submodule* n
         pass
     @staticmethod
     @overload
-    def foo(s: Optional[S] = None, e: E = E.a) -> None:
-        """---
-        Python bindings defaults:
-            If s is None, then its default value will be: N.S()
-        """
+    def foo(s: S = S(), e: E = E.a) -> None:
         pass
 
 # </submodule n>
@@ -1274,11 +1256,7 @@ class a:  # Proxy class that introduces typings for the *submodule* a
             pass
         @staticmethod
         @overload
-        def foo(s: Optional[S] = None, e: E = E.a) -> None:
-            """---
-            Python bindings defaults:
-                If s is None, then its default value will be: A.N.S()
-            """
+        def foo(s: S = S(), e: E = E.a) -> None:
             pass
     # </submodule n>
 

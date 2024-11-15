@@ -1249,33 +1249,7 @@ void py_init_module_lg_mylib(nb::module_& m)
 
 
     m.def("fn_brace",
-        [](const std::optional<const FooBrace> & foo_brace = std::nullopt, const std::optional<const std::vector<int>> & ints = std::nullopt) -> int
-        {
-            auto FnBrace_adapt_mutable_param_with_default_value = [](const std::optional<const FooBrace> & foo_brace = std::nullopt, const std::optional<const std::vector<int>> & ints = std::nullopt) -> int
-            {
-
-                const FooBrace& foo_brace_or_default = [&]() -> const FooBrace {
-                    if (foo_brace.has_value())
-                        return foo_brace.value();
-                    else
-                        return {};
-                }();
-
-                const std::vector<int>& ints_or_default = [&]() -> const std::vector<int> {
-                    if (ints.has_value())
-                        return ints.value();
-                    else
-                        return {1, 2, 3};
-                }();
-
-                auto lambda_result = FnBrace(foo_brace_or_default, ints_or_default);
-                return lambda_result;
-            };
-
-            return FnBrace_adapt_mutable_param_with_default_value(foo_brace, ints);
-        },
-        nb::arg("foo_brace") = nb::none(), nb::arg("ints") = nb::none(),
-        "---\nPython bindings defaults:\n    If any of the params below is None, then its default value below will be used:\n        foo_brace: initialized with default value\n        ints: initialized with 1, 2, 3");
+        FnBrace, nb::arg("foo_brace") = FooBrace{}, nb::arg("ints") = std::vector<int>{1, 2, 3});
 
     { // <namespace MathFunctions>
         nb::module_ pyNsMathFunctions = m.def_submodule("math_functions", " Vectorizable functions example\n    Numeric functions (i.e. function accepting and returning only numeric params or py::array), can be vectorized\n    i.e. they will accept numpy arrays as an input.\n\n Auto-vectorization is enabled via the following options:\n     options.fn_namespace_vectorize__regex: str = r\"^MathFunctions$\"\n     options.fn_vectorize__regex = r\".*\"\n");
@@ -1858,25 +1832,7 @@ void py_init_module_lg_mylib(nb::module_& m)
             nb::overload_cast<N::E>(N::Foo), nb::arg("e") = N::E_a);
 
         pyNsN.def("foo",
-            [](const std::optional<const N::S> & s = std::nullopt, N::E e = N::E_a)
-            {
-                auto Foo_adapt_mutable_param_with_default_value = [](const std::optional<const N::S> & s = std::nullopt, N::E e = N::E_a)
-                {
-
-                    const N::S& s_or_default = [&]() -> const N::S {
-                        if (s.has_value())
-                            return s.value();
-                        else
-                            return N::S();
-                    }();
-
-                    N::Foo(s_or_default, e);
-                };
-
-                Foo_adapt_mutable_param_with_default_value(s, e);
-            },
-            nb::arg("s") = nb::none(), nb::arg("e") = N::E_a,
-            "---\nPython bindings defaults:\n    If s is None, then its default value will be: N.S()");
+            nb::overload_cast<N::S, N::E>(N::Foo), nb::arg("s") = N::S(), nb::arg("e") = N::E_a);
     } // </namespace N>
 
     { // <namespace A>
@@ -1934,25 +1890,7 @@ void py_init_module_lg_mylib(nb::module_& m)
                 nb::overload_cast<A::N::E>(A::N::Foo), nb::arg("e") = A::N::E_a);
 
             pyNsA_NsN.def("foo",
-                [](const std::optional<const A::N::S> & s = std::nullopt, A::N::E e = A::N::E_a)
-                {
-                    auto Foo_adapt_mutable_param_with_default_value = [](const std::optional<const A::N::S> & s = std::nullopt, A::N::E e = A::N::E_a)
-                    {
-
-                        const A::N::S& s_or_default = [&]() -> const A::N::S {
-                            if (s.has_value())
-                                return s.value();
-                            else
-                                return A::N::S();
-                        }();
-
-                        A::N::Foo(s_or_default, e);
-                    };
-
-                    Foo_adapt_mutable_param_with_default_value(s, e);
-                },
-                nb::arg("s") = nb::none(), nb::arg("e") = A::N::E_a,
-                "---\nPython bindings defaults:\n    If s is None, then its default value will be: A.N.S()");
+                nb::overload_cast<A::N::S, A::N::E>(A::N::Foo), nb::arg("s") = A::N::S(), nb::arg("e") = A::N::E_a);
         } // </namespace N>
 
     } // </namespace A>
