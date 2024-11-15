@@ -18,8 +18,7 @@ __all__ = ["CppParameter"]
 
 
 # Array of precompiled patterns for immutables
-# Array of precompiled patterns for immutables
-_IMMUTABLE_PATTERNS = [
+_IMMUTABLE_VALUES_PATTERNS = [
     # Floating point literals with optional suffixes (e.g., 1.5f, 2.0, .5L)
     re.compile(
         r"""
@@ -57,7 +56,7 @@ _IMMUTABLE_PATTERNS = [
     re.compile(r"^'.{1,2}'$"),  # Character literal (e.g., 'a', '\n')
 ]
 # Immutable keywords that don't require regex matching
-_IMMUTABLE_KEYWORDS = ["nullptr", "NULL", "true", "false", "TRUE", "FALSE", "nullopt", "std::nullopt"]
+_IMMUTABLE_VALUES_KEYWORDS = ["nullptr", "NULL", "true", "false", "TRUE", "FALSE", "nullopt", "std::nullopt"]
 
 
 _BASE_IMMUTABLE_TYPES = [
@@ -138,40 +137,36 @@ def _looks_like_mutable_default_value(
         - string literals
         - nullptr or NULL
     """
-
-    # Strip whitespace around the initial value code
     initial_value_code = initial_value_code.strip()
 
-    def extract_call_before_paren_or_accolade(code: str) -> str | None:
-        r = None
-        if "(" in code:
-            r = code.split("(")[0]
-        if "{" in code:
-            r = code.split("{")[0]
-        return r
-
-    if fn_is_known_immutable_value is not None:
-        if fn_is_known_immutable_value(initial_value_code):
-            return False
-
-    initial_value_code_without_call = extract_call_before_paren_or_accolade(initial_value_code)
-    if initial_value_code_without_call is not None:
-        # Check if the value matches any known immutable types
-        if initial_value_code_without_call in _BASE_IMMUTABLE_TYPES:
-            return False
-        # Check if the value matches with fn_is_known_immutable_type
-        if fn_is_known_immutable_type is not None:
-            if fn_is_known_immutable_type(initial_value_code_without_call):
+    # Test the value
+    if True:  # just to have a block
+        if fn_is_known_immutable_value is not None and fn_is_known_immutable_value(initial_value_code):
                 return False
 
-    # Check if the value matches any immutable regex pattern
-    for pattern in _IMMUTABLE_PATTERNS:
-        if pattern.match(initial_value_code):
-            return False  # Definitely immutable
+        for pattern in _IMMUTABLE_VALUES_PATTERNS:
+            if pattern.match(initial_value_code):
+                return False
 
-    # Check if it's in known immutable keywords
-    if initial_value_code in _IMMUTABLE_KEYWORDS:
-        return False
+        if initial_value_code in _IMMUTABLE_VALUES_KEYWORDS:
+            return False
+
+    # Test the value type if available
+    if True: # just to have a block
+        def try_extract_type() -> str | None:
+            r = None
+            if "(" in initial_value_code:
+                r = initial_value_code.split("(")[0]
+            if "{" in initial_value_code:
+                r = initial_value_code.split("{")[0]
+            return r
+
+        initial_value_type = try_extract_type()
+        if initial_value_type is not None:
+            if initial_value_type in _BASE_IMMUTABLE_TYPES:
+                return False
+            if fn_is_known_immutable_type is not None and fn_is_known_immutable_type(initial_value_type):
+                    return False
 
     # Default to True for values that look mutable or ambiguous
     return True
