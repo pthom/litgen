@@ -104,3 +104,12 @@ class NamespacesCodeTree:
 
     def register_namespace_creation(self, qualified_namespace_name: CppQualifiedNamespaceName) -> None:
         self._created_namespaces.add(qualified_namespace_name)
+
+    def qualified_namespaces(self) -> set[CppQualifiedNamespaceName]:
+        return self._created_namespaces
+
+    def unqualified_namespaces(self) -> set[CppNamespaceName]:
+        r = set()
+        for ns in self._created_namespaces:
+            r.add(ns.split("::")[-1])
+        return r

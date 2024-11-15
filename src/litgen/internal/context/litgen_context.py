@@ -8,6 +8,7 @@ from litgen.internal.context.namespaces_code_tree import (
 )
 from litgen.internal.context.replacements_cache import ReplacementsCache
 from litgen.internal.context.type_synonyms import CppTypeName
+from litgen.internal.context.type_synonyms import CppNamespaceName, CppQualifiedNamespaceName
 from srcmlcpp.cpp_types.cpp_enum import CppEnum
 
 if TYPE_CHECKING:
@@ -46,3 +47,9 @@ class LitgenContext:
     def clear_namespaces_code_tree(self) -> None:
         self.namespaces_stub = NamespacesCodeTree(self.options, PydefOrStub.Stub)
         self.namespaces_pydef = NamespacesCodeTree(self.options, PydefOrStub.Pydef)
+
+    def qualified_stub_namespaces(self) -> set[CppQualifiedNamespaceName]:
+        return self.namespaces_stub.qualified_namespaces()
+
+    def unqualified_stub_namespaces(self) -> set[CppNamespaceName]:
+        return self.namespaces_stub.unqualified_namespaces()

@@ -120,7 +120,7 @@ def test_context_replacements():
             value_a = enum.auto() # (= 0)
 
         def foo_inner(
-            x: int = Inner.FooValue(),
+            x: int = inner.FooValue(),
             a: MyEnumClass = MyEnumClass.value_a,
             b: MyEnumNonClass = MyEnumNonClass.value_a
             ) -> int:

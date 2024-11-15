@@ -1218,7 +1218,7 @@ class AdaptedFunction(AdaptedElement):
         else:
             cpp_adapted_function_terse = self.cpp_adapted_function.with_terse_types()
             return_type_cpp = cpp_adapted_function_terse.str_full_return_type()
-            return_type_python = cpp_to_python.type_to_python(self.options, return_type_cpp)
+            return_type_python = cpp_to_python.type_to_python(self.lg_context, return_type_cpp)
             return_type_python = self._add_class_hierarchy_to_python_type__fixme(return_type_python)
             return return_type_python
 
@@ -1226,6 +1226,7 @@ class AdaptedFunction(AdaptedElement):
         current_scope = self.cpp_element().cpp_scope(include_self=False)
         cpp_adapted_function_terse = self.cpp_adapted_function.with_terse_types(current_scope=current_scope)
         cpp_parameters = cpp_adapted_function_terse.parameter_list.parameters
+
         r = []
         for i, param in enumerate(cpp_parameters):
             # For nanobind, skip first "self" argument in constructors
@@ -1255,7 +1256,7 @@ class AdaptedFunction(AdaptedElement):
                 r.append("**kwargs")
                 continue
 
-            param_type_python = cpp_to_python.type_to_python(self.options, param_type_cpp)
+            param_type_python = cpp_to_python.type_to_python(self.lg_context, param_type_cpp)
             # Add Optional to param_type_python if cpp_type is a pointer with default = nullptr or NULL
             if "*" in param_decl.cpp_type.modifiers and param_decl.initial_value_code in ["NULL", "nullptr"]:
                 param_type_python = f"Optional[{param_type_python}]"

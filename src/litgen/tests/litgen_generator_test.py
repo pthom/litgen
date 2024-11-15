@@ -154,20 +154,37 @@ def test_scoping_enum_in_stub() -> None:
     )
 
 
-def test_naming() -> None:
+def test_namespace_adapt_in_stub() -> None:
     code = """
 
-    //namespace CamelCase { // should be converted to snake_case in Python
-        enum Foo { a, b, c };
-
-        void UseFoo(Foo f = Foo::a);
-    //}
+    namespace CamelCase { // should be converted to snake_case in Python
+        enum Foo { a };
+    }
 
     // should have this signature in Python:
     //    def use_foo(f: camel_case.Foo = camel_case.Foo.a) -> None:
-    // void UseFoo(CamelCase::Foo f = CamelCase::Foo::a);
+    void UseFoo(CamelCase::Foo f = CamelCase::Foo::a);
     """
     options = litgen.LitgenOptions()
     options.fn_params_adapt_mutable_param_with_default_value__regex = r".*"
     generated_code = litgen.generate_code(options, code)
-    print(generated_code.stub_code)
+    # print(generated_code.stub_code)
+    code_utils.assert_are_codes_equal(
+        generated_code.stub_code,
+        '''
+        def use_foo(f: camel_case.Foo = camel_case.Foo.a) -> None:
+            """ should have this signature in Python:
+                def use_foo(f: camel_case.Foo = camel_case.Foo.a) -> None:
+            """
+            pass
+
+        # <submodule camel_case>
+        class camel_case:  # Proxy class that introduces typings for the *submodule* camel_case
+            pass  # (This corresponds to a C++ namespace. All method are static!)
+            class Foo(enum.Enum):
+                """ should be converted to snake_case in Python"""
+                a = enum.auto() # (= 0)
+
+        # </submodule camel_case>
+        '''
+    )

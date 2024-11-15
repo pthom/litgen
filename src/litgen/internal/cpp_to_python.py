@@ -47,7 +47,8 @@ def comment_pydef_one_line(options: LitgenOptions, title_cpp: str) -> str:
     return r
 
 
-def type_to_python(options: LitgenOptions, cpp_type_str: str) -> str:
+def type_to_python(lg_context: LitgenContext, cpp_type_str: str) -> str:
+    options = lg_context.options
     specialized_type_python_name = options.class_template_options.specialized_type_python_name_str(
         cpp_type_str, options.type_replacements
     )
@@ -67,6 +68,14 @@ def type_to_python(options: LitgenOptions, cpp_type_str: str) -> str:
 
     # Fix for std::optional (issue origin unknown)
     r = r.replace("Optional[" + " ", "Optional[")
+
+    # Translate known namespaces
+    for cpp_namespace_name in lg_context.unqualified_stub_namespaces():
+        python_namespace_name = namespace_name_to_python(options, cpp_namespace_name)
+        if python_namespace_name != cpp_namespace_name:
+            r = r.replace(cpp_namespace_name + ".", python_namespace_name + ".")
+    for cpp_namespace_name in options.namespaces_root:
+        r = r.replace(cpp_namespace_name + ".", "")
 
     return r
 
@@ -122,20 +131,14 @@ def var_name_to_python(options: LitgenOptions, name: str) -> str:
     return r
 
 
-def var_value_to_python(context: LitgenContext, default_value_cpp: str) -> str:
+def var_value_to_python(lg_context: LitgenContext, default_value_cpp: str) -> str:
+    options = lg_context.options
     r = default_value_cpp
-    r = context.options.type_replacements.apply(r)
-    r = context.options.value_replacements.apply(r)
-    for number_macro, value in context.options.srcmlcpp_options.named_number_macros.items():
+    r = options.type_replacements.apply(r)
+    r = options.value_replacements.apply(r)
+    for number_macro, value in lg_context.options.srcmlcpp_options.named_number_macros.items():
         r = r.replace(number_macro, str(value))
-    r = context.var_values_replacements_cache.apply(r)
-
-    # If this default value uses a bound template type, try to translate it
-    specialized_type_python_default_value = (
-        context.options.class_template_options.specialized_type_python_default_value(
-            default_value_cpp, context.options.type_replacements
-        )
-    )
+    r = lg_context.var_values_replacements_cache.apply(r)
 
     # If this value is a std::initializer_list, try to translate it
     if r.startswith("{") and r.endswith("}"):
@@ -145,6 +148,21 @@ def var_value_to_python(context: LitgenContext, default_value_cpp: str) -> str:
         else:
             r = f"initialized with {inner}"
 
+    # Translate known namespaces
+    for cpp_namespace_name in lg_context.unqualified_stub_namespaces():
+        python_namespace_name = namespace_name_to_python(options, cpp_namespace_name)
+        if python_namespace_name != cpp_namespace_name:
+            r = r.replace(cpp_namespace_name + ".", python_namespace_name + ".")
+    for cpp_namespace_name in options.namespaces_root:
+        r = r.replace(cpp_namespace_name + ".", "")
+
+
+    # If this default value uses a bound template type, try to translate it
+    specialized_type_python_default_value = (
+        options.class_template_options.specialized_type_python_default_value(
+            default_value_cpp, lg_context.options.type_replacements
+        )
+    )
     if specialized_type_python_default_value is not None:
         r = specialized_type_python_default_value
 

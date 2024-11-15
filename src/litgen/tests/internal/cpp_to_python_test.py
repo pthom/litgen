@@ -26,9 +26,11 @@ def test_std_array():
 
 
 def test_type_to_python() -> None:
+    from litgen.internal.context.litgen_context import LitgenContext
     options = litgen.LitgenOptions()
+    lg_context = LitgenContext(options)
     def my_type_to_python(s: str) -> str:
-        return cpp_to_python.type_to_python(options, s)
+        return cpp_to_python.type_to_python(lg_context, s)
 
     assert my_type_to_python("unsigned int") == "int"
     assert my_type_to_python("std::vector<std::optional<int>>") == "List[Optional[int]]"

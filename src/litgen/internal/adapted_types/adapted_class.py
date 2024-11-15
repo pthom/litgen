@@ -890,7 +890,7 @@ class AdaptedClass(AdaptedElement):
         new_class_name_python = template_options._apply_template_naming(
             tpl_class_name_python, instantiated_cpp_type_str
         )
-        new_class_name_python = cpp_to_python.type_to_python(self.options, new_class_name_python)
+        new_class_name_python = cpp_to_python.type_to_python(self.lg_context, new_class_name_python)
 
         new_adapted_class.template_specialization = AdaptedClass.TemplateSpecialization(new_class_name_python, cpp_type)
 

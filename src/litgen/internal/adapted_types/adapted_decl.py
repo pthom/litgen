@@ -45,7 +45,7 @@ class AdaptedDecl(AdaptedElement):
 
     def decl_type_python(self) -> str:
         decl_type_cpp = self.cpp_element().cpp_type.str_code()
-        decl_type_python = cpp_to_python.type_to_python(self.options, decl_type_cpp)
+        decl_type_python = cpp_to_python.type_to_python(self.lg_context, decl_type_cpp)
         return decl_type_python
 
     def is_immutable_for_python(self) -> bool:
