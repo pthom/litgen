@@ -47,12 +47,24 @@ def test_type_to_python() -> None:
     assert my_type_to_python("std::variant<int, float, std::string>") == "Union[int, float, str]"
     assert my_type_to_python("std::vector<std::map<int, std::vector<std::string>>>") == "List[Dict[int, List[str]]]"
     assert my_type_to_python("std::function<void(std::vector<int>&, const std::string&)>") == "Callable[[List[int], str], None]"
+    assert my_type_to_python("std::optional<int, std::allocator<int>>") == "Optional[int, std.allocator[int]]"
+    assert my_type_to_python("const std::optional<const MyVector<Inner>> &") == "Optional[MyVector[Inner]]"
+    assert my_type_to_python("const std::optional<const std::vector<Inner>> &") == "Optional[List[Inner]]"
+
+    assert my_type_to_python("std::function<void(int)>") == "Callable[[int], None]"
+    assert my_type_to_python("std::function<int(std::string, double)>") == "Callable[[str, float], int]"
+    assert my_type_to_python(
+        "std::function<void(std::vector<int>&, const std::string&)>") == "Callable[[List[int], str], None]"
+
+    assert my_type_to_python("std::vector<std::map<int, std::vector<std::string>>>") == "List[Dict[int, List[str]]]"
+    assert my_type_to_python("std::tuple<int, std::vector<std::string>, std::map<int, float>>") == "Tuple[int, List[str], Dict[int, float]]"
+    assert my_type_to_python("std::function<std::optional<std::string>(int, float)>") == "Callable[[int, float], Optional[str]]"
+
+    assert my_type_to_python("void *") == "Any"
 
     # Known limitations
     # =================
     # volatile is not handled
     assert my_type_to_python("volatile int") == "volatile int"
-    # unsigned char is not handled (up the user to decide if it is a char or an int)
+    # unsigned char is not handled (up the user to defined another synonym)
     assert my_type_to_python("unsigned char") == "unsigned char"
-    # Missed allocator in optional (this is a corner case, which we do not handle)
-    assert my_type_to_python("std::optional<int, std::allocator<int>>") == "Optional[int, std.allocator<int]>"

@@ -92,7 +92,7 @@ def test_class_exclude_unhandled_instantiations_from_code():
 
         class FooStruct:
             v1: MyPair_int  # Should be included in bindings
-            def __init__(self, v1: Optional[MyPair<int]> = None) -> None:
+            def __init__(self, v1: Optional[MyPair[int]] = None) -> None:
                 """Auto-generated default constructor with named params
                 ---
                 Python bindings defaults:
@@ -160,7 +160,7 @@ def test_tpl_class_naming_with_replacements():
 
         class Foo:
             configs: ImVector_Config
-            def __init__(self, configs: Optional[ImVector<Config]> = None) -> None:
+            def __init__(self, configs: Optional[ImVector[Config]] = None) -> None:
                 """Auto-generated default constructor with named params
                 ---
                 Python bindings defaults:
@@ -313,7 +313,7 @@ def test_tpl_class_with_synonyms():
 
         class Foo:
             values: MyData_MyInt
-            def __init__(self, values: Optional[MyData<MyInt]> = None) -> None:
+            def __init__(self, values: Optional[MyData[MyInt]] = None) -> None:
                 """Auto-generated default constructor with named params
                 ---
                 Python bindings defaults:

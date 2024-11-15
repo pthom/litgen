@@ -47,6 +47,79 @@ def comment_pydef_one_line(options: LitgenOptions, title_cpp: str) -> str:
     return r
 
 
+def _split_cpp_type_template_args(s: str) -> list[str]:
+        """Split template at level 1,
+        ie
+            "AAA <BBB<CC>DD> EE" -> ["AAA ", "BBB<CC>DD", " EE"]
+        """
+        idx_start = s.find('<')
+        if idx_start == -1:
+            # No '<' found, return the original string in a list
+            return [s]
+
+        # Initialize depth and index
+        depth = 0
+        idx = idx_start
+        idx_end = -1
+        while idx < len(s):
+            if s[idx] == '<':
+                depth += 1
+            elif s[idx] == '>':
+                depth -= 1
+                if depth == 0:
+                    idx_end = idx
+                    break
+            idx += 1
+
+        if idx_end == -1:
+            # No matching '>' found, return the original string in a list
+            return [s]
+
+        # Split the string into before, inside, and after
+        before = s[:idx_start]
+        inside = s[idx_start + 1: idx_end]  # Exclude the outer '<' and '>'
+        after = s[idx_end + 1:]
+        # Reconstruct 'inside' with the outer '<' and '>' if needed
+        # For now, as per your requirement, we exclude them.
+
+        # Since you want 'inside' to include nested templates, we don't split further
+        return [before, inside, after]
+
+def _perform_cpp_type_replacements_recursively(cpp_type_str: str, type_replacements: RegexReplacementList) -> str:
+    # Preprocessing: Remove 'const', '&', and '*' tokens
+    import re
+
+    if '<' not in cpp_type_str:
+        return type_replacements.apply(cpp_type_str)
+
+    # Split at the first level of template arguments
+    tokens = _split_cpp_type_template_args(cpp_type_str)
+    # tokens is [before, inside, after]
+
+    # Apply replacements to 'before' and 'after'
+    before = type_replacements.apply(tokens[0].strip())
+    after = type_replacements.apply(tokens[2].strip())
+
+    # Recursively process 'inside'
+    inside = _perform_cpp_type_replacements_recursively(tokens[1].strip(), type_replacements)
+
+    # Reconstruct the type
+    r = f"{before}<{inside}>{after}"
+    r = type_replacements.apply(r)
+
+    # Replace angle brackets with square brackets as last resort (this means some template regexes are missing)
+    r = r.replace('<', '[').replace('>', ']')
+    # Normalize whitespace
+    r = re.sub(r'\s+', ' ', r).strip()
+
+    cpp_type_str = re.sub(r'\bconst\b', '', cpp_type_str)
+    cpp_type_str = re.sub(r'&', '', cpp_type_str)
+    cpp_type_str = re.sub(r'\*', '', cpp_type_str)
+    cpp_type_str = re.sub(r'\s+', ' ', cpp_type_str).strip()
+
+    return r
+
+
 def type_to_python(lg_context: LitgenContext, cpp_type_str: str) -> str:
     options = lg_context.options
     specialized_type_python_name = options.class_template_options.specialized_type_python_name_str(
@@ -58,7 +131,9 @@ def type_to_python(lg_context: LitgenContext, cpp_type_str: str) -> str:
         r = cpp_type_str
     r = r.replace("static ", "")
     r = r.replace("constexpr ", "")
-    r = options.type_replacements.apply(r).strip()
+
+    r = _perform_cpp_type_replacements_recursively(r, options.type_replacements)
+
     r = r.replace("::", ".")
 
     def normalize_whitespace(s: str) -> str:
