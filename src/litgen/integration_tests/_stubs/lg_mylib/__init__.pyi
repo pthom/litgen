@@ -1102,8 +1102,8 @@ class some_namespace:  # Proxy class that introduces typings for the *submodule*
         inner_enum: InnerEnum = InnerEnum.three
         def __init__(
             self,
-            inner_struct: Optional[SomeNamespace.ParentStruct.InnerStruct] = None,
-            inner_enum: SomeNamespace.ParentStruct.InnerEnum = SomeNamespace.ParentStruct.InnerEnum.three,
+            inner_struct: Optional[ParentStruct.InnerStruct] = None,
+            inner_enum: ParentStruct.InnerEnum = ParentStruct.InnerEnum.three,
         ) -> None:
             """Auto-generated default constructor with named params
             ---
@@ -1212,20 +1212,14 @@ class n:  # Proxy class that introduces typings for the *submodule* n
         pass
     @staticmethod
     @overload
-    def foo(e: Optional[E] = None) -> None:
-        """---
-        Python bindings defaults:
-            If e is None, then its default value will be: N.E.a
-        """
+    def foo(e: E = E.a) -> None:
         pass
     @staticmethod
     @overload
-    def foo(s: Optional[S] = None, e: Optional[E] = None) -> None:
+    def foo(s: Optional[S] = None, e: E = E.a) -> None:
         """---
         Python bindings defaults:
-            If any of the params below is None, then its default value below will be used:
-                s: N.S()
-                e: N.E.a
+            If s is None, then its default value will be: N.S()
         """
         pass
 
@@ -1251,7 +1245,7 @@ class a:  # Proxy class that introduces typings for the *submodule* a
         foo: Foo = Foo.foo1
         s: str = "Allo"  # (const)
         def __init__(
-            self, b: bool = True, a: int = int(), c: int = 3, foo: A.Foo = A.Foo.foo1
+            self, b: bool = True, a: int = int(), c: int = 3, foo: Foo = Foo.foo1
         ) -> None:
             """Auto-generated default constructor with named params"""
             pass
@@ -1276,20 +1270,14 @@ class a:  # Proxy class that introduces typings for the *submodule* a
             pass
         @staticmethod
         @overload
-        def foo(e: Optional[E] = None) -> None:
-            """---
-            Python bindings defaults:
-                If e is None, then its default value will be: A.N.E.a
-            """
+        def foo(e: E = E.a) -> None:
             pass
         @staticmethod
         @overload
-        def foo(s: Optional[S] = None, e: Optional[E] = None) -> None:
+        def foo(s: Optional[S] = None, e: E = E.a) -> None:
             """---
             Python bindings defaults:
-                If any of the params below is None, then its default value below will be used:
-                    s: A.N.S()
-                    e: A.N.E.a
+                If s is None, then its default value will be: A.N.S()
             """
             pass
     # </submodule n>

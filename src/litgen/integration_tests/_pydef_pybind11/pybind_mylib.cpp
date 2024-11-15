@@ -1818,30 +1818,12 @@ void py_init_module_lg_mylib(py::module& m)
             py::overload_cast<N::EC>(N::Foo), py::arg("e") = N::EC::a);
 
         pyNsN.def("foo",
-            [](const std::optional<const N::E> & e = std::nullopt)
-            {
-                auto Foo_adapt_mutable_param_with_default_value = [](const std::optional<const N::E> & e = std::nullopt)
-                {
-
-                    const N::E& e_or_default = [&]() -> const N::E {
-                        if (e.has_value())
-                            return e.value();
-                        else
-                            return N::E_a;
-                    }();
-
-                    N::Foo(e_or_default);
-                };
-
-                Foo_adapt_mutable_param_with_default_value(e);
-            },
-            py::arg("e") = py::none(),
-            "---\nPython bindings defaults:\n    If e is None, then its default value will be: N.E.a");
+            py::overload_cast<N::E>(N::Foo), py::arg("e") = N::E_a);
 
         pyNsN.def("foo",
-            [](const std::optional<const N::S> & s = std::nullopt, const std::optional<const N::E> & e = std::nullopt)
+            [](const std::optional<const N::S> & s = std::nullopt, N::E e = N::E_a)
             {
-                auto Foo_adapt_mutable_param_with_default_value = [](const std::optional<const N::S> & s = std::nullopt, const std::optional<const N::E> & e = std::nullopt)
+                auto Foo_adapt_mutable_param_with_default_value = [](const std::optional<const N::S> & s = std::nullopt, N::E e = N::E_a)
                 {
 
                     const N::S& s_or_default = [&]() -> const N::S {
@@ -1851,20 +1833,13 @@ void py_init_module_lg_mylib(py::module& m)
                             return N::S();
                     }();
 
-                    const N::E& e_or_default = [&]() -> const N::E {
-                        if (e.has_value())
-                            return e.value();
-                        else
-                            return N::E_a;
-                    }();
-
-                    N::Foo(s_or_default, e_or_default);
+                    N::Foo(s_or_default, e);
                 };
 
                 Foo_adapt_mutable_param_with_default_value(s, e);
             },
-            py::arg("s") = py::none(), py::arg("e") = py::none(),
-            "---\nPython bindings defaults:\n    If any of the params below is None, then its default value below will be used:\n        s: N.S()\n        e: N.E.a");
+            py::arg("s") = py::none(), py::arg("e") = N::E_a,
+            "---\nPython bindings defaults:\n    If s is None, then its default value will be: N.S()");
     } // </namespace N>
 
     { // <namespace A>
@@ -1920,30 +1895,12 @@ void py_init_module_lg_mylib(py::module& m)
                 py::overload_cast<A::N::EC>(A::N::Foo), py::arg("e") = A::N::EC::a);
 
             pyNsA_NsN.def("foo",
-                [](const std::optional<const A::N::E> & e = std::nullopt)
-                {
-                    auto Foo_adapt_mutable_param_with_default_value = [](const std::optional<const A::N::E> & e = std::nullopt)
-                    {
-
-                        const A::N::E& e_or_default = [&]() -> const A::N::E {
-                            if (e.has_value())
-                                return e.value();
-                            else
-                                return A::N::E_a;
-                        }();
-
-                        A::N::Foo(e_or_default);
-                    };
-
-                    Foo_adapt_mutable_param_with_default_value(e);
-                },
-                py::arg("e") = py::none(),
-                "---\nPython bindings defaults:\n    If e is None, then its default value will be: A.N.E.a");
+                py::overload_cast<A::N::E>(A::N::Foo), py::arg("e") = A::N::E_a);
 
             pyNsA_NsN.def("foo",
-                [](const std::optional<const A::N::S> & s = std::nullopt, const std::optional<const A::N::E> & e = std::nullopt)
+                [](const std::optional<const A::N::S> & s = std::nullopt, A::N::E e = A::N::E_a)
                 {
-                    auto Foo_adapt_mutable_param_with_default_value = [](const std::optional<const A::N::S> & s = std::nullopt, const std::optional<const A::N::E> & e = std::nullopt)
+                    auto Foo_adapt_mutable_param_with_default_value = [](const std::optional<const A::N::S> & s = std::nullopt, A::N::E e = A::N::E_a)
                     {
 
                         const A::N::S& s_or_default = [&]() -> const A::N::S {
@@ -1953,20 +1910,13 @@ void py_init_module_lg_mylib(py::module& m)
                                 return A::N::S();
                         }();
 
-                        const A::N::E& e_or_default = [&]() -> const A::N::E {
-                            if (e.has_value())
-                                return e.value();
-                            else
-                                return A::N::E_a;
-                        }();
-
-                        A::N::Foo(s_or_default, e_or_default);
+                        A::N::Foo(s_or_default, e);
                     };
 
                     Foo_adapt_mutable_param_with_default_value(s, e);
                 },
-                py::arg("s") = py::none(), py::arg("e") = py::none(),
-                "---\nPython bindings defaults:\n    If any of the params below is None, then its default value below will be used:\n        s: A.N.S()\n        e: A.N.E.a");
+                py::arg("s") = py::none(), py::arg("e") = A::N::E_a,
+                "---\nPython bindings defaults:\n    If s is None, then its default value will be: A.N.S()");
         } // </namespace N>
 
     } // </namespace A>
