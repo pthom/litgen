@@ -568,11 +568,20 @@ def assert_are_equal_ignore_spaces(generated_code: Any, expected_code: str) -> N
         diff_str = make_nice_code_diff(generated_processed, expected_processed)
         logging.error(
             f"""assert_are_equal_ignore_spaces returns false
+
+                    ========================
                     with diff=
+                    ========================
 {str(diff_str)}
+
+                    ========================
                     expected_processed=
+                    ========================
 {expected_processed}
+
+                    ========================
                     and generated_processed=
+                    ========================
 {generated_processed}
         """
         )
@@ -592,11 +601,19 @@ def assert_are_codes_equal(generated_code: Any, expected_code: str) -> None:
         diff_str = make_nice_code_diff(generated_processed, expected_processed)
         logging.error(
             f"""assert_are_codes_equal returns false
+                    ========================
                     with diff=
+                    ========================
 {str(diff_str)}
+
+                    ========================
                     expected_processed=
+                    ========================
 {expected_processed}
+
+                    ========================
                     and generated_processed=
+                    ========================
 {generated_processed}
         """
         )
