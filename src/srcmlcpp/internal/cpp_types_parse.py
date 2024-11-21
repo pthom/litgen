@@ -576,6 +576,13 @@ def fill_constructor_decl(
                 constructor_decl.cpp_element_comments.comment_end_of_line += " " + child_text
         elif child_tag == "attribute":
             pass  # compiler options, such as [[gnu::optimize(0)]]
+        elif child_tag == "noexcept":
+            arg_list = child.wrapped_child_with_tag("argument_list")
+            if arg_list is None:
+                constructor_decl._noexcept = ""
+            else:
+                constructor_decl._noexcept = arg_list.str_code_verbatim()
+            print(f"noexcept: {constructor_decl._noexcept}")
         elif child_tag in ["block", "member_init_list"]:
             pass  # will be handled by parse_constructor
         else:

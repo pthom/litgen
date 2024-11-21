@@ -899,3 +899,31 @@ def test_instantiated_template() -> None:
     #     class Foo:
     #         values: ImVector_int
     #         def __init__(self, values: Optional[ImVector[int]] = None) -> None:
+
+
+def test_noexcept():
+    code = """
+    struct GlTexture
+    {
+        GlTexture();
+         GlTexture(GlTexture&& other) noexcept = default;
+         GlTexture(Foo&& f) noexcept(false);
+    };
+    """
+    options = litgen.LitgenOptions()
+    generated_code = litgen.generate_code(options, code)
+    # print("\n" + generated_code.pydef_code)
+    code_utils.assert_are_codes_equal(
+        generated_code.pydef_code,
+        """
+        auto pyClassGlTexture =
+            py::class_<GlTexture>
+                (m, "GlTexture", "")
+            .def(py::init<>())
+            .def(py::init<GlTexture &&>(),
+                py::arg("other"))
+            .def(py::init<Foo &&>(),
+                py::arg("f"))
+            ;
+        """
+        )
