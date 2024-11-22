@@ -100,6 +100,7 @@ class LitgenOptions:
     # - by default, the others are empty
     # - type_replacements, var_names_replacements and function_names_replacements enable you
     #   to modify the outputted python code
+    # - fn_parameters_type_replacements can be used to modify types when used as function parameters
     type_replacements: RegexReplacementList  # = cpp_to_python.standard_type_replacements() by default
     var_names_replacements: RegexReplacementList  # = RegexReplacementList() by default (i.e. empty)
     namespace_names_replacements: RegexReplacementList  # = RegexReplacementList() by default (i.e. empty)
@@ -107,6 +108,7 @@ class LitgenOptions:
     value_replacements: RegexReplacementList  # = cpp_to_python.standard_value_replacements() by default
     comments_replacements: RegexReplacementList  # = cpp_to_python.standard_comment_replacements() by default
     macro_name_replacements: RegexReplacementList  # = RegexReplacementList() by default (i.e. empty)
+    fn_params_type_replacements: RegexReplacementList # = RegexReplacementList() by default (i.e. empty)
 
     ################################################################################
     #    <functions and method adaptations>
@@ -695,6 +697,7 @@ class LitgenOptions:
         self.var_names_replacements = RegexReplacementList()
         self.macro_name_replacements = RegexReplacementList()
         self.namespace_names_replacements = RegexReplacementList()
+        self.fn_params_type_replacements = RegexReplacementList()
 
         self.fn_template_options = TemplateFunctionsOptions()
         self.class_template_options = TemplateClassOptions()

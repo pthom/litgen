@@ -16,6 +16,10 @@ class RegexReplacement:
         return r
 
     @staticmethod
+    def replace_whole_word(s: str) -> RegexReplacement:
+        return RegexReplacement(r"\b" + s + r"\b", s)
+
+    @staticmethod
     def from_string(line: str) -> RegexReplacement:
         """
         Parses a string of the form
@@ -66,6 +70,16 @@ class RegexReplacementList:
     def add_last_replacement(self, replace_what_regex: str, by_what: str) -> None:
         r = RegexReplacement(replace_what_regex, by_what)
         self.add_last_regex_replacement(r)
+
+    def add_replacement(self, replace_what_regex: str, by_what: str) -> None:
+        self.add_last_replacement(replace_what_regex, by_what)
+
+    def add_replacements(self, replacements: list[RegexReplacement | tuple[str, str]]) -> None:
+        for replacement in replacements:
+            if isinstance(replacement, tuple):
+                self.add_last_replacement(replacement[0], replacement[1])
+            else:
+                self.add_last_regex_replacement(replacement)
 
     def add_first_regex_replacement(self, replacement: RegexReplacement) -> None:
         self.replacements = [replacement] + self.replacements

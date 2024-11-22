@@ -1243,19 +1243,21 @@ class AdaptedFunction(AdaptedElement):
             param_type_cpp = param_decl.cpp_type.str_code()
 
             # Handle *args and **kwargs
-            param_type_cpp_simplified = (
-                param_type_cpp.replace("const ", "")
-                .replace("pybind11::", "py::")
-                .replace(" &", "")
-                .replace("nanobind::", "nb::")
-            )
-            if param_type_cpp_simplified == "py::args" or param_type_cpp_simplified == "nb::args":
-                r.append("*args")
-                continue
-            if param_type_cpp_simplified == "py::kwargs" or param_type_cpp_simplified == "nb::kwargs":
-                r.append("**kwargs")
-                continue
+            if True:
+                param_type_cpp_simplified = (
+                    param_type_cpp.replace("const ", "")
+                    .replace("pybind11::", "py::")
+                    .replace(" &", "")
+                    .replace("nanobind::", "nb::")
+                )
+                if param_type_cpp_simplified == "py::args" or param_type_cpp_simplified == "nb::args":
+                    r.append("*args")
+                    continue
+                if param_type_cpp_simplified == "py::kwargs" or param_type_cpp_simplified == "nb::kwargs":
+                    r.append("**kwargs")
+                    continue
 
+            param_type_cpp = self.options.fn_params_type_replacements.apply(param_type_cpp)
             param_type_python = cpp_to_python.type_to_python(self.lg_context, param_type_cpp)
             # Add Optional to param_type_python if cpp_type is a pointer with default = nullptr or NULL
             if "*" in param_decl.cpp_type.modifiers and param_decl.initial_value_code in ["NULL", "nullptr"]:
