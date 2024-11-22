@@ -1232,16 +1232,13 @@ void py_init_module_lg_mylib(nb::module_& m)
     auto pyClassFooBrace =
         nb::class_<FooBrace>
             (m, "FooBrace", "")
-        .def("__init__", [](FooBrace * self, const std::optional<const std::vector<int>> & int_values = std::nullopt)
+        .def("__init__", [](FooBrace * self, std::vector<int> int_values = {1, 2, 3})
         {
             new (self) FooBrace();  // placement new
             auto r = self;
-            if (int_values.has_value())
-                r->int_values = int_values.value();
-            else
-                r->int_values = {1, 2, 3};
+            r->int_values = int_values;
         },
-        nb::arg("int_values") = nb::none()
+        nb::arg("int_values") = std::vector<int>{1, 2, 3}
         )
         .def_rw("int_values", &FooBrace::int_values, "")
         .def_rw("dict_string_int", &FooBrace::dict_string_int, "")
@@ -1357,17 +1354,14 @@ void py_init_module_lg_mylib(nb::module_& m)
         } // end of inner classes & enums of ParentStruct
 
         pyNsSomeNamespace_ClassParentStruct
-            .def("__init__", [](SomeNamespace::ParentStruct * self, const std::optional<const SomeNamespace::ParentStruct::InnerStruct> & inner_struct = std::nullopt, SomeNamespace::ParentStruct::InnerEnum inner_enum = SomeNamespace::ParentStruct::InnerEnum::Three)
+            .def("__init__", [](SomeNamespace::ParentStruct * self, SomeNamespace::ParentStruct::InnerStruct inner_struct = SomeNamespace::ParentStruct::InnerStruct(), SomeNamespace::ParentStruct::InnerEnum inner_enum = SomeNamespace::ParentStruct::InnerEnum::Three)
             {
                 new (self) SomeNamespace::ParentStruct();  // placement new
                 auto r = self;
-                if (inner_struct.has_value())
-                    r->inner_struct = inner_struct.value();
-                else
-                    r->inner_struct = SomeNamespace::ParentStruct::InnerStruct();
+                r->inner_struct = inner_struct;
                 r->inner_enum = inner_enum;
             },
-            nb::arg("inner_struct") = nb::none(), nb::arg("inner_enum") = SomeNamespace::ParentStruct::InnerEnum::Three
+            nb::arg("inner_struct") = SomeNamespace::ParentStruct::InnerStruct(), nb::arg("inner_enum") = SomeNamespace::ParentStruct::InnerEnum::Three
             )
             .def_rw("inner_struct", &SomeNamespace::ParentStruct::inner_struct, "")
             .def_rw("inner_enum", &SomeNamespace::ParentStruct::inner_enum, "")
