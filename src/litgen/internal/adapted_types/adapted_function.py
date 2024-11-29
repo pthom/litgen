@@ -942,7 +942,10 @@ class AdaptedFunction(AdaptedElement):
 
         if (matches_regex_pointer and returns_pointer) or (matches_regex_reference and returns_reference):
             self.return_value_policy = "reference"
-
+        
+        if options.fn_return_force_policy_reference__callback:
+            options.fn_return_force_policy_reference__callback(self)
+            
     def _pydef_fill_call_policy_from_function_comment(self, call_policy_token: str) -> str | None:
         function_comment = self.cpp_element().cpp_element_comments.comments_as_str()
         if call_policy_token in function_comment:

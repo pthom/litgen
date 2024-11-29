@@ -10,6 +10,7 @@ from srcmlcpp import SrcmlcppOptions
 
 from litgen.internal.template_options import TemplateFunctionsOptions, TemplateClassOptions
 from litgen.internal.class_iterable_info import ClassIterablesInfos
+from litgen.internal.adapted_types import AdaptedFunction
 
 
 class BindLibraryType(Enum):
@@ -210,7 +211,10 @@ class LitgenOptions:
     #    See packages/litgen/integration_tests/mylib/include/mylib/return_value_policy_test.h as an example
     fn_return_force_policy_reference_for_pointers__regex: str = ""
     fn_return_force_policy_reference_for_references__regex: str = ""
-
+    # 
+    # The callback provides a flexible way to enforce the reference return policy for functions
+    fn_return_force_policy_reference__callback: Callable[[AdaptedFunction]] | None = None
+    
     # ------------------------------------------------------------------------------
     # Force overload
     # ------------------------------------------------------------------------------
