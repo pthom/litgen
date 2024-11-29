@@ -721,23 +721,16 @@ def standard_type_replacements() -> RegexReplacementList:
 
 
 def standard_value_replacements() -> RegexReplacementList:
-    """Replacements for C++ code when translating to python.
-
-    Consists mostly of
-    * number translation (e.g. `1.5f` -> `1.5`)
-    """
+    """Replacements for C++ code when translating to Python."""
     replacements_str = r"""
-
     \btrue\b -> True
     \bfalse\b -> False
     \bvoid\s*\* -> Any
     \bvoid\b -> None
     \bNULL\b -> None
     \bnullptr\b -> None
-    \std::nullopt\b -> None
-    ^std::nullopt\b$ -> None
-    \std.nullopt\b -> None
-    ^std.nullopt\b$ -> None
+    \bstd::nullopt\b -> None
+    \bstd.nullopt\b -> None
 
     \bstd::string\(\) -> ""
     \bstd.string\(\) -> ""
@@ -749,14 +742,14 @@ def standard_value_replacements() -> RegexReplacementList:
     \bLDBL_MIN\b -> sys.float_info.min
     \bLDBL_MAX\b -> sys.float_info.max
 
-
-    ([+-]?[0-9]+([.][0-9]*)?|[.][0-9]+)(d?) -> \1
-    ([+-]?[0-9]+([.][0-9]*)?|[.][0-9]+)(f?) -> \1
-
+    ([0-9])'([0-9]) -> \1_\2
+    (?<![a-zA-Z0-9])([+-]?[0-9]+(?:\.[0-9]*)?(?:[eE][+-]?[0-9]+)?)([fFdD])(?=\W|$) -> \1
     :: -> .
     """
-    # Note: the two last regexes replace C numbers like 1.5f or 1.5d by 1.5
-
+    # Explanation of the last regexes:
+    #   ([0-9])'([0-9]) -> \1_\2 # Replace 1'000 by 1_000
+    #   (?<![a-zA-Z0-9])([+-]?[0-9]+(?:\.[0-9]*)?(?:[eE][+-]?[0-9]+)?)([fFdD])(?=\W|$) -> \1
+    #      Replace C numbers like 1.5f or 1.5d by 1.5
     replaces = RegexReplacementList.from_string(replacements_str)
     return replaces
 
