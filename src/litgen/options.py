@@ -213,7 +213,7 @@ class LitgenOptions:
     fn_return_force_policy_reference_for_references__regex: str = ""
     # 
     # The callback provides a flexible way to enforce the reference return policy for functions
-    fn_return_force_policy_reference__callback: Callable[[AdaptedFunction]] | None = None
+    fn_return_force_policy_reference__callback: Callable[[AdaptedFunction], None] | None = None
     
     # ------------------------------------------------------------------------------
     # Force overload
