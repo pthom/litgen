@@ -2,10 +2,14 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Optional
 
+from codemanip import code_utils
+
 import srcmlcpp
 from srcmlcpp import srcmlcpp_main
 from srcmlcpp.cpp_types import CppFunctionDecl
 
+import litgen
+from litgen import litgen_generator
 
 @dataclass
 class AdaptedFunction2(CppFunctionDecl):
@@ -31,3 +35,44 @@ def test_inherit():
     cpp_function = srcmlcpp_main.code_first_child_of_type(options, CppFunctionDecl, code)
     assert isinstance(cpp_function, CppFunctionDecl)
     _ = AdaptedFunction2(cpp_function, "Foo")
+
+
+def test_lambda_correctly_returns_reference():
+    """
+    Test for check the "auto& lambda_result" has a reference
+    """
+    options = litgen.LitgenOptions()
+    code = """
+    class MyClass {
+    public:
+        MyClass& setArray(const uint8_t arr[20]) {
+            memcpy(_signature, arr, sizeof(arr));
+            return *this;
+        }
+    private:
+        uint8_t _arr[20];
+    };
+    """
+
+    generated_code = litgen.generate_code(options, code)
+    code_utils.assert_are_codes_equal(
+        generated_code.pydef_code,
+        """
+        auto pyClassMyClass =
+            py::class_<MyClass>
+                (m, "MyClass", "")
+            .def(py::init<>()) // implicit default constructor
+            .def("set_array",
+                [](MyClass & self, const std::array<uint8_t, 20>& arr) -> MyClass &
+                {
+                    auto setArray_adapt_fixed_size_c_arrays = [&self](const std::array<uint8_t, 20>& arr) -> MyClass &
+                    {
+                        auto& lambda_result = self.setArray(arr.data());
+                        return lambda_result;
+                    };
+
+                    return setArray_adapt_fixed_size_c_arrays(arr);
+                },     py::arg("arr"))
+            ;
+    """,
+    )
