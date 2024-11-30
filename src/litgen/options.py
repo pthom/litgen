@@ -522,6 +522,11 @@ class LitgenOptions:
     # the generated classes together
     class_template_decorate_in_stub: bool = True
 
+    # This callback Callback to customize the base classes used in generated bindings
+    # First param is the AdoptedClass
+    # Second indicates context - True for python stub, False for CPP bindings
+    class_base_custom_derivation__callback: Callable[[Any, bool], list[str]] | None = None
+
     # ------------------------------------------------------------------------------
     # Adapt class members
     # ------------------------------------------------------------------------------
