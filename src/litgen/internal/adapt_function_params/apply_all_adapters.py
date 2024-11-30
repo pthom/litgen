@@ -161,7 +161,12 @@ def _make_adapted_lambda_code_end(adapted_function: AdaptedFunction, lambda_adap
 
     # Fill auto_r_equal_or_void
     _fn_return_type = adapted_function.cpp_adapted_function.str_full_return_type()
-    auto_r_equal_or_void = "auto lambda_result = " if _fn_return_type != "void" else ""
+    _return_referenced = False
+
+    if hasattr(adapted_function.cpp_element(), "return_type"):
+        _return_referenced = '&' in adapted_function.cpp_element().return_type.modifiers
+
+    auto_r_equal_or_void = ("auto" + ("&" if _return_referenced else "") + " lambda_result = ") if _fn_return_type != "void" else ""
 
     # Fill function_or_lambda_to_call
     if adapted_function.lambda_to_call is not None:
