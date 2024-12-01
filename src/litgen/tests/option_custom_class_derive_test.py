@@ -81,5 +81,3 @@ def test_custom_classes_base_option():
                 pass
       """,
     )
-
-test_custom_classes_base_option()
