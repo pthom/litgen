@@ -11,7 +11,6 @@ from srcmlcpp import SrcmlcppOptions
 from litgen.internal.template_options import TemplateFunctionsOptions, TemplateClassOptions
 from litgen.internal.class_iterable_info import ClassIterablesInfos
 
-
 class BindLibraryType(Enum):
     pybind11 = 1
     nanobind = 2
@@ -210,7 +209,11 @@ class LitgenOptions:
     #    See packages/litgen/integration_tests/mylib/include/mylib/return_value_policy_test.h as an example
     fn_return_force_policy_reference_for_pointers__regex: str = ""
     fn_return_force_policy_reference_for_references__regex: str = ""
-
+    # 
+    # The callback provides a flexible way to enforce the reference return policy for functions
+    # callback takes litgen.internal.adapted_types.AdaptedFunction as the parameter
+    fn_return_force_policy_reference__callback: Callable[[Any], None] | None = None
+    
     # ------------------------------------------------------------------------------
     # Force overload
     # ------------------------------------------------------------------------------
