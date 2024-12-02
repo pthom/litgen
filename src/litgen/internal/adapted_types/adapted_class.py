@@ -469,13 +469,24 @@ class AdaptedClass(AdaptedElement):
 
         def str_parent_classes_python() -> str:
             parents: list[str] = []
-            if not self.cpp_element().has_base_classes():
+            custom_derived = (
+                []
+                if not self.options.class_custom_inheritance__callback
+                else self.options.class_custom_inheritance__callback(self, litgen.GeneratedCodeType.stub)
+            )
+
+            if not custom_derived and not self.cpp_element().has_base_classes():
                 return ""
-            for _access_type, base_class in self.cpp_element().base_classes():
-                class_python_scope = cpp_to_python.cpp_scope_to_pybind_scope_str(
-                    self.options, base_class, include_self=True
-                )
-                parents.append(class_python_scope)
+
+            if custom_derived:
+                for custom_base in custom_derived:
+                    parents.append(custom_base)
+            else:
+                for _access_type, base_class in self.cpp_element().base_classes():
+                    class_python_scope = cpp_to_python.cpp_scope_to_pybind_scope_str(
+                        self.options, base_class, include_self=True
+                    )
+                    parents.append(class_python_scope)
             if len(parents) == 0:
                 return ""
             else:
@@ -604,11 +615,21 @@ class AdaptedClass(AdaptedElement):
 
             # fill py::class_ additional template params (base classes, nodelete, etc)
             other_template_params_list = []
-            if self.cpp_element().has_base_classes():
+            custom_derived = (
+                []
+                if not self.options.class_custom_inheritance__callback
+                else self.options.class_custom_inheritance__callback(self, litgen.GeneratedCodeType.pydef)
+            )
+
+            if custom_derived:
+                for custom_base in custom_derived:
+                    other_template_params_list.append(custom_base)
+            elif self.cpp_element().has_base_classes():
                 base_classes = self.cpp_element().base_classes()
                 for access_type, base_class in base_classes:
                     if access_type == CppAccessType.public or access_type == CppAccessType.protected:
                         other_template_params_list.append(base_class.cpp_scope_str(include_self=True))
+
             if self.cpp_element().has_private_destructor() and options.bind_library == BindLibraryType.pybind11:
                 # nanobind does not support nodelete
                 other_template_params_list.append(f"std::unique_ptr<{qualified_struct_name}, py::nodelete>")

@@ -16,6 +16,7 @@ from litgen.internal.cpp_to_python import (
 from litgen.litgen_generator import (
     LitgenGenerator,
     GeneratedCodes,
+    GeneratedCodeType,
     write_generated_code_for_files,
     write_generated_code_for_file,
     generate_code,
@@ -37,6 +38,7 @@ __all__ = [
     # When it is needed to have different options per c++ header file
     "LitgenGenerator",
     "GeneratedCodes",
+    "GeneratedCodeType",
     "generate_code_for_file",
     # Configure replacements
     "standard_type_replacements",

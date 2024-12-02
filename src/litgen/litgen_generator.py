@@ -3,6 +3,7 @@ import logging
 import os
 import subprocess
 from dataclasses import dataclass
+from enum import Enum
 
 from codemanip import code_utils
 
@@ -59,6 +60,12 @@ def apply_black_formatter_pyi(options: LitgenOptions, file: str) -> bool:
             return False
 
     return _apply_black_formatter_pyi_via_subprocess(options, file)
+
+
+class GeneratedCodeType(Enum):
+    pydef = 1
+    stub = 2
+    glue = 3
 
 
 @dataclass
