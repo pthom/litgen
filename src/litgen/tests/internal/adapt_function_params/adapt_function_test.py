@@ -9,7 +9,7 @@ from srcmlcpp import srcmlcpp_main
 from srcmlcpp.cpp_types import CppFunctionDecl
 
 import litgen
-from litgen import litgen_generator
+
 
 @dataclass
 class AdaptedFunction2(CppFunctionDecl):

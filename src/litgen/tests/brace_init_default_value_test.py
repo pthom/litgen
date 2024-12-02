@@ -28,10 +28,10 @@ def test_fn_brace():
     )
     code_utils.assert_are_codes_equal(
         generated_code.stub_code,
-        '''
+        """
         def f(v: V = V(1, 2)) -> None:
             pass
-            '''
+            """,
     )
 
 

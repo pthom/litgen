@@ -48,48 +48,49 @@ def comment_pydef_one_line(options: LitgenOptions, title_cpp: str) -> str:
 
 
 def _split_cpp_type_template_args(s: str) -> list[str]:
-        """Split template at level 1,
-        ie
-            "AAA <BBB<CC>DD> EE" -> ["AAA ", "BBB<CC>DD", " EE"]
-        """
-        idx_start = s.find('<')
-        if idx_start == -1:
-            # No '<' found, return the original string in a list
-            return [s]
+    """Split template at level 1,
+    ie
+        "AAA <BBB<CC>DD> EE" -> ["AAA ", "BBB<CC>DD", " EE"]
+    """
+    idx_start = s.find("<")
+    if idx_start == -1:
+        # No '<' found, return the original string in a list
+        return [s]
 
-        # Initialize depth and index
-        depth = 0
-        idx = idx_start
-        idx_end = -1
-        while idx < len(s):
-            if s[idx] == '<':
-                depth += 1
-            elif s[idx] == '>':
-                depth -= 1
-                if depth == 0:
-                    idx_end = idx
-                    break
-            idx += 1
+    # Initialize depth and index
+    depth = 0
+    idx = idx_start
+    idx_end = -1
+    while idx < len(s):
+        if s[idx] == "<":
+            depth += 1
+        elif s[idx] == ">":
+            depth -= 1
+            if depth == 0:
+                idx_end = idx
+                break
+        idx += 1
 
-        if idx_end == -1:
-            # No matching '>' found, return the original string in a list
-            return [s]
+    if idx_end == -1:
+        # No matching '>' found, return the original string in a list
+        return [s]
 
-        # Split the string into before, inside, and after
-        before = s[:idx_start]
-        inside = s[idx_start + 1: idx_end]  # Exclude the outer '<' and '>'
-        after = s[idx_end + 1:]
-        # Reconstruct 'inside' with the outer '<' and '>' if needed
-        # For now, as per your requirement, we exclude them.
+    # Split the string into before, inside, and after
+    before = s[:idx_start]
+    inside = s[idx_start + 1 : idx_end]  # Exclude the outer '<' and '>'
+    after = s[idx_end + 1 :]
+    # Reconstruct 'inside' with the outer '<' and '>' if needed
+    # For now, as per your requirement, we exclude them.
 
-        # Since you want 'inside' to include nested templates, we don't split further
-        return [before, inside, after]
+    # Since you want 'inside' to include nested templates, we don't split further
+    return [before, inside, after]
+
 
 def _perform_cpp_type_replacements_recursively(cpp_type_str: str, type_replacements: RegexReplacementList) -> str:
     # Preprocessing: Remove 'const', '&', and '*' tokens
     import re
 
-    if '<' not in cpp_type_str:
+    if "<" not in cpp_type_str:
         return type_replacements.apply(cpp_type_str)
 
     # Split at the first level of template arguments
@@ -108,14 +109,14 @@ def _perform_cpp_type_replacements_recursively(cpp_type_str: str, type_replaceme
     r = type_replacements.apply(r)
 
     # Replace angle brackets with square brackets as last resort (this means some template regexes are missing)
-    r = r.replace('<', '[').replace('>', ']')
+    r = r.replace("<", "[").replace(">", "]")
     # Normalize whitespace
-    r = re.sub(r'\s+', ' ', r).strip()
+    r = re.sub(r"\s+", " ", r).strip()
 
-    cpp_type_str = re.sub(r'\bconst\b', '', cpp_type_str)
-    cpp_type_str = re.sub(r'&', '', cpp_type_str)
-    cpp_type_str = re.sub(r'\*', '', cpp_type_str)
-    cpp_type_str = re.sub(r'\s+', ' ', cpp_type_str).strip()
+    cpp_type_str = re.sub(r"\bconst\b", "", cpp_type_str)
+    cpp_type_str = re.sub(r"&", "", cpp_type_str)
+    cpp_type_str = re.sub(r"\*", "", cpp_type_str)
+    cpp_type_str = re.sub(r"\s+", " ", cpp_type_str).strip()
 
     return r
 
@@ -138,7 +139,9 @@ def type_to_python(lg_context: LitgenContext, cpp_type_str: str) -> str:
 
     def normalize_whitespace(s: str) -> str:
         import re
-        return re.sub(r'\s+', ' ', s).strip()
+
+        return re.sub(r"\s+", " ", s).strip()
+
     r = normalize_whitespace(r)
 
     # Fix for std::optional (issue origin unknown)
@@ -231,12 +234,9 @@ def var_value_to_python(lg_context: LitgenContext, default_value_cpp: str) -> st
     for cpp_namespace_name in options.namespaces_root:
         r = r.replace(cpp_namespace_name + ".", "")
 
-
     # If this default value uses a bound template type, try to translate it
-    specialized_type_python_default_value = (
-        options.class_template_options.specialized_type_python_default_value(
-            default_value_cpp, lg_context.options.type_replacements
-        )
+    specialized_type_python_default_value = options.class_template_options.specialized_type_python_default_value(
+        default_value_cpp, lg_context.options.type_replacements
     )
     if specialized_type_python_default_value is not None:
         r = specialized_type_python_default_value

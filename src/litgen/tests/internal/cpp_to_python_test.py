@@ -24,17 +24,17 @@ def test_standard_replacements():
     assert replacements.apply("a = -1E+2f;") == "a = -1E+2;"
 
     # Hexadecimal literals
-    assert replacements.apply("a = 0x7000000e;" ) == "a = 0x7000000e;"
-    assert replacements.apply("a = 0x7000000f;" ) == "a = 0x7000000f;"
-    assert replacements.apply("a = 0XABCD;" ) == "a = 0XABCD;"
+    assert replacements.apply("a = 0x7000000e;") == "a = 0x7000000e;"
+    assert replacements.apply("a = 0x7000000f;") == "a = 0x7000000f;"
+    assert replacements.apply("a = 0XABCD;") == "a = 0XABCD;"
 
     # Octal literals
-    assert replacements.apply("a = 0755;" ) == "a = 0755;"  # Classic octal
-    assert replacements.apply("a = 0o755;" ) == "a = 0o755;"  # Modern octal
+    assert replacements.apply("a = 0755;") == "a = 0755;"  # Classic octal
+    assert replacements.apply("a = 0o755;") == "a = 0o755;"  # Modern octal
 
     # Binary literals
-    assert replacements.apply("a = 0b1010;" ) == "a = 0b1010;"
-    assert replacements.apply("a = 0B1010;" ) == "a = 0B1010;"
+    assert replacements.apply("a = 0b1010;") == "a = 0b1010;"
+    assert replacements.apply("a = 0B1010;") == "a = 0B1010;"
 
     # True/false replacements
     assert replacements.apply("flag = true;") == "flag = True;"
@@ -79,8 +79,10 @@ def test_std_array():
 
 def test_type_to_python() -> None:
     from litgen.internal.context.litgen_context import LitgenContext
+
     options = litgen.LitgenOptions()
     lg_context = LitgenContext(options)
+
     def my_type_to_python(s: str) -> str:
         return cpp_to_python.type_to_python(lg_context, s)
 
@@ -98,19 +100,30 @@ def test_type_to_python() -> None:
     assert my_type_to_python("std::tuple<int, float, std::string>") == "Tuple[int, float, str]"
     assert my_type_to_python("std::variant<int, float, std::string>") == "Union[int, float, str]"
     assert my_type_to_python("std::vector<std::map<int, std::vector<std::string>>>") == "List[Dict[int, List[str]]]"
-    assert my_type_to_python("std::function<void(std::vector<int>&, const std::string&)>") == "Callable[[List[int], str], None]"
+    assert (
+        my_type_to_python("std::function<void(std::vector<int>&, const std::string&)>")
+        == "Callable[[List[int], str], None]"
+    )
     assert my_type_to_python("std::optional<int, std::allocator<int>>") == "Optional[int, std.allocator[int]]"
     assert my_type_to_python("const std::optional<const MyVector<Inner>> &") == "Optional[MyVector[Inner]]"
     assert my_type_to_python("const std::optional<const std::vector<Inner>> &") == "Optional[List[Inner]]"
 
     assert my_type_to_python("std::function<void(int)>") == "Callable[[int], None]"
     assert my_type_to_python("std::function<int(std::string, double)>") == "Callable[[str, float], int]"
-    assert my_type_to_python(
-        "std::function<void(std::vector<int>&, const std::string&)>") == "Callable[[List[int], str], None]"
+    assert (
+        my_type_to_python("std::function<void(std::vector<int>&, const std::string&)>")
+        == "Callable[[List[int], str], None]"
+    )
 
     assert my_type_to_python("std::vector<std::map<int, std::vector<std::string>>>") == "List[Dict[int, List[str]]]"
-    assert my_type_to_python("std::tuple<int, std::vector<std::string>, std::map<int, float>>") == "Tuple[int, List[str], Dict[int, float]]"
-    assert my_type_to_python("std::function<std::optional<std::string>(int, float)>") == "Callable[[int, float], Optional[str]]"
+    assert (
+        my_type_to_python("std::tuple<int, std::vector<std::string>, std::map<int, float>>")
+        == "Tuple[int, List[str], Dict[int, float]]"
+    )
+    assert (
+        my_type_to_python("std::function<std::optional<std::string>(int, float)>")
+        == "Callable[[int, float], Optional[str]]"
+    )
 
     assert my_type_to_python("void *") == "Any"
 

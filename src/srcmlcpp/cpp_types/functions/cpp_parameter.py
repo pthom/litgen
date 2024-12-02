@@ -76,7 +76,6 @@ _BASE_IMMUTABLE_TYPES = [
     "short",
     "signed short",
     "unsigned short",
-
     # Base floating point types
     "float",
     "double",
@@ -84,20 +83,16 @@ _BASE_IMMUTABLE_TYPES = [
     "float32_t",
     "float64_t",
     "float128_t",
-
     # Boolean type
     "bool",
-
     # String types
     "std::string",
     "std::string_view",
     "std::wstring",
     "std::u16string",
     "std::u32string",
-
     # Byte type
     "std::byte",
-
     # Fixed-width integer types
     "int8_t",
     "int16_t",
@@ -109,7 +104,6 @@ _BASE_IMMUTABLE_TYPES = [
     "uint64_t",
     "intptr_t",
     "uintptr_t",
-
     # Size types
     "size_t",
     "ssize_t",
@@ -118,9 +112,9 @@ _BASE_IMMUTABLE_TYPES = [
 
 
 def _looks_like_mutable_default_value(
-        initial_value_code: str,
-        fn_is_known_immutable_type: Callable[[str], bool] | None,
-        fn_is_known_immutable_value: Callable[[str], bool] | None,
+    initial_value_code: str,
+    fn_is_known_immutable_type: Callable[[str], bool] | None,
+    fn_is_known_immutable_value: Callable[[str], bool] | None,
 ) -> bool:
     """Return True if the initial_value_code looks like a mutable default value.
     initial_value_code is the code that is used to initialize the parameter, e.g.
@@ -142,7 +136,7 @@ def _looks_like_mutable_default_value(
     # Test the value
     if True:  # just to have a block
         if fn_is_known_immutable_value is not None and fn_is_known_immutable_value(initial_value_code):
-                return False
+            return False
 
         for pattern in _IMMUTABLE_VALUES_PATTERNS:
             if pattern.match(initial_value_code):
@@ -152,7 +146,8 @@ def _looks_like_mutable_default_value(
             return False
 
     # Test the value type if available
-    if True: # just to have a block
+    if True:  # just to have a block
+
         def try_extract_type() -> str | None:
             r = None
             if "(" in initial_value_code:
@@ -166,7 +161,7 @@ def _looks_like_mutable_default_value(
             if initial_value_type in _BASE_IMMUTABLE_TYPES:
                 return False
             if fn_is_known_immutable_type is not None and fn_is_known_immutable_type(initial_value_type):
-                    return False
+                return False
 
     # Default to True for values that look mutable or ambiguous
     return True
@@ -223,9 +218,9 @@ class CppParameter(CppElementAndComment):
         return r
 
     def seems_mutable_param_with_default_value(
-            self,
-            fn_is_immutable_type: Callable[[str], bool] | None = None,
-            fn_is_immutable_value: Callable[[str], bool] | None = None,
+        self,
+        fn_is_immutable_type: Callable[[str], bool] | None = None,
+        fn_is_immutable_value: Callable[[str], bool] | None = None,
     ) -> bool:
         """Determines whether the parameter with a default value appears to be mutable."""
 

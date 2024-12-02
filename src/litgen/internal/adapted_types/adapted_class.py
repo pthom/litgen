@@ -1308,7 +1308,6 @@ class PythonNamedConstructorHelper:
         # (we keep a backup of the original, to be able to compare)
         ctor_decl_adapted = adapted_ctor.cpp_adapted_function
 
-
         if len(ctor_decl.parameter_list.parameters) == 0:
             py = "py" if self.options.bind_library == BindLibraryType.pybind11 else "nb"
             return f"{_i_}.def({py}::init<>()) // implicit default constructor \n"
@@ -1352,7 +1351,10 @@ class PythonNamedConstructorHelper:
         replacements_lines.maybe_pyargs = ", ".join(adapted_ctor._pydef_pyarg_list())
 
         def get_all_params_set_values() -> str:
-            from litgen.internal.adapt_function_params._adapt_mutable_param_with_default_value import was_mutable_param_with_default_value_made_optional
+            from litgen.internal.adapt_function_params._adapt_mutable_param_with_default_value import (
+                was_mutable_param_with_default_value_made_optional,
+            )
+
             original_parameters = ctor_decl.parameter_list.parameters
             modified_parameters = ctor_decl_adapted.parameter_list.parameters
             # Remove first "self" parameter from modified_parameters (may have been added by AdaptedFunction, if using nanobind)

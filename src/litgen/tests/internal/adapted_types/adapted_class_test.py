@@ -877,7 +877,7 @@ def test_named_ctor_with_optional() -> None:
                     If inner is None, then its default value will be: MyVector<Inner>()
                 """
                 pass
-        '''
+        ''',
     )
 
 
@@ -925,5 +925,5 @@ def test_noexcept():
             .def(py::init<Foo &&>(),
                 py::arg("f"))
             ;
-        """
-        )
+        """,
+    )

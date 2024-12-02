@@ -150,7 +150,7 @@ def test_scoping_enum_in_stub() -> None:
             def __init__(self, e: EC = EC.a) -> None:
                 """Auto-generated default constructor with named params"""
                 pass
-        '''
+        ''',
     )
 
 
@@ -186,5 +186,5 @@ def test_namespace_adapt_in_stub() -> None:
                 a = enum.auto() # (= 0)
 
         # </submodule camel_case>
-        '''
+        ''',
     )

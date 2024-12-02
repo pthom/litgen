@@ -473,7 +473,6 @@ class _AdaptBuffersHelper:
         dtype_code = cpp_to_python.nanobind_cpp_type_to_dtype_code_as_uint8(raw_cpp_type)
         return dtype_code
 
-
     def _lambda_input_buffer_standard_check_part(self, idx_param: int) -> str:
         _ = self
         if self.options.bind_library == BindLibraryType.pybind11:

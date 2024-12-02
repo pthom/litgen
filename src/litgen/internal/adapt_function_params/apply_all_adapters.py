@@ -49,7 +49,7 @@ def apply_all_adapters(inout_adapted_function: AdaptedFunction) -> None:
     assert_parents_are_present()
 
     all_adapters_functions = [
-        adapt_c_buffers, # must be done at start
+        adapt_c_buffers,  # must be done at start
         adapt_exclude_params,
         adapt_mutable_param_with_default_value,  # must be done just after adapt_exclude_params
         adapt_c_arrays,
@@ -125,7 +125,9 @@ def _apply_all_adapters_on_constructor(inout_adapted_function: AdaptedFunction) 
     cpp_wrapper_function = srcmlcpp_main.code_first_function_decl(
         inout_adapted_function.options.srcmlcpp_options, ctor_wrapper_signature_code
     )
-    cpp_wrapper_function.cpp_element_comments.comment_on_previous_lines = inout_adapted_function.cpp_element().cpp_element_comments.comment_on_previous_lines
+    cpp_wrapper_function.cpp_element_comments.comment_on_previous_lines = (
+        inout_adapted_function.cpp_element().cpp_element_comments.comment_on_previous_lines
+    )
     cpp_wrapper_function.parent = inout_adapted_function.cpp_element().parent
     ctor_adapted_wrapper_function = AdaptedFunction(
         inout_adapted_function.lg_context,
@@ -133,7 +135,9 @@ def _apply_all_adapters_on_constructor(inout_adapted_function: AdaptedFunction) 
         is_overloaded=False,
         initial_lambda_to_call="ctor_wrapper",
     )
-    inout_adapted_function.cpp_element().cpp_element_comments.comment_on_previous_lines = cpp_wrapper_function.cpp_element_comments.comment_on_previous_lines
+    inout_adapted_function.cpp_element().cpp_element_comments.comment_on_previous_lines = (
+        cpp_wrapper_function.cpp_element_comments.comment_on_previous_lines
+    )
 
     if ctor_adapted_wrapper_function.cpp_adapter_code is not None:
         inout_adapted_function.cpp_adapter_code = (
@@ -164,7 +168,7 @@ def _make_adapted_lambda_code_end(adapted_function: AdaptedFunction, lambda_adap
     _return_referenced = False
 
     if hasattr(adapted_function.cpp_element(), "return_type"):
-        _return_referenced = '&' in adapted_function.cpp_element().return_type.modifiers
+        _return_referenced = "&" in adapted_function.cpp_element().return_type.modifiers
 
     # Fill auto_r_equal_or_void
     if _fn_return_type != "void":
