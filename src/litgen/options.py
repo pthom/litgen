@@ -12,7 +12,8 @@ from litgen.internal.template_options import TemplateFunctionsOptions, TemplateC
 from litgen.internal.class_iterable_info import ClassIterablesInfos
 
 if TYPE_CHECKING:
-    from litgen.internal.adapted_types import AdaptedFunction
+    from litgen.internal.adapted_types import AdaptedFunction, AdaptedClass
+    from litgen.litgen_generator import GeneratedCodeType
 
 
 class BindLibraryType(Enum):
@@ -505,6 +506,13 @@ class LitgenOptions:
     # - [Understanding Holder Types in pybind11](https://pybind11.readthedocs.io/en/stable/advanced/classes.html#custom-smart-pointers)
     class_held_as_shared__regex: str = ""
 
+    # class_custom_inheritance__callback:
+    # (advanced) A callback to customize the base classes used in generated bindings.
+    # The first parameter is the AdaptedClass, representing the C++ class being adapted.
+    # The second parameter is the GeneratedCodeType, indicating whether stub or pydef code is being generated.
+    # An example usage can be found in: src/litgen/tests/option_class_custom_inheritance__callback_test.py
+    class_custom_inheritance__callback: Callable[[AdaptedClass, GeneratedCodeType], list[str]] | None = None
+
     # ------------------------------------------------------------------------------
     # Templated class options
     # ------------------------------------------------------------------------------
@@ -530,11 +538,6 @@ class LitgenOptions:
     # decorative comments in the stub file, in order to visually group
     # the generated classes together
     class_template_decorate_in_stub: bool = True
-
-    # This callback Callback to customize the base classes used in generated bindings
-    # First param is the AdoptedClass
-    # Second indicates context - True for python stub, False for CPP bindings
-    class_base_custom_derivation__callback: Callable[[Any, bool], list[str]] | None = None
 
     # ------------------------------------------------------------------------------
     # Adapt class members

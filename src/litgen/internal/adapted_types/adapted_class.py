@@ -470,12 +470,14 @@ class AdaptedClass(AdaptedElement):
         def str_parent_classes_python() -> str:
             parents: list[str] = []
             custom_derived = (
-                [] if not self.options.class_base_custom_derivation__callback 
-                    else self.options.class_base_custom_derivation__callback(self, True))
+                []
+                if not self.options.class_custom_inheritance__callback
+                else self.options.class_custom_inheritance__callback(self, litgen.GeneratedCodeType.stub)
+            )
 
             if not custom_derived and not self.cpp_element().has_base_classes():
                 return ""
-            
+
             if custom_derived:
                 for custom_base in custom_derived:
                     parents.append(custom_base)
@@ -614,8 +616,10 @@ class AdaptedClass(AdaptedElement):
             # fill py::class_ additional template params (base classes, nodelete, etc)
             other_template_params_list = []
             custom_derived = (
-                [] if not self.options.class_base_custom_derivation__callback 
-                    else self.options.class_base_custom_derivation__callback(self, False))
+                []
+                if not self.options.class_custom_inheritance__callback
+                else self.options.class_custom_inheritance__callback(self, litgen.GeneratedCodeType.pydef)
+            )
 
             if custom_derived:
                 for custom_base in custom_derived:
