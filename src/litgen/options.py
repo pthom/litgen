@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from enum import Enum
-from typing import Any, Callable, List
+from typing import Any, Callable, List, TYPE_CHECKING
 
 from codemanip import code_utils
 from codemanip.code_replacements import RegexReplacementList
@@ -10,6 +10,10 @@ from srcmlcpp import SrcmlcppOptions
 
 from litgen.internal.template_options import TemplateFunctionsOptions, TemplateClassOptions
 from litgen.internal.class_iterable_info import ClassIterablesInfos
+
+if TYPE_CHECKING:
+    from litgen.internal.adapted_types import AdaptedFunction
+
 
 class BindLibraryType(Enum):
     pybind11 = 1
@@ -107,7 +111,7 @@ class LitgenOptions:
     value_replacements: RegexReplacementList  # = cpp_to_python.standard_value_replacements() by default
     comments_replacements: RegexReplacementList  # = cpp_to_python.standard_comment_replacements() by default
     macro_name_replacements: RegexReplacementList  # = RegexReplacementList() by default (i.e. empty)
-    fn_params_type_replacements: RegexReplacementList # = RegexReplacementList() by default (i.e. empty)
+    fn_params_type_replacements: RegexReplacementList  # = RegexReplacementList() by default (i.e. empty)
 
     ################################################################################
     #    <functions and method adaptations>
@@ -209,11 +213,13 @@ class LitgenOptions:
     #    See packages/litgen/integration_tests/mylib/include/mylib/return_value_policy_test.h as an example
     fn_return_force_policy_reference_for_pointers__regex: str = ""
     fn_return_force_policy_reference_for_references__regex: str = ""
-    # 
-    # The callback provides a flexible way to enforce the reference return policy for functions
-    # callback takes litgen.internal.adapted_types.AdaptedFunction as the parameter
-    fn_return_force_policy_reference__callback: Callable[[Any], None] | None = None
-    
+    #
+    # The callback below provides a flexible way to enforce the reference return policy for functions
+    # It accepts litgen.internal.adapted_types.AdaptedFunction as a parameter.
+    # See an example in
+    #     src/litgen/tests/internal/adapted_types/function_policy_reference_callback_test.py
+    fn_return_force_policy_reference__callback: Callable[[AdaptedFunction], None] | None = None
+
     # ------------------------------------------------------------------------------
     # Force overload
     # ------------------------------------------------------------------------------

@@ -1,28 +1,32 @@
 from __future__ import annotations
 from codemanip import code_utils
 import litgen
+from litgen.internal.adapted_types import AdaptedFunction
 
-from srcmlcpp.cpp_types import (
-    CppPublicProtectedPrivate    
-)
+from srcmlcpp.cpp_types import CppPublicProtectedPrivate
+
 
 def test_reference_marking():
     """
     Example of how the callback mechanism could be used in practice to handle reference return policies
     """
-   
-    def test_custom_reference_detection(func):
+
+    def test_custom_reference_detection(func: AdaptedFunction) -> None:
         if not func.return_value_policy:
-            # for all funcdecl members of classes and structures
-            if isinstance(func.cpp_element().parent, CppPublicProtectedPrivate):
+            # In this example, all methods which return a reference or pointer
+            # will be marked with a custom return_value_policy attribute: "reference_internal"
+            # func.return_value_policy attribute, will be applied in pybind11 / nanobind code
+            if isinstance(func.cpp_element().parent, CppPublicProtectedPrivate):  # if it is a member function
                 if hasattr(func.cpp_element(), "return_type") and (
-                        '&' in func.cpp_element().return_type.modifiers or 
-                        '*' in func.cpp_element().return_type.modifiers):
+                    "&" in func.cpp_element().return_type.modifiers or "*" in func.cpp_element().return_type.modifiers
+                ):
                     func.return_value_policy = "reference_internal"
-            # not relevant for this test but it shows posibility to apply policy based on filename
-            elif func.cpp_adapted_function.filename and "ref_stuf" in func.cpp_adapted_function.filename:             
+
+            # Another custom policy could be applied based on the filename (not relevant for this test)
+            elif func.cpp_adapted_function.filename and "ref_stuf" in func.cpp_adapted_function.filename:
                 func.return_value_policy = "reference"
-            elif "ByRef" in func.cpp_adapted_function.function_name: 
+            # or based on the function name
+            elif "ByRef" in func.cpp_adapted_function.function_name:
                 func.return_value_policy = "reference"
 
     code = """
