@@ -227,7 +227,8 @@ def adapt_mutable_param_with_default_value(adapted_function: AdaptedFunction) ->
     # Add comment lines to the function
     if options.fn_params_adapt_mutable_param_with_default_value__add_comment:
         cpp_comments = adapted_function.cpp_element().cpp_element_comments
-        cpp_comments.add_comment_on_previous_lines("---")
+        cpp_comments.add_comment_on_previous_lines("")
+        cpp_comments.add_comment_on_previous_lines("")
         cpp_comments.add_comment_on_previous_lines("Python bindings defaults:")
         if len(new_function_comment_lines) == 1:
             param_name = list(new_function_comment_lines.keys())[0]
@@ -239,7 +240,7 @@ def adapt_mutable_param_with_default_value(adapted_function: AdaptedFunction) ->
                 "    If any of the params below is None, then its default value below will be used:"
             )
             for param_name, param_default_value in new_function_comment_lines.items():
-                comment = f"        {param_name}: {param_default_value}"
+                comment = f"        * {param_name}: {param_default_value}"
                 cpp_comments.add_comment_on_previous_lines(comment)
 
     return lambda_adapter
