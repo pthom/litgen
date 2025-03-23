@@ -112,7 +112,7 @@ void use_foo(const Foo &foo = Foo());
                 use_foo_adapt_mutable_param_with_default_value(foo);
             },
             py::arg("foo") = py::none(),
-            "---\\nPython bindings defaults:\\n    If foo is None, then its default value will be: Foo()");
+            "Python bindings defaults:\\n    If foo is None, then its default value will be: Foo()");
         """,
     )
 
@@ -125,8 +125,7 @@ void use_foo(const Foo &foo = Foo());
                 """Auto-generated default constructor"""
                 pass
         def use_foo(foo: Optional[Foo] = None) -> None:
-            """---
-            Python bindings defaults:
+            """Python bindings defaults:
                 If foo is None, then its default value will be: Foo()
             """
             pass
@@ -165,7 +164,7 @@ void use_vec(const std::vector<int>& Ints = std::vector<int>());
                 use_vec_adapt_mutable_param_with_default_value(Ints);
             },
             nb::arg("ints") = nb::none(),
-            "---\\nPython bindings defaults:\\n    If Ints is None, then its default value will be: List[int]()");
+            "Python bindings defaults:\\n    If Ints is None, then its default value will be: List[int]()");
         """,
     )
 
@@ -174,8 +173,7 @@ void use_vec(const std::vector<int>& Ints = std::vector<int>());
         generated_code.stub_code,
         '''
         def use_vec(ints: Optional[List[int]] = None) -> None:
-            """---
-            Python bindings defaults:
+            """Python bindings defaults:
                 If Ints is None, then its default value will be: List[int]()
             """
             pass
@@ -225,7 +223,8 @@ def test_adapt_mutable_param_with_default_value__within_struct():
                 v: Optional[ImVec2] = None
                 ) -> None:
                 """Auto-generated default constructor with named params
-                ---
+
+
                 Python bindings defaults:
                     If v is None, then its default value will be: ImVec2()
                 """

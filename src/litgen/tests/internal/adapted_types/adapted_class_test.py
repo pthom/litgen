@@ -872,7 +872,8 @@ def test_named_ctor_with_optional() -> None:
             inner: MyVector[Inner]
             def __init__(self, inner: Optional[MyVector[Inner]] = None) -> None:
                 """Auto-generated default constructor with named params
-                ---
+
+
                 Python bindings defaults:
                     If inner is None, then its default value will be: MyVector<Inner>()
                 """

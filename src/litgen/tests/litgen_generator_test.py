@@ -78,7 +78,7 @@ def test_scoping_no_root_namespace():
                     return Foo_adapt_mutable_param_with_default_value(e, s);
                 },
                 py::arg("e") = N::E_a, py::arg("s") = py::none(),
-                "---\\nPython bindings defaults:\\n    If s is None, then its default value will be: N.S()");
+                "Python bindings defaults:\\n    If s is None, then its default value will be: N.S()");
         } // </namespace N>
       """,
     )
@@ -110,8 +110,7 @@ def test_scoping_no_root_namespace():
             @staticmethod
             @overload
             def foo(e: E = E.a, s: Optional[S] = None) -> S:
-                """---
-                Python bindings defaults:
+                """Python bindings defaults:
                     If s is None, then its default value will be: N.S()
                 """
                 pass
