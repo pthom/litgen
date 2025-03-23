@@ -529,6 +529,17 @@ def remove_redundant_spaces(code: str) -> str:
     return result
 
 
+def shorten_lines_containing_only_spaces(code: str) -> str:
+    lines = code.split("\n")
+    new_lines = []
+    for line in lines:
+        if len(line.strip()) > 0:
+            new_lines.append(line)
+        else:
+            new_lines.append("")
+    return "\n".join(new_lines)
+
+
 def count_spaces_at_start_of_line(line: str) -> int:
     nb_spaces_this_line = 0
     for char in line:
