@@ -311,6 +311,13 @@ class AdaptedFunction(AdaptedElement):
         if "delete" in cpp_function.specifiers:
             return False
 
+        if "::" in cpp_function.function_name:
+            # if there is a scope in the function name at the declaration site, we do not publish it
+            # Reasoning:
+            #    it is probably the implementation of a previously forward declared method or function
+            #    (hence, it is not the "real" declaration, and it was already published)
+            return False
+
         # Exclude if one param or the return type of the function is an unhandled template type
         for param in cpp_function.parameter_list.parameters:
             if options.class_template_options.shall_exclude_type(param.decl.cpp_type):

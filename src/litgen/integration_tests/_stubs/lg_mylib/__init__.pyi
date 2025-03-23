@@ -456,15 +456,18 @@ class MyStructWithNestedEnum:
         """Auto-generated default constructor"""
         pass
 
+class ClassWithInlineForwardDeclaredMethod:
+    def get_tex_id(self) -> int:
+        pass
+    def __init__(self) -> None:
+        """Auto-generated default constructor"""
+        pass
+
 # ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 #                       mylib/class_inheritance_test.h included by mylib/mylib_main/mylib.h                    //
 # //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 # pybind11 supports bindings for multiple inheritance, nanobind does not
-# #ifdef BINDING_MULTIPLE_INHERITANCE
-#
-# #endif
-#
 
 def binding_multiple_inheritance() -> bool:
     pass
@@ -967,12 +970,7 @@ class math_functions:  # Proxy class that introduces typings for the *submodule*
 
     """
     @staticmethod
-    @overload
     def vectorizable_sum(x: float, y: float) -> float:
-        pass
-    @staticmethod
-    @overload
-    def vectorizable_sum(x: np.ndarray, y: np.ndarray) -> np.ndarray:
         pass
 
 # </submodule math_functions>
@@ -993,25 +991,6 @@ class animals:  # Proxy class that introduces typings for the *submodule* animal
             pass
 
 # </submodule animals>
-
-# <submodule home>
-class home:  # Proxy class that introduces typings for the *submodule* home
-    pass  # (This corresponds to a C++ namespace. All method are static!)
-
-    class Pet:
-        def is_pet(self) -> bool:
-            pass
-        def __init__(self) -> None:
-            """Auto-generated default constructor"""
-            pass
-
-    class PetDog(Animals.Dog, Home.Pet):
-        def __init__(self, name: str) -> None:
-            pass
-        def bark(self) -> str:
-            pass
-
-# </submodule home>
 
 # <submodule aaa>
 class aaa:  # Proxy class that introduces typings for the *submodule* aaa

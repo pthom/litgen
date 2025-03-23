@@ -528,6 +528,16 @@ struct MyStructWithNestedEnum
     MY_API int HandleChoice(Choice value = Choice::A) { return 0; }
 };
 
+struct ClassWithInlineForwardDeclaredMethod
+{
+    MY_API inline int GetTexID();
+};
+
+MY_API inline int ClassWithInlineForwardDeclaredMethod::GetTexID()
+{
+    return 42;
+}
+
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //                       mylib/class_inheritance_test.h included by mylib/mylib_main/mylib.h                    //
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////

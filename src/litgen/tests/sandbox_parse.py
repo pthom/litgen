@@ -86,21 +86,21 @@ def play() -> None:
     # options.globals_vars_include_by_name__regex = r".*"
 
     code = """
-    static float PI_2 = 6.283185307179586f;
-    void foo()
-    {
-        circle([&] (int i) {
-                    const float a = PI_2 * i / num_segments;
-                    const float x = (scale(16) * ImPow(ImSin(a), 3));
-                    const float y = -1.f * (scale(13) * ImCos(a) - scale(5) * ImCos(2 * a) - scale(2) * ImCos(3 * a) - ImCos(4 * a));
-                    return rotate(ImVec2(x, y), ang_min);
-                }, color_alpha(color, 1.f), thickness);
-    }
+struct ClassWithInlineForwardDeclaredMethod
+{
+    inline int GetTexID();
+};
+
+inline int ClassWithInlineForwardDeclaredMethod::GetTexID()
+{
+    return 42;
+}
+
         """
     generated_code = litgen.generate_code(options, code)
     print(generated_code.stub_code)
 
-    print(generated_code.pydef_code)
+    # print(generated_code.pydef_code)
 
 
 if __name__ == "__main__":

@@ -784,6 +784,15 @@ void py_init_module_lg_mylib(nb::module_& m)
         ;
 
 
+    auto pyClassClassWithInlineForwardDeclaredMethod =
+        nb::class_<ClassWithInlineForwardDeclaredMethod>
+            (m, "ClassWithInlineForwardDeclaredMethod", "")
+        .def(nb::init<>()) // implicit default constructor
+        .def("get_tex_id",
+            &ClassWithInlineForwardDeclaredMethod::GetTexID)
+        ;
+
+
     m.def("binding_multiple_inheritance",
         binding_multiple_inheritance);
 
