@@ -1339,9 +1339,9 @@ class PythonNamedConstructorHelper:
                 .def(py::init<>([](
                 {all_params_signature})
                 {
-                {_i_}auto r = std::make_unique<{qualified_struct_name}>();
+                {_i_}auto r_ctor_ = std::make_unique<{qualified_struct_name}>();
                 {all_params_set_values}
-                {_i_}return r;
+                {_i_}return r_ctor_;
                 })
                 , {maybe_pyargs}
                 )
@@ -1354,7 +1354,7 @@ class PythonNamedConstructorHelper:
                 .def("__init__", []({all_params_signature})
                 {
                 {_i_}new (self) {qualified_struct_name}();  // placement new
-                {_i_}auto r = self;
+                {_i_}auto r_ctor_ = self;
                 {all_params_set_values}
                 },
                 {maybe_pyargs}
@@ -1390,14 +1390,14 @@ class PythonNamedConstructorHelper:
                 if was_mutable_param_with_default_value_made_optional(lg_context, original_param):
                     code = f"""
                     if ({modified_param.decl.name()}.has_value())
-                    {_i_}r->{modified_param.decl.name()} = {modified_param.decl.name()}.value();
+                    {_i_}r_ctor_->{modified_param.decl.name()} = {modified_param.decl.name()}.value();
                     else
-                    {_i_}r->{modified_param.decl.name()} = {original_param.decl.initial_value_code};
+                    {_i_}r_ctor_->{modified_param.decl.name()} = {original_param.decl.initial_value_code};
                     """
                     code = code_utils.unindent_code(code, flag_strip_empty_lines=True)
 
                 else:
-                    code = f"r->{original_param.decl.name()} = {original_param.decl.name()};"
+                    code = f"r_ctor_->{original_param.decl.name()} = {original_param.decl.name()};"
                 all_params_set_values_list.append(code)
             all_params_set_values = "\n".join(all_params_set_values_list)
             all_params_set_values = code_utils.indent_code(all_params_set_values, indent_str=_i_)
