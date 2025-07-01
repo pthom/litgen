@@ -731,3 +731,25 @@ def test_change_decl_stmt_to_function_decl_if_suspicious():
     generated_code = litgen.generate_code(options, code)
     # print(generated_code.stub_code)
     code_utils.assert_are_codes_equal(generated_code.stub_code, "")
+
+
+def test_optional_none_param():
+    options = litgen.LitgenOptions()
+    options.bind_library = litgen.BindLibraryType.nanobind
+    code = """
+    void foo(std::optional<int> a);
+    void foo_default(std::optional<int> a = std::nullopt);
+    """
+    generated_code = litgen.generate_code(options, code)
+    # print(generated_code.pydef_code)
+
+    code_utils.assert_are_codes_equal(
+        generated_code.pydef_code,
+        """
+        m.def("foo",
+            foo, nb::arg("a").none());
+
+        m.def("foo_default",
+            foo_default, nb::arg("a").none() = nb::none());
+        """
+        )

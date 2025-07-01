@@ -154,6 +154,11 @@ class CppType(CppElementAndComment):
         r = "<" in joined_typenames and ">" in joined_typenames
         return r
 
+    def is_optional(self) -> bool:
+        """Returns True if this type is a std::optional type"""
+        joined_typenames = " ".join(self.typenames)
+        return joined_typenames.startswith("std::optional<")
+
     def template_name(self) -> str | None:
         if not self.is_template():
             return None

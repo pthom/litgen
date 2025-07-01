@@ -121,7 +121,7 @@ class AdaptedDecl(AdaptedElement):
     def _str_pydef_as_pyarg(self) -> str:
         """pydef code for function parameters"""
         py_colon = "py::" if self.options.bind_library == BindLibraryType.pybind11 else "nb::"
-        param_template = py_colon + 'arg("{argname_python}"){maybe_equal}{maybe_defaultvalue_cpp}'
+        param_template = py_colon + 'arg("{argname_python}"){maybe_dot_none}{maybe_equal}{maybe_defaultvalue_cpp}'
 
         maybe_defaultvalue_cpp = self.cpp_element().initial_value_code
         if maybe_defaultvalue_cpp.strip().startswith("{"):
@@ -136,11 +136,18 @@ class AdaptedDecl(AdaptedElement):
 
         argname_python = self.decl_name_python()
 
+        # fill maybe_dot_none with ".none()" if the type is an optional
+        maybe_dot_none = ""
+        if self.options.bind_library == BindLibraryType.nanobind:
+            if self.cpp_element().cpp_type.is_optional():
+                maybe_dot_none = ".none()"
+
         param_line = code_utils.replace_in_string(
             param_template,
             {
                 "argname_python": argname_python,
                 "maybe_equal": maybe_equal,
+                "maybe_dot_none": maybe_dot_none,
                 "maybe_defaultvalue_cpp": maybe_defaultvalue_cpp,
             },
         )

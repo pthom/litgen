@@ -163,7 +163,7 @@ void use_vec(const std::vector<int>& Ints = std::vector<int>());
 
                 use_vec_adapt_mutable_param_with_default_value(Ints);
             },
-            nb::arg("ints") = nb::none(),
+            nb::arg("ints").none() = nb::none(),
             "Python bindings defaults:\\n    If Ints is None, then its default value will be: List[int]()");
         """,
     )
