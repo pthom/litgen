@@ -259,8 +259,8 @@ def test_adapt_mutable_param_with_default_value__within_struct_2() -> None:
             .def("__init__", [](Foo * self, E e = E::A)
             {
                 new (self) Foo();  // placement new
-                auto r = self;
-                r->e = e;
+                auto r_ctor_ = self;
+                r_ctor_->e = e;
             },
             nb::arg("e") = E::A
             )
@@ -289,8 +289,8 @@ def test_adapt_mutable_param_with_default_value__within_struct_3() -> None:
             .def("__init__", [](Foo * self, int a = 1)
             {
                 new (self) Foo();  // placement new
-                auto r = self;
-                r->a = a;
+                auto r_ctor_ = self;
+                r_ctor_->a = a;
             },
             nb::arg("a") = 1
             )

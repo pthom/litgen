@@ -44,9 +44,9 @@ def test_post_process():
             .def(py::init<>([](
             int BlahPost = 0)
             {
-                auto r = std::make_unique<Foo>();
-                r->BlahPost = BlahPost;
-                return r;
+                auto r_ctor_ = std::make_unique<Foo>();
+                r_ctor_->BlahPost = BlahPost;
+                return r_ctor_;
             })
             , py::arg("blah") = 0
             )

@@ -110,10 +110,10 @@ def test_struct_pydef_simple():
             .def(py::init<>([](
             int a = int(), bool flag = bool())
             {
-                auto r = std::make_unique<Foo>();
-                r->a = a;
-                r->flag = flag;
-                return r;
+                auto r_ctor_ = std::make_unique<Foo>();
+                r_ctor_->a = a;
+                r_ctor_->flag = flag;
+                return r_ctor_;
             })
             , py::arg("a") = int(), py::arg("flag") = bool()
             )
@@ -387,9 +387,9 @@ def test_deepcopy_with_specialization():
                 .def(py::init<>([](
                 int value = int())
                 {
-                    auto r = std::make_unique<Ns::Foo<int>>();
-                    r->value = value;
-                    return r;
+                    auto r_ctor_ = std::make_unique<Ns::Foo<int>>();
+                    r_ctor_->value = value;
+                    return r_ctor_;
                 })
                 , py::arg("value") = int()
                 )
@@ -558,12 +558,12 @@ def test_named_ctor_helper_struct() -> None:
                 .def(py::init<>([](
                 bool b = true, int a = int(), int c = 3, A::Foo foo = A::Foo::Foo1)
                 {
-                    auto r = std::make_unique<A::ClassNoDefaultCtor>();
-                    r->b = b;
-                    r->a = a;
-                    r->c = c;
-                    r->foo = foo;
-                    return r;
+                    auto r_ctor_ = std::make_unique<A::ClassNoDefaultCtor>();
+                    r_ctor_->b = b;
+                    r_ctor_->a = a;
+                    r_ctor_->c = c;
+                    r_ctor_->foo = foo;
+                    return r_ctor_;
                 })
                 , py::arg("b") = true, py::arg("a") = int(), py::arg("c") = 3, py::arg("foo") = A::Foo::Foo1
                 )
@@ -660,9 +660,9 @@ def test_ctor_placement_new():
             .def(py::init<>([](
             int x = 1)
             {
-                auto r = std::make_unique<Foo>();
-                r->x = x;
-                return r;
+                auto r_ctor_ = std::make_unique<Foo>();
+                r_ctor_->x = x;
+                return r_ctor_;
             })
             , py::arg("x") = 1
             )
@@ -684,8 +684,8 @@ def test_ctor_placement_new():
             .def("__init__", [](Foo * self, int x = 1)
             {
                 new (self) Foo();  // placement new
-                auto r = self;
-                r->x = x;
+                auto r_ctor_ = self;
+                r_ctor_->x = x;
             },
             nb::arg("x") = 1
             )

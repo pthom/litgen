@@ -55,16 +55,16 @@ def test_struct_brace():
             .def(py::init<>([](
             const std::optional<const std::vector<int>> & l = std::nullopt, const std::optional<const V> & v = std::nullopt)
             {
-                auto r = std::make_unique<Foo>();
+                auto r_ctor_ = std::make_unique<Foo>();
                 if (l.has_value())
-                    r->l = l.value();
+                    r_ctor_->l = l.value();
                 else
-                    r->l = {1};
+                    r_ctor_->l = {1};
                 if (v.has_value())
-                    r->v = v.value();
+                    r_ctor_->v = v.value();
                 else
-                    r->v = {1, 2, 3};
-                return r;
+                    r_ctor_->v = {1, 2, 3};
+                return r_ctor_;
             })
             , py::arg("l") = py::none(), py::arg("v") = py::none()
             )

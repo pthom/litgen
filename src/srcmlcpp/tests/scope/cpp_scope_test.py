@@ -303,10 +303,10 @@ def test_scope_with_litgen():
             .def(py::init<>([](
             int x = 0, int y = 0)
             {
-                auto r = std::make_unique<DaftLib::Point>();
-                r->x = x;
-                r->y = y;
-                return r;
+                auto r_ctor_ = std::make_unique<DaftLib::Point>();
+                r_ctor_->x = x;
+                r_ctor_->y = y;
+                return r_ctor_;
             })
             , py::arg("x") = 0, py::arg("y") = 0
             )
