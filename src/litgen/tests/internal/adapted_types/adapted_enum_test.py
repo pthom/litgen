@@ -50,7 +50,7 @@ enum Foo
     code_utils.assert_are_codes_equal(
         stub_code,
         '''
-        class Foo(enum.Enum):
+        class Foo(enum.IntEnum):
             """ Doc about Foo
              On several lines
             """
@@ -73,7 +73,7 @@ enum Foo
     code_utils.assert_are_codes_equal(
         stub_code,
         '''
-        class Foo(enum.Enum):
+        class Foo(enum.IntEnum):
             """ Doc about Foo
              On several lines
             """
@@ -132,7 +132,7 @@ def test_enum_class():
     code_utils.assert_are_codes_equal(
         generated_code.stub_code,
         """
-        class Foo(enum.Enum):
+        class Foo(enum.IntEnum):
             a = enum.auto() # (= 0)
             b = enum.auto() # (= 1)
             c = enum.auto() # (= 256)
@@ -141,3 +141,32 @@ def test_enum_class():
             f = enum.auto() # (= 5)
         """,
     )
+
+
+def test_enum_int():
+    code = """
+        enum Foo { A, B };
+    """
+    options = litgen.LitgenOptions()
+    options.bind_library = litgen.BindLibraryType.nanobind
+    options.enum_make_flag__regex = r"Foo"
+    options.enum_make_arithmetic__regex = r"Foo"
+    generated_code = litgen.generate_code(options, code)
+    # print(generated_code.pydef_code)
+    code_utils.assert_are_codes_equal(
+        generated_code.pydef_code,
+    """
+        auto pyEnumFoo =
+            nb::enum_<Foo>(m, "Foo", nb::is_arithmetic(), nb::is_flag(), "")
+                .value("a", A, "")
+                .value("b", B, "");
+        """)
+
+    # print(generated_code.stub_code)
+    code_utils.assert_are_codes_equal(
+        generated_code.stub_code,
+        """
+        class Foo(enum.IntFlag):
+            a = enum.auto() # (= 0)
+            b = enum.auto() # (= 1)
+        """)

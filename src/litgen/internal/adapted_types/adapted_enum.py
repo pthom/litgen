@@ -212,7 +212,19 @@ class AdaptedEnum(AdaptedElement):
 
         line_spacer = LineSpacerPython(self.options)
 
-        title_line = f"class {self.enum_name_python()}(enum.Enum):"
+        enum_name_cpp = self.cpp_element().cpp_scope_str(True)
+        is_arithmetic = code_utils.does_match_regex(self.options.enum_make_arithmetic__regex, enum_name_cpp)
+        is_flag = code_utils.does_match_regex(self.options.enum_make_flag__regex, enum_name_cpp)
+
+        enum_parent = "enum.Enum"  # Default parent for enum
+        if is_arithmetic and is_flag:
+            enum_parent = "enum.IntFlag"
+        elif is_arithmetic:
+            enum_parent = "enum.IntEnum"
+        elif is_flag:
+            enum_parent = "enum.Flag"
+
+        title_line = f"class {self.enum_name_python()}({enum_parent}):"
 
         body_lines: list[str] = []
         for child in self.adapted_children:
@@ -236,16 +248,18 @@ class AdaptedEnum(AdaptedElement):
         # Enum decl first line
         is_arithmetic = code_utils.does_match_regex(self.options.enum_make_arithmetic__regex, enum_name_cpp)
         if is_arithmetic:
-            arithmetic_str = (
-                ", py::arithmetic()"
-                if self.options.bind_library == BindLibraryType.pybind11
-                else ", nb::is_arithmetic()"
-            )
+            if self.options.bind_library == BindLibraryType.pybind11:
+                enum_annotation = ", py::arithmetic()"
+            else:
+                enum_annotation = ", nb::is_arithmetic()"
+                is_flag = code_utils.does_match_regex(self.options.enum_make_flag__regex, enum_name_cpp)
+                if is_flag:
+                    enum_annotation += ", nb::is_flag()"
         pydef_class_var_parent = cpp_to_python.cpp_scope_to_pybind_parent_var_name(self.options, self.cpp_element())
         enum_var = f"auto pyEnum{enum_name_python} = "
         py = "py" if self.options.bind_library == BindLibraryType.pybind11 else "nb"
         enum_decl_line = (
-            f'{py}::enum_<{enum_name_cpp}>({pydef_class_var_parent}, "{enum_name_python}"{arithmetic_str}, "{comment}")'
+            f'{py}::enum_<{enum_name_cpp}>({pydef_class_var_parent}, "{enum_name_python}"{enum_annotation}, "{comment}")'
             f"{location}"
         )
         lines += [enum_var]

@@ -114,9 +114,9 @@ def test_context_replacements():
     code_utils.assert_are_codes_equal(
         generated_code.stub_code,
         """
-        class MyEnumClass(enum.Enum):
+        class MyEnumClass(enum.IntEnum):
             value_a = enum.auto() # (= 0)
-        class MyEnumNonClass(enum.Enum):
+        class MyEnumNonClass(enum.IntEnum):
             value_a = enum.auto() # (= 0)
 
         def foo_inner(

@@ -613,8 +613,12 @@ class LitgenOptions:
     # Skip count value from enums, for example like in:
     #    enum MyEnum { MyEnum_A = 1, MyEnum_B = 1, MyEnum_COUNT };
     enum_flag_skip_count: bool = True
-    # By default, all enums export rudimentary arithmetic and bit-level operations ( r".*" matches any enum name)
+    # By default, all enums export rudimentary arithmetic ( r".*" matches any enum name)
+    # (and the enum will be a derivative of enum.IntEnum)
     enum_make_arithmetic__regex: str = r".*"
+    # Indicate that the enumeration supports bit-wise operations
+    # (and the enum will be a derivative of enum.IntFlag or enum.Flag)
+    enum_make_flag__regex: str = r""
     # Export all entries of the enumeration into the parent scope.
     enum_export_values: bool = False
 

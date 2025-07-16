@@ -518,7 +518,7 @@ def test_named_ctor_helper_struct() -> None:
         # <submodule a>
         class a:  # Proxy class that introduces typings for the *submodule* a
             pass  # (This corresponds to a C++ namespace. All method are static!)
-            class Foo(enum.Enum):
+            class Foo(enum.IntEnum):
                 foo1 = enum.auto() # (= 0)
             class ClassNoDefaultCtor:
                 b: bool = True
