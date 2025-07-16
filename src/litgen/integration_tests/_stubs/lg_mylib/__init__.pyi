@@ -325,7 +325,7 @@ class FooOverload:
 #                       mylib/enum_test.h included by mylib/mylib_main/mylib.h                                 //
 # //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-class BasicEnum(enum.Enum):
+class BasicEnum(enum.IntEnum):
     """BasicEnum: a simple C-style enum"""
 
     # C-style enums often contain a prefix that is the enum name in itself, in order
@@ -341,7 +341,7 @@ class BasicEnum(enum.Enum):
     # This is value b
     b = enum.auto()  # (= 4)
 
-class ClassEnum(enum.Enum):
+class ClassEnum(enum.IntEnum):
     """ClassEnum: a class enum that should be published"""
 
     on = enum.auto()  # (= 0)
@@ -443,7 +443,7 @@ class MyStructDynamic:
         pass
 
 class MyStructWithNestedEnum:
-    class Choice(enum.Enum):
+    class Choice(enum.IntEnum):
         a = enum.auto()  # (= 0)
     def handle_choice(
         self, value: MyStructWithNestedEnum.Choice = MyStructWithNestedEnum.Choice.a
@@ -468,6 +468,10 @@ class ClassWithInlineForwardDeclaredMethod:
 # //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 # pybind11 supports bindings for multiple inheritance, nanobind does not
+# #ifdef BINDING_MULTIPLE_INHERITANCE
+#
+# #endif
+#
 
 def binding_multiple_inheritance() -> bool:
     pass
@@ -970,7 +974,12 @@ class math_functions:  # Proxy class that introduces typings for the *submodule*
 
     """
     @staticmethod
+    @overload
     def vectorizable_sum(x: float, y: float) -> float:
+        pass
+    @staticmethod
+    @overload
+    def vectorizable_sum(x: np.ndarray, y: np.ndarray) -> np.ndarray:
         pass
 
 # </submodule math_functions>
@@ -991,6 +1000,25 @@ class animals:  # Proxy class that introduces typings for the *submodule* animal
             pass
 
 # </submodule animals>
+
+# <submodule home>
+class home:  # Proxy class that introduces typings for the *submodule* home
+    pass  # (This corresponds to a C++ namespace. All method are static!)
+
+    class Pet:
+        def is_pet(self) -> bool:
+            pass
+        def __init__(self) -> None:
+            """Auto-generated default constructor"""
+            pass
+
+    class PetDog(Animals.Dog, Home.Pet):
+        def __init__(self, name: str) -> None:
+            pass
+        def bark(self) -> str:
+            pass
+
+# </submodule home>
 
 # <submodule aaa>
 class aaa:  # Proxy class that introduces typings for the *submodule* aaa
@@ -1062,7 +1090,7 @@ class some_namespace:  # Proxy class that introduces typings for the *submodule*
             def add(self, a: int, b: int) -> int:
                 pass
 
-        class InnerEnum(enum.Enum):
+        class InnerEnum(enum.IntEnum):
             zero = enum.auto()  # (= 0)
             one = enum.auto()  # (= 1)
             two = enum.auto()  # (= 2)
@@ -1166,10 +1194,10 @@ class n:  # Proxy class that introduces typings for the *submodule* n
             """Auto-generated default constructor"""
             pass
 
-    class EC(enum.Enum):
+    class EC(enum.IntEnum):
         a = enum.auto()  # (= 0)
 
-    class E(enum.Enum):
+    class E(enum.IntEnum):
         a = enum.auto()  # (= 0)
     @staticmethod
     @overload
@@ -1190,7 +1218,7 @@ class n:  # Proxy class that introduces typings for the *submodule* n
 class a:  # Proxy class that introduces typings for the *submodule* a
     pass  # (This corresponds to a C++ namespace. All method are static!)
 
-    class Foo(enum.Enum):
+    class Foo(enum.IntEnum):
         foo1 = enum.auto()  # (= 0)
         foo2 = enum.auto()  # (= 1)
         foo3 = enum.auto()  # (= 2)
@@ -1220,10 +1248,10 @@ class a:  # Proxy class that introduces typings for the *submodule* a
                 """Auto-generated default constructor"""
                 pass
 
-        class EC(enum.Enum):
+        class EC(enum.IntEnum):
             a = enum.auto()  # (= 0)
 
-        class E(enum.Enum):
+        class E(enum.IntEnum):
             a = enum.auto()  # (= 0)
         @staticmethod
         @overload
