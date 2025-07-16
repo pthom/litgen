@@ -15,7 +15,7 @@ HtmlCode = str
 
 
 def _html_code_viewer(code: str, lexer: Lexer, style: str) -> HtmlCode:
-    pygments_css = HtmlFormatter(style=style).get_style_defs(".highlight")
+    pygments_css = HtmlFormatter(style=style).get_style_defs(".highlight")  # type: ignore
     html_style = f"""<style>{pygments_css}</style>"""
 
     html_code = highlight(code, lexer, HtmlFormatter())
