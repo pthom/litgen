@@ -720,15 +720,6 @@ def does_match_regex(regex_str: str, word: str) -> bool:
     return len(matches) > 0
 
 
-def does_match_regexes(regex_strs: list[str], word: str) -> bool:
-    if word is None:
-        return False
-    for regex_str in regex_strs:
-        if does_match_regex(regex_str, word):
-            return True
-    return False
-
-
 def make_regex_any_variable_ending_with(what_to_find: str) -> str:
     # For example, this matches only variable
     # ending with count or Count:
