@@ -398,6 +398,7 @@ document.write(`
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#autogenerate-the-binding-code">Autogenerate the binding code</a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#install-requirements">Install requirements</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#generate-bindings">Generate bindings</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#customize-bindings-generation">Customize bindings generation</a></li>
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#adapt-for-your-own-library">Adapt for your own library</a></li>
@@ -507,9 +508,12 @@ This template provides tooling to make the publishing process easier, via <a cla
 <div><p><em>Tip: compare the <a class="reference external" href="https://github.com/pthom/litgen_template/blob/main/_stubs/daft_lib/__init__.pyi">python stubs</a>
 with the <a class="reference external" href="https://github.com/pthom/litgen_template/blob/main/src/cpp_libraries/DaftLib/DaftLib.h">C++ header file</a> to see how close they are!</em></p>
 </div></blockquote>
-<blockquote>
-<div><p><em>Note: the options inside <a class="reference external" href="https://github.com/pthom/litgen_template/blob/main/tools/autogenerate_bindings.py">autogenerate_bindings.py</a> showcase a subset of litgen customization capabilities. See the <a class="reference external" href="https://pthom.github.io/litgen">litgen documentation</a> for more details. They are heavily documented, and correspond to the documentation you can find in <a class="reference external" href="https://github.com/pthom/litgen_template/tree/main/src/cpp_libraries/DaftLib/DaftLib.h">DaftLib.h</a></em></p>
-</div></blockquote>
+</section>
+<section id="customize-bindings-generation">
+<h3>Customize bindings generation<a class="headerlink" href="#customize-bindings-generation" title="Permalink to this heading">#</a></h3>
+<p><a class="reference external" href="https://github.com/pthom/litgen_template/blob/main/tools/autogenerate_bindings.py">tools/autogenerate_bindings.py</a> is an example of how to drive the bindings generation via a script.</p>
+<p>It will set a number of options, demonstrating a subset of litgen options: see the <a class="reference external" href="https://pthom.github.io/litgen">litgen documentation</a> for more details.</p>
+<p>The options in this script are heavily documented, and correspond to the documentation you can find in <a class="reference external" href="https://github.com/pthom/litgen_template/tree/main/src/cpp_libraries/DaftLib/DaftLib.h">DaftLib.h</a>_</p>
 </section>
 </section>
 <hr class="docutils" />
@@ -806,6 +810,7 @@ pytest<span class="w"> </span><span class="c1"># each time you want to run your 
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#autogenerate-the-binding-code">Autogenerate the binding code</a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#install-requirements">Install requirements</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#generate-bindings">Generate bindings</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#customize-bindings-generation">Customize bindings generation</a></li>
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#adapt-for-your-own-library">Adapt for your own library</a></li>

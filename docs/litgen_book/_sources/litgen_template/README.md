@@ -77,7 +77,13 @@ This will:
 > _Tip: compare the [python stubs](https://github.com/pthom/litgen_template/blob/main/_stubs/daft_lib/__init__.pyi)
 >  with the [C++ header file](https://github.com/pthom/litgen_template/blob/main/src/cpp_libraries/DaftLib/DaftLib.h) to see how close they are!_
 
-> _Note: the options inside [autogenerate_bindings.py](https://github.com/pthom/litgen_template/blob/main/tools/autogenerate_bindings.py) showcase a subset of litgen customization capabilities. See the [litgen documentation](https://pthom.github.io/litgen) for more details. They are heavily documented, and correspond to the documentation you can find in [DaftLib.h](https://github.com/pthom/litgen_template/tree/main/src/cpp_libraries/DaftLib/DaftLib.h)_
+### Customize bindings generation
+
+[tools/autogenerate_bindings.py](https://github.com/pthom/litgen_template/blob/main/tools/autogenerate_bindings.py) is an example of how to drive the bindings generation via a script.
+
+It will set a number of options, demonstrating a subset of litgen options: see the [litgen documentation](https://pthom.github.io/litgen) for more details. 
+
+The options in this script are heavily documented, and correspond to the documentation you can find in [DaftLib.h](https://github.com/pthom/litgen_template/tree/main/src/cpp_libraries/DaftLib/DaftLib.h)_
 
 
 
