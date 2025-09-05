@@ -4,6 +4,7 @@ from typing import Optional
 from xml.etree import ElementTree as ET
 
 from codemanip import code_utils
+from codemanip.code_utils import RegexOrMatcher
 
 import srcmlcpp
 from srcmlcpp.internal import srcml_utils
@@ -63,7 +64,7 @@ class _SrcmlPreprocessorState:
     We will test that a ifndef is an inclusion guard by checking comparing its suffix with HEADER_GUARD_SUFFIXES
     """
 
-    header_acceptable__regex: str
+    header_acceptable__regex: RegexOrMatcher
 
     was_last_element_an_ignored_endif: bool = False
     last_ignored_preprocessor_stmt_line: int = -1
@@ -72,7 +73,7 @@ class _SrcmlPreprocessorState:
     encountered_if: list[str]
     debug = False
 
-    def __init__(self, header_acceptable__regex: str) -> None:
+    def __init__(self, header_acceptable__regex: RegexOrMatcher) -> None:
         self.header_acceptable__regex = header_acceptable__regex
         self.shall_exclude = False
         self.encountered_if = []
@@ -142,7 +143,7 @@ class _SrcmlPreprocessorState:
 
     def has_one_excluded_ifdef(self) -> bool:
         for ifdef_var_name in self.encountered_if:
-            if not code_utils.does_match_regex(self.header_acceptable__regex, ifdef_var_name):
+            if not code_utils.does_match_regex_or_matcher(self.header_acceptable__regex, ifdef_var_name):
                 return True
         return False
 
@@ -162,7 +163,7 @@ class _SrcmlPreprocessorState:
         return r
 
 
-def filter_preprocessor_regions(unit: ET.Element, header_acceptable__regex: str) -> ET.Element:
+def filter_preprocessor_regions(unit: ET.Element, header_acceptable__regex: RegexOrMatcher) -> ET.Element:
     filtered_unit = copy.deepcopy(unit)
     processor = _SrcmlPreprocessorState(header_acceptable__regex)
     children_to_remove = []

@@ -5,6 +5,7 @@ from typing import Any, Callable, List, TYPE_CHECKING
 
 from codemanip import code_utils
 from codemanip.code_replacements import RegexReplacementList
+from codemanip.code_utils import RegexOrMatcher
 
 from srcmlcpp import SrcmlcppOptions
 
@@ -14,6 +15,8 @@ from litgen.internal.class_iterable_info import ClassIterablesInfos
 if TYPE_CHECKING:
     from litgen.internal.adapted_types import AdaptedFunction, AdaptedClass
     from litgen.litgen_generator import GeneratedCodeType
+
+
 
 
 class BindLibraryType(Enum):
@@ -28,15 +31,24 @@ class LitgenOptions:
     adaptations, etc.)"""
 
     # ------------------------------------------------------------------------------
-    # Note about regexes below:
+    # Note about __regex fields
     # =========================
-    # - regexes can support several alternatives: separate them by "|"
-    # For example, in order to match an exact function name, as well as functions ending with "_private",
-    # use a regex like this:
-    #         r"^YourFunctionName$|_private$",
-    # - If a regex string is empty, it will not match anything
-    # - To match everything, use r".*"
-    # - It is advised to prefix your regex strings with "r" (in order to use raw strings)
+    # All variables ending with __regex are of type RegexOrMatcher, i.e. they can be:
+    #   - a regex string (str)
+    #   - or a callable (str -> bool) that decides whether a name matches
+    #
+    # Defaults:
+    #   - ""  : matches nothing
+    #   - ".*": matches everything
+    #
+    # Regex usage tips:
+    #   - Combine alternatives with "|" (OR)
+    #       e.g. r"^ExactName$|_private$"
+    #   - Always use raw strings (prefix with "r") to avoid backslash issues
+    #
+    # Callables:
+    #   - Example: lambda name: name.endswith("_internal")
+    #
     # ------------------------------------------------------------------------------
 
     ################################################################################
@@ -122,7 +134,7 @@ class LitgenOptions:
     # Exclude some functions
     # ------------------------------------------------------------------------------
     # Exclude certain functions and methods by a regex on their name
-    fn_exclude_by_name__regex: str = ""
+    fn_exclude_by_name__regex: RegexOrMatcher = ""
 
     # Exclude certain functions and methods by a regex on any of their parameter type and/or return type
     # (those should be decorated type)
@@ -132,7 +144,7 @@ class LitgenOptions:
     #
     # Note: this is distinct from `fn_params_exclude_types__regex` which removes params
     # from the function signature, but not the function itself.
-    fn_exclude_by_param_type__regex: str = ""
+    fn_exclude_by_param_type__regex: RegexOrMatcher = ""
 
     # Exclude function and methods by its name and signature
     # For example:
@@ -146,8 +158,8 @@ class LitgenOptions:
     # ------------------------------------------------------------------------------
     # Remove some params from the python published interface. A param can only be removed if it has a default value
     # in the C++ signature
-    fn_params_exclude_names__regex: str = ""
-    fn_params_exclude_types__regex: str = ""
+    fn_params_exclude_names__regex: RegexOrMatcher = ""
+    fn_params_exclude_types__regex: RegexOrMatcher = ""
 
     # fn_exclude_non_api:
     # if srcmlcpp_options.functions_api_prefixes is filled, and fn_exclude_non_api=True,
@@ -199,8 +211,8 @@ class LitgenOptions:
     #
     # * fn_vectorize_prefix and fn_vectorize_suffix will be added to the vectorized functions names
     #   (they can be empty, in which case the vectorized function will be a usable overload with the same name)
-    fn_vectorize__regex: str = r""
-    fn_namespace_vectorize__regex: str = r""
+    fn_vectorize__regex: RegexOrMatcher = r""
+    fn_namespace_vectorize__regex: RegexOrMatcher = r""
     fn_vectorize_prefix: str = ""
     fn_vectorize_suffix: str = ""
 
@@ -212,8 +224,8 @@ class LitgenOptions:
     # Note:
     #    you can also write "// py::return_value_policy::reference" as an end of line comment after the function.
     #    See packages/litgen/integration_tests/mylib/include/mylib/return_value_policy_test.h as an example
-    fn_return_force_policy_reference_for_pointers__regex: str = ""
-    fn_return_force_policy_reference_for_references__regex: str = ""
+    fn_return_force_policy_reference_for_pointers__regex: RegexOrMatcher = ""
+    fn_return_force_policy_reference_for_references__regex: RegexOrMatcher = ""
     #
     # The callback below provides a flexible way to enforce the reference return policy for functions
     # It accepts litgen.internal.adapted_types.AdaptedFunction as a parameter.
@@ -225,11 +237,11 @@ class LitgenOptions:
     # Force overload
     # ------------------------------------------------------------------------------
     # Force using py::overload for functions that matches these regexes
-    fn_force_overload__regex: str = ""
+    fn_force_overload__regex: RegexOrMatcher = ""
     # Force using a lambda for functions that matches these regexes
     # (useful when pybind11 is confused and gives error like
     #     error: no matching function for call to object of type 'const detail::overload_cast_impl<...>'
-    fn_force_lambda__regex: str = ""
+    fn_force_lambda__regex: RegexOrMatcher = ""
 
     # ------------------------------------------------------------------------------
     # C style buffers to py::array
@@ -252,7 +264,7 @@ class LitgenOptions:
     # for which this transformation will be applied.
     # Set it to r".*" to apply this to all functions, set it to "" to disable it
     #
-    fn_params_replace_buffer_by_array__regex: str = r""
+    fn_params_replace_buffer_by_array__regex: RegexOrMatcher = r""
 
     # fn_params_buffer_types: list of numeric types that are considered as possible buffers.
     # You can customize this list in your own options by removing items from it,
@@ -283,7 +295,7 @@ class LitgenOptions:
 
     # fn_params_buffer_size_names__regex: possible names for the size of the buffer
     # = ["nb", "size", "count", "total", "n"] by default
-    fn_params_buffer_size_names__regex: str = code_utils.join_string_by_pipe_char(
+    fn_params_buffer_size_names__regex: RegexOrMatcher = code_utils.join_string_by_pipe_char(
         [
             code_utils.make_regex_var_name_contains_word("nb"),
             code_utils.make_regex_var_name_contains_word("size"),
@@ -305,7 +317,7 @@ class LitgenOptions:
     # fn_params_replace_c_array_const_by_std_array__regex contains a list of regexes on functions names
     # for which this transformation will be applied.
     # Set it to r".*" to apply this to all functions, set it to "" to disable it
-    fn_params_replace_c_array_const_by_std_array__regex: str = r".*"
+    fn_params_replace_c_array_const_by_std_array__regex: RegexOrMatcher = r".*"
 
     # Signatures like
     #       void foo_non_const(int output[2])
@@ -315,7 +327,7 @@ class LitgenOptions:
     # fn_params_replace_c_array_modifiable_by_boxed__regex contains a list of regexes on functions names
     # for which this transformation will be applied.
     # Set it to r".*" to apply this to all functions, set it to "" to disable it
-    fn_params_replace_c_array_modifiable_by_boxed__regex: str = r".*"
+    fn_params_replace_c_array_modifiable_by_boxed__regex: RegexOrMatcher = r".*"
     # (c_array_modifiable_max_size is the maximum number of params that can be boxed like this)
     fn_params_replace_modifiable_c_array__max_size = 10
 
@@ -330,7 +342,7 @@ class LitgenOptions:
     # fn_params_replace_c_string_list_regexes contains a list of regexes on functions names
     # for which this transformation will be applied.
     # Set it to [r".*"] to apply this to all functions, set it to [] to disable it
-    fn_params_replace_c_string_list__regex: str = r".*"
+    fn_params_replace_c_string_list__regex: RegexOrMatcher = r".*"
 
     # ------------------------------------------------------------------------------
     # Make "immutable python types" modifiable, when passed by pointer or reference
@@ -346,7 +358,7 @@ class LitgenOptions:
     #
     # fn_params_adapt_modifiable_immutable_regexes contains a list of regexes on functions names
     # Set it to r".*" to apply this to all functions. Set it to "" to disable it
-    fn_params_replace_modifiable_immutable_by_boxed__regex: str = r""
+    fn_params_replace_modifiable_immutable_by_boxed__regex: RegexOrMatcher = r""
 
     # ------------------------------------------------------------------------------
     # Make "mutable default parameters" behave like C++ default arguments
@@ -369,7 +381,7 @@ class LitgenOptions:
     # ------------------------------------------------------------------------------
     # Regex which contains a list of regexes on functions names for which this transformation will be applied.
     # by default, this is disabled (set it to r".*" to enable it for all functions)
-    fn_params_adapt_mutable_param_with_default_value__regex: str = r""
+    fn_params_adapt_mutable_param_with_default_value__regex: RegexOrMatcher = r""
     # if True, auto-generated named constructors will adapt mutable default parameters
     fn_params_adapt_mutable_param_with_default_value__to_autogenerated_named_ctor: bool = False
     # if True, a comment will be added in the stub file to explain the behavior
@@ -405,7 +417,7 @@ class LitgenOptions:
     #
     # fn_params_output_modifiable_immutable_to_return__regex contains a list of regexes on functions names
     # Set it to r".*" to apply this to all functions. Set it to "" to disable it
-    fn_params_output_modifiable_immutable_to_return__regex: str = ""
+    fn_params_output_modifiable_immutable_to_return__regex: RegexOrMatcher = ""
 
     # ------------------------------------------------------------------------------
     # Custom adapters (advanced, very advanced and not documented here)
@@ -419,11 +431,11 @@ class LitgenOptions:
     ################################################################################
 
     # Exclude certain classes and structs by a regex on their name
-    class_exclude_by_name__regex: str = ""
+    class_exclude_by_name__regex: RegexOrMatcher = ""
     # Exclude certain members by a regex on their name
-    member_exclude_by_name__regex: str = ""
+    member_exclude_by_name__regex: RegexOrMatcher = ""
     # Exclude members based on their type
-    member_exclude_by_type__regex: str = ""
+    member_exclude_by_type__regex: RegexOrMatcher = ""
     # Exclude certain members by a regex on their name, if class or struct name matched
     # For example:
     #   options.member_exclude_by_name_and_class__regex = {
@@ -433,12 +445,12 @@ class LitgenOptions:
     #           ...
     #       ])
     #   }
-    member_exclude_by_name_and_class__regex: dict[str, str]
+    member_exclude_by_name_and_class__regex: dict[str, RegexOrMatcher]
 
     # Make certain members read-only by a regex on their name
-    member_readonly_by_name__regex: str = ""
+    member_readonly_by_name__regex: RegexOrMatcher = ""
     # Make certain members read-only based on their type
-    member_readonly_by_type__regex: str = ""
+    member_readonly_by_type__regex: RegexOrMatcher = ""
 
     # class_create_default_named_ctor__regex / struct_create_default_named_ctor__regex:
     # regex giving the list of class & struct names for which we want to generate a named
@@ -446,15 +458,15 @@ class LitgenOptions:
     # (by default, this is active for all structs and not for the classes,
     #  in order for it to work, all struct members need to be default constructible if
     #  they are not declared with a default value)
-    struct_create_default_named_ctor__regex: str = r".*"
-    class_create_default_named_ctor__regex: str = r""
+    struct_create_default_named_ctor__regex: RegexOrMatcher = r".*"
+    class_create_default_named_ctor__regex: RegexOrMatcher = r""
 
     # class_expose_protected_methods__regex:
     # regex giving the list of class names for which we want to expose protected methods.
     # (by default, only public methods are exposed)
     # If active, this will use the technique described at
     # https://pybind11.readthedocs.io/en/stable/advanced/classes.html#binding-protected-member-functions)
-    class_expose_protected_methods__regex: str = ""
+    class_expose_protected_methods__regex: RegexOrMatcher = ""
 
     # class_expose_protected_methods__regex:
     # regex giving the list of class names for which we want to be able to override virtual methods
@@ -464,22 +476,22 @@ class LitgenOptions:
     # https://pybind11.readthedocs.io/en/stable/advanced/classes.html#overriding-virtual-functions-in-python
     #
     # Note: if you want to override protected functions, also fill `class_expose_protected_methods__regex`
-    class_override_virtual_methods_in_python__regex: str = ""
+    class_override_virtual_methods_in_python__regex: RegexOrMatcher = ""
 
     # class_dynamic_attributes__regex
     # By default, classes exported from C++ do not support dynamic attributes and the only writable attributes are
     # the ones explicitly defined using class_::def_readwrite() or class_::def_property().
     # If active, this will use the technique described at
     # https://pybind11.readthedocs.io/en/stable/classes.html#dynamic-attributes
-    class_dynamic_attributes__regex: str = ""
+    class_dynamic_attributes__regex: RegexOrMatcher = ""
 
     # class_deep_copy__regex & class_copy__regex:
     # By default, structs and classes exported from C++ do not support (deep)copy.
     # However, if they do have a copy constructor (implicit or user defined),
     # (deep)copy can be enabled by invoking this constructor.
     # https://pybind11.readthedocs.io/en/stable/advanced/classes.html#deepcopy-support
-    class_deep_copy__regex: str = ""
-    class_copy__regex: str = ""
+    class_deep_copy__regex: RegexOrMatcher = ""
+    class_copy__regex: RegexOrMatcher = ""
     # If class_copy_add_info_in_stub=True, the existence of __copy__ and __deepcopy__
     # will be mentioned in the stub file.
     class_copy_add_info_in_stub: bool = False
@@ -504,7 +516,7 @@ class LitgenOptions:
     # **References:**
     # - [pybind11 Documentation: Smart Pointers](https://pybind11.readthedocs.io/en/stable/advanced/smart_ptrs.html)
     # - [Understanding Holder Types in pybind11](https://pybind11.readthedocs.io/en/stable/advanced/classes.html#custom-smart-pointers)
-    class_held_as_shared__regex: str = ""
+    class_held_as_shared__regex: RegexOrMatcher = ""
 
     # class_custom_inheritance__callback:
     # (advanced) A callback to customize the base classes used in generated bindings.
@@ -553,7 +565,7 @@ class LitgenOptions:
     # i.e. the member will be transformed to a property that points to a numpy array
     # which can be read/written from python (this requires numpy)
     # This is active by default.
-    member_numeric_c_array_replace__regex: str = r".*"
+    member_numeric_c_array_replace__regex: RegexOrMatcher = r".*"
 
     # member_numeric_c_array_types: list of numeric types that can be stored in a numpy array
     # for a class member which is a fixed size array of a numeric type
@@ -594,13 +606,13 @@ class LitgenOptions:
 
     # All C++ namespaces that match this regex will be excluded
     # By default, any namespace whose name contains "internal" or "detail" will be excluded.
-    namespace_exclude__regex = r"[Ii]nternal|[Dd]etail"
+    namespace_exclude__regex: RegexOrMatcher = r"[Ii]nternal|[Dd]etail"
 
     ################################################################################
     #    <enum adaptations>
     ################################################################################
     # Exclude certain enums by a regex on their name
-    enum_exclude_by_name__regex: str = ""
+    enum_exclude_by_name__regex: RegexOrMatcher = ""
     # Remove the typical "EnumName_" prefix from "C enum" values.
     # For example, with the C enum:
     #     enum MyEnum { MyEnum_A = 0, MyEnum_B };
@@ -615,10 +627,10 @@ class LitgenOptions:
     enum_flag_skip_count: bool = True
     # By default, all enums export rudimentary arithmetic ( r".*" matches any enum name)
     # (and the enum will be a derivative of enum.IntEnum)
-    enum_make_arithmetic__regex: str = r".*"
+    enum_make_arithmetic__regex: RegexOrMatcher = r".*"
     # Indicate that the enumeration supports bit-wise operations
     # (and the enum will be a derivative of enum.IntFlag or enum.Flag)
-    enum_make_flag__regex: str = r""
+    enum_make_flag__regex: RegexOrMatcher = r""
     # Export all entries of the enumeration into the parent scope.
     enum_export_values: bool = False
 
@@ -632,14 +644,14 @@ class LitgenOptions:
     #     #define MY_HEX_VALUE 0x00010009
     # This is limited to *simple* defines (no param, string, int, float or hex only)
     # By default nothing is exported
-    macro_define_include_by_name__regex: str = ""
+    macro_define_include_by_name__regex: RegexOrMatcher = ""
 
     ################################################################################
     #    <globals vars adaptations>
     ################################################################################
     # Global variable defines can be exported as global variables, e.g.:
     # By default nothing is exported (still experimental)
-    globals_vars_include_by_name__regex: str = ""
+    globals_vars_include_by_name__regex: RegexOrMatcher = ""
 
     ################################################################################
     #    <post processing>

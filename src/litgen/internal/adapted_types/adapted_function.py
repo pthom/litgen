@@ -328,7 +328,7 @@ class AdaptedFunction(AdaptedElement):
             return False
 
         # Check options.fn_exclude_by_name__regex
-        if code_utils.does_match_regex(options.fn_exclude_by_name__regex, cpp_function.function_name):
+        if code_utils.does_match_regex_or_matcher(options.fn_exclude_by_name__regex, cpp_function.function_name):
             return False
 
         # Exclude pointer to pointer
@@ -338,10 +338,10 @@ class AdaptedFunction(AdaptedElement):
         # Check options.fn_exclude_by_param_type__regex
         reg = options.fn_exclude_by_param_type__regex
         if hasattr(cpp_function, "return_type"):
-            if code_utils.does_match_regex(reg, cpp_function.return_type.str_code()):
+            if code_utils.does_match_regex_or_matcher(reg, cpp_function.return_type.str_code()):
                 return False
         for param in cpp_function.parameter_list.parameters:
-            if code_utils.does_match_regex(reg, param.decl.cpp_type.str_code()):
+            if code_utils.does_match_regex_or_matcher(reg, param.decl.cpp_type.str_code()):
                 return False
 
         # Check options.fn_exclude_by_name_and_signature
@@ -420,8 +420,8 @@ class AdaptedFunction(AdaptedElement):
         if self.options.bind_library != BindLibraryType.pybind11:
             return False
         ns_name = self.cpp_element().cpp_scope_str(include_self=False)
-        match_ns_name = code_utils.does_match_regex(self.options.fn_namespace_vectorize__regex, ns_name)
-        match_fn_name = code_utils.does_match_regex(self.options.fn_vectorize__regex, self.cpp_element().function_name)
+        match_ns_name = code_utils.does_match_regex_or_matcher(self.options.fn_namespace_vectorize__regex, ns_name)
+        match_fn_name = code_utils.does_match_regex_or_matcher(self.options.fn_vectorize__regex, self.cpp_element().function_name)
         r = match_ns_name and match_fn_name and not self.is_vectorize_impl
         return r
 
@@ -628,7 +628,7 @@ class AdaptedFunction(AdaptedElement):
         if self.is_method():
             replace_tokens.function_pointer = "&" + replace_tokens.function_pointer
 
-        force_overload_in_pydef = code_utils.does_match_regex(
+        force_overload_in_pydef = code_utils.does_match_regex_or_matcher(
             self.options.fn_force_overload__regex, self.cpp_element().function_name
         )
 
@@ -940,10 +940,10 @@ class AdaptedFunction(AdaptedElement):
         options = self.options
         returns_pointer = self.cpp_element().returns_pointer()
         returns_reference = self.cpp_element().returns_reference()
-        matches_regex_pointer = code_utils.does_match_regex(
+        matches_regex_pointer = code_utils.does_match_regex_or_matcher(
             options.fn_return_force_policy_reference_for_pointers__regex, function_name
         )
-        matches_regex_reference = code_utils.does_match_regex(
+        matches_regex_reference = code_utils.does_match_regex_or_matcher(
             options.fn_return_force_policy_reference_for_references__regex, function_name
         )
 
@@ -1053,7 +1053,7 @@ class AdaptedFunction(AdaptedElement):
         if self.cpp_element().is_virtual_method():
             parent_struct = self.cpp_element().parent_struct_if_method()
             assert parent_struct is not None
-            is_overridable = code_utils.does_match_regex(
+            is_overridable = code_utils.does_match_regex_or_matcher(
                 self.options.class_override_virtual_methods_in_python__regex, parent_struct.class_name
             )
             if is_overridable:
@@ -1343,7 +1343,7 @@ class AdaptedFunction(AdaptedElement):
 
         matching_template_spec = None
         for template_spec in self.options.fn_template_options.specs:
-            if code_utils.does_match_regex(template_spec.name_regex, self.cpp_element().function_name):
+            if code_utils.does_match_regex_or_matcher(template_spec.name_regex, self.cpp_element().function_name):
                 matching_template_spec = template_spec
 
         if matching_template_spec is None:

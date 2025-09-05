@@ -34,7 +34,7 @@ def adapt_c_string_list(adapted_function: AdaptedFunction) -> Optional[LambdaAda
         },
     """
     options = adapted_function.options
-    if not code_utils.does_match_regex(
+    if not code_utils.does_match_regex_or_matcher(
         options.fn_params_replace_c_string_list__regex, adapted_function.cpp_adapted_function.function_name
     ):
         return None
@@ -161,7 +161,7 @@ def adapt_c_string_list_no_count(adapted_function: AdaptedFunction) -> Optional[
         },
     """
     options = adapted_function.options
-    if not code_utils.does_match_regex(
+    if not code_utils.does_match_regex_or_matcher(
         options.fn_params_replace_c_string_list__regex, adapted_function.cpp_adapted_function.function_name
     ):
         return None

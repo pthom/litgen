@@ -48,7 +48,7 @@ def _name_looks_like_buffer_standard_or_template(options: LitgenOptions, param: 
 
 
 def _name_looks_like_buffer_size(options: LitgenOptions, param: CppParameter) -> bool:
-    r = code_utils.does_match_regex(options.fn_params_buffer_size_names__regex, param.variable_name())
+    r = code_utils.does_match_regex_or_matcher(options.fn_params_buffer_size_names__regex, param.variable_name())
     return r
 
 
@@ -118,7 +118,7 @@ class _AdaptBuffersHelper:
             return r
 
     def shall_adapt(self) -> bool:
-        if not code_utils.does_match_regex(
+        if not code_utils.does_match_regex_or_matcher(
             self.options.fn_params_replace_buffer_by_array__regex,
             self.adapted_function.cpp_adapted_function.function_name,
         ):

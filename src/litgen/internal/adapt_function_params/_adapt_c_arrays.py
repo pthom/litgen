@@ -58,7 +58,7 @@ def adapt_c_arrays(adapted_function: AdaptedFunction) -> Optional[LambdaAdapter]
     function_name = adapted_function.cpp_adapted_function.function_name
 
     def shall_replace_by_boxed(param: AdaptedParameter) -> bool:
-        flag_replace_by_boxed = code_utils.does_match_regex(
+        flag_replace_by_boxed = code_utils.does_match_regex_or_matcher(
             options.fn_params_replace_c_array_modifiable_by_boxed__regex, function_name
         )
         cpp_decl = param.adapted_decl().cpp_element()
@@ -67,7 +67,7 @@ def adapt_c_arrays(adapted_function: AdaptedFunction) -> Optional[LambdaAdapter]
         return is_modifiable and is_c_array_known_fixed_size and flag_replace_by_boxed
 
     def shall_replace_by_std_array(param: AdaptedParameter) -> bool:
-        flag_replace_by_std_array = code_utils.does_match_regex(
+        flag_replace_by_std_array = code_utils.does_match_regex_or_matcher(
             options.fn_params_replace_c_array_const_by_std_array__regex, function_name
         )
         cpp_decl = param.adapted_decl().cpp_element()

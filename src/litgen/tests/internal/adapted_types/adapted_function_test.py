@@ -753,3 +753,21 @@ def test_optional_none_param():
             foo_default, nb::arg("a").none() = nb::none());
         """
         )
+
+def test_callable_matcher_exclude_by_name():
+    options = LitgenOptions()
+    # exclude any function whose name ends with "_private"
+    options.fn_exclude_by_name__regex = lambda name: name.endswith("_private")
+
+    code = """
+    int keep();
+    int drop_private();
+    """
+    stub_code = LitgenGeneratorTestsHelper.code_to_stub(options, code)
+    code_utils.assert_are_codes_equal(
+        stub_code,
+        """
+        def keep() -> int:
+            pass
+        """,
+    )

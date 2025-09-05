@@ -4,6 +4,7 @@ import srcmlcpp
 from srcmlcpp.cpp_types import CppType
 from codemanip import code_utils
 from codemanip.code_replacements import RegexReplacementList
+from codemanip.code_utils import RegexOrMatcher
 
 from dataclasses import dataclass
 
@@ -50,13 +51,13 @@ def _make_cpp_type_synonym_list(synomym_strs: list[str] | None) -> list[CppTypeS
 
 @dataclass
 class _TemplateSpecializationSpec:
-    name_regex: str
+    name_regex: RegexOrMatcher
     cpp_types_list: list[CppType]
     add_suffix_to_function_name: bool
     cpp_types_synonyms: list[CppTypeSynonym]
 
     def matches_template_name(self, template_name: str) -> bool:
-        r = code_utils.does_match_regex(self.name_regex, template_name)
+        r = code_utils.does_match_regex_or_matcher(self.name_regex, template_name)
         return r
 
     def handles_type_instantiation(self, cpp_type: CppType) -> bool:
@@ -142,7 +143,7 @@ class TemplateSpecList:
 
     def _add_specialization(
         self,
-        name_regex: str,
+        name_regex: RegexOrMatcher,
         cpp_types_list_str: list[str],
         add_suffix_to_function_name: bool,
         cpp_types_synonyms: list[CppTypeSynonym],
@@ -223,7 +224,7 @@ class TemplateFunctionsOptions(TemplateSpecList):
 
     def specialized_function_python_name(self, function_name: str, cpp_type: CppType) -> str | None:
         for s in self.specs:
-            matches_name = code_utils.does_match_regex(s.name_regex, function_name)
+            matches_name = code_utils.does_match_regex_or_matcher(s.name_regex, function_name)
             matches_type = s.handles_type_instantiation(cpp_type) or s.handles_type_synonym(cpp_type)
             if matches_name and matches_type:
                 if s.add_suffix_to_function_name:

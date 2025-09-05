@@ -78,7 +78,7 @@ class AdaptedClassMember(AdaptedDecl):
         array_typename = cpp_decl.cpp_type.str_code()
         if array_typename not in options._member_numeric_c_array_types_list():
             return False
-        shall_replace = code_utils.does_match_regex(options.member_numeric_c_array_replace__regex, cpp_decl.decl_name)
+        shall_replace = code_utils.does_match_regex_or_matcher(options.member_numeric_c_array_replace__regex, cpp_decl.decl_name)
         if not shall_replace:
             return False
         if cpp_decl.c_array_size_as_int() is None:
@@ -99,7 +99,7 @@ class AdaptedClassMember(AdaptedDecl):
             )
             return False
 
-        shall_replace = code_utils.does_match_regex(options.member_numeric_c_array_replace__regex, cpp_decl.decl_name)
+        shall_replace = code_utils.does_match_regex_or_matcher(options.member_numeric_c_array_replace__regex, cpp_decl.decl_name)
         if not shall_replace:
             cpp_decl.emit_warning(
                 """
@@ -219,9 +219,9 @@ class AdaptedClassMember(AdaptedDecl):
         is_readonly = False
         if cpp_type.is_const():
             is_readonly = True
-        if code_utils.does_match_regex(self.options.member_readonly_by_type__regex, cpp_type.str_code()):
+        if code_utils.does_match_regex_or_matcher(self.options.member_readonly_by_type__regex, cpp_type.str_code()):
             is_readonly = True
-        if code_utils.does_match_regex(self.options.member_readonly_by_name__regex, name_cpp):
+        if code_utils.does_match_regex_or_matcher(self.options.member_readonly_by_name__regex, name_cpp):
             is_readonly = True
         return is_readonly
 
@@ -356,13 +356,13 @@ class AdaptedClass(AdaptedElement):
         class_name = self.cpp_element().class_name
 
         for cpp_decl in cpp_decl_statement.cpp_decls:
-            is_excluded_by_name_and_class = code_utils.does_match_regex(
+            is_excluded_by_name_and_class = code_utils.does_match_regex_or_matcher(
                 self.options.member_exclude_by_name_and_class__regex.get(class_name, ""), cpp_decl.decl_name
             )
-            is_excluded_by_name = code_utils.does_match_regex(
+            is_excluded_by_name = code_utils.does_match_regex_or_matcher(
                 self.options.member_exclude_by_name__regex, cpp_decl.decl_name
             )
-            is_excluded_by_type = code_utils.does_match_regex(
+            is_excluded_by_type = code_utils.does_match_regex_or_matcher(
                 self.options.member_exclude_by_type__regex, cpp_decl.cpp_type.str_code()
             )
             if not is_excluded_by_name_and_class and not is_excluded_by_name and not is_excluded_by_type:
@@ -373,7 +373,7 @@ class AdaptedClass(AdaptedElement):
     def _init_add_adopted_class_function(self, cpp_function_decl: CppFunctionDecl) -> None:
         class_name = self.cpp_element().class_name
 
-        is_excluded_by_name_and_class = code_utils.does_match_regex(
+        is_excluded_by_name_and_class = code_utils.does_match_regex_or_matcher(
             self.options.member_exclude_by_name_and_class__regex.get(class_name, ""), cpp_function_decl.name()
         )
         if not is_excluded_by_name_and_class:
@@ -672,7 +672,7 @@ class AdaptedClass(AdaptedElement):
             else:
                 replacements.maybe_py_is_final = ""
 
-            if code_utils.does_match_regex(self.options.class_dynamic_attributes__regex, self.cpp_element().class_name):
+            if code_utils.does_match_regex_or_matcher(self.options.class_dynamic_attributes__regex, self.cpp_element().class_name):
                 if options.bind_library == BindLibraryType.pybind11:
                     replacements.maybe_py_is_dynamic = ", py::dynamic_attr()"
                 else:
@@ -683,7 +683,7 @@ class AdaptedClass(AdaptedElement):
             replacements.comment = self._elm_comment_pydef_one_line()
 
             if (
-                code_utils.does_match_regex(options.class_held_as_shared__regex, self.cpp_element().class_name)
+                code_utils.does_match_regex_or_matcher(options.class_held_as_shared__regex, self.cpp_element().class_name)
                 and self.options.bind_library == BindLibraryType.pybind11
             ):
                 replacements.maybe_shared_ptr_holder = f", std::shared_ptr<{qualified_struct_name}>"
@@ -816,7 +816,7 @@ class AdaptedClass(AdaptedElement):
         else:
             match_regex = self.options.class_deep_copy__regex
 
-        if not code_utils.does_match_regex(match_regex, self.cpp_element().class_name):
+        if not code_utils.does_match_regex_or_matcher(match_regex, self.cpp_element().class_name):
             return False
 
         user_defined_copy_constructor = self.cpp_element().get_user_defined_copy_constructor()
@@ -922,7 +922,7 @@ class AdaptedClass(AdaptedElement):
 
         matching_template_spec = None
         for template_spec in self.options.class_template_options.specs:
-            if code_utils.does_match_regex(template_spec.name_regex, self.cpp_element().class_name):
+            if code_utils.does_match_regex_or_matcher(template_spec.name_regex, self.cpp_element().class_name):
                 matching_template_spec = template_spec
 
         if matching_template_spec is None:
@@ -1038,7 +1038,7 @@ class AdaptedClass(AdaptedElement):
         self.lg_context.virtual_methods_glue_code += glue_code_str
 
     def _virt_shall_override(self) -> bool:
-        active = code_utils.does_match_regex(
+        active = code_utils.does_match_regex_or_matcher(
             self.options.class_override_virtual_methods_in_python__regex, self.cpp_element().class_name
         )
         if not active:
@@ -1131,7 +1131,7 @@ class AdaptedClass(AdaptedElement):
                     self.adapted_protected_methods.append(AdaptedFunction(self.lg_context, child, is_overloaded))
 
     def _prot_shall_publish(self) -> bool:
-        r = code_utils.does_match_regex(
+        r = code_utils.does_match_regex_or_matcher(
             self.options.class_expose_protected_methods__regex, self.cpp_element().class_name
         )
         return r
@@ -1152,12 +1152,13 @@ class PythonNamedConstructorHelper:
 
     def flag_generate_named_ctor_params(self) -> bool:
         cpp_class = self.adapted_class.cpp_element()
-        ctor__regex = ""
+        from codemanip.code_utils import RegexOrMatcher
+        ctor__regex: RegexOrMatcher = ""
         if type(cpp_class) is CppClass:
             ctor__regex = self.options.class_create_default_named_ctor__regex
         elif type(cpp_class) is CppStruct:
             ctor__regex = self.options.struct_create_default_named_ctor__regex
-        result = code_utils.does_match_regex(ctor__regex, self.adapted_class.cpp_element().class_name)
+        result = code_utils.does_match_regex_or_matcher(ctor__regex, self.adapted_class.cpp_element().class_name)
 
         if cpp_class.has_private_destructor():
             result = False
@@ -1214,15 +1215,15 @@ class PythonNamedConstructorHelper:
                     # they introduce too many syntax exceptions
                     return False
 
-                if code_utils.does_match_regex(options.member_exclude_by_type__regex, cpp_type_str):
+                if code_utils.does_match_regex_or_matcher(options.member_exclude_by_type__regex, cpp_type_str):
                     return False
 
-                if code_utils.does_match_regex(options.member_exclude_by_name__regex, member.name()):
+                if code_utils.does_match_regex_or_matcher(options.member_exclude_by_name__regex, member.name()):
                     return False
 
                 cls_name = self.cpp_class.class_name
                 regex_str = options.member_exclude_by_name_and_class__regex.get(cls_name, "")
-                if code_utils.does_match_regex(regex_str, member.name()):
+                if code_utils.does_match_regex_or_matcher(regex_str, member.name()):
                     return False
 
                 return True

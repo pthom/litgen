@@ -14,7 +14,7 @@ def adapt_const_char_pointer_with_default_null(adapted_function: AdaptedFunction
         return None
 
     function_name = adapted_function.cpp_adapted_function.function_name
-    if not code_utils.does_match_regex(options.fn_params_output_modifiable_immutable_to_return__regex, function_name):
+    if not code_utils.does_match_regex_or_matcher(options.fn_params_output_modifiable_immutable_to_return__regex, function_name):
         return None
 
     needs_adapt = False

@@ -4,7 +4,7 @@ Options for srcmlcpp. Read the doc near all options elements.
 from __future__ import annotations
 from typing import Callable, Optional
 
-from codemanip.code_utils import split_string_by_pipe_char
+from codemanip.code_utils import split_string_by_pipe_char, RegexOrMatcher
 from srcmlcpp.scrml_warning_settings import WarningType
 
 
@@ -46,7 +46,7 @@ class SrcmlcppOptions:
     # inside header_guards (and other acceptable preprocessor defines you may set via this regex)
     # Your regex can have several options: separate them with a "|".
     # By default, all macros names ending with "_H", "HPP", "HXX" are considered as acceptable.
-    header_filter_acceptable__regex: str = "__cplusplus|_h_$|_h$|_H$|_H_$|hpp$|HPP$|hxx$|HXX$"
+    header_filter_acceptable__regex: RegexOrMatcher = "__cplusplus|_h_$|_h$|_H$|_H_$|hpp$|HPP$|hxx$|HXX$"
 
     ################################################################################
     #    <Custom preprocess of the code>

@@ -6,8 +6,9 @@ import os.path
 import pathlib
 import re
 import traceback
-from typing import Any, Optional, TypeVar
+from typing import Any, Optional, TypeVar, Callable
 from collections.abc import Iterable, Iterator
+from functools import lru_cache
 
 
 """Low level code utilities
@@ -15,8 +16,11 @@ from collections.abc import Iterable, Iterator
 Note: This module shall work standalone, and not depend on anything inside litgen or srcmlcpp!
 """
 
-T = TypeVar("T")
+# A regex string or a callable that takes a string and returns a bool
+RegexOrMatcher = str | Callable[[str], bool]
 
+
+T = TypeVar("T")
 
 # transform a list into a list of adjacent pairs
 # For example : [a, b, c] -> [ [a, b], [b, c]]
@@ -709,15 +713,44 @@ def contains_pointer_type(full_type_str: str, type_to_search: str) -> bool:
     return False
 
 
+@lru_cache(maxsize=2048)
+def _compile_regex(pattern: str) -> re.Pattern[str]:
+    # preserve your historical behavior
+    if pattern.startswith("|"):
+        pattern = pattern[1:]
+    return re.compile(pattern, flags=re.MULTILINE)
+
+
 def does_match_regex(regex_str: str, word: str) -> bool:
-    if regex_str.startswith("|"):
-        regex_str = regex_str[1:]
+    """
+    Return True if `word` matches the given regex string.
+    (note: uses internally a cache of compiled regex for performance)
+
+    Special cases:
+    - If `regex_str` starts with "|", the leading "|" is ignored
+      (historical compatibility with concatenated patterns).
+    - If `regex_str` is the empty string "", it matches nothing.
+      (Note: Python's re.compile("") would normally match *everywhere*;
+      this function deliberately overrides that behavior.)
+    - If `word` is None, returns False.
+
+    Example:
+        does_match_regex(r"^foo$", "foo")    # True
+        does_match_regex(r"", "foo")         # False (by convention)
+        does_match_regex(r".*", "foo")       # True
+    """
     if len(regex_str) == 0:
         return False
-    if word is None:
-        return False
-    matches = list(re.finditer(regex_str, word, re.MULTILINE))
-    return len(matches) > 0
+    return _compile_regex(regex_str).search(word) is not None
+
+
+def does_match_regex_or_matcher(rule: RegexOrMatcher, word: str) -> bool:
+    if isinstance(rule, str):
+        return does_match_regex(rule, word)
+    else:
+        # callable case
+        result = bool(rule(word))
+        return result
 
 
 def make_regex_any_variable_ending_with(what_to_find: str) -> str:

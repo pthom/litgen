@@ -42,7 +42,7 @@ def adapt_modifiable_immutable_to_return(adapted_function: AdaptedFunction) -> O
     options = adapted_function.options
 
     function_name = adapted_function.cpp_adapted_function.function_name
-    if not code_utils.does_match_regex(options.fn_params_output_modifiable_immutable_to_return__regex, function_name):
+    if not code_utils.does_match_regex_or_matcher(options.fn_params_output_modifiable_immutable_to_return__regex, function_name):
         return None
 
     needs_adapt = False

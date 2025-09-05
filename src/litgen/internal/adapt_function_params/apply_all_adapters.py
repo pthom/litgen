@@ -67,7 +67,7 @@ def apply_all_adapters(inout_adapted_function: AdaptedFunction) -> None:
         if lambda_adapter is not None:
             _apply_lambda_adapter(inout_adapted_function, lambda_adapter)
 
-    flag_force_lambda = code_utils.does_match_regex(
+    flag_force_lambda = code_utils.does_match_regex_or_matcher(
         inout_adapted_function.options.fn_force_lambda__regex, inout_adapted_function.cpp_adapted_function.function_name
     )
     if flag_force_lambda and inout_adapted_function.lambda_to_call is None:

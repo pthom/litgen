@@ -76,7 +76,7 @@ class AdaptedBlock(AdaptedElement):
                 elif isinstance(child, CppConditionMacro):
                     self.adapted_elements.append(AdaptedConditionMacro(self.lg_context, child))
                 elif isinstance(child, CppStruct):
-                    is_excluded_by_name = code_utils.does_match_regex(
+                    is_excluded_by_name = code_utils.does_match_regex_or_matcher(
                         self.options.class_exclude_by_name__regex, child.class_name
                     )
                     if not is_excluded_by_name:
@@ -86,21 +86,21 @@ class AdaptedBlock(AdaptedElement):
                         is_overloaded = self.cpp_element().is_function_overloaded(child)
                         self.adapted_elements.append(AdaptedFunction(self.lg_context, child, is_overloaded))
                 elif isinstance(child, CppDefine):
-                    is_included = code_utils.does_match_regex(
+                    is_included = code_utils.does_match_regex_or_matcher(
                         self.options.macro_define_include_by_name__regex, child.macro_name
                     )
                     is_publishable = AdaptedDefine.is_publishable(child)
                     if is_included and is_publishable:
                         self.adapted_elements.append(AdaptedDefine(self.lg_context, child))
                 elif isinstance(child, CppEnum):
-                    is_excluded_by_name = code_utils.does_match_regex(
+                    is_excluded_by_name = code_utils.does_match_regex_or_matcher(
                         self.options.enum_exclude_by_name__regex, child.enum_name
                     )
                     if not is_excluded_by_name:
                         self.adapted_elements.append(AdaptedEnum(self.lg_context, child))
                 elif isinstance(child, CppNamespace):
                     is_anonymous_namespace = child.ns_name == ""
-                    is_excluded_by_name = code_utils.does_match_regex(
+                    is_excluded_by_name = code_utils.does_match_regex_or_matcher(
                         self.options.namespace_exclude__regex, child.ns_name
                     )
                     has_block = hasattr(child, "_block")
@@ -112,7 +112,7 @@ class AdaptedBlock(AdaptedElement):
                     if True:
                         for cpp_decl in child.cpp_decls:
                             # print(f"Add global: class={self.__class__} decl={cpp_decl}")
-                            is_included = code_utils.does_match_regex(
+                            is_included = code_utils.does_match_regex_or_matcher(
                                 self.options.globals_vars_include_by_name__regex, cpp_decl.decl_name
                             )
                             if is_included:

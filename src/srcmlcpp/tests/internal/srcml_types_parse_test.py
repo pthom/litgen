@@ -323,6 +323,7 @@ def do_parse_imgui_implot(filename: str) -> None:
     options = SrcmlcppOptions()
     options.code_preprocess_function = preprocess_imgui_code
     options.flag_quiet = True
+    assert isinstance(options.header_filter_acceptable__regex, str)
     options.header_filter_acceptable__regex += "|^IMGUI_DISABLE$"
     cpp_unit = srcmlcpp_main.code_to_cpp_unit(options, filename=filename)
     recomposed_code = str(cpp_unit)
