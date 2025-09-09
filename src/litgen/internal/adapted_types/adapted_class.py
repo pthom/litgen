@@ -603,6 +603,10 @@ class AdaptedClass(AdaptedElement):
         children_except_inner_classes = list(filter(not_is_class_or_enum, self.adapted_public_children))
         children_inner_classes = list(filter(is_class_or_enum, self.adapted_public_children))
 
+        def pydef_class_var() -> str:
+            r = cpp_to_python.cpp_scope_to_pybind_var_name(options, self.cpp_element())
+            return r
+
         def make_pyclass_creation_code() -> str:
             """Return the C++ code that instantiates the class.
 
@@ -656,7 +660,7 @@ class AdaptedClass(AdaptedElement):
             replacements = munch.Munch()
             replacements.py = "py" if options.bind_library == BindLibraryType.pybind11 else "nb"
             replacements._i_ = self.options._indent_cpp_spaces()
-            replacements.pydef_class_var = cpp_to_python.cpp_scope_to_pybind_var_name(options, self.cpp_element())
+            replacements.pydef_class_var = pydef_class_var()
             replacements.qualified_struct_name = qualified_struct_name
             replacements.other_template_params = other_template_params
             replacements.location = self._elm_info_original_location_cpp()
@@ -789,11 +793,9 @@ class AdaptedClass(AdaptedElement):
 
         code = make_pyclass_creation_code()
         if len(inner_classes_code) > 0:
-            pydef_class_var = cpp_to_python.cpp_scope_to_pybind_var_name(options, self.cpp_element())
-
             code += ";\n"
             code += inner_classes_code + "\n\n"
-            code += pydef_class_var + "\n"
+            code += pydef_class_var() + "\n"
             code += make_all_children_code()
         else:
             code += "\n" + make_all_children_code()
