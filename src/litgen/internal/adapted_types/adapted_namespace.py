@@ -67,6 +67,15 @@ class AdaptedNamespace(AdaptedElement):
         lines.append("")
 
         if self.flag_shall_create_namespace_as_module():
+            # Add user custom code
+            custom_code = self.options.custom_bindings._pub_make_submodule_custom_code(
+                self.cpp_element().cpp_scope(include_self=True).str_cpp,
+                self.pydef_submodule_cpp_var(),
+                is_pydef=False
+            )
+            if custom_code is not None:
+                lines += custom_code.splitlines()
+
             context_stored_lines = self._stub_class_as_ns_creation_code()
             context_stored_lines += code_utils.indent_code_lines(lines, indent_str=self.options._indent_python_spaces())
             self.lg_context.namespaces_stub.store_code(
@@ -88,7 +97,7 @@ class AdaptedNamespace(AdaptedElement):
         replace_tokens.parent_module_cpp_var = cpp_to_python.cpp_scope_to_pybind_parent_var_name(
             self.options, self.cpp_element()
         )
-        replace_tokens.submodule_cpp_var = cpp_to_python.cpp_scope_to_pybind_var_name(self.options, self.cpp_element())
+        replace_tokens.submodule_cpp_var = self.pydef_submodule_cpp_var()
 
         replace_tokens.module_doc = cpp_to_python.comment_pydef_one_line(
             self.options, self.cpp_element().cpp_element_comments.full_comment()
@@ -103,11 +112,24 @@ class AdaptedNamespace(AdaptedElement):
         )
         return submodule_code_.split("\n")
 
+    def pydef_submodule_cpp_var(self) -> str:
+        r = cpp_to_python.cpp_scope_to_pybind_var_name(self.options, self.cpp_element())
+        return r
+
     # override
     def pydef_lines(self) -> list[str]:
         lines = self.adapted_block.pydef_lines()
 
         if self.flag_shall_create_namespace_as_module():
+            # Add user custom code
+            custom_code = self.options.custom_bindings._pub_make_submodule_custom_code(
+                self.cpp_element().cpp_scope(include_self=True).str_cpp,
+                self.pydef_submodule_cpp_var(),
+                is_pydef=True
+            )
+            if custom_code is not None:
+                lines += custom_code.splitlines()
+
             context_stored_lines = self._pydef_def_submodule_code() + lines
             context_stored_lines = code_utils.indent_code_lines(
                 context_stored_lines, indent_str=self.options._indent_cpp_spaces()

@@ -26,7 +26,7 @@ class some_namespace:  # Proxy class that introduces typings for the *submodule*
             def add(self, a: int, b: int) -> int:
                 pass
 
-        class InnerEnum(enum.Enum):
+        class InnerEnum(enum.IntEnum):
             zero = enum.auto()  # (= 0)
             one = enum.auto()  # (= 1)
             two = enum.auto()  # (= 2)

@@ -52,10 +52,10 @@ void py_init_module_mylib(py::module& m)
             .def(py::init<>([](
             SomeNamespace::ParentStruct::InnerStruct inner_struct = SomeNamespace::ParentStruct::InnerStruct(), SomeNamespace::ParentStruct::InnerEnum inner_enum = SomeNamespace::ParentStruct::InnerEnum::Three)
             {
-                auto r = std::make_unique<SomeNamespace::ParentStruct>();
-                r->inner_struct = inner_struct;
-                r->inner_enum = inner_enum;
-                return r;
+                auto r_ctor_ = std::make_unique<SomeNamespace::ParentStruct>();
+                r_ctor_->inner_struct = inner_struct;
+                r_ctor_->inner_enum = inner_enum;
+                return r_ctor_;
             })
             , py::arg("inner_struct") = SomeNamespace::ParentStruct::InnerStruct(), py::arg("inner_enum") = SomeNamespace::ParentStruct::InnerEnum::Three
             )

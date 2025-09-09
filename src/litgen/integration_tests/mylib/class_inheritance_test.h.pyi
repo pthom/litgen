@@ -20,7 +20,7 @@
 def binding_multiple_inheritance() -> bool:
     pass
 
-def make_dog() -> Animals.Animal:
+def make_dog() -> animals.Animal:
     """Test that downcasting works: the return type is Animal, but it should bark!"""
     pass
 

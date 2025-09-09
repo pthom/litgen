@@ -29,9 +29,9 @@ void py_init_module_mylib(py::module& m)
         .def(py::init<>([](
         std::vector<int> int_values = {1, 2, 3})
         {
-            auto r = std::make_unique<FooBrace>();
-            r->int_values = int_values;
-            return r;
+            auto r_ctor_ = std::make_unique<FooBrace>();
+            r_ctor_->int_values = int_values;
+            return r_ctor_;
         })
         , py::arg("int_values") = std::vector<int>{1, 2, 3}
         )

@@ -80,7 +80,7 @@ class MySingletonClass:
         pass
     @staticmethod
     def instance() -> MySingletonClass:
-        """py::return_value_policy::reference"""
+        """see: options.fn_return_force_policy_reference_for_references__regex = r"instance" """
         pass
 
 class MyFinalClass:
@@ -106,7 +106,7 @@ class MyStructDynamic:
         pass
 
 class MyStructWithNestedEnum:
-    class Choice(enum.Enum):
+    class Choice(enum.IntEnum):
         a = enum.auto()  # (= 0)
     def handle_choice(
         self, value: MyStructWithNestedEnum.Choice = MyStructWithNestedEnum.Choice.a
@@ -114,6 +114,13 @@ class MyStructWithNestedEnum:
         """The first param of this function uses the inner scope of this class!
         When building the bindings, we need to add MyStructWithNestedEnum::
         """
+        pass
+    def __init__(self) -> None:
+        """Auto-generated default constructor"""
+        pass
+
+class ClassWithInlineForwardDeclaredMethod:
+    def get_tex_id(self) -> int:
         pass
     def __init__(self) -> None:
         """Auto-generated default constructor"""

@@ -107,28 +107,28 @@ void py_init_module_mylib(py::module_& m)
     ////////////////////    <generated_from:class_virtual_test.h>    ////////////////////
 
     { // <namespace Root>
-        py::module_ pyNsRoot = m.def_submodule("root", "");
+        nb::module_ pyNsRoot = m.def_submodule("root", "");
         { // <namespace Inner>
-            py::module_ pyNsRoot_NsInner = pyNsRoot.def_submodule("inner", "");
+            nb::module_ pyNsRoot_NsInner = pyNsRoot.def_submodule("inner", "");
             auto pyNsRoot_NsInner_ClassMyVirtualClass =
-                py::class_<Root::Inner::MyVirtualClass, Root::Inner::MyVirtualClass_trampoline>
+                nb::class_<Root::Inner::MyVirtualClass, Root::Inner::MyVirtualClass_trampoline>
                     (pyNsRoot_NsInner, "MyVirtualClass", "")
-                .def(py::init<>()) // implicit default constructor
+                .def(nb::init<>()) // implicit default constructor
                 .def("foo_concrete",
-                    &Root::Inner::MyVirtualClass::foo_concrete, py::arg("x"), py::arg("name"))
+                    &Root::Inner::MyVirtualClass::foo_concrete, nb::arg("x"), nb::arg("name"))
                 .def("foo_virtual_public_pure",
                     &Root::Inner::MyVirtualClass::foo_virtual_public_pure)
                 .def("foo_virtual_protected",
-                    &Root::Inner::MyVirtualClass_publicist::foo_virtual_protected, py::arg("x"))
+                    &Root::Inner::MyVirtualClass_publicist::foo_virtual_protected, nb::arg("x"))
                 .def("foo_virtual_protected_const_const",
-                    &Root::Inner::MyVirtualClass_publicist::foo_virtual_protected_const_const, py::arg("name"))
+                    &Root::Inner::MyVirtualClass_publicist::foo_virtual_protected_const_const, nb::arg("name"))
                 ;
 
 
             auto pyNsRoot_NsInner_ClassMyVirtualDerivate =
-                py::class_<Root::Inner::MyVirtualDerivate, Root::Inner::MyVirtualClass, Root::Inner::MyVirtualDerivate_trampoline>
+                nb::class_<Root::Inner::MyVirtualDerivate, Root::Inner::MyVirtualClass, Root::Inner::MyVirtualDerivate_trampoline>
                     (pyNsRoot_NsInner, "MyVirtualDerivate", " Here, we test Combining virtual functions and inheritance\n See https://pybind11.readthedocs.io/en/stable/advanced/classes.html#combining-virtual-functions-and-inheritance")
-                .def(py::init<>())
+                .def(nb::init<>())
                 .def("foo_virtual_public_pure",
                     &Root::Inner::MyVirtualDerivate::foo_virtual_public_pure)
                 .def("foo_derivate",

@@ -239,9 +239,9 @@ void py_init_module_lg_mylib(nb::module_& m)
         .def("__init__", [](Point2 * self, int x = int(), int y = int())
         {
             new (self) Point2();  // placement new
-            auto r = self;
-            r->x = x;
-            r->y = y;
+            auto r_ctor_ = self;
+            r_ctor_->x = x;
+            r_ctor_->y = y;
         },
         nb::arg("x") = int(), nb::arg("y") = int()
         )
@@ -637,7 +637,7 @@ void py_init_module_lg_mylib(nb::module_& m)
 
             return ChangeVoidIntDefaultNull_adapt_modifiable_immutable_to_return(label, value);
         },
-        nb::arg("label"), nb::arg("value") = nb::none(),
+        nb::arg("label"), nb::arg("value").none() = nb::none(),
         " Will be published in python as:\n -->    def change_void_int_default_null(label: str, value: Optional[int] = None) -> Tuple[bool, Optional[int]]:");
 
     m.def("change_void_int_array",
@@ -756,8 +756,8 @@ void py_init_module_lg_mylib(nb::module_& m)
         .def("__init__", [](MyStructDynamic * self, int cpp_member = 1)
         {
             new (self) MyStructDynamic();  // placement new
-            auto r = self;
-            r->cpp_member = cpp_member;
+            auto r_ctor_ = self;
+            r_ctor_->cpp_member = cpp_member;
         },
         nb::arg("cpp_member") = 1
         )
@@ -834,8 +834,8 @@ void py_init_module_lg_mylib(nb::module_& m)
         .def("__init__", [](Copyable_ImplicitCopyCtor * self, int a = 1)
         {
             new (self) Copyable_ImplicitCopyCtor();  // placement new
-            auto r = self;
-            r->a = a;
+            auto r_ctor_ = self;
+            r_ctor_->a = a;
         },
         nb::arg("a") = 1
         )
@@ -885,8 +885,8 @@ void py_init_module_lg_mylib(nb::module_& m)
         .def("__init__", [](MyConfig * self, int value = 0)
         {
             new (self) MyConfig();  // placement new
-            auto r = self;
-            r->value = value;
+            auto r_ctor_ = self;
+            r_ctor_->value = value;
         },
         nb::arg("value") = 0
         )
@@ -1215,8 +1215,8 @@ void py_init_module_lg_mylib(nb::module_& m)
         .def("__init__", [](SmartElem * self, int x = 0)
         {
             new (self) SmartElem();  // placement new
-            auto r = self;
-            r->x = x;
+            auto r_ctor_ = self;
+            r_ctor_->x = x;
         },
         nb::arg("x") = 0
         )
@@ -1244,8 +1244,8 @@ void py_init_module_lg_mylib(nb::module_& m)
         .def("__init__", [](FooBrace * self, std::vector<int> int_values = {1, 2, 3})
         {
             new (self) FooBrace();  // placement new
-            auto r = self;
-            r->int_values = int_values;
+            auto r_ctor_ = self;
+            r_ctor_->int_values = int_values;
         },
         nb::arg("int_values") = std::vector<int>{1, 2, 3}
         )
@@ -1292,8 +1292,8 @@ void py_init_module_lg_mylib(nb::module_& m)
             .def("__init__", [](AAA::Copyable_Template<int> * self, int value = int())
             {
                 new (self) AAA::Copyable_Template<int>();  // placement new
-                auto r = self;
-                r->value = value;
+                auto r_ctor_ = self;
+                r_ctor_->value = value;
             },
             nb::arg("value") = int()
             )
@@ -1366,9 +1366,9 @@ void py_init_module_lg_mylib(nb::module_& m)
             .def("__init__", [](SomeNamespace::ParentStruct * self, SomeNamespace::ParentStruct::InnerStruct inner_struct = SomeNamespace::ParentStruct::InnerStruct(), SomeNamespace::ParentStruct::InnerEnum inner_enum = SomeNamespace::ParentStruct::InnerEnum::Three)
             {
                 new (self) SomeNamespace::ParentStruct();  // placement new
-                auto r = self;
-                r->inner_struct = inner_struct;
-                r->inner_enum = inner_enum;
+                auto r_ctor_ = self;
+                r_ctor_->inner_struct = inner_struct;
+                r_ctor_->inner_enum = inner_enum;
             },
             nb::arg("inner_struct") = SomeNamespace::ParentStruct::InnerStruct(), nb::arg("inner_enum") = SomeNamespace::ParentStruct::InnerEnum::Three
             )
@@ -1853,11 +1853,11 @@ void py_init_module_lg_mylib(nb::module_& m)
             .def("__init__", [](A::ClassNoDefaultCtor * self, bool b = true, int a = int(), int c = 3, A::Foo foo = A::Foo::Foo1)
             {
                 new (self) A::ClassNoDefaultCtor();  // placement new
-                auto r = self;
-                r->b = b;
-                r->a = a;
-                r->c = c;
-                r->foo = foo;
+                auto r_ctor_ = self;
+                r_ctor_->b = b;
+                r_ctor_->a = a;
+                r_ctor_->c = c;
+                r_ctor_->foo = foo;
             },
             nb::arg("b") = true, nb::arg("a") = int(), nb::arg("c") = 3, nb::arg("foo") = A::Foo::Foo1
             )
@@ -1897,6 +1897,31 @@ void py_init_module_lg_mylib(nb::module_& m)
         } // </namespace N>
 
     } // </namespace A>
+
+    { // <namespace RootCustom>
+        nb::module_ pyNsRootCustom = m.def_submodule("root_custom", "");
+        auto pyNsRootCustom_ClassFoo =
+            nb::class_<RootCustom::Foo>
+                (pyNsRootCustom, "Foo", "")
+            .def("__init__", [](RootCustom::Foo * self, int mValue = 0)
+            {
+                new (self) RootCustom::Foo();  // placement new
+                auto r_ctor_ = self;
+                r_ctor_->mValue = mValue;
+            },
+            nb::arg("m_value") = 0
+            )
+            .def_rw("m_value", &RootCustom::Foo::mValue, "")
+            ;
+
+        pyNsRootCustom_ClassFoo.def("get_value", [](const RootCustom::Foo& self){ return self.mValue; });
+        pyNsRootCustom_ClassFoo.def("set_value", [](RootCustom::Foo& self, int value){ self.mValue = value; });
+
+
+
+        // Example of adding a custom function to the submodule
+        pyNsRootCustom.def("foo_namespace_function", []() -> int { return 53; });
+    } // </namespace RootCustom>
     ////////////////////    </generated_from:mylib_amalgamation.h>    ////////////////////
 
     // </litgen_pydef> // Autogenerated code end

@@ -24,21 +24,21 @@ void py_init_module_mylib(py::module_& m)
     ////////////////////    <generated_from:basic_test.h>    ////////////////////
     m.def("my_sub",
         my_sub,
-        py::arg("a"), py::arg("b"),
+        nb::arg("a"), nb::arg("b"),
         "Subtracts two numbers: this will be the function's __doc__ since my_sub does not have an end-of-line comment");
 
     m.def("my_add",
         my_add,
-        py::arg("a"), py::arg("b"),
+        nb::arg("a"), nb::arg("b"),
         "Adds two numbers");
 
     m.def("my_mul",
-        my_mul, py::arg("a"), py::arg("b"));
+        my_mul, nb::arg("a"), nb::arg("b"));
 
     { // <namespace MathFunctions>
-        py::module_ pyNsMathFunctions = m.def_submodule("math_functions", " Vectorizable functions example\n    Numeric functions (i.e. function accepting and returning only numeric params or py::array), can be vectorized\n    i.e. they will accept numpy arrays as an input.\n\n Auto-vectorization is enabled via the following options:\n     options.fn_namespace_vectorize__regex: str = r\"^MathFunctions$\"\n     options.fn_vectorize__regex = r\".*\"\n");
+        nb::module_ pyNsMathFunctions = m.def_submodule("math_functions", " Vectorizable functions example\n    Numeric functions (i.e. function accepting and returning only numeric params or py::array), can be vectorized\n    i.e. they will accept numpy arrays as an input.\n\n Auto-vectorization is enabled via the following options:\n     options.fn_namespace_vectorize__regex: str = r\"^MathFunctions$\"\n     options.fn_vectorize__regex = r\".*\"\n");
         pyNsMathFunctions.def("vectorizable_sum",
-            MathFunctions::vectorizable_sum, py::arg("x"), py::arg("y"));
+            MathFunctions::vectorizable_sum, nb::arg("x"), nb::arg("y"));
     } // </namespace MathFunctions>
     ////////////////////    </generated_from:basic_test.h>    ////////////////////
 

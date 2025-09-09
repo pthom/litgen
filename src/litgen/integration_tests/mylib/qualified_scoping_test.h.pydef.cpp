@@ -50,7 +50,7 @@ void py_init_module_mylib(py::module& m)
             py::overload_cast<N::E>(N::Foo), py::arg("e") = N::E_a);
 
         pyNsN.def("foo",
-            py::overload_cast<N::E, N::S>(N::Foo), py::arg("e") = N::E_a, py::arg("s") = N::S());
+            py::overload_cast<N::S, N::E>(N::Foo), py::arg("s") = N::S(), py::arg("e") = N::E_a);
     } // </namespace N>
     ////////////////////    </generated_from:qualified_scoping_test.h>    ////////////////////
 

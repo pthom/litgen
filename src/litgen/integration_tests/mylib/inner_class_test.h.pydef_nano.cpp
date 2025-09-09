@@ -24,23 +24,23 @@ void py_init_module_mylib(py::module_& m)
     ////////////////////    <generated_from:inner_class_test.h>    ////////////////////
 
     { // <namespace SomeNamespace>
-        py::module_ pyNsSomeNamespace = m.def_submodule("some_namespace", "namespace SomeNamespace");
+        nb::module_ pyNsSomeNamespace = m.def_submodule("some_namespace", "namespace SomeNamespace");
         auto pyNsSomeNamespace_ClassParentStruct =
-            py::class_<SomeNamespace::ParentStruct>
+            nb::class_<SomeNamespace::ParentStruct>
                 (pyNsSomeNamespace, "ParentStruct", "");
 
         { // inner classes & enums of ParentStruct
             auto pyNsSomeNamespace_ClassParentStruct_ClassInnerStruct =
-                py::class_<SomeNamespace::ParentStruct::InnerStruct>
+                nb::class_<SomeNamespace::ParentStruct::InnerStruct>
                     (pyNsSomeNamespace_ClassParentStruct, "InnerStruct", "")
                 .def_rw("value", &SomeNamespace::ParentStruct::InnerStruct::value, "")
-                .def(py::init<int>(),
-                    py::arg("value") = 10)
+                .def(nb::init<int>(),
+                    nb::arg("value") = 10)
                 .def("add",
-                    &SomeNamespace::ParentStruct::InnerStruct::add, py::arg("a"), py::arg("b"))
+                    &SomeNamespace::ParentStruct::InnerStruct::add, nb::arg("a"), nb::arg("b"))
                 ;
             auto pyEnumInnerEnum =
-                py::enum_<SomeNamespace::ParentStruct::InnerEnum>(pyNsSomeNamespace_ClassParentStruct, "InnerEnum", py::is_arithmetic(), "")
+                nb::enum_<SomeNamespace::ParentStruct::InnerEnum>(pyNsSomeNamespace_ClassParentStruct, "InnerEnum", nb::is_arithmetic(), "")
                     .value("zero", SomeNamespace::ParentStruct::InnerEnum::Zero, "")
                     .value("one", SomeNamespace::ParentStruct::InnerEnum::One, "")
                     .value("two", SomeNamespace::ParentStruct::InnerEnum::Two, "")
@@ -48,15 +48,14 @@ void py_init_module_mylib(py::module_& m)
         } // end of inner classes & enums of ParentStruct
 
         pyNsSomeNamespace_ClassParentStruct
-            .def("__init__", []( SomeNamespace::ParentStruct *self,
-            SomeNamespace::ParentStruct::InnerStruct inner_struct = SomeNamespace::ParentStruct::InnerStruct(), SomeNamespace::ParentStruct::InnerEnum inner_enum = SomeNamespace::ParentStruct::InnerEnum::Three)
+            .def("__init__", [](SomeNamespace::ParentStruct * self, SomeNamespace::ParentStruct::InnerStruct inner_struct = SomeNamespace::ParentStruct::InnerStruct(), SomeNamespace::ParentStruct::InnerEnum inner_enum = SomeNamespace::ParentStruct::InnerEnum::Three)
             {
                 new (self) SomeNamespace::ParentStruct();  // placement new
-                auto r = self;
-                r->inner_struct = inner_struct;
-                r->inner_enum = inner_enum;
+                auto r_ctor_ = self;
+                r_ctor_->inner_struct = inner_struct;
+                r_ctor_->inner_enum = inner_enum;
             },
-            py::arg("inner_struct") = SomeNamespace::ParentStruct::InnerStruct(), py::arg("inner_enum") = SomeNamespace::ParentStruct::InnerEnum::Three
+            nb::arg("inner_struct") = SomeNamespace::ParentStruct::InnerStruct(), nb::arg("inner_enum") = SomeNamespace::ParentStruct::InnerEnum::Three
             )
             .def_rw("inner_struct", &SomeNamespace::ParentStruct::inner_struct, "")
             .def_rw("inner_enum", &SomeNamespace::ParentStruct::inner_enum, "")

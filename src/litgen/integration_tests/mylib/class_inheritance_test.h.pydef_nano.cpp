@@ -29,21 +29,21 @@ void py_init_module_mylib(py::module_& m)
         make_dog, "Test that downcasting works: the return type is Animal, but it should bark!");
 
     { // <namespace Animals>
-        py::module_ pyNsAnimals = m.def_submodule("animals", "");
+        nb::module_ pyNsAnimals = m.def_submodule("animals", "");
         auto pyNsAnimals_ClassAnimal =
-            py::class_<Animals::Animal>
+            nb::class_<Animals::Animal>
                 (pyNsAnimals, "Animal", "")
-            .def(py::init<const std::string &>(),
-                py::arg("name"))
+            .def(nb::init<const std::string &>(),
+                nb::arg("name"))
             .def_rw("name", &Animals::Animal::name, "")
             ;
 
 
         auto pyNsAnimals_ClassDog =
-            py::class_<Animals::Dog, Animals::Animal>
+            nb::class_<Animals::Dog, Animals::Animal>
                 (pyNsAnimals, "Dog", "")
-            .def(py::init<const std::string &>(),
-                py::arg("name"))
+            .def(nb::init<const std::string &>(),
+                nb::arg("name"))
             .def("bark",
                 &Animals::Dog::bark)
             ;

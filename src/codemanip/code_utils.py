@@ -95,6 +95,19 @@ def strip_empty_lines(code_lines: str) -> str:
     return "\n".join(lines)
 
 
+def strip_first_and_last_lines_if_empty(code_lines: str) -> str:
+    lines = code_lines.split("\n")
+    if len(lines) == 0:
+        return code_lines
+    if len(lines[0].strip()) == 0:
+        lines = lines[1:]
+    if len(lines) == 0:
+        return code_lines
+    if len(lines[-1].strip()) == 0:
+        lines = lines[:-1]
+    return "\n".join(lines)
+
+
 def line_cpp_comment_position(code_line: str) -> Optional[int]:
     in_string = False
     last_char = None

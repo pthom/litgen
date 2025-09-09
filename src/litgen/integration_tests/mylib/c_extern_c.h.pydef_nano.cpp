@@ -28,13 +28,13 @@ void py_init_module_mylib(py::module_& m)
     //
 
     m.def("extern_c_add",
-        extern_c_add, py::arg("a"), py::arg("b"));
+        extern_c_add, nb::arg("a"), nb::arg("b"));
 
     m.def("foo_void_param",
         foo_void_param);
 
     m.def("foo_unnamed_param",
-        foo_unnamed_param, py::arg("param_0"), py::arg("param_1"), py::arg("param_2"));
+        foo_unnamed_param, nb::arg("param_0"), nb::arg("param_1"), nb::arg("param_2"));
     m.attr("ANSWER_ZERO_COMMENTED") = 0;
     m.attr("ANSWER_ONE_COMMENTED") = 1;
     m.attr("HEXVALUE") = 0x43242;

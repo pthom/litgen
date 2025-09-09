@@ -25,13 +25,13 @@ void py_init_module_mylib(py::module_& m)
     m.def("call_guard_tester",
         call_guard_tester,
         "// py::call_guard<CallGuardLogger>()",
-        py::call_guard<CallGuardLogger>());
+        nb::call_guard<CallGuardLogger>());
 
 
     auto pyClassCallGuardLogger =
-        py::class_<CallGuardLogger>
+        nb::class_<CallGuardLogger>
             (m, "CallGuardLogger", " ============================================================================\n CallGuardLogger: dummy call guard for the tests\n ============================================================================")
-        .def(py::init<>())
+        .def(nb::init<>())
         .def_rw_static("nb_construct", &CallGuardLogger::nb_construct, "")
         .def_rw_static("nb_destroy", &CallGuardLogger::nb_destroy, "")
         ;

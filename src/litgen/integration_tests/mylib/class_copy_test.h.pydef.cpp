@@ -29,9 +29,9 @@ void py_init_module_mylib(py::module& m)
         .def(py::init<>([](
         int a = 1)
         {
-            auto r = std::make_unique<Copyable_ImplicitCopyCtor>();
-            r->a = a;
-            return r;
+            auto r_ctor_ = std::make_unique<Copyable_ImplicitCopyCtor>();
+            r_ctor_->a = a;
+            return r_ctor_;
         })
         , py::arg("a") = 1
         )
@@ -82,9 +82,9 @@ void py_init_module_mylib(py::module& m)
             .def(py::init<>([](
             int value = int())
             {
-                auto r = std::make_unique<AAA::Copyable_Template<int>>();
-                r->value = value;
-                return r;
+                auto r_ctor_ = std::make_unique<AAA::Copyable_Template<int>>();
+                r_ctor_->value = value;
+                return r_ctor_;
             })
             , py::arg("value") = int()
             )

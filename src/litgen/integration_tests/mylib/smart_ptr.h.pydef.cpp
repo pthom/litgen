@@ -29,9 +29,9 @@ void py_init_module_mylib(py::module& m)
         .def(py::init<>([](
         int x = 0)
         {
-            auto r = std::make_unique<SmartElem>();
-            r->x = x;
-            return r;
+            auto r_ctor_ = std::make_unique<SmartElem>();
+            r_ctor_->x = x;
+            return r_ctor_;
         })
         , py::arg("x") = 0
         )

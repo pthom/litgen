@@ -492,6 +492,7 @@ class AdaptedClass(AdaptedElement):
             else:
                 return "(" + ", ".join(parents) + ")"
 
+
         from litgen.internal.adapted_types.line_spacer import LineSpacerPython
 
         line_spacer = LineSpacerPython(self.options)
@@ -563,6 +564,12 @@ class AdaptedClass(AdaptedElement):
 
         body_lines += make_iterable_code().splitlines()
 
+        custom_code = self.options.custom_bindings._pub_make_class_custom_code(
+            self.cpp_element().qualified_class_name(), self.pydef_class_var(), is_pydef=False
+        )
+        if custom_code is not None:
+            body_lines += custom_code.splitlines()
+
         r = self._elm_str_stub_layout_lines(title_lines, body_lines)
         return r
 
@@ -572,6 +579,9 @@ class AdaptedClass(AdaptedElement):
     #    We override this methods from AdaptedElement
     #
     #  ============================================================================================
+    def pydef_class_var(self) -> str:
+        r = cpp_to_python.cpp_scope_to_pybind_var_name(self.options, self.cpp_element())
+        return r
 
     # override
     def pydef_lines(self) -> list[str]:
@@ -602,10 +612,6 @@ class AdaptedClass(AdaptedElement):
 
         children_except_inner_classes = list(filter(not_is_class_or_enum, self.adapted_public_children))
         children_inner_classes = list(filter(is_class_or_enum, self.adapted_public_children))
-
-        def pydef_class_var() -> str:
-            r = cpp_to_python.cpp_scope_to_pybind_var_name(options, self.cpp_element())
-            return r
 
         def make_pyclass_creation_code() -> str:
             """Return the C++ code that instantiates the class.
@@ -660,7 +666,7 @@ class AdaptedClass(AdaptedElement):
             replacements = munch.Munch()
             replacements.py = "py" if options.bind_library == BindLibraryType.pybind11 else "nb"
             replacements._i_ = self.options._indent_cpp_spaces()
-            replacements.pydef_class_var = pydef_class_var()
+            replacements.pydef_class_var = self.pydef_class_var()
             replacements.qualified_struct_name = qualified_struct_name
             replacements.other_template_params = other_template_params
             replacements.location = self._elm_info_original_location_cpp()
@@ -789,18 +795,24 @@ class AdaptedClass(AdaptedElement):
             children_code += make_iterable_code()
             return children_code
 
+
         inner_classes_code = make_inner_classes_code()
 
         code = make_pyclass_creation_code()
         if len(inner_classes_code) > 0:
             code += ";\n"
             code += inner_classes_code + "\n\n"
-            code += pydef_class_var() + "\n"
+            code += self.pydef_class_var() + "\n"
             code += make_all_children_code()
         else:
             code += "\n" + make_all_children_code()
 
         code = code + f"{_i_};"
+
+        custom_code = self.options.custom_bindings._pub_make_class_custom_code(
+            self.cpp_element().qualified_class_name(), self.pydef_class_var(), is_pydef=True)
+        if custom_code is not None:
+            code += "\n" + custom_code + "\n"
 
         lines = code.split("\n")
         return lines

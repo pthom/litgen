@@ -19,7 +19,7 @@ from typing import overload
 class a:  # Proxy class that introduces typings for the *submodule* a
     pass  # (This corresponds to a C++ namespace. All method are static!)
 
-    class Foo(enum.Enum):
+    class Foo(enum.IntEnum):
         foo1 = enum.auto()  # (= 0)
         foo2 = enum.auto()  # (= 1)
         foo3 = enum.auto()  # (= 2)
@@ -49,10 +49,10 @@ class a:  # Proxy class that introduces typings for the *submodule* a
                 """Auto-generated default constructor"""
                 pass
 
-        class EC(enum.Enum):
+        class EC(enum.IntEnum):
             a = enum.auto()  # (= 0)
 
-        class E(enum.Enum):
+        class E(enum.IntEnum):
             a = enum.auto()  # (= 0)
         @staticmethod
         @overload
@@ -64,7 +64,7 @@ class a:  # Proxy class that introduces typings for the *submodule* a
             pass
         @staticmethod
         @overload
-        def foo(e: E = E.a, s: S = S()) -> None:
+        def foo(s: S = S(), e: E = E.a) -> None:
             pass
     # </submodule n>
 

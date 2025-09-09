@@ -134,7 +134,51 @@ def mylib_litgen_options(bind_library_type: litgen.BindLibraryType) -> litgen.Li
 
     # pybind11 supports bindings for multiple inheritance, nanobind does not
     if bind_library_type == litgen.BindLibraryType.pybind11:
+        assert isinstance(options.srcmlcpp_options.header_filter_acceptable__regex, str)
         options.srcmlcpp_options.header_filter_acceptable__regex += "|BINDING_MULTIPLE_INHERITANCE"
+
+    #
+    # Custom bindings (cf custom_bindings.h / custom_bindings.h.pyi)
+    #
+    options.custom_bindings.add_custom_bindings_to_class(
+        qualified_class="RootCustom::Foo",
+        stub_code='''
+            def get_value(self) -> int:
+                """Get the value"""
+                ...
+            def set_value(self, value: int) -> None:
+                """Set the value"""
+                ...
+        ''',
+        pydef_code="""
+            LG_CLASS.def("get_value", [](const RootCustom::Foo& self){ return self.mValue; });
+            LG_CLASS.def("set_value", [](RootCustom::Foo& self, int value){ self.mValue = value; });
+        """,
+    )
+    options.custom_bindings.add_custom_bindings_to_submodule(
+        qualified_namespace="RootCustom",
+        stub_code='''
+        @staticmethod
+        def foo_namespace_function() -> int:
+            """A custom function in the submodule"""
+            ...
+        ''',
+        pydef_code="""
+        // Example of adding a custom function to the submodule
+        LG_SUBMODULE.def("foo_namespace_function", []() -> int { return 53; });
+        """,
+    )
+    # options.custom_bindings.add_custom_bindings_to_main_module(
+    #     stub_code='''
+    #     def global_function() -> int:
+    #         """A custom function in the global namespace"""
+    #         ...
+    #     ''',
+    #     pydef_code="""
+    #     // Example of adding a custom function to the main module
+    #     LG_MODULE.def("global_function", []() -> int { return 64; });
+    #     """,
+    # )
 
     #
     # Sandbox for other options

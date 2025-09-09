@@ -246,10 +246,10 @@ void py_init_module_lg_mylib(py::module& m)
         .def(py::init<>([](
         int x = int(), int y = int())
         {
-            auto r = std::make_unique<Point2>();
-            r->x = x;
-            r->y = y;
-            return r;
+            auto r_ctor_ = std::make_unique<Point2>();
+            r_ctor_->x = x;
+            r_ctor_->y = y;
+            return r_ctor_;
         })
         , py::arg("x") = int(), py::arg("y") = int()
         )
@@ -727,9 +727,9 @@ void py_init_module_lg_mylib(py::module& m)
         .def(py::init<>([](
         int cpp_member = 1)
         {
-            auto r = std::make_unique<MyStructDynamic>();
-            r->cpp_member = cpp_member;
-            return r;
+            auto r_ctor_ = std::make_unique<MyStructDynamic>();
+            r_ctor_->cpp_member = cpp_member;
+            return r_ctor_;
         })
         , py::arg("cpp_member") = 1
         )
@@ -753,6 +753,15 @@ void py_init_module_lg_mylib(py::module& m)
             &MyStructWithNestedEnum::HandleChoice,
             py::arg("value") = MyStructWithNestedEnum::Choice::A,
             " The first param of this function uses the inner scope of this class!\n When building the bindings, we need to add MyStructWithNestedEnum::")
+        ;
+
+
+    auto pyClassClassWithInlineForwardDeclaredMethod =
+        py::class_<ClassWithInlineForwardDeclaredMethod>
+            (m, "ClassWithInlineForwardDeclaredMethod", "")
+        .def(py::init<>()) // implicit default constructor
+        .def("get_tex_id",
+            &ClassWithInlineForwardDeclaredMethod::GetTexID)
         ;
     // #ifdef BINDING_MULTIPLE_INHERITANCE
     //
@@ -803,9 +812,9 @@ void py_init_module_lg_mylib(py::module& m)
         .def(py::init<>([](
         int a = 1)
         {
-            auto r = std::make_unique<Copyable_ImplicitCopyCtor>();
-            r->a = a;
-            return r;
+            auto r_ctor_ = std::make_unique<Copyable_ImplicitCopyCtor>();
+            r_ctor_->a = a;
+            return r_ctor_;
         })
         , py::arg("a") = 1
         )
@@ -855,9 +864,9 @@ void py_init_module_lg_mylib(py::module& m)
         .def(py::init<>([](
         int value = 0)
         {
-            auto r = std::make_unique<MyConfig>();
-            r->value = value;
-            return r;
+            auto r_ctor_ = std::make_unique<MyConfig>();
+            r_ctor_->value = value;
+            return r_ctor_;
         })
         , py::arg("value") = 0
         )
@@ -1188,9 +1197,9 @@ void py_init_module_lg_mylib(py::module& m)
         .def(py::init<>([](
         int x = 0)
         {
-            auto r = std::make_unique<SmartElem>();
-            r->x = x;
-            return r;
+            auto r_ctor_ = std::make_unique<SmartElem>();
+            r_ctor_->x = x;
+            return r_ctor_;
         })
         , py::arg("x") = 0
         )
@@ -1218,9 +1227,9 @@ void py_init_module_lg_mylib(py::module& m)
         .def(py::init<>([](
         std::vector<int> int_values = {1, 2, 3})
         {
-            auto r = std::make_unique<FooBrace>();
-            r->int_values = int_values;
-            return r;
+            auto r_ctor_ = std::make_unique<FooBrace>();
+            r_ctor_->int_values = int_values;
+            return r_ctor_;
         })
         , py::arg("int_values") = std::vector<int>{1, 2, 3}
         )
@@ -1290,9 +1299,9 @@ void py_init_module_lg_mylib(py::module& m)
             .def(py::init<>([](
             int value = int())
             {
-                auto r = std::make_unique<AAA::Copyable_Template<int>>();
-                r->value = value;
-                return r;
+                auto r_ctor_ = std::make_unique<AAA::Copyable_Template<int>>();
+                r_ctor_->value = value;
+                return r_ctor_;
             })
             , py::arg("value") = int()
             )
@@ -1365,10 +1374,10 @@ void py_init_module_lg_mylib(py::module& m)
             .def(py::init<>([](
             SomeNamespace::ParentStruct::InnerStruct inner_struct = SomeNamespace::ParentStruct::InnerStruct(), SomeNamespace::ParentStruct::InnerEnum inner_enum = SomeNamespace::ParentStruct::InnerEnum::Three)
             {
-                auto r = std::make_unique<SomeNamespace::ParentStruct>();
-                r->inner_struct = inner_struct;
-                r->inner_enum = inner_enum;
-                return r;
+                auto r_ctor_ = std::make_unique<SomeNamespace::ParentStruct>();
+                r_ctor_->inner_struct = inner_struct;
+                r_ctor_->inner_enum = inner_enum;
+                return r_ctor_;
             })
             , py::arg("inner_struct") = SomeNamespace::ParentStruct::InnerStruct(), py::arg("inner_enum") = SomeNamespace::ParentStruct::InnerEnum::Three
             )
@@ -1807,12 +1816,12 @@ void py_init_module_lg_mylib(py::module& m)
             .def(py::init<>([](
             bool b = true, int a = int(), int c = 3, A::Foo foo = A::Foo::Foo1)
             {
-                auto r = std::make_unique<A::ClassNoDefaultCtor>();
-                r->b = b;
-                r->a = a;
-                r->c = c;
-                r->foo = foo;
-                return r;
+                auto r_ctor_ = std::make_unique<A::ClassNoDefaultCtor>();
+                r_ctor_->b = b;
+                r_ctor_->a = a;
+                r_ctor_->c = c;
+                r_ctor_->foo = foo;
+                return r_ctor_;
             })
             , py::arg("b") = true, py::arg("a") = int(), py::arg("c") = 3, py::arg("foo") = A::Foo::Foo1
             )
@@ -1852,6 +1861,32 @@ void py_init_module_lg_mylib(py::module& m)
         } // </namespace N>
 
     } // </namespace A>
+
+    { // <namespace RootCustom>
+        py::module_ pyNsRootCustom = m.def_submodule("root_custom", "");
+        auto pyNsRootCustom_ClassFoo =
+            py::class_<RootCustom::Foo>
+                (pyNsRootCustom, "Foo", "")
+            .def(py::init<>([](
+            int mValue = 0)
+            {
+                auto r_ctor_ = std::make_unique<RootCustom::Foo>();
+                r_ctor_->mValue = mValue;
+                return r_ctor_;
+            })
+            , py::arg("m_value") = 0
+            )
+            .def_readwrite("m_value", &RootCustom::Foo::mValue, "")
+            ;
+
+        pyNsRootCustom_ClassFoo.def("get_value", [](const RootCustom::Foo& self){ return self.mValue; });
+        pyNsRootCustom_ClassFoo.def("set_value", [](RootCustom::Foo& self, int value){ self.mValue = value; });
+
+
+
+        // Example of adding a custom function to the submodule
+        pyNsRootCustom.def("foo_namespace_function", []() -> int { return 53; });
+    } // </namespace RootCustom>
     ////////////////////    </generated_from:mylib_amalgamation.h>    ////////////////////
 
     // </litgen_pydef> // Autogenerated code end

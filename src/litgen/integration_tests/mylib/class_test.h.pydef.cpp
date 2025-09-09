@@ -74,7 +74,7 @@ void py_init_module_mylib(py::module& m)
         .def(py::init<>())
         .def_static("instance",
             &MySingletonClass::instance,
-            "py::return_value_policy::reference",
+            "see: options.fn_return_force_policy_reference_for_references__regex = r\"instance\"",
             py::return_value_policy::reference)
         ;
 
@@ -94,9 +94,9 @@ void py_init_module_mylib(py::module& m)
         .def(py::init<>([](
         int cpp_member = 1)
         {
-            auto r = std::make_unique<MyStructDynamic>();
-            r->cpp_member = cpp_member;
-            return r;
+            auto r_ctor_ = std::make_unique<MyStructDynamic>();
+            r_ctor_->cpp_member = cpp_member;
+            return r_ctor_;
         })
         , py::arg("cpp_member") = 1
         )
@@ -120,6 +120,15 @@ void py_init_module_mylib(py::module& m)
             &MyStructWithNestedEnum::HandleChoice,
             py::arg("value") = MyStructWithNestedEnum::Choice::A,
             " The first param of this function uses the inner scope of this class!\n When building the bindings, we need to add MyStructWithNestedEnum::")
+        ;
+
+
+    auto pyClassClassWithInlineForwardDeclaredMethod =
+        py::class_<ClassWithInlineForwardDeclaredMethod>
+            (m, "ClassWithInlineForwardDeclaredMethod", "")
+        .def(py::init<>()) // implicit default constructor
+        .def("get_tex_id",
+            &ClassWithInlineForwardDeclaredMethod::GetTexID)
         ;
     ////////////////////    </generated_from:class_test.h>    ////////////////////
 

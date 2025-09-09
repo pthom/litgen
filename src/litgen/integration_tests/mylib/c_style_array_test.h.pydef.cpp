@@ -83,10 +83,10 @@ void py_init_module_mylib(py::module& m)
         .def(py::init<>([](
         int x = int(), int y = int())
         {
-            auto r = std::make_unique<Point2>();
-            r->x = x;
-            r->y = y;
-            return r;
+            auto r_ctor_ = std::make_unique<Point2>();
+            r_ctor_->x = x;
+            r_ctor_->y = y;
+            return r_ctor_;
         })
         , py::arg("x") = int(), py::arg("y") = int()
         )

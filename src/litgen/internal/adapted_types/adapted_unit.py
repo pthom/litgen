@@ -33,6 +33,13 @@ class AdaptedUnit(AdaptedBlock):
         context_namespaces_code = self.lg_context.namespaces_stub.full_tree_code(self.options._indent_python_spaces())
         r += context_namespaces_code
 
+        # custom bindings for the global namespace
+        custom_code = self.options.custom_bindings._pub_make_main_module_custom_code(
+            is_pydef=False, pydef_main_module_var_name="m"
+        )
+        if custom_code is not None:
+            r += custom_code
+
         global_progress_bars().stop_progress_bar(_PROGRESS_BAR_TITLE_STUB)
         return r
 
@@ -42,6 +49,13 @@ class AdaptedUnit(AdaptedBlock):
 
         context_namespaces_code = self.lg_context.namespaces_pydef.full_tree_code(self.options._indent_cpp_spaces())
         r += context_namespaces_code
+
+        # custom bindings for the global namespace
+        custom_code = self.options.custom_bindings._pub_make_main_module_custom_code(
+            is_pydef=True, pydef_main_module_var_name="m"
+        )
+        if custom_code is not None:
+            r += custom_code
 
         global_progress_bars().stop_progress_bar(_PROGRESS_BAR_TITLE_PYDEF)
         return r

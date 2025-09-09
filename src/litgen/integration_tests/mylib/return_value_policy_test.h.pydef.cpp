@@ -30,15 +30,15 @@ void py_init_module_mylib(py::module& m)
         .def(py::init<>([](
         int value = 0)
         {
-            auto r = std::make_unique<MyConfig>();
-            r->value = value;
-            return r;
+            auto r_ctor_ = std::make_unique<MyConfig>();
+            r_ctor_->value = value;
+            return r_ctor_;
         })
         , py::arg("value") = 0
         )
         .def_static("instance",
             &MyConfig::Instance,
-            "py::return_value_policy::reference",
+            "// return_value_policy::reference",
             py::return_value_policy::reference)
         .def_readwrite("value", &MyConfig::value, "")
         ;
@@ -46,7 +46,7 @@ void py_init_module_mylib(py::module& m)
 
     m.def("my_config_instance",
         MyConfigInstance,
-        "py::return_value_policy::reference",
+        "return_value_policy::reference",
         py::return_value_policy::reference);
     ////////////////////    </generated_from:return_value_policy_test.h>    ////////////////////
 

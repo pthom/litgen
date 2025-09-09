@@ -11,12 +11,12 @@ from srcmlcpp import SrcmlcppOptions
 
 from litgen.internal.template_options import TemplateFunctionsOptions, TemplateClassOptions
 from litgen.internal.class_iterable_info import ClassIterablesInfos
+from litgen.internal.custom_bindings import CustomBindings
+
 
 if TYPE_CHECKING:
     from litgen.internal.adapted_types import AdaptedFunction, AdaptedClass
     from litgen.litgen_generator import GeneratedCodeType
-
-
 
 
 class BindLibraryType(Enum):
@@ -661,6 +661,12 @@ class LitgenOptions:
     postprocess_pydef_function: Callable[[str], str] | None = None
 
     ################################################################################
+    #    <custom binding code>
+    #  inject custom binding code which you write yourself
+    ################################################################################
+    custom_bindings: CustomBindings
+
+    ################################################################################
     #    <Sanity checks and utilities below>
     ################################################################################
     def check_options_consistency(self) -> None:
@@ -742,3 +748,5 @@ class LitgenOptions:
 
         self.fn_exclude_by_name_and_signature = {}
         self.member_exclude_by_name_and_class__regex = {}
+
+        self.custom_bindings = CustomBindings()

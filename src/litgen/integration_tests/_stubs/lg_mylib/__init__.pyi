@@ -942,6 +942,10 @@ class ElemContainer:
 #    None reset_unique_elem(std::unique_ptr<Elem>& elem) { elem.reset(new Elem());    }
 
 # ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+#                       mylib/custom_bindings.h included by mylib/mylib_main/mylib.h                           //
+# //////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+# ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 #                       mylib/mylib_main/mylib.h continued                                                     //
 # //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -1268,6 +1272,28 @@ class a:  # Proxy class that introduces typings for the *submodule* a
     # </submodule n>
 
 # </submodule a>
+
+# <submodule root_custom>
+class root_custom:  # Proxy class that introduces typings for the *submodule* root_custom
+    pass  # (This corresponds to a C++ namespace. All method are static!)
+
+    class Foo:
+        m_value: int = 0
+        def __init__(self, m_value: int = 0) -> None:
+            """Auto-generated default constructor with named params"""
+            pass
+        def get_value(self) -> int:
+            """Get the value"""
+            ...
+        def set_value(self, value: int) -> None:
+            """Set the value"""
+            ...
+    @staticmethod
+    def foo_namespace_function() -> int:
+        """A custom function in the submodule"""
+        ...
+
+# </submodule root_custom>
 ####################    </generated_from:mylib_amalgamation.h>    ####################
 
 # </litgen_stub>

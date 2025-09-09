@@ -39,12 +39,12 @@ void py_init_module_mylib(py::module& m)
             .def(py::init<>([](
             bool b = true, int a = int(), int c = 3, A::Foo foo = A::Foo::Foo1)
             {
-                auto r = std::make_unique<A::ClassNoDefaultCtor>();
-                r->b = b;
-                r->a = a;
-                r->c = c;
-                r->foo = foo;
-                return r;
+                auto r_ctor_ = std::make_unique<A::ClassNoDefaultCtor>();
+                r_ctor_->b = b;
+                r_ctor_->a = a;
+                r_ctor_->c = c;
+                r_ctor_->foo = foo;
+                return r_ctor_;
             })
             , py::arg("b") = true, py::arg("a") = int(), py::arg("c") = 3, py::arg("foo") = A::Foo::Foo1
             )
@@ -80,7 +80,7 @@ void py_init_module_mylib(py::module& m)
                 py::overload_cast<A::N::E>(A::N::Foo), py::arg("e") = A::N::E_a);
 
             pyNsA_NsN.def("foo",
-                py::overload_cast<A::N::E, A::N::S>(A::N::Foo), py::arg("e") = A::N::E_a, py::arg("s") = A::N::S());
+                py::overload_cast<A::N::S, A::N::E>(A::N::Foo), py::arg("s") = A::N::S(), py::arg("e") = A::N::E_a);
         } // </namespace N>
 
     } // </namespace A>

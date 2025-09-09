@@ -24,28 +24,27 @@ void py_init_module_mylib(py::module_& m)
     ////////////////////    <generated_from:class_default_ctor_test.h>    ////////////////////
 
     { // <namespace A>
-        py::module_ pyNsA = m.def_submodule("a", "");
+        nb::module_ pyNsA = m.def_submodule("a", "");
         auto pyEnumFoo =
-            py::enum_<A::Foo>(pyNsA, "Foo", py::is_arithmetic(), "")
+            nb::enum_<A::Foo>(pyNsA, "Foo", nb::is_arithmetic(), "")
                 .value("foo1", A::Foo::Foo1, "")
                 .value("foo2", A::Foo::Foo2, "")
                 .value("foo3", A::Foo::Foo3, "");
 
 
         auto pyNsA_ClassClassNoDefaultCtor =
-            py::class_<A::ClassNoDefaultCtor>
+            nb::class_<A::ClassNoDefaultCtor>
                 (pyNsA, "ClassNoDefaultCtor", " This struct has no default constructor, so a default named constructor\n will be provided for python")
-            .def("__init__", []( A::ClassNoDefaultCtor *self,
-            bool b = true, int a = int(), int c = 3, A::Foo foo = A::Foo::Foo1)
+            .def("__init__", [](A::ClassNoDefaultCtor * self, bool b = true, int a = int(), int c = 3, A::Foo foo = A::Foo::Foo1)
             {
                 new (self) A::ClassNoDefaultCtor();  // placement new
-                auto r = self;
-                r->b = b;
-                r->a = a;
-                r->c = c;
-                r->foo = foo;
+                auto r_ctor_ = self;
+                r_ctor_->b = b;
+                r_ctor_->a = a;
+                r_ctor_->c = c;
+                r_ctor_->foo = foo;
             },
-            py::arg("b") = true, py::arg("a") = int(), py::arg("c") = 3, py::arg("foo") = A::Foo::Foo1
+            nb::arg("b") = true, nb::arg("a") = int(), nb::arg("c") = 3, nb::arg("foo") = A::Foo::Foo1
             )
             .def_rw("b", &A::ClassNoDefaultCtor::b, "")
             .def_rw("a", &A::ClassNoDefaultCtor::a, "")
@@ -54,32 +53,32 @@ void py_init_module_mylib(py::module_& m)
             .def_ro("s", &A::ClassNoDefaultCtor::s, "")
             ;
         { // <namespace N>
-            py::module_ pyNsA_NsN = pyNsA.def_submodule("n", "");
+            nb::module_ pyNsA_NsN = pyNsA.def_submodule("n", "");
             auto pyNsA_NsN_ClassS =
-                py::class_<A::N::S>
+                nb::class_<A::N::S>
                     (pyNsA_NsN, "S", "")
-                .def(py::init<>()) // implicit default constructor
+                .def(nb::init<>()) // implicit default constructor
                 ;
 
 
             auto pyEnumEC =
-                py::enum_<A::N::EC>(pyNsA_NsN, "EC", py::is_arithmetic(), "")
+                nb::enum_<A::N::EC>(pyNsA_NsN, "EC", nb::is_arithmetic(), "")
                     .value("a", A::N::EC::a, "");
 
 
             auto pyEnumE =
-                py::enum_<A::N::E>(pyNsA_NsN, "E", py::is_arithmetic(), "")
+                nb::enum_<A::N::E>(pyNsA_NsN, "E", nb::is_arithmetic(), "")
                     .value("a", A::N::E_a, "");
 
 
             pyNsA_NsN.def("foo",
-                py::overload_cast<A::N::EC>(A::N::Foo), py::arg("e") = A::N::EC::a);
+                nb::overload_cast<A::N::EC>(A::N::Foo), nb::arg("e") = A::N::EC::a);
 
             pyNsA_NsN.def("foo",
-                py::overload_cast<A::N::E>(A::N::Foo), py::arg("e") = A::N::E_a);
+                nb::overload_cast<A::N::E>(A::N::Foo), nb::arg("e") = A::N::E_a);
 
             pyNsA_NsN.def("foo",
-                py::overload_cast<A::N::E, A::N::S>(A::N::Foo), py::arg("e") = A::N::E_a, py::arg("s") = A::N::S());
+                nb::overload_cast<A::N::S, A::N::E>(A::N::Foo), nb::arg("s") = A::N::S(), nb::arg("e") = A::N::E_a);
         } // </namespace N>
 
     } // </namespace A>
