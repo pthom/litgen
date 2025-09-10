@@ -10,6 +10,7 @@ parts:
     chapters:
       - file: 01_05_00_install_or_online
       - file: 01_05_05_online
+      - file: 01_10_00_quickstart
       - file: litgen_template/README
 
   - caption: Bindings - Advanced Topics

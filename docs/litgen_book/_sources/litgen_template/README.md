@@ -1,4 +1,4 @@
-# Quickstart with litgen
+# litgen template
 
 [litgen_template](https://github.com/pthom/litgen_template) is a template repository to build python bindings using [litgen](https://pthom.github.io/litgen), [pybind11](https://pybind11.readthedocs.io/en/stable/) or [nanobind](https://nanobind.readthedocs.io/en/stable/) and [scikit-build](https://scikit-build-core.readthedocs.io/en/latest/getting_started.html).
 
