@@ -532,7 +532,7 @@ document.write(`
 </style>
 
     <script>
-       function copy_code_1757520192519_475() {
+       function copy_code_1757523833238_792() {
             let code = `from __future__ import annotations
 
 from enum import Enum
@@ -546,12 +546,12 @@ from srcmlcpp import SrcmlcppOptions
 
 from litgen.internal.template_options import TemplateFunctionsOptions, TemplateClassOptions
 from litgen.internal.class_iterable_info import ClassIterablesInfos
+from litgen.internal.custom_bindings import CustomBindings
+
 
 if TYPE_CHECKING:
     from litgen.internal.adapted_types import AdaptedFunction, AdaptedClass
     from litgen.litgen_generator import GeneratedCodeType
-
-
 
 
 class BindLibraryType(Enum):
@@ -1196,6 +1196,12 @@ class LitgenOptions:
     postprocess_pydef_function: Callable[[str], str] | None = None
 
     ################################################################################
+    #    <custom binding code>
+    #  inject custom binding code which you write yourself
+    ################################################################################
+    custom_bindings: CustomBindings
+
+    ################################################################################
     #    <Sanity checks and utilities below>
     ################################################################################
     def check_options_consistency(self) -> None:
@@ -1277,14 +1283,16 @@ class LitgenOptions:
 
         self.fn_exclude_by_name_and_signature = {}
         self.member_exclude_by_name_and_class__regex = {}
+
+        self.custom_bindings = CustomBindings()
 `;
             navigator.clipboard.writeText(code);
        }
     </script>
-    <button class="collapsible_header" id="btn_1757520192519_475_0" >litgen/options.py</button>
-    <div class="collapsible_content" id="content_1757520192519_475_0">
+    <button class="collapsible_header" id="btn_1757523833238_792_0" >litgen/options.py</button>
+    <div class="collapsible_content" id="content_1757523833238_792_0">
         <div>
-                <button onclick="copy_code_1757520192519_475()" align="right">copy &#x270d;</button>
+                <button onclick="copy_code_1757523833238_792()" align="right">copy &#x270d;</button>
         </div>
         <style>pre { line-height: 125%; }
 td.linenos .normal { color: inherit; background-color: transparent; padding-left: 5px; padding-right: 5px; }
@@ -1369,12 +1377,12 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
 
 <span class="kn">from</span> <span class="nn">litgen.internal.template_options</span> <span class="kn">import</span> <span class="n">TemplateFunctionsOptions</span><span class="p">,</span> <span class="n">TemplateClassOptions</span>
 <span class="kn">from</span> <span class="nn">litgen.internal.class_iterable_info</span> <span class="kn">import</span> <span class="n">ClassIterablesInfos</span>
+<span class="kn">from</span> <span class="nn">litgen.internal.custom_bindings</span> <span class="kn">import</span> <span class="n">CustomBindings</span>
+
 
 <span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
     <span class="kn">from</span> <span class="nn">litgen.internal.adapted_types</span> <span class="kn">import</span> <span class="n">AdaptedFunction</span><span class="p">,</span> <span class="n">AdaptedClass</span>
     <span class="kn">from</span> <span class="nn">litgen.litgen_generator</span> <span class="kn">import</span> <span class="n">GeneratedCodeType</span>
-
-
 
 
 <span class="k">class</span> <span class="nc">BindLibraryType</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
@@ -2019,6 +2027,12 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
     <span class="n">postprocess_pydef_function</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="nb">str</span><span class="p">],</span> <span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
 
     <span class="c1">################################################################################</span>
+    <span class="c1">#    &lt;custom binding code&gt;</span>
+    <span class="c1">#  inject custom binding code which you write yourself</span>
+    <span class="c1">################################################################################</span>
+    <span class="n">custom_bindings</span><span class="p">:</span> <span class="n">CustomBindings</span>
+
+    <span class="c1">################################################################################</span>
     <span class="c1">#    &lt;Sanity checks and utilities below&gt;</span>
     <span class="c1">################################################################################</span>
     <span class="k">def</span> <span class="nf">check_options_consistency</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
@@ -2100,15 +2114,17 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
 
         <span class="bp">self</span><span class="o">.</span><span class="n">fn_exclude_by_name_and_signature</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">member_exclude_by_name_and_class__regex</span> <span class="o">=</span> <span class="p">{}</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">custom_bindings</span> <span class="o">=</span> <span class="n">CustomBindings</span><span class="p">()</span>
 </pre></div>
 
     </div>
     
     <script>
-    var button = document.getElementById("btn_1757520192519_475_0");
+    var button = document.getElementById("btn_1757523833238_792_0");
     button.addEventListener("click", function() {
         this.classList.toggle("collapsible_header_opened");
-        var content = document.getElementById("content_1757520192519_475_0");
+        var content = document.getElementById("content_1757523833238_792_0");
         if (content.style.maxHeight){
           content.style.maxHeight = null;
         } else {
@@ -2118,9 +2134,9 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
     </script>
     
             <script>
-            var collapsible_header = document.getElementById("btn_1757520192519_475_0");
+            var collapsible_header = document.getElementById("btn_1757523833238_792_0");
             collapsible_header.classList.toggle("collapsible_header_opened");
-            var collapsible_content = document.getElementById("content_1757520192519_475_0");
+            var collapsible_content = document.getElementById("content_1757523833238_792_0");
             collapsible_content.style.maxHeight = collapsible_content.scrollHeight + "px";
             </script>
             </div></div>
@@ -2185,7 +2201,7 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
 </style>
 
     <script>
-       function copy_code_1757520192551_637() {
+       function copy_code_1757523833436_5872() {
             let code = `"""
 Options for srcmlcpp. Read the doc near all options elements.
 """
@@ -2316,10 +2332,10 @@ def _int_from_str_or_named_number_macros(options: SrcmlcppOptions, int_str: Opti
             navigator.clipboard.writeText(code);
        }
     </script>
-    <button class="collapsible_header" id="btn_1757520192551_637_1" >srcmlcpp/srcmlcpp_options.py</button>
-    <div class="collapsible_content" id="content_1757520192551_637_1">
+    <button class="collapsible_header" id="btn_1757523833436_5872_1" >srcmlcpp/srcmlcpp_options.py</button>
+    <div class="collapsible_content" id="content_1757523833436_5872_1">
         <div>
-                <button onclick="copy_code_1757520192551_637()" align="right">copy &#x270d;</button>
+                <button onclick="copy_code_1757523833436_5872()" align="right">copy &#x270d;</button>
         </div>
         <style>pre { line-height: 125%; }
 td.linenos .normal { color: inherit; background-color: transparent; padding-left: 5px; padding-right: 5px; }
@@ -2522,10 +2538,10 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
     </div>
     
     <script>
-    var button = document.getElementById("btn_1757520192551_637_1");
+    var button = document.getElementById("btn_1757523833436_5872_1");
     button.addEventListener("click", function() {
         this.classList.toggle("collapsible_header_opened");
-        var content = document.getElementById("content_1757520192551_637_1");
+        var content = document.getElementById("content_1757523833436_5872_1");
         if (content.style.maxHeight){
           content.style.maxHeight = null;
         } else {
@@ -2535,9 +2551,9 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
     </script>
     
             <script>
-            var collapsible_header = document.getElementById("btn_1757520192551_637_1");
+            var collapsible_header = document.getElementById("btn_1757523833436_5872_1");
             collapsible_header.classList.toggle("collapsible_header_opened");
-            var collapsible_content = document.getElementById("content_1757520192551_637_1");
+            var collapsible_content = document.getElementById("content_1757523833436_5872_1");
             collapsible_content.style.maxHeight = collapsible_content.scrollHeight + "px";
             </script>
             </div></div>
