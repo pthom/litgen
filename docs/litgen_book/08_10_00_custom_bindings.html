@@ -1,0 +1,1581 @@
+
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+    <title>Manually add custom bindings &#8212; litgen, the Literate Generator</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "light";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="_static/styles/theme.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+<link href="_static/styles/bootstrap.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+<link href="_static/styles/pydata-sphinx-theme.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+
+  
+  <link href="_static/vendor/fontawesome/6.5.1/css/all.min.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.5.1/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.5.1/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.5.1/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+    <link rel="stylesheet" href="_static/styles/sphinx-book-theme.css?digest=14f4ca6b54d191a8c7657f6c759bf11a5fb86285" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="_static/togglebutton.css" />
+    <link rel="stylesheet" type="text/css" href="_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+    <link rel="stylesheet" type="text/css" href="_static/sphinx-thebe.css" />
+    <link rel="stylesheet" type="text/css" href="_static/design-style.4045f2051d55cab465a707391d5b2007.min.css" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=8d27b9dea8ad943066ae" />
+<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=8d27b9dea8ad943066ae" />
+  <script src="_static/vendor/fontawesome/6.5.1/js/all.min.js?digest=8d27b9dea8ad943066ae"></script>
+
+    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/clipboard.min.js"></script>
+    <script src="_static/copybutton.js"></script>
+    <script src="_static/scripts/sphinx-book-theme.js?digest=5a5c038af52cf7bc1a1ec88eea08e6366ee68824"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="_static/togglebutton.js"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="_static/design-tabs.js"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"
+const thebe_selector = ".thebe,.cell"
+const thebe_selector_input = "pre"
+const thebe_selector_output = ".output, .cell_output"
+</script>
+    <script async="async" src="_static/sphinx-thebe.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '08_10_00_custom_bindings';</script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Preprocessor and macros" href="09_05_00_preprocessor.html" />
+    <link rel="prev" title="Namespaces" href="08_05_00_namespaces.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <a id="pst-skip-link" class="skip-link" href="#main-content">Skip to main content</a>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>
+    Back to top
+  </button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__primary"
+          id="__primary"/>
+  <label class="overlay overlay-primary" for="__primary"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__secondary"
+          id="__secondary"/>
+  <label class="overlay overlay-secondary" for="__secondary"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+
+<a class="navbar-brand logo" href="00_00_intro.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="_static/litgen_logo_big.png" class="logo__image only-light" alt="litgen, the Literate Generator - Home"/>
+    <script>document.write(`<img src="_static/litgen_logo_big.png" class="logo__image only-dark" alt="litgen, the Literate Generator - Home"/>`);</script>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item"><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="00_00_intro.html">
+                    litgen
+                </a>
+            </li>
+        </ul>
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Installation</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="01_05_00_install_or_online.html">Installation or online usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="01_05_05_online.html">Use litgen online</a></li>
+<li class="toctree-l1"><a class="reference internal" href="litgen_template/README.html">Quickstart with litgen</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Bindings - Advanced Topics</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="02_00_00_first_steps.html">First steps</a></li>
+<li class="toctree-l1"><a class="reference internal" href="02_03_00_options.html">litgen options</a></li>
+<li class="toctree-l1"><a class="reference internal" href="02_05_00_headers.html">Headers processing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="02_05_10_amalgamation.html">Headers amalgamation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="03_05_00_code_layout.html">Generated code layout</a></li>
+<li class="toctree-l1"><a class="reference internal" href="04_05_00_names_translation.html">Names and types translation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="05_05_00_functions.html">Functions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="06_05_00_classes.html">Classes and structs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="07_05_00_templates.html">Template classes and functions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="07_05_00_enums.html">Enums</a></li>
+<li class="toctree-l1"><a class="reference internal" href="08_05_00_namespaces.html">Namespaces</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Manually add custom bindings</a></li>
+<li class="toctree-l1"><a class="reference internal" href="09_05_00_preprocessor.html">Preprocessor and macros</a></li>
+<li class="toctree-l1"><a class="reference internal" href="10_05_00_ignore_warnings.html">Ignore litgen warnings</a></li>
+<li class="toctree-l1"><a class="reference internal" href="11_05_00_post_processing.html">Postprocessing and preprocessing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="12_05_00_srcml_issues.html">srcML - C++ parsing advices</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Litgen as C++ transformation tool</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="20_00_00_cpp_intro.html">srcmlcpp: C++ code parsing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="20_05_00_cpp_simple_transformations.html">Simple C++ code transformations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="20_20_00_install_srcml.html">Optional: install srcML command line tool</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><label class="sidebar-toggle primary-toggle btn btn-sm" for="__primary" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</label></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-launch-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Launch interactive content">
+    <i class="fas fa-rocket"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://mybinder.org/v2/gh/pthom/litgen/main?urlpath=lab/tree/litgen-book/08_10_00_custom_bindings.ipynb" target="_blank"
+   class="btn btn-sm dropdown-item"
+   title="Launch onBinder"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  
+    <img src="_static/images/logo_binder.svg">
+  </span>
+<span class="btn__text-container">Binder</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/pthom/litgen" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/pthom/litgen/issues/new?title=Issue%20on%20page%20%2F08_10_00_custom_bindings.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="_sources/08_10_00_custom_bindings.ipynb" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.ipynb</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="theme-switch nav-link" data-mode="light"><i class="fa-solid fa-sun fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="dark"><i class="fa-solid fa-moon fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg"></i></span>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+<label class="sidebar-toggle secondary-toggle btn btn-sm" for="__secondary"title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</label>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Manually add custom bindings</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#example-c-code">Example C++ code</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#custom-bindings-for-a-class">Custom bindings for a class</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#custom-bindings-for-c-namespace-python-submodule">Custom bindings for C++ namespace / Python submodule</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#custom-bindings-for-the-main-module">Custom bindings for the main module</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#generated-code-with-custom-bindings">Generated code (with custom bindings)</a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="manually-add-custom-bindings">
+<h1>Manually add custom bindings<a class="headerlink" href="#manually-add-custom-bindings" title="Permalink to this heading">#</a></h1>
+<p>Litgen normally generates bindings automatically from C++ headers, but sometimes
+you may want to extend the API with extra methods or functions that are not
+present in the C++ code. <code class="docutils literal notranslate"><span class="pre">LitgenOptions.custom_bindings</span></code> lets you do this <strong>without modifying
+your C++ headers</strong>.</p>
+<p>You can attach:</p>
+<ul class="simple">
+<li><p>extra methods/properties to a C++ <strong>class</strong>,</p></li>
+<li><p>free functions to a <strong>C++ namespace</strong> (shown as a Python submodule),</p></li>
+<li><p>free functions to the <strong>main module</strong>.</p></li>
+</ul>
+<p>Each injection consists of:</p>
+<ul class="simple">
+<li><p><strong>stub code</strong> (Python declarations added to the generated <code class="docutils literal notranslate"><span class="pre">.pyi</span></code> file),</p></li>
+<li><p><strong>pydef code</strong> (C++ binding code inserted into the generated binding .cpp file, using pybind11 or nanobind syntax).</p></li>
+</ul>
+<p><strong>Placeholders are available inside <code class="docutils literal notranslate"><span class="pre">pydef_code</span></code>:</strong></p>
+<table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Placeholder</p></th>
+<th class="head"><p>Role</p></th>
+<th class="head"><p>Expansion (example)</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">LG_CLASS</span></code></p></td>
+<td><p>The current bound C++ class object</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">pyNsRootNs_ClassFoo</span></code> (of type <code class="docutils literal notranslate"><span class="pre">nb::class_</span></code> or <code class="docutils literal notranslate"><span class="pre">py::class_</span></code>)</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">LG_SUBMODULE</span></code></p></td>
+<td><p>The current submodule (for a namespace)</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">pyNsRootNs</span></code> (a <code class="docutils literal notranslate"><span class="pre">nb::module_</span></code> or <code class="docutils literal notranslate"><span class="pre">py::module_</span></code>)</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">LG_MODULE</span></code></p></td>
+<td><p>The main Python module object</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">m</span></code> (the top-level module)</p></td>
+</tr>
+</tbody>
+</table>
+<p>These placeholders are automatically replaced by litgen during C++ binding code generation. You can safely use them inside your <code class="docutils literal notranslate"><span class="pre">pydef_code</span></code> snippets without declaring them yourself.</p>
+<p><strong>Note about <code class="docutils literal notranslate"><span class="pre">pydef_code</span></code> syntax:</strong></p>
+<ul class="simple">
+<li><p>You can use either <strong>pybind11</strong> or <strong>nanobind</strong> syntax in <code class="docutils literal notranslate"><span class="pre">pydef_code</span></code>, depending on which backend you are using.</p></li>
+<li><p>Since the <code class="docutils literal notranslate"><span class="pre">pydef_code</span></code> is inserted into a function, limit yourself to statements that are valid <strong>inside a function</strong>: no function/class definitions, no <code class="docutils literal notranslate"><span class="pre">#include</span></code>. Use <strong>lambdas</strong> for small helpers.</p></li>
+<li><p>When writing lambdas, <strong>fully qualify C++ types</strong> if the class/namespace isn’t open (e.g. <code class="docutils literal notranslate"><span class="pre">const</span> <span class="pre">RootNs::Foo&amp;</span> <span class="pre">self</span></code>).</p></li>
+<li><p>Argument helpers differ by backend (<code class="docutils literal notranslate"><span class="pre">py::arg</span></code> vs <code class="docutils literal notranslate"><span class="pre">nb::arg</span></code>). Use the one matching your active backend.</p></li>
+</ul>
+<section id="example-c-code">
+<h2>Example C++ code<a class="headerlink" href="#example-c-code" title="Permalink to this heading">#</a></h2>
+<p>This page demonstrates how to add custom bindings to the following C++ code.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">cpp_code</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">namespace RootNs</span>
+<span class="s2">{</span>
+<span class="s2">    struct Foo</span>
+<span class="s2">    {</span>
+<span class="s2">        int mValue = 0;</span>
+<span class="s2">    };</span>
+<span class="s2">}</span>
+<span class="s2">&quot;&quot;&quot;</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>We will be adding custom bindings to the class <code class="docutils literal notranslate"><span class="pre">RootNs::Foo</span></code>, the namespace <code class="docutils literal notranslate"><span class="pre">RootNs</span></code>, and to the main module.</p>
+</section>
+<section id="custom-bindings-for-a-class">
+<h2>Custom bindings for a class<a class="headerlink" href="#custom-bindings-for-a-class" title="Permalink to this heading">#</a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">options.custom_bindings.add_custom_bindings_to_class(qualified_class,</span> <span class="pre">stub_code,</span> <span class="pre">pydef_code)</span></code>, lets us extend the generated Python bindings with extra methods, properties, or static methods.</p>
+<p><strong>Args:</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">qualified_class</span></code>: Fully qualified C++ class name (e.g. <code class="docutils literal notranslate"><span class="pre">&quot;RootNs::Foo&quot;</span></code>).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">stub_code</span></code>: Python stub declarations to be inserted into the generated stub (“.pyi”) file. These should be written in normal Python syntax with type annotations.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">pydef_code</span></code>: Custom binding code in C++ (pybind11/nanobind syntax).
+You can use the placeholder <code class="docutils literal notranslate"><span class="pre">LG_CLASS</span></code> to refer to the bound <code class="docutils literal notranslate"><span class="pre">py::class_</span></code> / <code class="docutils literal notranslate"><span class="pre">nb::class_</span></code> object.</p></li>
+</ul>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">litgen</span>
+<span class="n">options</span> <span class="o">=</span> <span class="n">litgen</span><span class="o">.</span><span class="n">LitgenOptions</span><span class="p">()</span>
+
+<span class="n">options</span><span class="o">.</span><span class="n">custom_bindings</span><span class="o">.</span><span class="n">add_custom_bindings_to_class</span><span class="p">(</span>
+    <span class="n">qualified_class</span><span class="o">=</span><span class="s2">&quot;RootNs::Foo&quot;</span><span class="p">,</span>
+    <span class="n">stub_code</span><span class="o">=</span><span class="s1">&#39;&#39;&#39;</span>
+<span class="s1">        def get_value(self) -&gt; int:</span>
+<span class="s1">            &quot;&quot;&quot;Get the value&quot;&quot;&quot;</span>
+<span class="s1">            ...</span>
+<span class="s1">        def set_value(self, value: int) -&gt; None:</span>
+<span class="s1">            &quot;&quot;&quot;Set the value&quot;&quot;&quot;</span>
+<span class="s1">            ...</span>
+<span class="s1">    &#39;&#39;&#39;</span><span class="p">,</span>
+    <span class="n">pydef_code</span><span class="o">=</span><span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">        LG_CLASS.def(&quot;get_value&quot;, [](const RootNs::Foo&amp; self){ return self.mValue; });</span>
+<span class="s2">        LG_CLASS.def(&quot;set_value&quot;, [](RootNs::Foo&amp; self, int value){ self.mValue = value; }, nb::arg(&quot;value&quot;));</span>
+<span class="s2">    &quot;&quot;&quot;</span><span class="p">,</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="custom-bindings-for-c-namespace-python-submodule">
+<h2>Custom bindings for C++ namespace / Python submodule<a class="headerlink" href="#custom-bindings-for-c-namespace-python-submodule" title="Permalink to this heading">#</a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">options.custom_bindings.add_custom_bindings_to_submodule(qualified_namespace,</span> <span class="pre">stub_code,</span> <span class="pre">pydef_code)</span></code>, lets us extend the generated Python bindings with extra functions.</p>
+<p><strong>Args:</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">qualified_namespace</span></code>: Fully qualified C++ namespace name (e.g. “RootNs”).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">stub_code</span></code>: Python stub declarations to be inserted into the generated stub (“.pyi”) file. These should be written in normal Python syntax with type annotations. <strong>Functions here should be decorated with <code class="docutils literal notranslate"><span class="pre">&#64;staticmethod</span></code></strong>. Explanation for this: in stubs, namespaces are represented as proxy classes. Thus, functions must be declared as &#64;staticmethod to indicate they are module-level, not instance methods.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">pydef_code</span></code>: Custom binding code in C++ (pybind11/nanobind syntax).
+You can use the placeholder <code class="docutils literal notranslate"><span class="pre">LG_SUBMODULE</span></code> to refer to the bound submodule object.</p></li>
+</ul>
+<p><strong>Namespace stubs appear as a proxy class.</strong><br />
+When declaring functions in a C++ namespace (Python submodule) in the stub, mark them with <code class="docutils literal notranslate"><span class="pre">&#64;staticmethod</span></code>.  These are module-level functions, not instance methods.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">options</span><span class="o">.</span><span class="n">custom_bindings</span><span class="o">.</span><span class="n">add_custom_bindings_to_submodule</span><span class="p">(</span>
+    <span class="n">qualified_namespace</span><span class="o">=</span><span class="s2">&quot;RootNs&quot;</span><span class="p">,</span>
+    <span class="n">stub_code</span><span class="o">=</span><span class="s1">&#39;&#39;&#39;</span>
+<span class="s1">    @staticmethod   # We **must** use @staticmethod here</span>
+<span class="s1">    def foo_namespace_function() -&gt; int:</span>
+<span class="s1">        &quot;&quot;&quot;A custom function in the submodule&quot;&quot;&quot;</span>
+<span class="s1">        ...</span>
+<span class="s1">    &#39;&#39;&#39;</span><span class="p">,</span>
+    <span class="n">pydef_code</span><span class="o">=</span><span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">    // Example of adding a custom function to the submodule</span>
+<span class="s2">    LG_SUBMODULE.def(&quot;foo_namespace_function&quot;, [](){ return 53; });</span>
+<span class="s2">    &quot;&quot;&quot;</span><span class="p">,</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="custom-bindings-for-the-main-module">
+<h2>Custom bindings for the main module<a class="headerlink" href="#custom-bindings-for-the-main-module" title="Permalink to this heading">#</a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">options.custom_bindings.add_custom_bindings_to_main_module(stub_code,</span> <span class="pre">pydef_code)</span></code>, lets us extend the generated Python bindings with extra functions in the main module.</p>
+<p><strong>Args:</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">stub_code</span></code>: Python stub declarations to be inserted into the generated stub (“.pyi)” file. These should be written in normal Python syntax with type annotations.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">pydef_code</span></code>: Custom binding code in C++ (pybind11/nanobind syntax). You can use the placeholder <code class="docutils literal notranslate"><span class="pre">LG_MODULE</span></code> to refer to the bound module object.</p></li>
+</ul>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">options</span><span class="o">.</span><span class="n">custom_bindings</span><span class="o">.</span><span class="n">add_custom_bindings_to_main_module</span><span class="p">(</span>
+    <span class="n">stub_code</span><span class="o">=</span><span class="s1">&#39;&#39;&#39;</span>
+<span class="s1">    def global_function() -&gt; int:</span>
+<span class="s1">        &quot;&quot;&quot;A custom function in the main module&quot;&quot;&quot;</span>
+<span class="s1">        ...</span>
+<span class="s1">    &#39;&#39;&#39;</span><span class="p">,</span>
+    <span class="n">pydef_code</span><span class="o">=</span><span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">    // Example of adding a custom function to the main module</span>
+<span class="s2">    LG_MODULE.def(&quot;global_function&quot;, [](){ return 64; });</span>
+<span class="s2">    &quot;&quot;&quot;</span><span class="p">,</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="generated-code-with-custom-bindings">
+<h2>Generated code (with custom bindings)<a class="headerlink" href="#generated-code-with-custom-bindings" title="Permalink to this heading">#</a></h2>
+<p>We may now call <code class="docutils literal notranslate"><span class="pre">litgen.generate_code</span></code> to generate the bindings, which will include our custom additions.
+The generated code is shown below.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">litgen.demo</span> <span class="kn">import</span> <span class="n">litgen_demo</span>
+
+<span class="n">litgen_demo</span><span class="o">.</span><span class="n">demo</span><span class="p">(</span><span class="n">options</span><span class="p">,</span> <span class="n">cpp_code</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html">
+<style>
+.collapsible_header {
+  background-color: #AAAAAA;
+  color: white;
+  cursor: pointer;
+  padding: 3px;
+  width: 100%;
+  border: none;
+  text-align: left;
+  outline: none;
+  font-style: italic;
+}
+
+.collapsible_header_opened {
+  background-color: #555;
+}
+
+.collapsible_header:hover {
+  background-color: #AAAAFF;
+}
+
+.collapsible_header:after {
+  content: '\002B';
+  color: white;
+  font-weight: bold;
+  float: right;
+  margin-left: 5px;
+}
+
+.collapsible_header_opened:after {
+  content: "\2212";
+}
+
+.collapsible_content {
+  padding: 0 18px;
+  max-height: 0;
+  overflow-x: scroll;
+  overflow-y: scroll;
+  min-width: 100%;
+  transition: max-height 0.2s ease-out;
+  background-color: #f1f1f1;
+}
+</style>
+
+<style>
+  div.several_columns {
+    display: flex;
+    flex-wrap: wrap;
+  }
+  div.half_width {
+     width:49.5%;
+     overflow: auto;
+  }
+  div.half_width_spacer {
+     width:1%;
+  }
+  </style>
+
+        <div class ="several_columns">
+            <div class="half_width">
+                
+<style>
+.collapsible_header {
+  background-color: #AAAAAA;
+  color: white;
+  cursor: pointer;
+  padding: 3px;
+  width: 100%;
+  border: none;
+  text-align: left;
+  outline: none;
+  font-style: italic;
+}
+
+.collapsible_header_opened {
+  background-color: #555;
+}
+
+.collapsible_header:hover {
+  background-color: #AAAAFF;
+}
+
+.collapsible_header:after {
+  content: '\002B';
+  color: white;
+  font-weight: bold;
+  float: right;
+  margin-left: 5px;
+}
+
+.collapsible_header_opened:after {
+  content: "\2212";
+}
+
+.collapsible_content {
+  padding: 0 18px;
+  max-height: 0;
+  overflow-x: scroll;
+  overflow-y: scroll;
+  min-width: 100%;
+  transition: max-height 0.2s ease-out;
+  background-color: #f1f1f1;
+}
+</style>
+
+    <script>
+       function copy_code_1757520201063_373() {
+            let code = `
+namespace RootNs
+{
+    struct Foo
+    {
+        int mValue = 0;
+    };
+}
+`;
+            navigator.clipboard.writeText(code);
+       }
+    </script>
+    <button class="collapsible_header" id="btn_1757520201063_373_0" >Original C++ decls</button>
+    <div class="collapsible_content" id="content_1757520201063_373_0">
+        <div>
+                <button onclick="copy_code_1757520201063_373()" align="right">copy &#x270d;</button>
+        </div>
+        <style>pre { line-height: 125%; }
+td.linenos .normal { color: inherit; background-color: transparent; padding-left: 5px; padding-right: 5px; }
+span.linenos { color: inherit; background-color: transparent; padding-left: 5px; padding-right: 5px; }
+td.linenos .special { color: #000000; background-color: #ffffc0; padding-left: 5px; padding-right: 5px; }
+span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 5px; padding-right: 5px; }
+.highlight .hll { background-color: #3c3836 }
+.highlight { background: #fbf1c7; }
+.highlight .c { color: #928374; font-style: italic } /* Comment */
+.highlight .err { color: #fbf1c7; background-color: #9d0006 } /* Error */
+.highlight .k { color: #9d0006 } /* Keyword */
+.highlight .ch { color: #928374; font-style: italic } /* Comment.Hashbang */
+.highlight .cm { color: #928374; font-style: italic } /* Comment.Multiline */
+.highlight .c-PreProc { color: #427b58; font-style: italic } /* Comment.PreProc */
+.highlight .cp { color: #928374; font-style: italic } /* Comment.Preproc */
+.highlight .cpf { color: #928374; font-style: italic } /* Comment.PreprocFile */
+.highlight .c1 { color: #928374; font-style: italic } /* Comment.Single */
+.highlight .cs { color: #3c3836; font-weight: bold; font-style: italic } /* Comment.Special */
+.highlight .gd { color: #fbf1c7; background-color: #9d0006 } /* Generic.Deleted */
+.highlight .ge { font-style: italic } /* Generic.Emph */
+.highlight .gr { color: #9d0006 } /* Generic.Error */
+.highlight .gh { color: #3c3836; font-weight: bold } /* Generic.Heading */
+.highlight .gi { color: #fbf1c7; background-color: #79740e } /* Generic.Inserted */
+.highlight .go { color: #32302f } /* Generic.Output */
+.highlight .gp { color: #7c6f64 } /* Generic.Prompt */
+.highlight .gs { font-weight: bold } /* Generic.Strong */
+.highlight .gu { color: #3c3836; text-decoration: underline } /* Generic.Subheading */
+.highlight .gt { color: #9d0006 } /* Generic.Traceback */
+.highlight .kc { color: #9d0006 } /* Keyword.Constant */
+.highlight .kd { color: #9d0006 } /* Keyword.Declaration */
+.highlight .kn { color: #9d0006 } /* Keyword.Namespace */
+.highlight .kp { color: #9d0006 } /* Keyword.Pseudo */
+.highlight .kr { color: #9d0006 } /* Keyword.Reserved */
+.highlight .kt { color: #9d0006 } /* Keyword.Type */
+.highlight .m { color: #8f3f71 } /* Literal.Number */
+.highlight .s { color: #79740e } /* Literal.String */
+.highlight .na { color: #b57614 } /* Name.Attribute */
+.highlight .nb { color: #af3a03 } /* Name.Builtin */
+.highlight .nc { color: #427b58 } /* Name.Class */
+.highlight .no { color: #8f3f71 } /* Name.Constant */
+.highlight .nd { color: #9d0006 } /* Name.Decorator */
+.highlight .ne { color: #9d0006 } /* Name.Exception */
+.highlight .nf { color: #427b58 } /* Name.Function */
+.highlight .nn { color: #427b58 } /* Name.Namespace */
+.highlight .nt { color: #427b58 } /* Name.Tag */
+.highlight .nv { color: #076678 } /* Name.Variable */
+.highlight .ow { color: #9d0006 } /* Operator.Word */
+.highlight .mb { color: #8f3f71 } /* Literal.Number.Bin */
+.highlight .mf { color: #8f3f71 } /* Literal.Number.Float */
+.highlight .mh { color: #8f3f71 } /* Literal.Number.Hex */
+.highlight .mi { color: #8f3f71 } /* Literal.Number.Integer */
+.highlight .mo { color: #8f3f71 } /* Literal.Number.Oct */
+.highlight .sa { color: #79740e } /* Literal.String.Affix */
+.highlight .sb { color: #79740e } /* Literal.String.Backtick */
+.highlight .sc { color: #79740e } /* Literal.String.Char */
+.highlight .dl { color: #79740e } /* Literal.String.Delimiter */
+.highlight .sd { color: #79740e } /* Literal.String.Doc */
+.highlight .s2 { color: #79740e } /* Literal.String.Double */
+.highlight .se { color: #af3a03 } /* Literal.String.Escape */
+.highlight .sh { color: #79740e } /* Literal.String.Heredoc */
+.highlight .si { color: #79740e } /* Literal.String.Interpol */
+.highlight .sx { color: #79740e } /* Literal.String.Other */
+.highlight .sr { color: #79740e } /* Literal.String.Regex */
+.highlight .s1 { color: #79740e } /* Literal.String.Single */
+.highlight .ss { color: #79740e } /* Literal.String.Symbol */
+.highlight .bp { color: #af3a03 } /* Name.Builtin.Pseudo */
+.highlight .fm { color: #427b58 } /* Name.Function.Magic */
+.highlight .vc { color: #076678 } /* Name.Variable.Class */
+.highlight .vg { color: #076678 } /* Name.Variable.Global */
+.highlight .vi { color: #076678 } /* Name.Variable.Instance */
+.highlight .vm { color: #076678 } /* Name.Variable.Magic */
+.highlight .il { color: #8f3f71 } /* Literal.Number.Integer.Long */</style> <div class="highlight"><pre><span></span><span class="k">namespace</span><span class="w"> </span><span class="nn">RootNs</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="k">struct</span><span class="w"> </span><span class="nc">Foo</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">        </span><span class="kt">int</span><span class="w"> </span><span class="n">mValue</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+<span class="w">    </span><span class="p">};</span>
+<span class="p">}</span>
+</pre></div>
+
+    </div>
+    
+    <script>
+    var button = document.getElementById("btn_1757520201063_373_0");
+    button.addEventListener("click", function() {
+        this.classList.toggle("collapsible_header_opened");
+        var content = document.getElementById("content_1757520201063_373_0");
+        if (content.style.maxHeight){
+          content.style.maxHeight = null;
+        } else {
+          content.style.maxHeight = "40em";
+        }
+    });
+    </script>
+    
+            <script>
+            var collapsible_header = document.getElementById("btn_1757520201063_373_0");
+            collapsible_header.classList.toggle("collapsible_header_opened");
+            var collapsible_content = document.getElementById("content_1757520201063_373_0");
+            collapsible_content.style.maxHeight = "40em";
+            </script>
+            
+            </div>
+            <div class="half_width_spacer"></div>
+            <div class="half_width">
+                
+<style>
+.collapsible_header {
+  background-color: #AAAAAA;
+  color: white;
+  cursor: pointer;
+  padding: 3px;
+  width: 100%;
+  border: none;
+  text-align: left;
+  outline: none;
+  font-style: italic;
+}
+
+.collapsible_header_opened {
+  background-color: #555;
+}
+
+.collapsible_header:hover {
+  background-color: #AAAAFF;
+}
+
+.collapsible_header:after {
+  content: '\002B';
+  color: white;
+  font-weight: bold;
+  float: right;
+  margin-left: 5px;
+}
+
+.collapsible_header_opened:after {
+  content: "\2212";
+}
+
+.collapsible_content {
+  padding: 0 18px;
+  max-height: 0;
+  overflow-x: scroll;
+  overflow-y: scroll;
+  min-width: 100%;
+  transition: max-height 0.2s ease-out;
+  background-color: #f1f1f1;
+}
+</style>
+
+    <script>
+       function copy_code_1757520201079_541() {
+            let code = `
+
+# <submodule root_ns>
+class root_ns:  # Proxy class that introduces typings for the *submodule* root_ns
+    pass  # (This corresponds to a C++ namespace. All method are static!)
+    class Foo:
+        m_value: int = 0
+        def __init__(self, m_value: int = 0) -> None:
+            """Auto-generated default constructor with named params"""
+            pass
+
+        def get_value(self) -> int:
+            """Get the value"""
+            ...
+        def set_value(self, value: int) -> None:
+            """Set the value"""
+            ...
+
+
+    @staticmethod   # We **must** use @staticmethod here
+    def foo_namespace_function() -> int:
+        """A custom function in the submodule"""
+        ...
+# </submodule root_ns>
+
+def global_function() -> int:
+    """A custom function in the main module"""
+    ...
+`;
+            navigator.clipboard.writeText(code);
+       }
+    </script>
+    <button class="collapsible_header" id="btn_1757520201079_541_1" >Corresponding python decls (stub)</button>
+    <div class="collapsible_content" id="content_1757520201079_541_1">
+        <div>
+                <button onclick="copy_code_1757520201079_541()" align="right">copy &#x270d;</button>
+        </div>
+        <style>pre { line-height: 125%; }
+td.linenos .normal { color: inherit; background-color: transparent; padding-left: 5px; padding-right: 5px; }
+span.linenos { color: inherit; background-color: transparent; padding-left: 5px; padding-right: 5px; }
+td.linenos .special { color: #000000; background-color: #ffffc0; padding-left: 5px; padding-right: 5px; }
+span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 5px; padding-right: 5px; }
+.highlight .hll { background-color: #3c3836 }
+.highlight { background: #fbf1c7; }
+.highlight .c { color: #928374; font-style: italic } /* Comment */
+.highlight .err { color: #fbf1c7; background-color: #9d0006 } /* Error */
+.highlight .k { color: #9d0006 } /* Keyword */
+.highlight .ch { color: #928374; font-style: italic } /* Comment.Hashbang */
+.highlight .cm { color: #928374; font-style: italic } /* Comment.Multiline */
+.highlight .c-PreProc { color: #427b58; font-style: italic } /* Comment.PreProc */
+.highlight .cp { color: #928374; font-style: italic } /* Comment.Preproc */
+.highlight .cpf { color: #928374; font-style: italic } /* Comment.PreprocFile */
+.highlight .c1 { color: #928374; font-style: italic } /* Comment.Single */
+.highlight .cs { color: #3c3836; font-weight: bold; font-style: italic } /* Comment.Special */
+.highlight .gd { color: #fbf1c7; background-color: #9d0006 } /* Generic.Deleted */
+.highlight .ge { font-style: italic } /* Generic.Emph */
+.highlight .gr { color: #9d0006 } /* Generic.Error */
+.highlight .gh { color: #3c3836; font-weight: bold } /* Generic.Heading */
+.highlight .gi { color: #fbf1c7; background-color: #79740e } /* Generic.Inserted */
+.highlight .go { color: #32302f } /* Generic.Output */
+.highlight .gp { color: #7c6f64 } /* Generic.Prompt */
+.highlight .gs { font-weight: bold } /* Generic.Strong */
+.highlight .gu { color: #3c3836; text-decoration: underline } /* Generic.Subheading */
+.highlight .gt { color: #9d0006 } /* Generic.Traceback */
+.highlight .kc { color: #9d0006 } /* Keyword.Constant */
+.highlight .kd { color: #9d0006 } /* Keyword.Declaration */
+.highlight .kn { color: #9d0006 } /* Keyword.Namespace */
+.highlight .kp { color: #9d0006 } /* Keyword.Pseudo */
+.highlight .kr { color: #9d0006 } /* Keyword.Reserved */
+.highlight .kt { color: #9d0006 } /* Keyword.Type */
+.highlight .m { color: #8f3f71 } /* Literal.Number */
+.highlight .s { color: #79740e } /* Literal.String */
+.highlight .na { color: #b57614 } /* Name.Attribute */
+.highlight .nb { color: #af3a03 } /* Name.Builtin */
+.highlight .nc { color: #427b58 } /* Name.Class */
+.highlight .no { color: #8f3f71 } /* Name.Constant */
+.highlight .nd { color: #9d0006 } /* Name.Decorator */
+.highlight .ne { color: #9d0006 } /* Name.Exception */
+.highlight .nf { color: #427b58 } /* Name.Function */
+.highlight .nn { color: #427b58 } /* Name.Namespace */
+.highlight .nt { color: #427b58 } /* Name.Tag */
+.highlight .nv { color: #076678 } /* Name.Variable */
+.highlight .ow { color: #9d0006 } /* Operator.Word */
+.highlight .mb { color: #8f3f71 } /* Literal.Number.Bin */
+.highlight .mf { color: #8f3f71 } /* Literal.Number.Float */
+.highlight .mh { color: #8f3f71 } /* Literal.Number.Hex */
+.highlight .mi { color: #8f3f71 } /* Literal.Number.Integer */
+.highlight .mo { color: #8f3f71 } /* Literal.Number.Oct */
+.highlight .sa { color: #79740e } /* Literal.String.Affix */
+.highlight .sb { color: #79740e } /* Literal.String.Backtick */
+.highlight .sc { color: #79740e } /* Literal.String.Char */
+.highlight .dl { color: #79740e } /* Literal.String.Delimiter */
+.highlight .sd { color: #79740e } /* Literal.String.Doc */
+.highlight .s2 { color: #79740e } /* Literal.String.Double */
+.highlight .se { color: #af3a03 } /* Literal.String.Escape */
+.highlight .sh { color: #79740e } /* Literal.String.Heredoc */
+.highlight .si { color: #79740e } /* Literal.String.Interpol */
+.highlight .sx { color: #79740e } /* Literal.String.Other */
+.highlight .sr { color: #79740e } /* Literal.String.Regex */
+.highlight .s1 { color: #79740e } /* Literal.String.Single */
+.highlight .ss { color: #79740e } /* Literal.String.Symbol */
+.highlight .bp { color: #af3a03 } /* Name.Builtin.Pseudo */
+.highlight .fm { color: #427b58 } /* Name.Function.Magic */
+.highlight .vc { color: #076678 } /* Name.Variable.Class */
+.highlight .vg { color: #076678 } /* Name.Variable.Global */
+.highlight .vi { color: #076678 } /* Name.Variable.Instance */
+.highlight .vm { color: #076678 } /* Name.Variable.Magic */
+.highlight .il { color: #8f3f71 } /* Literal.Number.Integer.Long */</style> <div class="highlight"><pre><span></span><span class="c1"># &lt;submodule root_ns&gt;</span>
+<span class="k">class</span> <span class="nc">root_ns</span><span class="p">:</span>  <span class="c1"># Proxy class that introduces typings for the *submodule* root_ns</span>
+    <span class="k">pass</span>  <span class="c1"># (This corresponds to a C++ namespace. All method are static!)</span>
+    <span class="k">class</span> <span class="nc">Foo</span><span class="p">:</span>
+        <span class="n">m_value</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">m_value</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">            </span><span class="sd">&quot;&quot;&quot;Auto-generated default constructor with named params&quot;&quot;&quot;</span>
+            <span class="k">pass</span>
+
+        <span class="k">def</span> <span class="nf">get_value</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">            </span><span class="sd">&quot;&quot;&quot;Get the value&quot;&quot;&quot;</span>
+            <span class="o">...</span>
+        <span class="k">def</span> <span class="nf">set_value</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">            </span><span class="sd">&quot;&quot;&quot;Set the value&quot;&quot;&quot;</span>
+            <span class="o">...</span>
+
+
+    <span class="nd">@staticmethod</span>   <span class="c1"># We **must** use @staticmethod here</span>
+    <span class="k">def</span> <span class="nf">foo_namespace_function</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;A custom function in the submodule&quot;&quot;&quot;</span>
+        <span class="o">...</span>
+<span class="c1"># &lt;/submodule root_ns&gt;</span>
+
+<span class="k">def</span> <span class="nf">global_function</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A custom function in the main module&quot;&quot;&quot;</span>
+    <span class="o">...</span>
+</pre></div>
+
+    </div>
+    
+    <script>
+    var button = document.getElementById("btn_1757520201079_541_1");
+    button.addEventListener("click", function() {
+        this.classList.toggle("collapsible_header_opened");
+        var content = document.getElementById("content_1757520201079_541_1");
+        if (content.style.maxHeight){
+          content.style.maxHeight = null;
+        } else {
+          content.style.maxHeight = "40em";
+        }
+    });
+    </script>
+    
+            <script>
+            var collapsible_header = document.getElementById("btn_1757520201079_541_1");
+            collapsible_header.classList.toggle("collapsible_header_opened");
+            var collapsible_content = document.getElementById("content_1757520201079_541_1");
+            collapsible_content.style.maxHeight = "40em";
+            </script>
+            
+            <br/>
+        </div>
+    <br/>
+<style>
+.collapsible_header {
+  background-color: #AAAAAA;
+  color: white;
+  cursor: pointer;
+  padding: 3px;
+  width: 100%;
+  border: none;
+  text-align: left;
+  outline: none;
+  font-style: italic;
+}
+
+.collapsible_header_opened {
+  background-color: #555;
+}
+
+.collapsible_header:hover {
+  background-color: #AAAAFF;
+}
+
+.collapsible_header:after {
+  content: '\002B';
+  color: white;
+  font-weight: bold;
+  float: right;
+  margin-left: 5px;
+}
+
+.collapsible_header_opened:after {
+  content: "\2212";
+}
+
+.collapsible_content {
+  padding: 0 18px;
+  max-height: 0;
+  overflow-x: scroll;
+  overflow-y: scroll;
+  min-width: 100%;
+  transition: max-height 0.2s ease-out;
+  background-color: #f1f1f1;
+}
+</style>
+
+    <script>
+       function copy_code_1757520201081_035() {
+            let code = `
+{ // <namespace RootNs>
+    py::module_ pyNsRootNs = m.def_submodule("root_ns", "");
+    auto pyNsRootNs_ClassFoo =
+        py::class_<RootNs::Foo>
+            (pyNsRootNs, "Foo", "")
+        .def(py::init<>([](
+        int mValue = 0)
+        {
+            auto r_ctor_ = std::make_unique<RootNs::Foo>();
+            r_ctor_->mValue = mValue;
+            return r_ctor_;
+        })
+        , py::arg("m_value") = 0
+        )
+        .def_readwrite("m_value", &RootNs::Foo::mValue, "")
+        ;
+
+    pyNsRootNs_ClassFoo.def("get_value", [](const RootNs::Foo& self){ return self.mValue; });
+    pyNsRootNs_ClassFoo.def("set_value", [](RootNs::Foo& self, int value){ self.mValue = value; }, nb::arg("value"));
+
+
+
+    // Example of adding a custom function to the submodule
+    pyNsRootNs.def("foo_namespace_function", [](){ return 53; });
+} // </namespace RootNs>
+
+// Example of adding a custom function to the main module
+m.def("global_function", [](){ return 64; });
+`;
+            navigator.clipboard.writeText(code);
+       }
+    </script>
+    <button class="collapsible_header" id="btn_1757520201081_035_2" >pybind11 C++ binding code</button>
+    <div class="collapsible_content" id="content_1757520201081_035_2">
+        <div>
+                <button onclick="copy_code_1757520201081_035()" align="right">copy &#x270d;</button>
+        </div>
+        <style>pre { line-height: 125%; }
+td.linenos .normal { color: inherit; background-color: transparent; padding-left: 5px; padding-right: 5px; }
+span.linenos { color: inherit; background-color: transparent; padding-left: 5px; padding-right: 5px; }
+td.linenos .special { color: #000000; background-color: #ffffc0; padding-left: 5px; padding-right: 5px; }
+span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 5px; padding-right: 5px; }
+.highlight .hll { background-color: #3c3836 }
+.highlight { background: #fbf1c7; }
+.highlight .c { color: #928374; font-style: italic } /* Comment */
+.highlight .err { color: #fbf1c7; background-color: #9d0006 } /* Error */
+.highlight .k { color: #9d0006 } /* Keyword */
+.highlight .ch { color: #928374; font-style: italic } /* Comment.Hashbang */
+.highlight .cm { color: #928374; font-style: italic } /* Comment.Multiline */
+.highlight .c-PreProc { color: #427b58; font-style: italic } /* Comment.PreProc */
+.highlight .cp { color: #928374; font-style: italic } /* Comment.Preproc */
+.highlight .cpf { color: #928374; font-style: italic } /* Comment.PreprocFile */
+.highlight .c1 { color: #928374; font-style: italic } /* Comment.Single */
+.highlight .cs { color: #3c3836; font-weight: bold; font-style: italic } /* Comment.Special */
+.highlight .gd { color: #fbf1c7; background-color: #9d0006 } /* Generic.Deleted */
+.highlight .ge { font-style: italic } /* Generic.Emph */
+.highlight .gr { color: #9d0006 } /* Generic.Error */
+.highlight .gh { color: #3c3836; font-weight: bold } /* Generic.Heading */
+.highlight .gi { color: #fbf1c7; background-color: #79740e } /* Generic.Inserted */
+.highlight .go { color: #32302f } /* Generic.Output */
+.highlight .gp { color: #7c6f64 } /* Generic.Prompt */
+.highlight .gs { font-weight: bold } /* Generic.Strong */
+.highlight .gu { color: #3c3836; text-decoration: underline } /* Generic.Subheading */
+.highlight .gt { color: #9d0006 } /* Generic.Traceback */
+.highlight .kc { color: #9d0006 } /* Keyword.Constant */
+.highlight .kd { color: #9d0006 } /* Keyword.Declaration */
+.highlight .kn { color: #9d0006 } /* Keyword.Namespace */
+.highlight .kp { color: #9d0006 } /* Keyword.Pseudo */
+.highlight .kr { color: #9d0006 } /* Keyword.Reserved */
+.highlight .kt { color: #9d0006 } /* Keyword.Type */
+.highlight .m { color: #8f3f71 } /* Literal.Number */
+.highlight .s { color: #79740e } /* Literal.String */
+.highlight .na { color: #b57614 } /* Name.Attribute */
+.highlight .nb { color: #af3a03 } /* Name.Builtin */
+.highlight .nc { color: #427b58 } /* Name.Class */
+.highlight .no { color: #8f3f71 } /* Name.Constant */
+.highlight .nd { color: #9d0006 } /* Name.Decorator */
+.highlight .ne { color: #9d0006 } /* Name.Exception */
+.highlight .nf { color: #427b58 } /* Name.Function */
+.highlight .nn { color: #427b58 } /* Name.Namespace */
+.highlight .nt { color: #427b58 } /* Name.Tag */
+.highlight .nv { color: #076678 } /* Name.Variable */
+.highlight .ow { color: #9d0006 } /* Operator.Word */
+.highlight .mb { color: #8f3f71 } /* Literal.Number.Bin */
+.highlight .mf { color: #8f3f71 } /* Literal.Number.Float */
+.highlight .mh { color: #8f3f71 } /* Literal.Number.Hex */
+.highlight .mi { color: #8f3f71 } /* Literal.Number.Integer */
+.highlight .mo { color: #8f3f71 } /* Literal.Number.Oct */
+.highlight .sa { color: #79740e } /* Literal.String.Affix */
+.highlight .sb { color: #79740e } /* Literal.String.Backtick */
+.highlight .sc { color: #79740e } /* Literal.String.Char */
+.highlight .dl { color: #79740e } /* Literal.String.Delimiter */
+.highlight .sd { color: #79740e } /* Literal.String.Doc */
+.highlight .s2 { color: #79740e } /* Literal.String.Double */
+.highlight .se { color: #af3a03 } /* Literal.String.Escape */
+.highlight .sh { color: #79740e } /* Literal.String.Heredoc */
+.highlight .si { color: #79740e } /* Literal.String.Interpol */
+.highlight .sx { color: #79740e } /* Literal.String.Other */
+.highlight .sr { color: #79740e } /* Literal.String.Regex */
+.highlight .s1 { color: #79740e } /* Literal.String.Single */
+.highlight .ss { color: #79740e } /* Literal.String.Symbol */
+.highlight .bp { color: #af3a03 } /* Name.Builtin.Pseudo */
+.highlight .fm { color: #427b58 } /* Name.Function.Magic */
+.highlight .vc { color: #076678 } /* Name.Variable.Class */
+.highlight .vg { color: #076678 } /* Name.Variable.Global */
+.highlight .vi { color: #076678 } /* Name.Variable.Instance */
+.highlight .vm { color: #076678 } /* Name.Variable.Magic */
+.highlight .il { color: #8f3f71 } /* Literal.Number.Integer.Long */</style> <div class="highlight"><pre><span></span><span class="p">{</span><span class="w"> </span><span class="c1">// &lt;namespace RootNs&gt;</span>
+<span class="w">    </span><span class="n">py</span><span class="o">::</span><span class="n">module_</span><span class="w"> </span><span class="n">pyNsRootNs</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">m</span><span class="p">.</span><span class="n">def_submodule</span><span class="p">(</span><span class="s">&quot;root_ns&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;&quot;</span><span class="p">);</span>
+<span class="w">    </span><span class="k">auto</span><span class="w"> </span><span class="n">pyNsRootNs_ClassFoo</span><span class="w"> </span><span class="o">=</span>
+<span class="w">        </span><span class="n">py</span><span class="o">::</span><span class="n">class_</span><span class="o">&lt;</span><span class="n">RootNs</span><span class="o">::</span><span class="n">Foo</span><span class="o">&gt;</span>
+<span class="w">            </span><span class="p">(</span><span class="n">pyNsRootNs</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Foo&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;&quot;</span><span class="p">)</span>
+<span class="w">        </span><span class="p">.</span><span class="n">def</span><span class="p">(</span><span class="n">py</span><span class="o">::</span><span class="n">init</span><span class="o">&lt;&gt;</span><span class="p">([](</span>
+<span class="w">        </span><span class="kt">int</span><span class="w"> </span><span class="n">mValue</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span>
+<span class="w">        </span><span class="p">{</span>
+<span class="w">            </span><span class="k">auto</span><span class="w"> </span><span class="n">r_ctor_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">make_unique</span><span class="o">&lt;</span><span class="n">RootNs</span><span class="o">::</span><span class="n">Foo</span><span class="o">&gt;</span><span class="p">();</span>
+<span class="w">            </span><span class="n">r_ctor_</span><span class="o">-&gt;</span><span class="n">mValue</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">mValue</span><span class="p">;</span>
+<span class="w">            </span><span class="k">return</span><span class="w"> </span><span class="n">r_ctor_</span><span class="p">;</span>
+<span class="w">        </span><span class="p">})</span>
+<span class="w">        </span><span class="p">,</span><span class="w"> </span><span class="n">py</span><span class="o">::</span><span class="n">arg</span><span class="p">(</span><span class="s">&quot;m_value&quot;</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span>
+<span class="w">        </span><span class="p">)</span>
+<span class="w">        </span><span class="p">.</span><span class="n">def_readwrite</span><span class="p">(</span><span class="s">&quot;m_value&quot;</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">RootNs</span><span class="o">::</span><span class="n">Foo</span><span class="o">::</span><span class="n">mValue</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;&quot;</span><span class="p">)</span>
+<span class="w">        </span><span class="p">;</span>
+
+<span class="w">    </span><span class="n">pyNsRootNs_ClassFoo</span><span class="p">.</span><span class="n">def</span><span class="p">(</span><span class="s">&quot;get_value&quot;</span><span class="p">,</span><span class="w"> </span><span class="p">[](</span><span class="k">const</span><span class="w"> </span><span class="n">RootNs</span><span class="o">::</span><span class="n">Foo</span><span class="o">&amp;</span><span class="w"> </span><span class="n">self</span><span class="p">){</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">self</span><span class="p">.</span><span class="n">mValue</span><span class="p">;</span><span class="w"> </span><span class="p">});</span>
+<span class="w">    </span><span class="n">pyNsRootNs_ClassFoo</span><span class="p">.</span><span class="n">def</span><span class="p">(</span><span class="s">&quot;set_value&quot;</span><span class="p">,</span><span class="w"> </span><span class="p">[](</span><span class="n">RootNs</span><span class="o">::</span><span class="n">Foo</span><span class="o">&amp;</span><span class="w"> </span><span class="n">self</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">value</span><span class="p">){</span><span class="w"> </span><span class="n">self</span><span class="p">.</span><span class="n">mValue</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">value</span><span class="p">;</span><span class="w"> </span><span class="p">},</span><span class="w"> </span><span class="n">nb</span><span class="o">::</span><span class="n">arg</span><span class="p">(</span><span class="s">&quot;value&quot;</span><span class="p">));</span>
+
+
+
+<span class="w">    </span><span class="c1">// Example of adding a custom function to the submodule</span>
+<span class="w">    </span><span class="n">pyNsRootNs</span><span class="p">.</span><span class="n">def</span><span class="p">(</span><span class="s">&quot;foo_namespace_function&quot;</span><span class="p">,</span><span class="w"> </span><span class="p">[](){</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="mi">53</span><span class="p">;</span><span class="w"> </span><span class="p">});</span>
+<span class="p">}</span><span class="w"> </span><span class="c1">// &lt;/namespace RootNs&gt;</span>
+
+<span class="c1">// Example of adding a custom function to the main module</span>
+<span class="n">m</span><span class="p">.</span><span class="n">def</span><span class="p">(</span><span class="s">&quot;global_function&quot;</span><span class="p">,</span><span class="w"> </span><span class="p">[](){</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="mi">64</span><span class="p">;</span><span class="w"> </span><span class="p">});</span>
+</pre></div>
+
+    </div>
+    
+    <script>
+    var button = document.getElementById("btn_1757520201081_035_2");
+    button.addEventListener("click", function() {
+        this.classList.toggle("collapsible_header_opened");
+        var content = document.getElementById("content_1757520201081_035_2");
+        if (content.style.maxHeight){
+          content.style.maxHeight = null;
+        } else {
+          content.style.maxHeight = "40em";
+        }
+    });
+    </script>
+    
+<style>
+.collapsible_header {
+  background-color: #AAAAAA;
+  color: white;
+  cursor: pointer;
+  padding: 3px;
+  width: 100%;
+  border: none;
+  text-align: left;
+  outline: none;
+  font-style: italic;
+}
+
+.collapsible_header_opened {
+  background-color: #555;
+}
+
+.collapsible_header:hover {
+  background-color: #AAAAFF;
+}
+
+.collapsible_header:after {
+  content: '\002B';
+  color: white;
+  font-weight: bold;
+  float: right;
+  margin-left: 5px;
+}
+
+.collapsible_header_opened:after {
+  content: "\2212";
+}
+
+.collapsible_content {
+  padding: 0 18px;
+  max-height: 0;
+  overflow-x: scroll;
+  overflow-y: scroll;
+  min-width: 100%;
+  transition: max-height 0.2s ease-out;
+  background-color: #f1f1f1;
+}
+</style>
+
+    <script>
+       function copy_code_1757520201082_4731() {
+            let code = `
+{ // <namespace RootNs>
+    nb::module_ pyNsRootNs = m.def_submodule("root_ns", "");
+    auto pyNsRootNs_ClassFoo =
+        nb::class_<RootNs::Foo>
+            (pyNsRootNs, "Foo", "")
+        .def("__init__", [](RootNs::Foo * self, int mValue = 0)
+        {
+            new (self) RootNs::Foo();  // placement new
+            auto r_ctor_ = self;
+            r_ctor_->mValue = mValue;
+        },
+        nb::arg("m_value") = 0
+        )
+        .def_rw("m_value", &RootNs::Foo::mValue, "")
+        ;
+
+    pyNsRootNs_ClassFoo.def("get_value", [](const RootNs::Foo& self){ return self.mValue; });
+    pyNsRootNs_ClassFoo.def("set_value", [](RootNs::Foo& self, int value){ self.mValue = value; }, nb::arg("value"));
+
+
+
+    // Example of adding a custom function to the submodule
+    pyNsRootNs.def("foo_namespace_function", [](){ return 53; });
+} // </namespace RootNs>
+
+// Example of adding a custom function to the main module
+m.def("global_function", [](){ return 64; });
+`;
+            navigator.clipboard.writeText(code);
+       }
+    </script>
+    <button class="collapsible_header" id="btn_1757520201082_4731_3" >nanobind C++ binding code</button>
+    <div class="collapsible_content" id="content_1757520201082_4731_3">
+        <div>
+                <button onclick="copy_code_1757520201082_4731()" align="right">copy &#x270d;</button>
+        </div>
+        <style>pre { line-height: 125%; }
+td.linenos .normal { color: inherit; background-color: transparent; padding-left: 5px; padding-right: 5px; }
+span.linenos { color: inherit; background-color: transparent; padding-left: 5px; padding-right: 5px; }
+td.linenos .special { color: #000000; background-color: #ffffc0; padding-left: 5px; padding-right: 5px; }
+span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 5px; padding-right: 5px; }
+.highlight .hll { background-color: #3c3836 }
+.highlight { background: #fbf1c7; }
+.highlight .c { color: #928374; font-style: italic } /* Comment */
+.highlight .err { color: #fbf1c7; background-color: #9d0006 } /* Error */
+.highlight .k { color: #9d0006 } /* Keyword */
+.highlight .ch { color: #928374; font-style: italic } /* Comment.Hashbang */
+.highlight .cm { color: #928374; font-style: italic } /* Comment.Multiline */
+.highlight .c-PreProc { color: #427b58; font-style: italic } /* Comment.PreProc */
+.highlight .cp { color: #928374; font-style: italic } /* Comment.Preproc */
+.highlight .cpf { color: #928374; font-style: italic } /* Comment.PreprocFile */
+.highlight .c1 { color: #928374; font-style: italic } /* Comment.Single */
+.highlight .cs { color: #3c3836; font-weight: bold; font-style: italic } /* Comment.Special */
+.highlight .gd { color: #fbf1c7; background-color: #9d0006 } /* Generic.Deleted */
+.highlight .ge { font-style: italic } /* Generic.Emph */
+.highlight .gr { color: #9d0006 } /* Generic.Error */
+.highlight .gh { color: #3c3836; font-weight: bold } /* Generic.Heading */
+.highlight .gi { color: #fbf1c7; background-color: #79740e } /* Generic.Inserted */
+.highlight .go { color: #32302f } /* Generic.Output */
+.highlight .gp { color: #7c6f64 } /* Generic.Prompt */
+.highlight .gs { font-weight: bold } /* Generic.Strong */
+.highlight .gu { color: #3c3836; text-decoration: underline } /* Generic.Subheading */
+.highlight .gt { color: #9d0006 } /* Generic.Traceback */
+.highlight .kc { color: #9d0006 } /* Keyword.Constant */
+.highlight .kd { color: #9d0006 } /* Keyword.Declaration */
+.highlight .kn { color: #9d0006 } /* Keyword.Namespace */
+.highlight .kp { color: #9d0006 } /* Keyword.Pseudo */
+.highlight .kr { color: #9d0006 } /* Keyword.Reserved */
+.highlight .kt { color: #9d0006 } /* Keyword.Type */
+.highlight .m { color: #8f3f71 } /* Literal.Number */
+.highlight .s { color: #79740e } /* Literal.String */
+.highlight .na { color: #b57614 } /* Name.Attribute */
+.highlight .nb { color: #af3a03 } /* Name.Builtin */
+.highlight .nc { color: #427b58 } /* Name.Class */
+.highlight .no { color: #8f3f71 } /* Name.Constant */
+.highlight .nd { color: #9d0006 } /* Name.Decorator */
+.highlight .ne { color: #9d0006 } /* Name.Exception */
+.highlight .nf { color: #427b58 } /* Name.Function */
+.highlight .nn { color: #427b58 } /* Name.Namespace */
+.highlight .nt { color: #427b58 } /* Name.Tag */
+.highlight .nv { color: #076678 } /* Name.Variable */
+.highlight .ow { color: #9d0006 } /* Operator.Word */
+.highlight .mb { color: #8f3f71 } /* Literal.Number.Bin */
+.highlight .mf { color: #8f3f71 } /* Literal.Number.Float */
+.highlight .mh { color: #8f3f71 } /* Literal.Number.Hex */
+.highlight .mi { color: #8f3f71 } /* Literal.Number.Integer */
+.highlight .mo { color: #8f3f71 } /* Literal.Number.Oct */
+.highlight .sa { color: #79740e } /* Literal.String.Affix */
+.highlight .sb { color: #79740e } /* Literal.String.Backtick */
+.highlight .sc { color: #79740e } /* Literal.String.Char */
+.highlight .dl { color: #79740e } /* Literal.String.Delimiter */
+.highlight .sd { color: #79740e } /* Literal.String.Doc */
+.highlight .s2 { color: #79740e } /* Literal.String.Double */
+.highlight .se { color: #af3a03 } /* Literal.String.Escape */
+.highlight .sh { color: #79740e } /* Literal.String.Heredoc */
+.highlight .si { color: #79740e } /* Literal.String.Interpol */
+.highlight .sx { color: #79740e } /* Literal.String.Other */
+.highlight .sr { color: #79740e } /* Literal.String.Regex */
+.highlight .s1 { color: #79740e } /* Literal.String.Single */
+.highlight .ss { color: #79740e } /* Literal.String.Symbol */
+.highlight .bp { color: #af3a03 } /* Name.Builtin.Pseudo */
+.highlight .fm { color: #427b58 } /* Name.Function.Magic */
+.highlight .vc { color: #076678 } /* Name.Variable.Class */
+.highlight .vg { color: #076678 } /* Name.Variable.Global */
+.highlight .vi { color: #076678 } /* Name.Variable.Instance */
+.highlight .vm { color: #076678 } /* Name.Variable.Magic */
+.highlight .il { color: #8f3f71 } /* Literal.Number.Integer.Long */</style> <div class="highlight"><pre><span></span><span class="p">{</span><span class="w"> </span><span class="c1">// &lt;namespace RootNs&gt;</span>
+<span class="w">    </span><span class="n">nb</span><span class="o">::</span><span class="n">module_</span><span class="w"> </span><span class="n">pyNsRootNs</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">m</span><span class="p">.</span><span class="n">def_submodule</span><span class="p">(</span><span class="s">&quot;root_ns&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;&quot;</span><span class="p">);</span>
+<span class="w">    </span><span class="k">auto</span><span class="w"> </span><span class="n">pyNsRootNs_ClassFoo</span><span class="w"> </span><span class="o">=</span>
+<span class="w">        </span><span class="n">nb</span><span class="o">::</span><span class="n">class_</span><span class="o">&lt;</span><span class="n">RootNs</span><span class="o">::</span><span class="n">Foo</span><span class="o">&gt;</span>
+<span class="w">            </span><span class="p">(</span><span class="n">pyNsRootNs</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Foo&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;&quot;</span><span class="p">)</span>
+<span class="w">        </span><span class="p">.</span><span class="n">def</span><span class="p">(</span><span class="s">&quot;__init__&quot;</span><span class="p">,</span><span class="w"> </span><span class="p">[](</span><span class="n">RootNs</span><span class="o">::</span><span class="n">Foo</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">self</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">mValue</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span>
+<span class="w">        </span><span class="p">{</span>
+<span class="w">            </span><span class="k">new</span><span class="w"> </span><span class="p">(</span><span class="n">self</span><span class="p">)</span><span class="w"> </span><span class="n">RootNs</span><span class="o">::</span><span class="n">Foo</span><span class="p">();</span><span class="w">  </span><span class="c1">// placement new</span>
+<span class="w">            </span><span class="k">auto</span><span class="w"> </span><span class="n">r_ctor_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">self</span><span class="p">;</span>
+<span class="w">            </span><span class="n">r_ctor_</span><span class="o">-&gt;</span><span class="n">mValue</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">mValue</span><span class="p">;</span>
+<span class="w">        </span><span class="p">},</span>
+<span class="w">        </span><span class="n">nb</span><span class="o">::</span><span class="n">arg</span><span class="p">(</span><span class="s">&quot;m_value&quot;</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span>
+<span class="w">        </span><span class="p">)</span>
+<span class="w">        </span><span class="p">.</span><span class="n">def_rw</span><span class="p">(</span><span class="s">&quot;m_value&quot;</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">RootNs</span><span class="o">::</span><span class="n">Foo</span><span class="o">::</span><span class="n">mValue</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;&quot;</span><span class="p">)</span>
+<span class="w">        </span><span class="p">;</span>
+
+<span class="w">    </span><span class="n">pyNsRootNs_ClassFoo</span><span class="p">.</span><span class="n">def</span><span class="p">(</span><span class="s">&quot;get_value&quot;</span><span class="p">,</span><span class="w"> </span><span class="p">[](</span><span class="k">const</span><span class="w"> </span><span class="n">RootNs</span><span class="o">::</span><span class="n">Foo</span><span class="o">&amp;</span><span class="w"> </span><span class="n">self</span><span class="p">){</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">self</span><span class="p">.</span><span class="n">mValue</span><span class="p">;</span><span class="w"> </span><span class="p">});</span>
+<span class="w">    </span><span class="n">pyNsRootNs_ClassFoo</span><span class="p">.</span><span class="n">def</span><span class="p">(</span><span class="s">&quot;set_value&quot;</span><span class="p">,</span><span class="w"> </span><span class="p">[](</span><span class="n">RootNs</span><span class="o">::</span><span class="n">Foo</span><span class="o">&amp;</span><span class="w"> </span><span class="n">self</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">value</span><span class="p">){</span><span class="w"> </span><span class="n">self</span><span class="p">.</span><span class="n">mValue</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">value</span><span class="p">;</span><span class="w"> </span><span class="p">},</span><span class="w"> </span><span class="n">nb</span><span class="o">::</span><span class="n">arg</span><span class="p">(</span><span class="s">&quot;value&quot;</span><span class="p">));</span>
+
+
+
+<span class="w">    </span><span class="c1">// Example of adding a custom function to the submodule</span>
+<span class="w">    </span><span class="n">pyNsRootNs</span><span class="p">.</span><span class="n">def</span><span class="p">(</span><span class="s">&quot;foo_namespace_function&quot;</span><span class="p">,</span><span class="w"> </span><span class="p">[](){</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="mi">53</span><span class="p">;</span><span class="w"> </span><span class="p">});</span>
+<span class="p">}</span><span class="w"> </span><span class="c1">// &lt;/namespace RootNs&gt;</span>
+
+<span class="c1">// Example of adding a custom function to the main module</span>
+<span class="n">m</span><span class="p">.</span><span class="n">def</span><span class="p">(</span><span class="s">&quot;global_function&quot;</span><span class="p">,</span><span class="w"> </span><span class="p">[](){</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="mi">64</span><span class="p">;</span><span class="w"> </span><span class="p">});</span>
+</pre></div>
+
+    </div>
+    
+    <script>
+    var button = document.getElementById("btn_1757520201082_4731_3");
+    button.addEventListener("click", function() {
+        this.classList.toggle("collapsible_header_opened");
+        var content = document.getElementById("content_1757520201082_4731_3");
+        if (content.style.maxHeight){
+          content.style.maxHeight = null;
+        } else {
+          content.style.maxHeight = "40em";
+        }
+    });
+    </script>
+    </div></div>
+</div>
+<hr class="docutils" />
+<p><strong>Note about ordering:</strong></p>
+<p>If you call <code class="docutils literal notranslate"><span class="pre">add_custom_code_to_*</span></code> multiple times for the same target (class/namespace/module), snippets are emitted <strong>in the order they were added</strong>.</p>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./."
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="08_05_00_namespaces.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Namespaces</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="09_05_00_preprocessor.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Preprocessor and macros</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#example-c-code">Example C++ code</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#custom-bindings-for-a-class">Custom bindings for a class</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#custom-bindings-for-c-namespace-python-submodule">Custom bindings for C++ namespace / Python submodule</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#custom-bindings-for-the-main-module">Custom bindings for the main module</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#generated-code-with-custom-bindings">Generated code (with custom bindings)</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Pascal Thomet
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2023.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="_static/scripts/bootstrap.js?digest=8d27b9dea8ad943066ae"></script>
+<script src="_static/scripts/pydata-sphinx-theme.js?digest=8d27b9dea8ad943066ae"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

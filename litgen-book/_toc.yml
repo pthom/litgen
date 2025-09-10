@@ -25,6 +25,7 @@ parts:
      - file: 07_05_00_templates
      - file: 07_05_00_enums
      - file: 08_05_00_namespaces
+     - file: 08_10_00_custom_bindings
      - file: 09_05_00_preprocessor
      - file: 10_05_00_ignore_warnings
      - file: 11_05_00_post_processing
