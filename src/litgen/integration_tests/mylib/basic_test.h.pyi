@@ -30,7 +30,7 @@ def my_mul(a: int, b: int) -> int:
 
 # <submodule math_functions>
 class math_functions:  # Proxy class that introduces typings for the *submodule* math_functions
-    pass  # (This corresponds to a C++ namespace. All method are static!)
+    pass  # (This corresponds to a C++ namespace. All methods are static!)
     """ Vectorizable functions example
         Numeric functions (i.e. function accepting and returning only numeric params or py::array), can be vectorized
         i.e. they will accept numpy arrays as an input.

@@ -41,7 +41,7 @@ class Copyable_DeletedCopyCtor:
 
 # <submodule aaa>
 class aaa:  # Proxy class that introduces typings for the *submodule* aaa
-    pass  # (This corresponds to a C++ namespace. All method are static!)
+    pass  # (This corresponds to a C++ namespace. All methods are static!)
 
     #  ------------------------------------------------------------------------
     #      <template specializations for class Copyable_Template>

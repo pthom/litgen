@@ -64,7 +64,7 @@ def test_custom_code():
         '''
             # <submodule root_ns>
             class root_ns:  # Proxy class that introduces typings for the *submodule* root_ns
-                pass  # (This corresponds to a C++ namespace. All method are static!)
+                pass  # (This corresponds to a C++ namespace. All methods are static!)
                 class Foo:
                     m_value: int = 0
                     def __init__(self, m_value: int = 0) -> None:

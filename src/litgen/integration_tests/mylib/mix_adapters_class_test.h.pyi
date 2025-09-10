@@ -44,7 +44,7 @@ class BoxedString:
 
 # <submodule some_namespace>
 class some_namespace:  # Proxy class that introduces typings for the *submodule* some_namespace
-    pass  # (This corresponds to a C++ namespace. All method are static!)
+    pass  # (This corresponds to a C++ namespace. All methods are static!)
 
     class Blah:
         """struct Blah"""
@@ -78,7 +78,7 @@ class some_namespace:  # Proxy class that introduces typings for the *submodule*
 
     # <submodule some_inner_namespace>
     class some_inner_namespace:  # Proxy class that introduces typings for the *submodule* some_inner_namespace
-        pass  # (This corresponds to a C++ namespace. All method are static!)
+        pass  # (This corresponds to a C++ namespace. All methods are static!)
         """ namespace SomeInnerNamespace"""
         @staticmethod
         def toggle_bool_pointer(v: BoxedBool) -> None:

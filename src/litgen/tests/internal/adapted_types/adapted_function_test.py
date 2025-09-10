@@ -378,7 +378,7 @@ def test_vectorization_namespace_with_suffix():
         """
             # <submodule math_functions>
             class math_functions:  # Proxy class that introduces typings for the *submodule* math_functions
-                pass  # (This corresponds to a C++ namespace. All method are static!)
+                pass  # (This corresponds to a C++ namespace. All methods are static!)
                 @staticmethod
                 def vectorizable_sum(x: float, y: float) -> float:
                     pass
@@ -414,7 +414,7 @@ def test_vectorization_namespace_with_overload():
         """
             # <submodule math_functions>
             class math_functions:  # Proxy class that introduces typings for the *submodule* math_functions
-                pass  # (This corresponds to a C++ namespace. All method are static!)
+                pass  # (This corresponds to a C++ namespace. All methods are static!)
                 @staticmethod
                 @overload
                 def vectorizable_sum(x: float, y: float) -> float:

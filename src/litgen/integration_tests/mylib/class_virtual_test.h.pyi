@@ -34,11 +34,11 @@
 
 # <submodule root>
 class root:  # Proxy class that introduces typings for the *submodule* root
-    pass  # (This corresponds to a C++ namespace. All method are static!)
+    pass  # (This corresponds to a C++ namespace. All methods are static!)
 
     # <submodule inner>
     class inner:  # Proxy class that introduces typings for the *submodule* inner
-        pass  # (This corresponds to a C++ namespace. All method are static!)
+        pass  # (This corresponds to a C++ namespace. All methods are static!)
 
         class MyVirtualClass:
             def foo_concrete(self, x: int, name: str) -> str:

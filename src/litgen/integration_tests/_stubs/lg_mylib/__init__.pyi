@@ -967,7 +967,7 @@ def fn_brace(
 
 # <submodule math_functions>
 class math_functions:  # Proxy class that introduces typings for the *submodule* math_functions
-    pass  # (This corresponds to a C++ namespace. All method are static!)
+    pass  # (This corresponds to a C++ namespace. All methods are static!)
     """ Vectorizable functions example
         Numeric functions (i.e. function accepting and returning only numeric params or py::array), can be vectorized
         i.e. they will accept numpy arrays as an input.
@@ -990,7 +990,7 @@ class math_functions:  # Proxy class that introduces typings for the *submodule*
 
 # <submodule animals>
 class animals:  # Proxy class that introduces typings for the *submodule* animals
-    pass  # (This corresponds to a C++ namespace. All method are static!)
+    pass  # (This corresponds to a C++ namespace. All methods are static!)
 
     class Animal:
         def __init__(self, name: str) -> None:
@@ -1007,7 +1007,7 @@ class animals:  # Proxy class that introduces typings for the *submodule* animal
 
 # <submodule home>
 class home:  # Proxy class that introduces typings for the *submodule* home
-    pass  # (This corresponds to a C++ namespace. All method are static!)
+    pass  # (This corresponds to a C++ namespace. All methods are static!)
 
     class Pet:
         def is_pet(self) -> bool:
@@ -1026,7 +1026,7 @@ class home:  # Proxy class that introduces typings for the *submodule* home
 
 # <submodule aaa>
 class aaa:  # Proxy class that introduces typings for the *submodule* aaa
-    pass  # (This corresponds to a C++ namespace. All method are static!)
+    pass  # (This corresponds to a C++ namespace. All methods are static!)
 
     #  ------------------------------------------------------------------------
     #      <template specializations for class Copyable_Template>
@@ -1042,11 +1042,11 @@ class aaa:  # Proxy class that introduces typings for the *submodule* aaa
 
 # <submodule root>
 class root:  # Proxy class that introduces typings for the *submodule* root
-    pass  # (This corresponds to a C++ namespace. All method are static!)
+    pass  # (This corresponds to a C++ namespace. All methods are static!)
 
     # <submodule inner>
     class inner:  # Proxy class that introduces typings for the *submodule* inner
-        pass  # (This corresponds to a C++ namespace. All method are static!)
+        pass  # (This corresponds to a C++ namespace. All methods are static!)
 
         class MyVirtualClass:
             def foo_concrete(self, x: int, name: str) -> str:
@@ -1082,7 +1082,7 @@ class root:  # Proxy class that introduces typings for the *submodule* root
 
 # <submodule some_namespace>
 class some_namespace:  # Proxy class that introduces typings for the *submodule* some_namespace
-    pass  # (This corresponds to a C++ namespace. All method are static!)
+    pass  # (This corresponds to a C++ namespace. All methods are static!)
     """ namespace SomeNamespace"""
 
     class ParentStruct:
@@ -1141,7 +1141,7 @@ class some_namespace:  # Proxy class that introduces typings for the *submodule*
 
     # <submodule some_inner_namespace>
     class some_inner_namespace:  # Proxy class that introduces typings for the *submodule* some_inner_namespace
-        pass  # (This corresponds to a C++ namespace. All method are static!)
+        pass  # (This corresponds to a C++ namespace. All methods are static!)
         """ namespace SomeInnerNamespace"""
         @staticmethod
         def toggle_bool_pointer(v: BoxedBool) -> None:
@@ -1178,7 +1178,7 @@ class some_namespace:  # Proxy class that introduces typings for the *submodule*
 
 # <submodule inner>
 class inner:  # Proxy class that introduces typings for the *submodule* inner
-    pass  # (This corresponds to a C++ namespace. All method are static!)
+    pass  # (This corresponds to a C++ namespace. All methods are static!)
     """ this is an inner namespace (this comment should become the namespace doc)"""
     @staticmethod
     def foo_inner() -> int:
@@ -1191,7 +1191,7 @@ class inner:  # Proxy class that introduces typings for the *submodule* inner
 
 # <submodule n>
 class n:  # Proxy class that introduces typings for the *submodule* n
-    pass  # (This corresponds to a C++ namespace. All method are static!)
+    pass  # (This corresponds to a C++ namespace. All methods are static!)
 
     class S:
         def __init__(self) -> None:
@@ -1220,7 +1220,7 @@ class n:  # Proxy class that introduces typings for the *submodule* n
 
 # <submodule a>
 class a:  # Proxy class that introduces typings for the *submodule* a
-    pass  # (This corresponds to a C++ namespace. All method are static!)
+    pass  # (This corresponds to a C++ namespace. All methods are static!)
 
     class Foo(enum.IntEnum):
         foo1 = enum.auto()  # (= 0)
@@ -1245,7 +1245,7 @@ class a:  # Proxy class that introduces typings for the *submodule* a
 
     # <submodule n>
     class n:  # Proxy class that introduces typings for the *submodule* n
-        pass  # (This corresponds to a C++ namespace. All method are static!)
+        pass  # (This corresponds to a C++ namespace. All methods are static!)
 
         class S:
             def __init__(self) -> None:
@@ -1275,7 +1275,7 @@ class a:  # Proxy class that introduces typings for the *submodule* a
 
 # <submodule root_custom>
 class root_custom:  # Proxy class that introduces typings for the *submodule* root_custom
-    pass  # (This corresponds to a C++ namespace. All method are static!)
+    pass  # (This corresponds to a C++ namespace. All methods are static!)
 
     class Foo:
         m_value: int = 0

@@ -1380,7 +1380,7 @@ The following options are set in the Litgen configuration to add custom bindings
 ```python
 # <submodule root_custom>
 class root_custom:  # Proxy class that introduces typings for the *submodule* root_custom
-    pass  # (This corresponds to a C++ namespace. All method are static!)
+    pass  # (This corresponds to a C++ namespace. All methods are static!)
 
     class Foo:
         m_value: int = 0

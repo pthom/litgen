@@ -17,7 +17,7 @@ from typing import overload
 
 # <submodule a>
 class a:  # Proxy class that introduces typings for the *submodule* a
-    pass  # (This corresponds to a C++ namespace. All method are static!)
+    pass  # (This corresponds to a C++ namespace. All methods are static!)
 
     class Foo(enum.IntEnum):
         foo1 = enum.auto()  # (= 0)
@@ -42,7 +42,7 @@ class a:  # Proxy class that introduces typings for the *submodule* a
 
     # <submodule n>
     class n:  # Proxy class that introduces typings for the *submodule* n
-        pass  # (This corresponds to a C++ namespace. All method are static!)
+        pass  # (This corresponds to a C++ namespace. All methods are static!)
 
         class S:
             def __init__(self) -> None:

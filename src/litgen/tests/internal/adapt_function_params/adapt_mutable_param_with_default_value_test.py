@@ -322,13 +322,13 @@ def test__adapt_mutable_param_with_default_value__with_enum() -> None:
         """
         # <submodule root>
         class root:  # Proxy class that introduces typings for the *submodule* root
-            pass  # (This corresponds to a C++ namespace. All method are static!)
+            pass  # (This corresponds to a C++ namespace. All methods are static!)
             class E(enum.IntEnum):
                 a = enum.auto() # (= 0)
 
             # <submodule inner>
             class inner:  # Proxy class that introduces typings for the *submodule* inner
-                pass  # (This corresponds to a C++ namespace. All method are static!)
+                pass  # (This corresponds to a C++ namespace. All methods are static!)
                 @staticmethod
                 def f(e: E = E.a) -> None:
                     pass

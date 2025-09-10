@@ -828,7 +828,7 @@ def foo_root() -> None:
 
 # <submodule inner>
 class inner:  # Proxy class that introduces typings for the *submodule* inner
-    pass  # (This corresponds to a C++ namespace. All method are static!)
+    pass  # (This corresponds to a C++ namespace. All methods are static!)
     """ this is an inner namespace (this comment should become the namespace doc)"""
     @staticmethod
     def foo_inner() -> None:
@@ -928,7 +928,7 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
 
 <span class="c1"># &lt;submodule inner&gt;</span>
 <span class="k">class</span> <span class="nc">inner</span><span class="p">:</span>  <span class="c1"># Proxy class that introduces typings for the *submodule* inner</span>
-    <span class="k">pass</span>  <span class="c1"># (This corresponds to a C++ namespace. All method are static!)</span>
+    <span class="k">pass</span>  <span class="c1"># (This corresponds to a C++ namespace. All methods are static!)</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot; this is an inner namespace (this comment should become the namespace doc)&quot;&quot;&quot;</span>
     <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">foo_inner</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>

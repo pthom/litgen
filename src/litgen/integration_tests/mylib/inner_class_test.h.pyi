@@ -14,7 +14,7 @@ import enum
 
 # <submodule some_namespace>
 class some_namespace:  # Proxy class that introduces typings for the *submodule* some_namespace
-    pass  # (This corresponds to a C++ namespace. All method are static!)
+    pass  # (This corresponds to a C++ namespace. All methods are static!)
     """ namespace SomeNamespace"""
 
     class ParentStruct:

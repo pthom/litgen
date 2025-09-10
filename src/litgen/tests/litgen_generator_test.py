@@ -89,7 +89,7 @@ def test_scoping_no_root_namespace():
         '''
         # <submodule n>
         class n:  # Proxy class that introduces typings for the *submodule* n
-            pass  # (This corresponds to a C++ namespace. All method are static!)
+            pass  # (This corresponds to a C++ namespace. All methods are static!)
             class S:
                 def __init__(self) -> None:
                     """Auto-generated default constructor"""
@@ -179,7 +179,7 @@ def test_namespace_adapt_in_stub() -> None:
 
         # <submodule camel_case>
         class camel_case:  # Proxy class that introduces typings for the *submodule* camel_case
-            pass  # (This corresponds to a C++ namespace. All method are static!)
+            pass  # (This corresponds to a C++ namespace. All methods are static!)
             class Foo(enum.IntEnum):
                 """ should be converted to snake_case in Python"""
                 a = enum.auto() # (= 0)

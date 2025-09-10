@@ -15,7 +15,7 @@ import enum
 
 # <submodule n>
 class n:  # Proxy class that introduces typings for the *submodule* n
-    pass  # (This corresponds to a C++ namespace. All method are static!)
+    pass  # (This corresponds to a C++ namespace. All methods are static!)
 
     class S:
         def __init__(self) -> None:
