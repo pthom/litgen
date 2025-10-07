@@ -331,10 +331,6 @@ class AdaptedFunction(AdaptedElement):
         if code_utils.does_match_regex_or_matcher(options.fn_exclude_by_name__regex, cpp_function.function_name):
             return False
 
-        # Exclude pointer to pointer
-        if cpp_function.returns_pointer_to_pointer() or cpp_function.parameter_list.contains_pointer_to_pointer_param():
-            return False
-
         # Check options.fn_exclude_by_param_type__regex
         reg = options.fn_exclude_by_param_type__regex
         if hasattr(cpp_function, "return_type"):
