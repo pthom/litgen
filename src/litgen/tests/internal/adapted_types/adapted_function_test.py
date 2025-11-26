@@ -127,6 +127,38 @@ def test_return_policy_regex() -> None:
         """,
     )
 
+def test_gil_scoped_release_py() -> None:
+    options = LitgenOptions()
+    options.bind_library = litgen.BindLibraryType.pybind11
+    options.fn_add_gil_scoped_release_guard__regex = r"^Foo"
+
+    code = """
+    void Foo();
+    """
+    generated_code = LitgenGeneratorTestsHelper.code_to_pydef(options, code)
+    expected_code = """
+        m.def("foo",
+            Foo, py::call_guard<py::gil_scoped_release>());
+        """
+    # logging.warning("\n" + generated_code)
+    code_utils.assert_are_codes_equal(generated_code, expected_code)
+
+def test_gil_scoped_release_nb() -> None:
+    options = LitgenOptions()
+    options.bind_library = litgen.BindLibraryType.nanobind
+    options.fn_add_gil_scoped_release_guard__regex = r"^Foo"
+
+    code = """
+    void Foo();
+    """
+    generated_code = LitgenGeneratorTestsHelper.code_to_pydef(options, code)
+    expected_code = """
+        m.def("foo",
+            Foo, nb::call_guard<nb::gil_scoped_release>());
+        """
+    code_utils.assert_are_codes_equal(generated_code, expected_code)
+
+
 
 def test_implot_one_buffer() -> None:
     options = LitgenOptions()
