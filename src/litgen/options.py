@@ -244,6 +244,13 @@ class LitgenOptions:
     fn_force_lambda__regex: RegexOrMatcher = ""
 
     # ------------------------------------------------------------------------------
+    # Add py::call_guard<py::gil_scoped_release>()
+    # ------------------------------------------------------------------------------
+    # Add a GIL release call guard for functions that matches these regexes.
+    # This is useful for long-running C++ functions that don't need to interact with Python objects.
+    fn_add_gil_scoped_release_guard__regex: RegexOrMatcher = ""
+
+    # ------------------------------------------------------------------------------
     # C style buffers to py::array
     # ------------------------------------------------------------------------------
     #

@@ -549,6 +549,19 @@ class AdaptedFunction(AdaptedElement):
         replace_lines.maybe_keep_alive = self._pydef_fill_keep_alive_from_function_comment()
         replace_lines.maybe_call_guard = self._pydef_fill_call_guard_from_function_comment()
 
+        # Add gil_scoped_release call guard if regex matches
+        if code_utils.does_match_regex_or_matcher(
+            self.options.fn_add_gil_scoped_release_guard__regex, self.cpp_element().function_name
+        ):
+            py_ns = "py" if self.options.bind_library == BindLibraryType.pybind11 else "nb"
+            gil_guard = f"{py_ns}::call_guard<{py_ns}::gil_scoped_release>()"
+            if replace_lines.maybe_call_guard is None:
+                replace_lines.maybe_call_guard = gil_guard
+            else:
+                # If a call guard is already present from comments, append the new one.
+                # Note: pybind11 supports multiple call guards.
+                replace_lines.maybe_call_guard += f", {gil_guard}"
+
         # Process template
         code = code_utils.process_code_template(
             input_string=template_code,
