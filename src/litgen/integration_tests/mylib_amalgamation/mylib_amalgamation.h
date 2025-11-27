@@ -1332,7 +1332,7 @@ The following options are set in the Litgen configuration to add custom bindings
 
 
 ```python
-    options.custom_bindings.add_custom_code_to_class(
+    options.custom_bindings.add_custom_bindings_to_class(
         qualified_class="RootCustom::Foo",
         stub_code='''
             def get_value(self) -> int:
@@ -1347,7 +1347,7 @@ The following options are set in the Litgen configuration to add custom bindings
             LG_CLASS.def("set_value", [](RootCustom::Foo& self, int value){ self.mValue = value; });
         """,
     )
-    options.custom_bindings.add_custom_code_to_submodule(
+    options.custom_bindings.add_custom_bindings_to_submodule(
         qualified_namespace="RootCustom",
         stub_code='''
         @staticmethod
@@ -1361,7 +1361,7 @@ The following options are set in the Litgen configuration to add custom bindings
         """,
     )
 
-    # options.custom_bindings.add_custom_code_to_main_module(
+    # options.custom_bindings.add_custom_bindings_to_main_module(
     #     stub_code='''
     #     def global_function() -> int:
     #         """A custom function in the global namespace"""
