@@ -2,6 +2,16 @@
 
 ## [Unreleased]
 
+## [0.22.0] - 2025-11-27
+
+- Can publish functions that return a pointer to pointer
+- Improved doc
+- added gil_scoped_release support to functions using a regex (thanks to @gfabiano)
+
+## New Contributors
+- @gfabiano made their first contribution in https://github.com/pthom/litgen/pull/37
+
+
 ## [0.21.0] - 2025-09-09
 
 ### Added
