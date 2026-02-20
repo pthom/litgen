@@ -307,9 +307,9 @@ void py_init_module_lg_mylib(nb::module_& m)
         " add_inside_buffer: modifies a buffer by adding a value to its elements\n Will be published in python as:\n -->    def add_inside_buffer(buffer: np.ndarray, number_to_add: int) -> None:\n Warning, the python function will accept only uint8 numpy arrays, and check it at runtime!");
 
     m.def("buffer_sum",
-        [](const nb::ndarray<> & buffer, int stride = -1) -> int
+        [](nb::ndarray<nb::ro> & buffer, int stride = -1) -> int
         {
-            auto buffer_sum_adapt_c_buffers = [](const nb::ndarray<> & buffer, int stride = -1) -> int
+            auto buffer_sum_adapt_c_buffers = [](nb::ndarray<nb::ro> & buffer, int stride = -1) -> int
             {
                 // Check if the array is 1D and C-contiguous
                 if (! (buffer.ndim() == 1 && buffer.stride(0) == 1))

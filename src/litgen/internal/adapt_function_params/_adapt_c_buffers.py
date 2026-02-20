@@ -374,14 +374,22 @@ class _AdaptBuffersHelper:
 
         if self.options.bind_library == BindLibraryType.pybind11:
             new_param.decl.cpp_type.typenames = ["py::array"]
+            new_param.decl.cpp_type.modifiers = ["&"]
+            if self._is_const(idx_param):
+                new_param.decl.cpp_type.specifiers = ["const"]
+            else:
+                new_param.decl.cpp_type.specifiers = []
         else:
-            new_param.decl.cpp_type.typenames = ["nb::ndarray<>"]
-
-        new_param.decl.cpp_type.modifiers = ["&"]
-        if self._is_const(idx_param):
-            new_param.decl.cpp_type.specifiers = ["const"]
-        else:
+            # For nanobind, use nb::ndarray<nb::ro> for const params so that
+            # read-only arrays (e.g. from pandas) are accepted. Plain nb::ndarray<>
+            # requires writeable arrays even when the C++ parameter is const.
+            if self._is_const(idx_param):
+                new_param.decl.cpp_type.typenames = ["nb::ndarray<nb::ro>"]
+            else:
+                new_param.decl.cpp_type.typenames = ["nb::ndarray<>"]
+            new_param.decl.cpp_type.modifiers = ["&"]
             new_param.decl.cpp_type.specifiers = []
+
         return new_param
 
     def _adapted_param_buffer_size(self, idx_param: int) -> str:

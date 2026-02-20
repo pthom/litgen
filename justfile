@@ -4,11 +4,11 @@ default:
 
 # install dev requirements
 install_requirements_dev:
-    pip install -r requirements-dev.txt
+    uv pip install -r requirements-dev.txt
 
 # install litgen in editable mode
 install_litgen_editable:
-    pip install --verbose  -e .
+    uv pip install --verbose  -e .
 
 # run black formatter
 black:
@@ -17,14 +17,14 @@ black:
 # Builds the integration tests for pybind
 build_integration_tests_pybind:
     python src/litgen/integration_tests/autogenerate_mylib.py no_generate_file_by_file pybind
-    export LITGEN_USE_NANOBIND=OFF && cd src/litgen/integration_tests &&  pip install -v -e . && cd -
+    export LITGEN_USE_NANOBIND=OFF && cd src/litgen/integration_tests &&  uv pip install -v -e . && cd -
     python -m lg_mylib.use pybind
     python -c "import lg_mylib._lg_mylib_pybind"
 
 # Builds the integration tests for nanobind
 build_integration_tests_nanobind:
     python src/litgen/integration_tests/autogenerate_mylib.py no_generate_file_by_file nanobind
-    export LITGEN_USE_NANOBIND=ON && cd src/litgen/integration_tests &&  pip install -v -e . && cd -
+    export LITGEN_USE_NANOBIND=ON && cd src/litgen/integration_tests &&  uv pip install -v -e . && cd -
     python -m lg_mylib.use nanobind
     python -c "import lg_mylib._lg_mylib_nanobind"
 
