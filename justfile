@@ -1,14 +1,17 @@
+# Use pip if available (CI), otherwise fall back to uv pip (uv venvs are seedless)
+PIP := `command -v pip > /dev/null 2>&1 && echo "pip" || echo "uv pip"`
+
 # List all available commands
 default:
     just --list
 
 # install dev requirements
 install_requirements_dev:
-    uv pip install -r requirements-dev.txt
+    {{PIP}} install -r requirements-dev.txt
 
 # install litgen in editable mode
 install_litgen_editable:
-    uv pip install --verbose  -e .
+    {{PIP}} install --verbose  -e .
 
 # run black formatter
 black:
@@ -17,14 +20,14 @@ black:
 # Builds the integration tests for pybind
 build_integration_tests_pybind:
     python src/litgen/integration_tests/autogenerate_mylib.py no_generate_file_by_file pybind
-    export LITGEN_USE_NANOBIND=OFF && cd src/litgen/integration_tests &&  uv pip install -v -e . && cd -
+    export LITGEN_USE_NANOBIND=OFF && cd src/litgen/integration_tests &&  {{PIP}} install -v -e . && cd -
     python -m lg_mylib.use pybind
     python -c "import lg_mylib._lg_mylib_pybind"
 
 # Builds the integration tests for nanobind
 build_integration_tests_nanobind:
     python src/litgen/integration_tests/autogenerate_mylib.py no_generate_file_by_file nanobind
-    export LITGEN_USE_NANOBIND=ON && cd src/litgen/integration_tests &&  uv pip install -v -e . && cd -
+    export LITGEN_USE_NANOBIND=ON && cd src/litgen/integration_tests &&  {{PIP}} install -v -e . && cd -
     python -m lg_mylib.use nanobind
     python -c "import lg_mylib._lg_mylib_nanobind"
 
