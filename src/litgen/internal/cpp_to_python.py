@@ -121,6 +121,38 @@ def _perform_cpp_type_replacements_recursively(cpp_type_str: str, type_replaceme
     return r
 
 
+def _strip_callable_param_names(python_type: str) -> str:
+    """Strip leftover C++ parameter names from Callable type hints.
+
+    At this stage the type is already Python-ified, e.g.:
+        `Callable[[Decorator decorator], None]` -> `Callable[[Decorator], None]`
+        `Callable[[int line, int column], None]` -> `Callable[[int, int], None]`
+        `Callable[[str text], str]` -> `Callable[[str], str]`
+
+    A trailing bare identifier (no dots, no brackets) after a type token
+    is unambiguously a leftover C++ parameter name.
+    """
+    import re
+
+    def _strip_one_param(param: str) -> str:
+        param = param.strip()
+        if not param:
+            return param
+        # Split on whitespace; if the last token is a plain identifier
+        # (not a type-like thing with dots, brackets, or special chars), drop it
+        tokens = param.split()
+        if len(tokens) >= 2 and re.match(r"^[a-zA-Z_]\w*$", tokens[-1]):
+            return " ".join(tokens[:-1])
+        return param
+
+    def _replace_callable_params(match: re.Match) -> str:
+        params_str = match.group(1)
+        params = [_strip_one_param(p) for p in params_str.split(",")]
+        return "Callable[[" + ", ".join(params) + "]"
+
+    return re.sub(r"Callable\[\[([^\]]*)\]", _replace_callable_params, python_type)
+
+
 def type_to_python(lg_context: LitgenContext, cpp_type_str: str) -> str:
     options = lg_context.options
     specialized_type_python_name = options.class_template_options.specialized_type_python_name_str(
@@ -154,6 +186,12 @@ def type_to_python(lg_context: LitgenContext, cpp_type_str: str) -> str:
             r = r.replace(cpp_namespace_name + ".", python_namespace_name + ".")
     for cpp_namespace_name in options.namespaces_root:
         r = r.replace(cpp_namespace_name + ".", "")
+
+    # Strip C++ parameter names that leaked into Callable type hints.
+    # E.g. `Callable[[Decorator decorator], None]` -> `Callable[[Decorator], None]`
+    # At this stage the types are Python-ified, so a trailing bare identifier
+    # after a type is unambiguously a leftover parameter name.
+    r = _strip_callable_param_names(r)
 
     return r
 
@@ -690,6 +728,7 @@ def standard_type_replacements() -> RegexReplacementList:
 
     \bsize_t\b -> int
     \bstd::function<(.*)\((.*)\)> -> Callable[[\2], \1]
+    \bstd::string_view\b -> str
     \bstd::string\(\) -> ""
     \bstd::string\b -> str
     \bstd::unique_ptr<(.*?)> -> \1

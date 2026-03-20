@@ -127,6 +127,15 @@ def test_type_to_python() -> None:
 
     assert my_type_to_python("void *") == "Any"
 
+    # std::function with C++ parameter names (should be stripped)
+    assert my_type_to_python("std::function<void(int line)>") == "Callable[[int], None]"
+    assert my_type_to_python("std::function<void(int line, int column)>") == "Callable[[int, int], None]"
+    assert my_type_to_python("std::function<void(Decorator& decorator)>") == "Callable[[Decorator], None]"
+    assert my_type_to_python("std::function<std::string(std::string_view text)>") == "Callable[[str], str]"
+    # Without parameter names (should still work)
+    assert my_type_to_python("std::function<void(int)>") == "Callable[[int], None]"
+    assert my_type_to_python("std::function<void()>") == "Callable[[], None]"
+
     # Known limitations
     # =================
     # volatile is not handled
