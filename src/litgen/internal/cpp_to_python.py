@@ -145,7 +145,7 @@ def _strip_callable_param_names(python_type: str) -> str:
             return " ".join(tokens[:-1])
         return param
 
-    def _replace_callable_params(match: re.Match) -> str:
+    def _replace_callable_params(match: re.Match[str]) -> str:
         params_str = match.group(1)
         params = [_strip_one_param(p) for p in params_str.split(",")]
         return "Callable[[" + ", ".join(params) + "]"
