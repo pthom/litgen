@@ -1,19 +1,13 @@
-# litgen
+# Litgen
 
-```{admonition} What is litgen
-:class: note
-`litgen`, also known as _Literate Generator_, is an automatic python bindings generator for humans who like nice code and APIs.
+> *Automatic Python bindings for C++: readable, discoverable, IDE-friendly.*
+>
+> Battle-tested on 20+ libraries and 100,000 lines of code. Because your users deserve bindings they can actually read.
 
-It can be used to bind C++ libraries into _documented_ and _discoverable_ python modules using [pybind11](https://pybind11.readthedocs.io/en/stable/index.html) or [nanobind](https://nanobind.readthedocs.io/en/latest/).
-
-It can also be used as C++ transformation and refactoring tool.
-
+litgen generates Python bindings for C++ libraries using [pybind11](https://pybind11.readthedocs.io/en/stable/index.html) or [nanobind](https://nanobind.readthedocs.io/en/latest/). It can also be used as a C++ transformation and refactoring tool.
 [Source code](https://github.com/pthom/litgen), [Documentation](https://pthom.github.io/litgen/), [PyPI](https://pypi.org/project/litgen/)
-```
 
-Although being relatively new (2022), litgen was battle tested on 20 different libraries totalling more than 100,000 lines of code, and it is the main driving force behind the python bindings for [Dear ImGui Bundle](https://github.com/pthom/imgui_bundle).
-
-litgen puts a strong emphasis on emitting documented and discoverable code, thus providing a great experience for the final python user.
+litgen is the main driving force behind the Python bindings for [Dear ImGui Bundle](https://github.com/pthom/imgui_bundle). It puts a strong emphasis on emitting documented and discoverable code, providing a great experience for the final Python user.
 
 ```{admonition} srcML
 :class: tip

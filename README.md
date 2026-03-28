@@ -3,9 +3,11 @@
 
 # litgen - Literate Generator
 
-**litgen** is an automatic Python bindings generator designed for developers who appreciate clean, well-documented, and discoverable code and APIs.
+> *Automatic Python bindings for C++: readable, discoverable, IDE-friendly.*
+>
+> Battle-tested on 20+ libraries and 100,000 lines of code. Because your users deserve bindings they can actually read.
 
-It simplifies the process of creating Python bindings for C++ libraries using [pybind11](https://pybind11.readthedocs.io/en/stable/) or [nanobind](https://nanobind.readthedocs.io), and generating bindings that are easy to use, properly documented, and fully integrated into Python IDEs.
+litgen generates Python bindings for C++ libraries using [pybind11](https://pybind11.readthedocs.io/en/stable/) or [nanobind](https://nanobind.readthedocs.io). It produces clean, documented, IDE-friendly code with accurate function signatures and auto-completion.
 
 For a full guide on how to use litgen, see the [documentation](https://pthom.github.io/litgen/).
 

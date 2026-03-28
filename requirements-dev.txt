@@ -18,10 +18,11 @@ twine
 # for litgen-book (doc with jupyter-book)
 jupyter
 notebook
-jupyter-book
+jupyter-book<2.0.0
 jupyter-black
 Pygments
 types-Pygments
+playwright
 
 # probably not needed anymore
 # Flask
