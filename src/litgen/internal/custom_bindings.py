@@ -174,6 +174,10 @@ class CustomBindings:
     def __init__(self) -> None:
         self._custom_binding_pydefs = {}
         self._custom_binding_stubs = {}
+        # Track whether main-module custom bindings have been emitted,
+        # to avoid duplicates when a single generator processes multiple header files.
+        self._main_module_emitted_pydef = False
+        self._main_module_emitted_stub = False
 
     def _get_custom_bindings_ref(self, is_pydef: bool) -> Dict[CppScope, List[str]]:
         return self._custom_binding_pydefs if is_pydef else self._custom_binding_stubs
@@ -261,6 +265,15 @@ class CustomBindings:
             pydef_main_module_var_name: str,
             is_pydef: bool
     ) -> str | None:
+        # Emit only once per generator lifetime (a single generator may
+        # process multiple header files via repeated process_cpp_file calls).
+        if is_pydef:
+            if self._main_module_emitted_pydef:
+                return None
+        else:
+            if self._main_module_emitted_stub:
+                return None
+
         replacements = [_StringReplacement("LG_MODULE", pydef_main_module_var_name)]
         qual_class_scope = CppScope.from_string("")
         result = self._make_custom_code(
@@ -268,4 +281,11 @@ class CustomBindings:
             is_pydef=is_pydef,
             replacements=replacements
         )
+
+        if result is not None:
+            if is_pydef:
+                self._main_module_emitted_pydef = True
+            else:
+                self._main_module_emitted_stub = True
+
         return result
