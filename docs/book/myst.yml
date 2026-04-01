@@ -4,8 +4,6 @@ project:
   title: litgen, the Literate Generator
   copyright: 2023-2026, Pascal Thomet
   github: pthom/litgen
-  authors:
-    - name: Pascal Thomet
 
   exports:
     - format: pdf
