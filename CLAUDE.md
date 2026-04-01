@@ -91,7 +91,7 @@ src/
     integration_tests/        # End-to-end C++ build tests (pybind11 + nanobind)
   srcmlcpp/       # C++ XML parsing layer (wraps srcml)
   codemanip/      # Low-level code/string manipulation utilities
-litgen-book/      # Jupyter-based documentation
+docs/book/        # Jupyter Book v2 documentation
 ```
 
 ## Common commands (always use just recipes)

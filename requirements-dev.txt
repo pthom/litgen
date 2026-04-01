@@ -18,7 +18,7 @@ twine
 # for litgen-book (doc with jupyter-book)
 jupyter
 notebook
-jupyter-book<2.0.0
+jupyter-book
 jupyter-black
 Pygments
 types-Pygments

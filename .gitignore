@@ -26,3 +26,8 @@ venv_ci
 imgui.ini
 .DS_Store
 _pypi_token.txt
+
+# Jupyter Book build output
+docs/book/_build/
+
+uv.lock

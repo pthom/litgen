@@ -1,0 +1,27 @@
+version: 1
+
+project:
+  title: litgen, the Literate Generator
+  copyright: 2023-2026, Pascal Thomet
+  github: pthom/litgen
+  authors:
+    - name: Pascal Thomet
+
+  exports:
+    - format: pdf
+      output: _build/exports/book.pdf
+      toc: _toc.yml
+      template: lapreprint-typst
+
+site:
+  template: book-theme
+  options:
+    logo: images/litgen_logo_big.png
+    logo_text: litgen
+    favicon: images/litgen_logo_big.png
+    folders: true
+  nav:
+    - title: GitHub
+      url: https://github.com/pthom/litgen
+    - title: PyPI
+      url: https://pypi.org/project/litgen/

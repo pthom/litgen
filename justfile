@@ -53,6 +53,24 @@ pytest binding_type:
 mypy:
     mypy .
 
-# Build documentation
-docs:
-    ./litgen-book/generate_litgen_book.sh
+# Build the doc in interactive mode (for dev)
+[group('docs')]
+doc_serve_interactive:
+    cd docs/book && jupyter-book start
+
+# Serve the static built doc
+[group('docs')]
+doc_serve_static:
+    cd docs/book/_build/html && python -m http.server 7005
+
+# Build the doc in static html
+[group('docs')]
+doc_build_static:
+    cd docs/book && jupyter-book build --html
+    echo "Doc built in docs/book/_build/html"
+    echo "You can serve it with:\n  just doc_serve_static"
+
+# Build doc in pdf
+[group('docs')]
+doc_build_pdf:
+    cd docs/book && jupyter-book build --pdf
