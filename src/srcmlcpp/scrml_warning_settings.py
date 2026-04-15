@@ -38,7 +38,7 @@ class WarningType(enum.Enum):
     LitgenClassMemberSkipBitfield = enum.auto()
 
     # AdaptedClassMember: Can't parse the size of this array.
-    # Hint: use a vector, or extend `options.c_array_numeric_member_types`
+    # Hint: use a vector, or extend `options.member_numeric_c_array_types`
     LitgenClassMemberUnparsableSize = enum.auto()
 
     # An exception was raised when creating an adapted class member for python
