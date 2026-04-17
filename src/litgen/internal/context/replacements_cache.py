@@ -9,7 +9,10 @@ class ReplacementsCache:
         CamelCase to snake_case might have been applied
     """
 
-    replacement_list: RegexReplacementList = RegexReplacementList()
+    replacement_list: RegexReplacementList
+
+    def __init__(self) -> None:
+        self.replacement_list = RegexReplacementList()
 
     def store_replacements(self, replacements: RegexReplacementList) -> None:
         self.replacement_list.merge_replacements(replacements)

@@ -29,6 +29,11 @@ class LitgenContext:
     namespaces_pydef: NamespacesCodeTree
     var_values_replacements_cache: ReplacementsCache
 
+    # Registry of Python names defined in each non-root namespace (proxy class).
+    # Used to qualify sibling references inside nested classes.
+    # Key: C++ namespace name (e.g., "Snippets"), Value: set of Python names
+    namespace_proxy_python_names: dict[str, set[str]]
+
     # cf https://pybind11.readthedocs.io/en/stable/advanced/classes.html#binding-protected-member-functions
     protected_methods_glue_code: str = ""
     # cf https://pybind11.readthedocs.io/en/stable/advanced/classes.html#overriding-virtual-functions-in-python
@@ -43,6 +48,7 @@ class LitgenContext:
         self.namespaces_stub = NamespacesCodeTree(self.options, PydefOrStub.Stub)
         self.namespaces_pydef = NamespacesCodeTree(self.options, PydefOrStub.Pydef)
         self.var_values_replacements_cache = ReplacementsCache()
+        self.namespace_proxy_python_names = {}
 
     def clear_namespaces_code_tree(self) -> None:
         self.namespaces_stub = NamespacesCodeTree(self.options, PydefOrStub.Stub)

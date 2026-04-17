@@ -149,17 +149,22 @@ class AdaptedClassMember(AdaptedDecl):
         else:
             return True
 
+    def _qualify_for_namespace_proxy(self, python_str: str) -> str:
+        """Qualify sibling references if this member is inside a class nested in a namespace proxy."""
+        cpp_scope = self.class_parent.cpp_element().cpp_scope(include_self=False)
+        return cpp_to_python.qualify_sibling_in_namespace_proxy(self.lg_context, python_str, cpp_scope)
+
     def decl_type_python(self) -> str:
         if self._is_numeric_c_array():
             return "np.ndarray"
         else:
-            return super().decl_type_python()
+            return self._qualify_for_namespace_proxy(super().decl_type_python())
 
     def decl_value_python(self) -> str:
         if self._is_numeric_c_array():
             return ""
         else:
-            return super().decl_value_python()
+            return self._qualify_for_namespace_proxy(super().decl_value_python())
 
     def comment_array(self) -> str:
         if self._is_numeric_c_array():

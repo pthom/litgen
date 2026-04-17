@@ -1239,6 +1239,11 @@ class AdaptedFunction(AdaptedElement):
             return_type_cpp = cpp_adapted_function_terse.str_full_return_type()
             return_type_python = cpp_to_python.type_to_python(self.lg_context, return_type_cpp)
             return_type_python = self._add_class_hierarchy_to_python_type__fixme(return_type_python)
+            if self.is_method():
+                method_scope = self.cpp_element().cpp_scope(include_self=False)
+                return_type_python = cpp_to_python.qualify_sibling_in_namespace_proxy(
+                    self.lg_context, return_type_python, method_scope
+                )
             return return_type_python
 
     def _stub_params_list_signature(self) -> list[str]:
@@ -1295,6 +1300,13 @@ class AdaptedFunction(AdaptedElement):
             param_code = f"{param_name_python}: {param_type_python}"
             if len(param_default_value) > 0:
                 param_code += f" = {param_default_value}"
+
+            # Qualify sibling references if this method is inside a class
+            # nested in a namespace proxy
+            if self.is_method():
+                param_code = cpp_to_python.qualify_sibling_in_namespace_proxy(
+                    self.lg_context, param_code, current_scope
+                )
 
             r.append(param_code)
 

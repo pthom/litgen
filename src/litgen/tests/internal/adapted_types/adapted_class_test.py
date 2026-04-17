@@ -524,14 +524,14 @@ def test_named_ctor_helper_struct() -> None:
                 b: bool = True
                 a: int
                 c: int = 3
-                foo: Foo = Foo.foo1
+                foo: a.Foo = a.Foo.foo1
                 s: str = "Allo" # (const)
                 def __init__(
                     self,
                     b: bool = True,
                     a: int = int(),
                     c: int = 3,
-                    foo: Foo = Foo.foo1
+                    foo: a.Foo = a.Foo.foo1
                     ) -> None:
                     """Auto-generated default constructor with named params"""
                     pass
@@ -575,6 +575,58 @@ def test_named_ctor_helper_struct() -> None:
                 ;
         } // </namespace A>
     """,
+    )
+
+
+def test_namespace_proxy_sibling_qualification() -> None:
+    """Test that sibling references inside a class nested in a namespace proxy
+    are qualified with the proxy class name (required for mypy)."""
+    code = """
+    namespace Snippets
+    {
+        enum class SnippetLanguage { Cpp = 0, Python = 1 };
+        enum class SnippetTheme { Dark = 0, Light = 1 };
+        SnippetLanguage DefaultSnippetLanguage();
+        struct SnippetData
+        {
+            SnippetLanguage Language = DefaultSnippetLanguage();
+            SnippetTheme Palette = SnippetTheme::Dark;
+            bool ReadOnly = false;
+        };
+    }
+    """
+    options = litgen.LitgenOptions()
+    generated_code = litgen.generate_code(options, code)
+    code_utils.assert_are_codes_equal(
+        generated_code.stub_code,
+        '''
+        # <submodule snippets>
+        class snippets:  # Proxy class that introduces typings for the *submodule* snippets
+            pass  # (This corresponds to a C++ namespace. All methods are static!)
+            class SnippetLanguage(enum.IntEnum):
+                cpp = enum.auto()    # (= 0)
+                python = enum.auto() # (= 1)
+            class SnippetTheme(enum.IntEnum):
+                dark = enum.auto()  # (= 0)
+                light = enum.auto() # (= 1)
+            @staticmethod
+            def default_snippet_language() -> SnippetLanguage:
+                pass
+            class SnippetData:
+                language: snippets.SnippetLanguage = DefaultSnippetLanguage()
+                palette: snippets.SnippetTheme = snippets.SnippetTheme.dark
+                read_only: bool = False
+                def __init__(
+                    self,
+                    language: snippets.SnippetLanguage = DefaultSnippetLanguage(),
+                    palette: snippets.SnippetTheme = snippets.SnippetTheme.dark,
+                    read_only: bool = False
+                    ) -> None:
+                    """Auto-generated default constructor with named params"""
+                    pass
+
+        # </submodule snippets>
+        ''',
     )
 
 

@@ -22,6 +22,31 @@ class AdaptedNamespace(AdaptedElement):
     def __init__(self, lg_context: LitgenContext, namespace_: CppNamespace) -> None:
         super().__init__(lg_context, namespace_)
         self.adapted_block = AdaptedBlock(self.lg_context, self.cpp_element().block)
+        self._register_namespace_python_names()
+
+    def _register_namespace_python_names(self) -> None:
+        """Register the Python names of all members of this namespace in the context.
+
+        When a namespace becomes a proxy class, nested classes can't see sibling
+        names. This registry lets us qualify those references later.
+        """
+        from litgen.internal.adapted_types.adapted_class import AdaptedClass
+        from litgen.internal.adapted_types.adapted_function import AdaptedFunction
+        from litgen.internal.adapted_types.adapted_enum import AdaptedEnum
+
+        if not self.flag_shall_create_namespace_as_module():
+            return  # Root namespaces don't need this - they map to the module level
+
+        cpp_ns_name = self.namespace_name()
+        names: set[str] = set()
+        for elem in self.adapted_block.adapted_elements:
+            if isinstance(elem, AdaptedEnum):
+                names.add(cpp_to_python.enum_name_to_python(self.options, elem.cpp_element().enum_name))
+            elif isinstance(elem, AdaptedClass):
+                names.add(cpp_to_python._class_name_to_python(self.options, elem.cpp_element().class_name))
+            elif isinstance(elem, AdaptedFunction):
+                names.add(cpp_to_python.function_name_to_python(self.options, elem.cpp_element().function_name))
+        self.lg_context.namespace_proxy_python_names[cpp_ns_name] = names
 
     def namespace_name(self) -> str:
         return self.cpp_element().ns_name
