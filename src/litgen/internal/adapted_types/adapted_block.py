@@ -136,7 +136,7 @@ class AdaptedBlock(AdaptedElement):
         fn_first_index: dict[str, int] = {}
         reordered_adapted_elements: List[AdaptedElement] = []
         # Collect elements that need to be inserted after a prior overload
-        deferred: dict[str, list] = {}  # function_name -> list of elements to insert
+        deferred: dict[str, List[AdaptedElement]] = {}  # function_name -> list of elements to insert
 
         for elem in elements:
             if isinstance(elem, AdaptedFunction) and elem.is_overloaded:
@@ -165,10 +165,10 @@ class AdaptedBlock(AdaptedElement):
         insertions.sort(key=lambda x: x[0], reverse=True)
 
         for insert_after, elems in insertions:
-            for j, elem in enumerate(elems):
+            for j, elem in enumerate(elems):  # type: ignore
                 reordered_adapted_elements.insert(insert_after + 1 + j, elem)
 
-        self.adapted_elements = reordered_adapted_elements
+        self.adapted_elements = reordered_adapted_elements  # type: ignore
 
     # override
     def stub_lines(self) -> list[str]:
