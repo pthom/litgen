@@ -298,6 +298,69 @@ def test_overloads() -> None:
     )
 
 
+def test_overloads_non_adjacent() -> None:
+    """Test that non-adjacent overloads in C++ source are grouped together in stubs."""
+    options = LitgenOptions()
+    code = """
+    void SetWindowSize(int size, int cond = 0);
+    void SetWindowCollapsed(bool collapsed, int cond = 0);
+    void SetWindowFocus();
+    void SetWindowSize(const char* name, int size, int cond = 0);
+    void SetWindowCollapsed(const char* name, bool collapsed, int cond = 0);
+    void SetWindowFocus(const char* name);
+    """
+    generated_code = LitgenGeneratorTestsHelper.code_to_stub(options, code)
+    # The two SetWindowSize overloads should be adjacent, same for SetWindowCollapsed and SetWindowFocus
+    code_utils.assert_are_codes_equal(
+        generated_code,
+        '''
+        @overload
+        def set_window_size(size: int, cond: int = 0) -> None:
+            pass
+        @overload
+        def set_window_size(name: str, size: int, cond: int = 0) -> None:
+            pass
+        @overload
+        def set_window_collapsed(collapsed: bool, cond: int = 0) -> None:
+            pass
+        @overload
+        def set_window_collapsed(name: str, collapsed: bool, cond: int = 0) -> None:
+            pass
+        @overload
+        def set_window_focus() -> None:
+            pass
+        @overload
+        def set_window_focus(name: str) -> None:
+            pass
+        ''',
+    )
+
+    # pydef should also work (overload_cast for each)
+    generated_code = LitgenGeneratorTestsHelper.code_to_pydef(options, code)
+    code_utils.assert_are_codes_equal(
+        generated_code,
+        """
+        m.def("set_window_size",
+            py::overload_cast<int, int>(SetWindowSize), py::arg("size"), py::arg("cond") = 0);
+
+        m.def("set_window_size",
+            py::overload_cast<const char *, int, int>(SetWindowSize), py::arg("name"), py::arg("size"), py::arg("cond") = 0);
+
+        m.def("set_window_collapsed",
+            py::overload_cast<bool, int>(SetWindowCollapsed), py::arg("collapsed"), py::arg("cond") = 0);
+
+        m.def("set_window_collapsed",
+            py::overload_cast<const char *, bool, int>(SetWindowCollapsed), py::arg("name"), py::arg("collapsed"), py::arg("cond") = 0);
+
+        m.def("set_window_focus",
+            py::overload_cast<>(SetWindowFocus));
+
+        m.def("set_window_focus",
+            py::overload_cast<const char *>(SetWindowFocus), py::arg("name"));
+        """,
+    )
+
+
 def test_type_ignore():
     options = LitgenOptions()
     code = """
