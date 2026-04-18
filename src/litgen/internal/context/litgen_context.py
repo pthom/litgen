@@ -10,6 +10,7 @@ from litgen.internal.context.replacements_cache import ReplacementsCache
 from litgen.internal.context.type_synonyms import CppTypeName
 from litgen.internal.context.type_synonyms import CppNamespaceName, CppQualifiedNamespaceName
 from srcmlcpp.cpp_types.cpp_enum import CppEnum
+from srcmlcpp.cpp_types.scope.cpp_scope import CppScope
 
 if TYPE_CHECKING:
     from litgen.options import LitgenOptions
@@ -27,7 +28,12 @@ class LitgenContext:
     encountered_cpp_enums: list[CppEnum]
     namespaces_stub: NamespacesCodeTree
     namespaces_pydef: NamespacesCodeTree
-    var_values_replacements_cache: ReplacementsCache
+    # Per-scope replacement caches for default value translation.
+    # Key: CppScope.str_cpp (e.g., "" for root, "Snippets" for a namespace).
+    # The root scope ("") is also accessible as var_values_replacements_cache
+    # for backward compatibility with enum registration code.
+    _scoped_replacements: dict[str, ReplacementsCache]
+    var_values_replacements_cache: ReplacementsCache  # alias for root scope
 
     # Registry of Python names defined in each non-root namespace (proxy class).
     # Used to qualify sibling references inside nested classes.
@@ -47,7 +53,8 @@ class LitgenContext:
         self.encountered_cpp_enums = []
         self.namespaces_stub = NamespacesCodeTree(self.options, PydefOrStub.Stub)
         self.namespaces_pydef = NamespacesCodeTree(self.options, PydefOrStub.Pydef)
-        self.var_values_replacements_cache = ReplacementsCache()
+        self._scoped_replacements = {}
+        self.var_values_replacements_cache = self.get_scoped_replacements(CppScope([]))
         self.namespace_proxy_python_names = {}
 
     def clear_namespaces_code_tree(self) -> None:
@@ -59,3 +66,25 @@ class LitgenContext:
 
     def unqualified_stub_namespaces(self) -> set[CppNamespaceName]:
         return self.namespaces_stub.unqualified_namespaces()
+
+    def get_scoped_replacements(self, scope: CppScope) -> ReplacementsCache:
+        """Get (or create) the ReplacementsCache for a given scope."""
+        key = scope.str_cpp
+        if key not in self._scoped_replacements:
+            self._scoped_replacements[key] = ReplacementsCache()
+        return self._scoped_replacements[key]
+
+    def apply_scoped_var_value_replacements(self, s: str, cpp_scope: CppScope) -> str:
+        """Apply var value replacements walking up the scope hierarchy.
+
+        For scope A::B::C, applies replacements from:
+        root (""), then "A", then "A::B", then "A::B::C".
+        More specific scopes are applied last so they can override.
+        """
+        # scope_hierarchy_list is [A::B::C, A::B, A, ""] - most specific first
+        # We want to apply from root to most specific, so reverse it
+        for scope in reversed(cpp_scope.scope_hierarchy_list):
+            key = scope.str_cpp
+            if key in self._scoped_replacements:
+                s = self._scoped_replacements[key].apply(s)
+        return s

@@ -613,12 +613,12 @@ def test_namespace_proxy_sibling_qualification() -> None:
             def default_snippet_language() -> SnippetLanguage:
                 pass
             class SnippetData:
-                language: snippets.SnippetLanguage = DefaultSnippetLanguage()
+                language: snippets.SnippetLanguage = snippets.default_snippet_language()
                 palette: snippets.SnippetTheme = snippets.SnippetTheme.dark
                 read_only: bool = False
                 def __init__(
                     self,
-                    language: snippets.SnippetLanguage = DefaultSnippetLanguage(),
+                    language: snippets.SnippetLanguage = snippets.default_snippet_language(),
                     palette: snippets.SnippetTheme = snippets.SnippetTheme.dark,
                     read_only: bool = False
                     ) -> None:

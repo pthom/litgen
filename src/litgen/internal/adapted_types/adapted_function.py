@@ -270,6 +270,7 @@ class AdaptedFunction(AdaptedElement):
 
         self._pydef_fill_return_value_policy()
         self._stub_fill_is_type_ignore()
+        self._register_function_name_replacement()
 
         self.is_overloaded = is_overloaded
 
@@ -1295,7 +1296,7 @@ class AdaptedFunction(AdaptedElement):
             if initial_value_code.strip().startswith("{") and initial_value_code.endswith("}"):
                 # Special case for initial value with brace init
                 initial_value_code = param_decl.cpp_type.typenames[0] + "(" + initial_value_code[1:-1] + ")"
-            param_default_value = cpp_to_python.var_value_to_python(self.lg_context, initial_value_code)
+            param_default_value = cpp_to_python.var_value_to_python(self.lg_context, initial_value_code, current_scope)
 
             param_code = f"{param_name_python}: {param_type_python}"
             if len(param_default_value) > 0:
@@ -1325,6 +1326,27 @@ class AdaptedFunction(AdaptedElement):
             if eol_comment.lstrip().startswith("//"):
                 eol_comment = eol_comment.lstrip()[2:]
             self.cpp_element().cpp_element_comments.comment_end_of_line = eol_comment
+
+    def _register_function_name_replacement(self) -> None:
+        """Register a scoped replacement so that function calls in default values get snake_cased.
+
+        For example, if C++ has `DefaultSnippetLanguage()` as a default value,
+        this registers a replacement in the function's parent scope so that
+        `var_value_to_python` converts it to `default_snippet_language()`.
+
+        Scoped to the parent namespace/class to avoid collisions with common
+        names (e.g., `Value`, `Start`) in unrelated scopes.
+        """
+        if self.is_constructor() or self.cpp_element().is_operator():
+            return
+        cpp_name = self.cpp_element().function_name
+        py_name = cpp_to_python.function_name_to_python(self.options, cpp_name)
+        if cpp_name != py_name:
+            from codemanip.code_replacements import RegexReplacement
+            scope = self.cpp_element().cpp_scope(include_self=False)
+            cache = self.lg_context.get_scoped_replacements(scope)
+            replacement = RegexReplacement(rf"\b{cpp_name}\b", py_name)
+            cache.store_replacement(replacement)
 
     #  ============================================================================================
     #

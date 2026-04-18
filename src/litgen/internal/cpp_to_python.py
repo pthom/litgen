@@ -247,14 +247,21 @@ def var_name_to_python(options: LitgenOptions, name: str) -> str:
     return r
 
 
-def var_value_to_python(lg_context: LitgenContext, default_value_cpp: str) -> str:
+def var_value_to_python(
+    lg_context: LitgenContext,
+    default_value_cpp: str,
+    cpp_scope: Optional[CppScope] = None,
+) -> str:
     options = lg_context.options
     r = default_value_cpp
     r = options.type_replacements.apply(r)
     r = options.value_replacements.apply(r)
     for number_macro, value in lg_context.options.srcmlcpp_options.named_number_macros.items():
         r = r.replace(number_macro, str(value))
-    r = lg_context.var_values_replacements_cache.apply(r)
+    if cpp_scope is not None:
+        r = lg_context.apply_scoped_var_value_replacements(r, cpp_scope)
+    else:
+        r = lg_context.var_values_replacements_cache.apply(r)
 
     # If this value is a std::initializer_list, try to translate it
     if r.startswith("{") and r.endswith("}"):

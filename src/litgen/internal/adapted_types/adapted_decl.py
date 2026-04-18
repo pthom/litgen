@@ -40,7 +40,8 @@ class AdaptedDecl(AdaptedElement):
         if decl_value_cpp.startswith("{") and decl_value_cpp.endswith("}"):
             # special case for brace init default value
             decl_value_cpp = self.cpp_element().cpp_type.typenames[0] + "(" + decl_value_cpp[1:-1] + ")"
-        decl_value_python = cpp_to_python.var_value_to_python(self.lg_context, decl_value_cpp)
+        cpp_scope = self.cpp_element().cpp_scope(include_self=False)
+        decl_value_python = cpp_to_python.var_value_to_python(self.lg_context, decl_value_cpp, cpp_scope)
         return decl_value_python
 
     def decl_type_python(self) -> str:
