@@ -31,27 +31,31 @@ def dedup_stub_lines(elements: Sequence[AdaptedElement]) -> list[tuple[AdaptedEl
             emitted_signatures.add(sig)
         survivors.append(elem)
 
+    # Second pass: generate stub lines and count surviving overloads per name.
+    # Functions that produce empty stub output (e.g., excluded templates) don't count.
+    generated: list[tuple[AdaptedElement, list[str]]] = []
     overload_counts: dict[str, int] = {}
     for elem in survivors:
-        if isinstance(elem, AdaptedFunction) and elem.is_overloaded:
+        element_lines = elem.stub_lines()
+        generated.append((elem, element_lines))
+
+        has_content = any(line.strip() for line in element_lines)
+        if isinstance(elem, AdaptedFunction) and elem.is_overloaded and has_content:
             name = elem._stub_function_name_python()
             overload_counts[name] = overload_counts.get(name, 0) + 1
 
-    # Names where only one overload survived: strip @overload from their stub output
+    # Names where only one overload survived: strip @overload
     singleton_overloads = {name for name, count in overload_counts.items() if count <= 1}
 
-    # Second pass: generate stub lines, stripping @overload from singletons
+    # Third pass: strip @overload from singletons
     result: list[tuple[AdaptedElement, list[str]]] = []
-    for elem in survivors:
-        element_lines = elem.stub_lines()
-
+    for elem, element_lines in generated:
         if (
             isinstance(elem, AdaptedFunction)
             and elem.is_overloaded
             and elem._stub_function_name_python() in singleton_overloads
         ):
             element_lines = [line for line in element_lines if line.strip() != "@overload"]
-
         result.append((elem, element_lines))
 
     return result
