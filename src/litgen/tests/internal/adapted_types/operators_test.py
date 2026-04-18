@@ -124,7 +124,7 @@ def test_spaceship_operator():
                 pass
             def __le__(self, o: IntWrapperSpaceship) -> bool:
                 pass
-            def __eq__(self, o: IntWrapperSpaceship) -> bool:
+            def __eq__(self, o: object) -> bool:
                 pass
             def __ge__(self, o: IntWrapperSpaceship) -> bool:
                 pass

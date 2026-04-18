@@ -1300,6 +1300,10 @@ class AdaptedFunction(AdaptedElement):
                 param_type_python = f"Optional[{param_type_python}]"
             param_type_python = self._add_class_hierarchy_to_python_type__fixme(param_type_python)
 
+            # __eq__ and __ne__ should accept `object` per Python convention (Liskov principle)
+            if self.cpp_element().is_operator() and self.cpp_element().operator_name() in ("==", "!="):
+                param_type_python = "object"
+
             if self.is_vectorize_impl:
                 param_type_python = "np.ndarray"
 
