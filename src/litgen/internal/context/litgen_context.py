@@ -93,8 +93,7 @@ class LitgenContext:
     def apply_scoped_var_value_replacements(self, s: str, cpp_scope: CppScope | None) -> str:
         """Apply var value replacements from all scopes in the hierarchy.
 
-        For scope A::B::C, applies replacements
-        from A::B::C, A::B, A, and root ("").
+        For scope A::B::C, applies replacements from A::B::C, A::B, A, and root ("").
         """
         if cpp_scope is None:
             cpp_scope = CppScope([])
