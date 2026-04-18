@@ -675,6 +675,106 @@ def test_class_sibling_qualification() -> None:
     )
 
 
+def test_enum_function_name_clash() -> None:
+    """Test that a function name doesn't corrupt enum values in default expressions.
+
+    If a scope has both `enum Mode { Start }` and `void Start()`, the function
+    replacement should only match function calls (with parentheses), not bare
+    enum member references.
+    """
+    code = """
+    namespace MyLib {
+        enum class Mode { Start = 0, Stop = 1 };
+        void Start();
+        struct Config {
+            Mode mode = Mode::Start;
+        };
+    }
+    """
+    options = litgen.LitgenOptions()
+    generated_code = litgen.generate_code(options, code)
+    code_utils.assert_are_codes_equal(
+        generated_code.stub_code,
+        '''
+        # <submodule my_lib>
+        class my_lib:  # Proxy class that introduces typings for the *submodule* my_lib
+            pass  # (This corresponds to a C++ namespace. All methods are static!)
+            class Mode(enum.IntEnum):
+                start = enum.auto() # (= 0)
+                stop = enum.auto()  # (= 1)
+            @staticmethod
+            def start() -> None:
+                pass
+            class Config:
+                mode: my_lib.Mode = my_lib.Mode.start
+                def __init__(self, mode: my_lib.Mode = my_lib.Mode.start) -> None:
+                    """Auto-generated default constructor with named params"""
+                    pass
+
+        # </submodule my_lib>
+        ''',
+    )
+
+
+def test_function_call_snake_case_in_default() -> None:
+    """Test that function calls in default values are snake_cased,
+    but only when followed by parentheses."""
+    code = """
+    namespace Ns {
+        int MakeValue();
+        void DoWork(int x = MakeValue());
+    }
+    """
+    options = litgen.LitgenOptions()
+    generated_code = litgen.generate_code(options, code)
+    code_utils.assert_are_codes_equal(
+        generated_code.stub_code,
+        '''
+        # <submodule ns>
+        class ns:  # Proxy class that introduces typings for the *submodule* ns
+            pass  # (This corresponds to a C++ namespace. All methods are static!)
+            @staticmethod
+            def make_value() -> int:
+                pass
+            @staticmethod
+            def do_work(x: int = make_value()) -> None:
+                pass
+
+        # </submodule ns>
+        ''',
+    )
+
+
+def test_snake_case_cpp_function_no_replacement() -> None:
+    """Test that C++ functions already in snake_case don't register replacements."""
+    code = """
+    namespace ns {
+        int get_value();
+        void do_work(int x = get_value());
+    }
+    """
+    options = litgen.LitgenOptions()
+    # Disable snake_case conversion to simulate a snake_case codebase
+    options.python_convert_to_snake_case = False
+    generated_code = litgen.generate_code(options, code)
+    code_utils.assert_are_codes_equal(
+        generated_code.stub_code,
+        '''
+        # <submodule ns>
+        class ns:  # Proxy class that introduces typings for the *submodule* ns
+            pass  # (This corresponds to a C++ namespace. All methods are static!)
+            @staticmethod
+            def get_value() -> int:
+                pass
+            @staticmethod
+            def do_work(x: int = get_value()) -> None:
+                pass
+
+        # </submodule ns>
+        ''',
+    )
+
+
 def test_named_ctor_helper_class() -> None:
     code = """
         class ClassNoDefaultCtor

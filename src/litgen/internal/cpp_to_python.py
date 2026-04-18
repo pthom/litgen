@@ -258,10 +258,7 @@ def var_value_to_python(
     r = options.value_replacements.apply(r)
     for number_macro, value in lg_context.options.srcmlcpp_options.named_number_macros.items():
         r = r.replace(number_macro, str(value))
-    if cpp_scope is not None:
-        r = lg_context.apply_scoped_var_value_replacements(r, cpp_scope)
-    else:
-        r = lg_context.var_values_replacements_cache.apply(r)
+    r = lg_context.apply_scoped_var_value_replacements(r, cpp_scope)
 
     # If this value is a std::initializer_list, try to translate it
     if r.startswith("{") and r.endswith("}"):

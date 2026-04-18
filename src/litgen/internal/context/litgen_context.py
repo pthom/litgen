@@ -51,10 +51,7 @@ class LitgenContext:
     namespaces_pydef: NamespacesCodeTree
     # Per-scope replacement caches for default value translation.
     # Key: CppScope.str_cpp (e.g., "" for root, "Snippets" for a namespace).
-    # The root scope ("") is also accessible as var_values_replacements_cache
-    # for backward compatibility with enum registration code.
     _scoped_replacements: dict[str, ReplacementsCache]
-    var_values_replacements_cache: ReplacementsCache  # alias for root scope
 
     # Registry of members defined in each scope, keyed by C++ scope name.
     # See ScopeMembers for details.
@@ -74,7 +71,6 @@ class LitgenContext:
         self.namespaces_stub = NamespacesCodeTree(self.options, PydefOrStub.Stub)
         self.namespaces_pydef = NamespacesCodeTree(self.options, PydefOrStub.Pydef)
         self._scoped_replacements = {}
-        self.var_values_replacements_cache = self.get_scoped_replacements(CppScope([]))
         self.scope_members = {}
 
     def clear_namespaces_code_tree(self) -> None:
@@ -94,16 +90,15 @@ class LitgenContext:
             self._scoped_replacements[key] = ReplacementsCache()
         return self._scoped_replacements[key]
 
-    def apply_scoped_var_value_replacements(self, s: str, cpp_scope: CppScope) -> str:
-        """Apply var value replacements walking up the scope hierarchy.
+    def apply_scoped_var_value_replacements(self, s: str, cpp_scope: CppScope | None) -> str:
+        """Apply var value replacements from all scopes in the hierarchy.
 
-        For scope A::B::C, applies replacements from:
-        root (""), then "A", then "A::B", then "A::B::C".
-        More specific scopes are applied last so they can override.
+        For scope A::B::C, applies replacements
+        from A::B::C, A::B, A, and root ("").
         """
-        # scope_hierarchy_list is [A::B::C, A::B, A, ""] - most specific first
-        # We want to apply from root to most specific, so reverse it
-        for scope in reversed(cpp_scope.scope_hierarchy_list):
+        if cpp_scope is None:
+            cpp_scope = CppScope([])
+        for scope in cpp_scope.scope_hierarchy_list:
             key = scope.str_cpp
             if key in self._scoped_replacements:
                 s = self._scoped_replacements[key].apply(s)

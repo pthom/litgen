@@ -1336,6 +1336,11 @@ class AdaptedFunction(AdaptedElement):
         this registers a replacement in the function's parent scope so that
         `var_value_to_python` converts it to `default_snippet_language()`.
 
+        Only matches function calls (name followed by parenthesis) to avoid
+        corrupting enum values like `Mode::Start` where `Start` is also a
+        function name. Uses a lookahead `(?=\\s*\\()` so the parenthesis is
+        not consumed by the replacement.
+
         Scoped to the parent namespace/class to avoid collisions with common
         names (e.g., `Value`, `Start`) in unrelated scopes.
         """
@@ -1347,7 +1352,7 @@ class AdaptedFunction(AdaptedElement):
             from codemanip.code_replacements import RegexReplacement
             scope = self.cpp_element().cpp_scope(include_self=False)
             cache = self.lg_context.get_scoped_replacements(scope)
-            replacement = RegexReplacement(rf"\b{cpp_name}\b", py_name)
+            replacement = RegexReplacement(rf"\b{cpp_name}(?=\s*\()", py_name)
             cache.store_replacement(replacement)
 
     #  ============================================================================================

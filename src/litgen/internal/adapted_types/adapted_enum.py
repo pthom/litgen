@@ -175,7 +175,8 @@ class AdaptedEnum(AdaptedElement):
         self._fill_children()
 
         replacements = self.cpp_to_python_replacements()
-        self.lg_context.var_values_replacements_cache.store_replacements(replacements)
+        scope = self.cpp_element().cpp_scope(include_self=False)
+        self.lg_context.get_scoped_replacements(scope).store_replacements(replacements)
         self.lg_context.encountered_cpp_enums.append(self.cpp_element())
 
     # override
