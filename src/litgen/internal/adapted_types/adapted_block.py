@@ -173,19 +173,17 @@ class AdaptedBlock(AdaptedElement):
     # override
     def stub_lines(self) -> list[str]:
         from litgen.internal.adapted_types.line_spacer import LineSpacerCpp
+        from litgen.internal.adapted_types.stub_overload_dedup import dedup_stub_lines
 
         line_spacer = LineSpacerCpp()
 
         lines = []
-        for adapted_element in self.adapted_elements:
-            element_lines = adapted_element.stub_lines()
-
+        for adapted_element, element_lines in dedup_stub_lines(self.adapted_elements):
             current_line = adapted_element.cpp_element().start().line
             global_progress_bars().set_current_line(_PROGRESS_BAR_TITLE_STUB, current_line)
 
             if not self.options.python_reproduce_cpp_layout:
-                spacing_lines = line_spacer.spacing_lines(adapted_element, element_lines)
-                lines += spacing_lines
+                lines += line_spacer.spacing_lines(adapted_element, element_lines)
 
             lines += element_lines
         return lines

@@ -236,6 +236,13 @@ class LitgenOptions:
     # ------------------------------------------------------------------------------
     # Force overload
     # ------------------------------------------------------------------------------
+    # The following options nudge nanobind or pybind to select the correct overload when
+    # automatic detection fails.
+    # Two possibilities are available: use py::overload or write a small lambda in the pydef code.
+    # Notes:
+    #     - using fn_force_lambda__regex is often more "powerful" than fn_force_overload__regex.
+    #     - This applies to C++ binding code: `@overload` decorators in python stubs are added automatically.
+    #
     # Force using py::overload for functions that matches these regexes
     fn_force_overload__regex: RegexOrMatcher = ""
     # Force using a lambda for functions that matches these regexes

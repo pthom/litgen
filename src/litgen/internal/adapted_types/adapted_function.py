@@ -1162,6 +1162,17 @@ class AdaptedFunction(AdaptedElement):
                 has_module_proxy_class = True
         return has_module_proxy_class
 
+    def stub_python_signature(self) -> str:
+        """Return a string that uniquely identifies this function's Python signature.
+
+        Used to detect and skip duplicate overloads (e.g., int vs unsigned int
+        which both map to Python int). Two overloads with the same signature
+        string are duplicates from mypy's perspective.
+        """
+        name = self._stub_function_name_python()
+        params = self._stub_params_list_signature()
+        return f"{name}({', '.join(params)})"
+
     def _stub_function_name_python(self) -> str:
         from litgen.internal.adapted_types import operators
 

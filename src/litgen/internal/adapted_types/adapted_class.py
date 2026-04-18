@@ -539,9 +539,9 @@ class AdaptedClass(AdaptedElement):
 
         body_lines: list[str] = []
 
-        for element in self.adapted_public_children:
-            element_lines = element.stub_lines()
+        from litgen.internal.adapted_types.stub_overload_dedup import dedup_stub_lines
 
+        for element, element_lines in dedup_stub_lines(self.adapted_public_children):
             spacing_lines = line_spacer.spacing_lines(element, element_lines)
             body_lines += spacing_lines
             body_lines += element_lines

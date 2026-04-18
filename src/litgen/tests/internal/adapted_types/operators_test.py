@@ -46,11 +46,9 @@ def test_operators():
             # arithmetic operators
             def __add__(self, b: IntWrapper) -> IntWrapper:
                 pass
-            @overload
             def __sub__(self, b: IntWrapper) -> IntWrapper:
                 pass
 
-            @overload
             def __neg__(self) -> IntWrapper:
                 """ Unary minus operator"""
                 pass

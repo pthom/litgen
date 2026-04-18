@@ -361,6 +361,72 @@ def test_overloads_non_adjacent() -> None:
     )
 
 
+def test_overloads_duplicate_python_signature() -> None:
+    """Test that C++ overloads with identical Python signatures are deduplicated in stubs.
+
+    C++ distinguishes int vs unsigned int, int vs size_t, etc., but Python maps
+    them all to int. The duplicate overload should be skipped in stubs (but kept
+    in pydef since C++ still needs both).
+    """
+    options = LitgenOptions()
+
+    # Free functions: int vs unsigned int
+    code = """
+    bool IsPowerOfTwo(int v);
+    bool IsPowerOfTwo(unsigned int v);
+    void blah();
+    """
+    generated_stub = LitgenGeneratorTestsHelper.code_to_stub(options, code)
+    # Only one overload should appear in the stub.
+    # Since only one survives, @overload is removed (mypy requires at least 2).
+    code_utils.assert_are_codes_equal(
+        generated_stub,
+        """
+        def is_power_of_two(v: int) -> bool:
+            pass
+        def blah() -> None:
+            pass
+        """,
+    )
+
+    # pydef should still have both overloads (C++ needs them)
+    generated_pydef = LitgenGeneratorTestsHelper.code_to_pydef(options, code)
+    code_utils.assert_are_codes_equal(
+        generated_pydef,
+        """
+        m.def("is_power_of_two",
+            py::overload_cast<int>(IsPowerOfTwo), py::arg("v"));
+
+        m.def("is_power_of_two",
+            py::overload_cast<unsigned int>(IsPowerOfTwo), py::arg("v"));
+
+        m.def("blah",
+            blah);
+        """,
+    )
+
+    # Class methods: operator[] with int vs size_t
+    code = """
+    struct MyVec {
+        float operator[](int idx) const;
+        float operator[](size_t idx) const;
+    };
+    """
+    generated_stub = LitgenGeneratorTestsHelper.code_to_stub(options, code)
+    # Single survivor: @overload removed
+    code_utils.assert_are_codes_equal(
+        generated_stub,
+        """
+        class MyVec:
+            def __getitem__(self, idx: int) -> float:
+                pass
+            def __init__(self) -> None:
+                \"\"\"Auto-generated default constructor\"\"\"
+                pass
+        """,
+    )
+
+
 def test_type_ignore():
     options = LitgenOptions()
     code = """
