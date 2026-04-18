@@ -38,40 +38,40 @@ def test_operators():
     code_utils.assert_are_codes_equal(
         generated_code.stub_code,
         '''
-        class IntWrapper:
-            value: int
-            def __init__(self, v: int) -> None:
-                pass
+class IntWrapper:
+    value: int
+    def __init__(self, v: int) -> None:
+        pass
 
-            # arithmetic operators
-            def __add__(self, b: IntWrapper) -> IntWrapper:
-                pass
-            def __sub__(self, b: IntWrapper) -> IntWrapper:
-                pass
+    # arithmetic operators
+    def __add__(self, b: IntWrapper) -> IntWrapper:
+        pass
+    def __sub__(self, b: IntWrapper) -> IntWrapper:
+        pass
+    def __neg__(self) -> IntWrapper:
+        """ Unary minus operator"""
+        pass
 
-            def __neg__(self) -> IntWrapper:
-                """ Unary minus operator"""
-                pass
 
-            def __lt__(self, b: IntWrapper) -> bool:
-                """ Comparison operator"""
-                pass
+    def __lt__(self, b: IntWrapper) -> bool:
+        """ Comparison operator"""
+        pass
 
-            # Two overload of the += operator
-            @overload
-            def __iadd__(self, b: IntWrapper) -> IntWrapper:
-                pass
-            @overload
-            def __iadd__(self, b: int) -> IntWrapper:
-                pass
+    # Two overload of the += operator
+    @overload
+    def __iadd__(self, b: IntWrapper) -> IntWrapper:
+        pass
+    @overload
+    def __iadd__(self, b: int) -> IntWrapper:
+        pass
 
-            # Two overload of the call operator, with different results
-            @overload
-            def __call__(self, b: IntWrapper) -> int:
-                pass
-            @overload
-            def __call__(self, b: int) -> int:
-                pass
+    # Two overload of the call operator, with different results
+    @overload
+    def __call__(self, b: IntWrapper) -> int:
+        pass
+    @overload
+    def __call__(self, b: int) -> int:
+        pass
     ''',
     )
 

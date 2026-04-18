@@ -257,11 +257,11 @@ def test_templated_class():
             def __init__(self) -> None:
                 """ Standard constructor"""
                 pass
-
             @overload
             def __init__(self, v: List[str]) -> None:
                 """ Constructor that will need a parameter adaptation"""
                 pass
+
 
             def sum(self) -> str:
                 """ Standard method"""

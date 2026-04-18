@@ -353,11 +353,16 @@ class AdaptedClass(AdaptedElement):
         super().__init__(lg_context, class_)
         self.adapted_public_children = []
         self._init_fill_public_children()
+        self._group_overloaded_methods()
 
         self.adapted_protected_methods = []
         self._prot_fill_methods()
 
         self._register_inner_python_names()
+
+    def _group_overloaded_methods(self) -> None:
+        from litgen.internal.adapted_types.adapted_block import group_overloaded_functions
+        self.adapted_public_children = group_overloaded_functions(self.adapted_public_children)
 
     def _register_inner_python_names(self) -> None:
         """Register Python names of inner classes and enums.

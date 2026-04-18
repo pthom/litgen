@@ -1,6 +1,6 @@
 from __future__ import annotations
 from dataclasses import dataclass
-from typing import Union, cast, List
+from typing import Any, Union, cast
 
 from codemanip import code_utils
 from codemanip.parse_progress_bar import global_progress_bars
@@ -36,6 +36,50 @@ from litgen.internal.context.litgen_context import LitgenContext
 from litgen.internal.adapted_types.adapted_define import AdaptedDefine
 from litgen.internal.adapted_types.adapted_condition_macro import AdaptedConditionMacro
 from litgen.internal.adapted_types.adapted_decl import AdaptedGlobalDecl
+
+
+def group_overloaded_functions(elements: list[Any]) -> list[Any]:
+    """Reorder elements so that overloaded functions (same name) are adjacent.
+
+    mypy requires @overload-decorated functions to be adjacent in .pyi stubs.
+    litgen emits functions in C++ source order, which may interleave overloads
+    (e.g. operator*(double), operator+(Point), operator*(Point)).
+
+    This moves later overloads next to the first occurrence of each name,
+    preserving relative order for everything else.
+    """
+    fn_first_index: dict[str, int] = {}
+    result: list[Any] = []
+    deferred: dict[str, list[Any]] = {}
+
+    for elem in elements:
+        if isinstance(elem, AdaptedFunction) and elem.is_overloaded:
+            name = elem.cpp_element().function_name
+            if name not in fn_first_index:
+                fn_first_index[name] = len(result)
+                result.append(elem)
+            else:
+                if name not in deferred:
+                    deferred[name] = []
+                deferred[name].append(elem)
+        else:
+            result.append(elem)
+
+    if not deferred:
+        return elements  # Nothing to reorder
+
+    # Insert deferred overloads right after the first occurrence of each name.
+    # Process in reverse order of insertion point so indices stay valid.
+    insertions = sorted(
+        [(fn_first_index[name], elems) for name, elems in deferred.items()],
+        key=lambda x: x[0],
+        reverse=True,
+    )
+    for insert_after, elems in insertions:
+        for j, elem in enumerate(elems):
+            result.insert(insert_after + 1 + j, elem)
+
+    return result
 
 
 @dataclass
@@ -122,53 +166,7 @@ class AdaptedBlock(AdaptedElement):
                 child.emit_warning(str(e), WarningType.LitgenBlockElementException)
 
     def _group_overloaded_functions(self) -> None:
-        """Reorder adapted_elements so that overloaded functions (same name) are adjacent.
-
-        mypy requires @overload-decorated functions to be adjacent in .pyi stubs.
-        litgen emits functions in C++ source order, which may interleave overloads
-        (e.g. SetWindowSize(size), SetWindowCollapsed(...), SetWindowSize(name, size)).
-
-        This method moves later overloads next to the first occurrence of each name,
-        preserving relative order for everything else.
-        """
-        elements = self.adapted_elements
-        # Track the index of the first occurrence of each function name
-        fn_first_index: dict[str, int] = {}
-        reordered_adapted_elements: List[AdaptedElement] = []
-        # Collect elements that need to be inserted after a prior overload
-        deferred: dict[str, List[AdaptedElement]] = {}  # function_name -> list of elements to insert
-
-        for elem in elements:
-            if isinstance(elem, AdaptedFunction) and elem.is_overloaded:
-                name = elem.cpp_element().function_name
-                if name not in fn_first_index:
-                    # First occurrence: record position and add normally
-                    fn_first_index[name] = len(reordered_adapted_elements)
-                    reordered_adapted_elements.append(elem)
-                else:
-                    # Later occurrence: defer it for grouping
-                    if name not in deferred:
-                        deferred[name] = []
-                    deferred[name].append(elem)
-            else:
-                reordered_adapted_elements.append(elem)
-
-        if not deferred:
-            return  # Nothing to reorder
-
-        # Insert deferred overloads right after the first occurrence of each name.
-        # Process in reverse order of insertion point so indices stay valid.
-        insertions = []
-        for name, elems in deferred.items():
-            insert_after = fn_first_index[name]
-            insertions.append((insert_after, elems))
-        insertions.sort(key=lambda x: x[0], reverse=True)
-
-        for insert_after, elems in insertions:
-            for j, elem in enumerate(elems):  # type: ignore
-                reordered_adapted_elements.insert(insert_after + 1 + j, elem)
-
-        self.adapted_elements = reordered_adapted_elements  # type: ignore
+        self.adapted_elements = group_overloaded_functions(self.adapted_elements)  # type: ignore
 
     # override
     def stub_lines(self) -> list[str]:
