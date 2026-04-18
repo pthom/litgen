@@ -1,5 +1,5 @@
 from __future__ import annotations
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from typing import TYPE_CHECKING
 
 from litgen.internal.context.namespaces_code_tree import (
@@ -14,6 +14,27 @@ from srcmlcpp.cpp_types.scope.cpp_scope import CppScope
 
 if TYPE_CHECKING:
     from litgen.options import LitgenOptions
+
+
+@dataclass
+class ScopeMembers:
+    """Tracks the Python names defined inside a C++ scope (namespace or class).
+
+    Used to qualify sibling references in nested classes. For example,
+    inside TextEditor.CursorSelection, a reference to CursorPosition
+    must be qualified as TextEditor.CursorPosition.
+
+    python_scope_name: the Python name for the scope itself.
+        Stored at registration time because the scope type reported by
+        srcmlcpp can be unreliable for auto-generated constructors
+        (they may report Namespace instead of ClassOrStruct), making
+        it impossible to reliably recompute the Python name later.
+        E.g., "snippets" for namespace Snippets, "TextEditor" for class TextEditor.
+    member_names: Python names of types (classes, enums) and functions
+        defined directly in this scope.
+    """
+    python_scope_name: str
+    member_names: set[str] = field(default_factory=set)
 
 
 @dataclass
@@ -35,10 +56,9 @@ class LitgenContext:
     _scoped_replacements: dict[str, ReplacementsCache]
     var_values_replacements_cache: ReplacementsCache  # alias for root scope
 
-    # Registry of Python names defined in each non-root namespace (proxy class).
-    # Used to qualify sibling references inside nested classes.
-    # Key: C++ namespace name (e.g., "Snippets"), Value: set of Python names
-    namespace_proxy_python_names: dict[str, set[str]]
+    # Registry of members defined in each scope, keyed by C++ scope name.
+    # See ScopeMembers for details.
+    scope_members: dict[str, ScopeMembers]
 
     # cf https://pybind11.readthedocs.io/en/stable/advanced/classes.html#binding-protected-member-functions
     protected_methods_glue_code: str = ""
@@ -55,7 +75,7 @@ class LitgenContext:
         self.namespaces_pydef = NamespacesCodeTree(self.options, PydefOrStub.Pydef)
         self._scoped_replacements = {}
         self.var_values_replacements_cache = self.get_scoped_replacements(CppScope([]))
-        self.namespace_proxy_python_names = {}
+        self.scope_members = {}
 
     def clear_namespaces_code_tree(self) -> None:
         self.namespaces_stub = NamespacesCodeTree(self.options, PydefOrStub.Stub)

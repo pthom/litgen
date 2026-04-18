@@ -149,22 +149,22 @@ class AdaptedClassMember(AdaptedDecl):
         else:
             return True
 
-    def _qualify_for_namespace_proxy(self, python_str: str) -> str:
-        """Qualify sibling references if this member is inside a class nested in a namespace proxy."""
+    def _qualify_siblings(self, python_str: str) -> str:
+        """Qualify sibling references if this member is inside a nested class."""
         cpp_scope = self.class_parent.cpp_element().cpp_scope(include_self=False)
-        return cpp_to_python.qualify_sibling_in_namespace_proxy(self.lg_context, python_str, cpp_scope)
+        return cpp_to_python.qualify_sibling_in_scope(self.lg_context, python_str, cpp_scope)
 
     def decl_type_python(self) -> str:
         if self._is_numeric_c_array():
             return "np.ndarray"
         else:
-            return self._qualify_for_namespace_proxy(super().decl_type_python())
+            return self._qualify_siblings(super().decl_type_python())
 
     def decl_value_python(self) -> str:
         if self._is_numeric_c_array():
             return ""
         else:
-            return self._qualify_for_namespace_proxy(super().decl_value_python())
+            return self._qualify_siblings(super().decl_value_python())
 
     def comment_array(self) -> str:
         if self._is_numeric_c_array():
@@ -356,6 +356,28 @@ class AdaptedClass(AdaptedElement):
 
         self.adapted_protected_methods = []
         self._prot_fill_methods()
+
+        self._register_inner_python_names()
+
+    def _register_inner_python_names(self) -> None:
+        """Register Python names of inner classes and enums.
+
+        Used by qualify_sibling_in_scope() so that nested classes can
+        reference sibling inner types with proper qualification.
+        Only types (classes, enums) are registered - not methods, since
+        method names don't appear as type annotations or default values.
+        """
+        cpp_class_name = self.cpp_element().class_name
+        names: set[str] = set()
+        for elem in self.adapted_public_children:
+            if isinstance(elem, AdaptedEnum):
+                names.add(cpp_to_python.enum_name_to_python(self.options, elem.cpp_element().enum_name))
+            elif isinstance(elem, AdaptedClass):
+                names.add(cpp_to_python._class_name_to_python(self.options, elem.cpp_element().class_name))
+        if names:
+            from litgen.internal.context.litgen_context import ScopeMembers
+            python_scope_name = cpp_to_python._class_name_to_python(self.options, cpp_class_name)
+            self.lg_context.scope_members[cpp_class_name] = ScopeMembers(python_scope_name, names)
 
     def _init_add_adapted_class_member(self, cpp_decl_statement: CppDeclStatement) -> None:
         class_name = self.cpp_element().class_name

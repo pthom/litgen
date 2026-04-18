@@ -1242,7 +1242,7 @@ class AdaptedFunction(AdaptedElement):
             return_type_python = self._add_class_hierarchy_to_python_type__fixme(return_type_python)
             if self.is_method():
                 method_scope = self.cpp_element().cpp_scope(include_self=False)
-                return_type_python = cpp_to_python.qualify_sibling_in_namespace_proxy(
+                return_type_python = cpp_to_python.qualify_sibling_in_scope(
                     self.lg_context, return_type_python, method_scope
                 )
             return return_type_python
@@ -1298,16 +1298,18 @@ class AdaptedFunction(AdaptedElement):
                 initial_value_code = param_decl.cpp_type.typenames[0] + "(" + initial_value_code[1:-1] + ")"
             param_default_value = cpp_to_python.var_value_to_python(self.lg_context, initial_value_code, current_scope)
 
+            # Qualify sibling references in type and default value (but not the parameter name)
+            if self.is_method():
+                param_type_python = cpp_to_python.qualify_sibling_in_scope(
+                    self.lg_context, param_type_python, current_scope
+                )
+                param_default_value = cpp_to_python.qualify_sibling_in_scope(
+                    self.lg_context, param_default_value, current_scope
+                )
+
             param_code = f"{param_name_python}: {param_type_python}"
             if len(param_default_value) > 0:
                 param_code += f" = {param_default_value}"
-
-            # Qualify sibling references if this method is inside a class
-            # nested in a namespace proxy
-            if self.is_method():
-                param_code = cpp_to_python.qualify_sibling_in_namespace_proxy(
-                    self.lg_context, param_code, current_scope
-                )
 
             r.append(param_code)
 

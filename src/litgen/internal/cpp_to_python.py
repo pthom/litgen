@@ -289,41 +289,40 @@ def var_value_to_python(
     return r
 
 
-def qualify_sibling_in_namespace_proxy(
+def qualify_sibling_in_scope(
     lg_context: LitgenContext,
     python_str: str,
     cpp_scope: CppScope,
 ) -> str:
-    """Qualify unqualified sibling references inside a namespace proxy class.
+    """Qualify unqualified sibling references in nested Python scopes.
 
-    When a C++ namespace becomes a Python proxy class, nested classes (structs)
-    can't see sibling names. This function detects unqualified references to names
-    defined in the enclosing namespace and prefixes them with the proxy class name.
+    In Python, nested classes can't see names from their enclosing class or
+    namespace proxy. This function detects unqualified references to names
+    defined in an enclosing scope and prefixes them with the enclosing name.
 
-    Only applies when the element is inside a class that's inside a non-root namespace.
+    Applies to both namespace proxies and classes with inner classes/enums.
     """
     import re
 
-    # Walk the scope to find enclosing namespaces
     for scope_part in cpp_scope.scope_parts:
-        if scope_part.scope_type != CppScopeType.Namespace:
-            continue
-        cpp_ns_name = scope_part.scope_name
-        if cpp_ns_name in lg_context.options.namespaces_root:
-            continue  # Root namespaces map to module level, no proxy
+        cpp_name = scope_part.scope_name
 
-        names = lg_context.namespace_proxy_python_names.get(cpp_ns_name)
-        if not names:
+        # Skip root namespaces (they map to the module level, no proxy)
+        if cpp_name in lg_context.options.namespaces_root:
             continue
 
-        python_ns = namespace_name_to_python(lg_context.options, cpp_ns_name)
+        scope_entry = lg_context.scope_members.get(cpp_name)
+        if not scope_entry:
+            continue
+        python_prefix = scope_entry.python_scope_name
+        names = scope_entry.member_names
 
         # Sort by length (longest first) to avoid partial replacements
         for name in sorted(names, key=len, reverse=True):
             # Match `name` as a standalone word, not already preceded by a dot
             # (which would mean it's already qualified)
             pattern = r"(?<![.\w])" + re.escape(name) + r"\b"
-            replacement = python_ns + "." + name
+            replacement = python_prefix + "." + name
             python_str = re.sub(pattern, replacement, python_str)
 
     return python_str

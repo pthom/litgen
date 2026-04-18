@@ -46,7 +46,9 @@ class AdaptedNamespace(AdaptedElement):
                 names.add(cpp_to_python._class_name_to_python(self.options, elem.cpp_element().class_name))
             elif isinstance(elem, AdaptedFunction):
                 names.add(cpp_to_python.function_name_to_python(self.options, elem.cpp_element().function_name))
-        self.lg_context.namespace_proxy_python_names[cpp_ns_name] = names
+        from litgen.internal.context.litgen_context import ScopeMembers
+        python_scope_name = cpp_to_python.namespace_name_to_python(self.options, cpp_ns_name)
+        self.lg_context.scope_members[cpp_ns_name] = ScopeMembers(python_scope_name, names)
 
     def namespace_name(self) -> str:
         return self.cpp_element().ns_name
