@@ -1299,10 +1299,11 @@ class PythonNamedConstructorHelper:
             class_scope = self.adapted_class.cpp_element().cpp_scope()
             for scope_part in class_scope.scope_parts:
                 if scope_part.scope_type == CppScopeType.Namespace:
-                    str_cpp_code = "namespace " + scope_part.scope_name + "{\n" + str_cpp_code + "\n" + "}\n"
-                if scope_part.scope_type == CppScopeType.ClassOrStruct:
-                    # We reinterpret the struct as a namespace, this does not change the scope
-                    str_cpp_code = "namespace " + scope_part.scope_name + "{\n" + str_cpp_code + "\n" + "}\n"
+                    str_cpp_code = "namespace " + scope_part.scope_name + " {\n" + str_cpp_code + "\n}\n"
+                elif scope_part.scope_type == CppScopeType.ClassOrStruct:
+                    # Emit as namespace (srcmlcpp can't handle nested struct wrappers here),
+                    # then fix the scope type after parsing (see below).
+                    str_cpp_code = "namespace " + scope_part.scope_name + " {\n" + str_cpp_code + "\n}\n"
 
             return str_cpp_code
 
@@ -1351,6 +1352,17 @@ class PythonNamedConstructorHelper:
                     ctor_decl.cpp_element_comments.comment_on_previous_lines = "Auto-generated default constructor"
             # And qualify its types
             ctor_qualified = ctor_decl.with_qualified_types()
+
+            # Fix scope types: the synthetic code emits enclosing classes as
+            # namespaces (to avoid nested struct parsing issues), so the
+            # constructor's scope has Namespace where it should have ClassOrStruct.
+            # Restore the correct types from the original class scope.
+            original_scope = self.adapted_class.cpp_element().cpp_scope(include_self=True)
+            original_types = {part.scope_name: part.scope_type for part in original_scope.scope_parts}
+            for part in ctor_qualified.cpp_scope(include_self=False).scope_parts:
+                if part.scope_name in original_types:
+                    part.scope_type = original_types[part.scope_name]
+
             return ctor_qualified
 
         return make_cpp_constructor()
