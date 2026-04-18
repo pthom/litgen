@@ -262,8 +262,15 @@ class AdaptedClassMember(AdaptedDecl):
 
         decl_name_python = self.decl_name_python()
         decl_type_python = self.decl_type_python()
-
         default_value_python = self.decl_value_python()
+
+        # Pointer members with nullptr default should be Optional
+        if (
+            "*" in self.cpp_element().cpp_type.modifiers
+            and self.cpp_element().initial_value_code.strip() in ("nullptr", "NULL")
+        ):
+            decl_type_python = f"Optional[{decl_type_python}]"
+            default_value_python = "None"
         if len(default_value_python) > 0:
             maybe_defaultvalue_python = default_value_python
             maybe_equal = " = "

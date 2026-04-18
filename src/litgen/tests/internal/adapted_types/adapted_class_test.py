@@ -675,6 +675,39 @@ def test_class_sibling_qualification() -> None:
     )
 
 
+def test_pointer_member_with_nullptr_default() -> None:
+    """Test that pointer members with nullptr default are emitted as Optional."""
+    code = """
+    struct Palette { int color; };
+    struct Config {
+        const char* Label = nullptr;
+        const Palette* Theme = nullptr;
+        const char* Name = NULL;
+        int Value = 42;
+    };
+    """
+    options = litgen.LitgenOptions()
+    generated_code = litgen.generate_code(options, code)
+    code_utils.assert_are_codes_equal(
+        generated_code.stub_code,
+        '''
+        class Palette:
+            color: int
+            def __init__(self, color: int = int()) -> None:
+                """Auto-generated default constructor with named params"""
+                pass
+        class Config:
+            label: Optional[str] = None     # (const)
+            theme: Optional[Palette] = None # (const)
+            name: Optional[str] = None      # (const)
+            value: int = 42
+            def __init__(self, value: int = 42) -> None:
+                """Auto-generated default constructor with named params"""
+                pass
+        ''',
+    )
+
+
 def test_enum_function_name_clash() -> None:
     """Test that a function name doesn't corrupt enum values in default expressions.
 
