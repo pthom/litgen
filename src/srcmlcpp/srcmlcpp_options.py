@@ -53,7 +53,9 @@ class SrcmlcppOptions:
     ################################################################################
 
     #
-    # If you need to preprocess the code before parsing, fill this function
+    # If you need to preprocess the code before parsing, fill this function.
+    # Note: called on every snippet round-tripped through srcML, not only
+    # the full-file pass. See the TODO in srcmlcpp_main.code_to_srcml_wrapper.
     #
     code_preprocess_function: Optional[Callable[[str], str]] = None
 

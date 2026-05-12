@@ -58,6 +58,10 @@ def code_to_srcml_wrapper(
     code = _code_or_file_content(options, code, filename)
 
     if options.code_preprocess_function is not None:
+        # TODO: pass `filename` here so preprocess functions can tell the
+        # full-file pass from synthetic snippets (constructor wrappers, type
+        # strings, ...). Today users have to detect this with a landmark
+        # string. Signature break; update srcmlcpp_options.py in lockstep.
         code = options.code_preprocess_function(code)
 
     code_cache.store_cached_code(filename, code)
