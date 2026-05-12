@@ -435,11 +435,19 @@ class AdaptedClass(AdaptedElement):
                 elif isinstance(child, CppUnprocessed):
                     continue
                 elif isinstance(child, CppStruct):
-                    adapted_subclass = AdaptedClass(self.lg_context, child)
-                    self.adapted_public_children.append(adapted_subclass)
+                    is_excluded_by_name = code_utils.does_match_regex_or_matcher(
+                        self.options.class_exclude_by_name__regex, child.class_name
+                    )
+                    if not is_excluded_by_name:
+                        adapted_subclass = AdaptedClass(self.lg_context, child)
+                        self.adapted_public_children.append(adapted_subclass)
                 elif isinstance(child, CppEnum):
-                    adapted_enum = AdaptedEnum(self.lg_context, child)
-                    self.adapted_public_children.append(adapted_enum)
+                    is_excluded_by_name = code_utils.does_match_regex_or_matcher(
+                        self.options.enum_exclude_by_name__regex, child.enum_name
+                    )
+                    if not is_excluded_by_name:
+                        adapted_enum = AdaptedEnum(self.lg_context, child)
+                        self.adapted_public_children.append(adapted_enum)
                 elif isinstance(child, CppConditionMacro):
                     adapted_macro = AdaptedConditionMacro(self.lg_context, child)
                     self.adapted_public_children.append(adapted_macro)
