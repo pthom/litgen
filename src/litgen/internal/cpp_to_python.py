@@ -744,11 +744,23 @@ def standard_type_replacements() -> RegexReplacementList:
     * types translations
     * NULL, nullptr, void translation
     """
+
+    # RegexReplacementList is greedy! Some types like 'unsigned int' need to be
+    # first attempted to be replaced by a conversion targetting also the
+    # 'unsigned' qualifier to prevent errors.
     replacements_str = r"""
     \bunsigned \s*int\b -> int
     \bunsigned \s*short\b -> int
     \bunsigned \s*long long\b -> int
     \bunsigned \s*long\b -> int
+
+    \\blong \s*long\b -> int
+    \blong \s*long\b -> int
+    \blong \s*double\b -> float
+
+    \bconst \s*char*\b -> str
+    \bconst \s*char *\b -> str
+
     \buint8_t\b -> int
     \bint8_t\b -> int
     \buint16_t\b -> int
@@ -759,15 +771,9 @@ def standard_type_replacements() -> RegexReplacementList:
     \bint64_t\b -> int
     \blong\b -> int
     \bshort\b -> int
-    \\blong \s*long\b -> int
-    \blong \s*long\b -> int
 
-    \blong \s*double\b -> float
     \bdouble\b -> float
     \bfloat\b -> float
-
-    \bconst \s*char*\b -> str
-    \bconst \s*char *\b -> str
 
     \bsize_t\b -> int
     \bstd::function<(.*)\((.*)\)> -> Callable[[\2], \1]
