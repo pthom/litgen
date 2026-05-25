@@ -87,6 +87,10 @@ def test_type_to_python() -> None:
         return cpp_to_python.type_to_python(lg_context, s)
 
     assert my_type_to_python("unsigned int") == "int"
+    assert my_type_to_python("unsigned long long") == "int"
+    assert my_type_to_python("long long") == "int"
+    assert my_type_to_python("long double") == "float"
+    assert my_type_to_python("const char") == "str"
     assert my_type_to_python("std::vector<std::optional<int>>") == "List[Optional[int]]"
     assert my_type_to_python("std::optional<std::vector<int>>") == "Optional[List[int]]"
     assert my_type_to_python("std::map<int, std::string>") == "Dict[int, str]"
