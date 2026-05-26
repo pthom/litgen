@@ -2,6 +2,8 @@ from __future__ import annotations
 import os
 import tempfile
 
+import pytest
+
 from codemanip import amalgamated_header
 
 
@@ -69,3 +71,42 @@ def test_base_dir_takes_precedence_over_subdir() -> None:
         content = amalgamated_header.amalgamation_content(options)
         assert "// from base" in content
         assert "// from sub" not in content
+
+
+def test_angle_includes_are_external_by_default() -> None:
+    # Default (only_quoted_includes_are_local=True): quoted includes are inlined,
+    # angle-bracket includes (system headers) are left as external #include lines.
+    # This is the no-prefix case (e.g. Dear ImGui).
+    with tempfile.TemporaryDirectory() as d:
+        _write(os.path.join(d, "local.h"), "// LOCAL INLINED\n")
+        _write(os.path.join(d, "main.h"), '#include <vector>\n#include "local.h"\nint m();\n')
+        content = amalgamated_header.amalgamation_content(_make_options(d, "main.h"))
+        assert "// LOCAL INLINED" in content  # quoted include was inlined
+        assert "#include <vector>" in content  # system include kept as external (not inlined / no crash)
+
+
+def test_angle_local_includes_when_option_disabled() -> None:
+    # With only_quoted_includes_are_local=False and a prefix, a prefix-matching
+    # angle-bracket include is treated as local and inlined (requires the
+    # angle-bracket path extraction to work).
+    with tempfile.TemporaryDirectory() as d:
+        os.makedirs(os.path.join(d, "mylib"))
+        _write(os.path.join(d, "mylib", "foo.h"), "// FOO INLINED\n")
+        _write(os.path.join(d, "main.h"), "#include <mylib/foo.h>\nint m();\n")
+        options = _make_options(d, "main.h")
+        options.local_includes_startwith = "mylib/"
+        options.only_quoted_includes_are_local = False
+        content = amalgamated_header.amalgamation_content(options)
+        assert "// FOO INLINED" in content
+
+
+def test_empty_prefix_with_angle_local_enabled_raises() -> None:
+    # An empty prefix combined with only_quoted_includes_are_local=False would
+    # classify every system include (<vector>, ...) as local: reject it early.
+    with tempfile.TemporaryDirectory() as d:
+        _write(os.path.join(d, "main.h"), "int m();\n")
+        options = _make_options(d, "main.h")
+        options.local_includes_startwith = ""
+        options.only_quoted_includes_are_local = False
+        with pytest.raises(ValueError, match="only_quoted_includes_are_local"):
+            amalgamated_header.amalgamation_content(options)
