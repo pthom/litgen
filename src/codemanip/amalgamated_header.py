@@ -141,19 +141,20 @@ def _amalgamate_one_file(
     included_filename_full_path = included_filename
 
     if not os.path.isabs(included_filename):
-        proposed_paths = [
-            os.path.join(options.base_dir, included_filename)
-        ]
+        # Search base_dir first, then each include_subdir in order.
+        # base_dir takes precedence, and the first matching directory wins.
+        search_dirs = [options.base_dir]
         for include_subdir in options.include_subdirs:
             if os.path.isabs(include_subdir):
-                proposed_path = os.path.join(include_subdir, included_filename)
+                search_dirs.append(include_subdir)
             else:
-                proposed_path = os.path.join(options.base_dir, include_subdir, included_filename)
-            proposed_paths.append(proposed_path)
+                search_dirs.append(os.path.join(options.base_dir, include_subdir))
 
-        for proposed_path in proposed_paths:
+        for search_dir in search_dirs:
+            proposed_path = os.path.join(search_dir, included_filename)
             if os.path.isfile(proposed_path):
                 included_filename_full_path = proposed_path
+                break
 
     if not os.path.isfile(included_filename_full_path):
         raise FileNotFoundError(included_filename)
