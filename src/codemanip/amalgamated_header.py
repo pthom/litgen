@@ -138,10 +138,20 @@ def _amalgamate_one_file(
     """
     Recursive function that will create an amalgamation for a given header file.
     """
-    included_filename_full_path = f"{options.base_dir}/{included_filename}"
-    if not os.path.isfile(included_filename_full_path):
+    included_filename_full_path = included_filename
+
+    if not os.path.isabs(included_filename):
+        proposed_paths = [
+            os.path.join(options.base_dir, included_filename)
+        ]
         for include_subdir in options.include_subdirs:
-            proposed_path = f"{options.base_dir}/{include_subdir}/{included_filename}"
+            if os.path.isabs(include_subdir):
+                proposed_path = os.path.join(include_subdir, included_filename)
+            else:
+                proposed_path = os.path.join(options.base_dir, include_subdir, included_filename)
+            proposed_paths.append(proposed_path)
+
+        for proposed_path in proposed_paths:
             if os.path.isfile(proposed_path):
                 included_filename_full_path = proposed_path
 
