@@ -84,8 +84,6 @@ def _is_local_include_line(options: AmalgamationOptions, code_line: str) -> bool
     (i.e this will *exclude* lines like "#include <vector>")
     """
     result = False
-    if code_line.startswith(f"#include <{options.local_includes_startwith}"):
-        result = True
     if code_line.startswith(f'#include "{options.local_includes_startwith}'):
         result = True
     return result
