@@ -83,18 +83,22 @@ def _is_local_include_line(options: AmalgamationOptions, code_line: str) -> bool
     Tests whether a C++ code line is a local include statement
     (i.e this will *exclude* lines like "#include <vector>")
     """
+    _code_line = code_line.strip()
+
     result = False
-    if code_line.startswith(f"#include <{options.local_includes_startwith}"):
+    if _code_line.startswith(f"#include <{options.local_includes_startwith}"):
         result = True
-    if code_line.startswith(f'#include "{options.local_includes_startwith}'):
+    if _code_line.startswith(f'#include "{options.local_includes_startwith}'):
         result = True
     return result
 
 
 def _is_external_include_line(options: AmalgamationOptions, code_line: str) -> bool:
-    if not code_line.startswith("#include "):
+    _code_line = code_line.strip()
+
+    if not _code_line.startswith("#include "):
         return False
-    if _is_local_include_line(options, code_line):
+    if _is_local_include_line(options, _code_line):
         return False
     return True
 
@@ -103,7 +107,9 @@ def _extract_local_include_file(code_line: str) -> str:
     """
     Extracts the included file path from an include statement
     """
-    result = code_line.replace('#include "', "").replace('"', "").replace(">", "")[:-1]
+    _code_line = code_line.strip()
+
+    result = _code_line.replace('#include "', "").replace('"', "").replace(">", "")
     # possible_include_paths = [ 'immvision/', 'immdebug/']
     # for possible_include_path in possible_include_paths:
     #     result = result.replace(possible_include_path, "")
@@ -111,7 +117,9 @@ def _extract_local_include_file(code_line: str) -> str:
 
 
 def _extract_external_include_file(code_line: str) -> str:
-    result: str = code_line.replace("#include ", "").replace("\n", "")
+    _code_line = code_line.strip()
+
+    result: str = _code_line.replace("#include ", "")
     if "#" in result:
         result = result[: result.index("#")]
     return result
