@@ -93,7 +93,7 @@ class AdaptedClassMember(AdaptedDecl):
             cpp_decl.emit_warning(
                 """
                 AdaptedClassMember: Only numeric C Style arrays are supported
-                Hint: use a vector, or extend `options.c_array_numeric_member_types`
+                Hint: use a vector, or extend `options.member_numeric_c_array_types`
                 """,
                 WarningType.LitgenClassMemberNonNumericCStyleArray,
             )
@@ -137,7 +137,7 @@ class AdaptedClassMember(AdaptedDecl):
             cpp_decl.emit_warning(
                 """
                 AdaptedClassMember: Can't parse the size of this array.
-                Hint: use a vector, or extend `options.c_array_numeric_member_types`
+                Hint: use a vector, or extend `options.member_numeric_c_array_types`
                 """,
                 WarningType.LitgenClassMemberUnparsableSize,
             )
