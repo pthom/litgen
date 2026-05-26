@@ -754,7 +754,6 @@ def standard_type_replacements() -> RegexReplacementList:
     \bunsigned \s*long long\b -> int
     \bunsigned \s*long\b -> int
 
-    \\blong \s*long\b -> int
     \blong \s*long\b -> int
     \blong \s*double\b -> float
 
