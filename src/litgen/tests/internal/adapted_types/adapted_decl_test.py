@@ -55,11 +55,43 @@ struct Foo {
     """
     generated_code = litgen.generate_code(options, code)
     # print(generated_code.stub_code)
-    code_utils.assert_are_codes_equal(generated_code.stub_code, """
+    code_utils.assert_are_codes_equal(
+        generated_code.stub_code,
+        """
 class Foo:
     def __init__(self) -> None:
         pass
     v: np.ndarray  # ndarray[type=int, size=5]
     w: np.ndarray  # ndarray[type=int, size=5]
     x: np.ndarray  # ndarray[type=int, size=5]
-""")
+""",
+    )
+
+
+def test_comments_within_statements():
+    # cf https://github.com/pthom/litgen/issues/40
+    options = litgen.LitgenOptions()
+    code = """
+struct Foo {
+    // Common comment
+    int a /* a comment */, b /* b comment */, c;
+};
+    """
+    generated_code = litgen.generate_code(options, code)
+    code_utils.assert_are_codes_equal(generated_code.stub_code, '''
+class Foo:
+    # Common comment
+    #
+    # a comment
+    a: int
+    # Common comment
+    #
+    # b comment
+    b: int
+    # Common comment
+    c: int
+    def __init__(self, a: int = int(), b: int = int(), c: int = int()) -> None:
+        """Auto-generated default constructor with named params"""
+        pass
+    '''
+    )

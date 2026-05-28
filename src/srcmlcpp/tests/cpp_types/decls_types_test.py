@@ -190,6 +190,23 @@ def test_decl_statement():
     """,
     )
 
+    # Test with inline comments between several decls (see issue #40):
+    # they must not cause the whole decl_stmt to be skipped, and each comment
+    # is preserved as an end-of-line comment of the decl it annotates.
+    code = "int a /* a comment */, b /* b comment */, c;"
+    code_utils.assert_are_equal_ignore_spaces(
+        to_decl_statement(code),
+        """
+        int a; // a comment
+        int b; // b comment
+        int c;
+    """,
+    )
+
+    # Test with an inline comment between the type and the name (see issue #40)
+    code = "int /* comment */ a;"
+    code_utils.assert_are_equal_ignore_spaces(to_decl_statement(code), "int a; // comment")
+
 
 def test_decl_qualified_type():
     code = """

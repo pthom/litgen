@@ -7,6 +7,7 @@ The main interface of this module is:
 All the other functions can be considered private to this module.
 """
 from __future__ import annotations
+import copy
 from typing import Optional
 from xml.etree import ElementTree as ET
 
@@ -303,7 +304,10 @@ def parse_decl(
     https://www.srcml.org/doc/cpp_srcML.html#variable-declaration-statement
     """
     assert element_c.tag() == "decl"
-    result = CppDecl(element_c, element_c.cpp_element_comments)
+    # Give each decl its own comments: sibling decls of the same decl_stmt
+    # would otherwise share a single CppElementComments instance (since they are all
+    # parsed from the same reused element_c), which prevents per-decl inline comments.
+    result = CppDecl(element_c, copy.deepcopy(element_c.cpp_element_comments))
     result.parent = parent
     for child in element_c.make_wrapped_children():
         child_tag = child.tag()
@@ -326,6 +330,12 @@ def parse_decl(
         elif child_tag == "range":
             # this is for C bit fields
             result.bitfield_range = child.str_code_verbatim()
+        elif child_tag == "comment":
+            # An inline comment inside the declaration, e.g. `int /* comment */ a;`
+            # Attach it as an end-of-line comment of this single decl.
+            comment_text = child.text()
+            if comment_text is not None:
+                result.cpp_element_comments.add_eol_comment(srcml_comments._remove_comment_tokens(comment_text))
         else:
             raise SrcmlcppExceptionDetailed(child, f"parse_decl: unhandled tag {child_tag}")
 
@@ -354,10 +364,20 @@ def parse_decl_stmt(
             cpp_decl = parse_decl(options, child_c, result, previous_decl)
             result.cpp_decls.append(cpp_decl)
             previous_decl = cpp_decl
+        elif child_c.tag() == "comment":
+            # An inline comment between declarations, e.g. `int a /* comment */, b;`.
+            # srcml emits it right after the decl it annotates, so attach it as an
+            # end-of-line comment of the previous decl.
+            comment_text = child_c.text()
+            if previous_decl is not None and comment_text is not None:
+                previous_decl.cpp_element_comments.add_eol_comment(
+                    srcml_comments._remove_comment_tokens(comment_text)
+                )
         else:
             raise SrcmlcppExceptionDetailed(child, f"unhandled tag {child_c.tag()}")
 
-    # the comments were copied to all the internal decls, we can remove them from the decl_stmt
+    # The statement-level comments were copied to each internal decl (see parse_decl),
+    # so we can remove them from the decl_stmt itself.
     result.cpp_element_comments = CppElementComments()
 
     return result
