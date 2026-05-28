@@ -41,8 +41,8 @@ integration_tests_nanobind: build_integration_tests_nanobind
 
 # Runs all tests for pybind and nanobind (after building the integration tests)
 integration_tests:
-    just integration_tests_pybind
     just integration_tests_nanobind
+    just integration_tests_pybind
 
 # Just runs pytest (requires that the integration tests have been built)
 pytest binding_type:
