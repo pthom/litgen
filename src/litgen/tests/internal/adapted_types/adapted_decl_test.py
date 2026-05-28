@@ -18,8 +18,9 @@ def to_adapted_decl(code: str, options: LitgenOptions) -> AdaptedDecl:
 
 def test_c_array_fixed_size_to_std_array():
     options = litgen.LitgenOptions()
-    options.srcmlcpp_options.named_number_macros = {"COUNT": 3}
 
+    # Test with a named macro for the size
+    options.srcmlcpp_options.named_number_macros = {"COUNT": 3}
     code = "const int v[COUNT]"
     adapted_decl = to_adapted_decl(code, options)
     new_adapted_decl = adapted_decl.c_array_fixed_size_to_const_std_array()
@@ -36,3 +37,29 @@ def test_c_array_fixed_size_to_std_array():
     assert len(new_decls) == 2
     code_utils.assert_are_codes_equal(str(new_decls[0].cpp_element()), "BoxedInt & v_0")
     code_utils.assert_are_codes_equal(str(new_decls[1].cpp_element()), "BoxedInt & v_1")
+
+
+def test_c_array_with_macro_size():
+    options = litgen.LitgenOptions()
+    code = """
+#define COUNT 5
+#define ALIAS_COUNT COUNT
+#define ALIAS2_COUNT ALIAS_COUNT
+
+struct Foo {
+    Foo() {}
+    int v[COUNT];
+    int w[ALIAS_COUNT];
+    int x[ALIAS2_COUNT];
+};
+    """
+    generated_code = litgen.generate_code(options, code)
+    # print(generated_code.stub_code)
+    code_utils.assert_are_codes_equal(generated_code.stub_code, """
+class Foo:
+    def __init__(self) -> None:
+        pass
+    v: np.ndarray  # ndarray[type=int, size=5]
+    w: np.ndarray  # ndarray[type=int, size=5]
+    x: np.ndarray  # ndarray[type=int, size=5]
+""")

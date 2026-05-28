@@ -128,6 +128,31 @@ def test_struct_pydef_simple():
     )
 
 
+def test_struct_member_c_array_sized_by_define():
+    # Regression test for https://github.com/pthom/litgen/issues/44
+    # An array whose size is an object-like #define must be resolved automatically.
+    options = LitgenOptions()
+    code = """
+        #define MY_MACRO 5
+        struct Foo {
+            int lorem[4];
+            int ipsum[MY_MACRO];
+        };
+    """
+    stub_code = LitgenGeneratorTestsHelper.code_to_stub(options, code)
+    code_utils.assert_are_codes_equal(
+        stub_code,
+        """
+        class Foo:
+            lorem: np.ndarray  # ndarray[type=int, size=4]
+            ipsum: np.ndarray  # ndarray[type=int, size=5]
+            def __init__(self) -> None:
+                \"\"\"Auto-generated default constructor\"\"\"
+                pass
+    """,
+    )
+
+
 def test_struct_stub_complex():
     options = LitgenOptions()
     options.srcmlcpp_options.functions_api_prefixes = "MY_API"

@@ -3,7 +3,7 @@ import srcmlcpp.srcmlcpp_main
 from codemanip import code_utils
 
 from srcmlcpp import srcmlcpp_main
-from srcmlcpp.cpp_types import CppDecl, CppDeclStatement
+from srcmlcpp.cpp_types import CppDecl, CppDeclStatement, CppUnit
 from srcmlcpp.srcmlcpp_options import SrcmlcppOptions
 
 
@@ -11,6 +11,15 @@ def to_decl(code: str) -> CppDecl:
     options = SrcmlcppOptions()
     cpp_decl = srcmlcpp_main.code_first_decl(options, code)
     return cpp_decl
+
+
+def _c_array_sizes(unit: CppUnit) -> dict[str, int | None]:
+    sizes: dict[str, int | None] = {}
+    for decl in unit.all_elements_of_type(CppDecl):
+        assert isinstance(decl, CppDecl)
+        if decl.is_c_array():
+            sizes[decl.name()] = decl.c_array_size_as_int()
+    return sizes
 
 
 def to_decl_statement(code: str) -> CppDeclStatement:
@@ -382,3 +391,54 @@ def test_cpp_template_type():
     assert cpp_type.is_template()
     assert cpp_type.template_instantiated_unique_type() is None
     assert cpp_type.template_name() == "std::map"
+
+
+def test_c_array_size_from_define():
+    options = SrcmlcppOptions()
+    code = """
+#define MY_MACRO 5
+#define HEX_MACRO 0x10
+#define OCTAL_MACRO 010
+#define WRAPPED (8)
+#define ALIAS MY_MACRO
+#define FUNCLIKE(x) (x + 1)
+#define NOT_A_NUMBER "hello"
+struct Foo {
+    int literal[4];
+    int simple[MY_MACRO];
+    int hexa[HEX_MACRO];
+    int octal[OCTAL_MACRO];
+    int wrapped[WRAPPED];
+    int alias[ALIAS];
+    int funclike[FUNCLIKE];
+    int text[NOT_A_NUMBER];
+};
+"""
+    unit = srcmlcpp_main.code_to_cpp_unit(options, code)
+    sizes = _c_array_sizes(unit)
+    assert sizes["literal"] == 4
+    assert sizes["simple"] == 5
+    assert sizes["hexa"] == 16
+    assert sizes["octal"] == 8
+    assert sizes["wrapped"] == 8
+    assert sizes["alias"] == 5
+    # Function-like macros and non-numeric defines must not resolve
+    assert sizes["funclike"] is None
+    assert sizes["text"] is None
+
+
+def test_c_array_size_from_define_combined_with_named_number_macros():
+    # A #define may point (through indirection) to a named_number_macros entry
+    options = SrcmlcppOptions()
+    options.named_number_macros = {"EXTERNAL_COUNT": 7}
+    code = """
+#define ALIAS_TO_EXTERNAL EXTERNAL_COUNT
+struct Foo {
+    int direct[EXTERNAL_COUNT];
+    int indirect[ALIAS_TO_EXTERNAL];
+};
+"""
+    unit = srcmlcpp_main.code_to_cpp_unit(options, code)
+    sizes = _c_array_sizes(unit)
+    assert sizes["direct"] == 7
+    assert sizes["indirect"] == 7

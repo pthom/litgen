@@ -5,6 +5,7 @@ from enum import Enum
 from typing import TYPE_CHECKING
 
 from srcmlcpp.cpp_types.base import (
+    CppElement,
     CppElementAndComment,
     CppElementsVisitorFunction,
     CppElementsVisitorEvent,
@@ -183,15 +184,29 @@ class CppDecl(CppElementAndComment):
             int v[4]
         It will return 4
 
-        However, it might return None for
+        For
             int v[COUNT];
-        where COUNT is a macro or constexpr value
-
-        (but you can fill SrcmlcppOptions.named_number_macros to circumvent this)
+        where COUNT is a macro, the value is resolved automatically if an
+        object-like `#define COUNT <int>` is present in the same unit.
+        It can also be resolved by filling SrcmlcppOptions.named_number_macros.
         """
         size_as_str = self.c_array_size_as_str()
         maybe_size = _int_from_str_or_named_number_macros(self.options, size_as_str)
+        if maybe_size is None and size_as_str is not None and len(size_as_str.strip()) > 0:
+            maybe_size = self._int_from_unit_defines(size_as_str)
         return maybe_size
+
+    def _int_from_unit_defines(self, size_as_str: str) -> int | None:
+        from srcmlcpp.cpp_types.blocks.cpp_unit import CppUnit
+
+        if not hasattr(self, "parent"):
+            return None
+        current: CppElement | None = self
+        while current is not None:
+            if isinstance(current, CppUnit):
+                return current.int_value_from_define_name(size_as_str)
+            current = current.parent
+        return None
 
     def is_c_array_known_fixed_size(self) -> bool:
         """Returns true if this decl is a c array, and has a fixed size which we can interpret
