@@ -14,7 +14,6 @@ from srcmlcpp.cpp_types.decls_types.cpp_decl import CppDecl
 from srcmlcpp.cpp_types.template.cpp_template_specialization import CppTemplateSpecialization
 from srcmlcpp.srcml_wrapper import SrcmlWrapper
 
-
 __all__ = ["CppDeclStatement"]
 
 

@@ -17,6 +17,7 @@ original code (see str_code_verbatim())
 
 See doc/srcml_cpp_doc.png
 """
+
 from __future__ import annotations
 
 

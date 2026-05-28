@@ -4,7 +4,6 @@ from codemanip import code_utils
 
 import srcmlcpp
 
-
 # There are lots of other tests:
 # - inside classes_tests.py (methods related tests)
 # - inside template_tests.py (template related tests)

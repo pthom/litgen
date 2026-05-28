@@ -418,7 +418,9 @@ class AdaptedFunction(AdaptedElement):
             return False
         ns_name = self.cpp_element().cpp_scope_str(include_self=False)
         match_ns_name = code_utils.does_match_regex_or_matcher(self.options.fn_namespace_vectorize__regex, ns_name)
-        match_fn_name = code_utils.does_match_regex_or_matcher(self.options.fn_vectorize__regex, self.cpp_element().function_name)
+        match_fn_name = code_utils.does_match_regex_or_matcher(
+            self.options.fn_vectorize__regex, self.cpp_element().function_name
+        )
         r = match_ns_name and match_fn_name and not self.is_vectorize_impl
         return r
 
@@ -608,11 +610,9 @@ class AdaptedFunction(AdaptedElement):
 
     def _pydef_without_lambda_str_impl(self) -> str:
         """Create the full code of the pydef, with a direct call to the function or method"""
-        template_code = code_utils.unindent_code(
-            """
+        template_code = code_utils.unindent_code("""
             {pydef_method_creation_part}
-            {_i_}{function_pointer}{maybe_comma}{pydef_end_arg_docstring_returnpolicy}"""
-        )[1:]
+            {_i_}{function_pointer}{maybe_comma}{pydef_end_arg_docstring_returnpolicy}""")[1:]
 
         # Standard replacements dict (r) and replacement dict with possible line removal (l)
         replace_tokens = Munch()
@@ -686,16 +686,14 @@ class AdaptedFunction(AdaptedElement):
     def _pydef_with_lambda_str_impl(self) -> str:
         """Create the full code of the pydef, with an inner lambda"""
 
-        template_code = code_utils.unindent_code(
-            """
+        template_code = code_utils.unindent_code("""
             {pydef_method_creation_part}
             {_i_}[]({params_call_with_self_if_method}){lambda_return_arrow}
             {_i_}{
             {_i_}{_i_}{lambda_adapter_code}
             {maybe_empty_line}
             {_i_}{_i_}{return_code};
-            {_i_}}{maybe_close_paren_if_ctor}{maybe_comma}{pydef_end_arg_docstring_returnpolicy}"""
-        )[1:]
+            {_i_}}{maybe_close_paren_if_ctor}{maybe_comma}{pydef_end_arg_docstring_returnpolicy}""")[1:]
 
         function_infos = self.cpp_adapted_function
 
@@ -777,12 +775,10 @@ class AdaptedFunction(AdaptedElement):
             DOC_STRING);
         """
 
-        template_code = code_utils.unindent_code(
-            """
+        template_code = code_utils.unindent_code("""
             .def({py}::init<{arg_types}>(){maybe_comma}{location}
             {_i_}{maybe_pyarg}{maybe_comma}
-            {_i_}{maybe_docstring}"""
-        )[1:]
+            {_i_}{maybe_docstring}""")[1:]
 
         function_infos = self.cpp_element()
 
@@ -1365,6 +1361,7 @@ class AdaptedFunction(AdaptedElement):
         py_name = cpp_to_python.function_name_to_python(self.options, cpp_name)
         if cpp_name != py_name:
             from codemanip.code_replacements import RegexReplacement
+
             scope = self.cpp_element().cpp_scope(include_self=False)
             cache = self.lg_context.get_scoped_replacements(scope)
             replacement = RegexReplacement(rf"\b{cpp_name}(?=\s*\()", py_name)

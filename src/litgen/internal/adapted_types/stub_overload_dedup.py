@@ -1,4 +1,5 @@
 """Deduplication of overloaded functions with identical Python signatures in stubs."""
+
 from __future__ import annotations
 
 from typing import Sequence

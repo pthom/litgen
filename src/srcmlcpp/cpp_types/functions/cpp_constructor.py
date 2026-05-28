@@ -6,7 +6,6 @@ from srcmlcpp.cpp_types.base.cpp_unprocessed import CppUnprocessed
 from srcmlcpp.cpp_types.functions.cpp_constructor_decl import CppConstructorDecl
 from srcmlcpp.srcml_wrapper import SrcmlWrapper
 
-
 __all__ = ["CppConstructor"]
 
 

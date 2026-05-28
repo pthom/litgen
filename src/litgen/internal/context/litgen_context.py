@@ -33,6 +33,7 @@ class ScopeMembers:
     member_names: Python names of types (classes, enums) and functions
         defined directly in this scope.
     """
+
     python_scope_name: str
     member_names: set[str] = field(default_factory=set)
 

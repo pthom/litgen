@@ -6,7 +6,6 @@ import litgen
 from litgen import LitgenOptions
 from litgen.litgen_generator import LitgenGeneratorTestsHelper
 
-
 _THIS_DIR = os.path.dirname(__file__)
 sys.path.append(_THIS_DIR + "/../..")
 

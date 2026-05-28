@@ -13,7 +13,6 @@ from srcmlcpp.scrml_warning_settings import WarningType
 from srcmlcpp.cpp_types.decls_types.cpp_decl import CppDecl
 from srcmlcpp.srcml_wrapper import SrcmlWrapper
 
-
 __all__ = ["CppParameter"]
 
 

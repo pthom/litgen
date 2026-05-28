@@ -6,7 +6,6 @@ from codemanip import code_utils
 
 from srcmlcpp.internal import code_to_srcml, srcml_utils
 
-
 _THIS_DIR = os.path.dirname(__file__)
 sys.path.append(_THIS_DIR + "/../..")
 
@@ -62,8 +61,7 @@ def test_srcml_xml():
 def test_srcml_does_not_modify_code():
     assert_code_unmodified_by_srcml("int a    =    1;   // With utf8 and special chars: 😜 Héloïse € ")
     assert_code_unmodified_by_srcml("void foo(int x, int y=5){};")
-    assert_code_unmodified_by_srcml(
-        """
+    assert_code_unmodified_by_srcml("""
     #include <nonexistingfile.h>
     #define TRUC
     // A super nice function
@@ -73,5 +71,4 @@ def test_srcml_does_not_modify_code():
                             ;;TRUC;;TRUC; TRUC TRUC   ;;;; // and some gratuitous elements
     // A lambda
     auto fnSub = [](int a, int b) { return b - a;};
-    """
-    )
+    """)

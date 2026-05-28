@@ -8,7 +8,6 @@ from srcmlcpp.cpp_types import CppFunctionDecl
 
 from litgen.internal.adapted_types import AdaptedFunction
 
-
 CppOperatorName = str
 PythonOperatorName = str
 

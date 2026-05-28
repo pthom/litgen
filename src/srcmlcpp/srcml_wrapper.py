@@ -12,7 +12,6 @@ from srcmlcpp.internal import code_cache, code_to_srcml, srcml_utils
 from srcmlcpp.srcmlcpp_options import SrcmlcppOptions
 from srcmlcpp.scrml_warning_settings import WarningType
 
-
 # members that are always copied as shallow members (this is intentionally a static list)
 _SrcmlWrapper__deep_copy_force_shallow_ = ["options", "srcml_xml"]
 

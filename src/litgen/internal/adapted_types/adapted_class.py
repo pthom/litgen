@@ -78,7 +78,9 @@ class AdaptedClassMember(AdaptedDecl):
         array_typename = cpp_decl.cpp_type.str_code()
         if array_typename not in options._member_numeric_c_array_types_list():
             return False
-        shall_replace = code_utils.does_match_regex_or_matcher(options.member_numeric_c_array_replace__regex, cpp_decl.decl_name)
+        shall_replace = code_utils.does_match_regex_or_matcher(
+            options.member_numeric_c_array_replace__regex, cpp_decl.decl_name
+        )
         if not shall_replace:
             return False
         if cpp_decl.c_array_size_as_int() is None:
@@ -99,7 +101,9 @@ class AdaptedClassMember(AdaptedDecl):
             )
             return False
 
-        shall_replace = code_utils.does_match_regex_or_matcher(options.member_numeric_c_array_replace__regex, cpp_decl.decl_name)
+        shall_replace = code_utils.does_match_regex_or_matcher(
+            options.member_numeric_c_array_replace__regex, cpp_decl.decl_name
+        )
         if not shall_replace:
             cpp_decl.emit_warning(
                 """
@@ -265,9 +269,9 @@ class AdaptedClassMember(AdaptedDecl):
         default_value_python = self.decl_value_python()
 
         # Pointer members with nullptr default should be Optional
-        if (
-            "*" in self.cpp_element().cpp_type.modifiers
-            and self.cpp_element().initial_value_code.strip() in ("nullptr", "NULL")
+        if "*" in self.cpp_element().cpp_type.modifiers and self.cpp_element().initial_value_code.strip() in (
+            "nullptr",
+            "NULL",
         ):
             decl_type_python = f"Optional[{decl_type_python}]"
             default_value_python = "None"
@@ -369,6 +373,7 @@ class AdaptedClass(AdaptedElement):
 
     def _group_overloaded_methods(self) -> None:
         from litgen.internal.adapted_types.adapted_block import group_overloaded_functions
+
         self.adapted_public_children = group_overloaded_functions(self.adapted_public_children)
 
     def _register_inner_python_names(self) -> None:
@@ -388,6 +393,7 @@ class AdaptedClass(AdaptedElement):
                 names.add(cpp_to_python._class_name_to_python(self.options, elem.cpp_element().class_name))
         if names:
             from litgen.internal.context.litgen_context import ScopeMembers
+
             python_scope_name = cpp_to_python._class_name_to_python(self.options, cpp_class_name)
             self.lg_context.scope_members[cpp_class_name] = ScopeMembers(python_scope_name, names)
 
@@ -538,7 +544,6 @@ class AdaptedClass(AdaptedElement):
                 return ""
             else:
                 return "(" + ", ".join(parents) + ")"
-
 
         from litgen.internal.adapted_types.line_spacer import LineSpacerPython
 
@@ -729,7 +734,9 @@ class AdaptedClass(AdaptedElement):
             else:
                 replacements.maybe_py_is_final = ""
 
-            if code_utils.does_match_regex_or_matcher(self.options.class_dynamic_attributes__regex, self.cpp_element().class_name):
+            if code_utils.does_match_regex_or_matcher(
+                self.options.class_dynamic_attributes__regex, self.cpp_element().class_name
+            ):
                 if options.bind_library == BindLibraryType.pybind11:
                     replacements.maybe_py_is_dynamic = ", py::dynamic_attr()"
                 else:
@@ -740,7 +747,9 @@ class AdaptedClass(AdaptedElement):
             replacements.comment = self._elm_comment_pydef_one_line()
 
             if (
-                code_utils.does_match_regex_or_matcher(options.class_held_as_shared__regex, self.cpp_element().class_name)
+                code_utils.does_match_regex_or_matcher(
+                    options.class_held_as_shared__regex, self.cpp_element().class_name
+                )
                 and self.options.bind_library == BindLibraryType.pybind11
             ):
                 replacements.maybe_shared_ptr_holder = f", std::shared_ptr<{qualified_struct_name}>"
@@ -842,7 +851,6 @@ class AdaptedClass(AdaptedElement):
             children_code += make_iterable_code()
             return children_code
 
-
         inner_classes_code = make_inner_classes_code()
 
         code = make_pyclass_creation_code()
@@ -857,7 +865,8 @@ class AdaptedClass(AdaptedElement):
         code = code + f"{_i_};"
 
         custom_code = self.options.custom_bindings._pub_make_class_custom_code(
-            self.cpp_element().qualified_class_name(), self.pydef_class_var(), is_pydef=True)
+            self.cpp_element().qualified_class_name(), self.pydef_class_var(), is_pydef=True
+        )
         if custom_code is not None:
             code += "\n" + custom_code + "\n"
 
@@ -1214,6 +1223,7 @@ class PythonNamedConstructorHelper:
     def flag_generate_named_ctor_params(self) -> bool:
         cpp_class = self.adapted_class.cpp_element()
         from codemanip.code_utils import RegexOrMatcher
+
         ctor__regex: RegexOrMatcher = ""
         if type(cpp_class) is CppClass:
             ctor__regex = self.options.class_create_default_named_ctor__regex

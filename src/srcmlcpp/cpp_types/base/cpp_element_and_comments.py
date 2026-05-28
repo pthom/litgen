@@ -5,7 +5,6 @@ from srcmlcpp.cpp_types.base.cpp_element import CppElement
 from srcmlcpp.cpp_types.base.cpp_element_comments import CppElementComments
 from srcmlcpp.srcml_wrapper import SrcmlWrapper
 
-
 __all__ = ["CppElementAndComment"]
 
 

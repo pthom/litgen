@@ -4,7 +4,6 @@ from dataclasses import dataclass
 from srcmlcpp.cpp_types.blocks.cpp_block import CppBlock
 from srcmlcpp.srcml_wrapper import SrcmlWrapper
 
-
 __all__ = ["CppBlockContent"]
 
 

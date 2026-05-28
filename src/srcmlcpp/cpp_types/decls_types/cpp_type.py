@@ -9,7 +9,6 @@ from srcmlcpp.cpp_types.base import CppElementAndComment, CppElementComments
 from srcmlcpp.cpp_types.scope.cpp_scope import CppScope
 from srcmlcpp.srcml_wrapper import SrcmlWrapper
 
-
 if TYPE_CHECKING:
     from srcmlcpp.cpp_types.template.cpp_template_specialization import CppTemplateSpecialization
 

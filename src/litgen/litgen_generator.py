@@ -14,7 +14,6 @@ from litgen.code_to_adapted_unit import code_to_adapted_unit_in_context
 from litgen.internal import boxed_python_type, cpp_to_python
 from litgen.internal.context.litgen_context import LitgenContext
 
-
 CppFilename = str
 CppCode = str
 PythonCode = str

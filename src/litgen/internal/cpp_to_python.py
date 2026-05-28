@@ -13,7 +13,6 @@ from srcmlcpp.cpp_types.template.cpp_i_template_host import CppITemplateHost
 from litgen import LitgenOptions
 from litgen.internal import LitgenContext
 
-
 """
 Code utilities for transcription from C++ to Python
 """

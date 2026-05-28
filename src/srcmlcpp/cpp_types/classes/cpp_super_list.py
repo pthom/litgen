@@ -12,7 +12,6 @@ from srcmlcpp.cpp_types.base import (
 from srcmlcpp.cpp_types.classes.cpp_super import CppSuper
 from srcmlcpp.srcml_wrapper import SrcmlWrapper
 
-
 __all__ = ["CppSuperList"]
 
 

@@ -155,12 +155,13 @@ def test_enum_int():
     # print(generated_code.pydef_code)
     code_utils.assert_are_codes_equal(
         generated_code.pydef_code,
-    """
+        """
         auto pyEnumFoo =
             nb::enum_<Foo>(m, "Foo", nb::is_arithmetic(), nb::is_flag(), "")
                 .value("a", A, "")
                 .value("b", B, "");
-        """)
+        """,
+    )
 
     # print(generated_code.stub_code)
     code_utils.assert_are_codes_equal(
@@ -169,4 +170,5 @@ def test_enum_int():
         class Foo(enum.IntFlag):
             a = enum.auto() # (= 0)
             b = enum.auto() # (= 1)
-        """)
+        """,
+    )

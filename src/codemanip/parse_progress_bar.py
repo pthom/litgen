@@ -69,6 +69,7 @@ class ParseProgressBars:
         # assert step_name in self._progress_bars
         if step_name not in self._progress_bars:
             import logging
+
             logging.warning(f"stop_progress_bar: step_name not in self._progress_bars --> {step_name}")
             return
         self._progress_bars[step_name].stop()

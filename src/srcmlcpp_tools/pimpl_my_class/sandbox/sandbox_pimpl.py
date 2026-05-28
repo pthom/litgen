@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-
 cpp_code = """
 #include "my_class.h"
 

@@ -2,7 +2,6 @@ from __future__ import annotations
 
 from srcmlcpp.cpp_types.decls_types.cpp_type import CppType
 
-
 __all__ = ["CppTemplateSpecializationPart", "CppTemplateSpecialization"]
 
 

@@ -9,7 +9,6 @@ from srcmlcpp.cpp_types.base import (
 )
 from srcmlcpp.srcml_wrapper import SrcmlWrapper
 
-
 __all__ = ["CppDefine"]
 
 

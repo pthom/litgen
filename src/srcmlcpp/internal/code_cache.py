@@ -1,7 +1,6 @@
 from __future__ import annotations
 from typing import Optional
 
-
 _Filename = str
 _Code = str
 _CODE_CACHE: dict[Optional[_Filename], _Code] = {}

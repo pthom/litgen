@@ -4,7 +4,6 @@ import sys
 
 from codemanip import code_utils
 
-
 _THIS_DIR = os.path.dirname(__file__)
 sys.path.append(_THIS_DIR + "/../..")
 
@@ -64,17 +63,12 @@ def test_strip_empty_lines():
           struct Foo {
              int a = 1;
           };
-    """.split(
-        "\n"
-    )
+    """.split("\n")
     code_lines = code_utils.strip_empty_lines_in_list(code_lines)  # type: ignore
     code_stripped = "\n".join(code_lines)
-    assert (
-        code_stripped
-        == """          struct Foo {
+    assert code_stripped == """          struct Foo {
              int a = 1;
           };"""
-    )
 
 
 def test_to_snake_case():
@@ -94,14 +88,11 @@ def test_unindent_code():
     if a > 10:
         return 0
     """
-    assert (
-        code_utils.unindent_code(code)
-        == """
+    assert code_utils.unindent_code(code) == """
 a = 5
 if a > 10:
     return 0
 """
-    )
 
 
 def test_var_name_contains_word():

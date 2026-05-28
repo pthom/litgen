@@ -2,7 +2,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from enum import Enum
 from typing import cast
-from munch import Munch  # type:ignore
+from munch import Munch  # type: ignore
 
 from srcmlcpp.cpp_types import CppDefine
 from codemanip import code_utils

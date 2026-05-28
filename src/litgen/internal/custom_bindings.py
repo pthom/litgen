@@ -182,12 +182,7 @@ class CustomBindings:
     def _get_custom_bindings_ref(self, is_pydef: bool) -> Dict[CppScope, List[str]]:
         return self._custom_binding_pydefs if is_pydef else self._custom_binding_stubs
 
-    def _do_add_cleaned_code(
-        self,
-        qualified_scope: str,
-        code: str | None,
-        is_pydef: bool = False
-    ) -> None:
+    def _do_add_cleaned_code(self, qualified_scope: str, code: str | None, is_pydef: bool = False) -> None:
         if code is None:
             return
         code = code_utils.unindent_code(code)
@@ -208,10 +203,7 @@ class CustomBindings:
         self._do_add_cleaned_code(qualified_scope, stub_code, is_pydef=False)
         self._do_add_cleaned_code(qualified_scope, pydef_code, is_pydef=True)
 
-    def _make_custom_code(self,
-                          scope: CppScope,
-                          is_pydef: bool,
-                          replacements: List[_StringReplacement]) -> str | None:
+    def _make_custom_code(self, scope: CppScope, is_pydef: bool, replacements: List[_StringReplacement]) -> str | None:
         custom_binding_codes = self._get_custom_bindings_ref(is_pydef)
         if scope not in custom_binding_codes:
             return None
@@ -231,40 +223,22 @@ class CustomBindings:
         return result
 
     def _pub_make_class_custom_code(
-            self,
-            qualified_class_name: str,
-            pydef_class_var_name: str,
-            is_pydef: bool
+        self, qualified_class_name: str, pydef_class_var_name: str, is_pydef: bool
     ) -> str | None:
         replacements = [_StringReplacement("LG_CLASS", pydef_class_var_name)]
         qual_class_scope = CppScope.from_string(qualified_class_name)
-        result = self._make_custom_code(
-            qual_class_scope,
-            is_pydef=is_pydef,
-            replacements=replacements
-        )
+        result = self._make_custom_code(qual_class_scope, is_pydef=is_pydef, replacements=replacements)
         return result
 
     def _pub_make_submodule_custom_code(
-            self,
-            qualified_class_name: str,
-            pydef_submodule_var_name: str,
-            is_pydef: bool
+        self, qualified_class_name: str, pydef_submodule_var_name: str, is_pydef: bool
     ) -> str | None:
         replacements = [_StringReplacement("LG_SUBMODULE", pydef_submodule_var_name)]
         qual_class_scope = CppScope.from_string(qualified_class_name)
-        result = self._make_custom_code(
-            qual_class_scope,
-            is_pydef=is_pydef,
-            replacements=replacements
-        )
+        result = self._make_custom_code(qual_class_scope, is_pydef=is_pydef, replacements=replacements)
         return result
 
-    def _pub_make_main_module_custom_code(
-            self,
-            pydef_main_module_var_name: str,
-            is_pydef: bool
-    ) -> str | None:
+    def _pub_make_main_module_custom_code(self, pydef_main_module_var_name: str, is_pydef: bool) -> str | None:
         # Emit only once per generator lifetime (a single generator may
         # process multiple header files via repeated process_cpp_file calls).
         if is_pydef:
@@ -276,11 +250,7 @@ class CustomBindings:
 
         replacements = [_StringReplacement("LG_MODULE", pydef_main_module_var_name)]
         qual_class_scope = CppScope.from_string("")
-        result = self._make_custom_code(
-            qual_class_scope,
-            is_pydef=is_pydef,
-            replacements=replacements
-        )
+        result = self._make_custom_code(qual_class_scope, is_pydef=is_pydef, replacements=replacements)
 
         if result is not None:
             if is_pydef:

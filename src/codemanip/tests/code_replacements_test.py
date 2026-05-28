@@ -5,7 +5,6 @@ import sys
 from codemanip import code_replacements
 from codemanip.code_replacements import RegexReplacementList
 
-
 _THIS_DIR = os.path.dirname(__file__)
 sys.path.append(_THIS_DIR + "/../..")
 

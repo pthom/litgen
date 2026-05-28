@@ -4,7 +4,6 @@ from codemanip import code_utils
 import litgen
 from litgen import LitgenOptions
 
-
 # Other tests exist for namespace exist inside litgen_context_test.py
 # (since namespaces store their code in the context most of the time)
 

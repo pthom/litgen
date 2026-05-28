@@ -88,12 +88,13 @@ def test_custom_code():
             def global_function() -> None:
                 """A custom function in the global namespace"""
                 ...
-    ''')
+    ''',
+    )
 
     # print("\n" + generated_code.pydef_code)
     code_utils.assert_are_codes_equal(
         generated_code.pydef_code,
-        '''
+        """
             { // <namespace RootNs>
                 nb::module_ pyNsRootNs = m.def_submodule("root_ns", "");
                 auto pyNsRootNs_ClassFoo =
@@ -121,4 +122,5 @@ def test_custom_code():
 
             // Example of adding a custom function to the main module
             m.def("global_function", [](){ std::cout << "Hello from global_function!" << std::endl; });
-    ''')
+    """,
+    )

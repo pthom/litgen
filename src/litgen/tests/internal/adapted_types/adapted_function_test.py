@@ -127,6 +127,7 @@ def test_return_policy_regex() -> None:
         """,
     )
 
+
 def test_gil_scoped_release_py() -> None:
     options = LitgenOptions()
     options.bind_library = litgen.BindLibraryType.pybind11
@@ -143,6 +144,7 @@ def test_gil_scoped_release_py() -> None:
     # logging.warning("\n" + generated_code)
     code_utils.assert_are_codes_equal(generated_code, expected_code)
 
+
 def test_gil_scoped_release_nb() -> None:
     options = LitgenOptions()
     options.bind_library = litgen.BindLibraryType.nanobind
@@ -157,7 +159,6 @@ def test_gil_scoped_release_nb() -> None:
             Foo, nb::call_guard<nb::gil_scoped_release>());
         """
     code_utils.assert_are_codes_equal(generated_code, expected_code)
-
 
 
 def test_implot_one_buffer() -> None:
@@ -313,7 +314,7 @@ def test_overloads_non_adjacent() -> None:
     # The two SetWindowSize overloads should be adjacent, same for SetWindowCollapsed and SetWindowFocus
     code_utils.assert_are_codes_equal(
         generated_code,
-        '''
+        """
         @overload
         def set_window_size(size: int, cond: int = 0) -> None:
             pass
@@ -332,7 +333,7 @@ def test_overloads_non_adjacent() -> None:
         @overload
         def set_window_focus(name: str) -> None:
             pass
-        ''',
+        """,
     )
 
     # pydef should also work (overload_cast for each)
@@ -912,8 +913,9 @@ def test_optional_none_param():
 
         m.def("foo_default",
             foo_default, nb::arg("a").none() = nb::none());
-        """
-        )
+        """,
+    )
+
 
 def test_callable_matcher_exclude_by_name():
     options = LitgenOptions()

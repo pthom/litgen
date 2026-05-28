@@ -3,7 +3,6 @@ import litgen
 from codemanip import code_utils
 import srcmlcpp
 
-
 # def test_apply_scoped_identifiers_to_code():
 #     from srcmlcpp.cpp_types.scope.cpp_scope_identifiers import apply_scoped_identifiers_to_code
 #

@@ -6,7 +6,6 @@ from typing import TYPE_CHECKING, Callable
 from srcmlcpp.cpp_types.scope.cpp_scope import CppScope, CppScopePart, CppScopeType
 from srcmlcpp.srcml_wrapper import SrcmlWrapper
 
-
 if TYPE_CHECKING:
     from srcmlcpp.cpp_types.blocks.cpp_unit import CppUnit
 

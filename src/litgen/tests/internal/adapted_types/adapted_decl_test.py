@@ -78,7 +78,9 @@ struct Foo {
 };
     """
     generated_code = litgen.generate_code(options, code)
-    code_utils.assert_are_codes_equal(generated_code.stub_code, '''
+    code_utils.assert_are_codes_equal(
+        generated_code.stub_code,
+        '''
 class Foo:
     # Common comment
     #
@@ -93,5 +95,5 @@ class Foo:
     def __init__(self, a: int = int(), b: int = int(), c: int = int()) -> None:
         """Auto-generated default constructor with named params"""
         pass
-    '''
+    ''',
     )

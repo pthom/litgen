@@ -1,7 +1,6 @@
 from __future__ import annotations
 from enum import Enum
 
-
 CppNamespaceName = str
 CppQualifiedNamespaceName = str
 StubCode = str

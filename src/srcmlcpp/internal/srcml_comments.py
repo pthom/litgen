@@ -5,6 +5,7 @@ This modules parses the C++ comments:
 - Mark empty lines (transforms them into a comment that contains `COMMENT_NEW_LINE_TOKEN`
 - Group comments on consecutive lines
 """
+
 from __future__ import annotations
 import copy
 from typing import Optional
@@ -16,7 +17,6 @@ from srcmlcpp.cpp_types import CppElementAndComment, CppElementComments
 from srcmlcpp.internal import srcml_utils
 from srcmlcpp.internal.filter_preprocessor_regions import filter_preprocessor_regions
 from srcmlcpp.srcml_wrapper import SrcmlWrapper
-
 
 COMMENT_NEW_LINE_TOKEN = "_SRCML_LINEFEED_"
 EMPTY_LINE_COMMENT_CONTENT = "_SRCML_EMPTY_LINE_"

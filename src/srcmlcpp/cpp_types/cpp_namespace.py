@@ -8,7 +8,6 @@ from srcmlcpp.cpp_types.base.cpp_element_comments import CppElementComments
 from srcmlcpp.cpp_types.blocks.cpp_block import CppBlock
 from srcmlcpp.srcml_wrapper import SrcmlWrapper
 
-
 __all__ = ["CppNamespace"]
 
 

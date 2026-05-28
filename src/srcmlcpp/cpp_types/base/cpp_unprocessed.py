@@ -4,7 +4,6 @@ from dataclasses import dataclass
 from srcmlcpp.cpp_types.base import CppElementAndComment, CppElementComments
 from srcmlcpp.srcml_wrapper import SrcmlWrapper
 
-
 __all__ = ["CppEmptyLine", "CppUnprocessed", "CppComment"]
 
 

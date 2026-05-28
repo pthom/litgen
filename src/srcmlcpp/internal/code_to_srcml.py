@@ -1,6 +1,7 @@
 """
 Calls the external program srcml (https://www.srcml.org/)
 """
+
 from __future__ import annotations
 
 import sys
@@ -68,15 +69,13 @@ class _SrcmlCaller:
             subprocess.check_call(shell_command, shell=True)
         except subprocess.CalledProcessError as e:
             logging.error(f"_SrcmlCaller.call, error {e}")
-            logging.error(
-                """
+            logging.error("""
             srcmlcpp requires the installation of srcML ( https://www.srcml.org )
             (the command "srcml" needs to be available in your PATH)
             Did you install it?
             See install instructions at:
                 https://pthom.github.io/litgen/litgen_book/01_05_10_install.html
-            """
-            )
+            """)
             sys.exit(1)
 
     def _random_filename(self) -> str:

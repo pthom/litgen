@@ -9,7 +9,6 @@ from srcmlcpp import cpp_types, srcmlcpp_main
 from srcmlcpp.internal import cpp_types_parse
 from srcmlcpp.srcmlcpp_options import SrcmlcppOptions
 
-
 _THIS_DIR = os.path.dirname(__file__)
 
 

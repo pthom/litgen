@@ -6,6 +6,7 @@ The main interface of this module is:
 
 All the other functions can be considered private to this module.
 """
+
 from __future__ import annotations
 import copy
 from typing import Optional
@@ -52,7 +53,6 @@ from srcmlcpp.internal.srcmlcpp_exception_detailed import (
     SrcmlcppExceptionDetailed,
 )
 from srcmlcpp.srcmlcpp_options import SrcmlcppOptions
-
 
 _PROGRESS_BAR_TITLE_SRCML_PARSE = "srcmlcpp: Create CppElements................. "
 
@@ -370,9 +370,7 @@ def parse_decl_stmt(
             # end-of-line comment of the previous decl.
             comment_text = child_c.text()
             if previous_decl is not None and comment_text is not None:
-                previous_decl.cpp_element_comments.add_eol_comment(
-                    srcml_comments._remove_comment_tokens(comment_text)
-                )
+                previous_decl.cpp_element_comments.add_eol_comment(srcml_comments._remove_comment_tokens(comment_text))
         else:
             raise SrcmlcppExceptionDetailed(child, f"unhandled tag {child_c.tag()}")
 

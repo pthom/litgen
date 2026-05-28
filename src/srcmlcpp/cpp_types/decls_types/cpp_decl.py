@@ -20,7 +20,6 @@ from srcmlcpp.srcmlcpp_options import (
 )
 from srcmlcpp.srcml_wrapper import SrcmlWrapper
 
-
 if TYPE_CHECKING:
     from srcmlcpp.cpp_types.cpp_enum import CppEnum
 

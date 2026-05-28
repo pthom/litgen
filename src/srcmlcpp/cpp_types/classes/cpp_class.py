@@ -5,7 +5,6 @@ from srcmlcpp.cpp_types.base import CppElementComments
 from srcmlcpp.cpp_types.classes.cpp_struct import CppStruct
 from srcmlcpp.srcml_wrapper import SrcmlWrapper
 
-
 __all__ = ["CppClass"]
 
 

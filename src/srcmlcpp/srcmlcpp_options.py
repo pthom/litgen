@@ -1,6 +1,7 @@
 """
 Options for srcmlcpp. Read the doc near all options elements.
 """
+
 from __future__ import annotations
 from typing import Callable, Optional
 

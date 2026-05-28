@@ -6,7 +6,6 @@ from srcmlcpp.cpp_types.base.cpp_access_type import CppAccessType
 from srcmlcpp.cpp_types.blocks.cpp_block import CppBlock
 from srcmlcpp.srcml_wrapper import SrcmlWrapper
 
-
 __all__ = ["CppPublicProtectedPrivate"]
 
 

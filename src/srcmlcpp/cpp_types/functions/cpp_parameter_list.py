@@ -12,7 +12,6 @@ from srcmlcpp.cpp_types.scope.cpp_scope import CppScope
 from srcmlcpp.cpp_types.functions.cpp_parameter import CppParameter
 from srcmlcpp.srcml_wrapper import SrcmlWrapper
 
-
 __all__ = ["CppParameterList"]
 
 

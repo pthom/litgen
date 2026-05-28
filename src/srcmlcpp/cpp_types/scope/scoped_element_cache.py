@@ -1,10 +1,9 @@
-"""Qualifiable elements: CppElements for which we store (and cache the terse and/or qualified version)
-"""
+"""Qualifiable elements: CppElements for which we store (and cache the terse and/or qualified version)"""
+
 from __future__ import annotations
 
 from srcmlcpp.cpp_types.scope import CppScope
 from srcmlcpp.cpp_types.base import CppElementAndComment
-
 
 CppScopeName = str
 

@@ -10,7 +10,6 @@ from srcmlcpp.cpp_types import CppElement, CppElementComments, CppElementAndComm
 from srcmlcpp.internal import srcml_comments, srcml_utils
 from srcmlcpp.srcmlcpp_options import SrcmlcppOptions
 
-
 _THIS_DIR = os.path.dirname(__file__)
 sys.path.append(_THIS_DIR + "/../..")
 
@@ -105,9 +104,7 @@ def test_group_comment():
     MY_API void Foo();
     MY_API void Foo2();
     MY_API void Foo3();
-    """[
-        1:
-    ]
+    """[1:]
     options = SrcmlcppOptions()
     xml_wrapper = srcmlcpp_main.code_to_srcml_wrapper(options, code)
     children_and_comments = srcml_comments.get_children_with_comments(xml_wrapper)

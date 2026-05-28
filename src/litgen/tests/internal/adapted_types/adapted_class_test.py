@@ -787,7 +787,7 @@ def test_function_call_snake_case_in_default() -> None:
     generated_code = litgen.generate_code(options, code)
     code_utils.assert_are_codes_equal(
         generated_code.stub_code,
-        '''
+        """
         # <submodule ns>
         class ns:  # Proxy class that introduces typings for the *submodule* ns
             pass  # (This corresponds to a C++ namespace. All methods are static!)
@@ -799,7 +799,7 @@ def test_function_call_snake_case_in_default() -> None:
                 pass
 
         # </submodule ns>
-        ''',
+        """,
     )
 
 
@@ -817,7 +817,7 @@ def test_snake_case_cpp_function_no_replacement() -> None:
     generated_code = litgen.generate_code(options, code)
     code_utils.assert_are_codes_equal(
         generated_code.stub_code,
-        '''
+        """
         # <submodule ns>
         class ns:  # Proxy class that introduces typings for the *submodule* ns
             pass  # (This corresponds to a C++ namespace. All methods are static!)
@@ -829,7 +829,7 @@ def test_snake_case_cpp_function_no_replacement() -> None:
                 pass
 
         # </submodule ns>
-        ''',
+        """,
     )
 
 

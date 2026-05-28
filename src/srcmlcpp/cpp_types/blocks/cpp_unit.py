@@ -7,7 +7,6 @@ from srcmlcpp.cpp_types.blocks.cpp_block import CppBlock
 from srcmlcpp.srcml_wrapper import SrcmlWrapper
 from srcmlcpp.cpp_types.scope.cpp_scope_identifiers import CppScopeIdentifiers
 
-
 __all__ = ["CppUnit"]
 
 

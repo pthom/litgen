@@ -6,7 +6,6 @@ from srcmlcpp.cpp_types.template.cpp_template import CppTemplate
 from srcmlcpp.cpp_types.template.cpp_template_specialization import CppTemplateSpecialization
 from srcmlcpp.srcml_wrapper import SrcmlWrapper
 
-
 __all__ = ["CppITemplateHost"]
 
 

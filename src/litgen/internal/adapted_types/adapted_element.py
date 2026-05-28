@@ -11,7 +11,6 @@ from litgen.internal import cpp_to_python
 from litgen.internal.context.litgen_context import LitgenContext
 from litgen.options import LitgenOptions
 
-
 _PROGRESS_BAR_TITLE_ADAPTED_ELEMENTS = "litgen:   Create AdaptedElements............. "
 _PROGRESS_BAR_TITLE_PYDEF = "litgen:   Generate pydef cpp file............ "
 _PROGRESS_BAR_TITLE_STUB = "litgen:   Generate stubs..................... "

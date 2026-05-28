@@ -5,6 +5,7 @@ Main functions provided by this module
 
 * `code_to_srcml_xml_wrapper` is a lower level utility, that returns a wrapped version of the srcML tree
 """
+
 from __future__ import annotations
 from typing import cast
 

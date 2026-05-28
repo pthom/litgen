@@ -10,7 +10,6 @@ from srcmlcpp.cpp_types.base import (
 )
 from srcmlcpp.srcml_wrapper import SrcmlWrapper
 
-
 if TYPE_CHECKING:
     from srcmlcpp.cpp_types.functions import CppParameterList
 

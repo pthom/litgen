@@ -13,7 +13,6 @@ from litgen.internal.template_options import TemplateFunctionsOptions, TemplateC
 from litgen.internal.class_iterable_info import ClassIterablesInfos
 from litgen.internal.custom_bindings import CustomBindings
 
-
 if TYPE_CHECKING:
     from litgen.internal.adapted_types import AdaptedFunction, AdaptedClass
     from litgen.litgen_generator import GeneratedCodeType
@@ -705,12 +704,10 @@ class LitgenOptions:
         ]
         for buffer_type in self._fn_params_buffer_types_list():
             if buffer_type not in authorized_types:
-                raise ValueError(
-                    f"""
+                raise ValueError(f"""
                     options.build_types contains an unauthorized type: {buffer_type}
                     Authorized types are: { ", ".join(authorized_types) }
-                    """
-                )
+                    """)
 
     def _indent_cpp_spaces(self) -> str:
         space = "\t" if self.cpp_indent_with_tabs else " "

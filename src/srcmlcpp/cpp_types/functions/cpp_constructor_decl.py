@@ -5,7 +5,6 @@ from srcmlcpp.cpp_types.base import CppElementComments
 from srcmlcpp.cpp_types.functions.cpp_function_decl import CppFunctionDecl
 from srcmlcpp.srcml_wrapper import SrcmlWrapper
 
-
 __all__ = ["CppConstructorDecl"]
 
 

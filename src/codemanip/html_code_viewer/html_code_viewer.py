@@ -10,7 +10,6 @@ from pygments.lexer import Lexer
 from pygments.lexers import CppLexer, Python3Lexer
 from IPython.core.display import HTML  # type: ignore
 
-
 HtmlCode = str
 
 

@@ -4,7 +4,6 @@ from codemanip import code_utils
 
 from litgen.internal.context.type_synonyms import Code, CppNamespaceName, CppQualifiedNamespaceName, PydefOrStub
 
-
 if TYPE_CHECKING:
     from litgen.options import LitgenOptions
 

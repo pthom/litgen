@@ -3,6 +3,7 @@ Some utilities for srcml
 
 This module *must* not depend on srcml_types!
 """
+
 from __future__ import annotations
 import logging
 import os

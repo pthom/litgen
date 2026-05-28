@@ -16,7 +16,6 @@ from srcmlcpp.cpp_types.blocks.cpp_block import CppBlock
 from srcmlcpp.cpp_types.decls_types.cpp_decl import CppDecl
 from srcmlcpp.srcml_wrapper import SrcmlWrapper
 
-
 __all__ = ["CppEnum"]
 
 

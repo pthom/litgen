@@ -93,7 +93,7 @@ class AdaptedBlock(AdaptedElement):
             AdaptedFunction,
             AdaptedEnum,
             AdaptedDefine,
-            AdaptedConditionMacro
+            AdaptedConditionMacro,
             # AdaptedNamespace,  # There is actually a circular dependency here (with no important consequences)
             # A Block can contain a namespace, and a namespace contains a block
         ]

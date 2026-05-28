@@ -47,6 +47,7 @@ class AdaptedNamespace(AdaptedElement):
             elif isinstance(elem, AdaptedFunction):
                 names.add(cpp_to_python.function_name_to_python(self.options, elem.cpp_element().function_name))
         from litgen.internal.context.litgen_context import ScopeMembers
+
         python_scope_name = cpp_to_python.namespace_name_to_python(self.options, cpp_ns_name)
         self.lg_context.scope_members[cpp_ns_name] = ScopeMembers(python_scope_name, names)
 
@@ -96,9 +97,7 @@ class AdaptedNamespace(AdaptedElement):
         if self.flag_shall_create_namespace_as_module():
             # Add user custom code
             custom_code = self.options.custom_bindings._pub_make_submodule_custom_code(
-                self.cpp_element().cpp_scope(include_self=True).str_cpp,
-                self.pydef_submodule_cpp_var(),
-                is_pydef=False
+                self.cpp_element().cpp_scope(include_self=True).str_cpp, self.pydef_submodule_cpp_var(), is_pydef=False
             )
             if custom_code is not None:
                 lines += custom_code.splitlines()
@@ -150,9 +149,7 @@ class AdaptedNamespace(AdaptedElement):
         if self.flag_shall_create_namespace_as_module():
             # Add user custom code
             custom_code = self.options.custom_bindings._pub_make_submodule_custom_code(
-                self.cpp_element().cpp_scope(include_self=True).str_cpp,
-                self.pydef_submodule_cpp_var(),
-                is_pydef=True
+                self.cpp_element().cpp_scope(include_self=True).str_cpp, self.pydef_submodule_cpp_var(), is_pydef=True
             )
             if custom_code is not None:
                 lines += custom_code.splitlines()

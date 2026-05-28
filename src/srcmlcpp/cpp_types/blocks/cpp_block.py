@@ -14,7 +14,6 @@ from srcmlcpp.cpp_types.functions import CppFunctionDecl
 from srcmlcpp.srcml_wrapper import SrcmlWrapper
 from srcmlcpp.cpp_types.scope.cpp_scope import CppScope
 
-
 if TYPE_CHECKING:
     from srcmlcpp.cpp_types.classes.cpp_struct import CppStruct
     from srcmlcpp.cpp_types.decls_types import CppDecl, CppDeclStatement

@@ -5,7 +5,6 @@ import os
 import subprocess
 import sys
 
-
 INVOKE_DIR = os.getcwd()
 THIS_DIR = os.path.dirname(os.path.realpath(__file__))
 REPO_DIR = os.path.realpath(THIS_DIR + "/../..")
