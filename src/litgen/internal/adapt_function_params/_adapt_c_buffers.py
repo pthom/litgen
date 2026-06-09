@@ -160,13 +160,12 @@ class _AdaptBuffersHelper:
         param_default_value = param.default_value()
         return param_default_value.strip().startswith("sizeof")
 
-    def _last_template_buffer_param(self) -> Optional[CppParameter]:
+    def _template_buffer_params(self) -> list[CppParameter]:
         params = self.function_infos.parameter_list.parameters
+        return [p for p in params if _looks_like_param_template_buffer(self.options, p)]
 
-        def is_template_buffer(param):
-            return _looks_like_param_template_buffer(self.options, param)
-
-        template_buffer_params = list(filter(is_template_buffer, params))
+    def _last_template_buffer_param(self) -> Optional[CppParameter]:
+        template_buffer_params = self._template_buffer_params()
         if len(template_buffer_params) == 0:
             return None
         else:
@@ -281,6 +280,67 @@ class _AdaptBuffersHelper:
             {_i_}throw std::runtime_error(std::string("Bad array type ('") + {template_buffer_name}_type + "') for param {template_buffer_name}");
         """  # noqa
 
+        # When a function has several template buffers (e.g. PlotScatter(xs, ys)), the C++ function is
+        # templated on a *single* type T: xs and ys must share the same dtype. We only inspect the dtype of
+        # the reference buffer (the last template buffer) to pick T, then cast all buffers to it. If the other
+        # buffers have a different dtype, their bytes would be silently reinterpreted (cf. issue https://github.com/pthom/imgui_bundle/issues/467).
+        # The block below validates that every other template buffer matches the reference dtype, and raises
+        # an explicit, actionable error otherwise. It is only emitted when there is more than one template buffer.
+        if self.options.bind_library == BindLibraryType.nanobind:
+            dtype_name_helper = """
+                // Map a dtype letter code to a human-readable numpy dtype name (used in the error message below)
+                auto _nanobind_dtype_letter_to_name = [](char letter) -> const char *
+                {
+                    switch (letter)
+                    {
+                        case 'B': return "uint8";   case 'b': return "int8";
+                        case 'H': return "uint16";  case 'h': return "int16";
+                        case 'I': return "uint32";  case 'i': return "int32";
+                        case 'L': return "uint64";  case 'l': return "int64";
+                        case 'f': return "float32"; case 'd': return "float64";
+                        case 'g': return "longdouble";
+                        default:  return "<unsupported>";
+                    }
+                };
+            """
+            template_cross_dtype_check = """
+                // Ensure '{buffer_name}' shares the dtype of '{template_buffer_name}' (the C++ function is templated on a single type)
+                char {buffer_name}_type = _nanobind_buffer_type_to_letter_code({buffer_name}.dtype().code, {buffer_name}.dtype().bits / 8);
+                if ({buffer_name}_type != {template_buffer_name}_type)
+                {_i_}throw std::runtime_error(
+                {_i_}{_i_}std::string("{function_name_python}: all numeric arrays must share the same dtype, ")
+                {_i_}{_i_}+ "but \\"{buffer_name}\\" has dtype " + _nanobind_dtype_letter_to_name({buffer_name}_type)
+                {_i_}{_i_}+ " while \\"{template_buffer_name}\\" has dtype " + _nanobind_dtype_letter_to_name({template_buffer_name}_type)
+                {_i_}{_i_}+ ". Convert them to a common dtype, e.g. {buffer_name} = {buffer_name}.astype({template_buffer_name}.dtype).");
+            """  # noqa
+        else:
+            dtype_name_helper = """
+                // Map a numpy dtype char code to a human-readable name (used in the error message below)
+                auto _pybind_dtype_letter_to_name = [](char letter) -> const char *
+                {
+                    switch (letter)
+                    {
+                        case 'B': return "uint8";            case 'b': return "int8";
+                        case 'H': return "uint16";           case 'h': return "int16";
+                        case 'I': return "uint32";           case 'i': return "int32";
+                        case 'L': case 'Q': return "uint64"; case 'l': case 'q': return "int64";
+                        case 'f': return "float32";          case 'd': return "float64";
+                        case 'g': return "longdouble";
+                        default:  return "<unsupported>";
+                    }
+                };
+            """
+            template_cross_dtype_check = """
+                // Ensure '{buffer_name}' shares the dtype of '{template_buffer_name}' (the C++ function is templated on a single type)
+                char {buffer_name}_type = {buffer_name}.dtype().char_();
+                if ({buffer_name}_type != {template_buffer_name}_type)
+                {_i_}throw std::runtime_error(
+                {_i_}{_i_}std::string("{function_name_python}: all numeric arrays must share the same dtype, ")
+                {_i_}{_i_}+ "but \\"{buffer_name}\\" has dtype " + _pybind_dtype_letter_to_name({buffer_name}_type)
+                {_i_}{_i_}+ " while \\"{template_buffer_name}\\" has dtype " + _pybind_dtype_letter_to_name({template_buffer_name}_type)
+                {_i_}{_i_}+ ". Convert them to a common dtype, e.g. {buffer_name} = {buffer_name}.astype({template_buffer_name}.dtype).");
+            """  # noqa
+
         def process_templates() -> str:
             options = self.options
 
@@ -320,6 +380,29 @@ class _AdaptBuffersHelper:
             intro = code_utils.replace_in_string(intro, {"template_buffer_name": template_buffer_name})
 
             full_code += intro + "\n"
+
+            # Add cross-dtype validation for the other template buffers (see comment above)
+            other_template_buffers = [
+                p for p in self._template_buffer_params() if p.decl.decl_name != template_buffer_name
+            ]
+            if len(other_template_buffers) > 0:
+                function_name_python = cpp_to_python.function_name_to_python(options, self.function_infos.function_name)
+                helper_code = code_utils.unindent_code(dtype_name_helper, flag_strip_empty_lines=True) + "\n"
+                full_code += helper_code
+                for buffer_param in other_template_buffers:
+                    check_code = (
+                        code_utils.unindent_code(template_cross_dtype_check, flag_strip_empty_lines=True) + "\n"
+                    )
+                    check_code = code_utils.replace_in_string(
+                        check_code,
+                        {
+                            "_i_": _i_,
+                            "buffer_name": buffer_param.decl.decl_name,
+                            "template_buffer_name": template_buffer_name,
+                            "function_name_python": function_name_python,
+                        },
+                    )
+                    full_code += check_code
 
             # Add loop code
             for i, cpp_numeric_type in enumerate(self.options._fn_params_buffer_types_list()):

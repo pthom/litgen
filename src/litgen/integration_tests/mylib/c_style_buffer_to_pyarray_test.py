@@ -63,3 +63,34 @@ def test_templated_mul_inside_buffer():
     except RuntimeError:
         got_exception = True
     assert got_exception
+
+
+def test_templated_sum_buffers():
+    # templated_sum_buffers takes two templated buffers: both numpy arrays must share the same dtype,
+    # since the C++ function is templated on a single type T.
+
+    # Matched dtype (int) -> works
+    x = np.array((1, 2, 3), np.int32)
+    y = np.array((10, 20, 30), np.int32)
+    assert lg_mylib.templated_sum_buffers(x, y) == 66.0
+
+    # Matched dtype (float) -> works
+    xf = np.array((1.0, 2.0, 3.0), np.float64)
+    yf = np.array((0.5, 0.5, 0.5), np.float64)
+    assert lg_mylib.templated_sum_buffers(xf, yf) == 7.5
+
+    # Mismatched dtype -> raises an explicit, actionable error (cf. issue imgui_bundle#467).
+    # Without the dtype guard, buffer_1's bytes would be silently reinterpreted as buffer_2's type.
+    with pytest.raises(RuntimeError) as exc_info:
+        lg_mylib.templated_sum_buffers(
+            np.array((1, 2, 3), np.int64),
+            np.array((1.0, 2.0, 3.0), np.float64),
+        )
+    message = str(exc_info.value)
+    assert "share the same dtype" in message
+    assert "astype(" in message
+    # Full message test (may discard later, if too brittle)
+    assert (
+        message
+        == 'templated_sum_buffers: all numeric arrays must share the same dtype, but "buffer_1" has dtype int64 while "buffer_2" has dtype float64. Convert them to a common dtype, e.g. buffer_1 = buffer_1.astype(buffer_2.dtype).'
+    )

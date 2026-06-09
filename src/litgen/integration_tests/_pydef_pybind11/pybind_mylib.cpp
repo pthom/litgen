@@ -447,6 +447,92 @@ void py_init_module_lg_mylib(py::module& m)
         py::arg("buffer"), py::arg("factor"),
         " templated_mul_inside_buffer: template function that modifies an array by multiplying its elements by a given factor\n litgen will detect that this function can be published as using a numpy array.\n It will be published in python as:\n -->    def mul_inside_buffer(buffer: np.ndarray, factor: float) -> None:\n\n The type will be detected at runtime and the correct template version will be called accordingly!\n An error will be thrown if the numpy array numeric type is not supported.");
 
+    m.def("templated_sum_buffers",
+        [](const py::array & buffer_1, const py::array & buffer_2) -> double
+        {
+            auto templated_sum_buffers_adapt_c_buffers = [](const py::array & buffer_1, const py::array & buffer_2) -> double
+            {
+                // Check if the array is 1D and C-contiguous
+                if (! (buffer_1.ndim() == 1 && buffer_1.strides(0) == buffer_1.itemsize()) )
+                    throw std::runtime_error("The array must be 1D and contiguous");
+
+                // convert py::array to C standard buffer (const)
+                const void * buffer_1_from_pyarray = buffer_1.data();
+                py::ssize_t buffer_1_count = buffer_1.shape()[0];
+
+                // Check if the array is 1D and C-contiguous
+                if (! (buffer_2.ndim() == 1 && buffer_2.strides(0) == buffer_2.itemsize()) )
+                    throw std::runtime_error("The array must be 1D and contiguous");
+
+                // convert py::array to C standard buffer (const)
+                const void * buffer_2_from_pyarray = buffer_2.data();
+                py::ssize_t buffer_2_count = buffer_2.shape()[0];
+
+                #ifdef _WIN32
+                using np_uint_l = uint32_t;
+                using np_int_l = int32_t;
+                #else
+                using np_uint_l = uint64_t;
+                using np_int_l = int64_t;
+                #endif
+                // call the correct template version by casting
+                char buffer_2_type = buffer_2.dtype().char_();
+                // Map a numpy dtype char code to a human-readable name (used in the error message below)
+                auto _pybind_dtype_letter_to_name = [](char letter) -> const char *
+                {
+                    switch (letter)
+                    {
+                        case 'B': return "uint8";            case 'b': return "int8";
+                        case 'H': return "uint16";           case 'h': return "int16";
+                        case 'I': return "uint32";           case 'i': return "int32";
+                        case 'L': case 'Q': return "uint64"; case 'l': case 'q': return "int64";
+                        case 'f': return "float32";          case 'd': return "float64";
+                        case 'g': return "longdouble";
+                        default:  return "<unsupported>";
+                    }
+                };
+                // Ensure 'buffer_1' shares the dtype of 'buffer_2' (the C++ function is templated on a single type)
+                char buffer_1_type = buffer_1.dtype().char_();
+                if (buffer_1_type != buffer_2_type)
+                    throw std::runtime_error(
+                        std::string("templated_sum_buffers: all numeric arrays must share the same dtype, ")
+                        + "but \"buffer_1\" has dtype " + _pybind_dtype_letter_to_name(buffer_1_type)
+                        + " while \"buffer_2\" has dtype " + _pybind_dtype_letter_to_name(buffer_2_type)
+                        + ". Convert them to a common dtype, e.g. buffer_1 = buffer_1.astype(buffer_2.dtype).");
+                if (buffer_2_type == 'B')
+                    return templated_sum_buffers(static_cast<const uint8_t *>(buffer_1_from_pyarray), static_cast<const uint8_t *>(buffer_2_from_pyarray), static_cast<size_t>(buffer_2_count));
+                else if (buffer_2_type == 'b')
+                    return templated_sum_buffers(static_cast<const int8_t *>(buffer_1_from_pyarray), static_cast<const int8_t *>(buffer_2_from_pyarray), static_cast<size_t>(buffer_2_count));
+                else if (buffer_2_type == 'H')
+                    return templated_sum_buffers(static_cast<const uint16_t *>(buffer_1_from_pyarray), static_cast<const uint16_t *>(buffer_2_from_pyarray), static_cast<size_t>(buffer_2_count));
+                else if (buffer_2_type == 'h')
+                    return templated_sum_buffers(static_cast<const int16_t *>(buffer_1_from_pyarray), static_cast<const int16_t *>(buffer_2_from_pyarray), static_cast<size_t>(buffer_2_count));
+                else if (buffer_2_type == 'I')
+                    return templated_sum_buffers(static_cast<const uint32_t *>(buffer_1_from_pyarray), static_cast<const uint32_t *>(buffer_2_from_pyarray), static_cast<size_t>(buffer_2_count));
+                else if (buffer_2_type == 'i')
+                    return templated_sum_buffers(static_cast<const int32_t *>(buffer_1_from_pyarray), static_cast<const int32_t *>(buffer_2_from_pyarray), static_cast<size_t>(buffer_2_count));
+                else if (buffer_2_type == 'L')
+                    return templated_sum_buffers(static_cast<const np_uint_l *>(buffer_1_from_pyarray), static_cast<const np_uint_l *>(buffer_2_from_pyarray), static_cast<size_t>(buffer_2_count));
+                else if (buffer_2_type == 'l')
+                    return templated_sum_buffers(static_cast<const np_int_l *>(buffer_1_from_pyarray), static_cast<const np_int_l *>(buffer_2_from_pyarray), static_cast<size_t>(buffer_2_count));
+                else if (buffer_2_type == 'f')
+                    return templated_sum_buffers(static_cast<const float *>(buffer_1_from_pyarray), static_cast<const float *>(buffer_2_from_pyarray), static_cast<size_t>(buffer_2_count));
+                else if (buffer_2_type == 'd')
+                    return templated_sum_buffers(static_cast<const double *>(buffer_1_from_pyarray), static_cast<const double *>(buffer_2_from_pyarray), static_cast<size_t>(buffer_2_count));
+                else if (buffer_2_type == 'g')
+                    return templated_sum_buffers(static_cast<const long double *>(buffer_1_from_pyarray), static_cast<const long double *>(buffer_2_from_pyarray), static_cast<size_t>(buffer_2_count));
+                else if (buffer_2_type == 'q')
+                    return templated_sum_buffers(static_cast<const long long *>(buffer_1_from_pyarray), static_cast<const long long *>(buffer_2_from_pyarray), static_cast<size_t>(buffer_2_count));
+                // If we reach this point, the array type is not supported!
+                else
+                    throw std::runtime_error(std::string("Bad array type ('") + buffer_2_type + "') for param buffer_2");
+            };
+
+            return templated_sum_buffers_adapt_c_buffers(buffer_1, buffer_2);
+        },
+        py::arg("buffer_1"), py::arg("buffer_2"),
+        " templated_sum_buffers: sums two buffers that must share the same templated type T.\n litgen detects two templated buffers followed by a single size param.\n Will be published in python as:\n -->    def templated_sum_buffers(buffer_1: np.ndarray, buffer_2: np.ndarray) -> float:\n\n Since the function is templated on a single type T, both numpy arrays must share the same dtype:\n the dtype is detected at runtime from the last buffer, and an explicit error is thrown if the other\n buffers have a different dtype (otherwise their bytes would be silently reinterpreted).");
+
     m.def("c_string_list_total_size",
         [](const std::vector<std::string> & items, BoxedInt & output_0, BoxedInt & output_1) -> size_t
         {

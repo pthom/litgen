@@ -368,3 +368,42 @@ m.def("foo",
     },     nb::arg("buf"), nb::arg("flag"));
         """,
     )
+
+
+def test_template_buffer_nanobind_cross_dtype_check():
+    # When a function has several template buffers (e.g. xs, ys), the C++ function is templated on a single
+    # element `T`, so every buffer must share the same dtype. Litgen inspects only the reference buffer
+    # (the last one) to pick `T`, then casts every buffer to it. Without a guard, a buffer with a different
+    # dtype would have its bytes silently reinterpreted (cf. issue #467). Here we check that an explicit dtype
+    # guard is generated for every non-reference template buffer.
+    code = """
+    template<typename T> MY_API void foo(const T *xs, const T *ys, size_t count);
+    """
+    options = litgen.LitgenOptions()
+    options.fn_params_replace_buffer_by_array__regex = r".*"
+    options.bind_library = litgen.BindLibraryType.nanobind
+    generated_code = litgen.generate_code(options, code)
+    pydef = generated_code.pydef_code
+    print(pydef)
+
+    # The reference buffer is 'ys' (the last template buffer): its dtype drives the cast dispatch.
+    # 'xs' must be validated against 'ys', and raise an actionable error on mismatch.
+    assert "char xs_type = _nanobind_buffer_type_to_letter_code(xs.dtype().code, xs.dtype().bits / 8);" in pydef
+    assert "if (xs_type != ys_type)" in pydef
+    assert "all numeric arrays must share the same dtype" in pydef
+    assert "xs = xs.astype(ys.dtype)" in pydef
+    # Single-buffer functions must stay unchanged: no guard, no name helper.
+    assert "_nanobind_dtype_letter_to_name" in pydef
+
+
+def test_template_buffer_nanobind_single_buffer_unchanged():
+    # A function with a single template buffer must not emit any cross-dtype guard or name helper.
+    code = """
+    template<typename T> MY_API void foo(const T *values, size_t count);
+    """
+    options = litgen.LitgenOptions()
+    options.fn_params_replace_buffer_by_array__regex = r".*"
+    options.bind_library = litgen.BindLibraryType.nanobind
+    pydef = litgen.generate_code(options, code).pydef_code
+    assert "_nanobind_dtype_letter_to_name" not in pydef
+    assert "must share the same dtype" not in pydef

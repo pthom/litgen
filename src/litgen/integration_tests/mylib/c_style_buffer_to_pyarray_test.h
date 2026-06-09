@@ -60,3 +60,19 @@ template<typename T> MY_API void templated_mul_inside_buffer(T* buffer, size_t b
     for (size_t i  = 0; i < buffer_size; ++i)
         buffer[i] *= (T)factor;
 }
+
+// templated_sum_buffers: sums two buffers that must share the same templated type T.
+// litgen detects two templated buffers followed by a single size param.
+// Will be published in python as:
+// -->    def templated_sum_buffers(buffer_1: np.ndarray, buffer_2: np.ndarray) -> float:
+//
+// Since the function is templated on a single type T, both numpy arrays must share the same dtype:
+// the dtype is detected at runtime from the last buffer, and an explicit error is thrown if the other
+// buffers have a different dtype (otherwise their bytes would be silently reinterpreted).
+template<typename T> MY_API double templated_sum_buffers(const T* buffer_1, const T* buffer_2, size_t buffer_size)
+{
+    double sum = 0.;
+    for (size_t i  = 0; i < buffer_size; ++i)
+        sum += (double)(buffer_1[i] + buffer_2[i]);
+    return sum;
+}
