@@ -1,5 +1,6 @@
 from __future__ import annotations
 import os
+import shutil
 
 from codemanip import amalgamated_header, code_utils
 from srcmlcpp.scrml_warning_settings import WarningType
@@ -8,6 +9,13 @@ from litgen import litgen_generator
 
 THIS_DIR = os.path.dirname(os.path.realpath(__file__))
 CPP_AMALGAMATED_HEADER = THIS_DIR + "/mylib_amalgamation/mylib_amalgamation.h"
+
+# The .pyi stub is shared by both backends (a single lg_mylib package), but the two backends do not expose
+# exactly the same Python API: pybind11 supports e.g. multiple inheritance and vectorized functions, nanobind
+# does not. So the committed stub is *owned by a single canonical backend*; the other backend must not write it.
+# Otherwise, regenerating one backend alone (e.g. `just build_integration_tests_nanobind`) would silently
+# rewrite the committed stub in the other flavor (the "regenerate pybind last" footgun).
+CANONICAL_STUB_BIND_LIBRARY = litgen.BindLibraryType.pybind11
 
 
 def pydef_fname(bind_library_type: litgen.BindLibraryType) -> str:
@@ -192,11 +200,39 @@ def mylib_litgen_options(bind_library_type: litgen.BindLibraryType) -> litgen.Li
     return options
 
 
+def _warn_if_noncanonical_stub_diverges(
+    bind_library_type: litgen.BindLibraryType, noncanonical_stub_file: str, canonical_stub_file: str
+) -> None:
+    """Make the (expected) backend stub divergence loud instead of silent."""
+    with open(noncanonical_stub_file) as f:
+        noncanonical = f.read()
+    with open(canonical_stub_file) as f:
+        canonical = f.read()
+    if noncanonical != canonical:
+        print(
+            f"Note: the {bind_library_type.name} .pyi stub differs from the canonical "
+            f"({CANONICAL_STUB_BIND_LIBRARY.name}) stub (expected: backend-specific features such as "
+            f"multiple inheritance and vectorized functions). The committed stub is owned by the "
+            f"canonical backend and was left untouched."
+        )
+
+
 def autogenerate_mylib(bind_library_type: litgen.BindLibraryType) -> None:
     _pydef_dir = pydef_dir(bind_library_type)
     _stubs_dir = stubs_dir(bind_library_type)
     output_cpp_module = _pydef_dir + pydef_fname(bind_library_type)
-    output_stub_pyi_file = _stubs_dir + "/__init__.pyi"
+    canonical_stub_file = _stubs_dir + "/__init__.pyi"
+
+    # The committed stub is owned by the canonical backend. A non-canonical backend still produces a stub
+    # (litgen writes pydef + stub in a single call), but it is written to a temp file (seeded from the
+    # canonical stub so the litgen markers are present) and discarded, so that regenerating a single backend
+    # never silently rewrites the committed stub. See CANONICAL_STUB_BIND_LIBRARY above.
+    is_canonical = bind_library_type == CANONICAL_STUB_BIND_LIBRARY
+    if is_canonical or not os.path.isfile(canonical_stub_file):
+        output_stub_pyi_file = canonical_stub_file
+    else:
+        output_stub_pyi_file = canonical_stub_file + ".noncanonical.tmp"
+        shutil.copyfile(canonical_stub_file, output_stub_pyi_file)
 
     # Configure options
     options = mylib_litgen_options(bind_library_type)
@@ -220,6 +256,10 @@ def autogenerate_mylib(bind_library_type: litgen.BindLibraryType) -> None:
             output_cpp_module,
             output_stub_pyi_file,
         )
+
+    if output_stub_pyi_file != canonical_stub_file:
+        _warn_if_noncanonical_stub_diverges(bind_library_type, output_stub_pyi_file, canonical_stub_file)
+        os.remove(output_stub_pyi_file)
 
 
 def save_all_generated_codes_by_file(bind_library_type: litgen.BindLibraryType) -> None:
