@@ -857,11 +857,14 @@ def standard_comment_replacements() -> RegexReplacementList:
     \bNULL\b -> None
     \bnullptr\b -> None
 
-    ([+-]?[0-9]+([.][0-9]*)?|[.][0-9]+)(d?) -> \1
-    ([+-]?[0-9]+([.][0-9]*)?|[.][0-9]+)(f?) -> \1
+    (?<![a-zA-Z0-9])([+-]?[0-9]+(?:\.[0-9]*)?(?:[eE][+-]?[0-9]+)?)([fd])(?=\W|$) -> \1
     """
 
-    # Note: the two last regexes replace C numbers like 1.5f or 1.5d by 1.5
+    # Note: the last regex replaces C numbers like 1.5f or 1.5d by 1.5.
+    # The lookbehind/lookahead keep it from matching inside identifiers: e.g. "buffer_2.dtype" (the 'd' is
+    # followed by more letters) or "ImVec2f" (the digit is preceded by a letter) are left untouched.
+    # Only the lowercase f/d suffixes are stripped (unlike standard_value_replacements), so that prose such
+    # as "2D scatter" or "3D plot" in comments is preserved.
     return RegexReplacementList.from_string(replacements_str)
 
 

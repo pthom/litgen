@@ -70,6 +70,32 @@ def test_standard_replacements():
     assert replacements.apply("a = -1_234_567;") == "a = -1_234_567;"
 
 
+def test_standard_comment_replacements():
+    replacements = litgen.standard_comment_replacements()
+
+    # Number suffix stripping still works (incl. scientific notation)
+    assert replacements.apply("default is 1.5f here") == "default is 1.5 here"
+    assert replacements.apply("default is -1.5d here") == "default is -1.5 here"
+    assert replacements.apply("a = 1.5e10f;") == "a = 1.5e10;"
+    assert replacements.apply("a = -1.5E-3d;") == "a = -1.5E-3;"
+
+    # bool / null translation still works
+    assert replacements.apply("flag = true;") == "flag = True;"
+    assert replacements.apply("p = nullptr;") == "p = None;"
+
+    # The suffix stripper must NOT match inside identifiers / member access (regression for the dtype note):
+    # here the 'd'/'f' is part of a longer word, or the digit is part of an identifier.
+    assert replacements.apply("xs = xs.astype(ys.dtype)") == "xs = xs.astype(ys.dtype)"
+    assert replacements.apply("buffer_2.dtype") == "buffer_2.dtype"
+    assert replacements.apply("cast ys2 to ys2.dtype") == "cast ys2 to ys2.dtype"
+    assert replacements.apply("an ImVec2f value") == "an ImVec2f value"
+    assert replacements.apply("a point2d here") == "a point2d here"
+
+    # Uppercase D/F suffixes are not stripped, so prose like "2D"/"3D" in comments is preserved.
+    assert replacements.apply("Plots a standard 2D scatter plot.") == "Plots a standard 2D scatter plot."
+    assert replacements.apply("a 3D plot") == "a 3D plot"
+
+
 def test_std_array():
     s = "std::array<ImVec4, ImGuiCol_COUNT> Colors;"
     r = litgen.standard_type_replacements().apply(s)
