@@ -384,7 +384,6 @@ def test_template_buffer_nanobind_cross_dtype_check():
     options.bind_library = litgen.BindLibraryType.nanobind
     generated_code = litgen.generate_code(options, code)
     pydef = generated_code.pydef_code
-    print(pydef)
 
     # The reference buffer is 'ys' (the last template buffer): its dtype drives the cast dispatch.
     # 'xs' must be validated against 'ys', and raise an actionable error on mismatch.
@@ -394,6 +393,12 @@ def test_template_buffer_nanobind_cross_dtype_check():
     assert "xs = xs.astype(ys.dtype)" in pydef
     # Single-buffer functions must stay unchanged: no guard, no name helper.
     assert "_nanobind_dtype_letter_to_name" in pydef
+
+    # The same-dtype constraint is also documented in the function docstring, using the actual buffer names.
+    assert (
+        "Note: all array arguments must share the same dtype (e.g. xs = xs.astype(ys.dtype))."
+        in generated_code.stub_code
+    )
 
 
 def test_template_buffer_nanobind_single_buffer_unchanged():

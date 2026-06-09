@@ -579,7 +579,7 @@ void py_init_module_lg_mylib(nb::module_& m)
             return templated_sum_buffers_adapt_c_buffers(buffer_1, buffer_2);
         },
         nb::arg("buffer_1"), nb::arg("buffer_2"),
-        " templated_sum_buffers: sums two buffers that must share the same templated type T.\n litgen detects two templated buffers followed by a single size param.\n Will be published in python as:\n -->    def templated_sum_buffers(buffer_1: np.ndarray, buffer_2: np.ndarray) -> float:\n\n Since the function is templated on a single type T, both numpy arrays must share the same dtype:\n the dtype is detected at runtime from the last buffer, and an explicit error is thrown if the other\n buffers have a different dtype (otherwise their bytes would be silently reinterpreted).");
+        " templated_sum_buffers: sums two buffers that must share the same templated type T.\n litgen detects two templated buffers followed by a single size param.\n Will be published in python as:\n -->    def templated_sum_buffers(buffer_1: np.ndarray, buffer_2: np.ndarray) -> float:\n\n Since the function is templated on a single type T, both numpy arrays must share the same dtype:\n the dtype is detected at runtime from the last buffer, and an explicit error is thrown if the other\n buffers have a different dtype (otherwise their bytes would be silently reinterpreted).\n\nNote: all array arguments must share the same dtype (e.g. xs = xs.astype(ys.dtype)).");
 
     m.def("c_string_list_total_size",
         [](const std::vector<std::string> & items, BoxedInt & output_0, BoxedInt & output_1) -> size_t

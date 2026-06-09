@@ -173,13 +173,15 @@ def templated_mul_inside_buffer(buffer: np.ndarray, factor: float) -> None:
 
 def templated_sum_buffers(buffer_1: np.ndarray, buffer_2: np.ndarray) -> float:
     """templated_sum_buffers: sums two buffers that must share the same templated type T.
-    litgen detects two templated buffers followed by a single size param.
-    Will be published in python as:
-    -->    def templated_sum_buffers(buffer_1: np.ndarray, buffer_2: np.ndarray) -> float:
+     litgen detects two templated buffers followed by a single size param.
+     Will be published in python as:
+     -->    def templated_sum_buffers(buffer_1: np.ndarray, buffer_2: np.ndarray) -> float:
 
-    Since the function is templated on a single type T, both numpy arrays must share the same dtype:
-    the dtype is detected at runtime from the last buffer, and an explicit error is thrown if the other
-    buffers have a different dtype (otherwise their bytes would be silently reinterpreted).
+     Since the function is templated on a single type T, both numpy arrays must share the same dtype:
+     the dtype is detected at runtime from the last buffer, and an explicit error is thrown if the other
+     buffers have a different dtype (otherwise their bytes would be silently reinterpreted).
+
+    Note: all array arguments must share the same dtype (e.g. xs = xs.astype(ys.dtype)).
     """
     pass
 

@@ -73,6 +73,22 @@ class _AdaptBuffersHelper:
 
         if self.has_template_buffer_param() and self.shall_adapt():
             self.adapted_function.has_adapted_template_buffer = True
+            self._maybe_add_multi_buffer_dtype_doc()
+
+    def _maybe_add_multi_buffer_dtype_doc(self) -> None:
+        """When a function has several template buffers, they must share the same dtype (the function is
+        templated on a single type, and we cast every buffer to the dtype of the reference buffer, see
+        make_adapted_lambda_code_end_template_buffer). Document that constraint in the function's docstring."""
+        if len(self._template_buffer_params()) < 2:
+            return
+        # Note: the example uses the generic names xs/ys on purpose. Using the actual buffer names would be
+        # mangled by the numeric-literal-suffix comment replacement when a name ends in a digit (e.g. "ys2.dtype"
+        # would become "ys2.type", because "2.d" looks like a number with a 'd' suffix).
+        cpp_comments = self.adapted_function.cpp_element().cpp_element_comments
+        cpp_comments.add_comment_on_previous_lines("")
+        cpp_comments.add_comment_on_previous_lines(
+            "Note: all array arguments must share the same dtype (e.g. xs = xs.astype(ys.dtype))."
+        )
 
     def lambda_input(self, idx_param: int) -> Optional[str]:
         if self._is_buffer_standard(idx_param):
