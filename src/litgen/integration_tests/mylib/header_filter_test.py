@@ -7,3 +7,15 @@ def test_header_filter():
     assert "obscure_function" not in dir(
         lg_mylib,
     )
+
+
+def test_header_filter_if_expression():
+    # `#if MACRO` / `#if defined(MACRO)` regions are filtered like `#ifdef`:
+    # the macro name in the condition is matched against header_filter_acceptable__regex.
+
+    # OBSCURE_OPTION is not acceptable => `#if OBSCURE_OPTION` region is not exported
+    assert "obscure_function_in_if" not in dir(lg_mylib)
+
+    # HEADER_FILTER_ACCEPTABLE_IF is acceptable => both `#if` forms are exported
+    assert lg_mylib.filter_acceptable_if_function() == 44
+    assert lg_mylib.filter_acceptable_defined_function() == 45

@@ -139,6 +139,11 @@ def mylib_litgen_options(bind_library_type: litgen.BindLibraryType) -> litgen.Li
     options.macro_define_include_by_name__regex = r"^MY_"
     options.macro_name_replacements.add_first_replacement("MY_", "")
 
+    # Accept the `#if HEADER_FILTER_ACCEPTABLE_IF` regions of header_filter_test.h
+    # (a `#if MACRO` region is kept when MACRO matches header_filter_acceptable__regex, like `#ifdef`)
+    assert isinstance(options.srcmlcpp_options.header_filter_acceptable__regex, str)
+    options.srcmlcpp_options.header_filter_acceptable__regex += "|HEADER_FILTER_ACCEPTABLE_IF"
+
     # pybind11 supports bindings for multiple inheritance, nanobind does not
     if bind_library_type == litgen.BindLibraryType.pybind11:
         assert isinstance(options.srcmlcpp_options.header_filter_acceptable__regex, str)

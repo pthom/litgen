@@ -197,6 +197,20 @@ void py_init_module_lg_mylib(nb::module_& m)
 
     m.def("my_mul",
         my_mul, nb::arg("a"), nb::arg("b"));
+    // #if HEADER_FILTER_ACCEPTABLE_IF
+    //
+
+    m.def("filter_acceptable_if_function",
+        FilterAcceptableIfFunction);
+    // #endif
+    //
+    // #if defined(HEADER_FILTER_ACCEPTABLE_IF)
+    //
+
+    m.def("filter_acceptable_defined_function",
+        FilterAcceptableDefinedFunction);
+    // #endif
+    //
 
     m.def("const_array2_add",
         [](const std::array<int, 2>& values) -> int

@@ -42,6 +42,41 @@ void FooAccepted();
 #endif // #ifndef MY_HEADER_H
     """
 
+
+def _extract_macro_name_from_if_expr(element: ET.Element) -> str:
+    """Extract the first macro name referenced in a `#if` condition.
+
+    Unlike `#ifdef`/`#ifndef` (whose macro name is a direct `<name>` child of the
+    directive), `#if` stores the condition inside an `<expr>` subtree. We walk
+    that subtree in document order and return the first referenced macro name, so that
+    `#if MY_MACRO` and `#if defined(MY_MACRO)` can be matched against
+    `header_acceptable__regex` exactly like `#ifdef MY_MACRO`.
+
+    This is intentionally *not* a C-expression evaluator: compound conditions such as
+    `#if defined(A) && !defined(B)` are handled on a best-effort basis (the first name,
+    here `A`, is returned). The `defined` operator itself is skipped so that its argument
+    is used instead.
+    """
+
+    def visit(node: ET.Element) -> str:
+        for child in node:
+            tag = srcml_utils.clean_tag_or_attrib(child.tag)
+            if tag == "name":
+                if child.text is not None and child.text != "defined":
+                    return child.text
+            elif tag == "argument":
+                # `defined(MY_MACRO)` stores the argument as plain text;
+                # in compound expressions it nests an <expr> instead.
+                if child.text is not None and child.text.strip() != "":
+                    return child.text.strip()
+            found = visit(child)
+            if found != "":
+                return found
+        return ""
+
+    return visit(element)
+
+
 _EXPECTED_FILTERED_HEADER = """
 #ifndef MY_HEADER_H   // We are in the main header, and this comment should be included (the previous ifndef was just an inclusion guard)
 
@@ -110,6 +145,10 @@ class _SrcmlPreprocessorState:
         def extract_ifdef_var_name() -> str:
             if not is_ifdef:
                 return ""
+            # `#if` stores its condition inside an <expr> subtree, so the macro name is
+            # not a direct <name> child (unlike `#ifdef`/`#ifndef`).
+            if tag == "if":
+                return _extract_macro_name_from_if_expr(element)
             for child in element:
                 if srcml_utils.clean_tag_or_attrib(child.tag) == "name":
                     assert child.text is not None
