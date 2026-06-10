@@ -306,7 +306,6 @@ def test_tpl_class_with_synonyms():
             def __init__(self, values: Optional[MyData[MyInt]] = None) -> None:
                 """Auto-generated default constructor with named params
 
-
                 Python bindings defaults:
                     If values is None, then its default value will be: MyData_MyInt()
                 """

@@ -224,7 +224,6 @@ def test_adapt_mutable_param_with_default_value__within_struct():
                 ) -> None:
                 """Auto-generated default constructor with named params
 
-
                 Python bindings defaults:
                     If v is None, then its default value will be: ImVec2()
                 """

@@ -85,7 +85,6 @@ def test_struct_brace():
             def __init__(self, l: Optional[List[int]] = None, v: Optional[V] = None) -> None:
                 """Auto-generated default constructor with named params
 
-
                 Python bindings defaults:
                     If any of the params below is None, then its default value below will be used:
                         * l: initialized with 1

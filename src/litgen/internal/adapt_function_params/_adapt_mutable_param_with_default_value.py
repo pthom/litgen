@@ -228,7 +228,8 @@ def adapt_mutable_param_with_default_value(adapted_function: AdaptedFunction) ->
     # Add comment lines to the function
     if options.fn_params_adapt_mutable_param_with_default_value__add_comment:
         cpp_comments = adapted_function.cpp_element().cpp_element_comments
-        cpp_comments.add_comment_on_previous_lines("")
+        # A single blank line separates this note from any preceding comment (when there is one;
+        # leading blank lines are dropped otherwise).
         cpp_comments.add_comment_on_previous_lines("")
         cpp_comments.add_comment_on_previous_lines("Python bindings defaults:")
         if len(new_function_comment_lines) == 1:
