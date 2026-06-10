@@ -107,6 +107,15 @@ MY_API int FilterAcceptableIfFunction() { return 44; }
 MY_API int FilterAcceptableDefinedFunction() { return 45; }
 #endif
 
+// The `#else` branch of an accepted region is inactive: only the primary branch is
+// exported (the `#else` body is dropped). Since HEADER_FILTER_ACCEPTABLE_IF is defined,
+// the primary branch is what the C++ compiler keeps too.
+#if HEADER_FILTER_ACCEPTABLE_IF
+MY_API int ElseBranchPrimary() { return 46; }
+#else
+MY_API int ElseBranchSecondary() { return 47; }
+#endif
+
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //                       mylib/c_style_array_test.h included by mylib/mylib_main/mylib.h                        //
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////

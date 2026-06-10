@@ -218,6 +218,15 @@ void py_init_module_lg_mylib(py::module& m)
         FilterAcceptableDefinedFunction);
     // #endif
     //
+    // #if HEADER_FILTER_ACCEPTABLE_IF
+    //
+
+    m.def("else_branch_primary",
+        ElseBranchPrimary);
+    // #else
+    //
+    // #endif
+    //
 
     m.def("const_array2_add",
         [](const std::array<int, 2>& values) -> int

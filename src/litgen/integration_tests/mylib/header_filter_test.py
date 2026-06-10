@@ -19,3 +19,10 @@ def test_header_filter_if_expression():
     # HEADER_FILTER_ACCEPTABLE_IF is acceptable => both `#if` forms are exported
     assert lg_mylib.filter_acceptable_if_function() == 44
     assert lg_mylib.filter_acceptable_defined_function() == 45
+
+
+def test_header_filter_else_branch_is_dropped():
+    # The `#else` branch of an accepted region is inactive: only the primary branch is
+    # exported, the `#else` body is dropped.
+    assert lg_mylib.else_branch_primary() == 46
+    assert "else_branch_secondary" not in dir(lg_mylib)

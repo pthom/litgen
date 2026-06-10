@@ -104,6 +104,19 @@ def filter_acceptable_defined_function() -> int:
 # #endif
 #
 
+# The `#else` branch of an accepted region is inactive: only the primary branch is
+# exported (the `#else` body is dropped). Since HEADER_FILTER_ACCEPTABLE_IF is defined,
+# the primary branch is what the C++ compiler keeps too.
+# #if HEADER_FILTER_ACCEPTABLE_IF
+#
+def else_branch_primary() -> int:
+    pass
+
+# #else
+#
+# #endif
+#
+
 # ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 #                       mylib/c_style_array_test.h included by mylib/mylib_main/mylib.h                        //
 # //////////////////////////////////////////////////////////////////////////////////////////////////////////////
