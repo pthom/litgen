@@ -183,6 +183,13 @@ changing options, update the inline docstring and add a test that exercises the 
   **one** backend (selected by `LITGEN_USE_NANOBIND=ON|OFF`); switch the active backend
   with `python -m lg_mylib.use <pybind|nanobind>` and rebuild to test the other.
   `just integration_tests` does the full both-backend build + run.
+- **When a change alters generated output or parsing behavior, a golden unit test is not
+  enough.** Also add or extend a **runtime mylib integration test** (pick the matching
+  header, e.g. `header_filter_test.h` for preprocessor filtering, and assert behavior in
+  the matching `*_test.py`) and update the relevant `docs/book` notebook example. In the
+  integration header, accepted C++ must actually compile (e.g. the guarding macro is
+  defined) and rejected C++ must be compiled out — otherwise the generated pydef
+  references a nonexistent symbol and the build breaks.
 
 ## Documentation (`docs/book`, Jupyter Book v2 / MyST)
 
