@@ -164,10 +164,15 @@ changing options, update the inline docstring and add a test that exercises the 
   `pybind_*.cpp` (e.g. in imgui_bundle).
 - Regenerate mylib with `python src/litgen/integration_tests/autogenerate_mylib.py
   no_generate_file_by_file [pybind|nanobind]` (no flavor → both, nanobind then pybind).
-- The mylib `.pyi` stub is shared by both backends but is **owned by a canonical
-  backend** (`CANONICAL_STUB_BIND_LIBRARY`, pybind11), because the two backends expose
-  slightly different Python APIs (multiple inheritance, vectorize). A non-canonical
-  backend never rewrites the committed stub. Regeneration is order-independent.
+- The two backends expose slightly different Python APIs (multiple inheritance,
+  vectorize), so **each backend owns its own committed `.pyi` stub** — there is no shared
+  stub. Package stubs: `_stubs/lg_mylib/__init__.pybind.pyi` and `__init__.nano.pyi`;
+  per-file splits: `mylib/*.h.pybind.pyi` and `*.h.nano.pyi`. The active
+  `_stubs/lg_mylib/__init__.pyi` imported by the package is a **generated copy** of the
+  selected backend's stub (written by `autogenerate_mylib` and by `use.py` on switch); it
+  is **gitignored**. Because nothing is shared, each backend regenerates independently and
+  order is irrelevant — `build_integration_tests_pybind`/`_nanobind` each run
+  `autogenerate_mylib.py [pybind|nanobind]` file-by-file.
 
 ## Test layers
 

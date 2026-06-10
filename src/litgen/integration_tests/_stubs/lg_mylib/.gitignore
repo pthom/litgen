@@ -6,3 +6,7 @@ include/
 *.so
 
 binding.cfg
+
+# The active stub is a generated copy of the selected backend's committed stub
+# (__init__.pybind.pyi / __init__.nano.pyi). See use.py.
+__init__.pyi

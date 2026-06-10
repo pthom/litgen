@@ -3,3 +3,8 @@ select = ["E", "F", "B", "W"]
 ignore = [
     "E501", # Never enforce `E501` (line length violations).
 ]
+
+# The mylib per-file stubs (*.h.pybind.pyi / *.h.nano.pyi) are generated, side-by-side
+# documentation fragments: they have no import preamble, so symbols like `overload` or `np`
+# look undefined (F821/F811). They are not real modules — exclude them from linting.
+extend-exclude = ["src/litgen/integration_tests/mylib/*.pyi"]
