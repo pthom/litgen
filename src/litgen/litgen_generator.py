@@ -50,7 +50,7 @@ def apply_black_formatter_pyi(options: LitgenOptions, file: str) -> bool:
 
         add_python_exe_folder_to_env_path()
 
-        cmd = f"black --line-length {options.python_black_formatter_line_length} {file}"
+        cmd = f"black --target-version py310 --line-length {options.python_black_formatter_line_length} {file}"
 
         try:
             subprocess.check_call(cmd, shell=True)
