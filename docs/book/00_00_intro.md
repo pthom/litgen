@@ -67,7 +67,7 @@ m.def("push_item_width",
 More complete examples can be found online inside the [Dear ImGui Bundle](https://github.com/pthom/imgui_bundle) repository, for example:
 
 * [imgui.h](https://github.com/pthom/imgui/blob/imgui_bundle/imgui.h) header file that declares the API for [Dear ImGui](https://github.com/ocornut/imgui) in a documented way
-* [imgui.piy](https://github.com/pthom/imgui_bundle/blob/main/bindings/imgui_bundle/imgui/__init__.pyi) the corresponding python stub file which exposes the bindings in a documented way
+* [imgui.pyi](https://github.com/pthom/imgui_bundle/blob/main/bindings/imgui_bundle/imgui/__init__.pyi) the corresponding python stub file which exposes the bindings in a documented way
 
 ## Compatibility
 
