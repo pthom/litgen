@@ -46,7 +46,7 @@ namespace Root { namespace Inner {
 class MyVirtualClass_trampoline : public MyVirtualClass
 {
 public:
-    NB_TRAMPOLINE(MyVirtualClass, 3);
+    NB_TRAMPOLINE(MyVirtualClass);
 
     int foo_virtual_public_pure() const override
     {
@@ -79,7 +79,7 @@ namespace Root { namespace Inner {
 class MyVirtualDerivate_trampoline : public MyVirtualDerivate
 {
 public:
-    NB_TRAMPOLINE(MyVirtualDerivate, 4);
+    NB_TRAMPOLINE(MyVirtualDerivate);
 
     int foo_virtual_public_pure() const override
     {

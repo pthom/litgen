@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+- nanobind: require nanobind >= 3.0.1, and emit `NB_TRAMPOLINE(Base)` without the size argument (deprecated in nanobind 3)
+
 ## [0.22.0] - 2025-11-27
 
 - Can publish functions that return a pointer to pointer
