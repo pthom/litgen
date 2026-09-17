@@ -19,46 +19,36 @@ CppCode = str
 PythonCode = str
 
 
-def apply_black_formatter_pyi(options: LitgenOptions, file: str) -> bool:
-    def _apply_black_formatter_pyi_via_module(options: LitgenOptions, file: str) -> bool:
-        """This versions calls black formatter via a python module.
-        For some reason, it does not handle the line length correctly, so we use the subprocess version instead."""
-        import black
-        from pathlib import Path
+def format_stub_code_with_black(options: LitgenOptions, code: str, is_pyi: bool) -> str | None:
+    """Format code with black (via subprocess and stdin), return None on failure.
+    Formatting in memory (instead of formatting the written file in place) lets us write
+    the stub file only when its final content changes, so that its mtime is preserved otherwise
+    (build systems may depend on it)."""
 
-        black_mode = black.Mode()
-        black_mode.is_pyi = True
-        black_mode.target_versions = {black.TargetVersion.PY310}  # type: ignore
-        black_mode.line_length = options.python_black_formatter_line_length
+    def add_python_exe_folder_to_env_path() -> None:
+        """When calling this from CMake, the env PATH may not contain the python executable folder,
+        where black lives if installed in a virtual environment. This function adds it to the PATH."""
+        import sys
+        import os
+        import pathlib
 
-        result = black.format_file_in_place(src=Path(file), fast=False, mode=black_mode)
-        return result  # type: ignore
+        python_exe = pathlib.Path(sys.executable)
+        python_exe_folder = python_exe.parent
+        current_path = os.environ["PATH"]
+        if str(python_exe_folder) not in current_path:
+            os.environ["PATH"] += ":" + str(python_exe_folder)
 
-    def _apply_black_formatter_pyi_via_subprocess(options: LitgenOptions, file: str) -> bool:
-        def add_python_exe_folder_to_env_path() -> None:
-            """When calling this from CMake, the env PATH may not contain the python executable folder,
-            where black lives if installed in a virtual environment. This function adds it to the PATH."""
-            import sys
-            import os
-            import pathlib
+    add_python_exe_folder_to_env_path()
 
-            python_exe = pathlib.Path(sys.executable)
-            python_exe_folder = python_exe.parent
-            current_path = os.environ["PATH"]
-            if str(python_exe_folder) not in current_path:
-                os.environ["PATH"] += ":" + str(python_exe_folder)
-
-        add_python_exe_folder_to_env_path()
-
-        cmd = f"black --target-version py310 --line-length {options.python_black_formatter_line_length} {file}"
-
-        try:
-            subprocess.check_call(cmd, shell=True)
-            return True
-        except subprocess.CalledProcessError:
-            return False
-
-    return _apply_black_formatter_pyi_via_subprocess(options, file)
+    cmd = ["black", "-q", "--target-version", "py310", "--line-length", str(options.python_black_formatter_line_length)]
+    if is_pyi:
+        cmd.append("--pyi")
+    cmd.append("-")  # read from stdin, write to stdout
+    try:
+        result = subprocess.run(cmd, input=code, capture_output=True, text=True, check=True)
+        return result.stdout
+    except (subprocess.CalledProcessError, FileNotFoundError):
+        return None
 
 
 class GeneratedCodeType(Enum):
@@ -100,12 +90,16 @@ class LitgenGenerator:
             raise
 
         try:
-            code_utils.write_generated_code_between_markers(output_stub_pyi_file, "litgen_stub", stub_code)
+            stub_file_code = code_utils.generate_code_between_markers(output_stub_pyi_file, "litgen_stub", stub_code)
             if self.options().python_run_black_formatter:
-                success = apply_black_formatter_pyi(self.options(), output_stub_pyi_file)
-                if not success:
+                formatted = format_stub_code_with_black(
+                    self.options(), stub_file_code, is_pyi=output_stub_pyi_file.endswith(".pyi")
+                )
+                if formatted is None:
                     logging.warning(f"Failed to run black formatter on {output_stub_pyi_file}")
-
+                else:
+                    stub_file_code = formatted
+            code_utils.write_text_file(output_stub_pyi_file, stub_file_code)  # writes only if the content changed
         except (FileNotFoundError, RuntimeError):
             logging.warning(help_stub_file(output_stub_pyi_file))
             raise
