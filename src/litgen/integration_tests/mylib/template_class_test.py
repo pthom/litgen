@@ -16,3 +16,9 @@ def test_template_class_string():
     ci = lg_mylib.MyTemplateClass_string(["a", "b"])
     assert ci.sum() == "ab"
     assert ci.sum2(["c", "d"]) == "abcd"
+
+
+def test_template_class_custom_binding():
+    # values_count is a custom binding using LG_CPP_CLASS_NAME (see autogenerate_mylib.py)
+    assert lg_mylib.MyTemplateClass_int([1, 2]).values_count() == 2
+    assert lg_mylib.MyTemplateClass_string().values_count() == 0

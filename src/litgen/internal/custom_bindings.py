@@ -1,3 +1,4 @@
+import re
 from dataclasses import dataclass
 from typing import Dict, List
 from srcmlcpp.cpp_types.scope.cpp_scope import CppScope
@@ -30,6 +31,9 @@ class CustomBindings:
 
     Placeholders are available inside `pydef_code`:
       * ``LG_CLASS`` → the current ``py::class_`` / ``nb::class_`` object.
+      * ``LG_CPP_CLASS_NAME`` → the C++ name of the current class, including template arguments
+        (e.g. ``ImVector<int>``). For a template class, the custom code is emitted once per specialization,
+        and this placeholder lets lambdas name the concrete type (``[](LG_CPP_CLASS_NAME& self) {...}``).
       * ``LG_SUBMODULE`` → the current submodule (for a C++ namespace).
       * ``LG_MODULE`` → the main Python module object.
 
@@ -215,7 +219,10 @@ class CustomBindings:
 
         result = "\n".join(codes)
         for r in replacements:
-            result = result.replace(r.target, r.replacement)
+            # word-boundary replacement, so that LG_CLASS is not replaced inside LG_CPP_CLASS_NAME
+            # (backslashes are escaped, since re.sub interprets them in the replacement string)
+            replacement = r.replacement.replace("\\", "\\\\")
+            result = re.sub(r"\b" + re.escape(r.target) + r"\b", replacement, result)
         if not result.startswith("\n"):
             result = "\n" + result
         if not result.endswith("\n"):
@@ -223,9 +230,18 @@ class CustomBindings:
         return result
 
     def _pub_make_class_custom_code(
-        self, qualified_class_name: str, pydef_class_var_name: str, is_pydef: bool
+        self,
+        qualified_class_name: str,
+        pydef_class_var_name: str,
+        is_pydef: bool,
+        qualified_class_name_with_specialization: str | None = None,
     ) -> str | None:
-        replacements = [_StringReplacement("LG_CLASS", pydef_class_var_name)]
+        if qualified_class_name_with_specialization is None:
+            qualified_class_name_with_specialization = qualified_class_name
+        replacements = [
+            _StringReplacement("LG_CLASS", pydef_class_var_name),
+            _StringReplacement("LG_CPP_CLASS_NAME", qualified_class_name_with_specialization),
+        ]
         qual_class_scope = CppScope.from_string(qualified_class_name)
         result = self._make_custom_code(qual_class_scope, is_pydef=is_pydef, replacements=replacements)
         return result

@@ -124,3 +124,28 @@ def test_custom_code():
             m.def("global_function", [](){ std::cout << "Hello from global_function!" << std::endl; });
     """,
     )
+
+
+def test_custom_code_on_template_class_specializations():
+    code = "template<typename T> struct ImVector { int Size; T* Data; };"
+    options = litgen.LitgenOptions()
+    options.bind_library = litgen.BindLibraryType.nanobind
+    options.class_template_options.add_specialization(
+        name_regex="^ImVector$", cpp_types_list_str=["int", "ImVec2"], cpp_synonyms_list_str=[]
+    )
+    options.custom_bindings.add_custom_bindings_to_class(
+        qualified_class="ImVector",
+        stub_code="def data_address(self) -> int: ...",
+        pydef_code='LG_CLASS.def("data_address", [](LG_CPP_CLASS_NAME& self) { return (size_t)self.Data; });',
+    )
+    generated_code = litgen.generate_code(options, code)
+    # The custom code is emitted once per specialization, with the concrete C++ type
+    assert (
+        'pyClassImVector_int.def("data_address", [](ImVector<int>& self) { return (size_t)self.Data; });'
+        in generated_code.pydef_code
+    )
+    assert (
+        'pyClassImVector_ImVec2.def("data_address", [](ImVector<ImVec2>& self) { return (size_t)self.Data; });'
+        in generated_code.pydef_code
+    )
+    assert generated_code.stub_code.count("def data_address(self) -> int:") == 2

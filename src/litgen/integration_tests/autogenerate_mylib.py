@@ -194,6 +194,19 @@ def mylib_litgen_options(bind_library_type: litgen.BindLibraryType) -> litgen.Li
         LG_SUBMODULE.def("foo_namespace_function", []() -> int { return 53; });
         """,
     )
+    # Custom bindings on a template class: the code is emitted once per specialization,
+    # LG_CPP_CLASS_NAME expands to the concrete C++ type (cf template_class_test.h)
+    options.custom_bindings.add_custom_bindings_to_class(
+        qualified_class="MyTemplateClass",
+        stub_code='''
+            def values_count(self) -> int:
+                """Number of stored values (custom binding on a template class)"""
+                ...
+        ''',
+        pydef_code="""
+            LG_CLASS.def("values_count", [](const LG_CPP_CLASS_NAME& self) { return (int)self.values.size(); });
+        """,
+    )
     # options.custom_bindings.add_custom_bindings_to_main_module(
     #     stub_code='''
     #     def global_function() -> int:

@@ -1271,6 +1271,10 @@ void py_init_module_lg_mylib(nb::module_& m)
             nb::arg("v"),
             "Method that requires a parameter adaptation")
         ;
+
+    pyClassMyTemplateClass_int.def("values_count", [](const MyTemplateClass<int>& self) { return (int)self.values.size(); });
+
+
     auto pyClassMyTemplateClass_string =
         nb::class_<MyTemplateClass<std::string>>
             (m, "MyTemplateClass_string", "")
@@ -1309,6 +1313,10 @@ void py_init_module_lg_mylib(nb::module_& m)
             nb::arg("v"),
             "Method that requires a parameter adaptation")
         ;
+
+    pyClassMyTemplateClass_string.def("values_count", [](const MyTemplateClass<std::string>& self) { return (int)self.values.size(); });
+
+
     // #ifdef __cplusplus
     //
     // #endif

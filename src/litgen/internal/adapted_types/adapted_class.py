@@ -617,7 +617,10 @@ class AdaptedClass(AdaptedElement):
         body_lines += make_iterable_code().splitlines()
 
         custom_code = self.options.custom_bindings._pub_make_class_custom_code(
-            self.cpp_element().qualified_class_name(), self.pydef_class_var(), is_pydef=False
+            self.cpp_element().qualified_class_name(),
+            self.pydef_class_var(),
+            is_pydef=False,
+            qualified_class_name_with_specialization=self.cpp_element().qualified_class_name_with_specialization(),
         )
         if custom_code is not None:
             body_lines += custom_code.splitlines()
@@ -865,7 +868,10 @@ class AdaptedClass(AdaptedElement):
         code = code + f"{_i_};"
 
         custom_code = self.options.custom_bindings._pub_make_class_custom_code(
-            self.cpp_element().qualified_class_name(), self.pydef_class_var(), is_pydef=True
+            self.cpp_element().qualified_class_name(),
+            self.pydef_class_var(),
+            is_pydef=True,
+            qualified_class_name_with_specialization=self.cpp_element().qualified_class_name_with_specialization(),
         )
         if custom_code is not None:
             code += "\n" + custom_code + "\n"

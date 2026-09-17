@@ -449,7 +449,8 @@ class LitgenOptions:
     member_exclude_by_name__regex: RegexOrMatcher = ""
     # Exclude members based on their type
     member_exclude_by_type__regex: RegexOrMatcher = ""
-    # Exclude certain members by a regex on their name, if class or struct name matched
+    # Exclude certain members and methods by a regex on their name, if class or struct name matched
+    # (the key is the exact class name, without namespace nor template arguments)
     # For example:
     #   options.member_exclude_by_name_and_class__regex = {
     #       "ImVector": join_string_by_pipe_char([

@@ -899,6 +899,10 @@ class MyTemplateClass_int:  # Python specialization for MyTemplateClass<int>
         """Method that requires a parameter adaptation"""
         pass
 
+    def values_count(self) -> int:
+        """Number of stored values (custom binding on a template class)"""
+        ...
+
 class MyTemplateClass_string:  # Python specialization for MyTemplateClass<std::string>
     values: List[str]
 
@@ -919,6 +923,10 @@ class MyTemplateClass_string:  # Python specialization for MyTemplateClass<std::
     def sum2(self, v: List[str]) -> str:
         """Method that requires a parameter adaptation"""
         pass
+
+    def values_count(self) -> int:
+        """Number of stored values (custom binding on a template class)"""
+        ...
 
 #      </template specializations for class MyTemplateClass>
 #  ------------------------------------------------------------------------
