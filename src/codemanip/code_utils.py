@@ -821,6 +821,22 @@ def join_string_by_pipe_char(strs: list[str]) -> str:
     return "|".join(strs)
 
 
+def append_regex(current: RegexOrMatcher, *extra: str) -> str:
+    """Return a regex that matches `current` or any of the regexes in `extra`.
+
+    Typical usage, to extend an option which already has a default value:
+        options.fn_exclude_by_name__regex = append_regex(options.fn_exclude_by_name__regex, r"^Foo$", r"^Bar$")
+
+    - Leading and trailing "|" are ignored, and empty parts are skipped (a trailing "|" would otherwise add
+      an empty alternative, which matches everything).
+    - `current` must be a regex string: a matcher function cannot be extended this way.
+    """
+    if not isinstance(current, str):
+        raise TypeError("append_regex: cannot extend a matcher function, only a regex string")
+    parts = [part.strip("|") for part in (current, *extra)]
+    return "|".join(part for part in parts if len(part) > 0)
+
+
 def merge_dicts(dict1: dict[str, Any], dict2: dict[str, Any]) -> dict[str, Any]:
     res = {**dict1, **dict2}
     return res

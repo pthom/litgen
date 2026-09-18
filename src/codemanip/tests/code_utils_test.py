@@ -208,3 +208,16 @@ def test_find_word_after_token():
     code = "return_value_policy::reference // Yes"
     r = code_utils.find_word_after_token(code, "return_value_policy::")
     assert r == "reference"
+
+
+def test_append_regex():
+    import pytest
+
+    assert code_utils.append_regex("", r"^Foo$") == r"^Foo$"
+    assert code_utils.append_regex(r"^A$", r"^B$", r"^C$") == r"^A$|^B$|^C$"
+    # leading / trailing pipes and empty parts are ignored (a trailing "|" would match everything)
+    assert code_utils.append_regex(r"^A$|", r"|^B$", "", "|") == r"^A$|^B$"
+    assert not code_utils.does_match_regex(code_utils.append_regex(r"^A$|", r"^B$"), "Other")
+    # a matcher function cannot be extended
+    with pytest.raises(TypeError):
+        code_utils.append_regex(lambda s: True, r"^B$")
