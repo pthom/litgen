@@ -172,3 +172,24 @@ def test_type_to_python() -> None:
     assert my_type_to_python("volatile int") == "volatile int"
     # unsigned char is not handled (up the user to defined another synonym)
     assert my_type_to_python("unsigned char") == "unsigned char"
+
+
+def test_var_value_to_python_keeps_string_literals():
+    from litgen.internal import LitgenContext
+
+    lg_context = LitgenContext(litgen.LitgenOptions())
+
+    def to_python(value_cpp: str) -> str:
+        return cpp_to_python.var_value_to_python(lg_context, value_cpp)
+
+    # A printf format is not a number: "%.3f" used to become "%.3"
+    assert to_python('"%.3f"') == '"%.3f"'
+    assert to_python('"%d items, %5.1f %%"') == '"%d items, %5.1f %%"'
+    # Nothing is translated inside a string literal, escaped quotes included
+    assert to_python('"true or NULL, std::string: 1.5f"') == '"true or NULL, std::string: 1.5f"'
+    assert to_python(r'"a \" 2.5f"') == r'"a \" 2.5f"'
+    # ... and everything still is outside of them
+    assert to_python("1.5f") == "1.5"
+    assert to_python("true") == "True"
+    assert to_python("nullptr") == "None"
+    assert to_python('Foo("%.3f", 1.5f, NULL)') == 'Foo("%.3f", 1.5, None)'

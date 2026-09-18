@@ -2,6 +2,7 @@
 
 ## [Unreleased]
 
+- Default values: nothing is translated inside a C++ string literal any more. A printf format such as `"%.3f"` was published as `"%.3"` in the stubs (its `3f` was taken for a float literal)
 - `codemanip.code_utils.append_regex(current, *extra)`: typed helper to extend a regex option (replaces `options.xxx__regex += "|..."`, which does not type-check since these options may also hold a matcher function)
 - Custom bindings: new placeholder `LG_CPP_CLASS_NAME` (C++ class name with template arguments), so that custom class bindings can be written for template specializations
 - `member_exclude_by_name_and_class__regex`: document that it also applies to methods (it already did), with tests

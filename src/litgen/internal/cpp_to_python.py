@@ -1,7 +1,8 @@
 from __future__ import annotations
 import keyword
+import re
 from dataclasses import dataclass  # noqa
-from typing import Optional
+from typing import Callable, Optional
 
 from codemanip import code_utils
 from codemanip.code_replacements import RegexReplacementList
@@ -246,6 +247,22 @@ def var_name_to_python(options: LitgenOptions, name: str) -> str:
     return r
 
 
+_CPP_STRING_LITERAL_REGEX = re.compile(r'"(?:\\.|[^"\\])*"')
+
+
+def _apply_outside_string_literals(code: str, fn: Callable[[str], str]) -> str:
+    """Applies fn to the parts of a C++ expression that are not inside a string literal.
+    (so that e.g. the default value "%.3f" is not seen as the number 3f, and stays "%.3f")"""
+    parts = []
+    pos = 0
+    for match in _CPP_STRING_LITERAL_REGEX.finditer(code):
+        parts.append(fn(code[pos : match.start()]))
+        parts.append(match.group(0))
+        pos = match.end()
+    parts.append(fn(code[pos:]))
+    return "".join(parts)
+
+
 def var_value_to_python(
     lg_context: LitgenContext,
     default_value_cpp: str,
@@ -253,8 +270,11 @@ def var_value_to_python(
 ) -> str:
     options = lg_context.options
     r = default_value_cpp
-    r = options.type_replacements.apply(r)
-    r = options.value_replacements.apply(r)
+
+    def apply_replacements(code: str) -> str:
+        return options.value_replacements.apply(options.type_replacements.apply(code))
+
+    r = _apply_outside_string_literals(r, apply_replacements)
     for number_macro, value in lg_context.options.srcmlcpp_options.named_number_macros.items():
         r = r.replace(number_macro, str(value))
     r = lg_context.apply_scoped_var_value_replacements(r, cpp_scope)
