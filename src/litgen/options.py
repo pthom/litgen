@@ -100,6 +100,8 @@ class LitgenOptions:
     #    <Disable comments inclusion in C++ and Python>
     ################################################################################
     comments_exclude: bool = False
+    # Lines of a comment matching this regex are dropped (e.g. documentation markers such as "@@md#Name" / "@@/md")
+    comments_exclude_lines_regex: str = ""
 
     ################################################################################
     #    <names translation from C++ to python>

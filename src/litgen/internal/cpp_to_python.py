@@ -24,6 +24,10 @@ def _comment_apply_replacements(options: LitgenOptions, comment: str) -> str:
     (strip empty lines, remove API markers, apply replacements)
     """
     lines = comment.split("\n")
+    if options.comments_exclude_lines_regex:
+        kept = [line for line in lines if not re.search(options.comments_exclude_lines_regex, line)]
+        if len(kept) < len(lines):  # a dropped marker often had a blank line after it
+            lines = code_utils.strip_empty_lines_in_list(kept)
     if options.python_strip_empty_comment_lines:
         lines = code_utils.strip_empty_lines_in_list(lines)
     if len(lines) == 0:

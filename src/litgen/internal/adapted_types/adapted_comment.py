@@ -43,6 +43,8 @@ class AdaptedComment(AdaptedElement):
     def stub_lines(self) -> list[str]:
         comment_cpp = self.cpp_element().comment
         comment_python = cpp_to_python._comment_apply_replacements(self.options, comment_cpp)
+        if len(comment_python) == 0:  # e.g. a comment made only of excluded lines
+            return []
 
         def add_hash(s: str) -> str:
             if self.options.python_reproduce_cpp_layout:
