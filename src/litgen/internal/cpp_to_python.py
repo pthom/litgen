@@ -695,6 +695,12 @@ def _scope_part_name(scope_part: CppScopePart) -> str:
     return r
 
 
+def is_root_namespace(options: LitgenOptions, namespace_name: str) -> bool:
+    """A namespace listed in options.namespaces_root; a nested definition (namespace A::B) is a root
+    when each of its parts is a root"""
+    return all(part in options.namespaces_root for part in namespace_name.split("::"))
+
+
 def cpp_scope_to_pybind_scope(options: LitgenOptions, cpp_element: CppElement, include_self: bool) -> CppScope:
     """Remove namespaces considered as root namespace in the options
     (it requires to add a using namespace in the pybind_xxx.cpp file, but this is ok)
@@ -708,7 +714,7 @@ def cpp_scope_to_pybind_scope(options: LitgenOptions, cpp_element: CppElement, i
         if scope_part.scope_type != CppScopeType.Namespace:
             scope_parts_excluding_namespaces.append(scope_part)
         else:
-            is_root = scope_part.scope_name in options.namespaces_root
+            is_root = is_root_namespace(options, scope_part.scope_name)
             if not is_root:
                 scope_parts_excluding_namespaces.append(scope_part)
             else:

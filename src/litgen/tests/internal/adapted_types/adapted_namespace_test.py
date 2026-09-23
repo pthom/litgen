@@ -117,3 +117,28 @@ def test_root_namespace():
             pass
     """,
     )
+
+
+def test_nested_root_namespaces():
+    # namespace A::B (C++17 nested definition) is a root when each of its parts is a root:
+    # its content lands in the module, not in a submodule
+    options = LitgenOptions()
+    options.namespaces_root = ["A", "B"]
+    code = code_utils.unindent_code(
+        """
+        namespace A::B
+        {
+            int Foo();
+        }
+        """
+    )
+    generated_code = litgen.generate_code(options, code)
+    code_utils.assert_are_codes_equal(
+        generated_code.stub_code,
+        """
+        def foo() -> int:
+            pass
+        """,
+    )
+    assert 'm.def("foo",' in generated_code.pydef_code
+    assert "def_submodule" not in generated_code.pydef_code

@@ -55,7 +55,7 @@ class AdaptedNamespace(AdaptedElement):
         return self.cpp_element().ns_name
 
     def flag_shall_create_namespace_as_module(self) -> bool:
-        is_root = self.namespace_name() in self.options.namespaces_root
+        is_root = cpp_to_python.is_root_namespace(self.options, self.namespace_name())
         return not is_root
 
     # override

@@ -50,7 +50,7 @@ class NamespacesCodeTree:
         if len(current_namespace_name) == 0 or len(self._namespace_code) == 0:
             is_namespace_ignored = True
         else:
-            is_namespace_ignored = current_namespace_name in self._options.namespaces_root
+            is_namespace_ignored = cpp_to_python.is_root_namespace(self._options, current_namespace_name)
 
         ns_written_name = current_namespace_name
         if self._code_type == PydefOrStub.Stub:
@@ -87,14 +87,19 @@ class NamespacesCodeTree:
             sub_code_tree._store_code_in_tree(namespace_names[1:], code)
 
     def store_code(self, qualified_namespace_name: CppQualifiedNamespaceName, code: str) -> None:
+        from litgen.internal import cpp_to_python
+
         namespaces_names = qualified_namespace_name.split("::")
 
         def shall_use_this_namespace(namespace_name: str) -> bool:
-            is_root_namespace = namespace_name in self._options.namespaces_root
+            is_root_namespace = cpp_to_python.is_root_namespace(self._options, namespace_name)
             return not is_root_namespace
 
         namespaces_names = list(filter(shall_use_this_namespace, namespaces_names))
 
+        if len(namespaces_names) == 0:  # every part is a root namespace: the code belongs to the module
+            self._namespace_code += code
+            return
         self._store_code_in_tree(namespaces_names, code)
 
     def was_namespace_created(self, qualified_namespace_name: CppQualifiedNamespaceName) -> bool:
