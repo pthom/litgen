@@ -150,6 +150,14 @@ class AdaptedElement:  # (abc.ABC):  # Cannot be abstract (mypy limitation:  htt
             return []
 
         cpp_original_code = self._cpp_element.str_code_verbatim()
+        # A function defined in the header (inline): the signature only, not the body
+        block = getattr(self._cpp_element, "block", None)
+        if block is not None and hasattr(block, "str_code_verbatim"):
+            body = block.str_code_verbatim()
+            if body and body in cpp_original_code:
+                cpp_original_code = cpp_original_code.replace(body, "", 1).rstrip()
+                if not cpp_original_code.endswith(";"):
+                    cpp_original_code += ";"
         cpp_original_code = code_utils.strip_empty_lines(cpp_original_code)
         if len(cpp_original_code) == 0:
             return []
