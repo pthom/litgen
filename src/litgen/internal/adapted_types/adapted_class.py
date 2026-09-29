@@ -1390,6 +1390,7 @@ class PythonNamedConstructorHelper:
                 if part.scope_name in original_types:
                     part.scope_type = original_types[part.scope_name]
 
+            ctor_qualified.is_synthesized = True
             return ctor_qualified
 
         return make_cpp_constructor()

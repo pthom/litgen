@@ -148,6 +148,8 @@ class AdaptedElement:  # (abc.ABC):  # Cannot be abstract (mypy limitation:  htt
     def _elm_stub_original_code_lines_info(self) -> list[str]:
         if not self.options.original_signature_flag_show:
             return []
+        if getattr(self._cpp_element, "is_synthesized", False):  # litgen's invention: no original C++ code
+            return []
 
         cpp_original_code = self._cpp_element.str_code_verbatim()
         # A function defined in the header (inline): the signature only, not the body

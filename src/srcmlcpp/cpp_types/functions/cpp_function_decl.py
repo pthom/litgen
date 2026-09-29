@@ -60,6 +60,8 @@ class CppFunctionDecl(CppElementAndComment, CppITemplateHost):
         self.specifiers: list[str] = []
         self.is_pure_virtual = False
         self.function_name = ""
+        # Invented by litgen (a constructor with named params): it has no original C++ code
+        self.is_synthesized = False
         self._cache_with_qualified_types = ScopedElementCache()
         self._cache_with_terse_types = ScopedElementCache()
         self._noexcept = None
