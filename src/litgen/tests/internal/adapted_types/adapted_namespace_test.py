@@ -124,14 +124,12 @@ def test_nested_root_namespaces():
     # its content lands in the module, not in a submodule
     options = LitgenOptions()
     options.namespaces_root = ["A", "B"]
-    code = code_utils.unindent_code(
-        """
+    code = code_utils.unindent_code("""
         namespace A::B
         {
             int Foo();
         }
-        """
-    )
+        """)
     generated_code = litgen.generate_code(options, code)
     code_utils.assert_are_codes_equal(
         generated_code.stub_code,

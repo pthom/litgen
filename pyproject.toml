@@ -56,6 +56,9 @@ litgen-cli = 'litgen.cli.litgen_cli:main'
 
 [tool.black]
 line-length = 120
+# Explicit: inferred from requires-python, the targets would include a Python newer than the one running black,
+# whose safety check then cannot parse the output
+target-version = ["py310", "py311", "py312", "py313", "py314"]
 # A regex preceded with ^/ will apply only to files and directories
 # in the root of the project.
 extend-exclude = '''venv|^scratch|.ipynb$|_litgen_template|src/litgen/integration_tests/mylib|pybind11|importanize|.pyi$|lg_projects|ci_scripts/docker_ci/dvp|md4c|external/SDL'''
