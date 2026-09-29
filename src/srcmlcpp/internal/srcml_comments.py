@@ -243,6 +243,11 @@ def _is_comment_on_previous_line(children: list[SrcmlWrapper], idx: int) -> bool
               MY_API void Foo();         // element_n1
               MY_API void Foo2();        // element_n2
               MY_API void Foo3();
+        With options.comment_above_is_doc_when_next_has_eol_comment, the comment belongs to element_n1
+        when element_n2 documents itself with an end-of-line comment:
+              // A comment about Foo     // element_n0
+              MY_API void Foo();         // element_n1
+              MY_API void Foo2();        // A comment about Foo2
         """
         if idx + 2 > len(children) - 1:
             return False
@@ -255,8 +260,11 @@ def _is_comment_on_previous_line(children: list[SrcmlWrapper], idx: int) -> bool
         are_consecutive_lines = (element_n0.end().line + 1 == element_n1.start().line) and (
             element_n1.end().line + 1 == element_n2.start().line
         )
+        is_n2_documented = element_n0.options.comment_above_is_doc_when_next_has_eol_comment and (
+            _is_comment_end_of_line(children, idx + 3)
+        )
 
-        r = is_comment and are_next_same_types and are_consecutive_lines
+        r = is_comment and are_next_same_types and are_consecutive_lines and not is_n2_documented
         return r
 
     if is_group_comment():

@@ -46,6 +46,12 @@ MY_API inline int my_add(int a, int b) { return a + b; } // Adds two numbers
 
 MY_API int my_mul(int a, int b) { return a * b; }
 
+
+// Multiplies two numbers, then adds one: this will be my_mul_add's __doc__, since my_neg has an end-of-line comment
+// (autogenerate_mylib.py sets the option srcmlcpp_options.comment_above_is_doc_when_next_has_eol_comment)
+MY_API inline int my_mul_add(int a, int b) { return a * b + 1; }
+MY_API inline int my_neg(int a) { return -a; } // Negates a number
+
 // This should not be published, as it is not marked with MY_API
 int my_div(int a, int b) { return a / b;}
 

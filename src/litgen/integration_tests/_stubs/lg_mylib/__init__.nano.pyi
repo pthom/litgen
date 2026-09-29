@@ -74,6 +74,16 @@ def my_add(a: int, b: int) -> int:
 def my_mul(a: int, b: int) -> int:
     pass
 
+def my_mul_add(a: int, b: int) -> int:
+    """Multiplies two numbers, then adds one: this will be my_mul_add's __doc__, since my_neg has an end-of-line comment
+    (autogenerate_mylib.py sets the option srcmlcpp_options.comment_above_is_doc_when_next_has_eol_comment)
+    """
+    pass
+
+def my_neg(a: int) -> int:
+    """Negates a number"""
+    pass
+
 # ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 #                       mylib/header_filter_test.h included by mylib/mylib_main/mylib.h                        //
 # //////////////////////////////////////////////////////////////////////////////////////////////////////////////

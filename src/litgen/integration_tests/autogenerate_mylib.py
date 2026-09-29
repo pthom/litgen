@@ -86,6 +86,9 @@ def mylib_litgen_options(bind_library_type: litgen.BindLibraryType) -> litgen.Li
     options.srcmlcpp_options.functions_api_prefixes = "MY_API"
     options.fn_exclude_non_api = True
 
+    # A comment above a declaration documents it, when the next declaration has an end-of-line comment
+    options.srcmlcpp_options.comment_above_is_doc_when_next_has_eol_comment = True
+
     options.class_exclude_by_name__regex = "Detail$"
     options.enum_exclude_by_name__regex = "Detail$"
 

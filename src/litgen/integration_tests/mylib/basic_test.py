@@ -9,6 +9,8 @@ def test_functions():
 
     assert lg_mylib.my_mul(3, 4) == 12
     assert lg_mylib.my_sub(3, 4) == -1
+    assert lg_mylib.my_mul_add(3, 4) == 13
+    assert lg_mylib.my_neg(3) == -3
 
 
 def test_not_published():
@@ -24,6 +26,12 @@ def test_doc():
     assert (
         "Title that should be published as a top comment" not in lg_mylib.my_add.__doc__
     )
+
+    # The comment above my_mul_add documents it: my_neg, on the next line, has an end-of-line comment
+    assert lg_mylib.my_mul_add.__doc__ is not None
+    assert "Multiplies two numbers, then adds one" in lg_mylib.my_mul_add.__doc__
+    assert lg_mylib.my_neg.__doc__ is not None
+    assert "Negates a number" in lg_mylib.my_neg.__doc__
 
     # assert lg_mylib.my_mul.__doc__.startswith("my_mul(a: int, b: int) -> int")
 

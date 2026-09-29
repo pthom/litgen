@@ -114,6 +114,29 @@ def test_group_comment():
     assert children_and_comments[3].tag() == "function_decl"
 
 
+def test_comment_above_is_doc_when_next_has_eol_comment():
+    code = """
+    // Doc of Foo
+    MY_API void Foo();
+    MY_API void Foo2(); // Doc of Foo2
+    """[1:]
+    options = SrcmlcppOptions()
+
+    # By default, the comment is about the group (Foo and Foo2): it stays standalone
+    xml_wrapper = srcmlcpp_main.code_to_srcml_wrapper(options, code)
+    children_and_comments = srcml_comments.get_children_with_comments(xml_wrapper)
+    assert children_and_comments[0].tag() == "comment"
+
+    # With the option, it documents Foo, since Foo2 documents itself with an end-of-line comment
+    options.comment_above_is_doc_when_next_has_eol_comment = True
+    xml_wrapper = srcmlcpp_main.code_to_srcml_wrapper(options, code)
+    children_and_comments = srcml_comments.get_children_with_comments(xml_wrapper)
+    assert children_and_comments[0].tag() == "function_decl"
+    assert children_and_comments[0].cpp_element_comments.comment_on_previous_lines == " Doc of Foo"
+    assert children_and_comments[1].tag() == "function_decl"
+    assert children_and_comments[1].cpp_element_comments.comment_end_of_line == " Doc of Foo2"
+
+
 def test_multiline_c_style_comment():
     code = code_utils.unindent_code(
         """

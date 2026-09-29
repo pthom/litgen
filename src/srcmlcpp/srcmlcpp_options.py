@@ -61,6 +61,28 @@ class SrcmlcppOptions:
     code_preprocess_function: Optional[Callable[[str], str]] = None
 
     ################################################################################
+    #    <Comments: which comment documents which declaration>
+    ################################################################################
+
+    # A comment on the lines directly above a declaration documents it (it becomes its docstring),
+    # and so does a comment at the end of the declaration's line.
+    # Except a group comment: when the declaration is directly followed by another one of the same kind,
+    # the comment above is about the group, and it stays a standalone comment. For example, in imgui.h:
+    #       // Widgets: Trees                                  <- a group comment
+    #       IMGUI_API bool TreeNode(const char* label);
+    #       IMGUI_API bool TreeNode(const char* str_id, const char* fmt, ...);  // helper variation to ...
+    #
+    # Set comment_above_is_doc_when_next_has_eol_comment to True for a header that documents each declaration,
+    # either on the line above or at the end of the line. The comment above a declaration then documents it
+    # when the next declaration has an end-of-line comment:
+    #       // Makes this editor the current one               <- the docstring of SetCurrentEditor
+    #       IMGUI_NODE_EDITOR_API void SetCurrentEditor(EditorContext* ctx);
+    #       IMGUI_NODE_EDITOR_API EditorContext* GetCurrentEditor(); // The current editor
+    # In such a header, end a group comment with an empty line.
+    # (When the next declaration has no end-of-line comment, the comment above is still a group comment.)
+    comment_above_is_doc_when_next_has_eol_comment: bool = False
+
+    ################################################################################
     #    <Misc options>
     ################################################################################
 

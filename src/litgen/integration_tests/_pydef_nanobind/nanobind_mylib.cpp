@@ -197,6 +197,16 @@ void py_init_module_lg_mylib(nb::module_& m)
 
     m.def("my_mul",
         my_mul, nb::arg("a"), nb::arg("b"));
+
+    m.def("my_mul_add",
+        my_mul_add,
+        nb::arg("a"), nb::arg("b"),
+        " Multiplies two numbers, then adds one: this will be my_mul_add's __doc__, since my_neg has an end-of-line comment\n (autogenerate_mylib.py sets the option srcmlcpp_options.comment_above_is_doc_when_next_has_eol_comment)");
+
+    m.def("my_neg",
+        my_neg,
+        nb::arg("a"),
+        "Negates a number");
     // #if HEADER_FILTER_ACCEPTABLE_IF
     //
 
