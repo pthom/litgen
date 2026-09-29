@@ -46,7 +46,8 @@ def group_overloaded_functions(elements: list[Any]) -> list[Any]:
     (e.g. operator*(double), operator+(Point), operator*(Point)).
 
     This moves later overloads next to the first occurrence of each name,
-    preserving relative order for everything else.
+    preserving relative order for everything else. The comments right above a moved
+    overload (without an empty line in between) are about it: they move with it.
     """
     fn_first_index: dict[str, int] = {}
     result: list[Any] = []
@@ -59,9 +60,12 @@ def group_overloaded_functions(elements: list[Any]) -> list[Any]:
                 fn_first_index[name] = len(result)
                 result.append(elem)
             else:
+                comments_above: list[Any] = []
+                while result and isinstance(result[-1], AdaptedComment):
+                    comments_above.insert(0, result.pop())
                 if name not in deferred:
                     deferred[name] = []
-                deferred[name].append(elem)
+                deferred[name].extend(comments_above + [elem])
         else:
             result.append(elem)
 

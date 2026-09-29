@@ -362,6 +362,35 @@ def test_overloads_non_adjacent() -> None:
     )
 
 
+def test_overloads_comment_moves_with_overload() -> None:
+    """When the overloads are grouped, the comment right above a moved overload moves with it"""
+    options = LitgenOptions()
+    code = """
+    void Foo(int a);
+    void Bar();
+    // About Foo(int, float)
+    void Foo(int a, float b);
+    void Baz();
+    """
+    generated_code = LitgenGeneratorTestsHelper.code_to_stub(options, code)
+    code_utils.assert_are_codes_equal(
+        generated_code,
+        """
+        @overload
+        def foo(a: int) -> None:
+            pass
+        # About Foo(int, float)
+        @overload
+        def foo(a: int, b: float) -> None:
+            pass
+        def bar() -> None:
+            pass
+        def baz() -> None:
+            pass
+        """,
+    )
+
+
 def test_overloads_duplicate_python_signature() -> None:
     """Test that C++ overloads with identical Python signatures are deduplicated in stubs.
 
