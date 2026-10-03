@@ -8,6 +8,7 @@
 - `member_exclude_by_name_and_class__regex`: document that it also applies to methods (it already did), with tests
 - Generated stub files are formatted with black in memory and written only when their content changes (their mtime is preserved otherwise, which matters when a build system depends on them)
 - nanobind: require nanobind >= 3.0.1, and emit `NB_TRAMPOLINE(Base)` without the size argument (deprecated in nanobind 3)
+- C buffers: a 1D array with zero or one element is accepted whatever its stride (a contiguous single-element view such as `a[:, 0]` was rejected)
 
 ## [0.22.0] - 2025-11-27
 

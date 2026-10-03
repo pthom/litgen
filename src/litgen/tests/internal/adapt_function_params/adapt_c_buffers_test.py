@@ -41,7 +41,7 @@ def test_mutable_buffer_return_int():
                 auto foo_adapt_c_buffers = [](py::array & buf) -> int
                 {
                     // Check if the array is 1D and C-contiguous
-                    if (! (buf.ndim() == 1 && buf.strides(0) == buf.itemsize()) )
+                    if (buf.ndim() != 1 || (buf.shape(0) > 1 && buf.strides(0) != buf.itemsize()))
                         throw std::runtime_error("The array must be 1D and contiguous");
 
                     // convert py::array to C standard buffer (mutable)
@@ -82,7 +82,7 @@ def test_const_buffer_return_void_stride():
                 auto foo_adapt_c_buffers = [](const py::array & buf, int stride = -1)
                 {
                     // Check if the array is 1D and C-contiguous
-                    if (! (buf.ndim() == 1 && buf.strides(0) == buf.itemsize()) )
+                    if (buf.ndim() != 1 || (buf.shape(0) > 1 && buf.strides(0) != buf.itemsize()))
                         throw std::runtime_error("The array must be 1D and contiguous");
 
                     // convert py::array to C standard buffer (const)
@@ -127,7 +127,7 @@ def test_two_buffers():
                 auto foo_adapt_c_buffers = [](const py::array & buf1, const py::array & buf2) -> int
                 {
                     // Check if the array is 1D and C-contiguous
-                    if (! (buf1.ndim() == 1 && buf1.strides(0) == buf1.itemsize()) )
+                    if (buf1.ndim() != 1 || (buf1.shape(0) > 1 && buf1.strides(0) != buf1.itemsize()))
                         throw std::runtime_error("The array must be 1D and contiguous");
 
                     // convert py::array to C standard buffer (const)
@@ -144,7 +144,7 @@ def test_two_buffers():
                             )msg"));
 
                     // Check if the array is 1D and C-contiguous
-                    if (! (buf2.ndim() == 1 && buf2.strides(0) == buf2.itemsize()) )
+                    if (buf2.ndim() != 1 || (buf2.shape(0) > 1 && buf2.strides(0) != buf2.itemsize()))
                         throw std::runtime_error("The array must be 1D and contiguous");
 
                     // convert py::array to C standard buffer (const)
@@ -185,7 +185,7 @@ def test_template_buffer():
                 auto foo_adapt_c_buffers = [](const py::array & buf, bool flag) -> int
                 {
                     // Check if the array is 1D and C-contiguous
-                    if (! (buf.ndim() == 1 && buf.strides(0) == buf.itemsize()) )
+                    if (buf.ndim() != 1 || (buf.shape(0) > 1 && buf.strides(0) != buf.itemsize()))
                         throw std::runtime_error("The array must be 1D and contiguous");
 
                     // convert py::array to C standard buffer (const)
@@ -254,7 +254,7 @@ def test_nanobind_buffer() -> None:
                 auto foo_adapt_c_buffers = [](nb::ndarray<> & buffer)
                 {
                     // Check if the array is 1D and C-contiguous
-                    if (! (buffer.ndim() == 1 && buffer.stride(0) == 1))
+                    if (buffer.ndim() != 1 || (buffer.shape(0) > 1 && buffer.stride(0) != 1))
                         throw std::runtime_error("The array must be 1D and contiguous");
 
                     // convert nb::ndarray to C standard buffer (mutable)
@@ -303,7 +303,7 @@ m.def("foo",
         auto foo_adapt_c_buffers = [](nb::ndarray<nb::ro> & buf, bool flag) -> MY_API int
         {
             // Check if the array is 1D and C-contiguous
-            if (! (buf.ndim() == 1 && buf.stride(0) == 1))
+            if (buf.ndim() != 1 || (buf.shape(0) > 1 && buf.stride(0) != 1))
                 throw std::runtime_error("The array must be 1D and contiguous");
 
             // convert nb::ndarray to C standard buffer (const)
