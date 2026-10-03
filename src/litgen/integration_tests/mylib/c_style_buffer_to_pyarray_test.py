@@ -23,6 +23,23 @@ def test_buffer_sum():
     assert result_sum == 15
 
 
+def test_buffer_stride_is_checked_only_with_several_elements():
+    array = np.array([[7, 8, 9, 10]], dtype=np.uint8)
+    values = array[:, 0]
+    assert values.flags.c_contiguous
+    assert values.strides == (4,)
+    assert lg_mylib.buffer_sum(values) == 7
+    lg_mylib.add_inside_buffer(values, 2)
+    assert array[0, 0] == 9
+
+    empty_values = np.empty((0, 4), dtype=np.uint8)[:, 0]
+    assert empty_values.strides != (1,)
+    assert lg_mylib.buffer_sum(empty_values) == 0
+
+    with pytest.raises(RuntimeError, match="contiguous"):
+        lg_mylib.buffer_sum(np.arange(6, dtype=np.uint8)[::2])
+
+
 def test_add_inside_two_buffers():
     x = np.array((1, 2, 3), np.uint8)
     y = np.array((10, 11, 12), np.uint8)
