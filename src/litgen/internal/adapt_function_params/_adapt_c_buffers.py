@@ -539,7 +539,7 @@ class _AdaptBuffersHelper:
         if self.options.bind_library == BindLibraryType.pybind11:
             template = f"""
                         // Check if the array is 1D and C-contiguous
-                        if (! ({_._param_name(idx_param)}.ndim() == 1 && {_._param_name(idx_param)}.strides(0) == {_._param_name(idx_param)}.itemsize()) )
+                        if ({_._param_name(idx_param)}.ndim() != 1 || ({_._param_name(idx_param)}.shape(0) > 1 && {_._param_name(idx_param)}.strides(0) != {_._param_name(idx_param)}.itemsize()))
                             throw std::runtime_error("The array must be 1D and contiguous");
 
                         // convert py::array to C standard buffer ({mutable_or_const})
@@ -550,7 +550,7 @@ class _AdaptBuffersHelper:
             # TODO: implement contiguous check for nanobind
             template = f"""
                         // Check if the array is 1D and C-contiguous
-                        if (! ({_._param_name(idx_param)}.ndim() == 1 && {_._param_name(idx_param)}.stride(0) == 1))
+                        if ({_._param_name(idx_param)}.ndim() != 1 || ({_._param_name(idx_param)}.shape(0) > 1 && {_._param_name(idx_param)}.stride(0) != 1))
                             throw std::runtime_error("The array must be 1D and contiguous");
 
                         // convert nb::ndarray to C standard buffer ({mutable_or_const})
