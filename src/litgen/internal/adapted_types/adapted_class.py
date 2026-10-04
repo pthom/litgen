@@ -626,7 +626,18 @@ class AdaptedClass(AdaptedElement):
             body_lines += custom_code.splitlines()
 
         r = self._elm_str_stub_layout_lines(title_lines, body_lines)
+        r = self._elm_stub_original_decl_head_lines(self._cpp_decl_head()) + r
         return r
+
+    def _cpp_decl_head(self) -> str:
+        """The C++ declaration's head: "struct ImVec2", "class MyClass", "struct ImVector<ImDrawCmd>" for a specialization"""
+        from srcmlcpp.cpp_types.classes.cpp_class import CppClass
+
+        kind = "class" if isinstance(self.cpp_element(), CppClass) else "struct"
+        name = self.cpp_element().class_name
+        if self.template_specialization is not None:
+            name += f"<{self.template_specialization.cpp_type.str_code()}>"
+        return f"{kind} {name}"
 
     #  ============================================================================================
     #

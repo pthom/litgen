@@ -169,6 +169,15 @@ class AdaptedElement:  # (abc.ABC):  # Cannot be abstract (mypy limitation:  htt
             cpp_original_code_lines[0] += "    /* original C++ signature */"
             return cpp_original_code_lines
 
+    def _elm_stub_original_decl_head_lines(self, decl_head: str) -> list[str]:
+        """The original C++ declaration of a struct or an enum, as a comment: its head only ("struct ImGuiIO"),
+        since the body is the members' own declarations (which carry their own comment)"""
+        if not self.options.original_signature_flag_show:
+            return []
+        if getattr(self._cpp_element, "is_synthesized", False):
+            return []
+        return [f"# {decl_head}    /* original C++ signature */"]
+
     def _elm_str_stub_layout_lines(self, title_lines: list[str], body_lines: Optional[list[str]] = None) -> list[str]:
         """Common layout for class, enum, and functions stubs
         :param title_lines: class, enum or function decl + function params. Will be followed by docstring

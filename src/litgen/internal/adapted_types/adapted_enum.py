@@ -235,7 +235,9 @@ class AdaptedEnum(AdaptedElement):
             body_lines += element_lines
 
         all_lines = self._elm_str_stub_layout_lines([title_line], body_lines)
-        return all_lines
+        enum_kind = "enum class" if self.cpp_element().enum_type == "class" else "enum"
+        decl_head = f"{enum_kind} {self.cpp_element().enum_name}"
+        return self._elm_stub_original_decl_head_lines(decl_head) + all_lines
 
     # override
     def pydef_lines(self) -> list[str]:

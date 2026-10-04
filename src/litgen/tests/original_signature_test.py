@@ -4,8 +4,9 @@ from codemanip import code_utils
 
 
 def test_original_signature_not_for_synthesized_constructor():
-    """The original C++ signature comment is for the header's declarations: the constructor with named params, which
-    litgen invents for a struct with public members, has none"""
+    """The original C++ signature comment is for the header's declarations (a struct or an enum gets its head, since
+    its Python name may differ): the constructor with named params, which litgen invents for a struct with public
+    members, has none"""
     options = litgen.LitgenOptions()
     options.original_signature_flag_show = True
     code = """
@@ -19,6 +20,7 @@ def test_original_signature_not_for_synthesized_constructor():
     code_utils.assert_are_codes_equal(
         generated_code.stub_code,
         '''
+        # struct Point    /* original C++ signature */
         class Point:
             # int x = 0;    /* original C++ signature */
             x: int = 0
@@ -32,3 +34,15 @@ def test_original_signature_not_for_synthesized_constructor():
                 pass
         ''',
     )
+
+
+def test_original_signature_enum_head():
+    options = litgen.LitgenOptions()
+    options.original_signature_flag_show = True
+    code = """
+        enum MyFlags_ { MyFlags_None = 0, MyFlags_A = 1 };
+        enum class Color { Red, Green };
+        """
+    generated_code = litgen.generate_code(options, code)
+    assert "# enum MyFlags_    /* original C++ signature */\nclass MyFlags_(" in generated_code.stub_code
+    assert "# enum class Color    /* original C++ signature */\nclass Color(" in generated_code.stub_code
