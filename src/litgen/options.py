@@ -162,6 +162,19 @@ class LitgenOptions:
     fn_params_exclude_names__regex: RegexOrMatcher = ""
     fn_params_exclude_types__regex: RegexOrMatcher = ""
 
+    # fn_params_text_end_names__regex:
+    # A "text end" param is a `const char *` param that follows another `const char *` param (the text), and whose
+    # name matches this regex. It points inside the text, which a Python string cannot do: it leaves the Python
+    # signature, and the call passes its default value if it has one, else the end of the text.
+    # For example, with options.fn_params_text_end_names__regex = r"_end$"
+    #     void TextUnformatted(const char* text, const char* text_end = NULL);
+    #     void SeparatorTextEx(const char* label, const char* label_end, float extra_width);
+    # are published as
+    #     def text_unformatted(text: str) -> None:                # calls TextUnformatted(text, NULL)
+    #     def separator_text_ex(label: str, extra_width: float) -> None:
+    #                                                             # calls SeparatorTextEx(label, label + strlen(label), ...)
+    fn_params_text_end_names__regex: RegexOrMatcher = ""
+
     # fn_exclude_non_api:
     # if srcmlcpp_options.functions_api_prefixes is filled, and fn_exclude_non_api=True,
     # then only functions with an api marker will be exported.

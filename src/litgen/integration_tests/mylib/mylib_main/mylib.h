@@ -7,6 +7,7 @@
 #include "mylib/c_style_array_test.h"
 #include "mylib/c_style_buffer_to_pyarray_test.h"
 #include "mylib/c_string_list_test.h"
+#include "mylib/text_end_test.h"
 #include "mylib/modifiable_immutable_test.h"
 #include "mylib/overload_test.h"
 #include "mylib/enum_test.h"

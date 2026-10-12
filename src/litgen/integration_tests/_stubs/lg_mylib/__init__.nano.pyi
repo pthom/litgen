@@ -248,6 +248,25 @@ def c_string_list_total_size(
     pass
 
 # ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+#                       mylib/text_end_test.h included by mylib/mylib_main/mylib.h                             //
+# //////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+def text_end_length(text: str) -> int:
+    """
+    "Text end" params: with options.fn_params_text_end_names__regex = r"_end$", a `const char *` param that follows
+    another `const char *` param, and whose name ends with "_end", points inside the text: it leaves the python signature.
+
+    The following functions will be exported with the following python signatures:
+    -->    def text_end_length(text: str) -> int:            # text_end receives the end of the text
+    -->    def text_end_length_optional(text: str) -> int:   # text_end receives its default value
+
+    """
+    pass
+
+def text_end_length_optional(text: str) -> int:
+    pass
+
+# ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 #                       mylib/modifiable_immutable_test.h included by mylib/mylib_main/mylib.h                 //
 # //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 

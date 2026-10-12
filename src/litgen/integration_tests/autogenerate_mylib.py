@@ -114,6 +114,9 @@ def mylib_litgen_options(bind_library_type: litgen.BindLibraryType) -> litgen.Li
     # c style buffer options (will apply to all functions names, except if containing "Change")
     options.fn_params_replace_buffer_by_array__regex = code_utils.make_regex_exclude_word("Change")
 
+    # "text end" params (see text_end_test.h)
+    options.fn_params_text_end_names__regex = r"_end$"
+
     # namespace
     options.namespaces_root = ["Mylib"]
 

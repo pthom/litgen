@@ -597,6 +597,32 @@ void py_init_module_lg_mylib(py::module& m)
         py::arg("items"), py::arg("output_0"), py::arg("output_1"),
         "\n C String lists tests:\n   Two consecutive params (const char *, int | size_t) are exported as List[str]\n\n The following function will be exported with the following python signature:\n -->    def c_string_list_total_size(items: List[str], output_0: BoxedInt, output_1: BoxedInt) -> int:\n");
 
+    m.def("text_end_length",
+        [](const char * text) -> int
+        {
+            auto text_end_length_adapt_text_end_params = [](const char * text) -> int
+            {
+                auto lambda_result = text_end_length(text, text ? text + strlen(text) : nullptr);
+                return lambda_result;
+            };
+
+            return text_end_length_adapt_text_end_params(text);
+        },
+        py::arg("text"),
+        "\n \"Text end\" params: with options.fn_params_text_end_names__regex = r\"_end$\", a `const char *` param that follows\n another `const char *` param, and whose name ends with \"_end\", points inside the text: it leaves the python signature.\n\n The following functions will be exported with the following python signatures:\n -->    def text_end_length(text: str) -> int:            # text_end receives the end of the text\n -->    def text_end_length_optional(text: str) -> int:   # text_end receives its default value\n");
+
+    m.def("text_end_length_optional",
+        [](const char * text) -> int
+        {
+            auto text_end_length_optional_adapt_text_end_params = [](const char * text) -> int
+            {
+                auto lambda_result = text_end_length_optional(text, nullptr);
+                return lambda_result;
+            };
+
+            return text_end_length_optional_adapt_text_end_params(text);
+        },     py::arg("text"));
+
     m.def("toggle_bool_pointer",
         [](BoxedBool & v)
         {
