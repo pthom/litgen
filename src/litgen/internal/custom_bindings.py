@@ -273,5 +273,8 @@ class CustomBindings:
                 self._main_module_emitted_pydef = True
             else:
                 self._main_module_emitted_stub = True
+                # Between markers, as a submodule: a reader of the stub (a doc generator) can tell these hand-written
+                # stubs from the ones generated from the headers, which they follow
+                result = f"\n# <custom_bindings>{result}# </custom_bindings>\n"
 
         return result

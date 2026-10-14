@@ -11,6 +11,7 @@
 - C buffers: a 1D array with zero or one element is accepted whatever its stride (a contiguous single-element view such as `a[:, 0]` was rejected)
 - `fn_params_text_end_names__regex` (off by default): a "text end" param (`const char* text, const char* text_end`) leaves the Python signature, and receives its default value or the end of the text. A Python string could not point inside the text, so C++ read from an unrelated address
 - Stubs: a comment-only line that contains a `#` (a URL anchor, for example) is no longer aligned as an end-of-line comment: the rest of the line was pushed to the column of the block's other comments
+- Stubs: the main module's custom bindings are between `# <custom_bindings>` and `# </custom_bindings>`, as a submodule between its markers: a doc generator can tell them from the stubs generated from the headers
 
 ## [0.22.0] - 2025-11-27
 

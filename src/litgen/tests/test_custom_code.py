@@ -85,9 +85,11 @@ def test_custom_code():
                     ...
             # </submodule root_ns>
 
+            # <custom_bindings>
             def global_function() -> None:
                 """A custom function in the global namespace"""
                 ...
+            # </custom_bindings>
     ''',
     )
 
