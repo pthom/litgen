@@ -41,6 +41,9 @@ def test_line_python_comment_position():
     code = "        # my comment"
     assert code_utils.line_python_comment_eol_position(code) is None
 
+    code = "        # see https://example.com/page#anchor"
+    assert code_utils.line_python_comment_eol_position(code) is None
+
 
 def test_align_python_comments_in_block():
     code = """
@@ -52,6 +55,20 @@ aa = 5 # c
 a = 5  # c
 aa = 5 # c
 # cc
+    """
+    generated = code_utils.align_python_comments_in_block(code)
+    assert generated == expected
+
+    # A "#" inside a comment-only line (here a URL anchor) is not aligned with the end-of-line comments
+    code = """
+a = 5 # c
+aaaaaa = 5 # c
+# see https://example.com/page#anchor
+    """
+    expected = """
+a = 5      # c
+aaaaaa = 5 # c
+# see https://example.com/page#anchor
     """
     generated = code_utils.align_python_comments_in_block(code)
     assert generated == expected

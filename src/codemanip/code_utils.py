@@ -150,6 +150,7 @@ def line_python_comment_position(code_line: str, skip_if_comment_only_line: bool
             else:
                 if has_seen_non_space:
                     return i
+                return None  # a comment-only line: a "#" inside it (e.g. a URL anchor) does not start another comment
 
         if not char.isspace():
             has_seen_non_space = True
