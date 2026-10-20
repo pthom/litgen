@@ -18,6 +18,8 @@ def test_comments_python_names_in_backticks():
                 int a = 0;
                 // Unchanged: `HelloImGui::Run(const RunnerParams&)`, `ImGui::Unknown()`, `ImVec2(0, fpsIdle)`, `fps::idle`, `Render`, `bool IsIdle(float fpsIdle)`, `if (IsIdle()) { a = 1; }`, `id(obj)`
                 int b = 0;
+                // `fpsIdle=True`, `Render/GetRunnerParams()`. Unchanged: `Begin/GetRunnerParams()`, `SimpleParams`
+                int c = 0;
             };
             RunnerParams* GetRunnerParams();
             bool IsIdle(int id);
@@ -32,7 +34,8 @@ def test_comments_python_names_in_backticks():
     options.var_names_replacements.add_last_replacement(r"^id$", "id_")  # as imgui does: `id(obj)` is Python's
     options.fn_exclude_by_name__regex = "^FancyFunction$"
     options.custom_bindings.add_custom_bindings_to_main_module(
-        stub_code="def fancy_function(data: bytes) -> None:\n    pass\n", pydef_code=""
+        stub_code="def fancy_function(\n    data: bytes,\n    simple_params: int = 0,\n) -> None:\n    pass\n",
+        pydef_code="",
     )
     generated_code = litgen.generate_code(options, code)
 
@@ -53,7 +56,9 @@ def test_comments_python_names_in_backticks():
             a: int = 0
             # Unchanged: `HelloImGui::Run(const RunnerParams&)`, `ImGui::Unknown()`, `ImVec2(0, fpsIdle)`, `fps::idle`, `Render`, `bool IsIdle(float fpsIdle)`, `if (IsIdle()) { a = 1; }`, `id(obj)`
             b: int = 0
-            def __init__(self, fps_idle: float = 9., a: int = 0, b: int = 0) -> None:
+            # `fps_idle=True`, `render/get_runner_params()`. Unchanged: `Begin/GetRunnerParams()`, `SimpleParams`
+            c: int = 0
+            def __init__(self, fps_idle: float = 9., a: int = 0, b: int = 0, c: int = 0) -> None:
                 """Auto-generated default constructor with named params"""
                 pass
         def get_runner_params() -> RunnerParams:
@@ -72,7 +77,10 @@ def test_comments_python_names_in_backticks():
         # </submodule manual_render>
 
         # <custom_bindings>
-        def fancy_function(data: bytes) -> None:
+        def fancy_function(
+            data: bytes,
+            simple_params: int = 0,
+        ) -> None:
             pass
         # </custom_bindings>
     ''',
