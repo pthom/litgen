@@ -127,6 +127,20 @@ class LitgenOptions:
     macro_name_replacements: RegexReplacementList  # = RegexReplacementList() by default (i.e. empty)
     fn_params_type_replacements: RegexReplacementList  # = RegexReplacementList() by default (i.e. empty)
 
+    # In the stub, a text in backticks (in comments and docstrings) that names C++ functions, classes, fields, enum
+    # values or namespaces of this module gets their Python names:
+    #     `RunnerParams.callbacks.ShowMenus` -> `RunnerParams.callbacks.show_menus`
+    # A text with C++ that cannot be converted (`const std::string&`, another library's names) stays as is.
+    # Off by default: it changes the comments of existing stubs.
+    comments_python_names_in_backticks: bool = False
+    # The Python modules of C++ namespaces, in those texts: with {"HelloImGui": "hello_imgui"},
+    # `HelloImGui::Run()` becomes `hello_imgui.run()`. A text with a namespace not listed here stays as is.
+    comments_python_modules: dict[str, str]
+    # The names defined by other modules (e.g. read from their stubs), checked when converting their names:
+    # with {"imgui": {"get_style", "font_scale_dpi", ...}}, `ImGui::GetStyle().FontScaleDpi` becomes
+    # `imgui.get_style().font_scale_dpi`. Without an entry here, a module's names are those of this module.
+    comments_python_names_of_other_modules: dict[str, set[str]]
+
     ################################################################################
     #    <functions and method adaptations>
     ################################################################################
@@ -153,6 +167,13 @@ class LitgenOptions:
     #         "Selectable": "const char *, bool, ImGuiSelectableFlags, const ImVec2 &"
     #     }
     fn_exclude_by_name_and_signature: dict[str, str]
+
+    # ------------------------------------------------------------------------------
+    # Add a text to the docstring of some functions
+    # ------------------------------------------------------------------------------
+    # By qualified C++ name (all overloads). For example, to point to a simpler Python version:
+    #    options.fn_docstring_additions = {"ImGui::MenuItem": "Python: `menu_item_simple()` returns a bool."}
+    fn_docstring_additions: dict[str, str]
 
     # ------------------------------------------------------------------------------
     # Exclude some params by name or type
@@ -774,6 +795,9 @@ class LitgenOptions:
         self.namespaces_root = []
 
         self.fn_exclude_by_name_and_signature = {}
+        self.fn_docstring_additions = {}
+        self.comments_python_modules = {}
+        self.comments_python_names_of_other_modules = {}
         self.member_exclude_by_name_and_class__regex = {}
 
         self.custom_bindings = CustomBindings()

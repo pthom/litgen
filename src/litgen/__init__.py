@@ -13,6 +13,7 @@ from litgen.internal.cpp_to_python import (
     opencv_replacements,
     standard_comment_replacements,
 )
+from litgen.internal.comments_python_names import python_names_in_stub
 from litgen.litgen_generator import (
     LitgenGenerator,
     GeneratedCodes,
@@ -45,6 +46,8 @@ __all__ = [
     "standard_value_replacements",
     "opencv_replacements",
     "standard_comment_replacements",
+    # The names another module's stub defines (see comments_python_names_of_other_modules)
+    "python_names_in_stub",
     # Replacement helpers
     "RegexReplacement",
     "RegexReplacementList",

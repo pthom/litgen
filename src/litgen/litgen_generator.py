@@ -12,6 +12,7 @@ from srcmlcpp.internal.code_to_srcml import _SRCML_CALLER
 from litgen import LitgenOptions, BindLibraryType
 from litgen.code_to_adapted_unit import code_to_adapted_unit_in_context
 from litgen.internal import boxed_python_type, cpp_to_python
+from litgen.internal.comments_python_names import python_names_in_backticks
 from litgen.internal.context.litgen_context import LitgenContext
 
 CppFilename = str
@@ -163,6 +164,8 @@ class LitgenGenerator:
             stub_codes.append(decorated_stub_code)
         stub_code = "\n\n".join(stub_codes)
         stub_code = code_utils.shorten_lines_containing_only_spaces(stub_code)
+        if self.options().comments_python_names_in_backticks:
+            stub_code = python_names_in_backticks(self.lg_context, stub_code)
 
         postprocess_stub_function = self.options().postprocess_stub_function
         if postprocess_stub_function is not None:

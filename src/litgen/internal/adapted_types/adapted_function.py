@@ -271,11 +271,16 @@ class AdaptedFunction(AdaptedElement):
         self._pydef_fill_return_value_policy()
         self._stub_fill_is_type_ignore()
         self._register_function_name_replacement()
+        self._register_python_names()
 
         self.is_overloaded = is_overloaded
 
         if self.cpp_element().is_inferred_return_type():
             self.cpp_element().cpp_element_comments.comment_end_of_line += "\n(C++ auto return type)"
+        docstring_addition = self.options.fn_docstring_additions.get(self.cpp_element().qualified_function_name())
+        if docstring_addition is not None:
+            comments = self.cpp_element().cpp_element_comments
+            comments.comment_end_of_line += ("\n" if comments.comment_end_of_line else "") + docstring_addition
 
         adapt_function_params.apply_all_adapters(self)
         self.init_add_warning_if_non_published_api()
@@ -1366,6 +1371,15 @@ class AdaptedFunction(AdaptedElement):
             cache = self.lg_context.get_scoped_replacements(scope)
             replacement = RegexReplacement(rf"\b{cpp_name}(?=\s*\()", py_name)
             cache.store_replacement(replacement)
+
+    def _register_python_names(self) -> None:
+        """Register the Python names of the function and of its params, for the comments (comments_python_names.py)"""
+        if self.is_constructor() or self.cpp_element().is_operator():
+            return
+        self.lg_context.register_python_name(self.cpp_element().function_name, self._stub_function_name_python())
+        for param in self.cpp_element().parameter_list.parameters:
+            param_name = param.decl.decl_name
+            self.lg_context.register_python_name(param_name, cpp_to_python.var_name_to_python(self.options, param_name))
 
     #  ============================================================================================
     #

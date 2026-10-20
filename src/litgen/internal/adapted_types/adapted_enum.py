@@ -25,6 +25,19 @@ class AdaptedEnumDecl(AdaptedDecl):
     def __init__(self, lg_context: LitgenContext, decl: CppDecl, enum_parent: AdaptedEnum) -> None:
         self.enum_parent = enum_parent
         super().__init__(lg_context, decl)
+        self._register_python_name()
+
+    def _register_python_name(self) -> None:
+        """For the comments (comments_python_names.py): `MyEnum::Value` -> `MyEnum.value` (enum class),
+        `MyEnum_Value` -> `MyEnum_.value` (C enum, whose values are prefixed with its name)"""
+        enum_name_cpp = self.enum_parent.cpp_element().enum_name
+        value_name_cpp = self.cpp_element().decl_name
+        if self.enum_parent.cpp_element().is_enum_class():
+            self.lg_context.register_python_name(value_name_cpp, self.decl_name_python())
+            self.lg_context.enum_value_names.add(value_name_cpp)
+        elif value_name_cpp.lower().startswith(enum_name_cpp.lower()):
+            python_name = f"{self.enum_parent.enum_name_python()}.{self.decl_name_python()}"
+            self.lg_context.register_python_name(value_name_cpp, python_name)
 
     # override
     def cpp_element(self) -> CppDecl:
@@ -170,6 +183,7 @@ class AdaptedEnum(AdaptedElement):
 
     def __init__(self, lg_context: LitgenContext, enum_: CppEnum) -> None:
         super().__init__(lg_context, enum_)
+        lg_context.register_python_name(enum_.enum_name, self.enum_name_python())
         self.adapted_children = []
         self.adapted_enum_decls = []
         self._fill_children()

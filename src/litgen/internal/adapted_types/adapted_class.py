@@ -60,6 +60,7 @@ class AdaptedClassMember(AdaptedDecl):
     def __init__(self, lg_context: LitgenContext, decl: CppDecl, class_parent: AdaptedClass) -> None:
         self.class_parent = class_parent
         super().__init__(lg_context, decl)
+        lg_context.register_python_name(self.decl_name_cpp(), self.decl_name_python())
 
     def __str__(self) -> str:
         name_cpp = self.decl_name_cpp()
@@ -362,6 +363,7 @@ class AdaptedClass(AdaptedElement):
 
     def __init__(self, lg_context: LitgenContext, class_: CppStruct):
         super().__init__(lg_context, class_)
+        lg_context.register_python_name(class_.class_name, self.class_name_python())
         self.adapted_public_children = []
         self._init_fill_public_children()
         self._group_overloaded_methods()

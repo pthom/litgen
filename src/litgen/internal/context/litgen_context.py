@@ -58,6 +58,12 @@ class LitgenContext:
     # See ScopeMembers for details.
     scope_members: dict[str, ScopeMembers]
 
+    # The Python name of each C++ name met in this module, for the comments (see comments_python_names_in_backticks).
+    # None when a name has two Python forms (e.g. a class and a function both named Image).
+    python_names: dict[str, str | None]
+    # The C++ names of enum values: alone in backticks, they convert even when they are a plain word (`Metal`)
+    enum_value_names: set[str]
+
     # cf https://pybind11.readthedocs.io/en/stable/advanced/classes.html#binding-protected-member-functions
     protected_methods_glue_code: str = ""
     # cf https://pybind11.readthedocs.io/en/stable/advanced/classes.html#overriding-virtual-functions-in-python
@@ -73,6 +79,14 @@ class LitgenContext:
         self.namespaces_pydef = NamespacesCodeTree(self.options, PydefOrStub.Pydef)
         self._scoped_replacements = {}
         self.scope_members = {}
+        self.python_names = {}
+        self.enum_value_names = set()
+
+    def register_python_name(self, cpp_name: str, python_name: str) -> None:
+        if self.python_names.get(cpp_name, python_name) == python_name:
+            self.python_names[cpp_name] = python_name
+        else:
+            self.python_names[cpp_name] = None
 
     def clear_namespaces_code_tree(self) -> None:
         self.namespaces_stub = NamespacesCodeTree(self.options, PydefOrStub.Stub)

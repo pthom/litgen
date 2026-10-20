@@ -50,6 +50,7 @@ class AdaptedNamespace(AdaptedElement):
 
         python_scope_name = cpp_to_python.namespace_name_to_python(self.options, cpp_ns_name)
         self.lg_context.scope_members[cpp_ns_name] = ScopeMembers(python_scope_name, names)
+        self.lg_context.register_python_name(cpp_ns_name, python_scope_name)  # for the comments
 
     def namespace_name(self) -> str:
         return self.cpp_element().ns_name
