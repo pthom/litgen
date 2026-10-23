@@ -412,3 +412,20 @@ def test_template_buffer_nanobind_single_buffer_unchanged():
     pydef = litgen.generate_code(options, code).pydef_code
     assert "_nanobind_dtype_letter_to_name" not in pydef
     assert "must share the same dtype" not in pydef
+
+
+def test_two_buffers_one_count():
+    # xs and ys share one count: the generated code refuses arrays of different lengths (the shorter one would be
+    # read past its end)
+    code = """
+    MY_API void foo(const float *xs, const float *ys, int count);
+    """
+    generated_code = gen_pydef_code(code)
+    assert 'if (ys_count != xs_count)' in generated_code
+    assert 'throw std::runtime_error("foo: xs and ys must have the same length");' in generated_code
+    # each buffer has its own count: nothing to compare
+    code = """
+    MY_API void foo(const float *xs, int xs_count, const float *ys, int ys_count);
+    """
+    generated_code = gen_pydef_code(code)
+    assert "must have the same length" not in generated_code

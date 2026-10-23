@@ -558,6 +558,17 @@ class _AdaptBuffersHelper:
                         size_t {_._pyarray_count(idx_param)} = {_._param_name(idx_param)}.shape(0);
                     """  # noqa
         template = code_utils.unindent_code(template, flag_strip_empty_lines=True) + "\n"
+        # The buffers before one size param share it: a shorter array would be read (or written) past its end
+        if idx_param > 0 and self._is_buffer_template_or_not(idx_param - 1):
+            previous_name = _._param_name(idx_param - 1)
+            name = _._param_name(idx_param)
+            function_name_python = cpp_to_python.function_name_to_python(self.options, self.function_infos.function_name)
+            check = f"""
+                        // {previous_name} and {name} share the same count
+                        if ({name}_count != {previous_name}_count)
+                            throw std::runtime_error("{function_name_python}: {previous_name} and {name} must have the same length");
+                    """  # noqa
+            template += code_utils.unindent_code(check, flag_strip_empty_lines=True) + "\n"
         return template
 
     def _expected_dtype_char(self, idx_param: int) -> str:
