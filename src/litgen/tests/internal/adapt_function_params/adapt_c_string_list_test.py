@@ -88,3 +88,15 @@ def test_mix_array_and_string_list():
             },     py::arg("items"), py::arg("ouput_0"), py::arg("ouput_1"));
         """,
     )
+
+
+def test_c_string_list_counted_by_an_array():
+    # The count follows the array, not the list (ImPlot's PlotPieChart): the list must be as long as the array,
+    # since C++ reads one label per value
+    code = "void foo(const char * const labels[], const float* values, int count, double x);"
+    options = litgen.LitgenOptions()
+    options.bind_library = litgen.BindLibraryType.nanobind
+    options.fn_params_replace_buffer_by_array__regex = r".*"
+    generated_code = litgen.generate_code(options, code).pydef_code
+    assert "if (labels.size() != static_cast<size_t>(values.shape(0)))" in generated_code
+    assert 'throw std::runtime_error("foo: labels and values must have the same length");' in generated_code

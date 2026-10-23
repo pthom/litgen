@@ -223,6 +223,26 @@ def adapt_c_string_list_no_count(adapted_function: AdaptedFunction) -> Optional[
             lambda_adapter.lambda_input_code += f"for (const auto& v: {param_name})\n"
             lambda_adapter.lambda_input_code += f"{_i_}{vec_name}.push_back(v.c_str());\n"
 
+            # The list's count is the one of a numpy array of the function (the C count param followed the array,
+            # and the buffer adapter took it): C++ reads as many strings as the array has values
+            array_params = [
+                p
+                for p in old_function_params
+                if p.decl.cpp_type.typenames and p.decl.cpp_type.typenames[0].startswith(("nb::ndarray", "py::array"))
+            ]
+            if len(array_params) == 1:
+                array_name = array_params[0].decl.decl_name
+                function_name_python = cpp_to_python.function_name_to_python(
+                    options, adapted_function.cpp_adapted_function.function_name
+                )
+                lambda_adapter.lambda_input_code += (
+                    f"if ({param_name}.size() != static_cast<size_t>({array_name}.shape(0)))\n"
+                )
+                lambda_adapter.lambda_input_code += (
+                    f'{_i_}throw std::runtime_error("{function_name_python}: '
+                    f'{param_name} and {array_name} must have the same length");\n'
+                )
+
             #
             # Fill adapted_cpp_parameter_list (those that will call the original C style function)
             #
