@@ -1,5 +1,5 @@
-# Use pip if available (CI), otherwise fall back to uv pip (uv venvs are seedless)
-PIP := `command -v pip > /dev/null 2>&1 && echo "pip" || echo "uv pip"`
+# The pip of the `python` that runs the tests (CI), otherwise uv pip (uv venvs are seedless)
+PIP := `python -m pip --version > /dev/null 2>&1 && echo "python -m pip" || echo "uv pip"`
 
 # List all available commands
 default:
@@ -40,9 +40,7 @@ integration_tests_nanobind: build_integration_tests_nanobind
     just pytest nanobind
 
 # Runs all tests for pybind and nanobind (after building the integration tests)
-integration_tests:
-    just integration_tests_nanobind
-    just integration_tests_pybind
+integration_tests: integration_tests_nanobind integration_tests_pybind
 
 # Just runs pytest (requires that the integration tests have been built)
 pytest binding_type:
