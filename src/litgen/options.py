@@ -455,6 +455,19 @@ class LitgenOptions:
     # NOTE: Enable this for nanobind.
     fn_params_const_char_pointer_with_default_null: bool = True
 
+    # ------------------------------------------------------------------------------
+    # Pointer params that accept None
+    # ------------------------------------------------------------------------------
+    # A pointer param accepts None in Python when its default value is NULL or nullptr. Otherwise, nanobind refuses
+    # None (pybind11 accepts it, but the stub does not say so).
+    # fn_params_pointer_accept_none__regex: a regex on function names. The pointer params of these functions
+    # accept None: `.none()` for nanobind, `Optional[T]` in the stub. For example, with r"^SetCurrentContext$",
+    #     void SetCurrentContext(Context* ctx);
+    # is published as
+    #     def set_current_context(ctx: Optional[Context]) -> None
+    # Only the params that stay pointers in the binding: not the C buffers replaced by arrays, for example.
+    fn_params_pointer_accept_none__regex: RegexOrMatcher = r""
+
     # As an alternative, we can also add the modified value to the returned type
     # of the function (which will now be a tuple)
     #

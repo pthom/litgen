@@ -406,6 +406,9 @@ void py_init_module_lg_mylib(py::module& m)
                 // convert py::array to C standard buffer (mutable)
                 void * buffer_2_from_pyarray = buffer_2.mutable_data();
                 py::ssize_t buffer_2_count = buffer_2.shape()[0];
+                // buffer_1 and buffer_2 share the same count
+                if (buffer_2_count != buffer_1_count)
+                    throw std::runtime_error("add_inside_two_buffers: buffer_1 and buffer_2 must have the same length");
                 char buffer_2_type = buffer_2.dtype().char_();
                 if (buffer_2_type != 'B')
                     throw std::runtime_error(std::string(R"msg(
@@ -500,6 +503,9 @@ void py_init_module_lg_mylib(py::module& m)
                 // convert py::array to C standard buffer (const)
                 const void * buffer_2_from_pyarray = buffer_2.data();
                 py::ssize_t buffer_2_count = buffer_2.shape()[0];
+                // buffer_1 and buffer_2 share the same count
+                if (buffer_2_count != buffer_1_count)
+                    throw std::runtime_error("templated_sum_buffers: buffer_1 and buffer_2 must have the same length");
 
                 #ifdef _WIN32
                 using np_uint_l = uint32_t;
@@ -622,6 +628,28 @@ void py_init_module_lg_mylib(py::module& m)
 
             return text_end_length_optional_adapt_text_end_params(text);
         },     py::arg("text"));
+
+
+    auto pyClassPointAcceptNone =
+        py::class_<PointAcceptNone>
+            (m, "PointAcceptNone", "\n Pointer params that accept None: with options.fn_params_pointer_accept_none__regex = r\"^accept_none_\", the pointer\n params of the matching functions accept None (with nanobind, a pointer param refuses None unless it has a default).\n\n The following functions will be exported with the following python signatures:\n -->    def accept_none_value_or(point: Optional[PointAcceptNone], default_value: int) -> int:\n -->    class PointAcceptNone:\n -->        def accept_none_add(self, other: Optional[PointAcceptNone]) -> int:\n")
+        .def(py::init<>([](
+        int value = 0)
+        {
+            auto r_ctor_ = std::make_unique<PointAcceptNone>();
+            r_ctor_->value = value;
+            return r_ctor_;
+        })
+        , py::arg("value") = 0
+        )
+        .def_readwrite("value", &PointAcceptNone::value, "")
+        .def("accept_none_add",
+            &PointAcceptNone::accept_none_add, py::arg("other"))
+        ;
+
+
+    m.def("accept_none_value_or",
+        accept_none_value_or, py::arg("point"), py::arg("default_value"));
 
     m.def("toggle_bool_pointer",
         [](BoxedBool & v)

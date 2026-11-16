@@ -119,8 +119,8 @@ class AdaptedDecl(AdaptedElement):
 
         return new_decls
 
-    def _str_pydef_as_pyarg(self) -> str:
-        """pydef code for function parameters"""
+    def _str_pydef_as_pyarg(self, accept_none: bool = False) -> str:
+        """pydef code for function parameters. accept_none: the param accepts None (`.none()` for nanobind)"""
         py_colon = "py::" if self.options.bind_library == BindLibraryType.pybind11 else "nb::"
         param_template = py_colon + 'arg("{argname_python}"){maybe_dot_none}{maybe_equal}{maybe_defaultvalue_cpp}'
 
@@ -137,10 +137,10 @@ class AdaptedDecl(AdaptedElement):
 
         argname_python = self.decl_name_python()
 
-        # fill maybe_dot_none with ".none()" if the type is an optional
+        # fill maybe_dot_none with ".none()" if the type is an optional, or if the param accepts None
         maybe_dot_none = ""
         if self.options.bind_library == BindLibraryType.nanobind:
-            if self.cpp_element().cpp_type.is_optional():
+            if self.cpp_element().cpp_type.is_optional() or accept_none:
                 maybe_dot_none = ".none()"
 
         param_line = code_utils.replace_in_string(

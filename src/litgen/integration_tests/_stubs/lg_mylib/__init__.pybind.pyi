@@ -267,6 +267,33 @@ def text_end_length_optional(text: str) -> int:
     pass
 
 # ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+#                       mylib/pointer_accept_none_test.h included by mylib/mylib_main/mylib.h                  //
+# //////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+class PointAcceptNone:
+    """
+    Pointer params that accept None: with options.fn_params_pointer_accept_none__regex = r"^accept_none_", the pointer
+    params of the matching functions accept None (with nanobind, a pointer param refuses None unless it has a default).
+
+    The following functions will be exported with the following python signatures:
+    -->    def accept_none_value_or(point: Optional[PointAcceptNone], default_value: int) -> int:
+    -->    class PointAcceptNone:
+    -->        def accept_none_add(self, other: Optional[PointAcceptNone]) -> int:
+
+    """
+
+    value: int = 0
+    def accept_none_add(self, other: Optional[PointAcceptNone]) -> int:
+        pass
+
+    def __init__(self, value: int = 0) -> None:
+        """Auto-generated default constructor with named params"""
+        pass
+
+def accept_none_value_or(point: Optional[PointAcceptNone], default_value: int) -> int:
+    pass
+
+# ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 #                       mylib/modifiable_immutable_test.h included by mylib/mylib_main/mylib.h                 //
 # //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 

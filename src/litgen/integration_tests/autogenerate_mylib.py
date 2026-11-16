@@ -117,6 +117,9 @@ def mylib_litgen_options(bind_library_type: litgen.BindLibraryType) -> litgen.Li
     # "text end" params (see text_end_test.h)
     options.fn_params_text_end_names__regex = r"_end$"
 
+    # pointer params that accept None (see pointer_accept_none_test.h)
+    options.fn_params_pointer_accept_none__regex = r"^accept_none_"
+
     # namespace
     options.namespaces_root = ["Mylib"]
 

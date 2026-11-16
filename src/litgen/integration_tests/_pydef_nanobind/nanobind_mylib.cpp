@@ -416,6 +416,9 @@ void py_init_module_lg_mylib(nb::module_& m)
                 // convert nb::ndarray to C standard buffer (mutable)
                 void * buffer_2_from_pyarray = buffer_2.data();
                 size_t buffer_2_count = buffer_2.shape(0);
+                // buffer_1 and buffer_2 share the same count
+                if (buffer_2_count != buffer_1_count)
+                    throw std::runtime_error("add_inside_two_buffers: buffer_1 and buffer_2 must have the same length");
                 // Check the type of the ndarray (generic type and size)
                 //   - Step 1: check the generic type (one of dtype_code::Int, UInt, Float, Bfloat, Complex, Bool = 6);
                 uint8_t dtype_code_python_1 = buffer_2.dtype().code;
@@ -532,6 +535,9 @@ void py_init_module_lg_mylib(nb::module_& m)
                 // convert nb::ndarray to C standard buffer (const)
                 const void * buffer_2_from_pyarray = buffer_2.data();
                 size_t buffer_2_count = buffer_2.shape(0);
+                // buffer_1 and buffer_2 share the same count
+                if (buffer_2_count != buffer_1_count)
+                    throw std::runtime_error("templated_sum_buffers: buffer_1 and buffer_2 must have the same length");
 
                 using np_uint_l = uint64_t;
                 using np_int_l = int64_t;
@@ -671,6 +677,27 @@ void py_init_module_lg_mylib(nb::module_& m)
 
             return text_end_length_optional_adapt_text_end_params(text);
         },     nb::arg("text"));
+
+
+    auto pyClassPointAcceptNone =
+        nb::class_<PointAcceptNone>
+            (m, "PointAcceptNone", "\n Pointer params that accept None: with options.fn_params_pointer_accept_none__regex = r\"^accept_none_\", the pointer\n params of the matching functions accept None (with nanobind, a pointer param refuses None unless it has a default).\n\n The following functions will be exported with the following python signatures:\n -->    def accept_none_value_or(point: Optional[PointAcceptNone], default_value: int) -> int:\n -->    class PointAcceptNone:\n -->        def accept_none_add(self, other: Optional[PointAcceptNone]) -> int:\n")
+        .def("__init__", [](PointAcceptNone * self, int value = 0)
+        {
+            new (self) PointAcceptNone();  // placement new
+            auto r_ctor_ = self;
+            r_ctor_->value = value;
+        },
+        nb::arg("value") = 0
+        )
+        .def_rw("value", &PointAcceptNone::value, "")
+        .def("accept_none_add",
+            &PointAcceptNone::accept_none_add, nb::arg("other").none())
+        ;
+
+
+    m.def("accept_none_value_or",
+        accept_none_value_or, nb::arg("point").none(), nb::arg("default_value"));
 
     m.def("toggle_bool_pointer",
         [](BoxedBool & v)

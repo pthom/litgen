@@ -916,9 +916,15 @@ class AdaptedFunction(AdaptedElement):
             if param_type_cpp_simplified in ["py::args", "py::kwargs", "nb::args", "nb::kwargs"]:
                 continue
 
-            pyarg_str = adapted_decl._str_pydef_as_pyarg()
+            pyarg_str = adapted_decl._str_pydef_as_pyarg(accept_none=self._param_accepts_none(param))
             pyarg_strs.append(pyarg_str)
         return pyarg_strs
+
+    def _param_accepts_none(self, param: CppParameter) -> bool:
+        """A pointer param of a function matched by options.fn_params_pointer_accept_none__regex"""
+        return "*" in param.decl.cpp_type.modifiers and code_utils.does_match_regex_or_matcher(
+            self.options.fn_params_pointer_accept_none__regex, self.cpp_adapted_function.function_name
+        )
 
     def _pydef_fill_return_value_policy(self) -> None:
         """Parses the return_value_policy from the function end of line comment
@@ -1296,8 +1302,13 @@ class AdaptedFunction(AdaptedElement):
 
             param_type_cpp = self.options.fn_params_type_replacements.apply(param_type_cpp)
             param_type_python = cpp_to_python.type_to_python(self.lg_context, param_type_cpp)
-            # Add Optional to param_type_python if cpp_type is a pointer with default = nullptr or NULL
-            if "*" in param_decl.cpp_type.modifiers and param_decl.initial_value_code in ["NULL", "nullptr"]:
+            # Add Optional to param_type_python if cpp_type is a pointer with default = nullptr or NULL,
+            # or if it accepts None (options.fn_params_pointer_accept_none__regex)
+            is_pointer_with_null_default = "*" in param_decl.cpp_type.modifiers and param_decl.initial_value_code in [
+                "NULL",
+                "nullptr",
+            ]
+            if is_pointer_with_null_default or self._param_accepts_none(param):
                 param_type_python = f"Optional[{param_type_python}]"
             param_type_python = self._add_class_hierarchy_to_python_type__fixme(param_type_python)
 
