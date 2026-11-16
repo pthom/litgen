@@ -632,7 +632,7 @@ void py_init_module_lg_mylib(py::module& m)
 
     auto pyClassPointAcceptNone =
         py::class_<PointAcceptNone>
-            (m, "PointAcceptNone", "\n Pointer params that accept None: with options.fn_params_pointer_accept_none__regex = r\"^accept_none_\", the pointer\n params of the matching functions accept None (with nanobind, a pointer param refuses None unless it has a default).\n\n The following functions will be exported with the following python signatures:\n -->    def accept_none_value_or(point: Optional[PointAcceptNone], default_value: int) -> int:\n -->    class PointAcceptNone:\n -->        def accept_none_add(self, other: Optional[PointAcceptNone]) -> int:\n")
+            (m, "PointAcceptNone", "\n Pointer params that accept None: with options.fn_params_pointer_accept_none__regex = r\"^accept_none_\", the pointer\n params of the matching functions accept None (with nanobind, a pointer param refuses None unless it has a default).\n\n Returned pointers that may be None: with options.fn_return_pointer_optional__regex = r\"^maybe_none_\", the returned\n pointer of the matching functions is typed Optional in the stub.\n\n The following functions will be exported with the following python signatures:\n -->    def accept_none_value_or(point: Optional[PointAcceptNone], default_value: int) -> int:\n -->    class PointAcceptNone:\n -->        def accept_none_add(self, other: Optional[PointAcceptNone]) -> int:\n -->    def maybe_none_point(found: bool) -> Optional[PointAcceptNone]:\n")
         .def(py::init<>([](
         int value = 0)
         {
@@ -650,6 +650,12 @@ void py_init_module_lg_mylib(py::module& m)
 
     m.def("accept_none_value_or",
         accept_none_value_or, py::arg("point"), py::arg("default_value"));
+
+    m.def("maybe_none_point",
+        maybe_none_point,
+        py::arg("found"),
+        "// return_value_policy::reference",
+        py::return_value_policy::reference);
 
     m.def("toggle_bool_pointer",
         [](BoxedBool & v)

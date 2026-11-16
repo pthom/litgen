@@ -269,6 +269,18 @@ class LitgenOptions:
     fn_return_force_policy_reference__callback: Callable[[AdaptedFunction], None] | None = None
 
     # ------------------------------------------------------------------------------
+    # Returned pointers that may be None
+    # ------------------------------------------------------------------------------
+    # A function that returns a null pointer returns None in Python, but its stub gives the type only.
+    # fn_return_pointer_optional__regex: a regex on function names. Their returned pointer is typed `Optional[T]`
+    # in the stub (the binding code does not change). For example, with r"^GetCurrentContext$",
+    #     Context* GetCurrentContext();
+    # is published as
+    #     def get_current_context() -> Optional[Context]
+    # Name only the functions that may return null: mypy then asks the caller to check for None.
+    fn_return_pointer_optional__regex: RegexOrMatcher = r""
+
+    # ------------------------------------------------------------------------------
     # Force overload
     # ------------------------------------------------------------------------------
     # The following options nudge nanobind or pybind to select the correct overload when

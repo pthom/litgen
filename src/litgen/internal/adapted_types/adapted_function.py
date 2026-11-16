@@ -1263,6 +1263,10 @@ class AdaptedFunction(AdaptedElement):
                 return_type_python = cpp_to_python.qualify_sibling_in_scope(
                     self.lg_context, return_type_python, method_scope
                 )
+            if self.cpp_adapted_function.return_type.is_raw_pointer() and code_utils.does_match_regex_or_matcher(
+                self.options.fn_return_pointer_optional__regex, self.cpp_adapted_function.function_name
+            ):
+                return_type_python = f"Optional[{return_type_python}]"
             return return_type_python
 
     def _stub_params_list_signature(self) -> list[str]:
