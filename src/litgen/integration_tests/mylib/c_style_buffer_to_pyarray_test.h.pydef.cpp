@@ -118,6 +118,9 @@ void py_init_module_mylib(py::module& m)
                 // convert py::array to C standard buffer (mutable)
                 void * buffer_2_from_pyarray = buffer_2.mutable_data();
                 py::ssize_t buffer_2_count = buffer_2.shape()[0];
+                // buffer_1 and buffer_2 share the same count
+                if (buffer_2_count != buffer_1_count)
+                    throw std::runtime_error("add_inside_two_buffers: buffer_1 and buffer_2 must have the same length");
                 char buffer_2_type = buffer_2.dtype().char_();
                 if (buffer_2_type != 'B')
                     throw std::runtime_error(std::string(R"msg(
@@ -212,6 +215,9 @@ void py_init_module_mylib(py::module& m)
                 // convert py::array to C standard buffer (const)
                 const void * buffer_2_from_pyarray = buffer_2.data();
                 py::ssize_t buffer_2_count = buffer_2.shape()[0];
+                // buffer_1 and buffer_2 share the same count
+                if (buffer_2_count != buffer_1_count)
+                    throw std::runtime_error("templated_sum_buffers: buffer_1 and buffer_2 must have the same length");
 
                 #ifdef _WIN32
                 using np_uint_l = uint32_t;

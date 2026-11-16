@@ -135,6 +135,9 @@ void py_init_module_mylib(py::module_& m)
                 // convert nb::ndarray to C standard buffer (mutable)
                 void * buffer_2_from_pyarray = buffer_2.data();
                 size_t buffer_2_count = buffer_2.shape(0);
+                // buffer_1 and buffer_2 share the same count
+                if (buffer_2_count != buffer_1_count)
+                    throw std::runtime_error("add_inside_two_buffers: buffer_1 and buffer_2 must have the same length");
                 // Check the type of the ndarray (generic type and size)
                 //   - Step 1: check the generic type (one of dtype_code::Int, UInt, Float, Bfloat, Complex, Bool = 6);
                 uint8_t dtype_code_python_1 = buffer_2.dtype().code;
@@ -251,6 +254,9 @@ void py_init_module_mylib(py::module_& m)
                 // convert nb::ndarray to C standard buffer (const)
                 const void * buffer_2_from_pyarray = buffer_2.data();
                 size_t buffer_2_count = buffer_2.shape(0);
+                // buffer_1 and buffer_2 share the same count
+                if (buffer_2_count != buffer_1_count)
+                    throw std::runtime_error("templated_sum_buffers: buffer_1 and buffer_2 must have the same length");
 
                 using np_uint_l = uint64_t;
                 using np_int_l = int64_t;
