@@ -30,7 +30,7 @@ We’d love to hear about how you're using litgen! If you are using it, please c
 
 ## Help the Project
 
-If litgen has made a difference for you—especially in a commercial or research setting—please consider [making a donation](https://www.paypal.com/donate/?hosted_button_id=SHJ68RVDKURZA). Your support helps keep the project alive and growing. Every contribution, no matter the size, is greatly appreciated!
+If litgen has made a difference for you, especially in a commercial or research setting, please consider [sponsoring its maintenance](https://github.com/sponsors/pthom). Every contribution, no matter the size, is greatly appreciated!
 
 
 ## Contributions

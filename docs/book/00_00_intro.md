@@ -97,7 +97,7 @@ Contributions and skilled contributors are welcome! See contributors oriented do
 
 ## Help the Project
 
-If litgen has made a difference for you - especially in a commercial or research setting - please consider [making a donation](https://www.paypal.com/donate/?hosted_button_id=SHJ68RVDKURZA). Your support goes a long way toward keeping the project alive and growing. Any contribution, no matter the size, is greatly appreciated!
+If litgen has made a difference for you, especially in a commercial or research setting, please consider [sponsoring its maintenance](https://github.com/sponsors/pthom). Every contribution, no matter the size, is greatly appreciated!
 
 
 ## Technical Support
@@ -107,11 +107,6 @@ C++ is notorious for being hard to parse. As a consequence, the author makes no 
 **Open Source Support:** If you need assistance in an open-source context, please [open an issue](https://github.com/pthom/litgen/issues) in the repository.
 
 **Professional Support:** For more in-depth help in a professional setting, feel free to reach out to the author via email for consulting inquiries.
-
-
-<!--
-[![](https://raw.githubusercontent.com/pthom/imgui_bundle/main/bindings/imgui_bundle/doc/doc_images/btn_donate.gif)](https://www.paypal.com/donate/?hosted_button_id=SHJ68RVDKURZA)
--->
 
 -----
 
